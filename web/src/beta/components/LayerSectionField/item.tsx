@@ -101,6 +101,9 @@ const ItemVisibilityIcon = styled(Icon)`
   padding-top: 30%;
   padding-bottom: 27.34%;
 `;
-const ActionButton = styled.div``;
+const ActionButton = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 export default LayerSectionItem;
