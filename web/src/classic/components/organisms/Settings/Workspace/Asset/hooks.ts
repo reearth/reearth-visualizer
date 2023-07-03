@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import assetHooks from "@reearth/classic/components/organisms/Common/AssetContainer/hooks";
-import { useWorkspace, useProject, useSessionWorkspace } from "@reearth/services/state";
+import { useWorkspace, useProject } from "@reearth/services/state";
 
 export type Params = {
   workspaceId: string;
@@ -10,8 +10,7 @@ export type Params = {
 
 export default (params: Params) => {
   const navigate = useNavigate();
-  const [currentWorkspace] = useSessionWorkspace();
-  const [lastWorkspace] = useWorkspace();
+  const [currentWorkspace] = useWorkspace();
 
   const [currentProject] = useProject();
 
@@ -30,13 +29,13 @@ export default (params: Params) => {
 
   useEffect(() => {
     if (params.workspaceId && currentWorkspace?.id && params.workspaceId !== currentWorkspace.id) {
-      navigate(`/settings/workspaces/${currentWorkspace?.id ?? lastWorkspace?.id}/asset`);
+      navigate(`/settings/workspaces/${currentWorkspace?.id}/asset`);
     }
-  }, [params, currentWorkspace, navigate, lastWorkspace?.id]);
+  }, [params, currentWorkspace, navigate]);
 
   return {
     currentProject,
-    currentWorkspace: currentWorkspace ?? lastWorkspace,
+    currentWorkspace,
     assets,
     isLoading,
     hasMoreAssets,

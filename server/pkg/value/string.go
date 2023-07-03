@@ -44,6 +44,12 @@ func (p *propertyString) String(i any) string {
 	return i.(string)
 }
 
+func (v *propertyString) JSONSchema() map[string]any {
+	return map[string]any{
+		"type": "string",
+	}
+}
+
 func (v *Value) ValueString() (vv string, ok bool) {
 	if v == nil {
 		return

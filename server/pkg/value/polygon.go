@@ -61,6 +61,19 @@ func (p *propertyPolygon) String(i any) string {
 	return i.(Polygon).String()
 }
 
+func (v *propertyPolygon) JSONSchema() map[string]any {
+	return map[string]any{
+		"type":  "array",
+		"title": "Polygon",
+		"items": map[string]any{
+			"type": "array",
+			"items": map[string]any{
+				"type": "number",
+			},
+		},
+	}
+}
+
 func (v *Value) ValuePolygon() (vv Polygon, ok bool) {
 	if v == nil {
 		return

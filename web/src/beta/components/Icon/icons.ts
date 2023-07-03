@@ -18,6 +18,7 @@ import ArrowRight from "./Icons/arrowRight.svg";
 import ArrowLongLeft from "./Icons/arrowLongLeft.svg";
 import ArrowLongRight from "./Icons/arrowLongRight.svg";
 import ArrowDown from "./Icons/arrowDown.svg";
+import ArrowToggle from "./Icons/arrowToggle.svg";
 
 // Indicator
 import Crosshair from "./Icons/crosshair.svg";
@@ -27,6 +28,7 @@ import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
 import Help from "./Icons/help.svg";
+import CheckMark from "./Icons/checkMark.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -45,6 +47,13 @@ import Logout from "./Icons/logout.svg";
 import WorkspaceAdd from "./Icons/workspaceAdd.svg";
 import Workspaces from "./Icons/workspaces.svg";
 
+// Square
+import Square from "./Icons/square.svg";
+import TwoRectangle from "./Icons/two-rectangle.svg";
+
+// Plus
+import Plus from "./Icons/plus.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -60,17 +69,22 @@ export default {
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
   arrowDown: ArrowDown,
+  arrowToggle: ArrowToggle,
   cancel: Cancel,
   crosshair: Crosshair,
   plusSquare: PlusSquare,
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
+  square: Square,
+  plus: Plus,
   timeline: Timeline,
+  twoRectangle: TwoRectangle,
   actionbutton: ActionButton,
   dashboard: Dashboard,
   help: Help,
   logout: Logout,
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
+  checkmark: CheckMark,
 };

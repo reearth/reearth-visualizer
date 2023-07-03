@@ -31,8 +31,8 @@ func NewPlugin(client *mongox.Client) *Plugin {
 	}
 }
 
-func (r *Plugin) Init() error {
-	return createIndexes(context.Background(), r.client, pluginIndexes, pluginUniqueIndexes)
+func (r *Plugin) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, pluginIndexes, pluginUniqueIndexes)
 }
 
 func (r *Plugin) Filtered(f repo.SceneFilter) repo.Plugin {

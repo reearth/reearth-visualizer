@@ -28,7 +28,7 @@ export type Project = {
 export type Props = {
   currentProject?: Project;
   currentProjectStatus?: Status;
-  teamId?: string;
+  workspaceId?: string;
   onPublishmentStatusClick?: (p: publishingType) => void;
   onPreviewOpen?: () => void;
 } & CommonHeaderProps;
@@ -36,7 +36,7 @@ export type Props = {
 const Header: React.FC<Props> = ({
   currentProject,
   currentProjectStatus,
-  teamId,
+  workspaceId,
   onPublishmentStatusClick,
   onPreviewOpen,
   ...props
@@ -53,7 +53,7 @@ const Header: React.FC<Props> = ({
   }, [currentProjectStatus]);
 
   const center = currentProject && (
-    <ProjectMenu currentProject={currentProject} workspaceId={teamId} />
+    <ProjectMenu currentProject={currentProject} workspaceId={workspaceId} />
   );
 
   const right = (

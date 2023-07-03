@@ -12,7 +12,7 @@ import {
   SunLight,
   DirectionalLight,
 } from "cesium";
-import type { Viewer as CesiumViewer } from "cesium";
+import type { Viewer as CesiumViewer, ShadowMap } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
@@ -20,7 +20,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef } from "@reearth/beta/lib/core/Map";
+import { LayersRef, FEATURE_FLAGS } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -50,6 +50,7 @@ export default ({
   isLayerDraggable,
   meta,
   layersRef,
+  featureFlags,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -67,6 +68,7 @@ export default ({
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
+  featureFlags: number;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -128,6 +130,87 @@ export default ({
     property?.light?.lightDirectionY,
     property?.light?.lightDirectionZ,
     property?.light?.lightIntensity,
+  ]);
+
+  // shadow map
+  type ShadowMapBias = {
+    polygonOffsetFactor?: number;
+    polygonOffsetUnits?: number;
+    normalOffsetScale?: number;
+    normalShading?: boolean;
+    normalShadingSmooth?: number;
+    depthBias?: number;
+  };
+
+  useEffect(() => {
+    const shadowMap = cesium?.current?.cesiumElement?.shadowMap as
+      | (ShadowMap & {
+          _terrainBias?: ShadowMapBias;
+          _pointBias?: ShadowMapBias;
+          _primitiveBias?: ShadowMapBias;
+        })
+      | undefined;
+    if (!shadowMap) return;
+    shadowMap.softShadows = property?.atmosphere?.softShadow ?? false;
+    shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.3;
+    shadowMap.size = property?.atmosphere?.shadowResolution ?? 2048;
+    shadowMap.fadingEnabled = true;
+    shadowMap.maximumDistance = 5000;
+    shadowMap.normalOffset = true;
+
+    // bias
+    const defaultTerrainBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.5,
+      normalShading: true,
+      normalShadingSmooth: 0.3,
+      depthBias: 0.0001,
+    };
+    const defaultPrimitiveBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.1 * 100,
+      normalShading: true,
+      normalShadingSmooth: 0.05,
+      depthBias: 0.00002 * 10,
+    };
+    const defaultPointBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.0,
+      normalShading: true,
+      normalShadingSmooth: 0.1,
+      depthBias: 0.0005,
+    };
+
+    if (!shadowMap._terrainBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._terrainBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._terrainBias, defaultTerrainBias);
+    }
+
+    if (!shadowMap._primitiveBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._primitiveBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._primitiveBias, defaultPrimitiveBias);
+    }
+
+    if (!shadowMap._pointBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._pointBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._pointBias, defaultPointBias);
+    }
+  }, [
+    property?.atmosphere?.softShadow,
+    property?.atmosphere?.shadowDarkness,
+    property?.atmosphere?.shadowResolution,
   ]);
 
   useEffect(() => {
@@ -206,6 +289,8 @@ export default ({
   const prevSelectedEntity = useRef<Entity | Cesium3DTileset | InternalCesium3DTileFeature>();
   // manage layer selection
   useEffect(() => {
+    if (!(featureFlags & FEATURE_FLAGS.SINGLE_SELECTION)) return;
+
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
@@ -307,7 +392,7 @@ export default ({
           : undefined,
       );
     }
-  }, [cesium, selectedLayerId, onLayerSelect, layersRef]);
+  }, [cesium, selectedLayerId, onLayerSelect, layersRef, featureFlags]);
 
   const handleMouseEvent = useCallback(
     (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
@@ -370,6 +455,11 @@ export default ({
   const handleClick = useCallback(
     async (e: CesiumMovementEvent, target: RootEventTarget) => {
       mouseEventHandles.click?.(e, target);
+
+      if (!(featureFlags & FEATURE_FLAGS.SINGLE_SELECTION)) return;
+
+      // Layer selection from here
+
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
@@ -507,7 +597,7 @@ export default ({
       viewer.selectedEntity = undefined;
       onLayerSelect?.();
     },
-    [onLayerSelect, mouseEventHandles, layersRef],
+    [onLayerSelect, mouseEventHandles, layersRef, featureFlags],
   );
 
   // E2E test
@@ -599,6 +689,18 @@ export default ({
     },
     [engineAPI],
   );
+
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement) return;
+    const allowCameraMove = !!(featureFlags & FEATURE_FLAGS.CAMERA_MOVE);
+    const allowCameraZoom = !!(featureFlags & FEATURE_FLAGS.CAMERA_ZOOM);
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTranslate =
+      allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
+  }, [featureFlags]);
 
   return {
     backgroundColor,

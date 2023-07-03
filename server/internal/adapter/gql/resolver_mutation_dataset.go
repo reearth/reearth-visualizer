@@ -26,43 +26,6 @@ func (r *mutationResolver) UpdateDatasetSchema(ctx context.Context, input gqlmod
 	return &gqlmodel.UpdateDatasetSchemaPayload{DatasetSchema: gqlmodel.ToDatasetSchema(res)}, nil
 }
 
-func (r *mutationResolver) AddDynamicDatasetSchema(ctx context.Context, input gqlmodel.AddDynamicDatasetSchemaInput) (*gqlmodel.AddDynamicDatasetSchemaPayload, error) {
-	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := usecases(ctx).Dataset.AddDynamicDatasetSchema(ctx, interfaces.AddDynamicDatasetSchemaParam{
-		SceneId: sid,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.AddDynamicDatasetSchemaPayload{DatasetSchema: gqlmodel.ToDatasetSchema(res)}, nil
-}
-
-func (r *mutationResolver) AddDynamicDataset(ctx context.Context, input gqlmodel.AddDynamicDatasetInput) (*gqlmodel.AddDynamicDatasetPayload, error) {
-	dsid, err := gqlmodel.ToID[id.DatasetSchema](input.DatasetSchemaID)
-	if err != nil {
-		return nil, err
-	}
-
-	dss, ds, err := usecases(ctx).Dataset.AddDynamicDataset(ctx, interfaces.AddDynamicDatasetParam{
-		SchemaId: dsid,
-		Author:   input.Author,
-		Content:  input.Content,
-		Lat:      input.Lat,
-		Lng:      input.Lng,
-		Target:   input.Target,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.AddDynamicDatasetPayload{DatasetSchema: gqlmodel.ToDatasetSchema(dss), Dataset: gqlmodel.ToDataset(ds)}, nil
-}
-
 func (r *mutationResolver) SyncDataset(ctx context.Context, input gqlmodel.SyncDatasetInput) (*gqlmodel.SyncDatasetPayload, error) {
 	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
 	if err != nil {
