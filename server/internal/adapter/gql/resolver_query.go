@@ -244,10 +244,6 @@ func (r *queryResolver) DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID,
 	return loaders(ctx).Dataset.FindSchemaByScene(ctx, sceneID, first, last, before, after)
 }
 
-func (r *queryResolver) DynamicDatasetSchemas(ctx context.Context, sceneID gqlmodel.ID) ([]*gqlmodel.DatasetSchema, error) {
-	return loaders(ctx).Dataset.FindDynamicSchemasByScene(ctx, sceneID)
-}
-
 func (r *queryResolver) Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {
 	return loaders(ctx).Dataset.FindBySchema(ctx, datasetSchemaID, first, last, before, after)
 }

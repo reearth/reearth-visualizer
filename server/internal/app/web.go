@@ -55,7 +55,7 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 		return
 	}
 
-	e.Logger.Info("web: web directory will be delivered\n")
+	log.Infof("web: web directory will be delivered")
 
 	cfg := map[string]any{}
 	if w.AuthConfig != nil {
