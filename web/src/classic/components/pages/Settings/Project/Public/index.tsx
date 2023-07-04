@@ -17,6 +17,4 @@ const PublicPage: React.FC<Props> = () => {
   );
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(PublicPage);
+export default withAuthorisation()(PublicPage);

@@ -45,6 +45,4 @@ const EarthEditor: React.FC<Props> = () => {
   );
 };
 
-const withAuthenticationFun = withAuthorisation();
-
-export default withAuthenticationFun(EarthEditor);
+export default withAuthorisation()(EarthEditor);
