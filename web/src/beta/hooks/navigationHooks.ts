@@ -13,5 +13,5 @@ export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
     [sceneId, navigate],
   );
 
-  return sceneId && handleNavigate;
+  return sceneId ? handleNavigate : undefined;
 };
