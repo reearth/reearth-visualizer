@@ -2,7 +2,6 @@ package mongodoc
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/exp/slices"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -45,12 +44,10 @@ type PropertyItemDocument struct {
 	Fields      []*PropertyFieldDocument
 }
 
-type PropertyConsumer = Consumer[*PropertyDocument, *property.Property]
+type PropertyConsumer = mongox.SliceFuncConsumer[*PropertyDocument, *property.Property]
 
-func NewPropertyConsumer(scenes []id.SceneID) *PropertyConsumer {
-	return NewConsumer[*PropertyDocument, *property.Property](func(a *property.Property) bool {
-		return scenes == nil || slices.Contains(scenes, a.Scene())
-	})
+func NewPropertyConsumer() *PropertyConsumer {
+	return NewComsumer[*PropertyDocument, *property.Property]()
 }
 
 type PropertyBatchConsumer struct {

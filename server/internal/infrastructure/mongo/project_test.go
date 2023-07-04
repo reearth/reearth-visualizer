@@ -17,34 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func TestProject_FindByIDs(t *testing.T) {
-	c := mongotest.Connect(t)(t)
-	ctx := context.Background()
-	pid := id.NewProjectID()
-	pid2 := id.NewProjectID()
-	wid := id.NewWorkspaceID()
-	wid2 := id.NewWorkspaceID()
-	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid.String(), "team": wid.String()},
-		bson.M{"id": pid2.String(), "team": wid2.String()},
-	})
-
-	r := NewProject(mongox.NewClientWithDatabase(c))
-	got, err := r.FindByIDs(ctx, id.ProjectIDList{pid})
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(got))
-	assert.Equal(t, pid, got[0].ID())
-
-	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: id.WorkspaceIDList{wid2},
-	})
-	got, err = r2.FindByIDs(ctx, id.ProjectIDList{pid, pid2})
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(got))
-	assert.Nil(t, got[0])
-	assert.Equal(t, pid2, got[1].ID())
-}
-
 func TestProject_CountByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()

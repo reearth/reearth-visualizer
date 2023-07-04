@@ -90,21 +90,20 @@ export default function Feature({
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
-  const cacheable = !data?.updateInterval;
 
-  const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
+  const cachedRenderComponent = (
+    k: keyof AppearanceTypes,
+    f?: ComputedFeature,
+  ): JSX.Element | null => {
     const componentId = generateIDWithMD5(
       `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${data?.url ?? ""}_${
         JSON.stringify(f?.[k]) ?? ""
       }`,
     );
 
-    if (cacheable) {
-      const cachedComponent = CACHED_COMPONENTS.get(componentId);
-
-      if (cachedComponent) {
-        return cachedComponent;
-      }
+    const cachedComponent = CACHED_COMPONENTS.get(componentId);
+    if (cachedComponent) {
+      return cachedComponent;
     }
 
     try {
@@ -139,9 +138,7 @@ export default function Feature({
       );
 
       // Cache the component output
-      if (cacheable) {
-        CACHED_COMPONENTS.set(componentId, component);
-      }
+      CACHED_COMPONENTS.set(componentId, component);
 
       return component;
     } catch (e) {
@@ -185,7 +182,9 @@ export default function Feature({
     <>
       {cachedNoFeatureComponents ||
         [undefined, ...layer.features].flatMap(f =>
-          (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => renderComponent(k, f)),
+          (Object.keys(components) as (keyof AppearanceTypes)[]).map(k =>
+            cachedRenderComponent(k, f),
+          ),
         )}
     </>
   );

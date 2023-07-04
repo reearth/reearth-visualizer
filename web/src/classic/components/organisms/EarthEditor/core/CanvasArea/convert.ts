@@ -1,22 +1,18 @@
 import { Item } from "@reearth/classic/components/atoms/ContentPicker";
-import {
-  Layer,
-  Widget,
+import type {
   Block,
-  WidgetAlignSystem,
-  WidgetZone,
-  WidgetSection,
-  WidgetArea,
-  Alignment,
-  WidgetLayoutConstraint,
-  Tag,
-} from "@reearth/classic/components/molecules/Visualizer";
-import {
   BuiltinWidgets,
-  isBuiltinWidget,
-} from "@reearth/classic/components/molecules/Visualizer/Widget/builtin";
-import { WidgetAreaPadding } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
-import {
+  InternalWidget,
+  WidgetAlignSystem,
+  WidgetLayoutConstraint,
+  Alignment,
+  WidgetArea,
+  WidgetSection,
+  WidgetZone,
+} from "@reearth/classic/core/Crust";
+import { isBuiltinWidget } from "@reearth/classic/core/Crust";
+import type { LegacyLayer, Tag } from "@reearth/classic/core/mantle";
+import type {
   GetBlocksQuery,
   Maybe,
   MergedPropertyGroupFragmentFragment,
@@ -32,6 +28,8 @@ import {
   EarthLayer5Fragment,
 } from "@reearth/classic/gql";
 import { valueFromGQL } from "@reearth/classic/util/value";
+
+import { WidgetAreaPadding } from "../../PropertyPane/hooks";
 
 type BlockType = Item & {
   pluginId: string;
@@ -107,7 +105,7 @@ const processMergedProperty = (
   );
 };
 
-const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Layer["infobox"] => {
+const processInfobox = (infobox?: EarthLayerFragment["infobox"]): LegacyLayer["infobox"] => {
   if (!infobox) return;
   return {
     property: convertProperty(infobox.property),
@@ -123,7 +121,7 @@ const processInfobox = (infobox?: EarthLayerFragment["infobox"]): Layer["infobox
 
 const processMergedInfobox = (
   infobox?: Maybe<NonNullable<EarthLayerItemFragment["merged"]>["infobox"]>,
-): Layer["infobox"] | undefined => {
+): LegacyLayer["infobox"] | undefined => {
   if (!infobox) return;
   return {
     property: processMergedProperty(infobox.property),
@@ -137,7 +135,7 @@ const processMergedInfobox = (
   };
 };
 
-export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
+export const processLayer = (layer: EarthLayer5Fragment): LegacyLayer | undefined => {
   if (!layer) return;
   return {
     id: layer.id,
@@ -157,7 +155,7 @@ export const processLayer = (layer: EarthLayer5Fragment): Layer | undefined => {
       layer.__typename === "LayerGroup"
         ? layer.layers
             ?.map(l => processLayer((l as EarthLayer5Fragment) ?? undefined))
-            .filter((l): l is Layer => !!l)
+            .filter((l): l is LegacyLayer => !!l)
         : undefined,
   };
 };
@@ -166,10 +164,10 @@ export const convertWidgets = (
   data: GetEarthWidgetsQuery | undefined,
 ):
   | {
-      floatingWidgets: Widget[];
+      floatingWidgets: InternalWidget[];
       alignSystem: WidgetAlignSystem;
       layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
-      ownBuiltinWidgets: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
+      ownBuiltinWidgets: (keyof BuiltinWidgets)[];
     }
   | undefined => {
   if (!data?.node || data.node.__typename !== "Scene" || !data.node.widgetAlignSystem) {
@@ -202,7 +200,7 @@ export const convertWidgets = (
   const floatingWidgets = data.node.widgets
     .filter(w => w.enabled && layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
     .map(
-      (w): Widget => ({
+      (w): InternalWidget => ({
         id: w.id,
         extended: !!w.extended,
         pluginId: w.pluginId,
@@ -214,7 +212,7 @@ export const convertWidgets = (
   const widgets = data.node.widgets
     .filter(w => w.enabled && !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
     .map(
-      (w): Widget => ({
+      (w): InternalWidget => ({
         id: w.id,
         extended: !!w.extended,
         pluginId: w.pluginId,
@@ -223,37 +221,33 @@ export const convertWidgets = (
       }),
     );
 
-  const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone | undefined => {
-    const left = widgetSection(zone?.left);
-    const center = widgetSection(zone?.center);
-    const right = widgetSection(zone?.right);
-    if (!left && !center && !right) return;
+  const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone => {
     return {
-      left,
-      center,
-      right,
+      left: widgetSection(zone?.left),
+      center: widgetSection(zone?.center),
+      right: widgetSection(zone?.right),
     };
   };
 
-  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | undefined => {
-    const top = widgetArea(section?.top);
-    const middle = widgetArea(section?.middle);
-    const bottom = widgetArea(section?.bottom);
-    if (!top && !middle && !bottom) return;
+  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection => {
     return {
-      top,
-      middle,
-      bottom,
+      top: widgetArea(section?.top),
+      middle: widgetArea(section?.middle),
+      bottom: widgetArea(section?.bottom),
     };
   };
 
-  const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea | undefined => {
+  const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea => {
     const align = area?.align.toLowerCase() as Alignment | undefined;
     const padding = area?.padding as WidgetAreaPadding | undefined;
-    const areaWidgets: Widget[] | undefined = area?.widgetIds
-      .map<Widget | undefined>(w => widgets.find(w2 => w === w2.id))
-      .filter((w): w is Widget => !!w);
-    if (!areaWidgets || (areaWidgets && areaWidgets.length < 1)) return;
+    const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
+      .map<InternalWidget | undefined>(w => widgets.find(w2 => w === w2.id))
+      .filter((w): w is InternalWidget => !!w);
+    if (!areaWidgets || (areaWidgets && areaWidgets.length < 1))
+      return {
+        align: align ?? "start",
+        widgets: areaWidgets,
+      };
     return {
       align: align ?? "start",
       padding: {
@@ -262,24 +256,17 @@ export const convertWidgets = (
         left: padding?.left ?? 6,
         right: padding?.right ?? 6,
       },
-      widgets: areaWidgets,
       background: area?.background as string | undefined,
       centered: area?.centered,
       gap: area?.gap,
+      widgets: areaWidgets || [],
     };
   };
 
-  const ownBuiltinWidgets = data.node.widgets.reduce<{
-    [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K];
-  }>((res, next) => {
+  const ownBuiltinWidgets = data.node.widgets.reduce<(keyof BuiltinWidgets)[]>((res, next) => {
     const id = `${next.pluginId}/${next.extensionId}`;
-    return isBuiltinWidget(id)
-      ? {
-          ...res,
-          [id]: true,
-        }
-      : res;
-  }, {});
+    return isBuiltinWidget(id) && next.enabled ? [...res, id] : res;
+  }, []);
 
   return {
     floatingWidgets,

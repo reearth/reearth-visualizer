@@ -40,13 +40,10 @@ import {
 import {
   convertWidgets,
   convertToBlocks,
+  convertProperty,
   processSceneTags,
   processLayer,
-  processProperty,
-  extractDatasetSchemas,
-  RawLayer,
 } from "./convert";
-import { useDatasets } from "./hooks_dataset";
 
 export default (isBuilt?: boolean) => {
   const lang = useLang();
@@ -111,36 +108,22 @@ export default (isBuilt?: boolean) => {
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
 
-  // datasets
-  const datasetSchemaIds = useMemo(
+  const rootLayer = useMemo(
     () =>
       layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
-        ? extractDatasetSchemas(layerData.node.rootLayer as RawLayer)
+        ? processLayer(layerData?.node.rootLayer)
         : undefined,
     [layerData],
   );
 
-  const { datasets, loaded: datasetLoaded } = useDatasets(datasetSchemaIds);
-
-  const rootLayer = useMemo(
-    () =>
-      datasetLoaded &&
-      layerData?.node &&
-      layerData.node.__typename === "Scene" &&
-      layerData.node.rootLayer
-        ? processLayer(layerData?.node.rootLayer as RawLayer, undefined, datasets)
-        : undefined,
-    [layerData, datasets, datasetLoaded],
-  );
-
   const widgets = useMemo(() => convertWidgets(sceneData), [sceneData]);
-  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
+  const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
   const clusterProperty = useMemo<ClusterProperty[]>(
     () =>
       scene?.clusters
-        .map((a): any => ({ ...processProperty(a.property), id: a.id }))
+        .map((a): any => ({ ...convertProperty(a.property), id: a.id }))
         .filter((c): c is ClusterProperty => !!c) ?? [],
     [scene?.clusters],
   );
@@ -148,7 +131,7 @@ export default (isBuilt?: boolean) => {
   const pluginProperty = useMemo(
     () =>
       scene?.plugins.reduce<{ [key: string]: any }>(
-        (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
+        (a, b) => ({ ...a, [b.pluginId]: convertProperty(b.property) }),
         {},
       ),
     [scene?.plugins],

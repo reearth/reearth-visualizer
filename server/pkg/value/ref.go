@@ -38,7 +38,7 @@ func (p *propertyRef) String(i any) string {
 	return i.(string)
 }
 
-func (v *propertyRef) JSONSchema() map[string]any {
+func (v *propertyRef) JSONSchema() any {
 	return map[string]any{
 		"type":  "string",
 		"title": "Ref",

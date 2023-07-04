@@ -3,7 +3,7 @@ package mongodoc
 import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
-	"golang.org/x/exp/slices"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type PluginDocument struct {
@@ -47,13 +47,10 @@ type WidgetLocationDocument struct {
 	Area    string
 }
 
-type PluginConsumer = Consumer[*PluginDocument, *plugin.Plugin]
+type PluginConsumer = mongox.SliceFuncConsumer[*PluginDocument, *plugin.Plugin]
 
-func NewPluginConsumer(scenes []id.SceneID) *PluginConsumer {
-	return NewConsumer[*PluginDocument, *plugin.Plugin](func(a *plugin.Plugin) bool {
-		sid := a.ID().Scene()
-		return sid == nil || scenes == nil || slices.Contains(scenes, *sid)
-	})
+func NewPluginConsumer() *PluginConsumer {
+	return NewComsumer[*PluginDocument, *plugin.Plugin]()
 }
 
 func NewPlugin(plugin *plugin.Plugin) (*PluginDocument, string) {

@@ -6,7 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"golang.org/x/exp/slices"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type LayerDocument struct {
@@ -53,12 +53,10 @@ type LayerTagDocument struct {
 
 type LayerTagListDocument []LayerTagDocument
 
-type LayerConsumer = Consumer[*LayerDocument, layer.Layer]
+type LayerConsumer = mongox.SliceFuncConsumer[*LayerDocument, layer.Layer]
 
-func NewLayerConsumer(scenes []id.SceneID) *LayerConsumer {
-	return NewConsumer[*LayerDocument, layer.Layer](func(a layer.Layer) bool {
-		return scenes == nil || slices.Contains(scenes, a.Scene())
-	})
+func NewLayerConsumer() *LayerConsumer {
+	return NewComsumer[*LayerDocument, layer.Layer]()
 }
 
 func NewLayer(l layer.Layer) (*LayerDocument, string) {

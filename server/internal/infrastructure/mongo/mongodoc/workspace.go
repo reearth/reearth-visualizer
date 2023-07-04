@@ -3,6 +3,7 @@ package mongodoc
 import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type WorkspaceMemberDocument struct {
@@ -17,10 +18,10 @@ type WorkspaceDocument struct {
 	Policy   *workspace.PolicyID `bson:"policy,omitempty"`
 }
 
-type WorkspaceConsumer = Consumer[*WorkspaceDocument, *workspace.Workspace]
+type WorkspaceConsumer = mongox.SliceFuncConsumer[*WorkspaceDocument, *workspace.Workspace]
 
 func NewWorkspaceConsumer() *WorkspaceConsumer {
-	return NewConsumer[*WorkspaceDocument, *workspace.Workspace](nil)
+	return NewComsumer[*WorkspaceDocument, *workspace.Workspace]()
 }
 
 func NewWorkspace(ws *workspace.Workspace) (*WorkspaceDocument, string) {

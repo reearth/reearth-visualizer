@@ -1,7 +1,5 @@
 package dataset
 
-import "fmt"
-
 type Schema struct {
 	id                  SchemaID
 	source              string
@@ -124,23 +122,14 @@ func (d *Schema) JSONSchema() map[string]any {
 		"": map[string]any{
 			"title": "ID",
 			"type":  "string",
-			"$id":   "#/properties/id",
 		},
 	}
 	for _, f := range d.fields {
-		name := f.Name()
-		if name == "" {
-			name = f.ID().String()
-		}
-		if name == "" {
-			continue
-		}
-		properties[name] = f.JSONSchema()
+		properties[f.Name()] = f.JSONSchema()
 	}
 
 	m := map[string]any{
 		"$schema":    "http://json-schema.org/draft-07/schema#",
-		"$id":        fmt.Sprintf("#/schemas/%s", d.ID()),
 		"title":      d.name,
 		"type":       "object",
 		"properties": properties,

@@ -1,11 +1,13 @@
 package e2e
 
 import (
+	"encoding/json"
 	"net/http"
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/samber/lo"
 )
 
 func TestDatasetExport(t *testing.T) {
@@ -51,33 +53,26 @@ func TestDatasetExport(t *testing.T) {
 		Status(http.StatusOK).
 		ContentType("application/json")
 	res.Header("Content-Disposition").Equal("attachment;filename=test.csv.json")
-
-	res.JSON().Equal(map[string]any{
-		"schema": map[string]any{
+	res.Body().Equal(string(lo.Must(json.Marshal([]map[string]any{
+		{
 			"$schema": "http://json-schema.org/draft-07/schema#",
-			"$id":     "#/schemas/" + dssID.String(),
 			"title":   "test.csv",
 			"type":    "object",
 			"properties": map[string]any{
 				"": map[string]any{
 					"title": "ID",
-					"$id":   "#/properties/id",
 					"type":  "string",
 				},
 				"f1": map[string]any{
-					"$id":  "#/properties/" + dsfID1.String(),
 					"type": "string",
 				},
 				"f2": map[string]any{
-					"$id":  "#/properties/" + dsfID2.String(),
 					"type": "number",
 				},
 				"f3": map[string]any{
-					"$id":  "#/properties/" + dsfID3.String(),
 					"type": "boolean",
 				},
 				"location": map[string]any{
-					"$id":   "#/properties/" + dsfID4.String(),
 					"type":  "object",
 					"title": "LatLng",
 					"required": []string{
@@ -95,17 +90,15 @@ func TestDatasetExport(t *testing.T) {
 				},
 			},
 		},
-		"datasets": []map[string]any{
-			{
-				"":   dsID.String(),
-				"f1": "test",
-				"f2": 123,
-				"f3": true,
-				"location": map[string]any{
-					"lat": 11.0,
-					"lng": 12.0,
-				},
+		{
+			"":   dsID.String(),
+			"f1": "test",
+			"f2": 123,
+			"f3": true,
+			"location": map[string]any{
+				"lat": 11.0,
+				"lng": 12.0,
 			},
 		},
-	})
+	}))) + "\n")
 }

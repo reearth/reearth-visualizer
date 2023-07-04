@@ -1,13 +1,11 @@
 package mongodoc
 
 import (
-	"io"
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -173,78 +171,84 @@ func TestNewTags(t *testing.T) {
 	}
 }
 
-func TestTagConsumer_Consume(t *testing.T) {
+func TestFuncConsumer_Consume(t *testing.T) {
 	sid := id.NewSceneID()
-	tg := tag.NewGroup().
+	tg, _ := tag.NewGroup().
 		NewID().
 		Label("group").
 		Scene(sid).
-		MustBuild()
-	ti := tag.NewItem().
+		Build()
+	ti, _ := tag.NewItem().
 		NewID().
 		Label("group").
 		Scene(sid).
-		MustBuild()
-	doc1, _ := NewTag(tg)
-	doc2, _ := NewTag(ti)
-	r1 := lo.Must(bson.Marshal(doc1))
-	r2 := lo.Must(bson.Marshal(doc2))
+		Build()
+	doc, _ := NewTag(tg)
+	doc1, _ := NewTag(ti)
+	r, _ := bson.Marshal(doc)
+	r1, _ := bson.Marshal(doc1)
+	type fields struct {
+		Rows      []*tag.Tag
+		GroupRows []*tag.Group
+		ItemRows  []*tag.Item
+	}
+	type args struct {
+		raw bson.Raw
+	}
 
 	tests := []struct {
 		name    string
-		filter  []id.SceneID
-		arg     bson.Raw
+		fields  fields
+		args    args
 		wantErr bool
-		wantEOF bool
-		result  []tag.Tag
 	}{
 		{
-			name:    "nil",
-			filter:  nil,
-			arg:     nil,
+			name: "nil row",
+			fields: fields{
+				Rows:      nil,
+				GroupRows: nil,
+				ItemRows:  nil,
+			},
+			args: args{
+				raw: nil,
+			},
 			wantErr: false,
-			wantEOF: true,
-			result:  nil,
 		},
 		{
-			name:    "consume tag group",
-			filter:  nil,
-			arg:     r1,
+			name: "consume tag group",
+			fields: fields{
+				Rows:      nil,
+				GroupRows: nil,
+				ItemRows:  nil,
+			},
+			args: args{
+				raw: r,
+			},
 			wantErr: false,
-			wantEOF: false,
-			result:  []tag.Tag{tg},
 		},
 		{
-			name:    "consume tag item",
-			filter:  nil,
-			arg:     r2,
+			name: "consume tag item",
+			fields: fields{
+				Rows:      nil,
+				GroupRows: nil,
+				ItemRows:  nil,
+			},
+			args: args{
+				raw: r1,
+			},
 			wantErr: false,
-			wantEOF: false,
-			result:  []tag.Tag{ti},
 		},
 		{
-			name:    "filtered",
-			filter:  []id.SceneID{sid},
-			arg:     r2,
-			wantErr: false,
-			wantEOF: false,
-			result:  []tag.Tag{ti},
-		},
-		{
-			name:    "rejected",
-			filter:  []id.SceneID{id.NewSceneID()},
-			arg:     r2,
-			wantErr: false,
-			wantEOF: false,
-			result:  nil,
-		},
-		{
-			name:    "fail: unmarshal error",
-			filter:  nil,
-			arg:     []byte{},
+			name: "fail: unmarshal error",
+			fields: fields{
+				Rows:      nil,
+				GroupRows: nil,
+				ItemRows:  nil,
+			},
+			args: args{
+				raw: []byte{},
+			},
 			wantErr: true,
-			wantEOF: false,
-			result:  nil,
 		},
 	}
 
@@ -252,16 +256,10 @@ func TestTagConsumer_Consume(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			c := NewTagConsumer(tc.filter)
-			err := c.Consume(tc.arg)
-			if tc.wantEOF {
-				assert.Equal(t, io.EOF, err)
-			} else if tc.wantErr {
+			c := NewTagConsumer()
+			if err := c.Consume(tc.args.raw); tc.wantErr {
 				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
 			}
-			assert.Equal(t, tc.result, c.Result)
 		})
 	}
 }

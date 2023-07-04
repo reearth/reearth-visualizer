@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/user"
 	user1 "github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -34,10 +35,10 @@ type UserVerificationDoc struct {
 	Verified   bool
 }
 
-type UserConsumer = Consumer[*UserDocument, *user.User]
+type UserConsumer = mongox.SliceFuncConsumer[*UserDocument, *user.User]
 
 func NewUserConsumer() *UserConsumer {
-	return NewConsumer[*UserDocument, *user.User](nil)
+	return NewComsumer[*UserDocument, *user.User]()
 }
 
 func NewUser(user *user1.User) (*UserDocument, string) {

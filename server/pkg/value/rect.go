@@ -55,7 +55,7 @@ func (p *propertyRect) String(i any) string {
 	return i.(Rect).String()
 }
 
-func (v *propertyRect) JSONSchema() map[string]any {
+func (v *propertyRect) JSONSchema() any {
 	return map[string]any{
 		"type":  "object",
 		"title": "Rect",

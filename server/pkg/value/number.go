@@ -136,7 +136,7 @@ func (p *propertyNumber) String(i any) string {
 	return fmt.Sprintf("%g", i.(float64))
 }
 
-func (v *propertyNumber) JSONSchema() map[string]any {
+func (v *propertyNumber) JSONSchema() any {
 	return map[string]any{
 		"type": "number",
 	}

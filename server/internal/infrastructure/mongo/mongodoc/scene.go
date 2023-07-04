@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/exp/slices"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/mongox"
 )
 
 type SceneDocument struct {
@@ -44,12 +44,10 @@ type SceneClusterDocument struct {
 	Property string
 }
 
-type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]
+type SceneConsumer = mongox.SliceFuncConsumer[*SceneDocument, *scene.Scene]
 
-func NewSceneConsumer(workspaces []id.WorkspaceID) *SceneConsumer {
-	return NewConsumer[*SceneDocument, *scene.Scene](func(s *scene.Scene) bool {
-		return workspaces == nil || slices.Contains(workspaces, s.Workspace())
-	})
+func NewSceneConsumer() *SceneConsumer {
+	return NewComsumer[*SceneDocument, *scene.Scene]()
 }
 
 type SceneIDDocument struct {

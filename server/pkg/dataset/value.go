@@ -55,7 +55,7 @@ func (vt ValueType) None() *OptionalValue {
 	return NewOptionalValue(vt, nil)
 }
 
-func (vt ValueType) JSONSchema() map[string]any {
+func (vt ValueType) JSONSchema() any {
 	return value.Type(vt).JSONSchema(nil)
 }
 

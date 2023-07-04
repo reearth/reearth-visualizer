@@ -23,13 +23,9 @@ var (
 	pID    = id.NewProjectID()
 	pAlias = "PROJECT_ALIAS"
 
-	sID    = id.NewSceneID()
-	dssID  = id.NewDatasetSchemaID()
-	dsID   = id.NewDatasetID()
-	dsfID1 = dataset.NewFieldID()
-	dsfID2 = dataset.NewFieldID()
-	dsfID3 = dataset.NewFieldID()
-	dsfID4 = dataset.NewFieldID()
+	sID   = id.NewSceneID()
+	dssID = id.NewDatasetSchemaID()
+	dsID  = id.NewDatasetID()
 
 	now = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 )
@@ -67,14 +63,15 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 
+	fId1, fId2, fId3, fId4 := dataset.NewFieldID(), dataset.NewFieldID(), dataset.NewFieldID(), dataset.NewFieldID()
 	dss := dataset.NewSchema().ID(dssID).
 		Name("test.csv").
 		Scene(sID).
 		Fields([]*dataset.SchemaField{
-			dataset.NewSchemaField().ID(dsfID1).Name("f1").Type(dataset.ValueTypeString).MustBuild(),
-			dataset.NewSchemaField().ID(dsfID2).Name("f2").Type(dataset.ValueTypeNumber).MustBuild(),
-			dataset.NewSchemaField().ID(dsfID3).Name("f3").Type(dataset.ValueTypeBool).MustBuild(),
-			dataset.NewSchemaField().ID(dsfID4).Name("location").Type(dataset.ValueTypeLatLng).MustBuild(),
+			dataset.NewSchemaField().ID(fId1).Name("f1").Type(dataset.ValueTypeString).MustBuild(),
+			dataset.NewSchemaField().ID(fId2).Name("f2").Type(dataset.ValueTypeNumber).MustBuild(),
+			dataset.NewSchemaField().ID(fId3).Name("f3").Type(dataset.ValueTypeBool).MustBuild(),
+			dataset.NewSchemaField().ID(fId4).Name("location").Type(dataset.ValueTypeLatLng).MustBuild(),
 		}).
 		Source("file:///dss.csv").
 		MustBuild()
@@ -84,10 +81,10 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 
 	ds := dataset.New().ID(dsID).Schema(dss.ID()).Scene(sID).
 		Fields([]*dataset.Field{
-			dataset.NewField(dsfID1, dataset.ValueTypeString.ValueFrom("test"), ""),
-			dataset.NewField(dsfID2, dataset.ValueTypeNumber.ValueFrom(123), ""),
-			dataset.NewField(dsfID3, dataset.ValueTypeBool.ValueFrom(true), ""),
-			dataset.NewField(dsfID4, dataset.ValueTypeLatLng.ValueFrom(dataset.LatLng{Lat: 11, Lng: 12}), ""),
+			dataset.NewField(fId1, dataset.ValueTypeString.ValueFrom("test"), ""),
+			dataset.NewField(fId2, dataset.ValueTypeNumber.ValueFrom(123), ""),
+			dataset.NewField(fId3, dataset.ValueTypeBool.ValueFrom(true), ""),
+			dataset.NewField(fId4, dataset.ValueTypeLatLng.ValueFrom(dataset.LatLng{Lat: 11, Lng: 12}), ""),
 		}).
 		MustBuild()
 	if err := r.Dataset.Save(ctx, ds); err != nil {

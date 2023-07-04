@@ -2,7 +2,6 @@ package mongodoc
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/exp/slices"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -31,12 +30,10 @@ type DatasetExtendedDocument struct {
 	Depth int
 }
 
-type DatasetConsumer = Consumer[*DatasetDocument, *dataset.Dataset]
+type DatasetConsumer = mongox.SliceFuncConsumer[*DatasetDocument, *dataset.Dataset]
 
-func NewDatasetConsumer(scenes []id.SceneID) *DatasetConsumer {
-	return NewConsumer[*DatasetDocument, *dataset.Dataset](func(a *dataset.Dataset) bool {
-		return scenes == nil || slices.Contains(scenes, a.Scene())
-	})
+func NewDatasetConsumer() *DatasetConsumer {
+	return NewComsumer[*DatasetDocument, *dataset.Dataset]()
 }
 
 type DatasetMapConsumer struct {
