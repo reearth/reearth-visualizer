@@ -6,18 +6,15 @@ import { styled } from "@reearth/services/theme";
 type Props = {
   url: string;
   controls?: boolean;
-  height?: React.CSSProperties["height"];
+  height?: string | number;
 };
 
 const VideoBlock: React.FC<Props> = ({ url, controls, height }) => {
-  if (url) {
-    return (
-      <Player url={url} controls={controls} width={"100%"} height={height ? height : "auto"} />
-    );
-  }
-  return (
+  return url ? (
+    <Player url={url} controls={controls} width="100%" height={height ?? "auto"} />
+  ) : (
     <BlankVideoBox>
-      <Icon icon={"filmStrip"} color={"#2e2e2e"} size={32} />
+      <Icon icon="filmStrip" color="#2e2e2e" size={32} />
     </BlankVideoBox>
   );
 };
