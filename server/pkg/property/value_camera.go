@@ -70,7 +70,7 @@ func (p *typePropertyCamera) String(i interface{}) string {
 	// return i.(Camera).String()
 }
 
-func (v *typePropertyCamera) JSONSchema() any {
+func (v *typePropertyCamera) JSONSchema() map[string]any {
 	return map[string]any{
 		"type":  "object",
 		"title": "Camera",
