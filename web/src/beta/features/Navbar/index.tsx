@@ -46,8 +46,6 @@ const Navbar: React.FC<Props> = ({
     page: "editor",
   });
 
-  console.log("W: ", workspace);
-
   return (
     <Wrapper>
       <LeftSection
