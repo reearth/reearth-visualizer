@@ -12,10 +12,10 @@ import WorkspaceMenu from "@reearth/beta/features/Navbar/Menus/WorkspaceMenu";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { User, Workspace } from "../../types";
+import { Workspace } from "../../types";
 
 export type LoginProps = {
-  user: User;
+  username: string;
   currentWorkspace: Workspace;
   personalWorkspace?: boolean;
 };
@@ -27,12 +27,12 @@ export type Props = {
   openModal?: () => void;
 };
 
-const Label: React.FC<LoginProps> = ({ user, currentWorkspace }) => {
+const Label: React.FC<LoginProps> = ({ username, currentWorkspace }) => {
   const theme = useTheme();
   return (
     <LabelWrapper>
       <LabelLeft>
-        <Avatar innerText={user.name} borderRadius="4px" />
+        <Avatar innerText={username} borderRadius="4px" />
       </LabelLeft>
       <WorkspaceName size="h5" color={theme.general.content.weak}>
         {currentWorkspace.name}
@@ -42,7 +42,7 @@ const Label: React.FC<LoginProps> = ({ user, currentWorkspace }) => {
 };
 
 const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
-  user = { name: "" },
+  username = "",
   currentWorkspace = { id: undefined, name: "" },
   personalWorkspace,
   workspaces = [],
@@ -63,7 +63,7 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
       hasIcon
       label={
         <Label
-          user={user}
+          username={username}
           personalWorkspace={personalWorkspace}
           currentWorkspace={currentWorkspace}
         />

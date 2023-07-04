@@ -5,7 +5,9 @@ import LeftSection from "./LeftSection";
 import useRightSide from "./useRightSection";
 
 type Props = {
-  sceneId: string;
+  sceneId?: string;
+  projectId?: string;
+  workspaceId?: string;
   isDashboard?: boolean;
   currentTab: Tab;
 };
@@ -17,12 +19,18 @@ export function isTab(tab: string): tab is Tab {
   return Tabs.includes(tab as never);
 }
 
-const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = false }) => {
+const Navbar: React.FC<Props> = ({
+  sceneId,
+  projectId,
+  workspaceId,
+  currentTab = "scene",
+  isDashboard = false,
+}) => {
   const {
     currentProject,
-    currentWorkspace,
+    workspace,
     isPersonal,
-    user,
+    username,
     workspaces,
     workspaceModalVisible,
     handleLogout,
@@ -30,7 +38,7 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
     handleWorkspaceCreate,
     handleWorkspaceModalClose,
     handleWorkspaceModalOpen,
-  } = useHook(sceneId);
+  } = useHook({ projectId, workspaceId });
 
   const { rightSide } = useRightSide({
     currentTab,
@@ -38,13 +46,15 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
     page: "editor",
   });
 
+  console.log("W: ", workspace);
+
   return (
     <Wrapper>
       <LeftSection
         currentProject={currentProject}
         dashboard={isDashboard}
-        currentWorkspace={currentWorkspace}
-        user={user}
+        currentWorkspace={workspace}
+        username={username}
         personalWorkspace={isPersonal}
         modalShown={workspaceModalVisible}
         workspaces={workspaces}

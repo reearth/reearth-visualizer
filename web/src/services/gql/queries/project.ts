@@ -2,9 +2,8 @@ import { gql } from "@apollo/client";
 
 import { projectFragment } from "../fragments/project";
 
-// todo: simplify name (can't do without refactoring or removing classic)
-export const GET_PROJECT_WITH_SCENE_ID = gql`
-  query GetProjectWithSceneId($projectId: ID!) {
+export const GET_PROJECT = gql`
+  query GetProject($projectId: ID!) {
     node(id: $projectId, type: PROJECT) {
       id
       ... on Project {

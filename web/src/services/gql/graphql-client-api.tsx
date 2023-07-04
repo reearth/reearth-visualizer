@@ -2347,12 +2347,12 @@ export type MergedPropertyFragmentFragment = { __typename?: 'MergedProperty', or
 
 export type PropertyFieldLinkFragment = { __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null };
 
-export type GetProjectWithSceneIdQueryVariables = Exact<{
+export type GetProjectQueryVariables = Exact<{
   projectId: Scalars['ID'];
 }>;
 
 
-export type GetProjectWithSceneIdQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, coreSupport: boolean, scene?: { __typename?: 'Scene', id: string } | null } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+export type GetProjectQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, coreSupport: boolean, scene?: { __typename?: 'Scene', id: string } | null } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
 export type GetProjectsQueryVariables = Exact<{
   teamId: Scalars['ID'];
@@ -2441,6 +2441,13 @@ export type DeleteProjectMutationVariables = Exact<{
 
 export type DeleteProjectMutation = { __typename?: 'Mutation', deleteProject?: { __typename?: 'DeleteProjectPayload', projectId: string } | null };
 
+export type GetSceneQueryVariables = Exact<{
+  sceneId: Scalars['ID'];
+}>;
+
+
+export type GetSceneQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', rootLayerId: string, teamId: string, projectId: string, id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
+
 export type GetUserBySearchQueryVariables = Exact<{
   nameOrEmail: Scalars['String'];
 }>;
@@ -2471,6 +2478,13 @@ export type DeleteMeMutationVariables = Exact<{
 
 
 export type DeleteMeMutation = { __typename?: 'Mutation', deleteMe?: { __typename?: 'DeleteMePayload', userId: string } | null };
+
+export type CreateWorkspaceMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateWorkspaceMutation = { __typename?: 'Mutation', createTeam?: { __typename?: 'CreateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } } | null };
 
 export const WidgetAreaFragmentFragmentDoc = gql`
     fragment WidgetAreaFragment on WidgetArea {
@@ -3183,8 +3197,8 @@ export const ProjectFragmentFragmentDoc = gql`
   coreSupport
 }
     `;
-export const GetProjectWithSceneIdDocument = gql`
-    query GetProjectWithSceneId($projectId: ID!) {
+export const GetProjectDocument = gql`
+    query GetProject($projectId: ID!) {
   node(id: $projectId, type: PROJECT) {
     id
     ... on Project {
@@ -3198,32 +3212,32 @@ export const GetProjectWithSceneIdDocument = gql`
     ${ProjectFragmentFragmentDoc}`;
 
 /**
- * __useGetProjectWithSceneIdQuery__
+ * __useGetProjectQuery__
  *
- * To run a query within a React component, call `useGetProjectWithSceneIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProjectWithSceneIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetProjectQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetProjectWithSceneIdQuery({
+ * const { data, loading, error } = useGetProjectQuery({
  *   variables: {
  *      projectId: // value for 'projectId'
  *   },
  * });
  */
-export function useGetProjectWithSceneIdQuery(baseOptions: Apollo.QueryHookOptions<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>) {
+export function useGetProjectQuery(baseOptions: Apollo.QueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>(GetProjectWithSceneIdDocument, options);
+        return Apollo.useQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options);
       }
-export function useGetProjectWithSceneIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>) {
+export function useGetProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>(GetProjectWithSceneIdDocument, options);
+          return Apollo.useLazyQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options);
         }
-export type GetProjectWithSceneIdQueryHookResult = ReturnType<typeof useGetProjectWithSceneIdQuery>;
-export type GetProjectWithSceneIdLazyQueryHookResult = ReturnType<typeof useGetProjectWithSceneIdLazyQuery>;
-export type GetProjectWithSceneIdQueryResult = Apollo.QueryResult<GetProjectWithSceneIdQuery, GetProjectWithSceneIdQueryVariables>;
+export type GetProjectQueryHookResult = ReturnType<typeof useGetProjectQuery>;
+export type GetProjectLazyQueryHookResult = ReturnType<typeof useGetProjectLazyQuery>;
+export type GetProjectQueryResult = Apollo.QueryResult<GetProjectQuery, GetProjectQueryVariables>;
 export const GetProjectsDocument = gql`
     query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
   projects(
@@ -3610,6 +3624,46 @@ export function useDeleteProjectMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteProjectMutationHookResult = ReturnType<typeof useDeleteProjectMutation>;
 export type DeleteProjectMutationResult = Apollo.MutationResult<DeleteProjectMutation>;
 export type DeleteProjectMutationOptions = Apollo.BaseMutationOptions<DeleteProjectMutation, DeleteProjectMutationVariables>;
+export const GetSceneDocument = gql`
+    query GetScene($sceneId: ID!) {
+  node(id: $sceneId, type: SCENE) {
+    id
+    ... on Scene {
+      rootLayerId
+      teamId
+      projectId
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetSceneQuery__
+ *
+ * To run a query within a React component, call `useGetSceneQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSceneQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSceneQuery({
+ *   variables: {
+ *      sceneId: // value for 'sceneId'
+ *   },
+ * });
+ */
+export function useGetSceneQuery(baseOptions: Apollo.QueryHookOptions<GetSceneQuery, GetSceneQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSceneQuery, GetSceneQueryVariables>(GetSceneDocument, options);
+      }
+export function useGetSceneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSceneQuery, GetSceneQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSceneQuery, GetSceneQueryVariables>(GetSceneDocument, options);
+        }
+export type GetSceneQueryHookResult = ReturnType<typeof useGetSceneQuery>;
+export type GetSceneLazyQueryHookResult = ReturnType<typeof useGetSceneLazyQuery>;
+export type GetSceneQueryResult = Apollo.QueryResult<GetSceneQuery, GetSceneQueryVariables>;
 export const GetUserBySearchDocument = gql`
     query GetUserBySearch($nameOrEmail: String!) {
   searchUser(nameOrEmail: $nameOrEmail) {
@@ -3810,3 +3864,61 @@ export function useDeleteMeMutation(baseOptions?: Apollo.MutationHookOptions<Del
 export type DeleteMeMutationHookResult = ReturnType<typeof useDeleteMeMutation>;
 export type DeleteMeMutationResult = Apollo.MutationResult<DeleteMeMutation>;
 export type DeleteMeMutationOptions = Apollo.BaseMutationOptions<DeleteMeMutation, DeleteMeMutationVariables>;
+export const CreateWorkspaceDocument = gql`
+    mutation CreateWorkspace($name: String!) {
+  createTeam(input: {name: $name}) {
+    team {
+      id
+      name
+      members {
+        user {
+          id
+          name
+          email
+        }
+        userId
+        role
+      }
+      personal
+      policyId
+      policy {
+        id
+        name
+        projectCount
+        memberCount
+        publishedProjectCount
+        layerCount
+        assetStorageSize
+        datasetSchemaCount
+        datasetCount
+      }
+    }
+  }
+}
+    `;
+export type CreateWorkspaceMutationFn = Apollo.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+
+/**
+ * __useCreateWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, options);
+      }
+export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
+export type CreateWorkspaceMutationResult = Apollo.MutationResult<CreateWorkspaceMutation>;
+export type CreateWorkspaceMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
