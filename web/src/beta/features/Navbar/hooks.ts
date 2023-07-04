@@ -14,7 +14,7 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
   const navigate = useNavigate();
   const { logout: handleLogout } = useAuth();
 
-  const [_, setCurrentWorkspace] = useWorkspace(); // todo: remove when we don't rely on jotai anymore
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace(); // todo: remove when we don't rely on jotai anymore
   const [currentProject, setProject] = useProject(); // todo: remove when we don't rely on jotai anymore
 
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
@@ -40,9 +40,15 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
   );
 
   const workspace = useMemo(
-    () => workspaces?.find(w => w.id === workspaceId),
-    [workspaces, workspaceId],
+    () => workspaceData?.me?.teams?.find(w => w.id === workspaceId),
+    [workspaceData?.me?.teams, workspaceId],
   );
+
+  useEffect(() => {
+    if (!currentWorkspace || (workspace && workspace.id !== currentWorkspace?.id)) {
+      setCurrentWorkspace(workspace);
+    }
+  });
 
   const username = useMemo(() => workspaceData?.me?.name || "", [workspaceData?.me]);
 
@@ -71,10 +77,10 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
 
   const handleWorkspaceChange = useCallback(
     (id: string) => {
-      const workspace = workspaces?.find(team => team.id === workspaceId);
-      if (workspace && workspaceId !== id) {
-        setCurrentWorkspace(workspace);
-        navigate(`/dashboard/${workspaceId}`);
+      const newWorkspace = workspaces?.find(team => team.id === id);
+      if (newWorkspace && workspaceId !== newWorkspace.id) {
+        setCurrentWorkspace(newWorkspace);
+        navigate(`/dashboard/${newWorkspace.id}`);
       }
     },
     [workspaces, workspaceId, setCurrentWorkspace, navigate],
