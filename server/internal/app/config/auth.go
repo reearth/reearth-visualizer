@@ -67,7 +67,7 @@ func (c Auth0Config) AuthConfigForWeb() *AuthConfig {
 	if c.Domain == "" || c.WebClientID == "" {
 		return nil
 	}
-	domain := prepareUrl(c.Domain)
+	domain := getAuthDomain(c.Domain)
 	var aud []string
 	if len(c.Audience) > 0 {
 		aud = []string{c.Audience}
@@ -83,7 +83,7 @@ func (c Auth0Config) AuthConfigForM2M() *AuthConfig {
 	if c.Domain == "" || c.ClientID == "" {
 		return nil
 	}
-	domain := prepareUrl(c.Domain)
+	domain := getAuthDomain(c.Domain)
 	var aud []string
 	if len(c.Audience) > 0 {
 		aud = []string{c.Audience}
@@ -125,11 +125,11 @@ func (c CognitoConfig) Configs() AuthConfigs {
 	}
 }
 
-func prepareUrl(url string) string {
+func getAuthDomain(url string) string {
 	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		url = "https://" + url
 	}
-	// url = strings.TrimSuffix(url, "/")
+	// Auth0 JS library adds slash to the end of the domain (issuer)
 	if !strings.HasSuffix(url, "/") {
 		url = url + "/"
 	}

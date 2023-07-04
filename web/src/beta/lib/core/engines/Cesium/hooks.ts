@@ -166,20 +166,20 @@ export default ({
 
   // shadow map
   type ShadowMapBias = {
-    polygonOffsetFactor: number;
-    polygonOffsetUnits: number;
-    normalOffsetScale: number;
-    normalShading: boolean;
-    normalShadingSmooth: number;
-    depthBias: number;
+    polygonOffsetFactor?: number;
+    polygonOffsetUnits?: number;
+    normalOffsetScale?: number;
+    normalShading?: boolean;
+    normalShadingSmooth?: number;
+    depthBias?: number;
   };
 
   useEffect(() => {
     const shadowMap = cesium?.current?.cesiumElement?.shadowMap as
       | (ShadowMap & {
-          _terrainBias: ShadowMapBias;
-          _pointBias: ShadowMapBias;
-          _primitiveBias: ShadowMapBias;
+          _terrainBias?: ShadowMapBias;
+          _pointBias?: ShadowMapBias;
+          _primitiveBias?: ShadowMapBias;
         })
       | undefined;
     if (!shadowMap) return;
@@ -215,9 +215,30 @@ export default ({
       normalShadingSmooth: 0.1,
       depthBias: 0.0005,
     };
-    Object.assign(shadowMap._terrainBias, defaultTerrainBias);
-    Object.assign(shadowMap._primitiveBias, defaultPrimitiveBias);
-    Object.assign(shadowMap._pointBias, defaultPointBias);
+
+    if (!shadowMap._terrainBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._terrainBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._terrainBias, defaultTerrainBias);
+    }
+
+    if (!shadowMap._primitiveBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._primitiveBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._primitiveBias, defaultPrimitiveBias);
+    }
+
+    if (!shadowMap._pointBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._pointBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._pointBias, defaultPointBias);
+    }
   }, [
     property?.atmosphere?.softShadow,
     property?.atmosphere?.shadowDarkness,

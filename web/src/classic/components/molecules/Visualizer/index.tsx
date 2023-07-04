@@ -54,7 +54,7 @@ export type Props = {
     floatingWidgets?: Widget[];
     alignSystem?: WidgetAlignSystemType;
     layoutConstraint?: WidgetAlignSystemProps["layoutConstraint"];
-    ownBuiltinWidgets?: { [K in keyof BuiltinWidgets<boolean>]?: BuiltinWidgets<boolean>[K] };
+    ownBuiltinWidgets?: (keyof BuiltinWidgets<boolean>)[];
   };
   sceneProperty?: SceneProperty;
   tags?: Tag[];
@@ -213,8 +213,8 @@ export default function Visualizer({
             isLayerDragging={isLayerDragging}
             isLayerDraggable={props.isEditable}
             shouldRender={
-              !!widgets?.ownBuiltinWidgets?.[TIMELINE_BUILTIN_WIDGET_ID] ||
-              !!widgets?.ownBuiltinWidgets?.[NAVIGATOR_BUILTIN_WIDGET_ID]
+              !!widgets?.ownBuiltinWidgets?.includes(TIMELINE_BUILTIN_WIDGET_ID) ||
+              !!widgets?.ownBuiltinWidgets?.includes(NAVIGATOR_BUILTIN_WIDGET_ID)
             }
             meta={engineMeta}
             inEditor={inEditor}

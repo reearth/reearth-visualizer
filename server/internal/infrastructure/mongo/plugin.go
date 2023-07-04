@@ -11,7 +11,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -32,8 +31,8 @@ func NewPlugin(client *mongox.Client) *Plugin {
 	}
 }
 
-func (r *Plugin) Init() error {
-	return createIndexes(context.Background(), r.client, pluginIndexes, pluginUniqueIndexes)
+func (r *Plugin) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, pluginIndexes, pluginUniqueIndexes)
 }
 
 func (r *Plugin) Filtered(f repo.SceneFilter) repo.Plugin {
@@ -77,16 +76,12 @@ func (r *Plugin) FindByIDs(ctx context.Context, ids []id.PluginID) ([]*plugin.Pl
 	var err error
 
 	if len(ids2) > 0 {
-		log.Infof("TEMP: plugin mongo find by ids %v", ids2)
-
 		res, err = r.find(ctx, bson.M{
 			"id": bson.M{"$in": id.PluginIDsToStrings(ids2)},
 		})
 		if err != nil {
 			return nil, err
 		}
-
-		log.Infof("TEMP: plugin mongo find by ids OK")
 	}
 
 	return res.Concat(b.List()).MapToIDs(ids), nil
@@ -108,24 +103,24 @@ func (r *Plugin) Remove(ctx context.Context, id id.PluginID) error {
 }
 
 func (r *Plugin) find(ctx context.Context, filter any) ([]*plugin.Plugin, error) {
-	c := mongodoc.NewPluginConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewPluginConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result, nil
 }
 
 func (r *Plugin) findOne(ctx context.Context, filter any) (*plugin.Plugin, error) {
-	c := mongodoc.NewPluginConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewPluginConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
 }
 
-func (r *Plugin) readFilter(filter any) any {
-	return applyOptionalSceneFilter(filter, r.f.Readable)
-}
+// func (r *Plugin) readFilter(filter any) any {
+// 	return applyOptionalSceneFilter(filter, r.f.Readable)
+// }
 
 func (r *Plugin) writeFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Writable)

@@ -65,6 +65,7 @@ export default () => {
       login();
     } else {
       if (currentWorkspace || !data || !workspaceId) return;
+      setCurrentUserId(data?.me?.id);
       setCurrentWorkspace(data.me?.myTeam);
       navigate(`/dashboard/${workspaceId}`);
     }
@@ -79,6 +80,7 @@ export default () => {
     login,
     verifySignup,
     navigate,
+    setCurrentUserId,
     setCurrentWorkspace,
   ]);
 

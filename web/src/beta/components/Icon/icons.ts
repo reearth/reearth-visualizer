@@ -28,6 +28,7 @@ import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
 import Help from "./Icons/help.svg";
+import CheckMark from "./Icons/checkMark.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -38,6 +39,14 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
+// Storytelling blocks
+import Audio from "./Icons/audio.svg";
+import EditIcon from "./Icons/editIcon.svg";
+import Settings from "./Icons/settings.svg";
+import ButtonBlock from "./Icons/buttonBlock.svg";
+import Camera from "./Icons/camera.svg";
+import MdFile from "./Icons/mdFile.svg";
+import Clock from "./Icons/clock.svg";
 //Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
@@ -49,6 +58,9 @@ import Workspaces from "./Icons/workspaces.svg";
 // Square
 import Square from "./Icons/square.svg";
 import TwoRectangle from "./Icons/two-rectangle.svg";
+
+// Plus
+import Plus from "./Icons/plus.svg";
 
 export default {
   file: File,
@@ -73,12 +85,21 @@ export default {
   playRight: PlayRight,
   playLeft: PlayLeft,
   square: Square,
+  plus: Plus,
   timeline: Timeline,
   twoRectangle: TwoRectangle,
   actionbutton: ActionButton,
+  audio: Audio,
+  editIcon: EditIcon,
+  settings: Settings,
+  buttonBlock: ButtonBlock,
+  camera: Camera,
+  mdFile: MdFile,
+  clock: Clock,
   dashboard: Dashboard,
   help: Help,
   logout: Logout,
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
+  checkmark: CheckMark,
 };

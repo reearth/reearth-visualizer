@@ -22,7 +22,7 @@ func sheetURL(fileId string, sheetName string) string {
 	return gurl.String()
 }
 
-func fetchCSV(token string, fileId string, sheetName string) (*io.ReadCloser, error) {
+func fetchCSV(token string, fileId string, sheetName string) (io.ReadCloser, error) {
 	u := sheetURL(fileId, sheetName)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -38,5 +38,5 @@ func fetchCSV(token string, fileId string, sheetName string) (*io.ReadCloser, er
 		return nil, fmt.Errorf("StatusCode=%d", res.StatusCode)
 	}
 
-	return &res.Body, nil
+	return res.Body, nil
 }

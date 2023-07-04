@@ -34,7 +34,7 @@ var (
 
 func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID plugin.ID) (MigratePluginsResult, error) {
 	if s == nil {
-		return MigratePluginsResult{}, rerror.ErrInternalBy(errors.New("scene is nil"))
+		return MigratePluginsResult{}, rerror.ErrInternalByWithContext(ctx, errors.New("scene is nil"))
 	}
 
 	// should be same plugin but different version

@@ -55,6 +55,10 @@ func (vt ValueType) None() *OptionalValue {
 	return NewOptionalValue(vt, nil)
 }
 
+func (vt ValueType) JSONSchema() map[string]any {
+	return value.Type(vt).JSONSchema(nil)
+}
+
 type Value struct {
 	v value.Value
 }
