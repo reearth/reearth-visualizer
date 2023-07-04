@@ -37,8 +37,6 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
-// circle
-import PrimSphereIcon from "./Icons/primSphereIcon.svg";
 //Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
@@ -68,7 +66,6 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
-  primSphereIcon: PrimSphereIcon,
   timeline: Timeline,
   actionbutton: ActionButton,
   dashboard: Dashboard,

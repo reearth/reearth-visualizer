@@ -2,18 +2,20 @@ import { useState } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
 const PublishStateSwitchField: React.FC = () => {
-  const labels = ["Unpublished", "Published"];
+  const t = useT();
+  const labels = [t("Unpublished"), t("Published")];
   const [open, setOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState("Unpublished");
+  const [selectedLabel, setSelectedLabel] = useState(t("Unpublished"));
   const theme = useTheme();
 
   return (
     <Dropdown>
       <SelectedState onClick={() => setOpen(o => !o)}>
-        <StatusCircle isActive={selectedLabel === "Published"} />
+        <StatusCircle isActive={selectedLabel === t("Published")} />
         <StyledText color={theme.general.button.secondary.main} size="footnote">
           {selectedLabel}
         </StyledText>
