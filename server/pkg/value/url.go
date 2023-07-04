@@ -51,7 +51,7 @@ func (p *propertyURL) String(i any) string {
 	return i.(*url.URL).String()
 }
 
-func (v *propertyURL) JSONSchema() any {
+func (v *propertyURL) JSONSchema() map[string]any {
 	return map[string]any{
 		"type":   "string",
 		"title":  "URL",
