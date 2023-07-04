@@ -2,27 +2,23 @@ import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  src: NonNullable<React.ImgHTMLAttributes<HTMLImageElement>["src"]>;
-  alt?: React.ImgHTMLAttributes<HTMLImageElement>["alt"];
+  src: string;
+  alt?: string;
 };
 
 const ImageBlock: React.FC<Props> = ({ src, alt }) => {
-  if (src) {
-    return (
-      <Wrapper>
-        <ImageBox src={src} alt={alt} />
-      </Wrapper>
-    );
-  }
-  return (
+  return src ? (
+    <Wrapper>
+      <ImageBox src={src} alt={alt} />
+    </Wrapper>
+  ) : (
     <BlankImageBox>
-      <Icon icon={"image"} color={"#2e2e2e"} size={32} />
+      <Icon icon="image" color="#2e2e2e" size={32} />
     </BlankImageBox>
   );
 };
 
 const Wrapper = styled.div`
-  position: absolute;
   width: inherit;
 `;
 
