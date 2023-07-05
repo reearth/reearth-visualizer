@@ -34,7 +34,7 @@ const Label: React.FC<LoginProps> = ({ username, currentWorkspace }) => {
       <LabelLeft>
         <Avatar innerText={username} borderRadius="4px" />
       </LabelLeft>
-      <WorkspaceName size="h5" color={theme.general.content.weak}>
+      <WorkspaceName size="h5" weight="bold" color={theme.general.content.weak}>
         {currentWorkspace.name}
       </WorkspaceName>
     </LabelWrapper>
@@ -105,7 +105,6 @@ const ChildrenWrapper = styled.div`
 const LabelWrapper = styled.div`
   display: flex;
   height: 100%;
-  padding-left: 10px;
 `;
 
 const WorkspaceName = styled(Text)`
