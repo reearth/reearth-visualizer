@@ -13,7 +13,7 @@ const Popup: React.FC<{
 }> = ({ wrapperRef, open, onClickAway, onEscapeKeyDown, children }) => {
   const pickerRef = useRef<HTMLDivElement>(null);
   const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
-    placement: "bottom-start",
+    placement: "bottom",
     modifiers: [
       {
         name: "offset",
