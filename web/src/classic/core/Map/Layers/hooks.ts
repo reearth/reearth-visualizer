@@ -187,7 +187,7 @@ export default function useHooks({
   const lazyLayerPrototype = useMemo<object>(() => {
     return objectFromGetter(layerKeys, function (key) {
       const id: string | undefined = (this as any).id;
-      if (typeof id !== "string") throw new Error("layer ID is not specified");
+      if (!id || typeof id !== "string") throw new Error("layer ID is not specified");
 
       const layer = layerMap.get(id);
       if (!layer) return undefined;
