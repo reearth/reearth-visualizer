@@ -50,7 +50,7 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, childre
     });
   });
 
-  const loading = loadingScene ?? loadingProject;
+  const loading = useMemo(() => loadingScene ?? loadingProject, [loadingScene, loadingProject]);
 
   return loading ? (
     <Loading animationSize={80} animationColor={theme.general.select} />
