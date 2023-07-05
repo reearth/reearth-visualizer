@@ -78,6 +78,15 @@ function config(): Plugin {
   return {
     name: "reearth-config",
     async configureServer(server) {
+      const envs = loadEnv(
+        server.config.mode,
+        server.config.envDir ?? process.cwd(),
+        server.config.envPrefix,
+      );
+      const reearthConfigUrl = envs.REEARTH_WEB_CONFIG_URL;
+      const remoteReearthConfig = reearthConfigUrl
+        ? await (await fetch(reearthConfigUrl)).json()
+        : {};
       const configRes = JSON.stringify(
         {
           api: "http://localhost:8080/api",
@@ -86,16 +95,9 @@ function config(): Plugin {
           // ex: `CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
           // ref: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Core/Ion.js#L6-L7
           cesiumIonAccessToken:
-            process.env.CESIUM_ION_ACCESS_TOKEN ||
-            // Use test env's cesiumIonAccessToken if possible.
-            (await (await fetch("https://test.reearth.dev/reearth_config.json")).json())
-              .cesiumIonAccessToken,
+            process.env.CESIUM_ION_ACCESS_TOKEN || remoteReearthConfig.cesiumIonAccessToken,
           ...readEnv("REEARTH_WEB", {
-            source: loadEnv(
-              server.config.mode,
-              server.config.envDir ?? process.cwd(),
-              server.config.envPrefix,
-            ),
+            source: envs,
           }),
           ...loadJSON("./reearth-config.json"),
         },
