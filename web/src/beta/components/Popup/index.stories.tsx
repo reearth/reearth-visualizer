@@ -35,11 +35,41 @@ const Wrapper: React.FC<{
   );
 };
 
-export const Default: Story = {
+export const Left: Story = {
   args: {
     children: <input type="text" />,
   },
   render: args => {
-    return <Wrapper {...args} />;
+    return (
+      <div style={{ margin: "0 auto 0 0", width: "70px" }}>
+        <Wrapper {...args} />
+      </div>
+    );
+  },
+};
+
+export const Right: Story = {
+  args: {
+    children: <input type="text" />,
+  },
+  render: args => {
+    return (
+      <div style={{ margin: "0 0 0 auto", width: "70px" }}>
+        <Wrapper {...args} />
+      </div>
+    );
+  },
+};
+
+export const Center: Story = {
+  args: {
+    children: <input type="text" />,
+  },
+  render: args => {
+    return (
+      <div style={{ margin: "0 auto", width: "70px" }}>
+        <Wrapper {...args} />
+      </div>
+    );
   },
 };
