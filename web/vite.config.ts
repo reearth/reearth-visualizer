@@ -82,6 +82,10 @@ function config(): Plugin {
         {
           api: "http://localhost:8080/api",
           published: "/published.html?alias={}",
+          // If Cesium version is outdated, you can set Ion token as environment variables written at here.
+          // ex: `CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
+          // ref: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Core/Ion.js#L6-L7
+          cesiumIonAccessToken: process.env.CESIUM_ION_ACCESS_TOKEN,
           ...readEnv("REEARTH_WEB", {
             source: loadEnv(
               server.config.mode,
