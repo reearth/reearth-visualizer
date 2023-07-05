@@ -253,9 +253,7 @@ export default ({
               }
             }
           })() || [];
-        if (feature && layerId) {
-          onLayerSelect?.(layerId, feature?.id);
-        }
+        onLayerSelect?.(layerId, feature?.id);
       }
     }
 
