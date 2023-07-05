@@ -1,5 +1,5 @@
 import { mapValues } from "lodash-es";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import type { Block, ClusterProperty } from "@reearth/classic/components/molecules/Visualizer";
 import {
@@ -15,7 +15,10 @@ import {
   type LegacyLayer,
   convertLegacyCluster,
 } from "@reearth/classic/core/mantle";
+import type { ComputedLayer } from "@reearth/classic/core/mantle/types";
+import type { LayerSelectionReason } from "@reearth/classic/core/Map/Layers/hooks";
 import { config } from "@reearth/services/config";
+import { useSelected } from "@reearth/services/state";
 
 import type {
   PublishedData,
@@ -31,12 +34,18 @@ export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
+  const [selected, select] = useSelected();
 
   const sceneProperty = processProperty(data?.property);
-  const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
-    (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
-    {},
+  const pluginProperty = useMemo(
+    () =>
+      Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
+        {},
+      ),
+    [data?.plugins],
   );
+
   const legacyClusters = useMemo<ClusterProperty[]>(
     () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
     [data],
@@ -203,6 +212,29 @@ export default (alias?: string) => {
     [],
   );
 
+  const selectedLayerId = useMemo(
+    () =>
+      selected?.type === "layer"
+        ? { layerId: selected.layerId, featureId: selected.featureId }
+        : undefined,
+    [selected],
+  );
+
+  const layerSelectionReason = useMemo(
+    () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
+    [selected],
+  );
+
+  const selectLayer = useCallback(
+    (
+      id?: string,
+      featureId?: string,
+      _layer?: () => Promise<ComputedLayer | undefined>,
+      layerSelectionReason?: LayerSelectionReason,
+    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
+    [select],
+  );
+
   // GA
   useGA(sceneProperty);
 
@@ -217,6 +249,9 @@ export default (alias?: string) => {
     ready,
     error,
     engineMeta,
+    selectedLayerId,
+    layerSelectionReason,
+    selectLayer,
   };
 };
 
