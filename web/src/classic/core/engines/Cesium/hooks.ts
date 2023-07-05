@@ -19,7 +19,7 @@ import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "resium";
 import { useCustomCompareCallback } from "use-custom-compare";
 
-import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/classic/core/mantle";
+import { SelectedFeatureInfo } from "@reearth/classic/core/mantle";
 import { LayersRef } from "@reearth/classic/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
@@ -229,33 +229,6 @@ export default ({
     }
     if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
-
-    if (!entity && selectedLayerId?.featureId) {
-      // Find ImageryLayerFeature
-      const ImageryLayerDataTypes: DataType[] = ["mvt"];
-      const layers = layersRef?.current?.findAll(
-        layer =>
-          layer.type === "simple" &&
-          !!layer.data?.type &&
-          ImageryLayerDataTypes.includes(layer.data?.type),
-      );
-
-      if (layers?.length) {
-        // TODO: Get ImageryLayerFeature from `viewer.imageryLayers`.(But currently didn't find the way)
-        const [feature, layerId] =
-          ((): [ComputedFeature, string] | void => {
-            for (const layer of layers) {
-              const f = layer.computed?.features.find(
-                feature => feature.id !== selectedLayerId?.featureId,
-              );
-              if (f) {
-                return [f, layer.id];
-              }
-            }
-          })() || [];
-        onLayerSelect?.(layerId, feature?.id);
-      }
-    }
 
     const tag = getTag(entity);
     if (tag?.unselectable) return;
