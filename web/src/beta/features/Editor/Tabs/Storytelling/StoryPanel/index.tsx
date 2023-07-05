@@ -14,5 +14,5 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   width: 462px;
   padding: 10px 24px;
-  background-color: ${({ theme }) => theme.colors.scrollBar.bg.light};
+  background-color: #f1f1f1;
 `;
