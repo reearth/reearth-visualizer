@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import Loading from "@reearth/classic/components/atoms/Loading";
+import Loading from "@reearth/beta/components/Loading";
 import NotificationBanner from "@reearth/classic/components/organisms/Notification";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
 
@@ -15,7 +15,7 @@ export default function App() {
       <GqlProvider>
         <ThemeProvider>
           <I18nProvider>
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<Loading animationSize={80} animationColor="#3B3CD0" />}>
               <NotificationBanner />
               <AppRoutes />
             </Suspense>

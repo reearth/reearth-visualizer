@@ -16,11 +16,23 @@ export const GET_ME = gql`
       id
       name
       email
-      lang
-      theme
       myTeam {
         id
         name
+        projects(first: 100) {
+          nodes {
+            id
+            publishmentStatus
+            isArchived
+            name
+            imageUrl
+            description
+            visualizer
+            scene {
+              id
+            }
+          }
+        }
         policyId
         policy {
           id
@@ -58,8 +70,57 @@ export const GET_ME = gql`
           datasetSchemaCount
           datasetCount
         }
+        projects(first: 100) {
+          nodes {
+            id
+            publishmentStatus
+            isArchived
+            name
+            imageUrl
+            description
+            visualizer
+            scene {
+              id
+            }
+          }
+        }
       }
       auths
+    }
+  }
+`;
+
+export const GET_PROFILE = gql`
+  query GetProfile {
+    me {
+      id
+      name
+      email
+      lang
+      theme
+      myTeam {
+        id
+        name
+      }
+      auths
+    }
+  }
+`;
+
+export const GET_LANGUAGE = gql`
+  query GetLanguage {
+    me {
+      id
+      lang
+    }
+  }
+`;
+
+export const GET_THEME = gql`
+  query GetTheme {
+    me {
+      id
+      theme
     }
   }
 `;
