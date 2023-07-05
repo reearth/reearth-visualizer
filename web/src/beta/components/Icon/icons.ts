@@ -47,6 +47,7 @@ import ButtonBlock from "./Icons/buttonBlock.svg";
 import Camera from "./Icons/camera.svg";
 import MdFile from "./Icons/mdFile.svg";
 import Clock from "./Icons/clock.svg";
+
 //Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
@@ -61,6 +62,10 @@ import TwoRectangle from "./Icons/two-rectangle.svg";
 
 // Plus
 import Plus from "./Icons/plus.svg";
+
+// Logos
+import Logo from "./Icons/reearthLogo.svg";
+import LogoColorful from "./Icons/reearthLogoColorful.svg";
 
 export default {
   file: File,
@@ -102,4 +107,6 @@ export default {
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
   checkmark: CheckMark,
+  logo: Logo,
+  logoColorful: LogoColorful,
 };

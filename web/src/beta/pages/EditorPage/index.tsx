@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import NotFound from "@reearth/beta/components/NotFound";
 import Editor from "@reearth/beta/features/Editor";
 import { isTab } from "@reearth/beta/features/Navbar";
-import PageWrapper from "@reearth/beta/pages/PageWrapper";
+import Page from "@reearth/beta/pages/Page";
 
 type Props = {};
 
@@ -13,9 +13,9 @@ const EditorPage: React.FC<Props> = () => {
   return !sceneId || !tab || !isTab(tab) ? (
     <NotFound />
   ) : (
-    <PageWrapper sceneId={sceneId}>
+    <Page sceneId={sceneId}>
       <Editor tab={tab} sceneId={sceneId} />
-    </PageWrapper>
+    </Page>
   );
 };
 

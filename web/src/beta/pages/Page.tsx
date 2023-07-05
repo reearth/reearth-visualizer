@@ -1,5 +1,6 @@
 import React, { ReactElement, ReactNode, useMemo } from "react";
 
+import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
 import { AuthenticationRequiredPage } from "@reearth/services/auth";
 import { useGetMeQuery, useGetProjectQuery, useGetSceneQuery } from "@reearth/services/gql";
 import { useTheme } from "@reearth/services/theme";
@@ -16,7 +17,7 @@ type Props = {
 const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, children }) => {
   const theme = useTheme();
 
-  useGetMeQuery();
+  const { loading: loadingMe } = useGetMeQuery();
 
   const { data: sceneData, loading: loadingScene } = useGetSceneQuery({
     variables: { sceneId: sceneId ?? "" },
@@ -50,12 +51,18 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, childre
     });
   });
 
-  const loading = useMemo(() => loadingScene ?? loadingProject, [loadingScene, loadingProject]);
+  const loading = useMemo(
+    () => loadingMe ?? loadingScene ?? loadingProject,
+    [loadingMe, loadingScene, loadingProject],
+  );
 
   return loading ? (
     <Loading animationSize={80} animationColor={theme.general.select} />
   ) : (
-    <>{childrenWithProps}</>
+    <>
+      <GlobalModal />
+      {childrenWithProps}
+    </>
   );
 };
 
