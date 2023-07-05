@@ -133,7 +133,7 @@ func (p *typePropertyTypography) String(i interface{}) string {
 	// return i.(Typography).String()
 }
 
-func (v *typePropertyTypography) JSONSchema() any {
+func (v *typePropertyTypography) JSONSchema() map[string]any {
 	return map[string]any{
 		"type":  "object",
 		"title": "Typography",
