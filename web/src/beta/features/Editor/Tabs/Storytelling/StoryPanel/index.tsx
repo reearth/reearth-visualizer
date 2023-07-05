@@ -12,7 +12,7 @@ export const StoryPanel: FC<Props> = () => {
         currentPage={3}
         currentPageProgress={33}
         maxPage={6}
-        onChangePage={page => console.log(page)}
+        onPageChange={page => console.log(page)}
       />
       <Content>
         <div>StoryPanel</div>

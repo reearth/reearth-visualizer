@@ -6,24 +6,24 @@ type Props = {
   currentPage: number;
   currentPageProgress: number;
   maxPage: number;
-  onChangePage: (page: number) => void;
+  onPageChange: (page: number) => void;
 };
 
 const StoryPageIndicator: FC<Props> = ({
   currentPage,
   currentPageProgress,
   maxPage,
-  onChangePage,
+  onPageChange,
 }) => {
   return (
     <Wrapper>
-      {Array.from({ length: maxPage }).map((_, i) => {
+      {[...Array(maxPage)].map((_, i) => {
         const page = i + 1;
         const isActive = currentPage >= page;
         const isCurrentPage = page === currentPage;
         const progress = isCurrentPage ? currentPageProgress : isActive ? 100 : 0;
         return (
-          <Indicator key={i} progress={progress} type="button" onClick={() => onChangePage(page)} />
+          <Indicator key={i} progress={progress} type="button" onClick={() => onPageChange(page)} />
         );
       })}
     </Wrapper>
