@@ -1,6 +1,32 @@
 import { gql } from "@apollo/client";
 
 const propertyFragment = gql`
+  fragment PropertySchemaFieldFragment on PropertySchemaField {
+    fieldId
+    title
+    description
+    translatedTitle(lang: $lang)
+    translatedDescription(lang: $lang)
+    prefix
+    suffix
+    type
+    defaultValue
+    ui
+    min
+    max
+    choices {
+      key
+      icon
+      title
+      translatedTitle(lang: $lang)
+    }
+    isAvailableIf {
+      fieldId
+      type
+      value
+    }
+  }
+
   fragment PropertySchemaGroupFragment on PropertySchemaGroup {
     schemaGroupId
     title
@@ -13,29 +39,25 @@ const propertyFragment = gql`
       value
     }
     fields {
-      fieldId
-      title
-      description
-      translatedTitle(lang: $lang)
-      translatedDescription(lang: $lang)
-      prefix
-      suffix
-      type
-      defaultValue
-      ui
-      min
-      max
-      choices {
-        key
-        icon
-        title
-        translatedTitle(lang: $lang)
-      }
-      isAvailableIf {
-        fieldId
-        type
-        value
-      }
+      ...PropertySchemaFieldFragment
+    }
+  }
+
+  fragment PropertyFieldFragment on PropertyField {
+    id
+    fieldId
+    type
+    value
+    links {
+      ...PropertyFieldLink
+    }
+  }
+
+  fragment PropertyGroupFragment on PropertyGroup {
+    id
+    schemaGroupId
+    fields {
+      ...PropertyFieldFragment
     }
   }
 
@@ -44,31 +66,11 @@ const propertyFragment = gql`
       id
       schemaGroupId
       groups {
-        id
-        schemaGroupId
-        fields {
-          id
-          fieldId
-          type
-          value
-          links {
-            ...PropertyFieldLink
-          }
-        }
+        ...PropertyGroupFragment
       }
     }
     ... on PropertyGroup {
-      id
-      schemaGroupId
-      fields {
-        id
-        fieldId
-        type
-        value
-        links {
-          ...PropertyFieldLink
-        }
-      }
+      ...PropertyGroupFragment
     }
   }
 
@@ -130,18 +132,6 @@ const propertyFragment = gql`
     datasetId
     datasetSchemaId
     datasetSchemaFieldId
-    datasetSchema {
-      id
-      name
-    }
-    dataset {
-      id
-      name
-    }
-    datasetSchemaField {
-      id
-      name
-    }
   }
 `;
 

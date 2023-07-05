@@ -125,24 +125,24 @@ func (r *PropertySchema) RemoveAll(ctx context.Context, ids []id.PropertySchemaI
 }
 
 func (r *PropertySchema) find(ctx context.Context, dst property.SchemaList, filter any) (property.SchemaList, error) {
-	c := mongodoc.NewPropertySchemaConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewPropertySchemaConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result, nil
 }
 
 func (r *PropertySchema) findOne(ctx context.Context, filter any) (*property.Schema, error) {
-	c := mongodoc.NewPropertySchemaConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewPropertySchemaConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
 }
 
-func (r *PropertySchema) readFilter(filter any) any {
-	return applyOptionalSceneFilter(filter, r.f.Readable)
-}
+// func (r *PropertySchema) readFilter(filter any) any {
+// 	return applyOptionalSceneFilter(filter, r.f.Readable)
+// }
 
 func (r *PropertySchema) writeFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Writable)

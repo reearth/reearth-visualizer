@@ -68,7 +68,7 @@ func (p *propertyLatLng) String(i any) string {
 	return i.(LatLng).String()
 }
 
-func (v *propertyLatLng) JSONSchema() any {
+func (v *propertyLatLng) JSONSchema() map[string]any {
 	return map[string]any{
 		"type":  "object",
 		"title": "LatLng",

@@ -25,7 +25,7 @@ export default StoryPanel;
 
 const Wrapper = styled.div`
   width: 462px;
-  background-color: ${({ theme }) => theme.colors.scrollBar.bg.light};
+  background-color: #f1f1f1;
 `;
 
 const Content = styled.div`
