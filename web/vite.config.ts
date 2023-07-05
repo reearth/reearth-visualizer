@@ -85,7 +85,11 @@ function config(): Plugin {
           // If Cesium version becomes outdated, you can set the Ion token as an environment variables here.
           // ex: `CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
           // ref: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Core/Ion.js#L6-L7
-          cesiumIonAccessToken: process.env.CESIUM_ION_ACCESS_TOKEN,
+          cesiumIonAccessToken:
+            process.env.CESIUM_ION_ACCESS_TOKEN ||
+            // Use test env's cesiumIonAccessToken if possible.
+            (await (await fetch("https://test.reearth.dev/reearth_config.json")).json())
+              .cesiumIonAccessToken,
           ...readEnv("REEARTH_WEB", {
             source: loadEnv(
               server.config.mode,
