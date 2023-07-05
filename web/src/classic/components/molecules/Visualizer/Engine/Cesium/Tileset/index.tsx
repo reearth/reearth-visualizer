@@ -123,8 +123,9 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
       if (!tilesetRef.current) {
         return;
       }
+      // Cesium3DTileset constructor parameter options.url, Cesium3DTileset.ready, and Cesium3DTileset.readyPromise were deprecated in CesiumJS 1.104.They removed in 1.107.
 
-      await tilesetRef.current?.readyPromise;
+      // await tilesetRef.current?.readyPromise;
 
       const clippingPlanesOriginMatrix = Transforms.eastNorthUpToFixedFrame(
         tilesetRef.current.boundingSphere.center.clone(),

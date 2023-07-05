@@ -125,7 +125,9 @@ export function findEntity(
   // Find Cesium3DTileFeature
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset) || !prim.ready) {
+    //Cesium3DTileset.ready was deprecated in CesiumJS 1.104.They removed in 1.107.
+
+    if (!(prim instanceof Cesium3DTileset) /*|| !prim.ready*/) {
       continue;
     }
 

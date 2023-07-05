@@ -419,12 +419,13 @@ export const useHooks = ({
         return;
       }
 
-      try {
-        await tilesetRef.current?.readyPromise;
-      } catch (e) {
-        console.error("Could not load 3D tiles: ", e);
-        return;
-      }
+      //  Cesium3DTileset.readyPromise was deprecated in CesiumJS 1.104.They removed in 1.107.
+      // try {
+      //   await tilesetRef.current?.readyPromise;
+      // } catch (e) {
+      //   console.error("Could not load 3D tiles: ", e);
+      //   return;
+      // }
 
       // Use internal original matrix for clipping planes.
       const clippingPlanesOriginMatrix = (

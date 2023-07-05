@@ -31,7 +31,7 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
   const { providers, updated } = useImageryProviders({
     tiles,
     cesiumIonAccessToken,
-    presets: tilePresets,
+    presets: tilePresets as any,
   });
 
   // force rerendering all layers when any provider is updated
