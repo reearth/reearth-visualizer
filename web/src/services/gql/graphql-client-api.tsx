@@ -2454,6 +2454,13 @@ export type GetSceneQueryVariables = Exact<{
 
 export type GetSceneQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', rootLayerId: string, teamId: string, projectId: string, id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
+export type CreateSceneMutationVariables = Exact<{
+  projectId: Scalars['ID'];
+}>;
+
+
+export type CreateSceneMutation = { __typename?: 'Mutation', createScene?: { __typename?: 'CreateScenePayload', scene: { __typename?: 'Scene', id: string } } | null };
+
 export type GetUserBySearchQueryVariables = Exact<{
   nameOrEmail: Scalars['String'];
 }>;
@@ -3636,6 +3643,41 @@ export function useGetSceneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetSceneQueryHookResult = ReturnType<typeof useGetSceneQuery>;
 export type GetSceneLazyQueryHookResult = ReturnType<typeof useGetSceneLazyQuery>;
 export type GetSceneQueryResult = Apollo.QueryResult<GetSceneQuery, GetSceneQueryVariables>;
+export const CreateSceneDocument = gql`
+    mutation CreateScene($projectId: ID!) {
+  createScene(input: {projectId: $projectId}) {
+    scene {
+      id
+    }
+  }
+}
+    `;
+export type CreateSceneMutationFn = Apollo.MutationFunction<CreateSceneMutation, CreateSceneMutationVariables>;
+
+/**
+ * __useCreateSceneMutation__
+ *
+ * To run a mutation, you first call `useCreateSceneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSceneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSceneMutation, { data, loading, error }] = useCreateSceneMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *   },
+ * });
+ */
+export function useCreateSceneMutation(baseOptions?: Apollo.MutationHookOptions<CreateSceneMutation, CreateSceneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSceneMutation, CreateSceneMutationVariables>(CreateSceneDocument, options);
+      }
+export type CreateSceneMutationHookResult = ReturnType<typeof useCreateSceneMutation>;
+export type CreateSceneMutationResult = Apollo.MutationResult<CreateSceneMutation>;
+export type CreateSceneMutationOptions = Apollo.BaseMutationOptions<CreateSceneMutation, CreateSceneMutationVariables>;
 export const GetUserBySearchDocument = gql`
     query GetUserBySearch($nameOrEmail: String!) {
   searchUser(nameOrEmail: $nameOrEmail) {

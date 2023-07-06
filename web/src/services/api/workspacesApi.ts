@@ -1,42 +1,33 @@
-import { useMemo } from "react";
+import { useGetMeQuery, useCreateWorkspaceMutation } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
 
-import {
-  useGetTeamsQuery as useGetWorkspacesQuery,
-  useCreateTeamMutation as useCreateWorkspaceMutation,
-} from "@reearth/services/gql";
+import { CreateFuncReturn } from "./types";
 
-type User = {
-  name: string;
+export const useWorkspaceQuery = (workspaceId?: string) => {
+  const { data, ...rest } = useGetMeQuery();
+
+  const workspace = data?.me?.teams.find(t => t.id === workspaceId);
+
+  return { workspace, ...rest };
 };
 
-export const useWorkspacesFetcher = () => {
-  const { data: workspaceData } = useGetWorkspacesQuery();
-
-  const workspaces = useMemo(() => {
-    return workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name }));
-  }, [workspaceData?.me?.teams]);
-
-  const user: User = useMemo(() => {
-    return {
-      name: workspaceData?.me?.name || "",
-    };
-  }, [workspaceData?.me]);
-
-  return { workspaces, workspaceData, user };
+export const useWorkspacesQuery = () => {
+  const { data, ...rest } = useGetMeQuery();
+  return { workspaces: data?.me?.teams, ...rest };
 };
 
-export const useCreateWorkspaceFetcher = async (name: string) => {
-  const [createWorkspaceMutation] = useCreateWorkspaceMutation();
+export const useCreateWorkspace = async (name: string): Promise<CreateFuncReturn> => {
+  const [createWorkspaceMutation] = useCreateWorkspaceMutation({ refetchQueries: ["GetTeams"] });
+  const t = useT();
 
   const results = await createWorkspaceMutation({
     variables: { name },
-    refetchQueries: ["GetTeams"],
   });
 
-  if (results.data?.createTeam) {
-    const workspace = results.data.createTeam.team;
-    return workspace;
+  if (results.errors || !results.data?.createTeam) {
+    console.log("GraphQL: Failed to create workspace");
+    return { success: false, error: t("Failed to create workspace.") };
   }
 
-  return null;
+  return { success: true };
 };

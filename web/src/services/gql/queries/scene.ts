@@ -15,3 +15,13 @@ export const GET_SCENE = gql`
   }
   ${projectFragment}
 `;
+
+export const CREATE_SCENE = gql`
+  mutation CreateScene($projectId: ID!) {
+    createScene(input: { projectId: $projectId }) {
+      scene {
+        id
+      }
+    }
+  }
+`;
