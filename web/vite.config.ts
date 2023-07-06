@@ -1,3 +1,6 @@
+/// <reference types="vite/client" />
+/// <reference types="vitest" />
+
 import { readFileSync } from "fs";
 import { resolve } from "path";
 
@@ -7,10 +10,11 @@ import { readEnv } from "read-env";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { configDefaults } from "vitest/config";
 
 import pkg from "./package.json";
 
-export default defineConfig({
+export default defineConfig(() => ({
   envPrefix: "REEARTH_WEB_",
   plugins: [react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
   define: {
@@ -35,7 +39,28 @@ export default defineConfig({
       { find: "csv-parse", replacement: "csv-parse/browser/esm" },
     ],
   },
-});
+  test: {
+    environment: "jsdom",
+    setupFiles: ["src/test/setup.ts"],
+    exclude: [...configDefaults.exclude, "e2e/*"],
+    coverage: {
+      all: true,
+      include: ["src/**/*.ts", "src/**/*.tsx"],
+      exclude: [
+        "src/**/*.d.ts",
+        "src/**/*.cy.tsx",
+        "src/**/*.stories.tsx",
+        "src/services/gql/graphql-client-api.tsx",
+        "src/test/**/*",
+      ],
+      reporter: ["text", "json", "lcov"],
+    },
+    alias: [
+      { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
+      { find: "csv-parse", replacement: "csv-parse" },
+    ],
+  },
+}));
 
 function serverHeaders(): Plugin {
   return {
