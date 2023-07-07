@@ -15,9 +15,9 @@ func (r *mutationResolver) CreateStorytelling(ctx context.Context, input gqlmode
 	}
 
 	inp := interfaces.CreateStoryInput{
-		Scene: sId,
-		Title: input.Title,
-		Index: input.Index,
+		SceneID: sId,
+		Title:   input.Title,
+		Index:   input.Index,
 	}
 
 	res, err := usecases(ctx).StoryTelling.Create(ctx, inp, getOperator(ctx))
