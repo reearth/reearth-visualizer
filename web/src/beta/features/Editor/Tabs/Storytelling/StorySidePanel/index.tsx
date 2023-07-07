@@ -32,7 +32,13 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
                 ))}
               </ContentUp>
               <ContentBottom>
-                <StorySidePanelAction icon="square" title="+ New Story" onClick={onStoryAdd} />
+                <StorySidePanelAction
+                  icon="book"
+                  iconColor="#ffffff"
+                  iconSize={16}
+                  title="+ New Story"
+                  onClick={onStoryAdd}
+                />
               </ContentBottom>
             </ContentInner>
           </SidePanel.Content>
