@@ -1,8 +1,9 @@
 import { FC } from "react";
 import StorySidePanelAction from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelAction";
+import StorySidePanelItem from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelItem";
+import StorySidePanelPageWrapper from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelPageWrapper";
 
 import * as SidePanel from "@reearth/beta/features/Editor/SidePanel";
-import StorySidePanelItem from "@reearth/beta/features/Editor/Tabs/Storytelling/StorySidePanelItem";
 import { styled } from "@reearth/services/theme";
 
 // TODO: these are currently rough definition
@@ -26,8 +27,12 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
-                  <StorySidePanelItem key={i} onItemClick={() => onSelectStory(i.toString())}>
-                    Story{i} Story{i} Story{i} Story{i} Story{i} Story{i} Story{i}
+                  <StorySidePanelItem
+                    key={i}
+                    onItemClick={() => onSelectStory(i.toString())}
+                    onActionClick={() => console.log("onActionClick")}>
+                    Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} /
+                    Story{i} / Story{i}
                   </StorySidePanelItem>
                 ))}
               </ContentUp>
@@ -51,9 +56,14 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
-                  <StorySidePanelItem key={i} onItemClick={() => onSelectPage(i.toString())}>
-                    Page{i}
-                  </StorySidePanelItem>
+                  <StorySidePanelPageWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
+                    <StorySidePanelItem
+                      key={i}
+                      onItemClick={() => onSelectPage(i.toString())}
+                      onActionClick={() => console.log("onActionClick")}>
+                      Page
+                    </StorySidePanelItem>
+                  </StorySidePanelPageWrapper>
                 ))}
               </ContentUp>
               <ContentBottom>

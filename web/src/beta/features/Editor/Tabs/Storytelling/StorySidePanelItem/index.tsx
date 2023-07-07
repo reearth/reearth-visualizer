@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback } from "react";
+import { FC, ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
@@ -6,36 +6,33 @@ import { styled } from "@reearth/services/theme";
 
 type Props = {
   children: ReactNode;
-  onItemClick(): void;
+  onItemClick(id: string): void;
+  onActionClick(): void;
 };
 
-const StorySidePanelItem: FC<Props> = ({ children, onItemClick }) => {
-  const onActionClick = useCallback(() => {
-    console.log("open popover");
-  }, []);
-
+const StorySidePanelItem: FC<Props> = ({ children, onItemClick, onActionClick }) => {
   return (
-    <SWrapper>
-      <SInner onClick={onItemClick}>
+    <Wrapper>
+      <Inner onClick={() => onItemClick("id")}>
         <SText>
-          <Text size={"footnote"}>{children}</Text>
+          <Text size="footnote">{children}</Text>
         </SText>
-      </SInner>
+      </Inner>
       <SButton onClick={onActionClick}>
-        <Icon icon={"actionbutton"} size={12} />
+        <Icon icon="actionbutton" size={12} />
       </SButton>
-    </SWrapper>
+    </Wrapper>
   );
 };
 
 export default StorySidePanelItem;
 
-const SWrapper = styled.div`
+const Wrapper = styled.div`
   position: relative;
   width: 100%;
 `;
 
-const SInner = styled.button`
+const Inner = styled.button`
   display: flex;
   width: 100%;
   min-height: 38px;
@@ -64,6 +61,7 @@ const SButton = styled.button`
   top: 50%;
   transform: translateY(-50%);
   padding: 4px;
+  margin-left: -1px;
 
   color: #4a4a4a;
 `;
