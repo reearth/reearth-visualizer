@@ -1,12 +1,11 @@
 import { FC } from "react";
 
+import Icon, { Icons } from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
-import Icon from "../../../../../components/Icon";
-import Text from "../../../../../components/Text";
-
 type Props = {
-  icon: string;
+  icon: Icons;
   title: string;
   onClick: () => void;
 };
@@ -15,9 +14,9 @@ const StorySidePanelAction: FC<Props> = ({ icon, title, onClick }) => {
   return (
     <SWrapper onClick={onClick} type="button">
       <SIcon>
-        <Icon icon={icon} size={8} />
+        <Icon icon={icon} size={12} />
       </SIcon>
-      <Text size={"footnote"} otherProperties={{ wordBreak: "break-all" }}>
+      <Text size={"footnote"} otherProperties={{ wordBreak: "break-all", textAlign: "left" }}>
         {title}
       </Text>
     </SWrapper>

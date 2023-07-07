@@ -52,7 +52,7 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
               </ContentUp>
               <ContentBottom>
                 <StorySidePanelAction icon="square" title="+ New Page" onClick={onPageAdd} />
-                <StorySidePanelAction icon="square" title="+ New Swipe" onClick={onPageAdd} />
+                <StorySidePanelAction icon="swiper" title="+ New Swipe" onClick={onPageAdd} />
               </ContentBottom>
             </ContentInner>
           </SidePanel.Content>

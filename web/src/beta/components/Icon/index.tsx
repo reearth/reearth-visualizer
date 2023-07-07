@@ -11,7 +11,7 @@ export type Icons = keyof typeof Icons;
 
 export type Props = {
   className?: string;
-  icon?: string;
+  icon?: string | Icons;
   size?: string | number;
   alt?: string;
   color?: string;

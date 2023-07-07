@@ -10,7 +10,7 @@ type Story = StoryObj<typeof ActionItem>;
 
 export const Default: Story = {
   args: {
-    title: "New Page",
-    icon: "square",
+    children:
+      "long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text ",
   },
 };
