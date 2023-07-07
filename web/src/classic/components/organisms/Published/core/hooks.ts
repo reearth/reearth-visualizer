@@ -55,7 +55,7 @@ export default (alias?: string) => {
   const layers = useMemo(() => {
     return [
       convertLegacyLayer({
-        id: "",
+        id: "rootlayer",
         children: data?.layers?.map(l => processLayer(l)).filter((l): l is Layer => !!l),
       }),
     ].filter((l): l is Layer => !!l);
