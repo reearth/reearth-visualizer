@@ -76,7 +76,7 @@ const Wrapper = styled.div`
 const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
-  height: 100%;
+  height: 0;
   background-color: ${({ theme }) => theme.general.bg.veryStrong};
 `;
 
