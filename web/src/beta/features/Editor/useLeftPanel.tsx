@@ -11,18 +11,7 @@ export default ({ tab }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "scene":
-        // TODO replace with SceneSidePanel
-        return (
-          <StorySidePanel
-            stories={[]}
-            selectedStory={undefined}
-            onSelectStory={() => console.log("onSelectStory")}
-            onStoryAdd={() => console.log("onStoryAdd")}
-            selectedPageId={"1"}
-            onSelectPage={() => console.log("onSelectPage")}
-            onPageAdd={() => console.log("onPageAdd")}
-          />
-        );
+        return <div>TODO: LeftPanel</div>;
       case "story":
         return (
           <StorySidePanel

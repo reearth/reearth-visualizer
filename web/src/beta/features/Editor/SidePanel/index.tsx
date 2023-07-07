@@ -1,36 +1,8 @@
-import React, { CSSProperties, ReactNode } from "react";
+import { CSSProperties } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-export type SidePanelContent = {
-  id: string;
-  title: ReactNode;
-  children: ReactNode;
-  maxHeight?: CSSProperties["maxHeight"];
-};
-type Props = {
-  location: "left" | "right";
-  contents: SidePanelContent[];
-};
-
-const SidePanel: React.FC<Props> = ({ location, contents }) => {
-  return (
-    <SidePanelWrapper location={location}>
-      {contents.map(content => (
-        <SidePanelItem maxHeight={content.maxHeight} key={content.id}>
-          <SidePanelCard>
-            <SidePanelCardTitle>{content.title}</SidePanelCardTitle>
-            <SidePanelCardContent>{content.children}</SidePanelCardContent>
-          </SidePanelCard>
-        </SidePanelItem>
-      ))}
-    </SidePanelWrapper>
-  );
-};
-
-export default SidePanel;
-
-export const SidePanelWrapper = styled.div<Pick<Props, "location">>`
+export const Wrapper = styled.div<{ location: "left" | "right" }>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -44,13 +16,13 @@ export const SidePanelWrapper = styled.div<Pick<Props, "location">>`
   ${({ location }) => location === "right" && `padding-left: 0;`}
 `;
 
-export const SidePanelItem = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
+export const Item = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
   flex-grow: 1;
   height: 100%;
   ${({ maxHeight }) => maxHeight && `max-height: ${maxHeight};`}
 `;
 
-export const SidePanelCard = styled.div`
+export const Card = styled.div`
   background: ${({ theme }) => theme.general.bg.strong};
   border-radius: 4px;
   height: 100%;
@@ -58,7 +30,7 @@ export const SidePanelCard = styled.div`
   flex-direction: column;
 `;
 
-export const SidePanelCardTitle = styled.div`
+export const CardTitle = styled.div`
   background: ${({ theme }) => theme.general.bg.veryWeak};
   padding: 8px;
   font-weight: 500;
@@ -68,7 +40,7 @@ export const SidePanelCardTitle = styled.div`
   border-top-left-radius: 4px;
 `;
 
-export const SidePanelCardContent = styled.div`
+export const CardContent = styled.div`
   padding: 12px 8px;
   box-sizing: border-box;
   border-bottom-right-radius: 4px;

@@ -1,13 +1,7 @@
 import { FC } from "react";
 import StorySidePanelAction from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelAction";
 
-import {
-  SidePanelCard,
-  SidePanelCardContent,
-  SidePanelCardTitle,
-  SidePanelItem,
-  SidePanelWrapper,
-} from "@reearth/beta/features/Editor/SidePanel";
+import * as SidePanel from "@reearth/beta/features/Editor/SidePanel";
 import StorySidePanelItem from "@reearth/beta/features/Editor/Tabs/Storytelling/StorySidePanelItem";
 import { styled } from "@reearth/services/theme";
 
@@ -24,11 +18,11 @@ type Props = {
 
 const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
   return (
-    <SidePanelWrapper location="left">
-      <SidePanelItem maxHeight="33%">
-        <SidePanelCard>
-          <SidePanelCardTitle>Story</SidePanelCardTitle>
-          <SidePanelCardContent>
+    <SidePanel.Wrapper location="left">
+      <SidePanel.Item maxHeight="33%">
+        <SidePanel.Card>
+          <SidePanel.CardTitle>Story</SidePanel.CardTitle>
+          <SidePanel.CardContent>
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
@@ -41,13 +35,13 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
                 <StorySidePanelAction icon="square" title="+ New Story" onClick={onStoryAdd} />
               </ContentBottom>
             </ContentInner>
-          </SidePanelCardContent>
-        </SidePanelCard>
-      </SidePanelItem>
-      <SidePanelItem>
-        <SidePanelCard>
-          <SidePanelCardTitle>Pages</SidePanelCardTitle>
-          <SidePanelCardContent>
+          </SidePanel.CardContent>
+        </SidePanel.Card>
+      </SidePanel.Item>
+      <SidePanel.Item>
+        <SidePanel.Card>
+          <SidePanel.CardTitle>Pages</SidePanel.CardTitle>
+          <SidePanel.CardContent>
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
@@ -61,10 +55,10 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
                 <StorySidePanelAction icon="square" title="+ New Swipe" onClick={onPageAdd} />
               </ContentBottom>
             </ContentInner>
-          </SidePanelCardContent>
-        </SidePanelCard>
-      </SidePanelItem>
-    </SidePanelWrapper>
+          </SidePanel.CardContent>
+        </SidePanel.Card>
+      </SidePanel.Item>
+    </SidePanel.Wrapper>
   );
 };
 
