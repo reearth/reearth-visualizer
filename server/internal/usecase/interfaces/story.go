@@ -9,24 +9,24 @@ import (
 )
 
 type CreateStoryInput struct {
-	Scene id.SceneID
-	Title string
-	Index *int
+	SceneID id.SceneID
+	Title   string
+	Index   *int
 }
 
 type UpdateStoryInput struct {
-	StoryID id.StorytellingID
+	StoryID id.StoryID
 	Title   *string
 	Index   *int
 }
 
 type MoveStoryInput struct {
-	StoryID id.StorytellingID
+	StoryID id.StoryID
 	Index   int
 }
 
 type CreatePageParam struct {
-	StoryID     id.StorytellingID
+	StoryID     id.StoryID
 	Title       string
 	Swipe       bool
 	Layers      []id.LayerID
@@ -35,7 +35,7 @@ type CreatePageParam struct {
 }
 
 type UpdatePageParam struct {
-	StoryID     id.StorytellingID
+	StoryID     id.StoryID
 	PageID      id.PageID
 	Title       string
 	Swipe       bool
@@ -45,13 +45,13 @@ type UpdatePageParam struct {
 }
 
 type MovePageParam struct {
-	StoryID id.StorytellingID
+	StoryID id.StoryID
 	PageID  id.PageID
 	Index   int
 }
 
 type CreateBlockParam struct {
-	StoryID     id.StorytellingID
+	StoryID     id.StoryID
 	PageID      id.PageID
 	PluginID    id.PluginID
 	ExtensionID id.PluginExtensionID
@@ -59,31 +59,32 @@ type CreateBlockParam struct {
 }
 
 type MoveBlockParam struct {
-	StoryID id.StorytellingID
+	StoryID id.StoryID
 	PageID  id.PageID
 	BlockID id.BlockID
 	Index   *int
 }
 
 type RemoveBlockParam struct {
-	StoryID id.StorytellingID
+	StoryID id.StoryID
 	PageID  id.PageID
 	BlockID id.BlockID
 }
 
-type Story interface {
-	Fetch(context.Context, []id.StorytellingID, *usecase.Operator) (storytelling.List, error)
-	Create(context.Context, CreateStoryInput, *usecase.Operator) (storytelling.Story, error)
-	Update(context.Context, UpdateStoryInput, *usecase.Operator) (storytelling.Story, error)
-	Remove(context.Context, id.StorytellingID, *usecase.Operator) (id.StorytellingID, error)
-	Move(context.Context, MoveStoryInput, *usecase.Operator) (id.StorytellingID, int, error)
+type Storytelling interface {
+	Fetch(context.Context, id.StoryIDList, *usecase.Operator) (*storytelling.StoryList, error)
+	FetchByScene(context.Context, id.SceneID, *usecase.Operator) (*storytelling.StoryList, error)
+	Create(context.Context, CreateStoryInput, *usecase.Operator) (*storytelling.Story, error)
+	Update(context.Context, UpdateStoryInput, *usecase.Operator) (*storytelling.Story, error)
+	Remove(context.Context, id.StoryID, *usecase.Operator) (*id.StoryID, error)
+	Move(context.Context, MoveStoryInput, *usecase.Operator) (*id.StoryID, int, error)
 
-	CreatePage(context.Context, CreatePageParam, *usecase.Operator) (storytelling.Story, error)
-	UpdatePage(context.Context, UpdatePageParam, *usecase.Operator) (storytelling.Story, error)
-	RemovePage(context.Context, id.StorytellingID, id.PageID, *usecase.Operator) (storytelling.Story, error)
-	MovePage(context.Context, MovePageParam, *usecase.Operator) (storytelling.Story, error)
+	CreatePage(context.Context, CreatePageParam, *usecase.Operator) (*storytelling.Story, error)
+	UpdatePage(context.Context, UpdatePageParam, *usecase.Operator) (*storytelling.Story, error)
+	RemovePage(context.Context, id.StoryID, id.PageID, *usecase.Operator) (*storytelling.Story, error)
+	MovePage(context.Context, MovePageParam, *usecase.Operator) (*storytelling.Story, error)
 
-	CreateBlock(context.Context, CreateBlockParam, *usecase.Operator) (*id.BlockID, storytelling.Page, error)
-	RemoveBlock(context.Context, RemoveBlockParam, *usecase.Operator) (id.BlockID, storytelling.Page, error)
-	MoveBlock(context.Context, MoveBlockParam, *usecase.Operator) (id.BlockID, storytelling.Page, int, error)
+	CreateBlock(context.Context, CreateBlockParam, *usecase.Operator) (*id.BlockID, *storytelling.Page, error)
+	RemoveBlock(context.Context, RemoveBlockParam, *usecase.Operator) (*id.BlockID, *storytelling.Page, error)
+	MoveBlock(context.Context, MoveBlockParam, *usecase.Operator) (*id.BlockID, *storytelling.Page, int, error)
 }

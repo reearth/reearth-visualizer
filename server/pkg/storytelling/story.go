@@ -3,18 +3,18 @@ package storytelling
 import "time"
 
 type Story struct {
-	id          StorytellingID
+	id          StoryID
 	property    PropertyID
 	scene       SceneID
 	title       string
 	alias       string
-	pages       []Page
+	pages       PageList
 	status      PublishmentStatus
-	publishedAt time.Time
+	publishedAt *time.Time
 	updatedAt   time.Time
 }
 
-func (s Story) Id() StorytellingID {
+func (s Story) Id() StoryID {
 	return s.id
 }
 
@@ -26,7 +26,7 @@ func (s Story) Scene() SceneID {
 	return s.scene
 }
 
-func (s Story) Pages() []Page {
+func (s Story) Pages() PageList {
 	return s.pages
 }
 
@@ -46,7 +46,7 @@ func (s Story) Status() PublishmentStatus {
 	return s.status
 }
 
-func (s Story) PublishedAt() time.Time {
+func (s Story) PublishedAt() *time.Time {
 	return s.publishedAt
 }
 
@@ -56,4 +56,13 @@ func (s Story) CreatedAt() time.Time {
 
 func (s Story) UpdatedAt() time.Time {
 	return s.updatedAt
+}
+
+func (s Story) Rename(name string) {
+	s.title = name
+	s.updatedAt = time.Now()
+}
+
+func (s Story) SetUpdatedAt(now time.Time) {
+	s.updatedAt = now
 }

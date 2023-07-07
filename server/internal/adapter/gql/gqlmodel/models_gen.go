@@ -738,8 +738,15 @@ type MovePropertyItemInput struct {
 }
 
 type MoveStoryInput struct {
+	SceneID ID  `json:"sceneId"`
 	StoryID ID  `json:"storyId"`
 	Index   int `json:"index"`
+}
+
+type MoveStoryPayload struct {
+	StoryID ID       `json:"storyId"`
+	Index   int      `json:"index"`
+	Stories []*Story `json:"stories"`
 }
 
 type Page struct {
@@ -751,7 +758,6 @@ type Page struct {
 	SwipeLayers []ID      `json:"swipeLayers"`
 	Property    *Property `json:"property"`
 	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 func (Page) IsNode() {}
@@ -1400,6 +1406,7 @@ type UpdatePropertyValueInput struct {
 }
 
 type UpdateStoryInput struct {
+	SceneID ID      `json:"sceneId"`
 	StoryID ID      `json:"storyId"`
 	Title   *string `json:"title"`
 	Index   *int    `json:"index"`

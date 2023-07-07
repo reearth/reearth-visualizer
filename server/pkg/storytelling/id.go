@@ -2,7 +2,7 @@ package storytelling
 
 import "github.com/reearth/reearth/server/pkg/id"
 
-type StorytellingID = id.StorytellingID
+type StoryID = id.StoryID
 type PageID = id.PageID
 type BlockID = id.BlockID
 type SceneID = id.SceneID

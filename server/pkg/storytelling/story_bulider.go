@@ -22,8 +22,13 @@ func (b *StoryBuilder) MustBuild() *Story {
 	return s
 }
 
-func (b *StoryBuilder) ID(id id.StorytellingID) *StoryBuilder {
+func (b *StoryBuilder) ID(id id.StoryID) *StoryBuilder {
 	b.s.id = id
+	return b
+}
+
+func (b *StoryBuilder) NewID() *StoryBuilder {
+	b.s.id = id.NewStoryID()
 	return b
 }
 
@@ -37,7 +42,7 @@ func (b *StoryBuilder) Scene(scene id.SceneID) *StoryBuilder {
 	return b
 }
 
-func (b *StoryBuilder) Pages(pages []Page) *StoryBuilder {
+func (b *StoryBuilder) Pages(pages PageList) *StoryBuilder {
 	b.s.pages = pages
 	return b
 }
@@ -49,5 +54,10 @@ func (b *StoryBuilder) Status(status PublishmentStatus) *StoryBuilder {
 
 func (b *StoryBuilder) Alias(alias string) *StoryBuilder {
 	b.s.alias = alias
+	return b
+}
+
+func (b *StoryBuilder) Title(title string) *StoryBuilder {
+	b.s.title = title
 	return b
 }

@@ -1,3 +1,3 @@
 package storytelling
 
-type List []*Story
+type PageList []*Page

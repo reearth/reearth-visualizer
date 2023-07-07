@@ -540,6 +540,12 @@ type ComplexityRoot struct {
 		Story func(childComplexity int) int
 	}
 
+	MoveStoryPayload struct {
+		Index   func(childComplexity int) int
+		Stories func(childComplexity int) int
+		StoryID func(childComplexity int) int
+	}
+
 	Mutation struct {
 		AddCluster                   func(childComplexity int, input gqlmodel.AddClusterInput) int
 		AddDatasetSchema             func(childComplexity int, input gqlmodel.AddDatasetSchemaInput) int
@@ -577,7 +583,7 @@ type ComplexityRoot struct {
 		MoveLayer                    func(childComplexity int, input gqlmodel.MoveLayerInput) int
 		MovePage                     func(childComplexity int, input gqlmodel.MovePageInput) int
 		MovePropertyItem             func(childComplexity int, input gqlmodel.MovePropertyItemInput) int
-		MoveStorytelling             func(childComplexity int, input gqlmodel.PublishStoryInput) int
+		MoveStorytelling             func(childComplexity int, input gqlmodel.MoveStoryInput) int
 		PublishProject               func(childComplexity int, input gqlmodel.PublishProjectInput) int
 		PublishStorytelling          func(childComplexity int, input gqlmodel.PublishStoryInput) int
 		RemoveAsset                  func(childComplexity int, input gqlmodel.RemoveAssetInput) int
@@ -626,7 +632,6 @@ type ComplexityRoot struct {
 		Swipe       func(childComplexity int) int
 		SwipeLayers func(childComplexity int) int
 		Title       func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -1322,7 +1327,7 @@ type MutationResolver interface {
 	UpdateStorytelling(ctx context.Context, input gqlmodel.UpdateStoryInput) (*gqlmodel.StoryPayload, error)
 	DeleteStorytelling(ctx context.Context, input gqlmodel.DeleteStoryInput) (*gqlmodel.DeleteStoryPayload, error)
 	PublishStorytelling(ctx context.Context, input gqlmodel.PublishStoryInput) (*gqlmodel.StoryPayload, error)
-	MoveStorytelling(ctx context.Context, input gqlmodel.PublishStoryInput) (*gqlmodel.StoryPayload, error)
+	MoveStorytelling(ctx context.Context, input gqlmodel.MoveStoryInput) (*gqlmodel.MoveStoryPayload, error)
 	CreatePage(ctx context.Context, input gqlmodel.CreatePageInput) (*gqlmodel.CreatePagePayload, error)
 	UpdatePage(ctx context.Context, input gqlmodel.UpdatePageInput) (*gqlmodel.UpdatePagePayload, error)
 	RemovePage(ctx context.Context, input gqlmodel.DeletePageInput) (*gqlmodel.DeletePagePayload, error)
@@ -3404,6 +3409,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MovePagePayload.Story(childComplexity), true
 
+	case "MoveStoryPayload.index":
+		if e.complexity.MoveStoryPayload.Index == nil {
+			break
+		}
+
+		return e.complexity.MoveStoryPayload.Index(childComplexity), true
+
+	case "MoveStoryPayload.stories":
+		if e.complexity.MoveStoryPayload.Stories == nil {
+			break
+		}
+
+		return e.complexity.MoveStoryPayload.Stories(childComplexity), true
+
+	case "MoveStoryPayload.storyId":
+		if e.complexity.MoveStoryPayload.StoryID == nil {
+			break
+		}
+
+		return e.complexity.MoveStoryPayload.StoryID(childComplexity), true
+
 	case "Mutation.addCluster":
 		if e.complexity.Mutation.AddCluster == nil {
 			break
@@ -3846,7 +3872,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.MoveStorytelling(childComplexity, args["input"].(gqlmodel.PublishStoryInput)), true
+		return e.complexity.Mutation.MoveStorytelling(childComplexity, args["input"].(gqlmodel.MoveStoryInput)), true
 
 	case "Mutation.publishProject":
 		if e.complexity.Mutation.PublishProject == nil {
@@ -4347,13 +4373,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Page.Title(childComplexity), true
-
-	case "Page.updatedAt":
-		if e.complexity.Page.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.Page.UpdatedAt(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -8218,7 +8237,7 @@ extend type Mutation {
   createScene(input: CreateSceneInput!): CreateScenePayload
 }
 `, BuiltIn: false},
-	{Name: "../../../gql/story.graphql", Input: `type Story implements Node {
+	{Name: "../../../gql/storytelling.graphql", Input: `type Story implements Node {
   id: ID!
   title: String!
   alias: String!
@@ -8239,7 +8258,6 @@ type Page implements Node {
   swipeLayers: [ID!]
   property: Property
   createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Block implements Node {
@@ -8264,12 +8282,14 @@ input CreateStoryInput {
 }
 
 input UpdateStoryInput {
+  sceneId: ID!
   storyId: ID!
   title: String
   index: Int
 }
 
 input MoveStoryInput {
+  sceneId: ID!
   storyId: ID!
   index: Int!
 }
@@ -8343,6 +8363,12 @@ type DeleteStoryPayload {
   storyId: ID!
 }
 
+type MoveStoryPayload {
+  storyId: ID!
+  index: Int!
+  stories: [Story!]!
+}
+
 type CreatePagePayload {
   page: Page!
   story: Story!
@@ -8389,13 +8415,13 @@ extend type Mutation {
   updateStorytelling(input: UpdateStoryInput!): StoryPayload!
   deleteStorytelling(input: DeleteStoryInput!): DeleteStoryPayload!
   publishStorytelling(input: PublishStoryInput!): StoryPayload!
-  moveStorytelling(input: PublishStoryInput!): StoryPayload!
+  moveStorytelling(input: MoveStoryInput!): MoveStoryPayload!
 
   createPage(input: CreatePageInput!): CreatePagePayload!
   updatePage(input: UpdatePageInput!): UpdatePagePayload!
   removePage(input: DeletePageInput!): DeletePagePayload!
   movePage(input: MovePageInput!): MovePagePayload!
-#  dublicatePage(input: MovePageInput!): MovePagePayload!
+# duplicatePage(input: DuplicatePageInput!): DuplicatePagePayload!
 
   createBlock(input: CreateBlockInput!): CreateBlockPayload!
   moveBlock(input: MoveBlockInput!): MoveBlockPayload!
@@ -9451,10 +9477,10 @@ func (ec *executionContext) field_Mutation_movePropertyItem_args(ctx context.Con
 func (ec *executionContext) field_Mutation_moveStorytelling_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 gqlmodel.PublishStoryInput
+	var arg0 gqlmodel.MoveStoryInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNPublishStoryInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishStoryInput(ctx, tmp)
+		arg0, err = ec.unmarshalNMoveStoryInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMoveStoryInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -12749,8 +12775,6 @@ func (ec *executionContext) fieldContext_Block_page(ctx context.Context, field g
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -13641,8 +13665,6 @@ func (ec *executionContext) fieldContext_CreateBlockPayload_page(ctx context.Con
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -13857,8 +13879,6 @@ func (ec *executionContext) fieldContext_CreatePagePayload_page(ctx context.Cont
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -24714,8 +24734,6 @@ func (ec *executionContext) fieldContext_MoveBlockPayload_page(ctx context.Conte
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -25282,8 +25300,6 @@ func (ec *executionContext) fieldContext_MovePagePayload_page(ctx context.Contex
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -25394,6 +25410,158 @@ func (ec *executionContext) fieldContext_MovePagePayload_index(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MoveStoryPayload_storyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MoveStoryPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MoveStoryPayload_storyId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StoryID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MoveStoryPayload_storyId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MoveStoryPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MoveStoryPayload_index(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MoveStoryPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MoveStoryPayload_index(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Index, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MoveStoryPayload_index(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MoveStoryPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MoveStoryPayload_stories(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MoveStoryPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MoveStoryPayload_stories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Stories, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.Story)
+	fc.Result = res
+	return ec.marshalNStory2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MoveStoryPayload_stories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MoveStoryPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Story_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Story_title(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "property":
+				return ec.fieldContext_Story_property(ctx, field)
+			case "pages":
+				return ec.fieldContext_Story_pages(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Story_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Story_updatedAt(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
 	}
 	return fc, nil
@@ -28067,7 +28235,7 @@ func (ec *executionContext) _Mutation_moveStorytelling(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().MoveStorytelling(rctx, fc.Args["input"].(gqlmodel.PublishStoryInput))
+		return ec.resolvers.Mutation().MoveStorytelling(rctx, fc.Args["input"].(gqlmodel.MoveStoryInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28079,9 +28247,9 @@ func (ec *executionContext) _Mutation_moveStorytelling(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.StoryPayload)
+	res := resTmp.(*gqlmodel.MoveStoryPayload)
 	fc.Result = res
-	return ec.marshalNStoryPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryPayload(ctx, field.Selections, res)
+	return ec.marshalNMoveStoryPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMoveStoryPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_moveStorytelling(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -28092,10 +28260,14 @@ func (ec *executionContext) fieldContext_Mutation_moveStorytelling(ctx context.C
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "story":
-				return ec.fieldContext_StoryPayload_story(ctx, field)
+			case "storyId":
+				return ec.fieldContext_MoveStoryPayload_storyId(ctx, field)
+			case "index":
+				return ec.fieldContext_MoveStoryPayload_index(ctx, field)
+			case "stories":
+				return ec.fieldContext_MoveStoryPayload_stories(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type StoryPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type MoveStoryPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -30051,50 +30223,6 @@ func (ec *executionContext) _Page_createdAt(ctx context.Context, field graphql.C
 }
 
 func (ec *executionContext) fieldContext_Page_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Page",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Page_updatedAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Page) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Page_updatedAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Page_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Page",
 		Field:      field,
@@ -39445,8 +39573,6 @@ func (ec *executionContext) fieldContext_RemoveBlockPayload_page(ctx context.Con
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -42304,8 +42430,6 @@ func (ec *executionContext) fieldContext_Story_pages(ctx context.Context, field 
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -45145,8 +45269,6 @@ func (ec *executionContext) fieldContext_UpdatePagePayload_page(ctx context.Cont
 				return ec.fieldContext_Page_property(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Page_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Page_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Page", field.Name)
 		},
@@ -50780,13 +50902,21 @@ func (ec *executionContext) unmarshalInputMoveStoryInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"storyId", "index"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "index"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "sceneId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
+			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "storyId":
 			var err error
 
@@ -52224,13 +52354,21 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"storyId", "title", "index"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "sceneId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
+			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "storyId":
 			var err error
 
@@ -56679,6 +56817,48 @@ func (ec *executionContext) _MovePagePayload(ctx context.Context, sel ast.Select
 	return out
 }
 
+var moveStoryPayloadImplementors = []string{"MoveStoryPayload"}
+
+func (ec *executionContext) _MoveStoryPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.MoveStoryPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, moveStoryPayloadImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MoveStoryPayload")
+		case "storyId":
+
+			out.Values[i] = ec._MoveStoryPayload_storyId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "index":
+
+			out.Values[i] = ec._MoveStoryPayload_index(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "stories":
+
+			out.Values[i] = ec._MoveStoryPayload_stories(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -57245,13 +57425,6 @@ func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj
 		case "createdAt":
 
 			out.Values[i] = ec._Page_createdAt(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updatedAt":
-
-			out.Values[i] = ec._Page_updatedAt(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -63517,6 +63690,25 @@ func (ec *executionContext) marshalNMovePagePayload2ᚖgithubᚗcomᚋreearthᚋ
 func (ec *executionContext) unmarshalNMovePropertyItemInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMovePropertyItemInput(ctx context.Context, v interface{}) (gqlmodel.MovePropertyItemInput, error) {
 	res, err := ec.unmarshalInputMovePropertyItemInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNMoveStoryInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMoveStoryInput(ctx context.Context, v interface{}) (gqlmodel.MoveStoryInput, error) {
+	res, err := ec.unmarshalInputMoveStoryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNMoveStoryPayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMoveStoryPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.MoveStoryPayload) graphql.Marshaler {
+	return ec._MoveStoryPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMoveStoryPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMoveStoryPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.MoveStoryPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MoveStoryPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNNode2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v []gqlmodel.Node) graphql.Marshaler {

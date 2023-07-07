@@ -19,7 +19,6 @@ type Page implements Node {
   swipeLayers: [ID!]
   property: Property
   createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Block implements Node {
@@ -44,12 +43,14 @@ input CreateStoryInput {
 }
 
 input UpdateStoryInput {
+  sceneId: ID!
   storyId: ID!
   title: String
   index: Int
 }
 
 input MoveStoryInput {
+  sceneId: ID!
   storyId: ID!
   index: Int!
 }
@@ -123,6 +124,12 @@ type DeleteStoryPayload {
   storyId: ID!
 }
 
+type MoveStoryPayload {
+  storyId: ID!
+  index: Int!
+  stories: [Story!]!
+}
+
 type CreatePagePayload {
   page: Page!
   story: Story!
@@ -169,13 +176,13 @@ extend type Mutation {
   updateStorytelling(input: UpdateStoryInput!): StoryPayload!
   deleteStorytelling(input: DeleteStoryInput!): DeleteStoryPayload!
   publishStorytelling(input: PublishStoryInput!): StoryPayload!
-  moveStorytelling(input: PublishStoryInput!): StoryPayload!
+  moveStorytelling(input: MoveStoryInput!): MoveStoryPayload!
 
   createPage(input: CreatePageInput!): CreatePagePayload!
   updatePage(input: UpdatePageInput!): UpdatePagePayload!
   removePage(input: DeletePageInput!): DeletePagePayload!
   movePage(input: MovePageInput!): MovePagePayload!
-#  dublicatePage(input: MovePageInput!): MovePagePayload!
+# duplicatePage(input: DuplicatePageInput!): DuplicatePagePayload!
 
   createBlock(input: CreateBlockInput!): CreateBlockPayload!
   moveBlock(input: MoveBlockInput!): MoveBlockPayload!

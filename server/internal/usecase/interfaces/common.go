@@ -17,15 +17,16 @@ var (
 )
 
 type Container struct {
-	Asset     Asset
-	Dataset   Dataset
-	Layer     Layer
-	Plugin    Plugin
-	Project   Project
-	Property  Property
-	Published Published
-	Scene     Scene
-	Tag       Tag
-	Workspace Workspace
-	User      User
+	Asset        Asset
+	Dataset      Dataset
+	Layer        Layer
+	Plugin       Plugin
+	Project      Project
+	Property     Property
+	Published    Published
+	Scene        Scene
+	Tag          Tag
+	Workspace    Workspace
+	User         User
+	StoryTelling Storytelling
 }

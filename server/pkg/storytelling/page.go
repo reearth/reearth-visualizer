@@ -15,13 +15,13 @@ type Page struct {
 	swipe       bool
 	layers      LayerIDList
 	swipeLayers LayerIDList
-	blocks      []*Block
+	blocks      BlockList
 }
 
-func NewPage(blocks []*Block, p PropertyID) *Page {
+func NewPage(blocks BlockList, p PropertyID) *Page {
 	Page := Page{
 		property: p,
-		blocks:   make([]*Block, len(blocks)),
+		blocks:   make(BlockList, len(blocks)),
 	}
 	for i, b := range blocks {
 		if b == nil {
@@ -97,11 +97,11 @@ func (p *Page) PropertyRef() *PropertyID {
 	return &pid
 }
 
-func (p *Page) Blocks() []*Block {
+func (p *Page) Blocks() BlockList {
 	if p == nil {
 		return nil
 	}
-	return append([]*Block{}, p.blocks...)
+	return append(BlockList{}, p.blocks...)
 }
 
 func (p *Page) Block(block BlockID) *Block {
@@ -120,11 +120,11 @@ func (p *Page) BlockAt(index int) *Block {
 	return p.blocks[index]
 }
 
-func (p *Page) BlocksByPlugin(pid PluginID, eid *PluginExtensionID) []*Block {
+func (p *Page) BlocksByPlugin(pid PluginID, eid *PluginExtensionID) BlockList {
 	if p == nil {
 		return nil
 	}
-	blocks := make([]*Block, 0, len(p.blocks))
+	blocks := make(BlockList, 0, len(p.blocks))
 	for _, b := range p.blocks {
 		if b.Plugin().Equal(pid) && (eid == nil || b.Extension() == *eid) {
 			blocks = append(blocks, b)
@@ -158,7 +158,7 @@ func (p *Page) AddBlock(block *Block, index int) {
 	if p.HasBlock(block.ID()) {
 		return
 	}
-	p.blocks = append(p.blocks[:index], append([]*Block{block}, p.blocks[index:]...)...)
+	p.blocks = append(p.blocks[:index], append(BlockList{block}, p.blocks[index:]...)...)
 }
 
 func (p *Page) MoveBlock(block BlockID, toIndex int) {
@@ -181,7 +181,7 @@ func (p *Page) MoveBlockAt(fromIndex int, toIndex int) {
 	b := p.blocks[fromIndex]
 
 	p.blocks = append(p.blocks[:fromIndex], p.blocks[fromIndex+1:]...)
-	newSlice := make([]*Block, toIndex+1)
+	newSlice := make(BlockList, toIndex+1)
 	copy(newSlice, p.blocks[:toIndex])
 	newSlice[toIndex] = b
 	p.blocks = append(newSlice, p.blocks[toIndex:]...)

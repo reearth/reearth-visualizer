@@ -32,6 +32,7 @@ type Container struct {
 	Workspace      Workspace
 	User           User
 	Policy         Policy
+	Storytelling   Storytelling
 	Transaction    usecasex.Transaction
 }
 
