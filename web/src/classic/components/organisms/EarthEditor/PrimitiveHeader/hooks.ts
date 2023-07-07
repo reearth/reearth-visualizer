@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/services/gql";
+import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/classic/gql";
 import { useLang } from "@reearth/services/i18n";
 import { useSceneId, useSelected } from "@reearth/services/state";
 

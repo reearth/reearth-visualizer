@@ -232,6 +232,7 @@ export default function Visualizer({
               sceneProperty={overriddenSceneProperty}
               pluginBaseUrl={pluginBaseUrl}
               selectedLayerId={selectedLayerId}
+              meta={engineMeta}
               layers={layers}
               isLayerHidden={isLayerHidden}
               overriddenProperties={layerOverriddenProperties}

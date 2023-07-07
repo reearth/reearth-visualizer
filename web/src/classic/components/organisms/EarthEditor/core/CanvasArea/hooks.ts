@@ -9,13 +9,6 @@ import {
 } from "@reearth/classic/core/mantle";
 import type { Layer, LayerSelectionReason } from "@reearth/classic/core/Map";
 import {
-  valueTypeToGQL,
-  type ValueTypes,
-  valueToGQL,
-  type LatLng,
-} from "@reearth/classic/util/value";
-import { config } from "@reearth/services/config";
-import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
   useMoveInfoboxFieldMutation,
@@ -30,7 +23,14 @@ import {
   type WidgetAreaType,
   type WidgetAreaAlign,
   ValueType,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import {
+  valueTypeToGQL,
+  type ValueTypes,
+  valueToGQL,
+  type LatLng,
+} from "@reearth/classic/util/value";
+import { config } from "@reearth/services/config";
 import { useLang } from "@reearth/services/i18n";
 import {
   useSceneId,
