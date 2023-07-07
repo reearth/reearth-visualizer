@@ -45,8 +45,8 @@ const Text: React.FC<Props> = ({
         ? typographyBySize[trait]
         : weight in typographyBySize
         ? typographyBySize[weight]
-        : typographyBySize.regular,
-    [trait, typographyBySize, weight],
+        : typographyBySize[size === "h1" ? "medium" : "regular"],
+    [trait, size, typographyBySize, weight],
   );
 
   return Typography ? (

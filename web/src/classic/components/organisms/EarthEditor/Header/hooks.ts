@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Status } from "@reearth/classic/components/atoms/PublicationStatus";
 import { User } from "@reearth/classic/components/molecules/EarthEditor/Header";
 import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
-import { useAuth } from "@reearth/services/auth";
 import {
   useGetTeamsQuery,
   useGetProjectBySceneQuery,
@@ -12,7 +11,8 @@ import {
   usePublishProjectMutation,
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
 import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/services/state";
 

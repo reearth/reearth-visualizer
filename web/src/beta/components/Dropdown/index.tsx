@@ -76,7 +76,6 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
-  width: 100%;
 `;
 
 const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
@@ -99,7 +98,7 @@ const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
 const Label = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   cursor: pointer;
   width: 100%;
 `;
