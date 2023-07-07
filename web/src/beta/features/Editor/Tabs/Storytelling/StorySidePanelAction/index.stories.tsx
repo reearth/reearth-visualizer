@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import ActionItem from "./index";
+import ActionItem from ".";
 
 export default {
   component: ActionItem,

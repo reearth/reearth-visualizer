@@ -17,7 +17,9 @@ export const Default: Story = {
         <SidePanel.Section maxHeight="33%">
           <SidePanel.Card>
             <SidePanel.Title>Title1</SidePanel.Title>
-            <SidePanel.Content>content</SidePanel.Content>
+            <SidePanel.Content>
+              Please check this story how to use these separated components.
+            </SidePanel.Content>
           </SidePanel.Card>
         </SidePanel.Section>
         <SidePanel.Section>

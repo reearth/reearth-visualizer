@@ -99,7 +99,7 @@ const StyledSvg = styled(SVG)<{
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   color: ${({ color }) => color};
-  ${({ stroke }) => (stroke ? `stroke: ${stroke};` : "")}
+  ${({ stroke }) => stroke && `stroke: ${stroke};`}
   transition-property: color, background;
 `;
 

@@ -16,18 +16,18 @@ type Props = {
 
 const StorySidePanelAction: FC<Props> = ({ icon, iconSize, iconColor, title, onClick }) => {
   return (
-    <SWrapper onClick={onClick} type="button">
-      <SIcon>
+    <Wrapper onClick={onClick} type="button">
+      <IconWrapper>
         <Icon icon={icon} size={iconSize ?? 12} color={iconColor} />
-      </SIcon>
+      </IconWrapper>
       <Text size={"footnote"} otherProperties={{ wordBreak: "break-all", textAlign: "left" }}>
         {title}
       </Text>
-    </SWrapper>
+    </Wrapper>
   );
 };
 
-const SWrapper = styled.button`
+const Wrapper = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,7 +48,7 @@ const SWrapper = styled.button`
   cursor: pointer;
 `;
 
-const SIcon = styled.div`
+const IconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
