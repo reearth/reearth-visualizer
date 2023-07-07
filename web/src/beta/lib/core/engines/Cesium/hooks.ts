@@ -315,6 +315,7 @@ export default ({
     if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
 
+    // TODO: Support layers.selectFeature API for MVT
     if (!entity && selectedLayerId?.featureId) {
       // Find ImageryLayerFeature
       const ImageryLayerDataTypes: DataType[] = [];
