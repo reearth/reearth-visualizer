@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import Icon from "../../../../../components/Icon";
 import Text from "../../../../../components/Text";
@@ -8,26 +8,23 @@ import Text from "../../../../../components/Text";
 type Props = {
   icon: string;
   title: string;
-  onClick?: () => void;
+  onClick: () => void;
 };
 
 const StorySidePanelAction: FC<Props> = ({ icon, title, onClick }) => {
-  const theme = useTheme();
-
   return (
-    <Wrapper onClick={onClick} type="button">
-      <Icon icon={icon} size={8} />
-      <Text
-        size={"footnote"}
-        color={theme.general.content.main}
-        otherProperties={{ wordBreak: "break-all" }}>
+    <SWrapper onClick={onClick} type="button">
+      <SIcon>
+        <Icon icon={icon} size={8} />
+      </SIcon>
+      <Text size={"footnote"} otherProperties={{ wordBreak: "break-all" }}>
         {title}
       </Text>
-    </Wrapper>
+    </SWrapper>
   );
 };
 
-const Wrapper = styled.button`
+const SWrapper = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -46,6 +43,10 @@ const Wrapper = styled.button`
   }
   user-select: none;
   cursor: pointer;
+`;
+
+const SIcon = styled.div`
+  color: #4a4a4a;
 `;
 
 export default StorySidePanelAction;

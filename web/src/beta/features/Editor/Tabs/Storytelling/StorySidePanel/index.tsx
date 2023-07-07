@@ -1,5 +1,5 @@
 import { FC } from "react";
-import ActionItem from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelAction";
+import StorySidePanelAction from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelAction";
 
 import {
   SidePanelCard,
@@ -22,7 +22,7 @@ type Props = {
   onPageAdd: () => void;
 };
 
-const StorySidePanel: FC<Props> = () => {
+const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
   return (
     <SidePanelWrapper location="left">
       <SidePanelItem maxHeight="33%">
@@ -32,13 +32,13 @@ const StorySidePanel: FC<Props> = () => {
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
-                  <StorySidePanelItem key={i}>
+                  <StorySidePanelItem key={i} onItemClick={() => onSelectStory(i.toString())}>
                     Story{i} Story{i} Story{i} Story{i} Story{i} Story{i} Story{i}
                   </StorySidePanelItem>
                 ))}
               </ContentUp>
               <ContentBottom>
-                <ActionItem icon="square" title="+ New Story" />
+                <StorySidePanelAction icon="square" title="+ New Story" onClick={onStoryAdd} />
               </ContentBottom>
             </ContentInner>
           </SidePanelCardContent>
@@ -51,14 +51,14 @@ const StorySidePanel: FC<Props> = () => {
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
-                  <StorySidePanelItem key={i}>
-                    Page{i} Page{i} Page{i} Page{i} Page{i} Page{i} Page{i}
+                  <StorySidePanelItem key={i} onItemClick={() => onSelectPage(i.toString())}>
+                    Page{i}
                   </StorySidePanelItem>
                 ))}
               </ContentUp>
               <ContentBottom>
-                <ActionItem icon="square" title="+ New Page" />
-                <ActionItem icon="square" title="+ New Swipe" />
+                <StorySidePanelAction icon="square" title="+ New Page" onClick={onPageAdd} />
+                <StorySidePanelAction icon="square" title="+ New Swipe" onClick={onPageAdd} />
               </ContentBottom>
             </ContentInner>
           </SidePanelCardContent>
@@ -88,11 +88,11 @@ const ContentUp = styled.div`
   flex-direction: column;
   gap: 8px;
   box-sizing: border-box;
-  padding-bottom: 8px;
 `;
 
 const ContentBottom = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-top: 8px;
 `;
