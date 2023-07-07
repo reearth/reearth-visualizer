@@ -7,17 +7,27 @@ import Portal from "../Portal";
 
 export type Props = {
   className?: string;
+  animationSize?: number;
+  animationColor?: string;
   portal?: boolean;
   fixed?: boolean;
   relative?: boolean;
   overlay?: boolean;
 };
 
-const Loading: React.FC<Props> = ({ className, portal, fixed, relative, overlay }) => {
+const Loading: React.FC<Props> = ({
+  className,
+  animationSize,
+  animationColor,
+  portal,
+  fixed,
+  relative,
+  overlay,
+}) => {
   const theme = useTheme();
   const loading = (
     <LoadingWrapper className={className} fixed={fixed} overlay={overlay} relative={relative}>
-      <RingLoader size={33} color={theme.general.content.main} />
+      <RingLoader size={animationSize ?? 33} color={animationColor ?? theme.general.content.main} />
     </LoadingWrapper>
   );
   return portal ? <Portal>{loading}</Portal> : loading;

@@ -1,58 +1,61 @@
+import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@reearth/services/auth";
-import {
-  useCreateTeamMutation,
-  useGetProjectBySceneQuery,
-  useGetTeamsQuery,
-} from "@reearth/services/gql";
+import { useCreateWorkspaceMutation, GetMeQuery, GetProjectQuery } from "@reearth/services/gql";
+import { GET_PROJECT } from "@reearth/services/gql/queries/project";
+import { GET_ME } from "@reearth/services/gql/queries/user";
 import { useProject, useWorkspace } from "@reearth/services/state";
 
-type User = {
-  name: string;
-};
+export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: string }) => {
+  const gqlClient = useApolloClient();
 
-export default (sceneId: string) => {
+  const navigate = useNavigate();
   const { logout: handleLogout } = useAuth();
 
-  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
-  const [currentProject, setProject] = useProject();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspace(); // todo: remove when we don't rely on jotai anymore
+  const [currentProject, setProject] = useProject(); // todo: remove when we don't rely on jotai anymore
 
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
 
-  const { data: workspaceData } = useGetTeamsQuery();
-  const navigate = useNavigate();
-  const workspaces = useMemo(() => {
-    return workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name }));
-  }, [workspaceData?.me?.teams]);
+  const workspaceData: GetMeQuery | null = gqlClient.readQuery({ query: GET_ME }); // todo: use custom readQuery from other PR
 
-  const { data } = useGetProjectBySceneQuery({
-    variables: { sceneId: sceneId ?? "" },
-    skip: !sceneId,
-  });
+  const workspaces = useMemo(
+    () => workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name })),
+    [workspaceData?.me?.teams],
+  );
 
-  const workspaceId = useMemo(() => {
-    return data?.node?.__typename === "Scene" ? data.node.teamId : undefined;
-  }, [data?.node]);
+  const projectData: GetProjectQuery | null = gqlClient.readQuery({
+    query: GET_PROJECT,
+    variables: { projectId },
+  }); // todo: use custom readQuery from other PR
 
   const project = useMemo(
     () =>
-      data?.node?.__typename === "Scene" && data.node.project
-        ? { ...data.node.project, sceneId: data.node.id }
+      projectData?.node?.__typename === "Project"
+        ? { ...projectData.node, sceneId: projectData.node.scene?.id }
         : undefined,
-    [data?.node],
+    [projectData?.node],
   );
 
-  const user: User = useMemo(() => {
-    return {
-      name: workspaceData?.me?.name || "",
-    };
-  }, [workspaceData?.me]);
+  const workspace = useMemo(
+    () => workspaceData?.me?.teams?.find(w => w.id === workspaceId),
+    [workspaceData?.me?.teams, workspaceId],
+  );
 
-  const personal = useMemo(() => {
-    return workspaceId === workspaceData?.me?.myTeam.id;
-  }, [workspaceId, workspaceData?.me]);
+  useEffect(() => {
+    if (!currentWorkspace || (workspace && workspace.id !== currentWorkspace?.id)) {
+      setCurrentWorkspace(workspace);
+    }
+  });
+
+  const username = useMemo(() => workspaceData?.me?.name || "", [workspaceData?.me]);
+
+  const personal = useMemo(
+    () => workspaceId === workspaceData?.me?.myTeam.id,
+    [workspaceId, workspaceData?.me],
+  );
 
   const handleWorkspaceModalOpen = useCallback(() => setWorkspaceModalVisible(true), []);
   const handleWorkspaceModalClose = useCallback(() => setWorkspaceModalVisible(false), []);
@@ -73,22 +76,21 @@ export default (sceneId: string) => {
   }, [project, setProject]);
 
   const handleWorkspaceChange = useCallback(
-    (workspaceId: string) => {
-      const workspace = workspaces?.find(team => team.id === workspaceId);
-      if (workspace && workspaceId !== currentWorkspace?.id) {
-        setCurrentWorkspace(workspace);
-
-        navigate(`/dashboard/${workspaceId}`);
+    (id: string) => {
+      const newWorkspace = workspaces?.find(team => team.id === id);
+      if (newWorkspace && workspaceId !== newWorkspace.id) {
+        setCurrentWorkspace(newWorkspace);
+        navigate(`/dashboard/${newWorkspace.id}`);
       }
     },
-    [workspaces, currentWorkspace, setCurrentWorkspace, navigate],
+    [workspaces, workspaceId, setCurrentWorkspace, navigate],
   );
 
-  const [createTeamMutation] = useCreateTeamMutation();
+  const [createWorkspaceMutation] = useCreateWorkspaceMutation();
 
   const handleWorkspaceCreate = useCallback(
     async (data: { name: string }) => {
-      const results = await createTeamMutation({
+      const results = await createWorkspaceMutation({
         variables: { name: data.name },
         refetchQueries: ["GetTeams"],
       });
@@ -98,15 +100,15 @@ export default (sceneId: string) => {
         navigate(`/dashboard/${results.data.createTeam.team.id}`);
       }
     },
-    [createTeamMutation, setCurrentWorkspace, navigate],
+    [createWorkspaceMutation, setCurrentWorkspace, navigate],
   );
 
   return {
     workspaces,
     currentProject,
     isPersonal: personal,
-    user,
-    currentWorkspace,
+    username,
+    workspace,
     workspaceModalVisible,
     handleWorkspaceModalOpen,
     handleWorkspaceModalClose,
