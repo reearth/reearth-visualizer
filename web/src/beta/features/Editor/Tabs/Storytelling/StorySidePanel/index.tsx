@@ -19,10 +19,10 @@ type Props = {
 const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
   return (
     <SidePanel.Wrapper location="left">
-      <SidePanel.Item maxHeight="33%">
+      <SidePanel.Section maxHeight="33%">
         <SidePanel.Card>
-          <SidePanel.CardTitle>Story</SidePanel.CardTitle>
-          <SidePanel.CardContent>
+          <SidePanel.Title>Story</SidePanel.Title>
+          <SidePanel.Content>
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
@@ -35,13 +35,13 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
                 <StorySidePanelAction icon="square" title="+ New Story" onClick={onStoryAdd} />
               </ContentBottom>
             </ContentInner>
-          </SidePanel.CardContent>
+          </SidePanel.Content>
         </SidePanel.Card>
-      </SidePanel.Item>
-      <SidePanel.Item>
+      </SidePanel.Section>
+      <SidePanel.Section>
         <SidePanel.Card>
-          <SidePanel.CardTitle>Pages</SidePanel.CardTitle>
-          <SidePanel.CardContent>
+          <SidePanel.Title>Pages</SidePanel.Title>
+          <SidePanel.Content>
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
@@ -55,9 +55,9 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
                 <StorySidePanelAction icon="square" title="+ New Swipe" onClick={onPageAdd} />
               </ContentBottom>
             </ContentInner>
-          </SidePanel.CardContent>
+          </SidePanel.Content>
         </SidePanel.Card>
-      </SidePanel.Item>
+      </SidePanel.Section>
     </SidePanel.Wrapper>
   );
 };

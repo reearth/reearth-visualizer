@@ -16,7 +16,7 @@ export const Wrapper = styled.div<{ location: "left" | "right" }>`
   ${({ location }) => location === "right" && `padding-left: 0;`}
 `;
 
-export const Item = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
+export const Section = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
   flex-grow: 1;
   height: 100%;
   ${({ maxHeight }) => maxHeight && `max-height: ${maxHeight};`}
@@ -30,7 +30,7 @@ export const Card = styled.div`
   flex-direction: column;
 `;
 
-export const CardTitle = styled.div`
+export const Title = styled.div`
   background: ${({ theme }) => theme.general.bg.veryWeak};
   padding: 8px;
   font-weight: 500;
@@ -40,7 +40,7 @@ export const CardTitle = styled.div`
   border-top-left-radius: 4px;
 `;
 
-export const CardContent = styled.div`
+export const Content = styled.div`
   padding: 12px 8px;
   box-sizing: border-box;
   border-bottom-right-radius: 4px;
