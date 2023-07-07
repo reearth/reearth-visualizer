@@ -2,8 +2,8 @@ import { FC } from "react";
 
 import { styled, useTheme } from "@reearth/services/theme";
 
-import Icon from "../Icon";
-import Text from "../Text";
+import Icon from "../../../../../components/Icon";
+import Text from "../../../../../components/Text";
 
 type Props = {
   icon: string;
@@ -11,11 +11,11 @@ type Props = {
   onClick?: () => void;
 };
 
-const ActionItem: FC<Props> = ({ icon, title, onClick }) => {
+const StorySidePanelAction: FC<Props> = ({ icon, title, onClick }) => {
   const theme = useTheme();
 
   return (
-    <Box onClick={onClick}>
+    <Wrapper onClick={onClick} type="button">
       <Icon icon={icon} size={8} />
       <Text
         size={"footnote"}
@@ -23,20 +23,24 @@ const ActionItem: FC<Props> = ({ icon, title, onClick }) => {
         otherProperties={{ wordBreak: "break-all" }}>
         {title}
       </Text>
-    </Box>
+    </Wrapper>
   );
 };
 
-const Box = styled.div`
+const Wrapper = styled.button`
   display: flex;
-  flex-direction: row;
   align-items: center;
-  padding: 4px 12px;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 8px 12px;
   gap: 8px;
+  border-radius: 6px;
 
   min-height: 28px;
+  transition: all 0.15s;
 
-  background: ${props => props.theme.general.bg.main};
+  border: 1px solid #383838;
+
   :hover {
     background: ${props => props.theme.general.bg.weak};
   }
@@ -44,4 +48,4 @@ const Box = styled.div`
   cursor: pointer;
 `;
 
-export default ActionItem;
+export default StorySidePanelAction;
