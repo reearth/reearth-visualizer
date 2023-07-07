@@ -11,3 +11,4 @@ export type {
   SceneProperty,
 } from "../Map";
 export type { Theme } from "./theme";
+export type { InteractionModeType } from "./interactionMode";

@@ -8,7 +8,7 @@ import {
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 import { useLang as useCurrentLang } from "@reearth/services/i18n";
 import {
   useWorkspace,
@@ -16,7 +16,6 @@ import {
   useNotification,
   NotificationType,
   useCurrentTheme as useCurrentTheme,
-  useSessionWorkspace,
 } from "@reearth/services/state";
 
 type Params = {
@@ -24,8 +23,7 @@ type Params = {
 };
 
 export default ({ projectId }: Params) => {
-  const [currentWorkspace] = useSessionWorkspace();
-  const [lastWorkspace] = useWorkspace();
+  const [currentWorkspace] = useWorkspace();
 
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
@@ -172,7 +170,7 @@ export default ({ projectId }: Params) => {
   const [currentTheme] = useCurrentTheme();
 
   return {
-    currentWorkspace: currentWorkspace ?? lastWorkspace,
+    currentWorkspace,
     currentProject,
     projectAlias,
     projectStatus: convertStatus(project?.publishmentStatus),

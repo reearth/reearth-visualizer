@@ -9,7 +9,7 @@ import { Tab } from ".";
 
 type Props = {
   currentTab?: Tab;
-  sceneId: string;
+  sceneId?: string;
   page: "editor" | "settings";
 };
 
@@ -22,22 +22,22 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
       return (
         <RightSection>
           <TabButton
-            onClick={() => handleEditorNavigation("scene")}
+            onClick={() => handleEditorNavigation?.("scene")}
             selected={currentTab === "scene"}
             label={t("Scene")}
           />
           <TabButton
-            onClick={() => handleEditorNavigation("story")}
+            onClick={() => handleEditorNavigation?.("story")}
             selected={currentTab === "story"}
             label={t("Story")}
           />
           <TabButton
-            onClick={() => handleEditorNavigation("widgets")}
+            onClick={() => handleEditorNavigation?.("widgets")}
             selected={currentTab === "widgets"}
             label={t("Widgets")}
           />
           <TabButton
-            onClick={() => handleEditorNavigation("publish")}
+            onClick={() => handleEditorNavigation?.("publish")}
             selected={currentTab === "publish"}
             label={t("Publish")}
           />
