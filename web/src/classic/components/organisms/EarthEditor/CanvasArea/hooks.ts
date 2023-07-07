@@ -5,8 +5,6 @@ import {
   Location,
   Alignment,
 } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
-import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
-import { config } from "@reearth/services/config";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -22,7 +20,9 @@ import {
   WidgetAreaType,
   WidgetAreaAlign,
   ValueType,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
+import { config } from "@reearth/services/config";
 import { useLang } from "@reearth/services/i18n";
 import {
   useSceneId,

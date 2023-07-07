@@ -10,10 +10,12 @@ import { metrics, styled } from "@reearth/services/theme";
 
 type Props = {
   sceneId: string;
+  projectId?: string; // gotten through injection
+  workspaceId?: string; // gotten through injection
   tab: Tab;
 };
 
-const Editor: React.FC<Props> = ({ sceneId, tab }) => {
+const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab });
   const { visualizerNav } = useVisualizerNav({ tab });
@@ -21,7 +23,12 @@ const Editor: React.FC<Props> = ({ sceneId, tab }) => {
   return (
     <DndProvider>
       <Wrapper>
-        <Navbar sceneId={sceneId} currentTab={tab} />
+        <Navbar
+          sceneId={sceneId}
+          projectId={projectId}
+          workspaceId={workspaceId}
+          currentTab={tab}
+        />
         <MainSection>
           {leftPanel && (
             <Resizable
