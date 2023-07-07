@@ -48,7 +48,7 @@ const Indicator = styled.button<{ progress: number }>`
     opacity: 0.8;
   }
 
-  :not(:first-child) {
+  :not(:first-of-type) {
     border-left: 1px solid #ffffff;
   }
 
