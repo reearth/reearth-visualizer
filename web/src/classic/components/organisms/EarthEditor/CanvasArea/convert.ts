@@ -16,7 +16,6 @@ import {
   isBuiltinWidget,
 } from "@reearth/classic/components/molecules/Visualizer/Widget/builtin";
 import { WidgetAreaPadding } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
-import { valueFromGQL } from "@reearth/classic/util/value";
 import {
   GetBlocksQuery,
   Maybe,
@@ -27,13 +26,14 @@ import {
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
-  PropertyGroupFragmentFragment,
-  PropertyFieldFragmentFragment,
-  PropertySchemaGroupFragmentFragment,
-  PropertySchemaFieldFragmentFragment,
-  EarthLayerItemFragment,
   EarthLayerCommonFragment,
-} from "@reearth/services/gql";
+  EarthLayerItemFragment,
+  PropertySchemaGroupFragmentFragment,
+  PropertyGroupFragmentFragment,
+  PropertySchemaFieldFragmentFragment,
+  PropertyFieldFragmentFragment,
+} from "@reearth/classic/gql";
+import { valueFromGQL } from "@reearth/classic/util/value";
 
 export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
 

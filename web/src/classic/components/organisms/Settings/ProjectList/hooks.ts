@@ -11,7 +11,7 @@ import {
   useGetProjectsQuery,
   Visualizer,
   GetProjectsQuery,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";

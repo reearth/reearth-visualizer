@@ -5,14 +5,14 @@ import { styled } from "@reearth/services/theme";
 
 import WorkspaceCreationModal from "../../Modals/WorkspaceCreationModal";
 import ProjectMenu from "../Menus/ProjectMenu";
-import { Project, User, Workspace } from "../types";
+import { Project, Workspace } from "../types";
 
 import Profile from "./Profile";
 
 type Props = {
   currentProject?: Project;
   currentWorkspace?: Workspace;
-  user: User;
+  username?: string;
   dashboard: boolean;
   personalWorkspace: boolean;
   workspaces?: Workspace[];
@@ -24,7 +24,7 @@ type Props = {
   onModalClose?: (r?: boolean) => void;
 };
 const LeftSection: React.FC<Props> = ({
-  user,
+  username,
   dashboard,
   currentProject,
   currentWorkspace,
@@ -49,7 +49,7 @@ const LeftSection: React.FC<Props> = ({
         openModal={openModal}
         personalWorkspace={personalWorkspace}
         workspaces={workspaces}
-        user={user}
+        username={username}
       />
       <WorkspaceCreationModal
         open={modalShown}
@@ -74,6 +74,7 @@ const Wrapper = styled.div`
 
 const StyledLink = styled(Link)`
   display: flex;
+  margin-right: 19px;
   color: ${props => props.theme.general.content.main};
   text-decoration: none;
   &:hover {

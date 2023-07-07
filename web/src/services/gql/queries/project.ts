@@ -8,19 +8,6 @@ export const GET_PROJECT = gql`
       id
       ... on Project {
         ...ProjectFragment
-      }
-    }
-  }
-
-  ${projectFragment}
-`;
-
-export const GET_PROJECT_WITH_SCENE_ID = gql`
-  query GetProjectWithSceneId($projectId: ID!) {
-    node(id: $projectId, type: PROJECT) {
-      id
-      ... on Project {
-        ...ProjectFragment
         scene {
           id
         }
@@ -29,36 +16,6 @@ export const GET_PROJECT_WITH_SCENE_ID = gql`
   }
 
   ${projectFragment}
-`;
-
-export const GET_PROJECT_BY_SCENE = gql`
-  query GetProjectByScene($sceneId: ID!) {
-    node(id: $sceneId, type: SCENE) {
-      id
-      ... on Scene {
-        teamId
-        projectId
-        project {
-          id
-          alias
-          publishmentStatus
-          name
-          coreSupport
-        }
-      }
-    }
-  }
-`;
-
-export const GET_TEAM_PROJECTS = gql`
-  query GetTeamProjects($teamId: ID!, $includeArchived: Boolean, $first: Int, $last: Int) {
-    projects(teamId: $teamId, includeArchived: $includeArchived, first: $first, last: $last) {
-      nodes {
-        id
-        name
-      }
-    }
-  }
 `;
 
 export const GET_PROJECTS = gql`
@@ -128,14 +85,6 @@ export const CREATE_PROJECT = gql`
         imageUrl
         coreSupport
       }
-    }
-  }
-`;
-
-export const DELETE_PROJECT = gql`
-  mutation DeleteProject($projectId: ID!) {
-    deleteProject(input: { projectId: $projectId }) {
-      projectId
     }
   }
 `;
@@ -232,6 +181,14 @@ export const ARCHIVE_PROJECT = gql`
         id
         isArchived
       }
+    }
+  }
+`;
+
+export const DELETE_PROJECT = gql`
+  mutation DeleteProject($projectId: ID!) {
+    deleteProject(input: { projectId: $projectId }) {
+      projectId
     }
   }
 `;
