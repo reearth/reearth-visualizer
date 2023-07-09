@@ -1,7 +1,7 @@
 import { ApolloProvider, ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
 import type { ReactNode } from "react";
 
-import fragmentMatcher from "../fragmentMatcher.json";
+import fragmentMatcher from "../__gen__/fragmentMatcher.json";
 
 import { authLink, sentryLink, uploadLink, errorLink } from "./links";
 import { paginationMerge } from "./pagination";

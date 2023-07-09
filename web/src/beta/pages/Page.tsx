@@ -1,7 +1,7 @@
 import React, { ReactElement, ReactNode, useMemo } from "react";
 
 import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
-import { useMeQuery, useProjectQuery, useSceneQuery } from "@reearth/services/api";
+import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import { AuthenticationRequiredPage } from "@reearth/services/auth";
 import { useTheme } from "@reearth/services/theme";
 
@@ -16,6 +16,10 @@ type Props = {
 
 const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, children }) => {
   const theme = useTheme();
+
+  const { useMeQuery } = useMeFetcher();
+  const { useProjectQuery } = useProjectFetcher();
+  const { useSceneQuery } = useSceneFetcher();
 
   const { loading: loadingMe } = useMeQuery();
 

@@ -1,4 +1,4 @@
-export { useProjectQuery, useProjectCreate } from "./projectApi";
-export { useMeQuery } from "./meApi";
-export { useSceneQuery } from "./sceneApi";
-export { useWorkspaceQuery, useWorkspacesQuery, useCreateWorkspace } from "./workspacesApi";
+export { default as useProjectFetcher } from "./projectApi";
+export { default as useMeFetcher } from "./meApi";
+export { default as useSceneFetcher } from "./sceneApi";
+export { default as useWorkspaceFetcher } from "./workspacesApi";

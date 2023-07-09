@@ -1,12 +1,21 @@
-import { useGetSceneQuery } from "@reearth/services/gql";
+import { useQuery } from "@apollo/client";
+import { useCallback } from "react";
 
-export const useSceneQuery = (sceneId?: string) => {
-  const { data, ...rest } = useGetSceneQuery({
-    variables: { sceneId: sceneId ?? "" },
-    skip: !sceneId,
-  });
+import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 
-  const scene = data?.node?.__typename === "Scene" ? data.node : undefined;
+export default () => {
+  const useSceneQuery = useCallback((sceneId?: string) => {
+    const { data, ...rest } = useQuery(GET_SCENE, {
+      variables: { sceneId: sceneId ?? "" },
+      skip: !sceneId,
+    });
 
-  return { scene, ...rest };
+    const scene = data?.node?.__typename === "Scene" ? data.node : undefined;
+
+    return { scene, ...rest };
+  }, []);
+
+  return {
+    useSceneQuery,
+  };
 };
