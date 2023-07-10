@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import StoryPageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicator";
+import PageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicator";
 import { styled } from "@reearth/services/theme";
 
 type Props = {};
@@ -8,7 +8,7 @@ type Props = {};
 export const StoryPanel: FC<Props> = () => {
   return (
     <Wrapper>
-      <StoryPageIndicator
+      <PageIndicator
         currentPage={3}
         currentPageProgress={33}
         maxPage={6}
