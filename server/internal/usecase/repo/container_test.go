@@ -36,7 +36,7 @@ func TestSceneFilter_Merge(t *testing.T) {
 		Readable: scene.IDList{a, b},
 		Writable: scene.IDList{b, a},
 	}, SceneFilter{
-		Readable: scene.IDList{a},
+		Readable: scene.IDList{a, b},
 		Writable: scene.IDList{b},
 	}.Merge(SceneFilter{
 		Readable: scene.IDList{b},

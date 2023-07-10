@@ -101,24 +101,34 @@ func (d *Dataset) FieldByType(t ValueType) *Field {
 }
 
 // Interface returns a simple and human-readable representation of the dataset
-func (d *Dataset) Interface(s *Schema) map[string]interface{} {
+func (d *Dataset) Interface(s *Schema, idkey string) map[string]interface{} {
 	if d == nil || s == nil || d.Schema() != s.ID() {
 		return nil
 	}
 	m := map[string]interface{}{}
+	m[idkey] = d.ID().String()
 	for _, f := range d.fields {
 		key := s.Field(f.Field()).Name()
+		if key == "" {
+			key = f.Field().String()
+		}
+		if key == "" {
+			continue
+		}
 		m[key] = f.Value().Interface()
 	}
 	return m
 }
 
 // Interface is almost same as Interface, but keys of the map are IDs of fields.
-func (d *Dataset) InterfaceWithFieldIDs() map[string]interface{} {
+func (d *Dataset) InterfaceWithFieldIDs(idkey string) map[string]interface{} {
 	if d == nil {
 		return nil
 	}
 	m := map[string]interface{}{}
+	if !d.ID().IsEmpty() {
+		m[idkey] = d.ID().String()
+	}
 	for _, f := range d.fields {
 		key := f.Field().String()
 		m[key] = f.Value().Interface()

@@ -31,8 +31,8 @@ func NewAsset(client *mongox.Client) *Asset {
 	return &Asset{client: client.WithCollection("asset")}
 }
 
-func (r *Asset) Init() error {
-	return createIndexes(context.Background(), r.client, assetIndexes, assetUniqueIndexes)
+func (r *Asset) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, assetIndexes, assetUniqueIndexes)
 }
 
 func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
@@ -90,7 +90,7 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid accountdomain.Work
 		{"$group": bson.M{"_id": nil, "size": bson.M{"$sum": "$size"}}},
 	})
 	if err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	defer func() {
 		_ = c.Close(ctx)
@@ -105,7 +105,7 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid accountdomain.Work
 	}
 	var res resp
 	if err := c.Decode(&res); err != nil {
-		return 0, rerror.ErrInternalBy(err)
+		return 0, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return res.Size, nil
 }
@@ -132,26 +132,26 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 		}
 	}
 
-	c := mongodoc.NewAssetConsumer()
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), usort, pagination, c)
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
 	if err != nil {
-		return nil, nil, rerror.ErrInternalBy(err)
+		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return c.Result, pageInfo, nil
 }
 
 func (r *Asset) find(ctx context.Context, filter any) ([]*asset.Asset, error) {
-	c := mongodoc.NewAssetConsumer()
-	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
-		return nil, rerror.ErrInternalBy(err2)
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	if err2 := r.client.Find(ctx, filter, c); err2 != nil {
+		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
 }
 
 func (r *Asset) findOne(ctx context.Context, filter any) (*asset.Asset, error) {
-	c := mongodoc.NewAssetConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
@@ -172,9 +172,9 @@ func filterAssets(ids []id.AssetID, rows []*asset.Asset) []*asset.Asset {
 	return res
 }
 
-func (r *Asset) readFilter(filter any) any {
-	return applyWorkspaceFilter(filter, r.f.Readable)
-}
+// func (r *Asset) readFilter(filter any) any {
+// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// }
 
 func (r *Asset) writeFilter(filter any) any {
 	return applyWorkspaceFilter(filter, r.f.Writable)

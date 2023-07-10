@@ -23,7 +23,9 @@ func (c *PluginLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmode
 		return nil, []error{err}
 	}
 
-	res, err := c.usecase.Fetch(ctx, ids2, getOperator(ctx))
+	op := getOperator(ctx)
+
+	res, err := c.usecase.Fetch(ctx, ids2, op)
 	if err != nil {
 		return nil, []error{err}
 	}

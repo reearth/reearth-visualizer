@@ -66,21 +66,22 @@ func Init(r *repo.Container) error {
 		return nil
 	}
 
+	ctx := context.Background()
 	return util.Try(
-		r.Asset.(*Asset).Init,
-		r.AuthRequest.(*authserver.Mongo).Init,
-		r.Dataset.(*Dataset).Init,
-		r.DatasetSchema.(*DatasetSchema).Init,
-		r.Layer.(*Layer).Init,
-		r.Plugin.(*Plugin).Init,
-		r.Policy.(*Policy).Init,
-		r.Project.(*Project).Init,
-		r.Property.(*Property).Init,
-		r.PropertySchema.(*PropertySchema).Init,
-		r.Scene.(*Scene).Init,
-		r.Tag.(*Tag).Init,
-		r.User.(*accountmongo.User).Init,
-		r.Workspace.(*accountmongo.Workspace).Init,
+		func() error { return r.Asset.(*Asset).Init(ctx) },
+		func() error { return r.AuthRequest.(*authserver.Mongo).Init(ctx) },
+		func() error { return r.Dataset.(*Dataset).Init(ctx) },
+		func() error { return r.DatasetSchema.(*DatasetSchema).Init(ctx) },
+		func() error { return r.Layer.(*Layer).Init(ctx) },
+		func() error { return r.Plugin.(*Plugin).Init(ctx) },
+		func() error { return r.Policy.(*Policy).Init(ctx) },
+		func() error { return r.Project.(*Project).Init(ctx) },
+		func() error { return r.Property.(*Property).Init(ctx) },
+		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
+		func() error { return r.Scene.(*Scene).Init(ctx) },
+		func() error { return r.Tag.(*Tag).Init(ctx) },
+		func() error { return r.User.(*accountmongo.User).Init(ctx) },
+		func() error { return r.Workspace.(*accountmongo.Workspace).Init(ctx) },
 	)
 }
 
@@ -112,7 +113,7 @@ func applyOptionalSceneFilter(filter interface{}, ids scene.IDList) interface{} 
 func createIndexes(ctx context.Context, c *mongox.ClientCollection, keys, uniqueKeys []string) error {
 	created, deleted, err := c.Indexes(ctx, keys, uniqueKeys)
 	if len(created) > 0 || len(deleted) > 0 {
-		log.Infof("mongo: %s: index deleted: %v, created: %v\n", c.Client().Name(), deleted, created)
+		log.Infofc(ctx, "mongo: %s: index deleted: %v, created: %v\n", c.Client().Name(), deleted, created)
 	}
 	return err
 }

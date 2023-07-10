@@ -85,18 +85,20 @@ func (f WorkspaceFilter) Merge(g WorkspaceFilter) WorkspaceFilter {
 	var r, w accountdomain.WorkspaceIDList
 	if f.Readable != nil || g.Readable != nil {
 		if f.Readable == nil {
-			r = append(g.Readable[:0:0], g.Readable...)
+			r = g.Readable.Clone()
 		} else {
-			r = append(f.Readable, g.Readable...)
+			r = f.Readable.AddUniq(g.Readable...)
 		}
 	}
+
 	if f.Writable != nil || g.Writable != nil {
 		if f.Writable == nil {
-			w = append(g.Writable[:0:0], g.Writable...)
+			w = g.Writable.Clone()
 		} else {
-			w = append(f.Writable, g.Writable...)
+			w = f.Writable.AddUniq(g.Writable...)
 		}
 	}
+
 	return WorkspaceFilter{
 		Readable: r,
 		Writable: w,
@@ -125,20 +127,23 @@ func SceneFilterFromOperator(o *usecase.Operator) SceneFilter {
 
 func (f SceneFilter) Merge(g SceneFilter) SceneFilter {
 	var r, w scene.IDList
+
 	if f.Readable != nil || g.Readable != nil {
 		if f.Readable == nil {
-			r = append(g.Readable[:0:0], g.Readable...)
+			r = g.Readable.Clone()
 		} else {
-			r = append(f.Readable, g.Readable...)
+			r = f.Readable.AddUniq(g.Readable...)
 		}
 	}
+
 	if f.Writable != nil || g.Writable != nil {
 		if f.Writable == nil {
-			w = append(g.Writable[:0:0], g.Writable...)
+			w = g.Writable.Clone()
 		} else {
-			w = append(f.Writable, g.Writable...)
+			w = f.Writable.AddUniq(g.Writable...)
 		}
 	}
+
 	return SceneFilter{
 		Readable: r,
 		Writable: w,

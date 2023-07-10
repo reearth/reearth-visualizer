@@ -25,8 +25,8 @@ func NewPolicy(c *mongox.Client) *Policy {
 	}
 }
 
-func (r *Policy) Init() error {
-	return createIndexes(context.Background(), r.client, policyIndexes, policyUniqueIndexes)
+func (r *Policy) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, policyIndexes, policyUniqueIndexes)
 }
 
 func (r *Policy) FindByID(ctx context.Context, id workspace.PolicyID) (*workspace.Policy, error) {

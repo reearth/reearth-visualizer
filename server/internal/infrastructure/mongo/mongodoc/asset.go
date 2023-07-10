@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
+	"golang.org/x/exp/slices"
 )
 
 type AssetDocument struct {
@@ -19,10 +20,12 @@ type AssetDocument struct {
 	ContentType string
 }
 
-type AssetConsumer = mongox.SliceFuncConsumer[*AssetDocument, *asset.Asset]
+type AssetConsumer = Consumer[*AssetDocument, *asset.Asset]
 
-func NewAssetConsumer() *AssetConsumer {
-	return NewComsumer[*AssetDocument, *asset.Asset]()
+func NewAssetConsumer(workspaces []id.WorkspaceID) *AssetConsumer {
+	return NewConsumer[*AssetDocument, *asset.Asset](func(a *asset.Asset) bool {
+		return workspaces == nil || slices.Contains(workspaces, a.Workspace())
+	})
 }
 
 func NewAsset(asset *asset.Asset) (*AssetDocument, string) {

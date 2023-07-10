@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/exp/slices"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -30,8 +31,8 @@ func NewDatasetSchema(client *mongox.Client) *DatasetSchema {
 	}
 }
 
-func (r *DatasetSchema) Init() error {
-	return createIndexes(context.Background(), r.client, datasetSchemaIndexes, datasetSchemaUniqueIndexes)
+func (r *DatasetSchema) Init(ctx context.Context) error {
+	return createIndexes(ctx, r.client, datasetSchemaIndexes, datasetSchemaUniqueIndexes)
 }
 
 func (r *DatasetSchema) Filtered(f repo.SceneFilter) repo.DatasetSchema {
@@ -82,23 +83,6 @@ func (r *DatasetSchema) FindBySceneAll(ctx context.Context, sceneID id.SceneID) 
 	})
 }
 
-func (r *DatasetSchema) FindDynamicByID(ctx context.Context, sid id.DatasetSchemaID) (*dataset.Schema, error) {
-	return r.findOne(ctx, bson.M{
-		"id":      sid.String(),
-		"dynamic": true,
-	})
-}
-
-func (r *DatasetSchema) FindAllDynamicByScene(ctx context.Context, sceneID id.SceneID) (dataset.SchemaList, error) {
-	if !r.f.CanRead(sceneID) {
-		return nil, nil
-	}
-	return r.find(ctx, bson.M{
-		"scene":   sceneID.String(),
-		"dynamic": true,
-	})
-}
-
 func (r *DatasetSchema) FindBySceneAndSource(ctx context.Context, sceneID id.SceneID, source string) (dataset.SchemaList, error) {
 	if !r.f.CanRead(sceneID) {
 		return nil, nil
@@ -110,9 +94,13 @@ func (r *DatasetSchema) FindBySceneAndSource(ctx context.Context, sceneID id.Sce
 }
 
 func (r *DatasetSchema) CountByScene(ctx context.Context, id id.SceneID) (int, error) {
-	res, err := r.client.Count(ctx, r.readFilter(bson.M{
+	if r.f.Readable != nil && !slices.Contains(r.f.Readable, id) {
+		return 0, nil
+	}
+
+	res, err := r.client.Count(ctx, bson.M{
 		"scene": id.String(),
-	}))
+	})
 	if err != nil {
 		return 0, err
 	}
@@ -155,32 +143,32 @@ func (r *DatasetSchema) RemoveByScene(ctx context.Context, sceneID id.SceneID) e
 	if _, err := r.client.Client().DeleteMany(ctx, bson.M{
 		"scene": sceneID.String(),
 	}); err != nil {
-		return rerror.ErrInternalBy(err)
+		return rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return nil
 }
 
 func (r *DatasetSchema) find(ctx context.Context, filter any) ([]*dataset.Schema, error) {
-	c := mongodoc.NewDatasetSchemaConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewDatasetSchemaConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result, nil
 }
 
 func (r *DatasetSchema) findOne(ctx context.Context, filter any) (*dataset.Schema, error) {
-	c := mongodoc.NewDatasetSchemaConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewDatasetSchemaConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
 }
 
 func (r *DatasetSchema) paginate(ctx context.Context, filter bson.M, pagination *usecasex.Pagination) ([]*dataset.Schema, *usecasex.PageInfo, error) {
-	c := mongodoc.NewDatasetSchemaConsumer()
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, c)
+	c := mongodoc.NewDatasetSchemaConsumer(r.f.Readable)
+	pageInfo, err := r.client.Paginate(ctx, filter, nil, pagination, c)
 	if err != nil {
-		return nil, nil, rerror.ErrInternalBy(err)
+		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 	return c.Result, pageInfo, nil
 }
@@ -200,9 +188,9 @@ func filterDatasetSchemas(ids []id.DatasetSchemaID, rows []*dataset.Schema) []*d
 	return res
 }
 
-func (r *DatasetSchema) readFilter(filter any) any {
-	return applySceneFilter(filter, r.f.Readable)
-}
+// func (r *DatasetSchema) readFilter(filter any) any {
+// 	return applySceneFilter(filter, r.f.Readable)
+// }
 
 func (r *DatasetSchema) writeFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Writable)

@@ -2,7 +2,6 @@ package interactor
 
 import (
 	"context"
-	"encoding/csv"
 	"errors"
 	"io"
 	"strings"
@@ -15,7 +14,6 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
-	"github.com/samber/lo"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -65,12 +63,39 @@ func NewDataset(r *repo.Container, gr *gateway.Container) interfaces.Dataset {
 	}
 }
 
-func (i *Dataset) DynamicSchemaFields() []*dataset.SchemaField {
-	author, _ := dataset.NewSchemaField().NewID().Name("author").Type(dataset.ValueTypeString).Build()
-	content, _ := dataset.NewSchemaField().NewID().Name("content").Type(dataset.ValueTypeString).Build()
-	location, _ := dataset.NewSchemaField().NewID().Name("location").Type(dataset.ValueTypeLatLng).Build()
-	target, _ := dataset.NewSchemaField().NewID().Name("target").Type(dataset.ValueTypeString).Build()
-	return []*dataset.SchemaField{author, content, location, target}
+func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID) (dataset.List, error) {
+	return i.datasetRepo.FindByIDs(ctx, ids)
+}
+
+func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, w io.Writer, before func(string, string)) error {
+	f, ok := dataset.ExportFormat(format)
+	if !ok {
+		return rerror.ErrNotFound
+	}
+
+	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	name := s.Name()
+	if !strings.HasSuffix(name, "."+f.Ext) {
+		name += "." + f.Ext
+	}
+	before(name, f.ContentType)
+
+	if err := dataset.Export(w, format, s, true, func(f func(*dataset.Dataset) error) error {
+		return i.datasetRepo.FindBySchemaAllBy(ctx, id, func(d *dataset.Dataset) error {
+			if d == nil {
+				return nil
+			}
+			return f(d)
+		})
+	}); err != nil {
+		return rerror.ErrInternalByWithContext(ctx, err)
+	}
+
+	return nil
 }
 
 func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.UpdateDatasetSchemaParam, _ *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -103,14 +128,6 @@ func (i *Dataset) UpdateDatasetSchema(ctx context.Context, inp interfaces.Update
 	return schema, nil
 }
 
-func (i *Dataset) AddDynamicDatasetSchema(_ context.Context, _ interfaces.AddDynamicDatasetSchemaParam) (_ *dataset.Schema, err error) {
-	return nil, errors.New("not supported")
-}
-
-func (i *Dataset) AddDynamicDataset(_ context.Context, _ interfaces.AddDynamicDatasetParam) (_ *dataset.Schema, _ *dataset.Dataset, err error) {
-	return nil, nil, errors.New("not supported")
-}
-
 func (i *Dataset) ImportDataset(ctx context.Context, inp interfaces.ImportDatasetParam, operator *usecase.Operator) (_ *dataset.Schema, err error) {
 	if err := i.CanWriteScene(inp.SceneId, operator); err != nil {
 		return nil, err
@@ -138,13 +155,13 @@ func (i *Dataset) ImportDatasetFromGoogleSheet(ctx context.Context, inp interfac
 	}
 
 	defer func() {
-		err = (*csvFile).Close()
+		err = csvFile.Close()
 		if err != nil {
-			log.Fatal(err)
+			log.Errorfc(ctx, "failed to close: %v", err)
 		}
 	}()
 
-	return i.importDataset(ctx, *csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId, operator)
+	return i.importDataset(ctx, csvFile, inp.SheetName, ',', inp.SceneId, inp.SchemaId, operator)
 }
 
 func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name string, separator rune, sceneId id.SceneID, schemaId *id.DatasetSchemaID, o *usecase.Operator) (_ *dataset.Schema, err error) {
@@ -313,70 +330,6 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 	return schema, nil
 }
 
-func (i *Dataset) Fetch(ctx context.Context, ids []id.DatasetID, _ *usecase.Operator) (dataset.List, error) {
-	return i.datasetRepo.FindByIDs(ctx, ids)
-}
-
-func (i *Dataset) Export(ctx context.Context, id id.DatasetSchemaID, format string, _ *usecase.Operator) (io.Reader, string, error) {
-
-	s, err := i.datasetSchemaRepo.FindByID(ctx, id)
-	if err != nil {
-		return nil, "", err
-	}
-
-	ds, err := i.datasetRepo.FindBySchemaAll(ctx, id)
-	if err != nil {
-		return nil, "", err
-	}
-
-	var r io.Reader
-	switch format {
-	case "csv":
-		r = i.csvExport(s, ds)
-	default:
-		r = i.csvExport(s, ds)
-	}
-
-	return r, s.Name(), nil
-}
-
-func (i *Dataset) csvExport(s *dataset.Schema, ds dataset.List) io.Reader {
-	r, w := io.Pipe()
-	csvW := csv.NewWriter(w)
-
-	go func() {
-		var err error
-
-		defer func() {
-			_ = w.CloseWithError(err)
-		}()
-
-		// write csv headers
-		err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
-			return f.Name()
-		}))
-		if err != nil {
-			return
-		}
-
-		// write values
-		for _, values := range ds {
-			err = csvW.Write(lo.Map(s.Fields(), func(f *dataset.SchemaField, _ int) string {
-				fv := values.Field(f.ID())
-				if fv == nil || fv.Value() == nil {
-					return "#ERROR#"
-				}
-				return fv.Value().String()
-			}))
-			if err != nil {
-				return
-			}
-		}
-		csvW.Flush()
-	}()
-	return r
-}
-
 func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, _ *usecase.Operator) (dataset.List, error) {
 	if depth < 0 || depth > 3 {
 		return nil, interfaces.ErrDatasetInvalidDepth
@@ -393,7 +346,7 @@ func (i *Dataset) GraphFetch(ctx context.Context, id id.DatasetID, depth int, _ 
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.IsNil() {
-			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalByWithContext(ctx, errors.New("next id is nil"))
 		}
 		if done {
 			break
@@ -423,7 +376,7 @@ func (i *Dataset) GraphFetchSchema(ctx context.Context, id id.DatasetSchemaID, d
 		res = append(res, d)
 		next, done = it.Next(d)
 		if next.IsNil() {
-			return nil, rerror.ErrInternalBy(errors.New("next id is nil"))
+			return nil, rerror.ErrInternalByWithContext(ctx, errors.New("next id is nil"))
 		}
 		if done {
 			break
@@ -447,10 +400,6 @@ func (i *Dataset) FindSchemaByScene(ctx context.Context, sid id.SceneID, p *usec
 	}
 
 	return i.datasetSchemaRepo.FindByScene(ctx, sid, p)
-}
-
-func (i *Dataset) FindDynamicSchemaByScene(ctx context.Context, sid id.SceneID) (dataset.SchemaList, error) {
-	return i.datasetSchemaRepo.FindAllDynamicByScene(ctx, sid)
 }
 
 func (i *Dataset) Sync(ctx context.Context, sceneID id.SceneID, url string, operator *usecase.Operator) (dss dataset.SchemaList, ds dataset.List, err error) {

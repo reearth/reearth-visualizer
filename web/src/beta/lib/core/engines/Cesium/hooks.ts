@@ -12,7 +12,7 @@ import {
   SunLight,
   DirectionalLight,
 } from "cesium";
-import type { Viewer as CesiumViewer } from "cesium";
+import type { Viewer as CesiumViewer, ShadowMap } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
@@ -132,6 +132,87 @@ export default ({
     property?.light?.lightIntensity,
   ]);
 
+  // shadow map
+  type ShadowMapBias = {
+    polygonOffsetFactor?: number;
+    polygonOffsetUnits?: number;
+    normalOffsetScale?: number;
+    normalShading?: boolean;
+    normalShadingSmooth?: number;
+    depthBias?: number;
+  };
+
+  useEffect(() => {
+    const shadowMap = cesium?.current?.cesiumElement?.shadowMap as
+      | (ShadowMap & {
+          _terrainBias?: ShadowMapBias;
+          _pointBias?: ShadowMapBias;
+          _primitiveBias?: ShadowMapBias;
+        })
+      | undefined;
+    if (!shadowMap) return;
+    shadowMap.softShadows = property?.atmosphere?.softShadow ?? false;
+    shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.3;
+    shadowMap.size = property?.atmosphere?.shadowResolution ?? 2048;
+    shadowMap.fadingEnabled = true;
+    shadowMap.maximumDistance = 5000;
+    shadowMap.normalOffset = true;
+
+    // bias
+    const defaultTerrainBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.5,
+      normalShading: true,
+      normalShadingSmooth: 0.3,
+      depthBias: 0.0001,
+    };
+    const defaultPrimitiveBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.1 * 100,
+      normalShading: true,
+      normalShadingSmooth: 0.05,
+      depthBias: 0.00002 * 10,
+    };
+    const defaultPointBias: ShadowMapBias = {
+      polygonOffsetFactor: 1.1,
+      polygonOffsetUnits: 4.0,
+      normalOffsetScale: 0.0,
+      normalShading: true,
+      normalShadingSmooth: 0.1,
+      depthBias: 0.0005,
+    };
+
+    if (!shadowMap._terrainBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._terrainBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._terrainBias, defaultTerrainBias);
+    }
+
+    if (!shadowMap._primitiveBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._primitiveBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._primitiveBias, defaultPrimitiveBias);
+    }
+
+    if (!shadowMap._pointBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._pointBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._pointBias, defaultPointBias);
+    }
+  }, [
+    property?.atmosphere?.softShadow,
+    property?.atmosphere?.shadowDarkness,
+    property?.atmosphere?.shadowResolution,
+  ]);
+
   useEffect(() => {
     engineAPI.changeSceneMode(property?.default?.sceneMode, 0);
   }, [property?.default?.sceneMode, engineAPI]);
@@ -234,9 +315,10 @@ export default ({
     if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
 
+    // TODO: Support layers.selectFeature API for MVT
     if (!entity && selectedLayerId?.featureId) {
       // Find ImageryLayerFeature
-      const ImageryLayerDataTypes: DataType[] = ["mvt"];
+      const ImageryLayerDataTypes: DataType[] = [];
       const layers = layersRef?.current?.findAll(
         layer =>
           layer.type === "simple" &&
@@ -620,6 +702,21 @@ export default ({
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
   }, [featureFlags]);
+
+  // Anti-aliasing
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.postProcessStages.fxaa.enabled = property?.render?.antialias === "high";
+    viewer.scene.msaaSamples =
+      property?.render?.antialias === "extreme"
+        ? 8
+        : property?.render?.antialias === "high"
+        ? 0
+        : property?.render?.antialias === "medium"
+        ? 4
+        : 1; // default as 1
+  }, [property?.render?.antialias]);
 
   return {
     backgroundColor,

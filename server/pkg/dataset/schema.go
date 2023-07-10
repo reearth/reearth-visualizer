@@ -1,5 +1,7 @@
 package dataset
 
+import "fmt"
+
 type Schema struct {
 	id                  SchemaID
 	source              string
@@ -8,7 +10,6 @@ type Schema struct {
 	order               []FieldID
 	representativeField *FieldID
 	scene               SceneID
-	dynamic             bool
 }
 
 func (d *Schema) ID() (i SchemaID) {
@@ -109,10 +110,40 @@ func (d *Schema) FieldByType(t ValueType) *SchemaField {
 	return nil
 }
 
-func (d *Schema) Dynamic() bool {
-	return d.dynamic
-}
-
 func (u *Schema) Rename(name string) {
 	u.name = name
+}
+
+// JSONSchema prints a JSON schema for the schema
+func (d *Schema) JSONSchema() map[string]any {
+	if d == nil {
+		return nil
+	}
+
+	properties := map[string]any{
+		"": map[string]any{
+			"title": "ID",
+			"type":  "string",
+			"$id":   "#/properties/id",
+		},
+	}
+	for _, f := range d.fields {
+		name := f.Name()
+		if name == "" {
+			name = f.ID().String()
+		}
+		if name == "" {
+			continue
+		}
+		properties[name] = f.JSONSchema()
+	}
+
+	m := map[string]any{
+		"$schema":    "http://json-schema.org/draft-07/schema#",
+		"$id":        fmt.Sprintf("#/schemas/%s", d.ID()),
+		"title":      d.name,
+		"type":       "object",
+		"properties": properties,
+	}
+	return m
 }

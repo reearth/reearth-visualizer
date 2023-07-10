@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 )
@@ -79,13 +80,16 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			}
 
 			if u != nil {
+				ctx = adapter.AttachUser(ctx, u)
+				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
 					return err
 				}
 
-				ctx = adapter.AttachUser(ctx, u)
 				ctx = adapter.AttachOperator(ctx, op)
+				log.Debugfc(ctx, "auth: op: %#v", op)
 			}
 
 			c.SetRequest(req.WithContext(ctx))

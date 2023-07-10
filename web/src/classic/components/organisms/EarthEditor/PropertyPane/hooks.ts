@@ -4,7 +4,6 @@ import {
   ValueTypes,
   ValueType,
 } from "@reearth/classic/components/molecules/EarthEditor/PropertyPane";
-import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/classic/util/value";
 import {
   useUpdatePropertyValueMutation,
   useRemoveInfoboxFieldMutation,
@@ -23,7 +22,8 @@ import {
   WidgetAreaType,
   WidgetSectionType,
   WidgetZoneType,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/classic/util/value";
 import { useLang } from "@reearth/services/i18n";
 import {
   useSelected,
@@ -36,7 +36,6 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useSelectedWidgetArea,
-  useSessionWorkspace,
 } from "@reearth/services/state";
 
 import useQueries, { Mode as RawMode } from "./hooks-queries";
@@ -71,8 +70,7 @@ export default (mode: Mode) => {
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, setCamera] = useCamera();
   const [sceneMode] = useSceneMode();
-  const [workspace] = useSessionWorkspace();
-  const [lastWorkspace] = useWorkspace();
+  const [workspace] = useWorkspace();
 
   const [sceneId] = useSceneId();
   const [widgetAlignEditorActivated, setWidgetAlignEditorActivated] =
@@ -367,7 +365,7 @@ export default (mode: Mode) => {
 
   return {
     pane,
-    workspaceId: workspace?.id ?? lastWorkspace?.id,
+    workspaceId: workspace?.id,
     error,
     loading,
     isLayerGroup,
