@@ -15,13 +15,10 @@ const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({ childr
 const withAuthorisation = (): ((props: any) => React.FC<any>) => {
   const authProvider = window.REEARTH_CONFIG?.authProvider;
   if (authProvider === "cognito") {
-    // Check if authProvider is explicitly defined as "cognito"
     return withAuthenticator as unknown as (props: any) => React.FC<any>;
   } else if (authProvider === "auth0") {
-    // Handle the case when authProvider is undefined
     return withAuthenticationRequired as unknown as (props: any) => React.FC<any>;
   }
-  // Handle other authProvider values
   return (props: any) => props;
 };
 
