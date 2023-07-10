@@ -20,7 +20,7 @@ var (
 	uID    = user.NewID()
 	uEmail = "e2e@e2e.com"
 	uName  = "e2e"
-	wID    = id.NewWorkspaceID()
+	wID    = accountdomain.NewWorkspaceID()
 	pID    = id.NewProjectID()
 	pAlias = "PROJECT_ALIAS"
 
@@ -48,14 +48,10 @@ func baseSeeder(ctx context.Context, r *repo.Container) error {
 		return err
 	}
 
-<<<<<<< HEAD
 	m := workspace.Member{
 		Role: workspace.RoleOwner,
 	}
-	w := workspace.New().ID(wId).
-=======
 	w := workspace.New().ID(wID).
->>>>>>> main
 		Name("e2e").
 		Personal(false).
 		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).

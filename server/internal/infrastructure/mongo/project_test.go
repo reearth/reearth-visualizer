@@ -7,6 +7,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
@@ -22,8 +23,8 @@ func TestProject_FindByIDs(t *testing.T) {
 	ctx := context.Background()
 	pid := id.NewProjectID()
 	pid2 := id.NewProjectID()
-	wid := id.NewWorkspaceID()
-	wid2 := id.NewWorkspaceID()
+	wid := accountdomain.NewWorkspaceID()
+	wid2 := accountdomain.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": pid.String(), "team": wid.String()},
 		bson.M{"id": pid2.String(), "team": wid2.String()},
@@ -36,7 +37,7 @@ func TestProject_FindByIDs(t *testing.T) {
 	assert.Equal(t, pid, got[0].ID())
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: id.WorkspaceIDList{wid2},
+		Readable: accountdomain.WorkspaceIDList{wid2},
 	})
 	got, err = r2.FindByIDs(ctx, id.ProjectIDList{pid, pid2})
 	assert.NoError(t, err)

@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/mongox"
 )
 
 type SceneDocument struct {
@@ -48,7 +47,7 @@ type SceneClusterDocument struct {
 
 type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]
 
-func NewSceneConsumer(workspaces []id.WorkspaceID) *SceneConsumer {
+func NewSceneConsumer(workspaces []accountdomain.WorkspaceID) *SceneConsumer {
 	return NewConsumer[*SceneDocument, *scene.Scene](func(s *scene.Scene) bool {
 		return workspaces == nil || slices.Contains(workspaces, s.Workspace())
 	})

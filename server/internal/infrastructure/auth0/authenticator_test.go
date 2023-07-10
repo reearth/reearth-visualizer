@@ -89,7 +89,7 @@ func TestAuth0(t *testing.T) {
 	})
 
 	newEmail := "xxxxx"
-	r, err := a.UpdateUser(accountgateway.AuthenticatorUpdateUserParam{
+	r, err := a.UpdateUser(context.Background(), accountgateway.AuthenticatorUpdateUserParam{
 		ID:    userID,
 		Email: &newEmail,
 	})

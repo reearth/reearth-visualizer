@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -139,7 +138,7 @@ func (r *Project) find(ctx context.Context, filter interface{}) ([]*project.Proj
 }
 
 func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bool) (*project.Project, error) {
-	var f []id.WorkspaceID
+	var f []accountdomain.WorkspaceID
 	if filterByWorkspaces {
 		f = r.f.Readable
 	}
