@@ -40,7 +40,7 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		Property:       NewProperty(client),
 		Scene:          NewScene(client),
 		Tag:            NewTag(client),
-		Workspace:      accountmongo.NewWorkspace(client),
+		Workspace:      accountmongo.NewWorkspaceCompat(client),
 		User:           accountmongo.NewUser(client),
 		SceneLock:      NewSceneLock(client),
 		Policy:         NewPolicy(client),
@@ -80,8 +80,8 @@ func Init(r *repo.Container) error {
 		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
 		func() error { return r.Scene.(*Scene).Init(ctx) },
 		func() error { return r.Tag.(*Tag).Init(ctx) },
-		func() error { return r.User.(*accountmongo.User).Init(ctx) },
-		func() error { return r.Workspace.(*accountmongo.Workspace).Init(ctx) },
+		func() error { return r.User.(*accountmongo.User).Init() },
+		func() error { return r.Workspace.(*accountmongo.Workspace).Init() },
 	)
 }
 
