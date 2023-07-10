@@ -1,0 +1,38 @@
+name: deploy-aws
+on:
+  workflow_dispatch:
+    inputs:
+      keyId:
+        description: 'You can override the AWS access key id, or keep it empty to use the default from the secrets'
+        required: false
+        default:
+      secretAccessKey:
+        description: 'You can override the AWS secret access key, or keep it empty to use the default from the secrets'
+        required: false
+        default:
+env:
+  # server
+  IMAGE: reearth/reearth:nightly
+  IMAGE_AWS: reearth-test-server:latest
+
+jobs:
+  deploy_server:
+    name: Deploy server to AWS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID || github.events.inputs.keyId }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY || github.events.inputs.secretAccessKey }}
+          aws-region: us-west-2
+
+      - name: Log in to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: docker pull, push to ECR
+        run: |
+          docker pull $IMAGE
+          docker tag $IMAGE ${{ steps.login-ecr.outputs.registry }}/$IMAGE_AWS
+          docker push ${{ steps.login-ecr.outputs.registry }}/$IMAGE_AWS
