@@ -5,14 +5,14 @@ on:
       sha_short:
         description: 'sha_short'
         required: true
-      name:
-        description: 'name'
+      tag:
+        description: 'tag'
         required: true
 jobs:
   build-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    if: github.event.inputs.name
+    if: github.event.inputs.tag
     env:
       IMAGE_NAME: reearth/reearth
     defaults:
@@ -33,12 +33,12 @@ jobs:
       - name: Get options
         id: options
         env:
-          NAME: ${{ github.event.inputs.name }}
+          TAG: ${{ github.event.inputs.tag }}
           SHA: ${{ github.event.inputs.sha_short }}
         run: |
           PLATFORMS=linux/amd64
           VERSION=$SHA
-          TAGS=$IMAGE_NAME:$NAME
+          TAGS=$IMAGE_NAME:$TAG
           echo "::set-output name=platforms::$PLATFORMS"
           echo "::set-output name=version::$VERSION"
           echo "::set-output name=tags::$TAGS"
