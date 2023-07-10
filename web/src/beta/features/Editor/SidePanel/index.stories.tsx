@@ -1,34 +1,47 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import * as SidePanel from "@reearth/beta/features/Editor/SidePanel/index";
+import SidePanel from ".";
 
-const meta: Meta<typeof SidePanel.Wrapper> = {
-  component: SidePanel.Wrapper,
+const meta: Meta<typeof SidePanel> = {
+  component: SidePanel,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof SidePanel.Wrapper>;
+type Story = StoryObj<typeof SidePanel>;
 
 export const Default: Story = {
-  render: () => (
+  render: args => (
     <div style={{ height: "100vh" }}>
-      <SidePanel.Wrapper location="left">
-        <SidePanel.Section maxHeight="33%">
-          <SidePanel.Card>
-            <SidePanel.Title>Title1</SidePanel.Title>
-            <SidePanel.Content>
-              Please check this story how to use these separated components.
-            </SidePanel.Content>
-          </SidePanel.Card>
-        </SidePanel.Section>
-        <SidePanel.Section>
-          <SidePanel.Card>
-            <SidePanel.Title>Title2</SidePanel.Title>
-            <SidePanel.Content>content</SidePanel.Content>
-          </SidePanel.Card>
-        </SidePanel.Section>
-      </SidePanel.Wrapper>
+      <SidePanel {...args} />
     </div>
   ),
+  args: {
+    location: "left",
+    contents: [
+      {
+        id: "Dummy1",
+        title: "Dummy1",
+        children: (
+          <>
+            {[...Array(100)].map((_, i) => (
+              <div key={i}>scrollable / {i}</div>
+            ))}
+          </>
+        ),
+      },
+      {
+        id: "Dummy2",
+        title: "Dummy2",
+        maxHeight: "33%",
+        children: (
+          <>
+            {[...Array(100)].map((_, i) => (
+              <div key={i}>scrollable / {i}</div>
+            ))}
+          </>
+        ),
+      },
+    ],
+  },
 };
