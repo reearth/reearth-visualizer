@@ -1,6 +1,6 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
-import ContentPage from "@reearth/beta/features/Editor/Tabs/story/SidePanel/ContentPage";
-import ContentStory from "@reearth/beta/features/Editor/Tabs/story/SidePanel/ContentStory";
+import ContentPage from "@reearth/beta/features/Editor/tabs/story/SidePanel/ContentPage";
+import ContentStory from "@reearth/beta/features/Editor/tabs/story/SidePanel/ContentStory";
 import { useT } from "@reearth/services/i18n";
 
 // TODO: these are currently rough definition

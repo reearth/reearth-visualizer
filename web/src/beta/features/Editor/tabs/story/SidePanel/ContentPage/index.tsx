@@ -1,6 +1,6 @@
-import Action from "@reearth/beta/features/Editor/Tabs/story/SidePanel/Action";
-import Item from "@reearth/beta/features/Editor/Tabs/story/SidePanel/Item";
-import PageItemWrapper from "@reearth/beta/features/Editor/Tabs/story/SidePanel/PageItemWrapper";
+import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
+import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
+import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
