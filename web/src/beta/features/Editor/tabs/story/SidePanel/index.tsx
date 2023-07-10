@@ -4,9 +4,9 @@ import * as StyledSidePanel from "@reearth/beta/features/Editor/SidePanel";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import Action from "./Action";
+import Item from "./Item";
 import PageItemWrapper from "./PageItemWrapper";
-import RowAction from "./RowAction";
-import RowItem from "./RowItem";
 
 // TODO: these are currently rough definition
 type Props = {
@@ -30,17 +30,17 @@ const SidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPa
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
-                  <RowItem
+                  <Item
                     key={i}
                     onItemClick={() => onSelectStory(i.toString())}
                     onActionClick={() => console.log("onActionClick")}>
                     Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} /
                     Story{i} / Story{i}
-                  </RowItem>
+                  </Item>
                 ))}
               </ContentUp>
               <ContentBottom>
-                <RowAction
+                <Action
                   icon="book"
                   iconColor="#ffffff"
                   iconSize={16}
@@ -60,18 +60,18 @@ const SidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPa
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
                   <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
-                    <RowItem
+                    <Item
                       key={i}
                       onItemClick={() => onSelectPage(i.toString())}
                       onActionClick={() => console.log("onActionClick")}>
                       Page
-                    </RowItem>
+                    </Item>
                   </PageItemWrapper>
                 ))}
               </ContentUp>
               <ContentBottom>
-                <RowAction icon="square" title={`+ ${t("New Page")}`} onClick={onPageAdd} />
-                <RowAction icon="swiper" title={`+ ${t("New Swipe")}`} onClick={onPageAdd} />
+                <Action icon="square" title={`+ ${t("New Page")}`} onClick={onPageAdd} />
+                <Action icon="swiper" title={`+ ${t("New Swipe")}`} onClick={onPageAdd} />
               </ContentBottom>
             </ContentInner>
           </StyledSidePanel.Content>

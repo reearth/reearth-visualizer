@@ -39,7 +39,7 @@ export default ({
     }[],
   ) => void;
 }) => {
-  // const [innerItems, setItems] = useState<RowItem[]>(items);
+  // const [innerItems, setItems] = useState<Item[]>(items);
   const innerSelectedIndex = useRef(selectedIndex);
   const [layerModalActive, setLayerModalActive] = useState(false);
   const selectedLayers = useMemo(
