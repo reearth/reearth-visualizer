@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "@reearth/services/gql/__gen__";
 
-export const CREATE_WORKSPACE = gql`
+export const CREATE_WORKSPACE = gql(`
   mutation CreateWorkspace($name: String!) {
     createTeam(input: { name: $name }) {
       team {
@@ -31,4 +31,4 @@ export const CREATE_WORKSPACE = gql`
       }
     }
   }
-`;
+`);
