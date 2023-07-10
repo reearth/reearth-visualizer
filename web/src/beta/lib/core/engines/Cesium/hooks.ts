@@ -703,6 +703,21 @@ export default ({
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
   }, [featureFlags]);
 
+  // Anti-aliasing
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.postProcessStages.fxaa.enabled = property?.render?.antialias === "high";
+    viewer.scene.msaaSamples =
+      property?.render?.antialias === "extreme"
+        ? 8
+        : property?.render?.antialias === "high"
+        ? 0
+        : property?.render?.antialias === "medium"
+        ? 4
+        : 1; // default as 1
+  }, [property?.render?.antialias]);
+
   return {
     backgroundColor,
     cesium,
