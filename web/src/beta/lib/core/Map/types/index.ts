@@ -329,6 +329,9 @@ export type SceneProperty = {
     sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
     imageBasedLightIntensity?: number;
   };
+  render?: {
+    antialias?: "low" | "medium" | "high" | "extreme";
+  };
 };
 
 export type EngineComponent = ForwardRefExoticComponent<
