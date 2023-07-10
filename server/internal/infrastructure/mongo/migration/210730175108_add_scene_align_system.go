@@ -3,12 +3,12 @@ package migration
 import (
 	"context"
 
-	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -22,7 +22,7 @@ func AddSceneAlignSystem(ctx context.Context, c DBClient) error {
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
-			log.Infof("migration: AddSceneAlignSystem: hit scenes: %d\n", len(rows))
+			log.Infofc(ctx, "migration: AddSceneAlignSystem: hit scenes: %d\n", len(rows))
 
 			for _, row := range rows {
 				var doc mongodoc.SceneDocument

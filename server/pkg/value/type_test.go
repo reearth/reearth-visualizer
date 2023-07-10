@@ -148,3 +148,35 @@ func TestType_ValueFrom(t *testing.T) {
 		})
 	}
 }
+
+func TestType_JSONSchema(t *testing.T) {
+	tests := []struct {
+		name string
+		tr   Type
+		want map[string]any
+	}{
+		{
+			name: "default",
+			tr:   TypeString,
+			want: map[string]any{"type": "string"},
+		},
+		{
+			name: "custom",
+			tr:   Type("foo"),
+			want: nil,
+		},
+		{
+			name: "unknown",
+			tr:   TypeUnknown,
+			want: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.want, tt.tr.JSONSchema(nil))
+		})
+	}
+}

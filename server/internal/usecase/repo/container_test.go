@@ -15,7 +15,7 @@ func TestWorkspaceFilter_Merge(t *testing.T) {
 		Readable: user.WorkspaceIDList{a, b},
 		Writable: user.WorkspaceIDList{b, a},
 	}, WorkspaceFilter{
-		Readable: user.WorkspaceIDList{a},
+		Readable: user.WorkspaceIDList{a, b},
 		Writable: user.WorkspaceIDList{b},
 	}.Merge(WorkspaceFilter{
 		Readable: user.WorkspaceIDList{b},
@@ -34,7 +34,7 @@ func TestSceneFilter_Merge(t *testing.T) {
 		Readable: scene.IDList{a, b},
 		Writable: scene.IDList{b, a},
 	}, SceneFilter{
-		Readable: scene.IDList{a},
+		Readable: scene.IDList{a, b},
 		Writable: scene.IDList{b},
 	}.Merge(SceneFilter{
 		Readable: scene.IDList{b},

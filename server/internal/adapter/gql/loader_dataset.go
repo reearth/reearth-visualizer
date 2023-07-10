@@ -25,7 +25,7 @@ func (c *DatasetLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmod
 		return nil, []error{err}
 	}
 
-	res, err := c.usecase.Fetch(ctx, datasetids, getOperator(ctx))
+	res, err := c.usecase.Fetch(ctx, datasetids)
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -128,25 +128,6 @@ func (c *DatasetLoader) FindSchemaByScene(ctx context.Context, i gqlmodel.ID, fi
 		PageInfo:   gqlmodel.ToPageInfo(pi),
 		TotalCount: int(pi.TotalCount),
 	}, nil
-}
-
-func (c *DatasetLoader) FindDynamicSchemasByScene(ctx context.Context, sid gqlmodel.ID) ([]*gqlmodel.DatasetSchema, error) {
-	sceneid, err := gqlmodel.ToID[id.Scene](sid)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := c.usecase.FindDynamicSchemaByScene(ctx, sceneid)
-	if err != nil {
-		return nil, err
-	}
-
-	dss := []*gqlmodel.DatasetSchema{}
-	for _, dataset := range res {
-		dss = append(dss, gqlmodel.ToDatasetSchema(dataset))
-	}
-
-	return dss, nil
 }
 
 func (c *DatasetLoader) FindBySchema(ctx context.Context, dsid gqlmodel.ID, first *int, last *int, before *usecasex.Cursor, after *usecasex.Cursor) (*gqlmodel.DatasetConnection, error) {

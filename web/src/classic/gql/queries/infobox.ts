@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { layerFragment, infoboxFragment } from "@reearth/services/gql/fragments";
+import { layerFragment, infoboxFragment } from "../fragments";
 
 export const GET_BLOCKS = gql`
   query GetBlocks($sceneId: ID!, $lang: Lang) {
@@ -34,13 +34,6 @@ export const CREATE_INFOBOX = gql`
         infobox {
           ...InfoboxFragment
         }
-        ... on LayerItem {
-          merged {
-            infobox {
-              ...MergedInfoboxFragment
-            }
-          }
-        }
       }
     }
   }
@@ -55,13 +48,6 @@ export const REMOVE_INFOBOX = gql`
         id
         infobox {
           ...InfoboxFragment
-        }
-        ... on LayerItem {
-          merged {
-            infobox {
-              ...MergedInfoboxFragment
-            }
-          }
         }
       }
     }
