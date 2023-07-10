@@ -147,6 +147,9 @@ export type Cesium3DTilesAppearance = {
   pointSize?: number;
   meta?: unknown;
   pbr?: boolean;
+  specularEnvironmentMaps?: string;
+  sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+  imageBasedLightIntensity?: number;
 };
 
 export type LegacyPhotooverlayAppearance = {

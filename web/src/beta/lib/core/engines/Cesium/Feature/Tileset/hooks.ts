@@ -15,6 +15,7 @@ import {
   Cesium3DTileFeature,
   Model,
   Cesium3DTilePointFeature,
+  ImageBasedLighting,
 } from "cesium";
 import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -43,6 +44,18 @@ import {
 import { useClippingBox } from "./useClippingBox";
 
 import { Property } from ".";
+
+const sphericalHarmonicCoefficientsScratch = [
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+];
 
 const useData = (layer: ComputedLayer | undefined) => {
   return useMemo(() => {
@@ -516,11 +529,35 @@ export const useHooks = ({
       : null;
   }, [isVisible, tileset, url, type, meta]);
 
+  const imageBasedLighting = useMemo(() => {
+    const ibl = new ImageBasedLighting();
+    console.log("ibl update");
+    if (property?.specularEnvironmentMaps) {
+      ibl.specularEnvironmentMaps = property.specularEnvironmentMaps;
+    }
+    if (property?.sphericalHarmonicCoefficients) {
+      ibl.sphericalHarmonicCoefficients = property?.sphericalHarmonicCoefficients?.map(
+        (cartesian, index) =>
+          Cartesian3.multiplyByScalar(
+            new Cartesian3(...cartesian),
+            property?.imageBasedLightIntensity ?? 1.0,
+            sphericalHarmonicCoefficientsScratch[index],
+          ),
+      );
+    }
+    return ibl;
+  }, [
+    property?.specularEnvironmentMaps,
+    property?.sphericalHarmonicCoefficients,
+    property?.imageBasedLightIntensity,
+  ]);
+
   return {
     tilesetUrl,
     ref,
     style,
     clippingPlanes,
     builtinBoxProps,
+    imageBasedLighting,
   };
 };
