@@ -531,7 +531,6 @@ export const useHooks = ({
 
   const imageBasedLighting = useMemo(() => {
     const ibl = new ImageBasedLighting();
-    console.log("ibl update");
     if (property?.specularEnvironmentMaps) {
       ibl.specularEnvironmentMaps = property.specularEnvironmentMaps;
     }
