@@ -1,10 +1,11 @@
 import { FC } from "react";
 
-import * as SidePanel from "@reearth/beta/features/Editor/SidePanel";
-import StorySidePanelAction from "@reearth/beta/features/Editor/tabs/story/StorySidePanelAction";
-import StorySidePanelItem from "@reearth/beta/features/Editor/tabs/story/StorySidePanelItem";
-import StorySidePanelPageWrapper from "@reearth/beta/features/Editor/tabs/story/StorySidePanelPageWrapper";
+import * as StyledSidePanel from "@reearth/beta/features/Editor/SidePanel";
 import { styled } from "@reearth/services/theme";
+
+import PageItemWrapper from "./PageItemWrapper";
+import RowAction from "./RowAction";
+import RowItem from "./RowItem";
 
 // TODO: these are currently rough definition
 type Props = {
@@ -17,27 +18,27 @@ type Props = {
   onPageAdd: () => void;
 };
 
-const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
+const SidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
   return (
-    <SidePanel.Wrapper location="left">
-      <SidePanel.Section maxHeight="33%">
-        <SidePanel.Card>
-          <SidePanel.Title>Story</SidePanel.Title>
-          <SidePanel.Content>
+    <StyledSidePanel.Wrapper location="left">
+      <StyledSidePanel.Section maxHeight="33%">
+        <StyledSidePanel.Card>
+          <StyledSidePanel.Title>Story</StyledSidePanel.Title>
+          <StyledSidePanel.Content>
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
-                  <StorySidePanelItem
+                  <RowItem
                     key={i}
                     onItemClick={() => onSelectStory(i.toString())}
                     onActionClick={() => console.log("onActionClick")}>
                     Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} /
                     Story{i} / Story{i}
-                  </StorySidePanelItem>
+                  </RowItem>
                 ))}
               </ContentUp>
               <ContentBottom>
-                <StorySidePanelAction
+                <RowAction
                   icon="book"
                   iconColor="#ffffff"
                   iconSize={16}
@@ -46,39 +47,39 @@ const StorySidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSel
                 />
               </ContentBottom>
             </ContentInner>
-          </SidePanel.Content>
-        </SidePanel.Card>
-      </SidePanel.Section>
-      <SidePanel.Section>
-        <SidePanel.Card>
-          <SidePanel.Title>Pages</SidePanel.Title>
-          <SidePanel.Content>
+          </StyledSidePanel.Content>
+        </StyledSidePanel.Card>
+      </StyledSidePanel.Section>
+      <StyledSidePanel.Section>
+        <StyledSidePanel.Card>
+          <StyledSidePanel.Title>Pages</StyledSidePanel.Title>
+          <StyledSidePanel.Content>
             <ContentInner>
               <ContentUp>
                 {[...Array(100)].map((_, i) => (
-                  <StorySidePanelPageWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
-                    <StorySidePanelItem
+                  <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
+                    <RowItem
                       key={i}
                       onItemClick={() => onSelectPage(i.toString())}
                       onActionClick={() => console.log("onActionClick")}>
                       Page
-                    </StorySidePanelItem>
-                  </StorySidePanelPageWrapper>
+                    </RowItem>
+                  </PageItemWrapper>
                 ))}
               </ContentUp>
               <ContentBottom>
-                <StorySidePanelAction icon="square" title="+ New Page" onClick={onPageAdd} />
-                <StorySidePanelAction icon="swiper" title="+ New Swipe" onClick={onPageAdd} />
+                <RowAction icon="square" title="+ New Page" onClick={onPageAdd} />
+                <RowAction icon="swiper" title="+ New Swipe" onClick={onPageAdd} />
               </ContentBottom>
             </ContentInner>
-          </SidePanel.Content>
-        </SidePanel.Card>
-      </SidePanel.Section>
-    </SidePanel.Wrapper>
+          </StyledSidePanel.Content>
+        </StyledSidePanel.Card>
+      </StyledSidePanel.Section>
+    </StyledSidePanel.Wrapper>
   );
 };
 
-export default StorySidePanel;
+export default SidePanel;
 
 const ContentInner = styled.div`
   display: flex;
