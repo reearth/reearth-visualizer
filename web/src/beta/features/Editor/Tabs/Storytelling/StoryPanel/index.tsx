@@ -1,18 +1,33 @@
 import { FC } from "react";
 
+import StoryPageIndicator from "@reearth/beta/features/Editor/Tabs/Storytelling/StoryPageIndicator";
 import { styled } from "@reearth/services/theme";
 
 type Props = {};
 
-const StoryPanel: FC<Props> = () => {
-  return <Wrapper>StoryPanel</Wrapper>;
+export const StoryPanel: FC<Props> = () => {
+  return (
+    <Wrapper>
+      <StoryPageIndicator
+        currentPage={3}
+        currentPageProgress={33}
+        maxPage={6}
+        onPageChange={page => console.log(page)}
+      />
+      <Content>
+        <div>StoryPanel</div>
+      </Content>
+    </Wrapper>
+  );
 };
 
 export default StoryPanel;
 
 const Wrapper = styled.div`
-  box-sizing: border-box;
   width: 462px;
-  padding: 10px 24px;
   background-color: #f1f1f1;
+`;
+
+const Content = styled.div`
+  padding: 10px 24px;
 `;
