@@ -40,7 +40,7 @@ const WorkspaceMenu: React.FC<Props> = ({
   const theme = useTheme();
 
   return (
-    <Dropdown label={label} direction="right" hasIcon>
+    <StyledDropdown label={label} direction="right" hasIcon>
       <DropdownInner>
         <MenuList>
           {workspaces.map(workspace => (
@@ -76,9 +76,13 @@ const WorkspaceMenu: React.FC<Props> = ({
           </MenuListItem>
         </MenuList>
       </DropdownInner>
-    </Dropdown>
+    </StyledDropdown>
   );
 };
+
+const StyledDropdown = styled(Dropdown)`
+  flex: 1;
+`;
 
 const DropdownInner = styled.div`
   padding: 0;
