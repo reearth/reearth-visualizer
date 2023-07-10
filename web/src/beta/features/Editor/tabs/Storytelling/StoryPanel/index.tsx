@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import StoryPageIndicator from "@reearth/beta/features/Editor/Tabs/Storytelling/StoryPageIndicator";
+import StoryPageIndicator from "@reearth/beta/features/Editor/tabs/Storytelling/StoryPageIndicator";
 import { styled } from "@reearth/services/theme";
 
 type Props = {};

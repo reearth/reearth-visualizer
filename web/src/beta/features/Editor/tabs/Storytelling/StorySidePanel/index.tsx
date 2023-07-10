@@ -1,9 +1,9 @@
 import { FC } from "react";
-import StorySidePanelAction from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelAction";
-import StorySidePanelItem from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelItem";
-import StorySidePanelPageWrapper from "src/beta/features/Editor/Tabs/Storytelling/StorySidePanelPageWrapper";
 
 import * as SidePanel from "@reearth/beta/features/Editor/SidePanel";
+import StorySidePanelAction from "@reearth/beta/features/Editor/tabs/Storytelling/StorySidePanelAction";
+import StorySidePanelItem from "@reearth/beta/features/Editor/tabs/Storytelling/StorySidePanelItem";
+import StorySidePanelPageWrapper from "@reearth/beta/features/Editor/tabs/Storytelling/StorySidePanelPageWrapper";
 import { styled } from "@reearth/services/theme";
 
 // TODO: these are currently rough definition
