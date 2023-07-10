@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import * as StyledSidePanel from "@reearth/beta/features/Editor/SidePanel";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import PageItemWrapper from "./PageItemWrapper";
@@ -19,11 +20,12 @@ type Props = {
 };
 
 const SidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
+  const t = useT();
   return (
     <StyledSidePanel.Wrapper location="left">
       <StyledSidePanel.Section maxHeight="33%">
         <StyledSidePanel.Card>
-          <StyledSidePanel.Title>Story</StyledSidePanel.Title>
+          <StyledSidePanel.Title>{t("Story")}</StyledSidePanel.Title>
           <StyledSidePanel.Content>
             <ContentInner>
               <ContentUp>
@@ -42,7 +44,7 @@ const SidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPa
                   icon="book"
                   iconColor="#ffffff"
                   iconSize={16}
-                  title="+ New Story"
+                  title={`+ ${t("New Story")}`}
                   onClick={onStoryAdd}
                 />
               </ContentBottom>
@@ -52,7 +54,7 @@ const SidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPa
       </StyledSidePanel.Section>
       <StyledSidePanel.Section>
         <StyledSidePanel.Card>
-          <StyledSidePanel.Title>Pages</StyledSidePanel.Title>
+          <StyledSidePanel.Title>{t("Page")}</StyledSidePanel.Title>
           <StyledSidePanel.Content>
             <ContentInner>
               <ContentUp>
@@ -68,8 +70,8 @@ const SidePanel: FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPa
                 ))}
               </ContentUp>
               <ContentBottom>
-                <RowAction icon="square" title="+ New Page" onClick={onPageAdd} />
-                <RowAction icon="swiper" title="+ New Swipe" onClick={onPageAdd} />
+                <RowAction icon="square" title={`+ ${t("New Page")}`} onClick={onPageAdd} />
+                <RowAction icon="swiper" title={`+ ${t("New Swipe")}`} onClick={onPageAdd} />
               </ContentBottom>
             </ContentInner>
           </StyledSidePanel.Content>
