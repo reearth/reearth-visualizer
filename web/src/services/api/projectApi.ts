@@ -39,7 +39,7 @@ export default () => {
       description?: string,
       imageUrl?: string,
     ): Promise<MutationReturn<Partial<Project>>> => {
-      const { data, errors } = await createNewProject({
+      const { data: projectResults, errors: projectErrors } = await createNewProject({
         variables: {
           teamId: workspaceId,
           visualizer,
@@ -49,16 +49,16 @@ export default () => {
           coreSupport: !!coreSupport,
         },
       });
-      if (errors || !data?.createProject) {
+      if (projectErrors || !projectResults?.createProject) {
         console.log("GraphQL: Failed to create project");
         setNotification({ type: "error", text: t("Failed to create project.") });
 
         return { status: "error" };
       } else {
-        const scene = await createScene({
-          variables: { projectId: data.createProject.project.id },
+        const { errors: sceneErrors } = await createScene({
+          variables: { projectId: projectResults?.createProject.project.id },
         });
-        if (scene.errors) {
+        if (sceneErrors) {
           console.log("GraphQL: Failed to create scene for project creation.");
           setNotification({ type: "error", text: t("Failed to create project.") });
 
@@ -66,7 +66,7 @@ export default () => {
         }
       }
       return {
-        data: data.createProject.project,
+        data: projectResults.createProject.project,
         status: "success",
       };
     },
