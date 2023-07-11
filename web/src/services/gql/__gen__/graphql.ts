@@ -1,31 +1,32 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+/* eslint-disable */
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {} as const;
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  Any: any;
-  Cursor: string;
-  DateTime: Date;
-  FileSize: number;
-  Lang: string;
-  TranslatedString: { [lang in string]?: string } | null;
-  URL: string;
-  Upload: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Any: { input: any; output: any; }
+  Cursor: { input: string; output: string; }
+  DateTime: { input: Date; output: Date; }
+  FileSize: { input: number; output: number; }
+  Lang: { input: string; output: string; }
+  TranslatedString: { input: { [lang in string]?: string } | null; output: { [lang in string]?: string } | null; }
+  URL: { input: string; output: string; }
+  Upload: { input: any; output: any; }
 };
 
 export type AddClusterInput = {
-  name: Scalars['String'];
-  sceneId: Scalars['ID'];
+  name: Scalars['String']['input'];
+  sceneId: Scalars['ID']['input'];
 };
 
 export type AddClusterPayload = {
@@ -35,9 +36,9 @@ export type AddClusterPayload = {
 };
 
 export type AddDatasetSchemaInput = {
-  name: Scalars['String'];
-  representativefield?: InputMaybe<Scalars['ID']>;
-  sceneId: Scalars['ID'];
+  name: Scalars['String']['input'];
+  representativefield?: InputMaybe<Scalars['ID']['input']>;
+  sceneId: Scalars['ID']['input'];
 };
 
 export type AddDatasetSchemaPayload = {
@@ -46,10 +47,10 @@ export type AddDatasetSchemaPayload = {
 };
 
 export type AddInfoboxFieldInput = {
-  extensionId: Scalars['ID'];
-  index?: InputMaybe<Scalars['Int']>;
-  layerId: Scalars['ID'];
-  pluginId: Scalars['ID'];
+  extensionId: Scalars['ID']['input'];
+  index?: InputMaybe<Scalars['Int']['input']>;
+  layerId: Scalars['ID']['input'];
+  pluginId: Scalars['ID']['input'];
 };
 
 export type AddInfoboxFieldPayload = {
@@ -59,43 +60,43 @@ export type AddInfoboxFieldPayload = {
 };
 
 export type AddLayerGroupInput = {
-  extensionId?: InputMaybe<Scalars['ID']>;
-  index?: InputMaybe<Scalars['Int']>;
-  linkedDatasetSchemaID?: InputMaybe<Scalars['ID']>;
-  name?: InputMaybe<Scalars['String']>;
-  parentLayerId: Scalars['ID'];
-  pluginId?: InputMaybe<Scalars['ID']>;
-  representativeFieldId?: InputMaybe<Scalars['ID']>;
+  extensionId?: InputMaybe<Scalars['ID']['input']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
+  linkedDatasetSchemaID?: InputMaybe<Scalars['ID']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  parentLayerId: Scalars['ID']['input'];
+  pluginId?: InputMaybe<Scalars['ID']['input']>;
+  representativeFieldId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type AddLayerGroupPayload = {
   __typename?: 'AddLayerGroupPayload';
-  index?: Maybe<Scalars['Int']>;
+  index?: Maybe<Scalars['Int']['output']>;
   layer: LayerGroup;
   parentLayer: LayerGroup;
 };
 
 export type AddLayerItemInput = {
-  extensionId: Scalars['ID'];
-  index?: InputMaybe<Scalars['Int']>;
-  lat?: InputMaybe<Scalars['Float']>;
-  lng?: InputMaybe<Scalars['Float']>;
-  name?: InputMaybe<Scalars['String']>;
-  parentLayerId: Scalars['ID'];
-  pluginId: Scalars['ID'];
+  extensionId: Scalars['ID']['input'];
+  index?: InputMaybe<Scalars['Int']['input']>;
+  lat?: InputMaybe<Scalars['Float']['input']>;
+  lng?: InputMaybe<Scalars['Float']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  parentLayerId: Scalars['ID']['input'];
+  pluginId: Scalars['ID']['input'];
 };
 
 export type AddLayerItemPayload = {
   __typename?: 'AddLayerItemPayload';
-  index?: Maybe<Scalars['Int']>;
+  index?: Maybe<Scalars['Int']['output']>;
   layer: LayerItem;
   parentLayer: LayerGroup;
 };
 
 export type AddMemberToTeamInput = {
   role: Role;
-  teamId: Scalars['ID'];
-  userId: Scalars['ID'];
+  teamId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 export type AddMemberToTeamPayload = {
@@ -104,17 +105,17 @@ export type AddMemberToTeamPayload = {
 };
 
 export type AddPropertyItemInput = {
-  index?: InputMaybe<Scalars['Int']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
   nameFieldType?: InputMaybe<ValueType>;
-  nameFieldValue?: InputMaybe<Scalars['Any']>;
-  propertyId: Scalars['ID'];
-  schemaGroupId: Scalars['ID'];
+  nameFieldValue?: InputMaybe<Scalars['Any']['input']>;
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId: Scalars['ID']['input'];
 };
 
 export type AddWidgetInput = {
-  extensionId: Scalars['ID'];
-  pluginId: Scalars['ID'];
-  sceneId: Scalars['ID'];
+  extensionId: Scalars['ID']['input'];
+  pluginId: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
 };
 
 export type AddWidgetPayload = {
@@ -125,14 +126,14 @@ export type AddWidgetPayload = {
 
 export type Asset = Node & {
   __typename?: 'Asset';
-  contentType: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  size: Scalars['FileSize'];
+  contentType: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  size: Scalars['FileSize']['output'];
   team?: Maybe<Team>;
-  teamId: Scalars['ID'];
-  url: Scalars['String'];
+  teamId: Scalars['ID']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type AssetConnection = {
@@ -140,12 +141,12 @@ export type AssetConnection = {
   edges: Array<AssetEdge>;
   nodes: Array<Maybe<Asset>>;
   pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type AssetEdge = {
   __typename?: 'AssetEdge';
-  cursor: Scalars['Cursor'];
+  cursor: Scalars['Cursor']['output'];
   node?: Maybe<Asset>;
 };
 
@@ -156,8 +157,8 @@ export enum AssetSortType {
 }
 
 export type AttachTagItemToGroupInput = {
-  groupID: Scalars['ID'];
-  itemID: Scalars['ID'];
+  groupID: Scalars['ID']['input'];
+  itemID: Scalars['ID']['input'];
 };
 
 export type AttachTagItemToGroupPayload = {
@@ -166,8 +167,8 @@ export type AttachTagItemToGroupPayload = {
 };
 
 export type AttachTagToLayerInput = {
-  layerID: Scalars['ID'];
-  tagID: Scalars['ID'];
+  layerID: Scalars['ID']['input'];
+  tagID: Scalars['ID']['input'];
 };
 
 export type AttachTagToLayerPayload = {
@@ -177,26 +178,26 @@ export type AttachTagToLayerPayload = {
 
 export type Camera = {
   __typename?: 'Camera';
-  altitude: Scalars['Float'];
-  fov: Scalars['Float'];
-  heading: Scalars['Float'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
-  pitch: Scalars['Float'];
-  roll: Scalars['Float'];
+  altitude: Scalars['Float']['output'];
+  fov: Scalars['Float']['output'];
+  heading: Scalars['Float']['output'];
+  lat: Scalars['Float']['output'];
+  lng: Scalars['Float']['output'];
+  pitch: Scalars['Float']['output'];
+  roll: Scalars['Float']['output'];
 };
 
 export type Cluster = {
   __typename?: 'Cluster';
-  id: Scalars['ID'];
-  name: Scalars['String'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
   property?: Maybe<Property>;
-  propertyId: Scalars['ID'];
+  propertyId: Scalars['ID']['output'];
 };
 
 export type CreateAssetInput = {
-  file: Scalars['Upload'];
-  teamId: Scalars['ID'];
+  file: Scalars['Upload']['input'];
+  teamId: Scalars['ID']['input'];
 };
 
 export type CreateAssetPayload = {
@@ -205,7 +206,7 @@ export type CreateAssetPayload = {
 };
 
 export type CreateInfoboxInput = {
-  layerId: Scalars['ID'];
+  layerId: Scalars['ID']['input'];
 };
 
 export type CreateInfoboxPayload = {
@@ -214,18 +215,18 @@ export type CreateInfoboxPayload = {
 };
 
 export type CreateProjectInput = {
-  alias?: InputMaybe<Scalars['String']>;
-  archived?: InputMaybe<Scalars['Boolean']>;
-  coreSupport?: InputMaybe<Scalars['Boolean']>;
-  description?: InputMaybe<Scalars['String']>;
-  imageUrl?: InputMaybe<Scalars['URL']>;
-  name?: InputMaybe<Scalars['String']>;
-  teamId: Scalars['ID'];
+  alias?: InputMaybe<Scalars['String']['input']>;
+  archived?: InputMaybe<Scalars['Boolean']['input']>;
+  coreSupport?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['URL']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  teamId: Scalars['ID']['input'];
   visualizer: Visualizer;
 };
 
 export type CreateSceneInput = {
-  projectId: Scalars['ID'];
+  projectId: Scalars['ID']['input'];
 };
 
 export type CreateScenePayload = {
@@ -234,9 +235,9 @@ export type CreateScenePayload = {
 };
 
 export type CreateTagGroupInput = {
-  label: Scalars['String'];
-  sceneId: Scalars['ID'];
-  tags?: InputMaybe<Array<Scalars['ID']>>;
+  label: Scalars['String']['input'];
+  sceneId: Scalars['ID']['input'];
+  tags?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type CreateTagGroupPayload = {
@@ -245,12 +246,12 @@ export type CreateTagGroupPayload = {
 };
 
 export type CreateTagItemInput = {
-  label: Scalars['String'];
-  linkedDatasetField?: InputMaybe<Scalars['ID']>;
-  linkedDatasetID?: InputMaybe<Scalars['ID']>;
-  linkedDatasetSchemaID?: InputMaybe<Scalars['ID']>;
-  parent?: InputMaybe<Scalars['ID']>;
-  sceneId: Scalars['ID'];
+  label: Scalars['String']['input'];
+  linkedDatasetField?: InputMaybe<Scalars['ID']['input']>;
+  linkedDatasetID?: InputMaybe<Scalars['ID']['input']>;
+  linkedDatasetSchemaID?: InputMaybe<Scalars['ID']['input']>;
+  parent?: InputMaybe<Scalars['ID']['input']>;
+  sceneId: Scalars['ID']['input'];
 };
 
 export type CreateTagItemPayload = {
@@ -260,7 +261,7 @@ export type CreateTagItemPayload = {
 };
 
 export type CreateTeamInput = {
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 export type CreateTeamPayload = {
@@ -271,11 +272,11 @@ export type CreateTeamPayload = {
 export type Dataset = Node & {
   __typename?: 'Dataset';
   fields: Array<DatasetField>;
-  id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   schema?: Maybe<DatasetSchema>;
-  schemaId: Scalars['ID'];
-  source: Scalars['String'];
+  schemaId: Scalars['ID']['output'];
+  source: Scalars['String']['output'];
 };
 
 export type DatasetConnection = {
@@ -283,48 +284,48 @@ export type DatasetConnection = {
   edges: Array<DatasetEdge>;
   nodes: Array<Maybe<Dataset>>;
   pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type DatasetEdge = {
   __typename?: 'DatasetEdge';
-  cursor: Scalars['Cursor'];
+  cursor: Scalars['Cursor']['output'];
   node?: Maybe<Dataset>;
 };
 
 export type DatasetField = {
   __typename?: 'DatasetField';
   field?: Maybe<DatasetSchemaField>;
-  fieldId: Scalars['ID'];
+  fieldId: Scalars['ID']['output'];
   schema?: Maybe<DatasetSchema>;
-  schemaId: Scalars['ID'];
-  source: Scalars['String'];
+  schemaId: Scalars['ID']['output'];
+  source: Scalars['String']['output'];
   type: ValueType;
-  value?: Maybe<Scalars['Any']>;
+  value?: Maybe<Scalars['Any']['output']>;
   valueRef?: Maybe<Dataset>;
 };
 
 export type DatasetSchema = Node & {
   __typename?: 'DatasetSchema';
   datasets: DatasetConnection;
-  dynamic?: Maybe<Scalars['Boolean']>;
+  dynamic?: Maybe<Scalars['Boolean']['output']>;
   fields: Array<DatasetSchemaField>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
   representativeField?: Maybe<DatasetSchemaField>;
-  representativeFieldId?: Maybe<Scalars['ID']>;
+  representativeFieldId?: Maybe<Scalars['ID']['output']>;
   scene?: Maybe<Scene>;
-  sceneId: Scalars['ID'];
-  source: Scalars['String'];
-  totalCount: Scalars['Int'];
+  sceneId: Scalars['ID']['output'];
+  source: Scalars['String']['output'];
+  totalCount: Scalars['Int']['output'];
 };
 
 
 export type DatasetSchemaDatasetsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type DatasetSchemaConnection = {
@@ -332,57 +333,57 @@ export type DatasetSchemaConnection = {
   edges: Array<DatasetSchemaEdge>;
   nodes: Array<Maybe<DatasetSchema>>;
   pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type DatasetSchemaEdge = {
   __typename?: 'DatasetSchemaEdge';
-  cursor: Scalars['Cursor'];
+  cursor: Scalars['Cursor']['output'];
   node?: Maybe<DatasetSchema>;
 };
 
 export type DatasetSchemaField = Node & {
   __typename?: 'DatasetSchemaField';
-  id: Scalars['ID'];
-  name: Scalars['String'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
   ref?: Maybe<DatasetSchema>;
-  refId?: Maybe<Scalars['ID']>;
+  refId?: Maybe<Scalars['ID']['output']>;
   schema?: Maybe<DatasetSchema>;
-  schemaId: Scalars['ID'];
-  source: Scalars['String'];
+  schemaId: Scalars['ID']['output'];
+  source: Scalars['String']['output'];
   type: ValueType;
 };
 
 export type DeleteMeInput = {
-  userId: Scalars['ID'];
+  userId: Scalars['ID']['input'];
 };
 
 export type DeleteMePayload = {
   __typename?: 'DeleteMePayload';
-  userId: Scalars['ID'];
+  userId: Scalars['ID']['output'];
 };
 
 export type DeleteProjectInput = {
-  projectId: Scalars['ID'];
+  projectId: Scalars['ID']['input'];
 };
 
 export type DeleteProjectPayload = {
   __typename?: 'DeleteProjectPayload';
-  projectId: Scalars['ID'];
+  projectId: Scalars['ID']['output'];
 };
 
 export type DeleteTeamInput = {
-  teamId: Scalars['ID'];
+  teamId: Scalars['ID']['input'];
 };
 
 export type DeleteTeamPayload = {
   __typename?: 'DeleteTeamPayload';
-  teamId: Scalars['ID'];
+  teamId: Scalars['ID']['output'];
 };
 
 export type DetachTagFromLayerInput = {
-  layerID: Scalars['ID'];
-  tagID: Scalars['ID'];
+  layerID: Scalars['ID']['input'];
+  tagID: Scalars['ID']['input'];
 };
 
 export type DetachTagFromLayerPayload = {
@@ -391,8 +392,8 @@ export type DetachTagFromLayerPayload = {
 };
 
 export type DetachTagItemFromGroupInput = {
-  groupID: Scalars['ID'];
-  itemID: Scalars['ID'];
+  groupID: Scalars['ID']['input'];
+  itemID: Scalars['ID']['input'];
 };
 
 export type DetachTagItemFromGroupPayload = {
@@ -401,17 +402,17 @@ export type DetachTagItemFromGroupPayload = {
 };
 
 export type ImportDatasetFromGoogleSheetInput = {
-  accessToken: Scalars['String'];
-  datasetSchemaId?: InputMaybe<Scalars['ID']>;
-  fileId: Scalars['String'];
-  sceneId: Scalars['ID'];
-  sheetName: Scalars['String'];
+  accessToken: Scalars['String']['input'];
+  datasetSchemaId?: InputMaybe<Scalars['ID']['input']>;
+  fileId: Scalars['String']['input'];
+  sceneId: Scalars['ID']['input'];
+  sheetName: Scalars['String']['input'];
 };
 
 export type ImportDatasetInput = {
-  datasetSchemaId?: InputMaybe<Scalars['ID']>;
-  file: Scalars['Upload'];
-  sceneId: Scalars['ID'];
+  datasetSchemaId?: InputMaybe<Scalars['ID']['input']>;
+  file: Scalars['Upload']['input'];
+  sceneId: Scalars['ID']['input'];
 };
 
 export type ImportDatasetPayload = {
@@ -420,9 +421,9 @@ export type ImportDatasetPayload = {
 };
 
 export type ImportLayerInput = {
-  file: Scalars['Upload'];
+  file: Scalars['Upload']['input'];
   format: LayerEncodingFormat;
-  layerId: Scalars['ID'];
+  layerId: Scalars['ID']['input'];
 };
 
 export type ImportLayerPayload = {
@@ -435,39 +436,39 @@ export type Infobox = {
   __typename?: 'Infobox';
   fields: Array<InfoboxField>;
   layer: Layer;
-  layerId: Scalars['ID'];
+  layerId: Scalars['ID']['output'];
   linkedDataset?: Maybe<Dataset>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
+  linkedDatasetId?: Maybe<Scalars['ID']['output']>;
   merged?: Maybe<MergedInfobox>;
   property?: Maybe<Property>;
-  propertyId: Scalars['ID'];
+  propertyId: Scalars['ID']['output'];
   scene?: Maybe<Scene>;
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['output'];
 };
 
 export type InfoboxField = {
   __typename?: 'InfoboxField';
   extension?: Maybe<PluginExtension>;
-  extensionId: Scalars['ID'];
-  id: Scalars['ID'];
+  extensionId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
   infobox: Infobox;
   layer: Layer;
-  layerId: Scalars['ID'];
+  layerId: Scalars['ID']['output'];
   linkedDataset?: Maybe<Dataset>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
+  linkedDatasetId?: Maybe<Scalars['ID']['output']>;
   merged?: Maybe<MergedInfoboxField>;
   plugin?: Maybe<Plugin>;
-  pluginId: Scalars['ID'];
+  pluginId: Scalars['ID']['output'];
   property?: Maybe<Property>;
-  propertyId: Scalars['ID'];
+  propertyId: Scalars['ID']['output'];
   scene?: Maybe<Scene>;
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['output'];
   scenePlugin?: Maybe<ScenePlugin>;
 };
 
 export type InstallPluginInput = {
-  pluginId: Scalars['ID'];
-  sceneId: Scalars['ID'];
+  pluginId: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
 };
 
 export type InstallPluginPayload = {
@@ -478,31 +479,31 @@ export type InstallPluginPayload = {
 
 export type LatLng = {
   __typename?: 'LatLng';
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
+  lat: Scalars['Float']['output'];
+  lng: Scalars['Float']['output'];
 };
 
 export type LatLngHeight = {
   __typename?: 'LatLngHeight';
-  height: Scalars['Float'];
-  lat: Scalars['Float'];
-  lng: Scalars['Float'];
+  height: Scalars['Float']['output'];
+  lat: Scalars['Float']['output'];
+  lng: Scalars['Float']['output'];
 };
 
 export type Layer = {
   extension?: Maybe<PluginExtension>;
-  extensionId?: Maybe<Scalars['ID']>;
-  id: Scalars['ID'];
+  extensionId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
   infobox?: Maybe<Infobox>;
-  isVisible: Scalars['Boolean'];
-  name: Scalars['String'];
+  isVisible: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
   parent?: Maybe<LayerGroup>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentId?: Maybe<Scalars['ID']['output']>;
   plugin?: Maybe<Plugin>;
-  pluginId?: Maybe<Scalars['ID']>;
+  pluginId?: Maybe<Scalars['ID']['output']>;
   property?: Maybe<Property>;
-  propertyId?: Maybe<Scalars['ID']>;
-  sceneId: Scalars['ID'];
+  propertyId?: Maybe<Scalars['ID']['output']>;
+  sceneId: Scalars['ID']['output'];
   scenePlugin?: Maybe<ScenePlugin>;
   tags: Array<LayerTag>;
 };
@@ -518,24 +519,24 @@ export enum LayerEncodingFormat {
 export type LayerGroup = Layer & {
   __typename?: 'LayerGroup';
   extension?: Maybe<PluginExtension>;
-  extensionId?: Maybe<Scalars['ID']>;
-  id: Scalars['ID'];
+  extensionId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
   infobox?: Maybe<Infobox>;
-  isVisible: Scalars['Boolean'];
-  layerIds: Array<Scalars['ID']>;
+  isVisible: Scalars['Boolean']['output'];
+  layerIds: Array<Scalars['ID']['output']>;
   layers: Array<Maybe<Layer>>;
   linkedDatasetSchema?: Maybe<DatasetSchema>;
-  linkedDatasetSchemaId?: Maybe<Scalars['ID']>;
-  name: Scalars['String'];
+  linkedDatasetSchemaId?: Maybe<Scalars['ID']['output']>;
+  name: Scalars['String']['output'];
   parent?: Maybe<LayerGroup>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentId?: Maybe<Scalars['ID']['output']>;
   plugin?: Maybe<Plugin>;
-  pluginId?: Maybe<Scalars['ID']>;
+  pluginId?: Maybe<Scalars['ID']['output']>;
   property?: Maybe<Property>;
-  propertyId?: Maybe<Scalars['ID']>;
-  root: Scalars['Boolean'];
+  propertyId?: Maybe<Scalars['ID']['output']>;
+  root: Scalars['Boolean']['output'];
   scene?: Maybe<Scene>;
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['output'];
   scenePlugin?: Maybe<ScenePlugin>;
   tags: Array<LayerTag>;
 };
@@ -543,52 +544,52 @@ export type LayerGroup = Layer & {
 export type LayerItem = Layer & {
   __typename?: 'LayerItem';
   extension?: Maybe<PluginExtension>;
-  extensionId?: Maybe<Scalars['ID']>;
-  id: Scalars['ID'];
+  extensionId?: Maybe<Scalars['ID']['output']>;
+  id: Scalars['ID']['output'];
   infobox?: Maybe<Infobox>;
-  isVisible: Scalars['Boolean'];
+  isVisible: Scalars['Boolean']['output'];
   linkedDataset?: Maybe<Dataset>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
+  linkedDatasetId?: Maybe<Scalars['ID']['output']>;
   merged?: Maybe<MergedLayer>;
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   parent?: Maybe<LayerGroup>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentId?: Maybe<Scalars['ID']['output']>;
   plugin?: Maybe<Plugin>;
-  pluginId?: Maybe<Scalars['ID']>;
+  pluginId?: Maybe<Scalars['ID']['output']>;
   property?: Maybe<Property>;
-  propertyId?: Maybe<Scalars['ID']>;
+  propertyId?: Maybe<Scalars['ID']['output']>;
   scene?: Maybe<Scene>;
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['output'];
   scenePlugin?: Maybe<ScenePlugin>;
   tags: Array<LayerTag>;
 };
 
 export type LayerTag = {
   tag?: Maybe<Tag>;
-  tagId: Scalars['ID'];
+  tagId: Scalars['ID']['output'];
 };
 
 export type LayerTagGroup = LayerTag & {
   __typename?: 'LayerTagGroup';
   children: Array<LayerTagItem>;
   tag?: Maybe<Tag>;
-  tagId: Scalars['ID'];
+  tagId: Scalars['ID']['output'];
 };
 
 export type LayerTagItem = LayerTag & {
   __typename?: 'LayerTagItem';
   tag?: Maybe<Tag>;
-  tagId: Scalars['ID'];
+  tagId: Scalars['ID']['output'];
 };
 
 export type LinkDatasetToPropertyValueInput = {
-  datasetIds?: InputMaybe<Array<Scalars['ID']>>;
-  datasetSchemaFieldIds: Array<Scalars['ID']>;
-  datasetSchemaIds: Array<Scalars['ID']>;
-  fieldId: Scalars['ID'];
-  itemId?: InputMaybe<Scalars['ID']>;
-  propertyId: Scalars['ID'];
-  schemaGroupId?: InputMaybe<Scalars['ID']>;
+  datasetIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  datasetSchemaFieldIds: Array<Scalars['ID']['input']>;
+  datasetSchemaIds: Array<Scalars['ID']['input']>;
+  fieldId: Scalars['ID']['input'];
+  itemId?: InputMaybe<Scalars['ID']['input']>;
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export enum ListOperation {
@@ -599,13 +600,13 @@ export enum ListOperation {
 
 export type Me = {
   __typename?: 'Me';
-  auths: Array<Scalars['String']>;
-  email: Scalars['String'];
-  id: Scalars['ID'];
-  lang: Scalars['Lang'];
+  auths: Array<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  lang: Scalars['Lang']['output'];
   myTeam: Team;
-  myTeamId: Scalars['ID'];
-  name: Scalars['String'];
+  myTeamId: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
   teams: Array<Team>;
   theme: Theme;
 };
@@ -615,19 +616,19 @@ export type MergedInfobox = {
   fields: Array<MergedInfoboxField>;
   property?: Maybe<MergedProperty>;
   scene?: Maybe<Scene>;
-  sceneID: Scalars['ID'];
+  sceneID: Scalars['ID']['output'];
 };
 
 export type MergedInfoboxField = {
   __typename?: 'MergedInfoboxField';
   extension?: Maybe<PluginExtension>;
-  extensionId: Scalars['ID'];
-  originalId: Scalars['ID'];
+  extensionId: Scalars['ID']['output'];
+  originalId: Scalars['ID']['output'];
   plugin?: Maybe<Plugin>;
-  pluginId: Scalars['ID'];
+  pluginId: Scalars['ID']['output'];
   property?: Maybe<MergedProperty>;
   scene?: Maybe<Scene>;
-  sceneID: Scalars['ID'];
+  sceneID: Scalars['ID']['output'];
   scenePlugin?: Maybe<ScenePlugin>;
 };
 
@@ -635,38 +636,38 @@ export type MergedLayer = {
   __typename?: 'MergedLayer';
   infobox?: Maybe<MergedInfobox>;
   original?: Maybe<LayerItem>;
-  originalId: Scalars['ID'];
+  originalId: Scalars['ID']['output'];
   parent?: Maybe<LayerGroup>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentId?: Maybe<Scalars['ID']['output']>;
   property?: Maybe<MergedProperty>;
   scene?: Maybe<Scene>;
-  sceneID: Scalars['ID'];
+  sceneID: Scalars['ID']['output'];
 };
 
 export type MergedProperty = {
   __typename?: 'MergedProperty';
   groups: Array<MergedPropertyGroup>;
   linkedDataset?: Maybe<Dataset>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
+  linkedDatasetId?: Maybe<Scalars['ID']['output']>;
   original?: Maybe<Property>;
-  originalId?: Maybe<Scalars['ID']>;
+  originalId?: Maybe<Scalars['ID']['output']>;
   parent?: Maybe<Property>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentId?: Maybe<Scalars['ID']['output']>;
   schema?: Maybe<PropertySchema>;
-  schemaId?: Maybe<Scalars['ID']>;
+  schemaId?: Maybe<Scalars['ID']['output']>;
 };
 
 export type MergedPropertyField = {
   __typename?: 'MergedPropertyField';
-  actualValue?: Maybe<Scalars['Any']>;
+  actualValue?: Maybe<Scalars['Any']['output']>;
   field?: Maybe<PropertySchemaField>;
-  fieldId: Scalars['ID'];
+  fieldId: Scalars['ID']['output'];
   links?: Maybe<Array<PropertyFieldLink>>;
-  overridden: Scalars['Boolean'];
+  overridden: Scalars['Boolean']['output'];
   schema?: Maybe<PropertySchema>;
-  schemaId: Scalars['ID'];
+  schemaId: Scalars['ID']['output'];
   type: ValueType;
-  value?: Maybe<Scalars['Any']>;
+  value?: Maybe<Scalars['Any']['output']>;
 };
 
 export type MergedPropertyGroup = {
@@ -674,52 +675,52 @@ export type MergedPropertyGroup = {
   fields: Array<MergedPropertyField>;
   groups: Array<MergedPropertyGroup>;
   linkedDataset?: Maybe<Dataset>;
-  linkedDatasetId?: Maybe<Scalars['ID']>;
+  linkedDatasetId?: Maybe<Scalars['ID']['output']>;
   original?: Maybe<PropertyGroup>;
-  originalId?: Maybe<Scalars['ID']>;
+  originalId?: Maybe<Scalars['ID']['output']>;
   originalProperty?: Maybe<Property>;
-  originalPropertyId?: Maybe<Scalars['ID']>;
+  originalPropertyId?: Maybe<Scalars['ID']['output']>;
   parent?: Maybe<PropertyGroup>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentId?: Maybe<Scalars['ID']['output']>;
   parentProperty?: Maybe<Property>;
-  parentPropertyId?: Maybe<Scalars['ID']>;
+  parentPropertyId?: Maybe<Scalars['ID']['output']>;
   schema?: Maybe<PropertySchema>;
-  schemaGroupId: Scalars['ID'];
-  schemaId?: Maybe<Scalars['ID']>;
+  schemaGroupId: Scalars['ID']['output'];
+  schemaId?: Maybe<Scalars['ID']['output']>;
 };
 
 export type MoveInfoboxFieldInput = {
-  index: Scalars['Int'];
-  infoboxFieldId: Scalars['ID'];
-  layerId: Scalars['ID'];
+  index: Scalars['Int']['input'];
+  infoboxFieldId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
 };
 
 export type MoveInfoboxFieldPayload = {
   __typename?: 'MoveInfoboxFieldPayload';
-  index: Scalars['Int'];
-  infoboxFieldId: Scalars['ID'];
+  index: Scalars['Int']['output'];
+  infoboxFieldId: Scalars['ID']['output'];
   layer: Layer;
 };
 
 export type MoveLayerInput = {
-  destLayerId?: InputMaybe<Scalars['ID']>;
-  index?: InputMaybe<Scalars['Int']>;
-  layerId: Scalars['ID'];
+  destLayerId?: InputMaybe<Scalars['ID']['input']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
+  layerId: Scalars['ID']['input'];
 };
 
 export type MoveLayerPayload = {
   __typename?: 'MoveLayerPayload';
   fromParentLayer: LayerGroup;
-  index: Scalars['Int'];
-  layerId: Scalars['ID'];
+  index: Scalars['Int']['output'];
+  layerId: Scalars['ID']['output'];
   toParentLayer: LayerGroup;
 };
 
 export type MovePropertyItemInput = {
-  index: Scalars['Int'];
-  itemId: Scalars['ID'];
-  propertyId: Scalars['ID'];
-  schemaGroupId: Scalars['ID'];
+  index: Scalars['Int']['input'];
+  itemId: Scalars['ID']['input'];
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId: Scalars['ID']['input'];
 };
 
 export type Mutation = {
@@ -1099,7 +1100,7 @@ export type MutationUploadPluginArgs = {
 };
 
 export type Node = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
 };
 
 export enum NodeType {
@@ -1119,70 +1120,70 @@ export enum NodeType {
 
 export type PageInfo = {
   __typename?: 'PageInfo';
-  endCursor?: Maybe<Scalars['Cursor']>;
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['Cursor']>;
+  endCursor?: Maybe<Scalars['Cursor']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPreviousPage: Scalars['Boolean']['output'];
+  startCursor?: Maybe<Scalars['Cursor']['output']>;
 };
 
 export type Pagination = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Plugin = {
   __typename?: 'Plugin';
-  allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
-  author: Scalars['String'];
-  description: Scalars['String'];
+  allTranslatedDescription?: Maybe<Scalars['TranslatedString']['output']>;
+  allTranslatedName?: Maybe<Scalars['TranslatedString']['output']>;
+  author: Scalars['String']['output'];
+  description: Scalars['String']['output'];
   extensions: Array<PluginExtension>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
   propertySchema?: Maybe<PropertySchema>;
-  propertySchemaId?: Maybe<Scalars['ID']>;
-  repositoryUrl: Scalars['String'];
+  propertySchemaId?: Maybe<Scalars['ID']['output']>;
+  repositoryUrl: Scalars['String']['output'];
   scene?: Maybe<Scene>;
-  sceneId?: Maybe<Scalars['ID']>;
+  sceneId?: Maybe<Scalars['ID']['output']>;
   scenePlugin?: Maybe<ScenePlugin>;
-  translatedDescription: Scalars['String'];
-  translatedName: Scalars['String'];
-  version: Scalars['String'];
+  translatedDescription: Scalars['String']['output'];
+  translatedName: Scalars['String']['output'];
+  version: Scalars['String']['output'];
 };
 
 
 export type PluginScenePluginArgs = {
-  sceneId?: InputMaybe<Scalars['ID']>;
+  sceneId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
 export type PluginTranslatedDescriptionArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 
 export type PluginTranslatedNameArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 export type PluginExtension = {
   __typename?: 'PluginExtension';
-  allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedName?: Maybe<Scalars['TranslatedString']>;
-  description: Scalars['String'];
-  extensionId: Scalars['ID'];
-  icon: Scalars['String'];
-  name: Scalars['String'];
+  allTranslatedDescription?: Maybe<Scalars['TranslatedString']['output']>;
+  allTranslatedName?: Maybe<Scalars['TranslatedString']['output']>;
+  description: Scalars['String']['output'];
+  extensionId: Scalars['ID']['output'];
+  icon: Scalars['String']['output'];
+  name: Scalars['String']['output'];
   plugin?: Maybe<Plugin>;
-  pluginId: Scalars['ID'];
+  pluginId: Scalars['ID']['output'];
   propertySchema?: Maybe<PropertySchema>;
-  propertySchemaId: Scalars['ID'];
+  propertySchemaId: Scalars['ID']['output'];
   sceneWidget?: Maybe<SceneWidget>;
-  singleOnly?: Maybe<Scalars['Boolean']>;
-  translatedDescription: Scalars['String'];
-  translatedName: Scalars['String'];
+  singleOnly?: Maybe<Scalars['Boolean']['output']>;
+  translatedDescription: Scalars['String']['output'];
+  translatedName: Scalars['String']['output'];
   type: PluginExtensionType;
   visualizer?: Maybe<Visualizer>;
   widgetLayout?: Maybe<WidgetLayout>;
@@ -1190,17 +1191,17 @@ export type PluginExtension = {
 
 
 export type PluginExtensionSceneWidgetArgs = {
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['input'];
 };
 
 
 export type PluginExtensionTranslatedDescriptionArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 
 export type PluginExtensionTranslatedNameArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 export enum PluginExtensionType {
@@ -1213,47 +1214,47 @@ export enum PluginExtensionType {
 
 export type Policy = {
   __typename?: 'Policy';
-  assetStorageSize?: Maybe<Scalars['FileSize']>;
-  datasetCount?: Maybe<Scalars['Int']>;
-  datasetSchemaCount?: Maybe<Scalars['Int']>;
-  id: Scalars['ID'];
-  layerCount?: Maybe<Scalars['Int']>;
-  memberCount?: Maybe<Scalars['Int']>;
-  name: Scalars['String'];
-  projectCount?: Maybe<Scalars['Int']>;
-  publishedProjectCount?: Maybe<Scalars['Int']>;
+  assetStorageSize?: Maybe<Scalars['FileSize']['output']>;
+  datasetCount?: Maybe<Scalars['Int']['output']>;
+  datasetSchemaCount?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
+  layerCount?: Maybe<Scalars['Int']['output']>;
+  memberCount?: Maybe<Scalars['Int']['output']>;
+  name: Scalars['String']['output'];
+  projectCount?: Maybe<Scalars['Int']['output']>;
+  publishedProjectCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Project = Node & {
   __typename?: 'Project';
-  alias: Scalars['String'];
-  basicAuthPassword: Scalars['String'];
-  basicAuthUsername: Scalars['String'];
-  coreSupport: Scalars['Boolean'];
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  id: Scalars['ID'];
-  imageUrl?: Maybe<Scalars['URL']>;
-  isArchived: Scalars['Boolean'];
-  isBasicAuthActive: Scalars['Boolean'];
-  name: Scalars['String'];
-  publicDescription: Scalars['String'];
-  publicImage: Scalars['String'];
-  publicNoIndex: Scalars['Boolean'];
-  publicTitle: Scalars['String'];
-  publishedAt?: Maybe<Scalars['DateTime']>;
+  alias: Scalars['String']['output'];
+  basicAuthPassword: Scalars['String']['output'];
+  basicAuthUsername: Scalars['String']['output'];
+  coreSupport: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['URL']['output']>;
+  isArchived: Scalars['Boolean']['output'];
+  isBasicAuthActive: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  publicDescription: Scalars['String']['output'];
+  publicImage: Scalars['String']['output'];
+  publicNoIndex: Scalars['Boolean']['output'];
+  publicTitle: Scalars['String']['output'];
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
   publishmentStatus: PublishmentStatus;
   scene?: Maybe<Scene>;
   team?: Maybe<Team>;
-  teamId: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
+  teamId: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   visualizer: Visualizer;
 };
 
 export type ProjectAliasAvailability = {
   __typename?: 'ProjectAliasAvailability';
-  alias: Scalars['String'];
-  available: Scalars['Boolean'];
+  alias: Scalars['String']['output'];
+  available: Scalars['Boolean']['output'];
 };
 
 export type ProjectConnection = {
@@ -1261,12 +1262,12 @@ export type ProjectConnection = {
   edges: Array<ProjectEdge>;
   nodes: Array<Maybe<Project>>;
   pageInfo: PageInfo;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type ProjectEdge = {
   __typename?: 'ProjectEdge';
-  cursor: Scalars['Cursor'];
+  cursor: Scalars['Cursor']['output'];
   node?: Maybe<Project>;
 };
 
@@ -1277,45 +1278,45 @@ export type ProjectPayload = {
 
 export type Property = Node & {
   __typename?: 'Property';
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   items: Array<PropertyItem>;
   layer?: Maybe<Layer>;
   merged?: Maybe<MergedProperty>;
   schema?: Maybe<PropertySchema>;
-  schemaId: Scalars['ID'];
+  schemaId: Scalars['ID']['output'];
 };
 
 export type PropertyCondition = {
   __typename?: 'PropertyCondition';
-  fieldId: Scalars['ID'];
+  fieldId: Scalars['ID']['output'];
   type: ValueType;
-  value?: Maybe<Scalars['Any']>;
+  value?: Maybe<Scalars['Any']['output']>;
 };
 
 export type PropertyField = {
   __typename?: 'PropertyField';
-  actualValue?: Maybe<Scalars['Any']>;
+  actualValue?: Maybe<Scalars['Any']['output']>;
   field?: Maybe<PropertySchemaField>;
-  fieldId: Scalars['ID'];
-  id: Scalars['String'];
+  fieldId: Scalars['ID']['output'];
+  id: Scalars['String']['output'];
   links?: Maybe<Array<PropertyFieldLink>>;
   parent?: Maybe<Property>;
-  parentId: Scalars['ID'];
+  parentId: Scalars['ID']['output'];
   schema?: Maybe<PropertySchema>;
-  schemaId: Scalars['ID'];
+  schemaId: Scalars['ID']['output'];
   type: ValueType;
-  value?: Maybe<Scalars['Any']>;
+  value?: Maybe<Scalars['Any']['output']>;
 };
 
 export type PropertyFieldLink = {
   __typename?: 'PropertyFieldLink';
   dataset?: Maybe<Dataset>;
   datasetField?: Maybe<DatasetField>;
-  datasetId?: Maybe<Scalars['ID']>;
+  datasetId?: Maybe<Scalars['ID']['output']>;
   datasetSchema?: Maybe<DatasetSchema>;
   datasetSchemaField?: Maybe<DatasetSchemaField>;
-  datasetSchemaFieldId: Scalars['ID'];
-  datasetSchemaId: Scalars['ID'];
+  datasetSchemaFieldId: Scalars['ID']['output'];
+  datasetSchemaId: Scalars['ID']['output'];
 };
 
 export type PropertyFieldPayload = {
@@ -1327,21 +1328,21 @@ export type PropertyFieldPayload = {
 export type PropertyGroup = {
   __typename?: 'PropertyGroup';
   fields: Array<PropertyField>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   schema?: Maybe<PropertySchema>;
   schemaGroup?: Maybe<PropertySchemaGroup>;
-  schemaGroupId: Scalars['ID'];
-  schemaId: Scalars['ID'];
+  schemaGroupId: Scalars['ID']['output'];
+  schemaId: Scalars['ID']['output'];
 };
 
 export type PropertyGroupList = {
   __typename?: 'PropertyGroupList';
   groups: Array<PropertyGroup>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   schema?: Maybe<PropertySchema>;
   schemaGroup?: Maybe<PropertySchemaGroup>;
-  schemaGroupId: Scalars['ID'];
-  schemaId: Scalars['ID'];
+  schemaGroupId: Scalars['ID']['output'];
+  schemaId: Scalars['ID']['output'];
 };
 
 export type PropertyItem = PropertyGroup | PropertyGroupList;
@@ -1354,63 +1355,63 @@ export type PropertyItemPayload = {
 
 export type PropertyLinkableFields = {
   __typename?: 'PropertyLinkableFields';
-  latlng?: Maybe<Scalars['ID']>;
+  latlng?: Maybe<Scalars['ID']['output']>;
   latlngField?: Maybe<PropertySchemaField>;
   schema?: Maybe<PropertySchema>;
-  schemaId: Scalars['ID'];
-  url?: Maybe<Scalars['ID']>;
+  schemaId: Scalars['ID']['output'];
+  url?: Maybe<Scalars['ID']['output']>;
   urlField?: Maybe<PropertySchemaField>;
 };
 
 export type PropertySchema = {
   __typename?: 'PropertySchema';
   groups: Array<PropertySchemaGroup>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   linkableFields: PropertyLinkableFields;
 };
 
 export type PropertySchemaField = {
   __typename?: 'PropertySchemaField';
-  allTranslatedDescription?: Maybe<Scalars['TranslatedString']>;
-  allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
+  allTranslatedDescription?: Maybe<Scalars['TranslatedString']['output']>;
+  allTranslatedTitle?: Maybe<Scalars['TranslatedString']['output']>;
   choices?: Maybe<Array<PropertySchemaFieldChoice>>;
-  defaultValue?: Maybe<Scalars['Any']>;
-  description: Scalars['String'];
-  fieldId: Scalars['ID'];
+  defaultValue?: Maybe<Scalars['Any']['output']>;
+  description: Scalars['String']['output'];
+  fieldId: Scalars['ID']['output'];
   isAvailableIf?: Maybe<PropertyCondition>;
-  max?: Maybe<Scalars['Float']>;
-  min?: Maybe<Scalars['Float']>;
-  prefix?: Maybe<Scalars['String']>;
-  suffix?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
-  translatedDescription: Scalars['String'];
-  translatedTitle: Scalars['String'];
+  max?: Maybe<Scalars['Float']['output']>;
+  min?: Maybe<Scalars['Float']['output']>;
+  prefix?: Maybe<Scalars['String']['output']>;
+  suffix?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  translatedDescription: Scalars['String']['output'];
+  translatedTitle: Scalars['String']['output'];
   type: ValueType;
   ui?: Maybe<PropertySchemaFieldUi>;
 };
 
 
 export type PropertySchemaFieldTranslatedDescriptionArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 
 export type PropertySchemaFieldTranslatedTitleArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 export type PropertySchemaFieldChoice = {
   __typename?: 'PropertySchemaFieldChoice';
-  allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
-  icon?: Maybe<Scalars['String']>;
-  key: Scalars['String'];
-  title: Scalars['String'];
-  translatedTitle: Scalars['String'];
+  allTranslatedTitle?: Maybe<Scalars['TranslatedString']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  key: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  translatedTitle: Scalars['String']['output'];
 };
 
 
 export type PropertySchemaFieldChoiceTranslatedTitleArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 export enum PropertySchemaFieldUi {
@@ -1429,27 +1430,27 @@ export enum PropertySchemaFieldUi {
 
 export type PropertySchemaGroup = {
   __typename?: 'PropertySchemaGroup';
-  allTranslatedTitle?: Maybe<Scalars['TranslatedString']>;
+  allTranslatedTitle?: Maybe<Scalars['TranslatedString']['output']>;
   fields: Array<PropertySchemaField>;
   isAvailableIf?: Maybe<PropertyCondition>;
-  isList: Scalars['Boolean'];
+  isList: Scalars['Boolean']['output'];
   representativeField?: Maybe<PropertySchemaField>;
-  representativeFieldId?: Maybe<Scalars['ID']>;
+  representativeFieldId?: Maybe<Scalars['ID']['output']>;
   schema?: Maybe<PropertySchema>;
-  schemaGroupId: Scalars['ID'];
-  schemaId: Scalars['ID'];
-  title?: Maybe<Scalars['String']>;
-  translatedTitle: Scalars['String'];
+  schemaGroupId: Scalars['ID']['output'];
+  schemaId: Scalars['ID']['output'];
+  title?: Maybe<Scalars['String']['output']>;
+  translatedTitle: Scalars['String']['output'];
 };
 
 
 export type PropertySchemaGroupTranslatedTitleArgs = {
-  lang?: InputMaybe<Scalars['Lang']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
 };
 
 export type PublishProjectInput = {
-  alias?: InputMaybe<Scalars['String']>;
-  projectId: Scalars['ID'];
+  alias?: InputMaybe<Scalars['String']['input']>;
+  projectId: Scalars['ID']['input'];
   status: PublishmentStatus;
 };
 
@@ -1480,143 +1481,143 @@ export type Query = {
 
 
 export type QueryAssetsArgs = {
-  keyword?: InputMaybe<Scalars['String']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<AssetSortType>;
-  teamId: Scalars['ID'];
+  teamId: Scalars['ID']['input'];
 };
 
 
 export type QueryCheckProjectAliasArgs = {
-  alias: Scalars['String'];
+  alias: Scalars['String']['input'];
 };
 
 
 export type QueryDatasetSchemasArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  sceneId: Scalars['ID'];
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  sceneId: Scalars['ID']['input'];
 };
 
 
 export type QueryDatasetsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  datasetSchemaId: Scalars['ID'];
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  datasetSchemaId: Scalars['ID']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QueryLayerArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
 };
 
 
 export type QueryNodeArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
   type: NodeType;
 };
 
 
 export type QueryNodesArgs = {
-  id: Array<Scalars['ID']>;
+  id: Array<Scalars['ID']['input']>;
   type: NodeType;
 };
 
 
 export type QueryPluginArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
 };
 
 
 export type QueryPluginsArgs = {
-  id: Array<Scalars['ID']>;
+  id: Array<Scalars['ID']['input']>;
 };
 
 
 export type QueryProjectsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  includeArchived?: InputMaybe<Scalars['Boolean']>;
-  last?: InputMaybe<Scalars['Int']>;
-  teamId: Scalars['ID'];
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  includeArchived?: InputMaybe<Scalars['Boolean']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  teamId: Scalars['ID']['input'];
 };
 
 
 export type QueryPropertySchemaArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
 };
 
 
 export type QueryPropertySchemasArgs = {
-  id: Array<Scalars['ID']>;
+  id: Array<Scalars['ID']['input']>;
 };
 
 
 export type QuerySceneArgs = {
-  projectId: Scalars['ID'];
+  projectId: Scalars['ID']['input'];
 };
 
 
 export type QuerySearchUserArgs = {
-  nameOrEmail: Scalars['String'];
+  nameOrEmail: Scalars['String']['input'];
 };
 
 export type Rect = {
   __typename?: 'Rect';
-  east: Scalars['Float'];
-  north: Scalars['Float'];
-  south: Scalars['Float'];
-  west: Scalars['Float'];
+  east: Scalars['Float']['output'];
+  north: Scalars['Float']['output'];
+  south: Scalars['Float']['output'];
+  west: Scalars['Float']['output'];
 };
 
 export type RemoveAssetInput = {
-  assetId: Scalars['ID'];
+  assetId: Scalars['ID']['input'];
 };
 
 export type RemoveAssetPayload = {
   __typename?: 'RemoveAssetPayload';
-  assetId: Scalars['ID'];
+  assetId: Scalars['ID']['output'];
 };
 
 export type RemoveClusterInput = {
-  clusterId: Scalars['ID'];
-  sceneId: Scalars['ID'];
+  clusterId: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
 };
 
 export type RemoveClusterPayload = {
   __typename?: 'RemoveClusterPayload';
-  clusterId: Scalars['ID'];
+  clusterId: Scalars['ID']['output'];
   scene: Scene;
 };
 
 export type RemoveDatasetSchemaInput = {
-  force?: InputMaybe<Scalars['Boolean']>;
-  schemaId: Scalars['ID'];
+  force?: InputMaybe<Scalars['Boolean']['input']>;
+  schemaId: Scalars['ID']['input'];
 };
 
 export type RemoveDatasetSchemaPayload = {
   __typename?: 'RemoveDatasetSchemaPayload';
-  schemaId: Scalars['ID'];
+  schemaId: Scalars['ID']['output'];
 };
 
 export type RemoveInfoboxFieldInput = {
-  infoboxFieldId: Scalars['ID'];
-  layerId: Scalars['ID'];
+  infoboxFieldId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
 };
 
 export type RemoveInfoboxFieldPayload = {
   __typename?: 'RemoveInfoboxFieldPayload';
-  infoboxFieldId: Scalars['ID'];
+  infoboxFieldId: Scalars['ID']['output'];
   layer: Layer;
 };
 
 export type RemoveInfoboxInput = {
-  layerId: Scalars['ID'];
+  layerId: Scalars['ID']['input'];
 };
 
 export type RemoveInfoboxPayload = {
@@ -1625,18 +1626,18 @@ export type RemoveInfoboxPayload = {
 };
 
 export type RemoveLayerInput = {
-  layerId: Scalars['ID'];
+  layerId: Scalars['ID']['input'];
 };
 
 export type RemoveLayerPayload = {
   __typename?: 'RemoveLayerPayload';
-  layerId: Scalars['ID'];
+  layerId: Scalars['ID']['output'];
   parentLayer: LayerGroup;
 };
 
 export type RemoveMemberFromTeamInput = {
-  teamId: Scalars['ID'];
-  userId: Scalars['ID'];
+  teamId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 export type RemoveMemberFromTeamPayload = {
@@ -1645,41 +1646,41 @@ export type RemoveMemberFromTeamPayload = {
 };
 
 export type RemoveMyAuthInput = {
-  auth: Scalars['String'];
+  auth: Scalars['String']['input'];
 };
 
 export type RemovePropertyFieldInput = {
-  fieldId: Scalars['ID'];
-  itemId?: InputMaybe<Scalars['ID']>;
-  propertyId: Scalars['ID'];
-  schemaGroupId?: InputMaybe<Scalars['ID']>;
+  fieldId: Scalars['ID']['input'];
+  itemId?: InputMaybe<Scalars['ID']['input']>;
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type RemovePropertyItemInput = {
-  itemId: Scalars['ID'];
-  propertyId: Scalars['ID'];
-  schemaGroupId: Scalars['ID'];
+  itemId: Scalars['ID']['input'];
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId: Scalars['ID']['input'];
 };
 
 export type RemoveTagInput = {
-  tagID: Scalars['ID'];
+  tagID: Scalars['ID']['input'];
 };
 
 export type RemoveTagPayload = {
   __typename?: 'RemoveTagPayload';
-  tagId: Scalars['ID'];
+  tagId: Scalars['ID']['output'];
   updatedLayers: Array<Layer>;
 };
 
 export type RemoveWidgetInput = {
-  sceneId: Scalars['ID'];
-  widgetId: Scalars['ID'];
+  sceneId: Scalars['ID']['input'];
+  widgetId: Scalars['ID']['input'];
 };
 
 export type RemoveWidgetPayload = {
   __typename?: 'RemoveWidgetPayload';
   scene: Scene;
-  widgetId: Scalars['ID'];
+  widgetId: Scalars['ID']['output'];
 };
 
 export enum Role {
@@ -1691,60 +1692,60 @@ export enum Role {
 export type Scene = Node & {
   __typename?: 'Scene';
   clusters: Array<Cluster>;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   datasetSchemas: DatasetSchemaConnection;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   plugins: Array<ScenePlugin>;
   project?: Maybe<Project>;
-  projectId: Scalars['ID'];
+  projectId: Scalars['ID']['output'];
   property?: Maybe<Property>;
-  propertyId: Scalars['ID'];
+  propertyId: Scalars['ID']['output'];
   rootLayer?: Maybe<LayerGroup>;
-  rootLayerId: Scalars['ID'];
-  tagIds: Array<Scalars['ID']>;
+  rootLayerId: Scalars['ID']['output'];
+  tagIds: Array<Scalars['ID']['output']>;
   tags: Array<Tag>;
   team?: Maybe<Team>;
-  teamId: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
+  teamId: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   widgetAlignSystem?: Maybe<WidgetAlignSystem>;
   widgets: Array<SceneWidget>;
 };
 
 
 export type SceneDatasetSchemasArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ScenePlugin = {
   __typename?: 'ScenePlugin';
   plugin?: Maybe<Plugin>;
-  pluginId: Scalars['ID'];
+  pluginId: Scalars['ID']['output'];
   property?: Maybe<Property>;
-  propertyId?: Maybe<Scalars['ID']>;
+  propertyId?: Maybe<Scalars['ID']['output']>;
 };
 
 export type SceneWidget = {
   __typename?: 'SceneWidget';
-  enabled: Scalars['Boolean'];
-  extended: Scalars['Boolean'];
+  enabled: Scalars['Boolean']['output'];
+  extended: Scalars['Boolean']['output'];
   extension?: Maybe<PluginExtension>;
-  extensionId: Scalars['ID'];
-  id: Scalars['ID'];
+  extensionId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
   plugin?: Maybe<Plugin>;
-  pluginId: Scalars['ID'];
+  pluginId: Scalars['ID']['output'];
   property?: Maybe<Property>;
-  propertyId: Scalars['ID'];
+  propertyId: Scalars['ID']['output'];
 };
 
 export type SignupInput = {
-  lang?: InputMaybe<Scalars['Lang']>;
-  secret?: InputMaybe<Scalars['String']>;
-  teamId?: InputMaybe<Scalars['ID']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
+  secret?: InputMaybe<Scalars['String']['input']>;
+  teamId?: InputMaybe<Scalars['ID']['input']>;
   theme?: InputMaybe<Theme>;
-  userId?: InputMaybe<Scalars['ID']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type SignupPayload = {
@@ -1754,86 +1755,86 @@ export type SignupPayload = {
 };
 
 export type SyncDatasetInput = {
-  sceneId: Scalars['ID'];
-  url: Scalars['String'];
+  sceneId: Scalars['ID']['input'];
+  url: Scalars['String']['input'];
 };
 
 export type SyncDatasetPayload = {
   __typename?: 'SyncDatasetPayload';
   dataset: Array<Dataset>;
   datasetSchema: Array<DatasetSchema>;
-  sceneId: Scalars['ID'];
-  url: Scalars['String'];
+  sceneId: Scalars['ID']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type Tag = {
-  id: Scalars['ID'];
-  label: Scalars['String'];
+  id: Scalars['ID']['output'];
+  label: Scalars['String']['output'];
   layers: Array<Layer>;
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['output'];
 };
 
 export type TagGroup = Tag & {
   __typename?: 'TagGroup';
-  id: Scalars['ID'];
-  label: Scalars['String'];
+  id: Scalars['ID']['output'];
+  label: Scalars['String']['output'];
   layers: Array<Layer>;
   scene?: Maybe<Scene>;
-  sceneId: Scalars['ID'];
-  tagIds?: Maybe<Array<Scalars['ID']>>;
+  sceneId: Scalars['ID']['output'];
+  tagIds?: Maybe<Array<Scalars['ID']['output']>>;
   tags: Array<TagItem>;
 };
 
 export type TagItem = Tag & {
   __typename?: 'TagItem';
-  id: Scalars['ID'];
-  label: Scalars['String'];
+  id: Scalars['ID']['output'];
+  label: Scalars['String']['output'];
   layers: Array<Layer>;
   linkedDataset?: Maybe<Dataset>;
   linkedDatasetField?: Maybe<DatasetField>;
-  linkedDatasetFieldID?: Maybe<Scalars['ID']>;
-  linkedDatasetID?: Maybe<Scalars['ID']>;
+  linkedDatasetFieldID?: Maybe<Scalars['ID']['output']>;
+  linkedDatasetID?: Maybe<Scalars['ID']['output']>;
   linkedDatasetSchema?: Maybe<DatasetSchema>;
-  linkedDatasetSchemaID?: Maybe<Scalars['ID']>;
+  linkedDatasetSchemaID?: Maybe<Scalars['ID']['output']>;
   parent?: Maybe<TagGroup>;
-  parentId?: Maybe<Scalars['ID']>;
-  sceneId: Scalars['ID'];
+  parentId?: Maybe<Scalars['ID']['output']>;
+  sceneId: Scalars['ID']['output'];
 };
 
 export type Team = Node & {
   __typename?: 'Team';
   assets: AssetConnection;
-  id: Scalars['ID'];
+  id: Scalars['ID']['output'];
   members: Array<TeamMember>;
-  name: Scalars['String'];
-  personal: Scalars['Boolean'];
+  name: Scalars['String']['output'];
+  personal: Scalars['Boolean']['output'];
   policy?: Maybe<Policy>;
-  policyId?: Maybe<Scalars['ID']>;
+  policyId?: Maybe<Scalars['ID']['output']>;
   projects: ProjectConnection;
 };
 
 
 export type TeamAssetsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type TeamProjectsArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  first?: InputMaybe<Scalars['Int']>;
-  includeArchived?: InputMaybe<Scalars['Boolean']>;
-  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  includeArchived?: InputMaybe<Scalars['Boolean']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type TeamMember = {
   __typename?: 'TeamMember';
   role: Role;
   user?: Maybe<User>;
-  userId: Scalars['ID'];
+  userId: Scalars['ID']['output'];
 };
 
 export enum TextAlign {
@@ -1852,39 +1853,39 @@ export enum Theme {
 
 export type Typography = {
   __typename?: 'Typography';
-  bold?: Maybe<Scalars['Boolean']>;
-  color?: Maybe<Scalars['String']>;
-  fontFamily?: Maybe<Scalars['String']>;
-  fontSize?: Maybe<Scalars['Int']>;
-  fontWeight?: Maybe<Scalars['String']>;
-  italic?: Maybe<Scalars['Boolean']>;
+  bold?: Maybe<Scalars['Boolean']['output']>;
+  color?: Maybe<Scalars['String']['output']>;
+  fontFamily?: Maybe<Scalars['String']['output']>;
+  fontSize?: Maybe<Scalars['Int']['output']>;
+  fontWeight?: Maybe<Scalars['String']['output']>;
+  italic?: Maybe<Scalars['Boolean']['output']>;
   textAlign?: Maybe<TextAlign>;
-  underline?: Maybe<Scalars['Boolean']>;
+  underline?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type UninstallPluginInput = {
-  pluginId: Scalars['ID'];
-  sceneId: Scalars['ID'];
+  pluginId: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
 };
 
 export type UninstallPluginPayload = {
   __typename?: 'UninstallPluginPayload';
-  pluginId: Scalars['ID'];
+  pluginId: Scalars['ID']['output'];
   scene: Scene;
 };
 
 export type UnlinkPropertyValueInput = {
-  fieldId: Scalars['ID'];
-  itemId?: InputMaybe<Scalars['ID']>;
-  propertyId: Scalars['ID'];
-  schemaGroupId?: InputMaybe<Scalars['ID']>;
+  fieldId: Scalars['ID']['input'];
+  itemId?: InputMaybe<Scalars['ID']['input']>;
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type UpdateClusterInput = {
-  clusterId: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
-  propertyId?: InputMaybe<Scalars['ID']>;
-  sceneId: Scalars['ID'];
+  clusterId: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  propertyId?: InputMaybe<Scalars['ID']['input']>;
+  sceneId: Scalars['ID']['input'];
 };
 
 export type UpdateClusterPayload = {
@@ -1894,8 +1895,8 @@ export type UpdateClusterPayload = {
 };
 
 export type UpdateDatasetSchemaInput = {
-  name: Scalars['String'];
-  schemaId: Scalars['ID'];
+  name: Scalars['String']['input'];
+  schemaId: Scalars['ID']['input'];
 };
 
 export type UpdateDatasetSchemaPayload = {
@@ -1904,9 +1905,9 @@ export type UpdateDatasetSchemaPayload = {
 };
 
 export type UpdateLayerInput = {
-  layerId: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
-  visible?: InputMaybe<Scalars['Boolean']>;
+  layerId: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  visible?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type UpdateLayerPayload = {
@@ -1915,11 +1916,11 @@ export type UpdateLayerPayload = {
 };
 
 export type UpdateMeInput = {
-  email?: InputMaybe<Scalars['String']>;
-  lang?: InputMaybe<Scalars['Lang']>;
-  name?: InputMaybe<Scalars['String']>;
-  password?: InputMaybe<Scalars['String']>;
-  passwordConfirmation?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  passwordConfirmation?: InputMaybe<Scalars['String']['input']>;
   theme?: InputMaybe<Theme>;
 };
 
@@ -1930,8 +1931,8 @@ export type UpdateMePayload = {
 
 export type UpdateMemberOfTeamInput = {
   role: Role;
-  teamId: Scalars['ID'];
-  userId: Scalars['ID'];
+  teamId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 export type UpdateMemberOfTeamPayload = {
@@ -1940,50 +1941,50 @@ export type UpdateMemberOfTeamPayload = {
 };
 
 export type UpdateProjectInput = {
-  alias?: InputMaybe<Scalars['String']>;
-  archived?: InputMaybe<Scalars['Boolean']>;
-  basicAuthPassword?: InputMaybe<Scalars['String']>;
-  basicAuthUsername?: InputMaybe<Scalars['String']>;
-  deleteImageUrl?: InputMaybe<Scalars['Boolean']>;
-  deletePublicImage?: InputMaybe<Scalars['Boolean']>;
-  description?: InputMaybe<Scalars['String']>;
-  imageUrl?: InputMaybe<Scalars['URL']>;
-  isBasicAuthActive?: InputMaybe<Scalars['Boolean']>;
-  name?: InputMaybe<Scalars['String']>;
-  projectId: Scalars['ID'];
-  publicDescription?: InputMaybe<Scalars['String']>;
-  publicImage?: InputMaybe<Scalars['String']>;
-  publicNoIndex?: InputMaybe<Scalars['Boolean']>;
-  publicTitle?: InputMaybe<Scalars['String']>;
+  alias?: InputMaybe<Scalars['String']['input']>;
+  archived?: InputMaybe<Scalars['Boolean']['input']>;
+  basicAuthPassword?: InputMaybe<Scalars['String']['input']>;
+  basicAuthUsername?: InputMaybe<Scalars['String']['input']>;
+  deleteImageUrl?: InputMaybe<Scalars['Boolean']['input']>;
+  deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['URL']['input']>;
+  isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  projectId: Scalars['ID']['input'];
+  publicDescription?: InputMaybe<Scalars['String']['input']>;
+  publicImage?: InputMaybe<Scalars['String']['input']>;
+  publicNoIndex?: InputMaybe<Scalars['Boolean']['input']>;
+  publicTitle?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdatePropertyItemInput = {
   operations: Array<UpdatePropertyItemOperationInput>;
-  propertyId: Scalars['ID'];
-  schemaGroupId: Scalars['ID'];
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId: Scalars['ID']['input'];
 };
 
 export type UpdatePropertyItemOperationInput = {
-  index?: InputMaybe<Scalars['Int']>;
-  itemId?: InputMaybe<Scalars['ID']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
+  itemId?: InputMaybe<Scalars['ID']['input']>;
   nameFieldType?: InputMaybe<ValueType>;
-  nameFieldValue?: InputMaybe<Scalars['Any']>;
+  nameFieldValue?: InputMaybe<Scalars['Any']['input']>;
   operation: ListOperation;
 };
 
 export type UpdatePropertyValueInput = {
-  fieldId: Scalars['ID'];
-  itemId?: InputMaybe<Scalars['ID']>;
-  propertyId: Scalars['ID'];
-  schemaGroupId?: InputMaybe<Scalars['ID']>;
+  fieldId: Scalars['ID']['input'];
+  itemId?: InputMaybe<Scalars['ID']['input']>;
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId?: InputMaybe<Scalars['ID']['input']>;
   type: ValueType;
-  value?: InputMaybe<Scalars['Any']>;
+  value?: InputMaybe<Scalars['Any']['input']>;
 };
 
 export type UpdateTagInput = {
-  label?: InputMaybe<Scalars['String']>;
-  sceneId: Scalars['ID'];
-  tagId: Scalars['ID'];
+  label?: InputMaybe<Scalars['String']['input']>;
+  sceneId: Scalars['ID']['input'];
+  tagId: Scalars['ID']['input'];
 };
 
 export type UpdateTagPayload = {
@@ -1992,8 +1993,8 @@ export type UpdateTagPayload = {
 };
 
 export type UpdateTeamInput = {
-  name: Scalars['String'];
-  teamId: Scalars['ID'];
+  name: Scalars['String']['input'];
+  teamId: Scalars['ID']['input'];
 };
 
 export type UpdateTeamPayload = {
@@ -2003,12 +2004,12 @@ export type UpdateTeamPayload = {
 
 export type UpdateWidgetAlignSystemInput = {
   align?: InputMaybe<WidgetAreaAlign>;
-  background?: InputMaybe<Scalars['String']>;
-  centered?: InputMaybe<Scalars['Boolean']>;
-  gap?: InputMaybe<Scalars['Int']>;
+  background?: InputMaybe<Scalars['String']['input']>;
+  centered?: InputMaybe<Scalars['Boolean']['input']>;
+  gap?: InputMaybe<Scalars['Int']['input']>;
   location: WidgetLocationInput;
   padding?: InputMaybe<WidgetAreaPaddingInput>;
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['input'];
 };
 
 export type UpdateWidgetAlignSystemPayload = {
@@ -2017,12 +2018,12 @@ export type UpdateWidgetAlignSystemPayload = {
 };
 
 export type UpdateWidgetInput = {
-  enabled?: InputMaybe<Scalars['Boolean']>;
-  extended?: InputMaybe<Scalars['Boolean']>;
-  index?: InputMaybe<Scalars['Int']>;
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  extended?: InputMaybe<Scalars['Boolean']['input']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
   location?: InputMaybe<WidgetLocationInput>;
-  sceneId: Scalars['ID'];
-  widgetId: Scalars['ID'];
+  sceneId: Scalars['ID']['input'];
+  widgetId: Scalars['ID']['input'];
 };
 
 export type UpdateWidgetPayload = {
@@ -2032,9 +2033,9 @@ export type UpdateWidgetPayload = {
 };
 
 export type UpgradePluginInput = {
-  pluginId: Scalars['ID'];
-  sceneId: Scalars['ID'];
-  toPluginId: Scalars['ID'];
+  pluginId: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
+  toPluginId: Scalars['ID']['input'];
 };
 
 export type UpgradePluginPayload = {
@@ -2044,17 +2045,17 @@ export type UpgradePluginPayload = {
 };
 
 export type UploadFileToPropertyInput = {
-  fieldId: Scalars['ID'];
-  file: Scalars['Upload'];
-  itemId?: InputMaybe<Scalars['ID']>;
-  propertyId: Scalars['ID'];
-  schemaGroupId?: InputMaybe<Scalars['ID']>;
+  fieldId: Scalars['ID']['input'];
+  file: Scalars['Upload']['input'];
+  itemId?: InputMaybe<Scalars['ID']['input']>;
+  propertyId: Scalars['ID']['input'];
+  schemaGroupId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type UploadPluginInput = {
-  file?: InputMaybe<Scalars['Upload']>;
-  sceneId: Scalars['ID'];
-  url?: InputMaybe<Scalars['URL']>;
+  file?: InputMaybe<Scalars['Upload']['input']>;
+  sceneId: Scalars['ID']['input'];
+  url?: InputMaybe<Scalars['URL']['input']>;
 };
 
 export type UploadPluginPayload = {
@@ -2066,9 +2067,9 @@ export type UploadPluginPayload = {
 
 export type User = Node & {
   __typename?: 'User';
-  email: Scalars['String'];
-  id: Scalars['ID'];
-  name: Scalars['String'];
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
 };
 
 export enum ValueType {
@@ -2099,11 +2100,11 @@ export type WidgetAlignSystem = {
 export type WidgetArea = {
   __typename?: 'WidgetArea';
   align: WidgetAreaAlign;
-  background?: Maybe<Scalars['String']>;
-  centered: Scalars['Boolean'];
-  gap?: Maybe<Scalars['Int']>;
+  background?: Maybe<Scalars['String']['output']>;
+  centered: Scalars['Boolean']['output'];
+  gap?: Maybe<Scalars['Int']['output']>;
   padding?: Maybe<WidgetAreaPadding>;
-  widgetIds: Array<Scalars['ID']>;
+  widgetIds: Array<Scalars['ID']['output']>;
 };
 
 export enum WidgetAreaAlign {
@@ -2114,17 +2115,17 @@ export enum WidgetAreaAlign {
 
 export type WidgetAreaPadding = {
   __typename?: 'WidgetAreaPadding';
-  bottom: Scalars['Int'];
-  left: Scalars['Int'];
-  right: Scalars['Int'];
-  top: Scalars['Int'];
+  bottom: Scalars['Int']['output'];
+  left: Scalars['Int']['output'];
+  right: Scalars['Int']['output'];
+  top: Scalars['Int']['output'];
 };
 
 export type WidgetAreaPaddingInput = {
-  bottom: Scalars['Int'];
-  left: Scalars['Int'];
-  right: Scalars['Int'];
-  top: Scalars['Int'];
+  bottom: Scalars['Int']['input'];
+  left: Scalars['Int']['input'];
+  right: Scalars['Int']['input'];
+  top: Scalars['Int']['input'];
 };
 
 export enum WidgetAreaType {
@@ -2135,16 +2136,16 @@ export enum WidgetAreaType {
 
 export type WidgetExtendable = {
   __typename?: 'WidgetExtendable';
-  horizontally: Scalars['Boolean'];
-  vertically: Scalars['Boolean'];
+  horizontally: Scalars['Boolean']['output'];
+  vertically: Scalars['Boolean']['output'];
 };
 
 export type WidgetLayout = {
   __typename?: 'WidgetLayout';
   defaultLocation?: Maybe<WidgetLocation>;
   extendable: WidgetExtendable;
-  extended: Scalars['Boolean'];
-  floating: Scalars['Boolean'];
+  extended: Scalars['Boolean']['output'];
+  floating: Scalars['Boolean']['output'];
 };
 
 export type WidgetLocation = {
@@ -2354,78 +2355,78 @@ export type MergedPropertyFragmentFragment = { __typename?: 'MergedProperty', or
 export type PropertyFieldLinkFragment = { __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string };
 
 export type GetProjectQueryVariables = Exact<{
-  projectId: Scalars['ID'];
+  projectId: Scalars['ID']['input'];
 }>;
 
 
 export type GetProjectQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, coreSupport: boolean, scene?: { __typename?: 'Scene', id: string } | null } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
 export type GetProjectsQueryVariables = Exact<{
-  teamId: Scalars['ID'];
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
+  teamId: Scalars['ID']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
 }>;
 
 
 export type GetProjectsQuery = { __typename?: 'Query', projects: { __typename?: 'ProjectConnection', totalCount: number, edges: Array<{ __typename?: 'ProjectEdge', node?: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, coreSupport: boolean, scene?: { __typename?: 'Scene', id: string } | null } | null }>, nodes: Array<{ __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, coreSupport: boolean, scene?: { __typename?: 'Scene', id: string } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
 
 export type CheckProjectAliasQueryVariables = Exact<{
-  alias: Scalars['String'];
+  alias: Scalars['String']['input'];
 }>;
 
 
 export type CheckProjectAliasQuery = { __typename?: 'Query', checkProjectAlias: { __typename?: 'ProjectAliasAvailability', alias: string, available: boolean } };
 
 export type CreateProjectMutationVariables = Exact<{
-  teamId: Scalars['ID'];
+  teamId: Scalars['ID']['input'];
   visualizer: Visualizer;
-  name: Scalars['String'];
-  description: Scalars['String'];
-  imageUrl?: InputMaybe<Scalars['URL']>;
-  coreSupport?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  imageUrl?: InputMaybe<Scalars['URL']['input']>;
+  coreSupport?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
 export type CreateProjectMutation = { __typename?: 'Mutation', createProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, coreSupport: boolean } } | null };
 
 export type UpdateProjectMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  imageUrl?: InputMaybe<Scalars['URL']>;
-  publicTitle?: InputMaybe<Scalars['String']>;
-  publicDescription?: InputMaybe<Scalars['String']>;
-  publicImage?: InputMaybe<Scalars['String']>;
-  deleteImageUrl?: InputMaybe<Scalars['Boolean']>;
-  deletePublicImage?: InputMaybe<Scalars['Boolean']>;
+  projectId: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['URL']['input']>;
+  publicTitle?: InputMaybe<Scalars['String']['input']>;
+  publicDescription?: InputMaybe<Scalars['String']['input']>;
+  publicImage?: InputMaybe<Scalars['String']['input']>;
+  deleteImageUrl?: InputMaybe<Scalars['Boolean']['input']>;
+  deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
 export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, description: string, imageUrl?: string | null, isArchived: boolean, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string, publicTitle: string, publicDescription: string, publicImage: string, alias: string, publishmentStatus: PublishmentStatus, updatedAt: Date, coreSupport: boolean } } | null };
 
 export type UpdateProjectBasicAuthMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  isBasicAuthActive?: InputMaybe<Scalars['Boolean']>;
-  basicAuthUsername?: InputMaybe<Scalars['String']>;
-  basicAuthPassword?: InputMaybe<Scalars['String']>;
+  projectId: Scalars['ID']['input'];
+  isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;
+  basicAuthUsername?: InputMaybe<Scalars['String']['input']>;
+  basicAuthPassword?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
 export type UpdateProjectBasicAuthMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, isBasicAuthActive: boolean, basicAuthUsername: string, basicAuthPassword: string } } | null };
 
 export type UpdateProjectAliasMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  alias: Scalars['String'];
+  projectId: Scalars['ID']['input'];
+  alias: Scalars['String']['input'];
 }>;
 
 
 export type UpdateProjectAliasMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, name: string, alias: string } } | null };
 
 export type PublishProjectMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  alias?: InputMaybe<Scalars['String']>;
+  projectId: Scalars['ID']['input'];
+  alias?: InputMaybe<Scalars['String']['input']>;
   status: PublishmentStatus;
 }>;
 
@@ -2433,29 +2434,36 @@ export type PublishProjectMutationVariables = Exact<{
 export type PublishProjectMutation = { __typename?: 'Mutation', publishProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, alias: string, publishmentStatus: PublishmentStatus } } | null };
 
 export type ArchiveProjectMutationVariables = Exact<{
-  projectId: Scalars['ID'];
-  archived: Scalars['Boolean'];
+  projectId: Scalars['ID']['input'];
+  archived: Scalars['Boolean']['input'];
 }>;
 
 
 export type ArchiveProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'ProjectPayload', project: { __typename?: 'Project', id: string, isArchived: boolean } } | null };
 
 export type DeleteProjectMutationVariables = Exact<{
-  projectId: Scalars['ID'];
+  projectId: Scalars['ID']['input'];
 }>;
 
 
 export type DeleteProjectMutation = { __typename?: 'Mutation', deleteProject?: { __typename?: 'DeleteProjectPayload', projectId: string } | null };
 
 export type GetSceneQueryVariables = Exact<{
-  sceneId: Scalars['ID'];
+  sceneId: Scalars['ID']['input'];
 }>;
 
 
 export type GetSceneQuery = { __typename?: 'Query', node?: { __typename?: 'Asset', id: string } | { __typename?: 'Dataset', id: string } | { __typename?: 'DatasetSchema', id: string } | { __typename?: 'DatasetSchemaField', id: string } | { __typename?: 'Project', id: string } | { __typename?: 'Property', id: string } | { __typename?: 'Scene', rootLayerId: string, teamId: string, projectId: string, id: string } | { __typename?: 'Team', id: string } | { __typename?: 'User', id: string } | null };
 
+export type CreateSceneMutationVariables = Exact<{
+  projectId: Scalars['ID']['input'];
+}>;
+
+
+export type CreateSceneMutation = { __typename?: 'Mutation', createScene?: { __typename?: 'CreateScenePayload', scene: { __typename?: 'Scene', id: string } } | null };
+
 export type GetUserBySearchQueryVariables = Exact<{
-  nameOrEmail: Scalars['String'];
+  nameOrEmail: Scalars['String']['input'];
 }>;
 
 
@@ -2467,1430 +2475,87 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, policyId?: string | null, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }, teams: Array<{ __typename?: 'Team', id: string, name: string, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }> } | null };
 
 export type UpdateMeMutationVariables = Exact<{
-  name?: InputMaybe<Scalars['String']>;
-  email?: InputMaybe<Scalars['String']>;
-  lang?: InputMaybe<Scalars['Lang']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  lang?: InputMaybe<Scalars['Lang']['input']>;
   theme?: InputMaybe<Theme>;
-  password?: InputMaybe<Scalars['String']>;
-  passwordConfirmation?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  passwordConfirmation?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
 export type UpdateMeMutation = { __typename?: 'Mutation', updateMe?: { __typename?: 'UpdateMePayload', me: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, myTeam: { __typename?: 'Team', id: string, name: string } } } | null };
 
 export type DeleteMeMutationVariables = Exact<{
-  userId: Scalars['ID'];
+  userId: Scalars['ID']['input'];
 }>;
 
 
 export type DeleteMeMutation = { __typename?: 'Mutation', deleteMe?: { __typename?: 'DeleteMePayload', userId: string } | null };
 
 export type CreateWorkspaceMutationVariables = Exact<{
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 }>;
 
 
 export type CreateWorkspaceMutation = { __typename?: 'Mutation', createTeam?: { __typename?: 'CreateTeamPayload', team: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } } | null };
 
-export const WidgetAreaFragmentFragmentDoc = gql`
-    fragment WidgetAreaFragment on WidgetArea {
-  widgetIds
-  align
-  padding {
-    top
-    bottom
-    left
-    right
-  }
-  gap
-  centered
-  background
-}
-    `;
-export const WidgetSectionFragmentFragmentDoc = gql`
-    fragment WidgetSectionFragment on WidgetSection {
-  top {
-    ...WidgetAreaFragment
-  }
-  middle {
-    ...WidgetAreaFragment
-  }
-  bottom {
-    ...WidgetAreaFragment
-  }
-}
-    ${WidgetAreaFragmentFragmentDoc}`;
-export const WidgetZoneFragmentFragmentDoc = gql`
-    fragment WidgetZoneFragment on WidgetZone {
-  left {
-    ...WidgetSectionFragment
-  }
-  center {
-    ...WidgetSectionFragment
-  }
-  right {
-    ...WidgetSectionFragment
-  }
-}
-    ${WidgetSectionFragmentFragmentDoc}`;
-export const WidgetAlignSystemFragmentFragmentDoc = gql`
-    fragment WidgetAlignSystemFragment on WidgetAlignSystem {
-  outer {
-    ...WidgetZoneFragment
-  }
-  inner {
-    ...WidgetZoneFragment
-  }
-}
-    ${WidgetZoneFragmentFragmentDoc}`;
-export const DatasetFragmentFragmentDoc = gql`
-    fragment DatasetFragment on Dataset {
-  id
-  source
-  schemaId
-  fields {
-    fieldId
-    type
-    value
-    field {
-      id
-      name
-    }
-  }
-  name
-}
-    `;
-export const LayerSystemLayerFragmentDoc = gql`
-    fragment LayerSystemLayer on Layer {
-  id
-  name
-  isVisible
-  pluginId
-  extensionId
-  ... on LayerGroup {
-    linkedDatasetSchemaId
-    layers {
-      id
-    }
-  }
-  ... on LayerItem {
-    linkedDatasetId
-  }
-}
-    `;
-export const LayerSystemLayer1FragmentDoc = gql`
-    fragment LayerSystemLayer1 on Layer {
-  id
-  ...LayerSystemLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerSystemLayer
-    }
-  }
-}
-    ${LayerSystemLayerFragmentDoc}`;
-export const LayerSystemLayer2FragmentDoc = gql`
-    fragment LayerSystemLayer2 on Layer {
-  id
-  ...LayerSystemLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerSystemLayer1
-    }
-  }
-}
-    ${LayerSystemLayerFragmentDoc}
-${LayerSystemLayer1FragmentDoc}`;
-export const LayerSystemLayer3FragmentDoc = gql`
-    fragment LayerSystemLayer3 on Layer {
-  id
-  ...LayerSystemLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerSystemLayer2
-    }
-  }
-}
-    ${LayerSystemLayerFragmentDoc}
-${LayerSystemLayer2FragmentDoc}`;
-export const LayerSystemLayer4FragmentDoc = gql`
-    fragment LayerSystemLayer4 on Layer {
-  id
-  ...LayerSystemLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerSystemLayer3
-    }
-  }
-}
-    ${LayerSystemLayerFragmentDoc}
-${LayerSystemLayer3FragmentDoc}`;
-export const LayerSystemLayer5FragmentDoc = gql`
-    fragment LayerSystemLayer5 on Layer {
-  id
-  ...LayerSystemLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerSystemLayer4
-    }
-  }
-}
-    ${LayerSystemLayerFragmentDoc}
-${LayerSystemLayer4FragmentDoc}`;
-export const PropertyFieldLinkFragmentDoc = gql`
-    fragment PropertyFieldLink on PropertyFieldLink {
-  datasetId
-  datasetSchemaId
-  datasetSchemaFieldId
-}
-    `;
-export const PropertyFieldFragmentFragmentDoc = gql`
-    fragment PropertyFieldFragment on PropertyField {
-  id
-  fieldId
-  type
-  value
-  links {
-    ...PropertyFieldLink
-  }
-}
-    ${PropertyFieldLinkFragmentDoc}`;
-export const PropertyGroupFragmentFragmentDoc = gql`
-    fragment PropertyGroupFragment on PropertyGroup {
-  id
-  schemaGroupId
-  fields {
-    ...PropertyFieldFragment
-  }
-}
-    ${PropertyFieldFragmentFragmentDoc}`;
-export const PropertyItemFragmentFragmentDoc = gql`
-    fragment PropertyItemFragment on PropertyItem {
-  ... on PropertyGroupList {
-    id
-    schemaGroupId
-    groups {
-      ...PropertyGroupFragment
-    }
-  }
-  ... on PropertyGroup {
-    ...PropertyGroupFragment
-  }
-}
-    ${PropertyGroupFragmentFragmentDoc}`;
-export const PropertyFragmentWithoutSchemaFragmentDoc = gql`
-    fragment PropertyFragmentWithoutSchema on Property {
-  id
-  items {
-    ...PropertyItemFragment
-  }
-}
-    ${PropertyItemFragmentFragmentDoc}`;
-export const PropertySchemaFieldFragmentFragmentDoc = gql`
-    fragment PropertySchemaFieldFragment on PropertySchemaField {
-  fieldId
-  title
-  description
-  translatedTitle(lang: $lang)
-  translatedDescription(lang: $lang)
-  prefix
-  suffix
-  type
-  defaultValue
-  ui
-  min
-  max
-  choices {
-    key
-    icon
-    title
-    translatedTitle(lang: $lang)
-  }
-  isAvailableIf {
-    fieldId
-    type
-    value
-  }
-}
-    `;
-export const PropertySchemaGroupFragmentFragmentDoc = gql`
-    fragment PropertySchemaGroupFragment on PropertySchemaGroup {
-  schemaGroupId
-  title
-  translatedTitle(lang: $lang)
-  isList
-  representativeFieldId
-  isAvailableIf {
-    fieldId
-    type
-    value
-  }
-  fields {
-    ...PropertySchemaFieldFragment
-  }
-}
-    ${PropertySchemaFieldFragmentFragmentDoc}`;
-export const PropertyFragmentFragmentDoc = gql`
-    fragment PropertyFragment on Property {
-  id
-  ...PropertyFragmentWithoutSchema
-  schema {
-    id
-    groups {
-      ...PropertySchemaGroupFragment
-    }
-  }
-}
-    ${PropertyFragmentWithoutSchemaFragmentDoc}
-${PropertySchemaGroupFragmentFragmentDoc}`;
-export const EarthLayerCommonFragmentDoc = gql`
-    fragment EarthLayerCommon on Layer {
-  id
-  name
-  isVisible
-  pluginId
-  extensionId
-  scenePlugin {
-    property {
-      id
-      ...PropertyFragment
-    }
-  }
-  propertyId
-  property {
-    id
-    ...PropertyFragment
-  }
-  tags {
-    tagId
-    tag {
-      id
-      label
-    }
-    ... on LayerTagGroup {
-      children {
-        tagId
-        tag {
-          id
-          label
-        }
-      }
-    }
-  }
-  infobox {
-    propertyId
-    property {
-      id
-      ...PropertyFragment
-    }
-    fields {
-      id
-      pluginId
-      extensionId
-      propertyId
-      scenePlugin {
-        property {
-          id
-          ...PropertyFragment
-        }
-      }
-      property {
-        id
-        ...PropertyFragment
-      }
-    }
-  }
-  ... on LayerGroup {
-    linkedDatasetSchemaId
-    layers {
-      id
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}`;
-export const EarthLayerItemFragmentDoc = gql`
-    fragment EarthLayerItem on LayerItem {
-  id
-  linkedDatasetId
-  scenePlugin {
-    property {
-      id
-      ...PropertyFragment
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}`;
-export const EarthLayerFragmentDoc = gql`
-    fragment EarthLayer on Layer {
-  id
-  ...EarthLayerCommon
-  ...EarthLayerItem
-}
-    ${EarthLayerCommonFragmentDoc}
-${EarthLayerItemFragmentDoc}`;
-export const EarthLayer1FragmentDoc = gql`
-    fragment EarthLayer1 on Layer {
-  id
-  ...EarthLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...EarthLayer
-    }
-  }
-}
-    ${EarthLayerFragmentDoc}`;
-export const EarthLayer2FragmentDoc = gql`
-    fragment EarthLayer2 on Layer {
-  id
-  ...EarthLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...EarthLayer1
-    }
-  }
-}
-    ${EarthLayerFragmentDoc}
-${EarthLayer1FragmentDoc}`;
-export const EarthLayer3FragmentDoc = gql`
-    fragment EarthLayer3 on Layer {
-  id
-  ...EarthLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...EarthLayer2
-    }
-  }
-}
-    ${EarthLayerFragmentDoc}
-${EarthLayer2FragmentDoc}`;
-export const EarthLayer4FragmentDoc = gql`
-    fragment EarthLayer4 on Layer {
-  id
-  ...EarthLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...EarthLayer3
-    }
-  }
-}
-    ${EarthLayerFragmentDoc}
-${EarthLayer3FragmentDoc}`;
-export const EarthLayer5FragmentDoc = gql`
-    fragment EarthLayer5 on Layer {
-  id
-  ...EarthLayer
-  ... on LayerGroup {
-    layers {
-      id
-      ...EarthLayer4
-    }
-  }
-}
-    ${EarthLayerFragmentDoc}
-${EarthLayer4FragmentDoc}`;
-export const InfoboxFragmentFragmentDoc = gql`
-    fragment InfoboxFragment on Infobox {
-  propertyId
-  property {
-    id
-    ...PropertyFragment
-  }
-  fields {
-    id
-    pluginId
-    extensionId
-    propertyId
-    property {
-      id
-      ...PropertyFragment
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}`;
-export const MergedPropertyGroupCommonFragmentFragmentDoc = gql`
-    fragment MergedPropertyGroupCommonFragment on MergedPropertyGroup {
-  schemaGroupId
-  fields {
-    fieldId
-    type
-    actualValue
-    overridden
-    links {
-      ...PropertyFieldLink
-    }
-  }
-}
-    ${PropertyFieldLinkFragmentDoc}`;
-export const MergedPropertyGroupFragmentFragmentDoc = gql`
-    fragment MergedPropertyGroupFragment on MergedPropertyGroup {
-  ...MergedPropertyGroupCommonFragment
-  groups {
-    ...MergedPropertyGroupCommonFragment
-  }
-}
-    ${MergedPropertyGroupCommonFragmentFragmentDoc}`;
-export const MergedPropertyFragmentWithoutSchemaFragmentDoc = gql`
-    fragment MergedPropertyFragmentWithoutSchema on MergedProperty {
-  originalId
-  parentId
-  linkedDatasetId
-  groups {
-    ...MergedPropertyGroupFragment
-  }
-}
-    ${MergedPropertyGroupFragmentFragmentDoc}`;
-export const MergedPropertyFragmentFragmentDoc = gql`
-    fragment MergedPropertyFragment on MergedProperty {
-  ...MergedPropertyFragmentWithoutSchema
-  schema {
-    id
-  }
-}
-    ${MergedPropertyFragmentWithoutSchemaFragmentDoc}`;
-export const MergedInfoboxFragmentFragmentDoc = gql`
-    fragment MergedInfoboxFragment on MergedInfobox {
-  property {
-    ...MergedPropertyFragment
-  }
-  fields {
-    originalId
-    pluginId
-    extensionId
-    property {
-      ...MergedPropertyFragment
-    }
-  }
-}
-    ${MergedPropertyFragmentFragmentDoc}`;
-export const LayerFragmentFragmentDoc = gql`
-    fragment LayerFragment on Layer {
-  id
-  name
-  isVisible
-  pluginId
-  extensionId
-  property {
-    id
-    ...PropertyFragment
-  }
-  infobox {
-    ...InfoboxFragment
-  }
-  ... on LayerGroup {
-    linkedDatasetSchemaId
-  }
-  ... on LayerItem {
-    linkedDatasetId
-    merged {
-      parentId
-      property {
-        ...MergedPropertyFragment
-      }
-      infobox {
-        ...MergedInfoboxFragment
-      }
-    }
-  }
-}
-    ${PropertyFragmentFragmentDoc}
-${InfoboxFragmentFragmentDoc}
-${MergedPropertyFragmentFragmentDoc}
-${MergedInfoboxFragmentFragmentDoc}`;
-export const Layer0FragmentFragmentDoc = gql`
-    fragment Layer0Fragment on Layer {
-  id
-  ...LayerFragment
-  ... on LayerGroup {
-    layers {
-      id
-    }
-  }
-}
-    ${LayerFragmentFragmentDoc}`;
-export const Layer1FragmentFragmentDoc = gql`
-    fragment Layer1Fragment on Layer {
-  id
-  ...LayerFragment
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerFragment
-    }
-  }
-}
-    ${LayerFragmentFragmentDoc}`;
-export const Layer2FragmentFragmentDoc = gql`
-    fragment Layer2Fragment on Layer {
-  id
-  ...LayerFragment
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerFragment
-      ... on LayerGroup {
-        layers {
-          id
-          ...LayerFragment
-        }
-      }
-    }
-  }
-}
-    ${LayerFragmentFragmentDoc}`;
-export const Layer3FragmentFragmentDoc = gql`
-    fragment Layer3Fragment on Layer {
-  id
-  ...LayerFragment
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerFragment
-      ... on LayerGroup {
-        layers {
-          id
-          ...LayerFragment
-          ... on LayerGroup {
-            layers {
-              id
-              ...LayerFragment
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    ${LayerFragmentFragmentDoc}`;
-export const Layer4FragmentFragmentDoc = gql`
-    fragment Layer4Fragment on Layer {
-  id
-  ...LayerFragment
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerFragment
-      ... on LayerGroup {
-        layers {
-          id
-          ...LayerFragment
-          ... on LayerGroup {
-            layers {
-              id
-              ...LayerFragment
-              ... on LayerGroup {
-                layers {
-                  id
-                  ...LayerFragment
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    ${LayerFragmentFragmentDoc}`;
-export const Layer5FragmentFragmentDoc = gql`
-    fragment Layer5Fragment on Layer {
-  id
-  ...LayerFragment
-  ... on LayerGroup {
-    layers {
-      id
-      ...LayerFragment
-      ... on LayerGroup {
-        layers {
-          id
-          ...LayerFragment
-          ... on LayerGroup {
-            layers {
-              id
-              ...LayerFragment
-              ... on LayerGroup {
-                layers {
-                  id
-                  ...LayerFragment
-                  ... on LayerGroup {
-                    layers {
-                      id
-                      ...LayerFragment
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    ${LayerFragmentFragmentDoc}`;
-export const PluginFragmentFragmentDoc = gql`
-    fragment PluginFragment on Plugin {
-  id
-  name
-  extensions {
-    extensionId
-    type
-    name
-    description
-    icon
-    translatedName
-  }
-}
-    `;
-export const ProjectFragmentFragmentDoc = gql`
-    fragment ProjectFragment on Project {
-  id
-  name
-  description
-  imageUrl
-  isArchived
-  isBasicAuthActive
-  basicAuthUsername
-  basicAuthPassword
-  publicTitle
-  publicDescription
-  publicImage
-  alias
-  publishmentStatus
-  updatedAt
-  coreSupport
-}
-    `;
-export const GetProjectDocument = gql`
-    query GetProject($projectId: ID!) {
-  node(id: $projectId, type: PROJECT) {
-    id
-    ... on Project {
-      ...ProjectFragment
-      scene {
-        id
-      }
-    }
-  }
-}
-    ${ProjectFragmentFragmentDoc}`;
-
-/**
- * __useGetProjectQuery__
- *
- * To run a query within a React component, call `useGetProjectQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProjectQuery({
- *   variables: {
- *      projectId: // value for 'projectId'
- *   },
- * });
- */
-export function useGetProjectQuery(baseOptions: Apollo.QueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options);
-      }
-export function useGetProjectLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, options);
-        }
-export type GetProjectQueryHookResult = ReturnType<typeof useGetProjectQuery>;
-export type GetProjectLazyQueryHookResult = ReturnType<typeof useGetProjectLazyQuery>;
-export type GetProjectQueryResult = Apollo.QueryResult<GetProjectQuery, GetProjectQueryVariables>;
-export const GetProjectsDocument = gql`
-    query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
-  projects(
-    teamId: $teamId
-    first: $first
-    last: $last
-    after: $after
-    before: $before
-  ) {
-    edges {
-      node {
-        id
-        ...ProjectFragment
-        scene {
-          id
-        }
-      }
-    }
-    nodes {
-      id
-      ...ProjectFragment
-      scene {
-        id
-      }
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-      hasPreviousPage
-      startCursor
-    }
-    totalCount
-  }
-}
-    ${ProjectFragmentFragmentDoc}`;
-
-/**
- * __useGetProjectsQuery__
- *
- * To run a query within a React component, call `useGetProjectsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProjectsQuery({
- *   variables: {
- *      teamId: // value for 'teamId'
- *      first: // value for 'first'
- *      last: // value for 'last'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *   },
- * });
- */
-export function useGetProjectsQuery(baseOptions: Apollo.QueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, options);
-      }
-export function useGetProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, options);
-        }
-export type GetProjectsQueryHookResult = ReturnType<typeof useGetProjectsQuery>;
-export type GetProjectsLazyQueryHookResult = ReturnType<typeof useGetProjectsLazyQuery>;
-export type GetProjectsQueryResult = Apollo.QueryResult<GetProjectsQuery, GetProjectsQueryVariables>;
-export const CheckProjectAliasDocument = gql`
-    query CheckProjectAlias($alias: String!) {
-  checkProjectAlias(alias: $alias) {
-    alias
-    available
-  }
-}
-    `;
-
-/**
- * __useCheckProjectAliasQuery__
- *
- * To run a query within a React component, call `useCheckProjectAliasQuery` and pass it any options that fit your needs.
- * When your component renders, `useCheckProjectAliasQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCheckProjectAliasQuery({
- *   variables: {
- *      alias: // value for 'alias'
- *   },
- * });
- */
-export function useCheckProjectAliasQuery(baseOptions: Apollo.QueryHookOptions<CheckProjectAliasQuery, CheckProjectAliasQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CheckProjectAliasQuery, CheckProjectAliasQueryVariables>(CheckProjectAliasDocument, options);
-      }
-export function useCheckProjectAliasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckProjectAliasQuery, CheckProjectAliasQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CheckProjectAliasQuery, CheckProjectAliasQueryVariables>(CheckProjectAliasDocument, options);
-        }
-export type CheckProjectAliasQueryHookResult = ReturnType<typeof useCheckProjectAliasQuery>;
-export type CheckProjectAliasLazyQueryHookResult = ReturnType<typeof useCheckProjectAliasLazyQuery>;
-export type CheckProjectAliasQueryResult = Apollo.QueryResult<CheckProjectAliasQuery, CheckProjectAliasQueryVariables>;
-export const CreateProjectDocument = gql`
-    mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
-  createProject(
-    input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport}
-  ) {
-    project {
-      id
-      name
-      description
-      imageUrl
-      coreSupport
-    }
-  }
-}
-    `;
-export type CreateProjectMutationFn = Apollo.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
-
-/**
- * __useCreateProjectMutation__
- *
- * To run a mutation, you first call `useCreateProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createProjectMutation, { data, loading, error }] = useCreateProjectMutation({
- *   variables: {
- *      teamId: // value for 'teamId'
- *      visualizer: // value for 'visualizer'
- *      name: // value for 'name'
- *      description: // value for 'description'
- *      imageUrl: // value for 'imageUrl'
- *      coreSupport: // value for 'coreSupport'
- *   },
- * });
- */
-export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, options);
-      }
-export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
-export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
-export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
-export const UpdateProjectDocument = gql`
-    mutation UpdateProject($projectId: ID!, $name: String, $description: String, $imageUrl: URL, $publicTitle: String, $publicDescription: String, $publicImage: String, $deleteImageUrl: Boolean, $deletePublicImage: Boolean) {
-  updateProject(
-    input: {projectId: $projectId, name: $name, description: $description, imageUrl: $imageUrl, publicTitle: $publicTitle, publicDescription: $publicDescription, publicImage: $publicImage, deleteImageUrl: $deleteImageUrl, deletePublicImage: $deletePublicImage}
-  ) {
-    project {
-      id
-      ...ProjectFragment
-    }
-  }
-}
-    ${ProjectFragmentFragmentDoc}`;
-export type UpdateProjectMutationFn = Apollo.MutationFunction<UpdateProjectMutation, UpdateProjectMutationVariables>;
-
-/**
- * __useUpdateProjectMutation__
- *
- * To run a mutation, you first call `useUpdateProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectMutation, { data, loading, error }] = useUpdateProjectMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      name: // value for 'name'
- *      description: // value for 'description'
- *      imageUrl: // value for 'imageUrl'
- *      publicTitle: // value for 'publicTitle'
- *      publicDescription: // value for 'publicDescription'
- *      publicImage: // value for 'publicImage'
- *      deleteImageUrl: // value for 'deleteImageUrl'
- *      deletePublicImage: // value for 'deletePublicImage'
- *   },
- * });
- */
-export function useUpdateProjectMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectMutation, UpdateProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProjectMutation, UpdateProjectMutationVariables>(UpdateProjectDocument, options);
-      }
-export type UpdateProjectMutationHookResult = ReturnType<typeof useUpdateProjectMutation>;
-export type UpdateProjectMutationResult = Apollo.MutationResult<UpdateProjectMutation>;
-export type UpdateProjectMutationOptions = Apollo.BaseMutationOptions<UpdateProjectMutation, UpdateProjectMutationVariables>;
-export const UpdateProjectBasicAuthDocument = gql`
-    mutation UpdateProjectBasicAuth($projectId: ID!, $isBasicAuthActive: Boolean, $basicAuthUsername: String, $basicAuthPassword: String) {
-  updateProject(
-    input: {projectId: $projectId, isBasicAuthActive: $isBasicAuthActive, basicAuthUsername: $basicAuthUsername, basicAuthPassword: $basicAuthPassword}
-  ) {
-    project {
-      id
-      name
-      isBasicAuthActive
-      basicAuthUsername
-      basicAuthPassword
-    }
-  }
-}
-    `;
-export type UpdateProjectBasicAuthMutationFn = Apollo.MutationFunction<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
-
-/**
- * __useUpdateProjectBasicAuthMutation__
- *
- * To run a mutation, you first call `useUpdateProjectBasicAuthMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectBasicAuthMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectBasicAuthMutation, { data, loading, error }] = useUpdateProjectBasicAuthMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      isBasicAuthActive: // value for 'isBasicAuthActive'
- *      basicAuthUsername: // value for 'basicAuthUsername'
- *      basicAuthPassword: // value for 'basicAuthPassword'
- *   },
- * });
- */
-export function useUpdateProjectBasicAuthMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>(UpdateProjectBasicAuthDocument, options);
-      }
-export type UpdateProjectBasicAuthMutationHookResult = ReturnType<typeof useUpdateProjectBasicAuthMutation>;
-export type UpdateProjectBasicAuthMutationResult = Apollo.MutationResult<UpdateProjectBasicAuthMutation>;
-export type UpdateProjectBasicAuthMutationOptions = Apollo.BaseMutationOptions<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
-export const UpdateProjectAliasDocument = gql`
-    mutation UpdateProjectAlias($projectId: ID!, $alias: String!) {
-  updateProject(input: {projectId: $projectId, alias: $alias}) {
-    project {
-      id
-      name
-      alias
-    }
-  }
-}
-    `;
-export type UpdateProjectAliasMutationFn = Apollo.MutationFunction<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
-
-/**
- * __useUpdateProjectAliasMutation__
- *
- * To run a mutation, you first call `useUpdateProjectAliasMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProjectAliasMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateProjectAliasMutation, { data, loading, error }] = useUpdateProjectAliasMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      alias: // value for 'alias'
- *   },
- * });
- */
-export function useUpdateProjectAliasMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>(UpdateProjectAliasDocument, options);
-      }
-export type UpdateProjectAliasMutationHookResult = ReturnType<typeof useUpdateProjectAliasMutation>;
-export type UpdateProjectAliasMutationResult = Apollo.MutationResult<UpdateProjectAliasMutation>;
-export type UpdateProjectAliasMutationOptions = Apollo.BaseMutationOptions<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
-export const PublishProjectDocument = gql`
-    mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
-  publishProject(input: {projectId: $projectId, alias: $alias, status: $status}) {
-    project {
-      id
-      alias
-      publishmentStatus
-    }
-  }
-}
-    `;
-export type PublishProjectMutationFn = Apollo.MutationFunction<PublishProjectMutation, PublishProjectMutationVariables>;
-
-/**
- * __usePublishProjectMutation__
- *
- * To run a mutation, you first call `usePublishProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePublishProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [publishProjectMutation, { data, loading, error }] = usePublishProjectMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      alias: // value for 'alias'
- *      status: // value for 'status'
- *   },
- * });
- */
-export function usePublishProjectMutation(baseOptions?: Apollo.MutationHookOptions<PublishProjectMutation, PublishProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PublishProjectMutation, PublishProjectMutationVariables>(PublishProjectDocument, options);
-      }
-export type PublishProjectMutationHookResult = ReturnType<typeof usePublishProjectMutation>;
-export type PublishProjectMutationResult = Apollo.MutationResult<PublishProjectMutation>;
-export type PublishProjectMutationOptions = Apollo.BaseMutationOptions<PublishProjectMutation, PublishProjectMutationVariables>;
-export const ArchiveProjectDocument = gql`
-    mutation ArchiveProject($projectId: ID!, $archived: Boolean!) {
-  updateProject(input: {projectId: $projectId, archived: $archived}) {
-    project {
-      id
-      isArchived
-    }
-  }
-}
-    `;
-export type ArchiveProjectMutationFn = Apollo.MutationFunction<ArchiveProjectMutation, ArchiveProjectMutationVariables>;
-
-/**
- * __useArchiveProjectMutation__
- *
- * To run a mutation, you first call `useArchiveProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useArchiveProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [archiveProjectMutation, { data, loading, error }] = useArchiveProjectMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *      archived: // value for 'archived'
- *   },
- * });
- */
-export function useArchiveProjectMutation(baseOptions?: Apollo.MutationHookOptions<ArchiveProjectMutation, ArchiveProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ArchiveProjectMutation, ArchiveProjectMutationVariables>(ArchiveProjectDocument, options);
-      }
-export type ArchiveProjectMutationHookResult = ReturnType<typeof useArchiveProjectMutation>;
-export type ArchiveProjectMutationResult = Apollo.MutationResult<ArchiveProjectMutation>;
-export type ArchiveProjectMutationOptions = Apollo.BaseMutationOptions<ArchiveProjectMutation, ArchiveProjectMutationVariables>;
-export const DeleteProjectDocument = gql`
-    mutation DeleteProject($projectId: ID!) {
-  deleteProject(input: {projectId: $projectId}) {
-    projectId
-  }
-}
-    `;
-export type DeleteProjectMutationFn = Apollo.MutationFunction<DeleteProjectMutation, DeleteProjectMutationVariables>;
-
-/**
- * __useDeleteProjectMutation__
- *
- * To run a mutation, you first call `useDeleteProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteProjectMutation, { data, loading, error }] = useDeleteProjectMutation({
- *   variables: {
- *      projectId: // value for 'projectId'
- *   },
- * });
- */
-export function useDeleteProjectMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProjectMutation, DeleteProjectMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteProjectMutation, DeleteProjectMutationVariables>(DeleteProjectDocument, options);
-      }
-export type DeleteProjectMutationHookResult = ReturnType<typeof useDeleteProjectMutation>;
-export type DeleteProjectMutationResult = Apollo.MutationResult<DeleteProjectMutation>;
-export type DeleteProjectMutationOptions = Apollo.BaseMutationOptions<DeleteProjectMutation, DeleteProjectMutationVariables>;
-export const GetSceneDocument = gql`
-    query GetScene($sceneId: ID!) {
-  node(id: $sceneId, type: SCENE) {
-    id
-    ... on Scene {
-      rootLayerId
-      teamId
-      projectId
-    }
-  }
-}
-    `;
-
-/**
- * __useGetSceneQuery__
- *
- * To run a query within a React component, call `useGetSceneQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSceneQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSceneQuery({
- *   variables: {
- *      sceneId: // value for 'sceneId'
- *   },
- * });
- */
-export function useGetSceneQuery(baseOptions: Apollo.QueryHookOptions<GetSceneQuery, GetSceneQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetSceneQuery, GetSceneQueryVariables>(GetSceneDocument, options);
-      }
-export function useGetSceneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSceneQuery, GetSceneQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetSceneQuery, GetSceneQueryVariables>(GetSceneDocument, options);
-        }
-export type GetSceneQueryHookResult = ReturnType<typeof useGetSceneQuery>;
-export type GetSceneLazyQueryHookResult = ReturnType<typeof useGetSceneLazyQuery>;
-export type GetSceneQueryResult = Apollo.QueryResult<GetSceneQuery, GetSceneQueryVariables>;
-export const GetUserBySearchDocument = gql`
-    query GetUserBySearch($nameOrEmail: String!) {
-  searchUser(nameOrEmail: $nameOrEmail) {
-    id
-    name
-    email
-  }
-}
-    `;
-
-/**
- * __useGetUserBySearchQuery__
- *
- * To run a query within a React component, call `useGetUserBySearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserBySearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserBySearchQuery({
- *   variables: {
- *      nameOrEmail: // value for 'nameOrEmail'
- *   },
- * });
- */
-export function useGetUserBySearchQuery(baseOptions: Apollo.QueryHookOptions<GetUserBySearchQuery, GetUserBySearchQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserBySearchQuery, GetUserBySearchQueryVariables>(GetUserBySearchDocument, options);
-      }
-export function useGetUserBySearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserBySearchQuery, GetUserBySearchQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserBySearchQuery, GetUserBySearchQueryVariables>(GetUserBySearchDocument, options);
-        }
-export type GetUserBySearchQueryHookResult = ReturnType<typeof useGetUserBySearchQuery>;
-export type GetUserBySearchLazyQueryHookResult = ReturnType<typeof useGetUserBySearchLazyQuery>;
-export type GetUserBySearchQueryResult = Apollo.QueryResult<GetUserBySearchQuery, GetUserBySearchQueryVariables>;
-export const GetMeDocument = gql`
-    query GetMe {
-  me {
-    id
-    name
-    email
-    lang
-    theme
-    myTeam {
-      id
-      name
-      policyId
-      policy {
-        id
-        name
-        projectCount
-        memberCount
-        publishedProjectCount
-        layerCount
-        assetStorageSize
-        datasetSchemaCount
-        datasetCount
-      }
-    }
-    teams {
-      id
-      name
-      members {
-        user {
-          id
-          name
-          email
-        }
-        userId
-        role
-      }
-      policyId
-      policy {
-        id
-        name
-        projectCount
-        memberCount
-        publishedProjectCount
-        layerCount
-        assetStorageSize
-        datasetSchemaCount
-        datasetCount
-      }
-    }
-    auths
-  }
-}
-    `;
-
-/**
- * __useGetMeQuery__
- *
- * To run a query within a React component, call `useGetMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMeQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetMeQuery(baseOptions?: Apollo.QueryHookOptions<GetMeQuery, GetMeQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetMeQuery, GetMeQueryVariables>(GetMeDocument, options);
-      }
-export function useGetMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMeQuery, GetMeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetMeQuery, GetMeQueryVariables>(GetMeDocument, options);
-        }
-export type GetMeQueryHookResult = ReturnType<typeof useGetMeQuery>;
-export type GetMeLazyQueryHookResult = ReturnType<typeof useGetMeLazyQuery>;
-export type GetMeQueryResult = Apollo.QueryResult<GetMeQuery, GetMeQueryVariables>;
-export const UpdateMeDocument = gql`
-    mutation UpdateMe($name: String, $email: String, $lang: Lang, $theme: Theme, $password: String, $passwordConfirmation: String) {
-  updateMe(
-    input: {name: $name, email: $email, lang: $lang, theme: $theme, password: $password, passwordConfirmation: $passwordConfirmation}
-  ) {
-    me {
-      id
-      name
-      email
-      lang
-      theme
-      myTeam {
-        id
-        name
-      }
-    }
-  }
-}
-    `;
-export type UpdateMeMutationFn = Apollo.MutationFunction<UpdateMeMutation, UpdateMeMutationVariables>;
-
-/**
- * __useUpdateMeMutation__
- *
- * To run a mutation, you first call `useUpdateMeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateMeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateMeMutation, { data, loading, error }] = useUpdateMeMutation({
- *   variables: {
- *      name: // value for 'name'
- *      email: // value for 'email'
- *      lang: // value for 'lang'
- *      theme: // value for 'theme'
- *      password: // value for 'password'
- *      passwordConfirmation: // value for 'passwordConfirmation'
- *   },
- * });
- */
-export function useUpdateMeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMeMutation, UpdateMeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateMeMutation, UpdateMeMutationVariables>(UpdateMeDocument, options);
-      }
-export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
-export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
-export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<UpdateMeMutation, UpdateMeMutationVariables>;
-export const DeleteMeDocument = gql`
-    mutation DeleteMe($userId: ID!) {
-  deleteMe(input: {userId: $userId}) {
-    userId
-  }
-}
-    `;
-export type DeleteMeMutationFn = Apollo.MutationFunction<DeleteMeMutation, DeleteMeMutationVariables>;
-
-/**
- * __useDeleteMeMutation__
- *
- * To run a mutation, you first call `useDeleteMeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteMeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteMeMutation, { data, loading, error }] = useDeleteMeMutation({
- *   variables: {
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useDeleteMeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMeMutation, DeleteMeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteMeMutation, DeleteMeMutationVariables>(DeleteMeDocument, options);
-      }
-export type DeleteMeMutationHookResult = ReturnType<typeof useDeleteMeMutation>;
-export type DeleteMeMutationResult = Apollo.MutationResult<DeleteMeMutation>;
-export type DeleteMeMutationOptions = Apollo.BaseMutationOptions<DeleteMeMutation, DeleteMeMutationVariables>;
-export const CreateWorkspaceDocument = gql`
-    mutation CreateWorkspace($name: String!) {
-  createTeam(input: {name: $name}) {
-    team {
-      id
-      name
-      members {
-        user {
-          id
-          name
-          email
-        }
-        userId
-        role
-      }
-      personal
-      policyId
-      policy {
-        id
-        name
-        projectCount
-        memberCount
-        publishedProjectCount
-        layerCount
-        assetStorageSize
-        datasetSchemaCount
-        datasetCount
-      }
-    }
-  }
-}
-    `;
-export type CreateWorkspaceMutationFn = Apollo.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
-
-/**
- * __useCreateWorkspaceMutation__
- *
- * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
- *   variables: {
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useCreateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, options);
-      }
-export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
-export type CreateWorkspaceMutationResult = Apollo.MutationResult<CreateWorkspaceMutation>;
-export type CreateWorkspaceMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+export const WidgetAreaFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetAreaFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetArea"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"widgetIds"}},{"kind":"Field","name":{"kind":"Name","value":"align"}},{"kind":"Field","name":{"kind":"Name","value":"padding"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"top"}},{"kind":"Field","name":{"kind":"Name","value":"bottom"}},{"kind":"Field","name":{"kind":"Name","value":"left"}},{"kind":"Field","name":{"kind":"Name","value":"right"}}]}},{"kind":"Field","name":{"kind":"Name","value":"gap"}},{"kind":"Field","name":{"kind":"Name","value":"centered"}},{"kind":"Field","name":{"kind":"Name","value":"background"}}]}}]} as unknown as DocumentNode<WidgetAreaFragmentFragment, unknown>;
+export const WidgetSectionFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetSectionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetSection"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"top"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"middle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bottom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetAreaFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetArea"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"widgetIds"}},{"kind":"Field","name":{"kind":"Name","value":"align"}},{"kind":"Field","name":{"kind":"Name","value":"padding"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"top"}},{"kind":"Field","name":{"kind":"Name","value":"bottom"}},{"kind":"Field","name":{"kind":"Name","value":"left"}},{"kind":"Field","name":{"kind":"Name","value":"right"}}]}},{"kind":"Field","name":{"kind":"Name","value":"gap"}},{"kind":"Field","name":{"kind":"Name","value":"centered"}},{"kind":"Field","name":{"kind":"Name","value":"background"}}]}}]} as unknown as DocumentNode<WidgetSectionFragmentFragment, unknown>;
+export const WidgetZoneFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetZoneFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetZone"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"left"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetSectionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"center"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetSectionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"right"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetSectionFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetAreaFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetArea"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"widgetIds"}},{"kind":"Field","name":{"kind":"Name","value":"align"}},{"kind":"Field","name":{"kind":"Name","value":"padding"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"top"}},{"kind":"Field","name":{"kind":"Name","value":"bottom"}},{"kind":"Field","name":{"kind":"Name","value":"left"}},{"kind":"Field","name":{"kind":"Name","value":"right"}}]}},{"kind":"Field","name":{"kind":"Name","value":"gap"}},{"kind":"Field","name":{"kind":"Name","value":"centered"}},{"kind":"Field","name":{"kind":"Name","value":"background"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetSectionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetSection"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"top"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"middle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bottom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}}]}}]} as unknown as DocumentNode<WidgetZoneFragmentFragment, unknown>;
+export const WidgetAlignSystemFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetAlignSystemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetAlignSystem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"outer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetZoneFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetZoneFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetAreaFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetArea"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"widgetIds"}},{"kind":"Field","name":{"kind":"Name","value":"align"}},{"kind":"Field","name":{"kind":"Name","value":"padding"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"top"}},{"kind":"Field","name":{"kind":"Name","value":"bottom"}},{"kind":"Field","name":{"kind":"Name","value":"left"}},{"kind":"Field","name":{"kind":"Name","value":"right"}}]}},{"kind":"Field","name":{"kind":"Name","value":"gap"}},{"kind":"Field","name":{"kind":"Name","value":"centered"}},{"kind":"Field","name":{"kind":"Name","value":"background"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetSectionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetSection"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"top"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"middle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bottom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetAreaFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WidgetZoneFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WidgetZone"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"left"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetSectionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"center"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetSectionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"right"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WidgetSectionFragment"}}]}}]}}]} as unknown as DocumentNode<WidgetAlignSystemFragmentFragment, unknown>;
+export const DatasetFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DatasetFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Dataset"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"schemaId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"field"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<DatasetFragmentFragment, unknown>;
+export const LayerSystemLayerFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}}]}}]}}]} as unknown as DocumentNode<LayerSystemLayerFragment, unknown>;
+export const LayerSystemLayer1FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}}]}}]}}]} as unknown as DocumentNode<LayerSystemLayer1Fragment, unknown>;
+export const LayerSystemLayer2FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer1"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}}]}}]}}]}}]} as unknown as DocumentNode<LayerSystemLayer2Fragment, unknown>;
+export const LayerSystemLayer3FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer3"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer2"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer1"}}]}}]}}]}}]} as unknown as DocumentNode<LayerSystemLayer3Fragment, unknown>;
+export const LayerSystemLayer4FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer4"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer3"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer1"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer3"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer2"}}]}}]}}]}}]} as unknown as DocumentNode<LayerSystemLayer4Fragment, unknown>;
+export const LayerSystemLayer5FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer5"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer4"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer1"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer3"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer2"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerSystemLayer4"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerSystemLayer3"}}]}}]}}]}}]} as unknown as DocumentNode<LayerSystemLayer5Fragment, unknown>;
+export const PropertyFieldLinkFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}}]} as unknown as DocumentNode<PropertyFieldLinkFragment, unknown>;
+export const PropertyFieldFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}}]} as unknown as DocumentNode<PropertyFieldFragmentFragment, unknown>;
+export const PropertyGroupFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]} as unknown as DocumentNode<PropertyGroupFragmentFragment, unknown>;
+export const PropertyItemFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}}]} as unknown as DocumentNode<PropertyItemFragmentFragment, unknown>;
+export const PropertyFragmentWithoutSchemaFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}}]} as unknown as DocumentNode<PropertyFragmentWithoutSchemaFragment, unknown>;
+export const PropertySchemaFieldFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<PropertySchemaFieldFragmentFragment, unknown>;
+export const PropertySchemaGroupFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<PropertySchemaGroupFragmentFragment, unknown>;
+export const PropertyFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}}]} as unknown as DocumentNode<PropertyFragmentFragment, unknown>;
+export const EarthLayerCommonFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerCommon"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerTagGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"children"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}}]} as unknown as DocumentNode<EarthLayerCommonFragment, unknown>;
+export const EarthLayerItemFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}}]} as unknown as DocumentNode<EarthLayerItemFragment, unknown>;
+export const EarthLayerFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerCommon"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerItem"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerCommon"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerTagGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"children"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}}]} as unknown as DocumentNode<EarthLayerFragment, unknown>;
+export const EarthLayer1FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerCommon"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerTagGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"children"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerCommon"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerItem"}}]}}]} as unknown as DocumentNode<EarthLayer1Fragment, unknown>;
+export const EarthLayer2FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer1"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerCommon"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerTagGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"children"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerCommon"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerItem"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}}]}}]}}]}}]} as unknown as DocumentNode<EarthLayer2Fragment, unknown>;
+export const EarthLayer3FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer3"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer2"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerCommon"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerTagGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"children"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerCommon"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerItem"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer1"}}]}}]}}]}}]} as unknown as DocumentNode<EarthLayer3Fragment, unknown>;
+export const EarthLayer4FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer4"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer3"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerCommon"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerTagGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"children"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerCommon"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerItem"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer1"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer3"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer2"}}]}}]}}]}}]} as unknown as DocumentNode<EarthLayer4Fragment, unknown>;
+export const EarthLayer5FragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer5"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer4"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerCommon"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerTagGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"children"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayerItem"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerCommon"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayerItem"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer1"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer2"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer1"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer3"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer2"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EarthLayer4"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EarthLayer3"}}]}}]}}]}}]} as unknown as DocumentNode<EarthLayer5Fragment, unknown>;
+export const InfoboxFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}}]} as unknown as DocumentNode<InfoboxFragmentFragment, unknown>;
+export const MergedPropertyGroupCommonFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}}]} as unknown as DocumentNode<MergedPropertyGroupCommonFragmentFragment, unknown>;
+export const MergedPropertyGroupFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}}]} as unknown as DocumentNode<MergedPropertyGroupFragmentFragment, unknown>;
+export const MergedPropertyFragmentWithoutSchemaFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}}]} as unknown as DocumentNode<MergedPropertyFragmentWithoutSchemaFragment, unknown>;
+export const MergedPropertyFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}}]} as unknown as DocumentNode<MergedPropertyFragmentFragment, unknown>;
+export const MergedInfoboxFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<MergedInfoboxFragmentFragment, unknown>;
+export const LayerFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InfoboxFragment"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"merged"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedInfoboxFragment"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}}]} as unknown as DocumentNode<LayerFragmentFragment, unknown>;
+export const Layer0FragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Layer0Fragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InfoboxFragment"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"merged"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedInfoboxFragment"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Layer0FragmentFragment, unknown>;
+export const Layer1FragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Layer1Fragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InfoboxFragment"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"merged"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedInfoboxFragment"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Layer1FragmentFragment, unknown>;
+export const Layer2FragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Layer2Fragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InfoboxFragment"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"merged"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedInfoboxFragment"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Layer2FragmentFragment, unknown>;
+export const Layer3FragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Layer3Fragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}}]}}]}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InfoboxFragment"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"merged"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedInfoboxFragment"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Layer3FragmentFragment, unknown>;
+export const Layer4FragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Layer4Fragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}}]}}]}}]}}]}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InfoboxFragment"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"merged"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedInfoboxFragment"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Layer4FragmentFragment, unknown>;
+export const Layer5FragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Layer5Fragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"layers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"LayerFragment"}}]}}]}}]}}]}}]}}]}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldLink"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyFieldLink"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaId"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaFieldId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroupList"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"suffix"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"ui"}},{"kind":"Field","name":{"kind":"Name","value":"min"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"choices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]}]}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertySchemaGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PropertySchemaGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"translatedTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"isList"}},{"kind":"Field","name":{"kind":"Name","value":"representativeFieldId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailableIf"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertySchemaGroupFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Infobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"schemaGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"actualValue"}},{"kind":"Field","name":{"kind":"Name","value":"overridden"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFieldLink"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedPropertyGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupCommonFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"groups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedPropertyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedProperty"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragmentWithoutSchema"}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MergedInfoboxFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MergedInfobox"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"originalId"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"LayerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Layer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InfoboxFragment"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetSchemaId"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LayerItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"linkedDatasetId"}},{"kind":"Field","name":{"kind":"Name","value":"merged"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"parentId"}},{"kind":"Field","name":{"kind":"Name","value":"property"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedPropertyFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"infobox"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MergedInfoboxFragment"}}]}}]}}]}}]}}]} as unknown as DocumentNode<Layer5FragmentFragment, unknown>;
+export const PluginFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PluginFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Plugin"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"extensions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"extensionId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"translatedName"}}]}}]}}]} as unknown as DocumentNode<PluginFragmentFragment, unknown>;
+export const ProjectFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Project"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isArchived"}},{"kind":"Field","name":{"kind":"Name","value":"isBasicAuthActive"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthUsername"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthPassword"}},{"kind":"Field","name":{"kind":"Name","value":"publicTitle"}},{"kind":"Field","name":{"kind":"Name","value":"publicDescription"}},{"kind":"Field","name":{"kind":"Name","value":"publicImage"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"publishmentStatus"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"coreSupport"}}]}}]} as unknown as DocumentNode<ProjectFragmentFragment, unknown>;
+export const GetProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"EnumValue","value":"PROJECT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Project"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectFragment"}},{"kind":"Field","name":{"kind":"Name","value":"scene"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Project"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isArchived"}},{"kind":"Field","name":{"kind":"Name","value":"isBasicAuthActive"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthUsername"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthPassword"}},{"kind":"Field","name":{"kind":"Name","value":"publicTitle"}},{"kind":"Field","name":{"kind":"Name","value":"publicDescription"}},{"kind":"Field","name":{"kind":"Name","value":"publicImage"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"publishmentStatus"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"coreSupport"}}]}}]} as unknown as DocumentNode<GetProjectQuery, GetProjectQueryVariables>;
+export const GetProjectsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjects"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"last"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Cursor"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"before"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Cursor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projects"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"teamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"last"},"value":{"kind":"Variable","name":{"kind":"Name","value":"last"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"before"},"value":{"kind":"Variable","name":{"kind":"Name","value":"before"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectFragment"}},{"kind":"Field","name":{"kind":"Name","value":"scene"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectFragment"}},{"kind":"Field","name":{"kind":"Name","value":"scene"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Project"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isArchived"}},{"kind":"Field","name":{"kind":"Name","value":"isBasicAuthActive"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthUsername"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthPassword"}},{"kind":"Field","name":{"kind":"Name","value":"publicTitle"}},{"kind":"Field","name":{"kind":"Name","value":"publicDescription"}},{"kind":"Field","name":{"kind":"Name","value":"publicImage"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"publishmentStatus"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"coreSupport"}}]}}]} as unknown as DocumentNode<GetProjectsQuery, GetProjectsQueryVariables>;
+export const CheckProjectAliasDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckProjectAlias"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alias"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkProjectAlias"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"alias"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alias"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"available"}}]}}]}}]} as unknown as DocumentNode<CheckProjectAliasQuery, CheckProjectAliasQueryVariables>;
+export const CreateProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"visualizer"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Visualizer"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"description"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageUrl"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"URL"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreSupport"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"teamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"visualizer"},"value":{"kind":"Variable","name":{"kind":"Name","value":"visualizer"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"description"},"value":{"kind":"Variable","name":{"kind":"Name","value":"description"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"imageUrl"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageUrl"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"coreSupport"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreSupport"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"coreSupport"}}]}}]}}]}}]} as unknown as DocumentNode<CreateProjectMutation, CreateProjectMutationVariables>;
+export const UpdateProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"description"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageUrl"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"URL"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicTitle"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicDescription"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicImage"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deleteImageUrl"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deletePublicImage"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"description"},"value":{"kind":"Variable","name":{"kind":"Name","value":"description"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"imageUrl"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageUrl"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"publicTitle"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicTitle"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"publicDescription"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicDescription"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"publicImage"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicImage"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"deleteImageUrl"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deleteImageUrl"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"deletePublicImage"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deletePublicImage"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProjectFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProjectFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Project"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isArchived"}},{"kind":"Field","name":{"kind":"Name","value":"isBasicAuthActive"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthUsername"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthPassword"}},{"kind":"Field","name":{"kind":"Name","value":"publicTitle"}},{"kind":"Field","name":{"kind":"Name","value":"publicDescription"}},{"kind":"Field","name":{"kind":"Name","value":"publicImage"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"publishmentStatus"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"coreSupport"}}]}}]} as unknown as DocumentNode<UpdateProjectMutation, UpdateProjectMutationVariables>;
+export const UpdateProjectBasicAuthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProjectBasicAuth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isBasicAuthActive"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"basicAuthUsername"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"basicAuthPassword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"isBasicAuthActive"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isBasicAuthActive"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"basicAuthUsername"},"value":{"kind":"Variable","name":{"kind":"Name","value":"basicAuthUsername"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"basicAuthPassword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"basicAuthPassword"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isBasicAuthActive"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthUsername"}},{"kind":"Field","name":{"kind":"Name","value":"basicAuthPassword"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateProjectBasicAuthMutation, UpdateProjectBasicAuthMutationVariables>;
+export const UpdateProjectAliasDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateProjectAlias"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alias"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"alias"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alias"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateProjectAliasMutation, UpdateProjectAliasMutationVariables>;
+export const PublishProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PublishProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alias"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"status"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PublishmentStatus"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publishProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"alias"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alias"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"Variable","name":{"kind":"Name","value":"status"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"publishmentStatus"}}]}}]}}]}}]} as unknown as DocumentNode<PublishProjectMutation, PublishProjectMutationVariables>;
+export const ArchiveProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ArchiveProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"archived"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"archived"},"value":{"kind":"Variable","name":{"kind":"Name","value":"archived"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"project"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isArchived"}}]}}]}}]}}]} as unknown as DocumentNode<ArchiveProjectMutation, ArchiveProjectMutationVariables>;
+export const DeleteProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projectId"}}]}}]}}]} as unknown as DocumentNode<DeleteProjectMutation, DeleteProjectMutationVariables>;
+export const GetSceneDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetScene"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"EnumValue","value":"SCENE"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Scene"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rootLayerId"}},{"kind":"Field","name":{"kind":"Name","value":"teamId"}},{"kind":"Field","name":{"kind":"Name","value":"projectId"}}]}}]}}]}}]} as unknown as DocumentNode<GetSceneQuery, GetSceneQueryVariables>;
+export const CreateSceneDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateScene"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createScene"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scene"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<CreateSceneMutation, CreateSceneMutationVariables>;
+export const GetUserBySearchDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserBySearch"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nameOrEmail"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"nameOrEmail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nameOrEmail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<GetUserBySearchQuery, GetUserBySearchQueryVariables>;
+export const GetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"lang"}},{"kind":"Field","name":{"kind":"Name","value":"theme"}},{"kind":"Field","name":{"kind":"Name","value":"myTeam"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"policyId"}},{"kind":"Field","name":{"kind":"Name","value":"policy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"projectCount"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"publishedProjectCount"}},{"kind":"Field","name":{"kind":"Name","value":"layerCount"}},{"kind":"Field","name":{"kind":"Name","value":"assetStorageSize"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaCount"}},{"kind":"Field","name":{"kind":"Name","value":"datasetCount"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"teams"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"members"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"policyId"}},{"kind":"Field","name":{"kind":"Name","value":"policy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"projectCount"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"publishedProjectCount"}},{"kind":"Field","name":{"kind":"Name","value":"layerCount"}},{"kind":"Field","name":{"kind":"Name","value":"assetStorageSize"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaCount"}},{"kind":"Field","name":{"kind":"Name","value":"datasetCount"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"auths"}}]}}]}}]} as unknown as DocumentNode<GetMeQuery, GetMeQueryVariables>;
+export const UpdateMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMe"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lang"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Lang"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"theme"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Theme"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"passwordConfirmation"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateMe"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"theme"},"value":{"kind":"Variable","name":{"kind":"Name","value":"theme"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"passwordConfirmation"},"value":{"kind":"Variable","name":{"kind":"Name","value":"passwordConfirmation"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"lang"}},{"kind":"Field","name":{"kind":"Name","value":"theme"}},{"kind":"Field","name":{"kind":"Name","value":"myTeam"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UpdateMeMutation, UpdateMeMutationVariables>;
+export const DeleteMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteMe"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteMe"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}}]}}]}}]} as unknown as DocumentNode<DeleteMeMutation, DeleteMeMutationVariables>;
+export const CreateWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkspace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTeam"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"team"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"members"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"personal"}},{"kind":"Field","name":{"kind":"Name","value":"policyId"}},{"kind":"Field","name":{"kind":"Name","value":"policy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"projectCount"}},{"kind":"Field","name":{"kind":"Name","value":"memberCount"}},{"kind":"Field","name":{"kind":"Name","value":"publishedProjectCount"}},{"kind":"Field","name":{"kind":"Name","value":"layerCount"}},{"kind":"Field","name":{"kind":"Name","value":"assetStorageSize"}},{"kind":"Field","name":{"kind":"Name","value":"datasetSchemaCount"}},{"kind":"Field","name":{"kind":"Name","value":"datasetCount"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;

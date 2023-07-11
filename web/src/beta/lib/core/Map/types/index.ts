@@ -332,6 +332,9 @@ export type SceneProperty = {
     lightColor?: string;
     lightIntensity?: number;
   };
+  render?: {
+    antialias?: "low" | "medium" | "high" | "extreme";
+  };
 };
 
 export type EngineComponent = ForwardRefExoticComponent<

@@ -14,7 +14,7 @@ import { configDefaults } from "vitest/config";
 
 import pkg from "./package.json";
 
-export default defineConfig({
+export default defineConfig(() => ({
   envPrefix: "REEARTH_WEB_",
   plugins: [react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
   define: {
@@ -50,7 +50,8 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/**/*.cy.tsx",
         "src/**/*.stories.tsx",
-        "src/services/gql/graphql-client-api.tsx",
+        "src/classic/gql/graphql-client-api.tsx",
+        "src/beta/services/gql/__gen__/**/*",
         "src/test/**/*",
       ],
       reporter: ["text", "json", "lcov"],
@@ -60,7 +61,7 @@ export default defineConfig({
       { find: "csv-parse", replacement: "csv-parse" },
     ],
   },
-});
+}));
 
 function serverHeaders(): Plugin {
   return {
