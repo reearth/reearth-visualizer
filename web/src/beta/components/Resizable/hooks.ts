@@ -112,6 +112,9 @@ export default (
     }),
     [onResizeStart],
   );
+  const onInitializeSize = useCallback(() => {
+    setSize(initialSize);
+  }, [initialSize]);
 
-  return { size, gutterProps };
+  return { size: size, gutterProps, onInitializeSize };
 };
