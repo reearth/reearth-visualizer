@@ -1,16 +1,11 @@
-import { useApolloClient } from "@apollo/client";
 import { useMemo, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useWorkspaceFetcher, useMeFetcher, useProjectFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
-import { useCreateWorkspaceMutation, GetMeQuery, GetProjectQuery } from "@reearth/services/gql";
-import { GET_PROJECT } from "@reearth/services/gql/queries/project";
-import { GET_ME } from "@reearth/services/gql/queries/user";
-import { useProject, useWorkspace } from "@reearth/services/state";
+import { Workspace, useProject, useWorkspace } from "@reearth/services/state";
 
 export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: string }) => {
-  const gqlClient = useApolloClient();
-
   const navigate = useNavigate();
   const { logout: handleLogout } = useAuth();
 
@@ -19,43 +14,25 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
 
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
 
-  const workspaceData: GetMeQuery | null = gqlClient.readQuery({ query: GET_ME }); // todo: use custom readQuery from other PR
+  const { useProjectQuery } = useProjectFetcher();
+  const { useWorkspaceQuery, useWorkspacesQuery, useCreateWorkspace } = useWorkspaceFetcher();
+  const { useMeQuery } = useMeFetcher();
 
-  const workspaces = useMemo(
-    () => workspaceData?.me?.teams?.map(({ id, name }) => ({ id, name })),
-    [workspaceData?.me?.teams],
-  );
+  const { workspaces } = useWorkspacesQuery();
+  const { workspace } = useWorkspaceQuery(workspaceId);
 
-  const projectData: GetProjectQuery | null = gqlClient.readQuery({
-    query: GET_PROJECT,
-    variables: { projectId },
-  }); // todo: use custom readQuery from other PR
+  const { project } = useProjectQuery(projectId);
+  const {
+    me: { name, myTeam },
+  } = useMeQuery();
 
-  const project = useMemo(
-    () =>
-      projectData?.node?.__typename === "Project"
-        ? { ...projectData.node, sceneId: projectData.node.scene?.id }
-        : undefined,
-    [projectData?.node],
-  );
-
-  const workspace = useMemo(
-    () => workspaceData?.me?.teams?.find(w => w.id === workspaceId),
-    [workspaceData?.me?.teams, workspaceId],
-  );
+  const personal = useMemo(() => workspaceId === myTeam?.id, [workspaceId, myTeam?.id]);
 
   useEffect(() => {
     if (!currentWorkspace || (workspace && workspace.id !== currentWorkspace?.id)) {
       setCurrentWorkspace(workspace);
     }
   });
-
-  const username = useMemo(() => workspaceData?.me?.name || "", [workspaceData?.me]);
-
-  const personal = useMemo(
-    () => workspaceId === workspaceData?.me?.myTeam.id,
-    [workspaceId, workspaceData?.me],
-  );
 
   const handleWorkspaceModalOpen = useCallback(() => setWorkspaceModalVisible(true), []);
   const handleWorkspaceModalClose = useCallback(() => setWorkspaceModalVisible(false), []);
@@ -67,7 +44,7 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
           ? {
               id: project.id,
               name: project.name,
-              sceneId: project.sceneId,
+              sceneId: project.scene?.id,
               projectType: project.coreSupport ? "beta" : "classic",
             }
           : undefined
@@ -86,28 +63,25 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
     [workspaces, workspaceId, setCurrentWorkspace, navigate],
   );
 
-  const [createWorkspaceMutation] = useCreateWorkspaceMutation();
-
   const handleWorkspaceCreate = useCallback(
     async (data: { name: string }) => {
-      const results = await createWorkspaceMutation({
-        variables: { name: data.name },
-        refetchQueries: ["GetTeams"],
-      });
-      if (results.data?.createTeam) {
-        setCurrentWorkspace(results.data.createTeam.team);
+      const results = await useCreateWorkspace(data.name);
+      const newWorkspace = results.data as Workspace; // Only needed for setting current workspace. Can remove after jotai use ends.
 
-        navigate(`/dashboard/${results.data.createTeam.team.id}`);
+      if (results.status === "success") {
+        setCurrentWorkspace(newWorkspace);
+
+        navigate(`/dashboard/${newWorkspace.id}`);
       }
     },
-    [createWorkspaceMutation, setCurrentWorkspace, navigate],
+    [useCreateWorkspace, setCurrentWorkspace, navigate],
   );
 
   return {
     workspaces,
     currentProject,
     isPersonal: personal,
-    username,
+    username: name,
     workspace,
     workspaceModalVisible,
     handleWorkspaceModalOpen,

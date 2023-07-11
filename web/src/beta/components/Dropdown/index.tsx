@@ -7,6 +7,7 @@ import { styled } from "@reearth/services/theme";
 type Direction = "right" | "down" | "none";
 
 export type Props = {
+  className?: string;
   isOpen?: boolean;
   label: ReactNode;
   openOnClick?: boolean;
@@ -23,6 +24,7 @@ export type Ref = {
 
 const Dropdown: React.ForwardRefRenderFunction<Ref, Props> = (
   {
+    className,
     isOpen = false,
     openOnClick,
     noHoverStyle,
@@ -51,6 +53,7 @@ const Dropdown: React.ForwardRefRenderFunction<Ref, Props> = (
 
   return (
     <Wrapper
+      className={className}
       ref={wrapperRef}
       onMouseEnter={openOnClick ? undefined : () => setOpen(true)}
       onMouseLeave={openOnClick ? undefined : () => setOpen(false)}>

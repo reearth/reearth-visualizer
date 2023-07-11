@@ -1,8 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "@reearth/services/gql/__gen__";
 
-import { projectFragment } from "../fragments";
-
-export const GET_SCENE = gql`
+export const GET_SCENE = gql(`
   query GetScene($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
       id
@@ -13,5 +11,15 @@ export const GET_SCENE = gql`
       }
     }
   }
-  ${projectFragment}
-`;
+  
+`);
+
+export const CREATE_SCENE = gql(`
+  mutation CreateScene($projectId: ID!) {
+    createScene(input: { projectId: $projectId }) {
+      scene {
+        id
+      }
+    }
+  }
+`);

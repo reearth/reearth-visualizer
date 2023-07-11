@@ -1,8 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "@reearth/services/gql/__gen__";
 
-import { projectFragment } from "../fragments/project";
-
-export const GET_PROJECT = gql`
+export const GET_PROJECT = gql(`
   query GetProject($projectId: ID!) {
     node(id: $projectId, type: PROJECT) {
       id
@@ -14,11 +12,9 @@ export const GET_PROJECT = gql`
       }
     }
   }
+`);
 
-  ${projectFragment}
-`;
-
-export const GET_PROJECTS = gql`
+export const GET_PROJECTS = gql(`
   query GetProjects($teamId: ID!, $first: Int, $last: Int, $after: Cursor, $before: Cursor) {
     projects(teamId: $teamId, first: $first, last: $last, after: $after, before: $before) {
       edges {
@@ -47,19 +43,19 @@ export const GET_PROJECTS = gql`
     }
   }
 
-  ${projectFragment}
-`;
+  
+`);
 
-export const CHECK_PROJECT_ALIAS = gql`
+export const CHECK_PROJECT_ALIAS = gql(`
   query CheckProjectAlias($alias: String!) {
     checkProjectAlias(alias: $alias) {
       alias
       available
     }
   }
-`;
+`);
 
-export const CREATE_PROJECT = gql`
+export const CREATE_PROJECT = gql(`
   mutation CreateProject(
     $teamId: ID!
     $visualizer: Visualizer!
@@ -87,9 +83,9 @@ export const CREATE_PROJECT = gql`
       }
     }
   }
-`;
+`);
 
-export const UPDATE_PROJECT = gql`
+export const UPDATE_PROJECT = gql(`
   mutation UpdateProject(
     $projectId: ID!
     $name: String
@@ -121,10 +117,10 @@ export const UPDATE_PROJECT = gql`
     }
   }
 
-  ${projectFragment}
-`;
+  
+`);
 
-export const UPDATE_PROJECT_BASIC_AUTH = gql`
+export const UPDATE_PROJECT_BASIC_AUTH = gql(`
   mutation UpdateProjectBasicAuth(
     $projectId: ID!
     $isBasicAuthActive: Boolean
@@ -148,9 +144,9 @@ export const UPDATE_PROJECT_BASIC_AUTH = gql`
       }
     }
   }
-`;
+`);
 
-export const UPDATE_PROJECT_ALIAS = gql`
+export const UPDATE_PROJECT_ALIAS = gql(`
   mutation UpdateProjectAlias($projectId: ID!, $alias: String!) {
     updateProject(input: { projectId: $projectId, alias: $alias }) {
       project {
@@ -160,9 +156,9 @@ export const UPDATE_PROJECT_ALIAS = gql`
       }
     }
   }
-`;
+`);
 
-export const PUBLISH_PROJECT = gql`
+export const PUBLISH_PROJECT = gql(`
   mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
     publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
       project {
@@ -172,9 +168,9 @@ export const PUBLISH_PROJECT = gql`
       }
     }
   }
-`;
+`);
 
-export const ARCHIVE_PROJECT = gql`
+export const ARCHIVE_PROJECT = gql(`
   mutation ArchiveProject($projectId: ID!, $archived: Boolean!) {
     updateProject(input: { projectId: $projectId, archived: $archived }) {
       project {
@@ -183,12 +179,12 @@ export const ARCHIVE_PROJECT = gql`
       }
     }
   }
-`;
+`);
 
-export const DELETE_PROJECT = gql`
+export const DELETE_PROJECT = gql(`
   mutation DeleteProject($projectId: ID!) {
     deleteProject(input: { projectId: $projectId }) {
       projectId
     }
   }
-`;
+`);
