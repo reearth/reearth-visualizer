@@ -7,17 +7,19 @@ import { useAuthenticationRequired } from "./useAuth";
 export { AuthProvider } from "./authProvider";
 export { useAuth, useCleanUrl, useAuthenticationRequired } from "./useAuth";
 
-export const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({ children }) => {
+const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const [isAuthenticated] = useAuthenticationRequired(); // TODO: show error
   return isAuthenticated && children ? <>{children}</> : null;
 };
 
-export const withAuthorisation = (): ((props: any) => React.FC<any>) => {
+const withAuthorisation = (): ((props: any) => React.FC<any>) => {
   const authProvider = window.REEARTH_CONFIG?.authProvider;
-
   if (authProvider === "cognito") {
     return withAuthenticator as unknown as (props: any) => React.FC<any>;
+  } else if (authProvider === "auth0") {
+    return withAuthenticationRequired as unknown as (props: any) => React.FC<any>;
   }
-
-  return withAuthenticationRequired as unknown as (props: any) => React.FC<any>;
+  return (props: any) => props;
 };
+
+export const AuthenticatedPage = withAuthorisation()(AuthenticationRequiredPage);
