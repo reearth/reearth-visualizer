@@ -56,12 +56,25 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 		Scene:       s.Scene().String(),
 		Title:       s.Title(),
 		Alias:       s.Alias(),
-		Pages:       nil,
+		Pages:       newPages(s.Pages()),
 		Status:      string(s.Status()),
 		PublishedAt: s.PublishedAt(),
 		UpdatedAt:   s.UpdatedAt(),
 		Index:       1,
 	}, sId
+}
+
+func newPage(p storytelling.Page) PageDocument {
+	return PageDocument{}
+}
+
+func newPages(pl storytelling.PageList) []PageDocument {
+	return lo.Map(pl, func(p *storytelling.Page, _ int) PageDocument {
+		if p == nil {
+			return PageDocument{}
+		}
+		return newPage(*p)
+	})
 }
 
 func NewStorytellings(sl *storytelling.StoryList) ([]any, []string) {
