@@ -315,9 +315,10 @@ export default ({
     if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
 
+    // TODO: Support layers.selectFeature API for MVT
     if (!entity && selectedLayerId?.featureId) {
       // Find ImageryLayerFeature
-      const ImageryLayerDataTypes: DataType[] = ["mvt"];
+      const ImageryLayerDataTypes: DataType[] = [];
       const layers = layersRef?.current?.findAll(
         layer =>
           layer.type === "simple" &&
@@ -701,6 +702,21 @@ export default ({
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
   }, [featureFlags]);
+
+  // Anti-aliasing
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.postProcessStages.fxaa.enabled = property?.render?.antialias === "high";
+    viewer.scene.msaaSamples =
+      property?.render?.antialias === "extreme"
+        ? 8
+        : property?.render?.antialias === "high"
+        ? 0
+        : property?.render?.antialias === "medium"
+        ? 4
+        : 1; // default as 1
+  }, [property?.render?.antialias]);
 
   return {
     backgroundColor,
