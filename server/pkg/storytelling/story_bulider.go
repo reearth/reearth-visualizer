@@ -1,6 +1,10 @@
 package storytelling
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
+)
 
 type StoryBuilder struct {
 	s *Story
@@ -59,5 +63,15 @@ func (b *StoryBuilder) Alias(alias string) *StoryBuilder {
 
 func (b *StoryBuilder) Title(title string) *StoryBuilder {
 	b.s.title = title
+	return b
+}
+
+func (b *StoryBuilder) PublishedAt(t *time.Time) *StoryBuilder {
+	b.s.publishedAt = t
+	return b
+}
+
+func (b *StoryBuilder) UpdatedAt(at time.Time) *StoryBuilder {
+	b.s.updatedAt = at
 	return b
 }
