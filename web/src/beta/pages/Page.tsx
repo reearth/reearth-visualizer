@@ -1,8 +1,8 @@
 import React, { ReactElement, ReactNode, useMemo } from "react";
 
 import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
+import { AuthenticatedPage } from "@reearth/services/auth";
 import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
-import { AuthenticationRequiredPage } from "@reearth/services/auth";
 import { useTheme } from "@reearth/services/theme";
 
 import Loading from "../components/Loading";
@@ -61,11 +61,11 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, childre
 };
 
 const Page: React.FC<Props> = ({ sceneId, projectId, workspaceId, children }) => (
-  <AuthenticationRequiredPage>
+  <AuthenticatedPage>
     <PageWrapper sceneId={sceneId} projectId={projectId} workspaceId={workspaceId}>
       {children}
     </PageWrapper>
-  </AuthenticationRequiredPage>
+  </AuthenticatedPage>
 );
 
 export default Page;
