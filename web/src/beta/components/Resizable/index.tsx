@@ -84,6 +84,7 @@ const StyledResizable = styled.div<Pick<Props, "direction" | "size" | "minSize">
     direction === "horizontal" && minSize ? `${minSize}px` : null};
   min-height: ${({ direction, minSize }) =>
     direction === "vertical" && minSize ? `${minSize}px` : null};
+  transition: transform 0.3s ease-in-out;
 `;
 
 const Wrapper = styled.div`
@@ -112,5 +113,10 @@ const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
   width: ${({ direction }) => (direction === "horizontal" ? null : `24px`)};
   height: ${({ direction }) => (direction === "vertical" ? null : `24px`)};
   background: ${({ theme }) => theme.general.bg.weak};
+  cursor: pointer;
+  transition: background-color 0.3s;
+  &:hover {
+    background-color: ${({ theme }) => theme.general.bg.strong};
+  }
 `;
 export default Resizable;
