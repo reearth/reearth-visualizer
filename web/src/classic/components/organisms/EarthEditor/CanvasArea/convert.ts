@@ -53,24 +53,6 @@ export type RawLayer = EarthLayerCommonFragment &
       }
   );
 
-export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
-
-// export type RawLayer =
-//   | (EarthLayerItemFragment & EarthLayerCommonFragment)
-//   | ({
-//     __typename: "LayerGroup";
-//     layers?: RawLayer[] | null | undefined;
-//   } & EarthLayerCommonFragment);
-
-export type RawLayer = EarthLayerCommonFragment &
-  (
-    | EarthLayerItemFragment
-    | {
-        __typename: "LayerGroup";
-        layers?: RawLayer[] | null | undefined;
-      }
-  );
-
 type BlockType = Item & {
   pluginId: string;
   extensionId: string;
