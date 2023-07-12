@@ -11,7 +11,7 @@ export type CognitoParams = {
   oauthResponseType?: string;
 };
 
-export const configureCognito = () => {
+const configureCognito = () => {
   const cognitoConfig = window.REEARTH_CONFIG?.cognito;
   const authProvider = window.REEARTH_CONFIG?.authProvider;
 
@@ -43,3 +43,9 @@ export const configureCognito = () => {
     Amplify.configure(config);
   }
 };
+
+export default () =>
+  new Promise(resolve => {
+    configureCognito();
+    resolve(undefined);
+  });
