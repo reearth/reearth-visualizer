@@ -33,7 +33,7 @@ export default ({
           />
         );
       case "publish":
-        return <VisualizerNav />;
+        return <VisualizerNav>TODO: Publishing navbar</VisualizerNav>;
       case "scene":
       case "story":
       default:

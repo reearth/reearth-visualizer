@@ -4,6 +4,8 @@ import { styled } from "@reearth/services/theme";
 import { Layout } from "../../../types";
 import VisualizerNav from "../../../VisualizerNav";
 
+export const navbarHeight = "48px";
+
 type Props = {
   showWidgetEditor?: boolean;
   layout?: Layout;
@@ -18,7 +20,7 @@ const Nav: React.FC<Props> = ({
   onLayoutChange,
 }) => {
   return (
-    <VisualizerNav>
+    <StyledVisualizerNav>
       <WidgetSystemIcon
         toggled={showWidgetEditor}
         icon="widgetSystem"
@@ -37,11 +39,17 @@ const Nav: React.FC<Props> = ({
           onClick={() => onLayoutChange("mobile")}
         />
       </DeviceWrapper>
-    </VisualizerNav>
+    </StyledVisualizerNav>
   );
 };
 
 export default Nav;
+
+const StyledVisualizerNav = styled(VisualizerNav)`
+  background: ${({ theme }) => theme.general.bg.main};
+  padding: 8px;
+  height: ${navbarHeight};
+`;
 
 const StyledIcon = styled(Icon)<{ toggled?: boolean }>`
   padding: 12px;

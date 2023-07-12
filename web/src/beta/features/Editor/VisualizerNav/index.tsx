@@ -2,11 +2,12 @@ import styled from "@emotion/styled";
 import { ReactNode } from "react";
 
 type Props = {
+  className?: string;
   children?: ReactNode;
 };
 
-const VisualizerNav: React.FC<Props> = ({ children }) => {
-  return <Wrapper>{children}</Wrapper>;
+const VisualizerNav: React.FC<Props> = ({ className, children }) => {
+  return <Wrapper className={className}>{children}</Wrapper>;
 };
 
 export default VisualizerNav;
@@ -14,8 +15,6 @@ export default VisualizerNav;
 const Wrapper = styled.div`
   display: flex;
   gap: 24px;
-  background: ${({ theme }) => theme.general.bg.main};
   border-radius: 4px 4px 0 0;
-  padding: 8px;
-  height: 48px;
+  min-height: 48px;
 `;

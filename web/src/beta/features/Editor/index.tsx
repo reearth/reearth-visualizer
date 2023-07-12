@@ -54,9 +54,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           )}
           <Center hasStory={isStory}>
             {isStory && <StoryPanel />}
-            <VisualizerWrapper>
+            <VisualizerWrapper tab={tab}>
               {visualizerNav}
-              <Visualizer layout={layout} hasNav={!!visualizerNav} />
+              <Visualizer layout={layout} />
             </VisualizerWrapper>
           </Center>
           {rightPanel && (
@@ -99,8 +99,9 @@ const Center = styled.div<{ hasStory: boolean }>`
   flex-direction: ${hasStory => (hasStory ? "row" : "column")};
 `;
 
-const VisualizerWrapper = styled.div`
-  height: 100%;
+const VisualizerWrapper = styled.div<{ tab?: Tab }>`
+  height: ${({ tab }) =>
+    tab === "widgets" ? "calc(100% - 64px)" : tab === "publish" ? "calc(100% - 48px)" : "100%"};
   border-radius: 4px;
   flex-grow: 1;
 `;
