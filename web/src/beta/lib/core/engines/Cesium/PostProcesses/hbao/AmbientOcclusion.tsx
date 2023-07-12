@@ -1,4 +1,4 @@
-import { PerspectiveFrustum, type Scene } from "@cesium/engine";
+import { PerspectiveFrustum, type Scene, Math as CesiumMath } from "@cesium/engine";
 import { useState, type FC } from "react";
 import { useCesium } from "resium";
 import invariant from "tiny-invariant";
@@ -97,7 +97,24 @@ export const AmbientOcclusion: FC<AmbientOcclusionProps> = props => {
   const viewer = useCesium();
   const [useGlobeDepth, setUseGlobeDepth] = useState(false);
   usePreRender(() => {
-    setUseGlobeDepth(!viewer.scene?.globe.depthTestAgainstTerrain);
+    const scene = viewer.scene;
+
+    setUseGlobeDepth(!scene?.globe.depthTestAgainstTerrain);
+
+    // ref: https://github.com/takram-design-engineering/plateau-view/blob/6669bea902c5e53c21b695d32ada5ca3121bc401/libs/view/src/containers/SceneCoordinator.tsx#L27-L41
+    // Increase the precision of the depth buffer which HBAO looks up to
+    // reconstruct normals.
+    const { globeHeight } = scene as Scene & { globeHeight?: number };
+    if (!scene || globeHeight == null) {
+      return;
+    }
+    // Screen-space camera controller should detect collision
+    const cameraHeight = scene.camera.positionCartographic.height - globeHeight;
+    const frustum = scene?.camera.frustum;
+    if (frustum instanceof PerspectiveFrustum) {
+      scene.camera.frustum.near =
+        CesiumMath.clamp(cameraHeight - 1, 1, 5) / Math.tan(frustum.fov / 2);
+    }
   });
   return <AmbientOcclusionStage {...props} useGlobeDepth={useGlobeDepth} />;
 };
