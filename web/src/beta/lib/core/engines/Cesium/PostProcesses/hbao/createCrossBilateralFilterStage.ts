@@ -41,7 +41,7 @@ export interface CrossBilateralFilterStageOptions {
 }
 
 export function createBilateralFilterStage({
-  prefix = "plateau",
+  prefix = "reearth",
   outputType = null,
   useGlobeDepth = false,
   getGlobeDepthTexture,
