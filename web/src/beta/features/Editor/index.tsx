@@ -8,6 +8,8 @@ import Navbar, { Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { metrics, styled } from "@reearth/services/theme";
 
+import useHooks from "./hooks";
+
 type Props = {
   sceneId: string;
   projectId?: string; // gotten through injection
@@ -16,10 +18,20 @@ type Props = {
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
+  const { layout, showWidgetEditor, handleLayoutChange, handleWidgetEditorToggle } = useHooks();
+
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab });
-  const { visualizerNav } = useVisualizerNav({ tab });
+  const { visualizerNav } = useVisualizerNav({
+    tab,
+    layout,
+    showWidgetEditor,
+    handleLayoutChange,
+    handleWidgetEditorToggle,
+  });
+
   const isStory = tab === "story";
+
   return (
     <DndProvider>
       <Wrapper>
@@ -42,8 +54,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           )}
           <Center hasStory={isStory}>
             {isStory && <StoryPanel />}
-            <VisualizerWrapper hasNav={!!visualizerNav}>
-              {visualizerNav && <div>{visualizerNav}</div>}
+            <VisualizerWrapper>
+              {visualizerNav}
               <Visualizer />
             </VisualizerWrapper>
           </Center>
@@ -87,8 +99,7 @@ const Center = styled.div<{ hasStory: boolean }>`
   flex-direction: ${hasStory => (hasStory ? "row" : "column")};
 `;
 
-const VisualizerWrapper = styled.div<{ hasNav: boolean }>`
-  ${({ hasNav, theme }) => hasNav && `border: 1px solid ${theme.general.bg.veryStrong}`};
+const VisualizerWrapper = styled.div`
   height: 100%;
   border-radius: 4px;
   flex-grow: 1;
