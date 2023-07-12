@@ -77,7 +77,6 @@ const Wrapper = styled.div`
   align-items: center;
   padding: 8px 24px 8px 19px;
   gap: 24px;
-  height: 51px;
   background: ${({ theme }) => theme.navbar.bg.main};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;
