@@ -1,5 +1,6 @@
 import type { FC } from "react";
 
+import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
@@ -10,14 +11,16 @@ export type Props = {
 
 const TabButton: FC<Props> = ({ label, onClick, selected }) => {
   return (
-    <Button onClick={onClick} disabled={selected}>
-      {label}
+    <Button onClick={onClick} selected={selected} disabled={selected}>
+      <Text size="body" weight="bold" customColor>
+        {label}
+      </Text>
     </Button>
   );
 };
 
 type ButtonProps = {
-  disabled?: boolean;
+  selected?: boolean;
 };
 
 const Button = styled.button<ButtonProps>`
@@ -26,22 +29,16 @@ const Button = styled.button<ButtonProps>`
   align-items: flex-start;
   justify-content: center;
   padding: 8px 12px;
-  gap: 10px;
-  width: 67px;
-  height: 35px;
   border-radius: 4px;
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.general.content.main : theme.general.content.weak};
-  background: ${({ disabled, theme }) => (disabled ? theme.general.bg.weak : theme.navbar.bg)};
-  font-weight: 700;
-  font-size: 14px;
+  color: ${({ selected, theme }) =>
+    selected ? theme.general.content.main : theme.general.content.weak};
+  background: ${({ selected, theme }) => (selected ? theme.general.bg.weak : theme.navbar.bg.main)};
   line-height: 19px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
   :hover {
     background: ${({ theme }) => theme.general.bg.weak};
     transition: all 0.5s ease;
+    ${({ selected }) => selected && "cursor: default;"}
   }
 `;
 
