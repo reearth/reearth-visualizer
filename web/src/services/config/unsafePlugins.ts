@@ -31,16 +31,6 @@ export async function loadUnsafePlugins(urls?: string[]): Promise<UnsafePlugin[]
       });
 
       console.log("newUnsafePlugins", newUnsafePlugins);
-
-      // newExtensions.forEach(ext => {
-      //   if (ext.type === "dataset-import") datasetImport.push(ext as Extension<"dataset-import">);
-      //   else if (ext.type === "publication") publication.push(ext as Extension<"publication">);
-      //   else if (ext.type === "plugin-library")
-      //     pluginLibrary.push(ext as Extension<"plugin-library">);
-      //   else if (ext.type === "plugin-installed")
-      //     pluginInstalled.push(ext as Extension<"plugin-installed">);
-      //   else if (ext.type === "global-modal") globalModal.push(ext as Extension<"global-modal">);
-      // });
     } catch (e) {
       console.error("unsafe plugin load failed", e);
     }
