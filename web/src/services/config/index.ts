@@ -1,6 +1,6 @@
 import { Viewer } from "cesium";
 
-import configureCognito, { type CognitoParams } from "./aws";
+import { type CognitoParams } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
@@ -64,7 +64,7 @@ export default async function loadConfig() {
   };
 
   if (config?.cognito) {
-    await configureCognito();
+    await import("./aws");
   }
 
   if (config?.passwordPolicy) {
