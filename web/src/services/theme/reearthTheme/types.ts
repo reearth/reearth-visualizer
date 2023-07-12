@@ -1,7 +1,5 @@
 import { Theme as ClassicTheme } from "@reearth/classic/theme/reearthTheme/types";
-
-import type { MetricsSizesType } from "./common/metrics";
-import type { ZIndex } from "./common/zIndex";
+import { Common } from "@reearth/services/theme/reearthTheme/common";
 
 export type TempTheme = Theme & {
   classic: ClassicTheme;
@@ -19,9 +17,7 @@ type InteractiveElementTheme = {
 // Note: anything typed unknown is not set yet and just anticipated with high likelihood
 // But, might not be necessary so keep in mind. 2023/06/15 @KaWaite
 
-export type Theme = {
-  metrics: MetricsSizesType;
-  zIndexes: ZIndex;
+export type Theme = Common & {
   general: {
     select: string;
     bg: {

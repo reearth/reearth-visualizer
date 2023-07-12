@@ -111,6 +111,7 @@ export type EngineProps = {
     layerId?: string;
     featureId?: string;
   };
+  featureFlags: number;
   layerSelectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
   isLayerDragging?: boolean;
@@ -287,6 +288,9 @@ export type SceneProperty = {
     ground_atmosphere?: boolean;
     sky_atmosphere?: boolean;
     shadows?: boolean;
+    shadowResolution?: 1024 | 2048 | 4096;
+    softShadow?: boolean;
+    shadowDarkness?: number;
     fog?: boolean;
     fog_density?: number;
     brightness_shift?: number;
@@ -314,6 +318,12 @@ export type SceneProperty = {
     themeSelectColor?: string;
     themeBackgroundColor?: string;
   };
+  ambientOcclusion?: {
+    enabled?: boolean;
+    quality?: "low" | "medium" | "high" | "extreme";
+    intensity?: number;
+    ambientOcclusionOnly?: boolean;
+  };
   light?: {
     lightType?: "sunLight" | "directionalLight";
     lightDirectionX?: number;
@@ -321,6 +331,9 @@ export type SceneProperty = {
     lightDirectionZ?: number;
     lightColor?: string;
     lightIntensity?: number;
+  };
+  render?: {
+    antialias?: "low" | "medium" | "high" | "extreme";
   };
 };
 

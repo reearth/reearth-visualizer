@@ -4,7 +4,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/mongox"
+	"golang.org/x/exp/slices"
 )
 
 type PropertySchemaDocument struct {
@@ -58,10 +58,13 @@ type PropertyConditonDocument struct {
 	Value interface{}
 }
 
-type PropertySchemaConsumer = mongox.SliceFuncConsumer[*PropertySchemaDocument, *property.Schema]
+type PropertySchemaConsumer = Consumer[*PropertySchemaDocument, *property.Schema]
 
-func NewPropertySchemaConsumer() *PropertySchemaConsumer {
-	return NewComsumer[*PropertySchemaDocument, *property.Schema]()
+func NewPropertySchemaConsumer(scenes []id.SceneID) *PropertySchemaConsumer {
+	return NewConsumer[*PropertySchemaDocument, *property.Schema](func(a *property.Schema) bool {
+		sid := a.ID().Plugin().Scene()
+		return sid == nil || scenes == nil || slices.Contains(scenes, *sid)
+	})
 }
 
 func NewPropertySchemaField(f *property.SchemaField) *PropertySchemaFieldDocument {

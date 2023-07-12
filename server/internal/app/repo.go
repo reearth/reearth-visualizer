@@ -2,8 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
@@ -32,7 +30,6 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		ctx,
 		options.Client().
 			ApplyURI(conf.DB).
-			SetConnectTimeout(time.Second*10).
 			SetMonitor(otelmongo.NewMonitor()),
 	)
 	if err != nil {
@@ -63,7 +60,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 
 	// release lock of all scenes
 	if err := repos.SceneLock.ReleaseAllLock(context.Background()); err != nil {
-		log.Fatalln(fmt.Sprintf("repo initialization error: %+v", err))
+		log.Fatalf("repo initialization error: %v", err)
 	}
 
 	return repos, gateways
@@ -72,7 +69,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {
 	var err error
 	if conf.GCS.IsConfigured() {
-		log.Infof("file: GCS storage is used: %s\n", conf.GCS.BucketName)
+		log.Infofc(ctx, "file: GCS storage is used: %s\n", conf.GCS.BucketName)
 		fileRepo, err = gcs.NewFile(conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
 		if err != nil {
 			log.Warnf("file: failed to init GCS storage: %s\n", err.Error())
@@ -82,7 +79,7 @@ func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) 
 	}
 
 	if conf.S3.IsConfigured() {
-		log.Infof("file: S3 storage is used: %s\n", conf.S3.BucketName)
+		log.Infofc(ctx, "file: S3 storage is used: %s\n", conf.S3.BucketName)
 		fileRepo, err = s3.NewS3(ctx, conf.S3.BucketName, conf.AssetBaseURL, conf.S3.PublicationCacheControl)
 		if err != nil {
 			log.Warnf("file: failed to init S3 storage: %s\n", err.Error())
@@ -90,11 +87,11 @@ func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) 
 		return
 	}
 
-	log.Infoln("file: local storage is used")
+	log.Infof("file: local storage is used")
 	afs := afero.NewBasePathFs(afero.NewOsFs(), "data")
 	fileRepo, err = fs.NewFile(afs, conf.AssetBaseURL)
 	if err != nil {
-		log.Fatalln(fmt.Sprintf("file: init error: %+v", err))
+		log.Fatalf("file: init error: %+v", err)
 	}
 	return fileRepo
 }

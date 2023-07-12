@@ -28,7 +28,7 @@ func (i *pluginCommon) SavePluginPack(ctx context.Context, p *pluginpack.Package
 	for {
 		f, err := p.Files.Next()
 		if err != nil {
-			log.Errorf("failed to read a plugin file (%s): %s", id, err)
+			log.Errorfc(ctx, "failed to read a plugin file (%s): %s", id, err)
 			return interfaces.ErrInvalidPluginPackage
 		}
 
@@ -38,12 +38,12 @@ func (i *pluginCommon) SavePluginPack(ctx context.Context, p *pluginpack.Package
 
 		read = true
 		if err := i.file.UploadPluginFile(ctx, p.Manifest.Plugin.ID(), f); err != nil {
-			return rerror.ErrInternalBy(err)
+			return rerror.ErrInternalByWithContext(ctx, err)
 		}
 	}
 
 	if !read {
-		log.Errorf("no plugin files (%s)", id)
+		log.Errorfc(ctx, "no plugin files (%s)", id)
 		return interfaces.ErrInvalidPluginPackage
 	}
 

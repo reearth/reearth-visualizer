@@ -66,7 +66,11 @@ func (i *Plugin) UploadFromRemote(ctx context.Context, u *url.URL, sid id.SceneI
 	p, err := pluginpack.PackageFromZip(res.Body, &sid, pluginPackageSizeLimit)
 	if err != nil {
 		_ = res.Body.Close()
-		return nil, nil, interfaces.ErrInvalidPluginPackage
+		return nil, nil, &rerror.Error{
+			Label:    interfaces.ErrInvalidPluginPackage,
+			Err:      err,
+			Separate: true,
+		}
 	}
 
 	return i.upload(ctx, p, sid, operator)

@@ -37,10 +37,15 @@ export default (alias?: string) => {
   const [selected, select] = useSelected();
 
   const sceneProperty = processProperty(data?.property);
-  const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
-    (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
-    {},
+  const pluginProperty = useMemo(
+    () =>
+      Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
+        {},
+      ),
+    [data?.plugins],
   );
+
   const legacyClusters = useMemo<ClusterProperty[]>(
     () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
     [data],
@@ -50,29 +55,13 @@ export default (alias?: string) => {
   const layers = useMemo(() => {
     return [
       convertLegacyLayer({
-        id: "",
+        id: "rootlayer",
         children: data?.layers?.map(l => processLayer(l)).filter((l): l is Layer => !!l),
       }),
     ].filter((l): l is Layer => !!l);
   }, [data]);
 
   const tags = data?.tags; // Currently no need to convert tags
-
-  const selectedLayerId = useMemo(() => {
-    return selected?.type === "layer"
-      ? { layerId: selected.layerId, featureId: selected.featureId }
-      : undefined;
-  }, [selected]);
-
-  const selectLayer = useCallback(
-    (
-      id?: string,
-      featureId?: string,
-      _layer?: () => Promise<ComputedLayer | undefined>,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
-    [select],
-  );
 
   const widgets = useMemo<
     | {
@@ -223,6 +212,29 @@ export default (alias?: string) => {
     [],
   );
 
+  const selectedLayerId = useMemo(
+    () =>
+      selected?.type === "layer"
+        ? { layerId: selected.layerId, featureId: selected.featureId }
+        : undefined,
+    [selected],
+  );
+
+  const layerSelectionReason = useMemo(
+    () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
+    [selected],
+  );
+
+  const selectLayer = useCallback(
+    (
+      id?: string,
+      featureId?: string,
+      _layer?: () => Promise<ComputedLayer | undefined>,
+      layerSelectionReason?: LayerSelectionReason,
+    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
+    [select],
+  );
+
   // GA
   useGA(sceneProperty);
 
@@ -238,6 +250,7 @@ export default (alias?: string) => {
     error,
     engineMeta,
     selectedLayerId,
+    layerSelectionReason,
     selectLayer,
   };
 };

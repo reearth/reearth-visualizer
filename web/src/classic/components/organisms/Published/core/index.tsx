@@ -20,6 +20,7 @@ export default function Published({ alias }: Props) {
     clusters,
     engineMeta,
     selectedLayerId,
+    layerSelectionReason,
     selectLayer,
   } = useHooks(alias);
 
@@ -32,8 +33,6 @@ export default function Published({ alias }: Props) {
       floatingWidgets={widgets?.floatingWidgets}
       widgetAlignSystem={widgets?.alignSystem}
       ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
-      selectedLayerId={selectedLayerId}
-      onLayerSelect={selectLayer}
       tags={tags}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
@@ -42,6 +41,9 @@ export default function Published({ alias }: Props) {
       isBuilt
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}
+      selectedLayerId={selectedLayerId}
+      layerSelectionReason={layerSelectionReason}
+      onLayerSelect={selectLayer}
     />
   );
 }
