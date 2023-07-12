@@ -1,9 +1,10 @@
-import { Viewer } from "cesium";
+import { type Viewer } from "cesium";
 
 import { type CognitoParams, configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
+import { UnsafePlugin, loadUnsafePlugins } from "./unsafePlugins";
 
 export type Config = {
   version?: string;
@@ -44,6 +45,8 @@ export type Config = {
   marketplaceUrl?: string;
   extensionUrls?: string[];
   extensions?: Extensions;
+  unsafePluginUrls?: string[];
+  unsafePlugins?: UnsafePlugin[];
 };
 
 declare global {
@@ -76,6 +79,11 @@ export default async function loadConfig() {
   if (config?.extensionUrls) {
     const extensions = await loadExtensions(config.extensionUrls);
     config.extensions = extensions;
+  }
+
+  if (config?.unsafePluginUrls) {
+    const unsafePlugins = await loadUnsafePlugins(config.unsafePluginUrls);
+    config.unsafePlugins = unsafePlugins;
   }
 
   window.REEARTH_CONFIG = config;
