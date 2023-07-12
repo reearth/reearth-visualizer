@@ -161,7 +161,7 @@ export default function Feature({
           const [C] = components[k] ?? [];
           const isVisible = layer.layer.visible !== false && !isHidden;
           const useSphericalHormonicCoefficients =
-            !!props.sceneProperty.light?.sphericalHarmonicCoefficients;
+            !!props.sceneProperty.light?.sphericalHarmonicCoefficients && !!props.sceneProperty.light?.specularEnvironmentMaps;
 
           // "noFeature" component should be recreated when the following value is changed.
           // data.url, isVisible
