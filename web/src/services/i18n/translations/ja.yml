@@ -1,9 +1,11 @@
 Not found: ページが見つかりません
-Story: ストーリー
-New Story: 新しいストーリー
-Page: ページ
+Unpublished: 非公開
+Published: 一般公開
 New Page: 新しいページ
 New Swipe: 新しいスワイプ
+New Story: 新しいストーリー
+Story: ストーリー
+Page: ページ
 Angle: 角度
 Narrow: 狭い
 Wide: 広い
@@ -38,8 +40,6 @@ ellipse: 円錐
 Open timeline: タイムラインを開く
 Drop here: ここにドロップ
 Continue: 続ける
-Published: 一般公開
-Unpublished: 非公開
 not set: 未設定
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
