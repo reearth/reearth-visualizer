@@ -63,10 +63,6 @@ export default async function loadConfig() {
     ...(await (await fetch("/reearth_config.json")).json()),
   };
 
-  if (config?.cognito) {
-    await import("./aws");
-  }
-
   if (config?.passwordPolicy) {
     config.passwordPolicy = convertPasswordPolicy(
       config.passwordPolicy as { [key: string]: string },
