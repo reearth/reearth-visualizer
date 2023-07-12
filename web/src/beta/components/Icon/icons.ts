@@ -48,18 +48,23 @@ import Camera from "./Icons/camera.svg";
 import MdFile from "./Icons/mdFile.svg";
 import Clock from "./Icons/clock.svg";
 
-//Dashboard
+// Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
 
-//Workspaces
+// Workspaces
 import WorkspaceAdd from "./Icons/workspaceAdd.svg";
 import Workspaces from "./Icons/workspaces.svg";
 
-// StoryTelling
+// StoryTelling tab
 import Square from "./Icons/square.svg";
 import Swiper from "./Icons/swiper.svg";
 import Book from "./Icons/book.svg";
+
+// Widget tab
+import Desktop from "./Icons/desktop.svg";
+import Mobile from "./Icons/mobile.svg";
+import WidgetSystem from "./Icons/widgetSystem.svg";
 
 // Plus
 import Plus from "./Icons/plus.svg";
@@ -111,4 +116,7 @@ export default {
   checkmark: CheckMark,
   logo: Logo,
   logoColorful: LogoColorful,
+  desktop: Desktop,
+  mobile: Mobile,
+  widgetSystem: WidgetSystem,
 };
