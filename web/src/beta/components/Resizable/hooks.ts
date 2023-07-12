@@ -44,6 +44,17 @@ export default (
   const [isResizing, setIsResizing] = useState(false);
   const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [minimized, setMinimized] = useState(false);
+  useEffect(() => {
+    if (size <= initialSize / 2) {
+      setMinimized(true);
+    } else {
+      setMinimized(false);
+    }
+    if (!minimized && size <= initialSize / 2) {
+      setMinimized(true);
+    }
+  }, [direction, initialSize, minimized, size]);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -112,9 +123,9 @@ export default (
     }),
     [onResizeStart],
   );
-  const onInitializeSize = useCallback(() => {
+  const handleResetSize = useCallback(() => {
     setSize(initialSize);
   }, [initialSize]);
 
-  return { size: size, gutterProps, onInitializeSize };
+  return { size: size, gutterProps, minimized, handleResetSize };
 };

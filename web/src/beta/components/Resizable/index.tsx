@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback } from "react";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import { styled } from "@reearth/services/theme";
@@ -9,7 +9,7 @@ type Props = {
   children?: ReactNode;
   direction: "vertical" | "horizontal";
   gutter: "start" | "end";
-  size: number;
+  initialSize: number;
   minSize?: number;
   maxSize?: number;
 };
@@ -17,19 +17,18 @@ type Props = {
 const Resizable: React.FC<Props> = ({
   direction,
   gutter,
-  size: initialSize,
+  initialSize,
   minSize,
   maxSize,
   children,
 }) => {
-  const { size, gutterProps, onInitializeSize } = useHooks(
+  const { size, gutterProps, minimized, handleResetSize } = useHooks(
     direction,
     gutter,
     initialSize,
     minSize,
     maxSize,
   );
-  const [minimized, setMinimized] = useState(false);
 
   const showTopGutter = direction === "horizontal" && gutter === "start";
   const showRightGutter = direction === "vertical" && gutter === "end";
@@ -41,18 +40,9 @@ const Resizable: React.FC<Props> = ({
   const BottomGutter = showBottomGutter ? <HorizontalGutter {...gutterProps} /> : null;
   const LeftGutter = showLeftGutter ? <VerticalGutter {...gutterProps} /> : null;
 
-  useEffect(() => {
-    if (size <= initialSize / 2) {
-      setMinimized(true);
-    } else {
-      setMinimized(false);
-    }
-  }, [direction, initialSize, size]);
-
   const handleShowOriginalPanel = useCallback(() => {
-    setMinimized(false);
-    onInitializeSize();
-  }, [onInitializeSize]);
+    handleResetSize();
+  }, [handleResetSize]);
   return (
     <>
       {minimized ? (
@@ -72,19 +62,22 @@ const Resizable: React.FC<Props> = ({
   );
 };
 
-const StyledResizable = styled.div<Pick<Props, "direction" | "size" | "minSize">>`
+const StyledResizable = styled.div<{
+  direction: "vertical" | "horizontal";
+  size: number;
+  minSize?: number;
+}>`
   display: flex;
   align-items: stretch;
   flex-direction: ${({ direction }) => (direction === "vertical" ? "row" : "column")};
   width: ${({ direction, size }) => (direction === "horizontal" ? null : `${size}px`)};
   height: ${({ direction, size }) => (direction === "vertical" ? null : `${size}px`)};
   flex-shrink: 0;
-  resize: both;
   min-width: ${({ direction, minSize }) =>
     direction === "horizontal" && minSize ? `${minSize}px` : null};
   min-height: ${({ direction, minSize }) =>
     direction === "vertical" && minSize ? `${minSize}px` : null};
-  transition: transform 0.3s ease-in-out;
+  transition: ease-in-out;
 `;
 
 const Wrapper = styled.div`
