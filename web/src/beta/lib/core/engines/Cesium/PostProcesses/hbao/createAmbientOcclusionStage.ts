@@ -59,7 +59,7 @@ export interface AmbientOcclusionStageOptions {
 }
 
 export function createAmbientOcclusionStage({
-  prefix = "plateau",
+  prefix = "reearth",
   textureScale = 1,
   directions,
   steps,
