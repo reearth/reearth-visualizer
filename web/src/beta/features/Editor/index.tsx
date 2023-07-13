@@ -34,8 +34,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 
   const isStory = tab === "story";
 
-  console.log("ASDFSDF", devices[selectedDevice]);
-
   return (
     <DndProvider>
       <Wrapper>

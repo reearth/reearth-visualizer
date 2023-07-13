@@ -1,8 +1,8 @@
-import { Fragment } from "react";
-
+import Icon from "@reearth/beta/components/Icon";
+import TabButton from "@reearth/beta/components/TabButton";
+import Text from "@reearth/beta/components/Text";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-
-import { NavIcon } from "../NavIcon";
 
 export type Device = "desktop" | "mobile";
 
@@ -20,40 +20,43 @@ type Props = {
   onDeviceChange: (device: Device) => void;
 };
 
-const Devices: React.FC<Props> = ({ selectedDevice, onDeviceChange }) => (
-  <DeviceWrapper>
-    {(Object.keys(devices) as Device[]).map((d, idx) => {
-      const isFirst = idx === 0;
-      const isLast = idx === Object.keys(devices).length - 1;
-
-      return (
-        <Fragment key={d + idx}>
-          <DeviceIcon
-            icon={d}
-            toggled={selectedDevice == d}
-            isFirst={isFirst}
-            isLast={isLast}
-            onClick={() => onDeviceChange(d)}
-          />
-          {!isLast && <Separator />}
-        </Fragment>
-      );
-    })}
-  </DeviceWrapper>
+const DeviceLabel: React.FC<{ text: string; icon: string }> = ({ text, icon }) => (
+  <LabelWrapper>
+    <Icon icon={icon} size={20} />
+    <Text size="body" customColor>
+      {text}
+    </Text>
+  </LabelWrapper>
 );
+
+const Devices: React.FC<Props> = ({ selectedDevice, onDeviceChange }) => {
+  const t = useT();
+  return (
+    <DeviceWrapper>
+      <TabButton
+        label={<DeviceLabel text={t("Desktop")} icon="desktop" />}
+        selected={selectedDevice === "desktop"}
+        onClick={() => onDeviceChange("desktop")}
+      />
+      <TabButton
+        label={<DeviceLabel text={t("Mobile")} icon="mobile" />}
+        selected={selectedDevice === "mobile"}
+        onClick={() => onDeviceChange("mobile")}
+      />
+    </DeviceWrapper>
+  );
+};
 
 export default Devices;
 
 const DeviceWrapper = styled.div`
   display: flex;
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.general.border};
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
 `;
 
-const DeviceIcon = styled(NavIcon)<{ isFirst?: boolean; isLast?: boolean }>`
-  border-radius: ${({ isFirst, isLast }) => (isFirst ? "3px 0 0 3px" : isLast ? "0 3px 3px 0" : 0)};
-`;
-
-const Separator = styled.div`
-  border-right: 1px solid ${({ theme }) => theme.general.border};
+const LabelWrapper = styled.div`
+  display: flex;
+  gap: 8px;
 `;

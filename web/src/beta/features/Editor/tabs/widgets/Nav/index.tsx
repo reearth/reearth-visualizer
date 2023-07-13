@@ -1,13 +1,14 @@
+import Toggle from "@reearth/beta/components/properties/Toggle";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import VisualizerNav from "../../../VisualizerNav";
 
 import Devices, { type Device } from "./Devices";
-import { NavIcon } from "./NavIcon";
 
 export { type Device } from "./Devices";
 
-export const navbarHeight = "64px";
+export const navbarHeight = "52px";
 
 type Props = {
   showWidgetEditor?: boolean;
@@ -22,14 +23,18 @@ const Nav: React.FC<Props> = ({
   onShowWidgetEditor,
   onDeviceChange,
 }) => {
+  const t = useT();
   return (
     <StyledVisualizerNav>
-      <WidgetSystemIcon
-        toggled={showWidgetEditor}
-        icon="widgetSystem"
-        onClick={onShowWidgetEditor}
-      />
       <Devices selectedDevice={selectedDevice} onDeviceChange={onDeviceChange} />
+      <AlignSystem>
+        <Toggle
+          label={t("Align System")}
+          size="sm"
+          checked={!!showWidgetEditor}
+          onChange={onShowWidgetEditor}
+        />
+      </AlignSystem>
     </StyledVisualizerNav>
   );
 };
@@ -46,6 +51,4 @@ const StyledVisualizerNav = styled(VisualizerNav)`
   height: ${navbarHeight};
 `;
 
-const WidgetSystemIcon = styled(NavIcon)`
-  border: 1px solid ${({ theme }) => theme.general.border};
-`;
+const AlignSystem = styled.div``;
