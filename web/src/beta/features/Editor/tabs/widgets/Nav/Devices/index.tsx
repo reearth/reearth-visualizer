@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { styled } from "@reearth/services/theme";
 
 import { NavIcon } from "../NavIcon";
@@ -25,9 +27,8 @@ const Devices: React.FC<Props> = ({ selectedDevice, onDeviceChange }) => (
       const isLast = idx === Object.keys(devices).length - 1;
 
       return (
-        <>
+        <Fragment key={d + idx}>
           <DeviceIcon
-            key={d + idx}
             icon={d}
             toggled={selectedDevice == d}
             isFirst={isFirst}
@@ -35,7 +36,7 @@ const Devices: React.FC<Props> = ({ selectedDevice, onDeviceChange }) => (
             onClick={() => onDeviceChange(d)}
           />
           {!isLast && <Separator />}
-        </>
+        </Fragment>
       );
     })}
   </DeviceWrapper>
