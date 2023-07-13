@@ -8,7 +8,10 @@ export type Devices = {
   [key in Device]: string | number;
 };
 
-export const devices: Devices = { desktop: "100%", mobile: 437 };
+export const devices: Devices = {
+  desktop: "100%",
+  mobile: 437,
+};
 
 type Props = {
   selectedDevice?: Device;
