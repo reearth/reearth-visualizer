@@ -1,12 +1,20 @@
-import { Cartesian3, HeadingPitchRoll, Math as CesiumMath, Transforms } from "cesium";
-import { useMemo } from "react";
-import { ModelGraphics } from "resium";
+import {
+  Cartesian3,
+  HeadingPitchRoll,
+  Math as CesiumMath,
+  Transforms,
+  Model as CesiumModel,
+  ImageBasedLighting,
+} from "cesium";
+import { useEffect, useMemo, useRef } from "react";
+import { ModelGraphics, useCesium } from "resium";
 
 import { toColor } from "@reearth/beta/utils/value";
 
 import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import { NonPBRLightingShader } from "../../CustomShaders/NonPBRLightingShader";
+import { useSceneEvent } from "../../hooks/useSceneEvent";
 import {
   EntityExt,
   extractSimpleLayerData,
@@ -22,6 +30,18 @@ export type Property = ModelAppearance & {
   location?: { lat: number; lng: number };
   height?: number;
 };
+
+const sphericalHarmonicCoefficientsScratch = [
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+];
 
 export default function Model({ id, isVisible, property, geometry, layer, feature }: Props) {
   const data = extractSimpleLayerData(layer);
@@ -93,6 +113,55 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     () => toDistanceDisplayCondition(property?.near, property?.far),
     [property?.near, property?.far],
   );
+
+  const imageBasedLighting = useMemo(() => {
+    if (!property?.specularEnvironmentMaps && !property?.sphericalHarmonicCoefficients) return;
+
+    const ibl = new ImageBasedLighting();
+    if (property?.specularEnvironmentMaps) {
+      ibl.specularEnvironmentMaps = property.specularEnvironmentMaps;
+    }
+    if (property?.sphericalHarmonicCoefficients) {
+      ibl.sphericalHarmonicCoefficients = property?.sphericalHarmonicCoefficients?.map(
+        (cartesian, index) =>
+          Cartesian3.multiplyByScalar(
+            new Cartesian3(...cartesian),
+            property?.imageBasedLightIntensity ?? 1.0,
+            sphericalHarmonicCoefficientsScratch[index],
+          ),
+      );
+    }
+    return ibl;
+  }, [
+    property?.specularEnvironmentMaps,
+    property?.sphericalHarmonicCoefficients,
+    property?.imageBasedLightIntensity,
+  ]);
+
+  const { viewer } = useCesium();
+  const shouldUpdateAfterLoaded = useRef(false);
+  useSceneEvent("postRender", () => {
+    const primitives = viewer?.scene.primitives;
+    const length = primitives?.length ?? 0;
+
+    if (!shouldUpdateAfterLoaded.current || !imageBasedLighting) {
+      return;
+    }
+
+    for (let i = 0; i < length; i++) {
+      const prim = primitives?.get(i);
+      if (prim instanceof CesiumModel && prim.id && prim.id.id === id) {
+        shouldUpdateAfterLoaded.current = false;
+        prim.imageBasedLighting = imageBasedLighting;
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (imageBasedLighting) {
+      shouldUpdateAfterLoaded.current = true;
+    }
+  }, [imageBasedLighting]);
 
   // if data type is gltf, layer should be rendered. Otherwise only features should be rendererd.
   return (isGltfData ? feature : !feature) || !isVisible || !show || !actualUrl ? null : (

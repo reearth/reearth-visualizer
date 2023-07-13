@@ -530,6 +530,8 @@ export const useHooks = ({
   }, [isVisible, tileset, url, type, meta]);
 
   const imageBasedLighting = useMemo(() => {
+    if (!property?.specularEnvironmentMaps && !property?.sphericalHarmonicCoefficients) return;
+
     const ibl = new ImageBasedLighting();
     if (property?.specularEnvironmentMaps) {
       ibl.specularEnvironmentMaps = property.specularEnvironmentMaps;
