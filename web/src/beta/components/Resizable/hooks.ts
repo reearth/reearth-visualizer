@@ -28,29 +28,16 @@ const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
 const getDelta = (direction: Direction, deltaX: number, deltaY: number) =>
   direction === "vertical" ? deltaX : deltaY;
 
-const getSize = (size: number, delta: number, minSize?: number, maxSize?: number) => {
-  if (minSize !== undefined && size + delta < minSize) return minSize;
-  if (maxSize !== undefined && size + delta > maxSize) return maxSize;
+const getSize = (size: number, delta: number) => {
   return size + delta;
 };
 
-export default (
-  direction: Direction,
-  gutter: Gutter,
-  initialSize: number,
-  minSize?: number,
-  maxSize?: number,
-) => {
+export default (direction: Direction, gutter: Gutter, initialSize: number) => {
   const [isResizing, setIsResizing] = useState(false);
   const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [minimized, setMinimized] = useState(false);
   useEffect(() => {
-    if (size <= initialSize / 2) {
-      setMinimized(true);
-    } else {
-      setMinimized(false);
-    }
     if (!minimized && size <= initialSize / 2) {
       setMinimized(true);
     }
@@ -76,10 +63,10 @@ export default (
       const deltaY = gutter === "start" ? position.y - y : y - position.y;
       const delta = getDelta(direction, deltaX, deltaY);
 
-      setSize(getSize(size, delta, minSize, maxSize));
+      setSize(getSize(size, delta));
       setPosition({ x, y });
     },
-    [isResizing, position, direction, gutter, size, minSize, maxSize],
+    [isResizing, position, direction, gutter, size],
   );
 
   const onResizeEnd = useCallback(() => {
@@ -124,6 +111,7 @@ export default (
     [onResizeStart],
   );
   const handleResetSize = useCallback(() => {
+    setMinimized(false);
     setSize(initialSize);
   }, [initialSize]);
 
