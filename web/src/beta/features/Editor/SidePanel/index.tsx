@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -17,12 +17,12 @@ const SidePanel: React.FC<Props> = ({ location, contents }) => {
   return (
     <Wrapper location={location}>
       {contents.map(content => (
-        <Item maxHeight={content.maxHeight} key={content.id}>
+        <Section maxHeight={content.maxHeight} key={content.id}>
           <Card>
-            <CardTitle>{content.title}</CardTitle>
-            <CardContent>{content.children}</CardContent>
+            <Title>{content.title}</Title>
+            <Content>{content.children}</Content>
           </Card>
-        </Item>
+        </Section>
       ))}
     </Wrapper>
   );
@@ -30,7 +30,7 @@ const SidePanel: React.FC<Props> = ({ location, contents }) => {
 
 export default SidePanel;
 
-const Wrapper = styled.div<Pick<Props, "location">>`
+const Wrapper = styled.div<{ location: "left" | "right" }>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -44,7 +44,7 @@ const Wrapper = styled.div<Pick<Props, "location">>`
   ${({ location }) => location === "right" && `padding-left: 0;`}
 `;
 
-const Item = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
+const Section = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
   flex-grow: 1;
   height: 100%;
   ${({ maxHeight }) => maxHeight && `max-height: ${maxHeight};`}
@@ -58,7 +58,7 @@ const Card = styled.div`
   flex-direction: column;
 `;
 
-const CardTitle = styled.div`
+const Title = styled.div`
   background: ${({ theme }) => theme.general.bg.veryWeak};
   padding: 8px;
   font-weight: 500;
@@ -68,8 +68,9 @@ const CardTitle = styled.div`
   border-top-left-radius: 4px;
 `;
 
-const CardContent = styled.div`
-  padding: 8px;
+const Content = styled.div`
+  padding: 12px 8px;
+  box-sizing: border-box;
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   overflow-y: auto;
