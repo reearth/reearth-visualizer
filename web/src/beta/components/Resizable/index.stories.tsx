@@ -23,8 +23,6 @@ export const Vertical: StoryObj<typeof Resizable> = {
     direction: "vertical",
     gutter: "end",
     initialSize: 400,
-    minSize: 150,
-    maxSize: 500,
   },
   render: args => {
     return (
@@ -41,8 +39,6 @@ export const Horizontal: StoryObj<typeof Resizable> = {
     direction: "horizontal",
     gutter: "end",
     initialSize: 200,
-    minSize: 100,
-    maxSize: 300,
   },
   render: args => {
     return (
