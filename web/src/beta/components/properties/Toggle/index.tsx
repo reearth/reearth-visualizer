@@ -75,12 +75,8 @@ const TopSlider = styled.div<{
 }>`
   width: ${({ size }) => (size === "sm" ? "14px" : "20px")};
   height: ${({ size }) => (size === "sm" ? "14px" : "20px")};
-  background: ${({ checked, selected, theme }) =>
-    selected
-      ? theme.classic.toggleButton.highlight
-      : checked
-      ? theme.classic.toggleButton.activeToggle
-      : theme.classic.toggleButton.toggle};
+  background: ${({ selected, theme }) =>
+    selected ? theme.general.content.strong : theme.general.content.main};
   transition: 0.4s;
   border-radius: 50%;
   transform: ${({ checked }) => checked && "translateX(100%)"};
