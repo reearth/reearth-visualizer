@@ -1,5 +1,5 @@
 import Resizable from "@reearth/beta/components/Resizable";
-import StoryPanel from "@reearth/beta/features/Editor/Tabs/Storytelling/StoryPanel";
+import StoryPanel from "@reearth/beta/features/Editor/tabs/story/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
@@ -69,7 +69,7 @@ const Wrapper = styled.div`
 const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
-  height: 100%;
+  height: 0;
   background-color: ${({ theme }) => theme.general.bg.veryStrong};
 `;
 

@@ -318,6 +318,12 @@ export type SceneProperty = {
     themeSelectColor?: string;
     themeBackgroundColor?: string;
   };
+  ambientOcclusion?: {
+    enabled?: boolean;
+    quality?: "low" | "medium" | "high" | "extreme";
+    intensity?: number;
+    ambientOcclusionOnly?: boolean;
+  };
   light?: {
     lightType?: "sunLight" | "directionalLight";
     lightDirectionX?: number;

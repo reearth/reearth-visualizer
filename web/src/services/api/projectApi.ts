@@ -50,7 +50,7 @@ export default () => {
         },
       });
       if (projectErrors || !projectResults?.createProject) {
-        console.log("GraphQL: Failed to create project");
+        console.log("GraphQL: Failed to create project", projectErrors);
         setNotification({ type: "error", text: t("Failed to create project.") });
 
         return { status: "error" };
@@ -59,16 +59,15 @@ export default () => {
           variables: { projectId: projectResults?.createProject.project.id },
         });
         if (sceneErrors) {
-          console.log("GraphQL: Failed to create scene for project creation.");
+          console.log("GraphQL: Failed to create scene for project creation.", sceneErrors);
           setNotification({ type: "error", text: t("Failed to create project.") });
 
           return { status: "error" };
         }
       }
-      return {
-        data: projectResults.createProject.project,
-        status: "success",
-      };
+
+      setNotification({ type: "success", text: t("Successfully created project!") });
+      return { data: projectResults.createProject.project, status: "success" };
     },
     [createNewProject, createScene, setNotification, t],
   );
