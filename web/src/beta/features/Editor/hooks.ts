@@ -2,18 +2,18 @@ import { useCallback, useState } from "react";
 
 import { useWidgetAlignEditorActivated } from "@reearth/services/state";
 
-import { Layout } from "./types";
+import { type Device } from "./tabs/widgets/Nav";
 
 export default () => {
-  const [layout, setLayout] = useState<Layout>("desktop");
+  const [selectedDevice, setDevice] = useState<Device>("desktop");
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
 
-  const handleLayoutChange = useCallback((newLayout: Layout) => setLayout(newLayout), []);
+  const handleDeviceChange = useCallback((newDevice: Device) => setDevice(newDevice), []);
 
   const handleWidgetEditorToggle = useCallback(
     () => setWidgetEditor(show => !show),
     [setWidgetEditor],
   );
 
-  return { layout, showWidgetEditor, handleLayoutChange, handleWidgetEditorToggle };
+  return { selectedDevice, showWidgetEditor, handleDeviceChange, handleWidgetEditorToggle };
 };

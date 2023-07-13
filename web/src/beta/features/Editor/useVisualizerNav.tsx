@@ -1,24 +1,22 @@
 import { ReactNode, useMemo } from "react";
 
-import WidgetNav from "@reearth/beta/features/Editor/tabs/widgets/Nav";
+import WidgetNav, { type Device } from "@reearth/beta/features/Editor/tabs/widgets/Nav";
 import VisualizerNav from "@reearth/beta/features/Editor/VisualizerNav";
 import { Tab } from "@reearth/beta/features/Navbar";
 
-import { Layout } from "./types";
-
 type Props = {
   tab: Tab;
-  layout: Layout;
+  selectedDevice: Device;
   showWidgetEditor?: boolean;
-  handleLayoutChange: (newLayout: Layout) => void;
+  handleDeviceChange: (device: Device) => void;
   handleWidgetEditorToggle: () => void;
 };
 
 export default ({
   tab,
-  layout,
+  selectedDevice,
   showWidgetEditor,
-  handleLayoutChange,
+  handleDeviceChange,
   handleWidgetEditorToggle,
 }: Props) => {
   const visualizerNav = useMemo<ReactNode | undefined>(() => {
@@ -27,9 +25,9 @@ export default ({
         return (
           <WidgetNav
             showWidgetEditor={showWidgetEditor}
-            layout={layout}
+            selectedDevice={selectedDevice}
             onShowWidgetEditor={handleWidgetEditorToggle}
-            onLayoutChange={handleLayoutChange}
+            onDeviceChange={handleDeviceChange}
           />
         );
       case "publish":
@@ -39,7 +37,7 @@ export default ({
       default:
         return undefined;
     }
-  }, [tab, layout, showWidgetEditor, handleLayoutChange, handleWidgetEditorToggle]);
+  }, [tab, selectedDevice, showWidgetEditor, handleDeviceChange, handleWidgetEditorToggle]);
 
   return {
     visualizerNav,

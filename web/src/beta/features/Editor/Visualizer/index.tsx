@@ -1,18 +1,16 @@
 import { styled } from "@reearth/services/theme";
 
-import { Layout } from "../types";
-
 import CanvasArea from "./CanvasArea";
 
 type Props = {
-  layout?: Layout;
+  deviceWidth?: string | number;
   hasNav?: boolean;
 };
 
-const Visualizer: React.FC<Props> = ({ layout, hasNav }) => {
+const Visualizer: React.FC<Props> = ({ deviceWidth, hasNav }) => {
   return (
     <Wrapper hasNav={hasNav}>
-      <InnerWrapper layout={layout}>
+      <InnerWrapper deviceWidth={deviceWidth}>
         <CanvasArea isBuilt={false} inEditor={true} />
       </InnerWrapper>
     </Wrapper>
@@ -28,6 +26,7 @@ const Wrapper = styled.div<{ hasNav?: boolean }>`
   height: ${({ hasNav }) => (hasNav ? "calc(100% - 64px)" : "100%")};
 `;
 
-const InnerWrapper = styled.div<{ layout?: Layout }>`
-  width: ${({ layout }) => (layout === "mobile" ? "437px" : "100%")};
+const InnerWrapper = styled.div<{ deviceWidth?: string | number }>`
+  width: ${({ deviceWidth }) =>
+    typeof deviceWidth === "number" ? `${deviceWidth}px` : deviceWidth};
 `;

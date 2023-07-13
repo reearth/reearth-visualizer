@@ -1,5 +1,6 @@
 import Resizable from "@reearth/beta/components/Resizable";
 import StoryPanel from "@reearth/beta/features/Editor/tabs/story/StoryPanel";
+import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
@@ -18,19 +19,22 @@ type Props = {
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
-  const { layout, showWidgetEditor, handleLayoutChange, handleWidgetEditorToggle } = useHooks();
+  const { selectedDevice, showWidgetEditor, handleDeviceChange, handleWidgetEditorToggle } =
+    useHooks();
 
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab });
   const { visualizerNav } = useVisualizerNav({
     tab,
-    layout,
+    selectedDevice,
     showWidgetEditor,
-    handleLayoutChange,
+    handleDeviceChange,
     handleWidgetEditorToggle,
   });
 
   const isStory = tab === "story";
+
+  console.log("ASDFSDF", devices[selectedDevice]);
 
   return (
     <DndProvider>
@@ -56,7 +60,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             {isStory && <StoryPanel />}
             <VisualizerWrapper tab={tab}>
               {visualizerNav}
-              <Visualizer layout={layout} />
+              <Visualizer deviceWidth={devices[selectedDevice]} />
             </VisualizerWrapper>
           </Center>
           {rightPanel && (
