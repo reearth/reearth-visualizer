@@ -1,9 +1,9 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
-  label: string;
+  label: string | ReactNode;
   onClick?: () => void;
   selected?: boolean;
 };
