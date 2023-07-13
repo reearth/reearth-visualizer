@@ -4,18 +4,18 @@ import { useCallback } from "react";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 
 export default () => {
-  const useSceneQuery = useCallback((sceneId?: string, lang?: string) => {
+  const usePluginsQuery = useCallback((sceneId?: string, lang?: string) => {
     const { data, ...rest } = useQuery(GET_SCENE, {
       variables: { sceneId: sceneId ?? "", lang },
       skip: !sceneId,
     });
 
-    const scene = data?.node?.__typename === "Scene" ? data.node : undefined;
+    const plugins = data?.node?.__typename === "Scene" ? data.node.plugins : undefined;
 
-    return { scene, ...rest };
+    return { plugins, ...rest };
   }, []);
 
   return {
-    useSceneQuery,
+    usePluginsQuery,
   };
 };
