@@ -18,7 +18,6 @@ const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
   if (nativeEvent instanceof TouchEvent) {
     const touch = nativeEvent.touches[0];
     const { clientX: x, clientY: y } = touch;
-
     return { x, y };
   }
 

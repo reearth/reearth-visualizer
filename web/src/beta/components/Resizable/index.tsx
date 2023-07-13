@@ -12,13 +12,7 @@ type Props = {
   initialSize: number;
 };
 
-const Resizable: React.FC<Props> = ({
-  direction,
-  gutter,
-  initialSize,
-
-  children,
-}) => {
+const Resizable: React.FC<Props> = ({ direction, gutter, initialSize, children }) => {
   const { size, gutterProps, minimized, handleResetSize } = useHooks(
     direction,
     gutter,
