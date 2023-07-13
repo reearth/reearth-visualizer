@@ -5,9 +5,11 @@ import Manager from "./Manager";
 import Settings from "./Settings";
 
 // TODO: these are currently rough definition
-type Props = {};
+type Props = {
+  sceneId?: string;
+};
 
-const SidePanel: React.FC<Props> = () => {
+const SidePanel: React.FC<Props> = ({ sceneId }) => {
   const t = useT();
 
   return (
@@ -18,11 +20,11 @@ const SidePanel: React.FC<Props> = () => {
           id: "story",
           title: t("Widget Manager"),
           maxHeight: "33%",
-          children: <Manager />,
+          children: <Manager sceneId={sceneId} />,
         },
         {
           id: "page",
-          title: t("Widget Settings"),
+          title: t("Inspector"),
           children: <Settings />,
         },
       ]}

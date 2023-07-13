@@ -1,24 +1,31 @@
 import Icon from "@reearth/beta/components/Icon";
+import { usePluginsFetcher } from "@reearth/services/api";
 import { styled } from "@reearth/services/theme";
 
-const Manager: React.FC = () => {
+type Props = {
+  sceneId?: string;
+};
+
+const Manager: React.FC<Props> = ({ sceneId }) => {
+  const { usePluginsQuery } = usePluginsFetcher();
+  const { plugins } = usePluginsQuery(sceneId);
+  console.log("PLUGINS!!@#: ", plugins);
   return (
-    <div>
+    <Wrapper>
       <ActionArea onClick={() => alert("SHOW WIDGETSSS")}>
         <Icon icon="plusSquare" size={14} />
-        <Icon icon="arrowDown" size={14} />
       </ActionArea>
-    </div>
+    </Wrapper>
   );
 };
 
 export default Manager;
 
+const Wrapper = styled.div``;
+
 const ActionArea = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 4px;
-  padding: 0 8px 8px 8px;
-  background: ${({ theme }) => theme.general.bg.veryWeak};
   cursor: pointer;
 `;

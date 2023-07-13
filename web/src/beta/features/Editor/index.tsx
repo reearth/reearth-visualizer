@@ -23,7 +23,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     useHooks();
 
   const { leftPanel } = useLeftPanel({ tab });
-  const { rightPanel } = useRightPanel({ tab });
+  const { rightPanel } = useRightPanel({ tab, sceneId });
   const { visualizerNav } = useVisualizerNav({
     tab,
     selectedDevice,

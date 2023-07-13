@@ -1,5 +1,13 @@
+import { styled } from "@reearth/services/theme";
+
 const Settings: React.FC = () => {
-  return <div>Settings</div>;
+  return <Wrapper>asldkjlsdkafjlkjsadf</Wrapper>;
 };
 
 export default Settings;
+
+const Wrapper = styled.div`
+  padding: 8px;
+  background: ${({ theme }) => theme.general.bg.main};
+  border-radius: 4px;
+`;
