@@ -25,6 +25,7 @@ const Modal: React.FC<Props> = ({
   onClose,
   children,
 }) => {
+  //ToDo Beta project design
   const theme = useTheme();
   return (
     <Wrapper className={className} size={size} isVisible={isVisible} onClose={onClose}>
