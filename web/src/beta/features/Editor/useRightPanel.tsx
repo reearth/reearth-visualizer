@@ -2,6 +2,8 @@ import { ReactNode, useMemo } from "react";
 
 import { Tab } from "@reearth/beta/features/Navbar";
 
+import WidgetSidePanel from "./tabs/widgets/SidePanel";
+
 type Props = {
   tab: Tab;
 };
@@ -14,7 +16,7 @@ export default ({ tab }: Props) => {
       case "story":
         return <div>TODO: right panel</div>;
       case "widgets":
-        return <div>TODO: right panel</div>;
+        return <WidgetSidePanel />;
 
       case "publish":
       default:
