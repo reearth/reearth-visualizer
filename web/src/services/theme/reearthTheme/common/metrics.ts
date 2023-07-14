@@ -1,5 +1,6 @@
 const metrics = {
-  propertyMenuWidth: 272,
+  propertyMenuWidth: 350,
+  propertyMenuMinWidth: 200,
 };
 
 export const metricsSizes = {

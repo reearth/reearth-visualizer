@@ -31,7 +31,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
         />
         <MainSection>
           {leftPanel && (
-            <Resizable direction="vertical" gutter="end" initialSize={metrics.propertyMenuWidth}>
+            <Resizable
+              direction="vertical"
+              gutter="end"
+              initialSize={metrics.propertyMenuWidth}
+              minSize={metrics.propertyMenuMinWidth}>
               {leftPanel}
             </Resizable>
           )}
@@ -43,7 +47,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             </VisualizerWrapper>
           </Center>
           {rightPanel && (
-            <Resizable direction="vertical" gutter="start" initialSize={metrics.propertyMenuWidth}>
+            <Resizable
+              direction="vertical"
+              gutter="start"
+              initialSize={metrics.propertyMenuWidth}
+              minSize={metrics.propertyMenuMinWidth}>
               {rightPanel}
             </Resizable>
           )}

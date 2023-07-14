@@ -10,9 +10,10 @@ type Props = {
   direction: "vertical" | "horizontal";
   gutter: "start" | "end";
   initialSize: number;
+  minSize?: number;
 };
 
-const Resizable: React.FC<Props> = ({ direction, gutter, initialSize, children }) => {
+const Resizable: React.FC<Props> = ({ direction, gutter, minSize, initialSize, children }) => {
   const { size, gutterProps, minimized, handleResetSize } = useHooks(
     direction,
     gutter,
@@ -36,7 +37,7 @@ const Resizable: React.FC<Props> = ({ direction, gutter, initialSize, children }
           <Icon icon={gutter == "end" ? "arrowRight" : "arrowLeft"} />
         </MinimizedWrapper>
       ) : (
-        <StyledResizable direction={direction} size={size}>
+        <StyledResizable direction={direction} size={size} minSize={minSize}>
           {TopGutter}
           {LeftGutter}
           <Wrapper>{children}</Wrapper>
@@ -51,6 +52,7 @@ const Resizable: React.FC<Props> = ({ direction, gutter, initialSize, children }
 const StyledResizable = styled.div<{
   direction: "vertical" | "horizontal";
   size: number;
+  minSize?: number;
 }>`
   display: flex;
   align-items: stretch;
@@ -58,6 +60,10 @@ const StyledResizable = styled.div<{
   width: ${({ direction, size }) => (direction === "horizontal" ? null : `${size}px`)};
   height: ${({ direction, size }) => (direction === "vertical" ? null : `${size}px`)};
   flex-shrink: 0;
+  min-width: ${({ direction, minSize }) =>
+    direction === "horizontal" && minSize ? `${minSize}px` : null};
+  min-height: ${({ direction, minSize }) =>
+    direction === "vertical" && minSize ? `${minSize}px` : null};
 `;
 
 const Wrapper = styled.div`
