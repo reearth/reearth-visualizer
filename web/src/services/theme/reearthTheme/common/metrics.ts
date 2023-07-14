@@ -1,5 +1,5 @@
 const metrics = {
-  propertyMenuWidth: 350,
+  propertyMenuWidth: 308,
   propertyMenuMinWidth: 200,
 };
 

@@ -27,20 +27,17 @@ const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
 const getDelta = (direction: Direction, deltaX: number, deltaY: number) =>
   direction === "vertical" ? deltaX : deltaY;
 
-const getSize = (size: number, delta: number) => {
+const getSize = (size: number, delta: number, minSize?: number) => {
+  if (minSize !== undefined && size + delta < minSize) return minSize;
   return size + delta;
 };
 
-export default (direction: Direction, gutter: Gutter, initialSize: number) => {
+export default (direction: Direction, gutter: Gutter, initialSize: number, minSize: number) => {
   const [isResizing, setIsResizing] = useState(false);
   const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [minimized, setMinimized] = useState(false);
-  useEffect(() => {
-    if (!minimized && size <= initialSize / 2) {
-      setMinimized(true);
-    }
-  }, [direction, initialSize, minimized, size]);
+  const [resizingSize, setResizingSize] = useState(initialSize);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -62,10 +59,26 @@ export default (direction: Direction, gutter: Gutter, initialSize: number) => {
       const deltaY = gutter === "start" ? position.y - y : y - position.y;
       const delta = getDelta(direction, deltaX, deltaY);
 
-      setSize(getSize(size, delta));
+      setResizingSize(getSize(resizingSize, delta));
+      setSize(getSize(size, delta, minSize));
+
+      if (!minimized && resizingSize <= initialSize / 2) {
+        setMinimized(true);
+      }
       setPosition({ x, y });
     },
-    [isResizing, position, direction, gutter, size],
+    [
+      isResizing,
+      gutter,
+      position.x,
+      position.y,
+      direction,
+      resizingSize,
+      size,
+      minSize,
+      minimized,
+      initialSize,
+    ],
   );
 
   const onResizeEnd = useCallback(() => {
@@ -111,8 +124,8 @@ export default (direction: Direction, gutter: Gutter, initialSize: number) => {
   );
   const handleResetSize = useCallback(() => {
     setMinimized(false);
-    setSize(initialSize);
-  }, [initialSize]);
+    setSize(minSize);
+  }, [minSize]);
 
   return { size: size, gutterProps, minimized, handleResetSize };
 };
