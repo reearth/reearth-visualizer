@@ -27,7 +27,7 @@ const ModalContent: React.FC = () => {
 
 export const Small: Story = {
   render: () => (
-    <Modal size="sm" isVisible={true} title="Small modal" button1={<Button text="Confirm" />}>
+    <Modal size="sm" isVisible={true} modalTitle="Small modal" button1={<Button text="Confirm" />}>
       <ModalContent />
     </Modal>
   ),
@@ -35,7 +35,7 @@ export const Small: Story = {
 
 export const Medium: Story = {
   render: () => (
-    <Modal size="md" isVisible={true} title="Medium modal" button1={<Button text="Confirm" />}>
+    <Modal size="md" isVisible={true} modalTitle="Medium modal" button1={<Button text="Confirm" />}>
       <ModalContent />
     </Modal>
   ),
@@ -43,7 +43,7 @@ export const Medium: Story = {
 
 export const Large: Story = {
   render: () => (
-    <Modal size="lg" isVisible={true} title="Large modal" button1={<Button text="Confirm" />}>
+    <Modal size="lg" isVisible={true} modalTitle="Large modal" button1={<Button text="Confirm" />}>
       <ModalContent />
     </Modal>
   ),

@@ -48,7 +48,7 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
 
   return (
     <Modal
-      title={t("Create New Workspace")}
+      modalTitle={t("Create New Workspace")}
       isVisible={open}
       onClose={handleClose}
       button1={
