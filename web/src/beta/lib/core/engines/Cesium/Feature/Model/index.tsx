@@ -123,15 +123,16 @@ export default function Model({
   );
 
   const imageBasedLighting = useMemo(() => {
+    const ibl = new ImageBasedLighting();
+
     if (
       !property?.specularEnvironmentMaps &&
       !property?.sphericalHarmonicCoefficients &&
       !sceneProperty?.light?.specularEnvironmentMaps &&
       !sceneProperty?.light?.sphericalHarmonicCoefficients
     )
-      return;
+      return ibl;
 
-    const ibl = new ImageBasedLighting();
     const specularEnvironmentMaps =
       property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
     const sphericalHarmonicCoefficients =
