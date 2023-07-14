@@ -167,22 +167,23 @@ export default function Feature({
           const [C] = components[k] ?? [];
           const isVisible = layer.layer.visible !== false && !isHidden;
 
-          // NOTE: IBL for 3dtiles is not updated unless Tileset feature component is re-created. 
+          // NOTE: IBL for 3dtiles is not updated unless Tileset feature component is re-created.
           const useSceneSphericalHarmonicCoefficients =
             !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
           const useSceneSpecularEnvironmentMaps =
             !!props.sceneProperty?.light?.specularEnvironmentMaps;
-          const use3dtilesIBL =
+          const use3dtilesSphericalHarmonicCoefficients =
             layer?.layer?.type === "simple" &&
-            (!!layer?.layer?.["3dtiles"]?.sphericalHarmonicCoefficients ||
-              !!layer?.layer?.["3dtiles"]?.specularEnvironmentMaps);
+            !!layer?.layer?.["3dtiles"]?.sphericalHarmonicCoefficients;
+          const use3dtilesSpecularEnvironmentMaps =
+            layer?.layer?.type === "simple" && !!layer?.layer?.["3dtiles"]?.specularEnvironmentMaps;
 
           // "noFeature" component should be recreated when the following value is changed.
           // data.url, isVisible
           const key = generateIDWithMD5(
             `${layer?.id || ""}_${k}_${
               data?.url
-            }_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${use3dtilesIBL}}`,
+            }_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${use3dtilesSphericalHarmonicCoefficients}}_${use3dtilesSpecularEnvironmentMaps}`,
           );
 
           return (
