@@ -1,6 +1,6 @@
 import { Viewer } from "cesium";
 
-import { type CognitoParams } from "./aws";
+import { configureCognito, type CognitoParams } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
@@ -62,6 +62,10 @@ export default async function loadConfig() {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
   };
+
+  if (config?.cognito) {
+    configureCognito(config);
+  }
 
   if (config?.passwordPolicy) {
     config.passwordPolicy = convertPasswordPolicy(
