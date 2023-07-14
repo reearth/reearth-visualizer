@@ -540,12 +540,11 @@ export const useHooks = ({
       return;
 
     const ibl = new ImageBasedLighting();
-    const specularEnvironmentMaps = property?.specularEnvironmentMaps
-      ? property?.specularEnvironmentMaps
-      : sceneProperty?.light?.specularEnvironmentMaps;
-    const sphericalHarmonicCoefficients = property?.sphericalHarmonicCoefficients
-      ? property?.sphericalHarmonicCoefficients
-      : sceneProperty?.light?.sphericalHarmonicCoefficients;
+    const specularEnvironmentMaps =
+      property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
+    const sphericalHarmonicCoefficients =
+      property?.sphericalHarmonicCoefficients ??
+      sceneProperty?.light?.sphericalHarmonicCoefficients;
     const imageBasedLightIntensity =
       property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
 
