@@ -43,7 +43,15 @@ const sphericalHarmonicCoefficientsScratch = [
   new Cartesian3(),
 ];
 
-export default function Model({ id, isVisible, property, geometry, layer, feature }: Props) {
+export default function Model({
+  id,
+  isVisible,
+  property,
+  sceneProperty,
+  geometry,
+  layer,
+  feature,
+}: Props) {
   const data = extractSimpleLayerData(layer);
   const isGltfData = data?.type === "gltf";
 
@@ -115,20 +123,34 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
   );
 
   const imageBasedLighting = useMemo(() => {
-    if (!property?.specularEnvironmentMaps && !property?.sphericalHarmonicCoefficients) return;
+    if (
+      !property?.specularEnvironmentMaps &&
+      !property?.sphericalHarmonicCoefficients &&
+      !sceneProperty?.light?.specularEnvironmentMaps &&
+      !sceneProperty?.light?.sphericalHarmonicCoefficients
+    )
+      return;
 
     const ibl = new ImageBasedLighting();
-    if (property?.specularEnvironmentMaps) {
-      ibl.specularEnvironmentMaps = property.specularEnvironmentMaps;
+    const specularEnvironmentMaps = property?.specularEnvironmentMaps
+      ? property?.specularEnvironmentMaps
+      : sceneProperty?.light?.specularEnvironmentMaps;
+    const sphericalHarmonicCoefficients = property?.sphericalHarmonicCoefficients
+      ? property?.sphericalHarmonicCoefficients
+      : sceneProperty?.light?.sphericalHarmonicCoefficients;
+    const imageBasedLightIntensity =
+      property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
+
+    if (specularEnvironmentMaps) {
+      ibl.specularEnvironmentMaps = specularEnvironmentMaps;
     }
-    if (property?.sphericalHarmonicCoefficients) {
-      ibl.sphericalHarmonicCoefficients = property?.sphericalHarmonicCoefficients?.map(
-        (cartesian, index) =>
-          Cartesian3.multiplyByScalar(
-            new Cartesian3(...cartesian),
-            property?.imageBasedLightIntensity ?? 1.0,
-            sphericalHarmonicCoefficientsScratch[index],
-          ),
+    if (sphericalHarmonicCoefficients) {
+      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients?.map((cartesian, index) =>
+        Cartesian3.multiplyByScalar(
+          new Cartesian3(...cartesian),
+          imageBasedLightIntensity ?? 1.0,
+          sphericalHarmonicCoefficientsScratch[index],
+        ),
       );
     }
     return ibl;
@@ -136,6 +158,9 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     property?.specularEnvironmentMaps,
     property?.sphericalHarmonicCoefficients,
     property?.imageBasedLightIntensity,
+    sceneProperty?.light?.specularEnvironmentMaps,
+    sceneProperty?.light?.sphericalHarmonicCoefficients,
+    sceneProperty?.light?.imageBasedLightIntensity,
   ]);
 
   const { viewer } = useCesium();

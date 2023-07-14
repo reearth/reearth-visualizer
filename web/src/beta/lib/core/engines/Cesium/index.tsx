@@ -64,8 +64,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     cesiumIonAccessToken,
     context,
     light,
-    scaledSphericalHarmonicCoefficients,
-    specularEnvironmentMaps,
     handleMount,
     handleUnmount,
     handleUpdate,
@@ -185,8 +183,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         backgroundColor={backgroundColor}
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
-        sphericalHarmonicCoefficients={scaledSphericalHarmonicCoefficients}
-        specularEnvironmentMaps={specularEnvironmentMaps}
       />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog

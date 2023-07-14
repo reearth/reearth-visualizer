@@ -33,6 +33,7 @@ function Tileset({
     layer,
     feature,
     property,
+    sceneProperty,
     meta,
     evalFeature,
   });

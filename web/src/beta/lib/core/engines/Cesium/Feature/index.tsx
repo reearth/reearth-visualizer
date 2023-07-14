@@ -93,8 +93,15 @@ export default function Feature({
   const cacheable = !data?.updateInterval;
 
   const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
+    // fix scene sphericalHarmonicCoefficients update issue
+    const useSceneSphericalHarmonicCoefficients =
+      !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
+    const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
+
     const componentId = generateIDWithMD5(
-      `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${data?.url ?? ""}_${
+      `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${
+        data?.url ?? ""
+      }_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
         JSON.stringify(f?.[k]) ?? ""
       }`,
     );
@@ -163,8 +170,9 @@ export default function Feature({
 
           // fix scene sphericalHarmonicCoefficients update issue
           const useSceneSphericalHarmonicCoefficients =
-            !!props.sceneProperty.light?.sphericalHarmonicCoefficients;
-
+            !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
+          const useSceneSpecularEnvironmentMaps =
+            !!props.sceneProperty?.light?.specularEnvironmentMaps;
           // for 3dtiles ibl update
           const use3dtilesIBL =
             layer?.layer?.type === "simple" &&
@@ -176,7 +184,7 @@ export default function Feature({
           const key = generateIDWithMD5(
             `${layer?.id || ""}_${k}_${
               data?.url
-            }_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${use3dtilesIBL}}`,
+            }_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${use3dtilesIBL}}`,
           );
 
           return (

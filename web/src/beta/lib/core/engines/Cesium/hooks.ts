@@ -41,18 +41,6 @@ import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
-const sphericalHarmonicCoefficientsScratch = [
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-];
-
 export default ({
   ref,
   property,
@@ -143,26 +131,6 @@ export default ({
     property?.light?.lightDirectionZ,
     property?.light?.lightIntensity,
   ]);
-
-  // Image-based lighting
-  const scaledSphericalHarmonicCoefficients = useMemo(
-    () =>
-      property?.light?.sphericalHarmonicCoefficients
-        ? property?.light?.sphericalHarmonicCoefficients?.map((cartesian, index) =>
-            Cartesian3.multiplyByScalar(
-              new Cartesian3(...cartesian),
-              property?.light?.imageBasedLightIntensity ?? 1.0,
-              sphericalHarmonicCoefficientsScratch[index],
-            ),
-          )
-        : undefined,
-    [property?.light?.sphericalHarmonicCoefficients, property?.light?.imageBasedLightIntensity],
-  );
-
-  const specularEnvironmentMaps = useMemo(
-    () => property?.light?.specularEnvironmentMaps,
-    [property?.light?.specularEnvironmentMaps],
-  );
 
   // shadow map
   type ShadowMapBias = {
@@ -760,8 +728,6 @@ export default ({
     mouseEventHandles,
     context,
     light,
-    scaledSphericalHarmonicCoefficients,
-    specularEnvironmentMaps,
     handleMount,
     handleUnmount,
     handleUpdate,
