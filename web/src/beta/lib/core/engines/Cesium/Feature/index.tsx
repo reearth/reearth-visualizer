@@ -93,7 +93,6 @@ export default function Feature({
   const cacheable = !data?.updateInterval;
 
   const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
-    // fix scene sphericalHarmonicCoefficients update issue
     const useSceneSphericalHarmonicCoefficients =
       !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
     const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
@@ -168,12 +167,11 @@ export default function Feature({
           const [C] = components[k] ?? [];
           const isVisible = layer.layer.visible !== false && !isHidden;
 
-          // fix scene sphericalHarmonicCoefficients update issue
           const useSceneSphericalHarmonicCoefficients =
             !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
           const useSceneSpecularEnvironmentMaps =
             !!props.sceneProperty?.light?.specularEnvironmentMaps;
-          // for 3dtiles ibl update
+
           const use3dtilesIBL =
             layer?.layer?.type === "simple" &&
             (!!layer?.layer?.["3dtiles"]?.sphericalHarmonicCoefficients ||
