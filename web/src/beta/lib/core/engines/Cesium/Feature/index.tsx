@@ -160,13 +160,23 @@ export default function Feature({
         {displayType.map(k => {
           const [C] = components[k] ?? [];
           const isVisible = layer.layer.visible !== false && !isHidden;
-          const useSphericalHormonicCoefficients =
-            !!props.sceneProperty.light?.sphericalHarmonicCoefficients && !!props.sceneProperty.light?.specularEnvironmentMaps;
+
+          // fix scene sphericalHarmonicCoefficients update issue
+          const useSceneSphericalHarmonicCoefficients =
+            !!props.sceneProperty.light?.sphericalHarmonicCoefficients;
+
+          // for 3dtiles ibl update
+          const use3dtilesIBL =
+            layer?.layer?.type === "simple" &&
+            (!!layer?.layer?.["3dtiles"]?.sphericalHarmonicCoefficients ||
+              !!layer?.layer?.["3dtiles"]?.specularEnvironmentMaps);
 
           // "noFeature" component should be recreated when the following value is changed.
           // data.url, isVisible
           const key = generateIDWithMD5(
-            `${layer?.id || ""}_${k}_${data?.url}_${isVisible}_${useSphericalHormonicCoefficients}`,
+            `${layer?.id || ""}_${k}_${
+              data?.url
+            }_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${use3dtilesIBL}}`,
           );
 
           return (
