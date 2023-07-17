@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import PopoverContent from "@reearth/beta/components/PopoverContent";
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
 import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
@@ -36,7 +36,7 @@ const ContentPage: React.FC<Props> = ({
               }}
               isOpenAction={openedPageId === i.toString()}
               actionContent={
-                <PopoverContent
+                <PopoverMenuContent
                   width="120px"
                   size="md"
                   items={[
