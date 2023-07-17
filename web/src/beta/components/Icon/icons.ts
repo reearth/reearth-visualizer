@@ -60,6 +60,10 @@ import Workspaces from "./Icons/workspaces.svg";
 import Square from "./Icons/square.svg";
 import Swiper from "./Icons/swiper.svg";
 import Book from "./Icons/book.svg";
+import Copy from "./Icons/copy.svg";
+import GearSix from "./Icons/gearSix.svg";
+import PencilSimple from "./Icons/pencilSimple.svg";
+import Trash from "./Icons/trash.svg";
 
 // Plus
 import Plus from "./Icons/plus.svg";
@@ -111,4 +115,8 @@ export default {
   checkmark: CheckMark,
   logo: Logo,
   logoColorful: LogoColorful,
+  copy: Copy,
+  gearSix: GearSix,
+  pencilSimple: PencilSimple,
+  trash: Trash,
 };
