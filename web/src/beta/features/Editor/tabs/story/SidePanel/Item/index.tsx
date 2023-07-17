@@ -8,10 +8,11 @@ import { styled } from "@reearth/services/theme";
 type Props = {
   children: ReactNode;
   onItemClick(id: string): void;
-  onActionClick(): void;
-  actionContent: ReactNode;
-  onOpenChange: (isOpen: boolean) => void;
-  isOpenAction: boolean;
+  onActionClick?: () => void;
+  actionContent?: ReactNode;
+  onOpenChange?: (isOpen: boolean) => void;
+  isOpenAction?: boolean;
+  isActive: boolean;
 };
 
 const StorySidePanelItem: FC<Props> = ({
@@ -21,22 +22,25 @@ const StorySidePanelItem: FC<Props> = ({
   actionContent,
   onOpenChange,
   isOpenAction,
+  isActive,
 }) => {
   return (
     <Wrapper>
-      <Inner onClick={() => onItemClick("id")}>
+      <Inner onClick={() => onItemClick("id")} isActive={isActive}>
         <SText>
           <Text size="footnote">{children}</Text>
         </SText>
       </Inner>
-      <Popover.Provider open={isOpenAction} onOpenChange={onOpenChange}>
-        <Popover.Trigger asChild>
-          <SButton onClick={onActionClick}>
-            <Icon icon="actionbutton" size={12} />
-          </SButton>
-        </Popover.Trigger>
-        <Popover.Content>{actionContent}</Popover.Content>
-      </Popover.Provider>
+      {actionContent && (
+        <Popover.Provider open={isOpenAction} onOpenChange={onOpenChange}>
+          <Popover.Trigger asChild>
+            <SButton onClick={onActionClick}>
+              <Icon icon="actionbutton" size={12} />
+            </SButton>
+          </Popover.Trigger>
+          <Popover.Content>{actionContent}</Popover.Content>
+        </Popover.Provider>
+      )}
     </Wrapper>
   );
 };
@@ -48,7 +52,7 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const Inner = styled.button`
+const Inner = styled.button<{ isActive: boolean }>`
   display: flex;
   width: 100%;
   min-height: 38px;
@@ -59,8 +63,10 @@ const Inner = styled.button`
   padding: 8px 20px 8px 4px;
 
   transition: all 0.15s;
+
+  ${({ isActive }) => isActive && `background-color: #3B3CD0;`}
   :hover {
-    background-color: #232226;
+    ${({ isActive }) => !isActive && `background-color: #232226;`}
   }
 `;
 

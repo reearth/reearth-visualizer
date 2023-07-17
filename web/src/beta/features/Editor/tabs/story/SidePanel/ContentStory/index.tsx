@@ -1,4 +1,3 @@
-import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
 import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -7,31 +6,19 @@ type Props = {
   onSelectStory: (id: string) => void;
   onStoryAdd: () => void;
 };
-const ContentStory: React.FC<Props> = ({ onStoryAdd, onSelectStory }) => {
+const ContentStory: React.FC<Props> = ({ onSelectStory }) => {
   const t = useT();
 
   return (
     <SContent>
       <SContentUp>
-        {[...Array(100)].map((_, i) => (
-          <Item
-            key={i}
-            onItemClick={() => onSelectStory(i.toString())}
-            onActionClick={() => console.log("onActionClick")}>
-            Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} /
-            Story{i}
-          </Item>
-        ))}
+        <Item
+          onItemClick={() => onSelectStory("id")}
+          onActionClick={() => console.log("onActionClick")}
+          isActive={true}>
+          {t("Story")}
+        </Item>
       </SContentUp>
-      <SContentBottom>
-        <Action
-          icon="book"
-          iconColor="#ffffff"
-          iconSize={16}
-          title={`+ ${t("New Story")}`}
-          onClick={onStoryAdd}
-        />
-      </SContentBottom>
     </SContent>
   );
 };
@@ -56,11 +43,4 @@ const SContentUp = styled.div`
   flex-direction: column;
   gap: 8px;
   box-sizing: border-box;
-`;
-
-const SContentBottom = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 8px;
 `;
