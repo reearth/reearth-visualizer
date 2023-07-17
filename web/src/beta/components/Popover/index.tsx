@@ -1,4 +1,9 @@
-import { useMergeRefs, FloatingPortal, FloatingFocusManager } from "@floating-ui/react";
+import {
+  useMergeRefs,
+  FloatingPortal,
+  FloatingFocusManager,
+  useTransitionStyles,
+} from "@floating-ui/react";
 import * as React from "react";
 
 import { PopoverContext, usePopoverContext } from "@reearth/beta/components/Popover/context";
@@ -6,9 +11,8 @@ import { PopoverContext, usePopoverContext } from "@reearth/beta/components/Popo
 import usePopover from "./hooks";
 import { PopoverOptions } from "./types";
 
-// This component comes from official example and edited file structure and content a bit.
-// https://floating-ui.com/docs/react-examples
-export function Root({
+// Basic structure comes from official example https://floating-ui.com/docs/react-examples .
+export function Provider({
   children,
   modal = false,
   ...restOptions
@@ -60,15 +64,18 @@ export const Content = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivE
   function Content({ style, ...props }, propRef) {
     const { context: floatingContext, ...context } = usePopoverContext();
     const ref = useMergeRefs([context.refs.setFloating, propRef]);
+    const { isMounted, styles: transitionStyles } = useTransitionStyles(floatingContext, {
+      duration: 125,
+    });
 
-    if (!floatingContext.open) return null;
+    if (!isMounted) return null;
 
     return (
       <FloatingPortal>
         <FloatingFocusManager context={floatingContext} modal={context.modal}>
           <div
             ref={ref}
-            style={{ ...context.floatingStyles, ...style }}
+            style={{ ...context.floatingStyles, ...transitionStyles, ...style }}
             {...context.getFloatingProps(props)}>
             {props.children}
           </div>

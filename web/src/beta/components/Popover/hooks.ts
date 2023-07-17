@@ -31,13 +31,13 @@ export default function usePopover({
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(5),
+      offset(4),
       flip({
         crossAxis: placement.includes("-"),
         fallbackAxisSideDirection: "end",
-        padding: 5,
+        padding: 4,
       }),
-      shift({ padding: 5 }),
+      shift({ padding: 4 }),
     ],
   });
 

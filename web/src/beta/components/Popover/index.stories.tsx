@@ -3,20 +3,20 @@ import { Meta, StoryObj } from "@storybook/react";
 import * as Popover from "./";
 
 export default {
-  component: Popover.Root,
+  component: Popover.Provider,
 } as Meta;
 
-type Story = StoryObj<typeof Popover.Root>;
+type Story = StoryObj<typeof Popover.Provider>;
 
 export const Controlled: Story = {
   render: args => {
-    return <Popover.Root {...args} />;
+    return <Popover.Provider {...args} />;
   },
   args: {
     children: (
       <>
         <Popover.Trigger>
-          <div style={{ background: "#fff" }}>Trigger to show</div>
+          <div style={{ background: "gray" }}>Trigger(cannot toggle by click)</div>
         </Popover.Trigger>
         <Popover.Content>
           <div>
@@ -38,15 +38,15 @@ export const Controlled: Story = {
 
 export const Uncontrolled: Story = {
   render: args => {
-    return <Popover.Root {...args} />;
+    return <Popover.Provider {...args} />;
   },
   args: {
     children: (
       <>
         <Popover.Trigger>
-          <div style={{ background: "#fff" }}>Trigger to show</div>
+          <div style={{ background: "gray" }}>Trigger</div>
         </Popover.Trigger>
-        <Popover.Content>
+        <Popover.Content style={{ background: "gray" }}>
           <div>
             If you do not pass both open and onOpenChange, automatically managed open state by this
             component.
