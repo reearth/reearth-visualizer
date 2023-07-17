@@ -30,7 +30,6 @@ const Resizable: React.FC<Props> = ({ direction, gutter, minSize, initialSize, c
   const RightGutter = showRightGutter ? <VerticalGutter {...gutterProps} /> : null;
   const BottomGutter = showBottomGutter ? <HorizontalGutter {...gutterProps} /> : null;
   const LeftGutter = showLeftGutter ? <VerticalGutter {...gutterProps} /> : null;
-  console.log(size);
   return (
     <>
       {minimized ? (
