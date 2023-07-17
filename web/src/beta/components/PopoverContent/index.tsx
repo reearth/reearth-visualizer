@@ -70,11 +70,10 @@ const SRow = styled.button<Pick<Props, "size"> & Pick<PopoverContentItem, "isSel
   align-items: center;
   gap: 8px;
   color: #e0e0e0;
-  border: 1px solid transparent;
   ${({ size }) => stylesBySize[size].row ?? ""}
   ${({ isSelected }) => isSelected && "background: var(--editor-select-main, #3B3CD0);"}
   :hover {
-    border-color: var(--editor-outline-weak, #525252);
+    ${({ isSelected }) => !isSelected && "background-color: #2E2D33;"}
   }
 `;
 
