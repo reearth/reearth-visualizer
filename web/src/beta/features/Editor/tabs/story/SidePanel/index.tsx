@@ -5,16 +5,28 @@ import { useT } from "@reearth/services/i18n";
 
 // TODO: these are currently rough definition
 type Props = {
+  // story
   stories: any;
   selectedStory: any;
-  onSelectStory: (id: string) => void;
+  onStorySelect: (id: string) => void;
   onStoryAdd: () => void;
+
+  // page
   selectedPageId?: string;
-  onSelectPage: (id: string) => void;
+  onPageSelect: (id: string) => void;
+  onPageDuplicate: (id: string) => void;
+  onPageDelete: (id: string) => void;
   onPageAdd: () => void;
 };
 
-const SidePanel: React.FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
+const SidePanel: React.FC<Props> = ({
+  onStoryAdd,
+  onStorySelect,
+  onPageAdd,
+  onPageSelect,
+  onPageDuplicate,
+  onPageDelete,
+}) => {
   const t = useT();
 
   return (
@@ -25,12 +37,19 @@ const SidePanel: React.FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSe
           id: "story",
           title: t("Story"),
           maxHeight: "33%",
-          children: <ContentStory onSelectStory={onSelectStory} onStoryAdd={onStoryAdd} />,
+          children: <ContentStory onSelectStory={onStorySelect} onStoryAdd={onStoryAdd} />,
         },
         {
           id: "page",
           title: t("Page"),
-          children: <ContentPage onPageAdd={onPageAdd} onSelectPage={onSelectPage} />,
+          children: (
+            <ContentPage
+              onPageAdd={onPageAdd}
+              onPageSelect={onPageSelect}
+              onPageDuplicate={onPageDuplicate}
+              onPageDelete={onPageDelete}
+            />
+          ),
         },
       ]}
     />

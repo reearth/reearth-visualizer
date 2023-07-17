@@ -1,6 +1,7 @@
 import { FC, ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
+import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
@@ -8,9 +9,19 @@ type Props = {
   children: ReactNode;
   onItemClick(id: string): void;
   onActionClick(): void;
+  actionContent: ReactNode;
+  onOpenChange: (isOpen: boolean) => void;
+  isOpenAction: boolean;
 };
 
-const StorySidePanelItem: FC<Props> = ({ children, onItemClick, onActionClick }) => {
+const StorySidePanelItem: FC<Props> = ({
+  children,
+  onItemClick,
+  onActionClick,
+  actionContent,
+  onOpenChange,
+  isOpenAction,
+}) => {
   return (
     <Wrapper>
       <Inner onClick={() => onItemClick("id")}>
@@ -18,9 +29,14 @@ const StorySidePanelItem: FC<Props> = ({ children, onItemClick, onActionClick })
           <Text size="footnote">{children}</Text>
         </SText>
       </Inner>
-      <SButton onClick={onActionClick}>
-        <Icon icon="actionbutton" size={12} />
-      </SButton>
+      <Popover.Provider open={isOpenAction} onOpenChange={onOpenChange}>
+        <Popover.Trigger asChild>
+          <SButton onClick={onActionClick}>
+            <Icon icon="actionbutton" size={12} />
+          </SButton>
+        </Popover.Trigger>
+        <Popover.Content>{actionContent}</Popover.Content>
+      </Popover.Provider>
     </Wrapper>
   );
 };

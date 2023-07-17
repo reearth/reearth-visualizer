@@ -17,11 +17,13 @@ export default ({ tab }: Props) => {
           <StorySidePanel
             stories={[]}
             selectedStory={undefined}
-            onSelectStory={() => console.log("onSelectStory")}
+            onStorySelect={() => console.log("onSelectStory")}
             onStoryAdd={() => console.log("onStoryAdd")}
             selectedPageId={"1"}
-            onSelectPage={() => console.log("onSelectPage")}
+            onPageSelect={() => console.log("onSelectPage")}
             onPageAdd={() => console.log("onPageAdd")}
+            onPageDuplicate={() => console.log("onPageDuplicate")}
+            onPageDelete={() => console.log("onPageDelete")}
           />
         );
       case "widgets":
