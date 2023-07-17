@@ -65,7 +65,7 @@ export const Content = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivE
     const { context: floatingContext, ...context } = usePopoverContext();
     const ref = useMergeRefs([context.refs.setFloating, propRef]);
     const { isMounted, styles: transitionStyles } = useTransitionStyles(floatingContext, {
-      duration: 125,
+      duration: 50,
     });
 
     if (!isMounted) return null;
