@@ -1,7 +1,7 @@
 import Icon, { Icons } from "@reearth/beta/components/Icon";
 import { css, styled } from "@reearth/services/theme";
 
-export type PopoverContentItem = {
+export type MenuItem = {
   name: string;
   isSelected?: boolean;
   icon?: Icons;
@@ -11,7 +11,7 @@ export type PopoverContentItem = {
 export type Props = {
   width?: string;
   size: "sm" | "md";
-  items: PopoverContentItem[];
+  items: MenuItem[];
 };
 
 const stylesBySize = {
@@ -33,7 +33,7 @@ const stylesBySize = {
   },
 };
 
-const PopoverContent: React.FC<Props> = ({ size, width, items }) => {
+const PopoverMenuContent: React.FC<Props> = ({ size, width, items }) => {
   return (
     <SRoot width={width}>
       {items.map((item, i) => {
@@ -52,7 +52,7 @@ const PopoverContent: React.FC<Props> = ({ size, width, items }) => {
     </SRoot>
   );
 };
-export default PopoverContent;
+export default PopoverMenuContent;
 
 const SRoot = styled.div<Pick<Props, "width">>`
   ${({ width }) => width && `width: ${width};`}
@@ -63,7 +63,7 @@ const SRoot = styled.div<Pick<Props, "width">>`
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
 `;
 
-const SRow = styled.button<Pick<Props, "size"> & Pick<PopoverContentItem, "isSelected">>`
+const SRow = styled.button<Pick<Props, "size"> & Pick<MenuItem, "isSelected">>`
   box-sizing: border-box;
   width: 100%;
   display: flex;
