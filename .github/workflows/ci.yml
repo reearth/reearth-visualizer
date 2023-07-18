@@ -99,7 +99,7 @@ jobs:
       - ci-web
       - ci-collect-info
     runs-on: ubuntu-latest
-    if: !failure() && needs.ci-web.result == 'success' 
+    if: ${{!failure() && needs.ci-web.result == 'success' && github.event_name == 'push'}}
     steps:
       - name: Dispatch Web Build
         uses: benc-uk/workflow-dispatch@v1
