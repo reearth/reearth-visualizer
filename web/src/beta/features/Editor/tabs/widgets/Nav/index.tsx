@@ -42,7 +42,7 @@ const Nav: React.FC<Props> = ({
 export default Nav;
 
 const StyledVisualizerNav = styled(VisualizerNav)`
-  background: ${({ theme }) => theme.general.bg.main};
+  background: ${({ theme }) => theme.general.bg.strong};
   display: flex;
   align-items: center;
   gap: 24px;

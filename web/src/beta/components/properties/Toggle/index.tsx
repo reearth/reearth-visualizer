@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -22,8 +22,10 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
   size = "md",
   onChange,
 }) => {
-  const handleClick = !disabled && onChange ? () => onChange(!checked) : undefined;
   const theme = useTheme();
+
+  const handleClick = useCallback(() => onChange?.(!checked), [checked, onChange]);
+
   return (
     <Wrapper>
       {label && (

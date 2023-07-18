@@ -55,10 +55,8 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
 
 const RightSection = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: flex-end;
   gap: 4px;
-  height: 35px;
 `;
 
 export default useRightSide;
