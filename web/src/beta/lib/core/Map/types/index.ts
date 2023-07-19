@@ -253,9 +253,6 @@ export type TerrainProperty = {
 };
 
 export type SceneProperty = {
-  debugs?: {
-    debugSphericalHarmonicCoefficients: boolean;
-  };
   default?: {
     camera?: Camera;
     allowEnterGround?: boolean;
