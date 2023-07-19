@@ -1,12 +1,20 @@
-import { Cartesian3, HeadingPitchRoll, Math as CesiumMath, Transforms } from "cesium";
-import { useMemo } from "react";
-import { ModelGraphics } from "resium";
+import {
+  Cartesian3,
+  HeadingPitchRoll,
+  Math as CesiumMath,
+  Transforms,
+  Model as CesiumModel,
+  ImageBasedLighting,
+} from "cesium";
+import { useEffect, useMemo, useRef } from "react";
+import { ModelGraphics, useCesium } from "resium";
 
 import { toColor } from "@reearth/beta/utils/value";
 
 import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import { NonPBRLightingShader } from "../../CustomShaders/NonPBRLightingShader";
+import { useSceneEvent } from "../../hooks/useSceneEvent";
 import {
   EntityExt,
   extractSimpleLayerData,
@@ -23,7 +31,27 @@ export type Property = ModelAppearance & {
   height?: number;
 };
 
-export default function Model({ id, isVisible, property, geometry, layer, feature }: Props) {
+const sphericalHarmonicCoefficientsScratch = [
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+];
+
+export default function Model({
+  id,
+  isVisible,
+  property,
+  sceneProperty,
+  geometry,
+  layer,
+  feature,
+}: Props) {
   const data = extractSimpleLayerData(layer);
   const isGltfData = data?.type === "gltf";
 
@@ -93,6 +121,72 @@ export default function Model({ id, isVisible, property, geometry, layer, featur
     () => toDistanceDisplayCondition(property?.near, property?.far),
     [property?.near, property?.far],
   );
+
+  const imageBasedLighting = useMemo(() => {
+    const ibl = new ImageBasedLighting();
+
+    if (
+      !property?.specularEnvironmentMaps &&
+      !property?.sphericalHarmonicCoefficients &&
+      !sceneProperty?.light?.specularEnvironmentMaps &&
+      !sceneProperty?.light?.sphericalHarmonicCoefficients
+    )
+      return ibl;
+
+    const specularEnvironmentMaps =
+      property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
+    const sphericalHarmonicCoefficients =
+      property?.sphericalHarmonicCoefficients ??
+      sceneProperty?.light?.sphericalHarmonicCoefficients;
+    const imageBasedLightIntensity =
+      property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
+
+    if (specularEnvironmentMaps) {
+      ibl.specularEnvironmentMaps = specularEnvironmentMaps;
+    }
+    if (sphericalHarmonicCoefficients) {
+      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients?.map((cartesian, index) =>
+        Cartesian3.multiplyByScalar(
+          new Cartesian3(...cartesian),
+          imageBasedLightIntensity ?? 1.0,
+          sphericalHarmonicCoefficientsScratch[index],
+        ),
+      );
+    }
+    return ibl;
+  }, [
+    property?.specularEnvironmentMaps,
+    property?.sphericalHarmonicCoefficients,
+    property?.imageBasedLightIntensity,
+    sceneProperty?.light?.specularEnvironmentMaps,
+    sceneProperty?.light?.sphericalHarmonicCoefficients,
+    sceneProperty?.light?.imageBasedLightIntensity,
+  ]);
+
+  const { viewer } = useCesium();
+  const shouldUpdateAfterLoaded = useRef(false);
+  useSceneEvent("postRender", () => {
+    const primitives = viewer?.scene.primitives;
+    const length = primitives?.length ?? 0;
+
+    if (!shouldUpdateAfterLoaded.current || !imageBasedLighting) {
+      return;
+    }
+
+    for (let i = 0; i < length; i++) {
+      const prim = primitives?.get(i);
+      if (prim instanceof CesiumModel && prim.id && prim.id.id === id) {
+        shouldUpdateAfterLoaded.current = false;
+        prim.imageBasedLighting = imageBasedLighting;
+      }
+    }
+  });
+
+  useEffect(() => {
+    if (imageBasedLighting) {
+      shouldUpdateAfterLoaded.current = true;
+    }
+  }, [imageBasedLighting]);
 
   // if data type is gltf, layer should be rendered. Otherwise only features should be rendererd.
   return (isGltfData ? feature : !feature) || !isVisible || !show || !actualUrl ? null : (
