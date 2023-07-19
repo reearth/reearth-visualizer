@@ -37,7 +37,7 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, modalTitle, onClos
       <Wrapper className={className} ref={ref} size={size}>
         {!!modalTitle && (
           <HeaderWrapper>
-            <ModalTitle size="h4" weight="bold" color={theme.general.content.strong}>
+            <ModalTitle size="body" weight="regular" color={theme.editor.mainText}>
               {modalTitle}
             </ModalTitle>
             {onClose && <CloseIcon icon="cancel" onClick={onClose} />}
@@ -67,7 +67,7 @@ const Wrapper = styled.div<{ size?: string }>`
   margin: ${({ size }) => (size === "sm" ? "15%" : size === "lg" ? "4%" : "8%")} auto;
   padding-top: 36px;
   border-radius: 8px;
-  background: #161616;
+  background: ${({ theme }) => theme.editor.bg0};
   width: ${({ size }) => (size === "sm" ? "372px" : size === "lg" ? "684px" : "620px")};
   position: relative;
 `;
@@ -94,7 +94,7 @@ const HeaderWrapper = styled.div`
   align-self: stretch;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
-  background: #393939;
+  background: ${({ theme }) => theme.editor.bg1};
   position: absolute;
   top: 0;
   left: 0;

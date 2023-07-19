@@ -55,6 +55,13 @@ const lightTheme: Theme = {
     projectList: {},
   },
   editor: {
+    bg0: "",
+    bg1: "",
+    weakText: "",
+    weakOutline: "",
+    mainText: "",
+    weakerText: "",
+    mainSelect: "",
     secondaryNavbar: {},
     infobox: {},
     widgetAlignSystem: {

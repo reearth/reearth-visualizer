@@ -4,6 +4,19 @@ const colors = {
     white: "#FFFFFF",
     transparentBlack: "rgba(0,0,0,0.7)",
     transparentLight: "rgba(0,0,0,0.4)",
+    mainSelect: "#3B3CD0",
+    weakOutline: "#525252",
+    bg: {
+      1: "#1e2086",
+      2: "#df3013",
+      3: "#161616",
+      4: "#393939",
+    },
+    text: {
+      main: "#E0E0E0",
+      weak: "#6F6F6F",
+      weaker: "#525252",
+    },
   },
   brand: {
     blue: {

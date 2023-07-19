@@ -1,7 +1,6 @@
 import { ReactNode, useState } from "react";
 
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
-//  import { styled, useTheme } from "@reearth/services/theme";
 import { styled } from "@reearth/services/theme";
 
 type Size = "sm" | "md" | "lg";
@@ -38,7 +37,6 @@ const Modal: React.FC<Props> = ({
   onClose,
   sidebarTabs = [],
 }) => {
-  // const theme = useTheme();
   const [selectedTab, setSelectedTab] = useState<string | null>(
     sidebarTabs.length > 0 ? sidebarTabs[0].id : null,
   );
@@ -102,7 +100,7 @@ const NavBarWrapper = styled.div`
   align-items: flex-start;
   gap: 10px;
   align-self: stretch;
-  border-right: 1px solid #525252;
+  border-right: 1px solid ${({ theme }) => theme.editor.weakOutline};
 `;
 
 const Tab = styled.button<{ isSelected: boolean }>`
@@ -111,8 +109,8 @@ const Tab = styled.button<{ isSelected: boolean }>`
   align-items: flex-start;
   align-self: stretch;
   border-radius: 4px;
-  background: ${({ isSelected }) => (isSelected ? `  #393939 ` : `transparent`)};
-  color: ${({ isSelected }) => (isSelected ? `white` : `#393939`)};
+  background: ${({ isSelected, theme }) => (isSelected ? theme.editor.bg1 : `transparent`)};
+  color: ${({ isSelected, theme }) => (isSelected ? `white` : theme.editor.bg1)};
 `;
 
 const SidebarContentWrapper = styled.div`
@@ -149,7 +147,7 @@ const TabButtonWrapper = styled.div`
   align-items: flex-start;
   gap: 20px;
   align-self: stretch;
-  border-top: 1px solid #525252;
+  border-top: 1px solid ${({ theme }) => theme.editor.weakOutline};
 `;
 
 const ButtonWrapper = styled.div`
@@ -159,7 +157,7 @@ const ButtonWrapper = styled.div`
   align-items: flex-start;
   gap: 12px;
   align-self: stretch;
-  border-top: 1px solid #525252;
+  border-top: 1px solid ${({ theme }) => theme.editor.weakOutline};
 `;
 
 export default Modal;

@@ -55,6 +55,13 @@ const darkTheme: Theme = {
     projectList: {},
   },
   editor: {
+    bg0: commonColors.general.bg[3],
+    bg1: commonColors.general.bg[4],
+    weakText: commonColors.general.text.weak,
+    weakOutline: commonColors.general.weakOutline,
+    mainText: commonColors.general.text.main,
+    weakerText: commonColors.general.text.weaker,
+    mainSelect: commonColors.general.mainSelect,
     secondaryNavbar: {},
     infobox: {},
     widgetAlignSystem: {
