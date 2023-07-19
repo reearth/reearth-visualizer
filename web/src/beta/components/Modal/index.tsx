@@ -1,6 +1,5 @@
 import { ReactNode, useState } from "react";
 
-import Divider from "@reearth/beta/components/Divider";
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
 //  import { styled, useTheme } from "@reearth/services/theme";
 import { styled } from "@reearth/services/theme";
@@ -11,6 +10,8 @@ type SidebarTab = {
   id: string;
   label: string;
   content: ReactNode;
+  tabButton1?: ReactNode;
+  tabButton2?: ReactNode;
 };
 
 type Props = {
@@ -35,7 +36,6 @@ const Modal: React.FC<Props> = ({
   children,
   isVisible,
   onClose,
-  showSidebar = true,
   sidebarTabs = [],
 }) => {
   // const theme = useTheme();
@@ -54,7 +54,7 @@ const Modal: React.FC<Props> = ({
       isVisible={isVisible}
       modalTitle={modalTitle}
       onClose={onClose}>
-      {showSidebar && sidebarTabs.length > 0 ? (
+      {sidebarTabs.length > 0 ? (
         <SidebarWrapper>
           <Sidebar>
             {sidebarTabs.map(tab => (
@@ -67,19 +67,17 @@ const Modal: React.FC<Props> = ({
             ))}
           </Sidebar>
           <SidebarContentWrapper>
+            <TabContent />
             {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.content}
-            <Divider direction="Vertical" />
+            <TabButtonWrapper>
+              {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.tabButton1}
+              {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.tabButton2}
+            </TabButtonWrapper>
           </SidebarContentWrapper>
-          <ButtonWrapper>
-            {button2}
-            {button1}
-          </ButtonWrapper>
         </SidebarWrapper>
       ) : (
         <>
-          <ContentWrapper hasSidebar={showSidebar && sidebarTabs.length > 0}>
-            {children}
-          </ContentWrapper>
+          <ContentWrapper hasSidebar={sidebarTabs.length > 0}>{children}</ContentWrapper>
           <ButtonWrapper>
             {button2}
             {button1}
@@ -92,20 +90,37 @@ const Modal: React.FC<Props> = ({
 
 const SidebarWrapper = styled.div`
   display: flex;
-  height: 100%;
+  align-items: flex-start;
+  align-self: stretch;
 `;
 
 const Sidebar = styled.div`
-  /* Define styles for the sidebar */
+  display: flex;
+  padding: var(--spacing-large, 16px);
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
+  border-right: 1px solid var(--editor-outline-weak, #525252);
 `;
 
-const Tab = styled.button<{ isActive: boolean }>(({ isActive }) => ({
-  backgroundColor: isActive ? "blue" : "transparent",
-  color: isActive ? "white" : "black",
-}));
+const Tab = styled.button<{ isActive: boolean }>(
+  ({ isActive }) => ({
+    backgroundColor: isActive ? "blue" : "transparent",
+    color: isActive ? "white" : "black",
+  }),
+  `display: flex;
+padding: var(--radius-small, 4px) var(--spacing-small, 8px);
+align-items: flex-start;
+align-self: stretch;
+border-radius: var(--spacing-smallest, 4px);
+background: var(--editor-background-2, #393939);`,
+);
 
 const SidebarContentWrapper = styled.div`
-  /* Define styles for the sidebar content wrapper */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 0 0;
 `;
 
 const ContentWrapper = styled.div`
@@ -119,7 +134,7 @@ const ContentWrapper = styled.div`
     hasSidebar ? "0 1 calc(100% - 200px)" : "1"};
 `;
 
-const ButtonWrapper = styled.div`
+const TabContent = styled.div`
   display: flex;
   padding: var(--spacing-normal, 12px);
   justify-content: flex-end;
@@ -127,6 +142,25 @@ const ButtonWrapper = styled.div`
   gap: var(--spacing-normal, 12px);
   align-self: stretch;
 
+  border-top: 1px solid var(--editor-outline-weak, #525252);
+`;
+
+const TabButtonWrapper = styled.div`
+  display: flex;
+  padding: var(--spacing-large, 16px);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-largest, 20px);
+  align-self: stretch;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  padding: var(--spacing-normal, 12px);
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: var(--spacing-normal, 12px);
+  align-self: stretch;
   border-top: 1px solid var(--editor-outline-weak, #525252);
 `;
 

@@ -6,23 +6,17 @@ export type Props = {
   color?: string;
   margin?: string;
   spaceOnly?: boolean;
-  direction?: "Vertical" | "Horizontal";
 };
 
-const Divider: React.FC<Props> = ({ color, margin, spaceOnly, direction }) => {
-  return (
-    <StyledDivider color={color} margin={margin} spaceOnly={spaceOnly} direction={direction} />
-  );
+const Divider: React.FC<Props> = ({ color, margin, spaceOnly }) => {
+  return <StyledDivider color={color} margin={margin} spaceOnly={spaceOnly} />;
 };
 
 const StyledDivider = styled.div<{
   color?: string;
   margin?: string;
   spaceOnly?: boolean;
-  direction?: "Vertical" | "Horizontal";
 }>`
-  ${props => (props.direction === "Vertical" ? `{height:100%}` : `{width: 100% }`)};
-
   margin: ${props => (props.margin ? props.margin : "35px")} auto;
   border-bottom: ${props =>
     props.spaceOnly

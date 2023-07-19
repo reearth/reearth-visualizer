@@ -10,6 +10,4 @@ export default meta;
 
 type Story = StoryObj<typeof Divider>;
 
-export const horizontalDivider: Story = { render: () => <Divider direction="Horizontal" /> };
-
-export const verticalDivider: Story = { render: () => <Divider direction="Vertical" /> };
+export const divider: Story = { render: () => <Divider /> };
