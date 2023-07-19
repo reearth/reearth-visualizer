@@ -37,6 +37,7 @@ import type {
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
+import { arrayToCartecian3 } from "./helpers/sphericalHaromic";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
@@ -417,46 +418,24 @@ export default ({
     [engineAPI],
   );
 
-  // TODO: Replace after merged IBL PR.
   const sphericalHarmonicCoefficients = useMemo(
     () =>
-      !property?.debugs?.debugSphericalHarmonicCoefficients
-        ? property?.atmosphere?.sphericalHarmonicCoefficients?.map(
-            v => new Cartesian3(v.x, v.y, v.z),
+      property?.light?.sphericalHarmonicCoefficients
+        ? arrayToCartecian3(
+            property?.light?.sphericalHarmonicCoefficients,
+            property?.light?.imageBasedLightIntensity,
           )
-        : [
-            new Cartesian3(0.499745965003967, 0.499196201562881, 0.500154078006744), // L00, irradiance, pre-scaled base
-            new Cartesian3(0.265826553106308, -0.266099184751511, 0.265922993421555), // L1-1, irradiance, pre-scaled base
-            new Cartesian3(0.243236944079399, 0.266723394393921, -0.265380442142487), // L10, irradiance, pre-scaled base
-            new Cartesian3(-0.266895800828934, 0.265416264533997, 0.266921550035477), // L11, irradiance, pre-scaled base
-            new Cartesian3(0.000195000306121, -0.000644546060357, -0.000383183418307), // L2-2, irradiance, pre-scaled base
-            new Cartesian3(-0.000396036746679, -0.000622032093816, 0.000262127199676), // L2-1, irradiance, pre-scaled base
-            new Cartesian3(-0.000214280473301, 0.00004872302452, -0.000059724134189), // L20, irradiance, pre-scaled base
-            new Cartesian3(0.000107143961941, -0.000126510843984, -0.000425444566645), // L21, irradiance, pre-scaled base
-            new Cartesian3(-0.000069071611506, 0.000134039684781, -0.000119135256682), // L22, irradiance, pre-scaled base
-          ],
-    [
-      property?.atmosphere?.sphericalHarmonicCoefficients,
-      property?.debugs?.debugSphericalHarmonicCoefficients,
-    ],
+        : undefined,
+    [property?.light?.sphericalHarmonicCoefficients, property?.light?.imageBasedLightIntensity],
   );
-
-  useEffect(() => {
-    if (!cesium.current?.cesiumElement) return;
-
-    (cesium.current.cesiumElement.scene.sphericalHarmonicCoefficients as Cartesian3[] | undefined) =
-      sphericalHarmonicCoefficients;
-  }, [sphericalHarmonicCoefficients]);
 
   useOverrideGlobeShader({
     cesium,
-    sphericalHarmonicCoefficients: sphericalHarmonicCoefficients,
+    sphericalHarmonicCoefficients,
     globeShadowDarkness: property?.atmosphere?.globeShadowDarkness,
     globeImageBasedLighting: property?.atmosphere?.globeImageBasedLighting,
-    hasVertexNormals:
-      property?.atmosphere?.enable_lighting &&
-      property.terrain?.terrain &&
-      property.terrain.terrainNormal,
+    enableLighting: property?.atmosphere?.enable_lighting,
+    hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
   });
 
   const handleMouseWheel = useCallback(

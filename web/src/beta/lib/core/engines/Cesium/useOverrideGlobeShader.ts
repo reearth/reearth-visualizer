@@ -36,12 +36,14 @@ export const useOverrideGlobeShader = ({
   globeShadowDarkness,
   globeImageBasedLighting,
   hasVertexNormals,
+  enableLighting,
 }: {
   cesium: RefObject<CesiumComponentRef<Viewer>>;
   sphericalHarmonicCoefficients?: Cartesian3[];
   globeShadowDarkness?: number;
   globeImageBasedLighting?: boolean;
   hasVertexNormals?: boolean;
+  enableLighting?: boolean;
 }) => {
   const sphericalHarmonicCoefficientsRefFunc = useImmutableFunction(
     sphericalHarmonicCoefficients || [],
@@ -59,7 +61,10 @@ export const useOverrideGlobeShader = ({
 
   // This need to be invoked before Globe is updated.
   useEffect(() => {
-    if (!cesium.current?.cesiumElement || !hasVertexNormals) return;
+    // NOTE: Support the spherical harmonic coefficient only when the terrain normal is enabled.
+    // Because it's difficult to control the shader for the entire globe.
+    // ref: https://github.com/CesiumGS/cesium/blob/af4e2bebbef25259f049b05822adf2958fce11ff/packages/engine/Source/Shaders/GlobeFS.glsl#L408
+    if (!cesium.current?.cesiumElement || !enableLighting || !hasVertexNormals) return;
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
     const surfaceShaderSet = globe._surfaceShaderSet;
@@ -128,6 +133,7 @@ export const useOverrideGlobeShader = ({
   }, [
     sphericalHarmonicCoefficientsRefFunc,
     globeImageBasedLightingRefFunc,
+    enableLighting,
     cesium,
     hasVertexNormals,
   ]);
