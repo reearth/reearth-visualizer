@@ -726,11 +726,9 @@ export default ({
   // explicit rendering
   const explicitRender = useCallback(() => {
     const viewer = cesium.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed()) return;
-    if (requestingRender?.current) {
-      viewer.scene.requestRender();
-      requestingRender.current = false;
-    }
+    if (!requestingRender?.current || !viewer || viewer.isDestroyed()) return;
+    viewer.scene.requestRender();
+    requestingRender.current = false;
   }, [requestingRender]);
 
   useEffect(() => {
@@ -743,10 +741,10 @@ export default ({
   });
 
   useEffect(() => {
-    const viewer = cesium.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed()) return;
-    viewer.scene.requestRender();
-  }, [property]);
+    if (requestingRender) {
+      requestingRender.current = true;
+    }
+  }, [property, requestingRender]);
 
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
