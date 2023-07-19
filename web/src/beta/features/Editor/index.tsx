@@ -34,9 +34,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             <Resizable
               direction="vertical"
               gutter="end"
-              size={metrics.propertyMenuMinWidth}
-              minSize={metrics.propertyMenuMinWidth}
-              maxSize={metrics.propertyMenuMaxWidth}>
+              initialSize={metrics.propertyMenuWidth}
+              minSize={metrics.propertyMenuMinWidth}>
               {leftPanel}
             </Resizable>
           )}
@@ -51,9 +50,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             <Resizable
               direction="vertical"
               gutter="start"
-              size={metrics.propertyMenuMinWidth}
-              minSize={metrics.propertyMenuMinWidth}
-              maxSize={metrics.propertyMenuMaxWidth}>
+              initialSize={metrics.propertyMenuWidth}
+              minSize={metrics.propertyMenuMinWidth}>
               {rightPanel}
             </Resizable>
           )}
