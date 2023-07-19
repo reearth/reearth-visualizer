@@ -333,6 +333,9 @@ export type SceneProperty = {
     lightDirectionZ?: number;
     lightColor?: string;
     lightIntensity?: number;
+    specularEnvironmentMaps?: string;
+    sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+    imageBasedLightIntensity?: number;
   };
   render?: {
     antialias?: "low" | "medium" | "high" | "extreme";

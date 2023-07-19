@@ -15,6 +15,7 @@ import {
   Cesium3DTileFeature,
   Model,
   Cesium3DTilePointFeature,
+  ImageBasedLighting,
 } from "cesium";
 import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -43,6 +44,18 @@ import {
 import { useClippingBox } from "./useClippingBox";
 
 import { Property } from ".";
+
+const sphericalHarmonicCoefficientsScratch = [
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+  new Cartesian3(),
+];
 
 const useData = (layer: ComputedLayer | undefined) => {
   return useMemo(() => {
@@ -297,6 +310,7 @@ export const useHooks = ({
   boxId,
   isVisible,
   property,
+  sceneProperty,
   layer,
   feature,
   meta,
@@ -516,11 +530,52 @@ export const useHooks = ({
       : null;
   }, [isVisible, tileset, url, type, meta]);
 
+  const imageBasedLighting = useMemo(() => {
+    if (
+      !property?.specularEnvironmentMaps &&
+      !property?.sphericalHarmonicCoefficients &&
+      !sceneProperty?.light?.specularEnvironmentMaps &&
+      !sceneProperty?.light?.sphericalHarmonicCoefficients
+    )
+      return;
+
+    const ibl = new ImageBasedLighting();
+    const specularEnvironmentMaps =
+      property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
+    const sphericalHarmonicCoefficients =
+      property?.sphericalHarmonicCoefficients ??
+      sceneProperty?.light?.sphericalHarmonicCoefficients;
+    const imageBasedLightIntensity =
+      property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
+
+    if (specularEnvironmentMaps) {
+      ibl.specularEnvironmentMaps = specularEnvironmentMaps;
+    }
+    if (sphericalHarmonicCoefficients) {
+      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients?.map((cartesian, index) =>
+        Cartesian3.multiplyByScalar(
+          new Cartesian3(...cartesian),
+          imageBasedLightIntensity ?? 1.0,
+          sphericalHarmonicCoefficientsScratch[index],
+        ),
+      );
+    }
+    return ibl;
+  }, [
+    property?.specularEnvironmentMaps,
+    property?.sphericalHarmonicCoefficients,
+    property?.imageBasedLightIntensity,
+    sceneProperty?.light?.specularEnvironmentMaps,
+    sceneProperty?.light?.sphericalHarmonicCoefficients,
+    sceneProperty?.light?.imageBasedLightIntensity,
+  ]);
+
   return {
     tilesetUrl,
     ref,
     style,
     clippingPlanes,
     builtinBoxProps,
+    imageBasedLighting,
   };
 };
