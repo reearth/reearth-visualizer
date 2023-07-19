@@ -25,27 +25,30 @@ func ToStories(ss storytelling.StoryList) []*Story {
 	})
 }
 
-func ToPage(s *storytelling.Page) *Page {
-	return &Page{
-		ID:          IDFrom(s.Id()),
-		Title:       s.Title(),
-		Blocks:      ToBlocks(s.Blocks()),
-		Swipe:       s.Swipe(),
-		Layers:      nil,
-		SwipeLayers: nil,
-		Property:    nil,
-		CreatedAt:   s.Id().Timestamp(),
+func ToPage(s *storytelling.Page) *StoryPage {
+	return &StoryPage{
+		ID:              IDFrom(s.Id()),
+		Title:           s.Title(),
+		Blocks:          ToBlocks(s.Blocks()),
+		Swipeable:       s.Swipeable(),
+		Layers:          nil,
+		SwipeableLayers: nil,
+		Property:        nil,
+		CreatedAt:       s.Id().Timestamp(),
 	}
 }
 
-func ToPages(ss storytelling.PageList) []*Page {
-	return lo.Map(ss, func(s *storytelling.Page, _ int) *Page {
+func ToPages(ss *storytelling.PageList) []*StoryPage {
+	if ss == nil {
+		return nil
+	}
+	return lo.Map(ss.Pages(), func(s *storytelling.Page, _ int) *StoryPage {
 		return ToPage(s)
 	})
 }
 
-func ToBlock(s *storytelling.Block) *Block {
-	return &Block{
+func ToBlock(s *storytelling.Block) *StoryBlock {
+	return &StoryBlock{
 		ID:              IDFrom(s.ID()),
 		PropertyID:      "",
 		PluginID:        "",
@@ -58,8 +61,8 @@ func ToBlock(s *storytelling.Block) *Block {
 	}
 }
 
-func ToBlocks(ss storytelling.BlockList) []*Block {
-	return lo.Map(ss, func(s *storytelling.Block, _ int) *Block {
+func ToBlocks(ss storytelling.BlockList) []*StoryBlock {
+	return lo.Map(ss, func(s *storytelling.Block, _ int) *StoryBlock {
 		return ToBlock(s)
 	})
 }

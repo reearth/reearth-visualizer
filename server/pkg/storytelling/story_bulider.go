@@ -15,6 +15,9 @@ func NewStory() *StoryBuilder {
 }
 
 func (b *StoryBuilder) Build() (*Story, error) {
+	if b.s.updatedAt.IsZero() {
+		b.s.updatedAt = b.s.CreatedAt()
+	}
 	return b.s, nil
 }
 
@@ -46,7 +49,7 @@ func (b *StoryBuilder) Scene(scene id.SceneID) *StoryBuilder {
 	return b
 }
 
-func (b *StoryBuilder) Pages(pages PageList) *StoryBuilder {
+func (b *StoryBuilder) Pages(pages *PageList) *StoryBuilder {
 	b.s.pages = pages
 	return b
 }

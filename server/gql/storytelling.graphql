@@ -2,36 +2,45 @@ type Story implements Node {
   id: ID!
   title: String!
   alias: String!
+  propertyId: ID!
   property: Property
-  pages: [Page!]!
+  pages: [StoryPage!]!
   publishmentStatus: PublishmentStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime
+  sceneId: ID!
+  scene: Scene
 }
 
-type Page implements Node {
+type StoryPage implements Node {
   id: ID!
   title: String!
-  blocks: [Block!]!
-  swipe: Boolean!
-  layers: [ID!]!
-  swipeLayers: [ID!]
+  blocks: [StoryBlock!]!
+  swipeable: Boolean!
+  layersIds: [ID!]!
+  layers: [Layer!]!
+  swipeableLayersIds: [ID!]
+  swipeableLayers: [Layer!]
   property: Property
   createdAt: DateTime!
+  sceneId: ID!
+  scene: Scene
 }
 
-type Block implements Node {
+type StoryBlock implements Node {
   id: ID!
   propertyId: ID!
   pluginId: ID!
   extensionId: ID!
   linkedDatasetId: ID
-  page: Page!
+  pageId: ID!
+  page: StoryPage!
   property: Property
   plugin: Plugin
   extension: PluginExtension
-#  linkedDataset: Dataset
+  sceneId: ID!
+  scene: Scene
 }
 
 # InputType
@@ -56,6 +65,7 @@ input MoveStoryInput {
 }
 
 input DeleteStoryInput {
+  sceneId: ID!
   storyId: ID!
 }
 
@@ -65,35 +75,48 @@ input PublishStoryInput {
   status: PublishmentStatus!
 }
 
-input CreatePageInput {
+input CreateStoryPageInput {
+  sceneId: ID!
   storyId: ID!
   title: String
-  swipe: Boolean
+  swipeable: Boolean
   layers: [ID!]
-  swipeLayers: [ID!]
+  swipeableLayers: [ID!]
+  index: Int
 }
 
-input UpdatePageInput {
+input UpdateStoryPageInput {
+  sceneId: ID!
   storyId: ID!
   pageId: ID!
   title: String
-  swipe: Boolean
+  swipeable: Boolean
   layers: [ID!]
-  swipeLayers: [ID!]
+  swipeableLayers: [ID!]
+  index: Int
 }
 
-input MovePageInput {
+input MoveStoryPageInput {
   storyId: ID!
   pageId: ID!
   index: Int!
 }
 
-input DeletePageInput {
+input DeleteStoryPageInput {
+  sceneId: ID!
   storyId: ID!
   pageId: ID!
 }
 
-input CreateBlockInput {
+input PageLayerInput {
+  sceneId: ID!
+  storyId: ID!
+  PageId: ID!
+  swipeable: Boolean
+  layerId: ID!
+}
+
+input CreateStoryBlockInput {
   storyId: ID!
   pageId: ID!
   pluginId: ID!
@@ -101,14 +124,14 @@ input CreateBlockInput {
   index: Int
 }
 
-input MoveBlockInput {
+input MoveStoryBlockInput {
   storyId: ID!
   pageId: ID!
   blockId: ID!
   index: Int!
 }
 
-input RemoveBlockInput {
+input RemoveStoryBlockInput {
   storyId: ID!
   pageId: ID!
   blockId: ID!
@@ -130,61 +153,60 @@ type MoveStoryPayload {
   stories: [Story!]!
 }
 
-type CreatePagePayload {
-  page: Page!
+type StoryPagePayload {
+  page: StoryPage!
   story: Story!
 }
 
-type UpdatePagePayload {
-  page: Page!
-  story: Story!
-}
-
-type MovePagePayload {
-  page: Page!
+type MoveStoryPagePayload {
+  page: StoryPage!
   story: Story!
   index: Int!
 }
 
-type DeletePagePayload {
+type DeleteStoryPagePayload {
   pageId: ID!
   story: Story!
 }
 
-type CreateBlockPayload {
-  block: Block!
-  page: Page!
+type CreateStoryBlockPayload {
+  block: StoryBlock!
+  page: StoryPage!
   story: Story!
   index: Int!
 }
 
-type MoveBlockPayload {
-  block: Block!
-  page: Page!
+type MoveStoryBlockPayload {
+  block: StoryBlock!
+  page: StoryPage!
   story: Story!
   index: Int!
 }
 
-type RemoveBlockPayload {
+type RemoveStoryBlockPayload {
   blockId: ID!
-  page: Page!
+  page: StoryPage!
   story: Story!
 }
 
 extend type Mutation {
-  createStorytelling(input: CreateStoryInput!): StoryPayload!
-  updateStorytelling(input: UpdateStoryInput!): StoryPayload!
-  deleteStorytelling(input: DeleteStoryInput!): DeleteStoryPayload!
-  publishStorytelling(input: PublishStoryInput!): StoryPayload!
-  moveStorytelling(input: MoveStoryInput!): MoveStoryPayload!
+  createStory(input: CreateStoryInput!): StoryPayload!
+  updateStory(input: UpdateStoryInput!): StoryPayload!
+  deleteStory(input: DeleteStoryInput!): DeleteStoryPayload!
+  publishStory(input: PublishStoryInput!): StoryPayload!
+  moveStory(input: MoveStoryInput!): MoveStoryPayload!
 
-  createPage(input: CreatePageInput!): CreatePagePayload!
-  updatePage(input: UpdatePageInput!): UpdatePagePayload!
-  removePage(input: DeletePageInput!): DeletePagePayload!
-  movePage(input: MovePageInput!): MovePagePayload!
-# duplicatePage(input: DuplicatePageInput!): DuplicatePagePayload!
+  createStoryPage(input: CreateStoryPageInput!): StoryPagePayload!
+  updateStoryPage(input: UpdateStoryPageInput!): StoryPagePayload!
+  removeStoryPage(input: DeleteStoryPageInput!): DeleteStoryPagePayload!
+  moveStoryPage(input: MoveStoryPageInput!): MoveStoryPagePayload!
+# duplicateStoryPage(input: DuplicateStoryPageInput!): DuplicatePagePayload!
 
-  createBlock(input: CreateBlockInput!): CreateBlockPayload!
-  moveBlock(input: MoveBlockInput!): MoveBlockPayload!
-  removeBlock(input: RemoveBlockInput!): RemoveBlockPayload!
+  addPageLayer(input: PageLayerInput!): StoryPagePayload!
+  removePageLayer(input: PageLayerInput!): StoryPagePayload!
+
+
+  createStoryBlock(input: CreateStoryBlockInput!): CreateStoryBlockPayload!
+  moveStoryBlock(input: MoveStoryBlockInput!): MoveStoryBlockPayload!
+  removeStoryBlock(input: RemoveStoryBlockInput!): RemoveStoryBlockPayload!
 }

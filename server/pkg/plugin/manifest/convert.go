@@ -134,6 +134,12 @@ func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtensi
 		typ = plugin.ExtensionTypeInfobox
 	case "cluster":
 		typ = plugin.ExtensionTypeCluster
+	case "story":
+		typ = plugin.ExtensionTypeStory
+	case "storyPage":
+		typ = plugin.ExtensionTypeStoryPage
+	case "storyBlock":
+		typ = plugin.ExtensionTypeStoryBlock
 	case "":
 		return nil, nil, errors.New("type missing")
 	default:

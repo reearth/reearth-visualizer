@@ -122,6 +122,21 @@ func ToID[A idx.Type](a ID) (idx.ID[A], error) {
 	return idx.From[A](string(a))
 }
 
+func ToIDs[A idx.Type](a []ID) (*[]idx.ID[A], error) {
+	if a == nil {
+		return nil, nil
+	}
+	res := make([]idx.ID[A], len(a))
+	for i, v := range a {
+		r, err := ToID[A](v)
+		if err != nil {
+			return nil, err
+		}
+		res[i] = r
+	}
+	return &res, nil
+}
+
 func ToID2[A, B idx.Type](a, b ID) (ai idx.ID[A], bi idx.ID[B], err error) {
 	ai, err = ToID[A](a)
 	if err != nil {

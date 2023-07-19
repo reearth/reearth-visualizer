@@ -360,3 +360,9 @@ models:
         resolver: true
       myTeam:
         resolver: true
+  Story:
+    fields:
+      scene:
+        resolver: true
+      property:
+        resolver: true

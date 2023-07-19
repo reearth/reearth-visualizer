@@ -59,3 +59,15 @@ func (i *Block) UpgradePlugin(id plugin.ID) {
 	}
 	i.plugin = id
 }
+
+func (i *Block) Clone() *Block {
+	if i == nil {
+		return nil
+	}
+	return &Block{
+		id:        i.id.Clone(),
+		plugin:    i.plugin.Clone(),
+		extension: i.extension,
+		property:  i.property.Clone(),
+	}
+}

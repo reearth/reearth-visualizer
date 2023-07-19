@@ -26,7 +26,7 @@ type PageDocument struct {
 	Id          string
 	Property    string
 	Title       string
-	Swipe       bool
+	Swipeable   bool
 	Layers      []string
 	SwipeLayers []string
 	Blocks      []BlockDocument
@@ -65,11 +65,22 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 }
 
 func newPage(p storytelling.Page) PageDocument {
-	return PageDocument{}
+	return PageDocument{
+		Id:          p.Id().String(),
+		Property:    p.Property().String(),
+		Title:       p.Title(),
+		Swipeable:   p.Swipeable(),
+		Layers:      p.Layers().Strings(),
+		SwipeLayers: p.SwipeableLayers().Strings(),
+		Blocks:      nil,
+	}
 }
 
-func newPages(pl storytelling.PageList) []PageDocument {
-	return lo.Map(pl, func(p *storytelling.Page, _ int) PageDocument {
+func newPages(pl *storytelling.PageList) []PageDocument {
+	if pl == nil {
+		return nil
+	}
+	return lo.Map(pl.Pages(), func(p *storytelling.Page, _ int) PageDocument {
 		if p == nil {
 			return PageDocument{}
 		}
@@ -108,6 +119,18 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		return nil, err
 	}
 
+	pages := lo.Map(d.Pages, func(p PageDocument, _ int) *storytelling.Page {
+		page, err2 := p.Model()
+		if err2 != nil {
+			err = err2
+			return nil
+		}
+		return page
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	s, err := storytelling.NewStory().
 		ID(sid).
 		Property(property).
@@ -117,10 +140,45 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		Status(storytelling.PublishmentStatus(d.Status)).
 		PublishedAt(d.PublishedAt).
 		UpdatedAt(d.UpdatedAt).
+		Pages(storytelling.NewPageList(pages)).
 		Build()
 	if err != nil {
 		return nil, err
 	}
 
 	return s, nil
+}
+
+func (d *PageDocument) Model() (*storytelling.Page, error) {
+	pId, err := id.PageIDFrom(d.Id)
+	if err != nil {
+		return nil, err
+	}
+	property, err := id.PropertyIDFrom(d.Property)
+	if err != nil {
+		return nil, err
+	}
+	lIds, err := id.LayerIDListFrom(d.Layers)
+	if err != nil {
+		return nil, err
+	}
+	slIds, err := id.LayerIDListFrom(d.SwipeLayers)
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := storytelling.NewPage().
+		ID(pId).
+		Property(property).
+		Title(d.Title).
+		Layers(lIds).
+		Swipeable(d.Swipeable).
+		SwipeableLayers(slIds).
+		Blocks(nil).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }

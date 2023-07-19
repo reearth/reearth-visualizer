@@ -50,6 +50,7 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Lock:           c.Lock,
 		Plugin:         c.Plugin.Filtered(scene),
 		Policy:         c.Policy,
+		Storytelling:   c.Storytelling.Filtered(scene),
 		Project:        c.Project.Filtered(workspace),
 		PropertySchema: c.PropertySchema.Filtered(scene),
 		Property:       c.Property.Filtered(scene),

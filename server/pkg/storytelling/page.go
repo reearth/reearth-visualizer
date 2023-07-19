@@ -5,32 +5,33 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type Page struct {
-	id          PageID
-	property    PropertyID
-	title       string
-	swipe       bool
-	layers      LayerIDList
-	swipeLayers LayerIDList
-	blocks      BlockList
+	id              PageID
+	property        PropertyID
+	title           string
+	swipeable       bool
+	layers          LayerIDList
+	swipeableLayers LayerIDList
+	blocks          BlockList
 }
 
-func NewPage(blocks BlockList, p PropertyID) *Page {
-	Page := Page{
-		property: p,
-		blocks:   make(BlockList, len(blocks)),
-	}
-	for i, b := range blocks {
-		if b == nil {
-			continue
-		}
-		Page.blocks[i] = b
-	}
-	return &Page
-}
+// func NewPage(blocks BlockList, p PropertyID) *Page {
+// 	Page := Page{
+// 		property: p,
+// 		blocks:   make(BlockList, len(blocks)),
+// 	}
+// 	for i, b := range blocks {
+// 		if b == nil {
+// 			continue
+// 		}
+// 		Page.blocks[i] = b
+// 	}
+// 	return &Page
+// }
 
 func (p *Page) Id() PageID {
 	return p.id
@@ -40,8 +41,8 @@ func (p *Page) Title() string {
 	return p.title
 }
 
-func (p *Page) Swipe() bool {
-	return p.swipe
+func (p *Page) Swipeable() bool {
+	return p.swipeable
 }
 
 func (p *Page) Layers() LayerIDList {
@@ -63,26 +64,26 @@ func (p *Page) RemoveLayer(layer LayerID) {
 	p.layers = p.layers.Delete(layer)
 }
 
-func (p *Page) SwipeLayers() LayerIDList {
-	if !p.swipe {
+func (p *Page) SwipeableLayers() LayerIDList {
+	if !p.swipeable {
 		return nil
 	}
-	return p.swipeLayers
+	return p.swipeableLayers
 }
 
-func (p *Page) HasSwipeLayer(layer LayerID) bool {
-	if p == nil || p.swipeLayers == nil {
+func (p *Page) HasSwipeableLayer(layer LayerID) bool {
+	if p == nil || p.swipeableLayers == nil {
 		return false
 	}
-	return p.swipeLayers.Has(layer)
+	return p.swipeableLayers.Has(layer)
 }
 
-func (p *Page) AddSwipeLayer(layer LayerID) {
-	p.swipeLayers = p.swipeLayers.AddUniq(layer)
+func (p *Page) AddSwipeableLayer(layer LayerID) {
+	p.swipeableLayers = p.swipeableLayers.AddUniq(layer)
 }
 
-func (p *Page) RemoveSwipeLayer(layer LayerID) {
-	p.swipeLayers = p.swipeLayers.Delete(layer)
+func (p *Page) RemoveSwipeableLayer(layer LayerID) {
+	p.swipeableLayers = p.swipeableLayers.Delete(layer)
 }
 
 func (p *Page) Property() PropertyID {
@@ -234,7 +235,7 @@ func (p *Page) ValidateProperties(pm property.Map) error {
 	if lp == nil {
 		return errors.New("property does not exist")
 	}
-	if !lp.Schema().Equal(builtin.PropertySchemaIDPage) {
+	if !lp.Schema().Equal(builtin.PropertySchemaIDStoryPage) {
 		return errors.New("property has a invalid schema")
 	}
 
@@ -245,4 +246,32 @@ func (p *Page) ValidateProperties(pm property.Map) error {
 	}
 
 	return nil
+}
+
+func (p *Page) SetTitle(s string) {
+	if p == nil {
+		return
+	}
+	p.title = s
+}
+
+func (p *Page) SetLayers(ids []id.LayerID) {
+	if p == nil {
+		return
+	}
+	p.layers = append(LayerIDList{}, ids...)
+}
+
+func (p *Page) SetSwipeable(b bool) {
+	if p == nil {
+		return
+	}
+	p.swipeable = b
+}
+
+func (p *Page) SetSwipeableLayers(ids []id.LayerID) {
+	if p == nil {
+		return
+	}
+	p.swipeableLayers = append(LayerIDList{}, ids...)
 }

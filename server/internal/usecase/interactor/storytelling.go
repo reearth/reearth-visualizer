@@ -6,7 +6,9 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -49,10 +51,17 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		return nil, interfaces.ErrOperationDenied
 	}
 
+	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(inp.SceneID).Build()
+	if err != nil {
+		return nil, err
+	}
+
 	builder := storytelling.NewStory().
 		NewID().
 		Title(inp.Title).
-		Scene(inp.SceneID)
+		Scene(inp.SceneID).
+		Property(prop.ID())
 
 	story, err := builder.Build()
 	if err != nil {
@@ -104,7 +113,7 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 	return story, nil
 }
 
-func (i *Storytelling) Remove(ctx context.Context, sId id.StoryID, operator *usecase.Operator) (*id.StoryID, error) {
+func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInput, operator *usecase.Operator) (*id.StoryID, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -117,7 +126,7 @@ func (i *Storytelling) Remove(ctx context.Context, sId id.StoryID, operator *use
 		}
 	}()
 
-	story, err := i.storytellingRepo.FindByID(ctx, sId)
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, err
 	}
@@ -127,49 +136,219 @@ func (i *Storytelling) Remove(ctx context.Context, sId id.StoryID, operator *use
 
 	// TODO: Handel ordering
 
-	if err := i.storytellingRepo.Remove(ctx, sId); err != nil {
+	if err := i.storytellingRepo.Remove(ctx, inp.StoryID); err != nil {
 		return nil, err
 	}
 
-	return &sId, nil
+	return &inp.StoryID, nil
 }
 
-func (i *Storytelling) Move(ctx context.Context, input interfaces.MoveStoryInput, operator *usecase.Operator) (*id.StoryID, int, error) {
+func (i *Storytelling) Move(ctx context.Context, inp interfaces.MoveStoryInput, operator *usecase.Operator) (*id.StoryID, int, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (i *Storytelling) CreatePage(ctx context.Context, param interfaces.CreatePageParam, operator *usecase.Operator) (*storytelling.Story, error) {
+func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(inp.SceneID).Build()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	builder := storytelling.NewPage().
+		NewID().
+		Property(prop.ID())
+
+	if inp.Title != nil && *inp.Title != "" {
+		builder = builder.Title(*inp.Title)
+	} else {
+		builder = builder.Title("Untitled")
+	}
+
+	if inp.Layers != nil {
+		builder = builder.Layers(*inp.Layers)
+	}
+
+	builder = builder.Swipeable(inp.Swipeable != nil && *inp.Swipeable)
+
+	if inp.Swipeable != nil && *inp.Swipeable && inp.SwipeableLayers != nil {
+		builder = builder.SwipeableLayers(*inp.SwipeableLayers)
+	}
+
+	page, err := builder.Build()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	story.Pages().AddAt(page, inp.Index)
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return story, page, nil
+}
+
+func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, interfaces.ErrPageNotFound
+	}
+
+	if inp.Title != nil && *inp.Title != "" {
+		page.SetTitle(*inp.Title)
+	}
+
+	if inp.Layers != nil {
+		page.SetLayers(*inp.Layers)
+	}
+
+	page.SetSwipeable(inp.Swipeable != nil && *inp.Swipeable)
+
+	if inp.Swipeable != nil && *inp.Swipeable && inp.SwipeableLayers != nil {
+		page.SetSwipeableLayers(*inp.SwipeableLayers)
+	}
+
+	if inp.Index != nil {
+		story.Pages().Move(page.Id(), *inp.Index)
+	}
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return story, page, nil
+}
+
+func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePageParam, operator *usecase.Operator) (*storytelling.Story, *id.PageID, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, interfaces.ErrPageNotFound
+	}
+
+	story.Pages().Remove(page.Id())
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return story, page.Id().Ref(), nil
+}
+
+func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, int, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
+	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+		return nil, nil, 0, interfaces.ErrOperationDenied
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, 0, interfaces.ErrPageNotFound
+	}
+
+	story.Pages().Move(page.Id(), inp.Index)
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, 0, err
+	}
+
+	tx.Commit()
+	return story, page, inp.Index, nil
+}
+
+func (i *Storytelling) CreateBlock(ctx context.Context, param interfaces.CreateBlockParam, operator *usecase.Operator) (*storytelling.Page, *storytelling.Block, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (i *Storytelling) UpdatePage(ctx context.Context, param interfaces.UpdatePageParam, operator *usecase.Operator) (*storytelling.Story, error) {
+func (i *Storytelling) RemoveBlock(ctx context.Context, param interfaces.RemoveBlockParam, operator *usecase.Operator) (*storytelling.Page, *id.BlockID, error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (i *Storytelling) RemovePage(ctx context.Context, storyID id.StoryID, pageID id.PageID, operator *usecase.Operator) (*storytelling.Story, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (i *Storytelling) MovePage(ctx context.Context, param interfaces.MovePageParam, operator *usecase.Operator) (*storytelling.Story, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (i *Storytelling) CreateBlock(ctx context.Context, param interfaces.CreateBlockParam, operator *usecase.Operator) (*id.BlockID, *storytelling.Page, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (i *Storytelling) RemoveBlock(ctx context.Context, param interfaces.RemoveBlockParam, operator *usecase.Operator) (*id.BlockID, *storytelling.Page, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (i *Storytelling) MoveBlock(ctx context.Context, param interfaces.MoveBlockParam, operator *usecase.Operator) (*id.BlockID, *storytelling.Page, int, error) {
+func (i *Storytelling) MoveBlock(ctx context.Context, param interfaces.MoveBlockParam, operator *usecase.Operator) (*storytelling.Page, *id.BlockID, int, error) {
 	// TODO implement me
 	panic("implement me")
 }
