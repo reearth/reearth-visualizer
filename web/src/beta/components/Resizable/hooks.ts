@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 
-type Direction = "vertical" | "horizontal";
-type Gutter = "start" | "end";
+export type Direction = "vertical" | "horizontal";
+export type Gutter = "start" | "end";
 
 const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
   const { nativeEvent } = e;
@@ -33,20 +33,25 @@ const getSize = (size: number, delta: number, minSize?: number) => {
 };
 
 export default (direction: Direction, gutter: Gutter, initialSize: number, minSize: number) => {
+  const [startingSize, setStartingSize] = useState(initialSize);
+
   const [isResizing, setIsResizing] = useState(false);
   const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [minimized, setMinimized] = useState(false);
+
+  const [difference, setDifference] = useState(0);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
       const position = getPositionFromEvent(e);
       if (!position) return;
 
+      setStartingSize(size);
       setIsResizing(true);
       setPosition(position);
     },
-    [],
+    [size],
   );
 
   const onResize = useCallback(
@@ -58,14 +63,29 @@ export default (direction: Direction, gutter: Gutter, initialSize: number, minSi
       const deltaY = gutter === "start" ? position.y - y : y - position.y;
       const delta = getDelta(direction, deltaX, deltaY);
 
+      const newDiff = difference + delta;
+
+      setDifference(newDiff);
+
       setSize(getSize(size, delta, minSize));
 
-      if (!minimized && size + delta <= initialSize / 2) {
+      if (!minimized && startingSize + newDiff <= minSize / 2) {
         setMinimized(true);
       }
       setPosition({ x, y });
     },
-    [isResizing, gutter, position.x, position.y, direction, size, minSize, minimized, initialSize],
+    [
+      isResizing,
+      gutter,
+      position.x,
+      position.y,
+      direction,
+      size,
+      startingSize,
+      minSize,
+      minimized,
+      difference,
+    ],
   );
 
   const onResizeEnd = useCallback(() => {
@@ -73,7 +93,9 @@ export default (direction: Direction, gutter: Gutter, initialSize: number, minSi
 
     setIsResizing(false);
     setPosition({ x: 0, y: 0 });
-  }, [isResizing]);
+    setStartingSize(size);
+    setDifference(0);
+  }, [isResizing, size]);
 
   const bindEventListeners = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -109,6 +131,7 @@ export default (direction: Direction, gutter: Gutter, initialSize: number, minSi
     }),
     [onResizeStart],
   );
+
   const handleResetSize = useCallback(() => {
     setMinimized(false);
     setSize(initialSize);

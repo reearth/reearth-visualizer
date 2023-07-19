@@ -3,12 +3,12 @@ import { ReactNode } from "react";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import { styled } from "@reearth/services/theme";
 
-import useHooks from "./hooks";
+import useHooks, { type Direction, type Gutter } from "./hooks";
 
 type Props = {
   children?: ReactNode;
-  direction: "vertical" | "horizontal";
-  gutter: "start" | "end";
+  direction: Direction;
+  gutter: Gutter;
   initialSize: number;
   minSize: number;
 };
@@ -30,6 +30,7 @@ const Resizable: React.FC<Props> = ({ direction, gutter, minSize, initialSize, c
   const RightGutter = showRightGutter ? <VerticalGutter {...gutterProps} /> : null;
   const BottomGutter = showBottomGutter ? <HorizontalGutter {...gutterProps} /> : null;
   const LeftGutter = showLeftGutter ? <VerticalGutter {...gutterProps} /> : null;
+
   return (
     <>
       {minimized ? (
@@ -61,9 +62,9 @@ const StyledResizable = styled.div<{
   height: ${({ direction, size }) => (direction === "vertical" ? null : `${size}px`)};
   flex-shrink: 0;
   min-width: ${({ direction, minSize }) =>
-    direction === "horizontal" && minSize ? `${minSize}px` : null};
-  min-height: ${({ direction, minSize }) =>
     direction === "vertical" && minSize ? `${minSize}px` : null};
+  min-height: ${({ direction, minSize }) =>
+    direction === "horizontal" && minSize ? `${minSize}px` : null};
 `;
 
 const Wrapper = styled.div`
@@ -86,6 +87,7 @@ const VerticalGutter = styled(Gutter)`
   width: 4px;
   cursor: col-resize;
 `;
+
 const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
   display: flex;
   align-items: center;
@@ -93,9 +95,10 @@ const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
   height: ${({ direction }) => (direction === "vertical" ? null : `24px`)};
   background: ${({ theme }) => theme.general.bg.weak};
   cursor: pointer;
-  transition: background-color 0.3s;
-  &:hover {
-    background-color: ${({ theme }) => theme.general.bg.strong};
+  transition: background 0.3s;
+
+  :hover {
+    background: ${({ theme }) => theme.general.bg.veryWeak};
   }
 `;
 export default Resizable;
