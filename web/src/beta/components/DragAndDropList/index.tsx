@@ -1,17 +1,17 @@
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 
-import { ItemWrapper } from "./ItemWrapper";
+import { Item } from "./Item";
 
 type Props<Item> = {
+  uniqueKey: string;
   items: Item[];
   getId: (item: Item) => string;
-  onDrop(id: string, index: number): void;
+  onItemDrop(item: Item, targetIndex: number): void;
   renderItem: (item: Item) => ReactNode;
 };
 
-function DragAndDropList<Item>({ items, onDrop, getId, renderItem }: Props<Item>) {
-  console.log(onDrop);
+function DragAndDropList<Item>({ uniqueKey, items, onItemDrop, getId, renderItem }: Props<Item>) {
   const [movingItems, setMovingItems] = useState<Item[]>(items);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ function DragAndDropList<Item>({ items, onDrop, getId, renderItem }: Props<Item>
   }, [items]);
 
   const onItemMove = useCallback((dragIndex: number, hoverIndex: number) => {
-    setMovingItems((old: Item[]) => {
+    setMovingItems(old => {
       const items = [...old];
       items.splice(dragIndex, 1);
       items.splice(hoverIndex, 0, old[dragIndex]);
@@ -27,14 +27,28 @@ function DragAndDropList<Item>({ items, onDrop, getId, renderItem }: Props<Item>
     });
   }, []);
 
+  const onItemDropLocal = useCallback(
+    (index: number) => {
+      const item = movingItems[index];
+      item && onItemDrop(movingItems[index], index);
+    },
+    [movingItems, onItemDrop],
+  );
+
   return (
     <div>
       {movingItems.map((item, i) => {
         const id = getId(item);
         return (
-          <ItemWrapper key={id} index={i} id={id} onItemMove={onItemMove}>
+          <Item
+            itemGroupKey={uniqueKey}
+            key={id}
+            id={id}
+            index={i}
+            onItemMove={onItemMove}
+            onItemDrop={onItemDropLocal}>
             {renderItem(item)}
-          </ItemWrapper>
+          </Item>
         );
       })}
     </div>
