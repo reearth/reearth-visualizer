@@ -66,14 +66,13 @@ const Bg = styled.div<{ state: TransitionStatus }>`
 const Wrapper = styled.div<{ size?: string }>`
   margin: ${({ size }) => (size === "sm" ? "15%" : size === "lg" ? "4%" : "8%")} auto;
   padding-top: 36px;
-  padding-bottom: 36px;
   border-radius: var(--spacing-small, 8px);
   background: var(--editor-background-0, #161616);
   width: ${({ size }) => (size === "sm" ? "372px" : size === "lg" ? "684px" : "620px")};
   position: relative;
 `;
 
-const InnerWrapper = styled.div<{ size?: string }>`
+const InnerWrapper = styled.div`
   margin: 0 auto;
 `;
 

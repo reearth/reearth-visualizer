@@ -6,7 +6,7 @@ import { styled } from "@reearth/services/theme";
 
 type Size = "sm" | "md" | "lg";
 
-type SidebarTab = {
+export type SidebarTab = {
   id: string;
   label: string;
   content: ReactNode;
@@ -56,19 +56,20 @@ const Modal: React.FC<Props> = ({
       onClose={onClose}>
       {sidebarTabs.length > 0 ? (
         <SidebarWrapper>
-          <Sidebar>
+          <NavBarWrapper>
             {sidebarTabs.map(tab => (
               <Tab
                 key={tab.id}
-                isActive={selectedTab === tab.id}
+                isSelected={selectedTab === tab.id}
                 onClick={() => handleTabChange(tab.id)}>
                 {tab.label}
               </Tab>
             ))}
-          </Sidebar>
+          </NavBarWrapper>
           <SidebarContentWrapper>
-            <TabContent />
-            {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.content}
+            <TabContent>
+              {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.content}
+            </TabContent>
             <TabButtonWrapper>
               {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.tabButton1}
               {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.tabButton2}
@@ -94,27 +95,27 @@ const SidebarWrapper = styled.div`
   align-self: stretch;
 `;
 
-const Sidebar = styled.div`
+const NavBarWrapper = styled.div`
   display: flex;
-  padding: var(--spacing-large, 16px);
+  flex-direction: column;
+  // padding: var(--spacing-large, 16px);
+  padding: 16px;
   align-items: flex-start;
   gap: 10px;
   align-self: stretch;
-  border-right: 1px solid var(--editor-outline-weak, #525252);
+  // border-right: 1px solid var(--editor-outline-weak, #525252);
+  border-right: 1px solid #525252;
 `;
 
-const Tab = styled.button<{ isActive: boolean }>(
-  ({ isActive }) => ({
-    backgroundColor: isActive ? "blue" : "transparent",
-    color: isActive ? "white" : "black",
-  }),
-  `display: flex;
-padding: var(--radius-small, 4px) var(--spacing-small, 8px);
-align-items: flex-start;
-align-self: stretch;
-border-radius: var(--spacing-smallest, 4px);
-background: var(--editor-background-2, #393939);`,
-);
+const Tab = styled.button<{ isSelected: boolean }>`
+  display: flex;
+  padding: var(--radius-small, 4px) var(--spacing-small, 8px);
+  align-items: flex-start;
+  align-self: stretch;
+  border-radius: 4px;
+  background: ${({ isSelected }) => (isSelected ? `  #393939 ` : `transparent`)};
+  color: ${({ isSelected }) => (isSelected ? `white` : `#393939`)};
+`;
 
 const SidebarContentWrapper = styled.div`
   display: flex;
@@ -141,17 +142,18 @@ const TabContent = styled.div`
   align-items: flex-start;
   gap: var(--spacing-normal, 12px);
   align-self: stretch;
-
   border-top: 1px solid var(--editor-outline-weak, #525252);
 `;
 
 const TabButtonWrapper = styled.div`
   display: flex;
   padding: var(--spacing-large, 16px);
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: flex-end;
   align-items: flex-start;
   gap: var(--spacing-largest, 20px);
   align-self: stretch;
+  border-top: 1px solid var(--editor-outline-weak, #525252);
 `;
 
 const ButtonWrapper = styled.div`
