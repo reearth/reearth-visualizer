@@ -37,6 +37,7 @@ import type {
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
+import { usePostUpdate } from "./hooks/useSceneEvent";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
@@ -731,14 +732,7 @@ export default ({
     requestingRender.current = false;
   }, [requestingRender]);
 
-  useEffect(() => {
-    const viewer = cesium.current?.cesiumElement;
-    if (!viewer || viewer.isDestroyed()) return;
-    viewer.scene.postUpdate.addEventListener(explicitRender);
-    return () => {
-      viewer.scene.postUpdate.removeEventListener(explicitRender);
-    };
-  });
+  usePostUpdate(explicitRender);
 
   useEffect(() => {
     if (requestingRender) {
