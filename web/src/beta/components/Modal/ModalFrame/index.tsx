@@ -66,8 +66,8 @@ const Bg = styled.div<{ state: TransitionStatus }>`
 const Wrapper = styled.div<{ size?: string }>`
   margin: ${({ size }) => (size === "sm" ? "15%" : size === "lg" ? "4%" : "8%")} auto;
   padding-top: 36px;
-  border-radius: var(--spacing-small, 8px);
-  background: var(--editor-background-0, #161616);
+  border-radius: 8px;
+  background: #161616;
   width: ${({ size }) => (size === "sm" ? "372px" : size === "lg" ? "684px" : "620px")};
   position: relative;
 `;
@@ -88,13 +88,13 @@ const CloseIcon = styled(Icon)`
 
 const HeaderWrapper = styled.div`
   display: flex;
-  padding: var(--spacing-normal, 12px);
+  padding: 12px;
   justify-content: space-between;
   align-items: center;
   align-self: stretch;
-  border-top-right-radius: var(--spacing-small, 8px);
-  border-top-left-radius: var(--spacing-small, 8px);
-  background: var(--editor-background-2, #393939);
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  background: #393939;
   position: absolute;
   top: 0;
   left: 0;

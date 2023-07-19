@@ -78,7 +78,7 @@ const Modal: React.FC<Props> = ({
         </SidebarWrapper>
       ) : (
         <>
-          <ContentWrapper hasSidebar={sidebarTabs.length > 0}>{children}</ContentWrapper>
+          <ContentWrapper>{children}</ContentWrapper>
           <ButtonWrapper>
             {button2}
             {button1}
@@ -98,18 +98,16 @@ const SidebarWrapper = styled.div`
 const NavBarWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  // padding: var(--spacing-large, 16px);
   padding: 16px;
   align-items: flex-start;
   gap: 10px;
   align-self: stretch;
-  // border-right: 1px solid var(--editor-outline-weak, #525252);
   border-right: 1px solid #525252;
 `;
 
 const Tab = styled.button<{ isSelected: boolean }>`
   display: flex;
-  padding: var(--radius-small, 4px) var(--spacing-small, 8px);
+  padding: 4px 8px;
   align-items: flex-start;
   align-self: stretch;
   border-radius: 4px;
@@ -126,44 +124,42 @@ const SidebarContentWrapper = styled.div`
 
 const ContentWrapper = styled.div`
   display: flex;
-  padding: var(--spacing-super, 24px);
+  padding: 24px;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-largest, 20px);
+  gap: 20px;
   align-self: stretch;
-  flex: ${({ hasSidebar }: { hasSidebar: boolean }) =>
-    hasSidebar ? "0 1 calc(100% - 200px)" : "1"};
+  flex: 1;
 `;
 
 const TabContent = styled.div`
   display: flex;
-  padding: var(--spacing-normal, 12px);
-  justify-content: flex-end;
+  padding: 16px;
+  flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-normal, 12px);
+  gap: 20px;
   align-self: stretch;
-  border-top: 1px solid var(--editor-outline-weak, #525252);
 `;
 
 const TabButtonWrapper = styled.div`
   display: flex;
-  padding: var(--spacing-large, 16px);
+  padding: 16px;
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;
-  gap: var(--spacing-largest, 20px);
+  gap: 20px;
   align-self: stretch;
-  border-top: 1px solid var(--editor-outline-weak, #525252);
+  border-top: 1px solid #525252;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  padding: var(--spacing-normal, 12px);
+  padding: 12px;
   justify-content: flex-end;
   align-items: flex-start;
-  gap: var(--spacing-normal, 12px);
+  gap: 12px;
   align-self: stretch;
-  border-top: 1px solid var(--editor-outline-weak, #525252);
+  border-top: 1px solid #525252;
 `;
 
 export default Modal;
