@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 
+import { styled } from "@reearth/services/theme";
+
 import { Item } from "./Item";
 
 type Props<Item> = {
@@ -9,9 +11,17 @@ type Props<Item> = {
   getId: (item: Item) => string;
   onItemDrop(item: Item, targetIndex: number): void;
   renderItem: (item: Item) => ReactNode;
+  gap: number;
 };
 
-function DragAndDropList<Item>({ uniqueKey, items, onItemDrop, getId, renderItem }: Props<Item>) {
+function DragAndDropList<Item>({
+  uniqueKey,
+  items,
+  onItemDrop,
+  getId,
+  renderItem,
+  gap,
+}: Props<Item>) {
   const [movingItems, setMovingItems] = useState<Item[]>(items);
 
   useEffect(() => {
@@ -36,7 +46,7 @@ function DragAndDropList<Item>({ uniqueKey, items, onItemDrop, getId, renderItem
   );
 
   return (
-    <div>
+    <SWrapper gap={gap}>
       {movingItems.map((item, i) => {
         const id = getId(item);
         return (
@@ -51,8 +61,14 @@ function DragAndDropList<Item>({ uniqueKey, items, onItemDrop, getId, renderItem
           </Item>
         );
       })}
-    </div>
+    </SWrapper>
   );
 }
 
 export default DragAndDropList;
+
+const SWrapper = styled.div<Pick<Props, "gap">>`
+  display: flex;
+  flex-direction: column;
+  ${({ gap }) => `gap: ${gap}px`}
+`;

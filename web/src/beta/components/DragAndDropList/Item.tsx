@@ -3,12 +3,12 @@ import type { FC, ReactNode } from "react";
 import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-const style = {
-  border: "1px dashed gray",
-  padding: "0.5rem 1rem",
-  marginBottom: ".5rem",
-  backgroundColor: "lightgray",
-  cursor: "move",
+import { styled } from "@reearth/services/theme";
+
+type DragItem = {
+  index: number;
+  id: string;
+  type: string;
 };
 
 type Props = {
@@ -18,12 +18,6 @@ type Props = {
   onItemMove: (dragIndex: number, hoverIndex: number) => void;
   onItemDrop: (dropIndex: number) => void;
   children: ReactNode;
-};
-
-type DragItem = {
-  index: number;
-  id: string;
-  type: string;
 };
 
 export const Item: FC<Props> = ({ itemGroupKey, id, children, index, onItemMove, onItemDrop }) => {
@@ -72,11 +66,15 @@ export const Item: FC<Props> = ({ itemGroupKey, id, children, index, onItemMove,
     }),
   });
 
-  const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
   return (
-    <div ref={ref} style={{ ...style, opacity }} data-handler-id={handlerId}>
+    <SItem ref={ref} data-handler-id={handlerId} isDragging={isDragging}>
       {children}
-    </div>
+    </SItem>
   );
 };
+
+const SItem = styled.div<{ isDragging: boolean }>`
+  ${({ isDragging }) => `opacity: ${isDragging ? 0 : 1}`}
+  cursor: "move",
+`;
