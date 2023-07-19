@@ -41,11 +41,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     isLayerDraggable,
     isLayerDragging,
-    shouldRender: _shouldRender,
+    shouldRender,
     layerSelectionReason,
     meta,
     layersRef,
     featureFlags,
+    requestingRender,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
@@ -81,6 +82,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     meta,
     layersRef,
     featureFlags,
+    requestingRender,
+    shouldRender,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
@@ -114,12 +117,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         cursor: isLayerDragging ? "grab" : undefined,
         ...style,
       }}
-      // NOTE: Need to disable requestRenderMode on NLS, because we need to attach style dynamically.
-      //       If we want to use requestRenderMode, we need to add requestRenderMode option to sceneProperty.
-      // requestRenderMode={!property?.timeline?.animation && !isLayerDraggable && !shouldRender}
-      // maximumRenderTimeChange={
-      //   !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : undefined
-      // }
       shadows={!!property?.atmosphere?.shadows}
       onClick={handleClick}
       onDoubleClick={mouseEventHandles.doubleclick}
@@ -183,6 +180,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         backgroundColor={backgroundColor}
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
+        useDepthPicking={false}
       />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog

@@ -51,6 +51,8 @@ export default ({
   meta,
   layersRef,
   featureFlags,
+  requestingRender,
+  shouldRender,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -69,6 +71,8 @@ export default ({
   isLayerDraggable?: boolean;
   meta?: Record<string, unknown>;
   featureFlags: number;
+  requestingRender?: React.MutableRefObject<boolean>;
+  shouldRender?: boolean;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -680,8 +684,9 @@ export default ({
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
+      requestRender: handleUpdate,
     }),
-    [selectionReason, engineAPI, onLayerEdit],
+    [selectionReason, engineAPI, onLayerEdit, handleUpdate],
   );
 
   const handleTick = useCallback(
@@ -717,6 +722,38 @@ export default ({
         ? 4
         : 1; // default as 1
   }, [property?.render?.antialias]);
+
+  // explicit rendering
+  const explicitRender = useCallback(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    if (requestingRender?.current) {
+      viewer.scene.requestRender();
+      requestingRender.current = false;
+    }
+  }, [requestingRender]);
+
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.postUpdate.addEventListener(explicitRender);
+    return () => {
+      viewer.scene.postUpdate.removeEventListener(explicitRender);
+    };
+  });
+
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.requestRender();
+  }, [property]);
+
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.maximumRenderTimeChange =
+      !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : 0;
+  }, [property?.timeline?.animation, isLayerDraggable, shouldRender]);
 
   return {
     backgroundColor,

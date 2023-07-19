@@ -9,6 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MutableRefObject,
 } from "react";
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
@@ -99,6 +100,7 @@ export default function useHooks({
   hiddenLayers,
   selectedLayerId,
   selectionReason,
+  requestingRender,
   onLayerSelect,
 }: {
   layers?: Layer[];
@@ -109,6 +111,7 @@ export default function useHooks({
     featureId?: string;
   };
   selectionReason?: LayerSelectionReason;
+  requestingRender?: MutableRefObject<boolean>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -560,6 +563,12 @@ export default function useHooks({
     });
     setOverridenLayers(layers => layers.filter(l => !deleted.includes(l.id)));
   }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
+
+  useEffect(() => {
+    if (!requestingRender) return;
+    requestingRender.current = true;
+    // requestRender?.();
+  }, [flattenedLayers, overriddenLayers, requestingRender]);
 
   return { atomMap, flattenedLayers, isHidden };
 }

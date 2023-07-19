@@ -1,4 +1,4 @@
-import { forwardRef, type ForwardRefRenderFunction } from "react";
+import { forwardRef, type ForwardRefRenderFunction, type MutableRefObject } from "react";
 
 import { SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 
@@ -38,6 +38,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   };
   selectionReason?: LayerSelectionReason;
   sceneProperty?: any;
+  requestingRender?: MutableRefObject<boolean>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -48,7 +49,15 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (
-  { layers, hiddenLayers, selectedLayerId, selectionReason, onLayerSelect, ...props },
+  {
+    layers,
+    hiddenLayers,
+    selectedLayerId,
+    selectionReason,
+    requestingRender,
+    onLayerSelect,
+    ...props
+  },
   ref,
 ) => {
   const { atomMap, flattenedLayers, isHidden } = useHooks({
@@ -57,6 +66,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     hiddenLayers,
     selectedLayerId,
     selectionReason,
+    requestingRender,
     onLayerSelect,
   });
 

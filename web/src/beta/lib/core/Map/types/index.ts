@@ -5,6 +5,7 @@ import type {
   ReactNode,
   CSSProperties,
   RefObject,
+  MutableRefObject,
 } from "react";
 
 import type {
@@ -118,6 +119,7 @@ export type EngineProps = {
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
+  requestingRender?: MutableRefObject<boolean>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,

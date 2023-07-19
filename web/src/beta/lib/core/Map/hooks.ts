@@ -26,6 +26,7 @@ export default function ({
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
+  const requestingRender = useRef(false);
 
   useImperativeHandle(
     ref,
@@ -93,6 +94,7 @@ export default function ({
     engineRef,
     layersRef,
     selectedLayer,
+    requestingRender,
     handleLayerSelect,
     handleEngineLayerSelect,
   };
