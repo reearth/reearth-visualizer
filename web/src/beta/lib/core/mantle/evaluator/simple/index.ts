@@ -120,7 +120,7 @@ function hasExpression(e: any): e is ExpressionContainer {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasNonExpressionObject(v: any): boolean {
-  return typeof v === "object" && v && !("expression" in v);
+  return typeof v === "object" && v && !("expression" in v) && !Array.isArray(v);
 }
 
 function evalExpression(

@@ -325,6 +325,12 @@ export type SceneProperty = {
     themeSelectColor?: string;
     themeBackgroundColor?: string;
   };
+  ambientOcclusion?: {
+    enabled?: boolean;
+    quality?: "low" | "medium" | "high" | "extreme";
+    intensity?: number;
+    ambientOcclusionOnly?: boolean;
+  };
   light?: {
     lightType?: "sunLight" | "directionalLight";
     lightDirectionX?: number;
@@ -332,6 +338,12 @@ export type SceneProperty = {
     lightDirectionZ?: number;
     lightColor?: string;
     lightIntensity?: number;
+    specularEnvironmentMaps?: string;
+    sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+    imageBasedLightIntensity?: number;
+  };
+  render?: {
+    antialias?: "low" | "medium" | "high" | "extreme";
   };
 };
 

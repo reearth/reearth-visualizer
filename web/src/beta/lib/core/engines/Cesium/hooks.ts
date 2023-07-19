@@ -135,20 +135,20 @@ export default ({
 
   // shadow map
   type ShadowMapBias = {
-    polygonOffsetFactor: number;
-    polygonOffsetUnits: number;
-    normalOffsetScale: number;
-    normalShading: boolean;
-    normalShadingSmooth: number;
-    depthBias: number;
+    polygonOffsetFactor?: number;
+    polygonOffsetUnits?: number;
+    normalOffsetScale?: number;
+    normalShading?: boolean;
+    normalShadingSmooth?: number;
+    depthBias?: number;
   };
 
   useEffect(() => {
     const shadowMap = cesium?.current?.cesiumElement?.shadowMap as
       | (ShadowMap & {
-          _terrainBias: ShadowMapBias;
-          _pointBias: ShadowMapBias;
-          _primitiveBias: ShadowMapBias;
+          _terrainBias?: ShadowMapBias;
+          _pointBias?: ShadowMapBias;
+          _primitiveBias?: ShadowMapBias;
         })
       | undefined;
     if (!shadowMap) return;
@@ -184,9 +184,30 @@ export default ({
       normalShadingSmooth: 0.1,
       depthBias: 0.0005,
     };
-    Object.assign(shadowMap._terrainBias, defaultTerrainBias);
-    Object.assign(shadowMap._primitiveBias, defaultPrimitiveBias);
-    Object.assign(shadowMap._pointBias, defaultPointBias);
+
+    if (!shadowMap._terrainBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._terrainBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._terrainBias, defaultTerrainBias);
+    }
+
+    if (!shadowMap._primitiveBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._primitiveBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._primitiveBias, defaultPrimitiveBias);
+    }
+
+    if (!shadowMap._pointBias) {
+      if (import.meta.env.DEV) {
+        throw new Error("`shadowMap._pointBias` could not found");
+      }
+    } else {
+      Object.assign(shadowMap._pointBias, defaultPointBias);
+    }
   }, [
     property?.atmosphere?.softShadow,
     property?.atmosphere?.shadowDarkness,
@@ -295,9 +316,10 @@ export default ({
     if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
 
+    // TODO: Support layers.selectFeature API for MVT
     if (!entity && selectedLayerId?.featureId) {
       // Find ImageryLayerFeature
-      const ImageryLayerDataTypes: DataType[] = ["mvt"];
+      const ImageryLayerDataTypes: DataType[] = [];
       const layers = layersRef?.current?.findAll(
         layer =>
           layer.type === "simple" &&
@@ -723,6 +745,21 @@ export default ({
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
   }, [featureFlags]);
+
+  // Anti-aliasing
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    viewer.scene.postProcessStages.fxaa.enabled = property?.render?.antialias === "high";
+    viewer.scene.msaaSamples =
+      property?.render?.antialias === "extreme"
+        ? 8
+        : property?.render?.antialias === "high"
+        ? 0
+        : property?.render?.antialias === "medium"
+        ? 4
+        : 1; // default as 1
+  }, [property?.render?.antialias]);
 
   return {
     backgroundColor,

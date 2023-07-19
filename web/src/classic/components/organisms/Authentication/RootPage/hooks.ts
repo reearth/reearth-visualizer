@@ -2,8 +2,8 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useGetTeamsQuery } from "@reearth/classic/gql";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
-import { useGetTeamsQuery } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useNotification, useUserId } from "@reearth/services/state";
 
@@ -65,6 +65,7 @@ export default () => {
       login();
     } else {
       if (currentWorkspace || !data || !workspaceId) return;
+      setCurrentUserId(data?.me?.id);
       setCurrentWorkspace(data.me?.myTeam);
       navigate(`/dashboard/${workspaceId}`);
     }
@@ -79,6 +80,7 @@ export default () => {
     login,
     verifySignup,
     navigate,
+    setCurrentUserId,
     setCurrentWorkspace,
   ]);
 

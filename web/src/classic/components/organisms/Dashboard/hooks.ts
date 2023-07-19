@@ -13,7 +13,7 @@ import {
   useCreateSceneMutation,
   Visualizer,
   GetProjectsQuery,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,

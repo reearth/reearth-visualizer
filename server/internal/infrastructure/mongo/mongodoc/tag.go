@@ -6,7 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
-	"github.com/reearth/reearthx/mongox"
+	"golang.org/x/exp/slices"
 )
 
 type TagDocument struct {
@@ -28,10 +28,12 @@ type TagGroupDocument struct {
 	Tags []string
 }
 
-type TagConsumer = mongox.SliceFuncConsumer[*TagDocument, tag.Tag]
+type TagConsumer = Consumer[*TagDocument, tag.Tag]
 
-func NewTagConsumer() *TagConsumer {
-	return NewComsumer[*TagDocument, tag.Tag]()
+func NewTagConsumer(scenes []id.SceneID) *TagConsumer {
+	return NewConsumer[*TagDocument, tag.Tag](func(a tag.Tag) bool {
+		return scenes == nil || slices.Contains(scenes, a.Scene())
+	})
 }
 
 func NewTag(t tag.Tag) (*TagDocument, string) {

@@ -92,6 +92,27 @@ func (r *Dataset) FindBySchemaAll(ctx context.Context, schemaID id.DatasetSchema
 	})
 }
 
+func (r *Dataset) FindBySchemaAllBy(ctx context.Context, s id.DatasetSchemaID, cb func(*dataset.Dataset) error) error {
+	c := mongox.SimpleConsumer[mongodoc.DatasetDocument](func(d mongodoc.DatasetDocument) error {
+		m, err := d.Model()
+		if err != nil {
+			return err
+		}
+		if r.f.Readable != nil && !r.f.Readable.Has(m.Scene()) {
+			return nil
+		}
+		return cb(m)
+	})
+
+	if err := r.client.Find(ctx, bson.M{
+		"schema": s.String(),
+	}, c); err != nil {
+		return rerror.ErrInternalByWithContext(ctx, err)
+	}
+
+	return nil
+}
+
 func (r *Dataset) FindGraph(ctx context.Context, did id.DatasetID, fields id.DatasetFieldIDList) (dataset.List, error) {
 	if len(fields) == 0 {
 		d, err := r.FindByID(ctx, did)
@@ -319,24 +340,24 @@ func (r *Dataset) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
 }
 
 func (r *Dataset) find(ctx context.Context, dst dataset.List, filter interface{}) (dataset.List, error) {
-	c := mongodoc.NewDatasetConsumer()
-	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
+	c := mongodoc.NewDatasetConsumer(r.f.Readable)
+	if err2 := r.client.Find(ctx, filter, c); err2 != nil {
 		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
 }
 
 func (r *Dataset) findOne(ctx context.Context, filter interface{}) (*dataset.Dataset, error) {
-	c := mongodoc.NewDatasetConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewDatasetConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
 }
 
 func (r *Dataset) paginate(ctx context.Context, filter bson.M, pagination *usecasex.Pagination) (dataset.List, *usecasex.PageInfo, error) {
-	c := mongodoc.NewDatasetConsumer()
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, c)
+	c := mongodoc.NewDatasetConsumer(r.f.Readable)
+	pageInfo, err := r.client.Paginate(ctx, filter, nil, pagination, c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
