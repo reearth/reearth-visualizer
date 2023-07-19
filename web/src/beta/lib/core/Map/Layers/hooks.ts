@@ -567,7 +567,6 @@ export default function useHooks({
   useEffect(() => {
     if (!requestingRender) return;
     requestingRender.current = true;
-    // requestRender?.();
   }, [flattenedLayers, overriddenLayers, requestingRender]);
 
   return { atomMap, flattenedLayers, isHidden };

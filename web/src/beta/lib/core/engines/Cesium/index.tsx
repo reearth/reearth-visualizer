@@ -96,6 +96,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       ref={cesium}
       onUpdate={handleUpdate}
       className={className}
+      requestRenderMode={true}
       animation
       timeline
       // NOTE: We need to update cesium ion token dynamically.
@@ -181,6 +182,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
         useDepthPicking={false}
+        debugShowFramesPerSecond={true}
       />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
