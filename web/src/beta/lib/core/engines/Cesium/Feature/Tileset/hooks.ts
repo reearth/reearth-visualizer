@@ -30,6 +30,7 @@ import type {
   Cesium3DTilesAppearance,
 } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
+import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import type { InternalCesium3DTileFeature } from "../../types";
 import { lookupFeatures, translationWithClamping } from "../../utils";
 import {
@@ -44,18 +45,6 @@ import {
 import { useClippingBox } from "./useClippingBox";
 
 import { Property } from ".";
-
-const sphericalHarmonicCoefficientsScratch = [
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-];
 
 const useData = (layer: ComputedLayer | undefined) => {
   return useMemo(() => {
@@ -542,23 +531,19 @@ export const useHooks = ({
     const ibl = new ImageBasedLighting();
     const specularEnvironmentMaps =
       property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
-    const sphericalHarmonicCoefficients =
-      property?.sphericalHarmonicCoefficients ??
-      sceneProperty?.light?.sphericalHarmonicCoefficients;
     const imageBasedLightIntensity =
       property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
+    const sphericalHarmonicCoefficients = arrayToCartecian3(
+      property?.sphericalHarmonicCoefficients ??
+        sceneProperty?.light?.sphericalHarmonicCoefficients,
+      imageBasedLightIntensity,
+    );
 
     if (specularEnvironmentMaps) {
       ibl.specularEnvironmentMaps = specularEnvironmentMaps;
     }
     if (sphericalHarmonicCoefficients) {
-      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients?.map((cartesian, index) =>
-        Cartesian3.multiplyByScalar(
-          new Cartesian3(...cartesian),
-          imageBasedLightIntensity ?? 1.0,
-          sphericalHarmonicCoefficientsScratch[index],
-        ),
-      );
+      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients;
     }
     return ibl;
   }, [

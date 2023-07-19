@@ -13,8 +13,9 @@ import { toColor } from "@reearth/beta/utils/value";
 
 import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
-import { NonPBRLightingShader } from "../../CustomShaders/NonPBRLightingShader";
+import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import { useSceneEvent } from "../../hooks/useSceneEvent";
+import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
 import {
   EntityExt,
   extractSimpleLayerData,
@@ -30,18 +31,6 @@ export type Property = ModelAppearance & {
   location?: { lat: number; lng: number };
   height?: number;
 };
-
-const sphericalHarmonicCoefficientsScratch = [
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-  new Cartesian3(),
-];
 
 export default function Model({
   id,
@@ -135,23 +124,19 @@ export default function Model({
 
     const specularEnvironmentMaps =
       property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
-    const sphericalHarmonicCoefficients =
-      property?.sphericalHarmonicCoefficients ??
-      sceneProperty?.light?.sphericalHarmonicCoefficients;
     const imageBasedLightIntensity =
       property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
+    const sphericalHarmonicCoefficients = arrayToCartecian3(
+      property?.sphericalHarmonicCoefficients ??
+        sceneProperty?.light?.sphericalHarmonicCoefficients,
+      imageBasedLightIntensity,
+    );
 
     if (specularEnvironmentMaps) {
       ibl.specularEnvironmentMaps = specularEnvironmentMaps;
     }
     if (sphericalHarmonicCoefficients) {
-      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients?.map((cartesian, index) =>
-        Cartesian3.multiplyByScalar(
-          new Cartesian3(...cartesian),
-          imageBasedLightIntensity ?? 1.0,
-          sphericalHarmonicCoefficientsScratch[index],
-        ),
-      );
+      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients;
     }
     return ibl;
   }, [
