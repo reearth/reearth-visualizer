@@ -48,8 +48,8 @@ const sidebarTab1: SidebarTab = {
 };
 
 const sidebarTab2: SidebarTab = {
-  id: "1",
-  label: "Tab1",
+  id: "2",
+  label: "Tab2",
   content: TabContent,
   tabButton1: <Button text="Confirm" />,
   tabButton2: <Button text="Cancel" />,
