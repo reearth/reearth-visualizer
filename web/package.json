@@ -99,7 +99,7 @@
         "@aws-amplify/ui-react": "5.0.2",
         "@emotion/react": "11.11.0",
         "@emotion/styled": "11.11.0",
-        "@floating-ui/react-dom": "2.0.0",
+        "@floating-ui/react": "0.24.7",
         "@mapbox/vector-tile": "1.3.1",
         "@monaco-editor/react": "4.5.1",
         "@popperjs/core": "2.11.7",
