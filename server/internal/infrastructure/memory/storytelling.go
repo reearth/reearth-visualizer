@@ -127,9 +127,7 @@ func (r *Storytelling) RemoveAll(_ context.Context, ids id.StoryIDList) error {
 	}
 
 	for _, sId := range ids {
-		if _, ok := r.data[sId]; ok {
-			delete(r.data, sId)
-		}
+		delete(r.data, sId)
 	}
 	return nil
 }
