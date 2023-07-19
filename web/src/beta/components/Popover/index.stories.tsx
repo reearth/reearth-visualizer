@@ -24,6 +24,8 @@ export const Controlled: Story = {
             <br />
             Which means the PopoverClose component does not change state automatically but still
             causes event.
+            <br />
+            This component set as top placement, but it can automatically adjust position to bottom.
           </div>
           <Popover.Close style={{ color: "inherit" }}>Close</Popover.Close>
         </Popover.Content>
@@ -38,7 +40,11 @@ export const Controlled: Story = {
 
 export const Uncontrolled: Story = {
   render: args => {
-    return <Popover.Provider {...args} />;
+    return (
+      <div style={{ maxWidth: "200px", margin: "0 auto" }}>
+        <Popover.Provider {...args} />
+      </div>
+    );
   },
   args: {
     children: (
@@ -58,7 +64,12 @@ export const Uncontrolled: Story = {
     open: undefined,
     onOpenChange: undefined,
     initialOpen: true,
-    placement: "top",
+    placement: "bottom",
+    offset: {
+      mainAxis: 20,
+      crossAxis: 300,
+      alignmentAxis: 0,
+    },
     modal: true,
   },
 };

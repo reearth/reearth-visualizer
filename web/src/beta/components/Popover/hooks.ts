@@ -17,6 +17,7 @@ export default function usePopover({
   initialOpen = false,
   placement = "bottom",
   modal,
+  offset: offsetProps,
   open: controlledOpen,
   onOpenChange: setControlledOpen,
 }: PopoverOptions = {}) {
@@ -31,7 +32,7 @@ export default function usePopover({
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(4),
+      offset(offsetProps ?? 4),
       flip({
         crossAxis: placement.includes("-"),
         fallbackAxisSideDirection: "end",
