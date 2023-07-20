@@ -60,6 +60,10 @@ import Workspaces from "./Icons/workspaces.svg";
 import Square from "./Icons/square.svg";
 import Swiper from "./Icons/swiper.svg";
 import Book from "./Icons/book.svg";
+import Copy from "./Icons/copy.svg";
+import GearSix from "./Icons/gearSix.svg";
+import PencilSimple from "./Icons/pencilSimple.svg";
+import Trash from "./Icons/trash.svg";
 
 // Widget tab
 import Desktop from "./Icons/desktop.svg";
@@ -119,4 +123,8 @@ export default {
   desktop: Desktop,
   mobile: Mobile,
   widgetSystem: WidgetSystem,
+  copy: Copy,
+  gearSix: GearSix,
+  pencilSimple: PencilSimple,
+  trash: Trash,
 };
