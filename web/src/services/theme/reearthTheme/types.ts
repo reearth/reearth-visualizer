@@ -46,13 +46,6 @@ export type Theme = Common & {
     projectList: unknown;
   };
   editor: {
-    bg0: string;
-    bg1: string;
-    weakText: string;
-    weakOutline: string;
-    mainText: string;
-    weakerText: string;
-    mainSelect: string;
     secondaryNavbar: unknown;
     infobox: unknown;
     widgetAlignSystem: {

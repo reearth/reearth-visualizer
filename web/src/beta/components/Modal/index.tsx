@@ -1,6 +1,7 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
+import useManageSwitchState from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled } from "@reearth/services/theme";
 
 type Size = "sm" | "md" | "lg";
@@ -15,20 +16,19 @@ export type SidebarTab = {
 
 type Props = {
   className?: string;
-  modalTitle?: string;
+  title?: string;
   size?: Size;
   button1?: ReactNode;
   button2?: ReactNode;
   children?: ReactNode;
   isVisible?: boolean;
   onClose?: () => void;
-  showSidebar?: boolean;
   sidebarTabs?: SidebarTab[];
 };
 
 const Modal: React.FC<Props> = ({
   className,
-  modalTitle,
+  title,
   size = "md",
   button1,
   button2,
@@ -41,16 +41,22 @@ const Modal: React.FC<Props> = ({
     sidebarTabs.length > 0 ? sidebarTabs[0].id : null,
   );
 
-  const handleTabChange = (tabId: string) => {
-    setSelectedTab(tabId);
-  };
+  const { handleActivate } = useManageSwitchState({ fields: sidebarTabs });
+
+  const handleTabChange = useCallback(
+    (tabId: string) => {
+      setSelectedTab(tabId);
+      handleActivate(tabId);
+    },
+    [handleActivate],
+  );
 
   return (
     <Wrapper
       className={className}
       size={size}
       isVisible={isVisible}
-      modalTitle={modalTitle}
+      title={title}
       onClose={onClose}>
       {sidebarTabs.length > 0 ? (
         <SidebarWrapper>
@@ -89,7 +95,6 @@ const Modal: React.FC<Props> = ({
 
 const SidebarWrapper = styled.div`
   display: flex;
-  align-items: flex-start;
   align-self: stretch;
 `;
 
@@ -97,10 +102,9 @@ const NavBarWrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px;
-  align-items: flex-start;
   gap: 10px;
   align-self: stretch;
-  border-right: 1px solid ${({ theme }) => theme.editor.weakOutline};
+  border-right: 1px solid #525252;
 `;
 
 const Tab = styled.button<{ isSelected: boolean }>`
@@ -109,8 +113,8 @@ const Tab = styled.button<{ isSelected: boolean }>`
   align-items: flex-start;
   align-self: stretch;
   border-radius: 4px;
-  background: ${({ isSelected, theme }) => (isSelected ? theme.editor.bg1 : `transparent`)};
-  color: ${({ isSelected, theme }) => (isSelected ? `white` : theme.editor.bg1)};
+  background: ${({ isSelected }) => (isSelected ? "#393939" : "transparent")};
+  color: ${({ isSelected }) => (isSelected ? "white" : "#393939")};
 `;
 
 const SidebarContentWrapper = styled.div`
@@ -145,9 +149,8 @@ const TabButtonWrapper = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;
-  gap: 20px;
   align-self: stretch;
-  border-top: 1px solid ${({ theme }) => theme.editor.weakOutline};
+  border-top: 1px solid #525252;
 `;
 
 const ButtonWrapper = styled.div`
@@ -157,7 +160,7 @@ const ButtonWrapper = styled.div`
   align-items: flex-start;
   gap: 12px;
   align-self: stretch;
-  border-top: 1px solid ${({ theme }) => theme.editor.weakOutline};
+  border-top: 1px solid #525252;
 `;
 
 export default Modal;

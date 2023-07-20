@@ -4,21 +4,19 @@ import { useClickAway, useKeyPressEvent } from "react-use";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
   children?: ReactNode;
   size?: "sm" | "md" | "lg";
   isVisible?: boolean;
-  modalTitle?: string;
+  title?: string;
   onClose?: () => void;
 };
 
-const Modal: React.FC<Props> = ({ className, size, isVisible, modalTitle, onClose, children }) => {
+const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, children }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const theme = useTheme();
-
   useClickAway(ref, () => onClose?.());
 
   const state = useTransition(!!isVisible, 300, {
@@ -35,10 +33,10 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, modalTitle, onClos
   return state === "unmounted" ? null : (
     <Bg state={state}>
       <Wrapper className={className} ref={ref} size={size}>
-        {!!modalTitle && (
+        {!!title && (
           <HeaderWrapper>
-            <ModalTitle size="body" weight="regular" color={theme.editor.mainText}>
-              {modalTitle}
+            <ModalTitle size="body" weight="regular" color="#E0E0E0">
+              {title}
             </ModalTitle>
             {onClose && <CloseIcon icon="cancel" onClick={onClose} />}
           </HeaderWrapper>
@@ -67,7 +65,7 @@ const Wrapper = styled.div<{ size?: string }>`
   margin: ${({ size }) => (size === "sm" ? "15%" : size === "lg" ? "4%" : "8%")} auto;
   padding-top: 36px;
   border-radius: 8px;
-  background: ${({ theme }) => theme.editor.bg0};
+  background: #161616;
   width: ${({ size }) => (size === "sm" ? "372px" : size === "lg" ? "684px" : "620px")};
   position: relative;
 `;
@@ -94,7 +92,7 @@ const HeaderWrapper = styled.div`
   align-self: stretch;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
-  background: ${({ theme }) => theme.editor.bg1};
+  background: #393939;
   position: absolute;
   top: 0;
   left: 0;
