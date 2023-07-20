@@ -118,7 +118,7 @@ func StartGQLServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, see
 	if useMongo {
 		db := mongotest.Connect(t)(t)
 		repos = lo.Must(mongo.New(ctx, db, false))
-		accountRepos = lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false))
+		accountRepos = lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false,true))
 	} else {
 		repos = memory.New()
 		accountRepos = accountmemory.New()
