@@ -1,6 +1,6 @@
 import type { Identifier, XYCoord } from "dnd-core";
 import type { FC, ReactNode } from "react";
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
@@ -16,11 +16,20 @@ type Props = {
   id: string;
   index: number;
   onItemMove: (dragIndex: number, hoverIndex: number) => void;
-  onItemDrop: (dropIndex: number) => void;
+  onItemDropOnItem: (dropIndex: number) => void;
+  onItemDropOutside: () => void;
   children: ReactNode;
 };
 
-export const Item: FC<Props> = ({ itemGroupKey, id, children, index, onItemMove, onItemDrop }) => {
+export const Item: FC<Props> = ({
+  itemGroupKey,
+  id,
+  children,
+  index,
+  onItemMove,
+  onItemDropOnItem,
+  onItemDropOutside,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: itemGroupKey,
@@ -52,7 +61,7 @@ export const Item: FC<Props> = ({ itemGroupKey, id, children, index, onItemMove,
       item.index = hoverIndex;
     },
     drop(item) {
-      onItemDrop(item.index);
+      onItemDropOnItem(item.index);
     },
   });
 
@@ -64,6 +73,14 @@ export const Item: FC<Props> = ({ itemGroupKey, id, children, index, onItemMove,
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
+    end: (item, monitor) => {
+      const didDrop = monitor.didDrop();
+      if (didDrop) {
+        onItemDropOnItem(item.index);
+      } else {
+        onItemDropOutside();
+      }
+    },
   });
 
   drag(drop(ref));

@@ -37,13 +37,17 @@ function DragAndDropList<Item>({
     });
   }, []);
 
-  const onItemDropLocal = useCallback(
+  const onItemDropOnItem = useCallback(
     (index: number) => {
       const item = movingItems[index];
       item && onItemDrop(movingItems[index], index);
     },
     [movingItems, onItemDrop],
   );
+
+  const onItemDropOutside = useCallback(() => {
+    setMovingItems(items);
+  }, [items]);
 
   return (
     <SWrapper gap={gap}>
@@ -56,7 +60,8 @@ function DragAndDropList<Item>({
             id={id}
             index={i}
             onItemMove={onItemMove}
-            onItemDrop={onItemDropLocal}>
+            onItemDropOnItem={onItemDropOnItem}
+            onItemDropOutside={onItemDropOutside}>
             {renderItem(item)}
           </Item>
         );
@@ -67,7 +72,7 @@ function DragAndDropList<Item>({
 
 export default DragAndDropList;
 
-const SWrapper = styled.div<Pick<Props, "gap">>`
+const SWrapper = styled.div<Pick<Props<undefined>, "gap">>`
   display: flex;
   flex-direction: column;
   ${({ gap }) => `gap: ${gap}px`}

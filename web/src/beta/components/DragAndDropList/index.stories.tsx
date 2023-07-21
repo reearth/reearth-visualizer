@@ -1,26 +1,56 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 
 import DragAndDropList from ".";
 
-type Item = {
+type DummyItem = {
   id: string;
   text: string;
 };
 
-const meta: Meta<typeof DragAndDropList<Item>> = {
-  component: DragAndDropList<Item>,
+const meta: Meta<typeof DragAndDropList<DummyItem>> = {
+  component: DragAndDropList<DummyItem>,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof DragAndDropList<Item>>;
+type Story = StoryObj<typeof DragAndDropList<DummyItem>>;
+
+const dummyItems: DummyItem[] = [...Array(10)].map((_, i) => {
+  const str = `${i} Sample ID / Text`;
+  return { id: str, text: str };
+});
+
+const DummyComponent: typeof DragAndDropList<DummyItem> = args => {
+  const [items, setItems] = useState<DummyItem[]>(dummyItems);
+  return (
+    <DragAndDropList<DummyItem>
+      {...args}
+      items={items}
+      onItemDrop={(item, index) => {
+        // most actual use case are api call or optimistic update
+        setItems(old => {
+          const items = [...old];
+          items.splice(
+            old.findIndex(o => o.id === item.id),
+            1,
+          );
+          items.splice(index, 0, item);
+          return items;
+        });
+      }}
+    />
+  );
+};
 
 export const Default: Story = {
-  render: args => (
-    <div style={{ maxHeight: "320px", overflowY: "auto", background: "gray", padding: "24px" }}>
-      <DragAndDropList {...args} />
-    </div>
-  ),
+  render: args => {
+    return (
+      <div style={{ maxHeight: "240px", overflowY: "auto", background: "gray", padding: "24px" }}>
+        <DummyComponent {...args} />
+      </div>
+    );
+  },
   args: {
     uniqueKey: "uniqueKey",
     renderItem: item => (
@@ -34,11 +64,7 @@ export const Default: Story = {
       </div>
     ),
     getId: item => item.id.toString(),
-    items: [...Array(10)].map((_, i) => {
-      const str = `${i} Sample ID / Text`;
-      return { id: str, text: str };
-    }),
+    items: dummyItems,
     gap: 16,
-    // onItemDrop: (id, index) => console.log(id, index),
   },
 };
