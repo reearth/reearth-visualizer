@@ -43,11 +43,11 @@ const Manager: React.FC<Props> = ({ sceneId }) => {
         {installedWidgets?.map(w => (
           <ListItem
             key={w.id}
-            text={w.title}
             isSelected={w.id === selectedWidget?.id}
             onItemClick={() => handleWidgetSelection(w.id)}
-            onActionClick={() => console.log("ACTIONS")}
-          />
+            onActionClick={() => console.log("ACTIONS")}>
+            {w.title}
+          </ListItem>
         ))}
       </InstalledWidgetsList>
     </Wrapper>

@@ -1,22 +1,22 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  text: string;
+  children: ReactNode;
   border?: boolean;
   isSelected?: boolean;
   onItemClick: (id: string) => void;
   onActionClick?: () => void;
 };
 
-const ListItem: FC<Props> = ({ text, border, isSelected, onItemClick, onActionClick }) => {
+const ListItem: FC<Props> = ({ children, border, isSelected, onItemClick, onActionClick }) => {
   return (
     <Wrapper>
       <Inner border={border} isSelected={isSelected} onClick={() => onItemClick("id")}>
-        <StyledText size="footnote">{text}</StyledText>
+        <StyledText size="footnote">{children}</StyledText>
       </Inner>
       {onActionClick && (
         <Button onClick={onActionClick}>

@@ -18,11 +18,11 @@ const ContentPage: React.FC<Props> = ({ onSelectPage, onPageAdd }) => {
           <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
             <Item
               key={i}
-              text={t("Page")}
               border
               onItemClick={() => onSelectPage(i.toString())}
-              onActionClick={() => console.log("onActionClick")}
-            />
+              onActionClick={() => console.log("onActionClick")}>
+              Page
+            </Item>
           </PageItemWrapper>
         ))}
       </SContentUp>

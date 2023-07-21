@@ -16,11 +16,11 @@ const ContentStory: React.FC<Props> = ({ onStoryAdd, onSelectStory }) => {
         {[...Array(100)].map((_, i) => (
           <Item
             key={i}
-            text={` Story${i} / Story${i} / Story${i} / Story${i} / Story${i} / Story${i} / Story${i}`}
-            border
             onItemClick={() => onSelectStory(i.toString())}
-            onActionClick={() => console.log("onActionClick")}
-          />
+            onActionClick={() => console.log("onActionClick")}>
+            Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} /
+            Story{i}
+          </Item>
         ))}
       </SContentUp>
       <SContentBottom>
