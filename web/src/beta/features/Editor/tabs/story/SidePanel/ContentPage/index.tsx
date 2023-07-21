@@ -1,5 +1,5 @@
+import Item from "@reearth/beta/components/ListItem";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
-import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -18,10 +18,11 @@ const ContentPage: React.FC<Props> = ({ onSelectPage, onPageAdd }) => {
           <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
             <Item
               key={i}
+              text={t("Page")}
+              border
               onItemClick={() => onSelectPage(i.toString())}
-              onActionClick={() => console.log("onActionClick")}>
-              Page
-            </Item>
+              onActionClick={() => console.log("onActionClick")}
+            />
           </PageItemWrapper>
         ))}
       </SContentUp>

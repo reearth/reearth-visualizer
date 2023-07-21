@@ -1,5 +1,5 @@
+import Item from "@reearth/beta/components/ListItem";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
-import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -16,11 +16,11 @@ const ContentStory: React.FC<Props> = ({ onStoryAdd, onSelectStory }) => {
         {[...Array(100)].map((_, i) => (
           <Item
             key={i}
+            text={` Story${i} / Story${i} / Story${i} / Story${i} / Story${i} / Story${i} / Story${i}`}
+            border
             onItemClick={() => onSelectStory(i.toString())}
-            onActionClick={() => console.log("onActionClick")}>
-            Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} / Story{i} /
-            Story{i}
-          </Item>
+            onActionClick={() => console.log("onActionClick")}
+          />
         ))}
       </SContentUp>
       <SContentBottom>
