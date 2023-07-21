@@ -24,7 +24,7 @@ const Manager: React.FC<Props> = ({ sceneId }) => {
   return (
     <Wrapper>
       <ActionArea>
-        <StyledIcon icon="plusSquare" size={14} onClick={() => setShow(s => !s)} />
+        <StyledIcon icon="folderPlus" onClick={() => setShow(s => !s)} />
       </ActionArea>
       {show && (
         <ul>

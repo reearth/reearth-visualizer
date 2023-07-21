@@ -24,6 +24,7 @@ import ArrowToggle from "./Icons/arrowToggle.svg";
 import Crosshair from "./Icons/crosshair.svg";
 
 // Fields / Actions
+import FolderPlus from "./Icons/folderPlus.svg";
 import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
@@ -95,6 +96,7 @@ export default {
   arrowToggle: ArrowToggle,
   cancel: Cancel,
   crosshair: Crosshair,
+  folderPlus: FolderPlus,
   plusSquare: PlusSquare,
   ellipse: Ellipse,
   playRight: PlayRight,
