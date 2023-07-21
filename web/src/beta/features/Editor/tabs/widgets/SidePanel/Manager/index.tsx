@@ -1,17 +1,25 @@
 import { useState } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
+import ListItem from "@reearth/beta/components/ListItem";
 import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 
 type Props = {
   sceneId?: string;
+  selectedWidgetId?: string;
 };
 
 const Manager: React.FC<Props> = ({ sceneId }) => {
   const [show, setShow] = useState(false);
-  const { installableWidgets, installedWidgets, handleWidgetAdd } = useHooks({ sceneId });
+  const {
+    selectedWidget,
+    installedWidgets,
+    installableWidgets,
+    handleWidgetAdd,
+    handleWidgetSelection,
+  } = useHooks({ sceneId });
 
   return (
     <Wrapper>
@@ -31,13 +39,17 @@ const Manager: React.FC<Props> = ({ sceneId }) => {
             ))}
         </ul>
       )}
-      {installedWidgets?.map(w => (
-        <p
-          key={`${w.pluginId}/${w.extensionId}`}
-          onClick={() => handleWidgetAdd(`${w.pluginId}/${w.extensionId}`)}>
-          {w.title}
-        </p>
-      ))}
+      <InstalledWidgetsList>
+        {installedWidgets?.map(w => (
+          <ListItem
+            key={w.id}
+            text={w.title}
+            isSelected={w.id === selectedWidget?.id}
+            onItemClick={() => handleWidgetSelection(w.id)}
+            onActionClick={() => console.log("ACTIONS")}
+          />
+        ))}
+      </InstalledWidgetsList>
     </Wrapper>
   );
 };
@@ -50,6 +62,11 @@ const ActionArea = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 4px;
+`;
+
+const InstalledWidgetsList = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const StyledIcon = styled(Icon)`

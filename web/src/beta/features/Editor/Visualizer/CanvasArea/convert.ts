@@ -1,14 +1,36 @@
-import { valueTypeFromGQL } from "@reearth/beta/utils/value";
-
 import {
-  PropertyFieldFragmentFragment,
+  type WidgetZone,
+  type WidgetSection,
+  type WidgetArea,
+  type Alignment,
+} from "@reearth/beta/lib/core/Crust";
+import {
+  BuiltinWidgets,
+  Widget as RawWidget,
+  WidgetAlignSystem,
+  WidgetLayoutConstraint,
+  isBuiltinWidget,
+} from "@reearth/beta/lib/core/Crust/Widgets";
+import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
+import { valueTypeFromGQL } from "@reearth/beta/utils/value";
+import {
+  type Maybe,
+  type WidgetZone as WidgetZoneType,
+  type WidgetSection as WidgetSectionType,
+  type WidgetArea as WidgetAreaType,
+  type Scene,
   PropertyFragmentFragment,
-  PropertyGroupFragmentFragment,
-  PropertyItemFragmentFragment,
-  PropertySchemaFieldFragmentFragment,
   PropertySchemaGroupFragmentFragment,
+  PropertyItemFragmentFragment,
+  PropertyGroupFragmentFragment,
+  PropertySchemaFieldFragmentFragment,
+  PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
-} from "../../gql";
+} from "@reearth/services/gql";
+
+type P = { [key in string]: any };
+
+export type DatasetMap = Record<string, Datasets>;
 
 export type Datasets = {
   // JSON schema
@@ -25,9 +47,128 @@ export type Datasets = {
   datasets: Record<string, any>[];
 };
 
-export type DatasetMap = Record<string, Datasets>;
+export type Widget = Omit<RawWidget, "layout" | "extended"> & { extended?: boolean };
 
-type P = { [key in string]: any };
+export const convertWidgets = (
+  scene?: Partial<Scene>,
+):
+  | {
+      floating: Widget[];
+      alignSystem: WidgetAlignSystem;
+      layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
+      ownBuiltinWidgets: (keyof BuiltinWidgets)[];
+    }
+  | undefined => {
+  const layoutConstraint = scene?.plugins
+    ?.map(p =>
+      p.plugin?.extensions.reduce<{
+        [w in string]: WidgetLayoutConstraint & { floating: boolean };
+      }>(
+        (b, e) =>
+          e?.widgetLayout?.extendable
+            ? {
+                ...b,
+                [`${p.plugin?.id}/${e.extensionId}`]: {
+                  extendable: {
+                    horizontally: e?.widgetLayout?.extendable.horizontally,
+                    vertically: e?.widgetLayout?.extendable.vertically,
+                  },
+                  floating: !!e?.widgetLayout?.floating,
+                },
+              }
+            : b,
+        {},
+      ),
+    )
+    .reduce((a, b) => ({ ...a, ...b }), {});
+
+  const floating = scene?.widgets
+    ?.filter(w => w.enabled && layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    .map(
+      (w): Widget => ({
+        id: w.id,
+        extended: !!w.extended,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        property: processProperty(w.property, undefined, undefined, undefined),
+      }),
+    );
+
+  const widgets = scene?.widgets
+    ?.filter(w => w.enabled && !layoutConstraint?.[`${w.pluginId}/${w.extensionId}`]?.floating)
+    .map(
+      (w): Widget => ({
+        id: w.id,
+        extended: !!w.extended,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        property: processProperty(w.property, undefined, undefined, undefined),
+      }),
+    );
+
+  const widgetZone = (zone?: Maybe<WidgetZoneType>): WidgetZone | undefined => {
+    const left = widgetSection(zone?.left);
+    const center = widgetSection(zone?.center);
+    const right = widgetSection(zone?.right);
+    if (!left && !center && !right) return;
+    return {
+      left,
+      center,
+      right,
+    };
+  };
+
+  const widgetSection = (section?: Maybe<WidgetSectionType>): WidgetSection | undefined => {
+    const top = widgetArea(section?.top);
+    const middle = widgetArea(section?.middle);
+    const bottom = widgetArea(section?.bottom);
+    if (!top && !middle && !bottom) return;
+    return {
+      top,
+      middle,
+      bottom,
+    };
+  };
+
+  const widgetArea = (area?: Maybe<WidgetAreaType>): WidgetArea | undefined => {
+    const align = area?.align.toLowerCase() as Alignment | undefined;
+    const padding = area?.padding as WidgetAreaPadding | undefined;
+    const areaWidgets: Widget[] | undefined = area?.widgetIds
+      .map<Widget | undefined>(w => widgets?.find(w2 => w === w2.id))
+      .filter((w): w is Widget => !!w);
+    if (!areaWidgets || (areaWidgets && areaWidgets.length < 1)) return;
+    return {
+      align: align ?? "start",
+      padding: {
+        top: padding?.top ?? 6,
+        bottom: padding?.bottom ?? 6,
+        left: padding?.left ?? 6,
+        right: padding?.right ?? 6,
+      },
+      widgets: areaWidgets,
+      background: area?.background as string | undefined,
+      centered: area?.centered,
+      gap: area?.gap ?? undefined,
+    };
+  };
+
+  const ownBuiltinWidgets = scene?.widgets
+    ?.filter(w => w.enabled)
+    .map(w => {
+      return `${w.pluginId}/${w.extensionId}` as keyof BuiltinWidgets;
+    })
+    .filter(isBuiltinWidget);
+
+  return {
+    floating: floating ?? [],
+    alignSystem: {
+      outer: widgetZone(scene?.widgetAlignSystem?.outer),
+      inner: widgetZone(scene?.widgetAlignSystem?.inner),
+    },
+    layoutConstraint,
+    ownBuiltinWidgets: ownBuiltinWidgets ?? [],
+  };
+};
 
 export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
