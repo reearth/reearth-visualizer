@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import TabButton from "@reearth/beta/features/Navbar/TabButton";
+import TabButton from "@reearth/beta/components/TabButton";
 import { useEditorNavigation } from "@reearth/beta/hooks/navigationHooks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -55,10 +55,8 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
 
 const RightSection = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: flex-end;
   gap: 4px;
-  height: 35px;
 `;
 
 export default useRightSide;

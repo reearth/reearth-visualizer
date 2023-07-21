@@ -1,5 +1,5 @@
+import Item from "@reearth/beta/components/ListItem";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
-import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
