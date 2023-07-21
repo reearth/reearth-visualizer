@@ -1,63 +1,74 @@
+import type { Identifier, XYCoord } from "dnd-core";
 import type { FC, ReactNode } from "react";
-import { memo, useMemo } from "react";
+import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
 
+type DragItem = {
+  index: number;
+  id: string;
+  type: string;
+};
+
 type Props = {
   itemGroupKey: string;
   id: string;
-  onItemMove: (id: string, hoverIndex: number) => void;
-  findItem: (id: string) => number | undefined;
-  onItemDrop: (id: string) => void;
+  index: number;
+  onItemMove: (dragIndex: number, hoverIndex: number) => void;
+  onItemDrop: (dropIndex: number) => void;
   children: ReactNode;
 };
 
-type DragItem = {
-  id: string;
-  originalIndex: number;
-};
+export const Item: FC<Props> = ({ itemGroupKey, id, children, index, onItemMove, onItemDrop }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
+    accept: itemGroupKey,
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      };
+    },
+    hover(item: DragItem, monitor) {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = item.index;
+      const hoverIndex = index;
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+      onItemMove(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+    drop(item) {
+      onItemDrop(item.index);
+    },
+  });
 
-const Item: FC<Props> = ({ itemGroupKey, id, children, findItem, onItemMove, onItemDrop }) => {
-  const thisItemsOriginalIndex = useMemo(() => findItem(id), [findItem, id]);
-  const [{ isDragging }, drag] = useDrag(
-    () => ({
-      type: itemGroupKey,
-      item: { id, originalIndex: thisItemsOriginalIndex },
-      collect: monitor => ({
-        isDragging: monitor.isDragging(),
-      }),
-      end: (item, monitor) => {
-        const { id: droppedId, originalIndex } = item;
-        const didDrop = monitor.didDrop();
-        if (!didDrop && originalIndex !== undefined) {
-          console.log("when it happens? 1");
-          onItemMove(droppedId, originalIndex);
-        } else {
-          onItemDrop(droppedId);
-        }
-      },
+  const [{ isDragging }, drag] = useDrag({
+    type: itemGroupKey,
+    item: () => {
+      return { id, index };
+    },
+    collect: monitor => ({
+      isDragging: monitor.isDragging(),
     }),
-    [id, thisItemsOriginalIndex, onItemMove],
-  );
+  });
 
-  const [, drop] = useDrop(
-    () => ({
-      accept: itemGroupKey,
-      hover({ id: draggedId }: DragItem) {
-        if (draggedId !== id) {
-          console.log("whats this 3 / ", draggedId, id);
-          const overIndex = findItem(id);
-          if (overIndex === undefined) return;
-          onItemMove(draggedId, overIndex);
-        }
-      },
-    }),
-    [findItem, onItemMove],
-  );
-
+  drag(drop(ref));
   return (
-    <SItem ref={node => drag(drop(node))} isDragging={isDragging}>
+    <SItem ref={ref} data-handler-id={handlerId} isDragging={isDragging}>
       {children}
     </SItem>
   );
