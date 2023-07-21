@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Item from "@reearth/beta/components/ListItem";
+import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
@@ -27,7 +27,7 @@ const ContentPage: React.FC<Props> = ({
       <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
         {[...Array(100)].map((_, i) => (
           <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
-            <Item
+            <ListItem
               key={i}
               border
               onItemClick={() => onPageSelect(i.toString())}
@@ -62,7 +62,7 @@ const ContentPage: React.FC<Props> = ({
                 />
               }>
               Page
-            </Item>
+            </ListItem>
           </PageItemWrapper>
         ))}
       </SContentUp>

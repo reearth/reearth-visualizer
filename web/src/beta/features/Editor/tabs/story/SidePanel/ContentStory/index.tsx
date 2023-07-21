@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Item from "@reearth/beta/components/ListItem";
+import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
 import { styled } from "@reearth/services/theme";
@@ -28,7 +28,7 @@ const ContentStory: React.FC<Props> = ({
     <SContent>
       <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
         {[...Array(100)].map((_, i) => (
-          <Item
+          <ListItem
             key={i}
             onItemClick={() => onStorySelect(i.toString())}
             onActionClick={() => setOpenedPageId(old => (old ? undefined : i.toString()))}
@@ -70,7 +70,7 @@ const ContentStory: React.FC<Props> = ({
               />
             }>
             Story
-          </Item>
+          </ListItem>
         ))}
       </SContentUp>
       <SContentBottom>
