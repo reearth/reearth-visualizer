@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
@@ -22,49 +23,75 @@ const ContentPage: React.FC<Props> = ({
   const t = useT();
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
+  const [items, setItems] = useState(
+    [...Array(100)].map((_, i) => ({
+      id: i.toString(),
+      index: i,
+      text: "page" + i,
+    })),
+  );
   return (
     <SContent>
       <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
-        {[...Array(100)].map((_, i) => (
-          <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
-            <ListItem
-              key={i}
-              border
-              onItemClick={() => onPageSelect(i.toString())}
-              onActionClick={() => setOpenedPageId(old => (old ? undefined : i.toString()))}
-              onOpenChange={isOpen => {
-                setOpenedPageId(isOpen ? i.toString() : undefined);
-              }}
-              isSelected={i === 0}
-              isOpenAction={openedPageId === i.toString()}
-              actionContent={
-                <PopoverMenuContent
-                  width="120px"
-                  size="md"
-                  items={[
-                    {
-                      icon: "copy",
-                      name: "Duplicate",
-                      onClick: () => {
-                        setOpenedPageId(undefined);
-                        onPageDuplicate(i.toString());
-                      },
-                    },
-                    {
-                      icon: "trash",
-                      name: "Delete",
-                      onClick: () => {
-                        setOpenedPageId(undefined);
-                        onPageDelete(i.toString());
-                      },
-                    },
-                  ]}
-                />
-              }>
-              Page
-            </ListItem>
-          </PageItemWrapper>
-        ))}
+        <DragAndDropList
+          uniqueKey="LeftPanelPages"
+          gap={8}
+          items={items}
+          getId={item => item.id}
+          onItemDrop={(item, index) => {
+            // most actual use case are api call or optimistic update
+            setItems(old => {
+              const items = [...old];
+              items.splice(
+                old.findIndex(o => o.id === item.id),
+                1,
+              );
+              items.splice(index, 0, item);
+              return items;
+            });
+          }}
+          renderItem={item => {
+            return (
+              <PageItemWrapper pageCount={item.index + 1} isSwipable={item.index % 2 === 0}>
+                <ListItem
+                  border
+                  onItemClick={() => onPageSelect(item.id)}
+                  onActionClick={() => setOpenedPageId(old => (old ? undefined : item.id))}
+                  onOpenChange={isOpen => {
+                    setOpenedPageId(isOpen ? item.id : undefined);
+                  }}
+                  isSelected={item.index === 0}
+                  isOpenAction={openedPageId === item.id}
+                  actionContent={
+                    <PopoverMenuContent
+                      width="120px"
+                      size="md"
+                      items={[
+                        {
+                          icon: "copy",
+                          name: "Duplicate",
+                          onClick: () => {
+                            setOpenedPageId(undefined);
+                            onPageDuplicate(item.id);
+                          },
+                        },
+                        {
+                          icon: "trash",
+                          name: "Delete",
+                          onClick: () => {
+                            setOpenedPageId(undefined);
+                            onPageDelete(item.id);
+                          },
+                        },
+                      ]}
+                    />
+                  }>
+                  Page
+                </ListItem>
+              </PageItemWrapper>
+            );
+          }}
+        />
       </SContentUp>
       <SContentBottom>
         <Action icon="square" title={`+ ${t("New Page")}`} onClick={onPageAdd} />
