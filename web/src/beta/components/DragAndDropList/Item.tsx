@@ -74,7 +74,9 @@ export const Item: FC<Props> = ({ itemGroupKey, id, children, index, onItemMove,
   );
 };
 
+export default memo(Item);
+
 const SItem = styled.div<{ isDragging: boolean }>`
-  ${({ isDragging }) => `opacity: ${isDragging ? 0 : 1}`}
-  cursor: "move",
+  ${({ isDragging }) => `opacity: ${isDragging ? 0 : 1};`}
+  cursor: move;
 `;
