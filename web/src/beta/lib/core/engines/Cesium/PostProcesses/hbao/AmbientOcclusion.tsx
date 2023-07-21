@@ -1,7 +1,6 @@
 import { PerspectiveFrustum, type Scene, Math as CesiumMath } from "@cesium/engine";
 import { useState, type FC } from "react";
 import { useCesium } from "resium";
-import invariant from "tiny-invariant";
 
 import { useInstance } from "../../hooks/useInstance";
 import { usePreRender } from "../../hooks/useSceneEvent";
@@ -84,10 +83,11 @@ export const AmbientOcclusionStage = ({
 
   usePreRender(() => {
     const frustum = scene?.camera.frustum;
-    invariant(frustum instanceof PerspectiveFrustum);
-    const cotFovy = 1 / Math.tan(frustum.fovy / 2);
-    stage.uniforms.focalLength.x = cotFovy * frustum.aspectRatio;
-    stage.uniforms.focalLength.y = cotFovy;
+    if (frustum instanceof PerspectiveFrustum) {
+      const cotFovy = 1 / Math.tan(frustum.fovy / 2);
+      stage.uniforms.focalLength.x = cotFovy * frustum.aspectRatio;
+      stage.uniforms.focalLength.y = cotFovy;
+    }
   });
 
   return null;

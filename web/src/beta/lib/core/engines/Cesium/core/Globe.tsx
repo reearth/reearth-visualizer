@@ -31,6 +31,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     const opts = {
       terrain: terrainProperty?.terrain,
       terrainType: terrainProperty?.terrainType,
+      terrainNormal: terrainProperty?.terrainNormal,
       terrainCesiumIonAccessToken:
         terrainProperty?.terrainCesiumIonAccessToken || cesiumIonAccessToken,
       terrainCesiumIonAsset: terrainProperty?.terrainCesiumIonAsset,
@@ -44,6 +45,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     terrainProperty?.terrainCesiumIonAccessToken,
     terrainProperty?.terrainCesiumIonAsset,
     terrainProperty?.terrainCesiumIonUrl,
+    terrainProperty?.terrainNormal,
     cesiumIonAccessToken,
   ]);
 
@@ -82,24 +84,33 @@ const terrainProviders: {
     | ((
         opts: Pick<
           TerrainProperty,
-          "terrainCesiumIonAccessToken" | "terrainCesiumIonAsset" | "terrainCesiumIonUrl"
+          | "terrainCesiumIonAccessToken"
+          | "terrainCesiumIonAsset"
+          | "terrainCesiumIonUrl"
+          | "terrainNormal"
         >,
       ) => TerrainProvider | null);
 } = {
-  cesium: ({ terrainCesiumIonAccessToken }) =>
+  cesium: ({ terrainCesiumIonAccessToken, terrainNormal }) =>
     // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
     new CesiumTerrainProvider({
       url: IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,
       }),
-      requestVertexNormals: false,
+      requestVertexNormals: terrainNormal,
       requestWaterMask: false,
     }),
-  arcgis: () =>
+  arcgis: ({ terrainNormal }) =>
     new ArcGISTiledElevationTerrainProvider({
       url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+      requestVertexNormals: terrainNormal,
     }),
-  cesiumion: ({ terrainCesiumIonAccessToken, terrainCesiumIonAsset, terrainCesiumIonUrl }) =>
+  cesiumion: ({
+    terrainCesiumIonAccessToken,
+    terrainCesiumIonAsset,
+    terrainCesiumIonUrl,
+    terrainNormal,
+  }) =>
     terrainCesiumIonAsset
       ? new CesiumTerrainProvider({
           url:
@@ -107,7 +118,7 @@ const terrainProviders: {
             IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
               accessToken: terrainCesiumIonAccessToken,
             }),
-          requestVertexNormals: true,
+          requestVertexNormals: terrainNormal,
         })
       : null,
 };

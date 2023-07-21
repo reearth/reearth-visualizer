@@ -8,6 +8,7 @@ import type {
   DataType,
   ComputedFeature,
 } from "../../mantle";
+import { SceneProperty } from "../types";
 
 import useHooks, { type Atom, type EvalFeature } from "./hooks";
 
@@ -27,7 +28,7 @@ export type CommonProps = {
 
 export type FeatureComponentProps = {
   layer: ComputedLayer;
-  sceneProperty?: any;
+  sceneProperty?: SceneProperty;
   onFeatureRequest?: (range: DataRange) => void;
   onFeatureFetch?: (features: Feature[]) => void;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;

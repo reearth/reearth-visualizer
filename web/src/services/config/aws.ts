@@ -1,5 +1,7 @@
 import { Amplify } from "aws-amplify";
 
+import { Config } from ".";
+
 export type CognitoParams = {
   region?: string;
   userPoolId?: string;
@@ -11,9 +13,9 @@ export type CognitoParams = {
   oauthResponseType?: string;
 };
 
-export const configureCognito = () => {
-  const cognitoConfig = window.REEARTH_CONFIG?.cognito;
-  const authProvider = window.REEARTH_CONFIG?.authProvider;
+export const configureCognito = (config: Config) => {
+  const cognitoConfig = config.cognito;
+  const authProvider = config.authProvider;
 
   if (cognitoConfig && authProvider === "cognito") {
     const cognitoRegion = cognitoConfig?.region;

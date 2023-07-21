@@ -2,11 +2,14 @@ import { ReactNode, useMemo } from "react";
 
 import { Tab } from "@reearth/beta/features/Navbar";
 
+import WidgetSidePanel from "./tabs/widgets/SidePanel";
+
 type Props = {
   tab: Tab;
+  sceneId?: string;
 };
 
-export default ({ tab }: Props) => {
+export default ({ tab, sceneId }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "scene":
@@ -14,13 +17,13 @@ export default ({ tab }: Props) => {
       case "story":
         return <div>TODO: right panel</div>;
       case "widgets":
-        return <div>TODO: right panel</div>;
+        return <WidgetSidePanel sceneId={sceneId} />;
 
       case "publish":
       default:
         return undefined;
     }
-  }, [tab]);
+  }, [tab, sceneId]);
 
   return {
     rightPanel,

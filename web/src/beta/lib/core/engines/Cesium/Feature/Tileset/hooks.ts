@@ -15,6 +15,7 @@ import {
   Cesium3DTileFeature,
   Model,
   Cesium3DTilePointFeature,
+  ImageBasedLighting,
 } from "cesium";
 import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -29,6 +30,7 @@ import type {
   Cesium3DTilesAppearance,
 } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
+import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import type { InternalCesium3DTileFeature } from "../../types";
 import { lookupFeatures, translationWithClamping } from "../../utils";
 import {
@@ -297,6 +299,7 @@ export const useHooks = ({
   boxId,
   isVisible,
   property,
+  sceneProperty,
   layer,
   feature,
   meta,
@@ -516,11 +519,48 @@ export const useHooks = ({
       : null;
   }, [isVisible, tileset, url, type, meta]);
 
+  const imageBasedLighting = useMemo(() => {
+    if (
+      !property?.specularEnvironmentMaps &&
+      !property?.sphericalHarmonicCoefficients &&
+      !sceneProperty?.light?.specularEnvironmentMaps &&
+      !sceneProperty?.light?.sphericalHarmonicCoefficients
+    )
+      return;
+
+    const ibl = new ImageBasedLighting();
+    const specularEnvironmentMaps =
+      property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
+    const imageBasedLightIntensity =
+      property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
+    const sphericalHarmonicCoefficients = arrayToCartecian3(
+      property?.sphericalHarmonicCoefficients ??
+        sceneProperty?.light?.sphericalHarmonicCoefficients,
+      imageBasedLightIntensity,
+    );
+
+    if (specularEnvironmentMaps) {
+      ibl.specularEnvironmentMaps = specularEnvironmentMaps;
+    }
+    if (sphericalHarmonicCoefficients) {
+      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients;
+    }
+    return ibl;
+  }, [
+    property?.specularEnvironmentMaps,
+    property?.sphericalHarmonicCoefficients,
+    property?.imageBasedLightIntensity,
+    sceneProperty?.light?.specularEnvironmentMaps,
+    sceneProperty?.light?.sphericalHarmonicCoefficients,
+    sceneProperty?.light?.imageBasedLightIntensity,
+  ]);
+
   return {
     tilesetUrl,
     ref,
     style,
     clippingPlanes,
     builtinBoxProps,
+    imageBasedLighting,
   };
 };

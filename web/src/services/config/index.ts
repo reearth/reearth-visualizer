@@ -67,7 +67,7 @@ export default async function loadConfig() {
   };
 
   if (config?.cognito) {
-    configureCognito();
+    configureCognito(config);
   }
 
   if (config?.passwordPolicy) {
