@@ -4,11 +4,12 @@ import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useSecondaryNav from "@reearth/beta/features/Editor/useSecondaryNav";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
-import Navbar, { Tab } from "@reearth/beta/features/Navbar";
+import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { metrics, styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
+import { navbarHeight } from "./SecondaryNav";
 
 type Props = {
   sceneId: string;
@@ -108,7 +109,7 @@ const Center = styled.div`
 const CenterContents = styled.div<{ hasNav?: boolean }>`
   display: flex;
   justify-content: center;
-  height: ${({ hasNav }) => (hasNav ? "calc(100% - 52px)" : "100%")};
+  height: ${({ hasNav }) => (hasNav ? `calc(100% - ${navbarHeight})` : "100%")};
 `;
 
 const VisualizerWrapper = styled.div<{ tab?: Tab; visualizerWidth?: string | number }>`
