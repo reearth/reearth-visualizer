@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from "react";
 
+import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import WidgetNav, { type Device } from "@reearth/beta/features/Editor/tabs/widgets/Nav";
-import VisualizerNav from "@reearth/beta/features/Editor/VisualizerNav";
 import { Tab } from "@reearth/beta/features/Navbar";
 
 type Props = {
@@ -19,7 +19,7 @@ export default ({
   handleDeviceChange,
   handleWidgetEditorToggle,
 }: Props) => {
-  const visualizerNav = useMemo<ReactNode | undefined>(() => {
+  const secondaryNav = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "widgets":
         return (
@@ -31,7 +31,7 @@ export default ({
           />
         );
       case "publish":
-        return <VisualizerNav>TODO: Publishing navbar</VisualizerNav>;
+        return <SecondaryNav>TODO: Publishing navbar</SecondaryNav>;
       case "scene":
       case "story":
       default:
@@ -40,6 +40,6 @@ export default ({
   }, [tab, selectedDevice, showWidgetEditor, handleDeviceChange, handleWidgetEditorToggle]);
 
   return {
-    visualizerNav,
+    secondaryNav,
   };
 };

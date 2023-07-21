@@ -4,30 +4,19 @@ import CanvasArea from "./CanvasArea";
 
 type Props = {
   sceneId?: string;
-  deviceWidth?: string | number;
-  hasNav?: boolean;
 };
 
-const Visualizer: React.FC<Props> = ({ sceneId, deviceWidth, hasNav }) => {
+const Visualizer: React.FC<Props> = ({ sceneId }) => {
   return (
-    <Wrapper hasNav={hasNav}>
-      <InnerWrapper deviceWidth={deviceWidth}>
-        <CanvasArea sceneId={sceneId} isBuilt={false} inEditor={true} />
-      </InnerWrapper>
+    <Wrapper>
+      <CanvasArea sceneId={sceneId} isBuilt={false} inEditor={true} />
     </Wrapper>
   );
 };
 
 export default Visualizer;
 
-const Wrapper = styled.div<{ hasNav?: boolean }>`
-  display: flex;
-  justify-content: center;
+const Wrapper = styled.div`
   background: ${({ theme }) => theme.general.bg.strong};
-  height: ${({ hasNav }) => (hasNav ? "calc(100% - 64px)" : "100%")};
-`;
-
-const InnerWrapper = styled.div<{ deviceWidth?: string | number }>`
-  width: ${({ deviceWidth }) =>
-    typeof deviceWidth === "number" ? `${deviceWidth}px` : deviceWidth};
+  height: 100%;
 `;

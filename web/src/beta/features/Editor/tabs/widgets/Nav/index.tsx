@@ -2,7 +2,7 @@ import Toggle from "@reearth/beta/components/properties/Toggle";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import VisualizerNav from "../../../VisualizerNav";
+import SecondaryNav from "../../../SecondaryNav";
 
 import Devices, { type Device } from "./Devices";
 
@@ -25,7 +25,7 @@ const Nav: React.FC<Props> = ({
 }) => {
   const t = useT();
   return (
-    <StyledVisualizerNav>
+    <StyledSecondaryNav>
       <Devices selectedDevice={selectedDevice} onDeviceChange={onDeviceChange} />
       <AlignSystem>
         <Toggle
@@ -35,13 +35,13 @@ const Nav: React.FC<Props> = ({
           onChange={onShowWidgetEditor}
         />
       </AlignSystem>
-    </StyledVisualizerNav>
+    </StyledSecondaryNav>
   );
 };
 
 export default Nav;
 
-const StyledVisualizerNav = styled(VisualizerNav)`
+const StyledSecondaryNav = styled(SecondaryNav)`
   background: ${({ theme }) => theme.general.bg.strong};
   display: flex;
   align-items: center;

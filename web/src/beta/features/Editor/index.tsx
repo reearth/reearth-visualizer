@@ -1,9 +1,8 @@
 import Resizable from "@reearth/beta/components/Resizable";
 import StoryPanel from "@reearth/beta/features/Editor/tabs/story/StoryPanel";
-import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
-import useVisualizerNav from "@reearth/beta/features/Editor/useVisualizerNav";
+import useSecondaryNav from "@reearth/beta/features/Editor/useSecondaryNav";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
@@ -19,12 +18,17 @@ type Props = {
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
-  const { selectedDevice, showWidgetEditor, handleDeviceChange, handleWidgetEditorToggle } =
-    useHooks();
+  const {
+    selectedDevice,
+    visualizerWidth,
+    showWidgetEditor,
+    handleDeviceChange,
+    handleWidgetEditorToggle,
+  } = useHooks({ tab });
 
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab, sceneId });
-  const { visualizerNav } = useVisualizerNav({
+  const { secondaryNav } = useSecondaryNav({
     tab,
     selectedDevice,
     showWidgetEditor,
@@ -53,12 +57,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               {leftPanel}
             </Resizable>
           )}
-          <Center hasStory={isStory}>
-            {isStory && <StoryPanel />}
-            <VisualizerWrapper tab={tab}>
-              {visualizerNav}
-              <Visualizer sceneId={sceneId} deviceWidth={devices[selectedDevice]} />
-            </VisualizerWrapper>
+          <Center>
+            {secondaryNav}
+            <CenterContents hasNav={!!secondaryNav}>
+              {isStory && <StoryPanel />}
+              <VisualizerWrapper tab={tab} visualizerWidth={visualizerWidth}>
+                <Visualizer sceneId={sceneId} />
+              </VisualizerWrapper>
+            </CenterContents>
           </Center>
           {rightPanel && (
             <Resizable
@@ -89,19 +95,24 @@ const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
   height: 0;
-  background-color: ${({ theme }) => theme.general.bg.veryStrong};
+  background: ${({ theme }) => theme.general.bg.veryStrong};
 `;
 
-const Center = styled.div<{ hasStory: boolean }>`
+const Center = styled.div`
   height: 100%;
   flex-grow: 1;
   display: flex;
-  flex-direction: ${hasStory => (hasStory ? "row" : "column")};
+  flex-direction: column;
 `;
 
-const VisualizerWrapper = styled.div<{ tab?: Tab }>`
-  height: ${({ tab }) =>
-    tab === "widgets" ? "calc(100% - 64px)" : tab === "publish" ? "calc(100% - 48px)" : "100%"};
+const CenterContents = styled.div<{ hasNav?: boolean }>`
+  display: flex;
+  justify-content: center;
+  height: ${({ hasNav }) => (hasNav ? "calc(100% - 52px)" : "100%")};
+`;
+
+const VisualizerWrapper = styled.div<{ tab?: Tab; visualizerWidth?: string | number }>`
   border-radius: 4px;
-  flex-grow: 1;
+  width: ${({ visualizerWidth }) =>
+    typeof visualizerWidth === "number" ? `${visualizerWidth}px` : visualizerWidth};
 `;

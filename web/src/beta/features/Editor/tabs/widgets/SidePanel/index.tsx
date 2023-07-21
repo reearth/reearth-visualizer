@@ -19,7 +19,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
         {
           id: "story",
           title: t("Widget Manager"),
-          maxHeight: "33%",
+          maxHeight: "50%",
           children: <Manager sceneId={sceneId} />,
         },
         {
