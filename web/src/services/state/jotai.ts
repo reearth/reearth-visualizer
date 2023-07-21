@@ -1,9 +1,9 @@
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import { Clock } from "@reearth/beta/lib/core/Crust/Plugins/plugin_types";
-import { type LayerSelectionReason } from "@reearth/beta/lib/core/Map";
-import { Camera } from "@reearth/beta/utils/value";
+import { Clock } from "@reearth/classic/components/molecules/Visualizer/Plugin/types";
+import { LayerSelectionReason } from "@reearth/classic/core/Map";
+import { Camera } from "@reearth/classic/util/value";
 import { ProjectType } from "@reearth/types";
 
 export { default as useSetError, useError } from "./gqlErrorHandling";
