@@ -1,8 +1,8 @@
 import { useState } from "react";
 
+import Item from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
-import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
@@ -35,7 +35,7 @@ const ContentStory: React.FC<Props> = ({
             onOpenChange={isOpen => {
               setOpenedPageId(isOpen ? i.toString() : undefined);
             }}
-            isActive={false}
+            isSelected={false}
             isOpenAction={openedPageId === i.toString()}
             actionContent={
               <PopoverMenuContent

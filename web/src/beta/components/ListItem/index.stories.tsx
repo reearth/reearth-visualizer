@@ -10,7 +10,7 @@ type Story = StoryObj<typeof ActionItem>;
 
 export const Default: Story = {
   args: {
-    isActive: false,
+    isSelected: false,
     actionContent: <div style={{ background: "gray" }}>actionContent</div>,
     isOpenAction: true,
     children:

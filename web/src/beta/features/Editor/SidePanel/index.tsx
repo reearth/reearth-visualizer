@@ -17,7 +17,7 @@ const SidePanel: React.FC<Props> = ({ location, contents }) => {
   return (
     <Wrapper location={location}>
       {contents.map(content => (
-        <Section maxHeight={content.maxHeight} key={content.id}>
+        <Section key={content.id} maxHeight={content.maxHeight}>
           <Card>
             <Title>{content.title}</Title>
             <Content>{content.children}</Content>

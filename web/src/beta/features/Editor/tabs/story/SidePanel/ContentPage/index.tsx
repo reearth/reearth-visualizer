@@ -1,8 +1,8 @@
 import { useState } from "react";
 
+import Item from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
-import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -29,12 +29,13 @@ const ContentPage: React.FC<Props> = ({
           <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
             <Item
               key={i}
+              border
               onItemClick={() => onPageSelect(i.toString())}
               onActionClick={() => setOpenedPageId(old => (old ? undefined : i.toString()))}
               onOpenChange={isOpen => {
                 setOpenedPageId(isOpen ? i.toString() : undefined);
               }}
-              isActive={i === 0}
+              isSelected={i === 0}
               isOpenAction={openedPageId === i.toString()}
               actionContent={
                 <PopoverMenuContent

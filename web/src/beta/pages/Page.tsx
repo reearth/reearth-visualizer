@@ -1,8 +1,8 @@
 import React, { ReactElement, ReactNode, useMemo } from "react";
 
 import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
-import { AuthenticatedPage } from "@reearth/services/auth";
 import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
+import { AuthenticatedPage } from "@reearth/services/auth";
 import { useTheme } from "@reearth/services/theme";
 
 import Loading from "../components/Loading";
@@ -23,7 +23,7 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, childre
 
   const { loading: loadingMe } = useMeQuery();
 
-  const { scene, loading: loadingScene } = useSceneQuery(sceneId);
+  const { scene, loading: loadingScene } = useSceneQuery({ sceneId });
 
   const currentProjectId = useMemo(
     () => projectId ?? scene?.projectId,
