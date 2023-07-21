@@ -3,9 +3,9 @@ import { useMemo, useEffect, useCallback } from "react";
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
+import { useSceneFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
-  useSceneId,
   useSceneMode,
   useIsCapturing,
   useCamera,
@@ -16,10 +16,13 @@ import {
   useSelectedWidgetArea,
 } from "@reearth/services/state";
 
+import { convertWidgets } from "./convert";
 import { BlockType } from "./type";
 
-export default (isBuilt?: boolean) => {
-  const [sceneId] = useSceneId();
+export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
+  const { useSceneQuery } = useSceneFetcher();
+  const { scene } = useSceneQuery({ sceneId });
+
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
@@ -81,15 +84,7 @@ export default (isBuilt?: boolean) => {
     return [l];
   }, []);
 
-  const widgets = useMemo(
-    () => ({
-      alignSystem: undefined,
-      floatingWidgets: undefined,
-      layoutConstraint: undefined,
-      ownBuiltinWidgets: undefined,
-    }),
-    [],
-  );
+  const widgets = convertWidgets(scene);
   // TODO: Fix to use exact type through GQL typing
   const sceneProperty: any = useMemo(
     () => ({

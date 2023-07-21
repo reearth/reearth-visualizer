@@ -57,7 +57,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             {isStory && <StoryPanel />}
             <VisualizerWrapper tab={tab}>
               {visualizerNav}
-              <Visualizer deviceWidth={devices[selectedDevice]} />
+              <Visualizer sceneId={sceneId} deviceWidth={devices[selectedDevice]} />
             </VisualizerWrapper>
           </Center>
           {rightPanel && (

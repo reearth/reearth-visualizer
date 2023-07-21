@@ -1,4 +1,4 @@
-import { gql } from "../__gen__";
+import { gql } from "@apollo/client";
 
 export const pluginFragment = gql(`
   fragment PluginFragment on Plugin {

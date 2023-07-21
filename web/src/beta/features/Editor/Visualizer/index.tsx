@@ -3,15 +3,16 @@ import { styled } from "@reearth/services/theme";
 import CanvasArea from "./CanvasArea";
 
 type Props = {
+  sceneId?: string;
   deviceWidth?: string | number;
   hasNav?: boolean;
 };
 
-const Visualizer: React.FC<Props> = ({ deviceWidth, hasNav }) => {
+const Visualizer: React.FC<Props> = ({ sceneId, deviceWidth, hasNav }) => {
   return (
     <Wrapper hasNav={hasNav}>
       <InnerWrapper deviceWidth={deviceWidth}>
-        <CanvasArea isBuilt={false} inEditor={true} />
+        <CanvasArea sceneId={sceneId} isBuilt={false} inEditor={true} />
       </InnerWrapper>
     </Wrapper>
   );
