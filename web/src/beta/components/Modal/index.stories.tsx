@@ -38,6 +38,32 @@ const TabContent: ReactNode = (
     </Text>
   </>
 );
+const TabContent2: ReactNode = (
+  <>
+    <Text size="h1">Tab Title2</Text>
+    <Text size="h5">
+      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
+      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
+      Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
+      words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
+      classical literature, discovered the undoubtable source.
+    </Text>
+  </>
+);
+
+const TabContent3: ReactNode = (
+  <>
+    <Text size="h1">Tab Title3</Text>
+    <Text size="h4">Tab subTitle3</Text>
+    <Text size="h5">
+      Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
+      classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a
+      Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin
+      words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in
+      classical literature, discovered the undoubtable source.
+    </Text>
+  </>
+);
 
 const sidebarTab1: SidebarTab = {
   id: "1",
@@ -50,9 +76,17 @@ const sidebarTab1: SidebarTab = {
 const sidebarTab2: SidebarTab = {
   id: "2",
   label: "Tab2",
-  content: TabContent,
-  tabButton1: <Button text="Confirm" />,
-  tabButton2: <Button text="Cancel" />,
+  content: TabContent2,
+  tabButton1: <Button text="Yes" />,
+  tabButton2: <Button text="No" />,
+};
+
+const sidebarTab3: SidebarTab = {
+  id: "3",
+  label: "Tab3",
+  content: TabContent3,
+  tabButton1: <Button text="Ok" large />,
+  tabButton2: <Button text="Cancel" large />,
 };
 
 export const Small: Story = {
@@ -85,7 +119,7 @@ export const Sidebar: Story = {
       size="lg"
       isVisible={true}
       title="Modal with sidebar"
-      sidebarTabs={[sidebarTab1, sidebarTab2]}
+      sidebarTabs={[sidebarTab1, sidebarTab2, sidebarTab3]}
     />
   ),
 };

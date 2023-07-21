@@ -1,7 +1,7 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
-import useManageSwitchState from "@reearth/beta/hooks/useManageSwitchState/hooks";
+import useManageSwitchState, { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
 import { styled } from "@reearth/services/theme";
 
 type Size = "sm" | "md" | "lg";
@@ -35,17 +35,26 @@ const Modal: React.FC<Props> = ({
   children,
   isVisible,
   onClose,
-  sidebarTabs = [],
+  sidebarTabs,
 }) => {
-  const [selectedTab, setSelectedTab] = useState<string | null>(
-    sidebarTabs.length > 0 ? sidebarTabs[0].id : null,
-  );
+  const [TabsFields, setTabsFields] = useState<SwitchField<SidebarTab>[]>([]);
 
-  const { handleActivate } = useManageSwitchState({ fields: sidebarTabs });
+  useEffect(() => {
+    if (sidebarTabs) {
+      const convertedFields: SwitchField<SidebarTab>[] = sidebarTabs.map((tab, index) => ({
+        active: index === 0,
+        ...tab,
+      }));
+      setTabsFields(convertedFields);
+    }
+  }, [sidebarTabs]);
+
+  const { handleActivate, fields: tabs } = useManageSwitchState({
+    fields: TabsFields,
+  });
 
   const handleTabChange = useCallback(
     (tabId: string) => {
-      setSelectedTab(tabId);
       handleActivate(tabId);
     },
     [handleActivate],
@@ -58,44 +67,33 @@ const Modal: React.FC<Props> = ({
       isVisible={isVisible}
       title={title}
       onClose={onClose}>
-      {sidebarTabs.length > 0 ? (
-        <SidebarWrapper>
+      <InnerWrapper>
+        {tabs.length > 0 && (
           <NavBarWrapper>
-            {sidebarTabs.map(tab => (
-              <Tab
-                key={tab.id}
-                isSelected={selectedTab === tab.id}
-                onClick={() => handleTabChange(tab.id)}>
+            {tabs.map(tab => (
+              <Tab key={tab.id} isSelected={tab.active} onClick={() => handleTabChange(tab.id)}>
                 {tab.label}
               </Tab>
             ))}
           </NavBarWrapper>
-          <SidebarContentWrapper>
-            <TabContent>
-              {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.content}
-            </TabContent>
-            <TabButtonWrapper>
-              {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.tabButton1}
-              {selectedTab && sidebarTabs.find(tab => tab.id === selectedTab)?.tabButton2}
-            </TabButtonWrapper>
-          </SidebarContentWrapper>
-        </SidebarWrapper>
-      ) : (
-        <>
-          <ContentWrapper>{children}</ContentWrapper>
+        )}
+        <ContentWrapper>
+          {tabs && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
+          <Content> {children}</Content>
           <ButtonWrapper>
+            {tabs.find(tab => tab.active === true)?.tabButton1}
+            {tabs.find(tab => tab.active === true)?.tabButton2}
             {button2}
             {button1}
           </ButtonWrapper>
-        </>
-      )}
+        </ContentWrapper>
+      </InnerWrapper>
     </Wrapper>
   );
 };
 
-const SidebarWrapper = styled.div`
+const InnerWrapper = styled.div`
   display: flex;
-  align-self: stretch;
 `;
 
 const NavBarWrapper = styled.div`
@@ -103,63 +101,36 @@ const NavBarWrapper = styled.div`
   flex-direction: column;
   padding: 16px;
   gap: 10px;
-  align-self: stretch;
   border-right: 1px solid #525252;
 `;
 
-const Tab = styled.button<{ isSelected: boolean }>`
+const Tab = styled.button<{ isSelected?: boolean }>`
   display: flex;
   padding: 4px 8px;
-  align-items: flex-start;
-  align-self: stretch;
   border-radius: 4px;
   background: ${({ isSelected }) => (isSelected ? "#393939" : "transparent")};
-  color: ${({ isSelected }) => (isSelected ? "white" : "#393939")};
-`;
-
-const SidebarContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1 0 0;
+  color: ${({ isSelected }) => (isSelected ? "#E0E0E0" : "#393939")};
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
+  flex-direction: column;
+`;
+
+const Content = styled.div`
+  display: flex;
   padding: 24px;
   flex-direction: column;
-  align-items: flex-start;
   gap: 20px;
   align-self: stretch;
-  flex: 1;
-`;
-
-const TabContent = styled.div`
-  display: flex;
-  padding: 16px;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-  align-self: stretch;
-`;
-
-const TabButtonWrapper = styled.div`
-  display: flex;
-  padding: 16px;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: flex-start;
-  align-self: stretch;
-  border-top: 1px solid #525252;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
+  flex-direction: row;
+  align-self: stretch;
   padding: 12px;
   justify-content: flex-end;
-  align-items: flex-start;
-  gap: 12px;
-  align-self: stretch;
   border-top: 1px solid #525252;
 `;
 
