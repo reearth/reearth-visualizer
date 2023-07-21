@@ -5,7 +5,7 @@ import { styled } from "@reearth/services/theme";
 
 import { Item } from "./Item";
 
-type Props<Item> = {
+type Props<Item extends { id: string } = { id: string }> = {
   uniqueKey: string;
   items: Item[];
   getId: (item: Item) => string;
@@ -14,7 +14,7 @@ type Props<Item> = {
   gap: number;
 };
 
-function DragAndDropList<Item>({
+function DragAndDropList<Item extends { id: string } = { id: string }>({
   uniqueKey,
   items,
   onItemDrop,
@@ -57,7 +57,7 @@ function DragAndDropList<Item>({
           <Item
             itemGroupKey={uniqueKey}
             key={id}
-            id={id}
+            id={item.id}
             index={i}
             onItemMove={onItemMove}
             onItemDropOnItem={onItemDropOnItem}
@@ -72,7 +72,7 @@ function DragAndDropList<Item>({
 
 export default DragAndDropList;
 
-const SWrapper = styled.div<Pick<Props<undefined>, "gap">>`
+const SWrapper = styled.div<Pick<Props, "gap">>`
   display: flex;
   flex-direction: column;
   ${({ gap }) => `gap: ${gap}px`}
