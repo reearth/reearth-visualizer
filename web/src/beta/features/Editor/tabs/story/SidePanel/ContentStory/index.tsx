@@ -1,24 +1,87 @@
-import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
-import { useT } from "@reearth/services/i18n";
+import { useState } from "react";
+
+import ListItem from "@reearth/beta/components/ListItem";
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  onSelectStory: (id: string) => void;
+  onStorySelect: (id: string) => void;
   onStoryAdd: () => void;
+  onStoryDelete: (id: string) => void;
+  onStoryClickSettings: (id: string) => void;
+  onStoryRename: (id: string) => void;
 };
-const ContentStory: React.FC<Props> = ({ onSelectStory }) => {
-  const t = useT();
+
+// This component is created for the multiple stories, currently this is hidden
+// Need to replace text with i18n when use this
+const ContentStory: React.FC<Props> = ({
+  onStorySelect,
+  onStoryAdd,
+  onStoryDelete,
+  onStoryClickSettings,
+  onStoryRename,
+}) => {
+  const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
   return (
     <SContent>
-      <SContentUp>
-        <Item
-          onItemClick={() => onSelectStory("id")}
-          onActionClick={() => console.log("onActionClick")}
-          isActive={true}>
-          {t("Story")}
-        </Item>
+      <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
+        {[...Array(100)].map((_, i) => (
+          <ListItem
+            key={i}
+            onItemClick={() => onStorySelect(i.toString())}
+            onActionClick={() => setOpenedPageId(old => (old ? undefined : i.toString()))}
+            onOpenChange={isOpen => {
+              setOpenedPageId(isOpen ? i.toString() : undefined);
+            }}
+            isSelected={false}
+            isOpenAction={openedPageId === i.toString()}
+            actionContent={
+              <PopoverMenuContent
+                width="128px"
+                size="md"
+                items={[
+                  {
+                    icon: "pencilSimple",
+                    name: "Rename",
+                    onClick: () => {
+                      setOpenedPageId(undefined);
+                      onStoryRename(i.toString());
+                    },
+                  },
+                  {
+                    icon: "gearSix",
+                    name: "Settings",
+                    onClick: () => {
+                      setOpenedPageId(undefined);
+                      onStoryClickSettings(i.toString());
+                    },
+                  },
+                  {
+                    icon: "trash",
+                    name: "Delete Story",
+                    onClick: () => {
+                      setOpenedPageId(undefined);
+                      onStoryDelete(i.toString());
+                    },
+                  },
+                ]}
+              />
+            }>
+            Story
+          </ListItem>
+        ))}
       </SContentUp>
+      <SContentBottom>
+        <Action
+          icon="book"
+          iconColor="#ffffff"
+          iconSize={16}
+          title={`+ New Story`}
+          onClick={onStoryAdd}
+        />
+      </SContentBottom>
     </SContent>
   );
 };
@@ -43,4 +106,11 @@ const SContentUp = styled.div`
   flex-direction: column;
   gap: 8px;
   box-sizing: border-box;
+`;
+
+const SContentBottom = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
 `;

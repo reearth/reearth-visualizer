@@ -46,17 +46,6 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     link: ApolloLink.from([errorLink(), sentryLink(endpoint), authLink(), uploadLink(endpoint)]),
     cache,
     connectToDevTools: import.meta.env.DEV,
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: "cache-and-network",
-        nextFetchPolicy(currentFetchPolicy) {
-          if (currentFetchPolicy === "cache-and-network") {
-            return "cache-first";
-          }
-          return currentFetchPolicy;
-        },
-      },
-    },
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

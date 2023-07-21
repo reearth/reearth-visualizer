@@ -38,7 +38,13 @@ const PopoverMenuContent: React.FC<Props> = ({ size, width, items }) => {
     <SRoot width={width}>
       {items.map((item, i) => {
         return (
-          <SRow key={i} isSelected={!!item.isSelected} size={size} onClick={item.onClick}>
+          <SRow
+            key={i}
+            isSelected={!!item.isSelected}
+            isFirst={i === 0}
+            isLast={i === items.length - 1}
+            size={size}
+            onClick={item.onClick}>
             {item.icon && (
               <SLeftIcon>
                 <Icon icon={item.icon} size={stylesBySize[size].iconSize} />
@@ -63,17 +69,23 @@ const SRoot = styled.div<Pick<Props, "width">>`
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
 `;
 
-const SRow = styled.button<Pick<Props, "size"> & Pick<MenuItem, "isSelected">>`
+const SRow = styled.button<
+  Pick<Props, "size"> & Pick<MenuItem, "isSelected"> & { isFirst: boolean; isLast: boolean }
+>`
   box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
   color: #e0e0e0;
+
+  ${({ isFirst }) => !isFirst && "border-top: 1px solid transparent;"}
+  ${({ isLast }) => !isLast && "border-bottom: 1px solid transparent;"}
   ${({ size }) => stylesBySize[size].row ?? ""}
   ${({ isSelected }) => isSelected && "background: var(--editor-select-main, #3B3CD0);"}
   :hover {
-    ${({ isSelected }) => !isSelected && "background-color: #2E2D33;"}
+    ${({ isSelected }) => !isSelected && "background-color: #393939;"}
+    ${({ isSelected }) => !isSelected && "border-color: #525252;"}
   }
 `;
 

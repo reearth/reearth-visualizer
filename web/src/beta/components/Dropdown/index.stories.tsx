@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { ReactNode } from "react";
 
-import Dropdown from ".";
+import Dropdown, { Menu } from ".";
 
 const Wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
   <div style={{ width: "100px", height: "60px" }}>{children}</div>
@@ -15,22 +15,15 @@ export default meta;
 
 type Story = StoryObj<typeof Dropdown>;
 
-const DropDownContent: React.FC = () => {
-  return (
-    <ul>
-      <li>Apple</li>
-      <li>Banana</li>
-      <li>Orange</li>
-    </ul>
-  );
+const menu: Menu = {
+  width: 200,
+  items: [{ text: "HARHAR" }, { text: "HARHAR" }, { text: "HARHAR" }],
 };
 
 export const Default: Story = {
   render: () => (
     <Wrapper>
-      <Dropdown isOpen label="Sample">
-        <DropDownContent />
-      </Dropdown>
+      <Dropdown isOpen label="Sample" menu={menu} />
     </Wrapper>
   ),
 };
@@ -38,18 +31,14 @@ export const Default: Story = {
 export const DirectionRight: Story = {
   render: () => (
     <Wrapper>
-      <Dropdown isOpen direction="right" label="Sample">
-        <DropDownContent />
-      </Dropdown>
+      <Dropdown isOpen direction="right" label="Sample" menu={menu} />
     </Wrapper>
   ),
 };
 export const DirectionDown: Story = {
   render: () => (
     <Wrapper>
-      <Dropdown isOpen direction="down" label="Sample">
-        <DropDownContent />
-      </Dropdown>
+      <Dropdown isOpen direction="down" label="Sample" menu={menu} />
     </Wrapper>
   ),
 };
