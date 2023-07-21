@@ -2,7 +2,7 @@ import Resizable from "@reearth/beta/components/Resizable";
 import StoryPanel from "@reearth/beta/features/Editor/tabs/story/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
-import useSecondaryNav from "@reearth/beta/features/Editor/useSecondaryNav";
+import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
@@ -29,7 +29,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 
   const { leftPanel } = useLeftPanel({ tab });
   const { rightPanel } = useRightPanel({ tab, sceneId });
-  const { secondaryNav } = useSecondaryNav({
+  const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     selectedDevice,
     showWidgetEditor,
@@ -59,8 +59,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             </Resizable>
           )}
           <Center>
-            {secondaryNav}
-            <CenterContents hasNav={!!secondaryNav}>
+            {secondaryNavbar}
+            <CenterContents hasNav={!!secondaryNavbar}>
               {isStory && <StoryPanel />}
               <VisualizerWrapper tab={tab} visualizerWidth={visualizerWidth}>
                 <Visualizer sceneId={sceneId} />

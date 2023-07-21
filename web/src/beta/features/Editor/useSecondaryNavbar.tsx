@@ -19,7 +19,7 @@ export default ({
   handleDeviceChange,
   handleWidgetEditorToggle,
 }: Props) => {
-  const secondaryNav = useMemo<ReactNode | undefined>(() => {
+  const secondaryNavbar = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "widgets":
         return (
@@ -40,6 +40,6 @@ export default ({
   }, [tab, selectedDevice, showWidgetEditor, handleDeviceChange, handleWidgetEditorToggle]);
 
   return {
-    secondaryNav,
+    secondaryNavbar,
   };
 };
