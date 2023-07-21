@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import { Item } from "./Item";
+import Item from "./Item";
 
 type Props<Item> = {
   uniqueKey: string;
@@ -28,34 +28,48 @@ function DragAndDropList<Item>({
     setMovingItems(items);
   }, [items]);
 
-  const onItemMove = useCallback((dragIndex: number, hoverIndex: number) => {
-    setMovingItems(old => {
-      const items = [...old];
-      items.splice(dragIndex, 1);
-      items.splice(hoverIndex, 0, old[dragIndex]);
-      return items;
-    });
-  }, []);
+  const findItem = useCallback(
+    (id: string) => {
+      const matched = movingItems.find(item => getId(item) === id);
+      return matched ? movingItems.findIndex(item => getId(item) === getId(matched)) : undefined;
+    },
+    [getId, movingItems],
+  );
+
+  const onItemMove = useCallback(
+    (id: string, hoverIndex: number) => {
+      setMovingItems(old => {
+        const index = findItem(id);
+        if (index == null) return old;
+        const items = [...old];
+        items.splice(index, 1);
+        items.splice(hoverIndex, 0, old[index]);
+        return items;
+      });
+    },
+    [findItem],
+  );
 
   const onItemDropLocal = useCallback(
-    (index: number) => {
-      const item = movingItems[index];
-      item && onItemDrop(movingItems[index], index);
+    (id: string) => {
+      const itemFinalIndex = movingItems.findIndex(item => id === getId(item));
+      if (itemFinalIndex === -1) return;
+      onItemDrop(movingItems[itemFinalIndex], itemFinalIndex);
     },
-    [movingItems, onItemDrop],
+    [getId, movingItems, onItemDrop],
   );
 
   return (
     <SWrapper gap={gap}>
-      {movingItems.map((item, i) => {
+      {movingItems.map(item => {
         const id = getId(item);
         return (
           <Item
             itemGroupKey={uniqueKey}
             key={id}
             id={id}
-            index={i}
             onItemMove={onItemMove}
+            findItem={findItem}
             onItemDrop={onItemDropLocal}>
             {renderItem(item)}
           </Item>
@@ -67,7 +81,7 @@ function DragAndDropList<Item>({
 
 export default DragAndDropList;
 
-const SWrapper = styled.div<Pick<Props, "gap">>`
+const SWrapper = styled.div<Pick<Props<unknown>, "gap">>`
   display: flex;
   flex-direction: column;
   ${({ gap }) => `gap: ${gap}px`}

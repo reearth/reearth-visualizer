@@ -1,3 +1,5 @@
+TODO Delete this file
+
 drag and drop
 
 - onDrop
@@ -31,3 +33,7 @@ drag and drop
 ```
 
 ただItemsを渡してしまう場合には中身の描画ができない。
+
+
+- 要素範囲外でドロップした場合にドロップの判定ができない
+- 
