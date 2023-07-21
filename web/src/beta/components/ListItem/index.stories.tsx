@@ -10,6 +10,7 @@ type Story = StoryObj<typeof ActionItem>;
 
 export const Default: Story = {
   args: {
-    text: "long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text ",
+    children:
+      "long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text ",
   },
 };
