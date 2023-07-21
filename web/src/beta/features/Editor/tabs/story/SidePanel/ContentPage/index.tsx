@@ -34,7 +34,7 @@ const ContentPage: React.FC<Props> = ({
               onOpenChange={isOpen => {
                 setOpenedPageId(isOpen ? i.toString() : undefined);
               }}
-              isActive={false}
+              isActive={i === 0}
               isOpenAction={openedPageId === i.toString()}
               actionContent={
                 <PopoverMenuContent
