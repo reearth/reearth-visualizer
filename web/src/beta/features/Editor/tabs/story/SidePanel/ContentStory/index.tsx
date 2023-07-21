@@ -3,7 +3,6 @@ import { useState } from "react";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
 import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
-import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
@@ -13,13 +12,16 @@ type Props = {
   onStoryClickSettings: (id: string) => void;
   onStoryRename: (id: string) => void;
 };
+
+// This component is created for the multiple stories, currently this is hidden
+// Need to replace text with i18n when use this
 const ContentStory: React.FC<Props> = ({
   onStorySelect,
   onStoryAdd,
-  onStoryDuplicate,
   onStoryDelete,
+  onStoryClickSettings,
+  onStoryRename,
 }) => {
-  const t = useT();
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
   return (
@@ -45,7 +47,7 @@ const ContentStory: React.FC<Props> = ({
                     name: "Rename",
                     onClick: () => {
                       setOpenedPageId(undefined);
-                      onStoryDuplicate(i.toString());
+                      onStoryRename(i.toString());
                     },
                   },
                   {
@@ -53,7 +55,7 @@ const ContentStory: React.FC<Props> = ({
                     name: "Settings",
                     onClick: () => {
                       setOpenedPageId(undefined);
-                      onStoryDelete(i.toString());
+                      onStoryClickSettings(i.toString());
                     },
                   },
                   {
@@ -76,7 +78,7 @@ const ContentStory: React.FC<Props> = ({
           icon="book"
           iconColor="#ffffff"
           iconSize={16}
-          title={`+ ${t("New Story")}`}
+          title={`+ New Story`}
           onClick={onStoryAdd}
         />
       </SContentBottom>

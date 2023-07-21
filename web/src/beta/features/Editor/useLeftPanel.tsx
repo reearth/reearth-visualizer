@@ -15,10 +15,10 @@ export default ({ tab }: Props) => {
       case "story":
         return (
           <StorySidePanel
-            stories={[]}
-            selectedStory={undefined}
-            onStorySelect={() => console.log("onSelectStory")}
-            onStoryAdd={() => console.log("onStoryAdd")}
+            // stories={[]}
+            // selectedStory={undefined}
+            // onStorySelect={() => console.log("onSelectStory")}
+            // onStoryAdd={() => console.log("onStoryAdd")}
             selectedPageId={"1"}
             onPageSelect={() => console.log("onSelectPage")}
             onPageAdd={() => console.log("onPageAdd")}
