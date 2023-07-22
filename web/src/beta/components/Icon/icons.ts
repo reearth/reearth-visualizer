@@ -24,6 +24,7 @@ import ArrowToggle from "./Icons/arrowToggle.svg";
 import Crosshair from "./Icons/crosshair.svg";
 
 // Fields / Actions
+import FolderPlus from "./Icons/folderPlus.svg";
 import PlusSquare from "./Icons/plusSquare.svg";
 import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
@@ -48,15 +49,15 @@ import Camera from "./Icons/camera.svg";
 import MdFile from "./Icons/mdFile.svg";
 import Clock from "./Icons/clock.svg";
 
-//Dashboard
+// Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
 
-//Workspaces
+// Workspaces
 import WorkspaceAdd from "./Icons/workspaceAdd.svg";
 import Workspaces from "./Icons/workspaces.svg";
 
-// StoryTelling
+// StoryTelling tab
 import Square from "./Icons/square.svg";
 import Swiper from "./Icons/swiper.svg";
 import Book from "./Icons/book.svg";
@@ -64,6 +65,11 @@ import Copy from "./Icons/copy.svg";
 import GearSix from "./Icons/gearSix.svg";
 import PencilSimple from "./Icons/pencilSimple.svg";
 import Trash from "./Icons/trash.svg";
+
+// Widget tab
+import Desktop from "./Icons/desktop.svg";
+import Mobile from "./Icons/mobile.svg";
+import WidgetSystem from "./Icons/widgetSystem.svg";
 
 // Plus
 import Plus from "./Icons/plus.svg";
@@ -90,6 +96,7 @@ export default {
   arrowToggle: ArrowToggle,
   cancel: Cancel,
   crosshair: Crosshair,
+  folderPlus: FolderPlus,
   plusSquare: PlusSquare,
   ellipse: Ellipse,
   playRight: PlayRight,
@@ -115,6 +122,9 @@ export default {
   checkmark: CheckMark,
   logo: Logo,
   logoColorful: LogoColorful,
+  desktop: Desktop,
+  mobile: Mobile,
+  widgetSystem: WidgetSystem,
   copy: Copy,
   gearSix: GearSix,
   pencilSimple: PencilSimple,
