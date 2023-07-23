@@ -91,7 +91,12 @@ const sidebarTab3: SidebarTab = {
 
 export const Small: Story = {
   render: () => (
-    <Modal size="sm" isVisible={true} title="Small modal" button1={<Button text="Confirm" />}>
+    <Modal
+      size="sm"
+      isVisible={true}
+      title="Small modal"
+      button1={<Button text="Confirm" />}
+      button2={<Button text="Cancel" />}>
       <ModalContent />
     </Modal>
   ),
@@ -99,7 +104,12 @@ export const Small: Story = {
 
 export const Medium: Story = {
   render: () => (
-    <Modal size="md" isVisible={true} title="Medium modal" button1={<Button text="Confirm" />}>
+    <Modal
+      size="md"
+      isVisible={true}
+      title="Medium modal"
+      button1={<Button text="Confirm" />}
+      button2={<Button text="Cancel" />}>
       <ModalContent />
     </Modal>
   ),
@@ -107,7 +117,12 @@ export const Medium: Story = {
 
 export const Large: Story = {
   render: () => (
-    <Modal size="lg" isVisible={true} title="Large modal" button1={<Button text="Confirm" />}>
+    <Modal
+      size="lg"
+      isVisible={true}
+      title="Large modal"
+      button1={<Button text="Confirm" />}
+      button2={<Button text="Cancel" />}>
       <ModalContent />
     </Modal>
   ),

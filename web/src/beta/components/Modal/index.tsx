@@ -81,10 +81,8 @@ const Modal: React.FC<Props> = ({
           {tabs && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
           <Content> {children}</Content>
           <ButtonWrapper>
-            {tabs.find(tab => tab.active === true)?.tabButton1}
-            {tabs.find(tab => tab.active === true)?.tabButton2}
-            {button2}
-            {button1}
+            {tabs.find(tab => tab.active === true)?.tabButton1 ?? button1}
+            {tabs.find(tab => tab.active === true)?.tabButton2 ?? button2}
           </ButtonWrapper>
         </ContentWrapper>
       </InnerWrapper>
@@ -129,9 +127,14 @@ const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-self: stretch;
-  padding: 12px;
   justify-content: flex-end;
   border-top: 1px solid #525252;
+  & > :first-child {
+    order: 2;
+  }
+  & > :last-child {
+    order: 1;
+  }
 `;
 
 export default Modal;
