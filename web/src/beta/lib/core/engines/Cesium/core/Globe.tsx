@@ -99,14 +99,14 @@ const terrainProviders: {
         accessToken: terrainCesiumIonAccessToken,
       }),
       {
-        requestVertexNormals: terrainNormal,
+        requestVertexNormals: !!terrainNormal,
         requestWaterMask: false,
       },
     ),
   arcgis: ({ terrainNormal }) =>
     ArcGISTiledElevationTerrainProvider.fromUrl(
       "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
-      { requestVertexNormals: terrainNormal },
+      { requestVertexNormals: !!terrainNormal },
     ),
   cesiumion: ({
     terrainCesiumIonAccessToken,
@@ -121,7 +121,7 @@ const terrainProviders: {
               accessToken: terrainCesiumIonAccessToken,
             }),
           {
-            requestVertexNormals: terrainNormal,
+            requestVertexNormals: !!terrainNormal,
           },
         )
       : null,
