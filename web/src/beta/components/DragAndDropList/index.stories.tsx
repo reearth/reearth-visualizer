@@ -28,7 +28,7 @@ const DummyComponent: typeof DragAndDropList<DummyItem> = args => {
       {...args}
       items={items}
       onItemDrop={(item, index) => {
-        // most actual use case are api call or optimistic update
+        // actual use case would be api call or optimistic update
         setItems(old => {
           const items = [...old];
           items.splice(

@@ -41,7 +41,6 @@ const ContentStory: React.FC<Props> = ({
           items={items}
           getId={item => item.id}
           onItemDrop={(item, index) => {
-            // most actual use case are api call or optimistic update
             setItems(old => {
               const items = [...old];
               items.splice(
