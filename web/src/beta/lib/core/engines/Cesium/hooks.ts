@@ -50,6 +50,7 @@ export default ({
   selectedLayerId,
   selectionReason,
   isLayerDraggable,
+  isLayerDragging,
   meta,
   layersRef,
   featureFlags,
@@ -71,6 +72,7 @@ export default ({
   layersRef?: RefObject<LayersRef>;
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
+  isLayerDragging?: boolean;
   meta?: Record<string, unknown>;
   featureFlags: number;
   requestingRender?: React.MutableRefObject<boolean>;
@@ -773,8 +775,10 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
     viewer.scene.maximumRenderTimeChange =
-      !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : 0;
-  }, [property?.timeline?.animation, isLayerDraggable, shouldRender]);
+      !property?.timeline?.animation && !isLayerDraggable && !isLayerDragging && !shouldRender
+        ? Infinity
+        : 0;
+  }, [property?.timeline?.animation, isLayerDraggable, isLayerDragging, shouldRender]);
 
   return {
     backgroundColor,
