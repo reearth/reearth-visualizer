@@ -31,27 +31,27 @@ func (s PluginInstaller) InstallPluginFromRepository(pluginID scene.PluginID) er
 	// 	for _, s := range manifest.ExtensionSchema {
 	// 		err = i.propertySchemaRepo.Save(&s)
 	// 		if err != nil {
-	// 			i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 			i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 			return
 	// 		}
 	// 	}
 
 	// 	err = i.pluginRepo.Save(plugin)
 	// 	if err != nil {
-	// 		i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 		i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 		return
 	// 	}
 
 	// 	// Download and extract plugin files to storage
 	// 	data, err := i.pluginRepositoryRepo.Data(inp.Name, inp.Version)
 	// 	if err != nil {
-	// 		i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 		i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 		return
 	// 	}
 
 	// 	_, err = i.fileRepo.UploadAndExtractPluginFiles(data, plugin)
 	// 	if err != nil {
-	// 		i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 		i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 		return
 	// 	}
 
@@ -78,7 +78,7 @@ func (s PluginInstaller) InstallPluginFromRepository(pluginID scene.PluginID) er
 	// 		Public(inp.Public).
 	// 		Build()
 	// 	if err != nil {
-	// 		i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 		i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 		return
 	// 	}
 
@@ -86,7 +86,7 @@ func (s PluginInstaller) InstallPluginFromRepository(pluginID scene.PluginID) er
 	// 	if manifest.Schema != nil {
 	// 		err = i.propertySchemaRepo.Save(manifest.Schema)
 	// 		if err != nil {
-	// 			i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 			i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 			return
 	// 		}
 	// 	}
@@ -94,27 +94,27 @@ func (s PluginInstaller) InstallPluginFromRepository(pluginID scene.PluginID) er
 	// 	for _, s := range manifest.ExtensionSchema {
 	// 		err = i.propertySchemaRepo.Save(&s)
 	// 		if err != nil {
-	// 			i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 			i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 			return
 	// 		}
 	// 	}
 
 	// 	err = i.pluginRepo.Save(plugin)
 	// 	if err != nil {
-	// 		i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 		i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 		return
 	// 	}
 
 	// 	// Download and extract plugin files to storage
 	// 	data, err := i.pluginRepositoryRepo.Data(inp.Name, inp.Version)
 	// 	if err != nil {
-	// 		i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 		i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 		return
 	// 	}
 
 	// 	_, err = i.fileRepo.UploadAndExtractPluginFiles(data, plugin)
 	// 	if err != nil {
-	// 		i.output.Upload(nil, rerror.ErrInternalBy(err))
+	// 		i.output.Upload(nil, rerror.ErrInternalByWithContext(ctx, err))
 	// 		return
 	// 	}
 

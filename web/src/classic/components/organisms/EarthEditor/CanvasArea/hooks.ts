@@ -5,8 +5,6 @@ import {
   Location,
   Alignment,
 } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
-import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
-import { config } from "@reearth/services/config";
 import {
   useGetLayersQuery,
   useGetEarthWidgetsQuery,
@@ -22,7 +20,9 @@ import {
   WidgetAreaType,
   WidgetAreaAlign,
   ValueType,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
+import { config } from "@reearth/services/config";
 import { useLang } from "@reearth/services/i18n";
 import {
   useSceneId,
@@ -40,10 +40,13 @@ import {
 import {
   convertWidgets,
   convertToBlocks,
-  convertProperty,
   processSceneTags,
   processLayer,
+  processProperty,
+  extractDatasetSchemas,
+  RawLayer,
 } from "./convert";
+import { useDatasets } from "./hooks_dataset";
 
 export default (isBuilt?: boolean) => {
   const lang = useLang();
@@ -108,22 +111,36 @@ export default (isBuilt?: boolean) => {
   // convert data
   const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
 
-  const rootLayer = useMemo(
+  // datasets
+  const datasetSchemaIds = useMemo(
     () =>
       layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
-        ? processLayer(layerData?.node.rootLayer)
+        ? extractDatasetSchemas(layerData.node.rootLayer as RawLayer)
         : undefined,
     [layerData],
   );
 
+  const { datasets, loaded: datasetLoaded } = useDatasets(datasetSchemaIds);
+
+  const rootLayer = useMemo(
+    () =>
+      datasetLoaded &&
+      layerData?.node &&
+      layerData.node.__typename === "Scene" &&
+      layerData.node.rootLayer
+        ? processLayer(layerData?.node.rootLayer as RawLayer, undefined, datasets)
+        : undefined,
+    [layerData, datasets, datasetLoaded],
+  );
+
   const widgets = useMemo(() => convertWidgets(sceneData), [sceneData]);
-  const sceneProperty = useMemo(() => convertProperty(scene?.property), [scene?.property]);
+  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
   const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
 
   const clusterProperty = useMemo<ClusterProperty[]>(
     () =>
       scene?.clusters
-        .map((a): any => ({ ...convertProperty(a.property), id: a.id }))
+        .map((a): any => ({ ...processProperty(a.property), id: a.id }))
         .filter((c): c is ClusterProperty => !!c) ?? [],
     [scene?.clusters],
   );
@@ -131,7 +148,7 @@ export default (isBuilt?: boolean) => {
   const pluginProperty = useMemo(
     () =>
       scene?.plugins.reduce<{ [key: string]: any }>(
-        (a, b) => ({ ...a, [b.pluginId]: convertProperty(b.property) }),
+        (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
         {},
       ),
     [scene?.plugins],

@@ -25,7 +25,7 @@ func TestMe(t *testing.T) {
 	e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		// WithHeader("authorization", "Bearer test").
-		WithHeader("X-Reearth-Debug-User", uId.String()).
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(requestBody).
 		Expect().
@@ -35,6 +35,6 @@ func TestMe(t *testing.T) {
 		Value("data").Object().
 		Value("me").Object().
 		ValueEqual("email", uEmail).
-		ValueEqual("id", uId.String()).
+		ValueEqual("id", uID.String()).
 		ValueEqual("name", uName)
 }

@@ -1,5 +1,7 @@
 package gateway
 
+import "context"
+
 type AuthenticatorUpdateUserParam struct {
 	ID       string
 	Name     *string
@@ -15,5 +17,5 @@ type AuthenticatorUser struct {
 }
 
 type Authenticator interface {
-	UpdateUser(AuthenticatorUpdateUserParam) (AuthenticatorUser, error)
+	UpdateUser(context.Context, AuthenticatorUpdateUserParam) (AuthenticatorUser, error)
 }

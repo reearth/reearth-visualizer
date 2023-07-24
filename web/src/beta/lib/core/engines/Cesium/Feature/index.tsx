@@ -91,20 +91,26 @@ export default function Feature({
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
+  const cacheable = !data?.updateInterval;
 
-  const cachedRenderComponent = (
-    k: keyof AppearanceTypes,
-    f?: ComputedFeature,
-  ): JSX.Element | null => {
+  const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
+    const useSceneSphericalHarmonicCoefficients =
+      !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
+    const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
+
     const componentId = generateIDWithMD5(
-      `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${data?.url ?? ""}_${
+      `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${
+        data?.url ?? ""
+      }_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
         JSON.stringify(f?.[k]) ?? ""
       }`,
     );
 
-    const cachedComponent = CACHED_COMPONENTS.get(componentId);
-    if (cachedComponent) {
-      return cachedComponent;
+    if (cacheable) {
+      const cachedComponent = CACHED_COMPONENTS.get(componentId);
+      if (cacheable && cachedComponent) {
+        return cachedComponent;
+      }
     }
 
     try {
@@ -139,7 +145,9 @@ export default function Feature({
       );
 
       // Cache the component output
-      CACHED_COMPONENTS.set(componentId, component);
+      if (cacheable) {
+        CACHED_COMPONENTS.set(componentId, component);
+      }
 
       return component;
     } catch (e) {
@@ -160,9 +168,24 @@ export default function Feature({
           const [C] = components[k] ?? [];
           const isVisible = layer.layer.visible !== false && !isHidden;
 
+          // NOTE: IBL for 3dtiles is not updated unless Tileset feature component is re-created.
+          const useSceneSphericalHarmonicCoefficients =
+            !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
+          const useSceneSpecularEnvironmentMaps =
+            !!props.sceneProperty?.light?.specularEnvironmentMaps;
+          const use3dtilesSphericalHarmonicCoefficients =
+            layer?.layer?.type === "simple" &&
+            !!layer?.layer?.["3dtiles"]?.sphericalHarmonicCoefficients;
+          const use3dtilesSpecularEnvironmentMaps =
+            layer?.layer?.type === "simple" && !!layer?.layer?.["3dtiles"]?.specularEnvironmentMaps;
+
           // "noFeature" component should be recreated when the following value is changed.
           // data.url, isVisible
-          const key = generateIDWithMD5(`${layer?.id || ""}_${k}_${data?.url}_${isVisible}`);
+          const key = generateIDWithMD5(
+            `${layer?.id || ""}_${k}_${
+              data?.url
+            }_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${use3dtilesSphericalHarmonicCoefficients}}_${use3dtilesSpecularEnvironmentMaps}`,
+          );
 
           return (
             <C
@@ -183,9 +206,7 @@ export default function Feature({
     <>
       {cachedNoFeatureComponents ||
         [undefined, ...layer.features].flatMap(f =>
-          (Object.keys(components) as (keyof AppearanceTypes)[]).map(k =>
-            cachedRenderComponent(k, f),
-          ),
+          (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => renderComponent(k, f)),
         )}
     </>
   );

@@ -3,9 +3,9 @@ package migration
 import (
 	"context"
 
-	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -19,7 +19,7 @@ func AddSceneFieldToPropertySchema(ctx context.Context, c DBClient) error {
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
-			log.Infof("migration: AddSceneFieldToPropertySchema: hit property schemas: %d\n", len(rows))
+			log.Infofc(ctx, "migration: AddSceneFieldToPropertySchema: hit property schemas: %d\n", len(rows))
 
 			for _, row := range rows {
 				var doc mongodoc.PropertySchemaDocument

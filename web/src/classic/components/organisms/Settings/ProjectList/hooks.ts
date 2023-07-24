@@ -11,14 +11,9 @@ import {
   useGetProjectsQuery,
   Visualizer,
   GetProjectsQuery,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 import { useT } from "@reearth/services/i18n";
-import {
-  useWorkspace,
-  useProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/services/state";
+import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>
@@ -33,9 +28,8 @@ export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][num
 const projectPerPage = 5;
 
 export default (workspaceId: string) => {
+  const [currentWorkspace, setWorkspace] = useWorkspace();
   const [, setNotification] = useNotification();
-  const [currentWorkspace, setWorkspace] = useSessionWorkspace();
-  const [lastWorkspace, setLastWorkspace] = useWorkspace();
   const [prjectType, setPrjectType] = useState<ProjectType>("classic");
   const [prjTypeSelectOpen, setPrjTypeSelectOpen] = useState(false);
 
@@ -55,10 +49,6 @@ export default (workspaceId: string) => {
     refetchQueries: ["GetProjects"],
   });
   const [createScene] = useCreateSceneMutation();
-
-  useEffect(() => {
-    if (!currentWorkspace && lastWorkspace) setWorkspace(lastWorkspace);
-  }, [currentWorkspace, lastWorkspace, setWorkspace]);
 
   if (currentWorkspace && currentWorkspace.id !== workspaceId) {
     workspaceId = currentWorkspace?.id;
@@ -81,9 +71,8 @@ export default (workspaceId: string) => {
   useEffect(() => {
     if (workspace?.id && !currentWorkspace?.id) {
       setWorkspace(workspace);
-      setLastWorkspace(currentWorkspace);
     }
-  }, [currentWorkspace, workspace, setWorkspace, setLastWorkspace]);
+  }, [currentWorkspace, workspace, setWorkspace]);
 
   const projectNodes = projectData?.projects.edges.map(e => e.node) as ProjectNodes;
 

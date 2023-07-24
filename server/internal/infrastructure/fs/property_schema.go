@@ -30,7 +30,7 @@ func (r *propertySchema) Filtered(f repo.SceneFilter) repo.PropertySchema {
 }
 
 func (r *propertySchema) FindByID(ctx context.Context, i id.PropertySchemaID) (*property.Schema, error) {
-	m, err := readPluginManifest(r.fs, i.Plugin())
+	m, err := readPluginManifest(ctx, r.fs, i.Plugin())
 	if err != nil {
 		return nil, err
 	}
@@ -66,17 +66,17 @@ func (r *propertySchema) FindByIDs(ctx context.Context, ids []id.PropertySchemaI
 }
 
 func (r *propertySchema) Save(ctx context.Context, p *property.Schema) error {
-	return rerror.ErrInternalBy(errors.New("read only"))
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
 
 func (r *propertySchema) SaveAll(ctx context.Context, p property.SchemaList) error {
-	return rerror.ErrInternalBy(errors.New("read only"))
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
 
 func (r *propertySchema) Remove(ctx context.Context, pid id.PropertySchemaID) error {
-	return rerror.ErrInternalBy(errors.New("read only"))
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
 
 func (r *propertySchema) RemoveAll(ctx context.Context, pid []id.PropertySchemaID) error {
-	return rerror.ErrInternalBy(errors.New("read only"))
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }

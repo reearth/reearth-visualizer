@@ -3,6 +3,7 @@ package pluginpack
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"path"
 	"path/filepath"
@@ -79,7 +80,7 @@ func readTranslation(fs *zip.Reader, base string) (manifest.TranslationMap, erro
 		}
 		langfile, err := f.Open()
 		if err != nil {
-			return nil, rerror.ErrInternalBy(err)
+			return nil, fmt.Errorf("failed to open translation file: %w", err)
 		}
 		defer func() {
 			_ = langfile.Close()

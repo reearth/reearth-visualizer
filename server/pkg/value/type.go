@@ -7,6 +7,7 @@ type TypeProperty interface {
 	V2I(interface{}) (interface{}, bool)
 	Validate(interface{}) bool
 	String(any) string
+	JSONSchema() map[string]any
 }
 
 type TypePropertyMap = map[Type]TypeProperty
@@ -54,5 +55,22 @@ func (t Type) ValueFrom(i interface{}, p TypePropertyMap) *Value {
 		}
 	}
 
+	return nil
+}
+
+func (vt Type) JSONSchema(p TypePropertyMap) map[string]any {
+	if vt == TypeUnknown {
+		return nil
+	}
+
+	if p != nil {
+		if v, ok := p[vt]; ok && v != nil {
+			return v.JSONSchema()
+		}
+	}
+
+	if v, ok := defaultTypes[vt]; ok && v != nil {
+		return v.JSONSchema()
+	}
 	return nil
 }

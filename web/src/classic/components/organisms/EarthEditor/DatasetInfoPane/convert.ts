@@ -4,7 +4,7 @@ import {
   Maybe,
   PluginExtensionType,
   PluginFragmentFragment,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 
 const excludePrimitiveType = ["polyline", "polygon", "rect"];
 

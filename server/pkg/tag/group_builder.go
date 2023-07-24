@@ -58,6 +58,10 @@ func (b *GroupBuilder) Scene(sid SceneID) *GroupBuilder {
 }
 
 func (b *GroupBuilder) Tags(tl IDList) *GroupBuilder {
+	if len(tl) == 0 {
+		b.g.tags = nil
+		return b
+	}
 	b.g.tags = tl.Clone()
 	return b
 }

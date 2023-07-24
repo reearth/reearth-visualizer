@@ -95,15 +95,6 @@ type ComplexityRoot struct {
 		DatasetSchema func(childComplexity int) int
 	}
 
-	AddDynamicDatasetPayload struct {
-		Dataset       func(childComplexity int) int
-		DatasetSchema func(childComplexity int) int
-	}
-
-	AddDynamicDatasetSchemaPayload struct {
-		DatasetSchema func(childComplexity int) int
-	}
-
 	AddInfoboxFieldPayload struct {
 		InfoboxField func(childComplexity int) int
 		Layer        func(childComplexity int) int
@@ -506,8 +497,6 @@ type ComplexityRoot struct {
 	Mutation struct {
 		AddCluster                   func(childComplexity int, input gqlmodel.AddClusterInput) int
 		AddDatasetSchema             func(childComplexity int, input gqlmodel.AddDatasetSchemaInput) int
-		AddDynamicDataset            func(childComplexity int, input gqlmodel.AddDynamicDatasetInput) int
-		AddDynamicDatasetSchema      func(childComplexity int, input gqlmodel.AddDynamicDatasetSchemaInput) int
 		AddInfoboxField              func(childComplexity int, input gqlmodel.AddInfoboxFieldInput) int
 		AddLayerGroup                func(childComplexity int, input gqlmodel.AddLayerGroupInput) int
 		AddLayerItem                 func(childComplexity int, input gqlmodel.AddLayerItemInput) int
@@ -798,22 +787,21 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Assets                func(childComplexity int, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) int
-		CheckProjectAlias     func(childComplexity int, alias string) int
-		DatasetSchemas        func(childComplexity int, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		Datasets              func(childComplexity int, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		DynamicDatasetSchemas func(childComplexity int, sceneID gqlmodel.ID) int
-		Layer                 func(childComplexity int, id gqlmodel.ID) int
-		Me                    func(childComplexity int) int
-		Node                  func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
-		Nodes                 func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
-		Plugin                func(childComplexity int, id gqlmodel.ID) int
-		Plugins               func(childComplexity int, id []gqlmodel.ID) int
-		Projects              func(childComplexity int, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		PropertySchema        func(childComplexity int, id gqlmodel.ID) int
-		PropertySchemas       func(childComplexity int, id []gqlmodel.ID) int
-		Scene                 func(childComplexity int, projectID gqlmodel.ID) int
-		SearchUser            func(childComplexity int, nameOrEmail string) int
+		Assets            func(childComplexity int, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) int
+		CheckProjectAlias func(childComplexity int, alias string) int
+		DatasetSchemas    func(childComplexity int, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		Datasets          func(childComplexity int, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		Layer             func(childComplexity int, id gqlmodel.ID) int
+		Me                func(childComplexity int) int
+		Node              func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
+		Nodes             func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
+		Plugin            func(childComplexity int, id gqlmodel.ID) int
+		Plugins           func(childComplexity int, id []gqlmodel.ID) int
+		Projects          func(childComplexity int, teamID gqlmodel.ID, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		PropertySchema    func(childComplexity int, id gqlmodel.ID) int
+		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
+		Scene             func(childComplexity int, projectID gqlmodel.ID) int
+		SearchUser        func(childComplexity int, nameOrEmail string) int
 	}
 
 	Rect struct {
@@ -865,25 +853,24 @@ type ComplexityRoot struct {
 	}
 
 	Scene struct {
-		Clusters              func(childComplexity int) int
-		CreatedAt             func(childComplexity int) int
-		DatasetSchemas        func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		DynamicDatasetSchemas func(childComplexity int) int
-		ID                    func(childComplexity int) int
-		Plugins               func(childComplexity int) int
-		Project               func(childComplexity int) int
-		ProjectID             func(childComplexity int) int
-		Property              func(childComplexity int) int
-		PropertyID            func(childComplexity int) int
-		RootLayer             func(childComplexity int) int
-		RootLayerID           func(childComplexity int) int
-		TagIds                func(childComplexity int) int
-		Tags                  func(childComplexity int) int
-		Team                  func(childComplexity int) int
-		TeamID                func(childComplexity int) int
-		UpdatedAt             func(childComplexity int) int
-		WidgetAlignSystem     func(childComplexity int) int
-		Widgets               func(childComplexity int) int
+		Clusters          func(childComplexity int) int
+		CreatedAt         func(childComplexity int) int
+		DatasetSchemas    func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		ID                func(childComplexity int) int
+		Plugins           func(childComplexity int) int
+		Project           func(childComplexity int) int
+		ProjectID         func(childComplexity int) int
+		Property          func(childComplexity int) int
+		PropertyID        func(childComplexity int) int
+		RootLayer         func(childComplexity int) int
+		RootLayerID       func(childComplexity int) int
+		TagIds            func(childComplexity int) int
+		Tags              func(childComplexity int) int
+		Team              func(childComplexity int) int
+		TeamID            func(childComplexity int) int
+		UpdatedAt         func(childComplexity int) int
+		WidgetAlignSystem func(childComplexity int) int
+		Widgets           func(childComplexity int) int
 	}
 
 	ScenePlugin struct {
@@ -1198,8 +1185,6 @@ type MutationResolver interface {
 	RemoveCluster(ctx context.Context, input gqlmodel.RemoveClusterInput) (*gqlmodel.RemoveClusterPayload, error)
 	UpdateDatasetSchema(ctx context.Context, input gqlmodel.UpdateDatasetSchemaInput) (*gqlmodel.UpdateDatasetSchemaPayload, error)
 	SyncDataset(ctx context.Context, input gqlmodel.SyncDatasetInput) (*gqlmodel.SyncDatasetPayload, error)
-	AddDynamicDatasetSchema(ctx context.Context, input gqlmodel.AddDynamicDatasetSchemaInput) (*gqlmodel.AddDynamicDatasetSchemaPayload, error)
-	AddDynamicDataset(ctx context.Context, input gqlmodel.AddDynamicDatasetInput) (*gqlmodel.AddDynamicDatasetPayload, error)
 	RemoveDatasetSchema(ctx context.Context, input gqlmodel.RemoveDatasetSchemaInput) (*gqlmodel.RemoveDatasetSchemaPayload, error)
 	ImportDataset(ctx context.Context, input gqlmodel.ImportDatasetInput) (*gqlmodel.ImportDatasetPayload, error)
 	ImportDatasetFromGoogleSheet(ctx context.Context, input gqlmodel.ImportDatasetFromGoogleSheetInput) (*gqlmodel.ImportDatasetPayload, error)
@@ -1320,7 +1305,6 @@ type QueryResolver interface {
 	Assets(ctx context.Context, teamID gqlmodel.ID, keyword *string, sort *gqlmodel.AssetSortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error)
 	DatasetSchemas(ctx context.Context, sceneID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
 	Datasets(ctx context.Context, datasetSchemaID gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetConnection, error)
-	DynamicDatasetSchemas(ctx context.Context, sceneID gqlmodel.ID) ([]*gqlmodel.DatasetSchema, error)
 	Layer(ctx context.Context, id gqlmodel.ID) (gqlmodel.Layer, error)
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
@@ -1406,27 +1390,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AddDatasetSchemaPayload.DatasetSchema(childComplexity), true
-
-	case "AddDynamicDatasetPayload.dataset":
-		if e.complexity.AddDynamicDatasetPayload.Dataset == nil {
-			break
-		}
-
-		return e.complexity.AddDynamicDatasetPayload.Dataset(childComplexity), true
-
-	case "AddDynamicDatasetPayload.datasetSchema":
-		if e.complexity.AddDynamicDatasetPayload.DatasetSchema == nil {
-			break
-		}
-
-		return e.complexity.AddDynamicDatasetPayload.DatasetSchema(childComplexity), true
-
-	case "AddDynamicDatasetSchemaPayload.datasetSchema":
-		if e.complexity.AddDynamicDatasetSchemaPayload.DatasetSchema == nil {
-			break
-		}
-
-		return e.complexity.AddDynamicDatasetSchemaPayload.DatasetSchema(childComplexity), true
 
 	case "AddInfoboxFieldPayload.infoboxField":
 		if e.complexity.AddInfoboxFieldPayload.InfoboxField == nil {
@@ -3178,30 +3141,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddDatasetSchema(childComplexity, args["input"].(gqlmodel.AddDatasetSchemaInput)), true
-
-	case "Mutation.addDynamicDataset":
-		if e.complexity.Mutation.AddDynamicDataset == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_addDynamicDataset_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AddDynamicDataset(childComplexity, args["input"].(gqlmodel.AddDynamicDatasetInput)), true
-
-	case "Mutation.addDynamicDatasetSchema":
-		if e.complexity.Mutation.AddDynamicDatasetSchema == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_addDynamicDatasetSchema_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AddDynamicDatasetSchema(childComplexity, args["input"].(gqlmodel.AddDynamicDatasetSchemaInput)), true
 
 	case "Mutation.addInfoboxField":
 		if e.complexity.Mutation.AddInfoboxField == nil {
@@ -5148,18 +5087,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Datasets(childComplexity, args["datasetSchemaId"].(gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
 
-	case "Query.dynamicDatasetSchemas":
-		if e.complexity.Query.DynamicDatasetSchemas == nil {
-			break
-		}
-
-		args, err := ec.field_Query_dynamicDatasetSchemas_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.DynamicDatasetSchemas(childComplexity, args["sceneId"].(gqlmodel.ID)), true
-
 	case "Query.layer":
 		if e.complexity.Query.Layer == nil {
 			break
@@ -5438,13 +5365,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Scene.DatasetSchemas(childComplexity, args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
-
-	case "Scene.dynamicDatasetSchemas":
-		if e.complexity.Scene.DynamicDatasetSchemas == nil {
-			break
-		}
-
-		return e.complexity.Scene.DynamicDatasetSchemas(childComplexity), true
 
 	case "Scene.id":
 		if e.complexity.Scene.ID == nil {
@@ -6306,8 +6226,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAddClusterInput,
 		ec.unmarshalInputAddDatasetSchemaInput,
-		ec.unmarshalInputAddDynamicDatasetInput,
-		ec.unmarshalInputAddDynamicDatasetSchemaInput,
 		ec.unmarshalInputAddInfoboxFieldInput,
 		ec.unmarshalInputAddLayerGroupInput,
 		ec.unmarshalInputAddLayerItemInput,
@@ -6708,19 +6626,6 @@ input UpdateDatasetSchemaInput {
   name: String!
 }
 
-input AddDynamicDatasetSchemaInput {
-  sceneId: ID!
-}
-
-input AddDynamicDatasetInput {
-  datasetSchemaId: ID!
-  author: String!
-  content: String!
-  lat: Float
-  lng: Float
-  target: String
-}
-
 input RemoveDatasetSchemaInput {
   schemaId: ID!
   force: Boolean
@@ -6764,15 +6669,6 @@ type RemoveDatasetSchemaPayload {
   schemaId: ID!
 }
 
-type AddDynamicDatasetSchemaPayload {
-  datasetSchema: DatasetSchema
-}
-
-type AddDynamicDatasetPayload {
-  datasetSchema: DatasetSchema
-  dataset: Dataset
-}
-
 type ImportDatasetPayload {
   datasetSchema: DatasetSchema!
 }
@@ -6810,19 +6706,17 @@ type DatasetEdge {
 extend type Query{
   datasetSchemas(sceneId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
   datasets(datasetSchemaId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection!
-  dynamicDatasetSchemas(sceneId: ID!): [DatasetSchema!]!
 }
 
 extend type Mutation {
   updateDatasetSchema(input: UpdateDatasetSchemaInput!): UpdateDatasetSchemaPayload
   syncDataset(input: SyncDatasetInput!): SyncDatasetPayload
-  addDynamicDatasetSchema(input: AddDynamicDatasetSchemaInput!): AddDynamicDatasetSchemaPayload
-  addDynamicDataset(input: AddDynamicDatasetInput!): AddDynamicDatasetPayload
   removeDatasetSchema(input: RemoveDatasetSchemaInput!): RemoveDatasetSchemaPayload
   importDataset(input: ImportDatasetInput!): ImportDatasetPayload
   importDatasetFromGoogleSheet(input: ImportDatasetFromGoogleSheetInput!): ImportDatasetPayload
   addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/layer.graphql", Input: `interface Layer {
   id: ID!
   sceneId: ID!
@@ -7657,7 +7551,6 @@ extend type Mutation {
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
-  dynamicDatasetSchemas: [DatasetSchema!]!
   project: Project
   team: Team
   property: Property
@@ -7705,7 +7598,8 @@ extend type Query{
 
 extend type Mutation {
   createScene(input: CreateSceneInput!): CreateScenePayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/tag.graphql", Input: `interface Tag {
   id: ID!
   sceneId: ID!
@@ -8234,36 +8128,6 @@ func (ec *executionContext) field_Mutation_addDatasetSchema_args(ctx context.Con
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddDatasetSchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDatasetSchemaInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_addDynamicDatasetSchema_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 gqlmodel.AddDynamicDatasetSchemaInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddDynamicDatasetSchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetSchemaInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_addDynamicDataset_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 gqlmodel.AddDynamicDatasetInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNAddDynamicDatasetInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9496,21 +9360,6 @@ func (ec *executionContext) field_Query_datasets_args(ctx context.Context, rawAr
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_dynamicDatasetSchemas_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 gqlmodel.ID
-	if tmp, ok := rawArgs["sceneId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
-		arg0, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["sceneId"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_layer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -9956,8 +9805,6 @@ func (ec *executionContext) fieldContext_AddClusterPayload_scene(ctx context.Con
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -10066,191 +9913,6 @@ func (ec *executionContext) _AddDatasetSchemaPayload_datasetSchema(ctx context.C
 func (ec *executionContext) fieldContext_AddDatasetSchemaPayload_datasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "AddDatasetSchemaPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_DatasetSchema_id(ctx, field)
-			case "source":
-				return ec.fieldContext_DatasetSchema_source(ctx, field)
-			case "name":
-				return ec.fieldContext_DatasetSchema_name(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
-			case "fields":
-				return ec.fieldContext_DatasetSchema_fields(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
-			case "representativeFieldId":
-				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
-			case "dynamic":
-				return ec.fieldContext_DatasetSchema_dynamic(ctx, field)
-			case "datasets":
-				return ec.fieldContext_DatasetSchema_datasets(ctx, field)
-			case "scene":
-				return ec.fieldContext_DatasetSchema_scene(ctx, field)
-			case "representativeField":
-				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _AddDynamicDatasetPayload_datasetSchema(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddDynamicDatasetPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AddDynamicDatasetPayload_datasetSchema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DatasetSchema, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.DatasetSchema)
-	fc.Result = res
-	return ec.marshalODatasetSchema2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDatasetSchema(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AddDynamicDatasetPayload_datasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AddDynamicDatasetPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_DatasetSchema_id(ctx, field)
-			case "source":
-				return ec.fieldContext_DatasetSchema_source(ctx, field)
-			case "name":
-				return ec.fieldContext_DatasetSchema_name(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
-			case "fields":
-				return ec.fieldContext_DatasetSchema_fields(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
-			case "representativeFieldId":
-				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
-			case "dynamic":
-				return ec.fieldContext_DatasetSchema_dynamic(ctx, field)
-			case "datasets":
-				return ec.fieldContext_DatasetSchema_datasets(ctx, field)
-			case "scene":
-				return ec.fieldContext_DatasetSchema_scene(ctx, field)
-			case "representativeField":
-				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _AddDynamicDatasetPayload_dataset(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddDynamicDatasetPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AddDynamicDatasetPayload_dataset(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Dataset, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Dataset)
-	fc.Result = res
-	return ec.marshalODataset2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDataset(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AddDynamicDatasetPayload_dataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AddDynamicDatasetPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Dataset_id(ctx, field)
-			case "source":
-				return ec.fieldContext_Dataset_source(ctx, field)
-			case "schemaId":
-				return ec.fieldContext_Dataset_schemaId(ctx, field)
-			case "fields":
-				return ec.fieldContext_Dataset_fields(ctx, field)
-			case "schema":
-				return ec.fieldContext_Dataset_schema(ctx, field)
-			case "name":
-				return ec.fieldContext_Dataset_name(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Dataset", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _AddDynamicDatasetSchemaPayload_datasetSchema(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddDynamicDatasetSchemaPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AddDynamicDatasetSchemaPayload_datasetSchema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DatasetSchema, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.DatasetSchema)
-	fc.Result = res
-	return ec.marshalODatasetSchema2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDatasetSchema(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AddDynamicDatasetSchemaPayload_datasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AddDynamicDatasetSchemaPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10958,8 +10620,6 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(ctx context.Cont
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -12491,8 +12151,6 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(ctx context.Co
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -14251,8 +13909,6 @@ func (ec *executionContext) fieldContext_DatasetSchema_scene(ctx context.Context
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -15999,8 +15655,6 @@ func (ec *executionContext) fieldContext_Infobox_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -16818,8 +16472,6 @@ func (ec *executionContext) fieldContext_InfoboxField_scene(ctx context.Context,
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -16953,8 +16605,6 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -18285,8 +17935,6 @@ func (ec *executionContext) fieldContext_LayerGroup_scene(ctx context.Context, f
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -19311,8 +18959,6 @@ func (ec *executionContext) fieldContext_LayerItem_scene(ctx context.Context, fi
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -20264,8 +19910,6 @@ func (ec *executionContext) fieldContext_MergedInfobox_scene(ctx context.Context
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -20734,8 +20378,6 @@ func (ec *executionContext) fieldContext_MergedInfoboxField_scene(ctx context.Co
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -21273,8 +20915,6 @@ func (ec *executionContext) fieldContext_MergedLayer_scene(ctx context.Context, 
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -23739,120 +23379,6 @@ func (ec *executionContext) fieldContext_Mutation_syncDataset(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_syncDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_addDynamicDatasetSchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addDynamicDatasetSchema(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddDynamicDatasetSchema(rctx, fc.Args["input"].(gqlmodel.AddDynamicDatasetSchemaInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AddDynamicDatasetSchemaPayload)
-	fc.Result = res
-	return ec.marshalOAddDynamicDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetSchemaPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_addDynamicDatasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_AddDynamicDatasetSchemaPayload_datasetSchema(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddDynamicDatasetSchemaPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addDynamicDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_addDynamicDataset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addDynamicDataset(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddDynamicDataset(rctx, fc.Args["input"].(gqlmodel.AddDynamicDatasetInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AddDynamicDatasetPayload)
-	fc.Result = res
-	return ec.marshalOAddDynamicDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetPayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_addDynamicDataset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "datasetSchema":
-				return ec.fieldContext_AddDynamicDatasetPayload_datasetSchema(ctx, field)
-			case "dataset":
-				return ec.fieldContext_AddDynamicDatasetPayload_dataset(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddDynamicDatasetPayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addDynamicDataset_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -27801,8 +27327,6 @@ func (ec *executionContext) fieldContext_Plugin_scene(ctx context.Context, field
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -30134,8 +29658,6 @@ func (ec *executionContext) fieldContext_Project_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -35206,85 +34728,6 @@ func (ec *executionContext) fieldContext_Query_datasets(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_dynamicDatasetSchemas(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_dynamicDatasetSchemas(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().DynamicDatasetSchemas(rctx, fc.Args["sceneId"].(gqlmodel.ID))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.DatasetSchema)
-	fc.Result = res
-	return ec.marshalNDatasetSchema2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDatasetSchemaᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_dynamicDatasetSchemas(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_DatasetSchema_id(ctx, field)
-			case "source":
-				return ec.fieldContext_DatasetSchema_source(ctx, field)
-			case "name":
-				return ec.fieldContext_DatasetSchema_name(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
-			case "fields":
-				return ec.fieldContext_DatasetSchema_fields(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
-			case "representativeFieldId":
-				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
-			case "dynamic":
-				return ec.fieldContext_DatasetSchema_dynamic(ctx, field)
-			case "datasets":
-				return ec.fieldContext_DatasetSchema_datasets(ctx, field)
-			case "scene":
-				return ec.fieldContext_DatasetSchema_scene(ctx, field)
-			case "representativeField":
-				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_dynamicDatasetSchemas_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_layer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_layer(ctx, field)
 	if err != nil {
@@ -35817,8 +35260,6 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -36382,8 +35823,6 @@ func (ec *executionContext) fieldContext_RemoveClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -36968,8 +36407,6 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -37505,74 +36942,6 @@ func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(ctx context.Con
 				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_dynamicDatasetSchemas(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DynamicDatasetSchemas, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.DatasetSchema)
-	fc.Result = res
-	return ec.marshalNDatasetSchema2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDatasetSchemaᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_dynamicDatasetSchemas(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_DatasetSchema_id(ctx, field)
-			case "source":
-				return ec.fieldContext_DatasetSchema_source(ctx, field)
-			case "name":
-				return ec.fieldContext_DatasetSchema_name(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
-			case "fields":
-				return ec.fieldContext_DatasetSchema_fields(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
-			case "representativeFieldId":
-				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
-			case "dynamic":
-				return ec.fieldContext_DatasetSchema_dynamic(ctx, field)
-			case "datasets":
-				return ec.fieldContext_DatasetSchema_datasets(ctx, field)
-			case "scene":
-				return ec.fieldContext_DatasetSchema_scene(ctx, field)
-			case "representativeField":
-				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
 	}
 	return fc, nil
@@ -39384,8 +38753,6 @@ func (ec *executionContext) fieldContext_TagGroup_scene(ctx context.Context, fie
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41013,8 +40380,6 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(ctx contex
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41097,8 +40462,6 @@ func (ec *executionContext) fieldContext_UpdateClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41576,8 +40939,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(ct
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41660,8 +41021,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -41808,8 +41167,6 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -42024,8 +41381,6 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_plugins(ctx, field)
 			case "widgetAlignSystem":
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "dynamicDatasetSchemas":
-				return ec.fieldContext_Scene_dynamicDatasetSchemas(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "team":
@@ -45346,102 +44701,6 @@ func (ec *executionContext) unmarshalInputAddDatasetSchemaInput(ctx context.Cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAddDynamicDatasetInput(ctx context.Context, obj interface{}) (gqlmodel.AddDynamicDatasetInput, error) {
-	var it gqlmodel.AddDynamicDatasetInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"datasetSchemaId", "author", "content", "lat", "lng", "target"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "datasetSchemaId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datasetSchemaId"))
-			it.DatasetSchemaID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "author":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("author"))
-			it.Author, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "content":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
-			it.Content, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "lat":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lat"))
-			it.Lat, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "lng":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lng"))
-			it.Lng, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "target":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("target"))
-			it.Target, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputAddDynamicDatasetSchemaInput(ctx context.Context, obj interface{}) (gqlmodel.AddDynamicDatasetSchemaInput, error) {
-	var it gqlmodel.AddDynamicDatasetSchemaInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"sceneId"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "sceneId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
-			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputAddInfoboxFieldInput(ctx context.Context, obj interface{}) (gqlmodel.AddInfoboxFieldInput, error) {
 	var it gqlmodel.AddInfoboxFieldInput
 	asMap := map[string]interface{}{}
@@ -48678,60 +47937,6 @@ func (ec *executionContext) _AddDatasetSchemaPayload(ctx context.Context, sel as
 		case "datasetSchema":
 
 			out.Values[i] = ec._AddDatasetSchemaPayload_datasetSchema(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var addDynamicDatasetPayloadImplementors = []string{"AddDynamicDatasetPayload"}
-
-func (ec *executionContext) _AddDynamicDatasetPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.AddDynamicDatasetPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, addDynamicDatasetPayloadImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AddDynamicDatasetPayload")
-		case "datasetSchema":
-
-			out.Values[i] = ec._AddDynamicDatasetPayload_datasetSchema(ctx, field, obj)
-
-		case "dataset":
-
-			out.Values[i] = ec._AddDynamicDatasetPayload_dataset(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var addDynamicDatasetSchemaPayloadImplementors = []string{"AddDynamicDatasetSchemaPayload"}
-
-func (ec *executionContext) _AddDynamicDatasetSchemaPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.AddDynamicDatasetSchemaPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, addDynamicDatasetSchemaPayloadImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AddDynamicDatasetSchemaPayload")
-		case "datasetSchema":
-
-			out.Values[i] = ec._AddDynamicDatasetSchemaPayload_datasetSchema(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -52192,18 +51397,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_syncDataset(ctx, field)
 			})
 
-		case "addDynamicDatasetSchema":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addDynamicDatasetSchema(ctx, field)
-			})
-
-		case "addDynamicDataset":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addDynamicDataset(ctx, field)
-			})
-
 		case "removeDatasetSchema":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -54488,29 +53681,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "dynamicDatasetSchemas":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_dynamicDatasetSchemas(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
 		case "layer":
 			field := field
 
@@ -55159,13 +54329,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 
 			out.Values[i] = ec._Scene_widgetAlignSystem(ctx, field, obj)
 
-		case "dynamicDatasetSchemas":
-
-			out.Values[i] = ec._Scene_dynamicDatasetSchemas(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "project":
 			field := field
 
@@ -57090,16 +56253,6 @@ func (ec *executionContext) unmarshalNAddClusterInput2githubᚗcomᚋreearthᚋr
 
 func (ec *executionContext) unmarshalNAddDatasetSchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDatasetSchemaInput(ctx context.Context, v interface{}) (gqlmodel.AddDatasetSchemaInput, error) {
 	res, err := ec.unmarshalInputAddDatasetSchemaInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNAddDynamicDatasetInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetInput(ctx context.Context, v interface{}) (gqlmodel.AddDynamicDatasetInput, error) {
-	res, err := ec.unmarshalInputAddDynamicDatasetInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNAddDynamicDatasetSchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetSchemaInput(ctx context.Context, v interface{}) (gqlmodel.AddDynamicDatasetSchemaInput, error) {
-	res, err := ec.unmarshalInputAddDynamicDatasetSchemaInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -60116,20 +59269,6 @@ func (ec *executionContext) marshalOAddDatasetSchemaPayload2ᚖgithubᚗcomᚋre
 		return graphql.Null
 	}
 	return ec._AddDatasetSchemaPayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOAddDynamicDatasetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddDynamicDatasetPayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AddDynamicDatasetPayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOAddDynamicDatasetSchemaPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDynamicDatasetSchemaPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddDynamicDatasetSchemaPayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AddDynamicDatasetSchemaPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOAddInfoboxFieldPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddInfoboxFieldPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddInfoboxFieldPayload) graphql.Marshaler {
