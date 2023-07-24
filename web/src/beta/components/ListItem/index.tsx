@@ -35,7 +35,7 @@ const ListItem: FC<Props> = ({
         <Popover.Provider open={isOpenAction} onOpenChange={onOpenChange}>
           <Popover.Trigger asChild>
             <Button onClick={onActionClick}>
-              <Icon icon="actionbutton" size={12} />
+              <Icon icon="actionButton" size={12} />
             </Button>
           </Popover.Trigger>
           <Popover.Content>{actionContent}</Popover.Content>

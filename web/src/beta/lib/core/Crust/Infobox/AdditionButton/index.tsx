@@ -51,7 +51,7 @@ const AdditionButton: React.FC<Props> = ({ className, children, disabled, onClic
       <InsertArea onClick={handleClick}>
         <Line />
         <Button className={className} ref={referenceElement}>
-          <StyledIcon icon="plusSquare" size={13} />
+          <StyledIcon icon="squarePlus" size={13} />
         </Button>
         <Line />
       </InsertArea>

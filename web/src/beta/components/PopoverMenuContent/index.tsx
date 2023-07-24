@@ -1,10 +1,10 @@
-import Icon, { Icons } from "@reearth/beta/components/Icon";
+import Icon, { Icon as IconType } from "@reearth/beta/components/Icon";
 import { css, styled } from "@reearth/services/theme";
 
 export type MenuItem = {
   name: string;
   isSelected?: boolean;
-  icon?: Icons;
+  icon?: IconType;
   onClick?: () => void;
 };
 

@@ -38,7 +38,7 @@ const StorytellingPageSectionItem: FC<Props> = ({
           {title}
         </Text>
         <Wrapper>
-          <Icon icon="actionbutton" onClick={onAction} />
+          <Icon icon="actionButton" onClick={onAction} />
         </Wrapper>
       </TitleArea>
     </HorizontalBox>

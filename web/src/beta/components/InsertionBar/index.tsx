@@ -68,7 +68,7 @@ const InsertionBar: React.FC<Props> = ({
           className="WORKAROUND_INSERTION_BAR"
           visible={mode === "visible"}
           hovered={!!children}>
-          <StyledAddButton onClick={handleClick} icon="plusSquare" size={13} />
+          <StyledAddButton onClick={handleClick} icon="squarePlus" size={13} />
         </ButtonWrapper>
       </Wrapper>
       <Portal>

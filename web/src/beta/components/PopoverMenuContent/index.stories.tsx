@@ -43,7 +43,7 @@ export const Default: Story = {
         onClick: action("onClickItem"),
       },
       {
-        icon: "gearSix",
+        icon: "cogNoFill",
         name: "NameNameNameNameNameNameName",
         onClick: action("onClickItem"),
       },

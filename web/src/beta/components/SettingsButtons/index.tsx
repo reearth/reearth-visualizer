@@ -19,7 +19,7 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
       <StyledText size={"xFootnote"} color={theme.general.content.strong} onClick={onBlock}>
         {title}
       </StyledText>
-      <StyledSubIcon size={12} icon={"editIcon"} onClick={onEdit} />
+      <StyledSubIcon size={12} icon={"edit"} onClick={onEdit} />
       <StyledSubIcon size={12} icon={"settings"} onClick={onSetting} />
     </Wrapper>
   );

@@ -9,6 +9,7 @@ import react from "@vitejs/plugin-react";
 import { readEnv } from "read-env";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
+import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
 
@@ -16,7 +17,15 @@ import pkg from "./package.json";
 
 export default defineConfig(() => ({
   envPrefix: "REEARTH_WEB_",
-  plugins: [react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
+  plugins: [
+    react(),
+    svgr(),
+    yaml() as Plugin, // to avoid type errors
+    cesium(),
+    serverHeaders(),
+    config(),
+    tsconfigPaths(),
+  ],
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),

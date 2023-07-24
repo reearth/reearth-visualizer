@@ -1,17 +1,17 @@
 import svgToMiniDataURI from "mini-svg-data-uri";
 import React, { AriaAttributes, AriaRole, CSSProperties, memo, useMemo } from "react";
-import SVG from "react-inlinesvg";
 
 import { ariaProps } from "@reearth/beta/utils/aria";
 import { styled } from "@reearth/services/theme";
 
-import Icons from "./icons";
+import { type Icon as IconType } from "./types";
+import useDynamicSVGImport from "./useDynamicSVGImport";
 
-export type Icons = keyof typeof Icons;
+export { type Icon } from "./types";
 
 export type Props = {
   className?: string;
-  icon?: string | Icons;
+  icon?: IconType | string;
   size?: string | number;
   alt?: string;
   color?: string;
@@ -37,47 +37,61 @@ const Icon: React.FC<Props> = ({
   onClick,
   ...props
 }) => {
-  const src = useMemo(
-    () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
-    [icon],
-  );
-  if (!icon) return null;
-
   const aria = ariaProps(props);
   const sizeStr = typeof size === "number" ? `${size}px` : size;
-  if (!src) {
+
+  const { SvgIcon } = useDynamicSVGImport(icon);
+
+  const src = useMemo(() => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : null), [icon]);
+
+  if (SvgIcon) {
+    const StyledSvg = styled(SvgIcon)<{
+      color?: string;
+      stroke?: string;
+      size?: string;
+    }>`
+      font-size: 0;
+      display: inline-block;
+      width: ${({ size }) => size};
+      height: ${({ size }) => size};
+      color: ${({ color }) => color};
+      ${({ stroke }) => stroke && `stroke: ${stroke};`}
+      transition-property: color, background;
+    `;
+
     return (
-      <StyledImg
+      <StyledSvg
         className={className}
-        src={icon}
-        alt={alt}
-        style={style}
         role={role}
+        color={color}
+        stroke={stroke}
         size={sizeStr}
-        notransition={notransition}
         onClick={onClick}
+        style={{
+          ...style,
+          // To prevent annoying errors from being output to the console, specify transitions without Emotion.
+          transitionDuration:
+            !notransition && !style?.transitionDuration
+              ? transitionDuration || "0.3s"
+              : style?.transitionDuration,
+        }}
         {...aria}
       />
     );
   }
 
+  if (!src) return null;
+
   return (
-    <StyledSvg
+    <StyledImg
       className={className}
-      src={src}
+      src={icon}
+      alt={alt}
+      style={style}
       role={role}
-      color={color}
-      stroke={stroke}
       size={sizeStr}
+      notransition={notransition}
       onClick={onClick}
-      style={{
-        ...style,
-        // To prevent annoying errors from being output to the console, specify transitions without Emotion.
-        transitionDuration:
-          !notransition && !style?.transitionDuration
-            ? transitionDuration || "0.3s"
-            : style?.transitionDuration,
-      }}
       {...aria}
     />
   );
@@ -87,20 +101,6 @@ const StyledImg = styled.img<{ size?: string; notransition?: boolean }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   ${({ notransition }) => !notransition && "transition: all 0.3s;"}
-`;
-
-const StyledSvg = styled(SVG)<{
-  color?: string;
-  stroke?: string;
-  size?: string;
-}>`
-  font-size: 0;
-  display: inline-block;
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  color: ${({ color }) => color};
-  ${({ stroke }) => stroke && `stroke: ${stroke};`}
-  transition-property: color, background;
 `;
 
 export default memo(Icon);
