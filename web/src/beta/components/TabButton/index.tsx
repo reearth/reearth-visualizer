@@ -2,12 +2,12 @@ import type { FC } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import Icon, { Icons } from "../Icon";
+import Icon, { type Icon as IconType } from "../Icon";
 import Text from "../Text";
 
 export type Props = {
   label: string;
-  icon?: Icons;
+  icon?: IconType;
   onClick?: () => void;
   selected?: boolean;
 };

@@ -1,6 +1,6 @@
 import { ReactNode, useState, Fragment } from "react";
 
-import Icon, { Icons } from "@reearth/beta/components/Icon";
+import Icon, { type Icon as IconType } from "@reearth/beta/components/Icon";
 import {
   MenuListItemLabel,
   MenuList,
@@ -21,7 +21,7 @@ export type Menu = {
 
 export type MenuItem = {
   text?: string;
-  icon?: Icons;
+  icon?: IconType;
   iconPosition?: "left" | "right";
   breakpoint?: boolean;
   items?: MenuItem[];

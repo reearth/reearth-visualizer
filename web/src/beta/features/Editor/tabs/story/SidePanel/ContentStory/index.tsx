@@ -51,7 +51,7 @@ const ContentStory: React.FC<Props> = ({
                     },
                   },
                   {
-                    icon: "gearSix",
+                    icon: "cogNoFill",
                     name: "Settings",
                     onClick: () => {
                       setOpenedPageId(undefined);
