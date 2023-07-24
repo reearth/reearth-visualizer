@@ -129,12 +129,6 @@ const ButtonWrapper = styled.div`
   align-self: stretch;
   justify-content: flex-end;
   border-top: 1px solid #525252;
-  & > :first-child {
-    order: 2;
-  }
-  & > :last-child {
-    order: 1;
-  }
 `;
 
 export default Modal;

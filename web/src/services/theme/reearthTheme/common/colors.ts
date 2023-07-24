@@ -4,10 +4,6 @@ const colors = {
     white: "#FFFFFF",
     transparentBlack: "rgba(0,0,0,0.7)",
     transparentLight: "rgba(0,0,0,0.4)",
-    bg: {
-      1: "#1e2086",
-      2: "#df3013",
-    },
   },
   brand: {
     blue: {
