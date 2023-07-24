@@ -3,7 +3,7 @@ import { forwardRef, type ForwardRefRenderFunction, type MutableRefObject } from
 import { SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
-import type { ComputedLayer } from "../types";
+import type { ComputedLayer, RequestingRenderMode } from "../types";
 
 import useHooks, { LayerSelectionReason, type Ref } from "./hooks";
 
@@ -38,7 +38,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   };
   selectionReason?: LayerSelectionReason;
   sceneProperty?: any;
-  requestingRender?: MutableRefObject<boolean>;
+  requestingRender?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,

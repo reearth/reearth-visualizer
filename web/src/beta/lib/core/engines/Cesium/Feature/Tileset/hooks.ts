@@ -36,6 +36,7 @@ import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
 import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import type { InternalCesium3DTileFeature } from "../../types";
 import { lookupFeatures, translationWithClamping } from "../../utils";
+import { useContext } from "../context";
 import {
   usePick,
   attachTag,
@@ -290,13 +291,16 @@ const useFeature = ({
     [computeFeatureAsync],
   );
 
+  const { requestRender } = useContext();
+
   useEffect(() => {
     const compute = async () => {
       const startedComputingAt = Date.now();
       await computeFeatures(startedComputingAt);
+      requestRender?.();
     };
     compute();
-  }, [computeFeatures]);
+  }, [computeFeatures, requestRender]);
 };
 
 export const useHooks = ({

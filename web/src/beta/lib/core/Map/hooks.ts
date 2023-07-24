@@ -3,7 +3,13 @@ import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect
 import { SelectedFeatureInfo } from "../mantle";
 
 import { type MapRef, mapRef } from "./ref";
-import type { EngineRef, LayersRef, LayerSelectionReason, ComputedLayer } from "./types";
+import type {
+  EngineRef,
+  LayersRef,
+  LayerSelectionReason,
+  ComputedLayer,
+  RequestingRenderMode,
+} from "./types";
 
 export type { MapRef } from "./ref";
 
@@ -26,7 +32,7 @@ export default function ({
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
-  const requestingRender = useRef(false);
+  const requestingRender = useRef<RequestingRenderMode>(0);
 
   useImperativeHandle(
     ref,

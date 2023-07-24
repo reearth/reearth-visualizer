@@ -20,7 +20,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef, FEATURE_FLAGS } from "@reearth/beta/lib/core/Map";
+import { LayersRef, FEATURE_FLAGS, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -75,7 +75,7 @@ export default ({
   isLayerDragging?: boolean;
   meta?: Record<string, unknown>;
   featureFlags: number;
-  requestingRender?: React.MutableRefObject<boolean>;
+  requestingRender?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
   onLayerSelect?: (
     layerId?: string,
@@ -708,9 +708,12 @@ export default ({
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
-      requestRender: handleUpdate,
+      requestRender: () => {
+        if (!requestingRender || requestingRender.current === -1) return;
+        requestingRender.current = 1;
+      },
     }),
-    [selectionReason, engineAPI, onLayerEdit, handleUpdate],
+    [selectionReason, engineAPI, requestingRender, onLayerEdit],
   );
 
   const handleTick = useCallback(
@@ -752,7 +755,9 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!requestingRender?.current || !viewer || viewer.isDestroyed()) return;
     viewer.scene.requestRender();
-    requestingRender.current = false;
+    if (requestingRender.current === 1) {
+      requestingRender.current = 0;
+    }
   }, [requestingRender]);
 
   // usePostUpdate(explicitRender);
@@ -767,18 +772,19 @@ export default ({
 
   useEffect(() => {
     if (requestingRender) {
-      requestingRender.current = true;
+      requestingRender.current = 1;
     }
   }, [property, requestingRender]);
 
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
-    viewer.scene.maximumRenderTimeChange =
-      !property?.timeline?.animation && !isLayerDraggable && !isLayerDragging && !shouldRender
-        ? Infinity
-        : 0;
-  }, [property?.timeline?.animation, isLayerDraggable, isLayerDragging, shouldRender]);
+    viewer.scene.maximumRenderTimeChange = !property?.timeline?.animation ? Infinity : 0;
+
+    if (requestingRender) {
+      requestingRender.current = isLayerDragging || shouldRender ? -1 : 0;
+    }
+  }, [property?.timeline?.animation, isLayerDragging, shouldRender, requestingRender]);
 
   return {
     backgroundColor,

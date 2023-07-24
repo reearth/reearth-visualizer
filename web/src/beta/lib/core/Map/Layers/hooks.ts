@@ -19,6 +19,7 @@ import { objectFromGetter } from "@reearth/beta/utils/object";
 
 import { computeAtom, convertLegacyLayer, SelectedFeatureInfo } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
+import { RequestingRenderMode } from "../types";
 import { useGet } from "../utils";
 
 import { computedLayerKeys, layerKeys } from "./keys";
@@ -111,7 +112,7 @@ export default function useHooks({
     featureId?: string;
   };
   selectionReason?: LayerSelectionReason;
-  requestingRender?: MutableRefObject<boolean>;
+  requestingRender?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -565,8 +566,8 @@ export default function useHooks({
   }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
 
   useEffect(() => {
-    if (!requestingRender) return;
-    requestingRender.current = true;
+    if (!requestingRender || requestingRender.current === -1) return;
+    requestingRender.current = 1;
   }, [flattenedLayers, overriddenLayers, requestingRender]);
 
   return { atomMap, flattenedLayers, isHidden };

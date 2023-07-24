@@ -119,7 +119,7 @@ export type EngineProps = {
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
-  requestingRender?: MutableRefObject<boolean>;
+  requestingRender?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
@@ -355,3 +355,5 @@ export type Engine = {
   clusterComponent: ClusterComponentType;
   delegatedDataTypes?: DataType[];
 };
+
+export type RequestingRenderMode = -1 | 0 | 1; // -1: force, 0: none, 1: request
