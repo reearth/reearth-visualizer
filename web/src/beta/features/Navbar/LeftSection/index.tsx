@@ -40,16 +40,16 @@ const LeftSection: React.FC<Props> = ({
   return (
     <Wrapper>
       <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
-        {!dashboard && <StyledIcon icon="dashboard" size={24} />}
+        {!dashboard && <StyledIcon icon="dashboard" size={20} />}
       </StyledLink>
       <Profile
-        onSignOut={onSignOut}
+        username={username}
         currentWorkspace={currentWorkspace}
-        onWorkspaceChange={onWorkspaceChange}
-        openModal={openModal}
         personalWorkspace={personalWorkspace}
         workspaces={workspaces}
-        username={username}
+        onSignOut={onSignOut}
+        onWorkspaceChange={onWorkspaceChange}
+        openModal={openModal}
       />
       <WorkspaceCreationModal
         open={modalShown}
@@ -94,4 +94,5 @@ const StyledIcon = styled(Icon)`
 const Separator = styled.div`
   color: ${props => props.theme.general.content.weak};
   margin: 0px 12px;
+  user-select: none;
 `;
