@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
-interface UseDynamicSVGImportOptions {
+type UseDynamicSVGImportOptions = {
   onCompleted?: (
     name: string,
     SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined,
   ) => void;
   onError?: (err: Error) => void;
-}
+};
 
 function useDynamicSVGImport(name?: string, options: UseDynamicSVGImportOptions = {}) {
   const ImportedIconRef = useRef<React.FC<React.SVGProps<SVGSVGElement>>>();
@@ -36,9 +36,5 @@ function useDynamicSVGImport(name?: string, options: UseDynamicSVGImportOptions 
 }
 
 export default (name?: string, options: UseDynamicSVGImportOptions = {}) => {
-  const { SvgIcon } = useDynamicSVGImport(name, options);
-
-  return {
-    SvgIcon,
-  };
+  return useDynamicSVGImport(name, options);
 };
