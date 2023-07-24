@@ -37,8 +37,10 @@ import type {
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
+import { arrayToCartecian3 } from "./helpers/sphericalHaromic";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
+import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
 export default ({
@@ -419,6 +421,26 @@ export default ({
     },
     [engineAPI],
   );
+
+  const sphericalHarmonicCoefficients = useMemo(
+    () =>
+      property?.light?.sphericalHarmonicCoefficients
+        ? arrayToCartecian3(
+            property?.light?.sphericalHarmonicCoefficients,
+            property?.light?.imageBasedLightIntensity,
+          )
+        : undefined,
+    [property?.light?.sphericalHarmonicCoefficients, property?.light?.imageBasedLightIntensity],
+  );
+
+  useOverrideGlobeShader({
+    cesium,
+    sphericalHarmonicCoefficients,
+    globeShadowDarkness: property?.atmosphere?.globeShadowDarkness,
+    globeImageBasedLighting: property?.atmosphere?.globeImageBasedLighting,
+    enableLighting: property?.atmosphere?.enable_lighting,
+    hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
+  });
 
   const handleMouseWheel = useCallback(
     (delta: number) => {

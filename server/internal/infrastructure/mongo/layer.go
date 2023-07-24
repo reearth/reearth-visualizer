@@ -36,6 +36,7 @@ var (
 		"infobox.property,scene",
 		"infobox.fields.property",
 		"infobox.fields.property,scene",
+		"group.linkeddatasetschema",
 	}
 	layerUniqueIndexes = []string{"id"}
 )

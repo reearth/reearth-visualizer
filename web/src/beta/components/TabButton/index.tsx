@@ -2,16 +2,23 @@ import type { FC } from "react";
 
 import { styled } from "@reearth/services/theme";
 
+import Icon, { Icons } from "../Icon";
+import Text from "../Text";
+
 export type Props = {
   label: string;
+  icon?: Icons;
   onClick?: () => void;
   selected?: boolean;
 };
 
-const TabButton: FC<Props> = ({ label, onClick, selected }) => {
+const TabButton: FC<Props> = ({ label, icon, onClick, selected }) => {
   return (
     <Button onClick={onClick} disabled={selected}>
-      {label}
+      {icon && <Icon icon={icon} size={20} />}
+      <Text size="body" customColor>
+        {label}
+      </Text>
     </Button>
   );
 };
@@ -25,10 +32,8 @@ const Button = styled.button<ButtonProps>`
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
-  padding: 8px 12px;
-  gap: 10px;
-  width: 67px;
-  height: 35px;
+  padding: 4px 8px;
+  gap: 8px;
   border-radius: 4px;
   color: ${({ disabled, theme }) =>
     disabled ? theme.general.content.main : theme.general.content.weak};
@@ -39,9 +44,10 @@ const Button = styled.button<ButtonProps>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
   :hover {
     background: ${({ theme }) => theme.general.bg.weak};
-    transition: all 0.5s ease;
+    transition: all 0.4s;
   }
 `;
 

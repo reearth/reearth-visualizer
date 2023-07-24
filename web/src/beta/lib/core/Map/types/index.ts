@@ -251,6 +251,7 @@ export type TerrainProperty = {
   terrainCesiumIonAccessToken?: string;
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
+  terrainNormal?: boolean;
 };
 
 export type SceneProperty = {
@@ -298,6 +299,8 @@ export type SceneProperty = {
     brightness_shift?: number;
     hue_shift?: number;
     surturation_shift?: number;
+    globeShadowDarkness?: number;
+    globeImageBasedLighting?: boolean;
   };
   timeline?: {
     animation?: boolean;

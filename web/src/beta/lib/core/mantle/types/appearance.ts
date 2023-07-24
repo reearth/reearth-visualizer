@@ -146,6 +146,7 @@ export type Cesium3DTilesAppearance = {
   edgeWidth?: number;
   edgeColor?: string;
   tileset?: string;
+  apiKey?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
   pointSize?: number;
   meta?: unknown;

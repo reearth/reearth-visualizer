@@ -3,7 +3,7 @@ import { Cesium3DTileset } from "resium";
 
 import type { Cesium3DTilesAppearance, ComputedLayer } from "../../..";
 import { colorBlendModeFor3DTile, shadowMode } from "../../common";
-import { NonPBRLightingShader } from "../../CustomShaders/NonPBRLightingShader";
+import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
 import Box from "../Box";
 import { type FeatureComponentConfig, type FeatureProps } from "../utils";
 
