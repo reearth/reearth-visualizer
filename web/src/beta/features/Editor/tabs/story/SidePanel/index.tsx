@@ -1,36 +1,48 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import ContentPage from "@reearth/beta/features/Editor/tabs/story/SidePanel/ContentPage";
-import ContentStory from "@reearth/beta/features/Editor/tabs/story/SidePanel/ContentStory";
 import { useT } from "@reearth/services/i18n";
 
 // TODO: these are currently rough definition
 type Props = {
-  stories: any;
-  selectedStory: any;
-  onSelectStory: (id: string) => void;
-  onStoryAdd: () => void;
+  // story
+  // stories: any;
+  // selectedStory: any;
+  // onStorySelect: (id: string) => void;
+  // onStoryAdd: () => void;
+
+  // page
   selectedPageId?: string;
-  onSelectPage: (id: string) => void;
+  onPageSelect: (id: string) => void;
+  onPageDuplicate: (id: string) => void;
+  onPageDelete: (id: string) => void;
   onPageAdd: () => void;
 };
 
-const SidePanel: React.FC<Props> = ({ onStoryAdd, onSelectStory, onPageAdd, onSelectPage }) => {
+const SidePanel: React.FC<Props> = ({ onPageAdd, onPageSelect, onPageDuplicate, onPageDelete }) => {
   const t = useT();
 
   return (
     <SidePanelCommon
       location="left"
       contents={[
-        {
-          id: "story",
-          title: t("Story"),
-          maxHeight: "33%",
-          children: <ContentStory onSelectStory={onSelectStory} onStoryAdd={onStoryAdd} />,
-        },
+        // you can use this when get multiple story feature
+        // {
+        //   id: "story",
+        //   title: t("Story"),
+        //   maxHeight: "33%",
+        //   children: <ContentStory ... />,
+        // },
         {
           id: "page",
           title: t("Page"),
-          children: <ContentPage onPageAdd={onPageAdd} onSelectPage={onSelectPage} />,
+          children: (
+            <ContentPage
+              onPageAdd={onPageAdd}
+              onPageSelect={onPageSelect}
+              onPageDuplicate={onPageDuplicate}
+              onPageDelete={onPageDelete}
+            />
+          ),
         },
       ]}
     />
