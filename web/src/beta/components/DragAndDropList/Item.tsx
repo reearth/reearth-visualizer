@@ -21,7 +21,7 @@ type Props = {
   children: ReactNode;
 };
 
-export const Item: FC<Props> = ({
+const Item: FC<Props> = ({
   itemGroupKey,
   id,
   children,

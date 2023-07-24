@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import { Item } from "./Item";
+import Item from "./Item";
 
 type Props<Item extends { id: string } = { id: string }> = {
   uniqueKey: string;
