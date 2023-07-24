@@ -25,14 +25,7 @@ import type {
 import { Block } from "../Infobox";
 import { Widget } from "../Widgets";
 
-import { CommonReearth } from "./api";
 import { ClientStorage } from "./useClientStorage";
-
-declare global {
-  interface Window {
-    reearth?: CommonReearth;
-  }
-}
 
 export type GlobalThis = {
   Cesium?: Cesium;
