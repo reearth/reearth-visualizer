@@ -31,6 +31,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     const opts = {
       terrain: terrainProperty?.terrain,
       terrainType: terrainProperty?.terrainType,
+      terrainNormal: terrainProperty?.terrainNormal,
       terrainCesiumIonAccessToken:
         terrainProperty?.terrainCesiumIonAccessToken || cesiumIonAccessToken,
       terrainCesiumIonAsset: terrainProperty?.terrainCesiumIonAsset,
@@ -44,6 +45,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     terrainProperty?.terrainCesiumIonAccessToken,
     terrainProperty?.terrainCesiumIonAsset,
     terrainProperty?.terrainCesiumIonUrl,
+    terrainProperty?.terrainNormal,
     cesiumIonAccessToken,
   ]);
 
@@ -83,26 +85,35 @@ const terrainProviders: {
     | ((
         opts: Pick<
           TerrainProperty,
-          "terrainCesiumIonAccessToken" | "terrainCesiumIonAsset" | "terrainCesiumIonUrl"
+          | "terrainCesiumIonAccessToken"
+          | "terrainCesiumIonAsset"
+          | "terrainCesiumIonUrl"
+          | "terrainNormal"
         >,
       ) => TerrainProvider | Promise<TerrainProvider> | null);
 } = {
-  cesium: ({ terrainCesiumIonAccessToken }) =>
+  cesium: ({ terrainCesiumIonAccessToken, terrainNormal }) =>
     // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
     CesiumTerrainProvider.fromUrl(
       IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,
       }),
       {
-        requestVertexNormals: false,
+        requestVertexNormals: terrainNormal,
         requestWaterMask: false,
       },
     ),
   arcgis: () =>
     ArcGISTiledElevationTerrainProvider.fromUrl(
       "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+      { requestVertexNormals: terrainNormal },
     ),
-  cesiumion: ({ terrainCesiumIonAccessToken, terrainCesiumIonAsset, terrainCesiumIonUrl }) =>
+  cesiumion: ({
+    terrainCesiumIonAccessToken,
+    terrainCesiumIonAsset,
+    terrainCesiumIonUrl,
+    terrainNormal,
+  }) =>
     terrainCesiumIonAsset
       ? CesiumTerrainProvider.fromUrl(
           terrainCesiumIonUrl ||
@@ -110,7 +121,7 @@ const terrainProviders: {
               accessToken: terrainCesiumIonAccessToken,
             }),
           {
-            requestVertexNormals: true,
+            requestVertexNormals: terrainNormal,
           },
         )
       : null,

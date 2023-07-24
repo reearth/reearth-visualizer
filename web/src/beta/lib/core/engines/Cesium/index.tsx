@@ -25,6 +25,8 @@ import Indicator from "./core/Indicator";
 import Event from "./Event";
 import Feature, { context as featureContext } from "./Feature";
 import useHooks from "./hooks";
+import { AmbientOcclusion, AmbientOcclusionOutputType } from "./PostProcesses/hbao";
+import { AMBIENT_OCCLUSION_QUALITY } from "./PostProcesses/hbao/config";
 
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   {
@@ -191,6 +193,16 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
       <Globe property={property} cesiumIonAccessToken={cesiumIonAccessToken} />
       <featureContext.Provider value={context}>{ready ? children : null}</featureContext.Provider>
+      <AmbientOcclusion
+        {...AMBIENT_OCCLUSION_QUALITY[property?.ambientOcclusion?.quality || "low"]}
+        enabled={!!property?.ambientOcclusion?.enabled}
+        intensity={property?.ambientOcclusion?.intensity ?? 100}
+        outputType={
+          property?.ambientOcclusion?.ambientOcclusionOnly
+            ? AmbientOcclusionOutputType.Occlusion
+            : null
+        }
+      />
     </Viewer>
   );
 };

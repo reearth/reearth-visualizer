@@ -1,8 +1,8 @@
 import React, { ReactElement, ReactNode, useMemo } from "react";
 
 import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
-import { AuthenticationRequiredPage } from "@reearth/services/auth";
-import { useGetMeQuery, useGetProjectQuery, useGetSceneQuery } from "@reearth/services/gql";
+import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
+import { AuthenticatedPage } from "@reearth/services/auth";
 import { useTheme } from "@reearth/services/theme";
 
 import Loading from "../components/Loading";
@@ -17,31 +17,25 @@ type Props = {
 const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, children }) => {
   const theme = useTheme();
 
-  const { loading: loadingMe } = useGetMeQuery();
+  const { useMeQuery } = useMeFetcher();
+  const { useProjectQuery } = useProjectFetcher();
+  const { useSceneQuery } = useSceneFetcher();
 
-  const { data: sceneData, loading: loadingScene } = useGetSceneQuery({
-    variables: { sceneId: sceneId ?? "" },
-    skip: !sceneId,
-  });
+  const { loading: loadingMe } = useMeQuery();
+
+  const { scene, loading: loadingScene } = useSceneQuery({ sceneId });
 
   const currentProjectId = useMemo(
-    () =>
-      projectId ?? (sceneData?.node?.__typename === "Scene" ? sceneData.node.projectId : undefined),
-    [projectId, sceneData?.node],
+    () => projectId ?? scene?.projectId,
+    [projectId, scene?.projectId],
   );
 
   const currentWorkspaceId = useMemo(
-    () =>
-      workspaceId ?? (sceneData?.node?.__typename === "Scene" ? sceneData.node.teamId : undefined),
-    [workspaceId, sceneData?.node],
+    () => workspaceId ?? scene?.teamId,
+    [workspaceId, scene?.teamId],
   );
 
-  const { loading: loadingProject } = useGetProjectQuery({
-    variables: {
-      projectId: currentProjectId ?? "",
-    },
-    skip: !currentProjectId,
-  });
+  const { loading: loadingProject } = useProjectQuery(currentProjectId);
 
   const childrenWithProps = React.Children.map(children, child => {
     return React.cloneElement(child as ReactElement<Props>, {
@@ -67,11 +61,11 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, childre
 };
 
 const Page: React.FC<Props> = ({ sceneId, projectId, workspaceId, children }) => (
-  <AuthenticationRequiredPage>
+  <AuthenticatedPage>
     <PageWrapper sceneId={sceneId} projectId={projectId} workspaceId={workspaceId}>
       {children}
     </PageWrapper>
-  </AuthenticationRequiredPage>
+  </AuthenticatedPage>
 );
 
 export default Page;
