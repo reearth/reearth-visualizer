@@ -48,7 +48,7 @@
         "@testing-library/jest-dom": "5.16.5",
         "@testing-library/react": "14.0.0",
         "@testing-library/user-event": "14.4.3",
-        "@types/apollo-upload-client": "14.1.0",
+        "@types/apollo-upload-client": "17.0.2",
         "@types/gapi.auth2": "0.0.57",
         "@types/gapi.client": "1.0.5",
         "@types/gapi.client.sheets": "4.0.20201031",
@@ -95,7 +95,7 @@
         "web-streams-polyfill": "3.2.1"
     },
     "dependencies": {
-        "@apollo/client": "3.7.14",
+        "@apollo/client": "3.7.3",
         "@auth0/auth0-react": "2.1.0",
         "@aws-amplify/ui-react": "5.0.2",
         "@emotion/react": "11.11.0",
