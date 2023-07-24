@@ -14,7 +14,7 @@ export type Props = {
 
 const TabButton: FC<Props> = ({ label, icon, onClick, selected }) => {
   return (
-    <Button onClick={onClick} disabled={selected}>
+    <Button onClick={onClick} selected={selected} disabled={selected}>
       {icon && <Icon icon={icon} size={20} />}
       <Text size="body" customColor>
         {label}
