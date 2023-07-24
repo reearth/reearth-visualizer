@@ -23,7 +23,7 @@ func Start(debug bool, version string) {
 	// Load config
 	conf, cerr := config.ReadConfig(debug)
 	if cerr != nil {
-		log.Fatal(cerr)
+		log.Fatalf("failed to load config: %v", cerr)
 	}
 	log.Infof("config: %s", conf.Print())
 
@@ -89,7 +89,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 }
 
 func (w *WebServer) Run() {
-	defer log.Infoln("Server shutdown")
+	defer log.Infof("Server shutdown")
 
 	debugLog := ""
 	if w.appServer.Debug {
@@ -99,7 +99,7 @@ func (w *WebServer) Run() {
 
 	go func() {
 		err := w.appServer.StartH2CServer(w.address, &http2.Server{})
-		log.Fatalln(err.Error())
+		log.Fatalf("failed to run server: %v", err)
 	}()
 
 	quit := make(chan os.Signal, 1)

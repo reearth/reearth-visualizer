@@ -249,6 +249,7 @@ export type TerrainProperty = {
   terrainCesiumIonAccessToken?: string;
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
+  terrainNormal?: boolean;
 };
 
 export type SceneProperty = {
@@ -288,11 +289,16 @@ export type SceneProperty = {
     ground_atmosphere?: boolean;
     sky_atmosphere?: boolean;
     shadows?: boolean;
+    shadowResolution?: 1024 | 2048 | 4096;
+    softShadow?: boolean;
+    shadowDarkness?: number;
     fog?: boolean;
     fog_density?: number;
     brightness_shift?: number;
     hue_shift?: number;
     surturation_shift?: number;
+    globeShadowDarkness?: number;
+    globeImageBasedLighting?: boolean;
   };
   timeline?: {
     animation?: boolean;
@@ -315,6 +321,12 @@ export type SceneProperty = {
     themeSelectColor?: string;
     themeBackgroundColor?: string;
   };
+  ambientOcclusion?: {
+    enabled?: boolean;
+    quality?: "low" | "medium" | "high" | "extreme";
+    intensity?: number;
+    ambientOcclusionOnly?: boolean;
+  };
   light?: {
     lightType?: "sunLight" | "directionalLight";
     lightDirectionX?: number;
@@ -322,6 +334,12 @@ export type SceneProperty = {
     lightDirectionZ?: number;
     lightColor?: string;
     lightIntensity?: number;
+    specularEnvironmentMaps?: string;
+    sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+    imageBasedLightIntensity?: number;
+  };
+  render?: {
+    antialias?: "low" | "medium" | "high" | "extreme";
   };
 };
 

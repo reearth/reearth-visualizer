@@ -2,6 +2,121 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.17.0 - 2023-07-11
+
+### Web
+
+#### 🚀 Features
+
+- Visualizer antialiasing ([#566](https://github.com/reearth/reearth/pull/566)) [`dd1b39`](https://github.com/reearth/reearth/commit/dd1b39)
+- Visualizer supports shadow map ([#524](https://github.com/reearth/reearth/pull/524)) [`748d9d`](https://github.com/reearth/reearth/commit/748d9d)
+- Add an option to disable default PBR to 3dtiles and model features in NLS ([#517](https://github.com/reearth/reearth/pull/517)) [`29083d`](https://github.com/reearth/reearth/commit/29083d)
+- Interaction mode on beta ([#507](https://github.com/reearth/reearth/pull/507)) [`d4bbd6`](https://github.com/reearth/reearth/commit/d4bbd6)
+- Add aws cognito support in auth ([#449](https://github.com/reearth/reearth/pull/449)) [`414473`](https://github.com/reearth/reearth/commit/414473)
+
+#### 🔧 Bug Fixes
+
+- Unexpect select undefined when select mvt layer ([#560](https://github.com/reearth/reearth/pull/560)) [`7ec40f`](https://github.com/reearth/reearth/commit/7ec40f)
+- Show OSM buildings [`ac01eb`](https://github.com/reearth/reearth/commit/ac01eb)
+- Selection event for published page ([#549](https://github.com/reearth/reearth/pull/549)) [`b4a111`](https://github.com/reearth/reearth/commit/b4a111)
+- Pass ion token to each layer ([#558](https://github.com/reearth/reearth/pull/558)) [`822d03`](https://github.com/reearth/reearth/commit/822d03)
+- Support with Authentication function support for cognito backend ([#514](https://github.com/reearth/reearth/pull/514)) [`c603f7`](https://github.com/reearth/reearth/commit/c603f7)
+- Skip cache feature for data has updateInterval ([#552](https://github.com/reearth/reearth/pull/552)) [`38489c`](https://github.com/reearth/reearth/commit/38489c)
+- Add id to property group list [`466fac`](https://github.com/reearth/reearth/commit/466fac)
+- Workspace or userId being undefined ([#527](https://github.com/reearth/reearth/pull/527)) [`d676dc`](https://github.com/reearth/reearth/commit/d676dc)
+- Infinite loop on network error ([#525](https://github.com/reearth/reearth/pull/525)) [`fa30bc`](https://github.com/reearth/reearth/commit/fa30bc)
+- Revert functionality to remember last workspace opened ([#523](https://github.com/reearth/reearth/pull/523)) [`05e32d`](https://github.com/reearth/reearth/commit/05e32d)
+- Typing for window in beta ([#518](https://github.com/reearth/reearth/pull/518)) [`b815a9`](https://github.com/reearth/reearth/commit/b815a9)
+- Wrong workspace when sharing link ([#506](https://github.com/reearth/reearth/pull/506)) [`5b939e`](https://github.com/reearth/reearth/commit/5b939e)
+- Revert published page VR layer selection ([#512](https://github.com/reearth/reearth/pull/512)) [`02d7fa`](https://github.com/reearth/reearth/commit/02d7fa)
+- Published page not getting theme [`a797dd`](https://github.com/reearth/reearth/commit/a797dd)
+
+#### ⚡️ Performance
+
+- Speed up fetching layers with datasets ([#544](https://github.com/reearth/reearth/pull/544)) [`e12357`](https://github.com/reearth/reearth/commit/e12357)
+
+#### ✨ Refactor
+
+- Split gql queries, fragments, etc ([#546](https://github.com/reearth/reearth/pull/546)) [`591800`](https://github.com/reearth/reearth/commit/591800)
+- Handle cesium private property of shadow map ([#531](https://github.com/reearth/reearth/pull/531)) [`ae4cdd`](https://github.com/reearth/reearth/commit/ae4cdd)
+- Handle GQL errors w useSetAtom ([#528](https://github.com/reearth/reearth/pull/528)) [`ff2040`](https://github.com/reearth/reearth/commit/ff2040)
+- Update Beta theme ([#504](https://github.com/reearth/reearth/pull/504)) [`248f1a`](https://github.com/reearth/reearth/commit/248f1a)
+
+#### Miscellaneous Tasks
+
+- Remove duplication from canvas convert.ts ([#573](https://github.com/reearth/reearth/pull/573)) [`988041`](https://github.com/reearth/reearth/commit/988041)
+- Update package.json to v0.17.0 ([#571](https://github.com/reearth/reearth/pull/571)) [`ac87ec`](https://github.com/reearth/reearth/commit/ac87ec)
+- Update package.json to v0.17.0 ([#570](https://github.com/reearth/reearth/pull/570)) [`215c73`](https://github.com/reearth/reearth/commit/215c73)
+- Refactor graphQL and set new standard ([#536](https://github.com/reearth/reearth/pull/536)) [`a002e6`](https://github.com/reearth/reearth/commit/a002e6)
+- Add story page indicator ([#543](https://github.com/reearth/reearth/pull/543)) [`7b47bb`](https://github.com/reearth/reearth/commit/7b47bb)
+- Add empty StoryPanel ([#541](https://github.com/reearth/reearth/pull/541)) [`65ba8c`](https://github.com/reearth/reearth/commit/65ba8c)
+- Allow reearth_config.json to be set remotely for local development ([#559](https://github.com/reearth/reearth/pull/559)) [`d1cba2`](https://github.com/reearth/reearth/commit/d1cba2)
+- Add SettingsButtons Component ([#513](https://github.com/reearth/reearth/pull/513)) [`6d0ab3`](https://github.com/reearth/reearth/commit/6d0ab3)
+- Add SwitchButtonList Component ([#526](https://github.com/reearth/reearth/pull/526)) [`34c54f`](https://github.com/reearth/reearth/commit/34c54f)
+- Reduce useless console.log on dataset load [`afcde1`](https://github.com/reearth/reearth/commit/afcde1)
+- Add actionItem to beta ([#497](https://github.com/reearth/reearth/pull/497)) [`d48d54`](https://github.com/reearth/reearth/commit/d48d54)
+- Add CheckboxField component ([#508](https://github.com/reearth/reearth/pull/508)) [`3a12f5`](https://github.com/reearth/reearth/commit/3a12f5)
+- Add SubTabButtonList component ([#509](https://github.com/reearth/reearth/pull/509)) [`61c937`](https://github.com/reearth/reearth/commit/61c937)
+- Add SidePanelSectionField component ([#505](https://github.com/reearth/reearth/pull/505)) [`4b7056`](https://github.com/reearth/reearth/commit/4b7056)
+- Update package.json version [`ff1daf`](https://github.com/reearth/reearth/commit/ff1daf)
+
+### Server
+
+#### 🚀 Features
+
+- Add dataset IDs and schema to dataset API ([#539](https://github.com/reearth/reearth/pull/539)) [`765c29`](https://github.com/reearth/reearth/commit/765c29)
+- Dataset REST API ([#537](https://github.com/reearth/reearth/pull/537)) [`62d6f0`](https://github.com/reearth/reearth/commit/62d6f0)
+
+#### 🔧 Bug Fixes
+
+- Reduce size of queries sent to MongoDB ([#550](https://github.com/reearth/reearth/pull/550)) [`56bef2`](https://github.com/reearth/reearth/commit/56bef2)
+- Filter properties in property.FindByIDs ([#548](https://github.com/reearth/reearth/pull/548)) [`842252`](https://github.com/reearth/reearth/commit/842252)
+- Add schema field ID to dataset REST API ([#547](https://github.com/reearth/reearth/pull/547)) [`241011`](https://github.com/reearth/reearth/commit/241011)
+- Use default mongo conn timeout [`f0e5cc`](https://github.com/reearth/reearth/commit/f0e5cc)
+
+#### ✨ Refactor
+
+- Replace user&#x2F;workspace with account in reearthx ([#493](https://github.com/reearth/reearth/pull/493)) [`5a612b`](https://github.com/reearth/reearth/commit/5a612b)
+
+#### Miscellaneous Tasks
+
+- Go mod tidy [`a0d8b0`](https://github.com/reearth/reearth/commit/a0d8b0)
+- Add REEARTH_ASSETBASEURL to &#x2F;server&#x2F;.env.example ([#433](https://github.com/reearth/reearth/pull/433)) [`02e25c`](https://github.com/reearth/reearth/commit/02e25c)
+- Print request ID to logs ([#530](https://github.com/reearth/reearth/pull/530)) [`8081c9`](https://github.com/reearth/reearth/commit/8081c9)
+- Add logs on internal error [`4b79e9`](https://github.com/reearth/reearth/commit/4b79e9)
+
+### Misc
+
+#### 🔧 Bug Fixes
+
+- Force jpg for watercolor tile ([#564](https://github.com/reearth/reearth/pull/564)) [`45ec8f`](https://github.com/reearth/reearth/commit/45ec8f)
+
+#### Miscellaneous Tasks
+
+- Update node.js to v18 ([#515](https://github.com/reearth/reearth/pull/515)) [`d34248`](https://github.com/reearth/reearth/commit/d34248)
+- Update CODEOWNERS [`55f82a`](https://github.com/reearth/reearth/commit/55f82a)
+
+#### 
+
+- Chore(web): Add InsertionButton ([#496](https://github.com/reearth/reearth/pull/496)) [`b55cc9`](https://github.com/reearth/reearth/commit/b55cc9)
+- Chore(web): Add StorytellingPageSectionItem ([#495](https://github.com/reearth/reearth/pull/495)) [`36ddb2`](https://github.com/reearth/reearth/commit/36ddb2)
+
+### 
+
+#### 🔧 Bug Fixes
+
+- Force jpg for watercolor tile ([#564](https://github.com/reearth/reearth/pull/564)) [`45ec8f`](https://github.com/reearth/reearth/commit/45ec8f)
+
+#### Miscellaneous Tasks
+
+- Update node.js to v18 ([#515](https://github.com/reearth/reearth/pull/515)) [`d34248`](https://github.com/reearth/reearth/commit/d34248)
+- Update CODEOWNERS [`55f82a`](https://github.com/reearth/reearth/commit/55f82a)
+
+#### 
+
+- Chore(web): Add InsertionButton ([#496](https://github.com/reearth/reearth/pull/496)) [`b55cc9`](https://github.com/reearth/reearth/commit/b55cc9)
+- Chore(web): Add StorytellingPageSectionItem ([#495](https://github.com/reearth/reearth/pull/495)) [`36ddb2`](https://github.com/reearth/reearth/commit/36ddb2)
+
 ## 0.16.3 - 2023-06-16
 
 ### Web

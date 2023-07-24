@@ -11,7 +11,7 @@ export type Icons = keyof typeof Icons;
 
 export type Props = {
   className?: string;
-  icon?: string;
+  icon?: string | Icons;
   size?: string | number;
   alt?: string;
   color?: string;
@@ -99,7 +99,7 @@ const StyledSvg = styled(SVG)<{
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   color: ${({ color }) => color};
-  ${({ stroke }) => `stroke: ${stroke};`}
+  ${({ stroke }) => stroke && `stroke: ${stroke};`}
   transition-property: color, background;
 `;
 

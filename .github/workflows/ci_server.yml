@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
       - name: set up
         uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
-      - name: checkout
-        uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -32,12 +32,13 @@ jobs:
         ports:
           - 27017:27017
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
       - name: set up
         uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_VERSION }}
-      - name: checkout
-        uses: actions/checkout@v3
+          cache-dependency-path: server/go.sum
       - name: test
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
         env:

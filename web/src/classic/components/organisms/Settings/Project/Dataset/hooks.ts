@@ -1,21 +1,16 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
-import { useAuth } from "@reearth/services/auth";
 import {
   DatasetsListQuery,
   useGetProjectSceneQuery,
   useImportDatasetMutation,
   useRemoveDatasetMutation,
   useDatasetsListQuery,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
-import {
-  useWorkspace,
-  useProject,
-  useNotification,
-  useSessionWorkspace,
-} from "@reearth/services/state";
+import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
 type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 
@@ -26,8 +21,7 @@ const datasetPerPage = 20;
 export default (projectId: string) => {
   const t = useT();
   const { getAccessToken } = useAuth();
-  const [currentWorkspace] = useSessionWorkspace();
-  const [lastWorkspace] = useWorkspace();
+  const [currentWorkspace] = useWorkspace();
 
   const [currentProject] = useProject();
   const [, setNotification] = useNotification();
@@ -142,7 +136,7 @@ export default (projectId: string) => {
   );
 
   return {
-    currentWorkspace: currentWorkspace ?? lastWorkspace,
+    currentWorkspace,
     currentProject,
     datasetSchemas,
     datasetLoading: loading ?? isRefetchingDataSets,

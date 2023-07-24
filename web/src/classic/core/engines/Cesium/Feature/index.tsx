@@ -50,6 +50,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   tms: ["raster"],
   "3dtiles": ["3dtiles"],
   "osm-buildings": ["3dtiles"],
+  "google-photorealistic": ["3dtiles"],
   gpx: "auto",
   shapefile: "auto",
   gtfs: "auto",
@@ -90,20 +91,22 @@ export default function Feature({
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
+  const cacheable = !data?.updateInterval;
+  const urlMD5 = useMemo(() => (data?.url ? generateIDWithMD5(data.url) : ""), [data?.url]);
 
-  const cachedRenderComponent = (
-    k: keyof AppearanceTypes,
-    f?: ComputedFeature,
-  ): JSX.Element | null => {
-    const componentId = generateIDWithMD5(
-      `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${data?.url ?? ""}_${
-        JSON.stringify(f?.[k]) ?? ""
-      }`,
-    );
+  const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
+    const componentId =
+      urlMD5 +
+      generateIDWithMD5(
+        `${layer.id}_${f?.id ?? ""}_${k}_${isHidden}_${JSON.stringify(f?.[k]) ?? ""}`,
+      );
 
-    const cachedComponent = CACHED_COMPONENTS.get(componentId);
-    if (cachedComponent) {
-      return cachedComponent;
+    if (cacheable) {
+      const cachedComponent = CACHED_COMPONENTS.get(componentId);
+
+      if (cachedComponent) {
+        return cachedComponent;
+      }
     }
 
     try {
@@ -138,7 +141,9 @@ export default function Feature({
       );
 
       // Cache the component output
-      CACHED_COMPONENTS.set(componentId, component);
+      if (cacheable) {
+        CACHED_COMPONENTS.set(componentId, component);
+      }
 
       return component;
     } catch (e) {
@@ -161,7 +166,7 @@ export default function Feature({
 
           // "noFeature" component should be recreated when the following value is changed.
           // data.url, isVisible
-          const key = generateIDWithMD5(`${layer?.id || ""}_${k}_${data?.url}_${isVisible}`);
+          const key = urlMD5 + generateIDWithMD5(`${layer?.id || ""}_${k}_${isVisible}`);
 
           return (
             <C
@@ -176,15 +181,13 @@ export default function Feature({
         })}
       </>
     );
-  }, [areAllDisplayTypeNoFeature, displayType, layer, isHidden, data, props]);
+  }, [areAllDisplayTypeNoFeature, displayType, layer, isHidden, urlMD5, props]);
 
   return (
     <>
       {cachedNoFeatureComponents ||
         [undefined, ...layer.features].flatMap(f =>
-          (Object.keys(components) as (keyof AppearanceTypes)[]).map(k =>
-            cachedRenderComponent(k, f),
-          ),
+          (Object.keys(components) as (keyof AppearanceTypes)[]).map(k => renderComponent(k, f)),
         )}
     </>
   );
