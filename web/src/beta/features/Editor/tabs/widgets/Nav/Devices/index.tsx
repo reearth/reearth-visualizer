@@ -1,5 +1,5 @@
-import TabButton from "@reearth/beta/components/TabButton";
-import { useT } from "@reearth/services/i18n";
+// import TabButton from "@reearth/beta/components/TabButton";
+// import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 export type Device = "desktop" | "mobile";
@@ -18,11 +18,11 @@ type Props = {
   onDeviceChange: (device: Device) => void;
 };
 
-const Devices: React.FC<Props> = ({ selectedDevice, onDeviceChange }) => {
-  const t = useT();
+const Devices: React.FC<Props> = () => {
+  // const t = useT();
   return (
     <DeviceWrapper>
-      <TabButton
+      {/* <TabButton
         label={t("Desktop")}
         icon="desktop"
         selected={selectedDevice === "desktop"}
@@ -33,7 +33,7 @@ const Devices: React.FC<Props> = ({ selectedDevice, onDeviceChange }) => {
         icon="mobile"
         selected={selectedDevice === "mobile"}
         onClick={() => onDeviceChange("mobile")}
-      />
+      /> */}
     </DeviceWrapper>
   );
 };
