@@ -1,27 +1,68 @@
+import { useState } from "react";
+
+import ListItem from "@reearth/beta/components/ListItem";
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
-import Item from "@reearth/beta/features/Editor/tabs/story/SidePanel/Item";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  onSelectPage: (id: string) => void;
+  onPageSelect: (id: string) => void;
   onPageAdd: () => void;
+  onPageDuplicate: (id: string) => void;
+  onPageDelete: (id: string) => void;
 };
-const ContentPage: React.FC<Props> = ({ onSelectPage, onPageAdd }) => {
+const ContentPage: React.FC<Props> = ({
+  onPageSelect,
+  onPageAdd,
+  onPageDuplicate,
+  onPageDelete,
+}) => {
   const t = useT();
+  const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
   return (
     <SContent>
-      <SContentUp>
+      <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
         {[...Array(100)].map((_, i) => (
           <PageItemWrapper key={i} pageCount={i + 1} isSwipable={i % 2 === 0}>
-            <Item
+            <ListItem
               key={i}
-              onItemClick={() => onSelectPage(i.toString())}
-              onActionClick={() => console.log("onActionClick")}>
+              border
+              onItemClick={() => onPageSelect(i.toString())}
+              onActionClick={() => setOpenedPageId(old => (old ? undefined : i.toString()))}
+              onOpenChange={isOpen => {
+                setOpenedPageId(isOpen ? i.toString() : undefined);
+              }}
+              isSelected={i === 0}
+              isOpenAction={openedPageId === i.toString()}
+              actionContent={
+                <PopoverMenuContent
+                  width="120px"
+                  size="md"
+                  items={[
+                    {
+                      icon: "copy",
+                      name: "Duplicate",
+                      onClick: () => {
+                        setOpenedPageId(undefined);
+                        onPageDuplicate(i.toString());
+                      },
+                    },
+                    {
+                      icon: "trash",
+                      name: "Delete",
+                      onClick: () => {
+                        setOpenedPageId(undefined);
+                        onPageDelete(i.toString());
+                      },
+                    },
+                  ]}
+                />
+              }>
               Page
-            </Item>
+            </ListItem>
           </PageItemWrapper>
         ))}
       </SContentUp>

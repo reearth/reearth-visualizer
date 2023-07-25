@@ -145,6 +145,7 @@ export type Cesium3DTilesAppearance = {
   experimental_clipping?: EXPERIMENTAL_clipping;
   pointSize?: number;
   meta?: unknown;
+  apiKey?: string;
 };
 
 export type LegacyPhotooverlayAppearance = {

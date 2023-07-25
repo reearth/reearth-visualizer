@@ -26,7 +26,7 @@ export const MenuListItemLabel: React.FC<{
     </MenuItemWrapper>
   );
 
-  return typeof linkTo !== "string" ? (
+  return !linkTo ? (
     content
   ) : (
     <StyledLinkButton
@@ -43,11 +43,17 @@ export const MenuList = styled.ul`
   list-style: none;
   padding-left: 0;
   margin: 0;
+  border-radius: 4px;
 `;
 
 export const MenuListItem = styled.li<{ noHover?: boolean }>`
   display: flex;
-  &:hover {
+  align-items: center;
+  border-radius: 4px;
+  padding: 8px 16px;
+  user-select: none;
+
+  :hover {
     ${props =>
       !props.noHover &&
       `
@@ -57,26 +63,23 @@ export const MenuListItem = styled.li<{ noHover?: boolean }>`
 `;
 
 const MenuItemWrapper = styled.div<{ disabled?: boolean }>`
-  flex: auto;
   display: flex;
-  padding: 0 16px;
-  align-items: center;
-  min-height: 52px;
-  cursor: pointer;
   height: 100%;
+  width: 100%;
+  align-content: center;
+  cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
 `;
 
 const StyledLabel = styled(Text)<{ center?: boolean }>`
-  flex: auto;
   text-align: ${({ center }) => (center ? "center" : "left")};
 `;
 
 const StyledLinkButton = styled(Link)`
   text-decoration: none;
   width: 100%;
-  height: 51px;
-  &:hover {
+
+  :hover {
     text-decoration: none;
   }
 `;

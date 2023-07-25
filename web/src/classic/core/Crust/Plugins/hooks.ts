@@ -13,7 +13,7 @@ import {
   TickEventCallback,
 } from "@reearth/classic/core/Map";
 
-import { commonReearth } from "./api";
+import { CommonReearth, commonReearth } from "./api";
 import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
 import { Context, Props } from "./types";
 import useClientStorage from "./useClientStorage";
@@ -444,7 +444,7 @@ export default function ({
 
   // expose plugin API for developers
   useEffect(() => {
-    window.reearth = value.reearth;
+    ((window as any).reearth as CommonReearth) = value.reearth;
     return () => {
       delete window.reearth;
     };
