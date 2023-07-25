@@ -64,7 +64,7 @@ const SRoot = styled.div<Pick<Props, "width">>`
   ${({ width }) => width && `width: ${width};`}
 
   border-radius: 2px;
-  border: 1px solid #525252;
+  border: 1px solid ${({ theme }) => theme.bg[3]};
   background: #262626;
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
 `;
@@ -77,15 +77,15 @@ const SRow = styled.button<
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #e0e0e0;
+  color: ${({ theme }) => theme.text.main};
 
   ${({ isFirst }) => !isFirst && "border-top: 1px solid transparent;"}
   ${({ isLast }) => !isLast && "border-bottom: 1px solid transparent;"}
   ${({ size }) => stylesBySize[size].row ?? ""}
-  ${({ isSelected }) => isSelected && "background: var(--editor-select-main, #3B3CD0);"}
+  ${({ isSelected, theme }) => isSelected && theme.select.main}
   :hover {
-    ${({ isSelected }) => !isSelected && "background-color: #393939;"}
-    ${({ isSelected }) => !isSelected && "border-color: #525252;"}
+    ${({ isSelected, theme }) => !isSelected && theme.bg[2]}
+    ${({ isSelected, theme }) => !isSelected && theme.bg[3]}
   }
 `;
 

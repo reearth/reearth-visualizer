@@ -42,7 +42,7 @@ const Wrapper = styled.button`
   border: 1px solid #383838;
 
   :hover {
-    background: ${props => props.theme.general.bg.weak};
+    background: ${props => props.theme.bg[3]};
   }
   user-select: none;
   cursor: pointer;

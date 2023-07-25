@@ -62,8 +62,8 @@ const Switch = styled.label<{
   cursor: pointer;
   width: ${({ size }) => (size === "sm" ? "28px" : "40px")};
   height: ${({ size }) => (size === "sm" ? "14px" : "20px")};
-  background: ${({ theme }) => theme.general.select};
-  border: 1px solid ${({ theme }) => theme.general.select};
+  background: ${({ theme }) => theme.select.main};
+  border: 1px solid ${({ theme }) => theme.select.main};
   border-radius: 11px;
   opacity: ${({ checked, selected }) => (checked || selected ? 1 : 0.5)};
   transition: 0.4s;
@@ -77,8 +77,7 @@ const TopSlider = styled.div<{
 }>`
   width: ${({ size }) => (size === "sm" ? "14px" : "20px")};
   height: ${({ size }) => (size === "sm" ? "14px" : "20px")};
-  background: ${({ selected, theme }) =>
-    selected ? theme.general.content.strong : theme.general.content.main};
+  background: ${({ selected, theme }) => (selected ? theme.text.lightest : theme.text.main)};
   transition: 0.4s;
   border-radius: 50%;
   transform: ${({ checked }) => checked && "translateX(100%)"};

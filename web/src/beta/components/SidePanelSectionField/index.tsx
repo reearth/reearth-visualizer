@@ -15,18 +15,10 @@ const SidePanelSectionField: React.FC<{
   return (
     <Field>
       <Header onClick={() => setOpened(!opened)}>
-        <Text
-          size="footnote"
-          color={theme.general.content.strong}
-          otherProperties={{ height: "16px" }}>
+        <Text size="footnote" color={theme.text.lightest} otherProperties={{ height: "16px" }}>
           {title}
         </Text>
-        <ArrowIcon
-          icon="arrowToggle"
-          size={12}
-          color={theme.general.content.main}
-          opened={opened}
-        />
+        <ArrowIcon icon="arrowToggle" size={12} color={theme.text.main} opened={opened} />
       </Header>
       {opened && children}
     </Field>
@@ -36,7 +28,7 @@ const SidePanelSectionField: React.FC<{
 const Field = styled.div`
   box-sizing: border-box;
 
-  border-bottom: 1px solid ${props => props.theme.general.bg.weak};
+  border-bottom: 1px solid ${props => props.theme.bg[3]};
 `;
 const Header = styled.div`
   box-sizing: border-box;

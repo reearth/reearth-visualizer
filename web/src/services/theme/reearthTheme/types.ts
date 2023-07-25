@@ -7,6 +7,7 @@ export type TempTheme = Theme & {
 
 export type Theme = Common & {
   bg: {
+    transparentBlack: string;
     0: string;
     1: string;
     2: string;

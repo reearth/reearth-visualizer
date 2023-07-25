@@ -156,8 +156,8 @@ const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
     ${({ noHover, theme }) =>
       !noHover &&
       `
-    color: ${theme.general.content.main};
-    background: ${theme.general.bg.main};
+    color: ${theme.text.main};
+    background: ${theme.bg[2]};
       `}
   }
 `;
@@ -208,7 +208,7 @@ const StyledMenuList = styled(MenuList)<{
   gap?: Gap;
 }>`
   position: absolute;
-  background: ${({ theme }) => theme.navbar.bg.main};
+  background: ${({ theme }) => theme.bg[0]};
 
   width: ${({ dropdownWidth }) => (dropdownWidth ? `${dropdownWidth}px` : "200px")};
   margin: 0 auto;
@@ -224,7 +224,7 @@ const StyledMenuList = styled(MenuList)<{
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${({ theme }) => theme.general.content.weak};
+  color: ${({ theme }) => theme.text.weak};
   pointer-events: none;
 `;
 
@@ -234,7 +234,7 @@ const SelectedIcon = styled.div<{ isActive: boolean }>`
   border-radius: 50%;
   margin-left: 4px;
   order: 2;
-  background-color: ${({ theme }) => theme.general.select};
+  background-color: ${({ theme }) => theme.select.main};
 `;
 
 // const ChildrenWrapper = styled.div`
@@ -243,7 +243,7 @@ const SelectedIcon = styled.div<{ isActive: boolean }>`
 // `;
 
 const Spacer = styled.div`
-  border-top: 0.5px solid ${({ theme }) => theme.general.border};
+  border-top: 0.5px solid ${({ theme }) => theme.outline.weak};
   margin: 2px 0;
 `;
 

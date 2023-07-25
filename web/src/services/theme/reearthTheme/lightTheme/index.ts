@@ -1,11 +1,12 @@
-import { gray, blue, white, coolGray, red, yellow } from "@carbon/colors";
+import { gray, blue, white, coolGray, red, yellow, rgba } from "@carbon/colors";
 
 import commonTheme from "../common";
 import type { Theme } from "../types";
 
-const darkTheme: Theme = {
+const lightTheme: Theme = {
   ...commonTheme,
   bg: {
+    transparentBlack: rgba("#000000", 0.7),
     0: gray[100],
     1: gray[90],
     2: gray[80],
@@ -37,5 +38,4 @@ const darkTheme: Theme = {
   },
   warning: { main: yellow[30] },
 };
-
-export default darkTheme;
+export default lightTheme;

@@ -22,9 +22,7 @@ const SwitchButtonList: React.FC<Props> = ({ list, onChange }) => {
           onClick={() => onChange?.(item.id)}
           first={index === 0}
           end={index === list.length - 1}>
-          <Text
-            size="footnote"
-            color={item.active ? theme.general.content.strong : theme.general.content.main}>
+          <Text size="footnote" color={item.active ? theme.text.lightest : theme.text.main}>
             {item.text}
           </Text>
         </SwitchButton>
@@ -37,8 +35,7 @@ const SwitchButton = styled.button<{
   first: boolean;
   end: boolean;
 }>`
-  background: ${props =>
-    props.disabled ? props.theme.general.select : props.theme.general.bg.strong};
+  background: ${props => (props.disabled ? props.theme.select.main : props.theme.bg[0])};
   padding: 8px;
   height: 32px;
   border-top-left-radius: ${props => (props.first ? "4px" : "0px")};
@@ -47,7 +44,7 @@ const SwitchButton = styled.button<{
   border-bottom-right-radius: ${props => (props.end ? "4px" : "0px")};
   transition: all 0.5s ease;
   :hover {
-    background: ${props => props.theme.general.select};
+    background: ${props => props.theme.select.main};
   }
 `;
 
