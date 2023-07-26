@@ -40,9 +40,10 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   const onItemDropOnItem = useCallback(
     (index: number) => {
       const item = movingItems[index];
+      if (items[index].id === item.id) return;
       item && onItemDrop(movingItems[index], index);
     },
-    [movingItems, onItemDrop],
+    [items, movingItems, onItemDrop],
   );
 
   const onItemDropOutside = useCallback(() => {
