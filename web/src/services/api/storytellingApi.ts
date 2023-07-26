@@ -65,7 +65,7 @@ export default function useStorytellingAPI() {
   >(CREATE_STORY_PAGE);
 
   const createStoryPage = useCallback(
-    async (input: CreateStoryPageInput, opt?: { disableNotification?: boolean }) => {
+    async (input: CreateStoryPageInput) => {
       const { data, errors } = await createStoryPageMutation({
         variables: {
           input,
@@ -73,19 +73,11 @@ export default function useStorytellingAPI() {
       });
       if (errors || !data?.createStoryPage?.story?.id) {
         console.log("GraphQL: Failed to create story page", errors);
-        if (!opt?.disableNotification) {
-          setNotification({ type: "error", text: t("Failed to create page.") });
-        }
-
         return { status: "error", errors };
-      }
-
-      if (!opt?.disableNotification) {
-        setNotification({ type: "success", text: t("Successfully created page!") });
       }
       return { data, status: "success" };
     },
-    [createStoryPageMutation, setNotification, t],
+    [createStoryPageMutation],
   );
 
   const [deleteStoryPageMutation] = useMutation<
@@ -94,7 +86,7 @@ export default function useStorytellingAPI() {
   >(DELETE_STORY_PAGE);
 
   const deleteStoryPage = useCallback(
-    async (input: DeleteStoryPageInput, opt?: { disableNotification?: boolean }) => {
+    async (input: DeleteStoryPageInput) => {
       const { data, errors } = await deleteStoryPageMutation({
         variables: {
           input,
@@ -102,19 +94,12 @@ export default function useStorytellingAPI() {
       });
       if (errors || !data?.removeStoryPage?.story?.id) {
         console.log("GraphQL: Failed to delete story page", errors);
-        if (!opt?.disableNotification) {
-          setNotification({ type: "error", text: t("Failed to delete page.") });
-        }
-
         return { status: "error", errors };
       }
 
-      if (!opt?.disableNotification) {
-        setNotification({ type: "success", text: t("Successfully deleted page!") });
-      }
       return { data, status: "success" };
     },
-    [deleteStoryPageMutation, setNotification, t],
+    [deleteStoryPageMutation],
   );
 
   const [moveStoryPageMutation] = useMutation<MoveStoryPageMutation, MutationMoveStoryPageArgs>(
@@ -122,7 +107,7 @@ export default function useStorytellingAPI() {
   );
 
   const moveStoryPage = useCallback(
-    async (input: MoveStoryPageInput, opt?: { disableNotification?: boolean }) => {
+    async (input: MoveStoryPageInput) => {
       const { data, errors } = await moveStoryPageMutation({
         variables: {
           input,
@@ -130,19 +115,12 @@ export default function useStorytellingAPI() {
       });
       if (errors || !data?.moveStoryPage?.page?.id) {
         console.log("GraphQL: Failed to move story page", errors);
-        if (!opt?.disableNotification) {
-          setNotification({ type: "error", text: t("Failed to move page.") });
-        }
-
         return { status: "error", errors };
       }
 
-      if (!opt?.disableNotification) {
-        setNotification({ type: "success", text: t("Successfully moved page!") });
-      }
       return { data, status: "success" };
     },
-    [moveStoryPageMutation, setNotification, t],
+    [moveStoryPageMutation],
   );
 
   return {
