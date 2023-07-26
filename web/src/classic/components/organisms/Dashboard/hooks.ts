@@ -209,15 +209,11 @@ export default (workspaceId?: string) => {
       }
 
       if (data.projectType === "beta") {
-        // add story creation
-        const story = await createStory(
-          {
-            sceneId: scene.data?.createScene?.scene.id,
-            title: "Default",
-            index: 0,
-          },
-          { disableNotification: true },
-        );
+        const story = await createStory({
+          sceneId: scene.data?.createScene?.scene.id,
+          title: "Default",
+          index: 0,
+        });
         if (story.errors || !story?.data?.createStory?.story?.id) {
           setNotification({
             type: "error",

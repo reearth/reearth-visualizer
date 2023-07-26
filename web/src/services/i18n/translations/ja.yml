@@ -373,5 +373,5 @@ Failed to delete member from the workspace.: メンバーの削除に失敗し�
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
 Failed to create story.: ストーリーの作成に失敗しました。
-Successfully created story!: ストーリーの作成に成功しました！
+Failed to create page.: ページの作成に失敗しました。
 Failed to add widget.: ウィジェットの作成に失敗しました。

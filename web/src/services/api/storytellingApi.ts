@@ -36,7 +36,7 @@ export default function useStorytellingAPI() {
     CREATE_STORY,
   );
   const createStory = useCallback(
-    async (input: CreateStoryInput, opt?: { disableNotification?: boolean }) => {
+    async (input: CreateStoryInput) => {
       const { data, errors } = await createStoryMutation({
         variables: {
           input,
@@ -44,15 +44,9 @@ export default function useStorytellingAPI() {
       });
       if (errors || !data?.createStory?.story?.id) {
         console.log("GraphQL: Failed to create story", errors);
-        if (!opt?.disableNotification) {
-          setNotification({ type: "error", text: t("Failed to create story.") });
-        }
+        setNotification({ type: "error", text: t("Failed to create story.") });
 
         return { status: "error", errors };
-      }
-
-      if (!opt?.disableNotification) {
-        setNotification({ type: "success", text: t("Successfully created story!") });
       }
       return { data, status: "success" };
     },
@@ -73,11 +67,13 @@ export default function useStorytellingAPI() {
       });
       if (errors || !data?.createStoryPage?.story?.id) {
         console.log("GraphQL: Failed to create story page", errors);
+        setNotification({ type: "error", text: t("Failed to create page.") });
+
         return { status: "error", errors };
       }
       return { data, status: "success" };
     },
-    [createStoryPageMutation],
+    [createStoryPageMutation, setNotification, t],
   );
 
   const [deleteStoryPageMutation] = useMutation<
