@@ -1,8 +1,10 @@
 import { useState } from "react";
 
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
+import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
@@ -23,10 +25,82 @@ const ContentStory: React.FC<Props> = ({
   onStoryRename,
 }) => {
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
-
+  const [items, setItems] = useState(
+    [...Array(100)].map((_, i) => ({
+      id: i.toString(),
+      index: i,
+      text: "page" + i,
+    })),
+  );
   return (
     <SContent>
       <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
+        <DragAndDropList
+          uniqueKey="LeftPanelPages"
+          gap={8}
+          items={items}
+          getId={item => item.id}
+          onItemDrop={(item, index) => {
+            setItems(old => {
+              const items = [...old];
+              items.splice(
+                old.findIndex(o => o.id === item.id),
+                1,
+              );
+              items.splice(index, 0, item);
+              return items;
+            });
+          }}
+          renderItem={item => {
+            return (
+              <PageItemWrapper pageCount={item.index + 1} isSwipable={item.index % 2 === 0}>
+                <ListItem
+                  border
+                  onItemClick={() => onStorySelect(item.id)}
+                  onActionClick={() => setOpenedPageId(old => (old ? undefined : item.id))}
+                  onOpenChange={isOpen => {
+                    setOpenedPageId(isOpen ? item.id : undefined);
+                  }}
+                  isSelected={item.index === 0}
+                  isOpenAction={openedPageId === item.id}
+                  actionContent={
+                    <PopoverMenuContent
+                      width="120px"
+                      size="md"
+                      items={[
+                        {
+                          icon: "pencilSimple",
+                          name: "Rename",
+                          onClick: () => {
+                            setOpenedPageId(undefined);
+                            onStoryRename(item.id);
+                          },
+                        },
+                        {
+                          icon: "gearSix",
+                          name: "Settings",
+                          onClick: () => {
+                            setOpenedPageId(undefined);
+                            onStoryClickSettings(item.id);
+                          },
+                        },
+                        {
+                          icon: "trash",
+                          name: "Delete Story",
+                          onClick: () => {
+                            setOpenedPageId(undefined);
+                            onStoryDelete(item.id);
+                          },
+                        },
+                      ]}
+                    />
+                  }>
+                  Page
+                </ListItem>
+              </PageItemWrapper>
+            );
+          }}
+        />
         {[...Array(100)].map((_, i) => (
           <ListItem
             key={i}
