@@ -36,13 +36,19 @@ export default function useStorytelling({ sceneId, stories }: Props) {
   const onPageDelete = useCallback(
     async (pageId: string) => {
       if (!selectedStory) return;
+      const pages = selectedStory?.pages ?? [];
+      const deletedPageIndex = pages.findIndex(p => p.id === pageId);
+
       await deleteStoryPage({
         sceneId,
         storyId: selectedStory.id,
         pageId,
       });
+      if (pageId === selectedPageId) {
+        setSelectedPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
+      }
     },
-    [deleteStoryPage, sceneId, selectedStory],
+    [deleteStoryPage, sceneId, selectedPageId, selectedStory],
   );
   const onPageAdd = useCallback(
     async (isSwipeable: boolean) => {
