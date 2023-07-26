@@ -569,7 +569,7 @@ export default function useHooks({
   useEffect(() => {
     if (!requestingRenderMode || requestingRenderMode.current === FORCE_REQUEST_RENDER) return;
     requestingRenderMode.current = REQUEST_RENDER_ONCE;
-  }, [flattenedLayers, overriddenLayers, requestingRenderMode]);
+  }, [flattenedLayers, overriddenLayers, hiddenLayerIds, requestingRenderMode]);
 
   return { atomMap, flattenedLayers, isHidden };
 }
