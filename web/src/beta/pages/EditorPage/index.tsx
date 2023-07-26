@@ -13,9 +13,10 @@ const EditorPage: React.FC<Props> = () => {
   return !sceneId || !tab || !isTab(tab) ? (
     <NotFound />
   ) : (
-    <Page sceneId={sceneId}>
-      <Editor tab={tab} sceneId={sceneId} />
-    </Page>
+    <Page
+      sceneId={sceneId}
+      renderItem={props => <Editor tab={tab} sceneId={sceneId} {...props} />}
+    />
   );
 };
 

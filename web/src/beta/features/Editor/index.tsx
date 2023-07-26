@@ -6,6 +6,7 @@ import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
+import { StoryFragmentFragment } from "@reearth/services/gql";
 import { metrics, styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
@@ -13,9 +14,10 @@ import { navbarHeight } from "./SecondaryNav";
 
 type Props = {
   sceneId: string;
-  projectId?: string; // gotten through injection
-  workspaceId?: string; // gotten through injection
   tab: Tab;
+  projectId?: string;
+  workspaceId?: string;
+  stories: StoryFragmentFragment[];
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
