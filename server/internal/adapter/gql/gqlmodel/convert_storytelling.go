@@ -12,7 +12,7 @@ func ToStory(s *storytelling.Story) *Story {
 		Alias:             s.Alias(),
 		Property:          nil,
 		Pages:             ToPages(s.Pages()),
-		PublishmentStatus: ToStoryPublishmentStatus(s.Published()),
+		PublishmentStatus: ToStoryPublishmentStatus(s.Status()),
 		CreatedAt:         s.Id().Timestamp(),
 		UpdatedAt:         s.UpdatedAt(),
 		PublishedAt:       s.PublishedAt(),

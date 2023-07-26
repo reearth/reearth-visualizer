@@ -61,7 +61,8 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		NewID().
 		Title(inp.Title).
 		Scene(inp.SceneID).
-		Property(prop.ID())
+		Property(prop.ID()).
+		Pages(storytelling.NewPageList(nil))
 
 	story, err := builder.Build()
 	if err != nil {

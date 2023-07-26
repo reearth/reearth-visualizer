@@ -5,7 +5,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/reearth/reearth/server/pkg/builtin"
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -99,13 +98,16 @@ func (p *Page) PropertyRef() *PropertyID {
 }
 
 func (p *Page) Blocks() BlockList {
-	if p == nil {
+	if p == nil || p.blocks == nil {
 		return nil
 	}
 	return append(BlockList{}, p.blocks...)
 }
 
 func (p *Page) Block(block BlockID) *Block {
+	if p == nil {
+		return nil
+	}
 	for _, b := range p.blocks {
 		if b.ID() == block {
 			return b
@@ -147,6 +149,9 @@ func (p *Page) HasBlock(id BlockID) bool {
 }
 
 func (p *Page) Count() int {
+	if p == nil {
+		return 0
+	}
 	return len(p.blocks)
 }
 
@@ -255,7 +260,7 @@ func (p *Page) SetTitle(s string) {
 	p.title = s
 }
 
-func (p *Page) SetLayers(ids []id.LayerID) {
+func (p *Page) SetLayers(ids []LayerID) {
 	if p == nil {
 		return
 	}
@@ -269,7 +274,7 @@ func (p *Page) SetSwipeable(b bool) {
 	p.swipeable = b
 }
 
-func (p *Page) SetSwipeableLayers(ids []id.LayerID) {
+func (p *Page) SetSwipeableLayers(ids []LayerID) {
 	if p == nil {
 		return
 	}

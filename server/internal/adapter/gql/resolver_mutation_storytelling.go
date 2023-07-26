@@ -212,6 +212,7 @@ func (r *mutationResolver) MoveStoryPage(ctx context.Context, input gqlmodel.Mov
 	inp := interfaces.MovePageParam{
 		StoryID: storyId,
 		PageID:  pageId,
+		Index:   input.Index,
 	}
 
 	story, page, idx, err := usecases(ctx).StoryTelling.MovePage(ctx, inp, getOperator(ctx))

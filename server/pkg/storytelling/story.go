@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearthx/util"
 )
 
 type Story struct {
@@ -45,10 +46,6 @@ func (s *Story) Alias() string {
 	return s.alias
 }
 
-func (s *Story) Published() PublishmentStatus {
-	return s.status
-}
-
 func (s *Story) Status() PublishmentStatus {
 	return s.status
 }
@@ -67,7 +64,7 @@ func (s *Story) UpdatedAt() time.Time {
 
 func (s *Story) Rename(name string) {
 	s.title = name
-	s.updatedAt = time.Now()
+	s.updatedAt = util.Now()
 }
 
 func (s *Story) SetUpdatedAt(now time.Time) {
