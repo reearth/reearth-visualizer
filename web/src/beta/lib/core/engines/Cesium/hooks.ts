@@ -33,6 +33,7 @@ import type {
   MouseEvents,
   LayerEditEvent,
 } from "..";
+import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
@@ -752,15 +753,17 @@ export default ({
     const viewer = cesium.current?.cesiumElement;
     if (!requestingRenderMode?.current || !viewer || viewer.isDestroyed()) return;
     viewer.scene.requestRender();
-    if (requestingRenderMode.current === 1) {
-      requestingRenderMode.current = 0;
+    if (requestingRenderMode.current === REQUEST_RENDER_ONCE) {
+      requestingRenderMode.current = NO_REQUEST_RENDER;
     }
   }, [requestingRenderMode]);
 
-  const explicitRenderRef = useRef();
+  const explicitRenderRef = useRef<() => void>();
+
   useEffect(() => {
     explicitRenderRef.current = explicitRender;
   }, [explicitRender]);
+
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
@@ -772,7 +775,7 @@ export default ({
   // render one frame when scene property changes
   useEffect(() => {
     if (requestingRenderMode) {
-      requestingRenderMode.current = 1;
+      requestingRenderMode.current = REQUEST_RENDER_ONCE;
     }
   }, [property, requestingRenderMode]);
 
@@ -785,7 +788,11 @@ export default ({
 
     if (requestingRenderMode) {
       requestingRenderMode.current =
-        isLayerDragging || shouldRender ? -1 : requestingRenderMode.current === 1 ? 1 : 0;
+        isLayerDragging || shouldRender
+          ? FORCE_REQUEST_RENDER
+          : requestingRenderMode.current === REQUEST_RENDER_ONCE
+          ? REQUEST_RENDER_ONCE
+          : NO_REQUEST_RENDER;
     }
   }, [property?.timeline?.animation, isLayerDragging, shouldRender, requestingRenderMode]);
 

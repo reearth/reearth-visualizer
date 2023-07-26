@@ -13,6 +13,10 @@ import type {
 
 export type { MapRef } from "./ref";
 
+export const FORCE_REQUEST_RENDER = -1;
+export const NO_REQUEST_RENDER = 0;
+export const REQUEST_RENDER_ONCE = 1;
+
 export default function ({
   ref,
   onLayerSelect,
@@ -32,7 +36,7 @@ export default function ({
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
-  const requestingRenderMode = useRef<RequestingRenderMode>(0);
+  const requestingRenderMode = useRef<RequestingRenderMode>(NO_REQUEST_RENDER);
 
   useImperativeHandle(
     ref,
