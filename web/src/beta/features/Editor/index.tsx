@@ -77,7 +77,13 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
           <Center>
             {secondaryNavbar}
             <CenterContents hasNav={!!secondaryNavbar}>
-              {isStory && <StoryPanel />}
+              {isStory && (
+                <StoryPanel
+                  selectedStory={selectedStory}
+                  selectedPage={selectedPage}
+                  onPageSelect={onPageSelect}
+                />
+              )}
               <VisualizerWrapper tab={tab} visualizerWidth={visualizerWidth}>
                 <Visualizer sceneId={sceneId} />
               </VisualizerWrapper>
