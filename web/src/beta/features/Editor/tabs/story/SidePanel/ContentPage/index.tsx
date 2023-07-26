@@ -95,9 +95,6 @@ const ContentPage: React.FC<Props> = ({
                       ]}
                     />
                   }>
-                  {/* TODO Delete id */}
-                  {storyPage.id}
-                  <br />
                   {storyPage.title}
                 </ListItem>
               </PageItemWrapper>

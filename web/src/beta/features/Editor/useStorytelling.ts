@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { useCallback, useMemo, useState } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
@@ -57,8 +56,7 @@ export default function useStorytelling({ sceneId, stories }: Props) {
         sceneId,
         storyId: selectedStory.id,
         swipeable: isSwipeable,
-        // TODO delete dummy date usage
-        title: t("Page") + dayjs().format("YYYY/MM/DD HH:mm:ss"),
+        title: t("Page"),
         index: selectedStory.pages.length,
         layers: [],
         swipeableLayers: [],
