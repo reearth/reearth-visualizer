@@ -113,7 +113,7 @@ export default function useStorytellingAPI() {
           input,
         },
       });
-      if (errors || !data?.moveStoryPage?.page?.id) {
+      if (errors || !data?.moveStoryPage?.story?.id) {
         console.log("GraphQL: Failed to move story page", errors);
         return { status: "error", errors };
       }
