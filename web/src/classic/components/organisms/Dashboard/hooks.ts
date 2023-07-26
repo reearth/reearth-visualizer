@@ -14,6 +14,7 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/classic/gql";
+import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
@@ -167,6 +168,7 @@ export default (workspaceId?: string) => {
 
   const [createNewProject] = useCreateProjectMutation();
   const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
+  const { createStory } = useStorytellingAPI();
   const handleProjectCreate = useCallback(
     async (data: {
       name: string;
@@ -192,11 +194,31 @@ export default (workspaceId?: string) => {
         });
         setModalShown(false);
         return;
-      } else {
-        const scene = await createScene({
-          variables: { projectId: project.data.createProject.project.id },
+      }
+
+      const scene = await createScene({
+        variables: { projectId: project.data.createProject.project.id },
+      });
+      if (scene.errors || !scene.data?.createScene?.scene.id) {
+        setNotification({
+          type: "error",
+          text: t("Failed to create project."),
         });
-        if (scene.errors) {
+        setModalShown(false);
+        return;
+      }
+
+      if (data.projectType === "beta") {
+        // add story creation
+        const story = await createStory(
+          {
+            sceneId: scene.data?.createScene?.scene.id,
+            title: "Default",
+            index: 0,
+          },
+          { disableNotification: true },
+        );
+        if (story.errors || !story?.data?.createStory?.story?.id) {
           setNotification({
             type: "error",
             text: t("Failed to create project."),
@@ -204,14 +226,15 @@ export default (workspaceId?: string) => {
           setModalShown(false);
           return;
         }
-        setNotification({
-          type: "success",
-          text: t("Successfully created project!"),
-        });
-        setModalShown(false);
       }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully created project!"),
+      });
+      setModalShown(false);
     },
-    [workspaceId, createNewProject, createScene, t, setNotification],
+    [workspaceId, createNewProject, createScene, setNotification, t, createStory],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);
