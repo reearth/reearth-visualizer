@@ -708,12 +708,9 @@ export default ({
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
-      requestRender: () => {
-        if (!requestingRenderMode || requestingRenderMode.current === -1) return;
-        requestingRenderMode.current = 1;
-      },
+      requestRender: engineAPI.requestRender,
     }),
-    [selectionReason, engineAPI, requestingRenderMode, onLayerEdit],
+    [selectionReason, engineAPI, onLayerEdit],
   );
 
   const handleTick = useCallback(
