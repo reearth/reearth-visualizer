@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useCallback, useMemo, useState } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
@@ -10,7 +11,7 @@ type Props = {
 };
 export default function useStorytelling({ sceneId, stories }: Props) {
   const t = useT();
-  const { createStoryPage } = useStorytellingAPI();
+  const { createStoryPage, deleteStoryPage } = useStorytellingAPI();
   const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
 
   const selectedStory = useMemo(() => {
@@ -31,9 +32,17 @@ export default function useStorytelling({ sceneId, stories }: Props) {
   const onPageDuplicate = useCallback(async (pageId: string) => {
     console.log("onPageDuplicate", pageId);
   }, []);
-  const onPageDelete = useCallback(async (pageId: string) => {
-    console.log("onPageDelete", pageId);
-  }, []);
+  const onPageDelete = useCallback(
+    async (pageId: string) => {
+      if (!selectedStory) return;
+      await deleteStoryPage({
+        sceneId,
+        storyId: selectedStory.id,
+        pageId,
+      });
+    },
+    [deleteStoryPage, sceneId, selectedStory],
+  );
   const onPageAdd = useCallback(
     async (isSwipeable: boolean) => {
       if (!selectedStory) return;
@@ -41,7 +50,8 @@ export default function useStorytelling({ sceneId, stories }: Props) {
         sceneId,
         storyId: selectedStory.id,
         swipeable: isSwipeable,
-        title: t("Page"),
+        // TODO delete dummy date usage
+        title: t("Page") + dayjs().format("YYYY/MM/DD HH:mm:ss"),
         index: selectedStory.pages.length,
         layers: [],
         swipeableLayers: [],
