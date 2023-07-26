@@ -304,6 +304,8 @@ models:
         resolver: true
       tags:
         resolver: true
+      stories:
+        resolver: true
   SceneWidget:
     fields:
       plugin:
