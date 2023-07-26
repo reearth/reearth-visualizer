@@ -10,7 +10,7 @@ type Props<Item extends { id: string } = { id: string }> = {
   items: Item[];
   getId: (item: Item) => string;
   onItemDrop(item: Item, targetIndex: number): void;
-  renderItem: (item: Item) => ReactNode;
+  renderItem: (item: Item, index: number) => ReactNode;
   gap: number;
 };
 
@@ -62,7 +62,7 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
             onItemMove={onItemMove}
             onItemDropOnItem={onItemDropOnItem}
             onItemDropOutside={onItemDropOutside}>
-            {renderItem(item)}
+            {renderItem(item, i)}
           </Item>
         );
       })}

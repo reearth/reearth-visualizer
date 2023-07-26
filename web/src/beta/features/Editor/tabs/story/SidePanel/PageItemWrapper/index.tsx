@@ -7,10 +7,10 @@ import { styled } from "@reearth/services/theme";
 type Props = {
   children: ReactNode;
   pageCount: number;
-  isSwipable: boolean;
+  isSwipeable: boolean;
 };
 
-const StorySidePanelPageWrapper: FC<Props> = ({ children, pageCount, isSwipable }) => {
+const StorySidePanelPageWrapper: FC<Props> = ({ children, pageCount, isSwipeable }) => {
   return (
     <Wrapper>
       <Left>
@@ -18,7 +18,7 @@ const StorySidePanelPageWrapper: FC<Props> = ({ children, pageCount, isSwipable 
           <Text size="footnote">{pageCount}</Text>
         </div>
         <div>
-          <Icon icon={isSwipable ? "swiper" : "square"} color="#4A4A4A" size={12} />
+          <Icon icon={isSwipeable ? "swiper" : "square"} color="#4A4A4A" size={12} />
         </div>
       </Left>
       <Right>{children}</Right>

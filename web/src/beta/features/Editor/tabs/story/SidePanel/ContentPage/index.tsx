@@ -5,16 +5,21 @@ import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/SidePanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/SidePanel/PageItemWrapper";
+import { StoryPageFragmentFragment } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
+  storyPages: StoryPageFragmentFragment[];
+  selectedPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
-  onPageAdd: () => void;
+  onPageAdd: (isSwipeable: boolean) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
 };
 const ContentPage: React.FC<Props> = ({
+  storyPages,
+  selectedPage,
   onPageSelect,
   onPageAdd,
   onPageDuplicate,
@@ -23,13 +28,7 @@ const ContentPage: React.FC<Props> = ({
   const t = useT();
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
-  const [items, setItems] = useState(
-    [...Array(100)].map((_, i) => ({
-      id: i.toString(),
-      index: i,
-      text: "page" + i,
-    })),
-  );
+  const [items, setItems] = useState(storyPages);
   return (
     <SContent>
       <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
@@ -49,18 +48,22 @@ const ContentPage: React.FC<Props> = ({
               return items;
             });
           }}
-          renderItem={item => {
+          renderItem={(storyPage, i) => {
             return (
-              <PageItemWrapper pageCount={item.index + 1} isSwipable={item.index % 2 === 0}>
+              <PageItemWrapper
+                key={storyPage.id}
+                pageCount={i + 1}
+                isSwipeable={storyPage.swipeable}>
                 <ListItem
+                  key={i}
                   border
-                  onItemClick={() => onPageSelect(item.id)}
-                  onActionClick={() => setOpenedPageId(old => (old ? undefined : item.id))}
+                  onItemClick={() => onPageSelect(storyPage.id)}
+                  onActionClick={() => setOpenedPageId(old => (old ? undefined : storyPage.id))}
                   onOpenChange={isOpen => {
-                    setOpenedPageId(isOpen ? item.id : undefined);
+                    setOpenedPageId(isOpen ? storyPage.id : undefined);
                   }}
-                  isSelected={item.index === 0}
-                  isOpenAction={openedPageId === item.id}
+                  isSelected={selectedPage?.id === storyPage.id}
+                  isOpenAction={openedPageId === storyPage.id}
                   actionContent={
                     <PopoverMenuContent
                       width="120px"
@@ -71,7 +74,7 @@ const ContentPage: React.FC<Props> = ({
                           name: "Duplicate",
                           onClick: () => {
                             setOpenedPageId(undefined);
-                            onPageDuplicate(item.id);
+                            onPageDuplicate(storyPage.id);
                           },
                         },
                         {
@@ -79,13 +82,13 @@ const ContentPage: React.FC<Props> = ({
                           name: "Delete",
                           onClick: () => {
                             setOpenedPageId(undefined);
-                            onPageDelete(item.id);
+                            onPageDelete(storyPage.id);
                           },
                         },
                       ]}
                     />
                   }>
-                  Page
+                  {storyPage.title}
                 </ListItem>
               </PageItemWrapper>
             );
@@ -93,8 +96,8 @@ const ContentPage: React.FC<Props> = ({
         />
       </SContentUp>
       <SContentBottom>
-        <Action icon="square" title={`+ ${t("New Page")}`} onClick={onPageAdd} />
-        <Action icon="swiper" title={`+ ${t("New Swipe")}`} onClick={onPageAdd} />
+        <Action icon="square" title={`+ ${t("New Page")}`} onClick={() => onPageAdd(false)} />
+        <Action icon="swiper" title={`+ ${t("New Swipe")}`} onClick={() => onPageAdd(true)} />
       </SContentBottom>
     </SContent>
   );

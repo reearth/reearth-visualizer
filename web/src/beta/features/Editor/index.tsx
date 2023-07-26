@@ -3,6 +3,7 @@ import StoryPanel from "@reearth/beta/features/Editor/tabs/story/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar";
+import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
@@ -20,7 +21,7 @@ type Props = {
   stories: StoryFragmentFragment[];
 };
 
-const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
+const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
   const {
     selectedDevice,
     visualizerWidth,
@@ -29,7 +30,19 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleWidgetEditorToggle,
   } = useHooks({ tab });
 
-  const { leftPanel } = useLeftPanel({ tab });
+  const { selectedStory, selectedPage, onPageSelect, onPageDuplicate, onPageDelete, onPageAdd } =
+    useStorytelling({
+      stories,
+    });
+  const { leftPanel } = useLeftPanel({
+    tab,
+    selectedStory,
+    selectedPage,
+    onPageSelect,
+    onPageDuplicate,
+    onPageDelete,
+    onPageAdd,
+  });
   const { rightPanel } = useRightPanel({ tab, sceneId });
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,

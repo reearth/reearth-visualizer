@@ -11,7 +11,7 @@ type Story = StoryObj<typeof ActionItem>;
 export const Default: Story = {
   args: {
     pageCount: 10,
-    isSwipable: true,
+    isSwipeable: true,
     children: <div>test</div>,
   },
 };
