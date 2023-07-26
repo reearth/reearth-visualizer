@@ -357,4 +357,4 @@ export type Engine = {
   delegatedDataTypes?: DataType[];
 };
 
-export type RequestingRenderMode = -1 | 0 | 1; // -1: force, 0: none, 1: request one frame
+export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame
