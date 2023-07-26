@@ -15,6 +15,7 @@ export type Theme = Common & {
     4: string;
   };
   select: {
+    light: string;
     main: string;
     strong: string;
   };
