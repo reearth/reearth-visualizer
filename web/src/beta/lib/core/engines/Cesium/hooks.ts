@@ -752,6 +752,7 @@ export default ({
 
   // explicit rendering
   const explicitRender = useCallback(() => {
+    console.log("explicitRender");
     const viewer = cesium.current?.cesiumElement;
     if (!requestingRenderMode?.current || !viewer || viewer.isDestroyed()) return;
     viewer.scene.requestRender();
@@ -760,22 +761,21 @@ export default ({
     }
   }, [requestingRenderMode]);
 
-  // usePostUpdate(explicitRender);
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
-    viewer.scene.postUpdate.addEventListener(explicitRender);
-    return () => {
-      viewer.scene.postUpdate.removeEventListener(explicitRender);
-    };
+    return viewer.scene.postUpdate.addEventListener(explicitRender);
   }, [explicitRender]);
 
+  // render one frame when scene property changes
   useEffect(() => {
     if (requestingRenderMode) {
       requestingRenderMode.current = 1;
     }
   }, [property, requestingRenderMode]);
 
+  // force render when timeline is animating or is shouldRender
+  // set maximumRenderTimeChange to 0 when is timeline animating
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
