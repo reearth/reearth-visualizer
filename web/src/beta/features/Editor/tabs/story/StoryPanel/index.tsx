@@ -26,7 +26,7 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
       {!!selectedStory?.pages?.length && (
         <PageIndicator
           currentPage={pageInfo.currentPage}
-          currentPageProgress={1}
+          currentPageProgress={33}
           onPageChange={pageInfo.onPageChange}
           maxPage={pageInfo.maxPage}
         />
