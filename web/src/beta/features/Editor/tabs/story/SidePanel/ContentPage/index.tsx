@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import ListItem from "@reearth/beta/components/ListItem";
@@ -29,6 +29,10 @@ const ContentPage: React.FC<Props> = ({
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
 
   const [items, setItems] = useState(storyPages);
+
+  useEffect(() => {
+    setItems(storyPages);
+  }, [storyPages]);
   return (
     <SContent>
       <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
