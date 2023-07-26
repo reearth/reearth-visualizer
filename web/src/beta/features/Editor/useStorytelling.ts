@@ -1,11 +1,16 @@
 import { useCallback, useMemo, useState } from "react";
 
+import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { StoryFragmentFragment } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
 
 type Props = {
+  sceneId: string;
   stories: StoryFragmentFragment[];
 };
-export default function useStorytelling({ stories }: Props) {
+export default function useStorytelling({ sceneId, stories }: Props) {
+  const t = useT();
+  const { createStoryPage } = useStorytellingAPI();
   const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
 
   const selectedStory = useMemo(() => {
@@ -29,9 +34,21 @@ export default function useStorytelling({ stories }: Props) {
   const onPageDelete = useCallback(async (pageId: string) => {
     console.log("onPageDelete", pageId);
   }, []);
-  const onPageAdd = useCallback(async (isSwipeable: boolean) => {
-    console.log("onPageAdd", isSwipeable);
-  }, []);
+  const onPageAdd = useCallback(
+    async (isSwipeable: boolean) => {
+      if (!selectedStory) return;
+      await createStoryPage({
+        sceneId,
+        storyId: selectedStory.id,
+        swipeable: isSwipeable,
+        title: t("Page"),
+        index: selectedStory.pages.length,
+        layers: [],
+        swipeableLayers: [],
+      });
+    },
+    [createStoryPage, sceneId, selectedStory, t],
+  );
 
   return {
     selectedStory,

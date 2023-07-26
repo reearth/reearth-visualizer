@@ -32,6 +32,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
 
   const { selectedStory, selectedPage, onPageSelect, onPageDuplicate, onPageDelete, onPageAdd } =
     useStorytelling({
+      sceneId,
       stories,
     });
   const { leftPanel } = useLeftPanel({

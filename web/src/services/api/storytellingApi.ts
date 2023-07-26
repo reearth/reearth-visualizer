@@ -4,10 +4,13 @@ import { useCallback } from "react";
 import {
   CreateStoryInput,
   CreateStoryMutation,
+  CreateStoryPageInput,
+  CreateStoryPageMutation,
   CreateTeamPayload,
   MutationCreateStoryArgs,
+  MutationCreateStoryPageArgs,
 } from "@reearth/services/gql/__gen__/graphql";
-import { CREATE_STORY } from "@reearth/services/gql/queries/storytelling";
+import { CREATE_STORY, CREATE_STORY_PAGE } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 
 import { useNotification } from "../state";
@@ -45,7 +48,37 @@ export default function useStorytellingAPI() {
     [createStoryMutation, setNotification, t],
   );
 
+  const [createStoryPageMutation] = useMutation<
+    CreateStoryPageMutation,
+    MutationCreateStoryPageArgs
+  >(CREATE_STORY_PAGE);
+
+  const createStoryPage = useCallback(
+    async (input: CreateStoryPageInput, opt?: { disableNotification?: boolean }) => {
+      const { data, errors } = await createStoryPageMutation({
+        variables: {
+          input,
+        },
+      });
+      if (errors || !data?.createStoryPage?.story?.id) {
+        console.log("GraphQL: Failed to create story page", errors);
+        if (!opt?.disableNotification) {
+          setNotification({ type: "error", text: t("Failed to create page.") });
+        }
+
+        return { status: "error", errors };
+      }
+
+      if (!opt?.disableNotification) {
+        setNotification({ type: "success", text: t("Successfully created page!") });
+      }
+      return { data, status: "success" };
+    },
+    [createStoryPageMutation, setNotification, t],
+  );
+
   return {
     createStory,
+    createStoryPage,
   };
 }
