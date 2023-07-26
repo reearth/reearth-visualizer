@@ -2013,3 +2013,27 @@ extensions:
                   label: Desktop only
                 - key: mobile
                   label: Mobile only
+  - id: story
+    name: Story
+    type: story
+    description: Storytelling story
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: title
+              type: string
+              title: Title
+  - id: storyPage
+    name: Page
+    type: storyPage
+    description: Storytelling Page
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: title
+              type: string
+              title: Title
