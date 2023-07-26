@@ -123,15 +123,15 @@ export default function Area({
         background: backgroundColor
           ? backgroundColor
           : area === "middle"
-          ? theme.editor.widgetAlignSystem.vertical.bg
-          : theme.editor.widgetAlignSystem.horizontal.bg,
+          ? theme.primary.main
+          : "#E9551880",
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
-            ? `1px solid ${theme.editor.widgetAlignSystem.vertical.border}`
-            : `1px solid ${theme.editor.widgetAlignSystem.horizontal.border}`,
+            ? `1px solid ${theme.primary.weak}`
+            : `1px solid #E95518`,
         gap: gap,
         alignItems: centered ? "center" : "unset",
       }}

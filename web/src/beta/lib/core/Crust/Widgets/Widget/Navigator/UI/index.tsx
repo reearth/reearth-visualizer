@@ -148,13 +148,12 @@ const CompassIcon = styled.div<{ publishedTheme?: Theme }>`
   left: 0;
   width: 64px;
   height: 64px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
   & path {
-    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
+    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
   }
   & circle {
-    stroke: ${({ theme, publishedTheme }) =>
-      publishedTheme?.background || theme.general.bg.veryStrong};
+    stroke: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.text.lightest};
   }
 `;
 
@@ -169,12 +168,10 @@ const CompassFocusIcon = styled.div`
 
 const AngleIcon = styled.div<{ publishedTheme?: Theme; editing: boolean }>`
   & circle {
-    fill: ${({ theme, publishedTheme }) =>
-      publishedTheme?.background || theme.general.bg.veryStrong};
+    fill: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
   }
   & g {
-    stroke: ${({ theme, publishedTheme }) =>
-      publishedTheme?.mainText || theme.general.content.main};
+    stroke: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
   }
   display: inline-block;
   height: 32px;
@@ -186,14 +183,13 @@ const Tool = styled.div<{ publishedTheme?: Theme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ theme, publishedTheme }) =>
-    publishedTheme?.background || theme.general.bg.veryStrong};
+  background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
   border-radius: 16px;
   margin-top: 8px;
 `;
 
 const ToolIconButton = styled.button<{ publishedTheme?: Theme }>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.general.content.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
   height: 32px;
   width: 32px;
   display: grid;

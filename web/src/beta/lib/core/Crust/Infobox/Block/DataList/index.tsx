@@ -114,10 +114,10 @@ const Template = styled.div`
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${props =>
     props.isHovered
-      ? props.theme.general.border
+      ? props.theme.outline.main
       : props.isSelected
-      ? props.theme.general.select
-      : props.theme.general.content.weak};
+      ? props.theme.select.main
+      : props.theme.text.weak};
 `;
 
 export default DataList;
