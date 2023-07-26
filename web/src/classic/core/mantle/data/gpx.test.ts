@@ -1,33 +1,30 @@
-import { expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import { Data } from "../types";
 
 import { fetchGPXfile } from "./gpx";
 import * as Utils from "./utils";
 
-test("with header", async () => {
-  const mockGPXData = `
-<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="GPS Visualizer https://www.gpsvisualizer.com/">
-  <trk>
-    <name>Example GPX Data</name>
-    <trkseg>
-      <trkpt lat="37.844799" lon="-122.257127">
-        <ele>2.2</ele>
-        <time>2023-02-19T23:04:00.000Z</time>
-      </trkpt>
-      <trkpt lat="37.844812" lon="-122.257126">
-        <ele>2.1</ele>
-        <time>2023-02-19T23:04:10.000Z</time>
-      </trkpt>
-      <trkpt lat="37.844797" lon="-122.257131">
-        <ele>2.3</ele>
-        <time>2023-02-19T23:04:20.000Z</time>
-      </trkpt>
-    </trkseg>
+describe("with header", async () => {
+  const mockGPXData = `<?xml version="1.0" encoding="UTF-8"?>
+  <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/0" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" creator="Yamareco Android 6.1.3 - www.yamareco.com">
+  <trk><name>track</name><number>1</number><trkseg>
+  <trkpt lat="37.7237236" lon="140.2551358"><ele>1578</ele><time>2022-09-24T23:05:14Z</time></trkpt>
+  <trkpt lat="37.7237021" lon="140.255021"><ele>1578</ele><time>2022-09-24T23:06:23Z</time></trkpt>
+  <trkpt lat="37.7234781" lon="140.254876"><ele>1578</ele><time>2022-09-24T23:06:37Z</time></trkpt>
+  <trkpt lat="37.7233925" lon="140.2548113"><ele>1578</ele><time>2022-09-24T23:07:22Z</time></trkpt>
+  <trkpt lat="37.7231886" lon="140.2548331"><ele>1577</ele><time>2022-09-24T23:07:42Z</time></trkpt>
+  </trkseg>
   </trk>
-</gpx>
-`;
+  <trk><name>track</name><number>2</number><trkseg>
+  <trkpt lat="37.7237236" lon="140.2551358"><ele>1578</ele><time>2022-09-24T23:05:14Z</time></trkpt>
+  <trkpt lat="37.7237021" lon="140.255021"><ele>1578</ele><time>2022-09-24T23:06:23Z</time></trkpt>
+  <trkpt lat="37.7234781" lon="140.254876"><ele>1578</ele><time>2022-09-24T23:06:37Z</time></trkpt>
+  <trkpt lat="37.7233925" lon="140.2548113"><ele>1578</ele><time>2022-09-24T23:07:22Z</time></trkpt>
+  <trkpt lat="37.7231886" lon="140.2548331"><ele>1577</ele><time>2022-09-24T23:07:42Z</time></trkpt>
+  </trkseg>
+  </trk>
+  </gpx>`;
 
   test("returns a list of GeoJSON LineString features", async () => {
     const fetchDataMock = vi.spyOn(Utils, "f");
