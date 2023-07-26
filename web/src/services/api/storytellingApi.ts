@@ -43,7 +43,6 @@ export default function useStorytellingAPI() {
         },
       });
       if (errors || !data?.createStory?.story?.id) {
-        console.log("GraphQL: Failed to create story", errors);
         setNotification({ type: "error", text: t("Failed to create story.") });
 
         return { status: "error", errors };
@@ -66,7 +65,6 @@ export default function useStorytellingAPI() {
         },
       });
       if (errors || !data?.createStoryPage?.story?.id) {
-        console.log("GraphQL: Failed to create story page", errors);
         setNotification({ type: "error", text: t("Failed to create page.") });
 
         return { status: "error", errors };
@@ -89,7 +87,6 @@ export default function useStorytellingAPI() {
         },
       });
       if (errors || !data?.removeStoryPage?.story?.id) {
-        console.log("GraphQL: Failed to delete story page", errors);
         return { status: "error", errors };
       }
 
@@ -110,7 +107,6 @@ export default function useStorytellingAPI() {
         },
       });
       if (errors || !data?.moveStoryPage?.story?.id) {
-        console.log("GraphQL: Failed to move story page", errors);
         return { status: "error", errors };
       }
 
