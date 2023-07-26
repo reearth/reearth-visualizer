@@ -411,4 +411,8 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
+Failed to create story.: Failed to create story.
+Successfully created story!: Successfully created story!
+Failed to create page.: Failed to create page
+Successfully created page!: Successfully created page!
 Failed to add widget.: Failed to add widget.
