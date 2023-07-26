@@ -782,7 +782,8 @@ export default ({
     viewer.scene.maximumRenderTimeChange = !property?.timeline?.animation ? Infinity : 0;
 
     if (requestingRenderMode) {
-      requestingRenderMode.current = isLayerDragging || shouldRender ? -1 : 0;
+      requestingRenderMode.current =
+        isLayerDragging || shouldRender ? -1 : requestingRenderMode.current === 1 ? 1 : 0;
     }
   }, [property?.timeline?.animation, isLayerDragging, shouldRender, requestingRenderMode]);
 
