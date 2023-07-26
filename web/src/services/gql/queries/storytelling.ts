@@ -61,8 +61,8 @@ export const DELETE_STORY_PAGE = gql(`
 export const MOVE_STORY_PAGE = gql(`
   mutation MoveStoryPage($input: MoveStoryPageInput!) {
     moveStoryPage(input: $input) {
-      page {
-        ...StoryPageFragment
+      story {
+        ...StoryFragment
       }
     }
   }
