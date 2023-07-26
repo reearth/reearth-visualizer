@@ -752,7 +752,6 @@ export default ({
 
   // explicit rendering
   const explicitRender = useCallback(() => {
-    console.log("explicitRender");
     const viewer = cesium.current?.cesiumElement;
     if (!requestingRenderMode?.current || !viewer || viewer.isDestroyed()) return;
     viewer.scene.requestRender();
