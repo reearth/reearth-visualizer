@@ -1,7 +1,7 @@
 import { Math as CesiumMath } from "cesium";
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 
-import { Camera, FlyToDestination, LookAtDestination } from "../types";
+import { Camera, FlyToDestination, LookAtDestination } from "../../types";
 
 export type Story = {
   title: string;

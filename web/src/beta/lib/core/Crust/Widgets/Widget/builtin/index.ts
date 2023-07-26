@@ -3,14 +3,14 @@ import { merge } from "lodash-es";
 import { config } from "@reearth/services/config";
 import { UnsafeBuiltinPlugin } from "@reearth/services/config/unsafePlugins";
 
+import type { Component } from "..";
+
 import Button from "./Button";
 import Menu from "./LegacyMenu";
 import Navigator from "./Navigator";
 import SplashScreen from "./SplashScreen";
 import Storytelling from "./Storytelling";
 import Timeline from "./Timeline";
-
-import type { Component } from ".";
 
 export const MENU_BUILTIN_WIDGET_ID = "reearth/menu"; // legacy
 export const BUTTON_BUILTIN_WIDGET_ID = "reearth/button";
@@ -19,7 +19,7 @@ export const STORYTELLING_BUILTIN_WIDGET_ID = "reearth/storytelling";
 export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
 export const NAVIGATOR_BUILTIN_WIDGET_ID = "reearth/navigator";
 
-export type BuiltinWidgets<T = unknown> = Record<
+export type ReEarthBuiltinWidgets<T = unknown> = Record<
   | typeof MENU_BUILTIN_WIDGET_ID
   | typeof BUTTON_BUILTIN_WIDGET_ID
   | typeof SPLASHSCREEN_BUILTIN_WIDGET_ID
@@ -31,9 +31,11 @@ export type BuiltinWidgets<T = unknown> = Record<
 
 export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 
+export type BuiltinWidgets<T = unknown> = ReEarthBuiltinWidgets<T> & UnsafeBuiltinWidgets<T>;
+
 const reearthConfig = config();
 
-const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> = {
+const REEARTH_BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> = {
   [MENU_BUILTIN_WIDGET_ID]: {},
   [BUTTON_BUILTIN_WIDGET_ID]: {},
   [SPLASHSCREEN_BUILTIN_WIDGET_ID]: {},
@@ -46,10 +48,15 @@ const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> = {
   },
 };
 
+const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> =
+  REEARTH_BUILTIN_WIDGET_OPTIONS;
+
+merge(BUILTIN_WIDGET_OPTIONS);
+
 export const getBuiltinWidgetOptions = (id: string) =>
   BUILTIN_WIDGET_OPTIONS[id as keyof BuiltinWidgets];
 
-const builtin: BuiltinWidgets<Component> = {
+const reearthBuiltin: BuiltinWidgets<Component> = {
   [MENU_BUILTIN_WIDGET_ID]: Menu,
   [BUTTON_BUILTIN_WIDGET_ID]: Button,
   [SPLASHSCREEN_BUILTIN_WIDGET_ID]: SplashScreen,
@@ -58,20 +65,25 @@ const builtin: BuiltinWidgets<Component> = {
   [NAVIGATOR_BUILTIN_WIDGET_ID]: Navigator,
 };
 
-const unsafeBuiltinPlugins = config()?.unsafeBuiltinPlugins;
+const unsafeBuiltinPlugins = reearthConfig?.unsafeBuiltinPlugins;
 
-const unsafeBuiltinWidgets: UnsafeBuiltinWidgets<Component> | undefined =
-  processUnsafeBuiltinWidgets(unsafeBuiltinPlugins);
+const unsafeBuiltinWidgets = processUnsafeBuiltinWidgets(unsafeBuiltinPlugins);
 
-const localUnsafeBuiltinWidgets = reearthConfig?.unsafeBuiltinPluginDevUrl
-  ? {
-      [(await import(/* @vite-ignore */ reearthConfig?.unsafeBuiltinPluginDevUrl)).widgetId]: (
-        await import(/* @vite-ignore */ reearthConfig?.unsafeBuiltinPluginDevUrl)
-      ).default,
-    }
-  : undefined;
+Object.keys(unsafeBuiltinWidgets ?? {}).map(uw => {
+  BUILTIN_WIDGET_OPTIONS[uw] = {};
+});
 
-merge(builtin, unsafeBuiltinWidgets, localUnsafeBuiltinWidgets);
+const localUnsafeBuiltinPlugins = (
+  await import(/* @vite-ignore */ "@reearth/beta/lib/unsafeBuiltinPlugins")
+).default;
+
+const localUnsafeBuiltinWidgets = processUnsafeBuiltinWidgets(localUnsafeBuiltinPlugins);
+
+Object.keys(localUnsafeBuiltinWidgets ?? {}).map(uw => {
+  BUILTIN_WIDGET_OPTIONS[uw] = {};
+});
+
+const builtin = merge({}, reearthBuiltin, unsafeBuiltinWidgets, localUnsafeBuiltinWidgets);
 
 export const isBuiltinWidget = (id: string): id is keyof BuiltinWidgets => {
   return !!builtin[id as keyof BuiltinWidgets];

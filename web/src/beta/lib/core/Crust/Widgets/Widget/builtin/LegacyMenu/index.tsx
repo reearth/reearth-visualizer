@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import Flex from "@reearth/beta/components/Flex";
 import { styled } from "@reearth/services/theme";
 
-import type { ComponentProps as WidgetProps } from "..";
+import type { ComponentProps as WidgetProps } from "../..";
 
 import MenuButton, {
   Button as ButtonType,

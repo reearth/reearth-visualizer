@@ -6,8 +6,8 @@ import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled, css, metricsSizes } from "@reearth/services/theme";
 
-import type { ComponentProps as WidgetProps } from "..";
-import type { Camera, Theme } from "../types";
+import type { ComponentProps as WidgetProps } from "../..";
+import type { Camera, Theme } from "../../types";
 
 import useHooks, { Story as StoryType } from "./hooks";
 

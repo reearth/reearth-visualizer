@@ -6,8 +6,8 @@ import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled, metricsSizes, mask } from "@reearth/services/theme";
 
-import type { Camera, FlyToDestination, Theme } from "../types";
-import { Visible } from "../useVisible";
+import type { Camera, FlyToDestination, Theme } from "../../types";
+import { Visible } from "../../useVisible";
 
 export type Button = {
   id: string;

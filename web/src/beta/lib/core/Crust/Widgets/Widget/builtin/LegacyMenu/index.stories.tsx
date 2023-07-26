@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import { Math as CesiumMath } from "cesium";
 
-import { contextEvents } from "../storybook";
+import { contextEvents } from "../../storybook";
 
 import Menu, { Props } from ".";
 

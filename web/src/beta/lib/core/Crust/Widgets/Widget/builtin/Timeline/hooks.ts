@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
-import type { TimeEventHandler } from "@reearth/beta/lib/core/Crust/Widgets/Widget/Timeline/UI";
+import type { TimeEventHandler } from "@reearth/beta/lib/core/Crust/Widgets/Widget/builtin/Timeline/UI";
 import { TickEvent, TickEventCallback } from "@reearth/beta/lib/core/Map";
 
-import type { Clock, Widget } from "../types";
-import { useVisible } from "../useVisible";
+import type { Clock, Widget } from "../../types";
+import { useVisible } from "../../useVisible";
 
 const MAX_RANGE = 86400000; // a day
 const getOrNewDate = (d?: Date) => d ?? new Date();

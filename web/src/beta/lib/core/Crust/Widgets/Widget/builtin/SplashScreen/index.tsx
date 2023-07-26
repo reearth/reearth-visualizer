@@ -4,9 +4,9 @@ import { useTimeoutFn } from "react-use";
 
 import { styled } from "@reearth/services/theme";
 
-import type { ComponentProps as WidgetProps } from "..";
-import type { Camera } from "../types";
-import { useVisible, Visible } from "../useVisible";
+import type { ComponentProps as WidgetProps } from "../..";
+import type { Camera } from "../../types";
+import { useVisible, Visible } from "../../useVisible";
 
 export type Props = WidgetProps<Property>;
 

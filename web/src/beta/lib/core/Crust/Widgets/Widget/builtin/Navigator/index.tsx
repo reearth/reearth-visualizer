@@ -1,5 +1,5 @@
-import type { ComponentProps as WidgetProps } from "..";
-import { Visible } from "../useVisible";
+import type { ComponentProps as WidgetProps } from "../..";
+import { Visible } from "../../useVisible";
 
 import useHooks from "./hooks";
 import NavigatorUI from "./UI";

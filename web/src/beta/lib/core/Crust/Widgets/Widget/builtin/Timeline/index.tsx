@@ -1,8 +1,8 @@
-import TimelineUI from "@reearth/beta/lib/core/Crust/Widgets/Widget/Timeline/UI";
+import TimelineUI from "@reearth/beta/lib/core/Crust/Widgets/Widget/builtin/Timeline/UI";
 import { styled } from "@reearth/services/theme";
 
-import type { ComponentProps as WidgetProps } from "..";
-import { Visible } from "../useVisible";
+import type { ComponentProps as WidgetProps } from "../..";
+import { Visible } from "../../useVisible";
 
 import { useTimeline } from "./hooks";
 

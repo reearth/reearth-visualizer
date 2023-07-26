@@ -8,7 +8,7 @@ import Icon from "@reearth/beta/components/Icon";
 import { Camera } from "@reearth/beta/utils/value";
 import { fonts, styled } from "@reearth/services/theme";
 
-import type { FlyToDestination, Theme } from "../types";
+import type { FlyToDestination, Theme } from "../../types";
 
 export type Position = "topleft" | "topright" | "bottomleft" | "bottomright";
 

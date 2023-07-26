@@ -1,7 +1,7 @@
 import { styled } from "@reearth/services/theme";
 
-import type { ComponentProps as WidgetProps } from "..";
-import { useVisible } from "../useVisible";
+import type { ComponentProps as WidgetProps } from "../..";
+import { useVisible } from "../../useVisible";
 
 import MenuButton, { Button as ButtonType, MenuItem as MenuItemType } from "./MenuButton";
 
@@ -27,6 +27,7 @@ const Menu = ({
     isMobile,
     onVisibilityChange,
   });
+  // console.log("BOKOSDFJ CONTEXT:", onFlyTo);
 
   return visible ? (
     <Wrapper>

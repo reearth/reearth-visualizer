@@ -1,6 +1,6 @@
 import { Meta, Story } from "@storybook/react";
 
-import { contextEvents } from "../storybook";
+import { contextEvents } from "../../storybook";
 
 import Component, { Props } from ".";
 
