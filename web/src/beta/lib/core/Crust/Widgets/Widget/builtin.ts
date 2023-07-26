@@ -1,3 +1,8 @@
+import { merge } from "lodash-es";
+
+import { config } from "@reearth/services/config";
+import { UnsafeBuiltinPlugin } from "@reearth/services/config/unsafePlugins";
+
 import Button from "./Button";
 import Menu from "./LegacyMenu";
 import Navigator from "./Navigator";
@@ -24,6 +29,10 @@ export type BuiltinWidgets<T = unknown> = Record<
   T
 >;
 
+export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
+
+const reearthConfig = config();
+
 const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> = {
   [MENU_BUILTIN_WIDGET_ID]: {},
   [BUTTON_BUILTIN_WIDGET_ID]: {},
@@ -40,9 +49,6 @@ const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> = {
 export const getBuiltinWidgetOptions = (id: string) =>
   BUILTIN_WIDGET_OPTIONS[id as keyof BuiltinWidgets];
 
-export const isBuiltinWidget = (id: string): id is keyof BuiltinWidgets =>
-  !!builtin[id as keyof BuiltinWidgets];
-
 const builtin: BuiltinWidgets<Component> = {
   [MENU_BUILTIN_WIDGET_ID]: Menu,
   [BUTTON_BUILTIN_WIDGET_ID]: Button,
@@ -52,4 +58,46 @@ const builtin: BuiltinWidgets<Component> = {
   [NAVIGATOR_BUILTIN_WIDGET_ID]: Navigator,
 };
 
+const unsafeBuiltinPlugins = config()?.unsafeBuiltinPlugins;
+
+const unsafeBuiltinWidgets: UnsafeBuiltinWidgets<Component> | undefined =
+  processUnsafeBuiltinWidgets(unsafeBuiltinPlugins);
+
+const localUnsafeBuiltinWidgets = reearthConfig?.unsafeBuiltinPluginDevUrl
+  ? {
+      [(await import(/* @vite-ignore */ reearthConfig?.unsafeBuiltinPluginDevUrl)).widgetId]: (
+        await import(/* @vite-ignore */ reearthConfig?.unsafeBuiltinPluginDevUrl)
+      ).default,
+    }
+  : undefined;
+
+merge(builtin, unsafeBuiltinWidgets, localUnsafeBuiltinWidgets);
+
+export const isBuiltinWidget = (id: string): id is keyof BuiltinWidgets => {
+  return !!builtin[id as keyof BuiltinWidgets];
+};
+
 export default builtin;
+
+function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
+  if (!plugin) return;
+
+  const unsafeWidgets: UnsafeBuiltinWidgets<Component> | undefined = plugin
+    .map(p =>
+      p.widgets.map(w => {
+        return {
+          widgetId: `${p.id}/${w.extensionId}`,
+          ...w,
+        };
+      }),
+    )
+    .reduce((a, b) => {
+      const newObject: { [key: string]: Component } = {};
+      b.forEach(w => {
+        newObject[w.widgetId] = w.component;
+      });
+      return merge(a, newObject);
+    }, {});
+
+  return unsafeWidgets;
+}
