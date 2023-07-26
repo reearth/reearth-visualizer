@@ -70,9 +70,6 @@ const Item: FC<Props> = ({
       onItemMove(dragIndex, hoverIndex);
       item.index = hoverIndex;
     },
-    drop(item) {
-      onItemDropOnItem(item.index);
-    },
   });
 
   const [{ isDragging }, drag] = useDrag({
