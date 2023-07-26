@@ -757,11 +757,17 @@ export default ({
     }
   }, [requestingRenderMode]);
 
+  const explicitRenderRef = useRef();
+  useEffect(() => {
+    explicitRenderRef.current = explicitRender;
+  }, [explicitRender]);
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
-    return viewer.scene.postUpdate.addEventListener(explicitRender);
-  }, [explicitRender]);
+    return viewer.scene.postUpdate.addEventListener(() => {
+      explicitRenderRef.current?.();
+    });
+  }, []);
 
   // render one frame when scene property changes
   useEffect(() => {
