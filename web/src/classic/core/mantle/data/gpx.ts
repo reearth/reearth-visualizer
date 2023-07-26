@@ -33,7 +33,7 @@ const parseGPX = (gpxSource: string) => {
   return parseGPXWithCustomParser(gpxSource, parseMethod);
 };
 
-export const parseGPXWithCustomParser = (
+const parseGPXWithCustomParser = (
   gpxSource: string,
   parseGPXToXML: (gpxSource: string) => Document | null,
 ) => {
@@ -360,7 +360,7 @@ const queryDirectSelector = (parent: Element, tag: string): Element | null => {
   return finalElem;
 };
 
-export const calculateDistance = (points: Point[]): Distance => {
+const calculateDistance = (points: Point[]): Distance => {
   const cumulativeDistance = [0];
 
   // Incrementally calculate the distance between adjacent points until
@@ -377,7 +377,7 @@ export const calculateDistance = (points: Point[]): Distance => {
   };
 };
 
-export const haversineDistance = (point1: Point, point2: Point): number => {
+const haversineDistance = (point1: Point, point2: Point): number => {
   const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
   const lat1Radians = toRadians(point1.latitude);
@@ -390,7 +390,7 @@ export const haversineDistance = (point1: Point, point2: Point): number => {
   return 6371000 * c;
 };
 
-export const calculateElevation = (points: Point[]): Elevation => {
+const calculateElevation = (points: Point[]): Elevation => {
   let dp = 0;
   let dn = 0;
   const elevation = [];
@@ -425,7 +425,7 @@ export const calculateElevation = (points: Point[]): Elevation => {
   };
 };
 
-export const calculateSlopes = (points: Point[], cumulativeDistance: number[]): number[] => {
+const calculateSlopes = (points: Point[], cumulativeDistance: number[]): number[] => {
   const slopes = [];
 
   for (let i = 0; i < points.length - 1; i++) {
@@ -463,7 +463,7 @@ const makeFeature = (geom: LineString, properties?: GeoJsonProperties): Feature 
   return feat;
 };
 
-export type MetaData = {
+type MetaData = {
   name: string;
   description: string;
   link: Link | null;
@@ -471,7 +471,7 @@ export type MetaData = {
   time: string;
 };
 
-export type Waypoint = {
+type Waypoint = {
   name: string;
   symbol: string;
   comment: string;
@@ -482,7 +482,7 @@ export type Waypoint = {
   time: Date | null;
 };
 
-export type Track = {
+type Track = {
   name: string;
   comment: string;
   description: string;
@@ -496,7 +496,7 @@ export type Track = {
   slopes: number[];
 };
 
-export type Route = {
+type Route = {
   name: string;
   comment: string;
   description: string;
@@ -510,7 +510,7 @@ export type Route = {
   slopes: number[];
 };
 
-export type Point = {
+type Point = {
   latitude: number;
   longitude: number;
   elevation: number | null;
@@ -520,12 +520,12 @@ export type Point = {
   } | null;
 };
 
-export type Distance = {
+type Distance = {
   total: number;
   cumulative: number[];
 };
 
-export type Elevation = {
+type Elevation = {
   maximum: number | null;
   minimum: number | null;
   positive: number | null;
@@ -533,24 +533,24 @@ export type Elevation = {
   average: number | null;
 };
 
-export type Author = {
+type Author = {
   name: string | null;
   email: Email | null;
   link: Link | null;
 };
 
-export type Email = {
+type Email = {
   id: string | null;
   domain: string | null;
 };
 
-export type Link = {
+type Link = {
   href: string | null;
   text: string | null;
   type: string | null;
 };
 
-export type ParsedGPXInputs = {
+type ParsedGPXInputs = {
   xml: Document;
   metadata: MetaData;
   waypoints: Waypoint[];
