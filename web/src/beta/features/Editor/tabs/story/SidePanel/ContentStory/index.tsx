@@ -53,7 +53,7 @@ const ContentStory: React.FC<Props> = ({
           }}
           renderItem={item => {
             return (
-              <PageItemWrapper pageCount={item.index + 1} isSwipable={item.index % 2 === 0}>
+              <PageItemWrapper pageCount={item.index + 1} isSwipeable={item.index % 2 === 0}>
                 <ListItem
                   border
                   onItemClick={() => onStorySelect(item.id)}
