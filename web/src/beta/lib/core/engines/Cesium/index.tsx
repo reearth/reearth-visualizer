@@ -46,7 +46,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     meta,
     layersRef,
     featureFlags,
-    requestingRender,
+    requestingRenderMode,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
@@ -83,7 +83,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     meta,
     layersRef,
     featureFlags,
-    requestingRender,
+    requestingRenderMode,
     shouldRender,
     onLayerSelect,
     onCameraChange,
@@ -183,7 +183,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
         useDepthPicking={false}
-        debugShowFramesPerSecond={true}
+        debugShowFramesPerSecond={!!property?.render?.debugFramePerSecond}
       />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog

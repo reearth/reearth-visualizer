@@ -119,7 +119,7 @@ export type EngineProps = {
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
-  requestingRender?: MutableRefObject<RequestingRenderMode>;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
@@ -342,6 +342,7 @@ export type SceneProperty = {
   };
   render?: {
     antialias?: "low" | "medium" | "high" | "extreme";
+    debugFramePerSecond?: boolean;
   };
 };
 
@@ -356,4 +357,4 @@ export type Engine = {
   delegatedDataTypes?: DataType[];
 };
 
-export type RequestingRenderMode = -1 | 0 | 1; // -1: force, 0: none, 1: request
+export type RequestingRenderMode = -1 | 0 | 1; // -1: force, 0: none, 1: request one frame

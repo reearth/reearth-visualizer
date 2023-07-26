@@ -53,7 +53,7 @@ function Map(
     engineRef,
     layersRef,
     selectedLayer,
-    requestingRender,
+    requestingRenderMode,
     handleLayerSelect,
     handleEngineLayerSelect,
   } = useHooks({
@@ -76,7 +76,7 @@ function Map(
       layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
       layersRef={layersRef}
-      requestingRender={requestingRender}
+      requestingRenderMode={requestingRenderMode}
       {...props}>
       <Layers
         ref={layersRef}
@@ -93,7 +93,7 @@ function Map(
         delegatedDataTypes={currentEngine.delegatedDataTypes}
         meta={props.meta}
         sceneProperty={props.property}
-        requestingRender={requestingRender}
+        requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
       />
     </Engine>

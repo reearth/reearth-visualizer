@@ -38,7 +38,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
   };
   selectionReason?: LayerSelectionReason;
   sceneProperty?: any;
-  requestingRender?: MutableRefObject<RequestingRenderMode>;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -54,7 +54,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     hiddenLayers,
     selectedLayerId,
     selectionReason,
-    requestingRender,
+    requestingRenderMode,
     onLayerSelect,
     ...props
   },
@@ -66,7 +66,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     hiddenLayers,
     selectedLayerId,
     selectionReason,
-    requestingRender,
+    requestingRenderMode,
     onLayerSelect,
   });
 

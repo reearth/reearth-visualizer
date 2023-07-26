@@ -32,7 +32,7 @@ export default function ({
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
-  const requestingRender = useRef<RequestingRenderMode>(0);
+  const requestingRenderMode = useRef<RequestingRenderMode>(0);
 
   useImperativeHandle(
     ref,
@@ -100,7 +100,7 @@ export default function ({
     engineRef,
     layersRef,
     selectedLayer,
-    requestingRender,
+    requestingRenderMode,
     handleLayerSelect,
     handleEngineLayerSelect,
   };

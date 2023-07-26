@@ -54,7 +54,7 @@ export default ({
   meta,
   layersRef,
   featureFlags,
-  requestingRender,
+  requestingRenderMode,
   shouldRender,
   onLayerSelect,
   onCameraChange,
@@ -75,7 +75,7 @@ export default ({
   isLayerDragging?: boolean;
   meta?: Record<string, unknown>;
   featureFlags: number;
-  requestingRender?: React.MutableRefObject<RequestingRenderMode>;
+  requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
   onLayerSelect?: (
     layerId?: string,
@@ -709,11 +709,11 @@ export default ({
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       requestRender: () => {
-        if (!requestingRender || requestingRender.current === -1) return;
-        requestingRender.current = 1;
+        if (!requestingRenderMode || requestingRenderMode.current === -1) return;
+        requestingRenderMode.current = 1;
       },
     }),
-    [selectionReason, engineAPI, requestingRender, onLayerEdit],
+    [selectionReason, engineAPI, requestingRenderMode, onLayerEdit],
   );
 
   const handleTick = useCallback(
@@ -753,12 +753,12 @@ export default ({
   // explicit rendering
   const explicitRender = useCallback(() => {
     const viewer = cesium.current?.cesiumElement;
-    if (!requestingRender?.current || !viewer || viewer.isDestroyed()) return;
+    if (!requestingRenderMode?.current || !viewer || viewer.isDestroyed()) return;
     viewer.scene.requestRender();
-    if (requestingRender.current === 1) {
-      requestingRender.current = 0;
+    if (requestingRenderMode.current === 1) {
+      requestingRenderMode.current = 0;
     }
-  }, [requestingRender]);
+  }, [requestingRenderMode]);
 
   // usePostUpdate(explicitRender);
   useEffect(() => {
@@ -771,20 +771,20 @@ export default ({
   }, [explicitRender]);
 
   useEffect(() => {
-    if (requestingRender) {
-      requestingRender.current = 1;
+    if (requestingRenderMode) {
+      requestingRenderMode.current = 1;
     }
-  }, [property, requestingRender]);
+  }, [property, requestingRenderMode]);
 
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
     viewer.scene.maximumRenderTimeChange = !property?.timeline?.animation ? Infinity : 0;
 
-    if (requestingRender) {
-      requestingRender.current = isLayerDragging || shouldRender ? -1 : 0;
+    if (requestingRenderMode) {
+      requestingRenderMode.current = isLayerDragging || shouldRender ? -1 : 0;
     }
-  }, [property?.timeline?.animation, isLayerDragging, shouldRender, requestingRender]);
+  }, [property?.timeline?.animation, isLayerDragging, shouldRender, requestingRenderMode]);
 
   return {
     backgroundColor,

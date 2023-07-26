@@ -101,7 +101,7 @@ export default function useHooks({
   hiddenLayers,
   selectedLayerId,
   selectionReason,
-  requestingRender,
+  requestingRenderMode,
   onLayerSelect,
 }: {
   layers?: Layer[];
@@ -112,7 +112,7 @@ export default function useHooks({
     featureId?: string;
   };
   selectionReason?: LayerSelectionReason;
-  requestingRender?: MutableRefObject<RequestingRenderMode>;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -566,9 +566,9 @@ export default function useHooks({
   }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
 
   useEffect(() => {
-    if (!requestingRender || requestingRender.current === -1) return;
-    requestingRender.current = 1;
-  }, [flattenedLayers, overriddenLayers, requestingRender]);
+    if (!requestingRenderMode || requestingRenderMode.current === -1) return;
+    requestingRenderMode.current = 1;
+  }, [flattenedLayers, overriddenLayers, requestingRenderMode]);
 
   return { atomMap, flattenedLayers, isHidden };
 }
