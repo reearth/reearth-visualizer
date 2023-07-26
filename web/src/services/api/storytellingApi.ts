@@ -9,14 +9,18 @@ import {
   CreateTeamPayload,
   DeleteStoryPageInput,
   DeleteStoryPageMutation,
+  MoveStoryPageInput,
+  MoveStoryPageMutation,
   MutationCreateStoryArgs,
   MutationCreateStoryPageArgs,
+  MutationMoveStoryPageArgs,
   MutationRemoveStoryPageArgs,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   CREATE_STORY,
   CREATE_STORY_PAGE,
   DELETE_STORY_PAGE,
+  MOVE_STORY_PAGE,
 } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 
@@ -113,9 +117,38 @@ export default function useStorytellingAPI() {
     [deleteStoryPageMutation, setNotification, t],
   );
 
+  const [moveStoryPageMutation] = useMutation<MoveStoryPageMutation, MutationMoveStoryPageArgs>(
+    MOVE_STORY_PAGE,
+  );
+
+  const moveStoryPage = useCallback(
+    async (input: MoveStoryPageInput, opt?: { disableNotification?: boolean }) => {
+      const { data, errors } = await moveStoryPageMutation({
+        variables: {
+          input,
+        },
+      });
+      if (errors || !data?.moveStoryPage?.page?.id) {
+        console.log("GraphQL: Failed to move story page", errors);
+        if (!opt?.disableNotification) {
+          setNotification({ type: "error", text: t("Failed to move page.") });
+        }
+
+        return { status: "error", errors };
+      }
+
+      if (!opt?.disableNotification) {
+        setNotification({ type: "success", text: t("Successfully moved page!") });
+      }
+      return { data, status: "success" };
+    },
+    [moveStoryPageMutation, setNotification, t],
+  );
+
   return {
     createStory,
     createStoryPage,
     deleteStoryPage,
+    moveStoryPage,
   };
 }

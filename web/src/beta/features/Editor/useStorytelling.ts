@@ -11,7 +11,7 @@ type Props = {
 };
 export default function useStorytelling({ sceneId, stories }: Props) {
   const t = useT();
-  const { createStoryPage, deleteStoryPage } = useStorytellingAPI();
+  const { createStoryPage, deleteStoryPage, moveStoryPage } = useStorytellingAPI();
   const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
 
   const selectedStory = useMemo(() => {
@@ -31,6 +31,7 @@ export default function useStorytelling({ sceneId, stories }: Props) {
   }, []);
   const onPageDuplicate = useCallback(async (pageId: string) => {
     console.log("onPageDuplicate", pageId);
+    alert("not implemented");
   }, []);
   const onPageDelete = useCallback(
     async (pageId: string) => {
@@ -59,6 +60,17 @@ export default function useStorytelling({ sceneId, stories }: Props) {
     },
     [createStoryPage, sceneId, selectedStory, t],
   );
+  const onPageMove = useCallback(
+    async (id: string, targetIndex: number) => {
+      if (!selectedStory) return;
+      await moveStoryPage({
+        storyId: selectedStory.id,
+        pageId: id,
+        index: targetIndex,
+      });
+    },
+    [moveStoryPage, selectedStory],
+  );
 
   return {
     selectedStory,
@@ -67,5 +79,6 @@ export default function useStorytelling({ sceneId, stories }: Props) {
     onPageDuplicate,
     onPageDelete,
     onPageAdd,
+    onPageMove,
   };
 }

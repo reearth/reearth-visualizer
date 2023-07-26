@@ -14,6 +14,7 @@ type Props = {
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
+  onPageMove: (id: string, targetIndex: number) => void;
 };
 
 export default ({
@@ -24,6 +25,7 @@ export default ({
   onPageDuplicate,
   onPageDelete,
   onPageAdd,
+  onPageMove,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -38,6 +40,7 @@ export default ({
             onPageDuplicate={onPageDuplicate}
             onPageDelete={onPageDelete}
             onPageAdd={onPageAdd}
+            onPageMove={onPageMove}
           />
         );
       case "widgets":
@@ -45,7 +48,16 @@ export default ({
       default:
         return undefined;
     }
-  }, [onPageAdd, onPageDelete, onPageDuplicate, onPageSelect, selectedPage, selectedStory, tab]);
+  }, [
+    onPageAdd,
+    onPageDelete,
+    onPageDuplicate,
+    onPageMove,
+    onPageSelect,
+    selectedPage,
+    selectedStory,
+    tab,
+  ]);
 
   return {
     leftPanel,

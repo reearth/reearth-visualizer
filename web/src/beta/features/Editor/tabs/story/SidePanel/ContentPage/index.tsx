@@ -16,6 +16,7 @@ type Props = {
   onPageAdd: (isSwipeable: boolean) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
+  onPageMove: (id: string, targetIndex: number) => void;
 };
 const ContentPage: React.FC<Props> = ({
   storyPages,
@@ -24,6 +25,7 @@ const ContentPage: React.FC<Props> = ({
   onPageAdd,
   onPageDuplicate,
   onPageDelete,
+  onPageMove,
 }) => {
   const t = useT();
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
@@ -41,7 +43,7 @@ const ContentPage: React.FC<Props> = ({
           gap={8}
           items={items}
           getId={item => item.id}
-          onItemDrop={(item, index) => {
+          onItemDrop={async (item, index) => {
             setItems(old => {
               const items = [...old];
               items.splice(
@@ -51,6 +53,7 @@ const ContentPage: React.FC<Props> = ({
               items.splice(index, 0, item);
               return items;
             });
+            await onPageMove(item.id, index);
           }}
           renderItem={(storyPage, i) => {
             return (
@@ -92,7 +95,7 @@ const ContentPage: React.FC<Props> = ({
                       ]}
                     />
                   }>
-                  {storyPage.title}
+                  {storyPage.id}
                 </ListItem>
               </PageItemWrapper>
             );

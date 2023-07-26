@@ -30,11 +30,18 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     handleWidgetEditorToggle,
   } = useHooks({ tab });
 
-  const { selectedStory, selectedPage, onPageSelect, onPageDuplicate, onPageDelete, onPageAdd } =
-    useStorytelling({
-      sceneId,
-      stories,
-    });
+  const {
+    selectedStory,
+    selectedPage,
+    onPageSelect,
+    onPageDuplicate,
+    onPageDelete,
+    onPageAdd,
+    onPageMove,
+  } = useStorytelling({
+    sceneId,
+    stories,
+  });
   const { leftPanel } = useLeftPanel({
     tab,
     selectedStory,
@@ -43,6 +50,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onPageDuplicate,
     onPageDelete,
     onPageAdd,
+    onPageMove,
   });
   const { rightPanel } = useRightPanel({ tab, sceneId });
   const { secondaryNavbar } = useSecondaryNavbar({

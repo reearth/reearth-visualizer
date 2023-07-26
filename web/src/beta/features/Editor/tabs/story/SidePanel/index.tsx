@@ -10,6 +10,7 @@ type Props = {
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
+  onPageMove: (id: string, targetIndex: number) => void;
 };
 
 const SidePanel: React.FC<Props> = ({
@@ -19,6 +20,7 @@ const SidePanel: React.FC<Props> = ({
   onPageDuplicate,
   onPageDelete,
   onPageAdd,
+  onPageMove,
 }) => {
   const t = useT();
 
@@ -44,6 +46,7 @@ const SidePanel: React.FC<Props> = ({
               onPageSelect={onPageSelect}
               onPageDuplicate={onPageDuplicate}
               onPageDelete={onPageDelete}
+              onPageMove={onPageMove}
             />
           ),
         },
