@@ -123,8 +123,8 @@ export default function Area({
         background: backgroundColor
           ? backgroundColor
           : area === "middle"
-          ? theme.primary.main
-          : "#E9551880",
+          ? theme.placeHolder.main_2
+          : theme.placeHolder.main_1,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`

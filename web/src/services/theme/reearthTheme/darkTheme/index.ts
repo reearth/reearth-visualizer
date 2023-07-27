@@ -1,6 +1,7 @@
 import { gray, blue, white, coolGray, red, yellow, rgba } from "@carbon/colors";
 
 import commonTheme from "../common";
+import { BrandBlue } from "../common/colors";
 import type { Theme } from "../types";
 
 const darkTheme: Theme = {
@@ -20,7 +21,7 @@ const darkTheme: Theme = {
     main: gray[20],
     strong: gray[10],
   },
-  select: { weaker: rgba("#3B3CD0", 0.2), main: "#3B3CD0", strong: "#4770FF" },
+  select: { weaker: rgba(BrandBlue.main, 0.2), main: BrandBlue.main, strong: BrandBlue.light },
   item: { default: "#FFFFFF", hover: gray[90] },
   outline: {
     weakest: rgba("#000000", 0.25),
@@ -42,7 +43,7 @@ const darkTheme: Theme = {
     main: red[60],
   },
   warning: { main: yellow[30] },
-  placeHolder: { main_1: rgba("FF560E", 0.2), main_2: rgba("3B3CD0", 0.2) },
+  placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(BrandBlue.main, 0.2) },
 };
 
 export default darkTheme;
