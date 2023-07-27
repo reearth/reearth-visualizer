@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
 // TODO: Move these utils
@@ -24,43 +24,48 @@ import useViewport from "./useViewport";
 
 const viewportMobileMaxWidth = 768;
 
-export default function useHooks({
-  selectedBlockId: initialSelectedBlockId,
-  camera: initialCamera,
-  interactionMode: initialInteractionMode,
-  sceneProperty,
-  isEditable,
-  rootLayerId,
-  zoomedLayerId,
-  ownBuiltinWidgets,
-  onLayerSelect,
-  onBlockSelect,
-  onCameraChange,
-  onInteractionModeChange,
-  onZoomToLayer,
-  onLayerDrop,
-}: {
-  selectedBlockId?: string;
-  camera?: Camera;
-  interactionMode?: InteractionModeType;
-  isEditable?: boolean;
-  rootLayerId?: string;
-  sceneProperty?: SceneProperty;
-  zoomedLayerId?: string;
-  ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
-  onLayerSelect?: (
-    layerId: string | undefined,
-    featureId: string | undefined,
-    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
-    reason: LayerSelectionReason | undefined,
-  ) => void;
-  onBlockSelect?: (blockId?: string) => void;
-  onCameraChange?: (camera: Camera) => void;
-  onInteractionModeChange?: (mode: InteractionModeType) => void;
-  onZoomToLayer?: (layerId: string | undefined) => void;
-  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
-}) {
+export default function useHooks(
+  {
+    selectedBlockId: initialSelectedBlockId,
+    camera: initialCamera,
+    interactionMode: initialInteractionMode,
+    sceneProperty,
+    isEditable,
+    rootLayerId,
+    zoomedLayerId,
+    ownBuiltinWidgets,
+    onLayerSelect,
+    onBlockSelect,
+    onCameraChange,
+    onInteractionModeChange,
+    onZoomToLayer,
+    onLayerDrop,
+  }: {
+    selectedBlockId?: string;
+    camera?: Camera;
+    interactionMode?: InteractionModeType;
+    isEditable?: boolean;
+    rootLayerId?: string;
+    sceneProperty?: SceneProperty;
+    zoomedLayerId?: string;
+    ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
+    onLayerSelect?: (
+      layerId: string | undefined,
+      featureId: string | undefined,
+      layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+      reason: LayerSelectionReason | undefined,
+    ) => void;
+    onBlockSelect?: (blockId?: string) => void;
+    onCameraChange?: (camera: Camera) => void;
+    onInteractionModeChange?: (mode: InteractionModeType) => void;
+    onZoomToLayer?: (layerId: string | undefined) => void;
+    onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  },
+  ref: Ref<MapRef | null>,
+) {
   const mapRef = useRef<MapRef>(null);
+
+  useImperativeHandle(ref, () => mapRef.current, []);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 

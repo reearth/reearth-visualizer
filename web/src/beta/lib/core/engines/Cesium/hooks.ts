@@ -58,6 +58,7 @@ export default ({
   onLayerDrag,
   onLayerDrop,
   onLayerEdit,
+  onMount,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -85,6 +86,7 @@ export default ({
     position: LatLng | undefined,
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  onMount?: () => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -238,18 +240,21 @@ export default ({
       if (camera) {
         onCameraChange?.(camera);
       }
+      onMount?.();
     },
     [
       engineAPI,
       onCameraChange,
       property?.default?.camera,
       property?.cameraLimiter?.cameraLimitterEnabled,
+      onMount,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
       isEqual(prevDeps[2], nextDeps[2]) &&
-      prevDeps[3] === nextDeps[3],
+      prevDeps[3] === nextDeps[3] &&
+      prevDeps[4] === nextDeps[4],
   );
 
   const handleUnmount = useCallback(() => {
