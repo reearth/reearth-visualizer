@@ -67,7 +67,7 @@ const Modal: React.FC<Props> = ({
       isVisible={isVisible}
       title={title}
       onClose={onClose}>
-      <InnerWrapper>
+      <InnerWrapper hasTabs={tabs.length > 0}>
         {tabs.length > 0 && (
           <NavBarWrapper>
             {tabs.map(tab => (
@@ -90,8 +90,9 @@ const Modal: React.FC<Props> = ({
   );
 };
 
-const InnerWrapper = styled.div`
+const InnerWrapper = styled.div<{ hasTabs: boolean }>`
   display: flex;
+  flex-direction: ${({ hasTabs }) => (hasTabs ? "row" : "column")};
 `;
 
 const NavBarWrapper = styled.div`
