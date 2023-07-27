@@ -5,8 +5,8 @@ import "leaflet/dist/leaflet.css";
 
 import { styled } from "@reearth/services/theme";
 
-import { CommonProps as BlockProps, LatLng } from "..";
-import { Border, Title } from "../utils";
+import { CommonProps as BlockProps, LatLng } from "../..";
+import { Border, Title } from "../../utils";
 
 import iconSvg from "./icon.svg?raw";
 

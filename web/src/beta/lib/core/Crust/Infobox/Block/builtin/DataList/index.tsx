@@ -4,8 +4,8 @@ import Icon from "@reearth/beta/components/Icon";
 import { Typography, typographyStyles } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import { CommonProps as BlockProps } from "..";
-import { Border, Title } from "../utils";
+import { CommonProps as BlockProps } from "../..";
+import { Border, Title } from "../../utils";
 
 export type Props = BlockProps<Property>;
 

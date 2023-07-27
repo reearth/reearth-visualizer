@@ -1,22 +1,20 @@
 import { merge } from "lodash-es";
 
-import type { Component } from "..";
+import { Component } from "..";
 import { UnsafeBuiltinPlugin } from "../../../types";
 
-export type { Component } from "..";
-
-export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
+export type UnsafeBuiltinBlocks<T = unknown> = Record<string, T>;
 
 const unsafeBuiltinPlugins = (
   await import(/* @vite-ignore */ "@reearth/beta/lib/unsafeBuiltinPlugins")
 ).default;
 
-export const unsafeBuiltinWidgets = processUnsafeBuiltinWidgets(unsafeBuiltinPlugins);
+export const unsafeBuiltinBlocks = processUnsafeBuiltinBlocks(unsafeBuiltinPlugins);
 
-function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
+function processUnsafeBuiltinBlocks(plugin?: UnsafeBuiltinPlugin[]) {
   if (!plugin) return;
 
-  const unsafeWidgets: UnsafeBuiltinWidgets<Component> | undefined = plugin
+  const unsafeBlocks: UnsafeBuiltinBlocks<Component> | undefined = plugin
     .map(p =>
       p.widgets.map(w => {
         return {
@@ -33,5 +31,5 @@ function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
       return merge(a, newObject);
     }, {});
 
-  return unsafeWidgets;
+  return unsafeBlocks;
 }

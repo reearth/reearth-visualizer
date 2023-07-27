@@ -1,65 +1,47 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import nl2br from "react-nl2br";
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
-import Markdown from "@reearth/beta/components/Markdown";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 import fonts from "@reearth/services/theme/reearthTheme/common/fonts";
 
-import { CommonProps as BlockProps, Typography } from "..";
-import { Border, typographyStyles } from "../utils";
+import { CommonProps as BlockProps } from "../..";
+import { Border } from "../../utils";
 
 export type Props = BlockProps<Property>;
 
 export type Property = {
-  text?: string;
-  paddingTop?: number;
-  paddingBottom?: number;
-  paddingLeft?: number;
-  paddingRight?: number;
+  html?: string;
   title?: string;
-  markdown?: boolean;
-  typography?: Typography;
 };
 
-const TextBlock: React.FC<Props> = ({
+const HTMLBlock: React.FC<Props> = ({
   block,
-  infoboxProperty,
   isSelected,
   isEditable,
+  infoboxProperty,
+  theme,
   onChange,
   onClick,
 }) => {
   const t = useT();
-  const theme = useTheme();
-  const {
-    text,
-    title,
-    paddingTop,
-    paddingBottom,
-    paddingLeft,
-    paddingRight,
-    markdown,
-    typography,
-  } = block?.property ?? {};
-  const { bgcolor: bg } = infoboxProperty ?? {};
+  const { html, title } = block?.property ?? {};
 
   const ref = useRef<HTMLTextAreaElement>(null);
   const isDirty = useRef(false);
   const [editingText, setEditingText] = useState<string | undefined>();
   const isEditing = typeof editingText === "string";
-  const isTemplate = !text && !title && !isEditing;
+  const isTemplate = !html && !title && !isEditing;
 
   const startEditing = useCallback(() => {
     if (!isEditable) return;
-    setEditingText(text ?? "");
-  }, [isEditable, text]);
+    setEditingText(html ?? "");
+  }, [isEditable, html]);
 
   const finishEditing = useCallback(() => {
     if (!isEditing) return;
     if (onChange && isDirty.current) {
-      onChange("default", "text", editingText ?? "", "string");
+      onChange("default", "html", editingText ?? "", "string");
     }
     isDirty.current = false;
     setEditingText(undefined);
@@ -93,20 +75,81 @@ const TextBlock: React.FC<Props> = ({
   const handleMouseEnter = useCallback(() => setHovered(true), []);
   const handleMouseLeave = useCallback(() => setHovered(false), []);
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
+    (e?: React.MouseEvent<HTMLDivElement>) => {
+      e?.stopPropagation();
       if (isEditing) return;
       onClick?.();
     },
     [isEditing, onClick],
   );
 
+  // iframe
+  const themeColor = infoboxProperty?.typography?.color ?? theme?.mainText;
+  const [frameRef, setFrameRef] = useState<HTMLIFrameElement | null>(null);
+  const [height, setHeight] = useState(15);
+  const initializeIframe = useCallback(() => {
+    const frameDocument = frameRef?.contentDocument;
+    const frameWindow = frameRef?.contentWindow;
+    if (!frameWindow || !frameDocument) {
+      return;
+    }
+
+    if (!frameDocument.body.innerHTML.length) {
+      // `document.write()` is not recommended API by HTML spec,
+      // but we need to use this API to make it work correctly on Safari.
+      // If Safari supports `onLoad` event with `srcDoc`, we can remove this line.
+      frameDocument.write(html || "");
+    }
+
+    // Initialize styles
+    frameWindow.document.documentElement.style.margin = "0";
+
+    // Check if a style element has already been appended to the head
+    let style: HTMLElement | null = frameWindow.document.querySelector(
+      'style[data-id="reearth-iframe-style"]',
+    );
+    if (!style) {
+      // Create a new style element if it doesn't exist
+      style = frameWindow.document.createElement("style");
+      style.dataset.id = "reearth-iframe-style";
+      frameWindow.document.head.append(style);
+    }
+    // Update the content of the existing or new style element
+    style.textContent = `body { color:${themeColor ?? getComputedStyle(frameRef).color}; 
+    font-family:Noto Sans, hiragino sans, hiragino kaku gothic proN, -apple-system, BlinkMacSystem, sans-serif; 
+    font-size: ${fonts.sizes.body}px; } a { color:${
+      themeColor ?? getComputedStyle(frameRef).color
+    };}`;
+
+    const handleFrameClick = () => handleClick();
+
+    if (isEditable) {
+      frameWindow.document.body.style.cursor = "pointer";
+      frameWindow.document.addEventListener("dblclick", startEditing);
+      frameWindow.document.addEventListener("click", handleFrameClick);
+    }
+
+    const resize = () => {
+      setHeight(frameWindow.document.documentElement.scrollHeight);
+    };
+
+    // Resize
+    const resizeObserver = new ResizeObserver(() => {
+      resize();
+    });
+    resizeObserver.observe(frameWindow.document.body);
+
+    return () => {
+      frameWindow.document.removeEventListener("dblclick", startEditing);
+      frameWindow.document.removeEventListener("click", handleFrameClick);
+      resizeObserver.disconnect();
+    };
+  }, [frameRef, themeColor, isEditable, html, handleClick, startEditing]);
+
+  useLayoutEffect(() => initializeIframe(), [initializeIframe]);
+
   return (
     <Wrapper
-      paddingTop={paddingTop}
-      paddingBottom={paddingBottom}
-      paddingLeft={paddingLeft}
-      paddingRight={paddingRight}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
@@ -116,7 +159,7 @@ const TextBlock: React.FC<Props> = ({
       isTemplate={isTemplate}>
       {isTemplate && isEditable && !isEditing ? (
         <Template onDoubleClick={startEditing}>
-          <StyledIcon icon="text" isSelected={isSelected} isHovered={isHovered} size={24} />
+          <StyledIcon icon="html" isSelected={isSelected} isHovered={isHovered} size={24} />
           <Text isSelected={isSelected} isHovered={isHovered}>
             {t("Double click here to write.")}
           </Text>
@@ -131,18 +174,18 @@ const TextBlock: React.FC<Props> = ({
               onChange={handleChange}
               onBlur={finishEditing}
               rows={10}
+              minHeight={height}
             />
-          ) : markdown ? (
-            <Markdown
-              styles={typography}
-              backgroundColor={bg || theme.general.bg.main}
-              onDoubleClick={startEditing}>
-              {text}
-            </Markdown>
           ) : (
-            <Field styles={typography} onDoubleClick={startEditing}>
-              {nl2br(text ?? "")}
-            </Field>
+            <IFrame
+              key={html}
+              ref={setFrameRef}
+              frameBorder="0"
+              scrolling="no"
+              $height={height}
+              allowFullScreen
+              sandbox="allow-same-origin allow-popups allow-forms"
+            />
           )}
         </>
       )}
@@ -152,15 +195,7 @@ const TextBlock: React.FC<Props> = ({
 
 const Wrapper = styled(Border)<{
   isTemplate: boolean;
-  paddingTop?: number;
-  paddingBottom?: number;
-  paddingLeft?: number;
-  paddingRight?: number;
 }>`
-  padding-top: ${({ paddingTop }) => (paddingTop ? paddingTop + "px" : "0")};
-  padding-bottom: ${({ paddingBottom }) => (paddingBottom ? paddingBottom + "px" : "0")};
-  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft + "px" : "0")};
-  padding-right: ${({ paddingRight }) => (paddingRight ? paddingRight + "px" : "0")};
   margin: 0 8px;
   border: 1px solid
     ${({ isSelected, isHovered, isTemplate, isEditable, theme }) =>
@@ -178,21 +213,25 @@ const Title = styled.div`
   font-size: 12px;
 `;
 
-const Field = styled.div<{ styles?: Typography }>`
-  ${({ styles }) => typographyStyles(styles)}
+const IFrame = styled.iframe<{ $height: number }>`
+  display: block;
+  border: none;
   padding: 5px;
-  min-height: 15px;
+  height: ${({ $height }) => $height}px;
+  width: 100%;
+  min-width: 100%;
+  box-sizing: border-box;
 `;
 
-const InputField = styled.textarea`
+const InputField = styled.textarea<{ minHeight: number }>`
   display: block;
   width: 100%;
-  min-height: 15px;
+  min-height: ${({ minHeight }) => minHeight}px;
   height: 185px;
   resize: none;
   box-sizing: border-box;
   background-color: transparent;
-  color: ${props => props.theme.general.content.main};
+  color: ${({ theme }) => theme.general.content.main};
   font-size: ${fonts.sizes.body}px;
   outline: none;
   border: none;
@@ -228,4 +267,4 @@ const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
       : theme.general.content.weak};
 `;
 
-export default TextBlock;
+export default HTMLBlock;

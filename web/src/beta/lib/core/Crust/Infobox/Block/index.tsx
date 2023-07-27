@@ -7,7 +7,7 @@ import { styled } from "@reearth/services/theme";
 import { Theme } from "../../types";
 import type { Block, BlockProps, InfoboxProperty } from "../types";
 
-import builtin from "./builtin";
+import builtin, { isBuiltinBlock } from "./builtin";
 
 export type { InfoboxProperty, Typography, LatLng } from "../types";
 
@@ -38,10 +38,8 @@ export default function BlockComponent<P = any>({
   renderBlock,
   ...props
 }: Props<P>): JSX.Element | null {
-  const Builtin =
-    props.block?.pluginId && props.block.extensionId
-      ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]
-      : undefined;
+  const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
+  const Builtin = isBuiltinBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
 
   return Builtin ? (
     <Builtin {...props} />
