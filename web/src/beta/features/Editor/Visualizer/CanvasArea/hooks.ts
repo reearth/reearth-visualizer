@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
@@ -31,6 +31,11 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   const [selectedWidgetArea, selectWidgetArea] = useSelectedWidgetArea();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
+
+  const [isVisualizerReady, setIsVisualizerReady] = useState(false);
+  const handleMount = useCallback(() => {
+    setIsVisualizerReady(true);
+  }, []);
 
   const onBlockMove = useCallback(
     async (_id: string, _fromIndex: number, _toIndex: number) => {
@@ -217,6 +222,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     engineMeta,
     layerSelectionReason,
     useExperimentalSandbox,
+    isVisualizerReady,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -231,5 +237,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     onFovChange,
     handleDropLayer,
     zoomToLayer,
+    handleMount,
   };
 };
