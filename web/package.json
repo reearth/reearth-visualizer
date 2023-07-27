@@ -49,7 +49,7 @@
         "@testing-library/react": "14.0.0",
         "@testing-library/user-event": "14.4.3",
         "@types/apollo-upload-client": "14.1.0",
-        "@types/carbon__colors": "^10.31.0",
+        "@types/carbon__colors": "10.31.0",
         "@types/gapi.auth2": "0.0.57",
         "@types/gapi.client": "1.0.5",
         "@types/gapi.client.sheets": "4.0.20201031",

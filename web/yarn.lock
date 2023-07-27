@@ -7595,7 +7595,7 @@
   dependencies:
     camelcase "*"
 
-"@types/carbon__colors@^10.31.0":
+"@types/carbon__colors@10.31.0":
   version "10.31.0"
   resolved "https://registry.yarnpkg.com/@types/carbon__colors/-/carbon__colors-10.31.0.tgz#0540bc15729dd90e3e82203c86ddd507a4830d47"
   integrity sha512-gK/1O6UuNEKQ6pIVK02f5VMN222fMIynINZQb58hqrGH48LzkQuHqrDBPjpK8IdI7ATYNudcYewxhc6ozmnT6g==
