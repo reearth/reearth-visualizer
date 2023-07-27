@@ -90,27 +90,27 @@ const StyledButton = styled.button<ButtonProps>`
   border-color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.text.weaker
+        ? theme.content.weaker
         : theme.dangerous.main
       : buttonType === "secondary"
       ? disabled
-        ? theme.text.weaker
+        ? theme.content.weaker
         : theme.secondary.main
       : disabled
-      ? theme.text.weaker
+      ? theme.content.weaker
       : theme.primary.main};
   background: inherit;
   color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.text.weaker
+        ? theme.content.weaker
         : theme.dangerous.main
       : buttonType === "secondary"
       ? disabled
-        ? theme.text.weaker
-        : theme.text.main
+        ? theme.content.weaker
+        : theme.content.main
       : disabled
-      ? theme.text.weaker
+      ? theme.content.weaker
       : theme.primary.main};
   padding: ${({ large }) =>
     large

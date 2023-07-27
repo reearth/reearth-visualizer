@@ -8,7 +8,7 @@ import { typographyStyles } from "./utils";
 export { typographyStyles } from "../utils";
 
 export const Title = styled.div<{ infoboxProperty?: InfoboxProperty }>`
-  color: ${props => props.theme.text.main};
+  color: ${props => props.theme.content.main};
   font-size: ${fonts.sizes.footnote}px;
   ${({ infoboxProperty }) => typographyStyles(infoboxProperty?.typography)}
 `;
@@ -26,6 +26,6 @@ export const Border = styled.div<{
         ? theme.outline.main
         : isSelected
         ? theme.select.main
-        : theme.text.weak};
+        : theme.content.weak};
   border-radius: 6px;
 `;

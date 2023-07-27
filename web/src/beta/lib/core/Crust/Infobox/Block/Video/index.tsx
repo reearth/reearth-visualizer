@@ -108,7 +108,7 @@ const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
       ? props.theme.outline.main
       : props.isSelected
       ? props.theme.select.main
-      : props.theme.text.weak};
+      : props.theme.content.weak};
 `;
 
 export default VideoBlock;

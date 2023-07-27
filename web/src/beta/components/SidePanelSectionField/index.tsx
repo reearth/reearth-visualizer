@@ -15,10 +15,13 @@ const SidePanelSectionField: React.FC<{
   return (
     <Field>
       <Header onClick={() => setOpened(!opened)}>
-        <Text size="footnote" color={theme.text.lightest} otherProperties={{ height: "16px" }}>
+        <Text
+          size="footnote"
+          color={theme.content.withBackground}
+          otherProperties={{ height: "16px" }}>
           {title}
         </Text>
-        <ArrowIcon icon="arrowToggle" size={12} color={theme.text.main} opened={opened} />
+        <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
       </Header>
       {opened && children}
     </Field>

@@ -52,7 +52,7 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   border-radius: 3px;
   width: 288px;
-  color: ${({ theme }) => theme.text.main};
+  color: ${({ theme }) => theme.content.main};
   box-shadow: 0 0 5px ${({ theme }) => theme.bg[0]};
   &:after {
     content: "";

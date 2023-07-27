@@ -27,7 +27,7 @@ const Loading: React.FC<Props> = ({
   const theme = useTheme();
   const loading = (
     <LoadingWrapper className={className} fixed={fixed} overlay={overlay} relative={relative}>
-      <RingLoader size={animationSize ?? 33} color={animationColor ?? theme.text.main} />
+      <RingLoader size={animationSize ?? 33} color={animationColor ?? theme.content.main} />
     </LoadingWrapper>
   );
   return portal ? <Portal>{loading}</Portal> : loading;

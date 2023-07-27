@@ -107,7 +107,7 @@ const Tab = styled.button<{ isSelected?: boolean }>`
   padding: 4px 8px;
   border-radius: 4px;
   background: ${({ isSelected, theme }) => (isSelected ? theme.bg[2] : "transparent")};
-  color: ${({ isSelected, theme }) => (isSelected ? theme.text.main : theme.bg[2])};
+  color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.bg[2])};
 `;
 
 const ContentWrapper = styled.div`

@@ -89,7 +89,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  color: ${({ theme }) => theme.text.main};
+  color: ${({ theme }) => theme.content.main};
 `;
 
 const MainSection = styled.div`

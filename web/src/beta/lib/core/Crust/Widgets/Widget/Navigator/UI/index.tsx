@@ -148,12 +148,13 @@ const CompassIcon = styled.div<{ publishedTheme?: Theme }>`
   left: 0;
   width: 64px;
   height: 64px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   & path {
-    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+    fill: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   }
   & circle {
-    stroke: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.text.lightest};
+    stroke: ${({ theme, publishedTheme }) =>
+      publishedTheme?.background || theme.content.withBackground};
   }
 `;
 
@@ -171,7 +172,7 @@ const AngleIcon = styled.div<{ publishedTheme?: Theme; editing: boolean }>`
     fill: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
   }
   & g {
-    stroke: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+    stroke: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   }
   display: inline-block;
   height: 32px;
@@ -189,7 +190,7 @@ const Tool = styled.div<{ publishedTheme?: Theme }>`
 `;
 
 const ToolIconButton = styled.button<{ publishedTheme?: Theme }>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   height: 32px;
   width: 32px;
   display: grid;

@@ -178,13 +178,13 @@ const Container = styled.div<StyledColorProps>`
 
 const OpenButton = styled.button<StyledColorProps>`
   background: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   padding: 8px 12px;
 `;
 
 const CloseButton = styled.button<StyledColorProps>`
   background: ${({ theme, publishedTheme }) => publishedTheme?.select || theme.select.main};
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -210,10 +210,10 @@ const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & St
   border-width: 1px;
   border-style: solid;
   border-color: ${({ theme, isPlaying, publishedTheme }) =>
-    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.text.main};
+    isPlaying ? publishedTheme?.select : publishedTheme?.mainText || theme.content.main};
   width: 22px;
   height: 22px;
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,7 +234,7 @@ const InputRangeLabel = styled.label`
 `;
 
 const InputRangeLabelText = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   /* space for preventing layout shift by increasing speed label. */
   width: 37px;
   text-align: right;
@@ -274,7 +274,7 @@ const CurrentTimeWrapper = styled.div`
 `;
 
 const CurrentTime = styled(Text)<StyledColorProps>`
-  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.text.main};
+  color: ${({ theme, publishedTheme }) => publishedTheme?.mainText || theme.content.main};
   line-height: 16px;
   white-space: pre-line;
 `;

@@ -77,7 +77,7 @@ const SRow = styled.button<
   display: flex;
   align-items: center;
   gap: 8px;
-  color: ${({ theme }) => theme.text.main};
+  color: ${({ theme }) => theme.content.main};
 
   ${({ isFirst }) => !isFirst && "border-top: 1px solid transparent;"}
   ${({ isLast }) => !isLast && "border-bottom: 1px solid transparent;"}

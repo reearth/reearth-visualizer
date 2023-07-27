@@ -156,7 +156,7 @@ const Parent = styled.div<{ noHover?: boolean; centered?: boolean }>`
     ${({ noHover, theme }) =>
       !noHover &&
       `
-    color: ${theme.text.main};
+    color: ${theme.content.main};
     background: ${theme.bg[2]};
       `}
   }
@@ -224,7 +224,7 @@ const StyledMenuList = styled(MenuList)<{
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${({ theme }) => theme.text.weak};
+  color: ${({ theme }) => theme.content.weak};
   pointer-events: none;
 `;
 

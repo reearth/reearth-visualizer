@@ -14,7 +14,7 @@ const CheckBoxField: React.FC<Props> = ({ onClick, checked, label }) => {
     <Field onClick={() => onClick?.(!checked)}>
       <BoxField>{checked && <CheckMark icon="checkmark" />}</BoxField>
       {label && (
-        <Text size="footnote" color={theme.text.main}>
+        <Text size="footnote" color={theme.content.main}>
           {label}
         </Text>
       )}

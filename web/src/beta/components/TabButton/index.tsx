@@ -35,7 +35,7 @@ const Button = styled.button<ButtonProps>`
   padding: 4px 8px;
   gap: 8px;
   border-radius: 4px;
-  color: ${({ disabled, theme }) => (disabled ? theme.text.main : theme.text.weak)};
+  color: ${({ disabled, theme }) => (disabled ? theme.content.main : theme.content.weak)};
   background: ${({ disabled, theme }) => (disabled ? theme.bg[3] : theme.bg[2])};
   font-weight: 700;
   font-size: 14px;

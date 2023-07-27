@@ -22,7 +22,9 @@ const SwitchButtonList: React.FC<Props> = ({ list, onChange }) => {
           onClick={() => onChange?.(item.id)}
           first={index === 0}
           end={index === list.length - 1}>
-          <Text size="footnote" color={item.active ? theme.text.lightest : theme.text.main}>
+          <Text
+            size="footnote"
+            color={item.active ? theme.content.withBackground : theme.content.main}>
             {item.text}
           </Text>
         </SwitchButton>

@@ -93,7 +93,7 @@ const ButtonWrapper = styled.div<{ visible?: boolean; hovered?: boolean }>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: ${({ hovered, theme }) => (hovered ? theme.text.lightest : theme.text.main)};
+  color: ${({ hovered, theme }) => (hovered ? theme.content.withBackground : theme.content.main)};
 `;
 
 const InsertLine = styled.div<{ circleVisible?: boolean }>`

@@ -32,7 +32,7 @@ const DraggableView = styled.div`
 `;
 
 const DragMessage = styled.p`
-  color: ${props => props.theme.text.main};
+  color: ${props => props.theme.content.main};
   opacity: 1;
 `;
 

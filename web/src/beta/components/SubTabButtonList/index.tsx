@@ -17,7 +17,7 @@ const SubTabButtonList: React.FC<Props> = ({ items, onChange }) => {
     <>
       {items.map((item, index) => (
         <SubTabButton key={index} disabled={!!item?.active} onClick={() => onChange?.(item.id)}>
-          <Text size="footnote" color={theme.text.main}>
+          <Text size="footnote" color={theme.content.main}>
             {item.name}
           </Text>
         </SubTabButton>

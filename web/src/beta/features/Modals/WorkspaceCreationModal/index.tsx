@@ -64,7 +64,10 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
       {formik.isSubmitting && <Loading overlay />}
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
-          <Text size="body" color={theme.text.main} otherProperties={{ flex: 1, margin: "1em 0" }}>
+          <Text
+            size="body"
+            color={theme.content.main}
+            otherProperties={{ flex: 1, margin: "1em 0" }}>
             {t("Workspace Name")}
           </Text>
           <StyledInput
@@ -92,7 +95,7 @@ const FormInputWrapper = styled.div`
 
 const StyledInput = styled.input`
   flex: 2;
-  color: ${props => props.theme.text.main};
+  color: ${props => props.theme.content.main};
   background: ${props => props.theme.bg[0]};
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.body}px;

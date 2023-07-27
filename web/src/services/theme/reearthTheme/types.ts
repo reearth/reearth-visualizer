@@ -15,7 +15,7 @@ export type Theme = Common & {
     4: string;
   };
   select: {
-    light: string;
+    weaker: string;
     main: string;
     strong: string;
   };
@@ -25,26 +25,35 @@ export type Theme = Common & {
   };
   outline: {
     weakest: string;
+    weaker: string;
     weak: string;
     main: string;
   };
   primary: {
     main: string;
     weak: string;
+    strong: string;
   };
-  text: {
-    lightest: string;
+  content: {
+    withBackground: string;
+    strong: string;
     main: string;
     weak: string;
     weaker: string;
   };
   secondary: {
+    weak: string;
     main: string;
+    strong: string;
   };
   dangerous: {
     main: string;
   };
   warning: {
     main: string;
+  };
+  placeHolder: {
+    main_1: string;
+    main_2: string;
   };
 };

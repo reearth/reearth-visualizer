@@ -33,7 +33,7 @@ const StorytellingPageSectionItem: FC<Props> = ({
         <Text
           onClick={onClick}
           size="footnote"
-          color={theme.text.lightest}
+          color={theme.content.withBackground}
           otherProperties={{ wordBreak: "break-all" }}>
           {title}
         </Text>

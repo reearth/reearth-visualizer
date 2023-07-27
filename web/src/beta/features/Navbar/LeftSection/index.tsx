@@ -75,7 +75,7 @@ const Wrapper = styled.div`
 const StyledLink = styled(Link)`
   display: flex;
   margin-right: 19px;
-  color: ${props => props.theme.text.main};
+  color: ${props => props.theme.content.main};
   text-decoration: none;
   &:hover {
     text-decoration: none;
@@ -85,14 +85,14 @@ const StyledLink = styled(Link)`
 const StyledIcon = styled(Icon)`
   border-radius: 5px;
   padding: 5px;
-  color: ${props => props.theme.text.main};
+  color: ${props => props.theme.content.main};
   &:hover {
     background: ${props => props.theme.bg[3]};
   }
 `;
 
 const Separator = styled.div`
-  color: ${props => props.theme.text.weak};
+  color: ${props => props.theme.content.weak};
   margin: 0px 12px;
   user-select: none;
 `;

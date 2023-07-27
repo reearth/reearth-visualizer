@@ -77,7 +77,8 @@ const TopSlider = styled.div<{
 }>`
   width: ${({ size }) => (size === "sm" ? "14px" : "20px")};
   height: ${({ size }) => (size === "sm" ? "14px" : "20px")};
-  background: ${({ selected, theme }) => (selected ? theme.text.lightest : theme.text.main)};
+  background: ${({ selected, theme }) =>
+    selected ? theme.content.withBackground : theme.content.main};
   transition: 0.4s;
   border-radius: 50%;
   transform: ${({ checked }) => checked && "translateX(100%)"};

@@ -13,30 +13,36 @@ const darkTheme: Theme = {
     3: gray[70],
     4: gray[60],
   },
-  text: {
-    lightest: white,
-    main: gray[20],
-    weak: gray[60],
+  content: {
+    withBackground: white,
     weaker: gray[70],
+    weak: gray[60],
+    main: gray[20],
+    strong: gray[10],
   },
-  select: { light: rgba("#3B3CD0", 0.2), main: "#3B3CD0", strong: "#4770FF" },
+  select: { weaker: rgba("#3B3CD0", 0.2), main: "#3B3CD0", strong: "#4770FF" },
   item: { default: "#FFFFFF", hover: gray[90] },
   outline: {
-    main: gray[70],
-    weak: gray[40],
     weakest: rgba("#000000", 0.25),
+    weaker: gray[80],
+    weak: gray[70],
+    main: gray[40],
   },
   primary: {
-    main: blue[60],
     weak: blue[70],
+    main: blue[60],
+    strong: blue[50],
   },
   secondary: {
+    weak: coolGray[80],
     main: coolGray[60],
+    strong: coolGray[60],
   },
   dangerous: {
     main: red[60],
   },
   warning: { main: yellow[30] },
+  placeHolder: { main_1: rgba("FF560E", 0.2), main_2: rgba("3B3CD0", 0.2) },
 };
 
 export default darkTheme;

@@ -33,7 +33,7 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
         <FovField>
           <Text
             size="footnote"
-            color={theme.text.lightest}
+            color={theme.content.withBackground}
             otherProperties={{ marginRight: "16px" }}>
             {t("Angle")}
           </Text>

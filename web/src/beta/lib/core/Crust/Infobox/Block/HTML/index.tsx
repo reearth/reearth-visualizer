@@ -205,7 +205,7 @@ const Wrapper = styled(Border)<{
         ? theme.outline.main
         : isSelected
         ? theme.select.main
-        : theme.text.weak};
+        : theme.content.weak};
   border-radius: 6px;
 `;
 
@@ -231,7 +231,7 @@ const InputField = styled.textarea<{ minHeight: number }>`
   resize: none;
   box-sizing: border-box;
   background-color: transparent;
-  color: ${({ theme }) => theme.text.main};
+  color: ${({ theme }) => theme.content.main};
   font-size: ${fonts.sizes.body}px;
   outline: none;
   border: none;
@@ -251,12 +251,12 @@ const Template = styled.div`
 
 const Text = styled.p<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.outline.main : isSelected ? theme.select.main : theme.text.weak};
+    isHovered ? theme.outline.main : isSelected ? theme.select.main : theme.content.weak};
 `;
 
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${({ isSelected, isHovered, theme }) =>
-    isHovered ? theme.outline.main : isSelected ? theme.select.main : theme.text.weak};
+    isHovered ? theme.outline.main : isSelected ? theme.select.main : theme.content.weak};
 `;
 
 export default HTMLBlock;
