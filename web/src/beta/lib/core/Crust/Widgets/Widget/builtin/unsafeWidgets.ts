@@ -1,8 +1,24 @@
 import { merge } from "lodash-es";
 
-import { UnsafeBuiltinPlugin } from "@reearth/services/config/unsafePlugins";
-
 import type { Component } from "..";
+
+export type UnsafeBuiltinPlugin = {
+  id: string;
+  name: string;
+  widgets: UnsafeWidget[];
+  blocks: UnsafeBlock[];
+};
+
+type UnsafeWidget = PluginExtension<"widget">;
+
+type UnsafeBlock = PluginExtension<"block">;
+
+type PluginExtension<T extends "widget" | "block"> = {
+  type: T;
+  extensionId: string;
+  name: string;
+  component: React.FC;
+};
 
 export type { Component } from "..";
 
