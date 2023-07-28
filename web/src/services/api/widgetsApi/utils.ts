@@ -1,4 +1,5 @@
 import { GetSceneQuery, PluginExtensionType } from "../../gql";
+import { Item, convert } from "../propertyApi";
 
 export type InstallableWidget = {
   pluginId: string;
@@ -18,6 +19,7 @@ export type InstalledWidget = {
   title: string;
   description: string | undefined;
   icon: string;
+  properties: Item[] | undefined;
 };
 
 export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
@@ -60,6 +62,7 @@ export const getInstalledWidgets = (rawScene?: GetSceneQuery): InstalledWidget[]
       title: e?.title || "",
       description: e?.description,
       icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
+      properties: convert(w.property, null),
     };
   });
 };

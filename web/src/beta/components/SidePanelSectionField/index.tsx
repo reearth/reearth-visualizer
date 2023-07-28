@@ -15,10 +15,7 @@ const SidePanelSectionField: React.FC<{
   return (
     <Field>
       <Header onClick={() => setOpened(!opened)}>
-        <Text
-          size="footnote"
-          color={theme.general.content.strong}
-          otherProperties={{ height: "16px" }}>
+        <Text size="body" color={theme.general.content.strong}>
           {title}
         </Text>
         <ArrowIcon
@@ -34,22 +31,22 @@ const SidePanelSectionField: React.FC<{
 };
 
 const Field = styled.div`
-  box-sizing: border-box;
-
-  border-bottom: 1px solid ${props => props.theme.general.bg.weak};
+  background: ${({ theme }) => theme.general.bg.main};
+  border-radius: 4px;
 `;
+
 const Header = styled.div`
-  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
-
-  height: 32px;
+  padding: 0 8px;
   cursor: pointer;
+  height: 38px;
 `;
+
 const ArrowIcon = styled(Icon)<{ opened: boolean }>`
   transform: rotate(${props => (props.opened ? 90 : 180)}deg);
+  transition: all 0.2s;
 `;
 
 export default SidePanelSectionField;

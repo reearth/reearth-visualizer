@@ -15,6 +15,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
 
   const {
     selectedWidget,
+    properties,
     installedWidgets,
     installableWidgets,
     handleWidgetAdd,
@@ -43,7 +44,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
         {
           id: "page",
           title: t("Inspector"),
-          children: <Settings />,
+          children: <Settings properties={properties} />,
         },
       ]}
     />
