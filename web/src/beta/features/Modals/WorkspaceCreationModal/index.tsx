@@ -90,7 +90,7 @@ const NewProjectForm = styled.form`
 const FormInputWrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
-  margin: 40px auto;
+  margin: 24px;
 `;
 
 const StyledInput = styled.input`
