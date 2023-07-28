@@ -1,7 +1,8 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import { useT } from "@reearth/services/i18n";
 
-import Manager from "./Manager";
+import useHooks from "./hooks";
+import Manager, { ActionArea } from "./Manager";
 import Settings from "./Settings";
 
 // TODO: these are currently rough definition
@@ -12,6 +13,14 @@ type Props = {
 const SidePanel: React.FC<Props> = ({ sceneId }) => {
   const t = useT();
 
+  const {
+    selectedWidget,
+    installedWidgets,
+    installableWidgets,
+    handleWidgetAdd,
+    handleWidgetSelection,
+  } = useHooks({ sceneId });
+
   return (
     <SidePanelCommon
       location="right"
@@ -19,8 +28,17 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
         {
           id: "story",
           title: t("Widget Manager"),
+          actions: (
+            <ActionArea installableWidgets={installableWidgets} onWidgetAdd={handleWidgetAdd} />
+          ),
           maxHeight: "50%",
-          children: <Manager sceneId={sceneId} />,
+          children: (
+            <Manager
+              selectedWidget={selectedWidget}
+              installedWidgets={installedWidgets}
+              onWidgetSelection={handleWidgetSelection}
+            />
+          ),
         },
         {
           id: "page",
