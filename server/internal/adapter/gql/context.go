@@ -44,7 +44,10 @@ func getOperator(ctx context.Context) *usecase.Operator {
 }
 
 func getAcOperator(ctx context.Context) *accountusecase.Operator {
-	return adapter.Operator(ctx).AcOperator
+	if op := getOperator(ctx); op != nil {
+		return op.AcOperator
+	}
+	return nil
 }
 
 func usecases(ctx context.Context) *interfaces.Container {
