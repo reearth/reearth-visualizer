@@ -35,6 +35,7 @@ const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor }) => {
     engineMeta,
     layerSelectionReason,
     useExperimentalSandbox,
+    isVisualizerReady: _isVisualizerReady,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -49,6 +50,7 @@ const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor }) => {
     onFovChange,
     handleDropLayer,
     zoomToLayer,
+    handleMount,
   } = useHooks({ sceneId, isBuilt });
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
@@ -99,6 +101,7 @@ const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor }) => {
         onBlockInsert={onBlockInsert}
         onLayerDrop={handleDropLayer}
         onZoomToLayer={zoomToLayer}
+        onMount={handleMount}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}
       />
       <FovSlider

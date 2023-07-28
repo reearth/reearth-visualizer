@@ -36,7 +36,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("mongo error: %+v\n", err)
 	}
 
-	repos, err := mongorepo.New(ctx, client.Database("reearth"), mongox.IsTransactionAvailable(conf.DB))
+	repos, err := mongorepo.NewWithExtensions(ctx, client.Database("reearth"), mongox.IsTransactionAvailable(conf.DB), conf.Ext_Plugin)
 	if err != nil {
 		log.Fatalf("Failed to init mongo: %+v\n", err)
 	}

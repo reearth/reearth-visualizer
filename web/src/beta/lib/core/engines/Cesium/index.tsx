@@ -51,6 +51,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onMount,
   },
   ref,
 ) => {
@@ -86,6 +87,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onMount,
   });
 
   return (
