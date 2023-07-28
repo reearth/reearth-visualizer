@@ -9,7 +9,7 @@ func NewPageList(pages []*Page) *PageList {
 }
 
 func (l *PageList) Pages() []*Page {
-	if l.pages == nil {
+	if l == nil || l.pages == nil {
 		return nil
 	}
 	return l.pages

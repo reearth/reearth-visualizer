@@ -209,7 +209,7 @@ type Story struct{}
 type Page struct{}
 type Block struct{}
 
-func (Story) Type() string { return "storytelling" }
+func (Story) Type() string { return "story" }
 func (Page) Type() string  { return "page" }
 func (Block) Type() string { return "block" }
 

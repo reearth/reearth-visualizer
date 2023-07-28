@@ -1,9 +1,5 @@
 package storytelling
 
-import (
-	"github.com/reearth/reearth/server/pkg/id"
-)
-
 type PageBuilder struct {
 	page *Page
 }
@@ -13,6 +9,9 @@ func NewPage() *PageBuilder {
 }
 
 func (b *PageBuilder) Build() (*Page, error) {
+	if b.page.id.IsEmpty() {
+		return nil, ErrInvalidID
+	}
 	return b.page, nil
 }
 
@@ -30,11 +29,11 @@ func (b *PageBuilder) ID(id PageID) *PageBuilder {
 }
 
 func (b *PageBuilder) NewID() *PageBuilder {
-	b.page.id = id.NewPageID()
+	b.page.id = NewPageID()
 	return b
 }
 
-func (b *PageBuilder) Property(property id.PropertyID) *PageBuilder {
+func (b *PageBuilder) Property(property PropertyID) *PageBuilder {
 	b.page.property = property
 	return b
 }

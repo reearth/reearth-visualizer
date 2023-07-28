@@ -12,4 +12,12 @@ type PropertyID = id.PropertyID
 type PluginID = id.PluginID
 type PluginExtensionID = id.PluginExtensionID
 
+var NewStoryID = id.NewStoryID
+var NewPageID = id.NewPageID
+var NewBlockID = id.NewBlockID
+var NewSceneID = id.NewSceneID
+var NewPropertyID = id.NewPropertyID
 var NewPropertySchemaID = id.NewPropertySchemaID
+var NewLayerID = id.NewLayerID
+
+var ErrInvalidID = id.ErrInvalidID
