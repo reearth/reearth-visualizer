@@ -13,9 +13,10 @@ type Props = {
 export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelect }) => {
   const pageInfo = useMemo(() => {
     const pages = selectedStory?.pages ?? [];
+    if ((pages?.length ?? 0) < 2) return;
+
     const currentIndex = pages.findIndex(p => p.id === selectedPage?.id);
     return {
-      pages,
       currentPage: currentIndex + 1,
       maxPage: pages.length,
       onPageChange: (page: number) => onPageSelect(pages[page - 1]?.id),
@@ -23,7 +24,7 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
   }, [onPageSelect, selectedPage, selectedStory]);
   return (
     <Wrapper>
-      {!!selectedStory?.pages?.length && (
+      {!!pageInfo && (
         <PageIndicator
           currentPage={pageInfo.currentPage}
           currentPageProgress={33}
