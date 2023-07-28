@@ -1,12 +1,23 @@
 import { GetSceneQuery, PluginExtensionType } from "../../gql";
 
-export type WidgetType = {
+export type InstallableWidget = {
   pluginId: string;
   extensionId: string;
   title: string;
   description?: string;
   icon?: string;
   disabled?: boolean;
+};
+
+export type InstalledWidget = {
+  id: string;
+  pluginId: string;
+  extensionId: string;
+  enabled: boolean;
+  extended: boolean;
+  title: string;
+  description: string | undefined;
+  icon: string;
 };
 
 export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
@@ -17,7 +28,7 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
       const plugin = p.plugin;
       return plugin?.extensions
         .filter(e => e.type === PluginExtensionType.Widget)
-        .map((e): WidgetType => {
+        .map((e): InstallableWidget => {
           return {
             pluginId: plugin.id,
             extensionId: e.extensionId,
@@ -29,12 +40,12 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
               undefined,
           };
         })
-        .filter((w): w is WidgetType => !!w);
+        .filter((w): w is InstallableWidget => !!w);
     })
-    .reduce<WidgetType[]>((a, b) => (b ? [...a, ...b] : a), []);
+    .reduce<InstallableWidget[]>((a, b) => (b ? [...a, ...b] : a), []);
 };
 
-export const getInstalledWidgets = (rawScene?: GetSceneQuery) => {
+export const getInstalledWidgets = (rawScene?: GetSceneQuery): InstalledWidget[] | undefined => {
   const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
 
   return scene?.widgets?.map(w => {
