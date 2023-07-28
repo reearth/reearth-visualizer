@@ -1,3 +1,4 @@
+import { Placement } from "@floating-ui/react";
 import { FC, ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
@@ -9,22 +10,24 @@ type Props = {
   children: ReactNode;
   border?: boolean;
   isSelected?: boolean;
+  actionContent?: ReactNode;
+  isOpenAction?: boolean;
+  actionPlacement?: Placement;
   onItemClick: (id: string) => void;
   onActionClick?: () => void;
-  actionContent?: ReactNode;
   onOpenChange?: (isOpen: boolean) => void;
-  isOpenAction?: boolean;
 };
 
 const ListItem: FC<Props> = ({
   children,
   border,
   isSelected,
+  actionContent,
+  isOpenAction,
+  actionPlacement,
   onItemClick,
   onActionClick,
-  actionContent,
   onOpenChange,
-  isOpenAction,
 }) => {
   return (
     <Wrapper>
@@ -32,7 +35,10 @@ const ListItem: FC<Props> = ({
         <StyledText size="footnote">{children}</StyledText>
       </Inner>
       {actionContent && (
-        <Popover.Provider open={isOpenAction} onOpenChange={onOpenChange}>
+        <Popover.Provider
+          open={isOpenAction}
+          placement={actionPlacement}
+          onOpenChange={onOpenChange}>
           <Popover.Trigger asChild>
             <Button onClick={onActionClick}>
               <Icon icon="actionbutton" size={12} />
