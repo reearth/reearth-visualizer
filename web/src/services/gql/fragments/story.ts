@@ -5,7 +5,6 @@ export const storyFragment = gql`
     id
     title
     pages {
-      id
       ...StoryPageFragment
     }
   }
