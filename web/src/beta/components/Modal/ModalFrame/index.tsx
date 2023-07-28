@@ -48,7 +48,7 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, ch
 };
 
 const Bg = styled.div<{ state: TransitionStatus }>`
-  background: ${({ theme }) => theme.general.bg.transparent};
+  background: ${({ theme }) => theme.bg.transparentBlack};
   position: fixed;
   z-index: ${({ theme }) => theme.zIndexes.fullScreenModal};
   left: 0;

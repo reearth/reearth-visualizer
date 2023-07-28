@@ -99,15 +99,15 @@ const NavBarWrapper = styled.div`
   flex-direction: column;
   padding: 16px;
   gap: 10px;
-  border-right: 1px solid #525252;
+  border-right: 1px solid ${({ theme }) => theme.bg[3]};
 `;
 
 const Tab = styled.button<{ isSelected?: boolean }>`
   display: flex;
   padding: 4px 8px;
   border-radius: 4px;
-  background: ${({ isSelected }) => (isSelected ? "#393939" : "transparent")};
-  color: ${({ isSelected }) => (isSelected ? "#E0E0E0" : "#393939")};
+  background: ${({ isSelected, theme }) => (isSelected ? theme.bg[2] : "transparent")};
+  color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.bg[2])};
 `;
 
 const ContentWrapper = styled.div`
@@ -128,7 +128,7 @@ const ButtonWrapper = styled.div`
   flex-direction: row;
   align-self: stretch;
   justify-content: flex-end;
-  border-top: 1px solid #525252;
+  border-top: 1px solid ${({ theme }) => theme.bg[3]};
 `;
 
 export default Modal;

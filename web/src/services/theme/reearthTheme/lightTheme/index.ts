@@ -1,99 +1,48 @@
-import commonTheme from "../common";
-import commonColors from "../common/colors";
-import type { Theme } from "../types";
+import { gray, blue, white, coolGray, red, yellow, rgba } from "@carbon/colors";
 
-import colors from "./colors";
+import commonTheme from "../common";
+import { brandBlue } from "../common/colors";
+import type { Theme } from "../types";
 
 const lightTheme: Theme = {
   ...commonTheme,
-  general: {
-    select: colors.functional.select,
-    bg: {
-      transparent: commonColors.general.transparentBlack,
-      veryWeak: colors.bg[5],
-      weak: colors.bg[4],
-      main: colors.bg[3],
-      strong: colors.bg[2],
-      veryStrong: colors.bg[1],
-    },
-    border: colors.bg[5],
-    button: {
-      primary: {
-        main: "",
-        hover: "",
-        disable: "",
-        content: "",
-        contentHover: "",
-        contentDisable: "",
-      },
-      secondary: {
-        main: "",
-        hover: "",
-        disable: "",
-        content: "",
-        contentHover: "",
-        contentDisable: "",
-      },
-      danger: {
-        main: "",
-        hover: "",
-        disable: "",
-        content: "",
-        contentHover: "",
-        contentDisable: "",
-      },
-    },
-    content: {
-      weak: colors.text.weak,
-      main: colors.text.main,
-      strong: colors.text.strong,
-    },
+  bg: {
+    transparentBlack: rgba("#000000", 0.7),
+    0: white,
+    1: gray[10],
+    2: gray[30],
+    3: gray[50],
+    4: gray[60],
   },
-  dashboard: {
-    workspace: {},
-    quickStart: {},
-    projectList: {},
+  content: {
+    withBackground: white,
+    weaker: gray[30],
+    weak: gray[60],
+    main: gray[90],
+    strong: gray[100],
   },
-  editor: {
-    secondaryNavbar: {},
-    infobox: {},
-    widgetAlignSystem: {
-      vertical: {
-        bg: commonColors.brand.blue.strongest50,
-        border: commonColors.brand.blue.strongest,
-      },
-      horizontal: {
-        bg: commonColors.brand.orange.main50,
-        border: commonColors.brand.orange.main,
-      },
-    },
-    slider: {
-      bg: colors.bg[3],
-      border: colors.outline.weak,
-      main: colors.primary.main,
-    },
+  select: { weaker: rgba(brandBlue.main, 0.2), main: brandBlue.main, strong: brandBlue.light },
+  item: { default: "#FFFFFF", hover: gray[90] },
+  outline: {
+    weakest: rgba("#000000", 0.25),
+    weaker: gray[30],
+    weak: gray[50],
+    main: gray[50],
   },
-  settings: {},
-  notifications: {
-    bg: {
-      success: "",
-      info: "",
-      warning: "",
-      error: "",
-    },
-    content: "",
+  primary: {
+    weak: blue[70],
+    main: blue[60],
+    strong: white,
   },
-  navbar: {
-    bg: {
-      main: "",
-      hover: "",
-    },
-    avatarBg: "",
-    tabButton: {
-      selectedBg: "",
-      selectedContent: "",
-    },
+  secondary: {
+    weak: coolGray[20],
+    main: coolGray[40],
+    strong: coolGray[50],
   },
+  dangerous: {
+    main: red[60],
+  },
+  warning: { main: yellow[30] },
+  placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(brandBlue.main, 0.2) },
 };
-
 export default lightTheme;
