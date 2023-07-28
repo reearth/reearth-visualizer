@@ -90,18 +90,19 @@ const NewProjectForm = styled.form`
 const FormInputWrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
-  margin: 0px auto;
+  margin: 30px auto;
 `;
 
 const StyledInput = styled.input`
   flex: 2;
   color: ${props => props.theme.general.content.main};
   background: ${props => props.theme.general.bg.veryStrong};
+  border-radius: 4px;
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.body}px;
-  outline: none;
   cursor: text;
-  padding: 0 10px;
+  padding: 4px 8px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
 `;
 
 export default WorkspaceCreationModal;

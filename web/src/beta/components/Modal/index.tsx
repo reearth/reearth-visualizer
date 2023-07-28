@@ -78,7 +78,7 @@ const Modal: React.FC<Props> = ({
           </NavBarWrapper>
         )}
         <ContentWrapper>
-          {tabs && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
+          {tabs.length > 0 && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
           <Content> {children}</Content>
           <ButtonWrapper>
             {tabs.find(tab => tab.active === true)?.tabButton1 ?? button1}
