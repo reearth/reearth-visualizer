@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useCallback } from "react";
 
+import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryInput,
   CreateStoryMutation,
@@ -36,7 +37,7 @@ export default function useStorytellingAPI() {
     CREATE_STORY,
   );
   const createStory = useCallback(
-    async (input: CreateStoryInput) => {
+    async (input: CreateStoryInput): Promise<MutationReturn<CreateStoryMutation>> => {
       const { data, errors } = await createStoryMutation({
         variables: {
           input,
@@ -58,7 +59,7 @@ export default function useStorytellingAPI() {
   >(CREATE_STORY_PAGE);
 
   const createStoryPage = useCallback(
-    async (input: CreateStoryPageInput) => {
+    async (input: CreateStoryPageInput): Promise<MutationReturn<CreateStoryPageMutation>> => {
       const { data, errors } = await createStoryPageMutation({
         variables: {
           input,
@@ -80,7 +81,7 @@ export default function useStorytellingAPI() {
   >(DELETE_STORY_PAGE);
 
   const deleteStoryPage = useCallback(
-    async (input: DeleteStoryPageInput) => {
+    async (input: DeleteStoryPageInput): Promise<MutationReturn<DeleteStoryPageMutation>> => {
       const { data, errors } = await deleteStoryPageMutation({
         variables: {
           input,
@@ -100,7 +101,7 @@ export default function useStorytellingAPI() {
   );
 
   const moveStoryPage = useCallback(
-    async (input: MoveStoryPageInput) => {
+    async (input: MoveStoryPageInput): Promise<MutationReturn<MoveStoryPageMutation>> => {
       const { data, errors } = await moveStoryPageMutation({
         variables: {
           input,
