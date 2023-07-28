@@ -211,7 +211,7 @@ export default (workspaceId?: string) => {
       if (data.projectType === "beta") {
         const story = await createStory({
           sceneId: scene.data?.createScene?.scene.id,
-          title: "Default",
+          title: t("Default"),
           index: 0,
         });
         if (story.errors || !story?.data?.createStory?.story?.id) {
