@@ -10,12 +10,12 @@ const SidePanelSectionField: React.FC<{
   children?: ReactNode;
 }> = ({ title, children }) => {
   const theme = useTheme();
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(true);
 
   return (
     <Field>
       <Header onClick={() => setOpened(!opened)}>
-        <Text size="body" color={theme.content.withBackground}>
+        <Text size="body" color={theme.content.main}>
           {title}
         </Text>
         <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
