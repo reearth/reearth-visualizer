@@ -95,5 +95,5 @@ const StyledIcon = styled(Icon)`
   cursor: pointer;
   align-self: center;
   height: 100%;
-  color: ${({ theme }) => theme.general.content.main};
+  color: ${({ theme }) => theme.content.main};
 `;
