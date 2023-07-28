@@ -6,6 +6,7 @@ export type SidePanelContent = {
   id: string;
   title: ReactNode;
   children: ReactNode;
+  actions?: ReactNode;
   maxHeight?: CSSProperties["maxHeight"];
 };
 type Props = {
@@ -20,6 +21,7 @@ const SidePanel: React.FC<Props> = ({ location, contents }) => {
         <Section key={content.id} maxHeight={content.maxHeight}>
           <Card>
             <Title>{content.title}</Title>
+            {content.actions && <ActionArea>{content.actions}</ActionArea>}
             <Content>{content.children}</Content>
           </Card>
         </Section>
@@ -37,7 +39,7 @@ const Wrapper = styled.div<{ location: "left" | "right" }>`
   height: 100%;
   box-sizing: border-box;
   gap: 4px;
-  padding: 4px;
+  padding: 2px 4px;
 
   // for Resizable gutter width
   ${({ location }) => location === "left" && `padding-right: 0;`}
@@ -60,12 +62,19 @@ const Card = styled.div`
 
 const Title = styled.div`
   background: ${({ theme }) => theme.general.bg.veryWeak};
-  padding: 8px;
+  padding: 4px 8px;
   font-weight: 500;
   font-size: 12px;
   line-height: 1.34;
   border-top-right-radius: 4px;
   border-top-left-radius: 4px;
+`;
+
+const ActionArea = styled.div`
+  padding: 8px 8px 0 8px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.34;
 `;
 
 const Content = styled.div`
