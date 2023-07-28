@@ -49,7 +49,10 @@ export const ActionArea: React.FC<ActionAreaProps> = ({ installableWidgets, onWi
 
   return (
     <ActionAreaWrapper>
-      <Popover.Provider open={popoverOpen} onOpenChange={() => setPopover(!popoverOpen)}>
+      <Popover.Provider
+        open={popoverOpen}
+        placement="bottom-start"
+        onOpenChange={() => setPopover(!popoverOpen)}>
         <Popover.Trigger>
           <StyledIcon icon="folderPlus" size={16} onClick={() => setPopover(!popoverOpen)} />
         </Popover.Trigger>
@@ -60,6 +63,8 @@ export const ActionArea: React.FC<ActionAreaProps> = ({ installableWidgets, onWi
 };
 
 const Manager: React.FC<Props> = ({ selectedWidget, installedWidgets, onWidgetSelection }) => {
+  const [openedActionId, setOpenedActionId] = useState<string | undefined>(undefined);
+
   return (
     <Wrapper>
       <InstalledWidgetsList>
@@ -68,7 +73,27 @@ const Manager: React.FC<Props> = ({ selectedWidget, installedWidgets, onWidgetSe
             key={w.id}
             isSelected={w.id === selectedWidget?.id}
             onItemClick={() => onWidgetSelection(w.id)}
-            onActionClick={() => console.log("ACTIONS")}>
+            onActionClick={() => setOpenedActionId(old => (old ? undefined : w.id))}
+            onOpenChange={isOpen => {
+              setOpenedActionId(isOpen ? w.id : undefined);
+            }}
+            isOpenAction={openedActionId === w.id}
+            actionPlacement="left"
+            actionContent={
+              <PopoverMenuContent
+                size="md"
+                items={[
+                  {
+                    icon: "trash",
+                    name: "Delete",
+                    onClick: () => {
+                      console.log("DELETED");
+                      setOpenedActionId(undefined);
+                    },
+                  },
+                ]}
+              />
+            }>
             {w.title}
           </ListItem>
         ))}
