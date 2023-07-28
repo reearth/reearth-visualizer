@@ -20,7 +20,7 @@ const SidePanelSectionField: React.FC<{
         </Text>
         <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
       </Header>
-      {opened && children}
+      {opened && children && <Content>{children}</Content>}
     </Field>
   );
 };
@@ -42,6 +42,13 @@ const Header = styled.div`
 const ArrowIcon = styled(Icon)<{ opened: boolean }>`
   transform: rotate(${props => (props.opened ? 90 : 180)}deg);
   transition: all 0.2s;
+`;
+
+const Content = styled.div`
+  padding: 0 8px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 export default SidePanelSectionField;
