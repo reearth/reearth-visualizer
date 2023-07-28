@@ -31,7 +31,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
           actions: (
             <ActionArea installableWidgets={installableWidgets} onWidgetAdd={handleWidgetAdd} />
           ),
-          maxHeight: "50%",
+          maxHeight: "40%",
           children: (
             <Manager
               selectedWidget={selectedWidget}
