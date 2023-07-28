@@ -27,11 +27,11 @@ func NewStorytelling(r *repo.Container) interfaces.Storytelling {
 	}
 }
 
-func (i *Storytelling) Fetch(ctx context.Context, ids id.StoryIDList, op *usecase.Operator) (*storytelling.StoryList, error) {
+func (i *Storytelling) Fetch(ctx context.Context, ids id.StoryIDList, _ *usecase.Operator) (*storytelling.StoryList, error) {
 	return i.storytellingRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Storytelling) FetchByScene(ctx context.Context, sid id.SceneID, op *usecase.Operator) (*storytelling.StoryList, error) {
+func (i *Storytelling) FetchByScene(ctx context.Context, sid id.SceneID, _ *usecase.Operator) (*storytelling.StoryList, error) {
 	return i.storytellingRepo.FindByScene(ctx, sid)
 }
 
