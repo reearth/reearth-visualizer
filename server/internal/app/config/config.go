@@ -60,6 +60,9 @@ type Config struct {
 	Auth_TTL      *int
 	Auth_ClientID *string
 	Auth_JWKSURI  *string
+
+	// system extensions
+	Ext_Plugin []string
 }
 
 func ReadConfig(debug bool) (*Config, error) {
