@@ -35,16 +35,15 @@ const Button = styled.button<ButtonProps>`
   padding: 4px 8px;
   gap: 8px;
   border-radius: 4px;
-  color: ${({ selected, theme }) =>
-    selected ? theme.general.content.main : theme.general.content.weak};
-  background: ${({ selected, theme }) => (selected ? theme.general.bg.weak : theme.navbar.bg.main)};
+  color: ${({ selected, theme }) => (selected ? theme.content.main : theme.content.weak)};
+  background: ${({ disabled, theme }) => (disabled ? theme.bg[3] : theme.bg[0])};
   line-height: 19px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
   :hover {
-    background: ${({ theme }) => theme.general.bg.weak};
+    background: ${({ theme }) => theme.bg[3]};
     transition: all 0.4s;
   }
 `;

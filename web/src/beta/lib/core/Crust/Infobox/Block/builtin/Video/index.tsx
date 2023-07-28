@@ -105,10 +105,10 @@ const Template = styled.div<{ infoboxSize?: string }>`
 const StyledIcon = styled(Icon)<{ isSelected?: boolean; isHovered?: boolean }>`
   color: ${props =>
     props.isHovered
-      ? props.theme.general.border
+      ? props.theme.outline.main
       : props.isSelected
-      ? props.theme.general.select
-      : props.theme.general.content.weak};
+      ? props.theme.select.main
+      : props.theme.content.weak};
 `;
 
 export default VideoBlock;

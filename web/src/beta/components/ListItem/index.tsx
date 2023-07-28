@@ -61,7 +61,7 @@ const Inner = styled.button<{ border?: boolean; isSelected?: boolean }>`
   border-radius: 6px;
   box-sizing: border-box;
   padding: 8px 20px 8px 4px;
-  background: ${({ theme, isSelected }) => (isSelected ? theme.general.select : "inherit")};
+  background: ${({ theme, isSelected }) => (isSelected ? theme.select.main : "inherit")};
   transition: all 0.15s;
 
   ${({ isSelected }) => isSelected && `background-color: #3B3CD0;`}

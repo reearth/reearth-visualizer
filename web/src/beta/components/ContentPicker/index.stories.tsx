@@ -1,9 +1,21 @@
 import { Meta } from "@storybook/react";
 
-import ContentPicker from ".";
+import ContentPicker, { Item } from ".";
 
 export default {
   component: ContentPicker,
 } as Meta;
 
-export const Default = () => <ContentPicker />;
+const items: Item[] = [
+  {
+    id: "1",
+    name: "2",
+    icon: "crosshair",
+  },
+  {
+    id: "1",
+    name: "2",
+    icon: "crosshair",
+  },
+];
+export const Default = () => <ContentPicker items={items} />;
