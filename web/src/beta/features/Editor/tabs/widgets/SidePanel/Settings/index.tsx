@@ -29,6 +29,6 @@ const Wrapper = styled.div`
 
 const Item = styled.div`
   padding: 8px;
-  background: ${({ theme }) => theme.general.bg.main};
+  background: ${({ theme }) => theme.bg[1]};
   border-radius: 4px;
 `;

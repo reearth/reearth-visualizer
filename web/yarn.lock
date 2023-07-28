@@ -3452,6 +3452,11 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@carbon/colors@11.18.0":
+  version "11.18.0"
+  resolved "https://registry.yarnpkg.com/@carbon/colors/-/colors-11.18.0.tgz#bcf81d54b64fe9e1952d4972bc2f669ec3916ced"
+  integrity sha512-X/tevl8DzIcu6PEXe512PNxOWGjk0KMT/wUaBqlpB8m5YqlKn5fRQPhVB9US0X2kbIGk95yeMttNYHi+3TWWXA==
+
 "@cesium/engine@2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.4.0.tgz#5716c992358330367046cb53810128a0a34984ba"
@@ -7589,6 +7594,11 @@
   integrity sha512-zhHaryYYUUsJ1h6Rq4hisPkljY7c2bkC5PFYQbom5fyKloGJEDK+wdsw2L4hnBwXr4plGjW6D/UVJBbNbOzVpQ==
   dependencies:
     camelcase "*"
+
+"@types/carbon__colors@10.31.0":
+  version "10.31.0"
+  resolved "https://registry.yarnpkg.com/@types/carbon__colors/-/carbon__colors-10.31.0.tgz#0540bc15729dd90e3e82203c86ddd507a4830d47"
+  integrity sha512-gK/1O6UuNEKQ6pIVK02f5VMN222fMIynINZQb58hqrGH48LzkQuHqrDBPjpK8IdI7ATYNudcYewxhc6ozmnT6g==
 
 "@types/chai-subset@^1.3.3":
   version "1.3.3"
