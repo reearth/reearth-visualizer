@@ -368,3 +368,23 @@ models:
         resolver: true
       property:
         resolver: true
+  StoryPage:
+    fields:
+      scene:
+        resolver: true
+      property:
+        resolver: true
+      layers:
+        resolver: true
+      swipeableLayers:
+        resolver: true
+  StoryBlock:
+    fields:
+      scene:
+        resolver: true
+      property:
+        resolver: true
+      plugin:
+        resolver: true
+      pluginExtension:
+        resolver: true

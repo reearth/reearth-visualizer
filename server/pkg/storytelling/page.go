@@ -280,3 +280,28 @@ func (p *Page) SetSwipeableLayers(ids []LayerID) {
 	}
 	p.swipeableLayers = append(LayerIDList{}, ids...)
 }
+
+func (p *Page) Clone() *Page {
+	if p == nil {
+		return nil
+	}
+	return &Page{
+		id:              p.id,
+		property:        p.property.Clone(),
+		title:           p.title,
+		layers:          p.layers.Clone(),
+		swipeable:       p.swipeable,
+		swipeableLayers: p.swipeableLayers.Clone(),
+		blocks:          p.blocks.Clone(),
+	}
+}
+
+func (p *Page) Duplicate() *Page {
+	if p == nil {
+		return nil
+	}
+	page := p.Clone()
+	page.id = NewPageID()
+	page.title = fmt.Sprintf("%s (copy)", page.title)
+	return page
+}

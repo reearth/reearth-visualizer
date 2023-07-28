@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 )
 
 type Storytelling struct {
@@ -337,6 +338,134 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 
 	tx.Commit()
 	return story, page, inp.Index, nil
+}
+
+func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.DuplicatePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, interfaces.ErrPageNotFound
+	}
+
+	dupPage := page.Duplicate()
+	story.Pages().AddAt(dupPage, lo.ToPtr(story.Pages().IndexOf(page.Id())+1))
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return story, dupPage, nil
+}
+
+func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLayerParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, interfaces.ErrPageNotFound
+	}
+
+	if !page.Swipeable() && inp.Swipeable {
+		return nil, nil, interfaces.ErrPageSwipeableMismatch
+	}
+
+	if inp.Swipeable {
+		page.AddSwipeableLayer(inp.LayerID)
+	} else {
+		page.AddLayer(inp.LayerID)
+	}
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return story, page, nil
+}
+
+func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageLayerParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+		return nil, nil, interfaces.ErrOperationDenied
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, interfaces.ErrPageNotFound
+	}
+
+	if !page.Swipeable() && inp.Swipeable {
+		return nil, nil, interfaces.ErrPageSwipeableMismatch
+	}
+
+	if inp.Swipeable {
+		page.RemoveSwipeableLayer(inp.LayerID)
+	} else {
+		page.RemoveLayer(inp.LayerID)
+	}
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return story, page, nil
 }
 
 func (i *Storytelling) CreateBlock(ctx context.Context, param interfaces.CreateBlockParam, operator *usecase.Operator) (*storytelling.Page, *storytelling.Block, error) {

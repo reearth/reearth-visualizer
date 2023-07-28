@@ -2022,9 +2022,6 @@ extensions:
         - id: default
           title: Basic
           fields:
-            - id: title
-              type: string
-              title: Title
   - id: storyPage
     name: Page
     type: storyPage

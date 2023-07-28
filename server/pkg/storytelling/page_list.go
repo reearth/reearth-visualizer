@@ -69,3 +69,15 @@ func (l *PageList) Remove(id PageID) {
 		}
 	}
 }
+
+func (l *PageList) IndexOf(id PageID) int {
+	if l == nil || l.pages == nil {
+		return -1
+	}
+	for index, page := range l.pages {
+		if page.Id() == id {
+			return index
+		}
+	}
+	return -1
+}

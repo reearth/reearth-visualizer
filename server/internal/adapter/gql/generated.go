@@ -77,6 +77,8 @@ type ResolverRoot interface {
 	ScenePlugin() ScenePluginResolver
 	SceneWidget() SceneWidgetResolver
 	Story() StoryResolver
+	StoryBlock() StoryBlockResolver
+	StoryPage() StoryPageResolver
 	TagGroup() TagGroupResolver
 	TagItem() TagItemResolver
 	Team() TeamResolver
@@ -558,6 +560,7 @@ type ComplexityRoot struct {
 		DeleteTeam                   func(childComplexity int, input gqlmodel.DeleteTeamInput) int
 		DetachTagFromLayer           func(childComplexity int, input gqlmodel.DetachTagFromLayerInput) int
 		DetachTagItemFromGroup       func(childComplexity int, input gqlmodel.DetachTagItemFromGroupInput) int
+		DuplicateStoryPage           func(childComplexity int, input gqlmodel.DuplicateStoryPageInput) int
 		ImportDataset                func(childComplexity int, input gqlmodel.ImportDatasetInput) int
 		ImportDatasetFromGoogleSheet func(childComplexity int, input gqlmodel.ImportDatasetFromGoogleSheetInput) int
 		ImportLayer                  func(childComplexity int, input gqlmodel.ImportLayerInput) int
@@ -991,6 +994,7 @@ type ComplexityRoot struct {
 		Layers             func(childComplexity int) int
 		LayersIds          func(childComplexity int) int
 		Property           func(childComplexity int) int
+		PropertyID         func(childComplexity int) int
 		Scene              func(childComplexity int) int
 		SceneID            func(childComplexity int) int
 		Swipeable          func(childComplexity int) int
@@ -1340,6 +1344,7 @@ type MutationResolver interface {
 	UpdateStoryPage(ctx context.Context, input gqlmodel.UpdateStoryPageInput) (*gqlmodel.StoryPagePayload, error)
 	RemoveStoryPage(ctx context.Context, input gqlmodel.DeleteStoryPageInput) (*gqlmodel.DeleteStoryPagePayload, error)
 	MoveStoryPage(ctx context.Context, input gqlmodel.MoveStoryPageInput) (*gqlmodel.MoveStoryPagePayload, error)
+	DuplicateStoryPage(ctx context.Context, input gqlmodel.DuplicateStoryPageInput) (*gqlmodel.StoryPagePayload, error)
 	AddPageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error)
 	RemovePageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error)
 	CreateStoryBlock(ctx context.Context, input gqlmodel.CreateStoryBlockInput) (*gqlmodel.CreateStoryBlockPayload, error)
@@ -1464,6 +1469,21 @@ type StoryResolver interface {
 	Property(ctx context.Context, obj *gqlmodel.Story) (*gqlmodel.Property, error)
 
 	Scene(ctx context.Context, obj *gqlmodel.Story) (*gqlmodel.Scene, error)
+}
+type StoryBlockResolver interface {
+	Property(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Property, error)
+	Plugin(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Plugin, error)
+
+	Scene(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Scene, error)
+}
+type StoryPageResolver interface {
+	Layers(ctx context.Context, obj *gqlmodel.StoryPage) ([]gqlmodel.Layer, error)
+
+	SwipeableLayers(ctx context.Context, obj *gqlmodel.StoryPage) ([]gqlmodel.Layer, error)
+
+	Property(ctx context.Context, obj *gqlmodel.StoryPage) (*gqlmodel.Property, error)
+
+	Scene(ctx context.Context, obj *gqlmodel.StoryPage) (*gqlmodel.Scene, error)
 }
 type TagGroupResolver interface {
 	Tags(ctx context.Context, obj *gqlmodel.TagGroup) ([]*gqlmodel.TagItem, error)
@@ -3691,6 +3711,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DetachTagItemFromGroup(childComplexity, args["input"].(gqlmodel.DetachTagItemFromGroupInput)), true
+
+	case "Mutation.duplicateStoryPage":
+		if e.complexity.Mutation.DuplicateStoryPage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_duplicateStoryPage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DuplicateStoryPage(childComplexity, args["input"].(gqlmodel.DuplicateStoryPageInput)), true
 
 	case "Mutation.importDataset":
 		if e.complexity.Mutation.ImportDataset == nil {
@@ -6232,6 +6264,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.StoryPage.Property(childComplexity), true
 
+	case "StoryPage.propertyId":
+		if e.complexity.StoryPage.PropertyID == nil {
+			break
+		}
+
+		return e.complexity.StoryPage.PropertyID(childComplexity), true
+
 	case "StoryPage.scene":
 		if e.complexity.StoryPage.Scene == nil {
 			break
@@ -6970,6 +7009,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDeleteTeamInput,
 		ec.unmarshalInputDetachTagFromLayerInput,
 		ec.unmarshalInputDetachTagItemFromGroupInput,
+		ec.unmarshalInputDuplicateStoryPageInput,
 		ec.unmarshalInputImportDatasetFromGoogleSheetInput,
 		ec.unmarshalInputImportDatasetInput,
 		ec.unmarshalInputImportLayerInput,
@@ -8357,6 +8397,7 @@ type StoryPage implements Node {
   layers: [Layer!]!
   swipeableLayersIds: [ID!]
   swipeableLayers: [Layer!]
+  propertyId: ID!
   property: Property
   createdAt: DateTime!
   sceneId: ID!
@@ -8437,6 +8478,12 @@ input MoveStoryPageInput {
   index: Int!
 }
 
+input DuplicateStoryPageInput {
+  sceneId: ID!
+  storyId: ID!
+  pageId: ID!
+}
+
 input DeleteStoryPageInput {
   sceneId: ID!
   storyId: ID!
@@ -8446,7 +8493,7 @@ input DeleteStoryPageInput {
 input PageLayerInput {
   sceneId: ID!
   storyId: ID!
-  PageId: ID!
+  pageId: ID!
   swipeable: Boolean
   layerId: ID!
 }
@@ -8535,7 +8582,7 @@ extend type Mutation {
   updateStoryPage(input: UpdateStoryPageInput!): StoryPagePayload!
   removeStoryPage(input: DeleteStoryPageInput!): DeleteStoryPagePayload!
   moveStoryPage(input: MoveStoryPageInput!): MoveStoryPagePayload!
-# duplicateStoryPage(input: DuplicateStoryPageInput!): DuplicatePagePayload!
+  duplicateStoryPage(input: DuplicateStoryPageInput!): StoryPagePayload!
 
   addPageLayer(input: PageLayerInput!): StoryPagePayload!
   removePageLayer(input: PageLayerInput!): StoryPagePayload!
@@ -9449,6 +9496,21 @@ func (ec *executionContext) field_Mutation_detachTagItemFromGroup_args(ctx conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNDetachTagItemFromGroupInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDetachTagItemFromGroupInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_duplicateStoryPage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.DuplicateStoryPageInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNDuplicateStoryPageInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStoryPageInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -13461,6 +13523,8 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_page(ctx contex
 				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
 			case "swipeableLayers":
 				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryPage_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryPage_property(ctx, field)
 			case "createdAt":
@@ -24698,6 +24762,8 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_page(ctx context.
 				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
 			case "swipeableLayers":
 				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryPage_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryPage_property(ctx, field)
 			case "createdAt":
@@ -24882,6 +24948,8 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_page(ctx context.C
 				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
 			case "swipeableLayers":
 				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryPage_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryPage_property(ctx, field)
 			case "createdAt":
@@ -28126,6 +28194,67 @@ func (ec *executionContext) fieldContext_Mutation_moveStoryPage(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_moveStoryPage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_duplicateStoryPage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_duplicateStoryPage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DuplicateStoryPage(rctx, fc.Args["input"].(gqlmodel.DuplicateStoryPageInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.StoryPagePayload)
+	fc.Result = res
+	return ec.marshalNStoryPagePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryPagePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_duplicateStoryPage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "page":
+				return ec.fieldContext_StoryPagePayload_page(ctx, field)
+			case "story":
+				return ec.fieldContext_StoryPagePayload_story(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type StoryPagePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_duplicateStoryPage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -39415,6 +39544,8 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_page(ctx contex
 				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
 			case "swipeableLayers":
 				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryPage_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryPage_property(ctx, field)
 			case "createdAt":
@@ -41838,6 +41969,8 @@ func (ec *executionContext) fieldContext_Story_pages(ctx context.Context, field 
 				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
 			case "swipeableLayers":
 				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryPage_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryPage_property(ctx, field)
 			case "createdAt":
@@ -42467,6 +42600,8 @@ func (ec *executionContext) fieldContext_StoryBlock_page(ctx context.Context, fi
 				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
 			case "swipeableLayers":
 				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryPage_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryPage_property(ctx, field)
 			case "createdAt":
@@ -42496,7 +42631,7 @@ func (ec *executionContext) _StoryBlock_property(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Property, nil
+		return ec.resolvers.StoryBlock().Property(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42514,8 +42649,8 @@ func (ec *executionContext) fieldContext_StoryBlock_property(ctx context.Context
 	fc = &graphql.FieldContext{
 		Object:     "StoryBlock",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -42551,7 +42686,7 @@ func (ec *executionContext) _StoryBlock_plugin(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Plugin, nil
+		return ec.resolvers.StoryBlock().Plugin(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42569,8 +42704,8 @@ func (ec *executionContext) fieldContext_StoryBlock_plugin(ctx context.Context, 
 	fc = &graphql.FieldContext{
 		Object:     "StoryBlock",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -42747,7 +42882,7 @@ func (ec *executionContext) _StoryBlock_scene(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Scene, nil
+		return ec.resolvers.StoryBlock().Scene(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -42765,8 +42900,8 @@ func (ec *executionContext) fieldContext_StoryBlock_scene(ctx context.Context, f
 	fc = &graphql.FieldContext{
 		Object:     "StoryBlock",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -43074,7 +43209,7 @@ func (ec *executionContext) _StoryPage_layers(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Layers, nil
+		return ec.resolvers.StoryPage().Layers(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43095,8 +43230,8 @@ func (ec *executionContext) fieldContext_StoryPage_layers(ctx context.Context, f
 	fc = &graphql.FieldContext{
 		Object:     "StoryPage",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
 		},
@@ -43159,7 +43294,7 @@ func (ec *executionContext) _StoryPage_swipeableLayers(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SwipeableLayers, nil
+		return ec.resolvers.StoryPage().SwipeableLayers(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43177,10 +43312,54 @@ func (ec *executionContext) fieldContext_StoryPage_swipeableLayers(ctx context.C
 	fc = &graphql.FieldContext{
 		Object:     "StoryPage",
 		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StoryPage_propertyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_StoryPage_propertyId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_StoryPage_propertyId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StoryPage",
+		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -43200,7 +43379,7 @@ func (ec *executionContext) _StoryPage_property(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Property, nil
+		return ec.resolvers.StoryPage().Property(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43218,8 +43397,8 @@ func (ec *executionContext) fieldContext_StoryPage_property(ctx context.Context,
 	fc = &graphql.FieldContext{
 		Object:     "StoryPage",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -43343,7 +43522,7 @@ func (ec *executionContext) _StoryPage_scene(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Scene, nil
+		return ec.resolvers.StoryPage().Scene(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43361,8 +43540,8 @@ func (ec *executionContext) fieldContext_StoryPage_scene(ctx context.Context, fi
 	fc = &graphql.FieldContext{
 		Object:     "StoryPage",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -43465,6 +43644,8 @@ func (ec *executionContext) fieldContext_StoryPagePayload_page(ctx context.Conte
 				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
 			case "swipeableLayers":
 				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryPage_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_StoryPage_property(ctx, field)
 			case "createdAt":
@@ -51251,6 +51432,50 @@ func (ec *executionContext) unmarshalInputDetachTagItemFromGroupInput(ctx contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDuplicateStoryPageInput(ctx context.Context, obj interface{}) (gqlmodel.DuplicateStoryPageInput, error) {
+	var it gqlmodel.DuplicateStoryPageInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"sceneId", "storyId", "pageId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "sceneId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
+			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "storyId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("storyId"))
+			it.StoryID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "pageId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageId"))
+			it.PageID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputImportDatasetFromGoogleSheetInput(ctx context.Context, obj interface{}) (gqlmodel.ImportDatasetFromGoogleSheetInput, error) {
 	var it gqlmodel.ImportDatasetFromGoogleSheetInput
 	asMap := map[string]interface{}{}
@@ -51798,7 +52023,7 @@ func (ec *executionContext) unmarshalInputPageLayerInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "storyId", "PageId", "swipeable", "layerId"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "pageId", "swipeable", "layerId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51821,10 +52046,10 @@ func (ec *executionContext) unmarshalInputPageLayerInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "PageId":
+		case "pageId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PageId"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageId"))
 			it.PageID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
@@ -58032,6 +58257,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "duplicateStoryPage":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_duplicateStoryPage(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addPageLayer":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -61346,28 +61580,28 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = ec._StoryBlock_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "propertyId":
 
 			out.Values[i] = ec._StoryBlock_propertyId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "pluginId":
 
 			out.Values[i] = ec._StoryBlock_pluginId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "extensionId":
 
 			out.Values[i] = ec._StoryBlock_extensionId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "linkedDatasetId":
 
@@ -61378,23 +61612,49 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = ec._StoryBlock_pageId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "page":
 
 			out.Values[i] = ec._StoryBlock_page(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "property":
+			field := field
 
-			out.Values[i] = ec._StoryBlock_property(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryBlock_property(ctx, field, obj)
+				return res
+			}
 
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "plugin":
+			field := field
 
-			out.Values[i] = ec._StoryBlock_plugin(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryBlock_plugin(ctx, field, obj)
+				return res
+			}
 
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "extension":
 
 			out.Values[i] = ec._StoryBlock_extension(ctx, field, obj)
@@ -61404,12 +61664,25 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = ec._StoryBlock_sceneId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "scene":
+			field := field
 
-			out.Values[i] = ec._StoryBlock_scene(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryBlock_scene(ctx, field, obj)
+				return res
+			}
 
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -61436,73 +61709,132 @@ func (ec *executionContext) _StoryPage(ctx context.Context, sel ast.SelectionSet
 			out.Values[i] = ec._StoryPage_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "title":
 
 			out.Values[i] = ec._StoryPage_title(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "blocks":
 
 			out.Values[i] = ec._StoryPage_blocks(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "swipeable":
 
 			out.Values[i] = ec._StoryPage_swipeable(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "layersIds":
 
 			out.Values[i] = ec._StoryPage_layersIds(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "layers":
+			field := field
 
-			out.Values[i] = ec._StoryPage_layers(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryPage_layers(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "swipeableLayersIds":
 
 			out.Values[i] = ec._StoryPage_swipeableLayersIds(ctx, field, obj)
 
 		case "swipeableLayers":
+			field := field
 
-			out.Values[i] = ec._StoryPage_swipeableLayers(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryPage_swipeableLayers(ctx, field, obj)
+				return res
+			}
 
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "propertyId":
+
+			out.Values[i] = ec._StoryPage_propertyId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "property":
+			field := field
 
-			out.Values[i] = ec._StoryPage_property(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryPage_property(ctx, field, obj)
+				return res
+			}
 
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "createdAt":
 
 			out.Values[i] = ec._StoryPage_createdAt(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "sceneId":
 
 			out.Values[i] = ec._StoryPage_sceneId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "scene":
+			field := field
 
-			out.Values[i] = ec._StoryPage_scene(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryPage_scene(ctx, field, obj)
+				return res
+			}
 
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -63963,6 +64295,11 @@ func (ec *executionContext) unmarshalNDetachTagFromLayerInput2githubᚗcomᚋree
 
 func (ec *executionContext) unmarshalNDetachTagItemFromGroupInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDetachTagItemFromGroupInput(ctx context.Context, v interface{}) (gqlmodel.DetachTagItemFromGroupInput, error) {
 	res, err := ec.unmarshalInputDetachTagItemFromGroupInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDuplicateStoryPageInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStoryPageInput(ctx context.Context, v interface{}) (gqlmodel.DuplicateStoryPageInput, error) {
+	res, err := ec.unmarshalInputDuplicateStoryPageInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
