@@ -168,7 +168,7 @@ export default (workspaceId?: string) => {
 
   const [createNewProject] = useCreateProjectMutation();
   const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
-  const { createStory } = useStorytellingAPI();
+  const { useCreateStory } = useStorytellingAPI();
   const handleProjectCreate = useCallback(
     async (data: {
       name: string;
@@ -209,12 +209,12 @@ export default (workspaceId?: string) => {
       }
 
       if (data.projectType === "beta") {
-        const story = await createStory({
+        const story = await useCreateStory({
           sceneId: scene.data?.createScene?.scene.id,
           title: t("Default"),
           index: 0,
         });
-        if (story.errors || !story?.data?.createStory?.story?.id) {
+        if (story.errors || !story?.data?.useCreateStory?.story?.id) {
           setNotification({
             type: "error",
             text: t("Failed to create project."),
@@ -230,7 +230,7 @@ export default (workspaceId?: string) => {
       });
       setModalShown(false);
     },
-    [workspaceId, createNewProject, createScene, setNotification, t, createStory],
+    [workspaceId, createNewProject, createScene, setNotification, t, useCreateStory],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);

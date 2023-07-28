@@ -8,9 +8,9 @@ type Props = {
   sceneId: string;
   stories: StoryFragmentFragment[];
 };
-export default function useStorytelling({ sceneId, stories }: Props) {
+export default function ({ sceneId, stories }: Props) {
   const t = useT();
-  const { createStoryPage, deleteStoryPage, moveStoryPage } = useStorytellingAPI();
+  const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = useStorytellingAPI();
   const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
 
   const selectedStory = useMemo(() => {
@@ -38,7 +38,7 @@ export default function useStorytelling({ sceneId, stories }: Props) {
       const pages = selectedStory?.pages ?? [];
       const deletedPageIndex = pages.findIndex(p => p.id === pageId);
 
-      await deleteStoryPage({
+      await useDeleteStoryPage({
         sceneId,
         storyId: selectedStory.id,
         pageId,
@@ -47,12 +47,12 @@ export default function useStorytelling({ sceneId, stories }: Props) {
         setSelectedPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
       }
     },
-    [deleteStoryPage, sceneId, selectedPageId, selectedStory],
+    [useDeleteStoryPage, sceneId, selectedPageId, selectedStory],
   );
   const onPageAdd = useCallback(
     async (isSwipeable: boolean) => {
       if (!selectedStory) return;
-      await createStoryPage({
+      await useCreateStoryPage({
         sceneId,
         storyId: selectedStory.id,
         swipeable: isSwipeable,
@@ -62,18 +62,18 @@ export default function useStorytelling({ sceneId, stories }: Props) {
         swipeableLayers: [],
       });
     },
-    [createStoryPage, sceneId, selectedStory, t],
+    [useCreateStoryPage, sceneId, selectedStory, t],
   );
   const onPageMove = useCallback(
     async (id: string, targetIndex: number) => {
       if (!selectedStory) return;
-      await moveStoryPage({
+      await useMoveStoryPage({
         storyId: selectedStory.id,
         pageId: id,
         index: targetIndex,
       });
     },
-    [moveStoryPage, selectedStory],
+    [useMoveStoryPage, selectedStory],
   );
 
   return {

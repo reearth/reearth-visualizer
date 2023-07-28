@@ -36,14 +36,14 @@ export default function useStorytellingAPI() {
   const [createStoryMutation] = useMutation<CreateStoryMutation, MutationCreateStoryArgs>(
     CREATE_STORY,
   );
-  const createStory = useCallback(
+  const useCreateStory = useCallback(
     async (input: CreateStoryInput): Promise<MutationReturn<CreateStoryMutation>> => {
       const { data, errors } = await createStoryMutation({
         variables: {
           input,
         },
       });
-      if (errors || !data?.createStory?.story?.id) {
+      if (errors || !data?.useCreateStory?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create story.") });
 
         return { status: "error", errors };
@@ -58,14 +58,14 @@ export default function useStorytellingAPI() {
     MutationCreateStoryPageArgs
   >(CREATE_STORY_PAGE);
 
-  const createStoryPage = useCallback(
+  const useCreateStoryPage = useCallback(
     async (input: CreateStoryPageInput): Promise<MutationReturn<CreateStoryPageMutation>> => {
       const { data, errors } = await createStoryPageMutation({
         variables: {
           input,
         },
       });
-      if (errors || !data?.createStoryPage?.story?.id) {
+      if (errors || !data?.useCreateStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create page.") });
 
         return { status: "error", errors };
@@ -80,7 +80,7 @@ export default function useStorytellingAPI() {
     MutationRemoveStoryPageArgs
   >(DELETE_STORY_PAGE);
 
-  const deleteStoryPage = useCallback(
+  const useDeleteStoryPage = useCallback(
     async (input: DeleteStoryPageInput): Promise<MutationReturn<DeleteStoryPageMutation>> => {
       const { data, errors } = await deleteStoryPageMutation({
         variables: {
@@ -100,14 +100,14 @@ export default function useStorytellingAPI() {
     MOVE_STORY_PAGE,
   );
 
-  const moveStoryPage = useCallback(
+  const useMoveStoryPage = useCallback(
     async (input: MoveStoryPageInput): Promise<MutationReturn<MoveStoryPageMutation>> => {
       const { data, errors } = await moveStoryPageMutation({
         variables: {
           input,
         },
       });
-      if (errors || !data?.moveStoryPage?.story?.id) {
+      if (errors || !data?.useMoveStoryPage?.story?.id) {
         return { status: "error", errors };
       }
 
@@ -117,9 +117,9 @@ export default function useStorytellingAPI() {
   );
 
   return {
-    createStory,
-    createStoryPage,
-    deleteStoryPage,
-    moveStoryPage,
+    useCreateStory,
+    useCreateStoryPage,
+    useDeleteStoryPage,
+    useMoveStoryPage,
   };
 }
