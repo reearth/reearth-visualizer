@@ -70,6 +70,13 @@ import Trash from "./Icons/trash.svg";
 import Desktop from "./Icons/desktop.svg";
 import Mobile from "./Icons/mobile.svg";
 import WidgetSystem from "./Icons/widgetSystem.svg";
+import Widgets from "./Icons/widgetsIcon.svg";
+import WidgetMenu from "./Icons/widgetMenu.svg";
+import WidgetButton from "./Icons/widgetButton.svg";
+import WidgetStory from "./Icons/widgetStorytelling.svg";
+import StorytellingMenu from "./Icons/storytellingMenu.svg";
+import WidgetSplash from "./Icons/widgetSplashscreen.svg";
+import WidgetNavigator from "./Icons/widgetNavigator.svg";
 
 // Plus
 import Plus from "./Icons/plus.svg";
@@ -129,4 +136,12 @@ export default {
   gearSix: GearSix,
   pencilSimple: PencilSimple,
   trash: Trash,
+  widget: Widgets,
+  widgets: Widgets,
+  menu: WidgetMenu,
+  button: WidgetButton,
+  storytelling: WidgetStory,
+  storytellingMenu: StorytellingMenu,
+  splashscreen: WidgetSplash,
+  navigator: WidgetNavigator,
 };
