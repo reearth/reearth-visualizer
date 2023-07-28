@@ -1,3 +1,4 @@
+import TextInput from "@reearth/beta/components/properties/TextInput";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { type Item } from "@reearth/services/api/propertyApi";
 import { styled } from "@reearth/services/theme";
@@ -8,11 +9,18 @@ type Props = {
 
 const Settings: React.FC<Props> = ({ properties }) => {
   console.log("P: ", properties);
+
   return (
     <Wrapper>
       {properties?.map((p, idx) => (
         <SidePanelSectionField title={p.title ?? "Undefined"} key={idx}>
-          <Item>{p.title}</Item>
+          {p.schemaFields.map(sf =>
+            sf.type === "string" ? (
+              <TextInput key={sf.id} name={sf.name} description={"asdf"} />
+            ) : (
+              <p key={sf.id}>{sf.name}</p>
+            ),
+          )}
         </SidePanelSectionField>
       ))}
     </Wrapper>
