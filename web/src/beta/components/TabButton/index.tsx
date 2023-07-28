@@ -36,7 +36,7 @@ const Button = styled.button<ButtonProps>`
   gap: 8px;
   border-radius: 4px;
   color: ${({ disabled, theme }) => (disabled ? theme.content.main : theme.content.weak)};
-  background: ${({ disabled, theme }) => (disabled ? theme.bg[3] : theme.bg[2])};
+  background: ${({ disabled, theme }) => (disabled ? theme.bg[3] : theme.bg[0])};
   font-weight: 700;
   font-size: 14px;
   line-height: 19px;

@@ -51,7 +51,7 @@ const Section = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
 `;
 
 const Card = styled.div`
-  background: ${({ theme }) => theme.bg[1]};
+  background: ${({ theme }) => theme.bg[0]};
   border-radius: 4px;
   height: 100%;
   display: flex;
@@ -59,7 +59,7 @@ const Card = styled.div`
 `;
 
 const Title = styled.div`
-  background: ${({ theme }) => theme.bg[0]};
+  background: ${({ theme }) => theme.bg[2]};
   padding: 8px;
   font-weight: 500;
   font-size: 12px;
