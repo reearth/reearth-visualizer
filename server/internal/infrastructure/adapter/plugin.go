@@ -10,7 +10,7 @@ import (
 	"github.com/reearth/reearthx/rerror"
 )
 
-// TODO: ここで幅優先探索していくアルゴリズムを書いてmongoからビルトインの検索ロジックを除去する
+// TODO: Write a width-first search algorithm here to remove the built-in search logic from mongo
 type pluginRepo struct {
 	readers []repo.Plugin
 	writer  repo.Plugin

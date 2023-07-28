@@ -239,7 +239,7 @@ const Menu = styled.div<{
     width: ${({ extended }) => (extended ? `calc(100% - 18px)` : "65vw")};
     max-height: ${({ area, align }) =>
       area === "middle" && align === "centered" ? "30vh" : "70vh"};
-    border: 1px solid ${props => props.theme.general.content.main};
+    border: 1px solid ${props => props.theme.content.main};
     top: ${({ area, align }) =>
       area === "top" || (area === "middle" && align === "start") ? "60px" : null};
     bottom: ${({ area, align }) =>

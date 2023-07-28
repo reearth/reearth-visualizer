@@ -35,9 +35,8 @@ const Button = styled.button<ButtonProps>`
   padding: 4px 8px;
   gap: 8px;
   border-radius: 4px;
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.general.content.main : theme.general.content.weak};
-  background: ${({ disabled, theme }) => (disabled ? theme.general.bg.weak : theme.navbar.bg)};
+  color: ${({ disabled, theme }) => (disabled ? theme.content.main : theme.content.weak)};
+  background: ${({ disabled, theme }) => (disabled ? theme.bg[3] : theme.bg[0])};
   font-weight: 700;
   font-size: 14px;
   line-height: 19px;
@@ -46,7 +45,7 @@ const Button = styled.button<ButtonProps>`
   text-overflow: ellipsis;
 
   :hover {
-    background: ${({ theme }) => theme.general.bg.weak};
+    background: ${({ theme }) => theme.bg[3]};
     transition: all 0.4s;
   }
 `;

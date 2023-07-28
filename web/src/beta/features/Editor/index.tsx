@@ -89,14 +89,14 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  color: ${({ theme }) => theme.general.content.main};
+  color: ${({ theme }) => theme.content.main};
 `;
 
 const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
   height: 0;
-  background: ${({ theme }) => theme.general.bg.veryStrong};
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const Center = styled.div`
