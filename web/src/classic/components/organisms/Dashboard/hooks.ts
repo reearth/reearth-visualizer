@@ -214,7 +214,7 @@ export default (workspaceId?: string) => {
           title: t("Default"),
           index: 0,
         });
-        if (story.errors || !story?.data?.useCreateStory?.story?.id) {
+        if (story.errors || !story?.data?.createStory?.story?.id) {
           setNotification({
             type: "error",
             text: t("Failed to create project."),

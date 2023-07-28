@@ -43,7 +43,7 @@ export default function useStorytellingAPI() {
           input,
         },
       });
-      if (errors || !data?.useCreateStory?.story?.id) {
+      if (errors || !data?.createStory?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create story.") });
 
         return { status: "error", errors };
@@ -65,7 +65,7 @@ export default function useStorytellingAPI() {
           input,
         },
       });
-      if (errors || !data?.useCreateStoryPage?.story?.id) {
+      if (errors || !data?.createStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create page.") });
 
         return { status: "error", errors };
@@ -107,7 +107,7 @@ export default function useStorytellingAPI() {
           input,
         },
       });
-      if (errors || !data?.useMoveStoryPage?.story?.id) {
+      if (errors || !data?.moveStoryPage?.story?.id) {
         return { status: "error", errors };
       }
 
