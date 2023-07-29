@@ -27,3 +27,20 @@ export const ADD_WIDGET =
       }
     }
   }`);
+
+export const REMOVE_WIDGET = gql(`
+  mutation RemoveWidget($sceneId: ID!, $widgetId: ID!) {
+    removeWidget(input: { sceneId: $sceneId, widgetId: $widgetId }) {
+      scene {
+        id
+        widgets {
+          id
+          enabled
+          pluginId
+          extensionId
+          propertyId
+        }
+      }
+    }
+  }
+`);
