@@ -1,5 +1,5 @@
 import { GetSceneQuery, PluginExtensionType } from "../../gql";
-import { Item, convert } from "../propertyApi";
+import { Item, convert } from "../propertyApi/utils";
 
 export type InstallableWidget = {
   pluginId: string;
@@ -19,7 +19,10 @@ export type InstalledWidget = {
   title: string;
   description: string | undefined;
   icon: string;
-  properties: Item[] | undefined;
+  property: {
+    id: string;
+    items: Item[] | undefined;
+  };
 };
 
 export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
@@ -57,12 +60,16 @@ export const getInstalledWidgets = (rawScene?: GetSceneQuery): InstalledWidget[]
       id: w.id,
       pluginId: w.pluginId,
       extensionId: w.extensionId,
+      propertyId: w.property?.id,
       enabled: w.enabled,
       extended: w.extended,
       title: e?.title || "",
       description: e?.description,
       icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
-      properties: convert(w.property, null),
+      property: {
+        id: w.property?.id ?? "",
+        items: convert(w.property, null),
+      },
     };
   });
 };

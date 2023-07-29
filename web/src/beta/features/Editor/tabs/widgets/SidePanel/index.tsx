@@ -15,7 +15,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
 
   const {
     selectedWidget,
-    properties,
+    propertyItems,
     installedWidgets,
     installableWidgets,
     handleWidgetAdd,
@@ -32,7 +32,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
           actions: (
             <ActionArea installableWidgets={installableWidgets} onWidgetAdd={handleWidgetAdd} />
           ),
-          maxHeight: "40%",
+          maxHeight: !selectedWidget ? "100%" : "40%",
           children: (
             <Manager
               selectedWidget={selectedWidget}
@@ -45,7 +45,9 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
           id: "page",
           title: t("Inspector"),
           hide: !selectedWidget,
-          children: <Settings properties={properties} />,
+          children: selectedWidget && (
+            <Settings widgetPropertyId={selectedWidget.propertyId} propertyItems={propertyItems} />
+          ),
         },
       ]}
     />

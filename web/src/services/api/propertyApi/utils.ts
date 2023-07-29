@@ -14,7 +14,7 @@ import {
   PropertySchemaFieldUi,
   PropertySchemaGroupFragmentFragment,
   ValueType as GQLValueType,
-} from "../gql";
+} from "../../gql";
 
 export type Field<T extends ValueType = ValueType> = {
   id: string;
@@ -216,6 +216,7 @@ const toField = (
     links?: Links;
   },
 ): Field | undefined => {
+  console.log("field: ", field);
   if (
     (!field && !merged) ||
     (field && field.fieldId !== schemaField.fieldId) ||

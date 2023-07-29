@@ -12,8 +12,8 @@ export default ({ sceneId }: { sceneId?: string }) => {
 
   const selectedWidget = useReactiveVar(selectedWidgetVar);
 
-  const properties = useMemo(
-    () => installedWidgets?.find(w => w.id === selectedWidget?.id)?.properties,
+  const propertyItems = useMemo(
+    () => installedWidgets?.find(w => w.id === selectedWidget?.id)?.property.items,
     [installedWidgets, selectedWidget],
   );
 
@@ -28,6 +28,7 @@ export default ({ sceneId }: { sceneId?: string }) => {
         id: w.id,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
+        propertyId: w.property.id,
       });
     }
   };
@@ -41,7 +42,7 @@ export default ({ sceneId }: { sceneId?: string }) => {
 
   return {
     selectedWidget,
-    properties,
+    propertyItems,
     installedWidgets,
     installableWidgets,
     handleWidgetAdd,
