@@ -370,4 +370,5 @@ Successfully added member(s) to the workspace!: このワークスペースに�
 Failed to delete member from the workspace.: メンバーの削除に失敗しました。
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
+Failed to update property.: プロパティのアップデートに失敗しました。
 Failed to add widget.: ウィジェットの作成に失敗しました。
