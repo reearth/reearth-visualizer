@@ -15,32 +15,30 @@ const Settings: React.FC<Props> = ({ widgetPropertyId, propertyItems }) => {
 
   return (
     <Wrapper>
-      {propertyItems?.map((i, idx) => {
-        return (
-          <SidePanelSectionField title={i.title ?? "Undefined"} key={idx}>
-            {i.schemaFields.map(sf => {
-              const isList = i && "items" in i;
-              const value = !isList ? i.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
-              return sf.type === "string" ? (
-                <TextInput
-                  key={sf.id}
-                  name={sf.name}
-                  value={(value as string) ?? ""}
-                  description={sf.description}
-                  onChange={handlePropertyValueUpdate(
-                    i.schemaGroup,
-                    widgetPropertyId,
-                    sf.id,
-                    sf.type,
-                  )}
-                />
-              ) : (
-                <p key={sf.id}>{sf.name}</p>
-              );
-            })}
-          </SidePanelSectionField>
-        );
-      })}
+      {propertyItems?.map((i, idx) => (
+        <SidePanelSectionField title={i.title ?? "Undefined"} key={idx}>
+          {i.schemaFields.map(sf => {
+            const isList = i && "items" in i;
+            const value = !isList ? i.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
+            return sf.type === "string" ? (
+              <TextInput
+                key={sf.id}
+                name={sf.name}
+                value={(value as string) ?? ""}
+                description={sf.description}
+                onChange={handlePropertyValueUpdate(
+                  i.schemaGroup,
+                  widgetPropertyId,
+                  sf.id,
+                  sf.type,
+                )}
+              />
+            ) : (
+              <p key={sf.id}>{sf.name}</p>
+            );
+          })}
+        </SidePanelSectionField>
+      ))}
     </Wrapper>
   );
 };
