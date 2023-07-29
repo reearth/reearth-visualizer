@@ -19,6 +19,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
     installedWidgets,
     installableWidgets,
     handleWidgetAdd,
+    handleWidgetRemove,
     handleWidgetSelection,
   } = useHooks({ sceneId });
 
@@ -38,6 +39,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
               selectedWidget={selectedWidget}
               installedWidgets={installedWidgets}
               onWidgetSelection={handleWidgetSelection}
+              onWidgetRemove={handleWidgetRemove}
             />
           ),
         },

@@ -5,7 +5,7 @@ import { useWidgetsFetcher } from "@reearth/services/api";
 import { selectedWidgetVar } from "@reearth/services/state";
 
 export default ({ sceneId }: { sceneId?: string }) => {
-  const { useInstallableWidgetsQuery, useInstalledWidgetsQuery, useAddWidget } =
+  const { useInstallableWidgetsQuery, useInstalledWidgetsQuery, useAddWidget, useRemoveWidget } =
     useWidgetsFetcher();
   const { installableWidgets } = useInstallableWidgetsQuery({ sceneId });
   const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
@@ -40,12 +40,20 @@ export default ({ sceneId }: { sceneId?: string }) => {
     [sceneId, useAddWidget],
   );
 
+  const handleWidgetRemove = useCallback(
+    async (id?: string) => {
+      await useRemoveWidget(sceneId, id);
+    },
+    [sceneId, useRemoveWidget],
+  );
+
   return {
     selectedWidget,
     propertyItems,
     installedWidgets,
     installableWidgets,
     handleWidgetAdd,
+    handleWidgetRemove,
     handleWidgetSelection,
   };
 };

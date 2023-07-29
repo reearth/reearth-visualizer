@@ -12,9 +12,15 @@ type Props = {
   selectedWidget?: SelectedWidget;
   installedWidgets?: InstalledWidget[];
   onWidgetSelection: (id: string) => void;
+  onWidgetRemove: (id?: string | undefined) => Promise<void>;
 };
 
-const Manager: React.FC<Props> = ({ selectedWidget, installedWidgets, onWidgetSelection }) => {
+const Manager: React.FC<Props> = ({
+  selectedWidget,
+  installedWidgets,
+  onWidgetSelection,
+  onWidgetRemove,
+}) => {
   const [openedActionId, setOpenedActionId] = useState<string | undefined>(undefined);
 
   return (
@@ -39,7 +45,7 @@ const Manager: React.FC<Props> = ({ selectedWidget, installedWidgets, onWidgetSe
                     icon: "trash",
                     name: "Delete",
                     onClick: () => {
-                      console.log("DELETED");
+                      onWidgetRemove(w.id);
                       setOpenedActionId(undefined);
                     },
                   },
