@@ -21,11 +21,15 @@ export default ({ sceneId }: { sceneId?: string }) => {
     const w = installedWidgets?.find(w => w.id === id);
     if (!w) return;
 
-    selectedWidgetVar({
-      id: w.id,
-      pluginId: w.pluginId,
-      extensionId: w.extensionId,
-    });
+    if (w.id === selectedWidget?.id) {
+      selectedWidgetVar(undefined);
+    } else {
+      selectedWidgetVar({
+        id: w.id,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+      });
+    }
   };
 
   const handleWidgetAdd = useCallback(

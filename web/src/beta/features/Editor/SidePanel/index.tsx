@@ -1,5 +1,6 @@
 import { CSSProperties, ReactNode } from "react";
 
+import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
 export type SidePanelContent = {
@@ -7,6 +8,7 @@ export type SidePanelContent = {
   title: ReactNode;
   children: ReactNode;
   actions?: ReactNode;
+  hide?: boolean;
   maxHeight?: CSSProperties["maxHeight"];
 };
 type Props = {
@@ -17,15 +19,18 @@ type Props = {
 const SidePanel: React.FC<Props> = ({ location, contents }) => {
   return (
     <Wrapper location={location}>
-      {contents.map(content => (
-        <Section key={content.id} maxHeight={content.maxHeight}>
-          <Card>
-            <Title>{content.title}</Title>
-            {content.actions && <ActionArea>{content.actions}</ActionArea>}
-            <Content>{content.children}</Content>
-          </Card>
-        </Section>
-      ))}
+      {contents.map(
+        content =>
+          !content.hide && (
+            <Section key={content.id} maxHeight={content.maxHeight}>
+              <Card>
+                <Title size="body">{content.title}</Title>
+                {content.actions && <ActionArea>{content.actions}</ActionArea>}
+                <Content>{content.children}</Content>
+              </Card>
+            </Section>
+          ),
+      )}
     </Wrapper>
   );
 };
@@ -60,12 +65,9 @@ const Card = styled.div`
   flex-direction: column;
 `;
 
-const Title = styled.div`
+const Title = styled(Text)`
   background: ${({ theme }) => theme.bg[2]};
   padding: 4px 8px;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 1.34;
   border-top-right-radius: 4px;
   border-top-left-radius: 4px;
 `;

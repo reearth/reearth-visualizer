@@ -44,6 +44,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
         {
           id: "page",
           title: t("Inspector"),
+          hide: !selectedWidget,
           children: <Settings properties={properties} />,
         },
       ]}
