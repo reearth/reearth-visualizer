@@ -77,7 +77,6 @@ const ActionArea = styled.div`
 `;
 
 const Content = styled.div<{ hasActions?: boolean }>`
-  padding: ${({ hasActions }) => (hasActions ? "0 8px 12px 0" : "12px 8px")};
   box-sizing: border-box;
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;

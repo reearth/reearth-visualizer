@@ -30,6 +30,7 @@ const Manager: React.FC<Props> = ({
           <ListItem
             key={w.id}
             isSelected={w.id === selectedWidget?.id}
+            clamp="right"
             onItemClick={() => onWidgetSelection(w.id)}
             onActionClick={() => setOpenedActionId(old => (old ? undefined : w.id))}
             onOpenChange={isOpen => {
@@ -67,4 +68,5 @@ const Wrapper = styled.div``;
 const InstalledWidgetsList = styled.div`
   display: flex;
   flex-direction: column;
+  padding-left: 4px;
 `;
