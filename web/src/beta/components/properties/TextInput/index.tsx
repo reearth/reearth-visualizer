@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -15,26 +15,24 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
   const [currentValue, setCurrentValue] = useState(value);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
-  useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      if (currentValue === undefined) return;
-      onChange?.(currentValue);
-    }, 3000);
-  }, [currentValue, onChange]);
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       const newValue = e.currentTarget.value;
+
+      timeoutRef.current = setTimeout(() => {
+        if (newValue === undefined) return;
+        onChange?.(newValue);
+      }, 1000);
 
       setCurrentValue(newValue);
     },
-    [],
+    [onChange],
   );
 
   return (
     <Property name={name} description={description}>
-      <StyledInput onChange={handleChange} />
+      <StyledInput defaultValue={currentValue} onChange={handleChange} />
     </Property>
   );
 };
