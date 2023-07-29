@@ -26,7 +26,7 @@ const SidePanel: React.FC<Props> = ({ location, contents }) => {
               <Card>
                 <Title size="body">{content.title}</Title>
                 {content.actions && <ActionArea>{content.actions}</ActionArea>}
-                <Content>{content.children}</Content>
+                <Content hasActions={!!content.actions}>{content.children}</Content>
               </Card>
             </Section>
           ),
@@ -73,14 +73,11 @@ const Title = styled(Text)`
 `;
 
 const ActionArea = styled.div`
-  padding: 8px 8px 0 8px;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 1.34;
+  padding: 8px;
 `;
 
-const Content = styled.div`
-  padding: 12px 8px;
+const Content = styled.div<{ hasActions?: boolean }>`
+  padding: ${({ hasActions }) => (hasActions ? "0 8px 12px 0" : "12px 8px")};
   box-sizing: border-box;
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
