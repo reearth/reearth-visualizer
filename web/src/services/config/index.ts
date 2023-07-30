@@ -1,6 +1,6 @@
-import { Viewer } from "cesium";
+import { type Viewer } from "cesium";
 
-import { configureCognito, type CognitoParams } from "./aws";
+import { type CognitoParams, configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";

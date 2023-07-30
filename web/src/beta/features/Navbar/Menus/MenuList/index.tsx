@@ -20,7 +20,7 @@ export const MenuListItemLabel: React.FC<{
       <StyledLabel
         size="h5"
         center={center}
-        color={(disabled && theme.general.content.main) || color || theme.general.content.main}>
+        color={(disabled && theme.content.main) || color || theme.content.main}>
         {text}
       </StyledLabel>
     </MenuItemWrapper>
@@ -31,7 +31,7 @@ export const MenuListItemLabel: React.FC<{
   ) : (
     <StyledLinkButton
       style={{
-        color: (disabled && theme.general.content.main) || color || theme.general.content.main,
+        color: (disabled && theme.content.main) || color || theme.content.main,
       }}
       to={linkTo}>
       {content}
@@ -57,7 +57,7 @@ export const MenuListItem = styled.li<{ noHover?: boolean }>`
     ${props =>
       !props.noHover &&
       `
-      background-color: ${props.theme.general.bg.main};
+      background-color: ${props.theme.bg[2]};
     `}
   }
 `;
@@ -87,5 +87,5 @@ const StyledLinkButton = styled(Link)`
 const StyledIcon = styled(Icon)<{ color?: string; disabled?: boolean }>`
   margin-right: 10px;
   color: ${({ disabled, color, theme }) =>
-    disabled ? theme.general.content.main : color ? color : theme.general.content.main};
+    disabled ? theme.content.main : color ? color : theme.content.main};
 `;

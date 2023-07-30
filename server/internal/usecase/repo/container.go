@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/authserver"
@@ -33,6 +34,7 @@ type Container struct {
 	User           User
 	Policy         Policy
 	Transaction    usecasex.Transaction
+	Extensions     []plugin.ID
 }
 
 func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {
@@ -58,6 +60,7 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Transaction:    c.Transaction,
 		User:           c.User,
 		Workspace:      c.Workspace,
+		Extensions:     c.Extensions,
 	}
 }
 

@@ -134,6 +134,7 @@ export type EngineProps = {
     position: LatLng | undefined,
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  onMount?: () => void;
 };
 
 export type LayerEditEvent = {

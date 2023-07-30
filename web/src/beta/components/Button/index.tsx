@@ -90,28 +90,28 @@ const StyledButton = styled.button<ButtonProps>`
   border-color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.general.button.danger.disable
-        : theme.general.button.danger.main
+        ? theme.content.weaker
+        : theme.dangerous.main
       : buttonType === "secondary"
       ? disabled
-        ? theme.general.button.secondary.disable
-        : theme.general.button.secondary.main
+        ? theme.content.weaker
+        : theme.secondary.main
       : disabled
-      ? theme.general.button.primary.disable
-      : theme.general.button.primary.main};
+      ? theme.content.weaker
+      : theme.primary.main};
   background: inherit;
   color: ${({ buttonType, disabled, theme }) =>
     buttonType === "danger"
       ? disabled
-        ? theme.general.button.danger.contentDisable
-        : theme.general.button.danger.content
+        ? theme.content.weaker
+        : theme.dangerous.main
       : buttonType === "secondary"
       ? disabled
-        ? theme.general.button.secondary.contentDisable
-        : theme.general.button.secondary.content
+        ? theme.content.weaker
+        : theme.content.main
       : disabled
-      ? theme.general.button.primary.contentDisable
-      : theme.general.button.primary.content};
+      ? theme.content.weaker
+      : theme.primary.main};
   padding: ${({ large }) =>
     large
       ? `${metricsSizes["s"]}px ${metricsSizes["2xl"]}px`
@@ -125,29 +125,6 @@ const StyledButton = styled.button<ButtonProps>`
   align-items: center;
   transition-property: color, background;
   transition-duration: 0.4s;
-
-  &:hover {
-    background: ${({ buttonType, disabled, theme }) =>
-      disabled
-        ? "inherit"
-        : buttonType === "danger"
-        ? theme.general.button.danger.hover
-        : buttonType === "secondary"
-        ? theme.general.button.secondary.hover
-        : theme.general.button.primary.hover};
-    color: ${({ buttonType, disabled, theme }) =>
-      buttonType === "danger"
-        ? disabled
-          ? theme.general.button.danger.contentDisable
-          : theme.general.button.danger.contentHover
-        : buttonType === "secondary"
-        ? disabled
-          ? theme.general.button.secondary.contentDisable
-          : theme.general.button.secondary.contentHover
-        : disabled
-        ? theme.general.button.primary.contentDisable
-        : theme.general.button.primary.contentHover};
-  }
 `;
 
 const IconWrapper = styled.span<{ text: boolean; iconRight?: boolean; large?: boolean }>`
