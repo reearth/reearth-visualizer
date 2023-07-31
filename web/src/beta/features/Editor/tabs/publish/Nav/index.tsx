@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -9,6 +9,8 @@ import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import useHooks from "./hooks";
+
 export { navbarHeight } from "@reearth/beta/features/Editor/SecondaryNav";
 
 export type ProjectType = "default" | "story";
@@ -16,19 +18,22 @@ export type ProjectType = "default" | "story";
 export type PublishStatus = "published" | "limited" | "unpublished";
 
 type Props = {
-  publishStatus?: PublishStatus;
+  projectId?: string;
   selectedProjectType?: ProjectType;
   onProjectTypeChange: (type: ProjectType) => void;
 };
 
-const Nav: React.FC<Props> = ({
-  publishStatus = "unpublished",
-  selectedProjectType,
-  onProjectTypeChange,
-}) => {
+const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeChange }) => {
   const t = useT();
 
-  const [dropdownOpen, setDropdown] = useState(false);
+  const {
+    publishStatus,
+    dropdownOpen,
+    setDropdown,
+    handleProjectPublish,
+    handleProjectUnpublish,
+    handleOpenProjectSettings,
+  } = useHooks({ projectId });
 
   const text = useMemo(
     () =>
@@ -37,21 +42,6 @@ const Nav: React.FC<Props> = ({
         : t("Unpublished"),
     [publishStatus, t],
   );
-
-  const handleProjectUnpublish = useCallback(() => {
-    console.log("unpublish");
-    setDropdown(false);
-  }, []);
-
-  const handleProjectPublish = useCallback(() => {
-    console.log("publish");
-    setDropdown(false);
-  }, []);
-
-  const handleOpenProjectSettings = useCallback(() => {
-    console.log("open settings");
-    setDropdown(false);
-  }, []);
 
   return (
     <StyledSecondaryNav>
@@ -88,7 +78,7 @@ const Nav: React.FC<Props> = ({
               },
               {
                 name: t("Publish"),
-                onClick: () => handleProjectPublish(),
+                onClick: () => handleProjectPublish("published"),
               },
               {
                 name: t("Publishing Settings"),

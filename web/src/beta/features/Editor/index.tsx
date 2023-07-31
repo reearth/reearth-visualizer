@@ -57,6 +57,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   const { rightPanel } = useRightPanel({ tab, sceneId });
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
+    projectId,
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
