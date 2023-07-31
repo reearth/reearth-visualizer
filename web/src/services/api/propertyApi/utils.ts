@@ -216,7 +216,6 @@ const toField = (
     links?: Links;
   },
 ): Field | undefined => {
-  console.log("field: ", field);
   if (
     (!field && !merged) ||
     (field && field.fieldId !== schemaField.fieldId) ||
