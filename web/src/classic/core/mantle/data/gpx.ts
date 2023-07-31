@@ -15,7 +15,6 @@ export async function fetchGPXfile(
 
 const handler = (xmlDataStr: string) => {
   const [featureList, error] = parseGPX(xmlDataStr);
-  // Or use a try catch to verify
   if (error) throw error;
   if (featureList instanceof Error) throw featureList;
   return featureList || [];
@@ -23,7 +22,6 @@ const handler = (xmlDataStr: string) => {
 
 const parseGPX = (gpxSource: string) => {
   const parseMethod = (gpxSource: string): Document | null => {
-    // Verify that we are in a browser
     if (typeof document == undefined) return null;
 
     const domParser = new window.DOMParser();
@@ -37,10 +35,8 @@ const parseGPXWithCustomParser = (
   gpxSource: string,
   parseGPXToXML: (gpxSource: string) => Document | null,
 ) => {
-  // Parse the GPX string using the given parse method
   const parsedSource = parseGPXToXML(gpxSource);
 
-  // Verify that the parsed data is present
   if (parsedSource === null) return [null, new Error("Provided parsing method failed.")];
 
   const output: ParsedGPXInputs = {
@@ -59,12 +55,10 @@ const parseGPXWithCustomParser = (
 
   const metadata = output.xml.querySelector("metadata");
   if (metadata !== null) {
-    // Store the top level elements of the metadata
     output.metadata.name = getElementValue(metadata, "name");
     output.metadata.description = getElementValue(metadata, "desc");
     output.metadata.time = getElementValue(metadata, "time");
 
-    // Parse and store the tree of data associated with the author
     const authorElement = metadata.querySelector("author");
     if (authorElement !== null) {
       const emailElement = authorElement.querySelector("email");
@@ -90,7 +84,6 @@ const parseGPXWithCustomParser = (
       };
     }
 
-    // Parse and store the link element and its associated data
     const linkElement = queryDirectSelector(metadata, "link");
     if (linkElement !== null) {
       output.metadata.link = {
@@ -101,7 +94,6 @@ const parseGPXWithCustomParser = (
     }
   }
 
-  // Parse and store all waypoints
   const waypoints = Array.from(output.xml.querySelectorAll("wpt"));
   for (const waypoint of waypoints) {
     const point: Waypoint = {
@@ -152,7 +144,6 @@ const parseGPXWithCustomParser = (
     const type = queryDirectSelector(routeElement, "type");
     route.type = type !== null ? type.innerHTML : null;
 
-    // Parse and store the link and its associated data
     const linkElement = routeElement.querySelector("link");
     if (linkElement !== null) {
       route.link = {
@@ -162,7 +153,6 @@ const parseGPXWithCustomParser = (
       };
     }
 
-    // Parse and store all points in the route
     const routePoints = Array.from(routeElement.querySelectorAll("rtept"));
     for (const routePoint of routePoints) {
       const point: Point = {
@@ -217,7 +207,6 @@ const parseGPXWithCustomParser = (
     const type = queryDirectSelector(trackElement, "type");
     track.type = type !== null ? type.innerHTML : null;
 
-    // Parse and store the link and its associated data
     const linkElement = trackElement.querySelector("link");
     if (linkElement !== null) {
       track.link = {
@@ -227,7 +216,6 @@ const parseGPXWithCustomParser = (
       };
     }
 
-    // Parse and store all track points
     const trackPoints = Array.from(trackElement.querySelectorAll("trkpt"));
     for (const trackPoint of trackPoints) {
       const point: Point = {
@@ -238,16 +226,13 @@ const parseGPXWithCustomParser = (
         extensions: null,
       };
 
-      // Parse any extensions and store them in an object
       const extensionsElement = trackPoint.querySelector("extensions");
       if (extensionsElement !== null) {
         const extensions: any = {};
 
-        // Store all available extensions as numbers
         for (const extension of Array.from(extensionsElement.childNodes)) {
           const name = extension.nodeName;
 
-          // Parse the extension data with support for the browser or an xml parser
           extensions[name] = parseFloat(
             (extension as Element).innerHTML != undefined
               ? (extension as Element).innerHTML
@@ -280,7 +265,6 @@ const parseGPXWithCustomParser = (
 const listFeatureCollection = (output: ParsedGPXInputs) => {
   const result: Feature[] = [];
 
-  // Converts a track or route to a feature and adds it to the output object
   const addFeature = (track: Track | Route) => {
     const { name, comment, description, src, number, link, type, points } = track;
     const coordinates: Position[] = [];
@@ -306,7 +290,6 @@ const listFeatureCollection = (output: ParsedGPXInputs) => {
     addFeature(track);
   }
 
-  // Convert waypoints into features and add them to the output object
   for (const waypoint of output.waypoints) {
     const { name, symbol, comment, description, longitude, latitude, elevation } = waypoint;
 
@@ -329,7 +312,6 @@ const listFeatureCollection = (output: ParsedGPXInputs) => {
 const getElementValue = (parent: Element, tag: string): string => {
   const element = parent.querySelector(tag);
 
-  // Extract and return the value within the parent element
   if (element !== null) {
     return element.innerHTML != undefined
       ? element.innerHTML
@@ -340,16 +322,13 @@ const getElementValue = (parent: Element, tag: string): string => {
 const queryDirectSelector = (parent: Element, tag: string): Element | null => {
   const elements = parent.querySelectorAll(tag);
 
-  // End immediately if there are no matching elements
   if (elements.length === 0) return null;
 
   let finalElem = elements[0];
 
-  // Find the last node that fits the given tag within the parent
   if (elements.length > 1) {
     const directChildren = parent.childNodes;
 
-    // Find all nodes that match the given tag within the parent
     for (const child of Array.from(directChildren)) {
       if ((child as Element).tagName === tag.toUpperCase()) {
         finalElem = child as Element;
@@ -363,8 +342,6 @@ const queryDirectSelector = (parent: Element, tag: string): Element | null => {
 const calculateDistance = (points: Point[]): Distance => {
   const cumulativeDistance = [0];
 
-  // Incrementally calculate the distance between adjacent points until
-  // all of the distances have been accumulated
   for (let i = 0; i < points.length - 1; i++) {
     const currentTotalDistance =
       cumulativeDistance[i] + haversineDistance(points[i], points[i + 1]);
@@ -396,7 +373,6 @@ const calculateElevation = (points: Point[]): Elevation => {
   const elevation = [];
   let sum = 0;
 
-  // Calculate the positive and negative changes over the whole set of points
   for (let i = 0; i < points.length - 1; i++) {
     const nextElevation = points[i + 1]?.elevation;
     const currentElevation = points[i]?.elevation;
@@ -408,7 +384,6 @@ const calculateElevation = (points: Point[]): Elevation => {
     }
   }
 
-  // Store all elevations and calculate the sum of the elevations
   for (const point of points) {
     if (point.elevation !== null) {
       elevation.push(point.elevation);
@@ -436,7 +411,6 @@ const calculateSlopes = (points: Point[], cumulativeDistance: number[]): number[
       const elevationDifference = nextElevation - currentElevation;
       const displacement = cumulativeDistance[i + 1] - cumulativeDistance[i];
 
-      // Calculate the elevation grade as a percentage
       const slope = (elevationDifference * 100) / displacement;
       slopes.push(slope);
     }
