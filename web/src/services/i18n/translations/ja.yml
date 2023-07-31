@@ -1,7 +1,13 @@
 Not found: ページが見つかりません
+Published: 一般公開
+Unpublished: 非公開
+Scene: シーン
+Story: ストーリー
+Unpublish: 非公開にする
+Publish: 公開
+Publishing Settings: 公開設定
 New Page: 新しいページ
 New Swipe: 新しいスワイプ
-Story: ストーリー
 Page: ページ
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
@@ -24,9 +30,7 @@ Datasets: データセット
 Plugins: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
-Scene: シーン
 Widgets: ウィジェット
-Publish: 公開
 Double click here to write.: ダブルクリックで入力
 Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 aria-label-compass: コンパス
@@ -41,8 +45,6 @@ ellipse: 円錐
 Open timeline: タイムラインを開く
 Drop here: ここにドロップ
 Continue: 続ける
-Published: 一般公開
-Unpublished: 非公開
 not set: 未設定
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
@@ -135,7 +137,6 @@ Export type: ファイル形式
 Export: エクスポート
 Update: 更新する
 Preview: プレビュー
-Unpublish: 非公開にする
 Layer selection: レイヤーを選択
 Selectable Layers: 選択可能なレイヤー
 Add: 追加
@@ -371,6 +372,7 @@ Successfully added member(s) to the workspace!: このワークスペースに�
 Failed to delete member from the workspace.: メンバーの削除に失敗しました。
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
+Failed to publish project.: プロジェクト公開に失敗しました。
 Failed to update property.: プロパティのアップデートに失敗しました。
 Failed to create story.: ストーリーの作成に失敗しました。
 Failed to create page.: ページの作成に失敗しました。

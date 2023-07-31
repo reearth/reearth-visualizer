@@ -1,7 +1,13 @@
 Not found: Not found
+Published: Published
+Unpublished: Unpublished
+Scene: Scene
+Story: Story
+Unpublish: Unpublish
+Publish: Publish
+Publishing Settings: Publishing Settings
 New Page: New Page
 New Swipe: New Swipe
-Story: Story
 Page: Page
 Align System: Align System
 Widget Manager: Widget Manager
@@ -24,9 +30,7 @@ Datasets: Datasets
 Plugins: Plugins
 Manage projects: Manage projects
 Documentation: Documentation
-Scene: Scene
 Widgets: Widgets
-Publish: Publish
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 aria-label-compass: compass
@@ -41,8 +45,6 @@ ellipse: ellipse
 Open timeline: Open timeline
 Drop here: Drop here
 Continue: Continue
-Published: Published
-Unpublished: Unpublished
 not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
@@ -145,7 +147,6 @@ Export type: Export type
 Export: Export
 Update: Update
 Preview: Preview
-Unpublish: Unpublish
 Layer selection: Layer selection
 Selectable Layers: Selectable Layers
 Add: Add
@@ -410,6 +411,7 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
+Failed to publish project.: Failed to publish project.
 Failed to update property.: Failed to update property
 Failed to create story.: Failed to create story.
 Failed to create page.: Failed to create page.
