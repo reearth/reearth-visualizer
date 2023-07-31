@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
 import { useWidgetAlignEditorActivated } from "@reearth/services/state";
@@ -10,6 +10,12 @@ import { type Device } from "./tabs/widgets/Nav";
 export default ({ tab }: { tab: Tab }) => {
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
+
+  useEffect(() => {
+    if (tab !== "widgets" && showWidgetEditor) {
+      setWidgetEditor(false);
+    }
+  }, [tab, showWidgetEditor, setWidgetEditor]);
 
   const handleDeviceChange = useCallback((newDevice: Device) => setDevice(newDevice), []);
 

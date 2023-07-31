@@ -93,12 +93,12 @@ const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
   align-items: center;
   width: ${({ direction }) => (direction === "horizontal" ? null : `24px`)};
   height: ${({ direction }) => (direction === "vertical" ? null : `24px`)};
-  background: ${({ theme }) => theme.bg[3]};
+  background: ${({ theme }) => theme.bg[2]};
   cursor: pointer;
   transition: background 0.3s;
 
   :hover {
-    background: ${({ theme }) => theme.bg[4]};
+    background: ${({ theme }) => theme.bg[3]};
   }
 `;
 export default Resizable;

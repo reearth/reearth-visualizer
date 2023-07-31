@@ -78,6 +78,6 @@ const Wrapper = styled.div`
   padding: 8px 24px;
   gap: 24px;
   background: ${({ theme }) => theme.bg[0]};
-  border-bottom: 1px solid ${({ theme }) => theme.outline.main};
+  border-bottom: 0.5px solid ${({ theme }) => theme.outline.weak};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;
