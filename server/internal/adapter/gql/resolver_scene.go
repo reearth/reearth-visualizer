@@ -75,6 +75,21 @@ func (r *sceneResolver) Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmod
 	return res, nil
 }
 
+func (r *sceneResolver) Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error) {
+	sid, err := gqlmodel.ToID[id.Scene](obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	stories, err := usecases(ctx).StoryTelling.FetchByScene(ctx, sid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	res := gqlmodel.ToStories(*stories)
+	return res, nil
+}
+
 type scenePluginResolver struct{ *Resolver }
 
 func (r *scenePluginResolver) Plugin(ctx context.Context, obj *gqlmodel.ScenePlugin) (*gqlmodel.Plugin, error) {
