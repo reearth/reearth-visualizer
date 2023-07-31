@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -15,16 +15,16 @@ const StoryPageIndicator: FC<Props> = ({
   maxPage,
   onPageChange,
 }) => {
+  const widthPercentage = useMemo(() => {
+    const onePageWidth = 100 / maxPage;
+    const base = (currentPage - 1) * onePageWidth;
+    const progress = (onePageWidth / 100) * currentPageProgress;
+    return base + progress;
+  }, [currentPage, currentPageProgress, maxPage]);
   return (
-    <Wrapper>
+    <Wrapper widthPercentage={widthPercentage}>
       {[...Array(maxPage)].map((_, i) => {
-        const page = i + 1;
-        const isActive = currentPage >= page;
-        const isCurrentPage = page === currentPage;
-        const progress = isCurrentPage ? currentPageProgress : isActive ? 100 : 0;
-        return (
-          <Indicator key={i} progress={progress} type="button" onClick={() => onPageChange(page)} />
-        );
+        return <Indicator key={i} type="button" onClick={() => onPageChange(i + 1)} />;
       })}
     </Wrapper>
   );
@@ -32,34 +32,32 @@ const StoryPageIndicator: FC<Props> = ({
 
 export default StoryPageIndicator;
 
-const Wrapper = styled.div`
+// TODO: fix colors/transitions including hover
+const Wrapper = styled.div<{ widthPercentage: number }>`
+  position: relative;
   display: flex;
+  background-color: #c2deff;
+
+  :after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: #3592ff;
+    transition: width 0.2s ease-out;
+    width: ${({ widthPercentage }) => widthPercentage}%;
+  }
 `;
 
-// TODO: fix colors/transitions including hover
-const Indicator = styled.button<{ progress: number }>`
+const Indicator = styled.button`
   position: relative;
   flex: 1;
   height: 8px;
-  background-color: #c2deff;
-  transition: all 0.15s;
-
+  z-index: 1;
   :hover {
     opacity: 0.8;
   }
 
   :not(:first-of-type) {
     border-left: 1px solid #ffffff;
-  }
-
-  :after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: ${({ progress }) => progress}%;
-    background-color: #3592ff;
-    transition: width 0.15s;
   }
 `;

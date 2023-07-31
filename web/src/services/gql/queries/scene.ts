@@ -54,10 +54,12 @@ export const GET_SCENE = gql(`
         widgetAlignSystem {
           ...WidgetAlignSystemFragment
         }
+        stories {
+          ...StoryFragment
+        }
       }
     }
   }
-  
 `);
 
 export const CREATE_SCENE = gql(`

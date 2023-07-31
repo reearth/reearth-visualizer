@@ -1,20 +1,28 @@
-import React, { ReactElement, ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 
 import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
 import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import { AuthenticatedPage } from "@reearth/services/auth";
+import { StoryFragmentFragment } from "@reearth/services/gql";
 import { useTheme } from "@reearth/services/theme";
 
 import Loading from "../components/Loading";
+
+type RenderItemProps = {
+  sceneId?: string;
+  projectId?: string;
+  workspaceId?: string;
+  stories: StoryFragmentFragment[];
+};
 
 type Props = {
   sceneId?: string;
   projectId?: string;
   workspaceId?: string;
-  children?: ReactNode;
+  renderItem: (props: RenderItemProps) => ReactNode;
 };
 
-const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, children }) => {
+const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => {
   const theme = useTheme();
 
   const { useMeQuery } = useMeFetcher();
@@ -37,14 +45,6 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, childre
 
   const { loading: loadingProject } = useProjectQuery(currentProjectId);
 
-  const childrenWithProps = React.Children.map(children, child => {
-    return React.cloneElement(child as ReactElement<Props>, {
-      sceneId,
-      projectId: currentProjectId,
-      workspaceId: currentWorkspaceId,
-    });
-  });
-
   const loading = useMemo(
     () => loadingMe ?? loadingScene ?? loadingProject,
     [loadingMe, loadingScene, loadingProject],
@@ -55,16 +55,24 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, childre
   ) : (
     <>
       <GlobalModal />
-      {childrenWithProps}
+      {renderItem({
+        sceneId,
+        projectId: currentProjectId,
+        workspaceId: currentWorkspaceId,
+        stories: scene?.stories ?? [],
+      })}
     </>
   );
 };
 
-const Page: React.FC<Props> = ({ sceneId, projectId, workspaceId, children }) => (
+const Page: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => (
   <AuthenticatedPage>
-    <PageWrapper sceneId={sceneId} projectId={projectId} workspaceId={workspaceId}>
-      {children}
-    </PageWrapper>
+    <PageWrapper
+      sceneId={sceneId}
+      projectId={projectId}
+      workspaceId={workspaceId}
+      renderItem={renderItem}
+    />
   </AuthenticatedPage>
 );
 

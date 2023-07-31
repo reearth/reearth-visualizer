@@ -316,6 +316,7 @@ Failed to delete one or more assets.: アセットの削除に失敗しまたし
 One or more assets were successfully deleted.: アセットが削除されました。
 Successfully created workspace!: 新しいワークスペースの作成に成功しました！
 Failed to create project.: プロジェクトの作成に失敗しました。
+Default: デフォルト
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Successfully created layer group: レイヤーが作成されました。
 Failed to create layer group: レイヤーの作成に失敗しました。
@@ -371,6 +372,8 @@ Failed to delete member from the workspace.: メンバーの削除に失敗し�
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
 Failed to update property.: プロパティのアップデートに失敗しました。
+Failed to create story.: ストーリーの作成に失敗しました。
+Failed to create page.: ページの作成に失敗しました。
 Failed to add widget.: ウィジェットの作成に失敗しました。
 Failed to update widget.: ウィジェットのアップデートに失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。

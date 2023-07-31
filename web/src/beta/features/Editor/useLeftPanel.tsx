@@ -2,12 +2,31 @@ import { ReactNode, useMemo } from "react";
 
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/SidePanel";
 import { Tab } from "@reearth/beta/features/Navbar";
+import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 type Props = {
   tab: Tab;
+
+  // for story tab
+  selectedStory?: StoryFragmentFragment;
+  selectedPage?: StoryPageFragmentFragment;
+  onPageSelect: (id: string) => void;
+  onPageDuplicate: (id: string) => void;
+  onPageDelete: (id: string) => void;
+  onPageAdd: (isSwipeable: boolean) => void;
+  onPageMove: (id: string, targetIndex: number) => void;
 };
 
-export default ({ tab }: Props) => {
+export default ({
+  tab,
+  selectedStory,
+  selectedPage,
+  onPageSelect,
+  onPageDuplicate,
+  onPageDelete,
+  onPageAdd,
+  onPageMove,
+}: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "scene":
@@ -15,15 +34,13 @@ export default ({ tab }: Props) => {
       case "story":
         return (
           <StorySidePanel
-            // stories={[]}
-            // selectedStory={undefined}
-            // onStorySelect={() => console.log("onSelectStory")}
-            // onStoryAdd={() => console.log("onStoryAdd")}
-            selectedPageId={"1"}
-            onPageSelect={() => console.log("onSelectPage")}
-            onPageAdd={() => console.log("onPageAdd")}
-            onPageDuplicate={() => console.log("onPageDuplicate")}
-            onPageDelete={() => console.log("onPageDelete")}
+            selectedStory={selectedStory}
+            selectedPage={selectedPage}
+            onPageSelect={onPageSelect}
+            onPageDuplicate={onPageDuplicate}
+            onPageDelete={onPageDelete}
+            onPageAdd={onPageAdd}
+            onPageMove={onPageMove}
           />
         );
       case "widgets":
@@ -31,7 +48,16 @@ export default ({ tab }: Props) => {
       default:
         return undefined;
     }
-  }, [tab]);
+  }, [
+    onPageAdd,
+    onPageDelete,
+    onPageDuplicate,
+    onPageMove,
+    onPageSelect,
+    selectedPage,
+    selectedStory,
+    tab,
+  ]);
 
   return {
     leftPanel,
