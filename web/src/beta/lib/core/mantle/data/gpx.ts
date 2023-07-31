@@ -37,10 +37,8 @@ const parseGPXWithCustomParser = (
   gpxSource: string,
   parseGPXToXML: (gpxSource: string) => Document | null,
 ) => {
-  // Parse the GPX string using the given parse method
   const parsedSource = parseGPXToXML(gpxSource);
 
-  // Verify that the parsed data is present
   if (parsedSource === null) return [null, new Error("Provided parsing method failed.")];
 
   const output: ParsedGPXInputs = {
@@ -59,12 +57,10 @@ const parseGPXWithCustomParser = (
 
   const metadata = output.xml.querySelector("metadata");
   if (metadata !== null) {
-    // Store the top level elements of the metadata
     output.metadata.name = getElementValue(metadata, "name");
     output.metadata.description = getElementValue(metadata, "desc");
     output.metadata.time = getElementValue(metadata, "time");
 
-    // Parse and store the tree of data associated with the author
     const authorElement = metadata.querySelector("author");
     if (authorElement !== null) {
       const emailElement = authorElement.querySelector("email");
@@ -90,7 +86,6 @@ const parseGPXWithCustomParser = (
       };
     }
 
-    // Parse and store the link element and its associated data
     const linkElement = queryDirectSelector(metadata, "link");
     if (linkElement !== null) {
       output.metadata.link = {
@@ -101,7 +96,6 @@ const parseGPXWithCustomParser = (
     }
   }
 
-  // Parse and store all waypoints
   const waypoints = Array.from(output.xml.querySelectorAll("wpt"));
   for (const waypoint of waypoints) {
     const point: Waypoint = {
@@ -152,7 +146,6 @@ const parseGPXWithCustomParser = (
     const type = queryDirectSelector(routeElement, "type");
     route.type = type !== null ? type.innerHTML : null;
 
-    // Parse and store the link and its associated data
     const linkElement = routeElement.querySelector("link");
     if (linkElement !== null) {
       route.link = {
@@ -162,7 +155,6 @@ const parseGPXWithCustomParser = (
       };
     }
 
-    // Parse and store all points in the route
     const routePoints = Array.from(routeElement.querySelectorAll("rtept"));
     for (const routePoint of routePoints) {
       const point: Point = {
