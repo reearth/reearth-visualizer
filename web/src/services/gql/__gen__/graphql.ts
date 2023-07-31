@@ -455,6 +455,12 @@ export type DetachTagItemFromGroupPayload = {
   tag: TagGroup;
 };
 
+export type DuplicateStoryPageInput = {
+  pageId: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
+  storyId: Scalars['ID']['input'];
+};
+
 export type ImportDatasetFromGoogleSheetInput = {
   accessToken: Scalars['String']['input'];
   datasetSchemaId?: InputMaybe<Scalars['ID']['input']>;
@@ -847,6 +853,7 @@ export type Mutation = {
   deleteTeam?: Maybe<DeleteTeamPayload>;
   detachTagFromLayer?: Maybe<DetachTagFromLayerPayload>;
   detachTagItemFromGroup?: Maybe<DetachTagItemFromGroupPayload>;
+  duplicateStoryPage: StoryPagePayload;
   importDataset?: Maybe<ImportDatasetPayload>;
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
   importLayer?: Maybe<ImportLayerPayload>;
@@ -1031,6 +1038,11 @@ export type MutationDetachTagFromLayerArgs = {
 
 export type MutationDetachTagItemFromGroupArgs = {
   input: DetachTagItemFromGroupInput;
+};
+
+
+export type MutationDuplicateStoryPageArgs = {
+  input: DuplicateStoryPageInput;
 };
 
 
@@ -1306,8 +1318,8 @@ export type PageInfo = {
 };
 
 export type PageLayerInput = {
-  PageId: Scalars['ID']['input'];
   layerId: Scalars['ID']['input'];
+  pageId: Scalars['ID']['input'];
   sceneId: Scalars['ID']['input'];
   storyId: Scalars['ID']['input'];
   swipeable?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2001,6 +2013,7 @@ export type StoryPage = Node & {
   layers: Array<Layer>;
   layersIds: Array<Scalars['ID']['output']>;
   property?: Maybe<Property>;
+  propertyId: Scalars['ID']['output'];
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
   swipeable: Scalars['Boolean']['output'];
