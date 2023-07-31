@@ -1,4 +1,8 @@
+import { useCallback, useMemo, useState } from "react";
+
 import Icon from "@reearth/beta/components/Icon";
+import * as Popover from "@reearth/beta/components/Popover";
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import TabButton from "@reearth/beta/components/TabButton";
 import Text from "@reearth/beta/components/Text";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
@@ -9,7 +13,7 @@ export { navbarHeight } from "@reearth/beta/features/Editor/SecondaryNav";
 
 export type ProjectType = "default" | "story";
 
-export type PublishStatus = "unpublished" | "published";
+export type PublishStatus = "published" | "limited" | "unpublished";
 
 type Props = {
   publishStatus?: PublishStatus;
@@ -18,11 +22,37 @@ type Props = {
 };
 
 const Nav: React.FC<Props> = ({
-  publishStatus = "published",
+  publishStatus = "unpublished",
   selectedProjectType,
   onProjectTypeChange,
 }) => {
   const t = useT();
+
+  const [dropdownOpen, setDropdown] = useState(false);
+
+  const text = useMemo(
+    () =>
+      publishStatus === "published" || publishStatus === "limited"
+        ? t("Published")
+        : t("Unpublished"),
+    [publishStatus, t],
+  );
+
+  const handleProjectUnpublish = useCallback(() => {
+    console.log("unpublish");
+    setDropdown(false);
+  }, []);
+
+  const handleProjectPublish = useCallback(() => {
+    console.log("publish");
+    setDropdown(false);
+  }, []);
+
+  const handleOpenProjectSettings = useCallback(() => {
+    console.log("open settings");
+    setDropdown(false);
+  }, []);
+
   return (
     <StyledSecondaryNav>
       <LeftSection>
@@ -37,13 +67,37 @@ const Nav: React.FC<Props> = ({
           onClick={() => onProjectTypeChange("story")}
         />
       </LeftSection>
-      <Publishing>
-        <Status status={publishStatus} />
-        <Text size="body" customColor>
-          Published
-        </Text>
-        <Icon icon="arrowDown" size={16} />
-      </Publishing>
+      <Popover.Provider open={dropdownOpen} placement="bottom-end">
+        <Popover.Trigger asChild>
+          <Publishing onClick={() => setDropdown(!dropdownOpen)}>
+            <Status status={publishStatus} />
+            <Text size="body" customColor>
+              {text}
+            </Text>
+            <Icon icon="arrowDown" size={16} />
+          </Publishing>
+        </Popover.Trigger>
+        <Popover.Content style={{ zIndex: 999 }}>
+          <PopoverMenuContent
+            size="sm"
+            width="142px"
+            items={[
+              {
+                name: t("Unpublish"),
+                onClick: () => handleProjectUnpublish(),
+              },
+              {
+                name: t("Publish"),
+                onClick: () => handleProjectPublish(),
+              },
+              {
+                name: t("Publishing Settings"),
+                onClick: () => handleOpenProjectSettings(),
+              },
+            ]}
+          />
+        </Popover.Content>
+      </Popover.Provider>
     </StyledSecondaryNav>
   );
 };
@@ -88,7 +142,7 @@ const Publishing = styled.div`
 const Status = styled.div<{ status?: PublishStatus }>`
   opacity: 0.5;
   background: ${({ theme, status }) =>
-    status === "published" ? theme.select.strong : theme.bg[4]};
+    status === "published" || status === "limited" ? theme.select.strong : theme.bg[4]};
   width: 8px;
   height: 8px;
   border-radius: 50%;
