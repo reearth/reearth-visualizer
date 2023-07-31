@@ -41,11 +41,11 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (onChange && e.key === "Enter") {
+      if (onChange && e.key === "Enter" && currentValue !== value) {
         onChange(currentValue);
       }
     },
-    [currentValue, onChange],
+    [value, currentValue, onChange],
   );
 
   return (

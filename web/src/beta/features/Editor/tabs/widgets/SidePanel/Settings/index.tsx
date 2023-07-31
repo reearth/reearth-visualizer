@@ -12,6 +12,7 @@ type Props = {
 
 const Settings: React.FC<Props> = ({ widgetPropertyId, propertyItems }) => {
   const { handlePropertyValueUpdate } = useHooks();
+  console.log("PI", propertyItems);
 
   return (
     <Wrapper>
@@ -21,20 +22,28 @@ const Settings: React.FC<Props> = ({ widgetPropertyId, propertyItems }) => {
             const isList = i && "items" in i;
             const value = !isList ? i.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
             return sf.type === "string" ? (
-              <TextInput
-                key={sf.id}
-                name={sf.name}
-                value={(value as string) ?? ""}
-                description={sf.description}
-                onChange={handlePropertyValueUpdate(
-                  i.schemaGroup,
-                  widgetPropertyId,
-                  sf.id,
-                  sf.type,
-                )}
-              />
+              sf.ui === "color" ? (
+                <p>Color field</p>
+              ) : sf.ui === "selection" || sf.choices ? (
+                <p>Selection or choices field</p>
+              ) : sf.ui === "buttons" ? (
+                <p>Button radio field</p>
+              ) : (
+                <TextInput
+                  key={sf.id}
+                  name={sf.name}
+                  value={(value as string) ?? ""}
+                  description={sf.description}
+                  onChange={handlePropertyValueUpdate(
+                    i.schemaGroup,
+                    widgetPropertyId,
+                    sf.id,
+                    sf.type,
+                  )}
+                />
+              )
             ) : (
-              <p key={sf.id}>{sf.name}</p>
+              <p key={sf.id}>{sf.name} field</p>
             );
           })}
         </SidePanelSectionField>
