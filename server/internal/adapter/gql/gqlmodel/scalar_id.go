@@ -109,6 +109,10 @@ func IDFromRef[T idx.Type](i *idx.ID[T]) *ID {
 	return (*ID)(i.StringRef())
 }
 
+func IDFromString[T idx.Type](i idx.StringID[T]) ID {
+	return (ID)(i)
+}
+
 func IDFromStringRef[T idx.Type](i *idx.StringID[T]) *ID {
 	return (*ID)(i)
 }

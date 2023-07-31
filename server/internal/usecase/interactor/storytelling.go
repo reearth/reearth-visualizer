@@ -2,14 +2,17 @@ package interactor
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/storytelling"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 )
@@ -17,12 +20,16 @@ import (
 type Storytelling struct {
 	common
 	storytellingRepo repo.Storytelling
+	pluginRepo       repo.Plugin
+	propertyRepo     repo.Property
 	transaction      usecasex.Transaction
 }
 
 func NewStorytelling(r *repo.Container) interfaces.Storytelling {
 	return &Storytelling{
 		storytellingRepo: r.Storytelling,
+		pluginRepo:       r.Plugin,
+		propertyRepo:     r.Property,
 		transaction:      r.Transaction,
 	}
 }
@@ -35,7 +42,7 @@ func (i *Storytelling) FetchByScene(ctx context.Context, sid id.SceneID, _ *usec
 	return i.storytellingRepo.FindByScene(ctx, sid)
 }
 
-func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInput, operator *usecase.Operator) (*storytelling.Story, error) {
+func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -48,7 +55,7 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		}
 	}()
 
-	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, interfaces.ErrOperationDenied
 	}
 
@@ -80,7 +87,7 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 	return story, nil
 }
 
-func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInput, operator *usecase.Operator) (*storytelling.Story, error) {
+func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -97,7 +104,7 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, err
 	}
 
@@ -115,7 +122,7 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 	return story, nil
 }
 
-func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInput, operator *usecase.Operator) (*id.StoryID, error) {
+func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInput, op *usecase.Operator) (*id.StoryID, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -132,7 +139,7 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 	if err != nil {
 		return nil, err
 	}
-	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, err
 	}
 
@@ -145,12 +152,11 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 	return &inp.StoryID, nil
 }
 
-func (i *Storytelling) Move(ctx context.Context, inp interfaces.MoveStoryInput, operator *usecase.Operator) (*id.StoryID, int, error) {
-	// TODO implement me
-	panic("implement me")
+func (i *Storytelling) Move(_ context.Context, _ interfaces.MoveStoryInput, _ *usecase.Operator) (*id.StoryID, int, error) {
+	return nil, 0, rerror.ErrNotImplemented
 }
 
-func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -163,7 +169,7 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		}
 	}()
 
-	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
@@ -213,7 +219,7 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	return story, page, nil
 }
 
-func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -226,7 +232,7 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 		}
 	}()
 
-	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
@@ -266,7 +272,7 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 	return story, page, nil
 }
 
-func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePageParam, operator *usecase.Operator) (*storytelling.Story, *id.PageID, error) {
+func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePageParam, op *usecase.Operator) (*storytelling.Story, *id.PageID, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -279,7 +285,7 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 		}
 	}()
 
-	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
@@ -303,7 +309,7 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 	return story, page.Id().Ref(), nil
 }
 
-func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, int, error) {
+func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, int, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, 0, err
@@ -321,7 +327,7 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 		return nil, nil, 0, err
 	}
 
-	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, 0, interfaces.ErrOperationDenied
 	}
 
@@ -340,7 +346,7 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 	return story, page, inp.Index, nil
 }
 
-func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.DuplicatePageParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.DuplicatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -358,7 +364,7 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 		return nil, nil, err
 	}
 
-	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
@@ -378,7 +384,7 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 	return story, dupPage, nil
 }
 
-func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLayerParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLayerParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -396,7 +402,7 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 		return nil, nil, err
 	}
 
-	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
@@ -423,7 +429,7 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 	return story, page, nil
 }
 
-func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageLayerParam, operator *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
+func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageLayerParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -441,7 +447,7 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 		return nil, nil, err
 	}
 
-	if err := i.CanWriteScene(story.Scene(), operator); err != nil {
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
@@ -468,17 +474,182 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 	return story, page, nil
 }
 
-func (i *Storytelling) CreateBlock(ctx context.Context, param interfaces.CreateBlockParam, operator *usecase.Operator) (*storytelling.Page, *storytelling.Block, error) {
-	// TODO implement me
-	panic("implement me")
+func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *storytelling.Block, int, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	_, extension, err := i.getPlugin(ctx, &inp.PluginID, &inp.ExtensionID)
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+	if extension.Type() != plugin.ExtensionTypeStoryBlock {
+		return nil, nil, nil, -1, interfaces.ErrExtensionTypeMustBeStoryBlock
+	}
+
+	prop, err := property.New().NewID().Schema(extension.Schema()).Scene(story.Scene()).Build()
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	block, err := storytelling.NewBlock().
+		NewID().
+		Plugin(inp.PluginID).
+		Extension(inp.ExtensionID).
+		Property(prop.ID()).
+		Build()
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	index := -1
+	if inp.Index != nil {
+		index = *inp.Index
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, nil, -1, interfaces.ErrPageNotFound
+	}
+
+	page.AddBlock(block, index)
+
+	err = i.propertyRepo.Save(ctx, prop)
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	err = i.storytellingRepo.Save(ctx, *story)
+	if err != nil {
+		return nil, nil, nil, -1, err
+	}
+
+	tx.Commit()
+	return story, page, block, 1, err
 }
 
-func (i *Storytelling) RemoveBlock(ctx context.Context, param interfaces.RemoveBlockParam, operator *usecase.Operator) (*storytelling.Page, *id.BlockID, error) {
-	// TODO implement me
-	panic("implement me")
+func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
+		return nil, nil, nil, err
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, nil, interfaces.ErrPageNotFound
+	}
+
+	block := page.Block(inp.BlockID)
+	if block == nil {
+		return nil, nil, nil, interfaces.ErrBlockNotFound
+	}
+
+	page.RemoveBlock(inp.BlockID)
+	err = i.storytellingRepo.Save(ctx, *story)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	if err := i.propertyRepo.Remove(ctx, block.Property()); err != nil {
+		return nil, nil, nil, err
+	}
+
+	tx.Commit()
+	return story, page, &inp.BlockID, nil
 }
 
-func (i *Storytelling) MoveBlock(ctx context.Context, param interfaces.MoveBlockParam, operator *usecase.Operator) (*storytelling.Page, *id.BlockID, int, error) {
-	// TODO implement me
-	panic("implement me")
+func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, int, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	if err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+
+	page := story.Pages().Page(inp.PageID)
+	if page == nil {
+		return nil, nil, nil, inp.Index, interfaces.ErrPageNotFound
+	}
+
+	if block := page.Block(inp.BlockID); block == nil {
+		return nil, nil, nil, inp.Index, interfaces.ErrBlockNotFound
+	}
+
+	page.MoveBlock(inp.BlockID, inp.Index)
+	err = i.storytellingRepo.Save(ctx, *story)
+	if err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+
+	tx.Commit()
+	return story, page, &inp.BlockID, inp.Index, nil
+}
+
+func (i *Storytelling) getPlugin(ctx context.Context, pId *id.PluginID, eId *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
+	if pId == nil {
+		return nil, nil, nil
+	}
+
+	plg, err := i.pluginRepo.FindByID(ctx, *pId)
+	if err != nil {
+		if errors.Is(err, rerror.ErrNotFound) {
+			return nil, nil, interfaces.ErrPluginNotFound
+		}
+		return nil, nil, err
+	}
+
+	if eId == nil {
+		return plg, nil, nil
+	}
+
+	extension := plg.Extension(*eId)
+	if extension == nil {
+		return nil, nil, interfaces.ErrExtensionNotFound
+	}
+
+	return plg, extension, nil
 }

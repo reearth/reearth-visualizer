@@ -2034,3 +2034,15 @@ extensions:
             - id: title
               type: string
               title: Title
+  - id: storyBlock
+    name: Block
+    type: storyBlock
+    description: Storytelling Block
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: title
+              type: string
+              title: Title
