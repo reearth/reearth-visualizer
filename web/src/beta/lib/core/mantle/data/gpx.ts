@@ -107,15 +107,15 @@ const parseGPXWithCustomParser = (
     const point: Waypoint = {
       name: getElementValue(waypoint, "name"),
       symbol: getElementValue(waypoint, "sym"),
-      latitude: parseFloat(waypoint.getAttribute("lat") ?? ""),
-      longitude: parseFloat(waypoint.getAttribute("lon") ?? ""),
+      latitude: parseFloat(waypoint.getAttribute("lat") ?? "") || 0,
+      longitude: parseFloat(waypoint.getAttribute("lon") ?? "") || 0,
       elevation: null,
       comment: getElementValue(waypoint, "cmt"),
       description: getElementValue(waypoint, "desc"),
       time: null,
     };
 
-    const rawElevation = parseFloat(getElementValue(waypoint, "ele"));
+    const rawElevation = parseFloat(getElementValue(waypoint, "ele")) || 0;
     point.elevation = isNaN(rawElevation) ? null : rawElevation;
 
     const rawTime = getElementValue(waypoint, "time");
@@ -166,14 +166,14 @@ const parseGPXWithCustomParser = (
     const routePoints = Array.from(routeElement.querySelectorAll("rtept"));
     for (const routePoint of routePoints) {
       const point: Point = {
-        latitude: parseFloat(routePoint.getAttribute("lat") ?? ""),
-        longitude: parseFloat(routePoint.getAttribute("lon") ?? ""),
+        latitude: parseFloat(routePoint.getAttribute("lat") ?? "") || 0,
+        longitude: parseFloat(routePoint.getAttribute("lon") ?? "") || 0,
         elevation: null,
         time: null,
         extensions: null,
       };
 
-      const rawElevation = parseFloat(getElementValue(routePoint, "ele") ?? "");
+      const rawElevation = parseFloat(getElementValue(routePoint, "ele") ?? "") || 0;
       point.elevation = isNaN(rawElevation) ? null : rawElevation;
 
       const rawTime = getElementValue(routePoint, "time");
@@ -231,8 +231,8 @@ const parseGPXWithCustomParser = (
     const trackPoints = Array.from(trackElement.querySelectorAll("trkpt"));
     for (const trackPoint of trackPoints) {
       const point: Point = {
-        latitude: parseFloat(trackPoint.getAttribute("lat") ?? ""),
-        longitude: parseFloat(trackPoint.getAttribute("lon") ?? ""),
+        latitude: parseFloat(trackPoint.getAttribute("lat") ?? "") || 0,
+        longitude: parseFloat(trackPoint.getAttribute("lon") ?? "") || 0,
         elevation: null,
         time: null,
         extensions: null,
@@ -258,7 +258,7 @@ const parseGPXWithCustomParser = (
         point.extensions = extensions;
       }
 
-      const rawElevation = parseFloat(getElementValue(trackPoint, "ele"));
+      const rawElevation = parseFloat(getElementValue(trackPoint, "ele")) || 0;
       point.elevation = isNaN(rawElevation) ? null : rawElevation;
 
       const rawTime = getElementValue(trackPoint, "time");
