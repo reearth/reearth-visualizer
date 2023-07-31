@@ -83,6 +83,7 @@ import NavigatorAngle from "./Icons/navigatorAngle.svg";
 import Compass from "./Icons/compass.svg";
 import CompassFocus from "./Icons/compassFocus.svg";
 import House from "./Icons/house.svg";
+import Plugin from "./Icons/plugin.svg";
 
 // Logos
 import Logo from "./Icons/reearthLogo.svg";
@@ -152,4 +153,5 @@ export default {
   compass: Compass,
   compassFocus: CompassFocus,
   house: House,
+  plugin: Plugin,
 };

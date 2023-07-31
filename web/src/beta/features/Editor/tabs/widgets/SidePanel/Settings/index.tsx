@@ -23,11 +23,11 @@ const Settings: React.FC<Props> = ({ widgetPropertyId, propertyItems }) => {
             const value = !isList ? i.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
             return sf.type === "string" ? (
               sf.ui === "color" ? (
-                <p>Color field</p>
+                <p key={sf.id}>Color field</p>
               ) : sf.ui === "selection" || sf.choices ? (
-                <p>Selection or choices field</p>
+                <p key={sf.id}>Selection or choices field</p>
               ) : sf.ui === "buttons" ? (
-                <p>Button radio field</p>
+                <p key={sf.id}>Button radio field</p>
               ) : (
                 <TextInput
                   key={sf.id}
