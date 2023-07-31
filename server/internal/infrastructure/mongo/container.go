@@ -50,6 +50,7 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		User:           NewUser(client),
 		SceneLock:      NewSceneLock(client),
 		Policy:         NewPolicy(client),
+		Storytelling:   NewStorytelling(client),
 		Lock:           lock,
 		Transaction:    client.Transaction(),
 	}
