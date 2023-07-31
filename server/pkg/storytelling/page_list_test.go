@@ -13,6 +13,7 @@ func TestPageList(t *testing.T) {
 	assert.Equal(t, 0, len(pl.Pages()))
 	assert.Nil(t, pl.Pages())
 	assert.Nil(t, pl.Page(NewPageID()))
+	assert.Equal(t, -1, pl.IndexOf(NewPageID()))
 	assert.NotPanics(t, func() {
 		pl.AddAt(nil, nil)
 		pl.Remove(NewPageID())
@@ -22,6 +23,7 @@ func TestPageList(t *testing.T) {
 	pl = NewPageList(nil)
 
 	assert.Equal(t, 0, len(pl.Pages()))
+	assert.Equal(t, -1, pl.IndexOf(NewPageID()))
 	assert.Nil(t, pl.Pages())
 	assert.Nil(t, pl.Page(NewPageID()))
 
@@ -32,6 +34,8 @@ func TestPageList(t *testing.T) {
 	pl.AddAt(p1, nil)
 	assert.Equal(t, 1, len(pl.Pages()))
 	assert.Equal(t, []*Page{p1}, pl.Pages())
+	assert.Equal(t, 0, pl.IndexOf(pageId1))
+	assert.Equal(t, -1, pl.IndexOf(NewPageID()))
 	assert.Equal(t, p1, pl.Page(pageId1))
 	assert.Nil(t, pl.Page(NewPageID()))
 

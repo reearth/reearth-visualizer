@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/samber/lo"
 )
 
 func (r *mutationResolver) CreateStory(ctx context.Context, input gqlmodel.CreateStoryInput) (*gqlmodel.StoryPayload, error) {
@@ -227,14 +228,77 @@ func (r *mutationResolver) MoveStoryPage(ctx context.Context, input gqlmodel.Mov
 	}, nil
 }
 
+func (r *mutationResolver) DuplicateStoryPage(ctx context.Context, input gqlmodel.DuplicateStoryPageInput) (*gqlmodel.StoryPagePayload, error) {
+	sceneId, storyId, pageId, err := gqlmodel.ToID3[id.Scene, id.Story, id.Page](input.SceneID, input.StoryID, input.PageID)
+	if err != nil {
+		return nil, err
+	}
+
+	inp := interfaces.DuplicatePageParam{
+		SceneID: sceneId,
+		StoryID: storyId,
+		PageID:  pageId,
+	}
+
+	story, page, err := usecases(ctx).StoryTelling.DuplicatePage(ctx, inp, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.StoryPagePayload{
+		Story: gqlmodel.ToStory(story),
+		Page:  gqlmodel.ToPage(page),
+	}, nil
+}
+
 func (r *mutationResolver) AddPageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error) {
-	// TODO implement me
-	panic("implement me")
+	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.Layer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	inp := interfaces.PageLayerParam{
+		SceneID:   sceneId,
+		StoryID:   storyId,
+		PageID:    pageId,
+		Swipeable: lo.FromPtrOr(input.Swipeable, false),
+		LayerID:   layerId,
+	}
+
+	story, page, err := usecases(ctx).StoryTelling.AddPageLayer(ctx, inp, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.StoryPagePayload{
+		Story: gqlmodel.ToStory(story),
+		Page:  gqlmodel.ToPage(page),
+	}, nil
 }
 
 func (r *mutationResolver) RemovePageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error) {
-	// TODO implement me
-	panic("implement me")
+	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.Layer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	inp := interfaces.PageLayerParam{
+		SceneID:   sceneId,
+		StoryID:   storyId,
+		PageID:    pageId,
+		Swipeable: lo.FromPtrOr(input.Swipeable, false),
+		LayerID:   layerId,
+	}
+
+	story, page, err := usecases(ctx).StoryTelling.RemovePageLayer(ctx, inp, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.StoryPagePayload{
+		Story: gqlmodel.ToStory(story),
+		Page:  gqlmodel.ToPage(page),
+	}, nil
 }
 
 func (r *mutationResolver) CreateStoryBlock(ctx context.Context, input gqlmodel.CreateStoryBlockInput) (*gqlmodel.CreateStoryBlockPayload, error) {

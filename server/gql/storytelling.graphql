@@ -22,6 +22,7 @@ type StoryPage implements Node {
   layers: [Layer!]!
   swipeableLayersIds: [ID!]
   swipeableLayers: [Layer!]
+  propertyId: ID!
   property: Property
   createdAt: DateTime!
   sceneId: ID!
@@ -102,6 +103,12 @@ input MoveStoryPageInput {
   index: Int!
 }
 
+input DuplicateStoryPageInput {
+  sceneId: ID!
+  storyId: ID!
+  pageId: ID!
+}
+
 input DeleteStoryPageInput {
   sceneId: ID!
   storyId: ID!
@@ -111,7 +118,7 @@ input DeleteStoryPageInput {
 input PageLayerInput {
   sceneId: ID!
   storyId: ID!
-  PageId: ID!
+  pageId: ID!
   swipeable: Boolean
   layerId: ID!
 }
@@ -200,7 +207,7 @@ extend type Mutation {
   updateStoryPage(input: UpdateStoryPageInput!): StoryPagePayload!
   removeStoryPage(input: DeleteStoryPageInput!): DeleteStoryPagePayload!
   moveStoryPage(input: MoveStoryPageInput!): MoveStoryPagePayload!
-# duplicateStoryPage(input: DuplicateStoryPageInput!): DuplicatePagePayload!
+  duplicateStoryPage(input: DuplicateStoryPageInput!): StoryPagePayload!
 
   addPageLayer(input: PageLayerInput!): StoryPagePayload!
   removePageLayer(input: PageLayerInput!): StoryPagePayload!

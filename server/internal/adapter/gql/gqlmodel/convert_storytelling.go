@@ -10,6 +10,7 @@ func ToStory(s *storytelling.Story) *Story {
 		ID:                IDFrom(s.Id()),
 		Title:             s.Title(),
 		Alias:             s.Alias(),
+		PropertyID:        IDFrom(s.Property()),
 		Property:          nil,
 		Pages:             ToPages(s.Pages()),
 		PublishmentStatus: ToStoryPublishmentStatus(s.Status()),
@@ -27,14 +28,17 @@ func ToStories(ss storytelling.StoryList) []*Story {
 
 func ToPage(s *storytelling.Page) *StoryPage {
 	return &StoryPage{
-		ID:              IDFrom(s.Id()),
-		Title:           s.Title(),
-		Blocks:          ToBlocks(s.Blocks()),
-		Swipeable:       s.Swipeable(),
-		Layers:          nil,
-		SwipeableLayers: nil,
-		Property:        nil,
-		CreatedAt:       s.Id().Timestamp(),
+		ID:                 IDFrom(s.Id()),
+		Title:              s.Title(),
+		Blocks:             ToBlocks(s.Blocks()),
+		Swipeable:          s.Swipeable(),
+		LayersIds:          IDFromList(s.Layers()),
+		Layers:             nil,
+		SwipeableLayersIds: IDFromList(s.SwipeableLayers()),
+		SwipeableLayers:    nil,
+		PropertyID:         IDFrom(s.Property()),
+		Property:           nil,
+		CreatedAt:          s.Id().Timestamp(),
 	}
 }
 

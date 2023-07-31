@@ -423,6 +423,12 @@ type DetachTagItemFromGroupPayload struct {
 	Tag *TagGroup `json:"tag"`
 }
 
+type DuplicateStoryPageInput struct {
+	SceneID ID `json:"sceneId"`
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
+}
+
 type ImportDatasetFromGoogleSheetInput struct {
 	AccessToken     string `json:"accessToken"`
 	FileID          string `json:"fileId"`
@@ -744,7 +750,7 @@ type PageInfo struct {
 type PageLayerInput struct {
 	SceneID   ID    `json:"sceneId"`
 	StoryID   ID    `json:"storyId"`
-	PageID    ID    `json:"PageId"`
+	PageID    ID    `json:"pageId"`
 	Swipeable *bool `json:"swipeable"`
 	LayerID   ID    `json:"layerId"`
 }
@@ -1213,6 +1219,7 @@ type StoryPage struct {
 	Layers             []Layer       `json:"layers"`
 	SwipeableLayersIds []ID          `json:"swipeableLayersIds"`
 	SwipeableLayers    []Layer       `json:"swipeableLayers"`
+	PropertyID         ID            `json:"propertyId"`
 	Property           *Property     `json:"property"`
 	CreatedAt          time.Time     `json:"createdAt"`
 	SceneID            ID            `json:"sceneId"`

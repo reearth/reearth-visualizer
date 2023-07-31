@@ -1,27 +1,14 @@
-const colors = {
-  general: {
-    black: "#000000",
-    white: "#FFFFFF",
-    transparentBlack: "rgba(0,0,0,0.7)",
-    transparentLight: "rgba(0,0,0,0.4)",
-  },
-  brand: {
-    blue: {
-      weak: "#161650",
-      main: "#212288",
-      strong: "#3B3CD0",
-      strongest: "#4770FF",
-      strongest50: "#4770FF80",
-    },
-    orange: {
-      weak: "#812702",
-      main: "#E95518",
-      main50: "#E9551880",
-      strong: "#F57C4B",
-    },
-  },
+export const brandBlue = {
+  light: "#4770FF",
+  main: "#3B3CD0",
+  dark: "#212288",
+  darkest: "#161650",
 };
 
-export default colors;
-
-export type Colors = typeof colors;
+export const brandRed = {
+  lightest: "#FF7B45",
+  light: "#FF753C",
+  main: "#E95518",
+  dark: "#D33E00",
+  darkest: "#A73100",
+};

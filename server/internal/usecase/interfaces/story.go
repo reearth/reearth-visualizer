@@ -67,6 +67,20 @@ type RemovePageParam struct {
 	PageID  id.PageID
 }
 
+type DuplicatePageParam struct {
+	SceneID id.SceneID
+	StoryID id.StoryID
+	PageID  id.PageID
+}
+
+type PageLayerParam struct {
+	SceneID   id.SceneID
+	StoryID   id.StoryID
+	PageID    id.PageID
+	Swipeable bool
+	LayerID   id.LayerID
+}
+
 type CreateBlockParam struct {
 	StoryID     id.StoryID
 	PageID      id.PageID
@@ -89,7 +103,8 @@ type RemoveBlockParam struct {
 }
 
 var (
-	ErrPageNotFound error = rerror.NewE(i18n.T("page not found"))
+	ErrPageNotFound          error = rerror.NewE(i18n.T("page not found"))
+	ErrPageSwipeableMismatch error = rerror.NewE(i18n.T("page swipeable mismatch"))
 )
 
 type Storytelling interface {
@@ -104,6 +119,10 @@ type Storytelling interface {
 	UpdatePage(context.Context, UpdatePageParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
 	RemovePage(context.Context, RemovePageParam, *usecase.Operator) (*storytelling.Story, *id.PageID, error)
 	MovePage(context.Context, MovePageParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, int, error)
+	DuplicatePage(context.Context, DuplicatePageParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
+
+	AddPageLayer(context.Context, PageLayerParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
+	RemovePageLayer(context.Context, PageLayerParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
 
 	CreateBlock(context.Context, CreateBlockParam, *usecase.Operator) (*storytelling.Page, *storytelling.Block, error)
 	RemoveBlock(context.Context, RemoveBlockParam, *usecase.Operator) (*storytelling.Page, *id.BlockID, error)

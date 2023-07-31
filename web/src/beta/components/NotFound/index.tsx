@@ -29,7 +29,7 @@ const Wrapper = styled.div`
   justify-content: center;
   padding-top: 40vh;
   height: 100%;
-  background: ${({ theme }) => theme.general.bg.main};
+  background: ${({ theme }) => theme.bg[2]};
 `;
 
 const IconWrapper = styled.div`

@@ -5,6 +5,7 @@ import type {
   ReactNode,
   CSSProperties,
   RefObject,
+  MutableRefObject,
 } from "react";
 
 import type {
@@ -118,6 +119,7 @@ export type EngineProps = {
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
@@ -341,6 +343,7 @@ export type SceneProperty = {
   };
   render?: {
     antialias?: "low" | "medium" | "high" | "extreme";
+    debugFramePerSecond?: boolean;
   };
 };
 
@@ -354,3 +357,5 @@ export type Engine = {
   clusterComponent: ClusterComponentType;
   delegatedDataTypes?: DataType[];
 };
+
+export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame

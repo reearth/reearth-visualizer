@@ -63,6 +63,8 @@ func TestPage_BlockManipulation(t *testing.T) {
 	var p *Page = nil
 
 	assert.Nil(t, p.Blocks())
+	assert.Nil(t, p.Clone())
+	assert.Nil(t, p.Duplicate())
 	assert.Equal(t, 0, p.Count())
 	assert.Nil(t, p.Block(NewBlockID()))
 	assert.Nil(t, p.PropertyRef())
@@ -89,6 +91,14 @@ func TestPage_BlockManipulation(t *testing.T) {
 		swipeableLayers: nil,
 		blocks:          nil,
 	}
+
+	clone := p.Clone()
+	assert.Equal(t, p, clone)
+	assert.NotSame(t, p, clone)
+
+	duplicate := p.Duplicate()
+	assert.NotEqual(t, p.Id(), duplicate.Id())
+	assert.Equal(t, p.Title()+" (copy)", duplicate.Title())
 
 	blockID1 := NewBlockID()
 	pluginId := id.MustPluginID("xxx~1.1.1")

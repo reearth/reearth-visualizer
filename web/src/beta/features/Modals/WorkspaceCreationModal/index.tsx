@@ -66,7 +66,7 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
         <FormInputWrapper>
           <Text
             size="body"
-            color={theme.general.content.main}
+            color={theme.content.main}
             otherProperties={{ flex: 1, margin: "1em 0" }}>
             {t("Workspace Name")}
           </Text>
@@ -90,18 +90,19 @@ const NewProjectForm = styled.form`
 const FormInputWrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
-  margin: 40px auto;
+  margin: 30px auto;
 `;
 
 const StyledInput = styled.input`
   flex: 2;
-  color: ${props => props.theme.general.content.main};
-  background: ${props => props.theme.general.bg.veryStrong};
+  color: ${props => props.theme.content.main};
+  background: ${props => props.theme.bg[0]};
+  border-radius: 4px;
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.body}px;
-  outline: none;
   cursor: text;
-  padding: 0 10px;
+  padding: 4px 8px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
 `;
 
 export default WorkspaceCreationModal;

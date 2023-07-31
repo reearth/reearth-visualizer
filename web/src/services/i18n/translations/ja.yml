@@ -3,8 +3,6 @@ New Page: 新しいページ
 New Swipe: 新しいスワイプ
 Story: ストーリー
 Page: ページ
-Desktop: デスクトップ
-Mobile: モバイル
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Inspector: インスペクター
@@ -373,6 +371,11 @@ Successfully added member(s) to the workspace!: このワークスペースに�
 Failed to delete member from the workspace.: メンバーの削除に失敗しました。
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
+Failed to update property.: プロパティのアップデートに失敗しました。
 Failed to create story.: ストーリーの作成に失敗しました。
 Failed to create page.: ページの作成に失敗しました。
 Failed to add widget.: ウィジェットの作成に失敗しました。
+Failed to update widget.: ウィジェットのアップデートに失敗しました。
+Failed to remove widget.: ウィジェットの削除に失敗しました。
+Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
+Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。

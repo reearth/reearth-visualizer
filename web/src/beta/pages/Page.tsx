@@ -51,7 +51,7 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
   );
 
   return loading ? (
-    <Loading animationSize={80} animationColor={theme.general.select} />
+    <Loading animationSize={80} animationColor={theme.select.main} />
   ) : (
     <>
       <GlobalModal />
