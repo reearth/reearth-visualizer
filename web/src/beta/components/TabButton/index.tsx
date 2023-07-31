@@ -1,9 +1,9 @@
 import type { FC } from "react";
 
+import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
 import Icon, { Icons } from "../Icon";
-import Text from "../Text";
 
 export type Props = {
   label: string;
@@ -14,7 +14,7 @@ export type Props = {
 
 const TabButton: FC<Props> = ({ label, icon, onClick, selected }) => {
   return (
-    <Button onClick={onClick} disabled={selected}>
+    <Button onClick={onClick} selected={selected} disabled={selected}>
       {icon && <Icon icon={icon} size={20} />}
       <Text size="body" customColor>
         {label}
@@ -24,7 +24,7 @@ const TabButton: FC<Props> = ({ label, icon, onClick, selected }) => {
 };
 
 type ButtonProps = {
-  disabled?: boolean;
+  selected?: boolean;
 };
 
 const Button = styled.button<ButtonProps>`
@@ -35,10 +35,8 @@ const Button = styled.button<ButtonProps>`
   padding: 4px 8px;
   gap: 8px;
   border-radius: 4px;
-  color: ${({ disabled, theme }) => (disabled ? theme.content.main : theme.content.weak)};
+  color: ${({ selected, theme }) => (selected ? theme.content.main : theme.content.weak)};
   background: ${({ disabled, theme }) => (disabled ? theme.bg[3] : theme.bg[0])};
-  font-weight: 700;
-  font-size: 14px;
   line-height: 19px;
   white-space: nowrap;
   overflow: hidden;
@@ -46,6 +44,7 @@ const Button = styled.button<ButtonProps>`
 
   :hover {
     background: ${({ theme }) => theme.bg[3]};
+    color: ${({ theme }) => theme.content.main};
     transition: all 0.4s;
   }
 `;

@@ -9,6 +9,7 @@ export type Context = {
   getCamera?: () => Camera | undefined;
   flyTo?: (target: string | FlyToDestination, options?: CameraOptions) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  requestRender?: () => void;
 };
 
 export const context = createContext<Context>({});

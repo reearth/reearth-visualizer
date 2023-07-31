@@ -3,8 +3,6 @@ New Page: New Page
 New Swipe: New Swipe
 Story: Story
 Page: Page
-Desktop: Desktop
-Mobile: Mobile
 Align System: Align System
 Widget Manager: Widget Manager
 Inspector: Inspector
@@ -411,4 +409,9 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
+Failed to update property.: Failed to update property
 Failed to add widget.: Failed to add widget.
+Failed to update widget.: Failed to update widget.
+Failed to remove widget.: Failed to remove widget.
+Failed to update widget alignment.: Failed to update widget alignment.
+Failed to update the widget align system.: Failed to update the widget align system.
