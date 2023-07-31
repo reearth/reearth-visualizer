@@ -107,7 +107,7 @@ const parseGPXWithCustomParser = (
     const point: Waypoint = {
       name: getElementValue(waypoint, "name"),
       symbol: getElementValue(waypoint, "sym"),
-      latitude: parseFloat(waypoint.getAttribute("lat") ?? "") || 0,
+      latitude: parseFloat(waypoint.getAttribute("lat") ?? 0),
       longitude: parseFloat(waypoint.getAttribute("lon") ?? "") || 0,
       elevation: null,
       comment: getElementValue(waypoint, "cmt"),
