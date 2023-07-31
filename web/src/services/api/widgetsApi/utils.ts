@@ -45,7 +45,7 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
               undefined,
           };
         })
-        .filter((w): w is InstallableWidget => !!w);
+        .filter((w): w is InstallableWidget => !!w && !w.title.includes("legacy"));
     })
     .reduce<InstallableWidget[]>((a, b) => (b ? [...a, ...b] : a), []);
 };
