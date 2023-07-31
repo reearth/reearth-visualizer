@@ -411,4 +411,7 @@ Successfully removed member from the workspace.: Successfully removed member fro
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
 Failed to update property.: Failed to update property
 Failed to add widget.: Failed to add widget.
-Failed to remove widget.: ''
+Failed to update widget.: Failed to update widget.
+Failed to remove widget.: Failed to remove widget.
+Failed to update widget alignment.: Failed to update widget alignment.
+Failed to update the widget align system.: Failed to update the widget align system.

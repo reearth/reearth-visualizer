@@ -372,4 +372,7 @@ Successfully removed member from the workspace.: このワークスペースか�
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
 Failed to update property.: プロパティのアップデートに失敗しました。
 Failed to add widget.: ウィジェットの作成に失敗しました。
-Failed to remove widget.: ''
+Failed to update widget.: ウィジェットのアップデートに失敗しました。
+Failed to remove widget.: ウィジェットの削除に失敗しました。
+Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
+Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
