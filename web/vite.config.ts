@@ -25,6 +25,7 @@ export default defineConfig(() => ({
     port: 3000,
   },
   build: {
+    target: "esnext",
     assetsDir: "static", // avoid conflicts with backend asset endpoints
     rollupOptions: {
       input: {
