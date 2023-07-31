@@ -8,6 +8,12 @@ export default {
 
 type Story = StoryObj<typeof ContentPage>;
 
+const dummyPages = [...Array(25)].map((_, i) => ({
+  id: i.toString(),
+  title: `Page ${i}`,
+  swipeable: i % 2 === 0,
+}));
+
 export const Default: Story = {
   render: args => {
     return (
@@ -15,5 +21,10 @@ export const Default: Story = {
         <ContentPage {...args} />
       </div>
     );
+  },
+  args: {
+    // need API mock
+    storyPages: dummyPages,
+    selectedPage: dummyPages[1],
   },
 };

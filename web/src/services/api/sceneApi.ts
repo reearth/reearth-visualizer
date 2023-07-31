@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 
@@ -32,8 +32,8 @@ export default () => {
       skip: !sceneId,
     });
 
-    const scene =
-      data?.node?.__typename === "Scene"
+    const scene = useMemo(() => {
+      return data?.node?.__typename === "Scene"
         ? ({
             id: data.node.id,
             clusters: data.node.clusters,
@@ -42,11 +42,13 @@ export default () => {
             property: data.node.property,
             rootLayerId: data.node.rootLayerId,
             tags: data.node.tags,
+            stories: data.node.stories,
             teamId: data.node.teamId,
             widgetAlignSystem: data.node.widgetAlignSystem,
             widgets: data.node.widgets,
           } as Scene)
         : undefined;
+    }, [data]);
 
     return { scene, ...rest };
   }, []);
