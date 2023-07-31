@@ -1,9 +1,9 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
-import { useSceneFetcher } from "@reearth/services/api";
+import { useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -20,6 +20,7 @@ import { convertWidgets } from "./convert";
 import { BlockType } from "./type";
 
 export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
+  const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { scene } = useSceneQuery({ sceneId });
 
@@ -31,6 +32,11 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   const [selectedWidgetArea, selectWidgetArea] = useSelectedWidgetArea();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
+
+  const [isVisualizerReady, setIsVisualizerReady] = useState(false);
+  const handleMount = useCallback(() => {
+    setIsVisualizerReady(true);
+  }, []);
 
   const onBlockMove = useCallback(
     async (_id: string, _fromIndex: number, _toIndex: number) => {
@@ -168,21 +174,17 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   );
 
   const onWidgetUpdate = useCallback(
-    async (_id: string, _update: { location?: Location; extended?: boolean; index?: number }) => {
-      if (!sceneId) return;
-
-      console.log("Widget has been updated!");
+    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+      await useUpdateWidget(id, update, sceneId);
     },
-    [sceneId],
+    [sceneId, useUpdateWidget],
   );
 
   const onWidgetAlignSystemUpdate = useCallback(
-    async (_location: Location, _align: Alignment) => {
-      if (!sceneId) return;
-
-      console.log("WAS has been updated!");
+    async (location: Location, align: Alignment) => {
+      await useUpdateWidgetAlignSystem(location, align, sceneId);
     },
-    [sceneId],
+    [sceneId, useUpdateWidgetAlignSystem],
   );
 
   const engineMeta = useMemo(
@@ -217,6 +219,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     engineMeta,
     layerSelectionReason,
     useExperimentalSandbox,
+    isVisualizerReady,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -231,5 +234,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     onFovChange,
     handleDropLayer,
     zoomToLayer,
+    handleMount,
   };
 };

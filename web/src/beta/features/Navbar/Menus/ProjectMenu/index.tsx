@@ -75,7 +75,7 @@ const StyledDropdown = styled(Dropdown)`
   height: 100%;
   margin-left: -8px;
   margin-right: -8px;
-  color: ${({ theme }) => theme.general.content.weak};
+  color: ${({ theme }) => theme.content.weak};
 `;
 
 export default ProjectMenu;

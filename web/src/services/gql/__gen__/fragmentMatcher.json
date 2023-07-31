@@ -16,6 +16,9 @@
       "Project",
       "Property",
       "Scene",
+      "Story",
+      "StoryBlock",
+      "StoryPage",
       "Team",
       "User"
     ],

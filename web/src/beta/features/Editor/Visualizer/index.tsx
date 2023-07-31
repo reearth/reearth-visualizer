@@ -17,6 +17,6 @@ const Visualizer: React.FC<Props> = ({ sceneId }) => {
 export default Visualizer;
 
 const Wrapper = styled.div`
-  background: ${({ theme }) => theme.general.bg.strong};
+  background: ${({ theme }) => theme.bg[0]};
   height: 100%;
 `;

@@ -1,51 +1,58 @@
 import { useState } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
 import ListItem from "@reearth/beta/components/ListItem";
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import { type InstalledWidget } from "@reearth/services/api/widgetsApi/utils";
+import { type SelectedWidget } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
-import useHooks from "./hooks";
+export { default as ActionArea } from "./Action";
 
 type Props = {
-  sceneId?: string;
-  selectedWidgetId?: string;
+  selectedWidget?: SelectedWidget;
+  installedWidgets?: InstalledWidget[];
+  onWidgetSelection: (id: string) => void;
+  onWidgetRemove: (id?: string | undefined) => Promise<void>;
 };
 
-const Manager: React.FC<Props> = ({ sceneId }) => {
-  const [show, setShow] = useState(false);
-  const {
-    selectedWidget,
-    installedWidgets,
-    installableWidgets,
-    handleWidgetAdd,
-    handleWidgetSelection,
-  } = useHooks({ sceneId });
+const Manager: React.FC<Props> = ({
+  selectedWidget,
+  installedWidgets,
+  onWidgetSelection,
+  onWidgetRemove,
+}) => {
+  const [openedActionId, setOpenedActionId] = useState<string | undefined>(undefined);
 
   return (
     <Wrapper>
-      <ActionArea>
-        <StyledIcon icon="folderPlus" onClick={() => setShow(s => !s)} />
-      </ActionArea>
-      {show && (
-        <ul>
-          {installableWidgets
-            ?.filter(w => !w.disabled)
-            .map(w => (
-              <li
-                key={`${w.pluginId}/${w.extensionId}`}
-                onClick={() => handleWidgetAdd(`${w.pluginId}/${w.extensionId}`)}>
-                {w.title}
-              </li>
-            ))}
-        </ul>
-      )}
       <InstalledWidgetsList>
         {installedWidgets?.map(w => (
           <ListItem
             key={w.id}
             isSelected={w.id === selectedWidget?.id}
-            onItemClick={() => handleWidgetSelection(w.id)}
-            onActionClick={() => console.log("ACTIONS")}>
+            clamp="right"
+            onItemClick={() => onWidgetSelection(w.id)}
+            onActionClick={() => setOpenedActionId(old => (old ? undefined : w.id))}
+            onOpenChange={isOpen => {
+              setOpenedActionId(isOpen ? w.id : undefined);
+            }}
+            isOpenAction={openedActionId === w.id}
+            actionPlacement="left"
+            actionContent={
+              <PopoverMenuContent
+                size="md"
+                items={[
+                  {
+                    icon: "trash",
+                    name: "Delete",
+                    onClick: () => {
+                      onWidgetRemove(w.id);
+                      setOpenedActionId(undefined);
+                    },
+                  },
+                ]}
+              />
+            }>
             {w.title}
           </ListItem>
         ))}
@@ -58,17 +65,8 @@ export default Manager;
 
 const Wrapper = styled.div``;
 
-const ActionArea = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 4px;
-`;
-
 const InstalledWidgetsList = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const StyledIcon = styled(Icon)`
-  cursor: pointer;
+  padding-left: 4px;
 `;

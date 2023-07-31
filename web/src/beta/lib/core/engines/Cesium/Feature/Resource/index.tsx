@@ -6,6 +6,7 @@ import { ComputedFeature, evalFeature, Feature, guessType } from "@reearth/beta/
 import { requestIdleCallbackWithRequiredWork } from "@reearth/beta/utils/idle";
 
 import type { ResourceAppearance } from "../../..";
+import { useContext } from "../context";
 import {
   attachTag,
   extractSimpleLayerData,
@@ -72,6 +73,8 @@ export default function Resource({
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
 
+  const { requestRender } = useContext();
+
   const handleChange = useCallback(
     (e: DataSource) => {
       if (!viewer) return;
@@ -92,13 +95,14 @@ export default function Resource({
           computedFeatures.push(computedFeature);
         }
       });
+      requestRender?.();
 
       // GeoJSON is not delegated data, so we need to skip.
       if (type !== "geojson") {
         onComputedFeatureFetch?.(features, computedFeatures);
       }
     },
-    [layer, viewer, onComputedFeatureFetch, type],
+    [layer, viewer, onComputedFeatureFetch, type, requestRender],
   );
 
   const initialClock = useRef({

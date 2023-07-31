@@ -27,7 +27,7 @@ const Loading: React.FC<Props> = ({
   const theme = useTheme();
   const loading = (
     <LoadingWrapper className={className} fixed={fixed} overlay={overlay} relative={relative}>
-      <RingLoader size={animationSize ?? 33} color={animationColor ?? theme.general.content.main} />
+      <RingLoader size={animationSize ?? 33} color={animationColor ?? theme.content.main} />
     </LoadingWrapper>
   );
   return portal ? <Portal>{loading}</Portal> : loading;
@@ -43,7 +43,7 @@ const LoadingWrapper = styled.div<{ fixed?: boolean; overlay?: boolean; relative
   position: ${({ fixed, relative }) => (fixed ? "fixed" : relative ? "relative" : "absolute")};
   top: 0;
   left: 0;
-  background: ${({ overlay, theme }) => (overlay ? theme.general.bg.veryStrong : null)};
+  background: ${({ overlay, theme }) => (overlay ? theme.bg[0] : null)};
   opacity: 0.8;
   z-index: ${props => props.theme.zIndexes.loading};
 `;

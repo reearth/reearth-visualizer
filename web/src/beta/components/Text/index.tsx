@@ -36,7 +36,7 @@ const Text: React.FC<Props> = ({
   onClick,
 }) => {
   const theme = useTheme();
-  const defaultColor = theme.general.content.main;
+  const defaultColor = theme.content.main;
   const typographyBySize = typography[size];
 
   const Typography = useMemo(
@@ -53,6 +53,7 @@ const Text: React.FC<Props> = ({
     <Typography
       className={className}
       style={{
+        userSelect: "none",
         ...otherProperties,
         color: customColor ? undefined : color || defaultColor,
       }}
