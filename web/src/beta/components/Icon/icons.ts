@@ -30,6 +30,8 @@ import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
 import Help from "./Icons/help.svg";
 import CheckMark from "./Icons/checkMark.svg";
+import Plus from "./Icons/plus.svg";
+import Minus from "./Icons/minus.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -77,9 +79,10 @@ import WidgetStory from "./Icons/widgetStorytelling.svg";
 import StorytellingMenu from "./Icons/storytellingMenu.svg";
 import WidgetSplash from "./Icons/widgetSplashscreen.svg";
 import WidgetNavigator from "./Icons/widgetNavigator.svg";
-
-// Plus
-import Plus from "./Icons/plus.svg";
+import NavigatorAngle from "./Icons/navigatorAngle.svg";
+import Compass from "./Icons/compass.svg";
+import CompassFocus from "./Icons/compassFocus.svg";
+import House from "./Icons/house.svg";
 
 // Logos
 import Logo from "./Icons/reearthLogo.svg";
@@ -127,6 +130,7 @@ export default {
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
   checkmark: CheckMark,
+  minus: Minus,
   logo: Logo,
   logoColorful: LogoColorful,
   desktop: Desktop,
@@ -144,4 +148,8 @@ export default {
   storytellingMenu: StorytellingMenu,
   splashscreen: WidgetSplash,
   navigator: WidgetNavigator,
+  navigatorAngle: NavigatorAngle,
+  compass: Compass,
+  compassFocus: CompassFocus,
+  house: House,
 };
