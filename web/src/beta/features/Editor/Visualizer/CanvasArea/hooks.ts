@@ -20,7 +20,7 @@ import { convertWidgets } from "./convert";
 import { BlockType } from "./type";
 
 export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
-  const { useUpdateWidget } = useWidgetsFetcher();
+  const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { scene } = useSceneQuery({ sceneId });
 
@@ -181,12 +181,10 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   );
 
   const onWidgetAlignSystemUpdate = useCallback(
-    async (_location: Location, _align: Alignment) => {
-      if (!sceneId) return;
-
-      console.log("WAS has been updated!");
+    async (location: Location, align: Alignment) => {
+      await useUpdateWidgetAlignSystem(location, align, sceneId);
     },
-    [sceneId],
+    [sceneId, useUpdateWidgetAlignSystem],
   );
 
   const engineMeta = useMemo(

@@ -78,3 +78,41 @@ export const REMOVE_WIDGET = gql(`
     }
   }
 `);
+
+export const UPDATE_WIDGET_ALIGN_SYSTEM = gql(`
+  mutation UpdateWidgetAlignSystem(
+    $sceneId: ID!
+    $location: WidgetLocationInput!
+    $align: WidgetAreaAlign
+    $padding: WidgetAreaPaddingInput
+    $gap: Int
+    $centered: Boolean
+    $background: String
+  ) {
+    updateWidgetAlignSystem(
+      input: {
+        sceneId: $sceneId
+        location: $location
+        align: $align
+        padding: $padding
+        gap: $gap
+        centered: $centered
+        background: $background
+      }
+    ) {
+      scene {
+        id
+        widgets {
+          id
+          enabled
+          pluginId
+          extensionId
+          propertyId
+        }
+        widgetAlignSystem {
+          ...WidgetAlignSystemFragment
+        }
+      }
+    }
+  }
+`);
