@@ -173,7 +173,7 @@ const parseGPXWithCustomParser = (
         extensions: null,
       };
 
-      const rawElevation = parseFloat(getElementValue(routePoint, "ele") ?? "0");
+      const rawElevation = parseFloat(getElementValue(routePoint, "ele") ?? '0');
       point.elevation = isNaN(rawElevation) ? null : rawElevation;
 
       const rawTime = getElementValue(routePoint, "time");
