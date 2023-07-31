@@ -1,9 +1,14 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
-import { SceneWidget } from "@reearth/services/gql";
+import {
+  SceneWidget,
+  WidgetAreaType,
+  WidgetSectionType,
+  WidgetZoneType,
+} from "@reearth/services/gql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
-import { ADD_WIDGET, REMOVE_WIDGET } from "@reearth/services/gql/queries/widget";
+import { ADD_WIDGET, REMOVE_WIDGET, UPDATE_WIDGET } from "@reearth/services/gql/queries/widget";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
@@ -96,6 +101,54 @@ export default () => {
     [addWidgetMutation, setNotification, t],
   );
 
+  const [updateWidget] = useMutation(UPDATE_WIDGET, { refetchQueries: ["GetScene"] });
+
+  const useUpdateWidget = useCallback(
+    async (
+      id: string,
+      update: { location?: WidgetLocation; extended?: boolean; index?: number },
+      sceneId?: string,
+    ) => {
+      if (!sceneId) {
+        console.log("GraphQL: Failed to update widget because there is no sceneId provided");
+        setNotification({ type: "error", text: t("Failed to update widget.") });
+        return {
+          status: "error",
+        };
+      }
+
+      const { data, errors } = await updateWidget({
+        variables: {
+          sceneId,
+          widgetId: id,
+          enabled: true,
+          location: update.location
+            ? {
+                zone: update.location.zone?.toUpperCase() as WidgetZoneType,
+                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                area: update.location.area?.toUpperCase() as WidgetAreaType,
+              }
+            : undefined,
+          extended: update.extended,
+          index: update.index,
+        },
+      });
+
+      if (errors || !data?.updateWidget) {
+        console.log("GraphQL: Failed to update widget", errors);
+        setNotification({ type: "error", text: t("Failed to update widget.") });
+
+        return { status: "error" };
+      }
+
+      return {
+        data: data.updateWidget.scene.widgets,
+        status: "success",
+      };
+    },
+    [updateWidget, setNotification, t],
+  );
+
   const [removeWidget] = useMutation(REMOVE_WIDGET, { refetchQueries: ["GetScene"] });
 
   const useRemoveWidget = useCallback(
@@ -103,10 +156,15 @@ export default () => {
       sceneId?: string,
       widgetId?: string,
     ): Promise<MutationReturn<Partial<SceneWidget>[]>> => {
-      if (!sceneId || !widgetId)
+      if (!sceneId || !widgetId) {
+        console.log(
+          "GraphQL: Failed to remove widget because there is either no sceneId or widgetId provided",
+        );
+        setNotification({ type: "error", text: t("Failed to update widget.") });
         return {
           status: "error",
         };
+      }
 
       const { data, errors } = await removeWidget({
         variables: { sceneId: sceneId ?? "", widgetId },
@@ -131,6 +189,7 @@ export default () => {
     useInstallableWidgetsQuery,
     useInstalledWidgetsQuery,
     useAddWidget,
+    useUpdateWidget,
     useRemoveWidget,
   };
 };

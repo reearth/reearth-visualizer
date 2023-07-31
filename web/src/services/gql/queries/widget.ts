@@ -28,6 +28,40 @@ export const ADD_WIDGET =
     }
   }`);
 
+export const UPDATE_WIDGET = gql(`
+  mutation UpdateWidget(
+    $sceneId: ID!
+    $widgetId: ID!
+    $enabled: Boolean
+    $location: WidgetLocationInput
+    $extended: Boolean
+    $index: Int
+  ) {
+    updateWidget(
+      input: {
+        sceneId: $sceneId
+        widgetId: $widgetId
+        enabled: $enabled
+        location: $location
+        extended: $extended
+        index: $index
+      }
+    ) {
+      scene {
+        id
+        widgets {
+          id
+          enabled
+          extended
+          pluginId
+          extensionId
+          propertyId
+        }
+      }
+    }
+  }
+`);
+
 export const REMOVE_WIDGET = gql(`
   mutation RemoveWidget($sceneId: ID!, $widgetId: ID!) {
     removeWidget(input: { sceneId: $sceneId, widgetId: $widgetId }) {

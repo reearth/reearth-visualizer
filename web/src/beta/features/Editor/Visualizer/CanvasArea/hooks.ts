@@ -3,7 +3,7 @@ import { useMemo, useEffect, useCallback, useState } from "react";
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
-import { useSceneFetcher } from "@reearth/services/api";
+import { useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -20,6 +20,7 @@ import { convertWidgets } from "./convert";
 import { BlockType } from "./type";
 
 export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
+  const { useUpdateWidget } = useWidgetsFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { scene } = useSceneQuery({ sceneId });
 
@@ -173,12 +174,10 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   );
 
   const onWidgetUpdate = useCallback(
-    async (_id: string, _update: { location?: Location; extended?: boolean; index?: number }) => {
-      if (!sceneId) return;
-
-      console.log("Widget has been updated!");
+    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+      await useUpdateWidget(id, update, sceneId);
     },
-    [sceneId],
+    [sceneId, useUpdateWidget],
   );
 
   const onWidgetAlignSystemUpdate = useCallback(
