@@ -1,8 +1,9 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
+import { SceneWidget } from "@reearth/services/gql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
-import { ADD_WIDGET } from "@reearth/services/gql/queries/widget";
+import { ADD_WIDGET, REMOVE_WIDGET } from "@reearth/services/gql/queries/widget";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
@@ -95,9 +96,41 @@ export default () => {
     [addWidgetMutation, setNotification, t],
   );
 
+  const [removeWidget] = useMutation(REMOVE_WIDGET, { refetchQueries: ["GetScene"] });
+
+  const useRemoveWidget = useCallback(
+    async (
+      sceneId?: string,
+      widgetId?: string,
+    ): Promise<MutationReturn<Partial<SceneWidget>[]>> => {
+      if (!sceneId || !widgetId)
+        return {
+          status: "error",
+        };
+
+      const { data, errors } = await removeWidget({
+        variables: { sceneId: sceneId ?? "", widgetId },
+      });
+
+      if (errors || !data?.removeWidget) {
+        console.log("GraphQL: Failed to remove widget", errors);
+        setNotification({ type: "error", text: t("Failed to remove widget.") });
+
+        return { status: "error" };
+      }
+
+      return {
+        data: data.removeWidget.scene.widgets,
+        status: "success",
+      };
+    },
+    [removeWidget, setNotification, t],
+  );
+
   return {
     useInstallableWidgetsQuery,
     useInstalledWidgetsQuery,
     useAddWidget,
+    useRemoveWidget,
   };
 };

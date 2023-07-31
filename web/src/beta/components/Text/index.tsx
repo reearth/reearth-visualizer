@@ -53,6 +53,7 @@ const Text: React.FC<Props> = ({
     <Typography
       className={className}
       style={{
+        userSelect: "none",
         ...otherProperties,
         color: customColor ? undefined : color || defaultColor,
       }}

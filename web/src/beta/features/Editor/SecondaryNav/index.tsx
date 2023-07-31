@@ -16,6 +16,6 @@ export default VisualizerNav;
 
 const Wrapper = styled.div`
   border-radius: 4px 4px 0 0;
-  background: ${({ theme }) => theme.bg[1]};
+  background: ${({ theme }) => theme.bg[0]};
   height: ${navbarHeight};
 `;

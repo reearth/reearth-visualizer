@@ -82,10 +82,9 @@ const SRow = styled.button<
   ${({ isFirst }) => !isFirst && "border-top: 1px solid transparent;"}
   ${({ isLast }) => !isLast && "border-bottom: 1px solid transparent;"}
   ${({ size }) => stylesBySize[size].row ?? ""}
-  ${({ isSelected, theme }) => isSelected && theme.select.main}
+  
   :hover {
-    ${({ isSelected, theme }) => !isSelected && theme.bg[2]}
-    ${({ isSelected, theme }) => !isSelected && theme.bg[3]}
+    background: ${({ isSelected, theme }) => !isSelected && theme.bg[2]};
   }
 `;
 

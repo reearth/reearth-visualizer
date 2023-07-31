@@ -30,6 +30,8 @@ import Cancel from "./Icons/cancel.svg";
 import ActionButton from "./Icons/actionButton.svg";
 import Help from "./Icons/help.svg";
 import CheckMark from "./Icons/checkMark.svg";
+import Plus from "./Icons/plus.svg";
+import Minus from "./Icons/minus.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -70,9 +72,17 @@ import Trash from "./Icons/trash.svg";
 import Desktop from "./Icons/desktop.svg";
 import Mobile from "./Icons/mobile.svg";
 import WidgetSystem from "./Icons/widgetSystem.svg";
-
-// Plus
-import Plus from "./Icons/plus.svg";
+import Widgets from "./Icons/widgetsIcon.svg";
+import WidgetMenu from "./Icons/widgetMenu.svg";
+import WidgetButton from "./Icons/widgetButton.svg";
+import WidgetStory from "./Icons/widgetStorytelling.svg";
+import StorytellingMenu from "./Icons/storytellingMenu.svg";
+import WidgetSplash from "./Icons/widgetSplashscreen.svg";
+import WidgetNavigator from "./Icons/widgetNavigator.svg";
+import NavigatorAngle from "./Icons/navigatorAngle.svg";
+import Compass from "./Icons/compass.svg";
+import CompassFocus from "./Icons/compassFocus.svg";
+import House from "./Icons/house.svg";
 
 // Logos
 import Logo from "./Icons/reearthLogo.svg";
@@ -120,6 +130,7 @@ export default {
   workspaceAdd: WorkspaceAdd,
   workspaces: Workspaces,
   checkmark: CheckMark,
+  minus: Minus,
   logo: Logo,
   logoColorful: LogoColorful,
   desktop: Desktop,
@@ -129,4 +140,16 @@ export default {
   gearSix: GearSix,
   pencilSimple: PencilSimple,
   trash: Trash,
+  widget: Widgets,
+  widgets: Widgets,
+  menu: WidgetMenu,
+  button: WidgetButton,
+  storytelling: WidgetStory,
+  storytellingMenu: StorytellingMenu,
+  splashscreen: WidgetSplash,
+  navigator: WidgetNavigator,
+  navigatorAngle: NavigatorAngle,
+  compass: Compass,
+  compassFocus: CompassFocus,
+  house: House,
 };

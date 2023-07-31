@@ -44,6 +44,7 @@ const Button = styled.button<ButtonProps>`
 
   :hover {
     background: ${({ theme }) => theme.bg[3]};
+    color: ${({ theme }) => theme.content.main};
     transition: all 0.4s;
   }
 `;

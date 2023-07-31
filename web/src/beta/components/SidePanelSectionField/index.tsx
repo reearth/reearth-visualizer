@@ -10,41 +10,45 @@ const SidePanelSectionField: React.FC<{
   children?: ReactNode;
 }> = ({ title, children }) => {
   const theme = useTheme();
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(true);
 
   return (
     <Field>
       <Header onClick={() => setOpened(!opened)}>
-        <Text
-          size="footnote"
-          color={theme.content.withBackground}
-          otherProperties={{ height: "16px" }}>
+        <Text size="body" color={theme.content.main}>
           {title}
         </Text>
         <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
       </Header>
-      {opened && children}
+      {opened && children && <Content>{children}</Content>}
     </Field>
   );
 };
 
 const Field = styled.div`
-  box-sizing: border-box;
-
-  border-bottom: 1px solid ${props => props.theme.bg[3]};
+  background: ${({ theme }) => theme.bg[1]};
+  border-radius: 4px;
 `;
+
 const Header = styled.div`
-  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
-
-  height: 32px;
+  padding: 0 8px;
   cursor: pointer;
+  height: 38px;
 `;
+
 const ArrowIcon = styled(Icon)<{ opened: boolean }>`
   transform: rotate(${props => (props.opened ? 90 : 180)}deg);
+  transition: all 0.2s;
+`;
+
+const Content = styled.div`
+  padding: 0 8px 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 export default SidePanelSectionField;
