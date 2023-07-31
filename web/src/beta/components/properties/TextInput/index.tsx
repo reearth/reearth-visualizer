@@ -12,11 +12,11 @@ type Props = {
 };
 
 const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
-  const [currentValue, setCurrentValue] = useState(value);
+  const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    setCurrentValue(value);
+    setCurrentValue(value ?? "");
   }, [value]);
 
   const handleChange = useCallback(
@@ -34,9 +34,28 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
     [onChange],
   );
 
+  const handleBlur = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    onChange?.(currentValue);
+  }, [currentValue, onChange]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (onChange && e.key === "Enter") {
+        onChange(currentValue);
+      }
+    },
+    [currentValue, onChange],
+  );
+
   return (
     <Property name={name} description={description}>
-      <StyledInput value={currentValue ?? ""} onChange={handleChange} />
+      <StyledInput
+        value={currentValue ?? ""}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+      />
     </Property>
   );
 };
