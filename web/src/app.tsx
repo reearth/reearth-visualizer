@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import Loading from "@reearth/beta/components/Loading";
-import NotificationBanner from "@reearth/classic/components/organisms/Notification";
+import NotificationBanner from "@reearth/beta/features/Notification";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
 
 import { AuthProvider } from "./services/auth";
