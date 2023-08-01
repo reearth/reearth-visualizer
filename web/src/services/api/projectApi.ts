@@ -1,13 +1,14 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
-import { PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/Nav";
+import { type PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/Nav/PublishModal/hooks";
 import {
   ProjectPayload,
   PublishmentStatus,
   Visualizer,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
+  CHECK_PROJECT_ALIAS,
   CREATE_PROJECT,
   GET_PROJECT,
   PUBLISH_PROJECT,
@@ -37,6 +38,10 @@ export default () => {
     );
 
     return { project, ...rest };
+  }, []);
+
+  const useProjectAliasCheckLazyQuery = useCallback(() => {
+    return useLazyQuery(CHECK_PROJECT_ALIAS);
   }, []);
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
@@ -121,6 +126,7 @@ export default () => {
 
   return {
     useProjectQuery,
+    useProjectAliasCheckLazyQuery,
     useCreateProject,
     usePublishProject,
   };

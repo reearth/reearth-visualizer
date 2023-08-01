@@ -6,16 +6,17 @@ import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import TabButton from "@reearth/beta/components/TabButton";
 import Text from "@reearth/beta/components/Text";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
+import PublishModal from "./PublishModal";
+import { PublishStatus } from "./PublishModal/hooks";
 
 export { navbarHeight } from "@reearth/beta/features/Editor/SecondaryNav";
 
 export type ProjectType = "default" | "story";
-
-export type PublishStatus = "published" | "limited" | "unpublished";
 
 type Props = {
   projectId?: string;
@@ -27,11 +28,18 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
   const t = useT();
 
   const {
+    publishing,
     publishStatus,
     dropdownOpen,
+    modalOpen,
+    alias,
+    validAlias,
+    validatingAlias,
+    handleModalOpen,
+    handleModalClose,
     setDropdown,
     handleProjectPublish,
-    handleProjectUnpublish,
+    handleProjectAliasCheck,
     handleOpenProjectSettings,
   } = useHooks({ projectId });
 
@@ -44,51 +52,71 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
   );
 
   return (
-    <StyledSecondaryNav>
-      <LeftSection>
-        <TabButton
-          selected={selectedProjectType === "default"}
-          label={t("Scene")}
-          onClick={() => onProjectTypeChange("default")}
-        />
-        <TabButton
-          selected={selectedProjectType === "story"}
-          label={t("Story")}
-          onClick={() => onProjectTypeChange("story")}
-        />
-      </LeftSection>
-      <Popover.Provider open={dropdownOpen} placement="bottom-end">
-        <Popover.Trigger asChild>
-          <Publishing onClick={() => setDropdown(!dropdownOpen)}>
-            <Status status={publishStatus} />
-            <Text size="body" customColor>
-              {text}
-            </Text>
-            <Icon icon="arrowDown" size={16} />
-          </Publishing>
-        </Popover.Trigger>
-        <Popover.Content style={{ zIndex: 999 }}>
-          <PopoverMenuContent
-            size="sm"
-            width="142px"
-            items={[
-              {
-                name: t("Unpublish"),
-                onClick: () => handleProjectUnpublish(),
-              },
-              {
-                name: t("Publish"),
-                onClick: () => handleProjectPublish("published"),
-              },
-              {
-                name: t("Publishing Settings"),
-                onClick: () => handleOpenProjectSettings(),
-              },
-            ]}
+    <>
+      <StyledSecondaryNav>
+        <LeftSection>
+          <TabButton
+            selected={selectedProjectType === "default"}
+            label={t("Scene")}
+            onClick={() => onProjectTypeChange("default")}
           />
-        </Popover.Content>
-      </Popover.Provider>
-    </StyledSecondaryNav>
+          <TabButton
+            selected={selectedProjectType === "story"}
+            label={t("Story")}
+            onClick={() => onProjectTypeChange("story")}
+          />
+        </LeftSection>
+        <Popover.Provider open={dropdownOpen} placement="bottom-end">
+          <Popover.Trigger asChild>
+            <Publishing onClick={() => setDropdown(!dropdownOpen)}>
+              <Status status={publishStatus} />
+              <Text size="body" customColor>
+                {text}
+              </Text>
+              <Icon icon="arrowDown" size={16} />
+            </Publishing>
+          </Popover.Trigger>
+          <Popover.Content style={{ zIndex: 999 }}>
+            <PopoverMenuContent
+              size="sm"
+              width="142px"
+              items={[
+                {
+                  name: t("Unpublish"),
+                  disabled: publishStatus === "unpublished",
+                  onClick: () => handleModalOpen("unpublishing"),
+                },
+                {
+                  name: t("Publish"),
+                  onClick: () =>
+                    handleModalOpen(
+                      publishStatus === "limited" || publishStatus === "published"
+                        ? "updating"
+                        : "publishing",
+                    ),
+                },
+                {
+                  name: t("Publishing Settings"),
+                  onClick: () => handleOpenProjectSettings(),
+                },
+              ]}
+            />
+          </Popover.Content>
+        </Popover.Provider>
+      </StyledSecondaryNav>
+      <PublishModal
+        isVisible={modalOpen}
+        publishing={publishing}
+        publishStatus={publishStatus}
+        url={config()?.published?.split("{}")}
+        projectAlias={alias}
+        validAlias={validAlias}
+        validatingAlias={validatingAlias}
+        onClose={handleModalClose}
+        onPublish={handleProjectPublish}
+        onAliasValidate={handleProjectAliasCheck}
+      />
+    </>
   );
 };
 
