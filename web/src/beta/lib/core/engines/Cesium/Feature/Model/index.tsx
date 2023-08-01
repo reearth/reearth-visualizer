@@ -16,6 +16,7 @@ import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import { useSceneEvent } from "../../hooks/useSceneEvent";
 import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
+import { useContext } from "../context";
 import {
   EntityExt,
   extractSimpleLayerData,
@@ -149,6 +150,7 @@ export default function Model({
   ]);
 
   const { viewer } = useCesium();
+  const { requestRender } = useContext();
   const shouldUpdateAfterLoaded = useRef(false);
   useSceneEvent("postRender", () => {
     const primitives = viewer?.scene.primitives;
@@ -161,10 +163,12 @@ export default function Model({
     for (let i = 0; i < length; i++) {
       const prim = primitives?.get(i);
       if (prim instanceof CesiumModel && prim.id && prim.id.id === id) {
-        shouldUpdateAfterLoaded.current = false;
         prim.imageBasedLighting = imageBasedLighting;
       }
     }
+
+    shouldUpdateAfterLoaded.current = false;
+    requestRender?.();
   });
 
   useEffect(() => {
