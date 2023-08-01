@@ -57,7 +57,6 @@ export default ({ projectId }: { projectId?: string }) => {
   const handleProjectPublish = useCallback(
     async (publishStatus: PublishStatus) => {
       await usePublishProject(publishStatus, projectId, alias);
-      setModal(false);
     },
     [projectId, alias, usePublishProject],
   );
