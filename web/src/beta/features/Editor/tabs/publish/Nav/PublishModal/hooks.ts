@@ -35,18 +35,6 @@ export default (
     setSearchIndex(!searchIndex);
   }, [searchIndex]);
 
-  const resetCopiedWithDelay = useCallback((key: keyof CopiedItemKey) => {
-    const timerID = setTimeout(
-      () =>
-        setCopiedKey(prevState => ({
-          ...prevState,
-          [key]: false,
-        })),
-      2500,
-    );
-    return () => clearTimeout(timerID);
-  }, []);
-
   const handleCopyToClipBoard = useCallback(
     (key: keyof CopiedItemKey, value: string | undefined) =>
       (_: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
@@ -57,9 +45,8 @@ export default (
         }));
         navigator.clipboard.writeText(value);
         onCopyToClipBoard?.();
-        resetCopiedWithDelay(key);
       },
-    [resetCopiedWithDelay, onCopyToClipBoard],
+    [onCopyToClipBoard],
   );
 
   const validate = useCallback(

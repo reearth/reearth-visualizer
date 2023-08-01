@@ -56,7 +56,6 @@ export default ({ projectId }: { projectId?: string }) => {
 
   const handleProjectPublish = useCallback(
     async (publishStatus: PublishStatus) => {
-      console.log("publish");
       await usePublishProject(publishStatus, projectId, alias);
       setModal(false);
     },
@@ -64,7 +63,6 @@ export default ({ projectId }: { projectId?: string }) => {
   );
 
   const handleOpenProjectSettings = useCallback(() => {
-    console.log("open settings");
     setDropdown(false);
   }, []);
 
@@ -75,11 +73,8 @@ export default ({ projectId }: { projectId?: string }) => {
   }, []);
 
   const handleModalClose = useCallback(() => {
-    // setSearchIndex(!!(project?.publishmentStatus === "PUBLIC"));
     setModal(false);
   }, []);
-
-  console.log("P", project);
 
   return {
     publishing,

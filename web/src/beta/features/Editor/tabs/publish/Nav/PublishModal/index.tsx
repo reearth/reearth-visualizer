@@ -5,7 +5,6 @@ import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import ToggleButton from "@reearth/beta/components/properties/Toggle";
 import Text from "@reearth/beta/components/Text";
-import InputField from "@reearth/classic/components/molecules/EarthEditor/PublicationModal/InputField";
 import { useT } from "@reearth/services/i18n";
 import { styled, metricsSizes, useTheme } from "@reearth/services/theme";
 
@@ -51,7 +50,6 @@ const PublishModal: React.FC<Props> = ({
     statusChanged,
     alias,
     validation,
-    copiedKey,
     showOptions,
     searchIndex,
     handlePublish,
@@ -86,14 +84,6 @@ const PublishModal: React.FC<Props> = ({
         (!alias || !!validation || validatingAlias || !validAlias)),
     [alias, loading, publishStatus, publishing, validation, validAlias, validatingAlias],
   );
-
-  console.log("loading", loading);
-  console.log("publishing", publishing);
-  console.log("publishStatus", publishStatus);
-  console.log("alias", alias);
-  console.log("validation", validation);
-  console.log("validatingAlias", validatingAlias);
-  console.log("validAlias", validAlias);
 
   const modalTitleText = useMemo(() => {
     return statusChanged
@@ -143,30 +133,31 @@ const PublishModal: React.FC<Props> = ({
         <Section>
           <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
           <Subtitle size="body">{t("Public URL")}</Subtitle>
-          <InputField
-            button1={t("Copy")}
-            value={purl}
-            actioned={copiedKey?.url}
-            onButtonClick1={handleCopyToClipBoard("url", purl)}
-            link
-            subMessage={t("* Anyone can see your project with this URL")}
-          />
+          <div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <Text size="body" color={theme.select.strong}>
+                {purl}
+              </Text>
+              <Button onClick={handleCopyToClipBoard("url", purl)}>{t("Copy")}</Button>
+            </div>
+            <Text size="footnote">{t("* Anyone can see your project with this URL")}</Text>
+          </div>
           <Subtitle size="body">{t("Embed Code")}</Subtitle>
-          <InputField
-            button1={t("Copy")}
-            value={embedCode}
-            actioned={copiedKey?.embedCode}
-            onButtonClick1={handleCopyToClipBoard("embedCode", embedCode)}
-            link
-            subMessage={t(
-              "* Please use this code if you want to embed your project into a webpage",
-            )}
-          />
+          <div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <Text size="footnote" color={theme.select.strong}>
+                {embedCode}
+              </Text>
+              <Button onClick={handleCopyToClipBoard("embedCode", embedCode)}>{t("Copy")}</Button>
+            </div>
+            <Text size="xFootnote">
+              {t("* Please use this code if you want to embed your project into a webpage")}
+            </Text>
+          </div>
         </Section>
       ) : publishing !== "unpublishing" ? (
         <>
           <Section>
-            <Divider />
             <Text size="body">{updateDescriptionText}</Text>
             {url && alias && (
               <PublishLink href={purl} target="blank">
@@ -175,11 +166,10 @@ const PublishModal: React.FC<Props> = ({
                 </UrlText>
               </PublishLink>
             )}
-            <Divider />
           </Section>
           <OptionsToggle onClick={() => setOptions(!showOptions)}>
-            <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
             <Text size="footnote">{t("more options")}</Text>
+            <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
             <Wrapper>
@@ -229,6 +219,7 @@ const PublishLink = styled.a`
 
 const OptionsToggle = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin: ${`0 0 ${metricsSizes["m"]}px 0`};
   color: ${({ theme }) => theme.classic.main.text};
@@ -236,13 +227,10 @@ const OptionsToggle = styled.div`
   user-select: none;
 `;
 
-const Divider = styled.div`
-  border-top: 1px solid black;
-`;
-
 const ArrowIcon = styled(Icon)<{ open?: boolean }>`
   transition: transform 0.15s ease;
-  transform: ${({ open }) => open && "translateY(10%) rotate(90deg)"};
+  transform: ${({ open }) =>
+    open ? "translateY(10%) rotate(90deg)" : "translateY(0) rotate(180deg)"};
 `;
 
 const UrlText = styled(Text)`

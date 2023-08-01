@@ -66,7 +66,10 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
             onClick={() => onProjectTypeChange("story")}
           />
         </LeftSection>
-        <Popover.Provider open={dropdownOpen} placement="bottom-end">
+        <Popover.Provider
+          open={dropdownOpen}
+          onOpenChange={() => setDropdown(!dropdownOpen)}
+          placement="bottom-end">
           <Popover.Trigger asChild>
             <Publishing onClick={() => setDropdown(!dropdownOpen)}>
               <Status status={publishStatus} />
