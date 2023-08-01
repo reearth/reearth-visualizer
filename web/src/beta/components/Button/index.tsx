@@ -10,39 +10,34 @@ export type Type = "primary" | "secondary" | "danger";
 export interface Props {
   className?: string;
   children?: ReactNode;
-  large?: boolean;
-  type?: "reset" | "button" | "submit" | undefined;
+  size?: "medium" | "small";
   buttonType?: Type;
   disabled?: boolean;
   text?: string;
   icon?: string;
-  iconRight?: boolean;
+  iconPosition?: "left" | "right";
   margin?: string;
+
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
 }
 
 const Button: React.FC<Props> = ({
   className,
   children,
-  large,
-  type,
-  buttonType,
+  size = "medium",
+  buttonType = "secondary",
   disabled,
   text,
   icon,
-  iconRight,
+  iconPosition = icon ? "left" : undefined,
   margin,
   onClick,
-  onMouseEnter,
-  onMouseLeave,
 }) => {
   const hasText = !!text || !!children;
-  const iSize = large ? "16px" : "12px";
+  const iSize = size === "medium" ? "16px" : "12px";
 
   const WrappedIcon = icon ? (
-    <IconWrapper text={hasText} iconRight={iconRight} large={large}>
+    <IconWrapper text={hasText} iconPosition={iconPosition} size={size}>
       <Icon icon={icon} size={iSize} notransition />
     </IconWrapper>
   ) : null;
@@ -50,18 +45,15 @@ const Button: React.FC<Props> = ({
   return (
     <StyledButton
       className={className}
-      large={large}
-      type={type}
+      size={size}
       buttonType={buttonType}
       text={hasText}
       disabled={disabled}
       margin={margin}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}>
-      {!iconRight && WrappedIcon}
-      {large ? (
-        <Text size="h5" weight="bold" customColor>
+      onClick={onClick}>
+      {iconPosition === "left" && WrappedIcon}
+      {size === "medium" ? (
+        <Text size="body" customColor>
           {text}
         </Text>
       ) : (
@@ -70,13 +62,13 @@ const Button: React.FC<Props> = ({
         </Text>
       )}
       {children}
-      {iconRight && WrappedIcon}
+      {iconPosition === "right" && WrappedIcon}
     </StyledButton>
   );
 };
 
 type ButtonProps = {
-  large?: boolean;
+  size?: Props["size"];
   buttonType?: Type;
   text?: boolean;
   disabled?: boolean;
@@ -84,38 +76,43 @@ type ButtonProps = {
 };
 
 const StyledButton = styled.button<ButtonProps>`
-  border-radius: ${({ large }) => (large ? "8px" : "6px")};
+  border-radius: ${({ size }) => (size === "medium" ? "6px" : "4px")};
   border-style: solid;
   border-width: 1px;
   border-color: ${({ buttonType, disabled, theme }) =>
-    buttonType === "danger"
-      ? disabled
-        ? theme.content.weaker
-        : theme.dangerous.main
-      : buttonType === "secondary"
-      ? disabled
-        ? theme.content.weaker
-        : theme.secondary.main
-      : disabled
-      ? theme.content.weaker
-      : theme.primary.main};
+    disabled
+      ? theme.content.weak
+      : buttonType === "danger"
+      ? theme.dangerous.main
+      : buttonType === "primary"
+      ? theme.primary.main
+      : theme.secondary.main};
   background: inherit;
   color: ${({ buttonType, disabled, theme }) =>
-    buttonType === "danger"
-      ? disabled
-        ? theme.content.weaker
-        : theme.dangerous.main
-      : buttonType === "secondary"
-      ? disabled
-        ? theme.content.weaker
-        : theme.content.main
-      : disabled
-      ? theme.content.weaker
-      : theme.primary.main};
-  padding: ${({ large }) =>
-    large
-      ? `${metricsSizes["s"]}px ${metricsSizes["2xl"]}px`
-      : `${metricsSizes["xs"]}px ${metricsSizes["xl"]}px`};
+    disabled
+      ? theme.content.weak
+      : buttonType === "danger"
+      ? theme.dangerous.main
+      : buttonType === "primary"
+      ? theme.primary.main
+      : theme.secondary.main};
+  &:active,
+  &:hover {
+    background: ${({ buttonType, disabled, theme }) =>
+      disabled
+        ? "inherit"
+        : buttonType === "danger"
+        ? theme.dangerous.main
+        : buttonType === "primary"
+        ? theme.primary.main
+        : theme.secondary.main};
+    color: ${({ disabled, theme }) =>
+      disabled ? theme.content.weak : theme.content.withBackground};
+  }
+  padding: ${({ size }) =>
+    size === "medium"
+      ? `${metricsSizes["s"]}px ${metricsSizes["l"]}px`
+      : `${metricsSizes["xs"]}px ${metricsSizes["s"]}px`};
   margin: ${({ margin }) => margin || `${metricsSizes["m"]}px`};
   user-select: none;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
@@ -123,18 +120,22 @@ const StyledButton = styled.button<ButtonProps>`
   align-items: center;
   display: flex;
   align-items: center;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
   transition-property: color, background;
   transition-duration: 0.4s;
 `;
 
-const IconWrapper = styled.span<{ text: boolean; iconRight?: boolean; large?: boolean }>`
+const IconWrapper = styled.span<{
+  text: boolean;
+  iconPosition?: Props["iconPosition"];
+  size?: Props["size"];
+}>`
   display: inline-flex;
   align-items: center;
   user-select: none;
-  margin-left: ${({ text, iconRight, large }) =>
-    text && iconRight ? (large ? "12px" : "8px") : "none"};
-  margin-right: ${({ text, iconRight, large }) =>
-    text && !iconRight ? (large ? "12px" : "8px") : "none"};
+  margin-left: ${({ text, iconPosition, size }) =>
+    text && iconPosition === "right" ? (size === "medium" ? "8px" : "8px") : "none"};
+  margin-right: ${({ text, iconPosition, size }) =>
+    text && iconPosition === "left" ? (size === "medium" ? "8px" : "8px") : "none"};
 `;
-
 export default Button;

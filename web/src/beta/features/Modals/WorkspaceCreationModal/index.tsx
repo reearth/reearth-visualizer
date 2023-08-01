@@ -53,14 +53,16 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
       onClose={handleClose}
       button1={
         <Button
-          large
+          size="medium"
           buttonType="primary"
           text={t("Create")}
           disabled={!formik.values.name}
           onClick={formik.submitForm}
         />
       }
-      button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
+      button2={
+        <Button size="medium" buttonType="secondary" text={t("Cancel")} onClick={handleClose} />
+      }>
       {formik.isSubmitting && <Loading overlay />}
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
