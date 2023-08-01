@@ -6,6 +6,29 @@ Story: Story
 Unpublish: Unpublish
 Publish: Publish
 Publishing Settings: Publishing Settings
+Congratulations!: Congratulations!
+Publish your project: Publish your project
+Update your project: Update your project
+Ok: Ok
+Update: Update
+Continue: Continue
+Your published project will be updated. This means all current changes will overwrite the current published project.: >-
+  Your published project will be updated. This means all current changes will
+  overwrite the current published project.
+Your project will be published. This means anybody with the below URL will be able to view this project.: >-
+  Your project will be published. This means anybody with the below URL will be
+  able to view this project.
+Your project has been published!: Your project has been published!
+Public URL: Public URL
+Copy: Copy
+'* Anyone can see your project with this URL': '* Anyone can see your project with this URL'
+Embed Code: Embed Code
+'* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
+more options: more options
+Search engine indexing: Search engine indexing
+Your project will be unpublished.: Your project will be unpublished.
+This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
+'**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
 New Page: New Page
 New Swipe: New Swipe
 Page: Page
@@ -31,6 +54,11 @@ Plugins: Plugins
 Manage projects: Manage projects
 Documentation: Documentation
 Widgets: Widgets
+Error: Error
+Warning: Warning
+Notice: Notice
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
+Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 aria-label-compass: compass
@@ -44,7 +72,6 @@ Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
 Drop here: Drop here
-Continue: Continue
 not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
@@ -145,7 +172,6 @@ Other Source: Other Source
 No Dataset is here: No Dataset is here
 Export type: Export type
 Export: Export
-Update: Update
 Preview: Preview
 Layer selection: Layer selection
 Selectable Layers: Selectable Layers
@@ -214,28 +240,7 @@ Gap Spacing: ''
 Align Center: ''
 Background Color: ''
 Enable Editor Mode: Enable Editor Mode
-Congratulations!: Congratulations!
-Publish your project: Publish your project
-Update your project: Update your project
-Ok: Ok
-Your published project will be updated. This means all current changes will overwrite the current published project.: >-
-  Your published project will be updated. This means all current changes will
-  overwrite the current published project.
-Your project will be published. This means anybody with the below URL will be able to view this project.: >-
-  Your project will be published. This means anybody with the below URL will be
-  able to view this project.
 Close: Close
-Your project has been published!: Your project has been published!
-Public URL: Public URL
-Copy: Copy
-'* Anyone can see your project with this URL': '* Anyone can see your project with this URL'
-Embed Code: Embed Code
-'* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
-more options: more options
-Search engine indexing: Search engine indexing
-Your project will be unpublished.: Your project will be unpublished.
-This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
-'**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
 Add a tag group: Add a tag group
 Add a tag: Add a tag
 Auto: Auto
@@ -258,7 +263,6 @@ Workspace List: Workspace List
 Assets: Assets
 Project List: Project List
 Public: Public
-Notice: Notice
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
@@ -377,10 +381,6 @@ Infobox: Infobox
 Tag: Tag
 Same label tag already exist. Please type different label.: Same label tag already exist. Please type different label.
 Tag group has tags, you need to remove all tags under the tag group: Tag group has tags, you need to remove all tags under the tag group
-Error: Error
-Warning: Warning
-You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
-Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Failed to update account name.: Failed to update account name.
 Failed to update password.: Failed to update password.
 Successfully updated password!: Successfully updated password!

@@ -6,6 +6,25 @@ Story: ストーリー
 Unpublish: 非公開にする
 Publish: 公開
 Publishing Settings: 公開設定
+Congratulations!: おめでとうございます！
+Publish your project: プロジェクトを公開する
+Update your project: プロジェクトを更新する
+Ok: 確認
+Update: 更新する
+Continue: 続ける
+Your published project will be updated. This means all current changes will overwrite the current published project.: 公開されたプロジェクトが更新されます。公開されているプロジェクトへ現在の内容が上書きされます。
+Your project will be published. This means anybody with the below URL will be able to view this project.: プロジェクトが公開されます。URLを知っている人は誰でもこのプロジェクトを見ることができるようになります。
+Your project has been published!: プロジェクトが公開されました。
+Public URL: 公開URL
+Copy: コピー
+'* Anyone can see your project with this URL': '*　このリンクを知っているインターネット上の全員が閲覧できます'
+Embed Code: 埋め込み用コード
+'* Please use this code if you want to embed your project into a webpage': その他のWebサイトでこのプロジェクトを埋め込む場合は、こちらのコードを使用してください
+more options: その他の設定
+Search engine indexing: 検索可能にする
+Your project will be unpublished.: プロジェクトを非公開にする
+This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
+'**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
 New Page: 新しいページ
 New Swipe: 新しいスワイプ
 Page: ページ
@@ -31,6 +50,11 @@ Plugins: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
 Widgets: ウィジェット
+Error: エラー
+Warning: 注意
+Notice: 通知
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
+Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
 Double click here to write.: ダブルクリックで入力
 Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 aria-label-compass: コンパス
@@ -44,7 +68,6 @@ Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
 Drop here: ここにドロップ
-Continue: 続ける
 not set: 未設定
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
@@ -135,7 +158,6 @@ Other Source: その他
 No Dataset is here: データセットは存在しません
 Export type: ファイル形式
 Export: エクスポート
-Update: 更新する
 Preview: プレビュー
 Layer selection: レイヤーを選択
 Selectable Layers: 選択可能なレイヤー
@@ -200,24 +222,7 @@ Gap Spacing: 間隔
 Align Center: 中央に配置
 Background Color: 背景色
 Enable Editor Mode: ウィジェットの配置を編集
-Congratulations!: おめでとうございます！
-Publish your project: プロジェクトを公開する
-Update your project: プロジェクトを更新する
-Ok: 確認
-Your published project will be updated. This means all current changes will overwrite the current published project.: 公開されたプロジェクトが更新されます。公開されているプロジェクトへ現在の内容が上書きされます。
-Your project will be published. This means anybody with the below URL will be able to view this project.: プロジェクトが公開されます。URLを知っている人は誰でもこのプロジェクトを見ることができるようになります。
 Close: 閉じる
-Your project has been published!: プロジェクトが公開されました。
-Public URL: 公開URL
-Copy: コピー
-'* Anyone can see your project with this URL': '*　このリンクを知っているインターネット上の全員が閲覧できます'
-Embed Code: 埋め込み用コード
-'* Please use this code if you want to embed your project into a webpage': その他のWebサイトでこのプロジェクトを埋め込む場合は、こちらのコードを使用してください
-more options: その他の設定
-Search engine indexing: 検索可能にする
-Your project will be unpublished.: プロジェクトを非公開にする
-This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
-'**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
 Add a tag group: タググループを追加
 Add a tag: タグを追加
 Auto: 自動
@@ -238,7 +243,6 @@ Workspace List: ワークスペース一覧
 Assets: アセット
 Project List: プロジェクト一覧
 Public: 公開設定
-Notice: 通知
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Basic Authorization: ベーシック認証
 Enable basic authorization: ベーシック認証を有効化する
@@ -338,10 +342,6 @@ Infobox: インフォボックス
 Tag: タグ
 Same label tag already exist. Please type different label.: 同じラベルのタグがすでに存在します。ラベルを変更してもう一度お試しください。
 Tag group has tags, you need to remove all tags under the tag group: タググループ内のタグをすべて削除してからタググループを削除してください。
-Error: エラー
-Warning: 注意
-You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
-Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
 Failed to update account name.: アカウント名の変更に失敗しました。
 Failed to update password.: パスワードの更新に失敗しました。
 Successfully updated password!: パスワードの更新が完了しました。
