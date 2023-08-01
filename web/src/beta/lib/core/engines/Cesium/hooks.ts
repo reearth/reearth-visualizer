@@ -796,7 +796,7 @@ export default ({
           ? REQUEST_RENDER_ONCE
           : NO_REQUEST_RENDER;
     }
-  }, [property?.timeline?.animation, isLayerDragging, shouldRender, requestingRenderMode]);
+  }, [isLayerDragging, shouldRender, requestingRenderMode]);
 
   return {
     backgroundColor,
