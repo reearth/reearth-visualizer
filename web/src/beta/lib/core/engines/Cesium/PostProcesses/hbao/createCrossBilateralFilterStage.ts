@@ -1,8 +1,4 @@
-import {
-  PostProcessStage,
-  PostProcessStageComposite,
-  PostProcessStageSampleMode,
-} from "@cesium/engine";
+import { PostProcessStage, PostProcessStageComposite, PostProcessStageSampleMode } from "cesium";
 import { defaults } from "lodash-es";
 
 import { createUniforms } from "../../helpers/createUniforms";
