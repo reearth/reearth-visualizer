@@ -1,4 +1,4 @@
-import { Cartesian2, Color, PostProcessStage, PostProcessStageComposite } from "@cesium/engine";
+import { Cartesian2, Color, PostProcessStage, PostProcessStageComposite } from "cesium";
 import { defaults, pick } from "lodash-es";
 
 import { createUniforms } from "../../helpers/createUniforms";
