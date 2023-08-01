@@ -164,11 +164,10 @@ export default function Model({
       const prim = primitives?.get(i);
       if (prim instanceof CesiumModel && prim.id && prim.id.id === id) {
         prim.imageBasedLighting = imageBasedLighting;
+        shouldUpdateAfterLoaded.current = false;
+        requestRender?.();
       }
     }
-
-    shouldUpdateAfterLoaded.current = false;
-    requestRender?.();
   });
 
   useEffect(() => {
