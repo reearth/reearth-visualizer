@@ -1,4 +1,4 @@
-import { PerspectiveFrustum, type Scene, Math as CesiumMath } from "@cesium/engine";
+import { PerspectiveFrustum, type Scene, Math as CesiumMath } from "cesium";
 import { useState, type FC } from "react";
 import { useCesium } from "resium";
 
