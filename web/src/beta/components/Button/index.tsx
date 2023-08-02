@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
@@ -33,14 +33,21 @@ const Button: React.FC<Props> = ({
   margin,
   onClick,
 }) => {
-  const hasText = !!text || !!children;
-  const iSize = size === "medium" ? "16px" : "12px";
+  const hasText = useMemo(() => {
+    return !!text || !!children;
+  }, [children, text]);
 
-  const WrappedIcon = icon ? (
-    <IconWrapper text={hasText} iconPosition={iconPosition} size={size}>
-      <Icon icon={icon} size={iSize} notransition />
-    </IconWrapper>
-  ) : null;
+  const iSize = useMemo(() => {
+    return size === "medium" ? "16px" : "12px";
+  }, [size]);
+
+  const WrappedIcon = useMemo(() => {
+    return icon ? (
+      <IconWrapper text={hasText} iconPosition={iconPosition} size={size}>
+        <Icon icon={icon} size={iSize} notransition />
+      </IconWrapper>
+    ) : null;
+  }, [hasText, iSize, icon, iconPosition, size]);
 
   return (
     <StyledButton
