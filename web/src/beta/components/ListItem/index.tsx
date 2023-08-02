@@ -71,7 +71,7 @@ const Inner = styled.button<{ border?: boolean; isSelected?: boolean; clamp?: Cl
   width: 100%;
   min-height: 38px;
   align-items: center;
-  border: 1px solid ${({ border }) => (border ? "#383838" : "transparent")};
+  border: 1px solid ${({ border, theme }) => (border ? theme.outline.weakest : "transparent")};
   border-radius: ${({ clamp }) =>
     clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
   box-sizing: border-box;
@@ -79,9 +79,9 @@ const Inner = styled.button<{ border?: boolean; isSelected?: boolean; clamp?: Cl
   background: ${({ theme, isSelected }) => (isSelected ? theme.select.main : "inherit")};
   transition: all 0.3s;
 
-  ${({ isSelected }) => isSelected && `background-color: #3B3CD0;`}
+  ${({ isSelected, theme }) => isSelected && `background-color:` + theme.select.main}
   :hover {
-    ${({ isSelected }) => !isSelected && `background-color: #232226;`}
+    ${({ isSelected, theme }) => !isSelected && `background-color:` + theme.bg[3]}
   }
 `;
 
@@ -100,7 +100,7 @@ const Button = styled.button<{ clamp?: Clamp }>`
   transform: translateY(-50%);
   padding: 4px;
   margin-left: -1px;
-  color: #4a4a4a;
+  color: ${({ theme }) => theme.content.weak};
   border-radius: ${({ clamp }) =>
     clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
 
