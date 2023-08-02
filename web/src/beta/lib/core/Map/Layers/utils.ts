@@ -8,7 +8,7 @@ export const deepAssign = <O extends Record<string, any>>(obj: O, src: O) => {
         if (Object.hasOwn(src, k) && srcV === undefined) {
           return undefined;
         }
-        if (srcV === undefined || (isObject(srcV) && Object.keys(srcV).length === 0)) {
+        if (srcV === undefined) {
           return [k, v];
         }
 
