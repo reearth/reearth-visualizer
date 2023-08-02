@@ -24,9 +24,11 @@ type Props = {
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
   const {
     selectedDevice,
+    selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
     handleDeviceChange,
+    handleProjectTypeChange,
     handleWidgetEditorToggle,
   } = useHooks({ tab });
 
@@ -55,13 +57,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   const { rightPanel } = useRightPanel({ tab, sceneId });
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
+    projectId,
     selectedDevice,
+    selectedProjectType,
     showWidgetEditor,
+    handleProjectTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
   });
-
-  const isStory = tab === "story";
 
   return (
     <DndProvider>
@@ -85,7 +88,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
           <Center>
             {secondaryNavbar}
             <CenterContents hasNav={!!secondaryNavbar}>
-              {isStory && (
+              {selectedProjectType === "story" && (
                 <StoryPanel
                   selectedStory={selectedStory}
                   selectedPage={selectedPage}
