@@ -185,8 +185,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
         useDepthPicking={false}
-        maximumRenderTimeChange={0}
-        requestRenderMode={true}
         debugShowFramesPerSecond={!!property?.render?.debugFramePerSecond}
       />
       <SkyBox show={property?.default?.skybox ?? true} />
