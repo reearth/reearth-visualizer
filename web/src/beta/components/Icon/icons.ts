@@ -32,6 +32,7 @@ import Help from "./Icons/help.svg";
 import CheckMark from "./Icons/checkMark.svg";
 import Plus from "./Icons/plus.svg";
 import Minus from "./Icons/minus.svg";
+import Alert from "./Icons/alert.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -132,6 +133,7 @@ export default {
   workspaces: Workspaces,
   checkmark: CheckMark,
   minus: Minus,
+  alert: Alert,
   logo: Logo,
   logoColorful: LogoColorful,
   desktop: Desktop,
