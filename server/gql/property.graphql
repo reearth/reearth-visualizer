@@ -58,6 +58,8 @@ enum PropertySchemaFieldUI {
   FILE
   CAMERA_POSE
   DATETIME
+  MARGIN
+  PADDING
 }
 
 type PropertySchemaFieldChoice {
@@ -190,6 +192,7 @@ enum ValueType {
   COORDINATES
   POLYGON
   RECT
+  SPACING
 }
 
 # InputType

@@ -1176,6 +1176,13 @@ type SignupPayload struct {
 	Team *Team `json:"team"`
 }
 
+type Spacing struct {
+	Top    float64 `json:"top"`
+	Bottom float64 `json:"bottom"`
+	Left   float64 `json:"left"`
+	Right  float64 `json:"right"`
+}
+
 type Story struct {
 	ID                ID                `json:"id"`
 	Title             string            `json:"title"`
@@ -1843,6 +1850,8 @@ const (
 	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
 	PropertySchemaFieldUICameraPose PropertySchemaFieldUI = "CAMERA_POSE"
 	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
+	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
+	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -1857,11 +1866,13 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIFile,
 	PropertySchemaFieldUICameraPose,
 	PropertySchemaFieldUIDatetime,
+	PropertySchemaFieldUIMargin,
+	PropertySchemaFieldUIPadding,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
 		return true
 	}
 	return false
@@ -2079,6 +2090,7 @@ const (
 	ValueTypeCoordinates  ValueType = "COORDINATES"
 	ValueTypePolygon      ValueType = "POLYGON"
 	ValueTypeRect         ValueType = "RECT"
+	ValueTypeSpacing      ValueType = "SPACING"
 )
 
 var AllValueType = []ValueType{
@@ -2094,11 +2106,12 @@ var AllValueType = []ValueType{
 	ValueTypeCoordinates,
 	ValueTypePolygon,
 	ValueTypeRect,
+	ValueTypeSpacing,
 }
 
 func (e ValueType) IsValid() bool {
 	switch e {
-	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect:
+	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing:
 		return true
 	}
 	return false
