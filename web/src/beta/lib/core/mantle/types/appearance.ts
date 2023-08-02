@@ -132,6 +132,8 @@ export type ModelAppearance = {
   near?: number;
   far?: number;
   pbr?: boolean;
+  metalness?: number;
+  roughness?: number;
   specularEnvironmentMaps?: string;
   sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
   imageBasedLightIntensity?: number;
@@ -151,6 +153,8 @@ export type Cesium3DTilesAppearance = {
   pointSize?: number;
   meta?: unknown;
   pbr?: boolean;
+  roughness?: number;
+  metalness?: number;
   specularEnvironmentMaps?: string;
   sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
   imageBasedLightIntensity?: number;

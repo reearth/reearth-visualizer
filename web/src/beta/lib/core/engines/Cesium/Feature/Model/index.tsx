@@ -15,7 +15,7 @@ import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import { useSceneEvent } from "../../hooks/useSceneEvent";
-import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
+import { CustomPBRShader } from "../../Shaders/CustomShaders/CustomPBRSHader";
 import {
   EntityExt,
   extractSimpleLayerData,
@@ -81,6 +81,8 @@ export default function Model({
     bearing,
     silhouetteSize = 1,
     pbr,
+    roughness,
+    metalness,
   } = property ?? {};
 
   const actualUrl = useMemo(() => model || url || data?.url, [model, url, data?.url]);
@@ -173,6 +175,17 @@ export default function Model({
     }
   }, [imageBasedLighting]);
 
+  const customShader = useMemo(
+    () =>
+      pbr === false
+        ? new CustomPBRShader({
+            metalness,
+            roughness,
+          })
+        : undefined,
+    [pbr, metalness, roughness],
+  );
+
   // if data type is gltf, layer should be rendered. Otherwise only features should be rendererd.
   return (isGltfData ? feature : !feature) || !isVisible || !show || !actualUrl ? null : (
     <EntityExt
@@ -188,7 +201,7 @@ export default function Model({
         uri={actualUrl}
         scale={scale}
         shadows={shadowMode(shadows)}
-        customShader={pbr === false ? NonPBRLightingShader : undefined}
+        customShader={customShader}
         colorBlendMode={colorBlendMode(colorBlend)}
         colorBlendAmount={colorBlendAmount}
         color={modelColor}

@@ -3,9 +3,9 @@ import { Cesium3DTileset } from "resium";
 
 import type { Cesium3DTilesAppearance, ComputedLayer } from "../../..";
 import { colorBlendModeFor3DTile, shadowMode } from "../../common";
-import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
+import { CustomPBRShader } from "../../Shaders/CustomShaders/CustomPBRSHader";
 import Box from "../Box";
-import { type FeatureComponentConfig, type FeatureProps } from "../utils";
+import { toColor, type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 import { useHooks } from "./hooks";
 
@@ -24,7 +24,7 @@ function Tileset({
   evalFeature,
   ...props
 }: Props): JSX.Element | null {
-  const { shadows, colorBlendMode, pbr } = property ?? {};
+  const { shadows, colorBlendMode, pbr, roughness, metalness, color } = property ?? {};
   const boxId = `${layer?.id}_box`;
   const { tilesetUrl, ref, style, clippingPlanes, builtinBoxProps, imageBasedLighting } = useHooks({
     id,
@@ -46,12 +46,24 @@ function Tileset({
   );
   const boxLayer = useMemo(() => ({ ...layer, id: boxId }), [layer, boxId]);
 
+  const customShader = useMemo(
+    () =>
+      pbr === false
+        ? new CustomPBRShader({
+            color: toColor(color)?.toBytes(),
+            metalness,
+            roughness,
+          })
+        : undefined,
+    [pbr, metalness, roughness, color],
+  );
+
   return !isVisible || !tilesetUrl ? null : (
     <>
       <Cesium3DTileset
         ref={ref}
         url={tilesetUrl}
-        customShader={pbr === false ? NonPBRLightingShader : undefined}
+        customShader={customShader}
         style={style}
         shadows={shadowMode(shadows)}
         clippingPlanes={clippingPlanes}
