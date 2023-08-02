@@ -5,7 +5,11 @@ import { UnsafeBuiltinPlugin } from "../../../types";
 
 export type UnsafeBuiltinBlocks<T = unknown> = Record<string, T>;
 
-const unsafeBuiltinPlugins = (await import("src/beta/lib/unsafeBuiltinPlugins")).default;
+let unsafeBuiltinPlugins;
+
+(async () => {
+  unsafeBuiltinPlugins = (await import("src/beta/lib/unsafeBuiltinPlugins")).default;
+})();
 
 export const unsafeBuiltinBlocks = processUnsafeBuiltinBlocks(unsafeBuiltinPlugins);
 
