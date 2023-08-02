@@ -1,5 +1,5 @@
 import useTransition, { TransitionStatus } from "@rot1024/use-transition";
-import { ReactNode, useRef, useCallback } from "react";
+import { ReactNode, useRef, useCallback, useMemo } from "react";
 import { useClickAway, useKeyPressEvent } from "react-use";
 
 import Icon from "@reearth/beta/components/Icon";
@@ -19,6 +19,11 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, ch
   const ref = useRef<HTMLDivElement>(null);
   useClickAway(ref, () => onClose?.());
 
+  const modalWidth = useMemo(
+    () => (size === "sm" ? "416px" : size === "lg" ? "778px" : "572px"),
+    [size],
+  );
+
   const state = useTransition(!!isVisible, 300, {
     mountOnEnter: true,
     unmountOnExit: true,
@@ -32,17 +37,19 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, ch
 
   return state === "unmounted" ? null : (
     <Bg state={state}>
-      <Wrapper className={className} ref={ref} size={size}>
-        {!!title && (
-          <HeaderWrapper>
-            <ModalTitle size="body" weight="regular" color="#E0E0E0">
-              {title}
-            </ModalTitle>
-            {onClose && <CloseIcon icon="cancel" onClick={onClose} />}
-          </HeaderWrapper>
-        )}
-        <InnerWrapper>{children}</InnerWrapper>
-      </Wrapper>
+      <CenteredWrapper width={modalWidth}>
+        <Wrapper className={className} ref={ref} width={modalWidth}>
+          {!!title && (
+            <HeaderWrapper>
+              <ModalTitle size="body" weight="regular" color="#E0E0E0">
+                {title}
+              </ModalTitle>
+              {onClose && <CloseIcon icon="cancel" onClick={onClose} />}
+            </HeaderWrapper>
+          )}
+          <InnerWrapper>{children}</InnerWrapper>
+        </Wrapper>
+      </CenteredWrapper>
     </Bg>
   );
 };
@@ -61,13 +68,21 @@ const Bg = styled.div<{ state: TransitionStatus }>`
   opacity: ${({ state }) => (state === "entered" || state === "entering" ? 1 : 0)};
 `;
 
-const Wrapper = styled.div<{ size?: string }>`
-  margin: ${({ size }) => (size === "sm" ? "15%" : size === "lg" ? "4%" : "8%")} auto;
-  padding-top: 36px;
+const CenteredWrapper = styled.div<{ width?: string }>`
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+  width: ${({ width }) => width};
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const Wrapper = styled.div<{ width?: string }>`
   border-radius: 8px;
   background: #161616;
-  width: ${({ size }) => (size === "sm" ? "372px" : size === "lg" ? "684px" : "620px")};
-  position: relative;
+  width: ${({ width }) => width};
 `;
 
 const InnerWrapper = styled.div`
@@ -93,9 +108,5 @@ const HeaderWrapper = styled.div`
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
   background: #393939;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
 `;
 export default Modal;

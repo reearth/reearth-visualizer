@@ -5,9 +5,12 @@ import { UnsafeBuiltinPlugin } from "../../../types";
 
 export type UnsafeBuiltinBlocks<T = unknown> = Record<string, T>;
 
-const unsafeBuiltinPlugins = (
-  await import(/* @vite-ignore */ "@reearth/beta/lib/unsafeBuiltinPlugins")
-).default;
+let unsafeBuiltinPlugins;
+
+(async () => {
+  unsafeBuiltinPlugins = (await import(/* @vite-ignore */ "src/beta/lib/unsafeBuiltinPlugins"))
+    .default;
+})();
 
 export const unsafeBuiltinBlocks = processUnsafeBuiltinBlocks(unsafeBuiltinPlugins);
 
