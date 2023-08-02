@@ -84,7 +84,7 @@ export async function loadExtensions(urls?: string[]): Promise<Extensions | unde
 
   for (const url of urls) {
     try {
-      const newExtensions: Extension[] = (await import(url)).default;
+      const newExtensions: Extension[] = (await import(/* @vite-ignore */ url)).default;
       newExtensions.forEach(ext => {
         if (ext.type === "dataset-import") datasetImport.push(ext as Extension<"dataset-import">);
         else if (ext.type === "publication") publication.push(ext as Extension<"publication">);

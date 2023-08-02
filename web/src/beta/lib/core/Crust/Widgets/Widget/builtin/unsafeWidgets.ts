@@ -10,7 +10,8 @@ export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 let unsafeBuiltinPlugins;
 
 (async () => {
-  unsafeBuiltinPlugins = (await import("src/beta/lib/unsafeBuiltinPlugins")).default;
+  unsafeBuiltinPlugins = (await import(/* @vite-ignore */ "src/beta/lib/unsafeBuiltinPlugins"))
+    .default;
 })();
 
 export const unsafeBuiltinWidgets = processUnsafeBuiltinWidgets(unsafeBuiltinPlugins);
