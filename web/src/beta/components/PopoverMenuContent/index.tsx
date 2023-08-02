@@ -5,6 +5,7 @@ export type MenuItem = {
   name: string;
   isSelected?: boolean;
   icon?: Icons;
+  disabled?: boolean;
   onClick?: () => void;
 };
 
@@ -44,6 +45,7 @@ const PopoverMenuContent: React.FC<Props> = ({ size, width, items }) => {
             isFirst={i === 0}
             isLast={i === items.length - 1}
             size={size}
+            disabled={!!item.disabled}
             onClick={item.onClick}>
             {item.icon && (
               <SLeftIcon>
@@ -77,14 +79,15 @@ const SRow = styled.button<
   display: flex;
   align-items: center;
   gap: 8px;
-  color: ${({ theme }) => theme.content.main};
+  color: ${({ theme, disabled }) => (disabled ? theme.content.weak : theme.content.main)};
+  ${({ disabled }) => disabled && "cursor: default;"}
 
   ${({ isFirst }) => !isFirst && "border-top: 1px solid transparent;"}
   ${({ isLast }) => !isLast && "border-bottom: 1px solid transparent;"}
   ${({ size }) => stylesBySize[size].row ?? ""}
   
   :hover {
-    background: ${({ isSelected, theme }) => !isSelected && theme.bg[2]};
+    background: ${({ isSelected, theme, disabled }) => !disabled && !isSelected && theme.bg[2]};
   }
 `;
 

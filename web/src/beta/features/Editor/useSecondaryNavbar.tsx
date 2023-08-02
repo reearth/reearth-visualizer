@@ -1,21 +1,27 @@
 import { ReactNode, useMemo } from "react";
 
-import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
+import PublishNav, { type ProjectType } from "@reearth/beta/features/Editor/tabs/publish/Nav";
 import WidgetNav, { type Device } from "@reearth/beta/features/Editor/tabs/widgets/Nav";
 import { Tab } from "@reearth/beta/features/Navbar";
 
 type Props = {
   tab: Tab;
-  selectedDevice: Device;
+  projectId?: string;
   showWidgetEditor?: boolean;
+  selectedDevice: Device;
+  selectedProjectType?: ProjectType;
+  handleProjectTypeChange: (type: ProjectType) => void;
   handleDeviceChange: (device: Device) => void;
   handleWidgetEditorToggle: () => void;
 };
 
 export default ({
   tab,
-  selectedDevice,
+  projectId,
   showWidgetEditor,
+  selectedDevice,
+  selectedProjectType,
+  handleProjectTypeChange,
   handleDeviceChange,
   handleWidgetEditorToggle,
 }: Props) => {
@@ -31,13 +37,28 @@ export default ({
           />
         );
       case "publish":
-        return <SecondaryNav>TODO: Publishing navbar</SecondaryNav>;
+        return (
+          <PublishNav
+            projectId={projectId}
+            selectedProjectType={selectedProjectType}
+            onProjectTypeChange={handleProjectTypeChange}
+          />
+        );
       case "scene":
       case "story":
       default:
         return undefined;
     }
-  }, [tab, selectedDevice, showWidgetEditor, handleDeviceChange, handleWidgetEditorToggle]);
+  }, [
+    tab,
+    projectId,
+    selectedDevice,
+    selectedProjectType,
+    showWidgetEditor,
+    handleDeviceChange,
+    handleWidgetEditorToggle,
+    handleProjectTypeChange,
+  ]);
 
   return {
     secondaryNavbar,
