@@ -5,9 +5,7 @@ import { UnsafeBuiltinPlugin } from "../../../types";
 
 export type UnsafeBuiltinBlocks<T = unknown> = Record<string, T>;
 
-const unsafeBuiltinPlugins = (
-  await import(/* @vite-ignore */ "@reearth/beta/lib/unsafeBuiltinPlugins")
-).default;
+const unsafeBuiltinPlugins = (await import("@reearth/beta/lib/unsafeBuiltinPlugins")).default;
 
 export const unsafeBuiltinBlocks = processUnsafeBuiltinBlocks(unsafeBuiltinPlugins);
 
