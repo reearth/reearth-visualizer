@@ -35,26 +35,29 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   const {
     selectedStory,
     selectedPage,
-    onPageSelect,
-    onPageDuplicate,
-    onPageDelete,
-    onPageAdd,
-    onPageMove,
+    handlePageSelect,
+    handlePageDuplicate,
+    handlePageDelete,
+    handlePageAdd,
+    handlePageMove,
   } = useStorytelling({
     sceneId,
     stories,
   });
+
   const { leftPanel } = useLeftPanel({
     tab,
     selectedStory,
     selectedPage,
-    onPageSelect,
-    onPageDuplicate,
-    onPageDelete,
-    onPageAdd,
-    onPageMove,
+    onPageSelect: handlePageSelect,
+    onPageDuplicate: handlePageDuplicate,
+    onPageDelete: handlePageDelete,
+    onPageAdd: handlePageAdd,
+    onPageMove: handlePageMove,
   });
+
   const { rightPanel } = useRightPanel({ tab, sceneId });
+
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     projectId,
@@ -92,7 +95,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
                 <StoryPanel
                   selectedStory={selectedStory}
                   selectedPage={selectedPage}
-                  onPageSelect={onPageSelect}
+                  onPageSelect={handlePageSelect}
                 />
               )}
               <VisualizerWrapper tab={tab} visualizerWidth={visualizerWidth}>

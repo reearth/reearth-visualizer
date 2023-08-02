@@ -4,6 +4,8 @@ import PageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicato
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 import { styled } from "@reearth/services/theme";
 
+import StoryPage from "./Page";
+
 type Props = {
   selectedStory?: StoryFragmentFragment;
   selectedPage?: StoryPageFragmentFragment;
@@ -32,9 +34,11 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
           maxPage={pageInfo.maxPage}
         />
       )}
-      <Content>
-        <div>StoryPanel</div>
-      </Content>
+      <PageWrapper>
+        {selectedStory?.pages.map(p => (
+          <StoryPage key={p.id} content={p.id} />
+        ))}
+      </PageWrapper>
     </Wrapper>
   );
 };
@@ -42,10 +46,14 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
 export default StoryPanel;
 
 const Wrapper = styled.div`
-  width: 462px;
   background-color: #f1f1f1;
+  color: ${({ theme }) => theme.content.weak};
 `;
 
-const Content = styled.div`
-  padding: 10px 24px;
+const PageWrapper = styled.div`
+  height: calc(100% - 8px);
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  width: 442px;
 `;
