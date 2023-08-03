@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -131,22 +131,22 @@
           },
           "schema": {
             "$ref": "#/definitions/propertySchemaGroup"
-          },
-          "required": [
-            "id",
-            "name",
-            "type"
-          ]
-        }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type"
+        ]
       }
-    },
-    "required": [
-      "id",
-      "name",
-      "system",
-      "extensions"
-    ]
+    }
   },
+  "required": [
+    "id",
+    "name",
+    "system",
+    "extensions"
+  ],
   "definitions": {
     "propertySchemaGroup": {
       "type": "object",
@@ -224,7 +224,6 @@
                       "type": "string"
                     },
                     "defaultValue": {
-                      "type": null
                     },
                     "choices": {
                       "type": "array",
@@ -288,18 +287,16 @@
             },
             "latlng": {
               "$ref": "#/definitions/propertyPointer"
-            },
-            "required": [
-            ]
-          },
-          "version": {
-            "type": "number"
+            }
           }
         },
-        "required": [
-          "groups"
-        ]
-      }
+        "version": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "groups"
+      ]
     },
     "propertyCondition": {
       "type": "object",
@@ -317,7 +314,6 @@
           ]
         },
         "value": {
-          "type": null
         }
       },
       "required": [
