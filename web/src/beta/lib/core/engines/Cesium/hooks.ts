@@ -785,12 +785,9 @@ export default ({
   }, [property, requestingRenderMode]);
 
   // force render when timeline is animating or is shouldRender
-  // set maximumRenderTimeChange to 0 when is timeline animating
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
-    viewer.scene.maximumRenderTimeChange = !property?.timeline?.animation ? Infinity : 0;
-
     if (requestingRenderMode) {
       requestingRenderMode.current =
         isLayerDragging || shouldRender
@@ -799,7 +796,7 @@ export default ({
           ? REQUEST_RENDER_ONCE
           : NO_REQUEST_RENDER;
     }
-  }, [property?.timeline?.animation, isLayerDragging, shouldRender, requestingRenderMode]);
+  }, [isLayerDragging, shouldRender, requestingRenderMode]);
 
   return {
     backgroundColor,
