@@ -7,6 +7,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/samber/lo"
 )
 
 func createProject(e *httpexpect.Expect) string {
@@ -92,6 +93,9 @@ func fetchSceneForStories(e *httpexpect.Expect, sId string) (GraphQLRequest, *ht
 				  swipeableLayers {
 					id
 				  }
+				  blocks {
+					id
+		  		  }
 				}
 		 	  }
 			  __typename
@@ -545,6 +549,147 @@ func removeLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId strin
 	return requestBody, res, layerId
 }
 
+func createBlock(e *httpexpect.Expect, sId, storyId, pageId, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateStoryBlock",
+		Query: `mutation CreateStoryBlock($storyId: ID!, $pageId: ID!, $pluginId: ID!, $extensionId: ID!, $index: Int) {
+			createStoryBlock( input: {storyId: $storyId, pageId: $pageId, pluginId: $pluginId, extensionId: $extensionId, index: $index} ) { 
+				story {
+					id
+					pages {
+						id
+					}
+				}
+				page {
+					id
+					title
+					swipeable
+					blocks {
+						id
+					}
+				}
+				block {
+					id
+				}
+			}
+		}`,
+		Variables: map[string]any{
+			"sceneId":     sId,
+			"storyId":     storyId,
+			"pageId":      pageId,
+			"pluginId":    pluginId,
+			"extensionId": extensionId,
+			"index":       idx,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Value("data").Object().
+		Value("createStoryBlock").Object().
+		Value("page").Object().
+		Value("blocks").Array().NotEmpty()
+
+	return requestBody, res, res.Path("$.data.createStoryBlock.block.id").Raw().(string)
+}
+
+func removeBlock(e *httpexpect.Expect, storyId, pageId, blockId string) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "RemoveStoryBlock",
+		Query: `mutation RemoveStoryBlock($storyId: ID!, $pageId: ID!, $blockId: ID!) {
+			removeStoryBlock( input: {storyId: $storyId, pageId: $pageId, blockId: $blockId} ) { 
+				story {
+					id
+					pages {
+						id
+					}
+				}
+				page {
+					id
+					title
+					swipeable
+					blocks {
+						id
+					}
+				}
+				blockId
+			}
+		}`,
+		Variables: map[string]any{
+			"storyId": storyId,
+			"pageId":  pageId,
+			"blockId": blockId,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotContains(blockId)
+
+	return requestBody, res, res.Path("$.data.removeStoryBlock.blockId").Raw().(string)
+}
+
+func moveBlock(e *httpexpect.Expect, storyId, pageId, blockId string, index int) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "MoveStoryBlock",
+		Query: `mutation MoveStoryBlock($storyId: ID!, $pageId: ID!, $blockId: ID!, $index: Int!) {
+			moveStoryBlock( input: {storyId: $storyId, pageId: $pageId, blockId: $blockId, index: $index} ) { 
+				story {
+					id
+					pages {
+						id
+					}
+				}
+				page {
+					id
+					title
+					swipeable
+					blocks {
+						id
+					}
+				}
+				blockId
+			}
+		}`,
+		Variables: map[string]any{
+			"storyId": storyId,
+			"pageId":  pageId,
+			"blockId": blockId,
+			"index":   index,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Path("$.data.moveStoryBlock.page.blocks[:].id").Array().Contains(blockId)
+
+	return requestBody, res, res.Path("$.data.moveStoryBlock.blockId").Raw().(string)
+}
+
 func TestStoryCRUD(t *testing.T) {
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
@@ -712,4 +857,53 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 	_, res = fetchSceneForStories(e, sId)
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
+}
+
+func TestStoryPageBlocksCRUD(t *testing.T) {
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	pId := createProject(e)
+
+	_, _, sId := createScene(e, pId)
+
+	_, _, storyId := createStory(e, sId, "test", 0)
+
+	_, _, pageId := createPage(e, sId, storyId, "test", true)
+
+	_, res := fetchSceneForStories(e, sId)
+	res.Object().
+		Path("$.data.node.stories[0].pages[0].blocks").Equal([]any{})
+
+	_, _, blockId1 := createBlock(e, sId, storyId, pageId, "reearth", "storyBlock", nil)
+	_, _, blockId2 := createBlock(e, sId, storyId, pageId, "reearth", "storyBlock", nil)
+
+	_, res = fetchSceneForStories(e, sId)
+	res.Object().
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockId1, blockId2})
+
+	_, _, _ = moveBlock(e, storyId, pageId, blockId1, 1)
+
+	_, res = fetchSceneForStories(e, sId)
+	res.Object().
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockId2, blockId1})
+
+	_, _, blockId3 := createBlock(e, sId, storyId, pageId, "reearth", "storyBlock", lo.ToPtr(1))
+
+	_, res = fetchSceneForStories(e, sId)
+	res.Object().
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockId2, blockId3, blockId1})
+
+	removeBlock(e, storyId, pageId, blockId1)
+	removeBlock(e, storyId, pageId, blockId2)
+	removeBlock(e, storyId, pageId, blockId3)
+
+	_, res = fetchSceneForStories(e, sId)
+	res.Object().
+		Path("$.data.node.stories[0].pages[0].blocks").Equal([]any{})
+
 }

@@ -710,10 +710,10 @@ type MoveStoryBlockInput struct {
 }
 
 type MoveStoryBlockPayload struct {
-	Block *StoryBlock `json:"block"`
-	Page  *StoryPage  `json:"page"`
-	Story *Story      `json:"story"`
-	Index int         `json:"index"`
+	Page    *StoryPage `json:"page"`
+	Story   *Story     `json:"story"`
+	BlockID ID         `json:"blockId"`
+	Index   int        `json:"index"`
 }
 
 type MoveStoryInput struct {
@@ -1195,17 +1195,13 @@ func (Story) IsNode() {}
 
 type StoryBlock struct {
 	ID              ID               `json:"id"`
-	PropertyID      ID               `json:"propertyId"`
 	PluginID        ID               `json:"pluginId"`
-	ExtensionID     ID               `json:"extensionId"`
-	LinkedDatasetID *ID              `json:"linkedDatasetId"`
-	PageID          ID               `json:"pageId"`
-	Page            *StoryPage       `json:"page"`
-	Property        *Property        `json:"property"`
 	Plugin          *Plugin          `json:"plugin"`
+	ExtensionID     ID               `json:"extensionId"`
 	Extension       *PluginExtension `json:"extension"`
-	SceneID         ID               `json:"sceneId"`
-	Scene           *Scene           `json:"scene"`
+	PropertyID      ID               `json:"propertyId"`
+	Property        *Property        `json:"property"`
+	LinkedDatasetID *ID              `json:"linkedDatasetId"`
 }
 
 func (StoryBlock) IsNode() {}

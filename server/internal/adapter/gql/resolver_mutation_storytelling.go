@@ -2,6 +2,7 @@ package gql
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -302,13 +303,80 @@ func (r *mutationResolver) RemovePageLayer(ctx context.Context, input gqlmodel.P
 }
 
 func (r *mutationResolver) CreateStoryBlock(ctx context.Context, input gqlmodel.CreateStoryBlockInput) (*gqlmodel.CreateStoryBlockPayload, error) {
-	return nil, ErrNotImplemented
+	sId, pId, err := gqlmodel.ToID2[id.Story, id.Page](input.StoryID, input.PageID)
+	if err != nil {
+		return nil, err
+	}
+
+	pid, err := gqlmodel.ToPluginID(input.PluginID)
+	if err != nil {
+		return nil, err
+	}
+
+	story, page, block, idx, err := usecases(ctx).StoryTelling.CreateBlock(ctx, interfaces.CreateBlockParam{
+		StoryID:     sId,
+		PageID:      pId,
+		PluginID:    pid,
+		ExtensionID: id.PluginExtensionID(input.ExtensionID),
+		Index:       input.Index,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.CreateStoryBlockPayload{
+		Block: gqlmodel.ToBlock(block),
+		Page:  gqlmodel.ToPage(page),
+		Story: gqlmodel.ToStory(story),
+		Index: idx,
+	}, nil
 }
 
 func (r *mutationResolver) MoveStoryBlock(ctx context.Context, input gqlmodel.MoveStoryBlockInput) (*gqlmodel.MoveStoryBlockPayload, error) {
-	return nil, ErrNotImplemented
+	sId, pId, bId, err := gqlmodel.ToID3[id.Story, id.Page, id.Block](input.StoryID, input.PageID, input.BlockID)
+	if err != nil {
+		return nil, err
+	}
+
+	story, page, blockId, idx, err := usecases(ctx).StoryTelling.MoveBlock(ctx, interfaces.MoveBlockParam{
+		StoryID: sId,
+		PageID:  pId,
+		BlockID: bId,
+		Index:   input.Index,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.MoveStoryBlockPayload{
+		Story:   gqlmodel.ToStory(story),
+		Page:    gqlmodel.ToPage(page),
+		BlockID: gqlmodel.IDFrom(*blockId),
+		Index:   idx,
+	}, nil
 }
 
 func (r *mutationResolver) RemoveStoryBlock(ctx context.Context, input gqlmodel.RemoveStoryBlockInput) (*gqlmodel.RemoveStoryBlockPayload, error) {
-	return nil, ErrNotImplemented
+	sId, pId, bId, err := gqlmodel.ToID3[id.Story, id.Page, id.Block](input.StoryID, input.PageID, input.BlockID)
+	if err != nil {
+		return nil, err
+	}
+
+	story, page, removedBlockId, err := usecases(ctx).StoryTelling.RemoveBlock(ctx, interfaces.RemoveBlockParam{
+		StoryID: sId,
+		PageID:  pId,
+		BlockID: bId,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	if removedBlockId == nil {
+		return nil, errors.New("block not found")
+	}
+
+	return &gqlmodel.RemoveStoryBlockPayload{
+		BlockID: gqlmodel.IDFrom(*removedBlockId),
+		Page:    gqlmodel.ToPage(page),
+		Story:   gqlmodel.ToStory(story),
+	}, nil
 }
