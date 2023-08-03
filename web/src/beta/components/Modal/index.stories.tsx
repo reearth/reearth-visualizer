@@ -85,8 +85,8 @@ const sidebarTab3: SidebarTab = {
   id: "3",
   label: "Tab3",
   content: TabContent3,
-  tabButton1: <Button text="Ok" large />,
-  tabButton2: <Button text="Cancel" large />,
+  tabButton1: <Button text="Ok" />,
+  tabButton2: <Button text="Cancel" />,
 };
 
 export const Small: Story = {
