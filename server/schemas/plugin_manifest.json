@@ -322,7 +322,10 @@
             "block",
             "visualizer",
             "infobox",
-            "cluster"
+            "cluster",
+            "story",
+            "storyPage",
+            "storyBlock"
           ]
         },
         "singleOnly": {
@@ -386,6 +389,9 @@
       "$id": "#root",
       "type": "object",
       "properties": {
+        "$schema": {
+          "type": "string"
+        },
         "id": {
           "$ref": "#/definitions/id"
         },
