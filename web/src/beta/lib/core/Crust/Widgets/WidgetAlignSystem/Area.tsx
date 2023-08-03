@@ -120,7 +120,7 @@ export default function Area({
       editorStyle={{
         flexWrap: "wrap",
         padding: `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`,
-        background: backgroundColor
+        backgroundColor: backgroundColor
           ? backgroundColor
           : area === "middle"
           ? theme.placeHolder.main_2

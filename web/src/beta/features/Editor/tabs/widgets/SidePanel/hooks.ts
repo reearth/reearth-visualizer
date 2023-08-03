@@ -2,7 +2,7 @@ import { useReactiveVar } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { useWidgetsFetcher } from "@reearth/services/api";
-import { selectedWidgetVar } from "@reearth/services/state";
+import { selectedWidgetVar, selectedWidgetAreaVar } from "@reearth/services/state";
 
 export default ({ sceneId }: { sceneId?: string }) => {
   const { useInstallableWidgetsQuery, useInstalledWidgetsQuery, useAddWidget, useRemoveWidget } =
@@ -11,6 +11,7 @@ export default ({ sceneId }: { sceneId?: string }) => {
   const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
 
   const selectedWidget = useReactiveVar(selectedWidgetVar);
+  const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
 
   const propertyItems = useMemo(
     () => installedWidgets?.find(w => w.id === selectedWidget?.id)?.property.items,
@@ -49,6 +50,7 @@ export default ({ sceneId }: { sceneId?: string }) => {
 
   return {
     selectedWidget,
+    selectedWidgetArea,
     propertyItems,
     installedWidgets,
     installableWidgets,
