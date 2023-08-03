@@ -957,6 +957,13 @@ type ComplexityRoot struct {
 		User func(childComplexity int) int
 	}
 
+	Spacing struct {
+		Bottom func(childComplexity int) int
+		Left   func(childComplexity int) int
+		Right  func(childComplexity int) int
+		Top    func(childComplexity int) int
+	}
+
 	Story struct {
 		Alias             func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
@@ -6049,6 +6056,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SignupPayload.User(childComplexity), true
 
+	case "Spacing.bottom":
+		if e.complexity.Spacing.Bottom == nil {
+			break
+		}
+
+		return e.complexity.Spacing.Bottom(childComplexity), true
+
+	case "Spacing.left":
+		if e.complexity.Spacing.Left == nil {
+			break
+		}
+
+		return e.complexity.Spacing.Left(childComplexity), true
+
+	case "Spacing.right":
+		if e.complexity.Spacing.Right == nil {
+			break
+		}
+
+		return e.complexity.Spacing.Right(childComplexity), true
+
+	case "Spacing.top":
+		if e.complexity.Spacing.Top == nil {
+			break
+		}
+
+		return e.complexity.Spacing.Top(childComplexity), true
+
 	case "Story.alias":
 		if e.complexity.Story.Alias == nil {
 			break
@@ -7158,6 +7193,13 @@ type Camera {
   fov: Float!
 }
 
+type Spacing {
+  top: Float!
+  bottom: Float!
+  left: Float!
+  right: Float!
+}
+
 type Rect {
   west: Float!
   south: Float!
@@ -8039,6 +8081,8 @@ enum PropertySchemaFieldUI {
   FILE
   CAMERA_POSE
   DATETIME
+  MARGIN
+  PADDING
 }
 
 type PropertySchemaFieldChoice {
@@ -8171,6 +8215,7 @@ enum ValueType {
   COORDINATES
   POLYGON
   RECT
+  SPACING
 }
 
 # InputType
@@ -41612,6 +41657,182 @@ func (ec *executionContext) fieldContext_SignupPayload_team(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Spacing_top(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Spacing) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Spacing_top(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Top, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Spacing_top(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Spacing",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Spacing_bottom(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Spacing) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Spacing_bottom(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Bottom, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Spacing_bottom(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Spacing",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Spacing_left(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Spacing) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Spacing_left(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Left, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Spacing_left(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Spacing",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Spacing_right(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Spacing) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Spacing_right(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Right, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Spacing_right(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Spacing",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Story_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Story_id(ctx, field)
 	if err != nil {
@@ -61108,6 +61329,55 @@ func (ec *executionContext) _SignupPayload(ctx context.Context, sel ast.Selectio
 		case "team":
 
 			out.Values[i] = ec._SignupPayload_team(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var spacingImplementors = []string{"Spacing"}
+
+func (ec *executionContext) _Spacing(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Spacing) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, spacingImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Spacing")
+		case "top":
+
+			out.Values[i] = ec._Spacing_top(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "bottom":
+
+			out.Values[i] = ec._Spacing_bottom(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "left":
+
+			out.Values[i] = ec._Spacing_left(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "right":
+
+			out.Values[i] = ec._Spacing_right(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
