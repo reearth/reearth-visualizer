@@ -2017,23 +2017,56 @@ extensions:
     name: Story
     type: story
     description: Storytelling story
-    schema:
-      groups:
-        - id: default
-          title: Basic
-          fields:
   - id: storyPage
     name: Page
     type: storyPage
     description: Storytelling Page
     schema:
       groups:
-        - id: default
-          title: Basic
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+            - id: gap
+              title: Gap
+              type: number
+              suffix: px
+        - id: title
+          title: Title Setting
           fields:
             - id: title
               type: string
               title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+        - id: cameraAnimation
+          title: Camera Animation
+          fields:
+            - id: cameraPosition
+              type: camera
+              title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+            - id: cameraDelay
+              type: number
+              title: Delay
+              suffix: s
+              min: 0
+        - id: timePoint
+          title: Time Point Setting
+          fields:
+            - id: timePoint
+              type: string
+              ui: datetime
+              title: Time
   - id: storyBlock
     name: Block
     type: storyBlock
@@ -2046,3 +2079,179 @@ extensions:
             - id: title
               type: string
               title: Title
+  - id: textStoryBlock
+    name: Text Block
+    type: storyBlock
+    description: Storytelling Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+        - id: default
+          title: Text
+          fields:
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+  - id: mdTextStoryBlock
+    name: MD Test Block
+    type: storyBlock
+    description: Storytelling MD Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+        - id: default
+          title: MD Text
+          fields:
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+  - id: imageStoryBlock
+    name: Image Block
+    type: storyBlock
+    description: Storytelling Image Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+        - id: default
+          title: Image
+          fields:
+            - id: src
+              type: url
+              title: Image
+              ui: image
+  - id: videoStoryBlock
+    name: Video Block
+    type: storyBlock
+    description: Storytelling Video Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+        - id: default
+          title: Video
+          fields:
+            - id: src
+              type: url
+              title: Video
+              ui: video
+  - id: cameraButtonStoryBlock
+    name: Camera Button
+    type: storyBlock
+    description: Storytelling Camera Button
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+        - id: default
+          title: Camera Button
+          list: true
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: bgColor
+              type: string
+              title: Background Color
+              ui: color
+            - id: cameraPosition
+              type: camera
+              title: Camera position
+  - id: linkButtonStoryBlock
+    name: Link Button
+    type: storyBlock
+    description: Storytelling Link Button
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+        - id: default
+          title: Link Button
+          list: true
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: bgColor
+              type: string
+              title: Background Color
+              ui: color
+            - id: url
+              type: url
+              title: Link URL
+  - id: timelineStoryBlock
+    name: Timeline Block
+    type: storyBlock
+    description: Storytelling Timeline Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+        - id: default
+          title: Timeline
+          fields:
+            - id: currentTime
+              type: string
+              ui: datetime
+              title: Current Time
+            - id: startTime
+              type: string
+              ui: datetime
+              title: Start Time
+            - id: endTime
+              type: string
+              ui: datetime
+              title: End Time
+            - id: autoPlay
+              type: bool
+              title: Auto Play
+            - id: loop
+              type: bool
+              title: Loop
