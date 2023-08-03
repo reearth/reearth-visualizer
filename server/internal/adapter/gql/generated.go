@@ -514,10 +514,10 @@ type ComplexityRoot struct {
 	}
 
 	MoveStoryBlockPayload struct {
-		Block func(childComplexity int) int
-		Index func(childComplexity int) int
-		Page  func(childComplexity int) int
-		Story func(childComplexity int) int
+		BlockID func(childComplexity int) int
+		Index   func(childComplexity int) int
+		Page    func(childComplexity int) int
+		Story   func(childComplexity int) int
 	}
 
 	MoveStoryPagePayload struct {
@@ -984,14 +984,10 @@ type ComplexityRoot struct {
 		ExtensionID     func(childComplexity int) int
 		ID              func(childComplexity int) int
 		LinkedDatasetID func(childComplexity int) int
-		Page            func(childComplexity int) int
-		PageID          func(childComplexity int) int
 		Plugin          func(childComplexity int) int
 		PluginID        func(childComplexity int) int
 		Property        func(childComplexity int) int
 		PropertyID      func(childComplexity int) int
-		Scene           func(childComplexity int) int
-		SceneID         func(childComplexity int) int
 	}
 
 	StoryPage struct {
@@ -1478,10 +1474,9 @@ type StoryResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.Story) (*gqlmodel.Scene, error)
 }
 type StoryBlockResolver interface {
-	Property(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Property, error)
 	Plugin(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Plugin, error)
 
-	Scene(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Scene, error)
+	Property(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Property, error)
 }
 type StoryPageResolver interface {
 	Layers(ctx context.Context, obj *gqlmodel.StoryPage) ([]gqlmodel.Layer, error)
@@ -3325,12 +3320,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MoveLayerPayload.ToParentLayer(childComplexity), true
 
-	case "MoveStoryBlockPayload.block":
-		if e.complexity.MoveStoryBlockPayload.Block == nil {
+	case "MoveStoryBlockPayload.blockId":
+		if e.complexity.MoveStoryBlockPayload.BlockID == nil {
 			break
 		}
 
-		return e.complexity.MoveStoryBlockPayload.Block(childComplexity), true
+		return e.complexity.MoveStoryBlockPayload.BlockID(childComplexity), true
 
 	case "MoveStoryBlockPayload.index":
 		if e.complexity.MoveStoryBlockPayload.Index == nil {
@@ -6201,20 +6196,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.StoryBlock.LinkedDatasetID(childComplexity), true
 
-	case "StoryBlock.page":
-		if e.complexity.StoryBlock.Page == nil {
-			break
-		}
-
-		return e.complexity.StoryBlock.Page(childComplexity), true
-
-	case "StoryBlock.pageId":
-		if e.complexity.StoryBlock.PageID == nil {
-			break
-		}
-
-		return e.complexity.StoryBlock.PageID(childComplexity), true
-
 	case "StoryBlock.plugin":
 		if e.complexity.StoryBlock.Plugin == nil {
 			break
@@ -6242,20 +6223,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.StoryBlock.PropertyID(childComplexity), true
-
-	case "StoryBlock.scene":
-		if e.complexity.StoryBlock.Scene == nil {
-			break
-		}
-
-		return e.complexity.StoryBlock.Scene(childComplexity), true
-
-	case "StoryBlock.sceneId":
-		if e.complexity.StoryBlock.SceneID == nil {
-			break
-		}
-
-		return e.complexity.StoryBlock.SceneID(childComplexity), true
 
 	case "StoryPage.blocks":
 		if e.complexity.StoryPage.Blocks == nil {
@@ -8451,17 +8418,13 @@ type StoryPage implements Node {
 
 type StoryBlock implements Node {
   id: ID!
-  propertyId: ID!
   pluginId: ID!
-  extensionId: ID!
-  linkedDatasetId: ID
-  pageId: ID!
-  page: StoryPage!
-  property: Property
   plugin: Plugin
+  extensionId: ID!
   extension: PluginExtension
-  sceneId: ID!
-  scene: Scene
+  propertyId: ID!
+  property: Property
+  linkedDatasetId: ID
 }
 
 # InputType
@@ -8604,9 +8567,9 @@ type CreateStoryBlockPayload {
 }
 
 type MoveStoryBlockPayload {
-  block: StoryBlock!
   page: StoryPage!
   story: Story!
+  blockId: ID!
   index: Int!
 }
 
@@ -13484,28 +13447,20 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_block(ctx conte
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_StoryBlock_id(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_StoryBlock_propertyId(ctx, field)
 			case "pluginId":
 				return ec.fieldContext_StoryBlock_pluginId(ctx, field)
-			case "extensionId":
-				return ec.fieldContext_StoryBlock_extensionId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
-			case "pageId":
-				return ec.fieldContext_StoryBlock_pageId(ctx, field)
-			case "page":
-				return ec.fieldContext_StoryBlock_page(ctx, field)
-			case "property":
-				return ec.fieldContext_StoryBlock_property(ctx, field)
 			case "plugin":
 				return ec.fieldContext_StoryBlock_plugin(ctx, field)
+			case "extensionId":
+				return ec.fieldContext_StoryBlock_extensionId(ctx, field)
 			case "extension":
 				return ec.fieldContext_StoryBlock_extension(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_StoryBlock_sceneId(ctx, field)
-			case "scene":
-				return ec.fieldContext_StoryBlock_scene(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryBlock_propertyId(ctx, field)
+			case "property":
+				return ec.fieldContext_StoryBlock_property(ctx, field)
+			case "linkedDatasetId":
+				return ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type StoryBlock", field.Name)
 		},
@@ -24682,76 +24637,6 @@ func (ec *executionContext) fieldContext_MoveLayerPayload_index(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _MoveStoryBlockPayload_block(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MoveStoryBlockPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MoveStoryBlockPayload_block(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Block, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.StoryBlock)
-	fc.Result = res
-	return ec.marshalNStoryBlock2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryBlock(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_MoveStoryBlockPayload_block(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MoveStoryBlockPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_StoryBlock_id(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_StoryBlock_propertyId(ctx, field)
-			case "pluginId":
-				return ec.fieldContext_StoryBlock_pluginId(ctx, field)
-			case "extensionId":
-				return ec.fieldContext_StoryBlock_extensionId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
-			case "pageId":
-				return ec.fieldContext_StoryBlock_pageId(ctx, field)
-			case "page":
-				return ec.fieldContext_StoryBlock_page(ctx, field)
-			case "property":
-				return ec.fieldContext_StoryBlock_property(ctx, field)
-			case "plugin":
-				return ec.fieldContext_StoryBlock_plugin(ctx, field)
-			case "extension":
-				return ec.fieldContext_StoryBlock_extension(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_StoryBlock_sceneId(ctx, field)
-			case "scene":
-				return ec.fieldContext_StoryBlock_scene(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type StoryBlock", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _MoveStoryBlockPayload_page(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MoveStoryBlockPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MoveStoryBlockPayload_page(ctx, field)
 	if err != nil {
@@ -24889,6 +24774,50 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(ctx context
 				return ec.fieldContext_Story_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MoveStoryBlockPayload_blockId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MoveStoryBlockPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MoveStoryBlockPayload_blockId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BlockID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MoveStoryBlockPayload_blockId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MoveStoryBlockPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -28532,12 +28461,12 @@ func (ec *executionContext) fieldContext_Mutation_moveStoryBlock(ctx context.Con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "block":
-				return ec.fieldContext_MoveStoryBlockPayload_block(ctx, field)
 			case "page":
 				return ec.fieldContext_MoveStoryBlockPayload_page(ctx, field)
 			case "story":
 				return ec.fieldContext_MoveStoryBlockPayload_story(ctx, field)
+			case "blockId":
+				return ec.fieldContext_MoveStoryBlockPayload_blockId(ctx, field)
 			case "index":
 				return ec.fieldContext_MoveStoryBlockPayload_index(ctx, field)
 			}
@@ -42549,50 +42478,6 @@ func (ec *executionContext) fieldContext_StoryBlock_id(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _StoryBlock_propertyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_propertyId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PropertyID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StoryBlock_propertyId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StoryBlock",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _StoryBlock_pluginId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_StoryBlock_pluginId(ctx, field)
 	if err != nil {
@@ -42632,262 +42517,6 @@ func (ec *executionContext) fieldContext_StoryBlock_pluginId(ctx context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StoryBlock_extensionId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_extensionId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ExtensionID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StoryBlock_extensionId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StoryBlock",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StoryBlock_linkedDatasetId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LinkedDatasetID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StoryBlock_linkedDatasetId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StoryBlock",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StoryBlock_pageId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_pageId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StoryBlock_pageId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StoryBlock",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StoryBlock_page(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_page(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Page, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.StoryPage)
-	fc.Result = res
-	return ec.marshalNStoryPage2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryPage(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StoryBlock_page(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StoryBlock",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_StoryPage_id(ctx, field)
-			case "title":
-				return ec.fieldContext_StoryPage_title(ctx, field)
-			case "blocks":
-				return ec.fieldContext_StoryPage_blocks(ctx, field)
-			case "swipeable":
-				return ec.fieldContext_StoryPage_swipeable(ctx, field)
-			case "layersIds":
-				return ec.fieldContext_StoryPage_layersIds(ctx, field)
-			case "layers":
-				return ec.fieldContext_StoryPage_layers(ctx, field)
-			case "swipeableLayersIds":
-				return ec.fieldContext_StoryPage_swipeableLayersIds(ctx, field)
-			case "swipeableLayers":
-				return ec.fieldContext_StoryPage_swipeableLayers(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_StoryPage_propertyId(ctx, field)
-			case "property":
-				return ec.fieldContext_StoryPage_property(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_StoryPage_createdAt(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_StoryPage_sceneId(ctx, field)
-			case "scene":
-				return ec.fieldContext_StoryPage_scene(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type StoryPage", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StoryBlock_property(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_property(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.StoryBlock().Property(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Property)
-	fc.Result = res
-	return ec.marshalOProperty2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProperty(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StoryBlock_property(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StoryBlock",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Property_id(ctx, field)
-			case "schemaId":
-				return ec.fieldContext_Property_schemaId(ctx, field)
-			case "items":
-				return ec.fieldContext_Property_items(ctx, field)
-			case "schema":
-				return ec.fieldContext_Property_schema(ctx, field)
-			case "layer":
-				return ec.fieldContext_Property_layer(ctx, field)
-			case "merged":
-				return ec.fieldContext_Property_merged(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Property", field.Name)
 		},
 	}
 	return fc, nil
@@ -42963,6 +42592,50 @@ func (ec *executionContext) fieldContext_StoryBlock_plugin(ctx context.Context, 
 				return ec.fieldContext_Plugin_propertySchema(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Plugin", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StoryBlock_extensionId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_StoryBlock_extensionId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExtensionID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_StoryBlock_extensionId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StoryBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -43045,8 +42718,8 @@ func (ec *executionContext) fieldContext_StoryBlock_extension(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _StoryBlock_sceneId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_sceneId(ctx, field)
+func (ec *executionContext) _StoryBlock_propertyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_StoryBlock_propertyId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -43059,7 +42732,7 @@ func (ec *executionContext) _StoryBlock_sceneId(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SceneID, nil
+		return obj.PropertyID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43076,7 +42749,7 @@ func (ec *executionContext) _StoryBlock_sceneId(ctx context.Context, field graph
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_StoryBlock_sceneId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StoryBlock_propertyId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StoryBlock",
 		Field:      field,
@@ -43089,8 +42762,8 @@ func (ec *executionContext) fieldContext_StoryBlock_sceneId(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _StoryBlock_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StoryBlock_scene(ctx, field)
+func (ec *executionContext) _StoryBlock_property(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_StoryBlock_property(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -43103,7 +42776,7 @@ func (ec *executionContext) _StoryBlock_scene(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.StoryBlock().Scene(rctx, obj)
+		return ec.resolvers.StoryBlock().Property(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43112,12 +42785,12 @@ func (ec *executionContext) _StoryBlock_scene(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Scene)
+	res := resTmp.(*gqlmodel.Property)
 	fc.Result = res
-	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
+	return ec.marshalOProperty2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProperty(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_StoryBlock_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_StoryBlock_property(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "StoryBlock",
 		Field:      field,
@@ -43126,45 +42799,60 @@ func (ec *executionContext) fieldContext_StoryBlock_scene(ctx context.Context, f
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Scene_id(ctx, field)
-			case "projectId":
-				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_Scene_propertyId(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Scene_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
-			case "widgets":
-				return ec.fieldContext_Scene_widgets(ctx, field)
-			case "plugins":
-				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "project":
-				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
-			case "property":
-				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
-			case "stories":
-				return ec.fieldContext_Scene_stories(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
+				return ec.fieldContext_Property_id(ctx, field)
+			case "schemaId":
+				return ec.fieldContext_Property_schemaId(ctx, field)
+			case "items":
+				return ec.fieldContext_Property_items(ctx, field)
+			case "schema":
+				return ec.fieldContext_Property_schema(ctx, field)
+			case "layer":
+				return ec.fieldContext_Property_layer(ctx, field)
+			case "merged":
+				return ec.fieldContext_Property_merged(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Property", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StoryBlock_linkedDatasetId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LinkedDatasetID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_StoryBlock_linkedDatasetId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StoryBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -43299,28 +42987,20 @@ func (ec *executionContext) fieldContext_StoryPage_blocks(ctx context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_StoryBlock_id(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_StoryBlock_propertyId(ctx, field)
 			case "pluginId":
 				return ec.fieldContext_StoryBlock_pluginId(ctx, field)
-			case "extensionId":
-				return ec.fieldContext_StoryBlock_extensionId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
-			case "pageId":
-				return ec.fieldContext_StoryBlock_pageId(ctx, field)
-			case "page":
-				return ec.fieldContext_StoryBlock_page(ctx, field)
-			case "property":
-				return ec.fieldContext_StoryBlock_property(ctx, field)
 			case "plugin":
 				return ec.fieldContext_StoryBlock_plugin(ctx, field)
+			case "extensionId":
+				return ec.fieldContext_StoryBlock_extensionId(ctx, field)
 			case "extension":
 				return ec.fieldContext_StoryBlock_extension(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_StoryBlock_sceneId(ctx, field)
-			case "scene":
-				return ec.fieldContext_StoryBlock_scene(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_StoryBlock_propertyId(ctx, field)
+			case "property":
+				return ec.fieldContext_StoryBlock_property(ctx, field)
+			case "linkedDatasetId":
+				return ec.fieldContext_StoryBlock_linkedDatasetId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type StoryBlock", field.Name)
 		},
@@ -58003,13 +57683,6 @@ func (ec *executionContext) _MoveStoryBlockPayload(ctx context.Context, sel ast.
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("MoveStoryBlockPayload")
-		case "block":
-
-			out.Values[i] = ec._MoveStoryBlockPayload_block(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "page":
 
 			out.Values[i] = ec._MoveStoryBlockPayload_page(ctx, field, obj)
@@ -58020,6 +57693,13 @@ func (ec *executionContext) _MoveStoryBlockPayload(ctx context.Context, sel ast.
 		case "story":
 
 			out.Values[i] = ec._MoveStoryBlockPayload_story(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "blockId":
+
+			out.Values[i] = ec._MoveStoryBlockPayload_blockId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -61852,13 +61532,6 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "propertyId":
-
-			out.Values[i] = ec._StoryBlock_propertyId(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "pluginId":
 
 			out.Values[i] = ec._StoryBlock_pluginId(ctx, field, obj)
@@ -61866,6 +61539,23 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "plugin":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StoryBlock_plugin(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "extensionId":
 
 			out.Values[i] = ec._StoryBlock_extensionId(ctx, field, obj)
@@ -61873,20 +61563,13 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "linkedDatasetId":
+		case "extension":
 
-			out.Values[i] = ec._StoryBlock_linkedDatasetId(ctx, field, obj)
+			out.Values[i] = ec._StoryBlock_extension(ctx, field, obj)
 
-		case "pageId":
+		case "propertyId":
 
-			out.Values[i] = ec._StoryBlock_pageId(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "page":
-
-			out.Values[i] = ec._StoryBlock_page(ctx, field, obj)
+			out.Values[i] = ec._StoryBlock_propertyId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -61908,51 +61591,10 @@ func (ec *executionContext) _StoryBlock(ctx context.Context, sel ast.SelectionSe
 				return innerFunc(ctx)
 
 			})
-		case "plugin":
-			field := field
+		case "linkedDatasetId":
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._StoryBlock_plugin(ctx, field, obj)
-				return res
-			}
+			out.Values[i] = ec._StoryBlock_linkedDatasetId(ctx, field, obj)
 
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
-		case "extension":
-
-			out.Values[i] = ec._StoryBlock_extension(ctx, field, obj)
-
-		case "sceneId":
-
-			out.Values[i] = ec._StoryBlock_sceneId(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
-		case "scene":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._StoryBlock_scene(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
