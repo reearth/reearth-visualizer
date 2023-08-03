@@ -1,4 +1,4 @@
-$schema: manifest.schema.json
+$schema: ../../schemas/plugin_manifest.json
 id: reearth
 system: true
 name: Re:Earth Official Plugin
