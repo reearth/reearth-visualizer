@@ -79,17 +79,6 @@ func (s storyBlockResolver) Property(ctx context.Context, obj *gqlmodel.StoryBlo
 	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }
 
-func (s storyBlockResolver) Scene(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Scene, error) {
-	scene, err := loaders(ctx).Scene.Fetch(ctx, []gqlmodel.ID{obj.SceneID})
-	if len(err) > 0 && err[0] != nil {
-		return nil, err[0]
-	}
-	if len(scene) == 0 {
-		return nil, rerror.ErrNotFound
-	}
-	return scene[0], nil
-}
-
 func (s storyBlockResolver) Plugin(ctx context.Context, obj *gqlmodel.StoryBlock) (*gqlmodel.Plugin, error) {
 	return dataloaders(ctx).Plugin.Load(obj.PluginID)
 }

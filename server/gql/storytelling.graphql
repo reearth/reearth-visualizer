@@ -31,17 +31,13 @@ type StoryPage implements Node {
 
 type StoryBlock implements Node {
   id: ID!
-  propertyId: ID!
   pluginId: ID!
-  extensionId: ID!
-  linkedDatasetId: ID
-  pageId: ID!
-  page: StoryPage!
-  property: Property
   plugin: Plugin
+  extensionId: ID!
   extension: PluginExtension
-  sceneId: ID!
-  scene: Scene
+  propertyId: ID!
+  property: Property
+  linkedDatasetId: ID
 }
 
 # InputType
@@ -184,9 +180,9 @@ type CreateStoryBlockPayload {
 }
 
 type MoveStoryBlockPayload {
-  block: StoryBlock!
   page: StoryPage!
   story: Story!
+  blockId: ID!
   index: Int!
 }
 

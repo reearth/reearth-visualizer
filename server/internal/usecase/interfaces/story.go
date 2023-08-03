@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -93,7 +94,7 @@ type MoveBlockParam struct {
 	StoryID id.StoryID
 	PageID  id.PageID
 	BlockID id.BlockID
-	Index   *int
+	Index   int
 }
 
 type RemoveBlockParam struct {
@@ -103,8 +104,10 @@ type RemoveBlockParam struct {
 }
 
 var (
-	ErrPageNotFound          error = rerror.NewE(i18n.T("page not found"))
-	ErrPageSwipeableMismatch error = rerror.NewE(i18n.T("page swipeable mismatch"))
+	ErrPageNotFound                  error = rerror.NewE(i18n.T("page not found"))
+	ErrBlockNotFound                 error = rerror.NewE(i18n.T("block not found"))
+	ErrPageSwipeableMismatch         error = rerror.NewE(i18n.T("page swipeable mismatch"))
+	ErrExtensionTypeMustBeStoryBlock error = errors.New("extension type must be storyBlock")
 )
 
 type Storytelling interface {
@@ -124,7 +127,7 @@ type Storytelling interface {
 	AddPageLayer(context.Context, PageLayerParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
 	RemovePageLayer(context.Context, PageLayerParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
 
-	CreateBlock(context.Context, CreateBlockParam, *usecase.Operator) (*storytelling.Page, *storytelling.Block, error)
-	RemoveBlock(context.Context, RemoveBlockParam, *usecase.Operator) (*storytelling.Page, *id.BlockID, error)
-	MoveBlock(context.Context, MoveBlockParam, *usecase.Operator) (*storytelling.Page, *id.BlockID, int, error)
+	CreateBlock(context.Context, CreateBlockParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, *storytelling.Block, int, error)
+	RemoveBlock(context.Context, RemoveBlockParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, error)
+	MoveBlock(context.Context, MoveBlockParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, int, error)
 }
