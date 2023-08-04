@@ -9,11 +9,12 @@ import FovSlider from "../FovSlider";
 import useHooks from "./hooks";
 
 export type Props = {
+  sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
 };
 
-const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
+const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor }) => {
   const {
     rootLayerId,
     selectedBlockId,
@@ -34,6 +35,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     engineMeta,
     layerSelectionReason,
     useExperimentalSandbox,
+    isVisualizerReady: _isVisualizerReady,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -48,7 +50,8 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     onFovChange,
     handleDropLayer,
     zoomToLayer,
-  } = useHooks(isBuilt);
+    handleMount,
+  } = useHooks({ sceneId, isBuilt });
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
   >(
@@ -67,7 +70,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         inEditor={!!inEditor}
         layers={layers}
         widgetAlignSystem={widgets?.alignSystem}
-        floatingWidgets={widgets?.floatingWidgets}
+        floatingWidgets={widgets?.floating}
         widgetLayoutConstraint={widgets?.layoutConstraint}
         ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
         selectedLayerId={selectedLayerId}
@@ -98,6 +101,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         onBlockInsert={onBlockInsert}
         onLayerDrop={handleDropLayer}
         onZoomToLayer={zoomToLayer}
+        onMount={handleMount}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}
       />
       <FovSlider

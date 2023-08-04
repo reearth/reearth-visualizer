@@ -5,6 +5,7 @@ import type {
   ReactNode,
   CSSProperties,
   RefObject,
+  MutableRefObject,
 } from "react";
 
 import type {
@@ -118,6 +119,7 @@ export type EngineProps = {
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
@@ -132,6 +134,7 @@ export type EngineProps = {
     position: LatLng | undefined,
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  onMount?: () => void;
 };
 
 export type LayerEditEvent = {
@@ -249,6 +252,7 @@ export type TerrainProperty = {
   terrainCesiumIonAccessToken?: string;
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
+  terrainNormal?: boolean;
 };
 
 export type SceneProperty = {
@@ -296,6 +300,8 @@ export type SceneProperty = {
     brightness_shift?: number;
     hue_shift?: number;
     surturation_shift?: number;
+    globeShadowDarkness?: number;
+    globeImageBasedLighting?: boolean;
   };
   timeline?: {
     animation?: boolean;
@@ -318,6 +324,12 @@ export type SceneProperty = {
     themeSelectColor?: string;
     themeBackgroundColor?: string;
   };
+  ambientOcclusion?: {
+    enabled?: boolean;
+    quality?: "low" | "medium" | "high" | "extreme";
+    intensity?: number;
+    ambientOcclusionOnly?: boolean;
+  };
   light?: {
     lightType?: "sunLight" | "directionalLight";
     lightDirectionX?: number;
@@ -325,9 +337,13 @@ export type SceneProperty = {
     lightDirectionZ?: number;
     lightColor?: string;
     lightIntensity?: number;
+    specularEnvironmentMaps?: string;
+    sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+    imageBasedLightIntensity?: number;
   };
   render?: {
     antialias?: "low" | "medium" | "high" | "extreme";
+    debugFramePerSecond?: boolean;
   };
 };
 
@@ -341,3 +357,5 @@ export type Engine = {
   clusterComponent: ClusterComponentType;
   delegatedDataTypes?: DataType[];
 };
+
+export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame

@@ -75,9 +75,9 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 24px 8px 19px;
+  padding: 8px 24px;
   gap: 24px;
-  height: 51px;
-  background: ${({ theme }) => theme.navbar.bg.main};
+  background: ${({ theme }) => theme.bg[0]};
+  border-bottom: 0.5px solid ${({ theme }) => theme.outline.weak};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;

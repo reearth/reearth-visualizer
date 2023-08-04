@@ -31,17 +31,18 @@ func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfi
 	}
 
 	return interfaces.Container{
-		Asset:     NewAsset(r, g),
-		Dataset:   NewDataset(r, g),
-		Layer:     NewLayer(r),
-		Plugin:    NewPlugin(r, g),
-		Project:   NewProject(r, g),
-		Property:  NewProperty(r, g),
-		Published: published,
-		Scene:     NewScene(r, g),
-		Tag:       NewTag(r),
-		Workspace: NewWorkspace(r),
-		User:      NewUser(r, g, config.SignupSecret, config.AuthSrvUIDomain),
+		Asset:        NewAsset(r, g),
+		Dataset:      NewDataset(r, g),
+		Layer:        NewLayer(r),
+		Plugin:       NewPlugin(r, g),
+		Project:      NewProject(r, g),
+		Property:     NewProperty(r, g),
+		Published:    published,
+		Scene:        NewScene(r, g),
+		Tag:          NewTag(r),
+		Workspace:    NewWorkspace(r),
+		User:         NewUser(r, g, config.SignupSecret, config.AuthSrvUIDomain),
+		StoryTelling: NewStorytelling(r),
 	}
 }
 

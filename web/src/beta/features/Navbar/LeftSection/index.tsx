@@ -40,16 +40,16 @@ const LeftSection: React.FC<Props> = ({
   return (
     <Wrapper>
       <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
-        {!dashboard && <StyledIcon icon="dashboard" size={24} />}
+        {!dashboard && <StyledIcon icon="dashboard" size={20} />}
       </StyledLink>
       <Profile
-        onSignOut={onSignOut}
+        username={username}
         currentWorkspace={currentWorkspace}
-        onWorkspaceChange={onWorkspaceChange}
-        openModal={openModal}
         personalWorkspace={personalWorkspace}
         workspaces={workspaces}
-        username={username}
+        onSignOut={onSignOut}
+        onWorkspaceChange={onWorkspaceChange}
+        openModal={openModal}
       />
       <WorkspaceCreationModal
         open={modalShown}
@@ -75,7 +75,7 @@ const Wrapper = styled.div`
 const StyledLink = styled(Link)`
   display: flex;
   margin-right: 19px;
-  color: ${props => props.theme.general.content.main};
+  color: ${props => props.theme.content.main};
   text-decoration: none;
   &:hover {
     text-decoration: none;
@@ -85,13 +85,14 @@ const StyledLink = styled(Link)`
 const StyledIcon = styled(Icon)`
   border-radius: 5px;
   padding: 5px;
-  color: ${props => props.theme.general.content.main};
+  color: ${props => props.theme.content.main};
   &:hover {
-    background: ${props => props.theme.general.bg.weak};
+    background: ${props => props.theme.bg[3]};
   }
 `;
 
 const Separator = styled.div`
-  color: ${props => props.theme.general.content.weak};
+  color: ${props => props.theme.content.weak};
   margin: 0px 12px;
+  user-select: none;
 `;

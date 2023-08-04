@@ -35,6 +35,9 @@
       }
     ]
   },
+  "exclude":[
+    "src/beta/lib/unsafeBuiltinPlugins"
+  ],
   "include": [
     "src",
     "e2e",

@@ -223,6 +223,37 @@ type CreateScenePayload struct {
 	Scene *Scene `json:"scene"`
 }
 
+type CreateStoryBlockInput struct {
+	StoryID     ID   `json:"storyId"`
+	PageID      ID   `json:"pageId"`
+	PluginID    ID   `json:"pluginId"`
+	ExtensionID ID   `json:"extensionId"`
+	Index       *int `json:"index"`
+}
+
+type CreateStoryBlockPayload struct {
+	Block *StoryBlock `json:"block"`
+	Page  *StoryPage  `json:"page"`
+	Story *Story      `json:"story"`
+	Index int         `json:"index"`
+}
+
+type CreateStoryInput struct {
+	SceneID ID     `json:"sceneId"`
+	Title   string `json:"title"`
+	Index   *int   `json:"index"`
+}
+
+type CreateStoryPageInput struct {
+	SceneID         ID      `json:"sceneId"`
+	StoryID         ID      `json:"storyId"`
+	Title           *string `json:"title"`
+	Swipeable       *bool   `json:"swipeable"`
+	Layers          []ID    `json:"layers"`
+	SwipeableLayers []ID    `json:"swipeableLayers"`
+	Index           *int    `json:"index"`
+}
+
 type CreateTagGroupInput struct {
 	SceneID ID     `json:"sceneId"`
 	Label   string `json:"label"`
@@ -346,6 +377,26 @@ type DeleteProjectPayload struct {
 	ProjectID ID `json:"projectId"`
 }
 
+type DeleteStoryInput struct {
+	SceneID ID `json:"sceneId"`
+	StoryID ID `json:"storyId"`
+}
+
+type DeleteStoryPageInput struct {
+	SceneID ID `json:"sceneId"`
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
+}
+
+type DeleteStoryPagePayload struct {
+	PageID ID     `json:"pageId"`
+	Story  *Story `json:"story"`
+}
+
+type DeleteStoryPayload struct {
+	StoryID ID `json:"storyId"`
+}
+
 type DeleteTeamInput struct {
 	TeamID ID `json:"teamId"`
 }
@@ -370,6 +421,12 @@ type DetachTagItemFromGroupInput struct {
 
 type DetachTagItemFromGroupPayload struct {
 	Tag *TagGroup `json:"tag"`
+}
+
+type DuplicateStoryPageInput struct {
+	SceneID ID `json:"sceneId"`
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
 }
 
 type ImportDatasetFromGoogleSheetInput struct {
@@ -645,11 +702,57 @@ type MovePropertyItemInput struct {
 	Index         int `json:"index"`
 }
 
+type MoveStoryBlockInput struct {
+	StoryID ID  `json:"storyId"`
+	PageID  ID  `json:"pageId"`
+	BlockID ID  `json:"blockId"`
+	Index   int `json:"index"`
+}
+
+type MoveStoryBlockPayload struct {
+	Page    *StoryPage `json:"page"`
+	Story   *Story     `json:"story"`
+	BlockID ID         `json:"blockId"`
+	Index   int        `json:"index"`
+}
+
+type MoveStoryInput struct {
+	SceneID ID  `json:"sceneId"`
+	StoryID ID  `json:"storyId"`
+	Index   int `json:"index"`
+}
+
+type MoveStoryPageInput struct {
+	StoryID ID  `json:"storyId"`
+	PageID  ID  `json:"pageId"`
+	Index   int `json:"index"`
+}
+
+type MoveStoryPagePayload struct {
+	Page  *StoryPage `json:"page"`
+	Story *Story     `json:"story"`
+	Index int        `json:"index"`
+}
+
+type MoveStoryPayload struct {
+	StoryID ID       `json:"storyId"`
+	Index   int      `json:"index"`
+	Stories []*Story `json:"stories"`
+}
+
 type PageInfo struct {
 	StartCursor     *usecasex.Cursor `json:"startCursor"`
 	EndCursor       *usecasex.Cursor `json:"endCursor"`
 	HasNextPage     bool             `json:"hasNextPage"`
 	HasPreviousPage bool             `json:"hasPreviousPage"`
+}
+
+type PageLayerInput struct {
+	SceneID   ID    `json:"sceneId"`
+	StoryID   ID    `json:"storyId"`
+	PageID    ID    `json:"pageId"`
+	Swipeable *bool `json:"swipeable"`
+	LayerID   ID    `json:"layerId"`
 }
 
 type Pagination struct {
@@ -893,6 +996,12 @@ type PublishProjectInput struct {
 	Status    PublishmentStatus `json:"status"`
 }
 
+type PublishStoryInput struct {
+	StoryID ID                `json:"storyId"`
+	Alias   *string           `json:"alias"`
+	Status  PublishmentStatus `json:"status"`
+}
+
 type Rect struct {
 	West  float64 `json:"west"`
 	South float64 `json:"south"`
@@ -980,6 +1089,18 @@ type RemovePropertyItemInput struct {
 	ItemID        ID `json:"itemId"`
 }
 
+type RemoveStoryBlockInput struct {
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
+	BlockID ID `json:"blockId"`
+}
+
+type RemoveStoryBlockPayload struct {
+	BlockID ID         `json:"blockId"`
+	Page    *StoryPage `json:"page"`
+	Story   *Story     `json:"story"`
+}
+
 type RemoveTagInput struct {
 	TagID ID `json:"tagID"`
 }
@@ -1014,6 +1135,7 @@ type Scene struct {
 	Team              *Team                    `json:"team"`
 	Property          *Property                `json:"property"`
 	RootLayer         *LayerGroup              `json:"rootLayer"`
+	Stories           []*Story                 `json:"stories"`
 	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
 	TagIds            []ID                     `json:"tagIds"`
 	Tags              []Tag                    `json:"tags"`
@@ -1052,6 +1174,70 @@ type SignupInput struct {
 type SignupPayload struct {
 	User *User `json:"user"`
 	Team *Team `json:"team"`
+}
+
+type Spacing struct {
+	Top    float64 `json:"top"`
+	Bottom float64 `json:"bottom"`
+	Left   float64 `json:"left"`
+	Right  float64 `json:"right"`
+}
+
+type Story struct {
+	ID                ID                `json:"id"`
+	Title             string            `json:"title"`
+	Alias             string            `json:"alias"`
+	PropertyID        ID                `json:"propertyId"`
+	Property          *Property         `json:"property"`
+	Pages             []*StoryPage      `json:"pages"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
+	PublishedAt       *time.Time        `json:"publishedAt"`
+	SceneID           ID                `json:"sceneId"`
+	Scene             *Scene            `json:"scene"`
+}
+
+func (Story) IsNode() {}
+
+type StoryBlock struct {
+	ID              ID               `json:"id"`
+	PluginID        ID               `json:"pluginId"`
+	Plugin          *Plugin          `json:"plugin"`
+	ExtensionID     ID               `json:"extensionId"`
+	Extension       *PluginExtension `json:"extension"`
+	PropertyID      ID               `json:"propertyId"`
+	Property        *Property        `json:"property"`
+	LinkedDatasetID *ID              `json:"linkedDatasetId"`
+}
+
+func (StoryBlock) IsNode() {}
+
+type StoryPage struct {
+	ID                 ID            `json:"id"`
+	Title              string        `json:"title"`
+	Blocks             []*StoryBlock `json:"blocks"`
+	Swipeable          bool          `json:"swipeable"`
+	LayersIds          []ID          `json:"layersIds"`
+	Layers             []Layer       `json:"layers"`
+	SwipeableLayersIds []ID          `json:"swipeableLayersIds"`
+	SwipeableLayers    []Layer       `json:"swipeableLayers"`
+	PropertyID         ID            `json:"propertyId"`
+	Property           *Property     `json:"property"`
+	CreatedAt          time.Time     `json:"createdAt"`
+	SceneID            ID            `json:"sceneId"`
+	Scene              *Scene        `json:"scene"`
+}
+
+func (StoryPage) IsNode() {}
+
+type StoryPagePayload struct {
+	Page  *StoryPage `json:"page"`
+	Story *Story     `json:"story"`
+}
+
+type StoryPayload struct {
+	Story *Story `json:"story"`
 }
 
 type SyncDatasetInput struct {
@@ -1235,6 +1421,24 @@ type UpdatePropertyValueInput struct {
 	FieldID       ID          `json:"fieldId"`
 	Value         interface{} `json:"value"`
 	Type          ValueType   `json:"type"`
+}
+
+type UpdateStoryInput struct {
+	SceneID ID      `json:"sceneId"`
+	StoryID ID      `json:"storyId"`
+	Title   *string `json:"title"`
+	Index   *int    `json:"index"`
+}
+
+type UpdateStoryPageInput struct {
+	SceneID         ID      `json:"sceneId"`
+	StoryID         ID      `json:"storyId"`
+	PageID          ID      `json:"pageId"`
+	Title           *string `json:"title"`
+	Swipeable       *bool   `json:"swipeable"`
+	Layers          []ID    `json:"layers"`
+	SwipeableLayers []ID    `json:"swipeableLayers"`
+	Index           *int    `json:"index"`
 }
 
 type UpdateTagInput struct {
@@ -1642,6 +1846,8 @@ const (
 	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
 	PropertySchemaFieldUICameraPose PropertySchemaFieldUI = "CAMERA_POSE"
 	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
+	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
+	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -1656,11 +1862,13 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIFile,
 	PropertySchemaFieldUICameraPose,
 	PropertySchemaFieldUIDatetime,
+	PropertySchemaFieldUIMargin,
+	PropertySchemaFieldUIPadding,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
 		return true
 	}
 	return false
@@ -1878,6 +2086,7 @@ const (
 	ValueTypeCoordinates  ValueType = "COORDINATES"
 	ValueTypePolygon      ValueType = "POLYGON"
 	ValueTypeRect         ValueType = "RECT"
+	ValueTypeSpacing      ValueType = "SPACING"
 )
 
 var AllValueType = []ValueType{
@@ -1893,11 +2102,12 @@ var AllValueType = []ValueType{
 	ValueTypeCoordinates,
 	ValueTypePolygon,
 	ValueTypeRect,
+	ValueTypeSpacing,
 }
 
 func (e ValueType) IsValid() bool {
 	switch e {
-	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect:
+	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing:
 		return true
 	}
 	return false

@@ -20,18 +20,18 @@ export const MenuListItemLabel: React.FC<{
       <StyledLabel
         size="h5"
         center={center}
-        color={(disabled && theme.general.content.main) || color || theme.general.content.main}>
+        color={(disabled && theme.content.main) || color || theme.content.main}>
         {text}
       </StyledLabel>
     </MenuItemWrapper>
   );
 
-  return typeof linkTo !== "string" ? (
+  return !linkTo ? (
     content
   ) : (
     <StyledLinkButton
       style={{
-        color: (disabled && theme.general.content.main) || color || theme.general.content.main,
+        color: (disabled && theme.content.main) || color || theme.content.main,
       }}
       to={linkTo}>
       {content}
@@ -43,40 +43,43 @@ export const MenuList = styled.ul`
   list-style: none;
   padding-left: 0;
   margin: 0;
+  border-radius: 4px;
 `;
 
 export const MenuListItem = styled.li<{ noHover?: boolean }>`
   display: flex;
-  &:hover {
+  align-items: center;
+  border-radius: 4px;
+  padding: 8px 16px;
+  user-select: none;
+
+  :hover {
     ${props =>
       !props.noHover &&
       `
-      background-color: ${props.theme.general.bg.main};
+      background-color: ${props.theme.bg[2]};
     `}
   }
 `;
 
 const MenuItemWrapper = styled.div<{ disabled?: boolean }>`
-  flex: auto;
   display: flex;
-  padding: 0 16px;
-  align-items: center;
-  min-height: 52px;
-  cursor: pointer;
   height: 100%;
+  width: 100%;
+  align-content: center;
+  cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
 `;
 
 const StyledLabel = styled(Text)<{ center?: boolean }>`
-  flex: auto;
   text-align: ${({ center }) => (center ? "center" : "left")};
 `;
 
 const StyledLinkButton = styled(Link)`
   text-decoration: none;
   width: 100%;
-  height: 51px;
-  &:hover {
+
+  :hover {
     text-decoration: none;
   }
 `;
@@ -84,5 +87,5 @@ const StyledLinkButton = styled(Link)`
 const StyledIcon = styled(Icon)<{ color?: string; disabled?: boolean }>`
   margin-right: 10px;
   color: ${({ disabled, color, theme }) =>
-    disabled ? theme.general.content.main : color ? color : theme.general.content.main};
+    disabled ? theme.content.main : color ? color : theme.content.main};
 `;

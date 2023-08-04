@@ -1,16 +1,10 @@
-import React, { useRef } from "react";
+import { useCallback } from "react";
 
-import Avatar from "@reearth/beta/components/Avatar";
-import Dropdown, { Ref as DropDownRef } from "@reearth/beta/components/Dropdown";
+// import Avatar from "@reearth/beta/components/Avatar";
+import Dropdown, { MenuItem } from "@reearth/beta/components/Dropdown";
 import Text from "@reearth/beta/components/Text";
-import {
-  MenuList,
-  MenuListItem,
-  MenuListItemLabel,
-} from "@reearth/beta/features/Navbar/Menus/MenuList";
-import WorkspaceMenu from "@reearth/beta/features/Navbar/Menus/WorkspaceMenu";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import { Workspace } from "../../types";
 
@@ -27,19 +21,13 @@ export type Props = {
   openModal?: () => void;
 };
 
-const Label: React.FC<LoginProps> = ({ username, currentWorkspace }) => {
-  const theme = useTheme();
-  return (
-    <LabelWrapper>
-      <LabelLeft>
-        <Avatar innerText={username} borderRadius="4px" />
-      </LabelLeft>
-      <WorkspaceName size="h5" weight="bold" color={theme.general.content.weak}>
-        {currentWorkspace.name}
-      </WorkspaceName>
-    </LabelWrapper>
-  );
-};
+const Label: React.FC<LoginProps> = ({ currentWorkspace }) => (
+  <LabelWrapper>
+    <Text size="body" weight="bold" customColor>
+      {currentWorkspace.name}
+    </Text>
+  </LabelWrapper>
+);
 
 const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
   username = "",
@@ -52,14 +40,39 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
 }) => {
   const t = useT();
 
-  const dropDownRef = useRef<DropDownRef>(null);
+  const menuItems: MenuItem[] = [
+    { text: t("Account Settings"), linkTo: "/settings/account" },
+    {
+      text: t("Workspaces"),
+      items: [
+        ...workspaces.map(w => {
+          return {
+            text: w.name ?? t("Unknown"),
+            selected: currentWorkspace.id === w.id,
+            onClick: () => w.id && handleWorkspaceChange(w.id),
+          };
+        }),
+        { text: t("Manage Workspaces"), icon: "workspaces", linkTo: "/settings/workspaces" },
+        { text: t("New Workspace"), icon: "workspaceAdd", onClick: openModal },
+      ],
+    },
+    { text: t("Log out"), onClick: onSignOut, breakpoint: true },
+    { breakpoint: true },
+    { text: `v${__APP_VERSION__}` },
+  ];
+
+  const handleWorkspaceChange = useCallback(
+    (t: string) => {
+      onWorkspaceChange?.(t);
+    },
+    [onWorkspaceChange],
+  );
 
   return (
     <StyledDropdown
-      ref={dropDownRef}
       openOnClick
-      noHoverStyle
       direction="down"
+      gap="lg"
       hasIcon
       label={
         <Label
@@ -67,58 +80,25 @@ const HeaderProfile: React.FC<Props & Partial<LoginProps>> = ({
           personalWorkspace={personalWorkspace}
           currentWorkspace={currentWorkspace}
         />
-      }>
-      <ChildrenWrapper>
-        <MenuList>
-          <MenuListItem>
-            <MenuListItemLabel linkTo={`/settings/account`} text={t("Account Settings")} />
-          </MenuListItem>
-          <MenuListItem>
-            <WorkspaceMenu
-              currentWorkspace={currentWorkspace}
-              workspaces={workspaces}
-              onWorkspaceChange={onWorkspaceChange}
-              openModal={openModal}
-            />
-          </MenuListItem>
-          <MenuListItem>
-            <MenuListItemLabel icon="logout" onClick={onSignOut} text={t("Log out")} />
-          </MenuListItem>
-        </MenuList>
-        <CurrentVersion size="h5">{`v${__APP_VERSION__}`}</CurrentVersion>
-      </ChildrenWrapper>
-    </StyledDropdown>
+      }
+      menu={{
+        width: 240,
+        items: menuItems,
+      }}
+    />
   );
 };
 
 const StyledDropdown = styled(Dropdown)`
-  cursor: pointer;
   height: 100%;
-`;
-
-const ChildrenWrapper = styled.div`
-  width: 230px;
-  background-color: ${({ theme }) => theme.general.bg.strong};
-  padding: 0;
+  margin-left: -8px;
+  margin-right: -8px;
+  color: ${({ theme }) => theme.content.weak};
 `;
 
 const LabelWrapper = styled.div`
   display: flex;
   height: 100%;
-`;
-
-const WorkspaceName = styled(Text)`
-  align-self: center;
-`;
-
-const LabelLeft = styled.div`
-  margin-right: 16px;
-`;
-
-const CurrentVersion = styled(Text)`
-  padding: 5px 16px;
-  cursor: default;
-  border-top: ${({ theme }) => `0.5px solid ${theme.general.border}`};
 `;
 
 export default HeaderProfile;

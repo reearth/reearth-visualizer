@@ -1,27 +1,25 @@
 import { ReactNode } from "react";
 
+import Icon from "@reearth/classic/components/atoms/Icon";
 import { styled } from "@reearth/services/theme";
 
-import useHooks from "./hooks";
+import useHooks, { type Direction, type Gutter } from "./hooks";
 
 type Props = {
   children?: ReactNode;
-  direction: "vertical" | "horizontal";
-  gutter: "start" | "end";
-  size: number;
-  minSize?: number;
-  maxSize?: number;
+  direction: Direction;
+  gutter: Gutter;
+  initialSize: number;
+  minSize: number;
 };
 
-const Resizable: React.FC<Props> = ({
-  direction,
-  gutter,
-  size: initialSize,
-  minSize,
-  maxSize,
-  children,
-}) => {
-  const { size, gutterProps } = useHooks(direction, gutter, initialSize, minSize, maxSize);
+const Resizable: React.FC<Props> = ({ direction, gutter, minSize, initialSize, children }) => {
+  const { size, gutterProps, minimized, handleResetSize } = useHooks(
+    direction,
+    gutter,
+    initialSize,
+    minSize,
+  );
 
   const showTopGutter = direction === "horizontal" && gutter === "start";
   const showRightGutter = direction === "vertical" && gutter === "end";
@@ -34,34 +32,50 @@ const Resizable: React.FC<Props> = ({
   const LeftGutter = showLeftGutter ? <VerticalGutter {...gutterProps} /> : null;
 
   return (
-    <StyledResizable direction={direction} size={size}>
-      {TopGutter}
-      {LeftGutter}
-      <Wrapper>{children}</Wrapper>
-      {RightGutter}
-      {BottomGutter}
-    </StyledResizable>
+    <>
+      {minimized ? (
+        <MinimizedWrapper direction={direction} onClick={handleResetSize}>
+          <Icon icon={gutter == "end" ? "arrowRight" : "arrowLeft"} />
+        </MinimizedWrapper>
+      ) : (
+        <StyledResizable direction={direction} size={size} minSize={minSize}>
+          {TopGutter}
+          {LeftGutter}
+          <Wrapper>{children}</Wrapper>
+          {RightGutter}
+          {BottomGutter}
+        </StyledResizable>
+      )}
+    </>
   );
 };
 
-const StyledResizable = styled.div<Pick<Props, "direction" | "size">>`
+const StyledResizable = styled.div<{
+  direction: "vertical" | "horizontal";
+  size: number;
+  minSize?: number;
+}>`
   display: flex;
   align-items: stretch;
   flex-direction: ${({ direction }) => (direction === "vertical" ? "row" : "column")};
   width: ${({ direction, size }) => (direction === "horizontal" ? null : `${size}px`)};
   height: ${({ direction, size }) => (direction === "vertical" ? null : `${size}px`)};
   flex-shrink: 0;
+  min-width: ${({ direction, minSize }) =>
+    direction === "vertical" && minSize ? `${minSize}px` : null};
+  min-height: ${({ direction, minSize }) =>
+    direction === "horizontal" && minSize ? `${minSize}px` : null};
 `;
 
 const Wrapper = styled.div`
   width: calc(100% - 4px);
   height: 100%;
-  background: ${({ theme }) => theme.general.bg.veryStrong};
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const Gutter = styled.div`
   user-select: none;
-  background: ${({ theme }) => theme.general.bg.veryStrong};
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const HorizontalGutter = styled(Gutter)`
@@ -74,4 +88,17 @@ const VerticalGutter = styled(Gutter)`
   cursor: col-resize;
 `;
 
+const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
+  display: flex;
+  align-items: center;
+  width: ${({ direction }) => (direction === "horizontal" ? null : `24px`)};
+  height: ${({ direction }) => (direction === "vertical" ? null : `24px`)};
+  background: ${({ theme }) => theme.bg[2]};
+  cursor: pointer;
+  transition: background 0.3s;
+
+  :hover {
+    background: ${({ theme }) => theme.bg[3]};
+  }
+`;
 export default Resizable;
