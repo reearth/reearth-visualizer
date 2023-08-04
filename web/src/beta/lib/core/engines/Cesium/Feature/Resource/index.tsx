@@ -95,12 +95,13 @@ export default function Resource({
           computedFeatures.push(computedFeature);
         }
       });
-      requestRender?.();
 
       // GeoJSON is not delegated data, so we need to skip.
       if (type !== "geojson") {
         onComputedFeatureFetch?.(features, computedFeatures);
       }
+
+      requestRender?.();
     },
     [layer, viewer, onComputedFeatureFetch, type, requestRender],
   );
@@ -130,8 +131,9 @@ export default function Resource({
         viewer.clock.startTime = ds.clock.startTime;
         viewer.clock.stopTime = ds.clock.stopTime;
       }
+      requestRender?.();
     },
-    [updateClock, viewer?.clock],
+    [updateClock, viewer?.clock, requestRender],
   );
 
   // convert hexCodeColorString to ColorValue?s

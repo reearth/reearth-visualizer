@@ -710,10 +710,10 @@ type MoveStoryBlockInput struct {
 }
 
 type MoveStoryBlockPayload struct {
-	Block *StoryBlock `json:"block"`
-	Page  *StoryPage  `json:"page"`
-	Story *Story      `json:"story"`
-	Index int         `json:"index"`
+	Page    *StoryPage `json:"page"`
+	Story   *Story     `json:"story"`
+	BlockID ID         `json:"blockId"`
+	Index   int        `json:"index"`
 }
 
 type MoveStoryInput struct {
@@ -1176,6 +1176,13 @@ type SignupPayload struct {
 	Team *Team `json:"team"`
 }
 
+type Spacing struct {
+	Top    float64 `json:"top"`
+	Bottom float64 `json:"bottom"`
+	Left   float64 `json:"left"`
+	Right  float64 `json:"right"`
+}
+
 type Story struct {
 	ID                ID                `json:"id"`
 	Title             string            `json:"title"`
@@ -1195,17 +1202,13 @@ func (Story) IsNode() {}
 
 type StoryBlock struct {
 	ID              ID               `json:"id"`
-	PropertyID      ID               `json:"propertyId"`
 	PluginID        ID               `json:"pluginId"`
-	ExtensionID     ID               `json:"extensionId"`
-	LinkedDatasetID *ID              `json:"linkedDatasetId"`
-	PageID          ID               `json:"pageId"`
-	Page            *StoryPage       `json:"page"`
-	Property        *Property        `json:"property"`
 	Plugin          *Plugin          `json:"plugin"`
+	ExtensionID     ID               `json:"extensionId"`
 	Extension       *PluginExtension `json:"extension"`
-	SceneID         ID               `json:"sceneId"`
-	Scene           *Scene           `json:"scene"`
+	PropertyID      ID               `json:"propertyId"`
+	Property        *Property        `json:"property"`
+	LinkedDatasetID *ID              `json:"linkedDatasetId"`
 }
 
 func (StoryBlock) IsNode() {}
@@ -1843,6 +1846,8 @@ const (
 	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
 	PropertySchemaFieldUICameraPose PropertySchemaFieldUI = "CAMERA_POSE"
 	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
+	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
+	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -1857,11 +1862,13 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIFile,
 	PropertySchemaFieldUICameraPose,
 	PropertySchemaFieldUIDatetime,
+	PropertySchemaFieldUIMargin,
+	PropertySchemaFieldUIPadding,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
 		return true
 	}
 	return false
@@ -2079,6 +2086,7 @@ const (
 	ValueTypeCoordinates  ValueType = "COORDINATES"
 	ValueTypePolygon      ValueType = "POLYGON"
 	ValueTypeRect         ValueType = "RECT"
+	ValueTypeSpacing      ValueType = "SPACING"
 )
 
 var AllValueType = []ValueType{
@@ -2094,11 +2102,12 @@ var AllValueType = []ValueType{
 	ValueTypeCoordinates,
 	ValueTypePolygon,
 	ValueTypeRect,
+	ValueTypeSpacing,
 }
 
 func (e ValueType) IsValid() bool {
 	switch e {
-	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect:
+	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing:
 		return true
 	}
 	return false

@@ -6,6 +6,9 @@ import (
 )
 
 func ToStory(s *storytelling.Story) *Story {
+	if s == nil {
+		return nil
+	}
 	return &Story{
 		ID:                IDFrom(s.Id()),
 		Title:             s.Title(),
@@ -20,53 +23,61 @@ func ToStory(s *storytelling.Story) *Story {
 	}
 }
 
-func ToStories(ss storytelling.StoryList) []*Story {
-	return lo.Map(ss, func(s *storytelling.Story, _ int) *Story {
+func ToStories(sl storytelling.StoryList) []*Story {
+	return lo.Map(sl, func(s *storytelling.Story, _ int) *Story {
 		return ToStory(s)
 	})
 }
 
-func ToPage(s *storytelling.Page) *StoryPage {
+func ToPage(p *storytelling.Page) *StoryPage {
+	if p == nil {
+		return nil
+	}
 	return &StoryPage{
-		ID:                 IDFrom(s.Id()),
-		Title:              s.Title(),
-		Blocks:             ToBlocks(s.Blocks()),
-		Swipeable:          s.Swipeable(),
-		LayersIds:          IDFromList(s.Layers()),
+		ID:                 IDFrom(p.Id()),
+		Title:              p.Title(),
+		Blocks:             ToBlocks(p.Blocks()),
+		Swipeable:          p.Swipeable(),
+		LayersIds:          IDFromList(p.Layers()),
 		Layers:             nil,
-		SwipeableLayersIds: IDFromList(s.SwipeableLayers()),
+		SwipeableLayersIds: IDFromList(p.SwipeableLayers()),
 		SwipeableLayers:    nil,
-		PropertyID:         IDFrom(s.Property()),
+		PropertyID:         IDFrom(p.Property()),
 		Property:           nil,
-		CreatedAt:          s.Id().Timestamp(),
+		CreatedAt:          p.Id().Timestamp(),
 	}
 }
 
-func ToPages(ss *storytelling.PageList) []*StoryPage {
-	if ss == nil {
-		return nil
+func ToPages(pl *storytelling.PageList) []*StoryPage {
+	if pl == nil || len(pl.Pages()) == 0 {
+		return []*StoryPage{}
 	}
-	return lo.Map(ss.Pages(), func(s *storytelling.Page, _ int) *StoryPage {
+	return lo.Map(pl.Pages(), func(s *storytelling.Page, _ int) *StoryPage {
 		return ToPage(s)
 	})
 }
 
-func ToBlock(s *storytelling.Block) *StoryBlock {
+func ToBlock(b *storytelling.Block) *StoryBlock {
+	if b == nil {
+		return nil
+	}
 	return &StoryBlock{
-		ID:              IDFrom(s.ID()),
-		PropertyID:      "",
-		PluginID:        "",
-		ExtensionID:     "",
-		LinkedDatasetID: nil,
-		Page:            nil,
+		ID:              IDFrom(b.ID()),
+		PropertyID:      IDFrom(b.Property()),
 		Property:        nil,
+		PluginID:        IDFromPluginID(b.Plugin()),
 		Plugin:          nil,
+		ExtensionID:     IDFromString(b.Extension()),
 		Extension:       nil,
+		LinkedDatasetID: nil,
 	}
 }
 
-func ToBlocks(ss storytelling.BlockList) []*StoryBlock {
-	return lo.Map(ss, func(s *storytelling.Block, _ int) *StoryBlock {
+func ToBlocks(bl storytelling.BlockList) []*StoryBlock {
+	if len(bl) == 0 {
+		return []*StoryBlock{}
+	}
+	return lo.Map(bl, func(s *storytelling.Block, _ int) *StoryBlock {
 		return ToBlock(s)
 	})
 }
