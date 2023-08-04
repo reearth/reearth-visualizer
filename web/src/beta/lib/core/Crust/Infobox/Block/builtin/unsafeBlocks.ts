@@ -1,14 +1,13 @@
 import { merge } from "lodash-es";
 
+import { config } from "@reearth/services/config";
+import { type UnsafeBuiltinPlugin } from "@reearth/services/config/unsafeBuiltinPlugin";
+
 import { Component } from "..";
-import { UnsafeBuiltinPlugin } from "../../../types";
 
 export type UnsafeBuiltinBlocks<T = unknown> = Record<string, T>;
 
-const unsafeBuiltinPlugins = (await import(/* @vite-ignore */ "src/beta/lib/unsafeBuiltinPlugins"))
-  .default;
-
-export const unsafeBuiltinBlocks = processUnsafeBuiltinBlocks(unsafeBuiltinPlugins);
+export const unsafeBuiltinBlocks = processUnsafeBuiltinBlocks(config()?.unsafeBuiltinPlugins);
 
 function processUnsafeBuiltinBlocks(plugin?: UnsafeBuiltinPlugin[]) {
   if (!plugin) return;
