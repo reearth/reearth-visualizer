@@ -7,12 +7,8 @@ export type { Component } from "..";
 
 export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 
-let unsafeBuiltinPlugins;
-
-(async () => {
-  unsafeBuiltinPlugins = (await import(/* @vite-ignore */ "src/beta/lib/unsafeBuiltinPlugins"))
-    .default;
-})();
+const unsafeBuiltinPlugins = (await import(/* @vite-ignore */ "src/beta/lib/unsafeBuiltinPlugins"))
+  .default;
 
 export const unsafeBuiltinWidgets = processUnsafeBuiltinWidgets(unsafeBuiltinPlugins);
 
