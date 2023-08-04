@@ -18,6 +18,14 @@ type UnsafeBuiltinPluginExtension<T extends "widget" | "block"> = {
 
 export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 
-export const unsafeBuiltinPlugins = (
-  await import(/* @vite-ignore */ "src/beta/lib/unsafeBuiltinPlugins")
-).default as UnsafeBuiltinPlugin[];
+export async function loadUnsafeBuiltinPlugins() {
+  try {
+    const unsafeBuiltinPlugins = (
+      await import(/* @vite-ignore */ "src/beta/lib/unsafeBuiltinPlugins")
+    ).default as UnsafeBuiltinPlugin[];
+    return unsafeBuiltinPlugins;
+  } catch (e) {
+    console.error("unsafe builtin plugin load failed", e);
+  }
+  return undefined;
+}
