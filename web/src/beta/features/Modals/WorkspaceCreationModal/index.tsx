@@ -14,11 +14,11 @@ export interface FormValues {
   // description: string;
 }
 
-export interface Props {
+export type Props = {
   open?: boolean;
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
-}
+};
 
 const initialValues: FormValues = {
   name: "",
@@ -97,10 +97,10 @@ const FormInputWrapper = styled.div`
 
 const StyledInput = styled.input`
   flex: 2;
-  color: ${props => props.theme.content.main};
-  background: ${props => props.theme.bg[0]};
+  color: ${({ theme }) => theme.content.main};
+  background: ${({ theme }) => theme.bg[0]};
   border-radius: 4px;
-  border: 1px solid ${props => props.theme.bg[4]};
+  border: 1px solid ${({ theme }) => theme.bg[4]};
   font-size: ${fonts.sizes.body}px;
   cursor: text;
   padding: 4px 8px;

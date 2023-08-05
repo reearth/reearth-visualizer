@@ -79,7 +79,6 @@ const Inner = styled.button<{ border?: boolean; isSelected?: boolean; clamp?: Cl
   background: ${({ theme, isSelected }) => (isSelected ? theme.select.main : "inherit")};
   transition: all 0.3s;
 
-  ${({ isSelected, theme }) => isSelected && `background-color:` + theme.select.main}
   :hover {
     ${({ isSelected, theme }) => !isSelected && `background-color:` + theme.bg[3]}
   }
