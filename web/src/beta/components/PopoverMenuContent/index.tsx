@@ -67,7 +67,7 @@ const SRoot = styled.div<Pick<Props, "width">>`
 
   border-radius: 2px;
   border: 1px solid ${({ theme }) => theme.bg[3]};
-  background: #262626;
+  background: ${({ theme }) => theme.bg[1]};
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
 `;
 
