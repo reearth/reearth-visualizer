@@ -3,6 +3,7 @@ package mongodoc
 import (
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/samber/lo"
@@ -64,30 +65,6 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 	}, sId
 }
 
-func newPage(p storytelling.Page) PageDocument {
-	return PageDocument{
-		Id:          p.Id().String(),
-		Property:    p.Property().String(),
-		Title:       p.Title(),
-		Swipeable:   p.Swipeable(),
-		Layers:      p.Layers().Strings(),
-		SwipeLayers: p.SwipeableLayers().Strings(),
-		Blocks:      nil,
-	}
-}
-
-func newPages(pl *storytelling.PageList) []PageDocument {
-	if pl == nil {
-		return nil
-	}
-	return lo.Map(pl.Pages(), func(p *storytelling.Page, _ int) PageDocument {
-		if p == nil {
-			return PageDocument{}
-		}
-		return newPage(*p)
-	})
-}
-
 func NewStorytellings(sl *storytelling.StoryList) ([]any, []string) {
 	if sl == nil {
 		return nil, nil
@@ -103,6 +80,51 @@ func NewStorytellings(sl *storytelling.StoryList) ([]any, []string) {
 	})
 
 	return sdl, ids
+}
+
+func newPage(p storytelling.Page) PageDocument {
+	return PageDocument{
+		Id:          p.Id().String(),
+		Property:    p.Property().String(),
+		Title:       p.Title(),
+		Swipeable:   p.Swipeable(),
+		Layers:      p.Layers().Strings(),
+		SwipeLayers: p.SwipeableLayers().Strings(),
+		Blocks:      newBlocks(p.Blocks()),
+	}
+}
+
+func newPages(pl *storytelling.PageList) []PageDocument {
+	if pl == nil {
+		return nil
+	}
+	return lo.Map(pl.Pages(), func(p *storytelling.Page, _ int) PageDocument {
+		if p == nil {
+			return PageDocument{}
+		}
+		return newPage(*p)
+	})
+}
+
+func newBlocks(blocks storytelling.BlockList) []BlockDocument {
+	if blocks == nil {
+		return nil
+	}
+	return lo.Map(blocks, func(b *storytelling.Block, _ int) BlockDocument {
+		if b == nil {
+			return BlockDocument{}
+		}
+		return newBlock(*b)
+	})
+}
+
+func newBlock(b storytelling.Block) BlockDocument {
+	return BlockDocument{
+		Id:        b.ID().String(),
+		Plugin:    b.Plugin().String(),
+		Extension: b.Extension().String(),
+		Property:  b.Property().String(),
+	}
 }
 
 func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
@@ -167,6 +189,18 @@ func (d *PageDocument) Model() (*storytelling.Page, error) {
 		return nil, err
 	}
 
+	blocks := lo.Map(d.Blocks, func(b BlockDocument, _ int) *storytelling.Block {
+		page, err2 := b.Model()
+		if err2 != nil {
+			err = err2
+			return nil
+		}
+		return page
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	p, err := storytelling.NewPage().
 		ID(pId).
 		Property(property).
@@ -174,11 +208,42 @@ func (d *PageDocument) Model() (*storytelling.Page, error) {
 		Layers(lIds).
 		Swipeable(d.Swipeable).
 		SwipeableLayers(slIds).
-		Blocks(nil).
+		Blocks(blocks).
 		Build()
 	if err != nil {
 		return nil, err
 	}
 
 	return p, nil
+}
+
+func (d BlockDocument) Model() (*storytelling.Block, error) {
+	bId, err := id.BlockIDFrom(d.Id)
+	if err != nil {
+		return nil, err
+	}
+	property, err := id.PropertyIDFrom(d.Property)
+	if err != nil {
+		return nil, err
+	}
+	plugin, err := id.PluginIDFrom(d.Plugin)
+	if err != nil {
+		return nil, err
+	}
+	extension := id.PluginExtensionIDFromRef(&d.Extension)
+	if extension == nil {
+		return nil, errors.New("invalid extension")
+	}
+
+	b, err := storytelling.NewBlock().
+		ID(bId).
+		Property(property).
+		Plugin(plugin).
+		Extension(*extension).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
