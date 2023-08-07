@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, onPageSelect }) => {
-  const { pageInfo, pageHeight, installableStoryBlocks, handleStoryBlockCreate } = useHooks({
+  const { pageInfo, pageHeight, installableStoryBlocks } = useHooks({
     sceneId,
     selectedStory,
     selectedPage,
@@ -37,10 +37,9 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
             <StoryPage
               sceneId={sceneId}
               storyId={selectedStory.id}
-              pageId={selectedPage?.id}
-              pageTitle={selectedPage?.title}
+              pageId={p.id}
+              pageTitle={p.title}
               installableStoryBlocks={installableStoryBlocks}
-              onStoryBlockCreate={handleStoryBlockCreate}
             />
             <PageGap height={pageHeight} />
           </Fragment>

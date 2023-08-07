@@ -32,7 +32,7 @@ export default () => {
   const [createStoryPageMutation] = useMutation<
     CreateStoryPageMutation,
     MutationCreateStoryPageArgs
-  >(CREATE_STORY_PAGE);
+  >(CREATE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useCreateStoryPage = useCallback(
     async (input: CreateStoryPageInput): Promise<MutationReturn<CreateStoryPageMutation>> => {
@@ -56,7 +56,7 @@ export default () => {
   const [deleteStoryPageMutation] = useMutation<
     DeleteStoryPageMutation,
     MutationRemoveStoryPageArgs
-  >(DELETE_STORY_PAGE);
+  >(DELETE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useDeleteStoryPage = useCallback(
     async (input: DeleteStoryPageInput): Promise<MutationReturn<DeleteStoryPageMutation>> => {
@@ -79,6 +79,7 @@ export default () => {
 
   const [moveStoryPageMutation] = useMutation<MoveStoryPageMutation, MutationMoveStoryPageArgs>(
     MOVE_STORY_PAGE,
+    { refetchQueries: ["GetScene"] },
   );
 
   const useMoveStoryPage = useCallback(

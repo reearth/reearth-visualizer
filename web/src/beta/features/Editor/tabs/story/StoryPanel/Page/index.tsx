@@ -13,10 +13,6 @@ type Props = {
   pageId?: string;
   pageTitle?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
-  onStoryBlockCreate?: (
-    extensionId?: string | undefined,
-    pluginId?: string | undefined,
-  ) => Promise<void>;
 };
 
 const StoryPage: React.FC<Props> = ({
@@ -25,11 +21,10 @@ const StoryPage: React.FC<Props> = ({
   pageId,
   pageTitle,
   installableStoryBlocks,
-  onStoryBlockCreate,
 }) => {
   const [openBlocks, setOpenBlocks] = useState(false);
 
-  const { installedStoryBlocks } = useHooks({ sceneId, storyId, pageId });
+  const { installedStoryBlocks, handleStoryBlockCreate } = useHooks({ sceneId, storyId, pageId });
 
   const handleBlockOpen = useCallback(() => {
     setOpenBlocks(o => !o);
@@ -37,10 +32,9 @@ const StoryPage: React.FC<Props> = ({
 
   const handleBlockAdd = useCallback(
     (extensionId: string, pluginId: string) => {
-      console.log("ADDDDD BLOCK w ID: ", extensionId, pluginId);
-      onStoryBlockCreate?.(extensionId, pluginId);
+      handleStoryBlockCreate(extensionId, pluginId);
     },
-    [onStoryBlockCreate],
+    [handleStoryBlockCreate],
   );
 
   return (
@@ -48,7 +42,7 @@ const StoryPage: React.FC<Props> = ({
       <Text size="h2" customColor>
         {pageTitle ?? "No Title"}
       </Text>
-      {installedStoryBlocks ? (
+      {installedStoryBlocks && installedStoryBlocks.length > 0 ? (
         installedStoryBlocks?.map((b, idx) => (
           <Fragment key={idx}>
             <Block>{b.title}</Block>
@@ -83,5 +77,5 @@ const Wrapper = styled.div`
 const Block = styled.div`
   padding: 5px;
   height: 50px;
-  background: yellow;
+  border: 1px dotted black;
 `;

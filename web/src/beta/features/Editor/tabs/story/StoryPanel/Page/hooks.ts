@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 
 export default ({
@@ -9,7 +11,7 @@ export default ({
   storyId?: string;
   pageId?: string;
 }) => {
-  const { useInstalledStoryBlocksQuery } = useStorytellingAPI();
+  const { useInstalledStoryBlocksQuery, useCreateStoryBlock } = useStorytellingAPI();
 
   const { installedStoryBlocks } = useInstalledStoryBlocksQuery({
     sceneId,
@@ -18,5 +20,18 @@ export default ({
     pageId,
   });
 
-  return { installedStoryBlocks };
+  const handleStoryBlockCreate = useCallback(
+    async (extensionId?: string, pluginId?: string) => {
+      if (!extensionId || !pluginId || !storyId || !pageId) return;
+      await useCreateStoryBlock({
+        pluginId,
+        extensionId,
+        storyId,
+        pageId,
+      });
+    },
+    [storyId, pageId, useCreateStoryBlock],
+  );
+
+  return { installedStoryBlocks, handleStoryBlockCreate };
 };

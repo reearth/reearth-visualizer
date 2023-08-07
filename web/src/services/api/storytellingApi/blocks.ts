@@ -95,7 +95,7 @@ export default () => {
   const [createStoryBlockMutation] = useMutation<
     CreateStoryBlockMutation,
     MutationCreateStoryBlockArgs
-  >(CREATE_STORY_BLOCK);
+  >(CREATE_STORY_BLOCK, { refetchQueries: ["GetScene"] });
 
   const useCreateStoryBlock = useCallback(
     async (input: CreateStoryBlockInput): Promise<MutationReturn<CreateStoryBlockMutation>> => {
@@ -115,7 +115,7 @@ export default () => {
   const [removeStoryBlockMutation] = useMutation<
     RemoveStoryBlockMutation,
     MutationRemoveStoryBlockArgs
-  >(REMOVE_STORY_BLOCK);
+  >(REMOVE_STORY_BLOCK, { refetchQueries: ["GetScene"] });
 
   const useDeleteStoryBlock = useCallback(
     async (input: RemoveStoryBlockInput): Promise<MutationReturn<RemoveStoryBlockMutation>> => {
@@ -134,6 +134,7 @@ export default () => {
 
   const [moveStoryBlockMutation] = useMutation<MoveStoryBlockMutation, MutationMoveStoryBlockArgs>(
     MOVE_STORY_BLOCK,
+    { refetchQueries: ["GetScene"] },
   );
 
   const useMoveStoryBlock = useCallback(

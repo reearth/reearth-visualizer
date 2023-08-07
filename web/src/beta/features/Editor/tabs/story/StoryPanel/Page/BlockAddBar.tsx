@@ -19,8 +19,8 @@ const BlockAddBar: React.FC<Props> = ({
   onBlockOpen,
   onBlockAdd,
 }) => {
-  const items = useMemo(() => {
-    const blockSelection: MenuItem[] =
+  const items: MenuItem[] = useMemo(
+    () =>
       installableStoryBlocks?.map?.(sb => {
         return {
           name: sb.name,
@@ -28,12 +28,11 @@ const BlockAddBar: React.FC<Props> = ({
           onClick: () => {
             onBlockAdd(sb.extensionId, sb.pluginId);
             onBlockOpen();
-            console.log("SB: ", sb);
           },
         };
-      }) ?? [];
-    return blockSelection;
-  }, [installableStoryBlocks, onBlockAdd, onBlockOpen]);
+      }) ?? [],
+    [installableStoryBlocks, onBlockAdd, onBlockOpen],
+  );
 
   return (
     <Wrapper>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
@@ -16,7 +16,7 @@ export default ({
   selectedPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 }) => {
-  const { useInstallableStoryBlocksQuery, useCreateStoryBlock } = useStorytellingAPI();
+  const { useInstallableStoryBlocksQuery } = useStorytellingAPI();
 
   const pageInfo = useMemo(() => {
     const pages = selectedStory?.pages ?? [];
@@ -37,23 +37,9 @@ export default ({
 
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
 
-  const handleStoryBlockCreate = useCallback(
-    async (extensionId?: string, pluginId?: string) => {
-      if (!extensionId || !pluginId || !selectedPage || !selectedStory) return;
-      await useCreateStoryBlock({
-        extensionId,
-        pageId: selectedPage.id,
-        storyId: selectedStory.id,
-        pluginId,
-      });
-    },
-    [selectedPage, selectedStory, useCreateStoryBlock],
-  );
-
   return {
     pageInfo,
     pageHeight,
     installableStoryBlocks,
-    handleStoryBlockCreate,
   };
 };
