@@ -2,48 +2,37 @@ import { useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import PopoverMenuContent, { MenuItem } from "@reearth/beta/components/PopoverMenuContent";
+import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  installableBlocks?: any[];
   openBlocks: boolean;
+  installableStoryBlocks?: InstallableStoryBlock[];
   onBlockOpen: () => void;
-  onBlockClick: (id: string) => void;
+  onBlockAdd: (id: string) => void;
 };
 
 const BlockAddBar: React.FC<Props> = ({
-  installableBlocks,
+  installableStoryBlocks,
   openBlocks,
   onBlockOpen,
-  onBlockClick,
+  onBlockAdd,
 }) => {
-  const blocks = useMemo(() => {
-    const blockSelection = [
-      {
-        name: "something",
-        onClick: () => {
-          onBlockClick("ID1234");
-          console.log("ASDFL:KJSDFLK:", installableBlocks);
-        },
-      },
-      {
-        name: "something",
-        onClick: () => {
-          onBlockClick("ID5678");
-          console.log("ASDFL:KJSDFLK:", installableBlocks);
-        },
-      },
-      {
-        name: "something",
-        onClick: () => {
-          onBlockClick("ID9101112");
-          console.log("ASDFL:KJSDFLK:", installableBlocks);
-        },
-      },
-    ];
+  const items = useMemo(() => {
+    const blockSelection: MenuItem[] =
+      installableStoryBlocks?.map?.(sb => {
+        return {
+          name: sb.name,
+          icon: "plugin",
+          onClick: () => {
+            onBlockAdd(sb.extensionId);
+            console.log("SB: ", sb);
+          },
+        };
+      }) ?? [];
     return blockSelection;
-  }, [installableBlocks, onBlockClick]);
+  }, [installableStoryBlocks, onBlockAdd]);
 
   return (
     <Wrapper>
@@ -59,7 +48,7 @@ const BlockAddBar: React.FC<Props> = ({
           </Bar>
         </Popover.Trigger>
         <Popover.Content>
-          <PopoverMenuContent size="md" width="200px" items={blocks} />
+          <PopoverMenuContent size="md" width="200px" items={items} />
         </Popover.Content>
       </Popover.Provider>
     </Wrapper>

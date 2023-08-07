@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useState } from "react";
 
+import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 import BlockAddBar from "./BlockAddBar";
@@ -12,15 +13,15 @@ type StoryBlock = {
 type Props = {
   content?: string;
   blocks?: StoryBlock[];
+  installableStoryBlocks?: InstallableStoryBlock[];
 };
 
-const StoryPage: React.FC<Props> = ({ content, blocks }) => {
+const StoryPage: React.FC<Props> = ({ content, blocks, installableStoryBlocks }) => {
   const [openBlocks, setOpenBlocks] = useState(false);
 
   const handleBlockOpen = useCallback(() => {
-    console.log("clicked", openBlocks);
     setOpenBlocks(o => !o);
-  }, [openBlocks]);
+  }, []);
 
   const handleBlockAdd = useCallback((id: string) => {
     console.log("ADDDDD BLOCK w ID: ", id);
@@ -36,16 +37,18 @@ const StoryPage: React.FC<Props> = ({ content, blocks }) => {
             <Block>{idx}</Block>
             <BlockAddBar
               openBlocks={openBlocks}
+              installableStoryBlocks={installableStoryBlocks}
               onBlockOpen={handleBlockOpen}
-              onBlockClick={handleBlockAdd}
+              onBlockAdd={handleBlockAdd}
             />
           </Fragment>
         ))
       ) : (
         <BlockAddBar
           openBlocks={openBlocks}
+          installableStoryBlocks={installableStoryBlocks}
           onBlockOpen={handleBlockOpen}
-          onBlockClick={handleBlockAdd}
+          onBlockAdd={handleBlockAdd}
         />
       )}
     </Wrapper>

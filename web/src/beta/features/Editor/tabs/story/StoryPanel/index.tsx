@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 
 import PageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicator";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
@@ -8,13 +8,19 @@ import useHooks, { pageElementId } from "./hooks";
 import StoryPage from "./Page";
 
 type Props = {
+  sceneId?: string;
   selectedStory?: StoryFragmentFragment;
   selectedPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 };
 
-export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelect }) => {
-  const { pageInfo, pageHeight } = useHooks({ selectedStory, selectedPage, onPageSelect });
+export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, onPageSelect }) => {
+  const { pageInfo, pageHeight, installableStoryBlocks } = useHooks({
+    sceneId,
+    selectedStory,
+    selectedPage,
+    onPageSelect,
+  });
 
   return (
     <Wrapper>
@@ -27,10 +33,10 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
       )}
       <PageWrapper id={pageElementId}>
         {selectedStory?.pages.map(p => (
-          <>
-            <StoryPage key={p.id} content={p.id} />
+          <Fragment key={p.id}>
+            <StoryPage content={p.id} installableStoryBlocks={installableStoryBlocks} />
             <PageGap height={pageHeight} />
-          </>
+          </Fragment>
         ))}
       </PageWrapper>
     </Wrapper>

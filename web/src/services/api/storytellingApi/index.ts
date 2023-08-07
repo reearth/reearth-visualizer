@@ -20,7 +20,12 @@ export default function useStorytellingAPI() {
   const [, setNotification] = useNotification();
 
   const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = usePages();
-  const { useCreateStoryBlock, useDeleteStoryBlock, useMoveStoryBlock } = useBlocks();
+  const {
+    useInstallableStoryBlocksQuery,
+    useCreateStoryBlock,
+    useDeleteStoryBlock,
+    useMoveStoryBlock,
+  } = useBlocks();
 
   const [createStoryMutation] = useMutation<CreateStoryMutation, MutationCreateStoryArgs>(
     CREATE_STORY,
@@ -45,6 +50,7 @@ export default function useStorytellingAPI() {
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
+    useInstallableStoryBlocksQuery,
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,

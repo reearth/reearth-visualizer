@@ -1407,6 +1407,7 @@ export enum PluginExtensionType {
   Block = 'BLOCK',
   Infobox = 'INFOBOX',
   Primitive = 'PRIMITIVE',
+  Storyblock = 'STORYBLOCK',
   Visualizer = 'VISUALIZER',
   Widget = 'WIDGET'
 }

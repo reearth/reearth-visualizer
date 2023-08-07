@@ -1,10 +1,12 @@
-import { useMutation } from "@apollo/client";
-import { useCallback } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { useCallback, useMemo } from "react";
 
 import { MutationReturn } from "@reearth/services/api/types";
+import { ExtensionType } from "@reearth/services/config/extensions";
 import {
   CreateStoryBlockInput,
   CreateStoryBlockMutation,
+  GetSceneQuery,
   MoveStoryBlockInput,
   MoveStoryBlockMutation,
   MutationCreateStoryBlockArgs,
@@ -13,6 +15,7 @@ import {
   RemoveStoryBlockInput,
   RemoveStoryBlockMutation,
 } from "@reearth/services/gql/__gen__/graphql";
+import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import {
   CREATE_STORY_BLOCK,
   MOVE_STORY_BLOCK,
@@ -21,9 +24,33 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
+import { SceneQueryProps } from "../sceneApi";
+
+export type StoryBlockQueryProps = SceneQueryProps;
+
+export type InstallableStoryBlock = {
+  name: string;
+  description?: string;
+  extensionId: string;
+  icon?: string;
+  singleOnly?: boolean;
+  type?: ExtensionType;
+};
+
 export default () => {
   const [, setNotification] = useNotification();
   const t = useT();
+
+  const useInstallableStoryBlocksQuery = useCallback(({ sceneId, lang }: StoryBlockQueryProps) => {
+    const { data, ...rest } = useQuery(GET_SCENE, {
+      variables: { sceneId: sceneId ?? "", lang },
+      skip: !sceneId,
+    });
+
+    const installableStoryBlocks = useMemo(() => getInstallableStoryBlocks(data), [data]);
+
+    return { installableStoryBlocks, ...rest };
+  }, []);
 
   const [createStoryBlockMutation] = useMutation<
     CreateStoryBlockMutation,
@@ -84,8 +111,25 @@ export default () => {
     [moveStoryBlockMutation, setNotification, t],
   );
   return {
+    useInstallableStoryBlocksQuery,
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,
   };
+};
+
+const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
+  const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
+
+  return scene?.plugins
+    .map(p => {
+      const plugin = p.plugin;
+      return plugin?.extensions
+        .filter(e => e.extensionId.toLowerCase().includes("storyblock")) // TODO: Change this filter to check for extensionType of storyblock
+        .map((e): any => {
+          return e;
+        })
+        .filter((sb): sb is any => !!sb);
+    })
+    .reduce<InstallableStoryBlock[]>((a, b) => (b ? [...a, ...b] : a), []);
 };

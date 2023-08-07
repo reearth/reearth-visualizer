@@ -93,6 +93,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
             <CenterContents hasNav={!!secondaryNavbar}>
               {selectedProjectType === "story" && (
                 <StoryPanel
+                  sceneId={sceneId}
                   selectedStory={selectedStory}
                   selectedPage={selectedPage}
                   onPageSelect={handlePageSelect}
