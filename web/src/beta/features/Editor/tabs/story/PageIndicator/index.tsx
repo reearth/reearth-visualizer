@@ -4,23 +4,16 @@ import { styled } from "@reearth/services/theme";
 
 type Props = {
   currentPage: number;
-  currentPageProgress: number;
   maxPage: number;
   onPageChange: (page: number) => void;
 };
 
-const StoryPageIndicator: FC<Props> = ({
-  currentPage,
-  currentPageProgress,
-  maxPage,
-  onPageChange,
-}) => {
+const StoryPageIndicator: FC<Props> = ({ currentPage, maxPage, onPageChange }) => {
   const widthPercentage = useMemo(() => {
     const onePageWidth = 100 / maxPage;
-    const base = (currentPage - 1) * onePageWidth;
-    const progress = (onePageWidth / 100) * currentPageProgress;
-    return base + progress;
-  }, [currentPage, currentPageProgress, maxPage]);
+    const base = currentPage * onePageWidth;
+    return base;
+  }, [currentPage, maxPage]);
   return (
     <Wrapper widthPercentage={widthPercentage}>
       {[...Array(maxPage)].map((_, i) => {

@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import PageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicator";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
@@ -27,30 +27,16 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
     };
   }, [onPageSelect, selectedPage, selectedStory]);
 
-  const handleScroll = useCallback(() => {
-    // console.log("Scrolled", e);
-    const pageElement = document.getElementById(pageElementId);
-    // console.log("TOP position", pageElement?.scrollTop);
-    // console.log("BOTTOM position", pageElement?.scrollTop);
-    // console.log("CLIENT HEIGHT", pageElement?.clientHeight);
-    if (pageElement) {
-      // console.log("page middle", pageElement.clientHeight / 2);
-      // console.log("scroll %: ", (pageElement.scrollTop / pageElement.scrollHeight) * 100);
-      // console.log("SCROLLED", pageElement.clientHeight + pageElement.scrollHeight);
-    }
-  }, []);
-
   return (
     <Wrapper>
       {!!pageInfo && (
         <PageIndicator
           currentPage={pageInfo.currentPage}
-          currentPageProgress={33}
-          onPageChange={pageInfo.onPageChange}
           maxPage={pageInfo.maxPage}
+          onPageChange={pageInfo.onPageChange}
         />
       )}
-      <PageWrapper id={pageElementId} onScroll={handleScroll}>
+      <PageWrapper id={pageElementId}>
         {selectedStory?.pages.map(p => (
           <StoryPage key={p.id} content={p.id} />
         ))}
