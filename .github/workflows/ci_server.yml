@@ -7,7 +7,7 @@ env:
 jobs:
   ci-server-lint:
     runs-on: ubuntu-latest
-    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
+    if: github.event_name != 'push'
     steps:
       - name: checkout
         uses: actions/checkout@v3
