@@ -35,7 +35,10 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
         {selectedStory?.pages.map(p => (
           <Fragment key={p.id}>
             <StoryPage
-              content={p.id}
+              sceneId={sceneId}
+              storyId={selectedStory.id}
+              pageId={selectedPage?.id}
+              pageTitle={selectedPage?.title}
               installableStoryBlocks={installableStoryBlocks}
               onStoryBlockCreate={handleStoryBlockCreate}
             />

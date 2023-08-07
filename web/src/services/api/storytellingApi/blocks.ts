@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { MutationReturn } from "@reearth/services/api/types";
-import { ExtensionType } from "@reearth/services/config/extensions";
 import {
   CreateStoryBlockInput,
   CreateStoryBlockMutation,
@@ -12,6 +11,7 @@ import {
   MutationCreateStoryBlockArgs,
   MutationMoveStoryBlockArgs,
   MutationRemoveStoryBlockArgs,
+  PluginExtensionType,
   RemoveStoryBlockInput,
   RemoveStoryBlockMutation,
 } from "@reearth/services/gql/__gen__/graphql";
@@ -24,6 +24,7 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
+import { Item, convert } from "../propertyApi/utils";
 import { SceneQueryProps } from "../sceneApi";
 
 export type StoryBlockQueryProps = SceneQueryProps;
@@ -35,7 +36,20 @@ export type InstallableStoryBlock = {
   extensionId: string;
   icon?: string;
   singleOnly?: boolean;
-  type?: ExtensionType;
+  type?: PluginExtensionType;
+};
+
+export type InstalledStoryBlock = {
+  id: string;
+  pluginId: string;
+  extensionId: string;
+  title: string;
+  description: string | undefined;
+  icon?: string;
+  property?: {
+    id: string;
+    items: Item[] | undefined;
+  };
 };
 
 export default () => {
@@ -52,6 +66,31 @@ export default () => {
 
     return { installableStoryBlocks, ...rest };
   }, []);
+
+  const useInstalledStoryBlocksQuery = useCallback(
+    ({
+      sceneId,
+      lang,
+      storyId,
+      pageId,
+    }: StoryBlockQueryProps & {
+      storyId?: string;
+      pageId?: string;
+    }) => {
+      const { data, ...rest } = useQuery(GET_SCENE, {
+        variables: { sceneId: sceneId ?? "", lang },
+        skip: !sceneId,
+      });
+
+      const installedStoryBlocks = useMemo(
+        () => getInstalledStoryBlocks(data, storyId, pageId),
+        [data, storyId, pageId],
+      );
+
+      return { installedStoryBlocks, ...rest };
+    },
+    [],
+  );
 
   const [createStoryBlockMutation] = useMutation<
     CreateStoryBlockMutation,
@@ -113,6 +152,7 @@ export default () => {
   );
   return {
     useInstallableStoryBlocksQuery,
+    useInstalledStoryBlocksQuery,
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,
@@ -126,14 +166,49 @@ const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
     .map(p => {
       const plugin = p.plugin;
       return plugin?.extensions
-        .filter(e => e.extensionId.toLowerCase().includes("storyblock")) // TODO: Change this filter to check for extensionType of storyblock
-        .map((e): any => {
+        .filter(e => e.type === PluginExtensionType.StoryBlock)
+        .map((e): InstallableStoryBlock => {
           return {
+            name: e.translatedName ?? e.name,
+            description: e.translatedDescription ?? e.description,
             pluginId: plugin.id,
-            ...e,
+            extensionId: e.extensionId,
+            icon: e.icon,
+            singleOnly: !!e.singleOnly,
+            type: e.type,
           };
         })
-        .filter((sb): sb is any => !!sb);
+        .filter((sb): sb is InstallableStoryBlock => !!sb);
     })
     .reduce<InstallableStoryBlock[]>((a, b) => (b ? [...a, ...b] : a), []);
+};
+
+export const getInstalledStoryBlocks = (
+  rawScene?: GetSceneQuery,
+  storyId?: string,
+  pageId?: string,
+): InstalledStoryBlock[] | undefined => {
+  if (!rawScene?.node || !storyId || !pageId) return;
+  const scene = rawScene.node.__typename === "Scene" ? rawScene.node : undefined;
+
+  const page = scene?.stories.find(s => s.id === storyId)?.pages.find(p => p.id === pageId);
+
+  const installableStoryBlocks = getInstallableStoryBlocks(rawScene);
+
+  return page?.blocks.map(b => {
+    const block = installableStoryBlocks?.find(isb => isb.extensionId === b.extensionId);
+
+    return {
+      id: b.id,
+      pluginId: b.pluginId,
+      extensionId: b.extensionId,
+      title: block?.name ?? "Undefined",
+      description: block?.description,
+      icon: block?.icon,
+      property: {
+        id: b.id,
+        items: convert(b.property, null),
+      },
+    };
+  });
 };

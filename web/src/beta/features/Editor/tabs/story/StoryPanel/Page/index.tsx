@@ -1,18 +1,17 @@
 import { Fragment, useCallback, useState } from "react";
 
+import Text from "@reearth/beta/components/Text";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 import BlockAddBar from "./BlockAddBar";
-
-type StoryBlock = {
-  id: string;
-  type: string;
-};
+import useHooks from "./hooks";
 
 type Props = {
-  content?: string;
-  blocks?: StoryBlock[];
+  sceneId?: string;
+  storyId?: string;
+  pageId?: string;
+  pageTitle?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   onStoryBlockCreate?: (
     extensionId?: string | undefined,
@@ -21,12 +20,16 @@ type Props = {
 };
 
 const StoryPage: React.FC<Props> = ({
-  content,
-  blocks,
+  sceneId,
+  storyId,
+  pageId,
+  pageTitle,
   installableStoryBlocks,
   onStoryBlockCreate,
 }) => {
   const [openBlocks, setOpenBlocks] = useState(false);
+
+  const { installedStoryBlocks } = useHooks({ sceneId, storyId, pageId });
 
   const handleBlockOpen = useCallback(() => {
     setOpenBlocks(o => !o);
@@ -42,12 +45,13 @@ const StoryPage: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <p>Page ID</p>
-      <p>{content}</p>
-      {blocks ? (
-        blocks.map((_, idx) => (
+      <Text size="h2" customColor>
+        {pageTitle ?? "No Title"}
+      </Text>
+      {installedStoryBlocks ? (
+        installedStoryBlocks?.map((b, idx) => (
           <Fragment key={idx}>
-            <Block>{idx}</Block>
+            <Block>{b.title}</Block>
             <BlockAddBar
               openBlocks={openBlocks}
               installableStoryBlocks={installableStoryBlocks}
@@ -71,9 +75,9 @@ const StoryPage: React.FC<Props> = ({
 export default StoryPage;
 
 const Wrapper = styled.div`
-  background: rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
+  color: ${({ theme }) => theme.content.weaker};
 `;
 
 const Block = styled.div`

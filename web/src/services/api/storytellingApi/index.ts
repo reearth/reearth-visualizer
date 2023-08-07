@@ -22,6 +22,7 @@ export default function useStorytellingAPI() {
   const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = usePages();
   const {
     useInstallableStoryBlocksQuery,
+    useInstalledStoryBlocksQuery,
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,
@@ -51,6 +52,7 @@ export default function useStorytellingAPI() {
     useDeleteStoryPage,
     useMoveStoryPage,
     useInstallableStoryBlocksQuery,
+    useInstalledStoryBlocksQuery,
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,
