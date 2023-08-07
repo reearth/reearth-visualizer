@@ -67,3 +67,49 @@ export const MOVE_STORY_PAGE = gql(`
     }
   }
 `);
+
+export const CREATE_STORY_BLOCK = gql(`
+  mutation CreateStoryBlock($input: CreateStoryBlockInput!){
+    createStoryBlock(input: $input) {
+      index
+      block {
+        id
+      }
+      page {
+        id
+      }
+      story {
+        id
+      }
+    }
+  }
+`);
+
+export const MOVE_STORY_BLOCK = gql(`
+  mutation MoveStoryBlock($input: MoveStoryBlockInput!){
+    moveStoryBlock(input: $input) {
+      index
+      blockId
+      page {
+        id
+      }
+      story {
+        id
+      }
+    }
+  }
+`);
+
+export const REMOVE_STORY_BLOCK = gql(`
+  mutation RemoveStoryBlock($input: RemoveStoryBlockInput!){
+    removeStoryBlock(input: $input) {
+      blockId
+      page {
+        id
+      }
+      story {
+        id
+      }
+    }
+  }
+`);

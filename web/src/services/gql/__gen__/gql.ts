@@ -44,6 +44,9 @@ const documents = {
     "\n  mutation UpdateStoryPage($input: UpdateStoryPageInput!) {\n    updateStoryPage(input: $input) {\n      story {\n        ...StoryFragment\n      }\n    }\n  }\n": types.UpdateStoryPageDocument,
     "\n  mutation DeleteStoryPage($input: DeleteStoryPageInput!) {\n    removeStoryPage(input: $input) {\n      story {\n        ...StoryFragment\n      }\n    }\n  }\n": types.DeleteStoryPageDocument,
     "\n  mutation MoveStoryPage($input: MoveStoryPageInput!) {\n    moveStoryPage(input: $input) {\n      story {\n        ...StoryFragment\n      }\n    }\n  }\n": types.MoveStoryPageDocument,
+    "\n  mutation CreateStoryBlock($input: CreateStoryBlockInput!){\n    createStoryBlock(input: $input) {\n      index\n      block {\n        id\n      }\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n": types.CreateStoryBlockDocument,
+    "\n  mutation MoveStoryBlock($input: MoveStoryBlockInput!){\n    moveStoryBlock(input: $input) {\n      index\n      blockId\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n": types.MoveStoryBlockDocument,
+    "\n  mutation RemoveStoryBlock($input: RemoveStoryBlockInput!){\n    removeStoryBlock(input: $input) {\n      blockId\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n": types.RemoveStoryBlockDocument,
     "\n  query GetUserBySearch($nameOrEmail: String!) {\n    searchUser(nameOrEmail: $nameOrEmail) {\n      id\n      name\n      email\n    }\n  }\n": types.GetUserBySearchDocument,
     "\n  query GetMe {\n    me {\n      id\n      name\n      email\n      lang\n      theme\n      myTeam {\n        id\n        name\n        policyId\n        policy {\n          id\n          name\n          projectCount\n          memberCount\n          publishedProjectCount\n          layerCount\n          assetStorageSize\n          datasetSchemaCount\n          datasetCount\n        }\n      }\n      teams {\n        id\n        name\n        members {\n          user {\n            id\n            name\n            email\n          }\n          userId\n          role\n        }\n        policyId\n        policy {\n          id\n          name\n          projectCount\n          memberCount\n          publishedProjectCount\n          layerCount\n          assetStorageSize\n          datasetSchemaCount\n          datasetCount\n        }\n      }\n      auths\n    }\n  }\n": types.GetMeDocument,
     "\n  mutation UpdateMe(\n    $name: String\n    $email: String\n    $lang: Lang\n    $theme: Theme\n    $password: String\n    $passwordConfirmation: String\n  ) {\n    updateMe(\n      input: {\n        name: $name\n        email: $email\n        lang: $lang\n        theme: $theme\n        password: $password\n        passwordConfirmation: $passwordConfirmation\n      }\n    ) {\n      me {\n        id\n        name\n        email\n        lang\n        theme\n        myTeam {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.UpdateMeDocument,
@@ -193,6 +196,18 @@ export function gql(source: "\n  mutation DeleteStoryPage($input: DeleteStoryPag
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation MoveStoryPage($input: MoveStoryPageInput!) {\n    moveStoryPage(input: $input) {\n      story {\n        ...StoryFragment\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation MoveStoryPage($input: MoveStoryPageInput!) {\n    moveStoryPage(input: $input) {\n      story {\n        ...StoryFragment\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation CreateStoryBlock($input: CreateStoryBlockInput!){\n    createStoryBlock(input: $input) {\n      index\n      block {\n        id\n      }\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateStoryBlock($input: CreateStoryBlockInput!){\n    createStoryBlock(input: $input) {\n      index\n      block {\n        id\n      }\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation MoveStoryBlock($input: MoveStoryBlockInput!){\n    moveStoryBlock(input: $input) {\n      index\n      blockId\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation MoveStoryBlock($input: MoveStoryBlockInput!){\n    moveStoryBlock(input: $input) {\n      index\n      blockId\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation RemoveStoryBlock($input: RemoveStoryBlockInput!){\n    removeStoryBlock(input: $input) {\n      blockId\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation RemoveStoryBlock($input: RemoveStoryBlockInput!){\n    removeStoryBlock(input: $input) {\n      blockId\n      page {\n        id\n      }\n      story {\n        id\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

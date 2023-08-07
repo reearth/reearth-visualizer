@@ -46,6 +46,8 @@ export default () => {
 
         return { status: "error", errors };
       }
+      setNotification({ type: "success", text: t("Successfullly created a page!") });
+
       return { data, status: "success" };
     },
     [createStoryPageMutation, setNotification, t],
@@ -64,12 +66,15 @@ export default () => {
         },
       });
       if (errors || !data?.removeStoryPage?.story?.id) {
+        setNotification({ type: "error", text: t("Failed to delete page.") });
+
         return { status: "error", errors };
       }
+      setNotification({ type: "info", text: t("Page was successfully deleted.") });
 
       return { data, status: "success" };
     },
-    [deleteStoryPageMutation],
+    [deleteStoryPageMutation, setNotification, t],
   );
 
   const [moveStoryPageMutation] = useMutation<MoveStoryPageMutation, MutationMoveStoryPageArgs>(
@@ -84,12 +89,15 @@ export default () => {
         },
       });
       if (errors || !data?.moveStoryPage?.story?.id) {
+        setNotification({ type: "error", text: t("Failed to move page.") });
+
         return { status: "error", errors };
       }
+      setNotification({ type: "info", text: t("Page was successfully moved.") });
 
       return { data, status: "success" };
     },
-    [moveStoryPageMutation],
+    [moveStoryPageMutation, setNotification, t],
   );
   return {
     useCreateStoryPage,
