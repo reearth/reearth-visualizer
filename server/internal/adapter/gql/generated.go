@@ -7825,6 +7825,10 @@ enum PluginExtensionType {
   BLOCK
   VISUALIZER
   INFOBOX
+  Cluster
+  Story
+  StoryPage
+  StoryBlock
 }
 
 type PluginExtension {
