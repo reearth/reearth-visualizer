@@ -44,6 +44,7 @@ export type Config = {
   documentationUrl?: string;
   marketplaceUrl?: string;
   extensionUrls?: string[];
+  unsafePluginUrls?: string[];
   extensions?: Extensions;
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
 };
@@ -80,9 +81,9 @@ export default async function loadConfig() {
     config.extensions = extensions;
   }
 
-  config.unsafeBuiltinPlugins = loadUnsafeBuiltinPlugins();
-
   window.REEARTH_CONFIG = config;
+
+  config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins();
 }
 
 export function config(): Config | undefined {

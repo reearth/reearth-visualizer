@@ -1,5 +1,5 @@
-// import { default as myExampleUnsafePlugin } from "./myExampleUnsafePlugin/index.jsx";
+import { loadPlugins } from "./load";
 
-// export default [myExampleUnsafePlugin];
+export * from "./types";
 
-export default [];
+export default await loadPlugins();
