@@ -21,9 +21,12 @@ enum PluginExtensionType {
   PRIMITIVE
   WIDGET
   BLOCK
-  STORYBLOCK
   VISUALIZER
   INFOBOX
+  Cluster
+  Story
+  StoryPage
+  StoryBlock
 }
 
 type PluginExtension {

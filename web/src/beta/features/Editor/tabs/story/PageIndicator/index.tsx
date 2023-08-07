@@ -35,7 +35,7 @@ const Wrapper = styled.div<{ widthPercentage: number }>`
     content: "";
     position: absolute;
     inset: 0;
-    background-color: #3592ff;
+    background-color: ${({ theme }) => theme.select.main};
     transition: width 0.2s ease-out;
     width: ${({ widthPercentage }) => widthPercentage}%;
   }
