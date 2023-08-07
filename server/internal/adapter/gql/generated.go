@@ -7823,6 +7823,7 @@ enum PluginExtensionType {
   PRIMITIVE
   WIDGET
   BLOCK
+  STORYBLOCK
   VISUALIZER
   INFOBOX
 }

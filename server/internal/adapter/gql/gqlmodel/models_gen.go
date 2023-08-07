@@ -1791,6 +1791,7 @@ const (
 	PluginExtensionTypePrimitive  PluginExtensionType = "PRIMITIVE"
 	PluginExtensionTypeWidget     PluginExtensionType = "WIDGET"
 	PluginExtensionTypeBlock      PluginExtensionType = "BLOCK"
+	PluginExtensionTypeStoryblock PluginExtensionType = "STORYBLOCK"
 	PluginExtensionTypeVisualizer PluginExtensionType = "VISUALIZER"
 	PluginExtensionTypeInfobox    PluginExtensionType = "INFOBOX"
 )
@@ -1799,13 +1800,14 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypePrimitive,
 	PluginExtensionTypeWidget,
 	PluginExtensionTypeBlock,
+	PluginExtensionTypeStoryblock,
 	PluginExtensionTypeVisualizer,
 	PluginExtensionTypeInfobox,
 }
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeStoryblock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox:
 		return true
 	}
 	return false
