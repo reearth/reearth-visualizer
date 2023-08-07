@@ -423,13 +423,6 @@ export const useHooks = ({
         return;
       }
 
-      try {
-        await tilesetRef.current?.readyPromise;
-      } catch (e) {
-        console.error("Could not load 3D tiles: ", e);
-        return;
-      }
-
       // Use internal original matrix for clipping planes.
       const clippingPlanesOriginMatrix = (
         tilesetRef.current as any

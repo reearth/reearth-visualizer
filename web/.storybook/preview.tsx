@@ -9,6 +9,7 @@ import {
 import { ThemeProvider } from "@emotion/react";
 import { withThemeFromJSXProvider } from "@storybook/addon-styling";
 import type { Preview } from "@storybook/react";
+import { themes } from "@storybook/theming";
 import React from "react";
 
 import classicDarkTheme from "../src/classic/theme/reearthTheme/darkTheme"; // temp classic imports
@@ -39,6 +40,9 @@ const preview: Preview = {
     layout: "fullscreen",
     controls: { expanded: true },
     actions: { argTypesRegex: "^on.*" },
+    docs: {
+      theme: themes.dark,
+    },
   },
   decorators: [
     withThemeFromJSXProvider({

@@ -27,7 +27,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     [property?.terrain, property?.default],
   );
 
-  const terrainProvider = useMemo((): TerrainProvider | undefined => {
+  const terrainProvider = useMemo((): Promise<TerrainProvider> | TerrainProvider | undefined => {
     const opts = {
       terrain: terrainProperty?.terrain,
       terrainType: terrainProperty?.terrainType,
@@ -89,22 +89,22 @@ const terrainProviders: {
           | "terrainCesiumIonUrl"
           | "terrainNormal"
         >,
-      ) => TerrainProvider | null);
+      ) => Promise<TerrainProvider> | null);
 } = {
   cesium: ({ terrainCesiumIonAccessToken, terrainNormal }) =>
-    // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
-    new CesiumTerrainProvider({
-      url: IonResource.fromAssetId(1, {
+    CesiumTerrainProvider.fromUrl(
+      IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,
       }),
-      requestVertexNormals: terrainNormal,
-      requestWaterMask: false,
-    }),
-  arcgis: ({ terrainNormal }) =>
-    new ArcGISTiledElevationTerrainProvider({
-      url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
-      requestVertexNormals: terrainNormal,
-    }),
+      {
+        requestVertexNormals: terrainNormal,
+        requestWaterMask: false,
+      },
+    ),
+  arcgis: () =>
+    ArcGISTiledElevationTerrainProvider.fromUrl(
+      "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+    ),
   cesiumion: ({
     terrainCesiumIonAccessToken,
     terrainCesiumIonAsset,
@@ -112,13 +112,14 @@ const terrainProviders: {
     terrainNormal,
   }) =>
     terrainCesiumIonAsset
-      ? new CesiumTerrainProvider({
-          url:
-            terrainCesiumIonUrl ||
+      ? CesiumTerrainProvider.fromUrl(
+          terrainCesiumIonUrl ||
             IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
               accessToken: terrainCesiumIonAccessToken,
             }),
-          requestVertexNormals: terrainNormal,
-        })
+          {
+            requestVertexNormals: terrainNormal,
+          },
+        )
       : null,
 };

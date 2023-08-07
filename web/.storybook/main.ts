@@ -6,9 +6,11 @@ import { mergeConfig } from "vite";
 const config: StorybookConfig = {
   stories: ["../src/**/*.stories.@(js|ts|tsx|mdx)"],
   addons: ["@storybook/addon-essentials", "@storybook/addon-styling"],
-  framework: "@storybook/react-vite",
+  framework: {
+    name: "@storybook/react-vite",
+    options: {},
+  },
   core: {
-    builder: "@storybook/builder-vite",
     disableTelemetry: true,
   },
   staticDirs: ["./public"],
@@ -17,6 +19,7 @@ const config: StorybookConfig = {
       define: {
         "process.env.QTS_DEBUG": "false", // quickjs-emscripten
       },
+
       build:
         configType === "PRODUCTION"
           ? {
@@ -27,13 +30,25 @@ const config: StorybookConfig = {
           : {},
       resolve: {
         alias: [
-          { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
-          { find: "@reearth", replacement: resolve(__dirname, "..", "src") },
-          { find: "csv-parse", replacement: "csv-parse/browser/esm" },
+          {
+            find: "crypto",
+            replacement: "crypto-js",
+          },
+          // quickjs-emscripten
+          {
+            find: "@reearth",
+            replacement: resolve(__dirname, "..", "src"),
+          },
+          {
+            find: "csv-parse",
+            replacement: "csv-parse/browser/esm",
+          },
         ],
       },
     });
   },
+  docs: {
+    autodocs: true,
+  },
 };
-
 module.exports = config;

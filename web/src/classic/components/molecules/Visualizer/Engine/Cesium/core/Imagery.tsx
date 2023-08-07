@@ -60,7 +60,13 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
   );
 }
 
-type Providers = { [id: string]: [string | undefined, string | undefined, ImageryProvider] };
+type Providers = {
+  [id: string]: [
+    string | undefined,
+    string | undefined,
+    Promise<ImageryProvider> | ImageryProvider,
+  ];
+};
 
 export function useImageryProviders({
   tiles = [],
@@ -73,7 +79,7 @@ export function useImageryProviders({
     [key: string]: (opts?: {
       url?: string;
       cesiumIonAccessToken?: string;
-    }) => ImageryProvider | null;
+    }) => Promise<ImageryProvider> | ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
@@ -116,7 +122,14 @@ export function useImageryProviders({
             prevProvider,
             tile,
           }):
-            | [string, [string | undefined, string | undefined, ImageryProvider | null | undefined]]
+            | [
+                string,
+                [
+                  string | undefined,
+                  string | undefined,
+                  Promise<ImageryProvider> | ImageryProvider | null | undefined,
+                ],
+              ]
             | null =>
             !tile
               ? null
@@ -131,8 +144,12 @@ export function useImageryProviders({
                 ],
         )
         .filter(
-          (e): e is [string, [string | undefined, string | undefined, ImageryProvider]] =>
-            !!e?.[1][2],
+          (
+            e,
+          ): e is [
+            string,
+            [string | undefined, string | undefined, Promise<ImageryProvider> | ImageryProvider],
+          ] => !!e?.[1][2],
         ),
     );
 
