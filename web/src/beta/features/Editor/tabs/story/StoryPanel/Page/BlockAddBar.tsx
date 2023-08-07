@@ -1,17 +1,67 @@
+import { useMemo } from "react";
+
 import Icon from "@reearth/beta/components/Icon";
+import * as Popover from "@reearth/beta/components/Popover";
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  onClick: () => void;
+  installableBlocks?: any[];
+  openBlocks: boolean;
+  onBlockOpen: () => void;
+  onBlockClick: (id: string) => void;
 };
 
-const BlockAddBar: React.FC<Props> = ({ onClick }) => {
+const BlockAddBar: React.FC<Props> = ({
+  installableBlocks,
+  openBlocks,
+  onBlockOpen,
+  onBlockClick,
+}) => {
+  const blocks = useMemo(() => {
+    const blockSelection = [
+      {
+        name: "something",
+        onClick: () => {
+          onBlockClick("ID1234");
+          console.log("ASDFL:KJSDFLK:", installableBlocks);
+        },
+      },
+      {
+        name: "something",
+        onClick: () => {
+          onBlockClick("ID5678");
+          console.log("ASDFL:KJSDFLK:", installableBlocks);
+        },
+      },
+      {
+        name: "something",
+        onClick: () => {
+          onBlockClick("ID9101112");
+          console.log("ASDFL:KJSDFLK:", installableBlocks);
+        },
+      },
+    ];
+    return blockSelection;
+  }, [installableBlocks, onBlockClick]);
+
   return (
     <Wrapper>
-      <Bar>
-        <StyledIcon icon="plus" size={16} onClick={onClick} />
-        <Line />
-      </Bar>
+      <Popover.Provider
+        open={openBlocks}
+        placement="bottom-start"
+        offset={-10}
+        onOpenChange={onBlockOpen}>
+        <Popover.Trigger asChild>
+          <Bar persist={openBlocks}>
+            <StyledIcon icon="plus" size={16} onClick={onBlockOpen} />
+            <Line />
+          </Bar>
+        </Popover.Trigger>
+        <Popover.Content>
+          <PopoverMenuContent size="md" width="200px" items={blocks} />
+        </Popover.Content>
+      </Popover.Provider>
     </Wrapper>
   );
 };
@@ -23,7 +73,7 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const Bar = styled.div`
+const Bar = styled.div<{ persist?: boolean }>`
   position: absolute;
   left: 0;
   right: 0;
@@ -34,7 +84,7 @@ const Bar = styled.div`
   height: 28px;
 
   * {
-    opacity: 0;
+    opacity: ${({ persist }) => (persist ? "100%" : 0)};
   }
 
   :hover {

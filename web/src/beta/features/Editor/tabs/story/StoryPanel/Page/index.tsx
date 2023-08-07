@@ -22,6 +22,10 @@ const StoryPage: React.FC<Props> = ({ content, blocks }) => {
     setOpenBlocks(o => !o);
   }, [openBlocks]);
 
+  const handleBlockAdd = useCallback((id: string) => {
+    console.log("ADDDDD BLOCK w ID: ", id);
+  }, []);
+
   return (
     <Wrapper>
       <p>Page ID</p>
@@ -30,11 +34,19 @@ const StoryPage: React.FC<Props> = ({ content, blocks }) => {
         blocks.map((_, idx) => (
           <Fragment key={idx}>
             <Block>{idx}</Block>
-            <BlockAddBar onClick={handleBlockOpen} />
+            <BlockAddBar
+              openBlocks={openBlocks}
+              onBlockOpen={handleBlockOpen}
+              onBlockClick={handleBlockAdd}
+            />
           </Fragment>
         ))
       ) : (
-        <BlockAddBar onClick={handleBlockOpen} />
+        <BlockAddBar
+          openBlocks={openBlocks}
+          onBlockOpen={handleBlockOpen}
+          onBlockClick={handleBlockAdd}
+        />
       )}
     </Wrapper>
   );
