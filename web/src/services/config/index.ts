@@ -80,7 +80,7 @@ export default async function loadConfig() {
     config.extensions = extensions;
   }
 
-  config.unsafeBuiltinPlugins = loadUnsafeBuiltinPlugins();
+  config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins();
 
   window.REEARTH_CONFIG = config;
 }
