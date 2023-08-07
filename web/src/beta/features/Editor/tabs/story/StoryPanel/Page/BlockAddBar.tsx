@@ -10,7 +10,7 @@ type Props = {
   openBlocks: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
   onBlockOpen: () => void;
-  onBlockAdd: (id: string) => void;
+  onBlockAdd: (extensionId: string, pluginId: string) => void;
 };
 
 const BlockAddBar: React.FC<Props> = ({
@@ -26,13 +26,14 @@ const BlockAddBar: React.FC<Props> = ({
           name: sb.name,
           icon: "plugin",
           onClick: () => {
-            onBlockAdd(sb.extensionId);
+            onBlockAdd(sb.extensionId, sb.pluginId);
+            onBlockOpen();
             console.log("SB: ", sb);
           },
         };
       }) ?? [];
     return blockSelection;
-  }, [installableStoryBlocks, onBlockAdd]);
+  }, [installableStoryBlocks, onBlockAdd, onBlockOpen]);
 
   return (
     <Wrapper>

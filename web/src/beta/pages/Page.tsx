@@ -33,6 +33,8 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
 
   const { scene, loading: loadingScene } = useSceneQuery({ sceneId });
 
+  console.log(scene);
+
   const currentProjectId = useMemo(
     () => projectId ?? scene?.projectId,
     [projectId, scene?.projectId],

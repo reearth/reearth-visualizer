@@ -14,18 +14,31 @@ type Props = {
   content?: string;
   blocks?: StoryBlock[];
   installableStoryBlocks?: InstallableStoryBlock[];
+  onStoryBlockCreate?: (
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+  ) => Promise<void>;
 };
 
-const StoryPage: React.FC<Props> = ({ content, blocks, installableStoryBlocks }) => {
+const StoryPage: React.FC<Props> = ({
+  content,
+  blocks,
+  installableStoryBlocks,
+  onStoryBlockCreate,
+}) => {
   const [openBlocks, setOpenBlocks] = useState(false);
 
   const handleBlockOpen = useCallback(() => {
     setOpenBlocks(o => !o);
   }, []);
 
-  const handleBlockAdd = useCallback((id: string) => {
-    console.log("ADDDDD BLOCK w ID: ", id);
-  }, []);
+  const handleBlockAdd = useCallback(
+    (extensionId: string, pluginId: string) => {
+      console.log("ADDDDD BLOCK w ID: ", extensionId, pluginId);
+      onStoryBlockCreate?.(extensionId, pluginId);
+    },
+    [onStoryBlockCreate],
+  );
 
   return (
     <Wrapper>

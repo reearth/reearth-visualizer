@@ -31,6 +31,7 @@ export type StoryBlockQueryProps = SceneQueryProps;
 export type InstallableStoryBlock = {
   name: string;
   description?: string;
+  pluginId: string;
   extensionId: string;
   icon?: string;
   singleOnly?: boolean;
@@ -127,7 +128,10 @@ const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
       return plugin?.extensions
         .filter(e => e.extensionId.toLowerCase().includes("storyblock")) // TODO: Change this filter to check for extensionType of storyblock
         .map((e): any => {
-          return e;
+          return {
+            pluginId: plugin.id,
+            ...e,
+          };
         })
         .filter((sb): sb is any => !!sb);
     })
