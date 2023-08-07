@@ -27,6 +27,11 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
     };
   }, [onPageSelect, selectedPage, selectedStory]);
 
+  const pageHeight = useMemo(() => {
+    const element = document.getElementById(pageElementId);
+    return element?.clientHeight;
+  }, []);
+
   return (
     <Wrapper>
       {!!pageInfo && (
@@ -38,7 +43,10 @@ export const StoryPanel: FC<Props> = ({ selectedStory, selectedPage, onPageSelec
       )}
       <PageWrapper id={pageElementId}>
         {selectedStory?.pages.map(p => (
-          <StoryPage key={p.id} content={p.id} />
+          <>
+            <StoryPage key={p.id} content={p.id} />
+            <PageGap height={pageHeight} />
+          </>
         ))}
       </PageWrapper>
     </Wrapper>
@@ -58,4 +66,8 @@ const PageWrapper = styled.div`
   box-sizing: border-box;
   overflow-y: auto;
   width: 442px;
+`;
+
+const PageGap = styled.div<{ height?: number }>`
+  height: ${({ height }) => (height ? height + "px" : "70vh")};
 `;
