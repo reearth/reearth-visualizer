@@ -61,7 +61,7 @@ declare global {
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
-  const config = {
+  const config: Config = {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
   };
@@ -81,9 +81,11 @@ export default async function loadConfig() {
     config.extensions = extensions;
   }
 
-  window.REEARTH_CONFIG = config;
+  if (config.unsafePluginUrls) {
+    config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins(config.unsafePluginUrls);
+  }
 
-  config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins();
+  window.REEARTH_CONFIG = config;
 }
 
 export function config(): Config | undefined {
