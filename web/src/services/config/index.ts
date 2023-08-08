@@ -4,6 +4,7 @@ import { type CognitoParams, configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
+import { type UnsafeBuiltinPlugin, loadUnsafeBuiltinPlugins } from "./unsafeBuiltinPlugin";
 
 export type Config = {
   version?: string;
@@ -43,7 +44,9 @@ export type Config = {
   documentationUrl?: string;
   marketplaceUrl?: string;
   extensionUrls?: string[];
+  unsafePluginUrls?: string[];
   extensions?: Extensions;
+  unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
 };
 
 declare global {
@@ -58,7 +61,7 @@ declare global {
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
-  const config = {
+  const config: Config = {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
   };
@@ -76,6 +79,10 @@ export default async function loadConfig() {
   if (config?.extensionUrls) {
     const extensions = await loadExtensions(config.extensionUrls);
     config.extensions = extensions;
+  }
+
+  if (config.unsafePluginUrls) {
+    config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins(config.unsafePluginUrls);
   }
 
   window.REEARTH_CONFIG = config;

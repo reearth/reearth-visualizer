@@ -1793,6 +1793,10 @@ const (
 	PluginExtensionTypeBlock      PluginExtensionType = "BLOCK"
 	PluginExtensionTypeVisualizer PluginExtensionType = "VISUALIZER"
 	PluginExtensionTypeInfobox    PluginExtensionType = "INFOBOX"
+	PluginExtensionTypeCluster    PluginExtensionType = "Cluster"
+	PluginExtensionTypeStory      PluginExtensionType = "Story"
+	PluginExtensionTypeStoryPage  PluginExtensionType = "StoryPage"
+	PluginExtensionTypeStoryBlock PluginExtensionType = "StoryBlock"
 )
 
 var AllPluginExtensionType = []PluginExtensionType{
@@ -1801,11 +1805,15 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypeBlock,
 	PluginExtensionTypeVisualizer,
 	PluginExtensionTypeInfobox,
+	PluginExtensionTypeCluster,
+	PluginExtensionTypeStory,
+	PluginExtensionTypeStoryPage,
+	PluginExtensionTypeStoryBlock,
 }
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock:
 		return true
 	}
 	return false
