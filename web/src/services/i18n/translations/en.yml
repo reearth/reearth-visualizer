@@ -1,8 +1,6 @@
 Not found: Not found
 Published: Published
 Unpublished: Unpublished
-Scene: Scene
-Story: Story
 Unpublish: Unpublish
 Publish: Publish
 Publishing Settings: Publishing Settings
@@ -31,6 +29,7 @@ This means that anybody with the URL will become unable to view this project.: T
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
 New Page: New Page
 New Swipe: New Swipe
+Story: Story
 Page: Page
 Align System: Align System
 Widget Manager: Widget Manager
@@ -53,6 +52,7 @@ Datasets: Datasets
 Plugins: Plugins
 Manage projects: Manage projects
 Documentation: Documentation
+Map: Map
 Widgets: Widgets
 Error: Error
 Warning: Warning
@@ -183,6 +183,7 @@ Create New Folder: Create New Folder
 Add Layer: Add Layer
 Zoom To Layer: Zoom To Layer
 Delete the selected item.: Delete the selected item.
+Scene: Scene
 Layers: Layers
 Clusters: Clusters
 Delete widget: Delete widget
@@ -412,9 +413,21 @@ Failed to delete member from the workspace.: Failed to delete member from the wo
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
 Failed to publish project.: Failed to publish project.
-Failed to update property.: Failed to update property
+Failed to update property.: Failed to update property.
+Failed to create block.: Failed to create block.
+Successfullly created a block!: Successfullly created a block!
+Failed to delete block.: Failed to delete block.
+Block was successfully deleted.: Block was successfully deleted.
+Failed to move block.: Failed to move block.
+Block was successfully moved.: Block was successfully moved.
 Failed to create story.: Failed to create story.
+Successfullly created a story!: Successfullly created a story!
 Failed to create page.: Failed to create page.
+Successfullly created a page!: Successfullly created a page!
+Failed to delete page.: Failed to delete page.
+Page was successfully deleted.: Page was successfully deleted.
+Failed to move page.: Failed to move page.
+Page was successfully moved.: Page was successfully moved.
 Failed to add widget.: Failed to add widget.
 Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
