@@ -11,12 +11,14 @@ type Spacing = {
 
 type Props = {
   padding?: Spacing;
+  isSelected?: boolean;
   children?: ReactNode;
+  onClick: (() => void) | undefined;
 };
 
-const BlockWrapper: React.FC<Props> = ({ padding, children }) => {
+const BlockWrapper: React.FC<Props> = ({ padding, isSelected, children, onClick }) => {
   return (
-    <Wrapper>
+    <Wrapper onClick={onClick} isSelected={isSelected}>
       <Block padding={padding}>{children}</Block>
     </Wrapper>
   );
@@ -24,15 +26,16 @@ const BlockWrapper: React.FC<Props> = ({ padding, children }) => {
 
 export default BlockWrapper;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ isSelected?: boolean }>`
   border-width: 1px;
   border-style: solid;
-  border-color: transparent;
+  border-color: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "transparent")};
   transition: all 0.3s;
+  cursor: pointer;
+  padding: 1px;
 
   :hover {
-    padding: 1px;
-    border-color: ${({ theme }) => theme.select.weaker};
+    border-color: ${({ isSelected, theme }) => !isSelected && theme.select.weaker};
   }
 `;
 

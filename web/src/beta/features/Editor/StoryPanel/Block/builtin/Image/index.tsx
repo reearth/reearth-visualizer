@@ -18,14 +18,14 @@ export type Property = {
   padding: Spacing;
 };
 
-const ImageBlock: React.FC<Props> = ({ block }) => {
+const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick }) => {
   const {
     // src = "https://upload.wikimedia.org/wikipedia/en/a/a5/Pok%C3%A9mon_Charmander_art.png",
     src,
     padding = { top: 10, bottom: 20, left: 30, right: 10 },
   } = block?.property ?? {};
   return (
-    <BlockWrapper padding={src ? padding : undefined}>
+    <BlockWrapper padding={src ? padding : undefined} isSelected={isSelected} onClick={onClick}>
       {src ? <Image src={src} /> : <Template />}
     </BlockWrapper>
   );

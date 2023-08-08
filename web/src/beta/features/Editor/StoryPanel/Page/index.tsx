@@ -15,6 +15,8 @@ type Props = {
   pageId?: string;
   pageTitle?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
+  selectedStoryBlockId?: string;
+  onBlockSelect: (blockId: string) => void;
 };
 
 const StoryPage: React.FC<Props> = ({
@@ -23,6 +25,8 @@ const StoryPage: React.FC<Props> = ({
   pageId,
   pageTitle,
   installableStoryBlocks,
+  selectedStoryBlockId,
+  onBlockSelect,
 }) => {
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
@@ -54,7 +58,11 @@ const StoryPage: React.FC<Props> = ({
       {installedStoryBlocks && installedStoryBlocks.length > 0 ? (
         installedStoryBlocks?.map((b, idx) => (
           <Fragment key={idx}>
-            <StoryBlock block={b} />
+            <StoryBlock
+              block={b}
+              isSelected={selectedStoryBlockId === b.id}
+              onClick={() => onBlockSelect(b.id)}
+            />
             <BlockAddBar
               openBlocks={openBlocksIndex === idx}
               installableStoryBlocks={installableStoryBlocks}

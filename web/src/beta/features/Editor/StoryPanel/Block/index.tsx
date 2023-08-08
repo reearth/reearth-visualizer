@@ -33,7 +33,7 @@ export type CommonProps<BP = unknown> = {
 
 export type Component<BP = any> = ComponentType<CommonProps<BP>>;
 
-export default function BlockComponent<P = any>({
+export default function StoryBlockComponent<P = any>({
   renderBlock,
   ...props
 }: Props<P>): JSX.Element | null {
@@ -52,7 +52,6 @@ export default function BlockComponent<P = any>({
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid
     ${({ selected, editable, theme }) => (editable && selected ? theme.select.main : "transparent")};
-  border-radius: 6px;
 
   &:hover {
     border-color: ${({ editable, theme }) => (editable ? theme.outline.main : null)};

@@ -7,6 +7,8 @@ import { styled } from "@reearth/services/theme";
 import useHooks, { pageElementId } from "./hooks";
 import StoryPage from "./Page";
 
+export const storyPanelWidth = 442;
+
 type Props = {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
@@ -15,7 +17,13 @@ type Props = {
 };
 
 export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, onPageSelect }) => {
-  const { pageInfo, pageHeight, installableStoryBlocks } = useHooks({
+  const {
+    pageInfo,
+    pageHeight,
+    installableStoryBlocks,
+    selectedStoryBlockId,
+    handleStoryBlockSelect,
+  } = useHooks({
     sceneId,
     selectedStory,
     selectedPage,
@@ -40,6 +48,8 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
               pageId={p.id}
               pageTitle={p.title}
               installableStoryBlocks={installableStoryBlocks}
+              selectedStoryBlockId={selectedStoryBlockId}
+              onBlockSelect={handleStoryBlockSelect}
             />
             <PageGap height={pageHeight} />
           </Fragment>
@@ -52,6 +62,7 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
 export default StoryPanel;
 
 const Wrapper = styled.div`
+  width: ${storyPanelWidth}px;
   background: #f1f1f1;
   color: ${({ theme }) => theme.content.weak};
 `;
