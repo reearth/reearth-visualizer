@@ -16,7 +16,7 @@ function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
 
   const unsafeWidgets: UnsafeBuiltinWidgets<Component> | undefined = plugin
     .map(p =>
-      p.widgets.map(w => {
+      p.widgets?.map(w => {
         return {
           widgetId: `${p.id}/${w.extensionId}`,
           ...w,
@@ -25,11 +25,11 @@ function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
     )
     .reduce((a, b) => {
       const newObject: { [key: string]: Component } = {};
-      b.forEach(w => {
+      b?.forEach(w => {
         newObject[w.widgetId] = w.component;
       });
       return merge(a, newObject);
     }, {});
 
-  return unsafeWidgets;
+  return unsafeWidgets || [];
 }
