@@ -141,11 +141,13 @@ const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
 const useFeature = ({
   id,
   tileset,
+  tilesetReady,
   layer,
   evalFeature,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
+  tilesetReady: boolean;
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
 }) => {
@@ -227,7 +229,7 @@ const useFeature = ({
         await attachComputedFeature(feature);
       });
     });
-  }, [tileset, cachedFeaturesRef, attachComputedFeature, layerId]);
+  }, [tileset, tilesetReady, cachedFeaturesRef, attachComputedFeature, layerId]);
 
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
@@ -378,6 +380,7 @@ export const useHooks = ({
       }),
   );
   const tilesetRef = useRef<Cesium3DTilesetType>();
+  const [tilesetReady, setTilesReady] = useState(false);
 
   const ref = useCallback(
     (tileset: CesiumComponentRef<Cesium3DTilesetType> | null) => {
@@ -388,6 +391,9 @@ export const useHooks = ({
         (tileset?.cesiumElement as any)[layerIdField] = layer.id;
       }
       tilesetRef.current = tileset?.cesiumElement;
+      if (tilesetRef.current) {
+        setTilesReady(true);
+      }
     },
     [id, layer?.id, feature?.id],
   );
@@ -395,6 +401,7 @@ export const useHooks = ({
   useFeature({
     id,
     tileset: tilesetRef,
+    tilesetReady,
     layer,
     evalFeature,
   });
