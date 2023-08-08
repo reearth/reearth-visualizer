@@ -12,7 +12,7 @@ type Props = {
   currentTab: Tab;
 };
 
-export const Tabs = ["scene", "story", "widgets", "publish"] as const;
+export const Tabs = ["map", "story", "widgets", "publish"] as const;
 export type Tab = (typeof Tabs)[number];
 
 export function isTab(tab: string): tab is Tab {
@@ -23,7 +23,7 @@ const Navbar: React.FC<Props> = ({
   sceneId,
   projectId,
   workspaceId,
-  currentTab = "scene",
+  currentTab = "map",
   isDashboard = false,
 }) => {
   const {
