@@ -22,13 +22,20 @@ const StoryPage: React.FC<Props> = ({
   pageTitle,
   installableStoryBlocks,
 }) => {
-  const [openBlocks, setOpenBlocks] = useState(false);
+  const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
   const { installedStoryBlocks, handleStoryBlockCreate } = useHooks({ sceneId, storyId, pageId });
 
-  const handleBlockOpen = useCallback(() => {
-    setOpenBlocks(o => !o);
-  }, []);
+  const handleBlockOpen = useCallback(
+    (index: number) => {
+      if (openBlocksIndex === index) {
+        setOpenBlocksIndex(undefined);
+      } else {
+        setOpenBlocksIndex(index);
+      }
+    },
+    [openBlocksIndex],
+  );
 
   const handleBlockAdd = useCallback(
     (extensionId: string, pluginId: string) => {
@@ -47,18 +54,18 @@ const StoryPage: React.FC<Props> = ({
           <Fragment key={idx}>
             <Block>{b.title}</Block>
             <BlockAddBar
-              openBlocks={openBlocks}
+              openBlocks={openBlocksIndex === idx}
               installableStoryBlocks={installableStoryBlocks}
-              onBlockOpen={handleBlockOpen}
+              onBlockOpen={() => handleBlockOpen(idx)}
               onBlockAdd={handleBlockAdd}
             />
           </Fragment>
         ))
       ) : (
         <BlockAddBar
-          openBlocks={openBlocks}
+          openBlocks={openBlocksIndex === -1}
           installableStoryBlocks={installableStoryBlocks}
-          onBlockOpen={handleBlockOpen}
+          onBlockOpen={() => handleBlockOpen(-1)}
           onBlockAdd={handleBlockAdd}
         />
       )}
