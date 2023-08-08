@@ -4,6 +4,8 @@ import Text from "@reearth/beta/components/Text";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
+import StoryBlock from "../Block";
+
 import BlockAddBar from "./BlockAddBar";
 import useHooks from "./hooks";
 
@@ -52,7 +54,7 @@ const StoryPage: React.FC<Props> = ({
       {installedStoryBlocks && installedStoryBlocks.length > 0 ? (
         installedStoryBlocks?.map((b, idx) => (
           <Fragment key={idx}>
-            <Block>{b.title}</Block>
+            <StoryBlock block={b} />
             <BlockAddBar
               openBlocks={openBlocksIndex === idx}
               installableStoryBlocks={installableStoryBlocks}
@@ -79,10 +81,4 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
-`;
-
-const Block = styled.div`
-  padding: 5px;
-  height: 50px;
-  border: 1px dotted black;
 `;
