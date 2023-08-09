@@ -11,7 +11,8 @@ export default ({
   storyId?: string;
   pageId?: string;
 }) => {
-  const { useInstalledStoryBlocksQuery, useCreateStoryBlock } = useStorytellingAPI();
+  const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
+    useStorytellingAPI();
 
   const { installedStoryBlocks } = useInstalledStoryBlocksQuery({
     sceneId,
@@ -33,5 +34,13 @@ export default ({
     [storyId, pageId, useCreateStoryBlock],
   );
 
-  return { installedStoryBlocks, handleStoryBlockCreate };
+  const handleStoryBlockDelete = useCallback(
+    async (blockId?: string) => {
+      if (!blockId || !storyId || !pageId) return;
+      await useDeleteStoryBlock({ blockId, pageId, storyId });
+    },
+    [storyId, pageId, useDeleteStoryBlock],
+  );
+
+  return { installedStoryBlocks, handleStoryBlockCreate, handleStoryBlockDelete };
 };

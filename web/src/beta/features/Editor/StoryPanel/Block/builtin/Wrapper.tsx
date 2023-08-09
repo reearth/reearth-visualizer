@@ -21,38 +21,36 @@ type Props = {
   isSelected?: boolean;
   children?: ReactNode;
   onClick: (() => void) | undefined;
+  onRemove?: () => void;
 };
 
-const BlockWrapper: React.FC<Props> = ({ title, icon, padding, isSelected, children, onClick }) => {
+const BlockWrapper: React.FC<Props> = ({
+  title,
+  icon,
+  padding,
+  isSelected,
+  children,
+  onClick,
+  onRemove,
+}) => {
   const t = useT();
   const [isHovered, setHover] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showPadding, setShowPadding] = useState(false);
 
-  const handleEditModeToggle = useCallback(() => {
-    setEditMode(em => !em);
-  }, []);
+  const handleEditModeToggle = useCallback(() => setEditMode(em => !em), []);
 
-  const handleSettingsToggle = useCallback(() => {
-    setShowSettings(s => !s);
-  }, []);
+  const handleSettingsToggle = useCallback(() => setShowSettings(s => !s), []);
 
-  const handleMouseEnter = useCallback(() => {
-    setHover(true);
-  }, []);
+  const handleMouseEnter = useCallback(() => setHover(true), []);
 
-  const handleMouseLeave = useCallback(() => {
-    setHover(false);
-  }, []);
+  const handleMouseLeave = useCallback(() => setHover(false), []);
 
-  const handleBlockRemove = useCallback(() => {
-    console.log("REMOVE");
-  }, []);
+  const handleBlockRemove = useCallback(() => onRemove?.(), [onRemove]);
 
   const handleBlockClick = useCallback(() => {
     if (showSettings && isSelected) return;
-    console.log("ALSKDFJLKASDJFLKASDJF");
     onClick?.();
   }, [onClick, showSettings, isSelected]);
 

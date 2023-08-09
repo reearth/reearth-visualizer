@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import { styled } from "@reearth/services/theme";
 
 import Template from "../../Template";
@@ -18,12 +20,14 @@ export type Property = {
   padding: Spacing;
 };
 
-const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick }) => {
+const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) => {
   const {
     // src = "https://upload.wikimedia.org/wikipedia/en/a/a5/Pok%C3%A9mon_Charmander_art.png",
     src,
     padding = { top: 10, bottom: 20, left: 30, right: 10 },
   } = block?.property ?? {};
+
+  const handleRemove = useCallback(() => onRemove?.(block?.id), [block?.id, onRemove]);
 
   return (
     <BlockWrapper
@@ -31,7 +35,8 @@ const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick }) => {
       icon={block?.extensionId}
       padding={src ? padding : undefined}
       isSelected={isSelected}
-      onClick={onClick}>
+      onClick={onClick}
+      onRemove={handleRemove}>
       {src ? <Image src={src} /> : <Template />}
     </BlockWrapper>
   );
