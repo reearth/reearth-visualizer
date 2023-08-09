@@ -39,7 +39,7 @@ const Wrapper = styled.button`
   min-height: 28px;
   transition: all 0.15s;
 
-  border: 1px solid #383838;
+  border: 1px solid ${({ theme }) => theme.outline.weakest};
 
   :hover {
     background: ${props => props.theme.bg[3]};
@@ -52,7 +52,7 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #4a4a4a;
+  color: ${({ theme }) => theme.content.weak};
 `;
 
 export default StorySidePanelAction;
