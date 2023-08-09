@@ -25,6 +25,7 @@ export type CommonProps<BP = any> = {
   // infoboxProperty?: InfoboxProperty;
   theme?: Theme;
   onClick?: () => void;
+  onRemove?: (id?: string) => void;
   onChange?: <T extends ValueType>(
     schemaItemId: string,
     fieldId: string,

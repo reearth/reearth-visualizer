@@ -1,12 +1,10 @@
 import type { ComponentType, ReactNode } from "react";
 
-import { type Theme } from "@reearth/beta/lib/core/Crust/theme";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
-import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import builtin, { isBuiltinStoryBlock } from "./builtin";
-import { Block, BlockProps } from "./types";
+import { CommonProps, BlockProps } from "./types";
 
 // export type { InfoboxProperty, Typography, LatLng } from "../types";
 
@@ -14,22 +12,6 @@ export type Props<BP = unknown> = {
   renderBlock?: (block: BlockProps) => ReactNode;
   layer?: Layer;
 } & CommonProps<BP>;
-
-export type CommonProps<BP = unknown> = {
-  isEditable?: boolean;
-  isBuilt?: boolean;
-  isSelected?: boolean;
-  block?: Block<BP>;
-  //   infoboxProperty?: InfoboxProperty;
-  theme?: Theme;
-  onClick?: () => void;
-  onChange?: <T extends ValueType>(
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-  ) => void;
-};
 
 export type Component<BP = any> = ComponentType<CommonProps<BP>>;
 
