@@ -33,6 +33,7 @@ import CheckMark from "./Icons/checkMark.svg";
 import Plus from "./Icons/plus.svg";
 import Minus from "./Icons/minus.svg";
 import Alert from "./Icons/alert.svg";
+import DndHandle from "./Icons/dndHandle.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -68,6 +69,12 @@ import Copy from "./Icons/copy.svg";
 import GearSix from "./Icons/gearSix.svg";
 import PencilSimple from "./Icons/pencilSimple.svg";
 import Trash from "./Icons/trash.svg";
+import TextStoryBlock from "./Icons/textStoryBlock.svg";
+import TitleStoryBlock from "./Icons/titleStoryBlock.svg";
+import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
+import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
+import MdTextStoryBlock from "./Icons/mdTextStoryBlock.svg";
+import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg";
 
 // Widget tab
 import Desktop from "./Icons/desktop.svg";
@@ -134,6 +141,7 @@ export default {
   checkmark: CheckMark,
   minus: Minus,
   alert: Alert,
+  dndHandle: DndHandle,
   logo: Logo,
   logoColorful: LogoColorful,
   desktop: Desktop,
@@ -143,6 +151,12 @@ export default {
   gearSix: GearSix,
   pencilSimple: PencilSimple,
   trash: Trash,
+  textStoryBlock: TextStoryBlock,
+  titleStoryBlock: TitleStoryBlock,
+  videoStoryBlock: VideoStoryBlock,
+  imageStoryBlock: ImageStoryBlock,
+  mdTextStoryBlock: MdTextStoryBlock,
+  cameraButtonStoryBlock: CameraButtonStoryBlock,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,
