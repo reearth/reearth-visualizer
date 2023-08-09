@@ -24,6 +24,7 @@ const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick }) => {
     src,
     padding = { top: 10, bottom: 20, left: 30, right: 10 },
   } = block?.property ?? {};
+
   return (
     <BlockWrapper
       title={block?.title}
