@@ -52,7 +52,14 @@ const StoryPage: React.FC<Props> = ({
       <Text size="h2" customColor>
         {pageTitle ?? "No Title"}
       </Text>
-      {installedStoryBlocks && installedStoryBlocks.length > 0 ? (
+      <BlockAddBar
+        openBlocks={openBlocksIndex === -1}
+        installableStoryBlocks={installableStoryBlocks}
+        onBlockOpen={() => handleBlockOpen(-1)}
+        onBlockAdd={handleStoryBlockCreate(0)}
+      />
+      {installedStoryBlocks &&
+        installedStoryBlocks.length > 0 &&
         installedStoryBlocks?.map((b, idx) => (
           <Fragment key={idx}>
             <StoryBlock
@@ -65,18 +72,10 @@ const StoryPage: React.FC<Props> = ({
               openBlocks={openBlocksIndex === idx}
               installableStoryBlocks={installableStoryBlocks}
               onBlockOpen={() => handleBlockOpen(idx)}
-              onBlockAdd={handleStoryBlockCreate}
+              onBlockAdd={handleStoryBlockCreate(idx + 1)}
             />
           </Fragment>
-        ))
-      ) : (
-        <BlockAddBar
-          openBlocks={openBlocksIndex === -1}
-          installableStoryBlocks={installableStoryBlocks}
-          onBlockOpen={() => handleBlockOpen(-1)}
-          onBlockAdd={handleStoryBlockCreate}
-        />
-      )}
+        ))}
     </Wrapper>
   );
 };
