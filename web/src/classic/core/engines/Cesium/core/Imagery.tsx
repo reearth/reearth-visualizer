@@ -1,5 +1,5 @@
 import { ImageryProvider } from "cesium";
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { ImageryLayer } from "resium";
 
 import { tiles as tilePresets } from "./presets";
@@ -27,7 +27,7 @@ export type Props = {
 };
 
 export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
-  const { providers, providerKey } = useImageryProviders({
+  const { providers } = useImageryProviders({
     tiles,
     cesiumIonAccessToken,
     presets: tilePresets,
@@ -36,9 +36,9 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
   const memoTiles = useMemo(
     () =>
       tiles
-        ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[providerKey(tile)] }))
+        ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
         .filter(({ provider }) => !!provider) ?? [],
-    [tiles, providerKey, providers],
+    [tiles, providers],
   );
 
   return (
@@ -59,6 +59,10 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
   );
 }
 
+type Providers = {
+  [id: string]: [string | undefined, string | undefined, ImageryProvider];
+};
+
 type ResolvedProviders = {
   [id: string]: ImageryProvider;
 };
@@ -77,32 +81,40 @@ export function useImageryProviders({
     }) => Promise<ImageryProvider> | ImageryProvider | null;
   };
 }): {
-  providers: ResolvedProviders;
-  providerKey: (tile: Omit<Tile, "id">) => string;
+  providers: Providers;
 } {
-  const [resolvedPresetProviders, setResolvedPresetProviders] = useState<ResolvedProviders>({});
+  const resolvedPresetProviders = useRef<ResolvedProviders>({});
+  const [providers, setProviders] = useState<Providers>({});
 
   const providerKey = useCallback(
-    (t: Omit<Tile, "id">) =>
-      `${cesiumIonAccessToken}_${
-        t.tile_type === "url" ? `url_${t.tile_url}` : t.tile_type || "default"
-      }`,
+    (t: Omit<Tile, "id">) => `${t.tile_type || "default"}_${t.tile_url}_${cesiumIonAccessToken}`,
     [cesiumIonAccessToken],
   );
 
   useEffect(() => {
-    tiles
-      .filter(t => !Object.keys(resolvedPresetProviders).includes(providerKey(t)))
-      .forEach(async t => {
-        const newProvider = await presets[t.tile_type || "default"]({
-          url: t.tile_url,
-          cesiumIonAccessToken,
-        });
-        if (newProvider) {
-          setResolvedPresetProviders(prev => ({ ...prev, [providerKey(t)]: newProvider }));
+    Promise.all(
+      tiles.map(async t => {
+        if (!Object.keys(resolvedPresetProviders.current).includes(providerKey(t))) {
+          const newProvider = await presets[t.tile_type || "default"]({
+            url: t.tile_url,
+            cesiumIonAccessToken,
+          });
+          if (newProvider) {
+            resolvedPresetProviders.current[providerKey(t)] = newProvider;
+          }
         }
-      });
+      }),
+    ).then(() => {
+      setProviders(
+        Object.fromEntries(
+          tiles.map(({ id, ...t }) => [
+            id,
+            [t.tile_type, t.tile_url, resolvedPresetProviders.current[providerKey(t)]],
+          ]),
+        ),
+      );
+    });
   }, [tiles, cesiumIonAccessToken, presets, resolvedPresetProviders, providerKey]);
 
-  return { providers: resolvedPresetProviders, providerKey };
+  return { providers };
 }
