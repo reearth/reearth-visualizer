@@ -4,6 +4,7 @@ import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 
 export type Block<P = unknown> = {
   id: string;
+  title?: string;
   pluginId?: string;
   extensionId?: string;
   property?: P;

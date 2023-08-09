@@ -25,7 +25,12 @@ const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick }) => {
     padding = { top: 10, bottom: 20, left: 30, right: 10 },
   } = block?.property ?? {};
   return (
-    <BlockWrapper padding={src ? padding : undefined} isSelected={isSelected} onClick={onClick}>
+    <BlockWrapper
+      title={block?.title}
+      icon={block?.extensionId}
+      padding={src ? padding : undefined}
+      isSelected={isSelected}
+      onClick={onClick}>
       {src ? <Image src={src} /> : <Template />}
     </BlockWrapper>
   );
