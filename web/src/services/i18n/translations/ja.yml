@@ -1,4 +1,6 @@
 Not found: ページが見つかりません
+Padding settings: ''
+Remove: 削除
 Published: 一般公開
 Unpublished: 非公開
 Unpublish: 非公開にする
@@ -162,7 +164,6 @@ Preview: プレビュー
 Layer selection: レイヤーを選択
 Selectable Layers: 選択可能なレイヤー
 Add: 追加
-Remove: 削除
 Stories: ストーリー
 Delete Selected Layer: 選択中のレイヤーを削除
 Create New Folder: 新規フォルダ作成
