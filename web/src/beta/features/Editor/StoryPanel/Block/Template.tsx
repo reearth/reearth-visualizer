@@ -1,10 +1,14 @@
 import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
-const Template: React.FC = () => {
+type Props = {
+  icon?: string;
+};
+
+const Template: React.FC<Props> = ({ icon }) => {
   return (
     <Wrapper>
-      <Icon icon="plugin" />
+      <Icon icon={icon ?? "plugin"} size={32} />
     </Wrapper>
   );
 };

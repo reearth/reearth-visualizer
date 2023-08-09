@@ -7,6 +7,8 @@ import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import Template from "../Template";
+
 type Spacing = {
   top: number;
   bottom: number;
@@ -138,7 +140,7 @@ const BlockWrapper: React.FC<Props> = ({
         </ActionPanel>
       )}
       <Block padding={padding} onClick={handleBlockClick}>
-        {children}
+        {children ?? <Template icon={icon} />}
       </Block>
       {editMode && (
         <EditorPanel>

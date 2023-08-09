@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import Template from "../../Template";
 import { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../Wrapper";
 
@@ -37,7 +36,7 @@ const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) =
       isSelected={isSelected}
       onClick={onClick}
       onRemove={handleRemove}>
-      {src ? <Image src={src} /> : <Template />}
+      {src && <Image src={src} />}
     </BlockWrapper>
   );
 };
