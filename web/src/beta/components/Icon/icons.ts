@@ -52,7 +52,7 @@ import Logout from "./Icons/logout.svg";
 import WorkspaceAdd from "./Icons/workspaceAdd.svg";
 import Workspaces from "./Icons/workspaces.svg";
 
-// StoryTelling tab
+// Storytelling tab
 import Square from "./Icons/square.svg";
 import Swiper from "./Icons/swiper.svg";
 import Book from "./Icons/book.svg";
@@ -61,8 +61,10 @@ import GearSix from "./Icons/gearSix.svg";
 import PencilSimple from "./Icons/pencilSimple.svg";
 import Trash from "./Icons/trash.svg";
 import TextStoryBlock from "./Icons/textStoryBlock.svg";
-import EditIcon from "./Icons/storyBlockEdit.svg";
+import Edit from "./Icons/storyBlockEdit.svg";
+import Exit from "./Icons/exit.svg";
 import Settings from "./Icons/settings.svg";
+import Padding from "./Icons/padding.svg";
 import TitleStoryBlock from "./Icons/titleStoryBlock.svg";
 import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
 import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
@@ -137,8 +139,10 @@ export default {
   gearSix: GearSix,
   pencilSimple: PencilSimple,
   trash: Trash,
-  storyBlockEdit: EditIcon,
+  storyBlockEdit: Edit,
+  exit: Exit,
   settings: Settings,
+  padding: Padding,
   textStoryBlock: TextStoryBlock,
   titleStoryBlock: TitleStoryBlock,
   videoStoryBlock: VideoStoryBlock,
