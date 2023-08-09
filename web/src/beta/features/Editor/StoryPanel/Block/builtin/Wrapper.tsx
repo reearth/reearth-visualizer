@@ -34,7 +34,7 @@ const BlockWrapper: React.FC<Props> = ({ title, icon, padding, isSelected, child
         icon: icon ?? "plugin",
       },
       {
-        icon: "settings",
+        icon: "storyBlockEdit",
         hide: !isSelected,
         onClick: () => console.log("SETTINGS"),
       },
@@ -64,12 +64,17 @@ const BlockWrapper: React.FC<Props> = ({ title, icon, padding, isSelected, child
       {(isHovered || isSelected) && (
         <ActionPanel isSelected={isSelected}>
           <Icon icon="dndHandle" size={16} />
-          <BlockOptions isSelected={isSelected} onClick={handleStopPropagation}>
+          <BlockOptions
+            isSelected={isSelected}
+            onClick={isSelected ? handleStopPropagation : undefined}>
             {actionItems.map(
               (a, idx) =>
                 !a.hide && (
-                  <OptionWrapper key={idx} onClick={a.onClick}>
-                    <OptionIcon icon={a.icon} size={16} showPointer={!!a.onClick} />
+                  <OptionWrapper
+                    key={idx}
+                    showPointer={!isSelected || !!a.onClick}
+                    onClick={a.onClick}>
+                    <OptionIcon icon={a.icon} size={16} />
                     {a.blockName && (
                       <OptionText size="footnote" customColor>
                         {a.blockName}
@@ -122,20 +127,19 @@ const BlockOptions = styled.div<{ isSelected?: boolean }>`
   transition: all 0.2s;
 `;
 
-const OptionWrapper = styled.div`
+const OptionWrapper = styled.div<{ showPointer?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 4px;
+  ${({ showPointer }) => showPointer && "cursor: pointer;"}
 `;
 
 const OptionText = styled(Text)`
-  margin-right: 4px;
+  padding-right: 4px;
 `;
 
-const OptionIcon = styled(Icon)<{ showPointer?: boolean }>`
+const OptionIcon = styled(Icon)`
   padding: 4px;
   border-left: 1px solid #f1f1f1;
-  ${({ showPointer }) => showPointer && "cursor: pointer;"}
 `;
 
 const Block = styled.div<{ padding?: Spacing }>`

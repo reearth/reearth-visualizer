@@ -44,15 +44,6 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
-// Storytelling blocks
-import Audio from "./Icons/audio.svg";
-import EditIcon from "./Icons/editIcon.svg";
-import Settings from "./Icons/settings.svg";
-import ButtonBlock from "./Icons/buttonBlock.svg";
-import Camera from "./Icons/camera.svg";
-import MdFile from "./Icons/mdFile.svg";
-import Clock from "./Icons/clock.svg";
-
 // Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
@@ -70,6 +61,8 @@ import GearSix from "./Icons/gearSix.svg";
 import PencilSimple from "./Icons/pencilSimple.svg";
 import Trash from "./Icons/trash.svg";
 import TextStoryBlock from "./Icons/textStoryBlock.svg";
+import EditIcon from "./Icons/storyBlockEdit.svg";
+import Settings from "./Icons/settings.svg";
 import TitleStoryBlock from "./Icons/titleStoryBlock.svg";
 import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
 import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
@@ -126,13 +119,6 @@ export default {
   plus: Plus,
   timeline: Timeline,
   actionbutton: ActionButton,
-  audio: Audio,
-  editIcon: EditIcon,
-  settings: Settings,
-  buttonBlock: ButtonBlock,
-  camera: Camera,
-  mdFile: MdFile,
-  clock: Clock,
   dashboard: Dashboard,
   help: Help,
   logout: Logout,
@@ -151,6 +137,8 @@ export default {
   gearSix: GearSix,
   pencilSimple: PencilSimple,
   trash: Trash,
+  storyBlockEdit: EditIcon,
+  settings: Settings,
   textStoryBlock: TextStoryBlock,
   titleStoryBlock: TitleStoryBlock,
   videoStoryBlock: VideoStoryBlock,
