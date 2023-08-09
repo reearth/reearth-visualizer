@@ -217,6 +217,7 @@ const EditorPanel = styled.div`
   color: ${({ theme }) => theme.content.main};
   height: 100px;
   padding: 12px;
+  z-index: 100;
   position: absolute;
   top: 100%;
   left: -1px;
