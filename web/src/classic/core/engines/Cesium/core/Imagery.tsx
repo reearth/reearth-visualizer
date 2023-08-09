@@ -78,28 +78,28 @@ export function useImageryProviders({
   };
 }): {
   providers: ResolvedProviders;
-  updated?: boolean;
   providerKey: (tile: Omit<Tile, "id">) => string;
 } {
   const [resolvedPresetProviders, setResolvedPresetProviders] = useState<ResolvedProviders>({});
 
   const providerKey = useCallback(
     (t: Omit<Tile, "id">) =>
-      cesiumIonAccessToken +
-      (t.tile_type === "url" ? `url_${t.tile_url}` : t.tile_type || "default"),
+      `${cesiumIonAccessToken}_${
+        t.tile_type === "url" ? `url_${t.tile_url}` : t.tile_type || "default"
+      }`,
     [cesiumIonAccessToken],
   );
 
   useEffect(() => {
     tiles
-      .filter(t => t && !Object.keys(resolvedPresetProviders).includes(providerKey(t)))
+      .filter(t => !Object.keys(resolvedPresetProviders).includes(providerKey(t)))
       .forEach(async t => {
-        const addedProvider = await presets[t.tile_type || "default"]({
+        const newProvider = await presets[t.tile_type || "default"]({
           url: t.tile_url,
           cesiumIonAccessToken,
         });
-        if (addedProvider) {
-          setResolvedPresetProviders(prev => ({ ...prev, [providerKey(t)]: addedProvider }));
+        if (newProvider) {
+          setResolvedPresetProviders(prev => ({ ...prev, [providerKey(t)]: newProvider }));
         }
       });
   }, [tiles, cesiumIonAccessToken, presets, resolvedPresetProviders, providerKey]);
