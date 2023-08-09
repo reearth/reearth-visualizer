@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
@@ -19,6 +19,12 @@ export default ({
   const [selectedStoryBlockId, setSelectedStoryBlockId] = useState<string>();
 
   const { useInstallableStoryBlocksQuery } = useStorytellingAPI();
+
+  useEffect(() => {
+    if (selectedPage) {
+      document.getElementById(selectedPage.id)?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedPage]);
 
   const pageInfo = useMemo(() => {
     const pages = selectedStory?.pages ?? [];

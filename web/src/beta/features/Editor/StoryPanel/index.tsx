@@ -69,8 +69,6 @@ const Wrapper = styled.div`
 
 const PageWrapper = styled.div`
   height: calc(100% - 8px);
-  padding: 20px;
-  box-sizing: border-box;
   overflow-y: auto;
   width: 442px;
 `;

@@ -48,7 +48,7 @@ const StoryPage: React.FC<Props> = ({
   );
 
   return (
-    <Wrapper>
+    <Wrapper id={pageId}>
       <Text size="h2" customColor>
         {pageTitle ?? "No Title"}
       </Text>
@@ -86,4 +86,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
+  padding: 20px;
+  box-sizing: border-box;
 `;
