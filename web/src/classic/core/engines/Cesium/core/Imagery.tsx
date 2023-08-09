@@ -1,6 +1,6 @@
 import { ImageryProvider } from "cesium";
 import { isEqual } from "lodash-es";
-import { useCallback, useMemo, useRef, useLayoutEffect } from "react";
+import { useMemo, useRef, useLayoutEffect, useState, useEffect, useCallback } from "react";
 import { ImageryLayer } from "resium";
 
 import { tiles as tilePresets } from "./presets";
@@ -45,6 +45,7 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
     <>
       {tiles
         ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
+        .filter(({ provider }) => !!provider)
         .map(({ id, tile_opacity: opacity, tile_minLevel: min, tile_maxLevel: max, provider }, i) =>
           provider ? (
             <ImageryLayer
@@ -62,11 +63,11 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
 }
 
 type Providers = {
-  [id: string]: [
-    string | undefined,
-    string | undefined,
-    Promise<ImageryProvider> | ImageryProvider,
-  ];
+  [id: string]: [string | undefined, string | undefined, ImageryProvider];
+};
+
+type ResolvedProviders = {
+  [id: string]: ImageryProvider;
 };
 
 export function useImageryProviders({
@@ -83,16 +84,30 @@ export function useImageryProviders({
     }) => Promise<ImageryProvider> | ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
-  const newTile = useCallback(
-    (t: Tile, ciat?: string) =>
-      presets[t.tile_type || "default"]({ url: t.tile_url, cesiumIonAccessToken: ciat }),
-    [presets],
-  );
-
   const prevCesiumIonAccessToken = useRef(cesiumIonAccessToken);
   const tileKeys = tiles.map(t => t.id).join(",");
   const prevTileKeys = useRef(tileKeys);
   const prevProviders = useRef<Providers>({});
+  const [presetProviders, setPresetProviders] = useState<ResolvedProviders>({});
+
+  const typekey = useCallback(
+    (t: Tile) => (t.tile_type === "url" ? `url_${t.tile_url}` : t.tile_type || "default"),
+    [],
+  );
+
+  useEffect(() => {
+    tiles
+      .filter(t => t && !Object.keys(presetProviders).includes(typekey(t)))
+      .forEach(async tile => {
+        const addedProvider = await presets[tile.tile_type || "default"]({
+          url: tile.tile_url,
+          cesiumIonAccessToken,
+        });
+        if (addedProvider) {
+          setPresetProviders(prev => ({ ...prev, [typekey(tile)]: addedProvider }));
+        }
+      });
+  }, [tiles, cesiumIonAccessToken, presets, presetProviders, typekey]);
 
   // Manage TileProviders so that TileProvider does not need to be recreated each time tiles are updated.
   const { providers, updated } = useMemo(() => {
@@ -123,14 +138,7 @@ export function useImageryProviders({
             prevProvider,
             tile,
           }):
-            | [
-                string,
-                [
-                  string | undefined,
-                  string | undefined,
-                  Promise<ImageryProvider> | ImageryProvider | null | undefined,
-                ],
-              ]
+            | [string, [string | undefined, string | undefined, ImageryProvider | null | undefined]]
             | null =>
             !tile
               ? null
@@ -140,17 +148,13 @@ export function useImageryProviders({
                   prevType !== tile.tile_type ||
                   prevUrl !== tile.tile_url ||
                   (isCesiumAccessTokenUpdated && (!tile.tile_type || tile.tile_type === "default"))
-                    ? [tile.tile_type, tile.tile_url, newTile(tile, cesiumIonAccessToken)]
+                    ? [tile.tile_type, tile.tile_url, presetProviders[typekey(tile)]]
                     : [prevType, prevUrl, prevProvider],
                 ],
         )
         .filter(
-          (
-            e,
-          ): e is [
-            string,
-            [string | undefined, string | undefined, Promise<ImageryProvider> | ImageryProvider],
-          ] => !!e?.[1][2],
+          (e): e is [string, [string | undefined, string | undefined, ImageryProvider]] =>
+            !!e?.[1][2],
         ),
     );
 
@@ -166,7 +170,7 @@ export function useImageryProviders({
     prevCesiumIonAccessToken.current = cesiumIonAccessToken;
 
     return { providers, updated };
-  }, [cesiumIonAccessToken, tiles, tileKeys, newTile]);
+  }, [cesiumIonAccessToken, tiles, tileKeys, presetProviders, typekey]);
 
   prevProviders.current = providers;
   return { providers, updated };
