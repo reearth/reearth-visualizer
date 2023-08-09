@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import ToggleButton from "@reearth/beta/components/Fields/Toggle";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
-import ToggleButton from "@reearth/beta/components/properties/Toggle";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, metricsSizes, useTheme } from "@reearth/services/theme";

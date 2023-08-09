@@ -1,4 +1,4 @@
-import TextInput from "@reearth/beta/components/properties/TextInput";
+import TextInput from "@reearth/beta/components/Fields/TextInput";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";

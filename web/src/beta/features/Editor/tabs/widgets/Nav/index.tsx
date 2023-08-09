@@ -1,4 +1,4 @@
-import Toggle from "@reearth/beta/components/properties/Toggle";
+import Toggle from "@reearth/beta/components/Fields/Toggle";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
