@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../Wrapper";
+import BlockWrapper from "../Builtin/Wrapper";
 
 export type Props = BlockProps<Property>;
 

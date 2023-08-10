@@ -6,8 +6,6 @@ import { styled } from "@reearth/services/theme";
 import builtin, { isBuiltinStoryBlock } from "./builtin";
 import { CommonProps, BlockProps } from "./types";
 
-// export type { InfoboxProperty, Typography, LatLng } from "../types";
-
 export type Props<BP = unknown> = {
   renderBlock?: (block: BlockProps) => ReactNode;
   layer?: Layer;

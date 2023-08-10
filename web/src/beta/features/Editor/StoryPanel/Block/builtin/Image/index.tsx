@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { styled } from "@reearth/services/theme";
 
 import { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../Wrapper";
+import BlockWrapper from "../Builtin/Wrapper";
 
 export type Props = BlockProps<Property>;
 

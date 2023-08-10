@@ -69,6 +69,7 @@ const SRoot = styled.div<Pick<Props, "width">>`
   border: 1px solid ${({ theme }) => theme.bg[3]};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  z-index: 2;
 `;
 
 const SRow = styled.button<

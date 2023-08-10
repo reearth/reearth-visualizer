@@ -30,6 +30,7 @@ const Wrapper = styled.div<{ widthPercentage: number }>`
   position: relative;
   display: flex;
   background-color: #78a9ff;
+  z-index: 1;
 
   :after {
     content: "";
@@ -45,7 +46,7 @@ const Indicator = styled.button`
   position: relative;
   flex: 1;
   height: 8px;
-  z-index: 1;
+  z-index: 2;
 
   :not(:first-of-type) {
     border-left: 1px solid #ffffff;
