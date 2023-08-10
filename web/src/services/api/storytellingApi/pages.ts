@@ -3,8 +3,6 @@ import { useCallback } from "react";
 
 import { MutationReturn } from "@reearth/services/api/types";
 import {
-  CreateStoryInput,
-  CreateStoryMutation,
   CreateStoryPageInput,
   CreateStoryPageMutation,
   CreateTeamPayload,
@@ -12,51 +10,29 @@ import {
   DeleteStoryPageMutation,
   MoveStoryPageInput,
   MoveStoryPageMutation,
-  MutationCreateStoryArgs,
   MutationCreateStoryPageArgs,
   MutationMoveStoryPageArgs,
   MutationRemoveStoryPageArgs,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
-  CREATE_STORY,
   CREATE_STORY_PAGE,
   DELETE_STORY_PAGE,
   MOVE_STORY_PAGE,
 } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 
-import { useNotification } from "../state";
+import { useNotification } from "../../state";
 
 export type Team = CreateTeamPayload["team"];
 
-export default function useStorytellingAPI() {
-  const t = useT();
+export default () => {
   const [, setNotification] = useNotification();
-
-  const [createStoryMutation] = useMutation<CreateStoryMutation, MutationCreateStoryArgs>(
-    CREATE_STORY,
-  );
-  const useCreateStory = useCallback(
-    async (input: CreateStoryInput): Promise<MutationReturn<CreateStoryMutation>> => {
-      const { data, errors } = await createStoryMutation({
-        variables: {
-          input,
-        },
-      });
-      if (errors || !data?.createStory?.story?.id) {
-        setNotification({ type: "error", text: t("Failed to create story.") });
-
-        return { status: "error", errors };
-      }
-      return { data, status: "success" };
-    },
-    [createStoryMutation, setNotification, t],
-  );
+  const t = useT();
 
   const [createStoryPageMutation] = useMutation<
     CreateStoryPageMutation,
     MutationCreateStoryPageArgs
-  >(CREATE_STORY_PAGE);
+  >(CREATE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useCreateStoryPage = useCallback(
     async (input: CreateStoryPageInput): Promise<MutationReturn<CreateStoryPageMutation>> => {
@@ -70,6 +46,8 @@ export default function useStorytellingAPI() {
 
         return { status: "error", errors };
       }
+      setNotification({ type: "success", text: t("Successfullly created a page!") });
+
       return { data, status: "success" };
     },
     [createStoryPageMutation, setNotification, t],
@@ -78,7 +56,7 @@ export default function useStorytellingAPI() {
   const [deleteStoryPageMutation] = useMutation<
     DeleteStoryPageMutation,
     MutationRemoveStoryPageArgs
-  >(DELETE_STORY_PAGE);
+  >(DELETE_STORY_PAGE, { refetchQueries: ["GetScene"] });
 
   const useDeleteStoryPage = useCallback(
     async (input: DeleteStoryPageInput): Promise<MutationReturn<DeleteStoryPageMutation>> => {
@@ -88,16 +66,20 @@ export default function useStorytellingAPI() {
         },
       });
       if (errors || !data?.removeStoryPage?.story?.id) {
+        setNotification({ type: "error", text: t("Failed to delete page.") });
+
         return { status: "error", errors };
       }
+      setNotification({ type: "info", text: t("Page was successfully deleted.") });
 
       return { data, status: "success" };
     },
-    [deleteStoryPageMutation],
+    [deleteStoryPageMutation, setNotification, t],
   );
 
   const [moveStoryPageMutation] = useMutation<MoveStoryPageMutation, MutationMoveStoryPageArgs>(
     MOVE_STORY_PAGE,
+    { refetchQueries: ["GetScene"] },
   );
 
   const useMoveStoryPage = useCallback(
@@ -108,18 +90,19 @@ export default function useStorytellingAPI() {
         },
       });
       if (errors || !data?.moveStoryPage?.story?.id) {
+        setNotification({ type: "error", text: t("Failed to move page.") });
+
         return { status: "error", errors };
       }
+      setNotification({ type: "info", text: t("Page was successfully moved.") });
 
       return { data, status: "success" };
     },
-    [moveStoryPageMutation],
+    [moveStoryPageMutation, setNotification, t],
   );
-
   return {
-    useCreateStory,
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
   };
-}
+};

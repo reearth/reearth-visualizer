@@ -1,8 +1,8 @@
 Not found: ページが見つかりません
+Padding settings: ''
+Remove: 削除
 Published: 一般公開
 Unpublished: 非公開
-Scene: シーン
-Story: ストーリー
 Unpublish: 非公開にする
 Publish: 公開
 Publishing Settings: 公開設定
@@ -27,6 +27,7 @@ This means that anybody with the URL will become unable to view this project.: U
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
 New Page: 新しいページ
 New Swipe: 新しいスワイプ
+Story: ストーリー
 Page: ページ
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
@@ -50,6 +51,7 @@ Datasets: データセット
 Plugins: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
+Map: マップ
 Widgets: ウィジェット
 Error: エラー
 Warning: 注意
@@ -163,13 +165,13 @@ Preview: プレビュー
 Layer selection: レイヤーを選択
 Selectable Layers: 選択可能なレイヤー
 Add: 追加
-Remove: 削除
 Stories: ストーリー
 Delete Selected Layer: 選択中のレイヤーを削除
 Create New Folder: 新規フォルダ作成
 Add Layer: ''
 Zoom To Layer: ''
 Delete the selected item.: 選択中の項目を削除
+Scene: シーン
 Layers: レイヤー
 Clusters: クラスター
 Delete widget: ウィジェットを削除
@@ -375,8 +377,20 @@ Successfully removed member from the workspace.: このワークスペースか�
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
 Failed to publish project.: プロジェクト公開に失敗しました。
 Failed to update property.: プロパティのアップデートに失敗しました。
+Failed to create block.: ''
+Successfullly created a block!: ''
+Failed to delete block.: ''
+Block was successfully deleted.: ''
+Failed to move block.: ''
+Block was successfully moved.: ''
 Failed to create story.: ストーリーの作成に失敗しました。
+Successfullly created a story!: ''
 Failed to create page.: ページの作成に失敗しました。
+Successfullly created a page!: ''
+Failed to delete page.: ''
+Page was successfully deleted.: ''
+Failed to move page.: ''
+Page was successfully moved.: ''
 Failed to add widget.: ウィジェットの作成に失敗しました。
 Failed to update widget.: ウィジェットのアップデートに失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。

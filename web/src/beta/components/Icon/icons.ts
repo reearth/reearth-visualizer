@@ -33,6 +33,7 @@ import CheckMark from "./Icons/checkMark.svg";
 import Plus from "./Icons/plus.svg";
 import Minus from "./Icons/minus.svg";
 import Alert from "./Icons/alert.svg";
+import DndHandle from "./Icons/dndHandle.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -43,15 +44,6 @@ import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
 
-// Storytelling blocks
-import Audio from "./Icons/audio.svg";
-import EditIcon from "./Icons/editIcon.svg";
-import Settings from "./Icons/settings.svg";
-import ButtonBlock from "./Icons/buttonBlock.svg";
-import Camera from "./Icons/camera.svg";
-import MdFile from "./Icons/mdFile.svg";
-import Clock from "./Icons/clock.svg";
-
 // Dashboard
 import Dashboard from "./Icons/dashboard.svg";
 import Logout from "./Icons/logout.svg";
@@ -60,7 +52,7 @@ import Logout from "./Icons/logout.svg";
 import WorkspaceAdd from "./Icons/workspaceAdd.svg";
 import Workspaces from "./Icons/workspaces.svg";
 
-// StoryTelling tab
+// Storytelling tab
 import Square from "./Icons/square.svg";
 import Swiper from "./Icons/swiper.svg";
 import Book from "./Icons/book.svg";
@@ -68,6 +60,16 @@ import Copy from "./Icons/copy.svg";
 import GearSix from "./Icons/gearSix.svg";
 import PencilSimple from "./Icons/pencilSimple.svg";
 import Trash from "./Icons/trash.svg";
+import TextStoryBlock from "./Icons/textStoryBlock.svg";
+import Edit from "./Icons/storyBlockEdit.svg";
+import Exit from "./Icons/exit.svg";
+import Settings from "./Icons/settings.svg";
+import Padding from "./Icons/padding.svg";
+import TitleStoryBlock from "./Icons/titleStoryBlock.svg";
+import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
+import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
+import MdTextStoryBlock from "./Icons/mdTextStoryBlock.svg";
+import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg";
 
 // Widget tab
 import Desktop from "./Icons/desktop.svg";
@@ -119,13 +121,6 @@ export default {
   plus: Plus,
   timeline: Timeline,
   actionbutton: ActionButton,
-  audio: Audio,
-  editIcon: EditIcon,
-  settings: Settings,
-  buttonBlock: ButtonBlock,
-  camera: Camera,
-  mdFile: MdFile,
-  clock: Clock,
   dashboard: Dashboard,
   help: Help,
   logout: Logout,
@@ -134,6 +129,7 @@ export default {
   checkmark: CheckMark,
   minus: Minus,
   alert: Alert,
+  dndHandle: DndHandle,
   logo: Logo,
   logoColorful: LogoColorful,
   desktop: Desktop,
@@ -143,6 +139,16 @@ export default {
   gearSix: GearSix,
   pencilSimple: PencilSimple,
   trash: Trash,
+  storyBlockEdit: Edit,
+  exit: Exit,
+  settings: Settings,
+  padding: Padding,
+  textStoryBlock: TextStoryBlock,
+  titleStoryBlock: TitleStoryBlock,
+  videoStoryBlock: VideoStoryBlock,
+  imageStoryBlock: ImageStoryBlock,
+  mdTextStoryBlock: MdTextStoryBlock,
+  cameraButtonStoryBlock: CameraButtonStoryBlock,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,
