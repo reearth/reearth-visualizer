@@ -1,10 +1,13 @@
 import { FC, Fragment } from "react";
 
 import PageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicator";
-import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 import { styled } from "@reearth/services/theme";
 
-import useHooks, { pageElementId } from "./hooks";
+import useHooks, {
+  pageElementId,
+  type StoryFragmentFragment,
+  type StoryPageFragmentFragment,
+} from "./hooks";
 import StoryPage from "./Page";
 
 export const storyPanelWidth = 442;

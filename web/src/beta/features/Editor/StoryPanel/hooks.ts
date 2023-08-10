@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
-import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+
+export type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 export const pageElementId = "story-page";
 
@@ -18,7 +20,13 @@ export default ({
 }) => {
   const [selectedStoryBlockId, setSelectedStoryBlockId] = useState<string>();
 
+  const handleStoryBlockSelect = useCallback((blockId: string) => {
+    setSelectedStoryBlockId(id => (id === blockId ? undefined : blockId));
+  }, []);
+
   const { useInstallableStoryBlocksQuery } = useStorytellingAPI();
+
+  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
 
   useEffect(() => {
     if (selectedPage) {
@@ -41,12 +49,6 @@ export default ({
   const pageHeight = useMemo(() => {
     const element = document.getElementById(pageElementId);
     return element?.clientHeight;
-  }, []);
-
-  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
-
-  const handleStoryBlockSelect = useCallback((blockId: string) => {
-    setSelectedStoryBlockId(id => (id === blockId ? undefined : blockId));
   }, []);
 
   return {
