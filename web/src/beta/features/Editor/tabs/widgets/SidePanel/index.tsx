@@ -23,6 +23,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
     handleWidgetAdd,
     handleWidgetRemove,
     handleWidgetSelection,
+    handleWidgetAreaStateChange,
   } = useHooks({ sceneId });
 
   return (
@@ -58,7 +59,10 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
           title: t("Container Settings"),
           hide: !selectedWidgetArea,
           children: selectedWidgetArea && sceneId && (
-            <ContainerSettings sceneId={sceneId} widgetArea={selectedWidgetArea} />
+            <ContainerSettings
+              widgetArea={selectedWidgetArea}
+              onWidgetAreaStateChange={handleWidgetAreaStateChange}
+            />
           ),
         },
       ]}

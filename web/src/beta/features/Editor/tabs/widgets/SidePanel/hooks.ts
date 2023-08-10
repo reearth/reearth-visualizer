@@ -2,11 +2,20 @@ import { useReactiveVar } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { useWidgetsFetcher } from "@reearth/services/api";
-import { selectedWidgetVar, selectedWidgetAreaVar } from "@reearth/services/state";
+import {
+  selectedWidgetVar,
+  selectedWidgetAreaVar,
+  type WidgetAreaState,
+} from "@reearth/services/state";
 
 export default ({ sceneId }: { sceneId?: string }) => {
-  const { useInstallableWidgetsQuery, useInstalledWidgetsQuery, useAddWidget, useRemoveWidget } =
-    useWidgetsFetcher();
+  const {
+    useInstallableWidgetsQuery,
+    useInstalledWidgetsQuery,
+    useAddWidget,
+    useRemoveWidget,
+    useUpdateWidgetAlignSystem,
+  } = useWidgetsFetcher();
   const { installableWidgets } = useInstallableWidgetsQuery({ sceneId });
   const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
 
@@ -48,6 +57,17 @@ export default ({ sceneId }: { sceneId?: string }) => {
     [sceneId, useRemoveWidget],
   );
 
+  const handleWidgetAreaStateChange = useCallback(
+    async (widgetAreaState?: WidgetAreaState) => {
+      if (!sceneId || !widgetAreaState) return;
+      const results = await useUpdateWidgetAlignSystem(widgetAreaState, sceneId);
+      if (results.status === "success") {
+        selectedWidgetAreaVar(widgetAreaState);
+      }
+    },
+    [sceneId, useUpdateWidgetAlignSystem],
+  );
+
   return {
     selectedWidget,
     selectedWidgetArea,
@@ -57,5 +77,6 @@ export default ({ sceneId }: { sceneId?: string }) => {
     handleWidgetAdd,
     handleWidgetRemove,
     handleWidgetSelection,
+    handleWidgetAreaStateChange,
   };
 };
