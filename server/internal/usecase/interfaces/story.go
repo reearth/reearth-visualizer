@@ -18,10 +18,21 @@ type CreateStoryInput struct {
 }
 
 type UpdateStoryInput struct {
-	SceneID id.SceneID
-	StoryID id.StoryID
-	Title   *string
-	Index   *int
+	SceneID       id.SceneID
+	StoryID       id.StoryID
+	Title         *string
+	Index         *int
+	PanelPosition *storytelling.Position
+
+	IsBasicAuthActive *bool
+	BasicAuthUsername *string
+	BasicAuthPassword *string
+	Alias             *string
+	PublicTitle       *string
+	PublicDescription *string
+	PublicImage       *string
+	PublicNoIndex     *bool
+	DeletePublicImage *bool
 }
 
 type MoveStoryInput struct {
