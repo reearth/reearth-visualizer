@@ -9,7 +9,6 @@ import {
 import { ThemeProvider } from "@emotion/react";
 import { withThemeFromJSXProvider } from "@storybook/addon-styling";
 import type { Preview } from "@storybook/react";
-import { themes } from "@storybook/theming";
 import React from "react";
 
 import classicDarkTheme from "../src/classic/theme/reearthTheme/darkTheme"; // temp classic imports
@@ -17,6 +16,8 @@ import classicLightTheme from "../src/classic/theme/reearthTheme/lightTheme"; //
 import { Provider as DndProvider } from "../src/classic/util/use-dnd";
 import { Provider as I18nProvider } from "../src/services/i18n";
 import { GlobalStyles, darkTheme, lightTheme } from "../src/services/theme";
+
+import theme from "./theme";
 
 // apollo client that does nothing
 const mockClient = new ApolloClient({
@@ -41,7 +42,7 @@ const preview: Preview = {
     controls: { expanded: true },
     actions: { argTypesRegex: "^on.*" },
     docs: {
-      theme: themes.dark,
+      theme,
     },
   },
   decorators: [
