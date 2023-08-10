@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 
@@ -11,6 +11,19 @@ export default ({
   storyId?: string;
   pageId?: string;
 }) => {
+  const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
+
+  const handleBlockOpen = useCallback(
+    (index: number) => {
+      if (openBlocksIndex === index) {
+        setOpenBlocksIndex(undefined);
+      } else {
+        setOpenBlocksIndex(index);
+      }
+    },
+    [openBlocksIndex],
+  );
+
   const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
     useStorytellingAPI();
 
@@ -43,5 +56,11 @@ export default ({
     [storyId, pageId, useDeleteStoryBlock],
   );
 
-  return { installedStoryBlocks, handleStoryBlockCreate, handleStoryBlockDelete };
+  return {
+    openBlocksIndex,
+    installedStoryBlocks,
+    handleStoryBlockCreate,
+    handleStoryBlockDelete,
+    handleBlockOpen,
+  };
 };

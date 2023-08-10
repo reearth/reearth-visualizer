@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import { Fragment } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
@@ -28,24 +28,17 @@ const StoryPage: React.FC<Props> = ({
   selectedStoryBlockId,
   onBlockSelect,
 }) => {
-  const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
-
-  const { installedStoryBlocks, handleStoryBlockCreate, handleStoryBlockDelete } = useHooks({
+  const {
+    openBlocksIndex,
+    installedStoryBlocks,
+    handleStoryBlockCreate,
+    handleStoryBlockDelete,
+    handleBlockOpen,
+  } = useHooks({
     sceneId,
     storyId,
     pageId,
   });
-
-  const handleBlockOpen = useCallback(
-    (index: number) => {
-      if (openBlocksIndex === index) {
-        setOpenBlocksIndex(undefined);
-      } else {
-        setOpenBlocksIndex(index);
-      }
-    },
-    [openBlocksIndex],
-  );
 
   return (
     <Wrapper id={pageId}>
@@ -60,7 +53,7 @@ const StoryPage: React.FC<Props> = ({
       />
       {installedStoryBlocks &&
         installedStoryBlocks.length > 0 &&
-        installedStoryBlocks?.map((b, idx) => (
+        installedStoryBlocks.map((b, idx) => (
           <Fragment key={idx}>
             <StoryBlock
               block={b}

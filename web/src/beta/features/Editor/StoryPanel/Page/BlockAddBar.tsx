@@ -36,11 +36,7 @@ const BlockAddBar: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Popover.Provider
-        open={openBlocks}
-        placement="bottom-start"
-        offset={-10}
-        onOpenChange={onBlockOpen}>
+      <Popover.Provider open={openBlocks} placement="bottom-start" onOpenChange={onBlockOpen}>
         <Popover.Trigger asChild>
           <Bar persist={openBlocks}>
             <StyledIcon icon="plus" size={16} onClick={onBlockOpen} />
