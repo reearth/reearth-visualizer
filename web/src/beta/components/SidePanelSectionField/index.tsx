@@ -6,7 +6,7 @@ import Icon from "../Icon";
 import Text from "../Text";
 
 const SidePanelSectionField: React.FC<{
-  title: string;
+  title?: string;
   children?: ReactNode;
 }> = ({ title, children }) => {
   const theme = useTheme();
@@ -14,12 +14,14 @@ const SidePanelSectionField: React.FC<{
 
   return (
     <Field>
-      <Header onClick={() => setOpened(!opened)}>
-        <Text size="body" color={theme.content.main}>
-          {title}
-        </Text>
-        <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
-      </Header>
+      {title && (
+        <Header onClick={() => setOpened(!opened)}>
+          <Text size="body" color={theme.content.main}>
+            {title}
+          </Text>
+          <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
+        </Header>
+      )}
       {opened && children && <Content>{children}</Content>}
     </Field>
   );
@@ -45,7 +47,7 @@ const ArrowIcon = styled(Icon)<{ opened: boolean }>`
 `;
 
 const Content = styled.div`
-  padding: 0 8px 8px 8px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
