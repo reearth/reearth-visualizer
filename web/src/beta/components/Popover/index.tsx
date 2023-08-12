@@ -24,12 +24,13 @@ export function Provider({
 }
 
 type TriggerProps = {
+  className?: string;
   children: React.ReactNode;
   asChild?: boolean;
 };
 
 export const Trigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement> & TriggerProps>(
-  function Trigger({ children, asChild = false, ...props }, propRef) {
+  function Trigger({ children, asChild = false, className, ...props }, propRef) {
     const context = usePopoverContext();
     const childrenRef = (children as any).ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -50,6 +51,7 @@ export const Trigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement
     return (
       <button
         ref={ref}
+        className={className}
         type="button"
         // The user can style the trigger based on the state
         data-state={context.open ? "open" : "closed"}
@@ -60,30 +62,36 @@ export const Trigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement
   },
 );
 
-export const Content = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
-  function Content({ style, ...props }, propRef) {
-    const { context: floatingContext, ...context } = usePopoverContext();
-    const ref = useMergeRefs([context.refs.setFloating, propRef]);
-    const { isMounted, styles: transitionStyles } = useTransitionStyles(floatingContext, {
-      duration: 50,
-    });
+type ContentProps = {
+  className?: string;
+};
 
-    if (!isMounted) return null;
+export const Content = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLProps<HTMLDivElement> & ContentProps
+>(function Content({ style, className, ...props }, propRef) {
+  const { context: floatingContext, ...context } = usePopoverContext();
+  const ref = useMergeRefs([context.refs.setFloating, propRef]);
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(floatingContext, {
+    duration: 50,
+  });
 
-    return (
-      <FloatingPortal>
-        <FloatingFocusManager context={floatingContext} modal={context.modal}>
-          <div
-            ref={ref}
-            style={{ ...context.floatingStyles, ...transitionStyles, ...style }}
-            {...context.getFloatingProps(props)}>
-            {props.children}
-          </div>
-        </FloatingFocusManager>
-      </FloatingPortal>
-    );
-  },
-);
+  if (!isMounted) return null;
+
+  return (
+    <FloatingPortal>
+      <FloatingFocusManager context={floatingContext} modal={context.modal}>
+        <div
+          ref={ref}
+          className={className}
+          style={{ ...context.floatingStyles, ...transitionStyles, ...style }}
+          {...context.getFloatingProps(props)}>
+          {props.children}
+        </div>
+      </FloatingFocusManager>
+    </FloatingPortal>
+  );
+});
 
 export const Close = React.forwardRef<
   HTMLButtonElement,

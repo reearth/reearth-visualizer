@@ -9,3 +9,20 @@ export const storyFragment = gql`
     }
   }
 `;
+
+export const storyPageFragment = gql`
+  fragment StoryPageFragment on StoryPage {
+    id
+    title
+    swipeable
+    blocks {
+      id
+      pluginId
+      extensionId
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
+  }
+`;

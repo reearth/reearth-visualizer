@@ -35,6 +35,7 @@ const ContentPage: React.FC<Props> = ({
   useEffect(() => {
     setItems(storyPages);
   }, [storyPages]);
+
   return (
     <SContent>
       <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
