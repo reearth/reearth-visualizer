@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from "react";
+import { useCallback, type ComponentType, type ReactNode } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import { styled } from "@reearth/services/theme";
@@ -15,13 +15,16 @@ export type Component<BP = any> = ComponentType<CommonProps<BP>>;
 
 export default function StoryBlockComponent<P = any>({
   renderBlock,
+  onRemove,
   ...props
 }: Props<P>): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
   const Builtin = isBuiltinStoryBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
 
+  const handleRemove = useCallback(() => onRemove?.(props.block?.id), [props.block?.id, onRemove]);
+
   return Builtin ? (
-    <Builtin {...props} />
+    <Builtin {...props} onRemove={handleRemove} />
   ) : props.block ? (
     <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
