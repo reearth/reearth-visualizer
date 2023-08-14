@@ -14,8 +14,9 @@ export default () => {
       vt: ValueType,
       itemId?: string,
     ) => {
-      return async (v?: ValueTypes[ValueType]) =>
+      return async (v?: ValueTypes[ValueType]) => {
         await useUpdatePropertyValue(propertyId, schemaGroupId, itemId, fieldId, "en", v, vt);
+      };
     },
     [useUpdatePropertyValue],
   );
