@@ -24,6 +24,13 @@ export type Camera = {
   fov: number;
 };
 
+export type Spacing = {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
+};
+
 export type Typography = {
   fontFamily?: string;
   fontSize?: number;
@@ -99,6 +106,7 @@ export type ValueTypes = {
   rect: Rect;
   ref: string;
   tiletype: string;
+  spacing: Spacing;
 };
 
 const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
@@ -114,6 +122,7 @@ const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
   [GQLValueType.Polygon]: "polygon",
   [GQLValueType.Rect]: "rect",
   [GQLValueType.Ref]: "ref",
+  [GQLValueType.Spacing]: "spacing",
 };
 
 export type ValueType = keyof ValueTypes;

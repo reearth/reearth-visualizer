@@ -24,7 +24,7 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
-import { convert } from "../propertyApi/utils";
+import { Item, convert } from "../propertyApi/utils";
 import { SceneQueryProps } from "../sceneApi";
 
 export type StoryBlockQueryProps = SceneQueryProps;
@@ -39,14 +39,17 @@ export type InstallableStoryBlock = {
   type?: PluginExtensionType;
 };
 
-export type InstalledStoryBlock<P = unknown> = {
+export type InstalledStoryBlock = {
   id: string;
   pluginId: string;
   extensionId: string;
   title: string;
   description: string | undefined;
   icon?: string;
-  property?: P;
+  property?: {
+    id: string;
+    items: Item[] | undefined;
+  };
 };
 
 export default () => {

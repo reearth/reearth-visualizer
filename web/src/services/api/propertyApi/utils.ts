@@ -54,7 +54,9 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
     | "video"
     | "file"
     | "layer"
-    | "cameraPose";
+    | "cameraPose"
+    | "padding"
+    | "margin";
   choices?: {
     key: string;
     label: string;
@@ -273,6 +275,10 @@ const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] =
       return "layer";
     case PropertySchemaFieldUi.CameraPose:
       return "cameraPose";
+    case PropertySchemaFieldUi.Margin:
+      return "margin";
+    case PropertySchemaFieldUi.Padding:
+      return "padding";
   }
   return undefined;
 };
