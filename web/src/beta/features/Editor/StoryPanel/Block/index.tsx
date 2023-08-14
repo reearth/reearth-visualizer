@@ -6,18 +6,18 @@ import { styled } from "@reearth/services/theme";
 import builtin, { isBuiltinStoryBlock } from "./builtin";
 import { CommonProps, BlockProps } from "./types";
 
-export type Props<BP = unknown> = {
+export type Props = {
   renderBlock?: (block: BlockProps) => ReactNode;
   layer?: Layer;
-} & CommonProps<BP>;
+} & CommonProps;
 
-export type Component<BP = any> = ComponentType<CommonProps<BP>>;
+export type Component = ComponentType<CommonProps>;
 
-export default function StoryBlockComponent<P = any>({
+export default function StoryBlockComponent({
   renderBlock,
   onRemove,
   ...props
-}: Props<P>): JSX.Element | null {
+}: Props): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
   const Builtin = isBuiltinStoryBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
 

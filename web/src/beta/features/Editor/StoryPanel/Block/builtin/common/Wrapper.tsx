@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
-import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import FieldComponents from "@reearth/beta/hooks/FieldBuilder";
+import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import Template from "../../Template";
@@ -21,15 +22,9 @@ type Props = {
   padding?: Spacing;
   isSelected?: boolean;
   children?: ReactNode;
+  propertyId?: string;
+  propertyItems?: Item[];
   onClick: (() => void) | undefined;
-  onChange?: (
-    propertyId?: string,
-    schemaItemId?: string,
-    fieldId?: string,
-    itemId?: string,
-    vt?: ValueType,
-    v?: ValueTypes[ValueType],
-  ) => Promise<void>;
   onRemove?: () => void;
 };
 
@@ -39,8 +34,9 @@ const BlockWrapper: React.FC<Props> = ({
   padding,
   isSelected,
   children,
+  propertyId,
+  propertyItems,
   onClick,
-  onChange,
   onRemove,
 }) => {
   const {
@@ -48,6 +44,8 @@ const BlockWrapper: React.FC<Props> = ({
     editMode,
     showSettings,
     showPadding,
+    defaultSettings,
+    panelSettings,
     setShowPadding,
     handleMouseEnter,
     handleMouseLeave,
@@ -56,15 +54,9 @@ const BlockWrapper: React.FC<Props> = ({
     handleSettingsToggle,
   } = useHooks({
     isSelected,
+    propertyItems,
     onClick,
-    onChange,
   });
-
-  // const handleChange = useCallback(() => {
-  //   const block = props.block;
-
-  //   onChange?.(block?.propertyId, block?.propertyId);
-  // }, [props.block, onChange]);
 
   return (
     <Wrapper
@@ -79,6 +71,8 @@ const BlockWrapper: React.FC<Props> = ({
           showSettings={showSettings}
           showPadding={showPadding}
           editMode={editMode}
+          propertyId={propertyId}
+          panelSettings={panelSettings}
           setShowPadding={setShowPadding}
           onEditModeToggle={handleEditModeToggle}
           onSettingsToggle={handleSettingsToggle}
@@ -88,9 +82,9 @@ const BlockWrapper: React.FC<Props> = ({
       <Block padding={padding} onClick={handleBlockClick}>
         {children ?? <Template icon={icon} />}
       </Block>
-      {editMode && (
+      {editMode && propertyId && defaultSettings && (
         <EditorPanel>
-          <p>Block editing</p>
+          <FieldComponents propertyId={propertyId} item={defaultSettings} />
         </EditorPanel>
       )}
     </Wrapper>

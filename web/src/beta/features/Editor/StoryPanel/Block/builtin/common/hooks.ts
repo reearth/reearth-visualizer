@@ -1,21 +1,14 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
 
 type Props = {
   isSelected?: boolean;
+  propertyItems?: Item[];
   onClick: (() => void) | undefined;
-  onChange?: (
-    propertyId?: string,
-    schemaItemId?: string,
-    fieldId?: string,
-    itemId?: string,
-    vt?: ValueType,
-    v?: ValueTypes[ValueType],
-  ) => Promise<void>;
 };
 
-export default ({ isSelected, onClick }: Props) => {
+export default ({ isSelected, propertyItems, onClick }: Props) => {
   const [isHovered, setHover] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -34,11 +27,23 @@ export default ({ isSelected, onClick }: Props) => {
     onClick?.();
   }, [onClick, showSettings, isSelected]);
 
+  const defaultSettings: Item | undefined = useMemo(
+    () => propertyItems?.find(i => i.schemaGroup === "default"),
+    [propertyItems],
+  );
+
+  const panelSettings: Item | undefined = useMemo(
+    () => propertyItems?.find(i => i.schemaGroup === "panel"),
+    [propertyItems],
+  );
+
   return {
     isHovered,
     editMode,
     showSettings,
     showPadding,
+    defaultSettings,
+    panelSettings,
     setShowPadding,
     handleMouseEnter,
     handleMouseLeave,

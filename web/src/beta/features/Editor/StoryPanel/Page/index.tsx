@@ -34,6 +34,7 @@ const StoryPage: React.FC<Props> = ({
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handleBlockOpen,
+    handlePropertyValueUpdate,
   } = useHooks({
     sceneId,
     storyId,
@@ -59,6 +60,7 @@ const StoryPage: React.FC<Props> = ({
               block={b}
               isSelected={selectedStoryBlockId === b.id}
               onClick={() => onBlockSelect(b.id)}
+              onChange={handlePropertyValueUpdate}
               onRemove={handleStoryBlockDelete}
             />
             <BlockAddBar
