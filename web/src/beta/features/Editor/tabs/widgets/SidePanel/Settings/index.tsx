@@ -1,5 +1,5 @@
+import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
-import FieldComponents from "@reearth/beta/hooks/FieldBuilder";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 

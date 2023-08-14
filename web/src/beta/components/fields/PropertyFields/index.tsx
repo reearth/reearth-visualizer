@@ -8,7 +8,7 @@ type Props = {
   item?: Item;
 };
 
-const FieldComponents: React.FC<Props> = ({ propertyId, item }) => {
+const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
   const { handlePropertyValueUpdate } = useHooks();
 
   return (
@@ -40,4 +40,4 @@ const FieldComponents: React.FC<Props> = ({ propertyId, item }) => {
   );
 };
 
-export default FieldComponents;
+export default PropertyFields;

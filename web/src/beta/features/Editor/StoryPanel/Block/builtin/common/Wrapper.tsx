@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import FieldComponents from "@reearth/beta/hooks/FieldBuilder";
+import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
