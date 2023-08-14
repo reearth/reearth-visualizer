@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import Template from "../../Template";
@@ -21,6 +22,14 @@ type Props = {
   isSelected?: boolean;
   children?: ReactNode;
   onClick: (() => void) | undefined;
+  onChange?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
   onRemove?: () => void;
 };
 
@@ -31,6 +40,7 @@ const BlockWrapper: React.FC<Props> = ({
   isSelected,
   children,
   onClick,
+  onChange,
   onRemove,
 }) => {
   const {
@@ -47,7 +57,14 @@ const BlockWrapper: React.FC<Props> = ({
   } = useHooks({
     isSelected,
     onClick,
+    onChange,
   });
+
+  // const handleChange = useCallback(() => {
+  //   const block = props.block;
+
+  //   onChange?.(block?.propertyId, block?.propertyId);
+  // }, [props.block, onChange]);
 
   return (
     <Wrapper

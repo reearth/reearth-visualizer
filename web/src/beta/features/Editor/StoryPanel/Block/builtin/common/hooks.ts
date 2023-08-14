@@ -1,8 +1,18 @@
 import { useCallback, useState } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+
 type Props = {
   isSelected?: boolean;
   onClick: (() => void) | undefined;
+  onChange?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 export default ({ isSelected, onClick }: Props) => {
