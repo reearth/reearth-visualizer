@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import Toggle from "@reearth/beta/components/properties/Toggle";
+import Toggle from "@reearth/beta/components/fields/Toggle";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { useT } from "@reearth/services/i18n";
 import { selectedWidgetAreaVar } from "@reearth/services/state";

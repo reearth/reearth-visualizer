@@ -1,4 +1,4 @@
-import TextInput from "@reearth/beta/components/properties/TextInput";
+import TextInput from "@reearth/beta/components/fields/TextInput";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import useHooks from "./hooks";
