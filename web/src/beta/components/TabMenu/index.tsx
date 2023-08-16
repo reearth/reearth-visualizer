@@ -14,8 +14,6 @@ type Props = {
 };
 // Work items:
 // - Render a more complex component
-// - Add icons
-// - Based on selected, change icon background color
 
 const TabMenu: FC<Props> = ({ tabs }) => {
   const [selected, setSelected] = useState<string | null>(null);
