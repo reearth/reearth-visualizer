@@ -1,30 +1,32 @@
-import { FC, useState } from "react";
+import { FC, useState, ReactNode } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-type Props = {};
+interface TabObject {
+  icon: string;
+  component: ReactNode;
+}
+
+type Props = {
+  tabs: Record<string, TabObject>;
+};
 // Work items:
-// - Add types
 // - Render a more complex component
 // - Add props
 // - Add icons
 // - Based on selected, change icon background color
 
-const TabMenu: FC<Props> = () => {
-  const [selected, setSelected] = useState(null);
+const TabMenu: FC<Props> = ({ tabs }) => {
+  const [selected, setSelected] = useState<TabObject | null>(null);
 
-  const obj = {
-    tab1: { icon: "t 1", component: <div>Tab 1</div> },
-    tab2: { icon: "t 2", component: <div>Tab 2</div> },
-  };
   return (
     <Wrapper>
       <Title>Inspector</Title>
       <Tabs>
-        {Object.entries(obj).map(([tab, val]) => (
+        {Object.entries(tabs).map(([tab, val]) => (
           <div
             style={{
-              background: val.icon === selected && selected.icon ? "#232226" : "inherit",
+              background: selected && val.icon === selected.icon ? "#232226" : "inherit",
             }}
             key={tab}
             onClick={() => setSelected(val)}>
