@@ -1,9 +1,11 @@
 import { FC, useState, ReactNode } from "react";
 
+import Icon from "@reearth/beta/components/Icon";
+import Icons from "@reearth/beta/components/Icon/icons";
 import { styled } from "@reearth/services/theme";
 
 interface TabObject {
-  icon: string;
+  icon: keyof typeof Icons;
   component: ReactNode;
 }
 
@@ -12,29 +14,32 @@ type Props = {
 };
 // Work items:
 // - Render a more complex component
-// - Add props
 // - Add icons
 // - Based on selected, change icon background color
 
 const TabMenu: FC<Props> = ({ tabs }) => {
-  const [selected, setSelected] = useState<TabObject | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
 
   return (
     <Wrapper>
       <Title>Inspector</Title>
       <Tabs>
         {Object.entries(tabs).map(([tab, val]) => (
-          <div
-            style={{
-              background: selected && val.icon === selected.icon ? "#232226" : "inherit",
-            }}
+          <Icon
             key={tab}
-            onClick={() => setSelected(val)}>
-            {val.icon}
-          </div>
+            onClick={() => setSelected(tab)}
+            icon={val.icon}
+            alt="icon"
+            size={20}
+            style={{
+              padding: "8px 0",
+              width: "100%",
+              background: tab === selected ? "#232226" : "inherit",
+            }}
+          />
         ))}
       </Tabs>
-      <MainArea>{selected ? selected.component : null}</MainArea>
+      <MainArea>{selected ? tabs[selected].component : null}</MainArea>
     </Wrapper>
   );
 };
@@ -62,7 +67,6 @@ const Title = styled.div`
 
 const Tabs = styled.div`
   grid-column: 1/2;
-  padding: 6px 0;
   background: black;
   cursor: pointer;
 `;
