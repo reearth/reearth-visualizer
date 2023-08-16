@@ -10,17 +10,16 @@ interface TabObject {
 }
 
 type Props = {
+  title: string;
   tabs: Record<string, TabObject>;
 };
-// Work items:
-// - Render a more complex component
 
-const TabMenu: FC<Props> = ({ tabs }) => {
+const TabMenu: FC<Props> = ({ tabs, title }) => {
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
     <Wrapper>
-      <Title>Inspector</Title>
+      <Title>{title}</Title>
       <Tabs>
         {Object.entries(tabs).map(([tab, val]) => (
           <Icon
