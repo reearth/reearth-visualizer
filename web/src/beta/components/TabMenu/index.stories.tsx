@@ -1,3 +1,4 @@
+import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 
 import Button from "@reearth/beta/components/Button";
@@ -35,14 +36,20 @@ const SampleComponent = () => {
   );
 };
 
-export const Default: Story = {
-  args: {
-    title: "Right panel",
-    tabs: {
-      tab1: { icon: "infobox", component: <SampleComponent /> },
-      tab2: { icon: "dl", component: <div>Tab 2. Can be any react component</div> },
-    },
+export const Default: Story = args => {
+  const [_, updateArgs] = useArgs();
+
+  const onSelectedTabChange = (tab: string) => updateArgs({ selectedTab: tab });
+  return <TabMenu onSelectedTabChange={onSelectedTabChange} {...args} />;
+};
+
+Default.args = {
+  title: "Right panel",
+  tabs: {
+    tab1: { icon: "infobox", component: <SampleComponent /> },
+    tab2: { icon: "dl", component: <div>Tab 2. Can be any react component</div> },
   },
+  selectedTab: "tab1",
 };
 
 const JSONTag = styled.pre`

@@ -1,8 +1,9 @@
-import { FC, useState, ReactNode } from "react";
+import { FC, ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Icons from "@reearth/beta/components/Icon/icons";
-import { styled } from "@reearth/services/theme";
+import Text from "@reearth/beta/components/Text";
+import { styled, useTheme } from "@reearth/services/theme";
 
 interface TabObject {
   icon: keyof typeof Icons;
@@ -12,31 +13,35 @@ interface TabObject {
 type Props = {
   title: string;
   tabs: Record<string, TabObject>;
+  selectedTab: string;
+  onSelectedTabChange: (tab: string) => void;
 };
 
-const TabMenu: FC<Props> = ({ tabs, title }) => {
-  const [selected, setSelected] = useState<string | null>(null);
+const TabMenu: FC<Props> = ({ tabs, title, selectedTab, onSelectedTabChange }) => {
+  const theme = useTheme();
 
   return (
     <Wrapper>
-      <Title>{title}</Title>
+      <Title>
+        <Text size="body">{title}</Text>
+      </Title>
       <Tabs>
         {Object.entries(tabs).map(([tab, val]) => (
           <Icon
             key={tab}
-            onClick={() => setSelected(tab)}
+            onClick={() => onSelectedTabChange(tab)}
             icon={val.icon}
             alt="icon"
             size={20}
             style={{
               padding: "8px 0",
               width: "100%",
-              background: tab === selected ? "#232226" : "inherit",
+              background: tab === selectedTab ? theme.bg[1] : "inherit",
             }}
           />
         ))}
       </Tabs>
-      <MainArea>{selected ? tabs[selected].component : null}</MainArea>
+      <MainArea>{selectedTab ? tabs[selectedTab]?.component : null}</MainArea>
     </Wrapper>
   );
 };
@@ -46,7 +51,6 @@ export default TabMenu;
 const Wrapper = styled.div`
   width: 286px;
   display: grid;
-  /* outline: solid red; */
   border-radius: 10px;
   margin: 15px;
   grid-template-rows: 36px 1fr;
@@ -72,5 +76,5 @@ const MainArea = styled.div`
   grid-column: 2/-1;
   display: block;
   padding: 6px;
-  background: #232226;
+  background: ${({ theme }) => theme.bg[1]};
 `;
