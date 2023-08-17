@@ -37,11 +37,19 @@ const SampleComponent = () => {
   );
 };
 
+const JSONTag = styled.pre`
+  background: ${({ theme }) => theme.bg[0]};
+  color: ${({ theme }) => theme.content.main};
+  border-radius: 10px;
+  padding: 10px;
+`;
+
 export const Default: Story = args => {
   const [_, updateArgs] = useArgs();
 
-  const onSelectedTabChange = (tab: string) => updateArgs({ selectedTab: tab });
-  return <TabMenu onSelectedTabChange={onSelectedTabChange} {...args} />;
+  const handleChange = (tab: string) => updateArgs({ selectedTab: tab });
+
+  return <TabMenu {...args} onSelectedTabChange={handleChange} />;
 };
 
 Default.args = {
@@ -56,10 +64,3 @@ Default.args = {
   ],
   selectedTab: "tab1",
 };
-
-const JSONTag = styled.pre`
-  background: lightgrey;
-  color: black;
-  border-radius: 10px;
-  padding: 10px;
-`;

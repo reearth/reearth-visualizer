@@ -21,7 +21,7 @@ type Props = {
 const TabMenu: FC<Props> = ({ tabs, title, selectedTab, onSelectedTabChange }) => {
   const theme = useTheme();
 
-  const selectedTabItem = tabs.find(({ key }) => key == selectedTab);
+  const selectedTabItem = tabs.find(({ key }) => key === selectedTab);
 
   return (
     <Wrapper>
@@ -30,19 +30,12 @@ const TabMenu: FC<Props> = ({ tabs, title, selectedTab, onSelectedTabChange }) =
       </Title>
       <Tabs>
         {tabs.map(({ key, icon }) => (
-          <Icon
+          <TabIconWrapper
             key={key}
             onClick={() => onSelectedTabChange(key)}
-            icon={icon}
-            alt="icon"
-            size={20}
-            color={theme.content.main}
-            style={{
-              padding: "8px 0",
-              width: "100%",
-              background: key === selectedTab ? theme.bg[1] : "inherit",
-            }}
-          />
+            selected={key === selectedTab}>
+            <Icon icon={icon} alt={"Tab " + key} size={20} color={theme.content.main} />
+          </TabIconWrapper>
         ))}
       </Tabs>
       <MainArea>{selectedTabItem ? selectedTabItem.component : null}</MainArea>
@@ -74,6 +67,14 @@ const Tabs = styled.div`
   grid-column: 1/2;
   background: ${({ theme }) => theme.bg[0]};
   cursor: pointer;
+`;
+
+const TabIconWrapper = styled.button`
+  padding: 8px 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: ${props => (props.selected ? props.theme.bg[1] : "inherit")};
 `;
 
 const MainArea = styled.div`
