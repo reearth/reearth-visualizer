@@ -33,6 +33,7 @@ const TabMenu: FC<Props> = ({ tabs, title, selectedTab, onSelectedTabChange }) =
             icon={val.icon}
             alt="icon"
             size={20}
+            color={theme.content.main}
             style={{
               padding: "8px 0",
               width: "100%",
@@ -56,7 +57,7 @@ const Wrapper = styled.div`
   grid-template-rows: 36px 1fr;
   grid-template-columns: 28px 1fr;
   height: 600px;
-  background: #3f3d45;
+  background: ${({ theme }) => theme.bg[2]};
 `;
 
 const Title = styled.div`
@@ -68,7 +69,7 @@ const Title = styled.div`
 
 const Tabs = styled.div`
   grid-column: 1/2;
-  background: black;
+  background: ${({ theme }) => theme.bg[0]};
   cursor: pointer;
 `;
 

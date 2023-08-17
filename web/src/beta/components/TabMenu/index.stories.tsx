@@ -2,6 +2,7 @@ import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 
 import Button from "@reearth/beta/components/Button";
+import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
 import TabMenu from "./index";
@@ -47,7 +48,7 @@ Default.args = {
   title: "Right panel",
   tabs: {
     tab1: { icon: "infobox", component: <SampleComponent /> },
-    tab2: { icon: "dl", component: <div>Tab 2. Can be any react component</div> },
+    tab2: { icon: "dl", component: <Text size="body">Tab 2. Can be any react component</Text> },
   },
   selectedTab: "tab1",
 };
