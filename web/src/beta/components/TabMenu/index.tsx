@@ -69,7 +69,7 @@ const Tabs = styled.div`
   cursor: pointer;
 `;
 
-const TabIconWrapper = styled.button`
+const TabIconWrapper = styled.div<{ selected: boolean }>`
   padding: 8px 0;
   width: 100%;
   display: flex;
