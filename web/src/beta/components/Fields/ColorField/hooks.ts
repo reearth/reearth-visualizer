@@ -10,7 +10,7 @@ export type RGBA = {
 
 export type Params = {
   value?: string;
-  onChange?: (value: string | undefined) => void | undefined;
+  onChange?: (value: string) => void;
 };
 
 export default ({ value, onChange }: Params) => {
@@ -66,7 +66,7 @@ export default ({ value, onChange }: Params) => {
 
   const handleSave = useCallback(() => {
     if (!onChange) return;
-    if (colorState != value) {
+    if (colorState != value && colorState) {
       onChange(colorState);
     }
     setOpen(false);

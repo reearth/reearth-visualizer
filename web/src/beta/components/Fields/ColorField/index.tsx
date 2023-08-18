@@ -22,7 +22,7 @@ export type Props = {
   name?: string;
   description?: string;
   value?: string;
-  onChange?: (value: string | undefined) => void | undefined;
+  onChange?: (value: string) => void;
 };
 
 // Component

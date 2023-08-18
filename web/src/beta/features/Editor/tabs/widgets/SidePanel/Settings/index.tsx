@@ -1,3 +1,4 @@
+import ColorField from "@reearth/beta/components/Fields/ColorField";
 import TextInput from "@reearth/beta/components/Fields/TextInput";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
@@ -23,7 +24,18 @@ const Settings: React.FC<Props> = ({ widgetPropertyId, propertyItems }) => {
             const value = !isList ? i.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
             return sf.type === "string" ? (
               sf.ui === "color" ? (
-                <p key={sf.id}>Color field</p>
+                <ColorField
+                  key={sf.id}
+                  name={sf.name}
+                  value={(value as string) ?? ""}
+                  description={sf.description}
+                  onChange={handlePropertyValueUpdate(
+                    i.schemaGroup,
+                    widgetPropertyId,
+                    sf.id,
+                    sf.type,
+                  )}
+                />
               ) : sf.ui === "selection" || sf.choices ? (
                 <p key={sf.id}>Selection or choices field</p>
               ) : sf.ui === "buttons" ? (
