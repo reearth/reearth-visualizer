@@ -36,31 +36,27 @@ export default ({ value, onChange }: Params) => {
   const handleRgbaInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
-
-      if (e.target.name === "a") {
-        setRgba({
-          ...rgba,
-          [e.target.name]: Number(e.target.value) / 100,
-        });
-      } else {
-        setRgba({
-          ...rgba,
-          [e.target.name]: e.target.value ? Number(e.target.value) : undefined,
-        });
-      }
+      setRgba({
+        ...rgba,
+        [e.target.name]: e.target.value ? Number(e.target.value) : undefined,
+      });
     },
     [rgba],
   );
 
-  const handleHexInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setColor(e.target.value);
-  }, []);
+  const handleHexInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      setColor(e.target.value);
+      setRgba(tinycolor(e.target.value ?? colorState).toRgb());
+    },
+    [colorState],
+  );
 
   const handleClose = useCallback(() => {
-    if (value) {
-      setColor(value);
-      setRgba(tinycolor(value).toRgb());
+    if (value || colorState) {
+      setColor(value ?? colorState);
+      setRgba(tinycolor(value ?? colorState).toRgb());
     } else {
       setColor(undefined);
       setRgba(tinycolor(colorState == null ? undefined : colorState).toRgb());

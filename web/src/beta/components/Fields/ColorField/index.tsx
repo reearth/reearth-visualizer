@@ -14,8 +14,8 @@ import useHooks, { RGBA } from "./hooks";
 import "./styles.css";
 
 // Constants
-const CHANNELS = ["r", "g", "b", "a"];
-const HEX_PLACEHOLDER = "#RRGGBBAA";
+const channels = ["r", "g", "b", "a"];
+const hexPlaceholder = "#RRGGBBAA";
 
 // Component Props
 export type Props = {
@@ -76,7 +76,7 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
           </Layers>
           <Input
             value={colorState || ""}
-            placeholder={t(HEX_PLACEHOLDER)}
+            placeholder={hexPlaceholder}
             onChange={handleHexInput}
             onKeyPress={handleKeyPress}
             onBlur={handleHexSave}
@@ -94,7 +94,7 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
             <RgbaInputWrapper>
               <Text size="footnote"> RGBA</Text>
               <ValuesWrapper>
-                {CHANNELS.map(channel => (
+                {channels.map(channel => (
                   <Input
                     key={channel}
                     name={channel}
