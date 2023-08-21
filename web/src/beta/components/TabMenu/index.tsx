@@ -2,11 +2,8 @@ import { FC, ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Icons from "@reearth/beta/components/Icon/icons";
-import Resizable from "@reearth/beta/components/Resizable";
 import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
-
-import { Direction, Gutter } from "../Resizable/hooks";
 
 interface TabObject {
   icon: keyof typeof Icons;
@@ -26,32 +23,23 @@ const TabMenu: FC<Props> = ({ tabs, title, selectedTab, onSelectedTabChange }) =
 
   const selectedTabItem = tabs.find(({ key }) => key === selectedTab);
 
-  const resizableArgs = {
-    direction: "vertical" as Direction,
-    gutter: "end" as Gutter,
-    initialSize: 800,
-    minSize: 300,
-  };
-
   return (
-    <Resizable {...resizableArgs}>
-      <Wrapper>
-        <Title>
-          <Text size="body">{title}</Text>
-        </Title>
-        <Tabs>
-          {tabs.map(({ key, icon }) => (
-            <TabIconWrapper
-              key={key}
-              onClick={() => onSelectedTabChange(key)}
-              selected={key === selectedTab}>
-              <Icon icon={icon} alt={"Tab " + key} size={20} color={theme.content.main} />
-            </TabIconWrapper>
-          ))}
-        </Tabs>
-        <MainArea>{selectedTabItem ? selectedTabItem.component : null}</MainArea>
-      </Wrapper>
-    </Resizable>
+    <Wrapper>
+      <Title>
+        <Text size="body">{title}</Text>
+      </Title>
+      <Tabs>
+        {tabs.map(({ key, icon }) => (
+          <TabIconWrapper
+            key={key}
+            onClick={() => onSelectedTabChange(key)}
+            selected={key === selectedTab}>
+            <Icon icon={icon} alt={"Tab " + key} size={20} color={theme.content.main} />
+          </TabIconWrapper>
+        ))}
+      </Tabs>
+      <MainArea>{selectedTabItem ? selectedTabItem.component : null}</MainArea>
+    </Wrapper>
   );
 };
 
@@ -60,10 +48,9 @@ export default TabMenu;
 const Wrapper = styled.div`
   display: grid;
   border-radius: 10px;
-  margin: 15px;
+  height: 100%;
   grid-template-rows: 36px 1fr;
   grid-template-columns: 28px 1fr;
-  min-height: 100vh;
   background: ${({ theme }) => theme.bg[2]};
 `;
 

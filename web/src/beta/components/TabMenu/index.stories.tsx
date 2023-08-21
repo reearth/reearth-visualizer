@@ -1,7 +1,9 @@
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
+import { ReactNode, CSSProperties } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import Resizable from "@reearth/beta/components/Resizable";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
@@ -44,12 +46,40 @@ const JSONTag = styled.pre`
   padding: 10px;
 `;
 
+const Container: React.FC<{ children?: ReactNode; style?: CSSProperties }> = ({
+  children,
+  style,
+}) => <div style={{ display: "flex", height: "100vh", ...style }}>{children}</div>;
+
+const Pane = (
+  <div
+    style={{
+      flex: 1,
+      background: "#ffffff",
+      color: "black",
+      fontSize: 24,
+      textAlign: "center",
+      padding: "25vh 0",
+    }}>
+    {" "}
+    Whatever the main area holds. The tab panel works only when on the <b>left</b> with{" "}
+    <b>flex 100%</b>
+  </div>
+);
+
 export const Default: Story = args => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = (tab: string) => updateArgs({ selectedTab: tab });
 
-  return <TabMenu {...args} onSelectedTabChange={handleChange} />;
+  return (
+    <Container style={{ flexDirection: "row" }}>
+      {Pane}
+      <Resizable direction="vertical" gutter="start" initialSize={500} minSize={200}>
+        <TabMenu {...args} onSelectedTabChange={handleChange} />
+      </Resizable>
+    </Container>
+  );
 };
 
 Default.args = {
