@@ -84,10 +84,9 @@ export const Default: Story = args => {
 
 Default.args = {
   tabs: [
-    { id: "tab1", icon: "infobox", title: "Inspector", component: <SampleComponent /> },
+    { id: "tab1", icon: "infobox", component: <SampleComponent /> },
     {
       id: "tab2",
-      title: "Sample tab 2",
       icon: "dl",
       component: <Text size="body">Tab 2. Can be any react component</Text>,
     },
