@@ -59,11 +59,11 @@ const Pane = (
       color: "black",
       fontSize: 24,
       textAlign: "center",
-      padding: "25vh 0",
+      padding: "25vh 5rem",
     }}>
     {" "}
     Whatever the main area holds. The tab panel works only when on the <b>left</b> with{" "}
-    <b>flex 100%</b>
+    <b>flex 100%</b>. Which is to do with <b>Resizable Component</b> and not the left panel.
   </div>
 );
 
