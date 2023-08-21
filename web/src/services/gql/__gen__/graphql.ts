@@ -104,6 +104,39 @@ export type AddMemberToTeamPayload = {
   team: Team;
 };
 
+export type AddNlsLayerSimpleInput = {
+  Appearance?: InputMaybe<Scalars['Any']['input']>;
+  Defines?: InputMaybe<Scalars['Any']['input']>;
+  Events?: InputMaybe<Scalars['Any']['input']>;
+  Properties?: InputMaybe<Scalars['Any']['input']>;
+  csvDisableTypeConversion?: InputMaybe<Scalars['Boolean']['input']>;
+  csvHeightColumn?: InputMaybe<Scalars['String']['input']>;
+  csvIdColumn?: InputMaybe<Scalars['String']['input']>;
+  csvLatColumn?: InputMaybe<Scalars['String']['input']>;
+  csvLngColumn?: InputMaybe<Scalars['String']['input']>;
+  csvNoHeader?: InputMaybe<Scalars['Boolean']['input']>;
+  dataJsonProperties?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  dataLayers?: InputMaybe<Scalars['Any']['input']>;
+  dataParameters?: InputMaybe<Scalars['Any']['input']>;
+  dataType?: InputMaybe<Scalars['String']['input']>;
+  dataUpdateInterval?: InputMaybe<Scalars['Int']['input']>;
+  dataUrl?: InputMaybe<Scalars['URL']['input']>;
+  dataValue?: InputMaybe<Scalars['Any']['input']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
+  layerType: Scalars['String']['input'];
+  parentLayerId: Scalars['ID']['input'];
+  sceneID: Scalars['ID']['input'];
+  timeInterval?: InputMaybe<Scalars['Int']['input']>;
+  timeProperty?: InputMaybe<Scalars['String']['input']>;
+  timeUpdateClockOnLoad?: InputMaybe<Scalars['Boolean']['input']>;
+  value?: InputMaybe<Scalars['Any']['input']>;
+};
+
+export type AddNlsLayerSimplePayload = {
+  __typename?: 'AddNLSLayerSimplePayload';
+  layers: NlsLayerSimple;
+};
+
 export type AddPropertyItemInput = {
   index?: InputMaybe<Scalars['Int']['input']>;
   nameFieldType?: InputMaybe<ValueType>;
@@ -174,6 +207,16 @@ export type AttachTagToLayerInput = {
 export type AttachTagToLayerPayload = {
   __typename?: 'AttachTagToLayerPayload';
   layer: Layer;
+};
+
+export type Csv = {
+  __typename?: 'CSV';
+  disableTypeConversion?: Maybe<Scalars['Boolean']['output']>;
+  heightColumn?: Maybe<Scalars['String']['output']>;
+  idColumn?: Maybe<Scalars['String']['output']>;
+  latColumn?: Maybe<Scalars['String']['output']>;
+  lngColumn?: Maybe<Scalars['String']['output']>;
+  noHeader?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type Camera = {
@@ -299,6 +342,19 @@ export type CreateTeamInput = {
 export type CreateTeamPayload = {
   __typename?: 'CreateTeamPayload';
   team: Team;
+};
+
+export type Data = {
+  __typename?: 'Data';
+  csv?: Maybe<Csv>;
+  dataType: Scalars['String']['output'];
+  jsonProperties?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  layers?: Maybe<Scalars['Any']['output']>;
+  parameters?: Maybe<Scalars['Any']['output']>;
+  time?: Maybe<Time>;
+  updateInterval?: Maybe<Scalars['Int']['output']>;
+  url?: Maybe<Scalars['URL']['output']>;
+  value?: Maybe<Scalars['Any']['output']>;
 };
 
 export type Dataset = Node & {
@@ -459,6 +515,11 @@ export type DuplicateStoryPageInput = {
   pageId: Scalars['ID']['input'];
   sceneId: Scalars['ID']['input'];
   storyId: Scalars['ID']['input'];
+};
+
+export type Events = {
+  __typename?: 'Events';
+  selectEvent?: Maybe<SelectEvent>;
 };
 
 export type ImportDatasetFromGoogleSheetInput = {
@@ -792,7 +853,7 @@ export type MoveStoryBlockInput = {
 
 export type MoveStoryBlockPayload = {
   __typename?: 'MoveStoryBlockPayload';
-  block: StoryBlock;
+  blockId: Scalars['ID']['output'];
   index: Scalars['Int']['output'];
   page: StoryPage;
   story: Story;
@@ -832,6 +893,7 @@ export type Mutation = {
   addLayerGroup?: Maybe<AddLayerGroupPayload>;
   addLayerItem?: Maybe<AddLayerItemPayload>;
   addMemberToTeam?: Maybe<AddMemberToTeamPayload>;
+  addNLSLayerSimple?: Maybe<AddNlsLayerSimplePayload>;
   addPageLayer: StoryPagePayload;
   addPropertyItem?: Maybe<PropertyItemPayload>;
   addWidget?: Maybe<AddWidgetPayload>;
@@ -875,6 +937,7 @@ export type Mutation = {
   removeLayer?: Maybe<RemoveLayerPayload>;
   removeMemberFromTeam?: Maybe<RemoveMemberFromTeamPayload>;
   removeMyAuth?: Maybe<UpdateMePayload>;
+  removeNLSLayer?: Maybe<RemoveNlsLayerPayload>;
   removePageLayer: StoryPagePayload;
   removePropertyField?: Maybe<PropertyFieldPayload>;
   removePropertyItem?: Maybe<PropertyItemPayload>;
@@ -891,6 +954,7 @@ export type Mutation = {
   updateLayer?: Maybe<UpdateLayerPayload>;
   updateMe?: Maybe<UpdateMePayload>;
   updateMemberOfTeam?: Maybe<UpdateMemberOfTeamPayload>;
+  updateNLSLayer?: Maybe<UpdateNlsLayerPayload>;
   updateProject?: Maybe<ProjectPayload>;
   updatePropertyItems?: Maybe<PropertyItemPayload>;
   updatePropertyValue?: Maybe<PropertyFieldPayload>;
@@ -933,6 +997,11 @@ export type MutationAddLayerItemArgs = {
 
 export type MutationAddMemberToTeamArgs = {
   input: AddMemberToTeamInput;
+};
+
+
+export type MutationAddNlsLayerSimpleArgs = {
+  input: AddNlsLayerSimpleInput;
 };
 
 
@@ -1151,6 +1220,11 @@ export type MutationRemoveMyAuthArgs = {
 };
 
 
+export type MutationRemoveNlsLayerArgs = {
+  input: RemoveNlsLayerInput;
+};
+
+
 export type MutationRemovePageLayerArgs = {
   input: PageLayerInput;
 };
@@ -1231,6 +1305,11 @@ export type MutationUpdateMemberOfTeamArgs = {
 };
 
 
+export type MutationUpdateNlsLayerArgs = {
+  input: UpdateNlsLayerInput;
+};
+
+
 export type MutationUpdateProjectArgs = {
   input: UpdateProjectInput;
 };
@@ -1290,6 +1369,52 @@ export type MutationUploadPluginArgs = {
   input: UploadPluginInput;
 };
 
+export type NlsLayer = {
+  creator?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  infobox?: Maybe<Infobox>;
+  layerType: Scalars['String']['output'];
+  sceneId: Scalars['ID']['output'];
+  tags: Array<LayerTag>;
+  title: Scalars['String']['output'];
+  visible: Scalars['Boolean']['output'];
+};
+
+export type NlsLayerGroup = NlsLayer & {
+  __typename?: 'NLSLayerGroup';
+  children: Array<Maybe<NlsLayer>>;
+  childrenIds: Array<Scalars['ID']['output']>;
+  common?: Maybe<LayerItem>;
+  creator?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  infobox?: Maybe<Infobox>;
+  layerType: Scalars['String']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+  tags: Array<LayerTag>;
+  title: Scalars['String']['output'];
+  visible: Scalars['Boolean']['output'];
+};
+
+export type NlsLayerSimple = NlsLayer & {
+  __typename?: 'NLSLayerSimple';
+  appearance?: Maybe<Scalars['Any']['output']>;
+  common?: Maybe<LayerItem>;
+  creator?: Maybe<Scalars['String']['output']>;
+  data?: Maybe<Data>;
+  defines?: Maybe<Scalars['Any']['output']>;
+  events?: Maybe<Events>;
+  id: Scalars['ID']['output'];
+  infobox?: Maybe<Infobox>;
+  layerType: Scalars['String']['output'];
+  properties?: Maybe<Scalars['Any']['output']>;
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+  tags: Array<LayerTag>;
+  title: Scalars['String']['output'];
+  visible: Scalars['Boolean']['output'];
+};
+
 export type Node = {
   id: Scalars['ID']['output'];
 };
@@ -1308,6 +1433,12 @@ export enum NodeType {
   Team = 'TEAM',
   User = 'USER'
 }
+
+export type OpenUrlEvent = {
+  __typename?: 'OpenUrlEvent';
+  url?: Maybe<Scalars['URL']['output']>;
+  urlKey?: Maybe<Scalars['String']['output']>;
+};
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -1405,8 +1536,12 @@ export type PluginExtensionTranslatedNameArgs = {
 
 export enum PluginExtensionType {
   Block = 'BLOCK',
+  Cluster = 'Cluster',
   Infobox = 'INFOBOX',
   Primitive = 'PRIMITIVE',
+  Story = 'Story',
+  StoryBlock = 'StoryBlock',
+  StoryPage = 'StoryPage',
   Visualizer = 'VISUALIZER',
   Widget = 'WIDGET'
 }
@@ -1620,7 +1755,9 @@ export enum PropertySchemaFieldUi {
   File = 'FILE',
   Image = 'IMAGE',
   Layer = 'LAYER',
+  Margin = 'MARGIN',
   Multiline = 'MULTILINE',
+  Padding = 'PADDING',
   Range = 'RANGE',
   Selection = 'SELECTION',
   Slider = 'SLIDER',
@@ -1854,6 +1991,15 @@ export type RemoveMyAuthInput = {
   auth: Scalars['String']['input'];
 };
 
+export type RemoveNlsLayerInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type RemoveNlsLayerPayload = {
+  __typename?: 'RemoveNLSLayerPayload';
+  layerId: Scalars['ID']['output'];
+};
+
 export type RemovePropertyFieldInput = {
   fieldId: Scalars['ID']['input'];
   itemId?: InputMaybe<Scalars['ID']['input']>;
@@ -1913,6 +2059,7 @@ export type Scene = Node & {
   createdAt: Scalars['DateTime']['output'];
   datasetSchemas: DatasetSchemaConnection;
   id: Scalars['ID']['output'];
+  newLayers: Array<NlsLayer>;
   plugins: Array<ScenePlugin>;
   project?: Maybe<Project>;
   projectId: Scalars['ID']['output'];
@@ -1921,6 +2068,7 @@ export type Scene = Node & {
   rootLayer?: Maybe<LayerGroup>;
   rootLayerId: Scalars['ID']['output'];
   stories: Array<Story>;
+  stylesList: Array<Scalars['Any']['output']>;
   tagIds: Array<Scalars['ID']['output']>;
   tags: Array<Tag>;
   team?: Maybe<Team>;
@@ -1959,6 +2107,11 @@ export type SceneWidget = {
   propertyId: Scalars['ID']['output'];
 };
 
+export type SelectEvent = {
+  __typename?: 'SelectEvent';
+  openUrl?: Maybe<OpenUrlEvent>;
+};
+
 export type SignupInput = {
   lang?: InputMaybe<Scalars['Lang']['input']>;
   secret?: InputMaybe<Scalars['String']['input']>;
@@ -1971,6 +2124,14 @@ export type SignupPayload = {
   __typename?: 'SignupPayload';
   team: Team;
   user: User;
+};
+
+export type Spacing = {
+  __typename?: 'Spacing';
+  bottom: Scalars['Float']['output'];
+  left: Scalars['Float']['output'];
+  right: Scalars['Float']['output'];
+  top: Scalars['Float']['output'];
 };
 
 export type Story = Node & {
@@ -1995,14 +2156,10 @@ export type StoryBlock = Node & {
   extensionId: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   linkedDatasetId?: Maybe<Scalars['ID']['output']>;
-  page: StoryPage;
-  pageId: Scalars['ID']['output'];
   plugin?: Maybe<Plugin>;
   pluginId: Scalars['ID']['output'];
   property?: Maybe<Property>;
   propertyId: Scalars['ID']['output'];
-  scene?: Maybe<Scene>;
-  sceneId: Scalars['ID']['output'];
 };
 
 export type StoryPage = Node & {
@@ -2130,6 +2287,13 @@ export enum Theme {
   Light = 'LIGHT'
 }
 
+export type Time = {
+  __typename?: 'Time';
+  interval?: Maybe<Scalars['Int']['output']>;
+  property?: Maybe<Scalars['String']['output']>;
+  updateClockOnLoad?: Maybe<Scalars['Boolean']['output']>;
+};
+
 export type Typography = {
   __typename?: 'Typography';
   bold?: Maybe<Scalars['Boolean']['output']>;
@@ -2217,6 +2381,17 @@ export type UpdateMemberOfTeamInput = {
 export type UpdateMemberOfTeamPayload = {
   __typename?: 'UpdateMemberOfTeamPayload';
   team: Team;
+};
+
+export type UpdateNlsLayerInput = {
+  layerId: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  visible?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type UpdateNlsLayerPayload = {
+  __typename?: 'UpdateNLSLayerPayload';
+  layer: NlsLayer;
 };
 
 export type UpdateProjectInput = {
@@ -2379,6 +2554,7 @@ export enum ValueType {
   Polygon = 'POLYGON',
   Rect = 'RECT',
   Ref = 'REF',
+  Spacing = 'SPACING',
   String = 'STRING',
   Typography = 'TYPOGRAPHY',
   Url = 'URL'

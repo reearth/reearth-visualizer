@@ -99,7 +99,7 @@ const NavBarWrapper = styled.div`
   flex-direction: column;
   padding: 16px;
   gap: 10px;
-  border-right: 1px solid ${({ theme }) => theme.bg[3]};
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const Tab = styled.button<{ isSelected?: boolean }>`
@@ -107,13 +107,14 @@ const Tab = styled.button<{ isSelected?: boolean }>`
   padding: 4px 8px;
   border-radius: 4px;
   background: ${({ isSelected, theme }) => (isSelected ? theme.bg[2] : "transparent")};
-  color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.bg[2])};
+  color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.content.weak)};
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  background: ${({ theme }) => theme.bg[1]};
 `;
 
 const Content = styled.div`
