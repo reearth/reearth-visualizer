@@ -1,6 +1,6 @@
 import { Color } from "cesium";
 
-import { ValueType as GQLValueType } from "@reearth/services/gql";
+import { ValueType as GQLValueType } from "@reearth/classic/gql";
 import { css } from "@reearth/services/theme";
 
 export type LatLng = {

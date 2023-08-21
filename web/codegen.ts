@@ -45,12 +45,12 @@ export default config;
 //   overwrite: true,
 //   schema: "../server/gql/*.graphql",
 //   documents: [
-//     "src/services/gql/fragments/*.ts",
-//     "src/services/gql/queries/*.ts",
-//     "src/services/**/*.graphql",
+//     "src/classic/gql/fragments/*.ts",
+//     "src/classic/gql/queries/*.ts",
+//     "src/classic/**/*.graphql",
 //   ],
 //   generates: {
-//     "./src/services/gql/graphql-client-api.tsx": {
+//     "./src/classic/gql/graphql-client-api.tsx": {
 //       plugins: ["typescript", "typescript-operations", "typescript-react-apollo"],
 //       config: {
 //         useTypeImports: true,
@@ -65,10 +65,10 @@ export default config;
 //         },
 //       },
 //     },
-//     "./src/services/gql/graphql.schema.json": {
+//     "./src/classic/gql/graphql.schema.json": {
 //       plugins: ["introspection"],
 //     },
-//     "./src/services/gql/fragmentMatcher.json": {
+//     "./src/classic/gql/fragmentMatcher.json": {
 //       plugins: ["fragment-matcher"],
 //     },
 //   },

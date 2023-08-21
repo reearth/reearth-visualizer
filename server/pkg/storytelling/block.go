@@ -15,18 +15,30 @@ type Block struct {
 }
 
 func (i *Block) ID() BlockID {
+	if i == nil {
+		return BlockID{}
+	}
 	return i.id
 }
 
 func (i *Block) Plugin() PluginID {
+	if i == nil {
+		return PluginID{}
+	}
 	return i.plugin
 }
 
 func (i *Block) Extension() PluginExtensionID {
+	if i == nil {
+		return PluginExtensionID("")
+	}
 	return i.extension
 }
 
 func (i *Block) Property() PropertyID {
+	if i == nil {
+		return PropertyID{}
+	}
 	return i.property
 }
 

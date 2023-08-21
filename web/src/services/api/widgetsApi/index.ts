@@ -16,7 +16,7 @@ import {
   UPDATE_WIDGET_ALIGN_SYSTEM,
 } from "@reearth/services/gql/queries/widget";
 import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
+import { WidgetAreaState, useNotification } from "@reearth/services/state";
 
 import { SceneQueryProps } from "../sceneApi";
 import { MutationReturn } from "../types";
@@ -196,7 +196,7 @@ export default () => {
   });
 
   const useUpdateWidgetAlignSystem = useCallback(
-    async (location: WidgetLocation, align: WidgetAlignment, sceneId?: string) => {
+    async (widgetAreaState: WidgetAreaState, sceneId?: string) => {
       if (!sceneId) {
         console.log(
           "GraphQL: Failed to update the widget align system because there is no sceneId provided",
@@ -211,11 +211,15 @@ export default () => {
         variables: {
           sceneId,
           location: {
-            zone: location.zone.toUpperCase() as WidgetZoneType,
-            section: location.section.toUpperCase() as WidgetSectionType,
-            area: location.area.toUpperCase() as WidgetAreaType,
+            zone: widgetAreaState.zone.toUpperCase() as WidgetZoneType,
+            section: widgetAreaState.section.toUpperCase() as WidgetSectionType,
+            area: widgetAreaState.area.toUpperCase() as WidgetAreaType,
           },
-          align: align?.toUpperCase() as WidgetAreaAlign,
+          align: widgetAreaState.align?.toUpperCase() as WidgetAreaAlign,
+          background: widgetAreaState.background,
+          padding: widgetAreaState.padding,
+          centered: widgetAreaState.centered,
+          gap: widgetAreaState.gap,
         },
       });
 

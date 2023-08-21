@@ -22,9 +22,9 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
       return (
         <RightSection>
           <TabButton
-            onClick={() => handleEditorNavigation?.("scene")}
-            selected={currentTab === "scene"}
-            label={t("Scene")}
+            onClick={() => handleEditorNavigation?.("map")}
+            selected={currentTab === "map"}
+            label={t("Map")}
           />
           <TabButton
             onClick={() => handleEditorNavigation?.("story")}
