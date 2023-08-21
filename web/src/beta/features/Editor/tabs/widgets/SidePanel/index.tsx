@@ -1,6 +1,7 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import { useT } from "@reearth/services/i18n";
 
+import ContainerSettings from "./ContainerSettings";
 import useHooks from "./hooks";
 import Manager, { ActionArea } from "./Manager";
 import Settings from "./Settings";
@@ -15,12 +16,14 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
 
   const {
     selectedWidget,
+    selectedWidgetArea,
     propertyItems,
     installedWidgets,
     installableWidgets,
     handleWidgetAdd,
     handleWidgetRemove,
     handleWidgetSelection,
+    handleWidgetAreaStateChange,
   } = useHooks({ sceneId });
 
   return (
@@ -49,6 +52,17 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
           hide: !selectedWidget,
           children: selectedWidget && (
             <Settings widgetPropertyId={selectedWidget.propertyId} propertyItems={propertyItems} />
+          ),
+        },
+        {
+          id: "containerSettings",
+          title: t("Container Settings"),
+          hide: !selectedWidgetArea,
+          children: selectedWidgetArea && sceneId && (
+            <ContainerSettings
+              widgetArea={selectedWidgetArea}
+              onWidgetAreaStateChange={handleWidgetAreaStateChange}
+            />
           ),
         },
       ]}

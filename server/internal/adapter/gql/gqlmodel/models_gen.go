@@ -1196,6 +1196,14 @@ type Story struct {
 	PublishedAt       *time.Time        `json:"publishedAt"`
 	SceneID           ID                `json:"sceneId"`
 	Scene             *Scene            `json:"scene"`
+	PanelPosition     Position          `json:"panelPosition"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
+	PublicTitle       string            `json:"publicTitle"`
+	PublicDescription string            `json:"publicDescription"`
+	PublicImage       string            `json:"publicImage"`
+	PublicNoIndex     bool              `json:"publicNoIndex"`
 }
 
 func (Story) IsNode() {}
@@ -1424,10 +1432,20 @@ type UpdatePropertyValueInput struct {
 }
 
 type UpdateStoryInput struct {
-	SceneID ID      `json:"sceneId"`
-	StoryID ID      `json:"storyId"`
-	Title   *string `json:"title"`
-	Index   *int    `json:"index"`
+	SceneID           ID        `json:"sceneId"`
+	StoryID           ID        `json:"storyId"`
+	Title             *string   `json:"title"`
+	Index             *int      `json:"index"`
+	PanelPosition     *Position `json:"panelPosition"`
+	IsBasicAuthActive *bool     `json:"isBasicAuthActive"`
+	BasicAuthUsername *string   `json:"basicAuthUsername"`
+	BasicAuthPassword *string   `json:"basicAuthPassword"`
+	Alias             *string   `json:"alias"`
+	PublicTitle       *string   `json:"publicTitle"`
+	PublicDescription *string   `json:"publicDescription"`
+	PublicImage       *string   `json:"publicImage"`
+	PublicNoIndex     *bool     `json:"publicNoIndex"`
+	DeletePublicImage *bool     `json:"deletePublicImage"`
 }
 
 type UpdateStoryPageInput struct {
@@ -1793,6 +1811,10 @@ const (
 	PluginExtensionTypeBlock      PluginExtensionType = "BLOCK"
 	PluginExtensionTypeVisualizer PluginExtensionType = "VISUALIZER"
 	PluginExtensionTypeInfobox    PluginExtensionType = "INFOBOX"
+	PluginExtensionTypeCluster    PluginExtensionType = "Cluster"
+	PluginExtensionTypeStory      PluginExtensionType = "Story"
+	PluginExtensionTypeStoryPage  PluginExtensionType = "StoryPage"
+	PluginExtensionTypeStoryBlock PluginExtensionType = "StoryBlock"
 )
 
 var AllPluginExtensionType = []PluginExtensionType{
@@ -1801,11 +1823,15 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypeBlock,
 	PluginExtensionTypeVisualizer,
 	PluginExtensionTypeInfobox,
+	PluginExtensionTypeCluster,
+	PluginExtensionTypeStory,
+	PluginExtensionTypeStoryPage,
+	PluginExtensionTypeStoryBlock,
 }
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock:
 		return true
 	}
 	return false
@@ -1829,6 +1855,47 @@ func (e *PluginExtensionType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e PluginExtensionType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Position string
+
+const (
+	PositionLeft  Position = "LEFT"
+	PositionRight Position = "RIGHT"
+)
+
+var AllPosition = []Position{
+	PositionLeft,
+	PositionRight,
+}
+
+func (e Position) IsValid() bool {
+	switch e {
+	case PositionLeft, PositionRight:
+		return true
+	}
+	return false
+}
+
+func (e Position) String() string {
+	return string(e)
+}
+
+func (e *Position) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Position(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Position", str)
+	}
+	return nil
+}
+
+func (e Position) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -1,3 +1,4 @@
+import { useReactiveVar } from "@apollo/client";
 import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
@@ -13,7 +14,7 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
-  useSelectedWidgetArea,
+  selectedWidgetAreaVar,
 } from "@reearth/services/state";
 
 import { convertWidgets } from "./convert";
@@ -29,7 +30,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-  const [selectedWidgetArea, selectWidgetArea] = useSelectedWidgetArea();
+  const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
@@ -182,7 +183,10 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
 
   const onWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
-      await useUpdateWidgetAlignSystem(location, align, sceneId);
+      await useUpdateWidgetAlignSystem(
+        { zone: location.zone, section: location.section, area: location.area, align },
+        sceneId,
+      );
     },
     [sceneId, useUpdateWidgetAlignSystem],
   );
@@ -227,7 +231,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     onBlockRemove,
     onBlockInsert,
     onWidgetUpdate,
-    selectWidgetArea,
+    selectWidgetArea: selectedWidgetAreaVar,
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,

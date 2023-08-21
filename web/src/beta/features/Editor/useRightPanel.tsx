@@ -12,7 +12,7 @@ type Props = {
 export default ({ tab, sceneId }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
-      case "scene":
+      case "map":
         return <div>TODO: right panel</div>;
       case "story":
         return <div>TODO: right panel</div>;

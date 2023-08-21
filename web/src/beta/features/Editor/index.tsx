@@ -1,5 +1,5 @@
 import Resizable from "@reearth/beta/components/Resizable";
-import StoryPanel from "@reearth/beta/features/Editor/tabs/story/StoryPanel";
+import StoryPanel from "@reearth/beta/features/Editor/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar";
@@ -35,26 +35,29 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   const {
     selectedStory,
     selectedPage,
-    onPageSelect,
-    onPageDuplicate,
-    onPageDelete,
-    onPageAdd,
-    onPageMove,
+    handlePageSelect,
+    handlePageDuplicate,
+    handlePageDelete,
+    handlePageAdd,
+    handlePageMove,
   } = useStorytelling({
     sceneId,
     stories,
   });
+
   const { leftPanel } = useLeftPanel({
     tab,
     selectedStory,
     selectedPage,
-    onPageSelect,
-    onPageDuplicate,
-    onPageDelete,
-    onPageAdd,
-    onPageMove,
+    onPageSelect: handlePageSelect,
+    onPageDuplicate: handlePageDuplicate,
+    onPageDelete: handlePageDelete,
+    onPageAdd: handlePageAdd,
+    onPageMove: handlePageMove,
   });
+
   const { rightPanel } = useRightPanel({ tab, sceneId });
+
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     projectId,
@@ -87,18 +90,21 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
           )}
           <Center>
             {secondaryNavbar}
-            <CenterContents hasNav={!!secondaryNavbar}>
-              {selectedProjectType === "story" && (
-                <StoryPanel
-                  selectedStory={selectedStory}
-                  selectedPage={selectedPage}
-                  onPageSelect={onPageSelect}
-                />
-              )}
-              <VisualizerWrapper tab={tab} visualizerWidth={visualizerWidth}>
-                <Visualizer sceneId={sceneId} />
-              </VisualizerWrapper>
-            </CenterContents>
+            <VisualizerWrapper
+              tab={tab}
+              hasNav={!!secondaryNavbar}
+              visualizerWidth={visualizerWidth}>
+              <Visualizer sceneId={sceneId}>
+                {selectedProjectType === "story" && (
+                  <StoryPanel
+                    sceneId={sceneId}
+                    selectedStory={selectedStory}
+                    selectedPage={selectedPage}
+                    onPageSelect={handlePageSelect}
+                  />
+                )}
+              </Visualizer>
+            </VisualizerWrapper>
           </Center>
           {rightPanel && (
             <Resizable
@@ -139,14 +145,13 @@ const Center = styled.div`
   flex-direction: column;
 `;
 
-const CenterContents = styled.div<{ hasNav?: boolean }>`
-  display: flex;
-  justify-content: center;
-  height: ${({ hasNav }) => (hasNav ? `calc(100% - ${navbarHeight})` : "100%")};
-`;
-
-const VisualizerWrapper = styled.div<{ tab?: Tab; visualizerWidth?: string | number }>`
+const VisualizerWrapper = styled.div<{
+  tab?: Tab;
+  hasNav?: boolean;
+  visualizerWidth?: string | number;
+}>`
   border-radius: 4px;
+  height: ${({ hasNav }) => (hasNav ? `calc(100% - ${navbarHeight})` : "100%")};
   width: ${({ visualizerWidth }) =>
     typeof visualizerWidth === "number" ? `${visualizerWidth}px` : visualizerWidth};
 `;

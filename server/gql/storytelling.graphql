@@ -11,6 +11,15 @@ type Story implements Node {
   publishedAt: DateTime
   sceneId: ID!
   scene: Scene
+  panelPosition: Position!
+
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
 }
 
 type StoryPage implements Node {
@@ -40,6 +49,11 @@ type StoryBlock implements Node {
   linkedDatasetId: ID
 }
 
+enum Position {
+  LEFT
+  RIGHT
+}
+
 # InputType
 
 input CreateStoryInput {
@@ -53,6 +67,18 @@ input UpdateStoryInput {
   storyId: ID!
   title: String
   index: Int
+  panelPosition: Position
+
+#  publishment
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  alias: String
+  publicTitle: String
+  publicDescription: String
+  publicImage: String
+  publicNoIndex: Boolean
+  deletePublicImage: Boolean
 }
 
 input MoveStoryInput {

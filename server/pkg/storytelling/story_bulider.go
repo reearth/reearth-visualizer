@@ -19,6 +19,9 @@ func (b *StoryBuilder) Build() (*Story, error) {
 	if b.s.updatedAt.IsZero() {
 		b.s.updatedAt = b.s.CreatedAt()
 	}
+	if len(b.s.panelPosition) == 0 {
+		b.s.panelPosition = PositionLeft
+	}
 	return b.s, nil
 }
 
@@ -60,6 +63,11 @@ func (b *StoryBuilder) Status(status PublishmentStatus) *StoryBuilder {
 	return b
 }
 
+func (b *StoryBuilder) PanelPosition(position Position) *StoryBuilder {
+	b.s.panelPosition = position
+	return b
+}
+
 func (b *StoryBuilder) Alias(alias string) *StoryBuilder {
 	b.s.alias = alias
 	return b
@@ -77,5 +85,32 @@ func (b *StoryBuilder) PublishedAt(t *time.Time) *StoryBuilder {
 
 func (b *StoryBuilder) UpdatedAt(at time.Time) *StoryBuilder {
 	b.s.updatedAt = at
+	return b
+}
+
+func (b *StoryBuilder) PublicBasicAuth(active bool, username, password string) *StoryBuilder {
+	b.s.isBasicAuthActive = active
+	b.s.basicAuthUsername = username
+	b.s.basicAuthPassword = password
+	return b
+}
+
+func (b *StoryBuilder) PublicTitle(title string) *StoryBuilder {
+	b.s.publicTitle = title
+	return b
+}
+
+func (b *StoryBuilder) PublicDescription(description string) *StoryBuilder {
+	b.s.publicDescription = description
+	return b
+}
+
+func (b *StoryBuilder) PublicImage(image string) *StoryBuilder {
+	b.s.publicImage = image
+	return b
+}
+
+func (b *StoryBuilder) PublicNoIndex(noIndex bool) *StoryBuilder {
+	b.s.publicNoIndex = noIndex
 	return b
 }
