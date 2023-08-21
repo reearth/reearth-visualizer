@@ -7,7 +7,7 @@ import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { StoryFragmentFragment } from "@reearth/services/gql";
+import { StoryFragmentFragment, PropertySchemaGroup } from "@reearth/services/gql";
 import { metrics, styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
@@ -19,9 +19,10 @@ type Props = {
   projectId?: string;
   workspaceId?: string;
   stories: StoryFragmentFragment[];
+  groups: PropertySchemaGroup[];
 };
 
-const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
+const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories, groups }) => {
   const {
     selectedDevice,
     selectedProjectType,
@@ -49,6 +50,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     tab,
     selectedStory,
     selectedPage,
+    groups,
     onPageSelect: handlePageSelect,
     onPageDuplicate: handlePageDuplicate,
     onPageDelete: handlePageDelete,
