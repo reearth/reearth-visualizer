@@ -1,10 +1,10 @@
 import { lazy } from "react";
 import { BrowserRouter as Router, Navigate, Route, Routes, useParams } from "react-router-dom";
 
+import NotFound from "@reearth/beta/components/NotFound";
 import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
 import PasswordResetPage from "@reearth/classic/components/pages/Authentication/PasswordReset";
 import SignupPage from "@reearth/classic/components/pages/Authentication/SignupPage";
-import NotFound from "@reearth/classic/components/pages/NotFound";
 import AccountSettings from "@reearth/classic/components/pages/Settings/Account";
 import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
 import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";

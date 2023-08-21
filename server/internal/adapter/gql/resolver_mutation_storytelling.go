@@ -39,10 +39,21 @@ func (r *mutationResolver) UpdateStory(ctx context.Context, input gqlmodel.Updat
 	}
 
 	inp := interfaces.UpdateStoryInput{
-		SceneID: sceneId,
-		StoryID: storyId,
-		Title:   input.Title,
-		Index:   input.Index,
+		SceneID:       sceneId,
+		StoryID:       storyId,
+		Title:         input.Title,
+		Index:         input.Index,
+		PanelPosition: gqlmodel.FromStoryPositionRef(input.PanelPosition),
+
+		IsBasicAuthActive: input.IsBasicAuthActive,
+		BasicAuthUsername: input.BasicAuthUsername,
+		BasicAuthPassword: input.BasicAuthPassword,
+		Alias:             input.Alias,
+		PublicTitle:       input.PublicTitle,
+		PublicDescription: input.PublicDescription,
+		PublicImage:       input.PublicImage,
+		PublicNoIndex:     input.PublicNoIndex,
+		DeletePublicImage: input.DeletePublicImage,
 	}
 
 	res, err := usecases(ctx).StoryTelling.Update(ctx, inp, getOperator(ctx))

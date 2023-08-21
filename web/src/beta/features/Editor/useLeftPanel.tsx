@@ -29,7 +29,7 @@ export default ({
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
-      case "scene":
+      case "map":
         return <div>TODO: LeftPanel</div>;
       case "story":
         return (

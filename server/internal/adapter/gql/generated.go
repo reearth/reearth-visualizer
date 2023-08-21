@@ -966,11 +966,19 @@ type ComplexityRoot struct {
 
 	Story struct {
 		Alias             func(childComplexity int) int
+		BasicAuthPassword func(childComplexity int) int
+		BasicAuthUsername func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		ID                func(childComplexity int) int
+		IsBasicAuthActive func(childComplexity int) int
 		Pages             func(childComplexity int) int
+		PanelPosition     func(childComplexity int) int
 		Property          func(childComplexity int) int
 		PropertyID        func(childComplexity int) int
+		PublicDescription func(childComplexity int) int
+		PublicImage       func(childComplexity int) int
+		PublicNoIndex     func(childComplexity int) int
+		PublicTitle       func(childComplexity int) int
 		PublishedAt       func(childComplexity int) int
 		PublishmentStatus func(childComplexity int) int
 		Scene             func(childComplexity int) int
@@ -6091,6 +6099,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Story.Alias(childComplexity), true
 
+	case "Story.basicAuthPassword":
+		if e.complexity.Story.BasicAuthPassword == nil {
+			break
+		}
+
+		return e.complexity.Story.BasicAuthPassword(childComplexity), true
+
+	case "Story.basicAuthUsername":
+		if e.complexity.Story.BasicAuthUsername == nil {
+			break
+		}
+
+		return e.complexity.Story.BasicAuthUsername(childComplexity), true
+
 	case "Story.createdAt":
 		if e.complexity.Story.CreatedAt == nil {
 			break
@@ -6105,12 +6127,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Story.ID(childComplexity), true
 
+	case "Story.isBasicAuthActive":
+		if e.complexity.Story.IsBasicAuthActive == nil {
+			break
+		}
+
+		return e.complexity.Story.IsBasicAuthActive(childComplexity), true
+
 	case "Story.pages":
 		if e.complexity.Story.Pages == nil {
 			break
 		}
 
 		return e.complexity.Story.Pages(childComplexity), true
+
+	case "Story.panelPosition":
+		if e.complexity.Story.PanelPosition == nil {
+			break
+		}
+
+		return e.complexity.Story.PanelPosition(childComplexity), true
 
 	case "Story.property":
 		if e.complexity.Story.Property == nil {
@@ -6125,6 +6161,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Story.PropertyID(childComplexity), true
+
+	case "Story.publicDescription":
+		if e.complexity.Story.PublicDescription == nil {
+			break
+		}
+
+		return e.complexity.Story.PublicDescription(childComplexity), true
+
+	case "Story.publicImage":
+		if e.complexity.Story.PublicImage == nil {
+			break
+		}
+
+		return e.complexity.Story.PublicImage(childComplexity), true
+
+	case "Story.publicNoIndex":
+		if e.complexity.Story.PublicNoIndex == nil {
+			break
+		}
+
+		return e.complexity.Story.PublicNoIndex(childComplexity), true
+
+	case "Story.publicTitle":
+		if e.complexity.Story.PublicTitle == nil {
+			break
+		}
+
+		return e.complexity.Story.PublicTitle(childComplexity), true
 
 	case "Story.publishedAt":
 		if e.complexity.Story.PublishedAt == nil {
@@ -8402,6 +8466,15 @@ extend type Mutation {
   publishedAt: DateTime
   sceneId: ID!
   scene: Scene
+  panelPosition: Position!
+
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
 }
 
 type StoryPage implements Node {
@@ -8431,6 +8504,11 @@ type StoryBlock implements Node {
   linkedDatasetId: ID
 }
 
+enum Position {
+  LEFT
+  RIGHT
+}
+
 # InputType
 
 input CreateStoryInput {
@@ -8444,6 +8522,18 @@ input UpdateStoryInput {
   storyId: ID!
   title: String
   index: Int
+  panelPosition: Position
+
+#  publishment
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  alias: String
+  publicTitle: String
+  publicDescription: String
+  publicImage: String
+  publicNoIndex: Boolean
+  deletePublicImage: Boolean
 }
 
 input MoveStoryInput {
@@ -13607,6 +13697,22 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(ctx conte
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -16388,6 +16494,22 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(ctx contex
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -24776,6 +24898,22 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(ctx context
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -25006,6 +25144,22 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(ctx context.
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -25208,6 +25362,22 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(ctx context.Co
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -39602,6 +39772,22 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(ctx conte
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -40647,6 +40833,22 @@ func (ec *executionContext) fieldContext_Scene_stories(ctx context.Context, fiel
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -42438,6 +42640,358 @@ func (ec *executionContext) fieldContext_Story_scene(ctx context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Story_panelPosition(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_panelPosition(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PanelPosition, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.Position)
+	fc.Result = res
+	return ec.marshalNPosition2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_panelPosition(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Position does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_isBasicAuthActive(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsBasicAuthActive, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_isBasicAuthActive(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_basicAuthUsername(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_basicAuthUsername(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasicAuthUsername, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_basicAuthUsername(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_basicAuthPassword(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_basicAuthPassword(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasicAuthPassword, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_basicAuthPassword(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_publicTitle(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_publicTitle(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicTitle, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_publicTitle(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_publicDescription(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_publicDescription(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicDescription, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_publicDescription(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_publicImage(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_publicImage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_publicImage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_publicNoIndex(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_publicNoIndex(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicNoIndex, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_publicNoIndex(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _StoryBlock_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryBlock) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_StoryBlock_id(ctx, field)
 	if err != nil {
@@ -43629,6 +44183,22 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(ctx context.Cont
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -43699,6 +44269,22 @@ func (ec *executionContext) fieldContext_StoryPayload_story(ctx context.Context,
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
 				return ec.fieldContext_Story_scene(ctx, field)
+			case "panelPosition":
+				return ec.fieldContext_Story_panelPosition(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Story_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Story_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Story", field.Name)
 		},
@@ -53328,7 +53914,7 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -53364,6 +53950,86 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
 			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "panelPosition":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("panelPosition"))
+			it.PanelPosition, err = ec.unmarshalOPosition2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isBasicAuthActive":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isBasicAuthActive"))
+			it.IsBasicAuthActive, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "basicAuthUsername":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basicAuthUsername"))
+			it.BasicAuthUsername, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "basicAuthPassword":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("basicAuthPassword"))
+			it.BasicAuthPassword, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alias":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
+			it.Alias, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicTitle":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicTitle"))
+			it.PublicTitle, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicDescription":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicDescription"))
+			it.PublicDescription, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicImage"))
+			it.PublicImage, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "publicNoIndex":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoIndex"))
+			it.PublicNoIndex, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "deletePublicImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletePublicImage"))
+			it.DeletePublicImage, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -61508,6 +62174,62 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 				return innerFunc(ctx)
 
 			})
+		case "panelPosition":
+
+			out.Values[i] = ec._Story_panelPosition(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "isBasicAuthActive":
+
+			out.Values[i] = ec._Story_isBasicAuthActive(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "basicAuthUsername":
+
+			out.Values[i] = ec._Story_basicAuthUsername(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "basicAuthPassword":
+
+			out.Values[i] = ec._Story_basicAuthPassword(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "publicTitle":
+
+			out.Values[i] = ec._Story_publicTitle(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "publicDescription":
+
+			out.Values[i] = ec._Story_publicDescription(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "publicImage":
+
+			out.Values[i] = ec._Story_publicImage(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "publicNoIndex":
+
+			out.Values[i] = ec._Story_publicNoIndex(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -65085,6 +65807,16 @@ func (ec *executionContext) marshalNPluginExtensionType2githubᚗcomᚋreearth�
 	return v
 }
 
+func (ec *executionContext) unmarshalNPosition2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx context.Context, v interface{}) (gqlmodel.Position, error) {
+	var res gqlmodel.Position
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPosition2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Position) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Project) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -67326,6 +68058,22 @@ func (ec *executionContext) marshalOPolicy2ᚖgithubᚗcomᚋreearthᚋreearth�
 		return graphql.Null
 	}
 	return ec._Policy(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPosition2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx context.Context, v interface{}) (*gqlmodel.Position, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(gqlmodel.Position)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPosition2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Position) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Project) graphql.Marshaler {

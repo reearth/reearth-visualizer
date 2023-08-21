@@ -24,7 +24,7 @@ export default ({ tab }: { tab: Tab }) => {
           setSelectedProjectType("story");
         }
         break;
-      case "scene":
+      case "map":
       case "widgets":
         if (selectedProjectType === "story") {
           setSelectedProjectType("default");

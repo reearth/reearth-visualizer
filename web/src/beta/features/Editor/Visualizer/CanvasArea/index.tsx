@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import Visualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
@@ -12,9 +12,10 @@ export type Props = {
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
+  children?: ReactNode;
 };
 
-const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor }) => {
+const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor, children }) => {
   const {
     rootLayerId,
     selectedBlockId,
@@ -102,8 +103,9 @@ const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor }) => {
         onLayerDrop={handleDropLayer}
         onZoomToLayer={zoomToLayer}
         onMount={handleMount}
-        renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}
-      />
+        renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
+        {children}
+      </Visualizer>
       <FovSlider
         visible={isCapturing && sceneMode && sceneMode !== "2d"}
         onIsCapturingChange={onIsCapturingChange}

@@ -44,7 +44,7 @@ export default ({
             onProjectTypeChange={handleProjectTypeChange}
           />
         );
-      case "scene":
+      case "map":
       case "story":
       default:
         return undefined;
