@@ -83,11 +83,11 @@ export const Default: Story = args => {
 };
 
 Default.args = {
-  title: "Right panel",
   tabs: [
-    { key: "tab1", icon: "infobox", component: <SampleComponent /> },
+    { id: "tab1", icon: "infobox", title: "Inspector", component: <SampleComponent /> },
     {
-      key: "tab2",
+      id: "tab2",
+      title: "Sample tab 2",
       icon: "dl",
       component: <Text size="body">Tab 2. Can be any react component</Text>,
     },

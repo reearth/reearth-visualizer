@@ -8,33 +8,33 @@ import { styled, useTheme } from "@reearth/services/theme";
 interface TabObject {
   icon: keyof typeof Icons;
   component: ReactNode;
-  key: string;
+  id: string;
+  title: string;
 }
 
 type Props = {
-  title: string;
   tabs: TabObject[];
   selectedTab: string;
   onSelectedTabChange: (tab: string) => void;
 };
 
-const TabMenu: FC<Props> = ({ tabs, title, selectedTab, onSelectedTabChange }) => {
+const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange }) => {
   const theme = useTheme();
 
-  const selectedTabItem = tabs.find(({ key }) => key === selectedTab);
+  const selectedTabItem = tabs.find(({ id }) => id === selectedTab);
 
   return (
     <Wrapper>
       <Title>
-        <Text size="body">{title}</Text>
+        <Text size="body">{selectedTabItem ? selectedTabItem.title : "Select a tab"}</Text>
       </Title>
       <Tabs>
-        {tabs.map(({ key, icon }) => (
+        {tabs.map(({ id, icon }) => (
           <TabIconWrapper
-            key={key}
-            onClick={() => onSelectedTabChange(key)}
-            selected={key === selectedTab}>
-            <Icon icon={icon} alt={"Tab " + key} size={20} color={theme.content.main} />
+            key={id}
+            onClick={() => onSelectedTabChange(id)}
+            selected={id === selectedTab}>
+            <Icon icon={icon} alt={"Tab " + id} size={20} color={theme.content.main} />
           </TabIconWrapper>
         ))}
       </Tabs>
