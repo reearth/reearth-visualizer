@@ -45,6 +45,12 @@ const config: StorybookConfig = {
           },
         ],
       },
+      server: {
+        watch: {
+          // https://github.com/storybookjs/storybook/issues/22253#issuecomment-1673229400
+          ignored: ["**/.env"],
+        },
+      },
     });
   },
   docs: {
