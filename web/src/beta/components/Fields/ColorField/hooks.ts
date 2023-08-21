@@ -165,7 +165,6 @@ export default ({ value, onChange }: Params) => {
     wrapperRef,
     pickerRef,
     colorState,
-    tempColor,
     open,
     rgba,
     getChannelLabel,
