@@ -1,0 +1,38 @@
+package interfaces
+
+import (
+	"context"
+
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/nlslayer"
+)
+
+type AddNLSLayerSimpleInput struct {
+	ParentLayerID  id.NLSLayerID
+	Index         *int
+	LayerType     string
+	Data          *nlslayer.Data
+	// LayerCommon   *id.LayerID TODO
+	Properties    *nlslayer.Properties
+	Defines       *nlslayer.Defines
+	Events        *nlslayer.Events
+	Appearance    *nlslayer.Appearance
+}
+
+type UpdateNLSLayerInput struct {
+	LayerID id.NLSLayerID
+	Name    *string
+	Visible *bool
+}
+
+
+type NLSLayer interface {
+	Fetch(context.Context, id.NLSLayerIDList, *usecase.Operator) (nlslayer.NLSLayerList, error)
+	FetchByScene(context.Context, id.SceneID, *usecase.Operator) (nlslayer.NLSLayerList, error)
+	FetchLayerSimple(context.Context, id.NLSLayerIDList, *usecase.Operator) (nlslayer.NLSLayerSimpleList, error)
+	FetchParent(context.Context, id.NLSLayerID, *usecase.Operator) (*nlslayer.NLSLayerGroup, error)
+	AddLayerSimple(context.Context, AddNLSLayerSimpleInput, *usecase.Operator) (*nlslayer.NLSLayerSimple, *nlslayer.NLSLayerGroup, error)
+	Remove(context.Context, id.NLSLayerID, *usecase.Operator) (id.NLSLayerID, *nlslayer.NLSLayerGroup, error)
+	Update(context.Context, UpdateNLSLayerInput, *usecase.Operator) (nlslayer.NLSLayer, error)
+}

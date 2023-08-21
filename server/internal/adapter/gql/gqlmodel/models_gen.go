@@ -22,6 +22,10 @@ type LayerTag interface {
 	IsLayerTag()
 }
 
+type NLSLayer interface {
+	IsNLSLayer()
+}
+
 type Node interface {
 	IsNode()
 }
@@ -108,6 +112,38 @@ type AddMemberToTeamPayload struct {
 	Team *Team `json:"team"`
 }
 
+type AddNLSLayerSimpleInput struct {
+	ParentLayerID            ID          `json:"parentLayerId"`
+	LayerType                string      `json:"layerType"`
+	SceneID                  ID          `json:"sceneID"`
+	DataType                 *string     `json:"dataType"`
+	DataURL                  *url.URL    `json:"dataUrl"`
+	DataValue                interface{} `json:"dataValue"`
+	DataLayers               interface{} `json:"dataLayers"`
+	DataJSONProperties       []*string   `json:"dataJsonProperties"`
+	DataUpdateInterval       *int        `json:"dataUpdateInterval"`
+	DataParameters           interface{} `json:"dataParameters"`
+	TimeProperty             *string     `json:"timeProperty"`
+	TimeInterval             *int        `json:"timeInterval"`
+	TimeUpdateClockOnLoad    *bool       `json:"timeUpdateClockOnLoad"`
+	CSVIDColumn              *string     `json:"csvIdColumn"`
+	CSVLatColumn             *string     `json:"csvLatColumn"`
+	CSVLngColumn             *string     `json:"csvLngColumn"`
+	CSVHeightColumn          *string     `json:"csvHeightColumn"`
+	CSVNoHeader              *bool       `json:"csvNoHeader"`
+	CSVDisableTypeConversion *bool       `json:"csvDisableTypeConversion"`
+	Value                    interface{} `json:"value"`
+	Index                    *int        `json:"index"`
+	Properties               interface{} `json:"Properties"`
+	Defines                  interface{} `json:"Defines"`
+	Events                   interface{} `json:"Events"`
+	Appearance               interface{} `json:"Appearance"`
+}
+
+type AddNLSLayerSimplePayload struct {
+	Layers *NLSLayerSimple `json:"layers"`
+}
+
 type AddPropertyItemInput struct {
 	PropertyID     ID          `json:"propertyId"`
 	SchemaGroupID  ID          `json:"schemaGroupId"`
@@ -168,6 +204,15 @@ type AttachTagToLayerInput struct {
 
 type AttachTagToLayerPayload struct {
 	Layer Layer `json:"layer"`
+}
+
+type CSV struct {
+	IDColumn              *string `json:"idColumn"`
+	LatColumn             *string `json:"latColumn"`
+	LngColumn             *string `json:"lngColumn"`
+	HeightColumn          *string `json:"heightColumn"`
+	NoHeader              *bool   `json:"noHeader"`
+	DisableTypeConversion *bool   `json:"disableTypeConversion"`
 }
 
 type Camera struct {
@@ -284,6 +329,18 @@ type CreateTeamInput struct {
 
 type CreateTeamPayload struct {
 	Team *Team `json:"team"`
+}
+
+type Data struct {
+	DataType       string      `json:"dataType"`
+	URL            *url.URL    `json:"url"`
+	Value          interface{} `json:"value"`
+	Layers         interface{} `json:"layers"`
+	JSONProperties []*string   `json:"jsonProperties"`
+	UpdateInterval *int        `json:"updateInterval"`
+	Parameters     interface{} `json:"parameters"`
+	Time           *Time       `json:"time"`
+	CSV            *CSV        `json:"csv"`
 }
 
 type Dataset struct {
@@ -427,6 +484,10 @@ type DuplicateStoryPageInput struct {
 	SceneID ID `json:"sceneId"`
 	StoryID ID `json:"storyId"`
 	PageID  ID `json:"pageId"`
+}
+
+type Events struct {
+	SelectEvent *SelectEvent `json:"selectEvent"`
 }
 
 type ImportDatasetFromGoogleSheetInput struct {
@@ -738,6 +799,48 @@ type MoveStoryPayload struct {
 	StoryID ID       `json:"storyId"`
 	Index   int      `json:"index"`
 	Stories []*Story `json:"stories"`
+}
+
+type NLSLayerGroup struct {
+	ID          ID         `json:"id"`
+	LayerType   string     `json:"layerType"`
+	SceneID     ID         `json:"sceneId"`
+	Children    []NLSLayer `json:"children"`
+	ChildrenIds []ID       `json:"childrenIds"`
+	Common      *LayerItem `json:"common"`
+	Title       string     `json:"title"`
+	Visible     bool       `json:"visible"`
+	Infobox     *Infobox   `json:"infobox"`
+	Tags        []LayerTag `json:"tags"`
+	Creator     *string    `json:"creator"`
+	Scene       *Scene     `json:"scene"`
+}
+
+func (NLSLayerGroup) IsNLSLayer() {}
+
+type NLSLayerSimple struct {
+	ID         ID          `json:"id"`
+	LayerType  string      `json:"layerType"`
+	SceneID    ID          `json:"sceneId"`
+	Data       *Data       `json:"data"`
+	Properties interface{} `json:"properties"`
+	Defines    interface{} `json:"defines"`
+	Events     *Events     `json:"events"`
+	Appearance interface{} `json:"appearance"`
+	Common     *LayerItem  `json:"common"`
+	Title      string      `json:"title"`
+	Visible    bool        `json:"visible"`
+	Infobox    *Infobox    `json:"infobox"`
+	Tags       []LayerTag  `json:"tags"`
+	Creator    *string     `json:"creator"`
+	Scene      *Scene      `json:"scene"`
+}
+
+func (NLSLayerSimple) IsNLSLayer() {}
+
+type OpenURLEvent struct {
+	URL    *url.URL `json:"url"`
+	URLKey *string  `json:"urlKey"`
 }
 
 type PageInfo struct {
@@ -1076,6 +1179,14 @@ type RemoveMyAuthInput struct {
 	Auth string `json:"auth"`
 }
 
+type RemoveNLSLayerInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type RemoveNLSLayerPayload struct {
+	LayerID ID `json:"layerId"`
+}
+
 type RemovePropertyFieldInput struct {
 	PropertyID    ID  `json:"propertyId"`
 	SchemaGroupID *ID `json:"schemaGroupId"`
@@ -1135,6 +1246,8 @@ type Scene struct {
 	Team              *Team                    `json:"team"`
 	Property          *Property                `json:"property"`
 	RootLayer         *LayerGroup              `json:"rootLayer"`
+	NewLayers         []NLSLayer               `json:"newLayers"`
+	StylesList        []interface{}            `json:"stylesList"`
 	Stories           []*Story                 `json:"stories"`
 	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
 	TagIds            []ID                     `json:"tagIds"`
@@ -1161,6 +1274,10 @@ type SceneWidget struct {
 	Plugin      *Plugin          `json:"plugin"`
 	Extension   *PluginExtension `json:"extension"`
 	Property    *Property        `json:"property"`
+}
+
+type SelectEvent struct {
+	OpenURL *OpenURLEvent `json:"openUrl"`
 }
 
 type SignupInput struct {
@@ -1300,6 +1417,12 @@ type TeamMember struct {
 	User   *User `json:"user"`
 }
 
+type Time struct {
+	Property          *string `json:"property"`
+	Interval          *int    `json:"interval"`
+	UpdateClockOnLoad *bool   `json:"updateClockOnLoad"`
+}
+
 type Typography struct {
 	FontFamily *string    `json:"fontFamily"`
 	FontWeight *string    `json:"fontWeight"`
@@ -1380,6 +1503,16 @@ type UpdateMemberOfTeamInput struct {
 
 type UpdateMemberOfTeamPayload struct {
 	Team *Team `json:"team"`
+}
+
+type UpdateNLSLayerInput struct {
+	LayerID ID      `json:"layerId"`
+	Name    *string `json:"name"`
+	Visible *bool   `json:"visible"`
+}
+
+type UpdateNLSLayerPayload struct {
+	Layer NLSLayer `json:"layer"`
 }
 
 type UpdateProjectInput struct {

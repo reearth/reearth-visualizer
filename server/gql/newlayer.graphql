@@ -1,0 +1,149 @@
+# TODO: Make LayerGroup Real
+interface NLSLayer {
+  id: ID!
+  layerType: String!
+  sceneId: ID!
+  title: String!
+  visible: Boolean!
+  infobox: Infobox
+  tags: [LayerTag!]!
+  creator: String
+}
+
+type NLSLayerSimple implements NLSLayer {
+    id: ID!
+    layerType: String!
+    sceneId: ID!
+    data: Data
+    properties: Any
+    defines: Any
+    events: Events
+    appearance: Any
+    common: LayerItem
+    title: String!
+    visible: Boolean!
+    infobox: Infobox
+    tags: [LayerTag!]!
+    creator: String
+    scene: Scene
+}
+
+type NLSLayerGroup implements NLSLayer {
+    id: ID!
+    layerType: String!
+    sceneId: ID!
+    children: [NLSLayer]!
+    childrenIds: [ID!]!
+    common: LayerItem
+    title: String!
+    visible: Boolean!
+    infobox: Infobox
+    tags: [LayerTag!]!
+    creator: String
+    scene: Scene
+}
+
+type Events {
+    selectEvent: SelectEvent
+}
+
+type SelectEvent {
+    openUrl: OpenUrlEvent
+}
+
+type OpenUrlEvent {
+    url: URL
+    urlKey: String
+}
+
+type Data {
+    dataType: String!
+    url: URL
+    value: Any
+    layers: Any
+    jsonProperties: [String]
+    updateInterval: Int
+    parameters: Any
+    time: Time
+    csv: CSV
+}
+
+type Time {
+    property: String
+    interval: Int
+    updateClockOnLoad: Boolean
+}
+
+type CSV {
+    idColumn: String
+    latColumn: String
+    lngColumn: String
+    heightColumn: String
+    noHeader: Boolean
+    disableTypeConversion: Boolean
+}
+
+# InputType
+
+input AddNLSLayerSimpleInput {
+    parentLayerId: ID!
+    layerType: String!
+    sceneID: ID!
+    dataType: String
+    dataUrl: URL
+    dataValue: Any
+    dataLayers: Any
+    dataJsonProperties: [String]
+    dataUpdateInterval: Int
+    dataParameters: Any
+    timeProperty: String
+    timeInterval: Int
+    timeUpdateClockOnLoad: Boolean
+    csvIdColumn: String
+    csvLatColumn: String
+    csvLngColumn: String
+    csvHeightColumn: String
+    csvNoHeader: Boolean
+    csvDisableTypeConversion: Boolean
+    value: Any
+    index: Int
+    Properties: Any
+    Defines: Any
+    Events: Any
+    Appearance: Any
+}
+
+input RemoveNLSLayerInput {
+    layerId: ID!
+}
+
+input UpdateNLSLayerInput {
+    layerId: ID!
+    name: String
+    visible: Boolean
+}
+
+# Payload
+
+type AddNLSLayerSimplePayload {
+    layers: NLSLayerSimple!
+}
+
+type RemoveNLSLayerPayload {
+    layerId: ID!
+}
+
+type UpdateNLSLayerPayload {
+    layer: NLSLayer!
+}
+
+# TODO
+# extend type Query{
+#     newLayer(id: ID!): NLSLayer
+# }
+
+extend type Mutation {
+    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload
+    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload
+    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload
+}
