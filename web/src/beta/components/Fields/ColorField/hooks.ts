@@ -16,9 +16,12 @@ export type Params = {
 export default ({ value, onChange }: Params) => {
   const [colorState, setColor] = useState<string>();
   const [rgba, setRgba] = useState<RGBA>(tinycolor(value).toRgb());
+  const [tempColor, setTempColor] = useState(colorState);
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
+
+  //Helper functions
 
   const getHexString = (value?: ColorInput) => {
     if (!value) return undefined;
@@ -26,23 +29,33 @@ export default ({ value, onChange }: Params) => {
     return color.getAlpha() === 1 ? color.toHexString() : color.toHex8String();
   };
 
+  const getChannelLabel = (channel: string) => {
+    switch (channel) {
+      case "r":
+        return "Red";
+      case "g":
+        return "Green";
+      case "b":
+        return "Blue";
+      case "a":
+        return "Alpha";
+      default:
+        return "";
+    }
+  };
+
+  function getChannelValue(rgba: RGBA, channel: keyof RGBA): number {
+    return rgba[channel];
+  }
+
+  //Actions
+
   const handleChange = useCallback((newColor: RGBA) => {
     const color = getHexString(newColor);
     if (!color) return;
-    setColor(color);
+    setTempColor(color);
     setRgba(newColor);
   }, []);
-
-  const handleRgbaInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      e.preventDefault();
-      setRgba({
-        ...rgba,
-        [e.target.name]: e.target.value ? Number(e.target.value) : undefined,
-      });
-    },
-    [rgba],
-  );
 
   const handleHexInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +64,18 @@ export default ({ value, onChange }: Params) => {
       setRgba(tinycolor(e.target.value ?? colorState).toRgb());
     },
     [colorState],
+  );
+
+  const handleRgbaInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+
+      handleChange({
+        ...rgba,
+        [e.target.name]: e.target.value ? Number(e.target.value) : undefined,
+      });
+    },
+    [handleChange, rgba],
   );
 
   const handleClose = useCallback(() => {
@@ -66,11 +91,15 @@ export default ({ value, onChange }: Params) => {
 
   const handleSave = useCallback(() => {
     if (!onChange) return;
-    if (colorState != value && colorState) {
+    if (tempColor && tempColor != value && tempColor != colorState) {
+      setColor(tempColor);
+      setRgba(tinycolor(tempColor).toRgb());
+      onChange(tempColor);
+    } else if (colorState != value && colorState) {
       onChange(colorState);
     }
     setOpen(false);
-  }, [colorState, onChange, value]);
+  }, [colorState, onChange, tempColor, value]);
 
   const handleHexSave = useCallback(() => {
     const hexPattern = /^#?([a-fA-F0-9]{3,4}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/;
@@ -80,6 +109,8 @@ export default ({ value, onChange }: Params) => {
       value && setColor(value);
     }
   }, [colorState, handleSave, value]);
+
+  //events
 
   const handleClick = useCallback(() => setOpen(!open), [open]);
 
@@ -91,6 +122,8 @@ export default ({ value, onChange }: Params) => {
     },
     [handleHexSave],
   );
+
+  //UseEffects
 
   useEffect(() => {
     if (value) {
@@ -128,28 +161,11 @@ export default ({ value, onChange }: Params) => {
     };
   }, [handleClose]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getChannelLabel = (channel: string) => {
-    switch (channel) {
-      case "r":
-        return "Red";
-      case "g":
-        return "Green";
-      case "b":
-        return "Blue";
-      case "a":
-        return "Alpha";
-      default:
-        return "";
-    }
-  };
-
-  function getChannelValue(rgba: RGBA, channel: keyof RGBA): number {
-    return rgba[channel];
-  }
   return {
     wrapperRef,
     pickerRef,
     colorState,
+    tempColor,
     open,
     rgba,
     getChannelLabel,
