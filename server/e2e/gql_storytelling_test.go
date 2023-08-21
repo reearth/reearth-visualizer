@@ -44,7 +44,7 @@ func createProject(e *httpexpect.Expect) string {
 	return res.Path("$.data.createProject.project.id").Raw().(string)
 }
 
-func createScene(e *httpexpect.Expect, pId string) (GraphQLRequest, *httpexpect.Value, string) {
+func createScene(e *httpexpect.Expect, pID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateScene",
 		Query: `mutation CreateScene($projectId: ID!) {
@@ -57,7 +57,7 @@ func createScene(e *httpexpect.Expect, pId string) (GraphQLRequest, *httpexpect.
 			}
 		}`,
 		Variables: map[string]any{
-			"projectId": pId,
+			"projectId": pID,
 		},
 	}
 
@@ -70,11 +70,11 @@ func createScene(e *httpexpect.Expect, pId string) (GraphQLRequest, *httpexpect.
 		Status(http.StatusOK).
 		JSON()
 
-	sId := res.Path("$.data.createScene.scene.id").Raw().(string)
-	return requestBody, res, sId
+	sID := res.Path("$.data.createScene.scene.id").Raw().(string)
+	return requestBody, res, sID
 }
 
-func fetchSceneForStories(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpexpect.Value) {
+func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *httpexpect.Value) {
 	fetchSceneRequestBody := GraphQLRequest{
 		OperationName: "GetScene",
 		Query: `query GetScene($sceneId: ID!) {
@@ -95,6 +95,19 @@ func fetchSceneForStories(e *httpexpect.Expect, sId string) (GraphQLRequest, *ht
 				  }
 				  blocks {
 					id
+					propertyId
+					property {
+					  id
+					  items {
+						  ... on PropertyGroup {
+							fields {
+							  id	
+							  value
+							  type
+							}
+						  }
+		      		  }
+					}
 		  		  }
 				}
 		 	  }
@@ -104,7 +117,7 @@ func fetchSceneForStories(e *httpexpect.Expect, sId string) (GraphQLRequest, *ht
 		  }
 		}`,
 		Variables: map[string]any{
-			"sceneId": sId,
+			"sceneId": sID,
 		},
 	}
 
@@ -120,7 +133,7 @@ func fetchSceneForStories(e *httpexpect.Expect, sId string) (GraphQLRequest, *ht
 	return fetchSceneRequestBody, res
 }
 
-func createStory(e *httpexpect.Expect, sId, name string, index int) (GraphQLRequest, *httpexpect.Value, string) {
+func createStory(e *httpexpect.Expect, sID, name string, index int) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateStory",
 		Query: `mutation CreateStory($sceneId: ID!, $title: String!, $index: Int) {
@@ -134,7 +147,7 @@ func createStory(e *httpexpect.Expect, sId, name string, index int) (GraphQLRequ
 			}
 		}`,
 		Variables: map[string]any{
-			"sceneId": sId,
+			"sceneId": sID,
 			"title":   name,
 			"index":   index,
 		},
@@ -158,7 +171,7 @@ func createStory(e *httpexpect.Expect, sId, name string, index int) (GraphQLRequ
 	return requestBody, res, res.Path("$.data.createStory.story.id").Raw().(string)
 }
 
-func updateStory(e *httpexpect.Expect, storyId, sId string) (GraphQLRequest, *httpexpect.Value) {
+func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateStory",
 		Query: `mutation UpdateStory($sceneId: ID!, $storyId: ID!, $title: String!, $index: Int) {
@@ -172,8 +185,8 @@ func updateStory(e *httpexpect.Expect, storyId, sId string) (GraphQLRequest, *ht
 			}
 		}`,
 		Variables: map[string]any{
-			"storyId": storyId,
-			"sceneId": sId,
+			"storyId": storyID,
+			"sceneId": sID,
 			"title":   "test2",
 			"index":   0,
 		},
@@ -197,7 +210,7 @@ func updateStory(e *httpexpect.Expect, storyId, sId string) (GraphQLRequest, *ht
 	return requestBody, res
 }
 
-func deleteStory(e *httpexpect.Expect, storyId, sId string) (GraphQLRequest, *httpexpect.Value) {
+func deleteStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "DeleteStory",
 		Query: `mutation DeleteStory($sceneId: ID!, $storyId: ID!) {
@@ -206,8 +219,8 @@ func deleteStory(e *httpexpect.Expect, storyId, sId string) (GraphQLRequest, *ht
 			}
 		}`,
 		Variables: map[string]any{
-			"storyId": storyId,
-			"sceneId": sId,
+			"storyId": storyID,
+			"sceneId": sID,
 		},
 	}
 
@@ -223,12 +236,12 @@ func deleteStory(e *httpexpect.Expect, storyId, sId string) (GraphQLRequest, *ht
 	res.Object().
 		Value("data").Object().
 		Value("deleteStory").Object().
-		ValueEqual("storyId", storyId)
+		ValueEqual("storyId", storyID)
 
 	return requestBody, res
 }
 
-func createPage(e *httpexpect.Expect, sId, storyId, name string, swipeable bool) (GraphQLRequest, *httpexpect.Value, string) {
+func createPage(e *httpexpect.Expect, sID, storyID, name string, swipeable bool) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateStoryPage",
 		Query: `mutation CreateStoryPage($sceneId: ID!, $storyId: ID!, $title: String, $swipeable: Boolean) {
@@ -247,8 +260,8 @@ func createPage(e *httpexpect.Expect, sId, storyId, name string, swipeable bool)
 			}
 		}`,
 		Variables: map[string]any{
-			"sceneId":   sId,
-			"storyId":   storyId,
+			"sceneId":   sID,
+			"storyId":   storyID,
 			"title":     name,
 			"swipeable": swipeable,
 		},
@@ -273,7 +286,7 @@ func createPage(e *httpexpect.Expect, sId, storyId, name string, swipeable bool)
 	return requestBody, res, res.Path("$.data.createStoryPage.page.id").Raw().(string)
 }
 
-func updatePage(e *httpexpect.Expect, sId, storyId, pageId, name string, swipeable bool) (GraphQLRequest, *httpexpect.Value) {
+func updatePage(e *httpexpect.Expect, sID, storyID, pageID, name string, swipeable bool) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateStoryPage",
 		Query: `mutation UpdateStoryPage($sceneId: ID!, $storyId: ID!, $pageId: ID!, $title: String, $swipeable: Boolean) {
@@ -289,9 +302,9 @@ func updatePage(e *httpexpect.Expect, sId, storyId, pageId, name string, swipeab
 			}
 		}`,
 		Variables: map[string]any{
-			"sceneId":   sId,
-			"storyId":   storyId,
-			"pageId":    pageId,
+			"sceneId":   sID,
+			"storyId":   storyID,
+			"pageId":    pageID,
 			"title":     name,
 			"swipeable": swipeable,
 		},
@@ -316,7 +329,7 @@ func updatePage(e *httpexpect.Expect, sId, storyId, pageId, name string, swipeab
 	return requestBody, res
 }
 
-func movePage(e *httpexpect.Expect, storyId, pageId string, idx int) (GraphQLRequest, *httpexpect.Value) {
+func movePage(e *httpexpect.Expect, storyID, pageID string, idx int) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "MoveStoryPage",
 		Query: `mutation MoveStoryPage($storyId: ID!, $pageId: ID!, $index: Int!) {
@@ -332,8 +345,8 @@ func movePage(e *httpexpect.Expect, storyId, pageId string, idx int) (GraphQLReq
 			}
 		}`,
 		Variables: map[string]any{
-			"storyId": storyId,
-			"pageId":  pageId,
+			"storyId": storyID,
+			"pageId":  pageID,
 			"index":   idx,
 		},
 	}
@@ -355,7 +368,7 @@ func movePage(e *httpexpect.Expect, storyId, pageId string, idx int) (GraphQLReq
 	return requestBody, res
 }
 
-func deletePage(e *httpexpect.Expect, sId, storyId, pageId string) (GraphQLRequest, *httpexpect.Value) {
+func deletePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveStoryPage",
 		Query: `mutation RemoveStoryPage($sceneId: ID!, $storyId: ID!, $pageId: ID!) {
@@ -370,9 +383,9 @@ func deletePage(e *httpexpect.Expect, sId, storyId, pageId string) (GraphQLReque
 			}
 		}`,
 		Variables: map[string]any{
-			"sceneId": sId,
-			"storyId": storyId,
-			"pageId":  pageId,
+			"sceneId": sID,
+			"storyId": storyID,
+			"pageId":  pageID,
 		},
 	}
 
@@ -388,15 +401,15 @@ func deletePage(e *httpexpect.Expect, sId, storyId, pageId string) (GraphQLReque
 	res.Object().
 		Value("data").Object().
 		Value("removeStoryPage").Object().
-		ValueEqual("pageId", pageId).
+		ValueEqual("pageId", pageID).
 		Value("story").Object().
 		Value("pages").Array().
-		Path("$..id").Array().NotContains(pageId)
+		Path("$..id").Array().NotContains(pageID)
 
 	return requestBody, res
 }
 
-func duplicatePage(e *httpexpect.Expect, sId, storyId, pageId string) (GraphQLRequest, *httpexpect.Value, string) {
+func duplicatePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "DuplicateStoryPage",
 		Query: `mutation DuplicateStoryPage($sceneId: ID!, $storyId: ID!, $pageId: ID!) {
@@ -413,9 +426,9 @@ func duplicatePage(e *httpexpect.Expect, sId, storyId, pageId string) (GraphQLRe
 			}
 		}`,
 		Variables: map[string]any{
-			"sceneId": sId,
-			"storyId": storyId,
-			"pageId":  pageId,
+			"sceneId": sID,
+			"storyId": storyID,
+			"pageId":  pageID,
 		},
 	}
 
@@ -428,13 +441,13 @@ func duplicatePage(e *httpexpect.Expect, sId, storyId, pageId string) (GraphQLRe
 		Status(http.StatusOK).
 		JSON()
 
-	pId := res.Object().
+	pID := res.Object().
 		Value("data").Object().
 		Value("duplicateStoryPage").Object().
 		Value("page").Object().
 		Value("id").Raw()
 
-	return requestBody, res, pId.(string)
+	return requestBody, res, pID.(string)
 }
 
 func addLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId string, swipeable *bool) (GraphQLRequest, *httpexpect.Value, string) {
@@ -549,7 +562,7 @@ func removeLayerToPage(e *httpexpect.Expect, sId, storyId, pageId, layerId strin
 	return requestBody, res, layerId
 }
 
-func createBlock(e *httpexpect.Expect, sId, storyId, pageId, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
+func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateStoryBlock",
 		Query: `mutation CreateStoryBlock($storyId: ID!, $pageId: ID!, $pluginId: ID!, $extensionId: ID!, $index: Int) {
@@ -574,9 +587,9 @@ func createBlock(e *httpexpect.Expect, sId, storyId, pageId, pluginId, extension
 			}
 		}`,
 		Variables: map[string]any{
-			"sceneId":     sId,
-			"storyId":     storyId,
-			"pageId":      pageId,
+			"sceneId":     sID,
+			"storyId":     storyID,
+			"pageId":      pageID,
 			"pluginId":    pluginId,
 			"extensionId": extensionId,
 			"index":       idx,
@@ -601,7 +614,7 @@ func createBlock(e *httpexpect.Expect, sId, storyId, pageId, pluginId, extension
 	return requestBody, res, res.Path("$.data.createStoryBlock.block.id").Raw().(string)
 }
 
-func removeBlock(e *httpexpect.Expect, storyId, pageId, blockId string) (GraphQLRequest, *httpexpect.Value, string) {
+func removeBlock(e *httpexpect.Expect, storyID, pageID, blockID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveStoryBlock",
 		Query: `mutation RemoveStoryBlock($storyId: ID!, $pageId: ID!, $blockId: ID!) {
@@ -624,9 +637,9 @@ func removeBlock(e *httpexpect.Expect, storyId, pageId, blockId string) (GraphQL
 			}
 		}`,
 		Variables: map[string]any{
-			"storyId": storyId,
-			"pageId":  pageId,
-			"blockId": blockId,
+			"storyId": storyID,
+			"pageId":  pageID,
+			"blockId": blockID,
 		},
 	}
 
@@ -640,12 +653,12 @@ func removeBlock(e *httpexpect.Expect, storyId, pageId, blockId string) (GraphQL
 		JSON()
 
 	res.Object().
-		Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotContains(blockId)
+		Path("$.data.removeStoryBlock.page.blocks[:].id").Array().NotContains(blockID)
 
 	return requestBody, res, res.Path("$.data.removeStoryBlock.blockId").Raw().(string)
 }
 
-func moveBlock(e *httpexpect.Expect, storyId, pageId, blockId string, index int) (GraphQLRequest, *httpexpect.Value, string) {
+func moveBlock(e *httpexpect.Expect, storyID, pageID, blockID string, index int) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "MoveStoryBlock",
 		Query: `mutation MoveStoryBlock($storyId: ID!, $pageId: ID!, $blockId: ID!, $index: Int!) {
@@ -668,9 +681,9 @@ func moveBlock(e *httpexpect.Expect, storyId, pageId, blockId string, index int)
 			}
 		}`,
 		Variables: map[string]any{
-			"storyId": storyId,
-			"pageId":  pageId,
-			"blockId": blockId,
+			"storyId": storyID,
+			"pageId":  pageID,
+			"blockId": blockID,
 			"index":   index,
 		},
 	}
@@ -685,7 +698,7 @@ func moveBlock(e *httpexpect.Expect, storyId, pageId, blockId string, index int)
 		JSON()
 
 	res.Object().
-		Path("$.data.moveStoryBlock.page.blocks[:].id").Array().Contains(blockId)
+		Path("$.data.moveStoryBlock.page.blocks[:].id").Array().Contains(blockID)
 
 	return requestBody, res, res.Path("$.data.moveStoryBlock.blockId").Raw().(string)
 }
@@ -698,34 +711,34 @@ func TestStoryCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pID := createProject(e)
 
-	_, _, sId := createScene(e, pId)
+	_, _, sID := createScene(e, pID)
 
 	// fetch scene
-	_, res := fetchSceneForStories(e, sId)
+	_, res := fetchSceneForStories(e, sID)
 	res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
 		Length().Equal(0)
 
-	_, _, storyId := createStory(e, sId, "test", 0)
+	_, _, storyID := createStory(e, sID, "test", 0)
 
 	// fetch scene and check story
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 
 	storiesRes := res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array()
 	storiesRes.Length().Equal(1)
-	storiesRes.First().Object().ValueEqual("id", storyId)
+	storiesRes.First().Object().ValueEqual("id", storyID)
 
 	// update story
-	_, _ = updateStory(e, storyId, sId)
+	_, _ = updateStory(e, storyID, sID)
 
-	_, _ = deleteStory(e, storyId, sId)
+	_, _ = deleteStory(e, storyID, sID)
 }
 
 func TestStoryPageCRUD(t *testing.T) {
@@ -736,37 +749,37 @@ func TestStoryPageCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pID := createProject(e)
 
-	_, _, sId := createScene(e, pId)
+	_, _, sID := createScene(e, pID)
 
-	_, _, storyId := createStory(e, sId, "test", 0)
+	_, _, storyID := createStory(e, sID, "test", 0)
 
-	_, _, pageId1 := createPage(e, sId, storyId, "test", true)
+	_, _, pageID1 := createPage(e, sID, storyID, "test", true)
 
-	_, res := fetchSceneForStories(e, sId)
+	_, res := fetchSceneForStories(e, sID)
 	storiesRes := res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array()
 	storiesRes.Length().Equal(1)
-	storiesRes.First().Object().ValueEqual("id", storyId)
+	storiesRes.First().Object().ValueEqual("id", storyID)
 
-	_, _, dupPageId := duplicatePage(e, sId, storyId, pageId1)
+	_, _, dupPageID := duplicatePage(e, sID, storyID, pageID1)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	pagesRes := res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
 		First().Object().Value("pages").Array()
 	pagesRes.Length().Equal(2)
-	pagesRes.Path("$[:].id").Equal([]string{pageId1, dupPageId})
+	pagesRes.Path("$[:].id").Equal([]string{pageID1, dupPageID})
 	pagesRes.Path("$[:].title").Equal([]string{"test", "test (copy)"})
 
-	_, _ = deletePage(e, sId, storyId, dupPageId)
+	_, _ = deletePage(e, sID, storyID, dupPageID)
 
-	requestBody, _ := updatePage(e, sId, storyId, pageId1, "test 1", false)
+	requestBody, _ := updatePage(e, sID, storyID, pageID1, "test 1", false)
 
 	// update page with invalid page id
 	requestBody.Variables["pageId"] = id.NewPageID().String()
@@ -784,22 +797,22 @@ func TestStoryPageCRUD(t *testing.T) {
 		Element(0).Object().
 		ValueEqual("message", "input: updateStoryPage page not found")
 
-	_, _, pageId2 := createPage(e, sId, storyId, "test 2", true)
-	_, _, pageId3 := createPage(e, sId, storyId, "test 3", false)
-	_, _, pageId4 := createPage(e, sId, storyId, "test 4", true)
+	_, _, pageID2 := createPage(e, sID, storyID, "test 2", true)
+	_, _, pageID3 := createPage(e, sID, storyID, "test 3", false)
+	_, _, pageID4 := createPage(e, sID, storyID, "test 4", true)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	pagesRes = res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("stories").Array().
 		First().Object().Value("pages").Array()
 	pagesRes.Length().Equal(4)
-	pagesRes.Path("$[:].id").Equal([]string{pageId1, pageId2, pageId3, pageId4})
+	pagesRes.Path("$[:].id").Equal([]string{pageID1, pageID2, pageID3, pageID4})
 
-	movePage(e, storyId, pageId1, 2)
+	movePage(e, storyID, pageID1, 2)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	pagesRes = res.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -808,11 +821,11 @@ func TestStoryPageCRUD(t *testing.T) {
 	pagesRes.Length().Equal(4)
 	pagesRes.Path("$[:].title").Equal([]string{"test 2", "test 3", "test 1", "test 4"})
 
-	deletePage(e, sId, storyId, pageId2)
-	deletePage(e, sId, storyId, pageId3)
-	deletePage(e, sId, storyId, pageId4)
+	deletePage(e, sID, storyID, pageID2)
+	deletePage(e, sID, storyID, pageID3)
+	deletePage(e, sID, storyID, pageID4)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	pagesRes = res.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -830,31 +843,31 @@ func TestStoryPageLayersCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pID := createProject(e)
 
-	_, _, sId := createScene(e, pId)
+	_, _, sID := createScene(e, pID)
 
-	_, _, storyId := createStory(e, sId, "test", 0)
+	_, _, storyID := createStory(e, sID, "test", 0)
 
-	_, _, pageId := createPage(e, sId, storyId, "test", true)
+	_, _, pageID := createPage(e, sID, storyID, "test", true)
 
-	_, res := fetchSceneForStories(e, sId)
+	_, res := fetchSceneForStories(e, sID)
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
 
-	rootLayerId := res.Path("$.data.node.rootLayerId").Raw().(string)
+	rootLayerID := res.Path("$.data.node.rootLayerId").Raw().(string)
 
-	_, _, layerId := addLayerItemFromPrimitive(e, rootLayerId)
+	_, _, layerID := addLayerItemFromPrimitive(e, rootLayerID)
 
-	_, _, _ = addLayerToPage(e, sId, storyId, pageId, layerId, nil)
+	_, _, _ = addLayerToPage(e, sID, storyID, pageID, layerID, nil)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].layers[:].id").Equal([]string{layerId})
+		Path("$.data.node.stories[0].pages[0].layers[:].id").Equal([]string{layerID})
 
-	_, _, _ = removeLayerToPage(e, sId, storyId, pageId, layerId, nil)
+	_, _, _ = removeLayerToPage(e, sID, storyID, pageID, layerID, nil)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].layers").Equal([]any{})
 }
@@ -867,43 +880,79 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 		},
 	}, true, baseSeeder)
 
-	pId := createProject(e)
+	pID := createProject(e)
 
-	_, _, sId := createScene(e, pId)
+	_, _, sID := createScene(e, pID)
 
-	_, _, storyId := createStory(e, sId, "test", 0)
+	_, _, storyID := createStory(e, sID, "test", 0)
 
-	_, _, pageId := createPage(e, sId, storyId, "test", true)
+	_, _, pageID := createPage(e, sID, storyID, "test", true)
 
-	_, res := fetchSceneForStories(e, sId)
+	_, res := fetchSceneForStories(e, sID)
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].blocks").Equal([]any{})
 
-	_, _, blockId1 := createBlock(e, sId, storyId, pageId, "reearth", "storyBlock", nil)
-	_, _, blockId2 := createBlock(e, sId, storyId, pageId, "reearth", "storyBlock", nil)
+	_, _, blockID1 := createBlock(e, sID, storyID, pageID, "reearth", "storyBlock", nil)
+	_, _, blockID2 := createBlock(e, sID, storyID, pageID, "reearth", "storyBlock", nil)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockId1, blockId2})
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockID1, blockID2})
 
-	_, _, _ = moveBlock(e, storyId, pageId, blockId1, 1)
+	_, _, _ = moveBlock(e, storyID, pageID, blockID1, 1)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockId2, blockId1})
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockID2, blockID1})
 
-	_, _, blockId3 := createBlock(e, sId, storyId, pageId, "reearth", "storyBlock", lo.ToPtr(1))
+	_, _, blockID3 := createBlock(e, sID, storyID, pageID, "reearth", "storyBlock", lo.ToPtr(1))
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	res.Object().
-		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockId2, blockId3, blockId1})
+		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockID2, blockID3, blockID1})
 
-	removeBlock(e, storyId, pageId, blockId1)
-	removeBlock(e, storyId, pageId, blockId2)
-	removeBlock(e, storyId, pageId, blockId3)
+	removeBlock(e, storyID, pageID, blockID1)
+	removeBlock(e, storyID, pageID, blockID2)
+	removeBlock(e, storyID, pageID, blockID3)
 
-	_, res = fetchSceneForStories(e, sId)
+	_, res = fetchSceneForStories(e, sID)
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].blocks").Equal([]any{})
+}
 
+func TestStoryPageBlocksProperties(t *testing.T) {
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	pID := createProject(e)
+
+	_, _, sID := createScene(e, pID)
+
+	_, _, storyID := createStory(e, sID, "test", 0)
+
+	_, _, pageID := createPage(e, sID, storyID, "test", true)
+
+	_, _, _ = createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", nil)
+
+	_, res := fetchSceneForStories(e, sID)
+	propID := res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].propertyId").Raw().(string)
+
+	_, res = updatePropertyValue(e, propID, "default", "", "text", "test value", "STRING")
+	res.Path("$.data.updatePropertyValue.propertyField.value").Equal("test value")
+
+	_, res = fetchSceneForStories(e, sID)
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].type").Equal("STRING")
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].value").Equal("test value")
+
+	p := map[string]any{"left": 0, "right": 1, "top": 2, "bottom": 3}
+	_, res = updatePropertyValue(e, propID, "panel", "", "padding", p, "SPACING")
+	res.Path("$.data.updatePropertyValue.propertyField.value").Equal(p)
+
+	_, res = fetchSceneForStories(e, sID)
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].type").Equal("SPACING")
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].value").Equal(p)
 }

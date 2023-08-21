@@ -13,7 +13,6 @@ type Story = StoryObj<typeof StoryPageIndicator>;
 export const Default: Story = {
   args: {
     currentPage: 3,
-    currentPageProgress: 33,
     maxPage: 5,
   },
 };

@@ -27,7 +27,6 @@ const Menu = ({
     isMobile,
     onVisibilityChange,
   });
-  // console.log("BOKOSDFJ CONTEXT:", onFlyTo);
 
   return visible ? (
     <Wrapper>

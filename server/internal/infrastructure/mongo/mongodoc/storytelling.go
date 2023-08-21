@@ -11,16 +11,25 @@ import (
 )
 
 type StorytellingDocument struct {
-	Id          string
-	Property    string
-	Scene       string
-	Title       string
-	Alias       string
-	Pages       []PageDocument
-	Status      string
-	PublishedAt *time.Time
-	UpdatedAt   time.Time
-	Index       int
+	Id            string
+	Property      string
+	Scene         string
+	Title         string
+	Alias         string
+	Pages         []PageDocument
+	Status        string
+	PublishedAt   *time.Time
+	UpdatedAt     time.Time
+	Index         int
+	PanelPosition string
+
+	IsBasicAuthActive bool
+	BasicAuthUsername string
+	BasicAuthPassword string
+	PublicTitle       string
+	PublicDescription string
+	PublicImage       string
+	PublicNoIndex     bool
 }
 
 type PageDocument struct {
@@ -52,16 +61,25 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 	sId := s.Id().String()
 
 	return &StorytellingDocument{
-		Id:          s.Id().String(),
-		Property:    s.Property().String(),
-		Scene:       s.Scene().String(),
-		Title:       s.Title(),
-		Alias:       s.Alias(),
-		Pages:       newPages(s.Pages()),
-		Status:      string(s.Status()),
-		PublishedAt: s.PublishedAt(),
-		UpdatedAt:   s.UpdatedAt(),
-		Index:       1,
+		Id:            s.Id().String(),
+		Property:      s.Property().String(),
+		Scene:         s.Scene().String(),
+		Title:         s.Title(),
+		Alias:         s.Alias(),
+		Pages:         newPages(s.Pages()),
+		Status:        string(s.Status()),
+		PublishedAt:   s.PublishedAt(),
+		UpdatedAt:     s.UpdatedAt(),
+		Index:         1,
+		PanelPosition: string(s.PanelPosition()),
+
+		IsBasicAuthActive: s.IsBasicAuthActive(),
+		BasicAuthUsername: s.BasicAuthUsername(),
+		BasicAuthPassword: s.BasicAuthPassword(),
+		PublicTitle:       s.PublicTitle(),
+		PublicDescription: s.PublicDescription(),
+		PublicImage:       s.PublicImage(),
+		PublicNoIndex:     s.PublicNoIndex(),
 	}, sId
 }
 
@@ -160,9 +178,15 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		Title(d.Title).
 		Alias(d.Alias).
 		Status(storytelling.PublishmentStatus(d.Status)).
+		PanelPosition(storytelling.Position(d.PanelPosition)).
 		PublishedAt(d.PublishedAt).
 		UpdatedAt(d.UpdatedAt).
 		Pages(storytelling.NewPageList(pages)).
+		PublicBasicAuth(d.IsBasicAuthActive, d.BasicAuthUsername, d.BasicAuthPassword).
+		PublicTitle(d.PublicTitle).
+		PublicDescription(d.PublicDescription).
+		PublicImage(d.PublicImage).
+		PublicNoIndex(d.PublicNoIndex).
 		Build()
 	if err != nil {
 		return nil, err
