@@ -67,6 +67,6 @@ const TabIconWrapper = styled.div<{ selected: boolean }>`
 const MainArea = styled.div`
   grid-column: 2/-1;
   display: block;
-  padding: 6px;
+  padding: 12px;
   background: ${({ theme }) => theme.bg[1]};
 `;
