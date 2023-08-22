@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import ToggleButton from "@reearth/beta/components/Fields/Toggle";
+import ToggleButton from "@reearth/beta/components/fields/Toggle";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";

@@ -1,5 +1,5 @@
-import ColorField from "@reearth/beta/components/Fields/ColorField";
-import TextInput from "@reearth/beta/components/Fields/TextInput";
+import ColorField from "@reearth/beta/components/fields/ColorField";
+import TextInput from "@reearth/beta/components/fields/TextInput";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
