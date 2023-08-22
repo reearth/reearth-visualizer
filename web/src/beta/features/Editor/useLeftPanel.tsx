@@ -1,12 +1,13 @@
 import { ReactNode, useMemo } from "react";
 
-// import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/SidePanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/SidePanel";
 import { Tab } from "@reearth/beta/features/Navbar";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 type Props = {
   tab: Tab;
+  sceneId: string;
 
   // for story tab
   selectedStory?: StoryFragmentFragment;
@@ -20,6 +21,7 @@ type Props = {
 
 export default ({
   tab,
+  sceneId,
   selectedStory,
   selectedPage,
   onPageSelect,
@@ -31,16 +33,7 @@ export default ({
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
-        // return groups.map(({ schemaGroupId, title, fields }) => (
-        //   <SidePanelSectionField key={schemaGroupId} title={title}>
-        //     <ul>
-        //       {fields.map(({ fieldId, title }) => (
-        //         <li key={fieldId}>{title}</li>
-        //       ))}
-        //     </ul>
-        //   </SidePanelSectionField>
-        // ));
-        return <div>Left panel</div>;
+        return <MapSidePanel sceneId={sceneId} />;
       case "story":
         return (
           <StorySidePanel
@@ -67,6 +60,7 @@ export default ({
     selectedPage,
     selectedStory,
     tab,
+    sceneId,
   ]);
 
   return {
