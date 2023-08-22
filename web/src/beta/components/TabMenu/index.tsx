@@ -10,7 +10,7 @@ interface TabObject {
   id: string;
 }
 
-type Props = {
+export type Props = {
   tabs: TabObject[];
   selectedTab: string;
   onSelectedTabChange: (tab: string) => void;

@@ -7,7 +7,7 @@ import Resizable from "@reearth/beta/components/Resizable";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
-import TabMenu from "./index";
+import TabMenu, { Props } from "./index";
 
 export default {
   component: TabMenu,
@@ -67,7 +67,7 @@ const Pane = (
   </div>
 );
 
-export const Default: Story = args => {
+export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = (tab: string) => updateArgs({ selectedTab: tab });
