@@ -32,6 +32,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({ groups }) => {
 const GroupSectionFieldText = styled(Text)`
   padding-left: 4px;
   padding-bottom: 4px;
+  cursor: pointer;
 `;
 
 const MapSidePanel: React.FC<Props> = ({ sceneId }) => {
