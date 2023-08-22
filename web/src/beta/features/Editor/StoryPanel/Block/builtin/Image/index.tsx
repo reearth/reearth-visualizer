@@ -4,16 +4,10 @@ import { styled } from "@reearth/services/theme";
 
 import { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../common/Wrapper";
+import { getFieldValue } from "../utils";
 
 const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, onClick, onRemove }) => {
-  const src = useMemo(() => {
-    const d = block?.property?.items?.find(i => i.schemaGroup === "default");
-    const isList = d && "items" in d;
-    const schemaField = d?.schemaFields.find(sf => sf.id === "src");
-    return (!isList ? d?.fields.find(f => f.id === schemaField?.id) : schemaField?.defaultValue) as
-      | string
-      | undefined;
-  }, [block?.property?.items]);
+  const src = useMemo(() => getFieldValue("src", block?.property?.items), [block?.property?.items]);
 
   return (
     <BlockWrapper
