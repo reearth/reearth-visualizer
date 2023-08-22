@@ -1,9 +1,9 @@
 import React from "react";
 import { RgbaColorPicker } from "react-colorful";
-import { usePopper } from "react-popper";
 
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
+import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, css, useTheme } from "@reearth/services/theme";
@@ -46,83 +46,67 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
     handleKeyPress,
   } = useHooks({ value, onChange });
 
-  const { styles, attributes } = usePopper(wrapperRef.current, pickerRef.current, {
-    placement: "bottom-start",
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, 8],
-        },
-      },
-      {
-        name: "eventListeners",
-        enabled: !open,
-        options: {
-          scroll: false,
-          resize: false,
-        },
-      },
-    ],
-  });
-
   return (
     <Property name={name} description={description}>
       <Wrapper ref={wrapperRef}>
-        <InputWrapper>
-          <Layers onClick={handleClick}>
-            <CheckedPattern />
-            <Swatch c={colorState || "transparent"} />
-          </Layers>
-          <Input
-            value={colorState || ""}
-            placeholder={hexPlaceholder}
-            onChange={handleHexInput}
-            onKeyPress={handleKeyPress}
-            onBlur={handleHexSave}
-          />
-        </InputWrapper>
-        <PickerWrapper ref={pickerRef} open={open} style={styles.popper} {...attributes.popper}>
-          <HeaderWrapper>
-            <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
-              Color Picker
-            </PickerTitle>
-            {handleClose && <CloseIcon icon="cancel" size={12} onClick={handleClose} />}
-          </HeaderWrapper>
-          <SelectorPickerWrapper>
-            <RgbaColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
-            <RgbaInputWrapper>
-              <Text size="footnote"> RGBA</Text>
-              <ValuesWrapper>
-                {channels.map(channel => (
-                  <Input
-                    key={channel}
-                    name={channel}
-                    type="number"
-                    value={getChannelValue(rgba, channel as keyof RGBA)}
-                    min={0}
-                    max={255}
-                    onChange={handleRgbaInput}
-                  />
-                ))}
-              </ValuesWrapper>
-            </RgbaInputWrapper>
-          </SelectorPickerWrapper>
-          <FormButtonGroup>
-            <ButtonWrapper
-              buttonType="secondary"
-              text={t("Cancel")}
-              onClick={handleClose}
-              size="medium"
-            />
-            <ButtonWrapper
-              buttonType="primary"
-              text={t("Apply")}
-              onClick={handleSave}
-              size="medium"
-            />
-          </FormButtonGroup>
-        </PickerWrapper>
+        <Popover.Provider open={open} placement="bottom-start" onOpenChange={handleClick}>
+          <Popover.Trigger asChild>
+            <InputWrapper>
+              <Layers onClick={handleClick}>
+                <CheckedPattern />
+                <Swatch c={colorState || "transparent"} />
+              </Layers>
+              <Input
+                value={colorState || ""}
+                placeholder={hexPlaceholder}
+                onChange={handleHexInput}
+                onKeyPress={handleKeyPress}
+                onBlur={handleHexSave}
+              />
+            </InputWrapper>
+          </Popover.Trigger>
+          <PickerWrapper ref={pickerRef}>
+            <HeaderWrapper>
+              <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
+                Color Picker
+              </PickerTitle>
+              {handleClose && <CloseIcon icon="cancel" size={12} onClick={handleClose} />}
+            </HeaderWrapper>
+            <SelectorPickerWrapper>
+              <RgbaColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
+              <RgbaInputWrapper>
+                <Text size="footnote"> RGBA</Text>
+                <ValuesWrapper>
+                  {channels.map(channel => (
+                    <Input
+                      key={channel}
+                      name={channel}
+                      type="number"
+                      value={getChannelValue(rgba, channel as keyof RGBA)}
+                      min={0}
+                      max={255}
+                      onChange={handleRgbaInput}
+                    />
+                  ))}
+                </ValuesWrapper>
+              </RgbaInputWrapper>
+            </SelectorPickerWrapper>
+            <FormButtonGroup>
+              <ButtonWrapper
+                buttonType="secondary"
+                text={t("Cancel")}
+                onClick={handleClose}
+                size="medium"
+              />
+              <ButtonWrapper
+                buttonType="primary"
+                text={t("Apply")}
+                onClick={handleSave}
+                size="medium"
+              />
+            </FormButtonGroup>
+          </PickerWrapper>
+        </Popover.Provider>
       </Wrapper>
     </Property>
   );
@@ -182,13 +166,7 @@ const Swatch = styled.div<{ c?: string }>`
   ${layerStyle};
 `;
 
-const PickerWrapper = styled.div<{ open: boolean }>`
-  ${({ open }) =>
-    !open &&
-    css`
-      visibility: hidden;
-      pointer-events: none;
-    `}
+const PickerWrapper = styled(Popover.Content)`
   width: 286px;
   height: 362px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
