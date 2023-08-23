@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
@@ -16,6 +16,12 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showPadding, setShowPadding] = useState(false);
+
+  useEffect(() => {
+    if (!isSelected && editMode) {
+      setEditMode(false);
+    }
+  }, [isSelected, editMode]);
 
   const handleEditModeToggle = useCallback(() => setEditMode(em => !em), []);
 
