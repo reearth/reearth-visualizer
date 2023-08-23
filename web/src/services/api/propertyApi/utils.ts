@@ -54,7 +54,9 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
     | "video"
     | "file"
     | "layer"
-    | "cameraPose";
+    | "cameraPose"
+    | "padding"
+    | "margin";
   choices?: {
     key: string;
     label: string;
@@ -224,16 +226,15 @@ const toField = (
     return;
   }
 
-  const type = valueTypeFromGQL(schemaField.type);
+  const { value, type } = valueFromGQL(field?.value, schemaField.type) ?? {};
   if (!type) return;
-  const value = valueFromGQL(field?.value, schemaField.type);
   const mergedValue = valueFromGQL(merged?.actualValue, schemaField.type);
   const links = merged?.links ?? field?.links ?? undefined;
 
   return {
     id: schemaField.fieldId,
     type,
-    value: value?.value,
+    value,
     mergedValue: mergedValue?.value,
     overridden: !!merged?.overridden,
     link:
@@ -273,6 +274,10 @@ const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] =
       return "layer";
     case PropertySchemaFieldUi.CameraPose:
       return "cameraPose";
+    case PropertySchemaFieldUi.Margin:
+      return "margin";
+    case PropertySchemaFieldUi.Padding:
+      return "padding";
   }
   return undefined;
 };

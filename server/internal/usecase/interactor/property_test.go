@@ -10,6 +10,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +19,7 @@ func TestProperty_AddItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	ws := id.NewWorkspaceID()
+	ws := accountdomain.NewWorkspaceID()
 	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{
 		property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild(),
@@ -69,7 +71,7 @@ func TestProperty_RemoveItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	ws := id.NewWorkspaceID()
+	ws := accountdomain.NewWorkspaceID()
 	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).MustBuild()
 	ps := property.NewSchema().ID(property.MustSchemaID("xxx~1.1.1/aa")).
@@ -114,7 +116,7 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()
 
-	ws := id.NewWorkspaceID()
+	ws := accountdomain.NewWorkspaceID()
 	scene := scene.New().NewID().Workspace(ws).RootLayer(id.NewLayerID()).MustBuild()
 	psf := property.NewSchemaField().ID("field").Type(property.ValueTypeString).MustBuild()
 	psg := property.NewSchemaGroup().ID("foobar").IsList(true).Fields([]*property.SchemaField{psf}).MustBuild()
@@ -136,8 +138,10 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 		transaction:        memory.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableWorkspaces: []id.WorkspaceID{ws},
-		WritableScenes:     []id.SceneID{scene.ID()},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
+		},
+		WritableScenes: []id.SceneID{scene.ID()},
 	}
 
 	np, npl, npg, npf, err := uc.UpdateValue(ctx, interfaces.UpdatePropertyValueParam{

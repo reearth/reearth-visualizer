@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -410,7 +411,7 @@ func TestSceneBuilder(t *testing.T) {
 	scene := scene.New().
 		ID(sceneID).
 		Project(scene.NewProjectID()).
-		Workspace(scene.NewWorkspaceID()).
+		Workspace(accountdomain.NewWorkspaceID()).
 		Property(scenep.ID()).
 		Widgets(scene.NewWidgets([]*scene.Widget{
 			sceneWidget1, sceneWidget2,
