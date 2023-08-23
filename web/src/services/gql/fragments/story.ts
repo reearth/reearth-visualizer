@@ -15,6 +15,11 @@ export const storyPageFragment = gql`
     id
     title
     swipeable
+    propertyId
+    property {
+      id
+      ...PropertyFragment
+    }
     blocks {
       id
       pluginId
