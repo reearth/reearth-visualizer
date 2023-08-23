@@ -80,7 +80,7 @@ const PublicSettings: React.FC<Props> = ({
   );
 
   return (
-    <InnerPage hasMenu>
+    <InnerPage wide>
       <InnerMenu>
         {menu.map(s => (
           <MenuListItemLabel key={s.id} text={s.title} active={s.active} linkTo={s.linkTo} />
@@ -91,6 +91,7 @@ const PublicSettings: React.FC<Props> = ({
           <ArchivedSettingNotice />
         ) : currentStory ? (
           <PublicSettingsDetail
+            key={currentStory.id}
             settingsItem={currentStory}
             onUpdate={onUpdateStory}
             onUpdateBasicAuth={onUpdateStoryBasicAuth}
@@ -98,6 +99,7 @@ const PublicSettings: React.FC<Props> = ({
           />
         ) : (
           <PublicSettingsDetail
+            key="map"
             settingsItem={project}
             onUpdate={onUpdateProject}
             onUpdateBasicAuth={onUpdateProjectBasicAuth}

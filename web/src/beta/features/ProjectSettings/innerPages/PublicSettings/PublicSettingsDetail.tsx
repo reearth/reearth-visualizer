@@ -43,6 +43,8 @@ const PublicSettingsDetail: React.FC<Props> = ({
   const handleSubmitBasicAuthorization = useCallback(() => {
     onUpdateBasicAuth({
       ...localBasicAuthorization,
+      // TODO: test
+      isBasicAuthActive: true,
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
 

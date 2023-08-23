@@ -5,11 +5,11 @@ import { styled } from "@reearth/services/theme";
 
 import { MenuList } from "../MenuList";
 
-export const InnerPage = styled.div<{ hasMenu?: boolean }>`
+export const InnerPage = styled.div<{ wide?: boolean; transparent?: boolean }>`
   display: flex;
   width: 100%;
-  max-width: ${({ hasMenu }) => (hasMenu ? "950px" : "750px")};
-  background-color: ${({ theme }) => theme.bg[1]};
+  max-width: ${({ wide }) => (wide ? "950px" : "750px")};
+  background-color: ${({ transparent, theme }) => (transparent ? "none" : theme.bg[1])};
 `;
 
 export const SettingsWrapper = styled.div`

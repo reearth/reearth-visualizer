@@ -7,6 +7,7 @@ import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
 import GeneralSettings from "./innerPages/GeneralSettings";
+import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 import { MenuList, MenuListItemLabel } from "./MenuList";
@@ -15,7 +16,7 @@ export const projectSettingFields = [
   { id: "general", text: "General" },
   { id: "story", text: "Story" },
   { id: "public", text: "Public" },
-  { id: "assets", text: "Assets" },
+  { id: "assets", text: "Workspace Assets" },
   { id: "plugin", text: "Plugin" },
 ];
 
@@ -112,6 +113,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               onUpdateProjectAlias={handleUpdateProjectAlias}
             />
           )}
+          {fieldId === "plugin" && <PluginSettings isArchived={project?.isArchived} />}
         </Content>
       </MainSection>
     </Wrapper>

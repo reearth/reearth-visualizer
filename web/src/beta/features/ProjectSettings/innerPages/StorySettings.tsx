@@ -42,7 +42,7 @@ const StorySettings: React.FC<Props> = ({ projectId, stories, currentStory, isAr
   );
 
   return (
-    <InnerPage hasMenu>
+    <InnerPage wide>
       <InnerMenu>
         {menu.map(s => (
           <MenuListItemLabel

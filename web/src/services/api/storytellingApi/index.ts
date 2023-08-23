@@ -40,7 +40,7 @@ export default function useStorytellingAPI() {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfullly created a story!") });
+      setNotification({ type: "success", text: t("Successfully created a story!") });
 
       return { data, status: "success" };
     },
@@ -57,7 +57,7 @@ export default function useStorytellingAPI() {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfullly updated a story!") });
+      setNotification({ type: "success", text: t("Successfully updated a story!") });
 
       return { data, status: "success" };
     },

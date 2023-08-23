@@ -79,6 +79,8 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
     },
     [useUpdateStory, currentStory?.id, scene?.id],
   );
+
+  // Public
   const handleUpdateStoryBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {
       if (!scene?.id || !currentStory?.id) return;
@@ -94,7 +96,6 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
     [useUpdateStory, currentStory?.id, scene?.id],
   );
 
-  // Public
   const handleUpdateProjectBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {
       if (!projectId) return;
