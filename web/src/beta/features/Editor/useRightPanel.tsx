@@ -2,6 +2,8 @@ import { ReactNode, useMemo } from "react";
 
 import { Tab } from "@reearth/beta/features/Navbar";
 
+import MapSidePanel from "./tabs/map/RightPanel";
+import StorySidePanel from "./tabs/story/RightPanel";
 import WidgetSidePanel from "./tabs/widgets/RightPanel";
 
 type Props = {
@@ -13,9 +15,9 @@ export default ({ tab, sceneId }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
-        return <div>TODO: right panel</div>;
+        return <MapSidePanel />;
       case "story":
-        return <div>TODO: right panel</div>;
+        return <StorySidePanel />;
       case "widgets":
         return <WidgetSidePanel sceneId={sceneId} />;
 

@@ -13,7 +13,7 @@ type Props = {
   onPageMove: (id: string, targetIndex: number) => void;
 };
 
-const SidePanel: React.FC<Props> = ({
+const StoryLeftPanel: React.FC<Props> = ({
   selectedStory,
   selectedPage,
   onPageSelect,
@@ -55,4 +55,4 @@ const SidePanel: React.FC<Props> = ({
   );
 };
 
-export default SidePanel;
+export default StoryLeftPanel;
