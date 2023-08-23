@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from "react";
 
-import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/SidePanel";
-import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/SidePanel";
+import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
+import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 

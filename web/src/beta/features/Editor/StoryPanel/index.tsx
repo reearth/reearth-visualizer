@@ -1,6 +1,6 @@
 import { FC, Fragment } from "react";
 
-import PageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicator";
+import PageIndicator from "@reearth/beta/features/Editor/StoryPanel/PageIndicator";
 import { styled } from "@reearth/services/theme";
 
 import useHooks, {

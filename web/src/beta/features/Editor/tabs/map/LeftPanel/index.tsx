@@ -1,6 +1,6 @@
 import Loading from "@reearth/beta/components/Loading";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
-import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/SidePanel/GroupField";
+import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/LeftPanel/GroupField";
 import { useSceneFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
