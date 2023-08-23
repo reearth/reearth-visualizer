@@ -1,17 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import tinycolor, { ColorInput } from "tinycolor2";
+import tinycolor from "tinycolor2";
 
-export type RGBA = {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-};
-
-export type Params = {
-  value?: string;
-  onChange?: (value: string) => void;
-};
+import { Params, RGBA } from "./types";
+import { getChannelLabel, getChannelValue, getHexString } from "./utils";
 
 export default ({ value, onChange }: Params) => {
   const [colorState, setColor] = useState<string>();
@@ -20,33 +11,6 @@ export default ({ value, onChange }: Params) => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
-
-  //Helper functions
-
-  const getHexString = (value?: ColorInput) => {
-    if (!value) return undefined;
-    const color = tinycolor(value);
-    return color.getAlpha() === 1 ? color.toHexString() : color.toHex8String();
-  };
-
-  const getChannelLabel = (channel: string) => {
-    switch (channel) {
-      case "r":
-        return "Red";
-      case "g":
-        return "Green";
-      case "b":
-        return "Blue";
-      case "a":
-        return "Alpha";
-      default:
-        return "";
-    }
-  };
-
-  function getChannelValue(rgba: RGBA, channel: keyof RGBA): number {
-    return rgba[channel];
-  }
 
   //Actions
 
@@ -86,6 +50,7 @@ export default ({ value, onChange }: Params) => {
       setColor(undefined);
       setRgba(tinycolor(colorState == null ? undefined : colorState).toRgb());
     }
+    setTempColor(undefined);
     setOpen(false);
   }, [value, colorState]);
 
@@ -95,6 +60,7 @@ export default ({ value, onChange }: Params) => {
       setColor(tempColor);
       setRgba(tinycolor(tempColor).toRgb());
       onChange(tempColor);
+      setTempColor(undefined);
     } else if (colorState != value && colorState) {
       onChange(colorState);
     }

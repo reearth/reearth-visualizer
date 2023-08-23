@@ -10,20 +10,12 @@ import { styled, css, useTheme } from "@reearth/services/theme";
 
 import Property from "..";
 
-import useHooks, { RGBA } from "./hooks";
-import "./styles.css";
+import useHooks from "./hooks";
+import { Props, RGBA } from "./types";
 
 // Constants
 const channels = ["r", "g", "b", "a"];
 const hexPlaceholder = "#RRGGBBAA";
-
-// Component Props
-export type Props = {
-  name?: string;
-  description?: string;
-  value?: string;
-  onChange?: (value: string) => void;
-};
 
 // Component
 const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => {
@@ -51,7 +43,7 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
       <Wrapper ref={wrapperRef}>
         <Popover.Provider open={open} placement="bottom-start" onOpenChange={handleClick}>
           <Popover.Trigger asChild>
-            <InputWrapper>
+            <InputWrapper ref={pickerRef}>
               <Layers onClick={handleClick}>
                 <CheckedPattern />
                 <Swatch c={colorState || "transparent"} />
@@ -65,7 +57,7 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
               />
             </InputWrapper>
           </Popover.Trigger>
-          <PickerWrapper ref={pickerRef}>
+          <PickerWrapper>
             <HeaderWrapper>
               <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
                 Color Picker
@@ -73,7 +65,7 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
               {handleClose && <CloseIcon icon="cancel" size={12} onClick={handleClose} />}
             </HeaderWrapper>
             <SelectorPickerWrapper>
-              <RgbaColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
+              <ColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
               <RgbaInputWrapper>
                 <Text size="footnote"> RGBA</Text>
                 <ValuesWrapper>
@@ -253,6 +245,44 @@ const ButtonWrapper = styled(Button)`
   min-width: 135px;
   padding: 0px;
   margin: 0px;
+`;
+
+const ColorPickerStyles = css`
+  padding: 8px 8px 6px 0px;
+  gap: 12px;
+
+  .react-colorful__saturation-pointer {
+    width: 15px;
+    height: 15px;
+    border-width: 2px;
+  }
+
+  .react-colorful__hue-pointer,
+  .react-colorful__alpha-pointer {
+    width: 1px;
+    height: 10px;
+    border: 1px solid white;
+    border-radius: 2px;
+  }
+
+  .react-colorful__saturation {
+    margin-bottom: 10px;
+    border-radius: 3px;
+    width: 270px;
+    border-bottom: none;
+  }
+
+  .react-colorful__hue,
+  .react-colorful__alpha {
+    height: 10px;
+    width: 270px;
+    margin: 0 5px 10px 3px;
+    border-radius: 3px;
+  }
+`;
+
+const ColorPicker = styled(RgbaColorPicker)`
+  ${ColorPickerStyles}
 `;
 
 export default ColorField;
