@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
@@ -33,7 +34,9 @@ type Container struct {
 	Workspace      accountrepo.Workspace
 	User           accountrepo.User
 	Policy         Policy
+	Storytelling   Storytelling
 	Transaction    usecasex.Transaction
+	Extensions     []plugin.ID
 }
 
 func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {
@@ -50,6 +53,7 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Lock:           c.Lock,
 		Plugin:         c.Plugin.Filtered(scene),
 		Policy:         c.Policy,
+		Storytelling:   c.Storytelling.Filtered(scene),
 		Project:        c.Project.Filtered(workspace),
 		PropertySchema: c.PropertySchema.Filtered(scene),
 		Property:       c.Property.Filtered(scene),
@@ -59,6 +63,7 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Transaction:    c.Transaction,
 		User:           c.User,
 		Workspace:      c.Workspace,
+		Extensions:     c.Extensions,
 	}
 }
 

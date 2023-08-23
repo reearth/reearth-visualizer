@@ -37,12 +37,10 @@ export default () => {
     async (name: string): Promise<MutationReturn<Partial<Team>>> => {
       const { data, errors } = await createWorkspaceMutation({ variables: { name } });
       if (errors || !data?.createTeam) {
-        console.log("GraphQL: Failed to create workspace");
+        console.log("GraphQL: Failed to create workspace", errors);
         setNotification({ type: "error", text: t("Failed to create workspace.") });
 
-        return {
-          status: "error",
-        };
+        return { status: "error" };
       }
 
       setNotification({ type: "success", text: t("Successfully created workspace!") });

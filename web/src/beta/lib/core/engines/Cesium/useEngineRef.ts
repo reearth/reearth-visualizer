@@ -110,7 +110,7 @@ export default function useEngineRef(
                 const entities = d.entities.values;
                 const e = entities.find(e => getTag(e)?.layerId === layerOrFeatureId);
                 if (e) {
-                  viewer.flyTo(d);
+                  viewer.flyTo(d, options);
                   return;
                 }
               }

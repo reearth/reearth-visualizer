@@ -20,7 +20,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef, FEATURE_FLAGS } from "@reearth/beta/lib/core/Map";
+import { LayersRef, FEATURE_FLAGS, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -33,12 +33,15 @@ import type {
   MouseEvents,
   LayerEditEvent,
 } from "..";
+import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
+import { arrayToCartecian3 } from "./helpers/sphericalHaromic";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
+import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
 export default ({
@@ -48,14 +51,18 @@ export default ({
   selectedLayerId,
   selectionReason,
   isLayerDraggable,
+  isLayerDragging,
   meta,
   layersRef,
   featureFlags,
+  requestingRenderMode,
+  shouldRender,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
   onLayerDrop,
   onLayerEdit,
+  onMount,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -67,8 +74,11 @@ export default ({
   layersRef?: RefObject<LayersRef>;
   selectionReason?: LayerSelectionReason;
   isLayerDraggable?: boolean;
+  isLayerDragging?: boolean;
   meta?: Record<string, unknown>;
   featureFlags: number;
+  requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
+  shouldRender?: boolean;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -83,6 +93,7 @@ export default ({
     position: LatLng | undefined,
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  onMount?: () => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -236,18 +247,21 @@ export default ({
       if (camera) {
         onCameraChange?.(camera);
       }
+      onMount?.();
     },
     [
       engineAPI,
       onCameraChange,
       property?.default?.camera,
       property?.cameraLimiter?.cameraLimitterEnabled,
+      onMount,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
       prevDeps[1] === nextDeps[1] &&
       isEqual(prevDeps[2], nextDeps[2]) &&
-      prevDeps[3] === nextDeps[3],
+      prevDeps[3] === nextDeps[3] &&
+      prevDeps[4] === nextDeps[4],
   );
 
   const handleUnmount = useCallback(() => {
@@ -415,6 +429,26 @@ export default ({
     },
     [engineAPI],
   );
+
+  const sphericalHarmonicCoefficients = useMemo(
+    () =>
+      property?.light?.sphericalHarmonicCoefficients
+        ? arrayToCartecian3(
+            property?.light?.sphericalHarmonicCoefficients,
+            property?.light?.imageBasedLightIntensity,
+          )
+        : undefined,
+    [property?.light?.sphericalHarmonicCoefficients, property?.light?.imageBasedLightIntensity],
+  );
+
+  useOverrideGlobeShader({
+    cesium,
+    sphericalHarmonicCoefficients,
+    globeShadowDarkness: property?.atmosphere?.globeShadowDarkness,
+    globeImageBasedLighting: property?.atmosphere?.globeImageBasedLighting,
+    enableLighting: property?.atmosphere?.enable_lighting,
+    hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
+  });
 
   const handleMouseWheel = useCallback(
     (delta: number) => {
@@ -680,6 +714,7 @@ export default ({
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
+      requestRender: engineAPI.requestRender,
     }),
     [selectionReason, engineAPI, onLayerEdit],
   );
@@ -717,6 +752,51 @@ export default ({
         ? 4
         : 1; // default as 1
   }, [property?.render?.antialias]);
+
+  // explicit rendering
+  const explicitRender = useCallback(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!requestingRenderMode?.current || !viewer || viewer.isDestroyed()) return;
+    viewer.scene.requestRender();
+    if (requestingRenderMode.current === REQUEST_RENDER_ONCE) {
+      requestingRenderMode.current = NO_REQUEST_RENDER;
+    }
+  }, [requestingRenderMode]);
+
+  const explicitRenderRef = useRef<() => void>();
+
+  useEffect(() => {
+    explicitRenderRef.current = explicitRender;
+  }, [explicitRender]);
+
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    return viewer.scene.postUpdate.addEventListener(() => {
+      explicitRenderRef.current?.();
+    });
+  }, []);
+
+  // render one frame when scene property changes
+  useEffect(() => {
+    if (requestingRenderMode) {
+      requestingRenderMode.current = REQUEST_RENDER_ONCE;
+    }
+  }, [property, requestingRenderMode]);
+
+  // force render when timeline is animating or is shouldRender
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer || viewer.isDestroyed()) return;
+    if (requestingRenderMode) {
+      requestingRenderMode.current =
+        isLayerDragging || shouldRender
+          ? FORCE_REQUEST_RENDER
+          : requestingRenderMode.current === REQUEST_RENDER_ONCE
+          ? REQUEST_RENDER_ONCE
+          : NO_REQUEST_RENDER;
+    }
+  }, [isLayerDragging, shouldRender, requestingRenderMode]);
 
   return {
     backgroundColor,

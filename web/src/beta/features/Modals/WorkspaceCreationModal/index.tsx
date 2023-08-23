@@ -14,11 +14,11 @@ export interface FormValues {
   // description: string;
 }
 
-export interface Props {
+export type Props = {
   open?: boolean;
   onClose?: (refetch?: boolean) => void;
   onSubmit?: (values: FormValues) => Promise<void> | void;
-}
+};
 
 const initialValues: FormValues = {
   name: "",
@@ -53,20 +53,22 @@ const WorkspaceCreationModal: React.FC<Props> = ({ open, onClose, onSubmit }) =>
       onClose={handleClose}
       button1={
         <Button
-          large
+          size="medium"
           buttonType="primary"
           text={t("Create")}
           disabled={!formik.values.name}
           onClick={formik.submitForm}
         />
       }
-      button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
+      button2={
+        <Button size="medium" buttonType="secondary" text={t("Cancel")} onClick={handleClose} />
+      }>
       {formik.isSubmitting && <Loading overlay />}
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
           <Text
             size="body"
-            color={theme.general.content.main}
+            color={theme.content.main}
             otherProperties={{ flex: 1, margin: "1em 0" }}>
             {t("Workspace Name")}
           </Text>
@@ -90,18 +92,19 @@ const NewProjectForm = styled.form`
 const FormInputWrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
-  margin: 40px auto;
+  margin: 30px auto;
 `;
 
 const StyledInput = styled.input`
   flex: 2;
-  color: ${props => props.theme.general.content.main};
-  background: ${props => props.theme.general.bg.veryStrong};
-  border: 1px solid #3f3d45;
+  color: ${({ theme }) => theme.content.main};
+  background: ${({ theme }) => theme.bg[0]};
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.bg[4]};
   font-size: ${fonts.sizes.body}px;
-  outline: none;
   cursor: text;
-  padding: 0 10px;
+  padding: 4px 8px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
 `;
 
 export default WorkspaceCreationModal;

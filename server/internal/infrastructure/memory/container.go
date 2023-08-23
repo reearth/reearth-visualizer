@@ -25,6 +25,7 @@ func New() *repo.Container {
 		SceneLock:      NewSceneLock(),
 		AuthRequest:    authserver.NewMemory(),
 		Policy:         NewPolicy(),
+		Storytelling:   NewStorytelling(),
 		Lock:           NewLock(),
 		Transaction:    &usecasex.NopTransaction{},
 	}

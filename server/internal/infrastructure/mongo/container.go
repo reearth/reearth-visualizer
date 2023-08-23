@@ -3,8 +3,14 @@ package mongo
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/internal/infrastructure/adapter"
+	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/migration"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/plugin/manifest"
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
@@ -12,6 +18,7 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -44,6 +51,7 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		User:           accountmongo.NewUser(client),
 		SceneLock:      NewSceneLock(client),
 		Policy:         NewPolicy(client),
+		Storytelling:   NewStorytelling(client),
 		Lock:           lock,
 		Transaction:    client.Transaction(),
 	}
@@ -58,6 +66,44 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		return nil, err
 	}
 
+	return c, nil
+}
+
+func NewWithExtensions(ctx context.Context, db *mongo.Database, useTransaction bool, src []string) (*repo.Container, error) {
+	c, err := New(ctx, db, useTransaction)
+	if err != nil {
+		return nil, err
+	}
+	if len(src) == 0 {
+		return c, nil
+	}
+
+	ms, err := manifest.ParseFromUrlList(ctx, src)
+	if err != nil {
+		return nil, err
+	}
+
+	ids := lo.Map(ms, func(m *manifest.Manifest, _ int) id.PluginID {
+		return m.Plugin.ID()
+	})
+
+	plugins := lo.Map(ms, func(m *manifest.Manifest, _ int) *plugin.Plugin {
+		return m.Plugin
+	})
+
+	propertySchemas := lo.FlatMap(ms, func(m *manifest.Manifest, _ int) []*property.Schema {
+		return m.ExtensionSchema
+	})
+
+	c.Extensions = ids
+	c.Plugin = adapter.NewPlugin(
+		[]repo.Plugin{memory.NewPluginWith(plugins...), c.Plugin},
+		c.Plugin,
+	)
+	c.PropertySchema = adapter.NewPropertySchema(
+		[]repo.PropertySchema{memory.NewPropertySchemaWith(propertySchemas...), c.PropertySchema},
+		c.PropertySchema,
+	)
 	return c, nil
 }
 

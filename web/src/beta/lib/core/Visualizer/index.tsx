@@ -1,4 +1,13 @@
-import { CSSProperties, useMemo, type ReactNode } from "react";
+import {
+  CSSProperties,
+  useMemo,
+  type ReactNode,
+  FC,
+  memo,
+  forwardRef,
+  Ref,
+  PropsWithChildren,
+} from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { styled } from "@reearth/services/theme";
@@ -26,7 +35,9 @@ import Map, {
   type Cluster,
   type ComputedLayer,
 } from "../Map";
+import { Ref as MapRef } from "../Map";
 
+import { VisualizerProvider } from "./context";
 import DropHolder from "./DropHolder";
 import { engines, type EngineType } from "./engines";
 import Err from "./Error";
@@ -42,6 +53,8 @@ export type {
 } from "../Crust";
 export type { EngineType } from "./engines";
 export type { Viewport } from "./useViewport";
+
+export { useVisualizer, type Context as VisualizerContext } from "./context";
 
 export type Props = {
   engine?: EngineType;
@@ -105,185 +118,209 @@ export type Props = {
   onBlockDelete?: (id: string) => void;
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
+  onMount?: () => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 } & ExternalPluginProps;
 
-export default function Visualizer({
-  engine,
-  isBuilt,
-  rootLayerId,
-  isEditable,
-  inEditor,
-  sceneProperty,
-  layers,
-  clusters,
-  widgetAlignSystem,
-  widgetAlignSystemEditing,
-  widgetLayoutConstraint,
-  floatingWidgets,
-  ownBuiltinWidgets,
-  small,
-  ready,
-  tags,
-  selectedBlockId,
-  selectedLayerId,
-  selectedWidgetArea,
-  hiddenLayers,
-  camera: initialCamera,
-  interactionMode: initialInteractionMode,
-  meta,
-  style,
-  pluginBaseUrl,
-  pluginProperty,
-  zoomedLayerId,
-  layerSelectionReason,
-  useExperimentalSandbox,
-  onLayerDrop,
-  onLayerSelect,
-  onCameraChange,
-  onWidgetLayoutUpdate,
-  onWidgetAlignmentUpdate,
-  onWidgetAreaSelect,
-  onInfoboxMaskClick,
-  onBlockSelect,
-  onBlockChange,
-  onBlockMove,
-  onBlockDelete,
-  onBlockInsert,
-  onZoomToLayer,
-  renderInfoboxInsertionPopup,
-}: Props): JSX.Element | null {
-  const {
-    mapRef,
-    wrapperRef,
-    selectedLayer,
-    selectedBlock,
-    selectedFeature,
-    selectedComputedFeature,
-    viewport,
-    camera,
-    interactionMode,
-    featureFlags,
-    isMobile,
-    overriddenSceneProperty,
-    overriddenClock,
-    isDroppable,
-    isLayerDragging,
-    infobox,
-    shouldRender,
-    handleLayerSelect,
-    handleBlockSelect,
-    handleCameraChange,
-    handleInteractionModeChange,
-    handleLayerDrag,
-    handleLayerDrop,
-    overrideSceneProperty,
-    handleLayerEdit,
-    onLayerEdit,
-    handleInfoboxClose,
-  } = useHooks({
-    rootLayerId,
-    isEditable,
-    camera: initialCamera,
-    interactionMode: initialInteractionMode,
-    selectedBlockId,
-    sceneProperty,
-    zoomedLayerId,
-    ownBuiltinWidgets,
-    onLayerSelect,
-    onBlockSelect,
-    onCameraChange,
-    onZoomToLayer,
-    onLayerDrop,
-  });
+const Visualizer: FC<PropsWithChildren<Props>> = memo(
+  forwardRef(function VisualizerPresenter(
+    {
+      engine,
+      isBuilt,
+      rootLayerId,
+      isEditable,
+      inEditor,
+      sceneProperty,
+      layers,
+      clusters,
+      widgetAlignSystem,
+      widgetAlignSystemEditing,
+      widgetLayoutConstraint,
+      floatingWidgets,
+      ownBuiltinWidgets,
+      small,
+      ready,
+      tags,
+      selectedBlockId,
+      selectedLayerId,
+      selectedWidgetArea,
+      hiddenLayers,
+      camera: initialCamera,
+      interactionMode: initialInteractionMode,
+      meta,
+      style,
+      pluginBaseUrl,
+      pluginProperty,
+      zoomedLayerId,
+      layerSelectionReason,
+      useExperimentalSandbox,
+      children,
+      onLayerDrop,
+      onLayerSelect,
+      onCameraChange,
+      onWidgetLayoutUpdate,
+      onWidgetAlignmentUpdate,
+      onWidgetAreaSelect,
+      onInfoboxMaskClick,
+      onBlockSelect,
+      onBlockChange,
+      onBlockMove,
+      onBlockDelete,
+      onBlockInsert,
+      onZoomToLayer,
+      onMount,
+      renderInfoboxInsertionPopup,
+    },
+    ref: Ref<MapRef | null>,
+  ) {
+    const {
+      mapRef,
+      wrapperRef,
+      selectedLayer,
+      selectedBlock,
+      selectedFeature,
+      selectedComputedFeature,
+      viewport,
+      camera,
+      interactionMode,
+      featureFlags,
+      isMobile,
+      overriddenSceneProperty,
+      overriddenClock,
+      isDroppable,
+      isLayerDragging,
+      infobox,
+      shouldRender,
+      handleLayerSelect,
+      handleBlockSelect,
+      handleCameraChange,
+      handleInteractionModeChange,
+      handleLayerDrag,
+      handleLayerDrop,
+      overrideSceneProperty,
+      handleLayerEdit,
+      onLayerEdit,
+      handleInfoboxClose,
+    } = useHooks(
+      {
+        rootLayerId,
+        isEditable,
+        camera: initialCamera,
+        interactionMode: initialInteractionMode,
+        selectedBlockId,
+        sceneProperty,
+        zoomedLayerId,
+        ownBuiltinWidgets,
+        onLayerSelect,
+        onBlockSelect,
+        onCameraChange,
+        onZoomToLayer,
+        onLayerDrop,
+      },
+      ref,
+    );
 
-  const selectedLayerIdForCrust = useMemo(
-    () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
-    [selectedLayer.featureId, selectedLayer.layerId],
-  );
+    const selectedLayerIdForCrust = useMemo(
+      () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
+      [selectedLayer.featureId, selectedLayer.layerId],
+    );
 
-  return (
-    <ErrorBoundary FallbackComponent={Err}>
-      <Filled ref={wrapperRef}>
-        {isDroppable && <DropHolder />}
-        <Crust
-          engineName={engine}
-          tags={tags}
-          viewport={viewport}
-          isBuilt={isBuilt}
-          isEditable={isEditable && infobox?.isEditable}
-          inEditor={inEditor}
-          sceneProperty={overriddenSceneProperty}
-          overrideSceneProperty={overrideSceneProperty}
-          overriddenClock={overriddenClock}
-          blocks={infobox?.blocks}
-          camera={camera}
-          interactionMode={interactionMode}
-          overrideInteractionMode={handleInteractionModeChange}
-          isMobile={isMobile}
-          selectedWidgetArea={selectedWidgetArea}
-          selectedComputedLayer={selectedLayer?.layer}
-          selectedFeature={selectedFeature}
-          selectedComputedFeature={selectedComputedFeature}
-          selectedReason={selectedLayer.reason}
-          infoboxProperty={infobox?.property}
-          infoboxTitle={infobox?.title}
-          infoboxVisible={!!infobox?.visible}
-          selectedBlockId={selectedBlock}
-          selectedLayerId={selectedLayerIdForCrust}
-          widgetAlignSystem={widgetAlignSystem}
-          widgetAlignSystemEditing={widgetAlignSystemEditing}
-          widgetLayoutConstraint={widgetLayoutConstraint}
-          floatingWidgets={floatingWidgets}
-          mapRef={mapRef}
-          externalPlugin={{ pluginBaseUrl, pluginProperty }}
-          useExperimentalSandbox={useExperimentalSandbox}
-          onWidgetLayoutUpdate={onWidgetLayoutUpdate}
-          onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
-          onWidgetAreaSelect={onWidgetAreaSelect}
-          onInfoboxMaskClick={onInfoboxMaskClick}
-          onInfoboxClose={handleInfoboxClose}
-          onBlockSelect={handleBlockSelect}
-          onBlockChange={onBlockChange}
-          onBlockMove={onBlockMove}
-          onBlockDelete={onBlockDelete}
-          onBlockInsert={onBlockInsert}
-          renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
-          onLayerEdit={onLayerEdit}
-        />
-        <Map
-          ref={mapRef}
-          isBuilt={isBuilt}
-          isEditable={isEditable}
-          engine={engine}
-          layers={layers}
-          engines={engines}
-          camera={camera}
-          overriddenClock={overriddenClock}
-          clusters={clusters}
-          hiddenLayers={hiddenLayers}
-          isLayerDragging={isLayerDragging}
-          isLayerDraggable={isEditable}
-          meta={meta}
-          style={style}
-          featureFlags={featureFlags}
-          shouldRender={shouldRender}
-          // overrides={overrides} // not used for now
-          property={overriddenSceneProperty}
-          selectedLayerId={selectedLayerId}
-          layerSelectionReason={layerSelectionReason}
-          small={small}
-          ready={ready}
-          onCameraChange={handleCameraChange}
-          onLayerDrag={handleLayerDrag}
-          onLayerDrop={handleLayerDrop}
-          onLayerSelect={handleLayerSelect}
-          onLayerEdit={handleLayerEdit}
-        />
-      </Filled>
-    </ErrorBoundary>
-  );
-}
+    return (
+      <ErrorBoundary FallbackComponent={Err}>
+        <Wrapper>
+          <VisualizerProvider mapRef={mapRef}>
+            {children}
+            <Filled ref={wrapperRef}>
+              {isDroppable && <DropHolder />}
+              <Crust
+                engineName={engine}
+                tags={tags}
+                viewport={viewport}
+                isBuilt={isBuilt}
+                isEditable={isEditable && infobox?.isEditable}
+                inEditor={inEditor}
+                sceneProperty={overriddenSceneProperty}
+                overrideSceneProperty={overrideSceneProperty}
+                overriddenClock={overriddenClock}
+                blocks={infobox?.blocks}
+                camera={camera}
+                interactionMode={interactionMode}
+                overrideInteractionMode={handleInteractionModeChange}
+                isMobile={isMobile}
+                selectedWidgetArea={selectedWidgetArea}
+                selectedComputedLayer={selectedLayer?.layer}
+                selectedFeature={selectedFeature}
+                selectedComputedFeature={selectedComputedFeature}
+                selectedReason={selectedLayer.reason}
+                infoboxProperty={infobox?.property}
+                infoboxTitle={infobox?.title}
+                infoboxVisible={!!infobox?.visible}
+                selectedBlockId={selectedBlock}
+                selectedLayerId={selectedLayerIdForCrust}
+                widgetAlignSystem={widgetAlignSystem}
+                widgetAlignSystemEditing={widgetAlignSystemEditing}
+                widgetLayoutConstraint={widgetLayoutConstraint}
+                floatingWidgets={floatingWidgets}
+                mapRef={mapRef}
+                externalPlugin={{ pluginBaseUrl, pluginProperty }}
+                useExperimentalSandbox={useExperimentalSandbox}
+                onWidgetLayoutUpdate={onWidgetLayoutUpdate}
+                onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
+                onWidgetAreaSelect={onWidgetAreaSelect}
+                onInfoboxMaskClick={onInfoboxMaskClick}
+                onInfoboxClose={handleInfoboxClose}
+                onBlockSelect={handleBlockSelect}
+                onBlockChange={onBlockChange}
+                onBlockMove={onBlockMove}
+                onBlockDelete={onBlockDelete}
+                onBlockInsert={onBlockInsert}
+                renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+                onLayerEdit={onLayerEdit}
+              />
+              <Map
+                ref={mapRef}
+                isBuilt={isBuilt}
+                isEditable={isEditable}
+                engine={engine}
+                layers={layers}
+                engines={engines}
+                camera={camera}
+                overriddenClock={overriddenClock}
+                clusters={clusters}
+                hiddenLayers={hiddenLayers}
+                isLayerDragging={isLayerDragging}
+                isLayerDraggable={isEditable}
+                meta={meta}
+                style={style}
+                featureFlags={featureFlags}
+                shouldRender={shouldRender}
+                // overrides={overrides} // not used for now
+                property={overriddenSceneProperty}
+                selectedLayerId={selectedLayerId}
+                layerSelectionReason={layerSelectionReason}
+                small={small}
+                ready={ready}
+                onCameraChange={handleCameraChange}
+                onLayerDrag={handleLayerDrag}
+                onLayerDrop={handleLayerDrop}
+                onLayerSelect={handleLayerSelect}
+                onLayerEdit={handleLayerEdit}
+                onMount={onMount}
+              />
+            </Filled>
+          </VisualizerProvider>
+        </Wrapper>
+      </ErrorBoundary>
+    );
+  }),
+);
+
+export default Visualizer;
+
+const Wrapper = styled.div`
+  display: flex;
+  height: 100%;
+`;
 
 const Filled = styled.div`
   width: 100%;

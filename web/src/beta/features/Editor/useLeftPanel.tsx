@@ -1,57 +1,67 @@
 import { ReactNode, useMemo } from "react";
 
-import SidePanel, { SidePanelContent } from "@reearth/beta/features/Editor/SidePanel";
+import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/SidePanel";
+import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/SidePanel";
 import { Tab } from "@reearth/beta/features/Navbar";
+import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 type Props = {
   tab: Tab;
+  sceneId: string;
+
+  // for story tab
+  selectedStory?: StoryFragmentFragment;
+  selectedPage?: StoryPageFragmentFragment;
+  onPageSelect: (id: string) => void;
+  onPageDuplicate: (id: string) => void;
+  onPageDelete: (id: string) => void;
+  onPageAdd: (isSwipeable: boolean) => void;
+  onPageMove: (id: string, targetIndex: number) => void;
 };
 
-const getSceneContents = (): SidePanelContent[] => {
-  return [
-    {
-      id: "Outline",
-      title: "Outline",
-      children: (
-        <>
-          {[...Array(100)].map((_, i) => (
-            <div key={i}>scrollable / {i}</div>
-          ))}
-        </>
-      ),
-    },
-  ];
-};
-
-const getStoryContents = (): SidePanelContent[] => {
-  return [
-    {
-      id: "Inspector",
-      title: "Inspector",
-      children: (
-        <>
-          {[...Array(100)].map((_, i) => (
-            <div key={i}>scrollable / {i}</div>
-          ))}
-        </>
-      ),
-    },
-  ];
-};
-
-export default ({ tab }: Props) => {
+export default ({
+  tab,
+  sceneId,
+  selectedStory,
+  selectedPage,
+  onPageSelect,
+  onPageDuplicate,
+  onPageDelete,
+  onPageAdd,
+  onPageMove,
+}: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
-      case "scene":
-        return <SidePanel location="left" contents={getSceneContents()} />;
+      case "map":
+        return <MapSidePanel sceneId={sceneId} />;
       case "story":
-        return <SidePanel location="left" contents={getStoryContents()} />;
+        return (
+          <StorySidePanel
+            selectedStory={selectedStory}
+            selectedPage={selectedPage}
+            onPageSelect={onPageSelect}
+            onPageDuplicate={onPageDuplicate}
+            onPageDelete={onPageDelete}
+            onPageAdd={onPageAdd}
+            onPageMove={onPageMove}
+          />
+        );
       case "widgets":
       case "publish":
       default:
         return undefined;
     }
-  }, [tab]);
+  }, [
+    onPageAdd,
+    onPageDelete,
+    onPageDuplicate,
+    onPageMove,
+    onPageSelect,
+    selectedPage,
+    selectedStory,
+    tab,
+    sceneId,
+  ]);
 
   return {
     leftPanel,

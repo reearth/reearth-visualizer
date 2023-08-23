@@ -15,6 +15,10 @@ import {
   Cesium3DTileFeature,
   Model,
   Cesium3DTilePointFeature,
+  GoogleMaps as CesiumGoogleMaps,
+  Resource,
+  defaultValue,
+  ImageBasedLighting,
 } from "cesium";
 import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -29,8 +33,10 @@ import type {
   Cesium3DTilesAppearance,
 } from "../../..";
 import { layerIdField, sampleTerrainHeightFromCartesian } from "../../common";
+import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import type { InternalCesium3DTileFeature } from "../../types";
 import { lookupFeatures, translationWithClamping } from "../../utils";
+import { useContext } from "../context";
 import {
   usePick,
   attachTag,
@@ -40,6 +46,7 @@ import {
   toColor,
 } from "../utils";
 
+import { GoogleMaps } from "./types";
 import { useClippingBox } from "./useClippingBox";
 
 import { Property } from ".";
@@ -134,11 +141,13 @@ const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
 const useFeature = ({
   id,
   tileset,
+  tilesetReady,
   layer,
   evalFeature,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
+  tilesetReady: boolean;
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
 }) => {
@@ -195,6 +204,7 @@ const useFeature = ({
 
   useEffect(() => {
     tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) => {
+      if (t.tileset.isDestroyed()) return;
       lookupFeatures(t.content, async (tileFeature, content) => {
         const coordinates = content.tile.boundingSphere.center;
         const featureId = getBuiltinFeatureId(tileFeature);
@@ -219,7 +229,7 @@ const useFeature = ({
         await attachComputedFeature(feature);
       });
     });
-  }, [tileset, cachedFeaturesRef, attachComputedFeature, layerId]);
+  }, [tileset, tilesetReady, cachedFeaturesRef, attachComputedFeature, layerId]);
 
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
@@ -283,13 +293,16 @@ const useFeature = ({
     [computeFeatureAsync],
   );
 
+  const { requestRender } = useContext();
+
   useEffect(() => {
     const compute = async () => {
       const startedComputingAt = Date.now();
       await computeFeatures(startedComputingAt);
+      requestRender?.();
     };
     compute();
-  }, [computeFeatures]);
+  }, [computeFeatures, requestRender]);
 };
 
 export const useHooks = ({
@@ -297,6 +310,7 @@ export const useHooks = ({
   boxId,
   isVisible,
   property,
+  sceneProperty,
   layer,
   feature,
   meta,
@@ -313,7 +327,7 @@ export const useHooks = ({
   evalFeature: EvalFeature;
 }) => {
   const { viewer } = useCesium();
-  const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping } = property ?? {};
+  const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping, apiKey } = property ?? {};
   const {
     width,
     height,
@@ -366,6 +380,7 @@ export const useHooks = ({
       }),
   );
   const tilesetRef = useRef<Cesium3DTilesetType>();
+  const [tilesetReady, setTilesReady] = useState(false);
 
   const ref = useCallback(
     (tileset: CesiumComponentRef<Cesium3DTilesetType> | null) => {
@@ -376,6 +391,9 @@ export const useHooks = ({
         (tileset?.cesiumElement as any)[layerIdField] = layer.id;
       }
       tilesetRef.current = tileset?.cesiumElement;
+      if (tilesetRef.current) {
+        setTilesReady(true);
+      }
     },
     [id, layer?.id, feature?.id],
   );
@@ -383,6 +401,7 @@ export const useHooks = ({
   useFeature({
     id,
     tileset: tilesetRef,
+    tilesetReady,
     layer,
     evalFeature,
   });
@@ -416,13 +435,6 @@ export const useHooks = ({
 
     const prepareClippingPlanes = async () => {
       if (!tilesetRef.current) {
-        return;
-      }
-
-      try {
-        await tilesetRef.current?.readyPromise;
-      } catch (e) {
-        console.error("Could not load 3D tiles: ", e);
         return;
       }
 
@@ -506,15 +518,67 @@ export const useHooks = ({
     })();
   }, [styleUrl]);
 
+  const googleMapResource = useMemo(() => {
+    if (type !== "google-photorealistic" || !isVisible) return;
+    // Ref: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Scene/createGooglePhotorealistic3DTileset.js#L30
+    const googleMaps = CesiumGoogleMaps as GoogleMaps;
+    // Default key: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Core/GoogleMaps.js#L6C36-L6C36
+    const key = defaultValue(apiKey, googleMaps.defaultApiKey);
+    const credit = googleMaps.getDefaultApiKeyCredit(key);
+    return new Resource({
+      url: `${googleMaps.mapTilesApiEndpoint}3dtiles/root.json`,
+      queryParameters: { key },
+      credits: credit ? [credit] : undefined,
+    } as Resource.ConstructorOptions);
+  }, [apiKey, type, isVisible]);
+
   const tilesetUrl = useMemo(() => {
     return type === "osm-buildings" && isVisible
       ? IonResource.fromAssetId(96188, {
           accessToken: meta?.cesiumIonAccessToken as string | undefined,
         }) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
+      : googleMapResource
+      ? googleMapResource
       : type === "3dtiles" && isVisible
       ? url ?? tileset
       : null;
-  }, [isVisible, tileset, url, type, meta]);
+  }, [isVisible, tileset, url, type, meta, googleMapResource]);
+
+  const imageBasedLighting = useMemo(() => {
+    if (
+      !property?.specularEnvironmentMaps &&
+      !property?.sphericalHarmonicCoefficients &&
+      !sceneProperty?.light?.specularEnvironmentMaps &&
+      !sceneProperty?.light?.sphericalHarmonicCoefficients
+    )
+      return;
+
+    const ibl = new ImageBasedLighting();
+    const specularEnvironmentMaps =
+      property?.specularEnvironmentMaps ?? sceneProperty?.light?.specularEnvironmentMaps;
+    const imageBasedLightIntensity =
+      property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
+    const sphericalHarmonicCoefficients = arrayToCartecian3(
+      property?.sphericalHarmonicCoefficients ??
+        sceneProperty?.light?.sphericalHarmonicCoefficients,
+      imageBasedLightIntensity,
+    );
+
+    if (specularEnvironmentMaps) {
+      ibl.specularEnvironmentMaps = specularEnvironmentMaps;
+    }
+    if (sphericalHarmonicCoefficients) {
+      ibl.sphericalHarmonicCoefficients = sphericalHarmonicCoefficients;
+    }
+    return ibl;
+  }, [
+    property?.specularEnvironmentMaps,
+    property?.sphericalHarmonicCoefficients,
+    property?.imageBasedLightIntensity,
+    sceneProperty?.light?.specularEnvironmentMaps,
+    sceneProperty?.light?.sphericalHarmonicCoefficients,
+    sceneProperty?.light?.imageBasedLightIntensity,
+  ]);
 
   return {
     tilesetUrl,
@@ -522,5 +586,6 @@ export const useHooks = ({
     style,
     clippingPlanes,
     builtinBoxProps,
+    imageBasedLighting,
   };
 };
