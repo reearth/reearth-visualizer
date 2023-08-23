@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 // import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
-import { Story } from "@reearth/services/gql";
+import { Position, Story } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 import { MenuListItemLabel } from "../MenuList";
@@ -17,7 +17,7 @@ import {
 } from "./common";
 
 export type StorySettingsType = {
-  panelPosition?: "LEFT" | "RIGHT";
+  panelPosition?: Position;
 };
 
 type Props = {

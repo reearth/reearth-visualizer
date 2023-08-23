@@ -12,11 +12,17 @@ export type PublicSettingsType = {
   publicTitle?: string;
   publicDescription?: string;
   publicImage?: string;
+  publishmentStatus?: string;
+};
+
+export type PublicBasicAuthSettingsType = {
   isBasicAuthActive?: boolean;
   basicAuthUsername?: string;
   basicAuthPassword?: string;
-  alias?: string;
-  publishmentStatus?: string;
+};
+
+export type PublicAliasSettingsType = {
+  alias: string;
 };
 
 type Props = {
@@ -35,7 +41,11 @@ type Props = {
   stories: Story[];
   currentStory?: Story;
   onUpdateStory: (settings: PublicSettingsType) => void;
+  onUpdateStoryBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
+  onUpdateStoryAlias: (settings: PublicAliasSettingsType) => void;
   onUpdateProject: (settings: PublicSettingsType) => void;
+  onUpdateProjectBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
+  onUpdateProjectAlias: (settings: PublicAliasSettingsType) => void;
 };
 
 const PublicSettings: React.FC<Props> = ({
@@ -43,7 +53,11 @@ const PublicSettings: React.FC<Props> = ({
   stories,
   currentStory,
   onUpdateStory,
+  onUpdateStoryBasicAuth,
+  onUpdateStoryAlias,
   onUpdateProject,
+  onUpdateProjectBasicAuth,
+  onUpdateProjectAlias,
 }) => {
   const t = useT();
 
@@ -76,9 +90,19 @@ const PublicSettings: React.FC<Props> = ({
         {project.isArchived ? (
           <ArchivedSettingNotice />
         ) : currentStory ? (
-          <PublicSettingsDetail settingsItem={currentStory} onUpdate={onUpdateStory} />
+          <PublicSettingsDetail
+            settingsItem={currentStory}
+            onUpdate={onUpdateStory}
+            onUpdateBasicAuth={onUpdateStoryBasicAuth}
+            onUpdateAlias={onUpdateStoryAlias}
+          />
         ) : (
-          <PublicSettingsDetail settingsItem={project} onUpdate={onUpdateProject} />
+          <PublicSettingsDetail
+            settingsItem={project}
+            onUpdate={onUpdateProject}
+            onUpdateBasicAuth={onUpdateProjectBasicAuth}
+            onUpdateAlias={onUpdateProjectAlias}
+          />
         )}
       </SettingsWrapper>
     </InnerPage>

@@ -46,6 +46,7 @@ import Ellipse from "./Icons/ellipse.svg";
 
 // Dashboard
 import Dashboard from "./Icons/dashboard.svg";
+import Scene from "./Icons/scene.svg";
 import Logout from "./Icons/logout.svg";
 
 // Workspaces
@@ -162,4 +163,5 @@ export default {
   compassFocus: CompassFocus,
   house: House,
   plugin: Plugin,
+  scene: Scene,
 };

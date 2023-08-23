@@ -9,6 +9,8 @@ import {
   Visualizer,
   DeleteProjectInput,
   ArchiveProjectMutationVariables,
+  UpdateProjectBasicAuthMutationVariables,
+  UpdateProjectAliasMutationVariables,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -18,6 +20,8 @@ import {
   GET_PROJECT,
   PUBLISH_PROJECT,
   UPDATE_PROJECT,
+  UPDATE_PROJECT_ALIAS,
+  UPDATE_PROJECT_BASIC_AUTH,
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -199,6 +203,44 @@ export default () => {
     [deleteProjectMutation, t, setNotification],
   );
 
+  const [updateProjectBasicAuthMutation] = useMutation(UPDATE_PROJECT_BASIC_AUTH);
+  const useUpdateProjectBasicAuth = useCallback(
+    async (input: UpdateProjectBasicAuthMutationVariables) => {
+      if (!input.projectId) return { status: "error" };
+      const { data, errors } = await updateProjectBasicAuthMutation({ variables: { ...input } });
+
+      if (errors || !data?.updateProject) {
+        console.log("GraphQL: Failed to update project", errors);
+        setNotification({ type: "error", text: t("Failed to update project.") });
+
+        return { status: "error" };
+      }
+
+      setNotification({ type: "success", text: t("Successfully updated project!") });
+      return { data: data?.updateProject?.project, status: "success" };
+    },
+    [updateProjectBasicAuthMutation, t, setNotification],
+  );
+
+  const [updateProjectAliasMutation] = useMutation(UPDATE_PROJECT_ALIAS);
+  const useUpdateProjectAlias = useCallback(
+    async (input: UpdateProjectAliasMutationVariables) => {
+      if (!input.projectId) return { status: "error" };
+      const { data, errors } = await updateProjectAliasMutation({ variables: { ...input } });
+
+      if (errors || !data?.updateProject) {
+        console.log("GraphQL: Failed to update project", errors);
+        setNotification({ type: "error", text: t("Failed to update project.") });
+
+        return { status: "error" };
+      }
+
+      setNotification({ type: "success", text: t("Successfully updated project!") });
+      return { data: data?.updateProject?.project, status: "success" };
+    },
+    [updateProjectAliasMutation, t, setNotification],
+  );
+
   return {
     useProjectQuery,
     useProjectAliasCheckLazyQuery,
@@ -207,6 +249,8 @@ export default () => {
     useUpdateProject,
     useArchiveProject,
     useDeleteProject,
+    useUpdateProjectBasicAuth,
+    useUpdateProjectAlias,
   };
 };
 

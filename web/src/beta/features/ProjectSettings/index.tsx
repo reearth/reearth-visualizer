@@ -25,31 +25,28 @@ export function isProjectSettingField(settingField: string): boolean {
 
 type Props = {
   projectId: string;
-  sceneId?: string;
   workspaceId?: string;
   fieldId?: (typeof projectSettingFields)[number]["id"];
   fieldParam?: string;
 };
 
-const ProjectSettings: React.FC<Props> = ({
-  projectId,
-  sceneId,
-  workspaceId,
-  fieldId,
-  fieldParam,
-}) => {
+const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fieldParam }) => {
   const t = useT();
   const {
+    sceneId,
     project,
     stories,
     currentStory,
     handleUpdateProject,
     handleArchiveProject,
     handleDeleteProject,
+    handleUpdateProjectBasicAuth,
+    handleUpdateProjectAlias,
     handleUpdateStory,
+    handleUpdateStoryBasicAuth,
+    handleUpdateStoryAlias,
   } = useHooks({
     projectId,
-    sceneId,
     workspaceId,
     fieldId,
     fieldParam,
@@ -67,7 +64,7 @@ const ProjectSettings: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Navbar projectId={projectId} workspaceId={workspaceId} page="settings" />
+      <Navbar projectId={projectId} workspaceId={workspaceId} sceneId={sceneId} page="settings" />
       <SecondaryNav>
         <Title size="h5">{t("Project Settings")}</Title>
       </SecondaryNav>
@@ -108,7 +105,11 @@ const ProjectSettings: React.FC<Props> = ({
               stories={stories}
               currentStory={currentStory}
               onUpdateStory={handleUpdateStory}
+              onUpdateStoryBasicAuth={handleUpdateStoryBasicAuth}
+              onUpdateStoryAlias={handleUpdateStoryAlias}
               onUpdateProject={handleUpdateProject}
+              onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}
+              onUpdateProjectAlias={handleUpdateProjectAlias}
             />
           )}
         </Content>

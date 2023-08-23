@@ -5,22 +5,31 @@ import { useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 
 import { GeneralSettingsType } from "./innerPages/GeneralSettings";
-import { PublicSettingsType } from "./innerPages/PublicSettings";
+import {
+  PublicBasicAuthSettingsType,
+  PublicSettingsType,
+  PublicAliasSettingsType,
+} from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
 type Props = {
   projectId: string;
-  sceneId?: string;
   workspaceId?: string;
   fieldId?: string;
   fieldParam?: string;
 };
 
-export default ({ projectId, sceneId, workspaceId, fieldId, fieldParam }: Props) => {
+export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
   const navigate = useNavigate();
 
-  const { useProjectQuery, useUpdateProject, useArchiveProject, useDeleteProject } =
-    useProjectFetcher();
+  const {
+    useProjectQuery,
+    useUpdateProject,
+    useArchiveProject,
+    useDeleteProject,
+    useUpdateProjectBasicAuth,
+    useUpdateProjectAlias,
+  } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
 
   const { project } = useProjectQuery(projectId);
@@ -65,21 +74,55 @@ export default ({ projectId, sceneId, workspaceId, fieldId, fieldParam }: Props)
   const { useUpdateStory } = useStorytellingAPI();
   const handleUpdateStory = useCallback(
     async (settings: PublicSettingsType & StorySettingsType) => {
-      if (!sceneId || !currentStory?.id) return;
-      await useUpdateStory({ storyId: currentStory.id, sceneId, ...settings });
+      if (!scene?.id || !currentStory?.id) return;
+      await useUpdateStory({ storyId: currentStory.id, sceneId: scene.id, ...settings });
     },
-    [useUpdateStory, sceneId, currentStory?.id],
+    [useUpdateStory, currentStory?.id, scene?.id],
+  );
+  const handleUpdateStoryBasicAuth = useCallback(
+    async (settings: PublicBasicAuthSettingsType) => {
+      if (!scene?.id || !currentStory?.id) return;
+      await useUpdateStory({ storyId: currentStory.id, sceneId: scene.id, ...settings });
+    },
+    [useUpdateStory, currentStory?.id, scene?.id],
+  );
+  const handleUpdateStoryAlias = useCallback(
+    async (settings: PublicAliasSettingsType) => {
+      if (!scene?.id || !currentStory?.id) return;
+      await useUpdateStory({ storyId: currentStory.id, sceneId: scene.id, ...settings });
+    },
+    [useUpdateStory, currentStory?.id, scene?.id],
   );
 
   // Public
+  const handleUpdateProjectBasicAuth = useCallback(
+    async (settings: PublicBasicAuthSettingsType) => {
+      if (!projectId) return;
+      await useUpdateProjectBasicAuth({ projectId, ...settings });
+    },
+    [projectId, useUpdateProjectBasicAuth],
+  );
+
+  const handleUpdateProjectAlias = useCallback(
+    async (settings: PublicAliasSettingsType) => {
+      if (!projectId) return;
+      await useUpdateProjectAlias({ projectId, ...settings });
+    },
+    [projectId, useUpdateProjectAlias],
+  );
 
   return {
+    sceneId: scene?.id,
     project,
     stories,
     currentStory,
     handleUpdateProject,
     handleArchiveProject,
     handleDeleteProject,
+    handleUpdateProjectBasicAuth,
+    handleUpdateProjectAlias,
     handleUpdateStory,
+    handleUpdateStoryBasicAuth,
+    handleUpdateStoryAlias,
   };
 };

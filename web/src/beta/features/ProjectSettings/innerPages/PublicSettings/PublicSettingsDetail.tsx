@@ -7,14 +7,21 @@ import { useT } from "@reearth/services/i18n";
 
 import { SettingsFields, ButtonWrapper } from "../common";
 
-import { PublicSettingsType } from ".";
+import { PublicAliasSettingsType, PublicBasicAuthSettingsType, PublicSettingsType } from ".";
 
 type Props = {
-  settingsItem: PublicSettingsType;
+  settingsItem: PublicSettingsType & PublicBasicAuthSettingsType & PublicAliasSettingsType;
   onUpdate: (settings: PublicSettingsType) => void;
+  onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
+  onUpdateAlias: (settings: PublicAliasSettingsType) => void;
 };
 
-const PublicSettingsDetail: React.FC<Props> = ({ settingsItem, onUpdate }) => {
+const PublicSettingsDetail: React.FC<Props> = ({
+  settingsItem,
+  onUpdate,
+  onUpdateBasicAuth,
+  onUpdateAlias,
+}) => {
   const t = useT();
 
   const [localPublicInfo, setLocalPublicInfo] = useState({
@@ -28,6 +35,24 @@ const PublicSettingsDetail: React.FC<Props> = ({ settingsItem, onUpdate }) => {
     });
   }, [localPublicInfo, onUpdate]);
 
+  const [localBasicAuthorization, setBasicAuthorization] = useState({
+    isBasicAuthActive: !!settingsItem.isBasicAuthActive,
+    basicAuthUsername: settingsItem.basicAuthUsername,
+    basicAuthPassword: settingsItem.basicAuthPassword,
+  });
+  const handleSubmitBasicAuthorization = useCallback(() => {
+    onUpdateBasicAuth({
+      ...localBasicAuthorization,
+    });
+  }, [localBasicAuthorization, onUpdateBasicAuth]);
+
+  const [localAlias, setLocalAlias] = useState(settingsItem.alias);
+  const handleSubmitAlias = useCallback(() => {
+    onUpdateAlias({
+      alias: localAlias,
+    });
+  }, [localAlias, onUpdateAlias]);
+
   return (
     <>
       <Collapse title={t("Public Info")} type="settings">
@@ -36,7 +61,7 @@ const PublicSettingsDetail: React.FC<Props> = ({ settingsItem, onUpdate }) => {
             name={t("Title")}
             value={settingsItem.publicTitle}
             onChange={publicTitle => {
-              setLocalPublicInfo(s => ({ ...s, publicTitle: publicTitle }));
+              setLocalPublicInfo(s => ({ ...s, publicTitle }));
             }}
             timeout={0}
           />
@@ -59,13 +84,17 @@ const PublicSettingsDetail: React.FC<Props> = ({ settingsItem, onUpdate }) => {
           <TextInput
             name={t("Username")}
             value={settingsItem.basicAuthUsername}
-            onChange={() => {}}
+            onChange={basicAuthUsername => {
+              setBasicAuthorization(s => ({ ...s, basicAuthUsername }));
+            }}
             timeout={0}
           />
           <TextInput
             name={t("Password")}
             value={settingsItem.basicAuthPassword}
-            onChange={() => {}}
+            onChange={basicAuthPassword => {
+              setBasicAuthorization(s => ({ ...s, basicAuthPassword }));
+            }}
             timeout={0}
           />
           <ButtonWrapper>
@@ -74,7 +103,7 @@ const PublicSettingsDetail: React.FC<Props> = ({ settingsItem, onUpdate }) => {
               size="medium"
               margin="0"
               buttonType="primary"
-              onClick={() => {}}
+              onClick={handleSubmitBasicAuthorization}
             />
           </ButtonWrapper>
         </SettingsFields>
@@ -84,9 +113,23 @@ const PublicSettingsDetail: React.FC<Props> = ({ settingsItem, onUpdate }) => {
           <TextInput
             name={t("Site name")}
             value={settingsItem.alias}
-            onChange={() => {}}
+            onChange={alias => {
+              setLocalAlias(alias);
+            }}
             timeout={0}
+            description={t(
+              "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.",
+            )}
           />
+          <ButtonWrapper>
+            <Button
+              text={t("Submit")}
+              size="medium"
+              margin="0"
+              buttonType="primary"
+              onClick={handleSubmitAlias}
+            />
+          </ButtonWrapper>
         </SettingsFields>
       </Collapse>
     </>

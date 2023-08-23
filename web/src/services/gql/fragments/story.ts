@@ -4,6 +4,15 @@ export const storyFragment = gql`
   fragment StoryFragment on Story {
     id
     title
+    panelPosition
+    isBasicAuthActive
+    basicAuthUsername
+    basicAuthPassword
+    alias
+    publicTitle
+    publicDescription
+    publicImage
+    publicNoIndex
     pages {
       ...StoryPageFragment
     }
