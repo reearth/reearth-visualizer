@@ -29,7 +29,7 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
   const { useProjectQuery } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
 
-  const { loading: loadingMe } = useMeQuery();
+  const { me, loading: loadingMe } = useMeQuery();
 
   const { scene, loading: loadingScene } = useSceneQuery({ sceneId });
 
@@ -39,8 +39,8 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
   );
 
   const currentWorkspaceId = useMemo(
-    () => workspaceId ?? scene?.teamId,
-    [workspaceId, scene?.teamId],
+    () => workspaceId ?? scene?.teamId ?? me?.myTeam?.id,
+    [workspaceId, scene?.teamId, me?.myTeam?.id],
   );
 
   const { loading: loadingProject } = useProjectQuery(currentProjectId);

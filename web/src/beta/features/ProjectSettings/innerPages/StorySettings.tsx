@@ -1,0 +1,86 @@
+import { useMemo } from "react";
+
+// import Button from "@reearth/beta/components/Button";
+import Collapse from "@reearth/beta/components/Collapse";
+import { StoryFragmentFragment } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
+
+import { MenuListItemLabel } from "../MenuList";
+
+import {
+  InnerPage,
+  InnerMenu,
+  SettingsWrapper,
+  SettingsFields,
+  // ButtonWrapper,
+  ArchivedSettingNotice,
+} from "./common";
+
+type Props = {
+  projectId: string;
+  stories: StoryFragmentFragment[];
+  currentStory?: StoryFragmentFragment;
+  isArchived?: boolean;
+  onUpdateStory: () => void;
+};
+
+const StorySettings: React.FC<Props> = ({ projectId, stories, currentStory, isArchived }) => {
+  const t = useT();
+
+  const menu = useMemo(
+    () =>
+      (stories.length > 0
+        ? stories
+        : // TODO: Check default story
+          [
+            {
+              id: "defaultStory",
+              title: "Story",
+              linkTo: `/settings/beta/projects/${projectId}/story/`,
+            },
+          ]
+      ).map(s => ({
+        id: s.id,
+        title: s.title,
+        linkTo: `/settings/beta/projects/${projectId}/story/${s.id}`,
+      })),
+    [stories, projectId],
+  );
+
+  return (
+    <InnerPage hasMenu>
+      <InnerMenu>
+        {menu.map(s => (
+          <MenuListItemLabel
+            key={s.id}
+            text={s.title}
+            active={s.id === currentStory?.id || s.id === "defaultStory"}
+            linkTo={s.linkTo}
+          />
+        ))}
+      </InnerMenu>
+      <SettingsWrapper>
+        {isArchived ? (
+          <ArchivedSettingNotice />
+        ) : (
+          <Collapse title={t("Story Panel")} type="settings" alwaysOpen>
+            <SettingsFields>
+              <div>Panel Position - Select Field</div>
+              {/* <ButtonWrapper>
+                <Button
+                  text={t("Submit")}
+                  size="medium"
+                  margin="0"
+                  buttonType="primary"
+                  onClick={onUpdateStory}
+                />
+              </ButtonWrapper> */}
+            </SettingsFields>
+          </Collapse>
+        )}
+      </SettingsWrapper>
+    </InnerPage>
+  );
+};
+
+export default StorySettings;

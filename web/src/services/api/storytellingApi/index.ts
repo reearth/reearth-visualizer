@@ -6,8 +6,9 @@ import {
   CreateStoryInput,
   CreateStoryMutation,
   MutationCreateStoryArgs,
+  UpdateStoryInput,
 } from "@reearth/services/gql/__gen__/graphql";
-import { CREATE_STORY } from "@reearth/services/gql/queries/storytelling";
+import { CREATE_STORY, UPDATE_STORY } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 
 import { useNotification } from "../../state";
@@ -46,8 +47,26 @@ export default function useStorytellingAPI() {
     [createStoryMutation, setNotification, t],
   );
 
+  const [updateStoryMutation] = useMutation(UPDATE_STORY, { refetchQueries: ["GetScene"] });
+  const useUpdateStory = useCallback(
+    async (input: UpdateStoryInput) => {
+      if (!input.storyId) return { status: "error" };
+      const { data, errors } = await updateStoryMutation({ variables: { input } });
+      if (errors || !data?.updateStory) {
+        setNotification({ type: "error", text: t("Failed to update story.") });
+
+        return { status: "error", errors };
+      }
+      setNotification({ type: "success", text: t("Successfullly updated a story!") });
+
+      return { data, status: "success" };
+    },
+    [updateStoryMutation, t, setNotification],
+  );
+
   return {
     useCreateStory,
+    useUpdateStory,
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,

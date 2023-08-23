@@ -20,6 +20,7 @@ import RootPage from "../../classic/components/pages/Authentication/RootPage";
 import Preview from "../../classic/components/pages/Preview";
 
 const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
+const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
 
 const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
 const Dashboard = lazy(() => import("@reearth/classic/components/pages/Dashboard"));
@@ -33,6 +34,10 @@ export const AppRoutes = () => {
       <StyledRouter>
         <Routes>
           <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
+          <Route
+            path="settings/beta/projects/:projectId/:fieldId?/:fieldParam?"
+            element={<BetaProjectSettings />}
+          />
           {/* Beta routes - end */}
           {/* classic routes - start */}
           <Route index={true} element={<RootPage />} />
