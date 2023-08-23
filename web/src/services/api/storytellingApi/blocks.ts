@@ -87,8 +87,6 @@ export default () => {
         [data, storyId, pageId],
       );
 
-      console.log("INSTALLED", installedStoryBlocks);
-
       return { installedStoryBlocks, ...rest };
     },
     [],

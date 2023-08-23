@@ -20,8 +20,8 @@ export default ({
 }) => {
   const [selectedStoryBlockId, setSelectedStoryBlockId] = useState<string>();
 
-  const handleStoryBlockSelect = useCallback((blockId: string) => {
-    setSelectedStoryBlockId(id => (id === blockId ? undefined : blockId));
+  const handleStoryBlockSelect = useCallback((blockId?: string) => {
+    setSelectedStoryBlockId(id => (!blockId || id === blockId ? undefined : blockId));
   }, []);
 
   const { useInstallableStoryBlocksQuery } = useStorytellingAPI();

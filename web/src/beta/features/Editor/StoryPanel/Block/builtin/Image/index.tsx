@@ -7,7 +7,7 @@ import { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../common/Wrapper";
 import { getFieldValue } from "../utils";
 
-const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, onClick, onRemove }) => {
+const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => getFieldValue(block?.property?.items ?? [], "src") as ValueTypes["string"],
     [block?.property?.items],
@@ -20,8 +20,7 @@ const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, onClick, onRemove
       isSelected={isSelected}
       propertyId={block?.property?.id}
       propertyItems={block?.property?.items}
-      onClick={onClick}
-      onRemove={onRemove}>
+      {...props}>
       {src && <Image src={src} />}
     </BlockWrapper>
   );

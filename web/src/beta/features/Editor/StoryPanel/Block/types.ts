@@ -27,6 +27,7 @@ export type CommonProps = {
   block?: Block<Item[]>;
   theme?: Theme;
   onClick?: () => void;
+  onClickAway?: () => void;
   onRemove?: (id?: string) => void;
   onChange?: (
     propertyId?: string,

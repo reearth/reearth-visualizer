@@ -9,7 +9,7 @@ import { getFieldValue } from "../utils";
 
 export type Props = BlockProps;
 
-const TextBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) => {
+const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => getFieldValue(block?.property?.items ?? [], "text") as ValueTypes["string"],
     [block?.property?.items],
@@ -22,8 +22,7 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) =>
       isSelected={isSelected}
       propertyId={block?.property?.id}
       propertyItems={block?.property?.items}
-      onClick={onClick}
-      onRemove={onRemove}>
+      {...props}>
       {text && (
         <Text size="body" customColor>
           {text}

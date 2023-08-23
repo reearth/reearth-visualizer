@@ -7,6 +7,7 @@ import { styled } from "@reearth/services/theme";
 import Template from "../../Template";
 
 import ActionPanel from "./ActionPanel";
+import ClickAwayListener from "./click-away";
 import useHooks from "./hooks";
 
 type Spacing = {
@@ -23,7 +24,8 @@ type Props = {
   children?: ReactNode;
   propertyId?: string;
   propertyItems?: Item[];
-  onClick: (() => void) | undefined;
+  onClick?: () => void;
+  onClickAway?: () => void;
   onRemove?: () => void;
 };
 
@@ -35,6 +37,7 @@ const BlockWrapper: React.FC<Props> = ({
   propertyId,
   propertyItems,
   onClick,
+  onClickAway,
   onRemove,
 }) => {
   const {
@@ -58,35 +61,37 @@ const BlockWrapper: React.FC<Props> = ({
   });
 
   return (
-    <Wrapper
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      isSelected={isSelected}>
-      {(isHovered || isSelected) && (
-        <ActionPanel
-          title={title}
-          icon={icon}
-          isSelected={isSelected}
-          showSettings={showSettings}
-          showPadding={showPadding}
-          editMode={editMode}
-          propertyId={propertyId}
-          panelSettings={panelSettings}
-          setShowPadding={setShowPadding}
-          onEditModeToggle={handleEditModeToggle}
-          onSettingsToggle={handleSettingsToggle}
-          onRemove={onRemove}
-        />
-      )}
-      <Block padding={padding} onClick={handleBlockClick}>
-        {children ?? <Template icon={icon} />}
-      </Block>
-      {editMode && propertyId && defaultSettings && (
-        <EditorPanel>
-          <FieldComponents propertyId={propertyId} item={defaultSettings} />
-        </EditorPanel>
-      )}
-    </Wrapper>
+    <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
+      <Wrapper
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        isSelected={isSelected}>
+        {(isHovered || isSelected) && (
+          <ActionPanel
+            title={title}
+            icon={icon}
+            isSelected={isSelected}
+            showSettings={showSettings}
+            showPadding={showPadding}
+            editMode={editMode}
+            propertyId={propertyId}
+            panelSettings={panelSettings}
+            setShowPadding={setShowPadding}
+            onEditModeToggle={handleEditModeToggle}
+            onSettingsToggle={handleSettingsToggle}
+            onRemove={onRemove}
+          />
+        )}
+        <Block padding={padding} onClick={handleBlockClick}>
+          {children ?? <Template icon={icon} />}
+        </Block>
+        {editMode && propertyId && defaultSettings && (
+          <EditorPanel>
+            <FieldComponents propertyId={propertyId} item={defaultSettings} />
+          </EditorPanel>
+        )}
+      </Wrapper>
+    </ClickAwayListener>
   );
 };
 
