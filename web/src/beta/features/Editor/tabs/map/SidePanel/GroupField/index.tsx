@@ -1,6 +1,7 @@
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
 import { PropertySchemaGroup } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type GroupSectionFieldProps = {
@@ -8,6 +9,8 @@ type GroupSectionFieldProps = {
 };
 
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({ groups }) => {
+  const t = useT();
+
   return (
     <SidePanelSectionField title={t("Scene")}>
       {groups.map(({ schemaGroupId, title }) => (
