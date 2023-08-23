@@ -3,7 +3,6 @@ import { Meta, Story } from "@storybook/react";
 import SpacingInput from "./index";
 
 export default {
-  title: "Components/SpacingInput",
   component: SpacingInput,
 } as Meta;
 
@@ -20,9 +19,9 @@ WithValues.args = {
   name: "Padding",
   description: "Adjust the padding values",
   value: {
-    top: "10px",
-    left: "20px",
-    right: "30px",
-    bottom: "40px",
+    top: "10",
+    left: "20",
+    right: "30",
+    bottom: "40",
   },
 };
