@@ -63,7 +63,7 @@ export type Plane = {
   pitch: number;
 };
 
-// Familiar with Cesium
+// Similar to Cesium
 export type EXPERIMENTAL_clipping = {
   planes?: {
     normal: {
@@ -109,7 +109,7 @@ export type ValueTypes = {
   spacing: Spacing;
 };
 
-const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
+const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Bool]: "bool",
   [GQLValueType.Number]: "number",
   [GQLValueType.String]: "string",
@@ -168,7 +168,7 @@ export function valueToGQL<T extends ValueType>(
   return val ?? null;
 }
 
-export const valueTypeFromGQL = (t: GQLValueType): ValueType | undefined => {
+export const valueTypeFromGQL = (t: GQLValueType): ValueType => {
   return valueTypeMapper[t];
 };
 

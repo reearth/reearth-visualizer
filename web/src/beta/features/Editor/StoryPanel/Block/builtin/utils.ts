@@ -1,10 +1,8 @@
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
-export const getFieldValue = (fieldId: string, items?: Item[]) => {
-  const d = items?.find(i => i.schemaGroup === "default");
+export const getFieldValue = (items: Item[], fieldId: string, fieldGroup?: string) => {
+  const d = items.find(i => i.schemaGroup === (fieldGroup ?? "default"));
   const isList = d && "items" in d;
   const schemaField = d?.schemaFields.find(sf => sf.id === fieldId);
-  return (!isList ? d?.fields.find(f => f.id === schemaField?.id) : schemaField?.defaultValue) as
-    | string
-    | undefined;
+  return !isList ? d?.fields.find(f => f.id === schemaField?.id)?.value : schemaField?.defaultValue;
 };

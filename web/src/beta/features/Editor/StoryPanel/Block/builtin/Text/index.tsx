@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import Text from "@reearth/beta/components/Text";
+import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../common/Wrapper";
@@ -10,9 +11,10 @@ export type Props = BlockProps;
 
 const TextBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) => {
   const text = useMemo(
-    () => getFieldValue("text", block?.property?.items),
+    () => getFieldValue(block?.property?.items ?? [], "text") as ValueTypes["string"],
     [block?.property?.items],
   );
+
   return (
     <BlockWrapper
       title={block?.title}
@@ -22,7 +24,11 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) =>
       propertyItems={block?.property?.items}
       onClick={onClick}
       onRemove={onRemove}>
-      {text && <Text size="body">{text}</Text>}
+      {text && (
+        <Text size="body" customColor>
+          {text}
+        </Text>
+      )}
     </BlockWrapper>
   );
 };

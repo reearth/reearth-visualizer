@@ -19,7 +19,6 @@ type Spacing = {
 type Props = {
   title?: string;
   icon?: string;
-  padding?: Spacing;
   isSelected?: boolean;
   children?: ReactNode;
   propertyId?: string;
@@ -31,7 +30,6 @@ type Props = {
 const BlockWrapper: React.FC<Props> = ({
   title,
   icon,
-  padding,
   isSelected,
   children,
   propertyId,
@@ -46,6 +44,7 @@ const BlockWrapper: React.FC<Props> = ({
     showPadding,
     defaultSettings,
     panelSettings,
+    padding,
     setShowPadding,
     handleMouseEnter,
     handleMouseLeave,
@@ -108,12 +107,12 @@ const Wrapper = styled.div<{ isSelected?: boolean }>`
 
 const Block = styled.div<{ padding?: Spacing }>`
   display: flex;
-  min-height: 255px;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
   cursor: pointer;
+  color: black;
 `;
 
 const EditorPanel = styled.div`

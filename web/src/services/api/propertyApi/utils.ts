@@ -226,16 +226,15 @@ const toField = (
     return;
   }
 
-  const type = valueTypeFromGQL(schemaField.type);
+  const { value, type } = valueFromGQL(field?.value, schemaField.type) ?? {};
   if (!type) return;
-  const value = valueFromGQL(field?.value, schemaField.type);
   const mergedValue = valueFromGQL(merged?.actualValue, schemaField.type);
   const links = merged?.links ?? field?.links ?? undefined;
 
   return {
     id: schemaField.fieldId,
     type,
-    value: value?.value,
+    value,
     mergedValue: mergedValue?.value,
     overridden: !!merged?.overridden,
     link:

@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 
+import { ValueTypes } from "@reearth/beta/utils/value";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
+
+import { getFieldValue } from "../utils";
 
 type Props = {
   isSelected?: boolean;
@@ -37,6 +40,11 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     [propertyItems],
   );
 
+  const padding = useMemo(
+    () => getFieldValue(propertyItems ?? [], "padding", "panel") as ValueTypes["spacing"],
+    [propertyItems],
+  );
+
   return {
     isHovered,
     editMode,
@@ -44,6 +52,7 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     showPadding,
     defaultSettings,
     panelSettings,
+    padding,
     setShowPadding,
     handleMouseEnter,
     handleMouseLeave,

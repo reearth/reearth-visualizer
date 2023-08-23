@@ -209,7 +209,7 @@ export const getInstalledStoryBlocks = (
       description: block?.description,
       icon: block?.icon,
       property: {
-        id: b.id,
+        id: b.property?.id ?? "",
         items: convert(b.property, null),
       },
     };
