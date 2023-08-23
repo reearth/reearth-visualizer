@@ -47,6 +47,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
 
   const { leftPanel } = useLeftPanel({
     tab,
+    sceneId,
     selectedStory,
     selectedPage,
     onPageSelect: handlePageSelect,
