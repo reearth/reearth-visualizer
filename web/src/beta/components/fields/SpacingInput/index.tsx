@@ -5,10 +5,10 @@ import { styled } from "@reearth/services/theme";
 import Property from "..";
 
 type SpacingValues = {
-  top: string;
-  left: string;
-  right: string;
-  bottom: string;
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
 };
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
 
 const SpacingInput: React.FC<Props> = ({ name, description, value, onChange }) => {
   const [spacingValues, setSpacingValues] = useState<SpacingValues>(
-    value || { top: "", left: "", right: "", bottom: "" },
+    value || { top: 0, left: 0, right: 0, bottom: 0 },
   );
 
   const handleInputChange = (position: keyof SpacingValues, newValue: string) => {
@@ -29,7 +29,7 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, onChange }) =
     onChange?.(updatedValues);
   };
 
-  function getSpacingPosition(spacingValue: SpacingValues, position: keyof SpacingValues): string {
+  function getSpacingPosition(spacingValue: SpacingValues, position: keyof SpacingValues): number {
     return spacingValue[position];
   }
 
