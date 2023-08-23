@@ -1,6 +1,8 @@
 import TextInput from "@reearth/beta/components/fields/TextInput";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
+import ColorField from "../ColorField";
+
 import useHooks from "./hooks";
 
 type Props = {
@@ -18,7 +20,13 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
         const value = !isList ? item.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
         return sf.type === "string" ? (
           sf.ui === "color" ? (
-            <p key={sf.id}>Color field</p>
+            <ColorField
+              key={sf.id}
+              name={sf.name}
+              value={(value as string) ?? ""}
+              description={sf.description}
+              onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+            />
           ) : sf.ui === "selection" || sf.choices ? (
             <p key={sf.id}>Selection or choices field</p>
           ) : sf.ui === "buttons" ? (
