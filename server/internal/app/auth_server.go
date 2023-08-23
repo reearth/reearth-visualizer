@@ -8,7 +8,8 @@ import (
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	authconfig "github.com/reearth/reearth/server/pkg/config"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/zitadel/oidc/pkg/oidc"
@@ -36,7 +37,7 @@ func authServer(ctx context.Context, e *echo.Echo, cfg *config.AuthSrvConfig, re
 }
 
 type authServerUser struct {
-	User repo.User
+	User accountrepo.User
 }
 
 func (r *authServerUser) Sub(ctx context.Context, email, password, authRequestID string) (string, error) {
@@ -66,7 +67,7 @@ func (r *authServerUser) Sub(ctx context.Context, email, password, authRequestID
 }
 
 func (r *authServerUser) Info(ctx context.Context, sub string, scopes []string, ui oidc.UserInfoSetter) error {
-	u, err := r.User.FindByAuth0Sub(ctx, sub)
+	u, err := r.User.FindBySub(ctx, sub)
 	if err != nil {
 		return err
 	}

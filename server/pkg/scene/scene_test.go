@@ -4,11 +4,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestScene_SetUpdatedAt(t *testing.T) {
-	s := New().NewID().Workspace(NewWorkspaceID()).RootLayer(NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
+	s := New().NewID().Workspace(accountdomain.NewWorkspaceID()).RootLayer(NewLayerID()).UpdatedAt(time.Date(1999, 1, 1, 00, 00, 1, 1, time.UTC)).MustBuild()
 	s.SetUpdatedAt(time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC))
 	assert.Equal(t, time.Date(2021, 1, 1, 00, 00, 1, 1, time.UTC), s.UpdatedAt())
 	s = nil
@@ -21,7 +22,7 @@ func TestScene_Properties(t *testing.T) {
 	pid2 := NewPropertyID()
 	s := New().
 		NewID().
-		Workspace(NewWorkspaceID()).
+		Workspace(accountdomain.NewWorkspaceID()).
 		RootLayer(NewLayerID()).
 		Property(pid1).
 		Widgets(

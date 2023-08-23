@@ -16,7 +16,7 @@ type Props = {
   pageTitle?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
-  onBlockSelect: (blockId: string) => void;
+  onBlockSelect: (blockId?: string) => void;
 };
 
 const StoryPage: React.FC<Props> = ({
@@ -34,6 +34,7 @@ const StoryPage: React.FC<Props> = ({
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handleBlockOpen,
+    handlePropertyValueUpdate,
   } = useHooks({
     sceneId,
     storyId,
@@ -59,6 +60,8 @@ const StoryPage: React.FC<Props> = ({
               block={b}
               isSelected={selectedStoryBlockId === b.id}
               onClick={() => onBlockSelect(b.id)}
+              onClickAway={() => onBlockSelect()}
+              onChange={handlePropertyValueUpdate}
               onRemove={handleStoryBlockDelete}
             />
             <BlockAddBar

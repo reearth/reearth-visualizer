@@ -17,6 +17,7 @@ export default Template;
 
 const Wrapper = styled.div`
   display: flex;
+  height: 255px;
   justify-content: center;
   align-items: center;
   flex: 1;

@@ -31,6 +31,7 @@ func TestCreateProject(t *testing.T) {
 
 	e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
+		WithHeader("authorization", "Bearer test").
 		// WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		WithHeader("Content-Type", "application/json").
