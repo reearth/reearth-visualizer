@@ -3,7 +3,7 @@ package gqlmodel
 import (
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
