@@ -42,5 +42,5 @@ export const loadUnsafeBuiltinPlugins = async (urls: string[]) => {
           return;
       }
     })
-    .filter(Boolean);
+    .filter((v): v is UnsafeBuiltinPlugin => !!v);
 };
