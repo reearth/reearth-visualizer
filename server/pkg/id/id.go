@@ -31,7 +31,7 @@ func (DatasetSchema) Type() string       { return "datasetSchema" }
 func (Cluster) Type() string             { return "cluster" }
 func (InfoboxField) Type() string        { return "infoboxField" }
 func (Layer) Type() string               { return "layer" }
-func (NLSLayer) Type() string			 { return "nlsLayer" }
+func (NLSLayer) Type() string            { return "nlsLayer" }
 func (PluginExtension) Type() string     { return "pluginExtension" }
 func (Project) Type() string             { return "project" }
 func (Property) Type() string            { return "property" }

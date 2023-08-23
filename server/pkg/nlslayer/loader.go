@@ -62,7 +62,7 @@ func (l Loader) Walk(ctx context.Context, walker func(NLSLayer, NLSLayerGroupLis
 			} else if err != nil {
 				return err
 			}
-			if lg := ToLayerGroup(l); lg != nil && lg.Children().LayerCount() > 0 {
+			if lg := ToNLSLayerGroup(l); lg != nil && lg.Children().LayerCount() > 0 {
 				if err := walk(lg.Children().Layers(), append(parents, lg)); err != nil {
 					return err
 				}

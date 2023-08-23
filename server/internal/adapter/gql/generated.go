@@ -161,15 +161,6 @@ type ComplexityRoot struct {
 		Layer func(childComplexity int) int
 	}
 
-	CSV struct {
-		DisableTypeConversion func(childComplexity int) int
-		HeightColumn          func(childComplexity int) int
-		IDColumn              func(childComplexity int) int
-		LatColumn             func(childComplexity int) int
-		LngColumn             func(childComplexity int) int
-		NoHeader              func(childComplexity int) int
-	}
-
 	Camera struct {
 		Altitude func(childComplexity int) int
 		Fov      func(childComplexity int) int
@@ -217,18 +208,6 @@ type ComplexityRoot struct {
 
 	CreateTeamPayload struct {
 		Team func(childComplexity int) int
-	}
-
-	Data struct {
-		CSV            func(childComplexity int) int
-		DataType       func(childComplexity int) int
-		JSONProperties func(childComplexity int) int
-		Layers         func(childComplexity int) int
-		Parameters     func(childComplexity int) int
-		Time           func(childComplexity int) int
-		URL            func(childComplexity int) int
-		UpdateInterval func(childComplexity int) int
-		Value          func(childComplexity int) int
 	}
 
 	Dataset struct {
@@ -327,10 +306,6 @@ type ComplexityRoot struct {
 
 	DetachTagItemFromGroupPayload struct {
 		Tag func(childComplexity int) int
-	}
-
-	Events struct {
-		SelectEvent func(childComplexity int) int
 	}
 
 	ImportDatasetPayload struct {
@@ -649,7 +624,7 @@ type ComplexityRoot struct {
 	NLSLayerGroup struct {
 		Children    func(childComplexity int) int
 		ChildrenIds func(childComplexity int) int
-		Common      func(childComplexity int) int
+		Config      func(childComplexity int) int
 		Creator     func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Infobox     func(childComplexity int) int
@@ -662,26 +637,16 @@ type ComplexityRoot struct {
 	}
 
 	NLSLayerSimple struct {
-		Appearance func(childComplexity int) int
-		Common     func(childComplexity int) int
-		Creator    func(childComplexity int) int
-		Data       func(childComplexity int) int
-		Defines    func(childComplexity int) int
-		Events     func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Infobox    func(childComplexity int) int
-		LayerType  func(childComplexity int) int
-		Properties func(childComplexity int) int
-		Scene      func(childComplexity int) int
-		SceneID    func(childComplexity int) int
-		Tags       func(childComplexity int) int
-		Title      func(childComplexity int) int
-		Visible    func(childComplexity int) int
-	}
-
-	OpenUrlEvent struct {
-		URL    func(childComplexity int) int
-		URLKey func(childComplexity int) int
+		Config    func(childComplexity int) int
+		Creator   func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Infobox   func(childComplexity int) int
+		LayerType func(childComplexity int) int
+		Scene     func(childComplexity int) int
+		SceneID   func(childComplexity int) int
+		Tags      func(childComplexity int) int
+		Title     func(childComplexity int) int
+		Visible   func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -1030,10 +995,6 @@ type ComplexityRoot struct {
 		PropertyID  func(childComplexity int) int
 	}
 
-	SelectEvent struct {
-		OpenURL func(childComplexity int) int
-	}
-
 	SignupPayload struct {
 		Team func(childComplexity int) int
 		User func(childComplexity int) int
@@ -1152,12 +1113,6 @@ type ComplexityRoot struct {
 		Role   func(childComplexity int) int
 		User   func(childComplexity int) int
 		UserID func(childComplexity int) int
-	}
-
-	Time struct {
-		Interval          func(childComplexity int) int
-		Property          func(childComplexity int) int
-		UpdateClockOnLoad func(childComplexity int) int
 	}
 
 	Typography struct {
@@ -1851,48 +1806,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AttachTagToLayerPayload.Layer(childComplexity), true
 
-	case "CSV.disableTypeConversion":
-		if e.complexity.CSV.DisableTypeConversion == nil {
-			break
-		}
-
-		return e.complexity.CSV.DisableTypeConversion(childComplexity), true
-
-	case "CSV.heightColumn":
-		if e.complexity.CSV.HeightColumn == nil {
-			break
-		}
-
-		return e.complexity.CSV.HeightColumn(childComplexity), true
-
-	case "CSV.idColumn":
-		if e.complexity.CSV.IDColumn == nil {
-			break
-		}
-
-		return e.complexity.CSV.IDColumn(childComplexity), true
-
-	case "CSV.latColumn":
-		if e.complexity.CSV.LatColumn == nil {
-			break
-		}
-
-		return e.complexity.CSV.LatColumn(childComplexity), true
-
-	case "CSV.lngColumn":
-		if e.complexity.CSV.LngColumn == nil {
-			break
-		}
-
-		return e.complexity.CSV.LngColumn(childComplexity), true
-
-	case "CSV.noHeader":
-		if e.complexity.CSV.NoHeader == nil {
-			break
-		}
-
-		return e.complexity.CSV.NoHeader(childComplexity), true
-
 	case "Camera.altitude":
 		if e.complexity.Camera.Altitude == nil {
 			break
@@ -2046,69 +1959,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CreateTeamPayload.Team(childComplexity), true
-
-	case "Data.csv":
-		if e.complexity.Data.CSV == nil {
-			break
-		}
-
-		return e.complexity.Data.CSV(childComplexity), true
-
-	case "Data.dataType":
-		if e.complexity.Data.DataType == nil {
-			break
-		}
-
-		return e.complexity.Data.DataType(childComplexity), true
-
-	case "Data.jsonProperties":
-		if e.complexity.Data.JSONProperties == nil {
-			break
-		}
-
-		return e.complexity.Data.JSONProperties(childComplexity), true
-
-	case "Data.layers":
-		if e.complexity.Data.Layers == nil {
-			break
-		}
-
-		return e.complexity.Data.Layers(childComplexity), true
-
-	case "Data.parameters":
-		if e.complexity.Data.Parameters == nil {
-			break
-		}
-
-		return e.complexity.Data.Parameters(childComplexity), true
-
-	case "Data.time":
-		if e.complexity.Data.Time == nil {
-			break
-		}
-
-		return e.complexity.Data.Time(childComplexity), true
-
-	case "Data.url":
-		if e.complexity.Data.URL == nil {
-			break
-		}
-
-		return e.complexity.Data.URL(childComplexity), true
-
-	case "Data.updateInterval":
-		if e.complexity.Data.UpdateInterval == nil {
-			break
-		}
-
-		return e.complexity.Data.UpdateInterval(childComplexity), true
-
-	case "Data.value":
-		if e.complexity.Data.Value == nil {
-			break
-		}
-
-		return e.complexity.Data.Value(childComplexity), true
 
 	case "Dataset.fields":
 		if e.complexity.Dataset.Fields == nil {
@@ -2485,13 +2335,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DetachTagItemFromGroupPayload.Tag(childComplexity), true
-
-	case "Events.selectEvent":
-		if e.complexity.Events.SelectEvent == nil {
-			break
-		}
-
-		return e.complexity.Events.SelectEvent(childComplexity), true
 
 	case "ImportDatasetPayload.datasetSchema":
 		if e.complexity.ImportDatasetPayload.DatasetSchema == nil {
@@ -4594,12 +4437,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerGroup.ChildrenIds(childComplexity), true
 
-	case "NLSLayerGroup.common":
-		if e.complexity.NLSLayerGroup.Common == nil {
+	case "NLSLayerGroup.config":
+		if e.complexity.NLSLayerGroup.Config == nil {
 			break
 		}
 
-		return e.complexity.NLSLayerGroup.Common(childComplexity), true
+		return e.complexity.NLSLayerGroup.Config(childComplexity), true
 
 	case "NLSLayerGroup.creator":
 		if e.complexity.NLSLayerGroup.Creator == nil {
@@ -4664,19 +4507,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerGroup.Visible(childComplexity), true
 
-	case "NLSLayerSimple.appearance":
-		if e.complexity.NLSLayerSimple.Appearance == nil {
+	case "NLSLayerSimple.config":
+		if e.complexity.NLSLayerSimple.Config == nil {
 			break
 		}
 
-		return e.complexity.NLSLayerSimple.Appearance(childComplexity), true
-
-	case "NLSLayerSimple.common":
-		if e.complexity.NLSLayerSimple.Common == nil {
-			break
-		}
-
-		return e.complexity.NLSLayerSimple.Common(childComplexity), true
+		return e.complexity.NLSLayerSimple.Config(childComplexity), true
 
 	case "NLSLayerSimple.creator":
 		if e.complexity.NLSLayerSimple.Creator == nil {
@@ -4684,27 +4520,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerSimple.Creator(childComplexity), true
-
-	case "NLSLayerSimple.data":
-		if e.complexity.NLSLayerSimple.Data == nil {
-			break
-		}
-
-		return e.complexity.NLSLayerSimple.Data(childComplexity), true
-
-	case "NLSLayerSimple.defines":
-		if e.complexity.NLSLayerSimple.Defines == nil {
-			break
-		}
-
-		return e.complexity.NLSLayerSimple.Defines(childComplexity), true
-
-	case "NLSLayerSimple.events":
-		if e.complexity.NLSLayerSimple.Events == nil {
-			break
-		}
-
-		return e.complexity.NLSLayerSimple.Events(childComplexity), true
 
 	case "NLSLayerSimple.id":
 		if e.complexity.NLSLayerSimple.ID == nil {
@@ -4726,13 +4541,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerSimple.LayerType(childComplexity), true
-
-	case "NLSLayerSimple.properties":
-		if e.complexity.NLSLayerSimple.Properties == nil {
-			break
-		}
-
-		return e.complexity.NLSLayerSimple.Properties(childComplexity), true
 
 	case "NLSLayerSimple.scene":
 		if e.complexity.NLSLayerSimple.Scene == nil {
@@ -4768,20 +4576,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerSimple.Visible(childComplexity), true
-
-	case "OpenUrlEvent.url":
-		if e.complexity.OpenUrlEvent.URL == nil {
-			break
-		}
-
-		return e.complexity.OpenUrlEvent.URL(childComplexity), true
-
-	case "OpenUrlEvent.urlKey":
-		if e.complexity.OpenUrlEvent.URLKey == nil {
-			break
-		}
-
-		return e.complexity.OpenUrlEvent.URLKey(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -6532,13 +6326,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SceneWidget.PropertyID(childComplexity), true
 
-	case "SelectEvent.openUrl":
-		if e.complexity.SelectEvent.OpenURL == nil {
-			break
-		}
-
-		return e.complexity.SelectEvent.OpenURL(childComplexity), true
-
 	case "SignupPayload.team":
 		if e.complexity.SignupPayload.Team == nil {
 			break
@@ -7136,27 +6923,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TeamMember.UserID(childComplexity), true
-
-	case "Time.interval":
-		if e.complexity.Time.Interval == nil {
-			break
-		}
-
-		return e.complexity.Time.Interval(childComplexity), true
-
-	case "Time.property":
-		if e.complexity.Time.Property == nil {
-			break
-		}
-
-		return e.complexity.Time.Property(childComplexity), true
-
-	case "Time.updateClockOnLoad":
-		if e.complexity.Time.UpdateClockOnLoad == nil {
-			break
-		}
-
-		return e.complexity.Time.UpdateClockOnLoad(childComplexity), true
 
 	case "Typography.bold":
 		if e.complexity.Typography.Bold == nil {
@@ -8399,12 +8165,7 @@ type NLSLayerSimple implements NLSLayer {
     id: ID!
     layerType: String!
     sceneId: ID!
-    data: Data
-    properties: Any
-    defines: Any
-    events: Events
-    appearance: Any
-    common: LayerItem
+    config: Any
     title: String!
     visible: Boolean!
     infobox: Infobox
@@ -8419,7 +8180,7 @@ type NLSLayerGroup implements NLSLayer {
     sceneId: ID!
     children: [NLSLayer]!
     childrenIds: [ID!]!
-    common: LayerItem
+    config: Any
     title: String!
     visible: Boolean!
     infobox: Infobox
@@ -8428,74 +8189,14 @@ type NLSLayerGroup implements NLSLayer {
     scene: Scene
 }
 
-type Events {
-    selectEvent: SelectEvent
-}
-
-type SelectEvent {
-    openUrl: OpenUrlEvent
-}
-
-type OpenUrlEvent {
-    url: URL
-    urlKey: String
-}
-
-type Data {
-    dataType: String!
-    url: URL
-    value: Any
-    layers: Any
-    jsonProperties: [String]
-    updateInterval: Int
-    parameters: Any
-    time: Time
-    csv: CSV
-}
-
-type Time {
-    property: String
-    interval: Int
-    updateClockOnLoad: Boolean
-}
-
-type CSV {
-    idColumn: String
-    latColumn: String
-    lngColumn: String
-    heightColumn: String
-    noHeader: Boolean
-    disableTypeConversion: Boolean
-}
-
 # InputType
 
 input AddNLSLayerSimpleInput {
     parentLayerId: ID!
     layerType: String!
     sceneID: ID!
-    dataType: String
-    dataUrl: URL
-    dataValue: Any
-    dataLayers: Any
-    dataJsonProperties: [String]
-    dataUpdateInterval: Int
-    dataParameters: Any
-    timeProperty: String
-    timeInterval: Int
-    timeUpdateClockOnLoad: Boolean
-    csvIdColumn: String
-    csvLatColumn: String
-    csvLngColumn: String
-    csvHeightColumn: String
-    csvNoHeader: Boolean
-    csvDisableTypeConversion: Boolean
-    value: Any
+    config: Any
     index: Int
-    Properties: Any
-    Defines: Any
-    Events: Any
-    Appearance: Any
 }
 
 input RemoveNLSLayerInput {
@@ -12647,18 +12348,8 @@ func (ec *executionContext) fieldContext_AddNLSLayerSimplePayload_layers(ctx con
 				return ec.fieldContext_NLSLayerSimple_layerType(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_NLSLayerSimple_sceneId(ctx, field)
-			case "data":
-				return ec.fieldContext_NLSLayerSimple_data(ctx, field)
-			case "properties":
-				return ec.fieldContext_NLSLayerSimple_properties(ctx, field)
-			case "defines":
-				return ec.fieldContext_NLSLayerSimple_defines(ctx, field)
-			case "events":
-				return ec.fieldContext_NLSLayerSimple_events(ctx, field)
-			case "appearance":
-				return ec.fieldContext_NLSLayerSimple_appearance(ctx, field)
-			case "common":
-				return ec.fieldContext_NLSLayerSimple_common(ctx, field)
+			case "config":
+				return ec.fieldContext_NLSLayerSimple_config(ctx, field)
 			case "title":
 				return ec.fieldContext_NLSLayerSimple_title(ctx, field)
 			case "visible":
@@ -13609,252 +13300,6 @@ func (ec *executionContext) fieldContext_AttachTagToLayerPayload_layer(ctx conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CSV_idColumn(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CSV) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CSV_idColumn(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IDColumn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CSV_idColumn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CSV",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CSV_latColumn(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CSV) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CSV_latColumn(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LatColumn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CSV_latColumn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CSV",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CSV_lngColumn(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CSV) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CSV_lngColumn(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LngColumn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CSV_lngColumn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CSV",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CSV_heightColumn(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CSV) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CSV_heightColumn(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HeightColumn, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CSV_heightColumn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CSV",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CSV_noHeader(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CSV) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CSV_noHeader(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NoHeader, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CSV_noHeader(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CSV",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _CSV_disableTypeConversion(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CSV) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CSV_disableTypeConversion(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DisableTypeConversion, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_CSV_disableTypeConversion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "CSV",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -15057,400 +14502,6 @@ func (ec *executionContext) fieldContext_CreateTeamPayload_team(ctx context.Cont
 				return ec.fieldContext_Team_projects(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_dataType(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_dataType(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DataType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_dataType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_url(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_url(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*url.URL)
-	fc.Result = res
-	return ec.marshalOURL2ᚖnetᚋurlᚐURL(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type URL does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_value(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_value(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_layers(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_layers(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Layers, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_layers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_jsonProperties(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_jsonProperties(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.JSONProperties, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*string)
-	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_jsonProperties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_updateInterval(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_updateInterval(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdateInterval, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_updateInterval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_parameters(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_parameters(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Parameters, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_parameters(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_time(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_time(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Time, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Time)
-	fc.Result = res
-	return ec.marshalOTime2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_time(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "property":
-				return ec.fieldContext_Time_property(ctx, field)
-			case "interval":
-				return ec.fieldContext_Time_interval(ctx, field)
-			case "updateClockOnLoad":
-				return ec.fieldContext_Time_updateClockOnLoad(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Time", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Data_csv(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Data) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Data_csv(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CSV, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.CSV)
-	fc.Result = res
-	return ec.marshalOCSV2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCSV(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Data_csv(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Data",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "idColumn":
-				return ec.fieldContext_CSV_idColumn(ctx, field)
-			case "latColumn":
-				return ec.fieldContext_CSV_latColumn(ctx, field)
-			case "lngColumn":
-				return ec.fieldContext_CSV_lngColumn(ctx, field)
-			case "heightColumn":
-				return ec.fieldContext_CSV_heightColumn(ctx, field)
-			case "noHeader":
-				return ec.fieldContext_CSV_noHeader(ctx, field)
-			case "disableTypeConversion":
-				return ec.fieldContext_CSV_disableTypeConversion(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type CSV", field.Name)
 		},
 	}
 	return fc, nil
@@ -18151,51 +17202,6 @@ func (ec *executionContext) fieldContext_DetachTagItemFromGroupPayload_tag(ctx c
 				return ec.fieldContext_TagGroup_layers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TagGroup", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Events_selectEvent(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Events) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Events_selectEvent(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SelectEvent, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.SelectEvent)
-	fc.Result = res
-	return ec.marshalOSelectEvent2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSelectEvent(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Events_selectEvent(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Events",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "openUrl":
-				return ec.fieldContext_SelectEvent_openUrl(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SelectEvent", field.Name)
 		},
 	}
 	return fc, nil
@@ -31768,8 +30774,8 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_childrenIds(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _NLSLayerGroup_common(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerGroup_common(ctx, field)
+func (ec *executionContext) _NLSLayerGroup_config(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerGroup_config(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -31782,7 +30788,7 @@ func (ec *executionContext) _NLSLayerGroup_common(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Common, nil
+		return obj.Config, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -31791,59 +30797,19 @@ func (ec *executionContext) _NLSLayerGroup_common(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.LayerItem)
+	res := resTmp.(interface{})
 	fc.Result = res
-	return ec.marshalOLayerItem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐLayerItem(ctx, field.Selections, res)
+	return ec.marshalOAny2interface(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_NLSLayerGroup_common(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_NLSLayerGroup_config(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NLSLayerGroup",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_LayerItem_id(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_LayerItem_sceneId(ctx, field)
-			case "name":
-				return ec.fieldContext_LayerItem_name(ctx, field)
-			case "isVisible":
-				return ec.fieldContext_LayerItem_isVisible(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_LayerItem_propertyId(ctx, field)
-			case "pluginId":
-				return ec.fieldContext_LayerItem_pluginId(ctx, field)
-			case "extensionId":
-				return ec.fieldContext_LayerItem_extensionId(ctx, field)
-			case "infobox":
-				return ec.fieldContext_LayerItem_infobox(ctx, field)
-			case "parentId":
-				return ec.fieldContext_LayerItem_parentId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_LayerItem_linkedDatasetId(ctx, field)
-			case "tags":
-				return ec.fieldContext_LayerItem_tags(ctx, field)
-			case "parent":
-				return ec.fieldContext_LayerItem_parent(ctx, field)
-			case "property":
-				return ec.fieldContext_LayerItem_property(ctx, field)
-			case "plugin":
-				return ec.fieldContext_LayerItem_plugin(ctx, field)
-			case "extension":
-				return ec.fieldContext_LayerItem_extension(ctx, field)
-			case "linkedDataset":
-				return ec.fieldContext_LayerItem_linkedDataset(ctx, field)
-			case "merged":
-				return ec.fieldContext_LayerItem_merged(ctx, field)
-			case "scene":
-				return ec.fieldContext_LayerItem_scene(ctx, field)
-			case "scenePlugin":
-				return ec.fieldContext_LayerItem_scenePlugin(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type LayerItem", field.Name)
+			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -32302,8 +31268,8 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_sceneId(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _NLSLayerSimple_data(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerSimple_data(ctx, field)
+func (ec *executionContext) _NLSLayerSimple_config(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerSimple_config(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -32316,68 +31282,7 @@ func (ec *executionContext) _NLSLayerSimple_data(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Data, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Data)
-	fc.Result = res
-	return ec.marshalOData2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐData(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NLSLayerSimple_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NLSLayerSimple",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "dataType":
-				return ec.fieldContext_Data_dataType(ctx, field)
-			case "url":
-				return ec.fieldContext_Data_url(ctx, field)
-			case "value":
-				return ec.fieldContext_Data_value(ctx, field)
-			case "layers":
-				return ec.fieldContext_Data_layers(ctx, field)
-			case "jsonProperties":
-				return ec.fieldContext_Data_jsonProperties(ctx, field)
-			case "updateInterval":
-				return ec.fieldContext_Data_updateInterval(ctx, field)
-			case "parameters":
-				return ec.fieldContext_Data_parameters(ctx, field)
-			case "time":
-				return ec.fieldContext_Data_time(ctx, field)
-			case "csv":
-				return ec.fieldContext_Data_csv(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Data", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NLSLayerSimple_properties(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerSimple_properties(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Properties, nil
+		return obj.Config, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32391,7 +31296,7 @@ func (ec *executionContext) _NLSLayerSimple_properties(ctx context.Context, fiel
 	return ec.marshalOAny2interface(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_NLSLayerSimple_properties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_NLSLayerSimple_config(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NLSLayerSimple",
 		Field:      field,
@@ -32399,214 +31304,6 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_properties(ctx context.C
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Any does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NLSLayerSimple_defines(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerSimple_defines(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Defines, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NLSLayerSimple_defines(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NLSLayerSimple",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NLSLayerSimple_events(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerSimple_events(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Events, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Events)
-	fc.Result = res
-	return ec.marshalOEvents2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐEvents(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NLSLayerSimple_events(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NLSLayerSimple",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "selectEvent":
-				return ec.fieldContext_Events_selectEvent(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Events", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NLSLayerSimple_appearance(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerSimple_appearance(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Appearance, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NLSLayerSimple_appearance(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NLSLayerSimple",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NLSLayerSimple_common(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerSimple_common(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Common, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.LayerItem)
-	fc.Result = res
-	return ec.marshalOLayerItem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐLayerItem(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NLSLayerSimple_common(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NLSLayerSimple",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_LayerItem_id(ctx, field)
-			case "sceneId":
-				return ec.fieldContext_LayerItem_sceneId(ctx, field)
-			case "name":
-				return ec.fieldContext_LayerItem_name(ctx, field)
-			case "isVisible":
-				return ec.fieldContext_LayerItem_isVisible(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_LayerItem_propertyId(ctx, field)
-			case "pluginId":
-				return ec.fieldContext_LayerItem_pluginId(ctx, field)
-			case "extensionId":
-				return ec.fieldContext_LayerItem_extensionId(ctx, field)
-			case "infobox":
-				return ec.fieldContext_LayerItem_infobox(ctx, field)
-			case "parentId":
-				return ec.fieldContext_LayerItem_parentId(ctx, field)
-			case "linkedDatasetId":
-				return ec.fieldContext_LayerItem_linkedDatasetId(ctx, field)
-			case "tags":
-				return ec.fieldContext_LayerItem_tags(ctx, field)
-			case "parent":
-				return ec.fieldContext_LayerItem_parent(ctx, field)
-			case "property":
-				return ec.fieldContext_LayerItem_property(ctx, field)
-			case "plugin":
-				return ec.fieldContext_LayerItem_plugin(ctx, field)
-			case "extension":
-				return ec.fieldContext_LayerItem_extension(ctx, field)
-			case "linkedDataset":
-				return ec.fieldContext_LayerItem_linkedDataset(ctx, field)
-			case "merged":
-				return ec.fieldContext_LayerItem_merged(ctx, field)
-			case "scene":
-				return ec.fieldContext_LayerItem_scene(ctx, field)
-			case "scenePlugin":
-				return ec.fieldContext_LayerItem_scenePlugin(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type LayerItem", field.Name)
 		},
 	}
 	return fc, nil
@@ -32928,88 +31625,6 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(ctx context.Contex
 				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _OpenUrlEvent_url(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.OpenURLEvent) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OpenUrlEvent_url(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*url.URL)
-	fc.Result = res
-	return ec.marshalOURL2ᚖnetᚋurlᚐURL(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_OpenUrlEvent_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "OpenUrlEvent",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type URL does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _OpenUrlEvent_urlKey(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.OpenURLEvent) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OpenUrlEvent_urlKey(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URLKey, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_OpenUrlEvent_urlKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "OpenUrlEvent",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -45060,53 +43675,6 @@ func (ec *executionContext) fieldContext_SceneWidget_property(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _SelectEvent_openUrl(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SelectEvent) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SelectEvent_openUrl(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.OpenURL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.OpenURLEvent)
-	fc.Result = res
-	return ec.marshalOOpenUrlEvent2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐOpenURLEvent(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_SelectEvent_openUrl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "SelectEvent",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "url":
-				return ec.fieldContext_OpenUrlEvent_url(ctx, field)
-			case "urlKey":
-				return ec.fieldContext_OpenUrlEvent_urlKey(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OpenUrlEvent", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _SignupPayload_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SignupPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_SignupPayload_user(ctx, field)
 	if err != nil {
@@ -49368,129 +47936,6 @@ func (ec *executionContext) fieldContext_TeamMember_user(ctx context.Context, fi
 				return ec.fieldContext_User_email(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Time_property(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Time) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Time_property(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Property, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Time_property(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Time",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Time_interval(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Time) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Time_interval(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Interval, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Time_interval(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Time",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Time_updateClockOnLoad(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Time) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Time_updateClockOnLoad(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdateClockOnLoad, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Time_updateClockOnLoad(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Time",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -54583,7 +53028,7 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"parentLayerId", "layerType", "sceneID", "dataType", "dataUrl", "dataValue", "dataLayers", "dataJsonProperties", "dataUpdateInterval", "dataParameters", "timeProperty", "timeInterval", "timeUpdateClockOnLoad", "csvIdColumn", "csvLatColumn", "csvLngColumn", "csvHeightColumn", "csvNoHeader", "csvDisableTypeConversion", "value", "index", "Properties", "Defines", "Events", "Appearance"}
+	fieldsInOrder := [...]string{"parentLayerId", "layerType", "sceneID", "config", "index"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54614,139 +53059,11 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 			if err != nil {
 				return it, err
 			}
-		case "dataType":
+		case "config":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dataType"))
-			it.DataType, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "dataUrl":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dataUrl"))
-			it.DataURL, err = ec.unmarshalOURL2ᚖnetᚋurlᚐURL(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "dataValue":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dataValue"))
-			it.DataValue, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "dataLayers":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dataLayers"))
-			it.DataLayers, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "dataJsonProperties":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dataJsonProperties"))
-			it.DataJSONProperties, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "dataUpdateInterval":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dataUpdateInterval"))
-			it.DataUpdateInterval, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "dataParameters":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dataParameters"))
-			it.DataParameters, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "timeProperty":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timeProperty"))
-			it.TimeProperty, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "timeInterval":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timeInterval"))
-			it.TimeInterval, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "timeUpdateClockOnLoad":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timeUpdateClockOnLoad"))
-			it.TimeUpdateClockOnLoad, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "csvIdColumn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("csvIdColumn"))
-			it.CSVIDColumn, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "csvLatColumn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("csvLatColumn"))
-			it.CSVLatColumn, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "csvLngColumn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("csvLngColumn"))
-			it.CSVLngColumn, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "csvHeightColumn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("csvHeightColumn"))
-			it.CSVHeightColumn, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "csvNoHeader":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("csvNoHeader"))
-			it.CSVNoHeader, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "csvDisableTypeConversion":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("csvDisableTypeConversion"))
-			it.CSVDisableTypeConversion, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "value":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalOAny2interface(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("config"))
+			it.Config, err = ec.unmarshalOAny2interface(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -54755,38 +53072,6 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
 			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Properties":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Properties"))
-			it.Properties, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Defines":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Defines"))
-			it.Defines, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Events":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Events"))
-			it.Events, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "Appearance":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Appearance"))
-			it.Appearance, err = ec.unmarshalOAny2interface(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -59148,51 +57433,6 @@ func (ec *executionContext) _AttachTagToLayerPayload(ctx context.Context, sel as
 	return out
 }
 
-var cSVImplementors = []string{"CSV"}
-
-func (ec *executionContext) _CSV(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CSV) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, cSVImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("CSV")
-		case "idColumn":
-
-			out.Values[i] = ec._CSV_idColumn(ctx, field, obj)
-
-		case "latColumn":
-
-			out.Values[i] = ec._CSV_latColumn(ctx, field, obj)
-
-		case "lngColumn":
-
-			out.Values[i] = ec._CSV_lngColumn(ctx, field, obj)
-
-		case "heightColumn":
-
-			out.Values[i] = ec._CSV_heightColumn(ctx, field, obj)
-
-		case "noHeader":
-
-			out.Values[i] = ec._CSV_noHeader(ctx, field, obj)
-
-		case "disableTypeConversion":
-
-			out.Values[i] = ec._CSV_disableTypeConversion(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var cameraImplementors = []string{"Camera"}
 
 func (ec *executionContext) _Camera(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Camera) graphql.Marshaler {
@@ -59532,66 +57772,6 @@ func (ec *executionContext) _CreateTeamPayload(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var dataImplementors = []string{"Data"}
-
-func (ec *executionContext) _Data(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Data) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, dataImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Data")
-		case "dataType":
-
-			out.Values[i] = ec._Data_dataType(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "url":
-
-			out.Values[i] = ec._Data_url(ctx, field, obj)
-
-		case "value":
-
-			out.Values[i] = ec._Data_value(ctx, field, obj)
-
-		case "layers":
-
-			out.Values[i] = ec._Data_layers(ctx, field, obj)
-
-		case "jsonProperties":
-
-			out.Values[i] = ec._Data_jsonProperties(ctx, field, obj)
-
-		case "updateInterval":
-
-			out.Values[i] = ec._Data_updateInterval(ctx, field, obj)
-
-		case "parameters":
-
-			out.Values[i] = ec._Data_parameters(ctx, field, obj)
-
-		case "time":
-
-			out.Values[i] = ec._Data_time(ctx, field, obj)
-
-		case "csv":
-
-			out.Values[i] = ec._Data_csv(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -60376,31 +58556,6 @@ func (ec *executionContext) _DetachTagItemFromGroupPayload(ctx context.Context, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var eventsImplementors = []string{"Events"}
-
-func (ec *executionContext) _Events(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Events) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, eventsImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Events")
-		case "selectEvent":
-
-			out.Values[i] = ec._Events_selectEvent(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -63110,9 +61265,9 @@ func (ec *executionContext) _NLSLayerGroup(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "common":
+		case "config":
 
-			out.Values[i] = ec._NLSLayerGroup_common(ctx, field, obj)
+			out.Values[i] = ec._NLSLayerGroup_config(ctx, field, obj)
 
 		case "title":
 
@@ -63202,29 +61357,9 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "data":
+		case "config":
 
-			out.Values[i] = ec._NLSLayerSimple_data(ctx, field, obj)
-
-		case "properties":
-
-			out.Values[i] = ec._NLSLayerSimple_properties(ctx, field, obj)
-
-		case "defines":
-
-			out.Values[i] = ec._NLSLayerSimple_defines(ctx, field, obj)
-
-		case "events":
-
-			out.Values[i] = ec._NLSLayerSimple_events(ctx, field, obj)
-
-		case "appearance":
-
-			out.Values[i] = ec._NLSLayerSimple_appearance(ctx, field, obj)
-
-		case "common":
-
-			out.Values[i] = ec._NLSLayerSimple_common(ctx, field, obj)
+			out.Values[i] = ec._NLSLayerSimple_config(ctx, field, obj)
 
 		case "title":
 
@@ -63272,35 +61407,6 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 				return innerFunc(ctx)
 
 			})
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var openUrlEventImplementors = []string{"OpenUrlEvent"}
-
-func (ec *executionContext) _OpenUrlEvent(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.OpenURLEvent) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, openUrlEventImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("OpenUrlEvent")
-		case "url":
-
-			out.Values[i] = ec._OpenUrlEvent_url(ctx, field, obj)
-
-		case "urlKey":
-
-			out.Values[i] = ec._OpenUrlEvent_urlKey(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -66333,31 +64439,6 @@ func (ec *executionContext) _SceneWidget(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
-var selectEventImplementors = []string{"SelectEvent"}
-
-func (ec *executionContext) _SelectEvent(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SelectEvent) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, selectEventImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("SelectEvent")
-		case "openUrl":
-
-			out.Values[i] = ec._SelectEvent_openUrl(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var signupPayloadImplementors = []string{"SignupPayload"}
 
 func (ec *executionContext) _SignupPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SignupPayload) graphql.Marshaler {
@@ -67375,39 +65456,6 @@ func (ec *executionContext) _TeamMember(ctx context.Context, sel ast.SelectionSe
 				return innerFunc(ctx)
 
 			})
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var timeImplementors = []string{"Time"}
-
-func (ec *executionContext) _Time(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Time) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, timeImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Time")
-		case "property":
-
-			out.Values[i] = ec._Time_property(ctx, field, obj)
-
-		case "interval":
-
-			out.Values[i] = ec._Time_interval(ctx, field, obj)
-
-		case "updateClockOnLoad":
-
-			out.Values[i] = ec._Time_updateClockOnLoad(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -72240,13 +70288,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOCSV2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCSV(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CSV) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._CSV(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOCreateAssetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateAssetPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CreateAssetPayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -72303,13 +70344,6 @@ func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthx�
 	}
 	res := gqlmodel.MarshalCursor(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOData2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐData(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Data) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Data(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalODataset2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDataset(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Dataset) graphql.Marshaler {
@@ -72389,13 +70423,6 @@ func (ec *executionContext) marshalODetachTagItemFromGroupPayload2ᚖgithubᚗco
 		return graphql.Null
 	}
 	return ec._DetachTagItemFromGroupPayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOEvents2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐEvents(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Events) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Events(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOFileSize2ᚖint64(ctx context.Context, v interface{}) (*int64, error) {
@@ -72674,13 +70701,6 @@ func (ec *executionContext) marshalONode2githubᚗcomᚋreearthᚋreearthᚋserv
 		return graphql.Null
 	}
 	return ec._Node(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOOpenUrlEvent2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐOpenURLEvent(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.OpenURLEvent) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._OpenUrlEvent(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination(ctx context.Context, v interface{}) (*gqlmodel.Pagination, error) {
@@ -73013,50 +71033,11 @@ func (ec *executionContext) marshalOSceneWidget2ᚖgithubᚗcomᚋreearthᚋreea
 	return ec._SceneWidget(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOSelectEvent2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSelectEvent(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SelectEvent) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._SelectEvent(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOSignupPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSignupPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SignupPayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._SignupPayload(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
@@ -73133,13 +71114,6 @@ func (ec *executionContext) marshalOTheme2ᚖgithubᚗcomᚋreearthᚋreearthᚋ
 		return graphql.Null
 	}
 	return v
-}
-
-func (ec *executionContext) marshalOTime2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTime(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Time) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Time(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOTranslatedString2map(ctx context.Context, v interface{}) (map[string]string, error) {

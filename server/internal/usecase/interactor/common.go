@@ -34,7 +34,7 @@ func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfi
 		Asset:        NewAsset(r, g),
 		Dataset:      NewDataset(r, g),
 		Layer:        NewLayer(r),
-		NLSLayer: 	  NewNLSLayer(r),
+		NLSLayer:     NewNLSLayer(r),
 		Plugin:       NewPlugin(r, g),
 		Project:      NewProject(r, g),
 		Property:     NewProperty(r, g),

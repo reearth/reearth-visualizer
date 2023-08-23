@@ -22,7 +22,6 @@ func (r *Resolver) NLSLayerGroup() NLSLayerGroupResolver {
 
 type nlsLayerGroupResolver struct{ *Resolver }
 
-func (r *nlsLayerGroupResolver ) Scene(ctx context.Context, obj *gqlmodel.NLSLayerGroup) (*gqlmodel.Scene, error) {
+func (r *nlsLayerGroupResolver) Scene(ctx context.Context, obj *gqlmodel.NLSLayerGroup) (*gqlmodel.Scene, error) {
 	return dataloaders(ctx).Scene.Load(obj.SceneID)
 }
-

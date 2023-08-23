@@ -16,23 +16,18 @@ func (r *mutationResolver) AddNLSLayerSimple(ctx context.Context, input gqlmodel
 
 	layer, parent, err := usecases(ctx).NLSLayer.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
 		ParentLayerID: lid,
-		Index:       input.Index,
-		LayerType:   input.LayerType,
-		Data:		 gqlmodel.ToNLSLayerData(input.DataType, input.TimeProperty, input.CSVIDColumn, input.CSVLatColumn, input.CSVLngColumn, input.CSVHeightColumn, input.DataJSONProperties, input.DataUpdateInterval, input.TimeInterval, input.DataLayers, input.DataParameters, input.DataValue, input.CSVDisableTypeConversion, input.CSVNoHeader, input.TimeUpdateClockOnLoad, input.DataURL),
-		Properties:  gqlmodel.ToNLSProperties(input.Properties),
-		Defines: gqlmodel.ToNLSDefines(input.Defines),
-		Events: gqlmodel.ToNLSEvents(input.Events),
-		Appearance: gqlmodel.ToNLSApperance(input.Appearance),
+		Index:         input.Index,
+		LayerType:     gqlmodel.ToNLSLayerType(input.LayerType),
+		Config:        gqlmodel.ToNLSConfig(input.Config),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
 	return &gqlmodel.AddNLSLayerSimplePayload{
-		Layers:       gqlmodel.ToNLSLayerSimple(layer, parent.IDRef()),
+		Layers: gqlmodel.ToNLSLayerSimple(layer, parent.IDRef()),
 	}, nil
 }
-
 
 func (r *mutationResolver) RemoveNLSLayer(ctx context.Context, input gqlmodel.RemoveNLSLayerInput) (*gqlmodel.RemoveNLSLayerPayload, error) {
 	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
@@ -46,8 +41,7 @@ func (r *mutationResolver) RemoveNLSLayer(ctx context.Context, input gqlmodel.Re
 	}
 
 	return &gqlmodel.RemoveNLSLayerPayload{
-		LayerID:     gqlmodel.IDFrom(id),
-
+		LayerID: gqlmodel.IDFrom(id),
 	}, nil
 }
 

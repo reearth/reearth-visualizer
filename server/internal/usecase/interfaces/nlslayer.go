@@ -9,15 +9,10 @@ import (
 )
 
 type AddNLSLayerSimpleInput struct {
-	ParentLayerID  id.NLSLayerID
+	ParentLayerID id.NLSLayerID
 	Index         *int
-	LayerType     string
-	Data          *nlslayer.Data
-	// LayerCommon   *id.LayerID TODO
-	Properties    *nlslayer.Properties
-	Defines       *nlslayer.Defines
-	Events        *nlslayer.Events
-	Appearance    *nlslayer.Appearance
+	LayerType     nlslayer.LayerType
+	Config        *nlslayer.Config
 }
 
 type UpdateNLSLayerInput struct {
@@ -25,7 +20,6 @@ type UpdateNLSLayerInput struct {
 	Name    *string
 	Visible *bool
 }
-
 
 type NLSLayer interface {
 	Fetch(context.Context, id.NLSLayerIDList, *usecase.Operator) (nlslayer.NLSLayerList, error)

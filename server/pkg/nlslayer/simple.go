@@ -1,17 +1,12 @@
 package nlslayer
 
 import (
-	pl"github.com/reearth/reearth/server/pkg/layer"
+	pl "github.com/reearth/reearth/server/pkg/layer"
 )
 
 type NLSLayerSimple struct {
 	layerBase
-	data				*Data
-	properties          *Properties
-	defines 			*Defines
-	events				*Events
-	appearance			*Appearance
-	common  			*LayerID
+	config *Config
 }
 
 func (l *NLSLayerSimple) ID() ID {
@@ -25,7 +20,7 @@ func (l *NLSLayerSimple) IDRef() *ID {
 	return l.layerBase.IDRef()
 }
 
-func (l *NLSLayerSimple) LayerType() string {
+func (l *NLSLayerSimple) LayerType() LayerType {
 	return l.layerBase.LayerType()
 }
 
@@ -34,7 +29,7 @@ func (l *NLSLayerSimple) Scene() SceneID {
 }
 
 func (l *NLSLayerSimple) LinkedDataset() *pl.DatasetID {
-		return nil
+	return nil
 }
 
 func (l *NLSLayerSimple) Title() string {
@@ -94,45 +89,28 @@ func (l *NLSLayerSimple) LayerRef() *NLSLayer {
 	return &layer
 }
 
-func (l *NLSLayerSimple) Data() *Data {
+func (l *NLSLayerSimple) Config() *Config {
 	if l == nil {
 		return nil
 	}
-	return l.data
+	return l.config
 }
 
-func (l *NLSLayerSimple) Properties() *Properties {
+func (l *NLSLayerSimple) Clone() Cloner {
 	if l == nil {
 		return nil
 	}
-	return l.properties
-}
 
-func (l *NLSLayerSimple) Defines() *Defines {
-	if l == nil {
-		return nil
+	clonedBase := l.layerBase.Clone()
+
+	var clonedConfig *Config
+	if l.config != nil {
+		clonedConfigItem := l.config.Clone()
+		clonedConfig = &clonedConfigItem
 	}
-	return l.defines
-}
 
-func (l *NLSLayerSimple) Events() *Events {
-	if l == nil {
-		return nil
+	return &NLSLayerSimple{
+		layerBase: *clonedBase,
+		config:    clonedConfig,
 	}
-	return l.events
-}
-
-func (l *NLSLayerSimple) Appearance() *Appearance {
-	if l == nil {
-		return nil
-	}
-	return l.appearance
-}
-
-
-func (l *NLSLayerSimple) CommonLayer() *LayerID {
-	if l == nil {
-		return &LayerID{}
-	}
-	return l.common.CloneRef()
 }

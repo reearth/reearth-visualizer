@@ -1,5 +1,9 @@
 package nlslayer
 
+import (
+	pl "github.com/reearth/reearth/server/pkg/layer"
+)
+
 func NLSLayerGroupFromLayer(l NLSLayer) *NLSLayerGroup {
 	li, ok := l.(*NLSLayerGroup)
 	if !ok {
@@ -57,7 +61,7 @@ func (b *NLSLayerGroupBuilder) NewID() *NLSLayerGroupBuilder {
 	return b
 }
 
-func (b *NLSLayerGroupBuilder) Type(t string) *NLSLayerGroupBuilder {
+func (b *NLSLayerGroupBuilder) LayerType(t LayerType) *NLSLayerGroupBuilder {
 	b.l.layerType = t
 	return b
 }
@@ -72,7 +76,32 @@ func (b *NLSLayerGroupBuilder) Layers(ll *IDList) *NLSLayerGroupBuilder {
 	return b
 }
 
-func (b *NLSLayerGroupBuilder) CommonLayer(cl *LayerID) *NLSLayerGroupBuilder {
-	b.l.common = cl
+func (b *NLSLayerGroupBuilder) Config(c *Config) *NLSLayerGroupBuilder {
+	b.l.config = c
+	return b
+}
+
+func (b *NLSLayerGroupBuilder) Title(t string) *NLSLayerGroupBuilder {
+	b.l.title = t
+	return b
+}
+
+func (b *NLSLayerGroupBuilder) Root(r bool) *NLSLayerGroupBuilder {
+	b.l.root = r
+	return b
+}
+
+func (b *NLSLayerGroupBuilder) IsVisible(i bool) *NLSLayerGroupBuilder {
+	b.l.visible = i
+	return b
+}
+
+func (b *NLSLayerGroupBuilder) Infobox(infobox *pl.Infobox) *NLSLayerGroupBuilder {
+	b.l.infobox = infobox
+	return b
+}
+
+func (b *NLSLayerGroupBuilder) Tags(tags *pl.TagList) *NLSLayerGroupBuilder {
+	b.l.tags = tags
 	return b
 }

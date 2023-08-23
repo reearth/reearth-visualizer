@@ -22,7 +22,7 @@ type Container struct {
 	DatasetSchema  DatasetSchema
 	Dataset        Dataset
 	Layer          Layer
-	NLSLayer	   NLSLayer
+	NLSLayer       NLSLayer
 	Lock           Lock
 	Plugin         Plugin
 	Project        Project
@@ -50,7 +50,7 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		DatasetSchema:  c.DatasetSchema.Filtered(scene),
 		Dataset:        c.Dataset.Filtered(scene),
 		Layer:          c.Layer.Filtered(scene),
-		NLSLayer:	   	c.NLSLayer.Filtered(scene),
+		NLSLayer:       c.NLSLayer.Filtered(scene),
 		Lock:           c.Lock,
 		Plugin:         c.Plugin.Filtered(scene),
 		Policy:         c.Policy,

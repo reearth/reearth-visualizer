@@ -8,12 +8,11 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
+	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
-
 
 type NLSLayer struct {
 	common
@@ -72,14 +71,10 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	}
 
 	layerSimple, err := nlslayerops.LayerSimple{
-		SceneID:       parentLayer.Scene(),
-		LayerType:     inp.LayerType,
-		Data:          inp.Data,
-		Properties:    inp.Properties,
-		Defines:       inp.Defines,
-		Events:        inp.Events,
-		Appearance:    inp.Appearance,
-		Index:         inp.Index,
+		SceneID:   parentLayer.Scene(),
+		Config:    inp.Config,
+		LayerType: inp.LayerType,
+		Index:     inp.Index,
 	}.Initialize()
 	if err != nil {
 		return nil, nil, err
@@ -99,13 +94,13 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 }
 
 func (i *NLSLayer) fetchAllChildren(ctx context.Context, l nlslayer.NLSLayer) ([]id.NLSLayerID, error) {
-	lidl := nlslayer.ToLayerGroup(l).Children().Layers()
+	lidl := nlslayer.ToNLSLayerGroup(l).Children().Layers()
 	layers, err := i.nlslayerRepo.FindByIDs(ctx, lidl)
 	if err != nil {
 		return nil, err
 	}
 	for _, ll := range layers {
-		lg := nlslayer.ToLayerGroup(*ll)
+		lg := nlslayer.ToNLSLayerGroup(*ll)
 		if lg != nil {
 			childrenLayers, err := i.fetchAllChildren(ctx, lg)
 			if err != nil {

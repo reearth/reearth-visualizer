@@ -52,7 +52,6 @@ func (ll NLSLayerList) Find(lid ID) *NLSLayer {
 	return nil
 }
 
-
 func (ll NLSLayerList) ToLayerItemList() NLSLayerSimpleList {
 	res := make(NLSLayerSimpleList, 0, len(ll))
 	for _, l := range ll {
@@ -155,7 +154,6 @@ func (ll NLSLayerList) AddUnique(newList ...*NLSLayer) NLSLayerList {
 
 type NLSLayerSimpleList []*NLSLayerSimple
 
-
 func (ll NLSLayerSimpleList) ToLayerList() NLSLayerList {
 	res := make(NLSLayerList, 0, len(ll))
 	for _, l := range ll {
@@ -230,7 +228,13 @@ func (m Map) Clone() Map {
 	}
 	m2 := make(Map, len(m))
 	for k, v := range m {
-		m2[k] = v
+		clonedObj := (*v).Clone()
+		clonedLayer, ok := clonedObj.(NLSLayer)
+		if ok {
+			m2[k] = &clonedLayer
+		} else {
+			m2[k] = nil
+		}
 	}
 	return m2
 }
@@ -269,14 +273,14 @@ func (m Map) NLSLayer(i ID) NLSLayer {
 }
 
 func (m Map) Item(i ID) *NLSLayerSimple {
-	if l := ToLayerSimple(m.NLSLayer(i)); l != nil {
+	if l := ToNLSLayerSimple(m.NLSLayer(i)); l != nil {
 		return l
 	}
 	return nil
 }
 
 func (m Map) Group(i ID) *NLSLayerGroup {
-	if l := ToLayerGroup(m.NLSLayer(i)); l != nil {
+	if l := ToNLSLayerGroup(m.NLSLayer(i)); l != nil {
 		return l
 	}
 	return nil

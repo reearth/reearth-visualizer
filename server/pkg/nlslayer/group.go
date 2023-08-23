@@ -1,13 +1,14 @@
 package nlslayer
 
 import (
-	pl"github.com/reearth/reearth/server/pkg/layer"
+	pl "github.com/reearth/reearth/server/pkg/layer"
 )
 
 type NLSLayerGroup struct {
 	layerBase
-	children            *IDList
-	common				*LayerID
+	children *IDList
+	config   *Config
+	root     bool
 }
 
 func (l *NLSLayerGroup) ID() ID {
@@ -21,7 +22,7 @@ func (l *NLSLayerGroup) IDRef() *ID {
 	return l.layerBase.IDRef()
 }
 
-func (l *NLSLayerGroup) LayerType() string {
+func (l *NLSLayerGroup) LayerType() LayerType {
 	return l.layerBase.LayerType()
 }
 
@@ -32,7 +33,6 @@ func (l *NLSLayerGroup) Scene() SceneID {
 func (l *NLSLayerGroup) Title() string {
 	return l.layerBase.Title()
 }
-
 
 func (l *NLSLayerGroup) IsVisible() bool {
 	if l == nil {
@@ -97,9 +97,42 @@ func (l *NLSLayerGroup) LayerRef() *NLSLayer {
 	return &layer
 }
 
-func (l *NLSLayerGroup) CommonLayer() *LayerID {
+func (l *NLSLayerGroup) Config() *Config {
 	if l == nil {
-		return &LayerID{}
+		return &Config{}
 	}
-	return l.common.CloneRef()
+	return l.config
+}
+
+func (l *NLSLayerGroup) IsRoot() bool {
+	if l == nil {
+		return false
+	}
+	return l.root
+}
+
+func (l *NLSLayerGroup) Clone() Cloner {
+	if l == nil {
+		return nil
+	}
+
+	clonedBase := l.layerBase.Clone()
+
+	var clonedChildren *IDList
+	if l.children != nil {
+		clonedChildren = l.children.Clone()
+	}
+
+	var clonedConfig *Config
+	if l.config != nil {
+		clonedConfigItem := l.config.Clone()
+		clonedConfig = &clonedConfigItem
+	}
+
+	return &NLSLayerGroup{
+		layerBase: *clonedBase,
+		children:  clonedChildren,
+		config:    clonedConfig,
+		root:      l.root,
+	}
 }

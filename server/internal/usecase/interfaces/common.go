@@ -20,7 +20,7 @@ type Container struct {
 	Asset        Asset
 	Dataset      Dataset
 	Layer        Layer
-	NLSLayer	 NLSLayer
+	NLSLayer     NLSLayer
 	Plugin       Plugin
 	Project      Project
 	Property     Property

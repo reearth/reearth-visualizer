@@ -1,5 +1,9 @@
 package nlslayer
 
+import (
+	pl "github.com/reearth/reearth/server/pkg/layer"
+)
+
 func NLSLayerSimpleFromLayer(l NLSLayer) *NLSLayerSimple {
 	li, ok := l.(*NLSLayerSimple)
 	if !ok {
@@ -57,7 +61,7 @@ func (b *NLSLayerSimpleBuilder) NewID() *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Type(t string) *NLSLayerSimpleBuilder {
+func (b *NLSLayerSimpleBuilder) LayerType(t LayerType) *NLSLayerSimpleBuilder {
 	b.l.layerType = t
 	return b
 }
@@ -67,32 +71,27 @@ func (b *NLSLayerSimpleBuilder) Scene(s SceneID) *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Data(d *Data) *NLSLayerSimpleBuilder {
-	b.l.data = d
+func (b *NLSLayerSimpleBuilder) Title(t string) *NLSLayerSimpleBuilder {
+	b.l.title = t
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Properties(p *Properties) *NLSLayerSimpleBuilder {
-	b.l.properties = p
+func (b *NLSLayerSimpleBuilder) IsVisible(i bool) *NLSLayerSimpleBuilder {
+	b.l.visible = i
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Defines(p *Defines) *NLSLayerSimpleBuilder {
-	b.l.defines = p
+func (b *NLSLayerSimpleBuilder) Infobox(infobox *pl.Infobox) *NLSLayerSimpleBuilder {
+	b.l.infobox = infobox
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Events(e *Events) *NLSLayerSimpleBuilder {
-	b.l.events = e
+func (b *NLSLayerSimpleBuilder) Tags(tags *pl.TagList) *NLSLayerSimpleBuilder {
+	b.l.tags = tags
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Appearance(a *Appearance) *NLSLayerSimpleBuilder {
-	b.l.appearance = a
-	return b
-}
-
-func (b *NLSLayerSimpleBuilder) CommonLayer(cl *LayerID) *NLSLayerSimpleBuilder {
-	b.l.common = cl
+func (b *NLSLayerSimpleBuilder) Config(c *Config) *NLSLayerSimpleBuilder {
+	b.l.config = c
 	return b
 }

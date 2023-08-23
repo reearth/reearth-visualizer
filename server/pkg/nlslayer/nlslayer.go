@@ -1,12 +1,13 @@
 package nlslayer
 
 import (
-	pl"github.com/reearth/reearth/server/pkg/layer"
+	pl "github.com/reearth/reearth/server/pkg/layer"
 )
 
 type NLSLayer interface {
+	Cloner
 	ID() ID
-	LayerType() string
+	LayerType() LayerType
 	Scene() SceneID
 	Title() string
 	IsVisible() bool
@@ -19,14 +20,14 @@ type NLSLayer interface {
 	Rename(string)
 }
 
-func ToLayerGroup(l NLSLayer) *NLSLayerGroup {
+func ToNLSLayerGroup(l NLSLayer) *NLSLayerGroup {
 	if lg, ok := l.(*NLSLayerGroup); ok {
 		return lg
 	}
 	return nil
 }
 
-func ToLayerGroupRef(l *NLSLayer) *NLSLayerGroup {
+func ToNLSLayerGroupRef(l *NLSLayer) *NLSLayerGroup {
 	if l == nil {
 		return nil
 	}
@@ -37,7 +38,7 @@ func ToLayerGroupRef(l *NLSLayer) *NLSLayerGroup {
 	return nil
 }
 
-func ToLayerSimple(l NLSLayer) *NLSLayerSimple {
+func ToNLSLayerSimple(l NLSLayer) *NLSLayerSimple {
 	if li, ok := l.(*NLSLayerSimple); ok {
 		return li
 	}
@@ -56,14 +57,14 @@ func ToLayerSimpleRef(l *NLSLayer) *NLSLayerSimple {
 }
 
 type layerBase struct {
-	id        		ID
-	layerType		string
-	scene     		SceneID
-	title			string
-	visible			bool
-	infobox			*pl.Infobox
-	tags      		*pl.TagList
-	creator 		string
+	id        ID
+	layerType LayerType
+	scene     SceneID
+	title     string
+	visible   bool
+	infobox   *pl.Infobox
+	tags      *pl.TagList
+	creator   string
 }
 
 func (l *layerBase) ID() ID {
@@ -77,13 +78,12 @@ func (l *layerBase) IDRef() *ID {
 	return l.id.Ref()
 }
 
-func (l *layerBase) LayerType() string {
+func (l *layerBase) LayerType() LayerType {
 	if l == nil {
 		return ""
 	}
 	return l.layerType
 }
-
 
 func (l *layerBase) Scene() SceneID {
 	return l.scene
@@ -143,4 +143,29 @@ func (l *layerBase) Rename(name string) {
 		return
 	}
 	l.title = name
+}
+
+func (l *layerBase) Clone() *layerBase {
+	if l == nil {
+		return nil
+	}
+
+	cloned := &layerBase{
+		id:        l.id,
+		layerType: l.layerType,
+		scene:     l.scene,
+		title:     l.title,
+		visible:   l.visible,
+		creator:   l.creator,
+	}
+
+	if l.infobox != nil {
+		cloned.infobox = l.infobox.Clone()
+	}
+
+	if l.tags != nil {
+		cloned.tags = l.tags.Clone()
+	}
+
+	return cloned
 }

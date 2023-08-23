@@ -127,8 +127,6 @@ func (r *NLSLayer) FindNLSLayerSimpleByID(ctx context.Context, id id.NLSLayerID)
 	return nil, rerror.ErrNotFound
 }
 
-
-
 func (r *NLSLayer) Save(ctx context.Context, l nlslayer.NLSLayer) error {
 	if !r.f.CanWrite(l.Scene()) {
 		return repo.ErrOperationDenied
@@ -147,7 +145,7 @@ func (r *NLSLayer) FindParentsByIDs(_ context.Context, ids id.NLSLayerIDList) (n
 
 	res := nlslayer.NLSLayerGroupList{}
 	for _, l := range r.data {
-		if lg := nlslayer.ToLayerGroup(l); lg != nil && r.f.CanRead(l.Scene()) {
+		if lg := nlslayer.ToNLSLayerGroup(l); lg != nil && r.f.CanRead(l.Scene()) {
 			for _, cl := range lg.Children().Layers() {
 				if ids.Has(cl) {
 					res = append(res, lg)
@@ -164,7 +162,7 @@ func (r *NLSLayer) FindParentByID(ctx context.Context, id id.NLSLayerID) (*nlsla
 	defer r.lock.Unlock()
 
 	for _, l := range r.data {
-		if lg := nlslayer.ToLayerGroup(l); lg != nil && r.f.CanRead(l.Scene()) {
+		if lg := nlslayer.ToNLSLayerGroup(l); lg != nil && r.f.CanRead(l.Scene()) {
 			for _, cl := range lg.Children().Layers() {
 				if cl == id {
 					return lg, nil

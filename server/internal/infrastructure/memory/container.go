@@ -13,7 +13,7 @@ func New() *repo.Container {
 		DatasetSchema:  NewDatasetSchema(),
 		Dataset:        NewDataset(),
 		Layer:          NewLayer(),
-		NLSLayer: 		NewNLSLayer(),
+		NLSLayer:       NewNLSLayer(),
 		Plugin:         NewPlugin(),
 		Project:        NewProject(),
 		PropertySchema: NewPropertySchema(),

@@ -31,7 +31,7 @@ func (b *Builder) Scene(s SceneID) *Builder {
 	return b
 }
 
-func (b *Builder) Type(t string) *Builder {
+func (b *Builder) LayerType(t LayerType) *Builder {
 	b.base.layerType = t
 	return b
 }

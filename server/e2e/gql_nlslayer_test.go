@@ -22,31 +22,31 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpe
 		}`,
 		Variables: map[string]any{
 			"input": map[string]any{
-				"parentLayerId": "parent12345",
-				"layerType": "SimpleType",
-				"sceneID": sId,
-				"dataType": "ExampleType",
-				"dataUrl": "https://example.com/data",
-				"dataValue": "sampleValue",
-				"dataLayers": "sampleLayerData",
-				"dataJsonProperties": []string{"prop1", "prop2"},
-				"dataUpdateInterval": 10,
-				"dataParameters": "sampleDataParameters",
-				"timeProperty": "time",
-				"timeInterval": 5,
-				"timeUpdateClockOnLoad": true,
-				"csvIdColumn": "id",
-				"csvLatColumn": "latitude",
-				"csvLngColumn": "longitude",
-				"csvHeightColumn": "height",
-				"csvNoHeader": false,
+				"parentLayerId":            "parent12345",
+				"layerType":                "SimpleType",
+				"sceneID":                  sId,
+				"dataType":                 "ExampleType",
+				"dataUrl":                  "https://example.com/data",
+				"dataValue":                "sampleValue",
+				"dataLayers":               "sampleLayerData",
+				"dataJsonProperties":       []string{"prop1", "prop2"},
+				"dataUpdateInterval":       10,
+				"dataParameters":           "sampleDataParameters",
+				"timeProperty":             "time",
+				"timeInterval":             5,
+				"timeUpdateClockOnLoad":    true,
+				"csvIdColumn":              "id",
+				"csvLatColumn":             "latitude",
+				"csvLngColumn":             "longitude",
+				"csvHeightColumn":          "height",
+				"csvNoHeader":              false,
 				"csvDisableTypeConversion": true,
-				"value": "sampleValue",
-				"index": 0,
-				"Properties": "sampleProperties",
-				"Defines": "sampleDefines",
-				"Events": "sampleEvents",
-				"Appearance": "sampleAppearance",
+				"value":                    "sampleValue",
+				"index":                    0,
+				"Properties":               "sampleProperties",
+				"Defines":                  "sampleDefines",
+				"Events":                   "sampleEvents",
+				"Appearance":               "sampleAppearance",
 			},
 		},
 	}
@@ -63,7 +63,6 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpe
 	layerId := res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
 	return requestBody, res, layerId
 }
-
 
 func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
@@ -107,7 +106,7 @@ func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 		Variables: map[string]any{
 			"input": map[string]any{
 				"layerId": layerId,
-				"name": "Updated Layer",
+				"name":    "Updated Layer",
 				"visible": true,
 			},
 		},

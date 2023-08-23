@@ -113,31 +113,11 @@ type AddMemberToTeamPayload struct {
 }
 
 type AddNLSLayerSimpleInput struct {
-	ParentLayerID            ID          `json:"parentLayerId"`
-	LayerType                string      `json:"layerType"`
-	SceneID                  ID          `json:"sceneID"`
-	DataType                 *string     `json:"dataType"`
-	DataURL                  *url.URL    `json:"dataUrl"`
-	DataValue                interface{} `json:"dataValue"`
-	DataLayers               interface{} `json:"dataLayers"`
-	DataJSONProperties       []*string   `json:"dataJsonProperties"`
-	DataUpdateInterval       *int        `json:"dataUpdateInterval"`
-	DataParameters           interface{} `json:"dataParameters"`
-	TimeProperty             *string     `json:"timeProperty"`
-	TimeInterval             *int        `json:"timeInterval"`
-	TimeUpdateClockOnLoad    *bool       `json:"timeUpdateClockOnLoad"`
-	CSVIDColumn              *string     `json:"csvIdColumn"`
-	CSVLatColumn             *string     `json:"csvLatColumn"`
-	CSVLngColumn             *string     `json:"csvLngColumn"`
-	CSVHeightColumn          *string     `json:"csvHeightColumn"`
-	CSVNoHeader              *bool       `json:"csvNoHeader"`
-	CSVDisableTypeConversion *bool       `json:"csvDisableTypeConversion"`
-	Value                    interface{} `json:"value"`
-	Index                    *int        `json:"index"`
-	Properties               interface{} `json:"Properties"`
-	Defines                  interface{} `json:"Defines"`
-	Events                   interface{} `json:"Events"`
-	Appearance               interface{} `json:"Appearance"`
+	ParentLayerID ID          `json:"parentLayerId"`
+	LayerType     string      `json:"layerType"`
+	SceneID       ID          `json:"sceneID"`
+	Config        interface{} `json:"config"`
+	Index         *int        `json:"index"`
 }
 
 type AddNLSLayerSimplePayload struct {
@@ -204,15 +184,6 @@ type AttachTagToLayerInput struct {
 
 type AttachTagToLayerPayload struct {
 	Layer Layer `json:"layer"`
-}
-
-type CSV struct {
-	IDColumn              *string `json:"idColumn"`
-	LatColumn             *string `json:"latColumn"`
-	LngColumn             *string `json:"lngColumn"`
-	HeightColumn          *string `json:"heightColumn"`
-	NoHeader              *bool   `json:"noHeader"`
-	DisableTypeConversion *bool   `json:"disableTypeConversion"`
 }
 
 type Camera struct {
@@ -329,18 +300,6 @@ type CreateTeamInput struct {
 
 type CreateTeamPayload struct {
 	Team *Team `json:"team"`
-}
-
-type Data struct {
-	DataType       string      `json:"dataType"`
-	URL            *url.URL    `json:"url"`
-	Value          interface{} `json:"value"`
-	Layers         interface{} `json:"layers"`
-	JSONProperties []*string   `json:"jsonProperties"`
-	UpdateInterval *int        `json:"updateInterval"`
-	Parameters     interface{} `json:"parameters"`
-	Time           *Time       `json:"time"`
-	CSV            *CSV        `json:"csv"`
 }
 
 type Dataset struct {
@@ -484,10 +443,6 @@ type DuplicateStoryPageInput struct {
 	SceneID ID `json:"sceneId"`
 	StoryID ID `json:"storyId"`
 	PageID  ID `json:"pageId"`
-}
-
-type Events struct {
-	SelectEvent *SelectEvent `json:"selectEvent"`
 }
 
 type ImportDatasetFromGoogleSheetInput struct {
@@ -802,46 +757,36 @@ type MoveStoryPayload struct {
 }
 
 type NLSLayerGroup struct {
-	ID          ID         `json:"id"`
-	LayerType   string     `json:"layerType"`
-	SceneID     ID         `json:"sceneId"`
-	Children    []NLSLayer `json:"children"`
-	ChildrenIds []ID       `json:"childrenIds"`
-	Common      *LayerItem `json:"common"`
-	Title       string     `json:"title"`
-	Visible     bool       `json:"visible"`
-	Infobox     *Infobox   `json:"infobox"`
-	Tags        []LayerTag `json:"tags"`
-	Creator     *string    `json:"creator"`
-	Scene       *Scene     `json:"scene"`
+	ID          ID          `json:"id"`
+	LayerType   string      `json:"layerType"`
+	SceneID     ID          `json:"sceneId"`
+	Children    []NLSLayer  `json:"children"`
+	ChildrenIds []ID        `json:"childrenIds"`
+	Config      interface{} `json:"config"`
+	Title       string      `json:"title"`
+	Visible     bool        `json:"visible"`
+	Infobox     *Infobox    `json:"infobox"`
+	Tags        []LayerTag  `json:"tags"`
+	Creator     *string     `json:"creator"`
+	Scene       *Scene      `json:"scene"`
 }
 
 func (NLSLayerGroup) IsNLSLayer() {}
 
 type NLSLayerSimple struct {
-	ID         ID          `json:"id"`
-	LayerType  string      `json:"layerType"`
-	SceneID    ID          `json:"sceneId"`
-	Data       *Data       `json:"data"`
-	Properties interface{} `json:"properties"`
-	Defines    interface{} `json:"defines"`
-	Events     *Events     `json:"events"`
-	Appearance interface{} `json:"appearance"`
-	Common     *LayerItem  `json:"common"`
-	Title      string      `json:"title"`
-	Visible    bool        `json:"visible"`
-	Infobox    *Infobox    `json:"infobox"`
-	Tags       []LayerTag  `json:"tags"`
-	Creator    *string     `json:"creator"`
-	Scene      *Scene      `json:"scene"`
+	ID        ID          `json:"id"`
+	LayerType string      `json:"layerType"`
+	SceneID   ID          `json:"sceneId"`
+	Config    interface{} `json:"config"`
+	Title     string      `json:"title"`
+	Visible   bool        `json:"visible"`
+	Infobox   *Infobox    `json:"infobox"`
+	Tags      []LayerTag  `json:"tags"`
+	Creator   *string     `json:"creator"`
+	Scene     *Scene      `json:"scene"`
 }
 
 func (NLSLayerSimple) IsNLSLayer() {}
-
-type OpenURLEvent struct {
-	URL    *url.URL `json:"url"`
-	URLKey *string  `json:"urlKey"`
-}
 
 type PageInfo struct {
 	StartCursor     *usecasex.Cursor `json:"startCursor"`
@@ -1276,10 +1221,6 @@ type SceneWidget struct {
 	Property    *Property        `json:"property"`
 }
 
-type SelectEvent struct {
-	OpenURL *OpenURLEvent `json:"openUrl"`
-}
-
 type SignupInput struct {
 	Lang   *language.Tag `json:"lang"`
 	Theme  *Theme        `json:"theme"`
@@ -1423,12 +1364,6 @@ type TeamMember struct {
 	UserID ID    `json:"userId"`
 	Role   Role  `json:"role"`
 	User   *User `json:"user"`
-}
-
-type Time struct {
-	Property          *string `json:"property"`
-	Interval          *int    `json:"interval"`
-	UpdateClockOnLoad *bool   `json:"updateClockOnLoad"`
 }
 
 type Typography struct {
