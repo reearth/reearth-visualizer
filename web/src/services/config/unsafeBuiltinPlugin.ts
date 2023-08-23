@@ -21,16 +21,21 @@ type UnsafeBuiltinPluginExtension<T extends "widget" | "block"> = {
 export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 
 export const loadUnsafeBuiltinPlugins = async (urls: string[]) => {
-  return (
-    await Promise.all(
-      urls.map(async url => {
-        try {
-          const plugin: UnsafeBuiltinPlugin = (await import(/* @vite-ignore */ url)).default;
-          return plugin;
-        } catch (e) {
-          throw new Error(`Specified unsafe built-in module could not find: ${url} ${e}`);
-        }
-      }),
-    )
-  ).filter(Boolean);
+  try {
+    return (
+      await Promise.all(
+        urls.map(async url => {
+          try {
+            const plugin: UnsafeBuiltinPlugin = (await import(/* @vite-ignore */ url)).default;
+            return plugin;
+          } catch (e) {
+            throw new Error(`Specified unsafe built-in module could not find: ${url} ${e}`);
+          }
+        }),
+      )
+    ).filter(Boolean);
+  } catch (e) {
+    console.warn(e);
+    return;
+  }
 };
