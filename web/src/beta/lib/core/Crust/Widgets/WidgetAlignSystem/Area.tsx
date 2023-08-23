@@ -120,18 +120,18 @@ export default function Area({
       editorStyle={{
         flexWrap: "wrap",
         padding: `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`,
-        background: backgroundColor
+        backgroundColor: backgroundColor
           ? backgroundColor
           : area === "middle"
-          ? theme.editor.widgetAlignSystem.vertical.bg
-          : theme.editor.widgetAlignSystem.horizontal.bg,
+          ? theme.placeHolder.main_2
+          : theme.placeHolder.main_1,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
-            ? `1px solid ${theme.editor.widgetAlignSystem.vertical.border}`
-            : `1px solid ${theme.editor.widgetAlignSystem.horizontal.border}`,
+            ? `1px solid ${theme.primary.weak}`
+            : `1px solid #E95518`,
         gap: gap,
         alignItems: centered ? "center" : "unset",
       }}

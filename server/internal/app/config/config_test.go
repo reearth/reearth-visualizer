@@ -49,6 +49,11 @@ func TestReadConfig(t *testing.T) {
 	}, cfg.Auths())
 	assert.Equal(t, "foo", cfg.Auth_AUD)
 	assert.Equal(t, map[string]string{}, cfg.Web)
+
+	t.Setenv("REEARTH_EXT_PLUGIN", "https://hoge.com/myplugin,https://hoge.com/myplugin2")
+	cfg, err = ReadConfig(false)
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"https://hoge.com/myplugin", "https://hoge.com/myplugin2"}, cfg.Ext_Plugin)
 }
 
 func Test_AddHTTPScheme(t *testing.T) {

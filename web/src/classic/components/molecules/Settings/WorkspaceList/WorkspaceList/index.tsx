@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Text from "@reearth/classic/components/atoms/Text";
 import WorkspaceCell from "@reearth/classic/components/molecules/Settings/WorkspaceList/WorkspaceCell";
-import { Team as WorkspaceType } from "@reearth/services/gql/graphql-client-api";
+import { Team as WorkspaceType } from "@reearth/classic/gql/graphql-client-api";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 

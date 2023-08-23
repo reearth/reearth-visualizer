@@ -17,6 +17,10 @@ var (
 	ExtensionTypeVisualizer      ExtensionType = "visualizer"
 	ExtensionTypeInfobox         ExtensionType = "infobox"
 	ExtensionTypeCluster         ExtensionType = "cluster"
+
+	ExtensionTypeStory      ExtensionType = "story"
+	ExtensionTypeStoryPage  ExtensionType = "storyPage"
+	ExtensionTypeStoryBlock ExtensionType = "storyBlock"
 )
 
 type Extension struct {

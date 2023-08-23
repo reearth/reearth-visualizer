@@ -67,6 +67,13 @@ type Camera {
   fov: Float!
 }
 
+type Spacing {
+  top: Float!
+  bottom: Float!
+  left: Float!
+  right: Float!
+}
+
 type Rect {
   west: Float!
   south: Float!

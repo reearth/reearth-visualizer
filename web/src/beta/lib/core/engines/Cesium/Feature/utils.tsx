@@ -29,7 +29,13 @@ import { type CesiumComponentRef, Entity } from "resium";
 
 import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/beta/lib/core/mantle";
 
-import type { ComputedFeature, ComputedLayer, FeatureComponentProps, Geometry } from "../..";
+import type {
+  ComputedFeature,
+  ComputedLayer,
+  FeatureComponentProps,
+  Geometry,
+  SceneProperty,
+} from "../..";
 import type { InternalCesium3DTileFeature } from "../types";
 
 export type FeatureProps<P = any> = {
@@ -39,7 +45,7 @@ export type FeatureProps<P = any> = {
   layer?: ComputedLayer;
   feature?: ComputedFeature;
   geometry?: Geometry;
-  sceneProperty?: any;
+  sceneProperty?: SceneProperty;
 } & Omit<FeatureComponentProps, "layer">;
 
 export type FeatureComponent = ComponentType<FeatureProps>;

@@ -33,7 +33,7 @@ const StorytellingPageSectionItem: FC<Props> = ({
         <Text
           onClick={onClick}
           size="footnote"
-          color={theme.general.content.strong}
+          color={theme.content.withBackground}
           otherProperties={{ wordBreak: "break-all" }}>
           {title}
         </Text>
@@ -65,9 +65,8 @@ const TitleArea = styled.div<{ active?: boolean }>`
   padding: 8px;
   gap: 4px;
 
-  background: ${props => (props.active ? props.theme.general.select : props.theme.general.bg.main)};
-  border: 1px solid
-    ${props => (props.active ? props.theme.general.select : props.theme.general.bg.veryWeak)};
+  background: ${props => (props.active ? props.theme.select.main : props.theme.bg[2])};
+  border: 1px solid ${props => (props.active ? props.theme.select.main : props.theme.bg[4])};
   border-radius: 6px;
 
   width: 100%;

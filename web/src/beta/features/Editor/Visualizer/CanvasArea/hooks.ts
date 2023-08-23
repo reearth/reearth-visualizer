@@ -1,11 +1,12 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { useReactiveVar } from "@apollo/client";
+import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
+import { useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
-  useSceneId,
   useSceneMode,
   useIsCapturing,
   useCamera,
@@ -13,21 +14,30 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
-  useSelectedWidgetArea,
+  selectedWidgetAreaVar,
 } from "@reearth/services/state";
 
+import { convertWidgets } from "./convert";
 import { BlockType } from "./type";
 
-export default (isBuilt?: boolean) => {
-  const [sceneId] = useSceneId();
+export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
+  const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
+  const { useSceneQuery } = useSceneFetcher();
+  const { scene } = useSceneQuery({ sceneId });
+
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-  const [selectedWidgetArea, selectWidgetArea] = useSelectedWidgetArea();
+  const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
+
+  const [isVisualizerReady, setIsVisualizerReady] = useState(false);
+  const handleMount = useCallback(() => {
+    setIsVisualizerReady(true);
+  }, []);
 
   const onBlockMove = useCallback(
     async (_id: string, _fromIndex: number, _toIndex: number) => {
@@ -81,15 +91,7 @@ export default (isBuilt?: boolean) => {
     return [l];
   }, []);
 
-  const widgets = useMemo(
-    () => ({
-      alignSystem: undefined,
-      floatingWidgets: undefined,
-      layoutConstraint: undefined,
-      ownBuiltinWidgets: undefined,
-    }),
-    [],
-  );
+  const widgets = convertWidgets(scene);
   // TODO: Fix to use exact type through GQL typing
   const sceneProperty: any = useMemo(
     () => ({
@@ -173,21 +175,20 @@ export default (isBuilt?: boolean) => {
   );
 
   const onWidgetUpdate = useCallback(
-    async (_id: string, _update: { location?: Location; extended?: boolean; index?: number }) => {
-      if (!sceneId) return;
-
-      console.log("Widget has been updated!");
+    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+      await useUpdateWidget(id, update, sceneId);
     },
-    [sceneId],
+    [sceneId, useUpdateWidget],
   );
 
   const onWidgetAlignSystemUpdate = useCallback(
-    async (_location: Location, _align: Alignment) => {
-      if (!sceneId) return;
-
-      console.log("WAS has been updated!");
+    async (location: Location, align: Alignment) => {
+      await useUpdateWidgetAlignSystem(
+        { zone: location.zone, section: location.section, area: location.area, align },
+        sceneId,
+      );
     },
-    [sceneId],
+    [sceneId, useUpdateWidgetAlignSystem],
   );
 
   const engineMeta = useMemo(
@@ -222,6 +223,7 @@ export default (isBuilt?: boolean) => {
     engineMeta,
     layerSelectionReason,
     useExperimentalSandbox,
+    isVisualizerReady,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -229,12 +231,13 @@ export default (isBuilt?: boolean) => {
     onBlockRemove,
     onBlockInsert,
     onWidgetUpdate,
-    selectWidgetArea,
+    selectWidgetArea: selectedWidgetAreaVar,
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,
     onFovChange,
     handleDropLayer,
     zoomToLayer,
+    handleMount,
   };
 };

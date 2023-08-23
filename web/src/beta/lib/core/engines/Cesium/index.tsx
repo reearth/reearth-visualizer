@@ -25,6 +25,8 @@ import Indicator from "./core/Indicator";
 import Event from "./Event";
 import Feature, { context as featureContext } from "./Feature";
 import useHooks from "./hooks";
+import { AmbientOcclusion, AmbientOcclusionOutputType } from "./PostProcesses/hbao";
+import { AMBIENT_OCCLUSION_QUALITY } from "./PostProcesses/hbao/config";
 
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   {
@@ -39,16 +41,18 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     isLayerDraggable,
     isLayerDragging,
-    shouldRender: _shouldRender,
+    shouldRender,
     layerSelectionReason,
     meta,
     layersRef,
     featureFlags,
+    requestingRenderMode,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onMount,
   },
   ref,
 ) => {
@@ -76,14 +80,18 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     selectionReason: layerSelectionReason,
     isLayerDraggable,
+    isLayerDragging,
     meta,
     layersRef,
     featureFlags,
+    requestingRenderMode,
+    shouldRender,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onMount,
   });
 
   return (
@@ -91,11 +99,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       ref={cesium}
       onUpdate={handleUpdate}
       className={className}
+      requestRenderMode={true}
       animation
       timeline
       // NOTE: We need to update cesium ion token dynamically.
       // To replace old imagery provider, we need to remove old imagery provider.
-      imageryProvider={false}
+      baseLayer={false}
       fullscreenButton={false}
       homeButton={false}
       geocoder={false}
@@ -112,12 +121,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         cursor: isLayerDragging ? "grab" : undefined,
         ...style,
       }}
-      // NOTE: Need to disable requestRenderMode on NLS, because we need to attach style dynamically.
-      //       If we want to use requestRenderMode, we need to add requestRenderMode option to sceneProperty.
-      // requestRenderMode={!property?.timeline?.animation && !isLayerDraggable && !shouldRender}
-      // maximumRenderTimeChange={
-      //   !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : undefined
-      // }
       shadows={!!property?.atmosphere?.shadows}
       onClick={handleClick}
       onDoubleClick={mouseEventHandles.doubleclick}
@@ -181,6 +184,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         backgroundColor={backgroundColor}
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
+        useDepthPicking={false}
+        debugShowFramesPerSecond={!!property?.render?.debugFramePerSecond}
       />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
@@ -191,6 +196,16 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
       <Globe property={property} cesiumIonAccessToken={cesiumIonAccessToken} />
       <featureContext.Provider value={context}>{ready ? children : null}</featureContext.Provider>
+      <AmbientOcclusion
+        {...AMBIENT_OCCLUSION_QUALITY[property?.ambientOcclusion?.quality || "low"]}
+        enabled={!!property?.ambientOcclusion?.enabled}
+        intensity={property?.ambientOcclusion?.intensity ?? 100}
+        outputType={
+          property?.ambientOcclusion?.ambientOcclusionOnly
+            ? AmbientOcclusionOutputType.Occlusion
+            : null
+        }
+      />
     </Viewer>
   );
 };

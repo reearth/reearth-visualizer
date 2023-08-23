@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import Visualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
@@ -9,11 +9,13 @@ import FovSlider from "../FovSlider";
 import useHooks from "./hooks";
 
 export type Props = {
+  sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
+  children?: ReactNode;
 };
 
-const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
+const CanvasArea: React.FC<Props> = ({ sceneId, isBuilt, inEditor, children }) => {
   const {
     rootLayerId,
     selectedBlockId,
@@ -34,6 +36,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     engineMeta,
     layerSelectionReason,
     useExperimentalSandbox,
+    isVisualizerReady: _isVisualizerReady,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -48,7 +51,8 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
     onFovChange,
     handleDropLayer,
     zoomToLayer,
-  } = useHooks(isBuilt);
+    handleMount,
+  } = useHooks({ sceneId, isBuilt });
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
   >(
@@ -67,7 +71,7 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         inEditor={!!inEditor}
         layers={layers}
         widgetAlignSystem={widgets?.alignSystem}
-        floatingWidgets={widgets?.floatingWidgets}
+        floatingWidgets={widgets?.floating}
         widgetLayoutConstraint={widgets?.layoutConstraint}
         ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
         selectedLayerId={selectedLayerId}
@@ -98,8 +102,10 @@ const CanvasArea: React.FC<Props> = ({ isBuilt, inEditor }) => {
         onBlockInsert={onBlockInsert}
         onLayerDrop={handleDropLayer}
         onZoomToLayer={zoomToLayer}
-        renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}
-      />
+        onMount={handleMount}
+        renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
+        {children}
+      </Visualizer>
       <FovSlider
         visible={isCapturing && sceneMode && sceneMode !== "2d"}
         onIsCapturingChange={onIsCapturingChange}

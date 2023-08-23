@@ -9,6 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MutableRefObject,
 } from "react";
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
@@ -18,6 +19,8 @@ import { objectFromGetter } from "@reearth/beta/utils/object";
 
 import { computeAtom, convertLegacyLayer, SelectedFeatureInfo } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
+import { FORCE_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../hooks";
+import { RequestingRenderMode } from "../types";
 import { useGet } from "../utils";
 
 import { computedLayerKeys, layerKeys } from "./keys";
@@ -99,6 +102,7 @@ export default function useHooks({
   hiddenLayers,
   selectedLayerId,
   selectionReason,
+  requestingRenderMode,
   onLayerSelect,
 }: {
   layers?: Layer[];
@@ -109,6 +113,7 @@ export default function useHooks({
     featureId?: string;
   };
   selectionReason?: LayerSelectionReason;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -560,6 +565,11 @@ export default function useHooks({
     });
     setOverridenLayers(layers => layers.filter(l => !deleted.includes(l.id)));
   }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
+
+  useEffect(() => {
+    if (!requestingRenderMode || requestingRenderMode.current === FORCE_REQUEST_RENDER) return;
+    requestingRenderMode.current = REQUEST_RENDER_ONCE;
+  }, [flattenedLayers, overriddenLayers, hiddenLayerIds, requestingRenderMode]);
 
   return { atomMap, flattenedLayers, isHidden };
 }

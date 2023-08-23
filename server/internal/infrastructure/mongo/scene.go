@@ -7,7 +7,8 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -64,8 +65,8 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scen
 	})
 }
 
-func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...id.WorkspaceID) (scene.List, error) {
-	workspaces2 := id.WorkspaceIDList(workspaces)
+func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
+	workspaces2 := accountdomain.WorkspaceIDList(workspaces)
 	if r.f.Readable != nil {
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}
@@ -91,24 +92,24 @@ func (r *Scene) Remove(ctx context.Context, id id.SceneID) error {
 }
 
 func (r *Scene) find(ctx context.Context, filter interface{}) ([]*scene.Scene, error) {
-	c := mongodoc.NewSceneConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewSceneConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result, nil
 }
 
 func (r *Scene) findOne(ctx context.Context, filter any) (*scene.Scene, error) {
-	c := mongodoc.NewSceneConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewSceneConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
 }
 
-func (r *Scene) readFilter(filter any) any {
-	return applyWorkspaceFilter(filter, r.f.Readable)
-}
+// func (r *Scene) readFilter(filter any) any {
+// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// }
 
 func (r *Scene) writeFilter(filter any) any {
 	return applyWorkspaceFilter(filter, r.f.Writable)

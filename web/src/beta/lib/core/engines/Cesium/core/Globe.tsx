@@ -27,10 +27,11 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     [property?.terrain, property?.default],
   );
 
-  const terrainProvider = useMemo((): TerrainProvider | undefined => {
+  const terrainProvider = useMemo((): Promise<TerrainProvider> | TerrainProvider | undefined => {
     const opts = {
       terrain: terrainProperty?.terrain,
       terrainType: terrainProperty?.terrainType,
+      terrainNormal: terrainProperty?.terrainNormal,
       terrainCesiumIonAccessToken:
         terrainProperty?.terrainCesiumIonAccessToken || cesiumIonAccessToken,
       terrainCesiumIonAsset: terrainProperty?.terrainCesiumIonAsset,
@@ -44,6 +45,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     terrainProperty?.terrainCesiumIonAccessToken,
     terrainProperty?.terrainCesiumIonAsset,
     terrainProperty?.terrainCesiumIonUrl,
+    terrainProperty?.terrainNormal,
     cesiumIonAccessToken,
   ]);
 
@@ -82,32 +84,42 @@ const terrainProviders: {
     | ((
         opts: Pick<
           TerrainProperty,
-          "terrainCesiumIonAccessToken" | "terrainCesiumIonAsset" | "terrainCesiumIonUrl"
+          | "terrainCesiumIonAccessToken"
+          | "terrainCesiumIonAsset"
+          | "terrainCesiumIonUrl"
+          | "terrainNormal"
         >,
-      ) => TerrainProvider | null);
+      ) => Promise<TerrainProvider> | null);
 } = {
-  cesium: ({ terrainCesiumIonAccessToken }) =>
-    // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
-    new CesiumTerrainProvider({
-      url: IonResource.fromAssetId(1, {
+  cesium: ({ terrainCesiumIonAccessToken, terrainNormal }) =>
+    CesiumTerrainProvider.fromUrl(
+      IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,
       }),
-      requestVertexNormals: false,
-      requestWaterMask: false,
-    }),
+      {
+        requestVertexNormals: terrainNormal,
+        requestWaterMask: false,
+      },
+    ),
   arcgis: () =>
-    new ArcGISTiledElevationTerrainProvider({
-      url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
-    }),
-  cesiumion: ({ terrainCesiumIonAccessToken, terrainCesiumIonAsset, terrainCesiumIonUrl }) =>
+    ArcGISTiledElevationTerrainProvider.fromUrl(
+      "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+    ),
+  cesiumion: ({
+    terrainCesiumIonAccessToken,
+    terrainCesiumIonAsset,
+    terrainCesiumIonUrl,
+    terrainNormal,
+  }) =>
     terrainCesiumIonAsset
-      ? new CesiumTerrainProvider({
-          url:
-            terrainCesiumIonUrl ||
+      ? CesiumTerrainProvider.fromUrl(
+          terrainCesiumIonUrl ||
             IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
               accessToken: terrainCesiumIonAccessToken,
             }),
-          requestVertexNormals: true,
-        })
+          {
+            requestVertexNormals: terrainNormal,
+          },
+        )
       : null,
 };

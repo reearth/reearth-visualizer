@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -61,7 +62,7 @@ func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Ass
 	return filterAssets(ids, res), nil
 }
 
-func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
@@ -79,7 +80,7 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id id.WorkspaceID, uFilter 
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
-func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid id.WorkspaceID) (int64, error) {
+func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID) (int64, error) {
 	if !r.f.CanRead(wid) {
 		return 0, repo.ErrOperationDenied
 	}
@@ -131,8 +132,8 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 		}
 	}
 
-	c := mongodoc.NewAssetConsumer()
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), usort, pagination, c)
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
@@ -141,16 +142,16 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 }
 
 func (r *Asset) find(ctx context.Context, filter any) ([]*asset.Asset, error) {
-	c := mongodoc.NewAssetConsumer()
-	if err2 := r.client.Find(ctx, r.readFilter(filter), c); err2 != nil {
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	if err2 := r.client.Find(ctx, filter, c); err2 != nil {
 		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
 }
 
 func (r *Asset) findOne(ctx context.Context, filter any) (*asset.Asset, error) {
-	c := mongodoc.NewAssetConsumer()
-	if err := r.client.FindOne(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewAssetConsumer(r.f.Readable)
+	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result[0], nil
@@ -171,9 +172,9 @@ func filterAssets(ids []id.AssetID, rows []*asset.Asset) []*asset.Asset {
 	return res
 }
 
-func (r *Asset) readFilter(filter any) any {
-	return applyWorkspaceFilter(filter, r.f.Readable)
-}
+// func (r *Asset) readFilter(filter any) any {
+// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// }
 
 func (r *Asset) writeFilter(filter any) any {
 	return applyWorkspaceFilter(filter, r.f.Writable)

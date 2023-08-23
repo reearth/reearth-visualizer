@@ -99,7 +99,7 @@ jobs:
       - ci-web
       - ci-collect-info
     runs-on: ubuntu-latest
-    if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
+    if: ${{!failure() && needs.ci-web.result == 'success' && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
       - name: Dispatch Web Build
         uses: benc-uk/workflow-dispatch@v1
@@ -118,7 +118,7 @@ jobs:
       - ci-server
       - ci-collect-info
     runs-on: ubuntu-latest
-    if: ${{!failure() && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
+    if: ${{!failure() && needs.ci-server.result == 'success' && github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'release' || startsWith(github.ref_name, 'release/'))}}
     steps:
       - name: Dispatch Server Build
         uses: benc-uk/workflow-dispatch@v1

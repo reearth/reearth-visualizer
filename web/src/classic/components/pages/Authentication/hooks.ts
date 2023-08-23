@@ -2,8 +2,8 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { useGetTeamsQuery } from "@reearth/classic/gql";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
-import { useGetTeamsQuery } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useNotification, useUserId } from "@reearth/services/state";
 
@@ -37,8 +37,17 @@ export default () => {
 
   useEffect(() => {
     if (!isAuthenticated || currentWorkspace || !data || !workspaceId) return;
+    setCurrentUserId(data?.me?.id);
     setCurrentWorkspace(data.me?.myTeam);
-  }, [isAuthenticated, navigate, data, workspaceId, currentWorkspace, setCurrentWorkspace]);
+  }, [
+    isAuthenticated,
+    navigate,
+    data,
+    workspaceId,
+    currentWorkspace,
+    setCurrentUserId,
+    setCurrentWorkspace,
+  ]);
 
   useEffect(() => {
     if (authError || (isAuthenticated && !loading && data?.me === null)) {

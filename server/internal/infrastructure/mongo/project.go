@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -44,7 +45,7 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
 	return r.findOne(ctx, bson.M{
 		"id": id.String(),
-	})
+	}, true)
 }
 
 func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
@@ -64,7 +65,7 @@ func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*proje
 	return filterProjects(ids, res), nil
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
@@ -88,10 +89,10 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 		},
 	}
 
-	return r.findOneWithoutReadFilter(ctx, f)
+	return r.findOne(ctx, f, false)
 }
 
-func (r *Project) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
+func (r *Project) CountByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
 	if !r.f.CanRead(ws) {
 		return 0, repo.ErrOperationDenied
 	}
@@ -102,7 +103,7 @@ func (r *Project) CountByWorkspace(ctx context.Context, ws id.WorkspaceID) (int,
 	return int(count), err
 }
 
-func (r *Project) CountPublicByWorkspace(ctx context.Context, ws id.WorkspaceID) (int, error) {
+func (r *Project) CountPublicByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
 	if !r.f.CanRead(ws) {
 		return 0, repo.ErrOperationDenied
 	}
@@ -129,19 +130,19 @@ func (r *Project) Remove(ctx context.Context, id id.ProjectID) error {
 }
 
 func (r *Project) find(ctx context.Context, filter interface{}) ([]*project.Project, error) {
-	c := mongodoc.NewProjectConsumer()
-	if err := r.client.Find(ctx, r.readFilter(filter), c); err != nil {
+	c := mongodoc.NewProjectConsumer(r.f.Readable)
+	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
 	return c.Result, nil
 }
 
-func (r *Project) findOne(ctx context.Context, filter any) (*project.Project, error) {
-	return r.findOneWithoutReadFilter(ctx, r.readFilter(filter))
-}
-
-func (r *Project) findOneWithoutReadFilter(ctx context.Context, filter any) (*project.Project, error) {
-	c := mongodoc.NewProjectConsumer()
+func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bool) (*project.Project, error) {
+	var f []accountdomain.WorkspaceID
+	if filterByWorkspaces {
+		f = r.f.Readable
+	}
+	c := mongodoc.NewProjectConsumer(f)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
@@ -149,8 +150,8 @@ func (r *Project) findOneWithoutReadFilter(ctx context.Context, filter any) (*pr
 }
 
 func (r *Project) paginate(ctx context.Context, filter bson.M, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
-	c := mongodoc.NewProjectConsumer()
-	pageInfo, err := r.client.Paginate(ctx, r.readFilter(filter), nil, pagination, c)
+	c := mongodoc.NewProjectConsumer(r.f.Readable)
+	pageInfo, err := r.client.Paginate(ctx, filter, nil, pagination, c)
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
@@ -172,9 +173,9 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 	return res
 }
 
-func (r *Project) readFilter(filter interface{}) interface{} {
-	return applyWorkspaceFilter(filter, r.f.Readable)
-}
+// func (r *Project) readFilter(filter interface{}) interface{} {
+// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// }
 
 func (r *Project) writeFilter(filter interface{}) interface{} {
 	return applyWorkspaceFilter(filter, r.f.Writable)

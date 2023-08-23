@@ -7,7 +7,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"golang.org/x/exp/slices"
 )
 
 type ProjectDocument struct {
@@ -32,10 +33,12 @@ type ProjectDocument struct {
 	CoreSupport       bool
 }
 
-type ProjectConsumer = mongox.SliceFuncConsumer[*ProjectDocument, *project.Project]
+type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
 
-func NewProjectConsumer() *ProjectConsumer {
-	return NewComsumer[*ProjectDocument, *project.Project]()
+func NewProjectConsumer(workspaces []accountdomain.WorkspaceID) *ProjectConsumer {
+	return NewConsumer[*ProjectDocument, *project.Project](func(a *project.Project) bool {
+		return workspaces == nil || slices.Contains(workspaces, a.Workspace())
+	})
 }
 
 func NewProject(project *project.Project) (*ProjectDocument, string) {
@@ -74,7 +77,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := id.WorkspaceIDFrom(d.Team)
+	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
 	if err != nil {
 		return nil, err
 	}

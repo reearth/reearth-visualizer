@@ -9,11 +9,11 @@ type Scene implements Node {
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
-  dynamicDatasetSchemas: [DatasetSchema!]!
   project: Project
   team: Team
   property: Property
   rootLayer: LayerGroup
+  stories: [Story!]!
   datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
   tagIds: [ID!]!
   tags: [Tag!]!

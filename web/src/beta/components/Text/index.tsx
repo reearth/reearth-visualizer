@@ -36,7 +36,7 @@ const Text: React.FC<Props> = ({
   onClick,
 }) => {
   const theme = useTheme();
-  const defaultColor = theme.general.content.main;
+  const defaultColor = theme.content.main;
   const typographyBySize = typography[size];
 
   const Typography = useMemo(
@@ -45,14 +45,15 @@ const Text: React.FC<Props> = ({
         ? typographyBySize[trait]
         : weight in typographyBySize
         ? typographyBySize[weight]
-        : typographyBySize.regular,
-    [trait, typographyBySize, weight],
+        : typographyBySize[size === "h1" ? "medium" : "regular"],
+    [trait, size, typographyBySize, weight],
   );
 
   return Typography ? (
     <Typography
       className={className}
       style={{
+        userSelect: "none",
         ...otherProperties,
         color: customColor ? undefined : color || defaultColor,
       }}

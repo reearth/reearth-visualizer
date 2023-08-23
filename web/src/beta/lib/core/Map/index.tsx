@@ -49,12 +49,18 @@ function Map(
 ): JSX.Element | null {
   const currentEngine = engine ? engines?.[engine] : undefined;
   const Engine = currentEngine?.component;
-  const { engineRef, layersRef, selectedLayer, handleLayerSelect, handleEngineLayerSelect } =
-    useHooks({
-      ref,
-      selectedLayerId,
-      onLayerSelect,
-    });
+  const {
+    engineRef,
+    layersRef,
+    selectedLayer,
+    requestingRenderMode,
+    handleLayerSelect,
+    handleEngineLayerSelect,
+  } = useHooks({
+    ref,
+    selectedLayerId,
+    onLayerSelect,
+  });
 
   const selectedLayerIdForEngine = useMemo(
     () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
@@ -70,6 +76,7 @@ function Map(
       layerSelectionReason={selectedLayer.reason}
       onLayerSelect={handleEngineLayerSelect}
       layersRef={layersRef}
+      requestingRenderMode={requestingRenderMode}
       {...props}>
       <Layers
         ref={layersRef}
@@ -86,6 +93,7 @@ function Map(
         delegatedDataTypes={currentEngine.delegatedDataTypes}
         meta={props.meta}
         sceneProperty={props.property}
+        requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
       />
     </Engine>

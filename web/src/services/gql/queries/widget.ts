@@ -1,136 +1,10 @@
-import { gql } from "@apollo/client";
+import { gql } from "@reearth/services/gql/__gen__";
 
-import { widgetAlignSysFragment } from "@reearth/services/gql/fragments";
-
-export const GET_WIDGETS = gql`
-  query GetWidgets($sceneId: ID!, $lang: Lang) {
-    node(id: $sceneId, type: SCENE) {
-      id
-      ... on Scene {
-        plugins {
-          plugin {
-            id
-            extensions {
-              extensionId
-              description
-              name
-              translatedDescription(lang: $lang)
-              translatedName(lang: $lang)
-              icon
-              singleOnly
-              type
-              widgetLayout {
-                extendable {
-                  vertically
-                  horizontally
-                }
-                extended
-                floating
-                defaultLocation {
-                  zone
-                  section
-                  area
-                }
-              }
-            }
-          }
-        }
-        widgets {
-          id
-          enabled
-          extended
-          pluginId
-          extensionId
-          propertyId
-        }
-      }
-    }
-  }
-`;
-
-export const GET_EARTH_WIDGETS = gql`
-  query GetEarthWidgets($sceneId: ID!, $lang: Lang) {
-    node(id: $sceneId, type: SCENE) {
-      id
-      ... on Scene {
-        project {
-          id
-          publicTitle
-        }
-        property {
-          id
-          ...PropertyFragment
-        }
-        clusters {
-          id
-          name
-          propertyId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        tags {
-          id
-          label
-          ... on TagGroup {
-            tags {
-              id
-              label
-            }
-          }
-        }
-        plugins {
-          property {
-            id
-            ...PropertyFragment
-          }
-          pluginId
-          plugin {
-            id
-            extensions {
-              extensionId
-              type
-              widgetLayout {
-                floating
-                extendable {
-                  vertically
-                  horizontally
-                }
-                extended
-                defaultLocation {
-                  zone
-                  section
-                  area
-                }
-              }
-            }
-          }
-        }
-        widgets {
-          id
-          enabled
-          extended
-          pluginId
-          extensionId
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        widgetAlignSystem {
-          ...WidgetAlignSystemFragment
-        }
-      }
-    }
-  }
-
-  ${widgetAlignSysFragment}
-`;
-
-export const ADD_WIDGET = gql`
-  mutation AddWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
-    addWidget(input: { sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId }) {
+export const ADD_WIDGET =
+  gql(` mutation AddWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
+    addWidget(
+      input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId}
+    ) {
       scene {
         id
         widgets {
@@ -152,27 +26,9 @@ export const ADD_WIDGET = gql`
         extensionId
       }
     }
-  }
-`;
+  }`);
 
-export const REMOVE_WIDGET = gql`
-  mutation RemoveWidget($sceneId: ID!, $widgetId: ID!) {
-    removeWidget(input: { sceneId: $sceneId, widgetId: $widgetId }) {
-      scene {
-        id
-        widgets {
-          id
-          enabled
-          pluginId
-          extensionId
-          propertyId
-        }
-      }
-    }
-  }
-`;
-
-export const UPDATE_WIDGET = gql`
+export const UPDATE_WIDGET = gql(`
   mutation UpdateWidget(
     $sceneId: ID!
     $widgetId: ID!
@@ -204,11 +60,26 @@ export const UPDATE_WIDGET = gql`
       }
     }
   }
+`);
 
-  ${widgetAlignSysFragment}
-`;
+export const REMOVE_WIDGET = gql(`
+  mutation RemoveWidget($sceneId: ID!, $widgetId: ID!) {
+    removeWidget(input: { sceneId: $sceneId, widgetId: $widgetId }) {
+      scene {
+        id
+        widgets {
+          id
+          enabled
+          pluginId
+          extensionId
+          propertyId
+        }
+      }
+    }
+  }
+`);
 
-export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
+export const UPDATE_WIDGET_ALIGN_SYSTEM = gql(`
   mutation UpdateWidgetAlignSystem(
     $sceneId: ID!
     $location: WidgetLocationInput!
@@ -244,6 +115,4 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql`
       }
     }
   }
-
-  ${widgetAlignSysFragment}
-`;
+`);
