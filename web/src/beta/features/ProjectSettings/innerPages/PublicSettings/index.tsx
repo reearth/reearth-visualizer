@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { StoryFragmentFragment } from "@reearth/services/gql";
+import { Story } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 import { MenuListItemLabel } from "../../MenuList";
@@ -8,10 +8,20 @@ import { InnerPage, InnerMenu, SettingsWrapper, ArchivedSettingNotice } from "..
 
 import PublicSettingsDetail from "./PublicSettingsDetail";
 
+export type PublicSettingsType = {
+  publicTitle?: string;
+  publicDescription?: string;
+  publicImage?: string;
+  isBasicAuthActive?: boolean;
+  basicAuthUsername?: string;
+  basicAuthPassword?: string;
+  alias?: string;
+  publishmentStatus?: string;
+};
+
 type Props = {
   project: {
     id: string;
-    isArchived: boolean;
     publicTitle: string;
     publicDescription: string;
     publicImage: string;
@@ -20,13 +30,21 @@ type Props = {
     basicAuthPassword: string;
     alias: string;
     publishmentStatus: string;
+    isArchived: boolean;
   };
-  stories: StoryFragmentFragment[];
-  currentStory?: StoryFragmentFragment;
-  onUpdateStory: () => void;
+  stories: Story[];
+  currentStory?: Story;
+  onUpdateStory: (settings: PublicSettingsType) => void;
+  onUpdateProject: (settings: PublicSettingsType) => void;
 };
 
-const PublicSettings: React.FC<Props> = ({ project, stories, currentStory }) => {
+const PublicSettings: React.FC<Props> = ({
+  project,
+  stories,
+  currentStory,
+  onUpdateStory,
+  onUpdateProject,
+}) => {
   const t = useT();
 
   const menu = useMemo(
@@ -37,16 +55,7 @@ const PublicSettings: React.FC<Props> = ({ project, stories, currentStory }) => 
         linkTo: `/settings/beta/projects/${project.id}/public/`,
         active: !currentStory,
       },
-      ...(stories.length > 0
-        ? stories
-        : // TODO: Check default story
-          [
-            {
-              id: "defaultStory",
-              title: "Story",
-            },
-          ]
-      ).map(s => ({
+      ...stories.map(s => ({
         id: s.id,
         title: s.title,
         linkTo: `/settings/beta/projects/${project.id}/public/${s.id}`,
@@ -54,24 +63,6 @@ const PublicSettings: React.FC<Props> = ({ project, stories, currentStory }) => 
       })),
     ],
     [stories, project.id, currentStory, t],
-  );
-
-  const story = useMemo(
-    () =>
-      currentStory
-        ? {
-            id: currentStory.id,
-            publicTitle: currentStory?.id,
-            publicDescription: currentStory?.id,
-            publicImage: currentStory?.id,
-            isBasicAuthActive: true,
-            basicAuthUsername: currentStory?.id,
-            basicAuthPassword: currentStory?.id,
-            alias: currentStory?.id,
-            publishmentStatus: currentStory?.id,
-          }
-        : undefined,
-    [currentStory],
   );
 
   return (
@@ -84,10 +75,10 @@ const PublicSettings: React.FC<Props> = ({ project, stories, currentStory }) => 
       <SettingsWrapper>
         {project.isArchived ? (
           <ArchivedSettingNotice />
-        ) : story ? (
-          <PublicSettingsDetail settingsItem={story} />
+        ) : currentStory ? (
+          <PublicSettingsDetail settingsItem={currentStory} onUpdate={onUpdateStory} />
         ) : (
-          <PublicSettingsDetail settingsItem={project} />
+          <PublicSettingsDetail settingsItem={project} onUpdate={onUpdateProject} />
         )}
       </SettingsWrapper>
     </InnerPage>

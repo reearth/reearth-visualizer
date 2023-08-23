@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 // import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
-import { StoryFragmentFragment } from "@reearth/services/gql";
+import { Story } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 import { MenuListItemLabel } from "../MenuList";
@@ -16,12 +16,16 @@ import {
   ArchivedSettingNotice,
 } from "./common";
 
+export type StorySettingsType = {
+  panelPosition?: "LEFT" | "RIGHT";
+};
+
 type Props = {
   projectId: string;
-  stories: StoryFragmentFragment[];
-  currentStory?: StoryFragmentFragment;
+  stories: Story[];
+  currentStory?: Story;
   isArchived?: boolean;
-  onUpdateStory: () => void;
+  onUpdateStory: (settings: StorySettingsType) => void;
 };
 
 const StorySettings: React.FC<Props> = ({ projectId, stories, currentStory, isArchived }) => {
@@ -29,17 +33,7 @@ const StorySettings: React.FC<Props> = ({ projectId, stories, currentStory, isAr
 
   const menu = useMemo(
     () =>
-      (stories.length > 0
-        ? stories
-        : // TODO: Check default story
-          [
-            {
-              id: "defaultStory",
-              title: "Story",
-              linkTo: `/settings/beta/projects/${projectId}/story/`,
-            },
-          ]
-      ).map(s => ({
+      stories.map(s => ({
         id: s.id,
         title: s.title,
         linkTo: `/settings/beta/projects/${projectId}/story/${s.id}`,
@@ -54,7 +48,7 @@ const StorySettings: React.FC<Props> = ({ projectId, stories, currentStory, isAr
           <MenuListItemLabel
             key={s.id}
             text={s.title}
-            active={s.id === currentStory?.id || s.id === "defaultStory"}
+            active={s.id === currentStory?.id}
             linkTo={s.linkTo}
           />
         ))}

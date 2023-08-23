@@ -2001,6 +2001,13 @@ export type Story = Node & {
   sceneId: Scalars['ID']['output'];
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  publicTitle: Scalars['String']['output'];
+  publicDescription: Scalars['String']['output'];
+  publicImage: Scalars['String']['output'];
+  publicNoIndex: Scalars['Boolean']['output'];
+  isBasicAuthActive: Scalars['Boolean']['output'];
+  basicAuthPassword: Scalars['String']['output'];
+  basicAuthUsername: Scalars['String']['output'];
 };
 
 export type StoryBlock = Node & {

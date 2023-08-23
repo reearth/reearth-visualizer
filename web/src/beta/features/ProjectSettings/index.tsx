@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import Navbar from "@reearth/beta/features/Navbar";
-import { StoryFragmentFragment } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -30,7 +29,6 @@ type Props = {
   workspaceId?: string;
   fieldId?: (typeof projectSettingFields)[number]["id"];
   fieldParam?: string;
-  stories: StoryFragmentFragment[];
 };
 
 const ProjectSettings: React.FC<Props> = ({
@@ -39,11 +37,11 @@ const ProjectSettings: React.FC<Props> = ({
   workspaceId,
   fieldId,
   fieldParam,
-  stories,
 }) => {
   const t = useT();
   const {
     project,
+    stories,
     currentStory,
     handleUpdateProject,
     handleArchiveProject,
@@ -53,8 +51,8 @@ const ProjectSettings: React.FC<Props> = ({
     projectId,
     sceneId,
     workspaceId,
+    fieldId,
     fieldParam,
-    stories,
   });
 
   const fields = useMemo(
@@ -110,6 +108,7 @@ const ProjectSettings: React.FC<Props> = ({
               stories={stories}
               currentStory={currentStory}
               onUpdateStory={handleUpdateStory}
+              onUpdateProject={handleUpdateProject}
             />
           )}
         </Content>

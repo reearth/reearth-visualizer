@@ -16,14 +16,21 @@ import {
   ArchivedSettingNotice,
 } from "./common";
 
+export type GeneralSettingsType = {
+  name?: string;
+  description?: string;
+  imageUrl?: string;
+};
+
 type Props = {
   project?: {
     id: string;
     name: string;
     description: string;
+    imageUrl?: string | null;
     isArchived: boolean;
   };
-  onUpdateProject: ({ name }: { name: string }) => void;
+  onUpdateProject: (settings: GeneralSettingsType) => void;
   onArchiveProject: (archive: boolean) => void;
   onDeleteProject: () => void;
 };

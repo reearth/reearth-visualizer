@@ -1,9 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useProjectFetcher } from "@reearth/services/api";
+import { useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
-import { StoryFragmentFragment } from "@reearth/services/gql";
+
+import { GeneralSettingsType } from "./innerPages/GeneralSettings";
+import { PublicSettingsType } from "./innerPages/PublicSettings";
+import { StorySettingsType } from "./innerPages/StorySettings";
 
 type Props = {
   projectId: string;
@@ -11,20 +14,21 @@ type Props = {
   workspaceId?: string;
   fieldId?: string;
   fieldParam?: string;
-  stories: StoryFragmentFragment[];
 };
-export default ({ projectId, sceneId, workspaceId, fieldId, fieldParam, stories }: Props) => {
+
+export default ({ projectId, sceneId, workspaceId, fieldId, fieldParam }: Props) => {
   const navigate = useNavigate();
 
-  // Project
   const { useProjectQuery, useUpdateProject, useArchiveProject, useDeleteProject } =
     useProjectFetcher();
+  const { useSceneQuery } = useSceneFetcher();
 
   const { project } = useProjectQuery(projectId);
+  const { scene } = useSceneQuery({ sceneId: project?.scene?.id });
 
   const handleUpdateProject = useCallback(
-    async ({ name }: { name: string }) => {
-      await useUpdateProject({ projectId, name });
+    async (settings: GeneralSettingsType & PublicSettingsType) => {
+      await useUpdateProject({ projectId, ...settings });
     },
     [projectId, useUpdateProject],
   );
@@ -47,24 +51,31 @@ export default ({ projectId, sceneId, workspaceId, fieldId, fieldParam, stories 
   }, [workspaceId, projectId, useDeleteProject, navigate]);
 
   // Story
+  const stories = useMemo(() => scene?.stories ?? [], [scene?.stories]);
   const currentStory = useMemo(
     () =>
-      fieldId === "story" || fieldId === "public"
+      fieldId === "story"
+        ? stories.find(s => s.id === fieldParam) ?? stories[0]
+        : fieldId === "public"
         ? stories.find(s => s.id === fieldParam)
         : undefined,
     [fieldId, fieldParam, stories],
   );
 
   const { useUpdateStory } = useStorytellingAPI();
-  const handleUpdateStory = useCallback(async () => {
-    if (!sceneId || !currentStory?.id) return;
-    await useUpdateStory({ storyId: currentStory.id, sceneId });
-  }, [useUpdateStory, sceneId, currentStory?.id]);
+  const handleUpdateStory = useCallback(
+    async (settings: PublicSettingsType & StorySettingsType) => {
+      if (!sceneId || !currentStory?.id) return;
+      await useUpdateStory({ storyId: currentStory.id, sceneId, ...settings });
+    },
+    [useUpdateStory, sceneId, currentStory?.id],
+  );
 
   // Public
 
   return {
     project,
+    stories,
     currentStory,
     handleUpdateProject,
     handleArchiveProject,
