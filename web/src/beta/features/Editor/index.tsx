@@ -57,7 +57,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onPageMove: handlePageMove,
   });
 
-  const { rightPanel } = useRightPanel({ tab, sceneId });
+  const { rightPanel } = useRightPanel({ tab, sceneId, selectedPage });
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
