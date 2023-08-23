@@ -76,8 +76,6 @@ var NewPropertyID = idx.New[Property]
 var NewPropertyItemID = idx.New[PropertyItem]
 var NewSceneID = idx.New[Scene]
 var NewTagID = idx.New[Tag]
-var NewWorkspaceID = idx.New[Workspace]
-var NewUserID = idx.New[User]
 var NewWidgetID = idx.New[Widget]
 
 var MustAssetID = idx.Must[Asset]

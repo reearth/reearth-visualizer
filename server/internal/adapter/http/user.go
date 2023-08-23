@@ -5,17 +5,18 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
 	"golang.org/x/text/language"
 )
 
 type UserController struct {
-	usecase interfaces.User
+	usecase accountinterfaces.User
 }
 
-func NewUserController(usecase interfaces.User) *UserController {
+func NewUserController(usecase accountinterfaces.User) *UserController {
 	return &UserController{
 		usecase: usecase,
 	}
@@ -28,11 +29,11 @@ type PasswordResetInput struct {
 }
 
 type SignupInput struct {
-	Sub         *string         `json:"sub"`
-	Secret      *string         `json:"secret"`
-	UserID      *id.UserID      `json:"userId"`
-	WorkspaceID *id.WorkspaceID `json:"teamId"`
-	Name        *string         `json:"name"`
+	Sub         *string                    `json:"sub"`
+	Secret      *string                    `json:"secret"`
+	UserID      *accountdomain.UserID      `json:"userId"`
+	WorkspaceID *accountdomain.WorkspaceID `json:"teamId"`
+	Name        *string                    `json:"name"`
 	// Username is an alias of Name
 	Username *string       `json:"username"`
 	Email    *string       `json:"email"`
@@ -51,10 +52,10 @@ type VerifyUserOutput struct {
 }
 
 type CreateUserInput struct {
-	Sub         string          `json:"sub"`
-	Secret      string          `json:"secret"`
-	UserID      *id.UserID      `json:"userId"`
-	WorkspaceID *id.WorkspaceID `json:"teamId"`
+	Sub         string                     `json:"sub"`
+	Secret      string                     `json:"secret"`
+	UserID      *id.UserID                 `json:"userId"`
+	WorkspaceID *accountdomain.WorkspaceID `json:"teamId"`
 }
 
 type SignupOutput struct {
@@ -81,14 +82,14 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 			name2 = *name
 		}
 
-		u, _, err = c.usecase.SignupOIDC(ctx, interfaces.SignupOIDCParam{
+		u, err = c.usecase.SignupOIDC(ctx, accountinterfaces.SignupOIDCParam{
 			Sub:         au.Sub,
 			AccessToken: au.Token,
 			Issuer:      au.Iss,
 			Email:       au.Email,
 			Name:        name2,
 			Secret:      input.Secret,
-			User: interfaces.SignupUserParam{
+			User: accountinterfaces.SignupUserParam{
 				UserID:      input.UserID,
 				WorkspaceID: input.WorkspaceID,
 				Lang:        input.Lang,
@@ -96,18 +97,15 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 			},
 		})
 	} else if name != nil && input.Email != nil {
-		u, _, err = c.usecase.Signup(ctx, interfaces.SignupParam{
-			Sub:      input.Sub,
-			Name:     *name,
-			Email:    *input.Email,
-			Password: input.Password,
-			Secret:   input.Secret,
-			User: interfaces.SignupUserParam{
-				UserID:      input.UserID,
-				WorkspaceID: input.WorkspaceID,
-				Lang:        input.Lang,
-				Theme:       input.Theme,
-			},
+		u, err = c.usecase.Signup(ctx, accountinterfaces.SignupParam{
+			Name:        *name,
+			Email:       *input.Email,
+			Password:    *input.Password,
+			Secret:      input.Secret,
+			UserID:      input.UserID,
+			WorkspaceID: input.WorkspaceID,
+			Lang:        input.Lang,
+			Theme:       input.Theme,
 		})
 	} else {
 		err = errors.New("invalid params")
