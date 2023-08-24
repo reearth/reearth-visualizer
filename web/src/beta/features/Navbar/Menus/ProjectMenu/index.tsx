@@ -28,7 +28,7 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
     },
     {
       text: t("Workspace assets"),
-      linkTo: `/project-settings/${currentProject.id}/assets`,
+      linkTo: `/project-settings/${currentProject.id}/asset`,
     },
     {
       text: t("Plugin"),

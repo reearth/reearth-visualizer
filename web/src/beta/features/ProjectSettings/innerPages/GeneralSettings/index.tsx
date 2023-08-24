@@ -14,7 +14,7 @@ import {
   SettingsFields,
   ButtonWrapper,
   ArchivedSettingNotice,
-} from "./common";
+} from "../common";
 
 export type GeneralSettingsType = {
   name?: string;

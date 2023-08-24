@@ -6,6 +6,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
+import AssetSettings from "./innerPages/AssetSettings";
 import GeneralSettings from "./innerPages/GeneralSettings";
 import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
@@ -16,7 +17,7 @@ export const projectSettingFields = [
   { id: "general", text: "General" },
   { id: "story", text: "Story" },
   { id: "public", text: "Public" },
-  { id: "assets", text: "Workspace Assets" },
+  { id: "asset", text: "Workspace Assets" },
   { id: "plugin", text: "Plugin" },
 ];
 
@@ -122,6 +123,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               extensions={extensions}
             />
           )}
+          {fieldId === "asset" && <AssetSettings />}
         </Content>
       </MainSection>
     </Wrapper>

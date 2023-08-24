@@ -54,7 +54,12 @@ const Project: React.FC<Props> = ({ className, project }) => {
                 <Button large buttonType="primary" icon="earthEditor" />
               </StyledLink>
               <Button large buttonType="primary" icon="preview" onClick={onPreviewOpen} />
-              <StyledLink to={`/settings/projects/${id}`}>
+              <StyledLink
+                to={
+                  project.projectType === "beta"
+                    ? `/project-settings/${id}`
+                    : `/settings/projects/${id}`
+                }>
                 <Button large buttonType="primary" icon="settings" />
               </StyledLink>
             </ButtonWrapper>
