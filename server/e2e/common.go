@@ -14,7 +14,6 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
@@ -35,13 +34,13 @@ func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder)
 	return e
 }
 
-func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container) {
+func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container) {
 	ctx := context.Background()
 
-	var repos *repo.Container
 	if useMongo {
 		db := mongotest.Connect(t)(t)
-		repos = lo.Must(mongo.New(ctx, db, false))
+		accountRepos := lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, false))
+		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
 	} else {
 		repos = memory.New()
 	}
@@ -52,8 +51,14 @@ func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder
 		}
 	}
 
+	return repos
+}
+
+func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container) {
+	repos := initRepos(t, useMongo, seeder)
 	return StartServerWithRepos(t, cfg, repos), repos
 }
+
 func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) *httpexpect.Expect {
 	t.Helper()
 
@@ -110,27 +115,9 @@ func StartGQLServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seed
 }
 
 func StartGQLServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	ctx := context.Background()
-
-	var repos *repo.Container
-	var accountRepos *accountrepo.Container
-
-	if useMongo {
-		db := mongotest.Connect(t)(t)
-		repos = lo.Must(mongo.New(ctx, db, false))
-		accountRepos = lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, true))
-	} else {
-		repos = memory.New()
-		accountRepos = accountmemory.New()
-	}
-
-	if seeder != nil {
-		if err := seeder(ctx, repos); err != nil {
-			t.Fatalf("failed to seed the db: %s", err)
-		}
-	}
-
-	return StartGQLServerWithRepos(t, cfg, repos, accountRepos), accountRepos
+	repos := initRepos(t, useMongo, seeder)
+	acRepos := repos.AccountRepos()
+	return StartGQLServerWithRepos(t, cfg, repos, acRepos), acRepos
 }
 
 func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container, accountrepos *accountrepo.Container) *httpexpect.Expect {
