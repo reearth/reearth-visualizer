@@ -24,7 +24,7 @@ type Props = {
   projectId: string;
   stories: Story[];
   currentStory?: Story;
-  isArchived?: boolean;
+  isArchived: boolean;
   onUpdateStory: (settings: StorySettingsType) => void;
 };
 

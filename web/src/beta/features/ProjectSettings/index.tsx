@@ -38,6 +38,8 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
     project,
     stories,
     currentStory,
+    accessToken,
+    extensions,
     handleUpdateProject,
     handleArchiveProject,
     handleDeleteProject,
@@ -96,7 +98,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               projectId={projectId}
               stories={stories}
               currentStory={currentStory}
-              isArchived={project?.isArchived}
+              isArchived={!!project?.isArchived}
               onUpdateStory={handleUpdateStory}
             />
           )}
@@ -113,7 +115,13 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               onUpdateProjectAlias={handleUpdateProjectAlias}
             />
           )}
-          {fieldId === "plugin" && <PluginSettings isArchived={project?.isArchived} />}
+          {fieldId === "plugin" && (
+            <PluginSettings
+              isArchived={!!project?.isArchived}
+              accessToken={accessToken}
+              extensions={extensions}
+            />
+          )}
         </Content>
       </MainSection>
     </Wrapper>
@@ -126,6 +134,7 @@ const Wrapper = styled.div`
   height: 100%;
   width: 100%;
   color: ${({ theme }) => theme.content.main};
+  background-color: ${({ theme }) => theme.bg[0]};
 `;
 
 const SecondaryNav = styled.div`

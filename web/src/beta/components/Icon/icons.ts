@@ -93,6 +93,11 @@ import Plugin from "./Icons/plugin.svg";
 import Logo from "./Icons/reearthLogo.svg";
 import LogoColorful from "./Icons/reearthLogoColorful.svg";
 
+// Plug-ins
+import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
+import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
+import Marketplace from "./Icons/marketplace.svg";
+
 export default {
   file: File,
   dl: InfoTable,
@@ -164,4 +169,7 @@ export default {
   house: House,
   plugin: Plugin,
   scene: Scene,
+  uploadZipPlugin: UploadZipPlugin,
+  publicGitHubRepo: PublicGitHubRepo,
+  marketplace: Marketplace,
 };

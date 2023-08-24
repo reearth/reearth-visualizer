@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
+import { useAuth } from "@reearth/services/auth";
 
 import { GeneralSettingsType } from "./innerPages/GeneralSettings";
 import {
@@ -112,11 +113,31 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
     [projectId, useUpdateProjectAlias],
   );
 
+  // Plugin
+  const { getAccessToken } = useAuth();
+  const [accessToken, setAccessToken] = useState<string>();
+
+  useEffect(() => {
+    getAccessToken().then(token => {
+      setAccessToken(token);
+    });
+  }, [getAccessToken]);
+
+  const extensions = useMemo(
+    () => ({
+      library: window.REEARTH_CONFIG?.extensions?.pluginLibrary,
+      installed: window.REEARTH_CONFIG?.extensions?.pluginInstalled,
+    }),
+    [],
+  );
+
   return {
     sceneId: scene?.id,
     project,
     stories,
     currentStory,
+    accessToken,
+    extensions,
     handleUpdateProject,
     handleArchiveProject,
     handleDeleteProject,
