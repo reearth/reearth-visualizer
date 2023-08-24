@@ -280,3 +280,63 @@ func (r *mutationResolver) RemoveCluster(ctx context.Context, input gqlmodel.Rem
 		ClusterID: input.ClusterID,
 	}, nil
 }
+
+func (r *mutationResolver) AddStyle(ctx context.Context, input gqlmodel.AddStyleInput) (*gqlmodel.AddStylePayload, error) {
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	s, c, err := usecases(ctx).Scene.AddStyle(ctx, interfaces.AddStyleInput{
+		SceneID: sid,
+		Name:    &input.Name,
+		Value:   gqlmodel.ToStyleValue(input.Value),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.AddStylePayload{
+		Scene: gqlmodel.ToScene(s),
+		Style: gqlmodel.ToStyle(c),
+	}, nil
+}
+
+func (r *mutationResolver) UpdateStyle(ctx context.Context, input gqlmodel.UpdateStyleInput) (*gqlmodel.UpdateStylePayload, error) {
+	sid, cid, err := gqlmodel.ToID2[id.Scene, id.Style](input.SceneID, input.StyleID)
+	if err != nil {
+		return nil, err
+	}
+
+	s, c, err := usecases(ctx).Scene.UpdateStyle(ctx, interfaces.UpdateStyleInput{
+		StyleID: cid,
+		SceneID: sid,
+		Name:    input.Name,
+		Value:   gqlmodel.ToStyleValue(input.Value),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.UpdateStylePayload{
+		Scene: gqlmodel.ToScene(s),
+		Style: gqlmodel.ToStyle(c),
+	}, nil
+}
+
+func (r *mutationResolver) RemoveStyle(ctx context.Context, input gqlmodel.RemoveStyleInput) (*gqlmodel.RemoveStylePayload, error) {
+	sid, cid, err := gqlmodel.ToID2[id.Scene, id.Style](input.SceneID, input.StyleID)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := usecases(ctx).Scene.RemoveStyle(ctx, sid, cid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.RemoveStylePayload{
+		Scene:   gqlmodel.ToScene(s),
+		StyleID: input.StyleID,
+	}, nil
+}

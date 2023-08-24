@@ -557,6 +557,114 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 	return s, nil
 }
 
+func (i *Scene) AddStyle(ctx context.Context,param interfaces.AddStyleInput , operator *usecase.Operator) (*scene.Scene, *scene.Style, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	s, err := i.sceneRepo.FindByID(ctx, param.SceneID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
+		return nil, nil, err
+	}
+
+	cid := id.NewStyleID()
+	style, err := scene.NewStyle(cid, *param.Name, param.Value)
+	if err != nil {
+		return nil, nil, err
+	}
+	s.Styles().Add(style)
+
+
+	if err := i.sceneRepo.Save(ctx, s); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return s, style, nil
+}
+
+func (i *Scene) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInput, operator *usecase.Operator) (*scene.Scene, *scene.Style, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	s, err := i.sceneRepo.FindByID(ctx, param.SceneID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
+		return nil, nil, err
+	}
+
+	style := s.Styles().Get(param.StyleID)
+	if style == nil {
+		return nil, nil, rerror.ErrNotFound
+	}
+	if param.Name != nil {
+		style.Rename(*param.Name)
+	}
+	if param.Value != nil {
+		style.UpdateValue(param.Value)
+	}
+
+	if err := i.sceneRepo.Save(ctx, s); err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return s, style, nil
+}
+
+func (i *Scene) RemoveStyle(ctx context.Context, sceneID id.SceneID, styleID id.StyleID, operator *usecase.Operator) (*scene.Scene, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	s, err := i.sceneRepo.FindByID(ctx, sceneID)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
+		return nil, err
+	}
+
+	s.Styles().Remove(styleID)
+
+	if err := i.sceneRepo.Save(ctx, s); err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return s, nil
+}
+
 func injectExtensionsToScene(s *scene.Scene, ext []plugin.ID) {
 	lo.ForEach(ext, func(p plugin.ID, _ int) {
 		s.Plugins().Add(scene.NewPlugin(p, nil))

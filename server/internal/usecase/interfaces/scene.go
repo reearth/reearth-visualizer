@@ -30,6 +30,9 @@ type Scene interface {
 	AddCluster(context.Context, id.SceneID, string, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	UpdateCluster(context.Context, UpdateClusterParam, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	RemoveCluster(context.Context, id.SceneID, id.ClusterID, *usecase.Operator) (*scene.Scene, error)
+	AddStyle(context.Context, AddStyleInput, *usecase.Operator) (*scene.Scene, *scene.Style, error)
+	UpdateStyle(context.Context, UpdateStyleInput, *usecase.Operator) (*scene.Scene, *scene.Style, error)
+	RemoveStyle(context.Context, id.SceneID, id.StyleID, *usecase.Operator) (*scene.Scene, error)
 }
 
 type UpdateWidgetParam struct {
@@ -56,4 +59,18 @@ type UpdateClusterParam struct {
 	SceneID    id.SceneID
 	Name       *string
 	PropertyID *id.PropertyID
+}
+
+
+type AddStyleInput struct {
+	SceneID    id.SceneID
+	Name       *string
+	Value      *scene.StyleValue
+}
+
+type UpdateStyleInput struct {
+	StyleID    id.StyleID
+	SceneID    id.SceneID
+	Name       *string
+	Value 	   *scene.StyleValue
 }
