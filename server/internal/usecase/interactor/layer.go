@@ -42,7 +42,7 @@ type Layer struct {
 	datasetSchemaRepo  repo.DatasetSchema
 	sceneRepo          repo.Scene
 	sceneLockRepo      repo.SceneLock
-	policyRepo         repo.Policy
+	policyRepo         accountrepo.Policy
 	workspaceRepo      accountrepo.Workspace
 	transaction        usecasex.Transaction
 }
