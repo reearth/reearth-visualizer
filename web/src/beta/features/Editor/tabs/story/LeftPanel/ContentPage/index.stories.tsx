@@ -13,6 +13,7 @@ const dummyPages = [...Array(25)].map((_, i) => ({
   title: `Page ${i}`,
   swipeable: i % 2 === 0,
   blocks: [],
+  propertyId: "1234",
 }));
 
 export const Default: Story = {
