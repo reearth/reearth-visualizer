@@ -10,7 +10,7 @@ import GeneralSettings from "./innerPages/GeneralSettings";
 import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
-import { MenuList, MenuListItemLabel } from "./MenuList";
+import { MenuList, MenuItem } from "./MenuList";
 
 export const projectSettingFields = [
   { id: "general", text: "General" },
@@ -75,7 +75,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
         <Menu>
           <MenuList>
             {fields.map(field => (
-              <MenuListItemLabel
+              <MenuItem
                 key={field.id}
                 linkTo={field.linkTo}
                 text={field.text}

@@ -50,19 +50,19 @@ const PluginInstall: React.FC<Props> = ({
     <>
       <ButtonsWrapper>
         {actionChoices.map(c => {
-          return c.mode === "install-public-repo" ? (
-            <PublicRepo
-              key={c.mode}
-              icon={c.icon}
-              buttonText={c.text}
-              onSend={installFromPublicRepo}
-            />
-          ) : c.mode === "install-zip" ? (
+          return c.mode === "install-zip" ? (
             <ZipUpload
               key={c.mode}
               icon={c.icon}
               buttonText={c.text}
               onSend={installByUploadingZipFile}
+            />
+          ) : c.mode === "install-public-repo" ? (
+            <PublicRepo
+              key={c.mode}
+              icon={c.icon}
+              buttonText={c.text}
+              onSend={installFromPublicRepo}
             />
           ) : c.mode === "market-publish" && c.url ? (
             <MarketplacePublish key={c.mode} icon={c.icon} buttonText={c.text} url={c.url} />

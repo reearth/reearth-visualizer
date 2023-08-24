@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Text from "@reearth/beta/components/Text";
 import { styled, useTheme } from "@reearth/services/theme";
 
-export const MenuListItemLabel: React.FC<{
+export const MenuItem: React.FC<{
   text?: string;
   linkTo?: string;
   onClick?: () => void;
@@ -13,9 +13,9 @@ export const MenuListItemLabel: React.FC<{
   const theme = useTheme();
   const content = (
     <MenuItemWrapper onClick={onClick} active={active}>
-      <StyledLabel size="body" color={color || theme.content.strong}>
+      <Text size="body" color={color || theme.content.strong}>
         {text}
-      </StyledLabel>
+      </Text>
     </MenuItemWrapper>
   );
 
@@ -38,10 +38,10 @@ const MenuItemWrapper = styled.div<{ active?: boolean }>`
   padding: 8px 16px;
   cursor: pointer;
   background-color: ${({ active, theme }) => (active ? theme.select.main : "")};
-`;
-
-const StyledLabel = styled(Text)`
-  line-height: 22px;
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: ${({ active, theme }) => (active ? theme.select.main : theme.bg[2])};
+  }
 `;
 
 const StyledLinkButton = styled(Link)`

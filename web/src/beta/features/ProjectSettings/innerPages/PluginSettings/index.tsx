@@ -137,7 +137,6 @@ const Tab = styled(Text)<{ active?: boolean }>`
   display: flex;
   padding: 4px 8px;
   border-radius: 4px;
-  line-height: 22px;
   cursor: pointer;
   background: ${({ active, theme }) => (active ? theme.bg[2] : "transparent")};
   color: ${({ active, theme }) => (active ? theme.content.main : theme.bg[2])};

@@ -2,19 +2,18 @@ import React from "react";
 import useFileInput from "use-file-input";
 
 import { Icons } from "@reearth/beta/components/Icon";
-import Loading from "@reearth/classic/components/atoms/Loading";
+import Loading from "@reearth/beta/components/Loading";
 
 import PluginInstallCardButton from "../PluginInstallCardButton";
 
 export type Props = {
-  className?: string;
   icon: Icons;
   buttonText: string;
   onSend?: (files: FileList) => void;
   loading?: boolean;
 };
 
-const ZipUpload: React.FC<Props> = ({ className, icon, buttonText, onSend, loading }) => {
+const ZipUpload: React.FC<Props> = ({ icon, buttonText, onSend, loading }) => {
   const accept = ".zip";
   const handleClick = useFileInput(files => onSend?.(files), {
     accept,
@@ -25,12 +24,7 @@ const ZipUpload: React.FC<Props> = ({ className, icon, buttonText, onSend, loadi
       {loading ? (
         <Loading overlay />
       ) : (
-        <PluginInstallCardButton
-          className={className}
-          icon={icon}
-          text={buttonText}
-          onClick={handleClick}
-        />
+        <PluginInstallCardButton icon={icon} text={buttonText} onClick={handleClick} />
       )}
     </>
   );
