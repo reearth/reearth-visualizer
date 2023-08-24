@@ -60,7 +60,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
       projectSettingFields.map(f => ({
         id: f.id,
         text: t(f.text),
-        linkTo: `/settings/beta/projects/${projectId}/${f.id === "general" ? "" : f.id}`,
+        linkTo: `/project-settings/${projectId}/${f.id === "general" ? "" : f.id}`,
       })),
     [projectId, t],
   );
@@ -93,7 +93,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               onDeleteProject={handleDeleteProject}
             />
           )}
-          {fieldId === "story" && (
+          {fieldId === "story" && currentStory && (
             <StorySettings
               projectId={projectId}
               stories={stories}

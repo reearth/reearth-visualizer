@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Story } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
-import { MenuListItemLabel } from "../../MenuList";
+import { MenuItem } from "../../MenuList";
 import { InnerPage, InnerMenu, SettingsWrapper, ArchivedSettingNotice } from "../common";
 
 import PublicSettingsDetail from "./PublicSettingsDetail";
@@ -66,13 +66,13 @@ const PublicSettings: React.FC<Props> = ({
       {
         id: "map",
         title: t("Map"),
-        linkTo: `/settings/beta/projects/${project.id}/public/`,
+        linkTo: `/project-settings/${project.id}/public/`,
         active: !currentStory,
       },
       ...stories.map(s => ({
         id: s.id,
         title: s.title,
-        linkTo: `/settings/beta/projects/${project.id}/public/${s.id}`,
+        linkTo: `/project-settings/${project.id}/public/${s.id}`,
         active: s.id === currentStory?.id,
       })),
     ],
@@ -83,7 +83,7 @@ const PublicSettings: React.FC<Props> = ({
     <InnerPage wide>
       <InnerMenu>
         {menu.map(s => (
-          <MenuListItemLabel key={s.id} text={s.title} active={s.active} linkTo={s.linkTo} />
+          <MenuItem key={s.id} text={s.title} active={s.active} linkTo={s.linkTo} />
         ))}
       </InnerMenu>
       <SettingsWrapper>
