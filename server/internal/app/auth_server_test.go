@@ -19,7 +19,8 @@ import (
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
@@ -39,7 +40,7 @@ func TestEndpoint(t *testing.T) {
 	e := echo.New()
 	lr := lo.Must(mongo.NewLock(db.Collection("locks")))
 	cr := mongo.NewConfig(db.Collection("config"), lr)
-	ur := mongo.NewUser(mongox.NewClientWithDatabase(db))
+	ur := accountmongo.NewUser(mongox.NewClientWithDatabase(db))
 	rr := authserver.NewMongo(mongox.NewClientCollection(db.Collection("authRequest")))
 
 	uid := user.NewID()

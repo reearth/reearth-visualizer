@@ -1,9 +1,11 @@
 import { Dispatch, Fragment, SetStateAction } from "react";
 
+import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
+import { Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -16,6 +18,8 @@ type Props = {
   showSettings?: boolean;
   showPadding?: boolean;
   editMode: boolean;
+  propertyId?: string;
+  panelSettings?: Item;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle: () => void;
   onSettingsToggle: () => void;
@@ -29,6 +33,8 @@ const ActionPanel: React.FC<Props> = ({
   showSettings,
   showPadding,
   editMode,
+  propertyId,
+  panelSettings,
   setShowPadding,
   onEditModeToggle,
   onSettingsToggle,
@@ -75,11 +81,15 @@ const ActionPanel: React.FC<Props> = ({
             <SettingsDropdown>
               <SettingsHeading>
                 <Text size="footnote" customColor>
-                  Padding settings
+                  {panelSettings?.title}
                 </Text>
                 <CancelIcon icon="cancel" size={14} onClick={() => setShowPadding(false)} />
               </SettingsHeading>
-              <SettingsContent>Padding</SettingsContent>
+              {propertyId && panelSettings && (
+                <SettingsContent>
+                  <FieldComponents propertyId={propertyId} item={panelSettings} />
+                </SettingsContent>
+              )}
             </SettingsDropdown>
           ) : (
             <PopoverMenuContent
@@ -161,6 +171,8 @@ const SettingsHeading = styled.div`
 const SettingsContent = styled.div`
   height: 100px;
   width: 200px;
+  padding: 8px;
+  box-sizing: border-box;
 `;
 
 const CancelIcon = styled(Icon)`

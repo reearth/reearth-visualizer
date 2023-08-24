@@ -1,10 +1,13 @@
 import { ReactNode } from "react";
 
+import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
+import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import Template from "../../Template";
 
 import ActionPanel from "./ActionPanel";
+import ClickAwayListener from "./click-away";
 import useHooks from "./hooks";
 
 type Spacing = {
@@ -17,20 +20,24 @@ type Spacing = {
 type Props = {
   title?: string;
   icon?: string;
-  padding?: Spacing;
   isSelected?: boolean;
   children?: ReactNode;
-  onClick: (() => void) | undefined;
+  propertyId?: string;
+  propertyItems?: Item[];
+  onClick?: () => void;
+  onClickAway?: () => void;
   onRemove?: () => void;
 };
 
 const BlockWrapper: React.FC<Props> = ({
   title,
   icon,
-  padding,
   isSelected,
   children,
+  propertyId,
+  propertyItems,
   onClick,
+  onClickAway,
   onRemove,
 }) => {
   const {
@@ -38,6 +45,9 @@ const BlockWrapper: React.FC<Props> = ({
     editMode,
     showSettings,
     showPadding,
+    defaultSettings,
+    panelSettings,
+    padding,
     setShowPadding,
     handleMouseEnter,
     handleMouseLeave,
@@ -46,37 +56,42 @@ const BlockWrapper: React.FC<Props> = ({
     handleSettingsToggle,
   } = useHooks({
     isSelected,
+    propertyItems,
     onClick,
   });
 
   return (
-    <Wrapper
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      isSelected={isSelected}>
-      {(isHovered || isSelected) && (
-        <ActionPanel
-          title={title}
-          icon={icon}
-          isSelected={isSelected}
-          showSettings={showSettings}
-          showPadding={showPadding}
-          editMode={editMode}
-          setShowPadding={setShowPadding}
-          onEditModeToggle={handleEditModeToggle}
-          onSettingsToggle={handleSettingsToggle}
-          onRemove={onRemove}
-        />
-      )}
-      <Block padding={padding} onClick={handleBlockClick}>
-        {children ?? <Template icon={icon} />}
-      </Block>
-      {editMode && (
-        <EditorPanel>
-          <p>Block editing</p>
-        </EditorPanel>
-      )}
-    </Wrapper>
+    <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
+      <Wrapper
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        isSelected={isSelected}>
+        {(isHovered || isSelected) && (
+          <ActionPanel
+            title={title}
+            icon={icon}
+            isSelected={isSelected}
+            showSettings={showSettings}
+            showPadding={showPadding}
+            editMode={editMode}
+            propertyId={propertyId}
+            panelSettings={panelSettings}
+            setShowPadding={setShowPadding}
+            onEditModeToggle={handleEditModeToggle}
+            onSettingsToggle={handleSettingsToggle}
+            onRemove={onRemove}
+          />
+        )}
+        <Block padding={padding} onClick={handleBlockClick}>
+          {children ?? <Template icon={icon} />}
+        </Block>
+        {editMode && propertyId && defaultSettings && (
+          <EditorPanel>
+            <FieldComponents propertyId={propertyId} item={defaultSettings} />
+          </EditorPanel>
+        )}
+      </Wrapper>
+    </ClickAwayListener>
   );
 };
 
@@ -97,12 +112,12 @@ const Wrapper = styled.div<{ isSelected?: boolean }>`
 
 const Block = styled.div<{ padding?: Spacing }>`
   display: flex;
-  min-height: 255px;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
   cursor: pointer;
+  color: black;
 `;
 
 const EditorPanel = styled.div`

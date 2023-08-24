@@ -1428,6 +1428,11 @@ export type Policy = {
   publishedProjectCount?: Maybe<Scalars['Int']['output']>;
 };
 
+export enum Position {
+  Left = 'LEFT',
+  Right = 'RIGHT'
+}
+
 export type Project = Node & {
   __typename?: 'Project';
   alias: Scalars['String']['output'];
@@ -1990,11 +1995,19 @@ export type Spacing = {
 export type Story = Node & {
   __typename?: 'Story';
   alias: Scalars['String']['output'];
+  basicAuthPassword: Scalars['String']['output'];
+  basicAuthUsername: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  isBasicAuthActive: Scalars['Boolean']['output'];
   pages: Array<StoryPage>;
+  panelPosition: Position;
   property?: Maybe<Property>;
   propertyId: Scalars['ID']['output'];
+  publicDescription: Scalars['String']['output'];
+  publicImage: Scalars['String']['output'];
+  publicNoIndex: Scalars['Boolean']['output'];
+  publicTitle: Scalars['String']['output'];
   publishedAt?: Maybe<Scalars['DateTime']['output']>;
   publishmentStatus: PublishmentStatus;
   scene?: Maybe<Scene>;
@@ -2271,7 +2284,17 @@ export type UpdatePropertyValueInput = {
 };
 
 export type UpdateStoryInput = {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  basicAuthPassword?: InputMaybe<Scalars['String']['input']>;
+  basicAuthUsername?: InputMaybe<Scalars['String']['input']>;
+  deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
   index?: InputMaybe<Scalars['Int']['input']>;
+  isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;
+  panelPosition?: InputMaybe<Position>;
+  publicDescription?: InputMaybe<Scalars['String']['input']>;
+  publicImage?: InputMaybe<Scalars['String']['input']>;
+  publicNoIndex?: InputMaybe<Scalars['Boolean']['input']>;
+  publicTitle?: InputMaybe<Scalars['String']['input']>;
   sceneId: Scalars['ID']['input'];
   storyId: Scalars['ID']['input'];
   title?: InputMaybe<Scalars['String']['input']>;
