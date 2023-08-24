@@ -27,7 +27,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     [property?.terrain, property?.default],
   );
 
-  const terrainProvider = useMemo((): Promise<TerrainProvider> | TerrainProvider | undefined => {
+  const terrainProvider = useMemo((): TerrainProvider | undefined => {
     const opts = {
       terrain: terrainProperty?.terrain,
       terrainType: terrainProperty?.terrainType,
@@ -84,33 +84,30 @@ const terrainProviders: {
           TerrainProperty,
           "terrainCesiumIonAccessToken" | "terrainCesiumIonAsset" | "terrainCesiumIonUrl"
         >,
-      ) => Promise<TerrainProvider> | TerrainProvider | null);
+      ) => TerrainProvider | null);
 } = {
   cesium: ({ terrainCesiumIonAccessToken }) =>
     // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
-    CesiumTerrainProvider.fromUrl(
-      IonResource.fromAssetId(1, {
+    new CesiumTerrainProvider({
+      url: IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,
       }),
-      {
-        requestVertexNormals: false,
-        requestWaterMask: false,
-      },
-    ),
+      requestVertexNormals: false,
+      requestWaterMask: false,
+    }),
   arcgis: () =>
-    ArcGISTiledElevationTerrainProvider.fromUrl(
-      "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
-    ),
+    new ArcGISTiledElevationTerrainProvider({
+      url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+    }),
   cesiumion: ({ terrainCesiumIonAccessToken, terrainCesiumIonAsset, terrainCesiumIonUrl }) =>
     terrainCesiumIonAsset
-      ? CesiumTerrainProvider.fromUrl(
-          terrainCesiumIonUrl ||
+      ? new CesiumTerrainProvider({
+          url:
+            terrainCesiumIonUrl ||
             IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
               accessToken: terrainCesiumIonAccessToken,
             }),
-          {
-            requestVertexNormals: true,
-          },
-        )
+          requestVertexNormals: true,
+        })
       : null,
 };
