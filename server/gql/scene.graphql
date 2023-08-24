@@ -14,7 +14,6 @@ type Scene implements Node {
   property: Property
   rootLayer: LayerGroup
   newLayers: [NLSLayer!]!
-  stylesList: [Any!]! # WIP
   stories: [Story!]!
   datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
   tagIds: [ID!]!

@@ -966,7 +966,6 @@ type ComplexityRoot struct {
 		RootLayer         func(childComplexity int) int
 		RootLayerID       func(childComplexity int) int
 		Stories           func(childComplexity int) int
-		StylesList        func(childComplexity int) int
 		TagIds            func(childComplexity int) int
 		Tags              func(childComplexity int) int
 		Team              func(childComplexity int) int
@@ -1519,7 +1518,6 @@ type SceneResolver interface {
 	Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error)
 	RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.LayerGroup, error)
 	NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error)
-
 	Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error)
 	DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
 
@@ -6179,13 +6177,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Scene.Stories(childComplexity), true
 
-	case "Scene.stylesList":
-		if e.complexity.Scene.StylesList == nil {
-			break
-		}
-
-		return e.complexity.Scene.StylesList(childComplexity), true
-
 	case "Scene.tagIds":
 		if e.complexity.Scene.TagIds == nil {
 			break
@@ -8777,7 +8768,6 @@ extend type Mutation {
   property: Property
   rootLayer: LayerGroup
   newLayers: [NLSLayer!]!
-  stylesList: [Any!]! # WIP
   stories: [Story!]!
   datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
   tagIds: [ID!]!
@@ -11551,8 +11541,6 @@ func (ec *executionContext) fieldContext_AddClusterPayload_scene(ctx context.Con
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -12438,8 +12426,6 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(ctx context.Cont
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -13975,8 +13961,6 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(ctx context.Co
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -16003,8 +15987,6 @@ func (ec *executionContext) fieldContext_DatasetSchema_scene(ctx context.Context
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -17929,8 +17911,6 @@ func (ec *executionContext) fieldContext_Infobox_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -18752,8 +18732,6 @@ func (ec *executionContext) fieldContext_InfoboxField_scene(ctx context.Context,
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -18891,8 +18869,6 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -20227,8 +20203,6 @@ func (ec *executionContext) fieldContext_LayerGroup_scene(ctx context.Context, f
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -21257,8 +21231,6 @@ func (ec *executionContext) fieldContext_LayerItem_scene(ctx context.Context, fi
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -22214,8 +22186,6 @@ func (ec *executionContext) fieldContext_MergedInfobox_scene(ctx context.Context
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -22688,8 +22658,6 @@ func (ec *executionContext) fieldContext_MergedInfoboxField_scene(ctx context.Co
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -23231,8 +23199,6 @@ func (ec *executionContext) fieldContext_MergedLayer_scene(ctx context.Context, 
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -31117,8 +31083,6 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(ctx context.Context
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -31611,8 +31575,6 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(ctx context.Contex
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -32436,8 +32398,6 @@ func (ec *executionContext) fieldContext_Plugin_scene(ctx context.Context, field
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -34773,8 +34733,6 @@ func (ec *executionContext) fieldContext_Project_scene(ctx context.Context, fiel
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -40381,8 +40339,6 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -40950,8 +40906,6 @@ func (ec *executionContext) fieldContext_RemoveClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -41786,8 +41740,6 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -42647,50 +42599,6 @@ func (ec *executionContext) fieldContext_Scene_newLayers(ctx context.Context, fi
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_stylesList(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_stylesList(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StylesList, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]interface{})
-	fc.Result = res
-	return ec.marshalNAny2ᚕinterfaceᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_stylesList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -44551,8 +44459,6 @@ func (ec *executionContext) fieldContext_Story_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -45963,8 +45869,6 @@ func (ec *executionContext) fieldContext_StoryPage_scene(ctx context.Context, fi
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -46749,8 +46653,6 @@ func (ec *executionContext) fieldContext_TagGroup_scene(ctx context.Context, fie
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -48382,8 +48284,6 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(ctx contex
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -48470,8 +48370,6 @@ func (ec *executionContext) fieldContext_UpdateClusterPayload_scene(ctx context.
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -48997,8 +48895,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(ct
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -49085,8 +48981,6 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -49237,8 +49131,6 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(ctx context.
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -49457,8 +49349,6 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(ctx context.C
 				return ec.fieldContext_Scene_rootLayer(ctx, field)
 			case "newLayers":
 				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stylesList":
-				return ec.fieldContext_Scene_stylesList(ctx, field)
 			case "stories":
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "datasetSchemas":
@@ -64167,13 +64057,6 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 				return innerFunc(ctx)
 
 			})
-		case "stylesList":
-
-			out.Values[i] = ec._Scene_stylesList(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "stories":
 			field := field
 
@@ -66647,59 +66530,6 @@ func (ec *executionContext) unmarshalNAddPropertyItemInput2githubᚗcomᚋreeart
 func (ec *executionContext) unmarshalNAddWidgetInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddWidgetInput(ctx context.Context, v interface{}) (gqlmodel.AddWidgetInput, error) {
 	res, err := ec.unmarshalInputAddWidgetInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
-	res, err := graphql.UnmarshalAny(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	res := graphql.MarshalAny(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNAny2ᚕinterfaceᚄ(ctx context.Context, v interface{}) ([]interface{}, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]interface{}, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNAny2interface(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNAny2ᚕinterfaceᚄ(ctx context.Context, sel ast.SelectionSet, v []interface{}) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNAny2interface(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNAsset2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAsset(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Asset) graphql.Marshaler {

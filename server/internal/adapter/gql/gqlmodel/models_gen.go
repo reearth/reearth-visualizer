@@ -1192,7 +1192,6 @@ type Scene struct {
 	Property          *Property                `json:"property"`
 	RootLayer         *LayerGroup              `json:"rootLayer"`
 	NewLayers         []NLSLayer               `json:"newLayers"`
-	StylesList        []interface{}            `json:"stylesList"`
 	Stories           []*Story                 `json:"stories"`
 	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
 	TagIds            []ID                     `json:"tagIds"`
