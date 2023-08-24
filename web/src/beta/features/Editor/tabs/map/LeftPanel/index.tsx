@@ -21,7 +21,7 @@ const MapSidePanel: React.FC<Props> = ({ sceneId, selectedItem, onItemSelect }) 
 
   const { scene } = useSceneQuery({ sceneId });
 
-  const groups =
+  const sceneSettings =
     scene?.property?.schema?.groups.map(g => {
       return {
         id: g.schemaGroupId,
@@ -30,7 +30,7 @@ const MapSidePanel: React.FC<Props> = ({ sceneId, selectedItem, onItemSelect }) 
       };
     }) ?? [];
 
-  return !groups ? (
+  return !sceneSettings ? (
     <Loading animationSize={80} animationColor={theme.select.main} />
   ) : (
     <SidePanelCommon
@@ -39,7 +39,13 @@ const MapSidePanel: React.FC<Props> = ({ sceneId, selectedItem, onItemSelect }) 
         {
           id: "outline",
           title: t("Outline"),
-          children: <Outline groups={groups} onItemSelect={onItemSelect} />,
+          children: (
+            <Outline
+              sceneSettings={sceneSettings}
+              onItemSelect={onItemSelect}
+              // onClickAction={() => console.log("Action clicked")}
+            />
+          ),
         },
       ]}
     />

@@ -7,18 +7,21 @@ import { SelectableItem } from "../../../types";
 import SceneSectionItem, { SceneSettingsItemProps } from "./item";
 
 export type SceneSectionFieldProps = {
-  groups: SwitchField<SceneSettingsItemProps>[];
+  sceneSettings: SwitchField<SceneSettingsItemProps>[];
   onItemSelect?: (item: SelectableItem) => void;
   onClickAction?: (id: string) => void;
 };
 
-const Outline: React.FC<SceneSectionFieldProps> = ({ groups, onItemSelect, onClickAction }) => {
-  console.log("GG", groups);
+const Outline: React.FC<SceneSectionFieldProps> = ({
+  sceneSettings,
+  onItemSelect,
+  onClickAction,
+}) => {
   return (
     <>
       <StyledSidePanelSectionField title="Scene">
         <List>
-          {groups.map((item, index) => (
+          {sceneSettings.map((item, index) => (
             <SceneSectionItem
               key={index}
               scene={item}
@@ -29,16 +32,10 @@ const Outline: React.FC<SceneSectionFieldProps> = ({ groups, onItemSelect, onCli
         </List>
       </StyledSidePanelSectionField>
       <StyledSidePanelSectionField title="Layers">
-        <List>
-          {groups.map((item, index) => (
-            <SceneSectionItem
-              key={index}
-              scene={item}
-              // onActive={onActive}
-              // onClickAction={onClickAction}
-            />
-          ))}
-        </List>
+        <SceneSectionItem
+          scene={{ id: "layer1", label: "Layer 1", active: false }}
+          onActive={() => onItemSelect?.({ type: "layer", id: "layer1" })}
+        />
       </StyledSidePanelSectionField>
     </>
   );
