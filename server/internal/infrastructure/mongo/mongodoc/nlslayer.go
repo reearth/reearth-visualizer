@@ -49,11 +49,14 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 		group = &NLSLayerGroupDocument{
 			Children: lg.Children().Strings(),
 			Root:     lg.IsRoot(),
+			Config: *lg.Config(),
 		}
 	}
 
 	if ls := nlslayer.NLSLayerSimpleFromLayer(l); ls != nil {
-		simple = &NLSLayerSimpleDocument{}
+		simple = &NLSLayerSimpleDocument{
+			Config: *ls.Config(),
+		}
 	}
 
 	if ib := l.Infobox(); ib != nil {
