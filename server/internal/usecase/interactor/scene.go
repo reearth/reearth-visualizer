@@ -557,7 +557,7 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 	return s, nil
 }
 
-func (i *Scene) AddStyle(ctx context.Context,param interfaces.AddStyleInput , operator *usecase.Operator) (*scene.Scene, *scene.Style, error) {
+func (i *Scene) AddStyle(ctx context.Context, param interfaces.AddStyleInput, operator *usecase.Operator) (*scene.Scene, *scene.Style, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -584,7 +584,6 @@ func (i *Scene) AddStyle(ctx context.Context,param interfaces.AddStyleInput , op
 		return nil, nil, err
 	}
 	s.Styles().Add(style)
-
 
 	if err := i.sceneRepo.Save(ctx, s); err != nil {
 		return nil, nil, err

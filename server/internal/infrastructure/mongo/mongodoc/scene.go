@@ -23,7 +23,7 @@ type SceneDocument struct {
 	UpdateAt    time.Time
 	Property    string
 	Clusters    []SceneClusterDocument
-	Styles    	[]SceneStyleDocument
+	Styles      []SceneStyleDocument
 }
 
 type SceneWidgetDocument struct {
@@ -47,9 +47,9 @@ type SceneClusterDocument struct {
 }
 
 type SceneStyleDocument struct {
-	ID       string
-	Name     string
-	Value	 map[string]struct{}
+	ID    string
+	Name  string
+	Value map[string]struct{}
 }
 
 type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]
@@ -124,9 +124,9 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 
 	for _, sl := range styles {
 		styleDoc = append(styleDoc, SceneStyleDocument{
-			ID:       sl.ID().String(),
-			Name:     sl.Name(),
-			Value:    *sl.Value(),
+			ID:    sl.ID().String(),
+			Name:  sl.Name(),
+			Value: *sl.Value(),
 		})
 	}
 
@@ -142,7 +142,7 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
 		Clusters:    clsuterDoc,
-		Styles: 	 styleDoc,
+		Styles:      styleDoc,
 	}, id
 }
 
@@ -231,7 +231,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		if err != nil {
 			return nil, err
 		}
-		
+
 		style, err := scene.NewStyle(cid, c.Name, (*scene.StyleValue)(&c.Value))
 		if err != nil {
 			return nil, err

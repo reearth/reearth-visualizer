@@ -61,9 +61,9 @@ func ToScene(scene *scene.Scene) *Scene {
 
 func ToStyle(v *scene.Style) *Style {
 	return &Style{
-		ID:         IDFrom(v.ID()),
-		Name:       v.Name(),
-		Value: 		v.Value(),
+		ID:    IDFrom(v.ID()),
+		Name:  v.Name(),
+		Value: v.Value(),
 	}
 }
 

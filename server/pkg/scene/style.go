@@ -1,9 +1,9 @@
 package scene
 
 type Style struct {
-	id       StyleID
-	name     string
-	value 	 *StyleValue
+	id    StyleID
+	name  string
+	value *StyleValue
 }
 
 func NewStyle(sid StyleID, name string, sv *StyleValue) (*Style, error) {
@@ -11,8 +11,8 @@ func NewStyle(sid StyleID, name string, sv *StyleValue) (*Style, error) {
 		return nil, ErrInvalidID
 	}
 	return &Style{
-		id:       sid,
-		name:     name,
+		id:    sid,
+		name:  name,
 		value: sv,
 	}, nil
 }

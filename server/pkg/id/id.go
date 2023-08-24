@@ -42,7 +42,7 @@ func (Tag) Type() string                 { return "tag" }
 func (Workspace) Type() string           { return "workspace" }
 func (User) Type() string                { return "user" }
 func (Widget) Type() string              { return "widget" }
-func (Style) Type() string				{  return "style"}
+func (Style) Type() string               { return "style" }
 
 type AssetID = idx.ID[Asset]
 type AuthRequestID = idx.ID[AuthRequest]

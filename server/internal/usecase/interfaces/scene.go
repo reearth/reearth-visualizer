@@ -61,16 +61,15 @@ type UpdateClusterParam struct {
 	PropertyID *id.PropertyID
 }
 
-
 type AddStyleInput struct {
-	SceneID    id.SceneID
-	Name       *string
-	Value      *scene.StyleValue
+	SceneID id.SceneID
+	Name    *string
+	Value   *scene.StyleValue
 }
 
 type UpdateStyleInput struct {
-	StyleID    id.StyleID
-	SceneID    id.SceneID
-	Name       *string
-	Value 	   *scene.StyleValue
+	StyleID id.StyleID
+	SceneID id.SceneID
+	Name    *string
+	Value   *scene.StyleValue
 }
