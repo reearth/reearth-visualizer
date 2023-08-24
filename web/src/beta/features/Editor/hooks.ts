@@ -6,9 +6,11 @@ import { useWidgetAlignEditorActivated } from "@reearth/services/state";
 import { Tab } from "../Navbar";
 
 import { type ProjectType } from "./tabs/publish/Nav";
+import { SelectableItem } from "./tabs/types";
 import { type Device } from "./tabs/widgets/Nav";
 
 export default ({ tab }: { tab: Tab }) => {
+  const [selectedItem, selectItem] = useState<SelectableItem>();
   const [selectedDevice, setDevice] = useState<Device>("desktop");
 
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
@@ -16,6 +18,11 @@ export default ({ tab }: { tab: Tab }) => {
   );
 
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
+
+  const handleItemSelect = useCallback(
+    (item?: SelectableItem) => selectItem(i => (i?.id == item?.id ? undefined : item)),
+    [],
+  );
 
   useEffect(() => {
     switch (tab) {
@@ -57,10 +64,12 @@ export default ({ tab }: { tab: Tab }) => {
   );
 
   return {
+    selectedItem,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
+    handleItemSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,

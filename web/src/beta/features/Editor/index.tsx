@@ -23,10 +23,12 @@ type Props = {
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
   const {
+    selectedItem,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
+    handleItemSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
@@ -50,6 +52,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     sceneId,
     selectedStory,
     selectedPage,
+    selectedItem,
+    onItemSelect: handleItemSelect,
     onPageSelect: handlePageSelect,
     onPageDuplicate: handlePageDuplicate,
     onPageDelete: handlePageDelete,

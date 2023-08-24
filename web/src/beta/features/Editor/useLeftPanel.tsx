@@ -1,17 +1,21 @@
 import { ReactNode, useMemo } from "react";
 
-import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/SidePanel";
+import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/SidePanel";
 import { Tab } from "@reearth/beta/features/Navbar";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
+import { SelectableItem } from "./tabs/types";
+
 type Props = {
   tab: Tab;
   sceneId: string;
+  selectedItem?: SelectableItem;
 
   // for story tab
   selectedStory?: StoryFragmentFragment;
   selectedPage?: StoryPageFragmentFragment;
+  onItemSelect?: (item: SelectableItem) => void;
   onPageSelect: (id: string) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
@@ -24,6 +28,8 @@ export default ({
   sceneId,
   selectedStory,
   selectedPage,
+  selectedItem,
+  onItemSelect,
   onPageSelect,
   onPageDuplicate,
   onPageDelete,
@@ -33,7 +39,9 @@ export default ({
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
-        return <MapSidePanel sceneId={sceneId} />;
+        return (
+          <MapSidePanel sceneId={sceneId} selectedItem={selectedItem} onItemSelect={onItemSelect} />
+        );
       case "story":
         return (
           <StorySidePanel
@@ -52,15 +60,17 @@ export default ({
         return undefined;
     }
   }, [
+    selectedPage,
+    selectedStory,
+    selectedItem,
+    tab,
+    sceneId,
+    onItemSelect,
     onPageAdd,
     onPageDelete,
     onPageDuplicate,
     onPageMove,
     onPageSelect,
-    selectedPage,
-    selectedStory,
-    tab,
-    sceneId,
   ]);
 
   return {
