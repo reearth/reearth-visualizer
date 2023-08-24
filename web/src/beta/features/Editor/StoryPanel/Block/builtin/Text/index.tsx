@@ -1,23 +1,34 @@
-import { useCallback } from "react";
+import { useMemo } from "react";
+
+import Text from "@reearth/beta/components/Text";
+import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../Builtin/Wrapper";
+import BlockWrapper from "../common/Wrapper";
+import { getFieldValue } from "../utils";
 
-export type Props = BlockProps<Property>;
+export type Props = BlockProps;
 
-export type Property = {};
-
-const TextBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) => {
-  const handleRemove = useCallback(() => onRemove?.(block?.id), [block?.id, onRemove]);
+const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
+  const text = useMemo(
+    () => getFieldValue(block?.property?.items ?? [], "text") as ValueTypes["string"],
+    [block?.property?.items],
+  );
 
   return (
     <BlockWrapper
       title={block?.title}
       icon={block?.extensionId}
       isSelected={isSelected}
-      onClick={onClick}
-      onRemove={handleRemove}
-    />
+      propertyId={block?.property?.id}
+      propertyItems={block?.property?.items}
+      {...props}>
+      {text && (
+        <Text size="body" customColor>
+          {text}
+        </Text>
+      )}
+    </BlockWrapper>
   );
 };
 

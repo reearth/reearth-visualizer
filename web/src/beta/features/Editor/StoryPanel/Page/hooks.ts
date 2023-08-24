@@ -1,5 +1,7 @@
 import { useCallback, useState } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { usePropertyFetcher } from "@reearth/services/api";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 
 export default ({
@@ -22,6 +24,23 @@ export default ({
       }
     },
     [openBlocksIndex],
+  );
+
+  const { useUpdatePropertyValue } = usePropertyFetcher();
+
+  const handlePropertyValueUpdate = useCallback(
+    async (
+      propertyId?: string,
+      schemaItemId?: string,
+      fieldId?: string,
+      itemId?: string,
+      vt?: ValueType,
+      v?: ValueTypes[ValueType],
+    ) => {
+      if (!propertyId || !schemaItemId || !fieldId || !vt) return;
+      await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
+    },
+    [useUpdatePropertyValue],
   );
 
   const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
@@ -62,5 +81,6 @@ export default ({
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handleBlockOpen,
+    handlePropertyValueUpdate,
   };
 };

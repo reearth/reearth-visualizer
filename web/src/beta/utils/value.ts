@@ -24,6 +24,13 @@ export type Camera = {
   fov: number;
 };
 
+export type Spacing = {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
+};
+
 export type Typography = {
   fontFamily?: string;
   fontSize?: number;
@@ -56,7 +63,7 @@ export type Plane = {
   pitch: number;
 };
 
-// Familiar with Cesium
+// Similar to Cesium
 export type EXPERIMENTAL_clipping = {
   planes?: {
     normal: {
@@ -99,9 +106,10 @@ export type ValueTypes = {
   rect: Rect;
   ref: string;
   tiletype: string;
+  spacing: Spacing;
 };
 
-const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
+const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Bool]: "bool",
   [GQLValueType.Number]: "number",
   [GQLValueType.String]: "string",
@@ -114,6 +122,7 @@ const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
   [GQLValueType.Polygon]: "polygon",
   [GQLValueType.Rect]: "rect",
   [GQLValueType.Ref]: "ref",
+  [GQLValueType.Spacing]: "spacing",
 };
 
 export type ValueType = keyof ValueTypes;
@@ -159,7 +168,7 @@ export function valueToGQL<T extends ValueType>(
   return val ?? null;
 }
 
-export const valueTypeFromGQL = (t: GQLValueType): ValueType | undefined => {
+export const valueTypeFromGQL = (t: GQLValueType): ValueType => {
   return valueTypeMapper[t];
 };
 
