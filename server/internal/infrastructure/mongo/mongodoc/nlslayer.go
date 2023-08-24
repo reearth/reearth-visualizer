@@ -49,7 +49,7 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 		group = &NLSLayerGroupDocument{
 			Children: lg.Children().Strings(),
 			Root:     lg.IsRoot(),
-			Config: *lg.Config(),
+			Config:   *lg.Config(),
 		}
 	}
 
