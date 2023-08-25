@@ -507,6 +507,8 @@ github.com/reearth/reearthx v0.0.0-20230728095451-b9d255b762d5 h1:FUjyN05gB3OeF+
 github.com/reearth/reearthx v0.0.0-20230728095451-b9d255b762d5/go.mod h1:O4zFr6ks8jDKfgy9NBpZKp31jpmAPnfOtMQK9B6xX54=
 github.com/reearth/reearthx v0.0.0-20230825065409-20e5d57ed3cf h1:84IW4YBa6xjxJml/F/jh51WR6WGlcI6QsRVACi5PhwQ=
 github.com/reearth/reearthx v0.0.0-20230825065409-20e5d57ed3cf/go.mod h1:O4zFr6ks8jDKfgy9NBpZKp31jpmAPnfOtMQK9B6xX54=
+github.com/reearth/reearthx v0.0.0-20230825072907-543ac159f33b h1:7IsqB7KdGzp0hwlOIGb2imQW8mWJ9Ua9Ad5pAGNYaRs=
+github.com/reearth/reearthx v0.0.0-20230825072907-543ac159f33b/go.mod h1:b8EygPZ9VcMv9vTbnl/oz3PU/wHz3wpBa4rc7W7URjw=
 github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481/go.mod h1:C9WhFzY47SzYBIvzFqSvHIR6ROgDo4TtdTuRaOMjF/s=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
