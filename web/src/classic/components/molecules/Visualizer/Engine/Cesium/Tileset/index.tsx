@@ -138,6 +138,8 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
         return;
       }
 
+      await tilesetRef.current?.readyPromise;
+
       const clippingPlanesOriginMatrix = Transforms.eastNorthUpToFixedFrame(
         tilesetRef.current.boundingSphere.center.clone(),
       );

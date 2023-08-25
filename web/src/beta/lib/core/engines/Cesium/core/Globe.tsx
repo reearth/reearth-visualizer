@@ -27,7 +27,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     [property?.terrain, property?.default],
   );
 
-  const terrainProvider = useMemo((): Promise<TerrainProvider> | TerrainProvider | undefined => {
+  const terrainProvider = useMemo((): TerrainProvider | undefined => {
     const opts = {
       terrain: terrainProperty?.terrain,
       terrainType: terrainProperty?.terrainType,
@@ -89,22 +89,21 @@ const terrainProviders: {
           | "terrainCesiumIonUrl"
           | "terrainNormal"
         >,
-      ) => Promise<TerrainProvider> | null);
+      ) => TerrainProvider | null);
 } = {
   cesium: ({ terrainCesiumIonAccessToken, terrainNormal }) =>
-    CesiumTerrainProvider.fromUrl(
-      IonResource.fromAssetId(1, {
+    new CesiumTerrainProvider({
+      url: IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,
       }),
-      {
-        requestVertexNormals: terrainNormal,
-        requestWaterMask: false,
-      },
-    ),
-  arcgis: () =>
-    ArcGISTiledElevationTerrainProvider.fromUrl(
-      "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
-    ),
+      requestVertexNormals: terrainNormal,
+      requestWaterMask: false,
+    }),
+  arcgis: ({ terrainNormal }) =>
+    new ArcGISTiledElevationTerrainProvider({
+      url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+      requestVertexNormals: terrainNormal,
+    }),
   cesiumion: ({
     terrainCesiumIonAccessToken,
     terrainCesiumIonAsset,
@@ -112,14 +111,13 @@ const terrainProviders: {
     terrainNormal,
   }) =>
     terrainCesiumIonAsset
-      ? CesiumTerrainProvider.fromUrl(
-          terrainCesiumIonUrl ||
+      ? new CesiumTerrainProvider({
+          url:
+            terrainCesiumIonUrl ||
             IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
               accessToken: terrainCesiumIonAccessToken,
             }),
-          {
-            requestVertexNormals: terrainNormal,
-          },
-        )
+          requestVertexNormals: terrainNormal,
+        })
       : null,
 };
