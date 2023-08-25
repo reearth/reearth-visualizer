@@ -79,6 +79,10 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 
 	// TODO: Handel ordering
 
+	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		return nil, err
+	}
+
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, err
 	}
@@ -236,6 +240,10 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	}
 
 	story.Pages().AddAt(page, inp.Index)
+
+	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		return nil, nil, err
+	}
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, nil, err
