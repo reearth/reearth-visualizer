@@ -1,7 +1,7 @@
 type Style {
   id: ID!
   name: String!
-  value: Any!
+  value: JSON!
 }
 
 # InputType
@@ -9,14 +9,14 @@ type Style {
 input AddStyleInput {
   sceneId: ID!
   name: String!
-  value: Any!
+  value: JSON!
 }
 
 input UpdateStyleInput {
   StyleId: ID!
   sceneId: ID!
-  name: String
-  value: Any!
+  name: String!
+  value: JSON!
 }
 
 input RemoveStyleInput {

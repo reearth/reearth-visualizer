@@ -289,7 +289,7 @@ func (r *mutationResolver) AddStyle(ctx context.Context, input gqlmodel.AddStyle
 
 	s, c, err := usecases(ctx).Scene.AddStyle(ctx, interfaces.AddStyleInput{
 		SceneID: sid,
-		Name:    &input.Name,
+		Name:    input.Name,
 		Value:   gqlmodel.ToStyleValue(input.Value),
 	}, getOperator(ctx))
 	if err != nil {

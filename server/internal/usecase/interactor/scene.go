@@ -579,7 +579,7 @@ func (i *Scene) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 	}
 
 	cid := id.NewStyleID()
-	style, err := scene.NewStyle(cid, *param.Name, param.Value)
+	style, err := scene.NewStyle(cid, param.Name, param.Value)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -618,9 +618,9 @@ func (i *Scene) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 	if style == nil {
 		return nil, nil, rerror.ErrNotFound
 	}
-	if param.Name != nil {
-		style.Rename(*param.Name)
-	}
+
+	style.Rename(param.Name)
+
 	if param.Value != nil {
 		style.UpdateValue(param.Value)
 	}

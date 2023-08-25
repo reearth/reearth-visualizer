@@ -7334,6 +7334,7 @@ scalar Lang
 scalar FileSize
 scalar TranslatedString
 scalar Cursor
+scalar JSON
 
 # Meta Type
 
@@ -8837,7 +8838,7 @@ extend type Mutation {
 	{Name: "../../../gql/style.graphql", Input: `type Style {
   id: ID!
   name: String!
-  value: Any!
+  value: JSON!
 }
 
 # InputType
@@ -8845,14 +8846,14 @@ extend type Mutation {
 input AddStyleInput {
   sceneId: ID!
   name: String!
-  value: Any!
+  value: JSON!
 }
 
 input UpdateStyleInput {
   StyleId: ID!
   sceneId: ID!
-  name: String
-  value: Any!
+  name: String!
+  value: JSON!
 }
 
 input RemoveStyleInput {
@@ -45173,9 +45174,9 @@ func (ec *executionContext) _Style_value(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(interface{})
+	res := resTmp.(gqlmodel.JSON)
 	fc.Result = res
-	return ec.marshalNAny2interface(ctx, field.Selections, res)
+	return ec.marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Style_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -45185,7 +45186,7 @@ func (ec *executionContext) fieldContext_Style_value(ctx context.Context, field 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
+			return nil, errors.New("field of type JSON does not have child fields")
 		},
 	}
 	return fc, nil
@@ -52160,7 +52161,7 @@ func (ec *executionContext) unmarshalInputAddStyleInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalNAny2interface(ctx, v)
+			it.Value, err = ec.unmarshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55288,7 +55289,7 @@ func (ec *executionContext) unmarshalInputUpdateStyleInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55296,7 +55297,7 @@ func (ec *executionContext) unmarshalInputUpdateStyleInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalNAny2interface(ctx, v)
+			it.Value, err = ec.unmarshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -65516,27 +65517,6 @@ func (ec *executionContext) unmarshalNAddWidgetInput2githubᚗcomᚋreearthᚋre
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
-	res, err := graphql.UnmarshalAny(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	res := graphql.MarshalAny(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
 func (ec *executionContext) marshalNAsset2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAsset(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Asset) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -66501,6 +66481,22 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx context.Context, v interface{}) (gqlmodel.JSON, error) {
+	var res gqlmodel.JSON
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx context.Context, sel ast.SelectionSet, v gqlmodel.JSON) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (language.Tag, error) {

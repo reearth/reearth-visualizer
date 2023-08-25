@@ -1,3 +1,3 @@
 package scene
 
-type StyleValue map[string]struct{}
+type StyleValue map[string]any

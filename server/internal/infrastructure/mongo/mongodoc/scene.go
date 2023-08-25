@@ -49,7 +49,7 @@ type SceneClusterDocument struct {
 type SceneStyleDocument struct {
 	ID    string
 	Name  string
-	Value map[string]struct{}
+	Value map[string]any
 }
 
 type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]

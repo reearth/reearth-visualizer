@@ -26,6 +26,8 @@ models:
     model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Lang
   ID:
     model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID
+  JSON:
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.JSON
   Asset:
     fields:
       team:

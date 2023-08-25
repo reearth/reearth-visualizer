@@ -117,9 +117,9 @@ type AddPropertyItemInput struct {
 }
 
 type AddStyleInput struct {
-	SceneID ID          `json:"sceneId"`
-	Name    string      `json:"name"`
-	Value   interface{} `json:"value"`
+	SceneID ID     `json:"sceneId"`
+	Name    string `json:"name"`
+	Value   JSON   `json:"value"`
 }
 
 type AddStylePayload struct {
@@ -1271,9 +1271,9 @@ type StoryPayload struct {
 }
 
 type Style struct {
-	ID    ID          `json:"id"`
-	Name  string      `json:"name"`
-	Value interface{} `json:"value"`
+	ID    ID     `json:"id"`
+	Name  string `json:"name"`
+	Value JSON   `json:"value"`
 }
 
 type SyncDatasetInput struct {
@@ -1488,10 +1488,10 @@ type UpdateStoryPageInput struct {
 }
 
 type UpdateStyleInput struct {
-	StyleID ID          `json:"StyleId"`
-	SceneID ID          `json:"sceneId"`
-	Name    *string     `json:"name"`
-	Value   interface{} `json:"value"`
+	StyleID ID     `json:"StyleId"`
+	SceneID ID     `json:"sceneId"`
+	Name    string `json:"name"`
+	Value   JSON   `json:"value"`
 }
 
 type UpdateStylePayload struct {

@@ -1,6 +1,10 @@
 package gqlmodel
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
+
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -287,4 +291,26 @@ func (s *Scene) Plugin(pluginID ID) *ScenePlugin {
 		}
 	}
 	return nil
+}
+
+type JSON map[string]any
+
+func (j *JSON) UnmarshalGQL(v interface{}) error {
+	switch v := v.(type) {
+	case string:
+		if err := json.Unmarshal([]byte(v), &j); err != nil {
+			return fmt.Errorf("cannot unmarshal string %v to JSON: %w", v, err)
+		}
+		return nil
+	default:
+		return fmt.Errorf("JSON must be a string, got: %T", v)
+	}
+}
+
+func (j JSON) MarshalGQL(w io.Writer) {
+	b, err := json.Marshal(j)
+	if err != nil {
+		panic(err)
+	}
+	w.Write(b)
 }
