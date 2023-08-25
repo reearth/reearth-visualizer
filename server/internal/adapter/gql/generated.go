@@ -625,7 +625,6 @@ type ComplexityRoot struct {
 		Children    func(childComplexity int) int
 		ChildrenIds func(childComplexity int) int
 		Config      func(childComplexity int) int
-		Creator     func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Infobox     func(childComplexity int) int
 		LayerType   func(childComplexity int) int
@@ -638,7 +637,6 @@ type ComplexityRoot struct {
 
 	NLSLayerSimple struct {
 		Config    func(childComplexity int) int
-		Creator   func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Infobox   func(childComplexity int) int
 		LayerType func(childComplexity int) int
@@ -4442,13 +4440,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerGroup.Config(childComplexity), true
 
-	case "NLSLayerGroup.creator":
-		if e.complexity.NLSLayerGroup.Creator == nil {
-			break
-		}
-
-		return e.complexity.NLSLayerGroup.Creator(childComplexity), true
-
 	case "NLSLayerGroup.id":
 		if e.complexity.NLSLayerGroup.ID == nil {
 			break
@@ -4511,13 +4502,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerSimple.Config(childComplexity), true
-
-	case "NLSLayerSimple.creator":
-		if e.complexity.NLSLayerSimple.Creator == nil {
-			break
-		}
-
-		return e.complexity.NLSLayerSimple.Creator(childComplexity), true
 
 	case "NLSLayerSimple.id":
 		if e.complexity.NLSLayerSimple.ID == nil {
@@ -8149,7 +8133,6 @@ interface NLSLayer {
   visible: Boolean!
   infobox: Infobox
   tags: [LayerTag!]!
-  creator: String
 }
 
 type NLSLayerSimple implements NLSLayer {
@@ -8161,7 +8144,6 @@ type NLSLayerSimple implements NLSLayer {
     visible: Boolean!
     infobox: Infobox
     tags: [LayerTag!]!
-    creator: String
     scene: Scene
 }
 
@@ -8176,7 +8158,6 @@ type NLSLayerGroup implements NLSLayer {
     visible: Boolean!
     infobox: Infobox
     tags: [LayerTag!]!
-    creator: String
     scene: Scene
 }
 
@@ -12346,8 +12327,6 @@ func (ec *executionContext) fieldContext_AddNLSLayerSimplePayload_layers(ctx con
 				return ec.fieldContext_NLSLayerSimple_infobox(ctx, field)
 			case "tags":
 				return ec.fieldContext_NLSLayerSimple_tags(ctx, field)
-			case "creator":
-				return ec.fieldContext_NLSLayerSimple_creator(ctx, field)
 			case "scene":
 				return ec.fieldContext_NLSLayerSimple_scene(ctx, field)
 			}
@@ -30976,47 +30955,6 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_tags(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _NLSLayerGroup_creator(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerGroup_creator(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Creator, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NLSLayerGroup_creator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NLSLayerGroup",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _NLSLayerGroup_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NLSLayerGroup_scene(ctx, field)
 	if err != nil {
@@ -31463,47 +31401,6 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_tags(ctx context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NLSLayerSimple_creator(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NLSLayerSimple_creator(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Creator, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NLSLayerSimple_creator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NLSLayerSimple",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -61184,10 +61081,6 @@ func (ec *executionContext) _NLSLayerGroup(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "creator":
-
-			out.Values[i] = ec._NLSLayerGroup_creator(ctx, field, obj)
-
 		case "scene":
 			field := field
 
@@ -61276,10 +61169,6 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "creator":
-
-			out.Values[i] = ec._NLSLayerSimple_creator(ctx, field, obj)
-
 		case "scene":
 			field := field
 

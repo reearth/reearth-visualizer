@@ -14,7 +14,6 @@ type NLSLayerDocument struct {
 	Title     string
 	Visible   bool
 	Scene     string
-	Creator   string
 	LayerType string
 	Infobox   *LayerInfoboxDocument
 	Simple    *NLSLayerSimpleDocument
@@ -23,13 +22,13 @@ type NLSLayerDocument struct {
 }
 
 type NLSLayerSimpleDocument struct {
-	Config map[string]struct{}
+	Config map[string]any
 }
 
 type NLSLayerGroupDocument struct {
 	Children []string
 	Root     bool
-	Config   map[string]struct{}
+	Config   map[string]any
 }
 
 type NLSLayerConsumer = Consumer[*NLSLayerDocument, nlslayer.NLSLayer]
@@ -83,7 +82,6 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 		Visible:   l.IsVisible(),
 		Scene:     l.Scene().String(),
 		Infobox:   infobox,
-		Creator:   l.Creator(),
 		LayerType: string(l.LayerType()),
 		Group:     group,
 		Simple:    simple,
@@ -200,7 +198,7 @@ func NewNLSLayerType(p string) nlslayer.LayerType {
 	return lt
 }
 
-func NewNLSLayerConfig(c map[string]struct{}) *nlslayer.Config {
+func NewNLSLayerConfig(c map[string]any) *nlslayer.Config {
 	config := nlslayer.Config(c)
 	return &config
 }

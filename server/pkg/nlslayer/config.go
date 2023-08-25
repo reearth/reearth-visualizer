@@ -1,6 +1,6 @@
 package nlslayer
 
-type Config map[string]struct{}
+type Config map[string]any
 
 func (c Config) Clone() Config {
 	cloned := make(Config)

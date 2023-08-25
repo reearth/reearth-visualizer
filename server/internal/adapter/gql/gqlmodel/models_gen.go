@@ -767,7 +767,6 @@ type NLSLayerGroup struct {
 	Visible     bool        `json:"visible"`
 	Infobox     *Infobox    `json:"infobox"`
 	Tags        []LayerTag  `json:"tags"`
-	Creator     *string     `json:"creator"`
 	Scene       *Scene      `json:"scene"`
 }
 
@@ -782,7 +781,6 @@ type NLSLayerSimple struct {
 	Visible   bool        `json:"visible"`
 	Infobox   *Infobox    `json:"infobox"`
 	Tags      []LayerTag  `json:"tags"`
-	Creator   *string     `json:"creator"`
 	Scene     *Scene      `json:"scene"`
 }
 

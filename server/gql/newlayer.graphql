@@ -7,7 +7,6 @@ interface NLSLayer {
   visible: Boolean!
   infobox: Infobox
   tags: [LayerTag!]!
-  creator: String
 }
 
 type NLSLayerSimple implements NLSLayer {
@@ -19,7 +18,6 @@ type NLSLayerSimple implements NLSLayer {
     visible: Boolean!
     infobox: Infobox
     tags: [LayerTag!]!
-    creator: String
     scene: Scene
 }
 
@@ -34,7 +32,6 @@ type NLSLayerGroup implements NLSLayer {
     visible: Boolean!
     infobox: Infobox
     tags: [LayerTag!]!
-    creator: String
     scene: Scene
 }
 

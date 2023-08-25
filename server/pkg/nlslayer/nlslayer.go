@@ -16,7 +16,6 @@ type NLSLayer interface {
 	Infobox() *pl.Infobox
 	SetInfobox(*pl.Infobox)
 	Tags() *pl.TagList
-	Creator() string
 	Rename(string)
 }
 
@@ -64,7 +63,6 @@ type layerBase struct {
 	visible   bool
 	infobox   *pl.Infobox
 	tags      *pl.TagList
-	creator   string
 }
 
 func (l *layerBase) ID() ID {
@@ -131,13 +129,6 @@ func (l *layerBase) SetInfobox(infobox *pl.Infobox) {
 	l.infobox = infobox
 }
 
-func (l *layerBase) Creator() string {
-	if l == nil {
-		return ""
-	}
-	return l.creator
-}
-
 func (l *layerBase) Rename(name string) {
 	if l == nil {
 		return
@@ -156,7 +147,6 @@ func (l *layerBase) Clone() *layerBase {
 		scene:     l.scene,
 		title:     l.title,
 		visible:   l.visible,
-		creator:   l.creator,
 	}
 
 	if l.infobox != nil {

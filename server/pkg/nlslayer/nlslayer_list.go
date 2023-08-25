@@ -203,9 +203,6 @@ func (m Map) Add(layers ...*NLSLayer) Map {
 			continue
 		}
 		l2 := *l
-		if l2 == nil {
-			continue
-		}
 		m[l2.ID()] = l
 	}
 	return m
