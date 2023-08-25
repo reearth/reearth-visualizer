@@ -54,12 +54,13 @@ const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg })
 const Wrapper = styled.div<{ bg?: string }>`
   margin: ${({ theme }) => theme.metrics["2xl"]}px 0;
   background-color: ${({ bg }) => bg};
+  border-radius: ${({ theme }) => theme.metrics["l"]}px;
 `;
 
 const AccordionItemStateWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: ${({ theme }) => theme.metrics["2xl"]}px;
+  padding: ${({ theme }) => theme.metrics["xl"]}px;
 `;
 
 const StyledIcon = styled(Icon)<{ open: boolean }>`

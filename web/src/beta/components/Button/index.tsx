@@ -126,7 +126,7 @@ const StyledButton = styled.button<ButtonProps>`
     size === "medium"
       ? `${metricsSizes["s"]}px ${metricsSizes["l"]}px`
       : `${metricsSizes["xs"]}px ${metricsSizes["s"]}px`};
-  margin: ${({ margin }) => margin || `${metricsSizes["m"]}px`};
+  margin: ${({ margin }) => margin};
   user-select: none;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   justify-content: center;

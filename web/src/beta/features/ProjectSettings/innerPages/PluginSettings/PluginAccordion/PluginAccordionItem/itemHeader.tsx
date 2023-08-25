@@ -47,21 +47,25 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
         </TitleWrapper>
         <Text size="body">v{version}</Text>
       </InfoWrapper>
-      {isInstalled && (
-        <StyledButton
-          buttonType={hovered ? "danger" : "secondary"}
-          icon={hovered ? "bin" : "checkmark"}
-          text={hovered ? t("Uninstall") : t("Installed")}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          onClick={() => setIsModalOpen(true)}
-        />
-      )}
-
+      <StyledButton
+        buttonType={isInstalled && hovered ? "danger" : "secondary"}
+        icon={isInstalled ? (hovered ? "bin" : "checkmark") : "install"}
+        text={isInstalled ? (hovered ? t("Uninstall") : t("Installed")) : t("Install")}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        margin="0"
+        onClick={
+          isInstalled
+            ? e => {
+                setIsModalOpen(true);
+                e.stopPropagation();
+              }
+            : undefined
+        }
+      />
       <DeleteModal
-        onCancel={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}
         onProceed={() => {
           onUninstall();
           setIsModalOpen(false);
@@ -73,7 +77,6 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
 
 const Wrapper = styled(Flex)`
   width: 100%;
-  padding: ${({ theme }) => `${theme.metrics.xl}px 0`};
 `;
 
 const InfoWrapper = styled.div`

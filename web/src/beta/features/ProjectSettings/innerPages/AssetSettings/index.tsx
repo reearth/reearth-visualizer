@@ -1,11 +1,61 @@
+import { useCallback } from "react";
+
 import { InnerPage } from "../common";
 
-type Props = {};
+import AssetContainer, { type Asset } from "./AssetContainer";
+import useHooks from "./hooks";
 
-const AssetSettings: React.FC<Props> = () => {
+type Props = {
+  workspaceId?: string;
+};
+
+const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    sort,
+    searchTerm,
+    selectedAssets,
+    selectAsset,
+    handleGetMoreAssets,
+    createAssets,
+    handleSortChange,
+    handleSearchTerm,
+    removeAssets,
+  } = useHooks({ workspaceId, allowDeletion: true });
+
+  const handleSelect = useCallback(
+    (asset?: Asset) => {
+      if (!asset) return;
+      if (selectedAssets.includes(asset)) {
+        selectAsset(selectedAssets.filter(a => a !== asset));
+      } else {
+        selectAsset(assets => [...assets, asset]);
+      }
+    },
+    [selectedAssets, selectAsset],
+  );
+
   return (
     <InnerPage wide transparent>
-      WIP
+      <AssetContainer
+        assets={assets}
+        selectedAssets={selectedAssets}
+        isLoading={isLoading}
+        isMultipleSelectable={true}
+        videoOnly={false}
+        hasMoreAssets={hasMoreAssets}
+        sort={sort}
+        searchTerm={searchTerm}
+        smallCardOnly={false}
+        onCreateAssets={createAssets}
+        onRemove={removeAssets}
+        onGetMore={handleGetMoreAssets}
+        onSelect={handleSelect}
+        onSortChange={handleSortChange}
+        onSearch={handleSearchTerm}
+      />
     </InnerPage>
   );
 };

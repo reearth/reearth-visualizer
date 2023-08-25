@@ -35,6 +35,12 @@ import Minus from "./Icons/minus.svg";
 import Alert from "./Icons/alert.svg";
 import DndHandle from "./Icons/dndHandle.svg";
 import Bin from "./Icons/bin.svg";
+import Install from "./Icons/install.svg";
+import UploadSimple from "./Icons/uploadSimple.svg";
+import Search from "./Icons/search.svg";
+
+// MSIC
+import CheckCircle from "./Icons/checkCircle.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -174,4 +180,8 @@ export default {
   publicGitHubRepo: PublicGitHubRepo,
   marketplace: Marketplace,
   bin: Bin,
+  install: Install,
+  uploadSimple: UploadSimple,
+  search: Search,
+  checkCircle: CheckCircle,
 };

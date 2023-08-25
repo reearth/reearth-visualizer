@@ -11,18 +11,35 @@ export type Props = {
   isOpen: boolean;
   onProceed: () => void;
   onCancel: () => void;
-  onClose: () => void;
 };
 
-const DeleteModal: React.FC<Props> = ({ isOpen, onProceed, onCancel, onClose }) => {
+const DeleteModal: React.FC<Props> = ({ isOpen, onProceed, onCancel }) => {
   const t = useT();
   const theme = useTheme();
   return (
     <Modal
       isVisible={isOpen}
-      onClose={onClose}
-      button1={<Button text={t("Cancel")} buttonType="secondary" onClick={onCancel} />}
-      button2={<Button text={t("Uninstall")} buttonType="danger" onClick={onProceed} />}>
+      onClose={onCancel}
+      button1={
+        <Button
+          text={t("Cancel")}
+          buttonType="secondary"
+          onClick={e => {
+            onCancel();
+            e.stopPropagation();
+          }}
+        />
+      }
+      button2={
+        <Button
+          text={t("Uninstall")}
+          buttonType="danger"
+          onClick={e => {
+            onProceed();
+            e.stopPropagation();
+          }}
+        />
+      }>
       <Icon icon="alert" size={24} color={theme.dangerous.main} />
       <Text size="body">
         {t(

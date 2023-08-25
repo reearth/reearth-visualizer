@@ -202,6 +202,7 @@ const GeneralSettings: React.FC<Props> = ({
           <Button
             text={t("Cancel")}
             buttonType="secondary"
+            margin="0"
             onClick={() => {
               setUnarchiveModelVisible(false);
             }}
@@ -282,7 +283,7 @@ export default GeneralSettings;
 const DangerItem = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: ${({ theme }) => theme.spacing.largest}px;
 `;
 
 const Divider = styled.div`

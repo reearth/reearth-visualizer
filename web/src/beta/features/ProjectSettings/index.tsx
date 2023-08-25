@@ -123,7 +123,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               extensions={extensions}
             />
           )}
-          {fieldId === "asset" && <AssetSettings />}
+          {fieldId === "asset" && workspaceId && <AssetSettings workspaceId={workspaceId} />}
         </Content>
       </MainSection>
     </Wrapper>
