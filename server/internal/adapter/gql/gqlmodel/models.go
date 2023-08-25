@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/usecasex"
@@ -295,6 +296,8 @@ func (s *Scene) Plugin(pluginID ID) *ScenePlugin {
 
 type JSON map[string]any
 
+const maxAttempts = 3
+
 func (j *JSON) UnmarshalGQL(v interface{}) error {
 	switch v := v.(type) {
 	case string:
@@ -310,7 +313,16 @@ func (j *JSON) UnmarshalGQL(v interface{}) error {
 func (j JSON) MarshalGQL(w io.Writer) {
 	b, err := json.Marshal(j)
 	if err != nil {
-		panic(err)
+		b = []byte(`{"status":"error","message":"default behavior due to marshaling error"}`)
 	}
-	w.Write(b)
+
+	// Retry mechanism for writing
+	for attempts := 0; attempts < maxAttempts; attempts++ {
+		_, err = w.Write(b)
+		if err == nil {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	// If after maxAttempts we still have an error, we silently fail.
 }
