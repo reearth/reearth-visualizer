@@ -1,0 +1,161 @@
+import React, { useState, useCallback, useRef, useEffect } from "react";
+
+import Text from "@reearth/beta/components/Text";
+import { useT } from "@reearth/services/i18n";
+import { useNotification } from "@reearth/services/state";
+import { styled, useTheme } from "@reearth/services/theme";
+import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+
+export type Props = {
+  className?: string;
+  suffix?: string;
+  min?: number;
+  max?: number;
+  disabled?: boolean;
+  inputDescription?: string;
+  value?: number;
+  onChange?: (value?: number | undefined) => void;
+};
+
+const NumberInput: React.FC<Props> = ({
+  className,
+  value,
+  inputDescription,
+  suffix,
+  onChange,
+  min,
+  max,
+  disabled = false,
+}) => {
+  const [innerValue, setInnerValue] = useState<number | undefined>(value);
+  const [, setNotification] = useNotification();
+
+  const isEditing = useRef(false);
+  const t = useT();
+
+  const theme = useTheme();
+
+  useEffect(() => {
+    setInnerValue(value);
+  }, [value]);
+
+  const callChange = useCallback(
+    (newValue: number | undefined) => {
+      if (!onChange || !isEditing.current) {
+        return;
+      }
+
+      if (newValue === undefined) {
+        setInnerValue(undefined);
+        onChange(undefined);
+      } else if (typeof max === "number" && isFinite(max) && newValue > max) {
+        setNotification({ type: "warning", text: t("You have passed the maximum value.") });
+        setInnerValue(undefined);
+        onChange(undefined);
+      } else if (typeof min === "number" && isFinite(min) && newValue < min) {
+        setNotification({ type: "warning", text: t("You have passed the minimum value.") });
+        setInnerValue(undefined);
+        onChange(undefined);
+      } else if (!isNaN(newValue)) {
+        setInnerValue(newValue);
+        onChange(newValue);
+      }
+    },
+    [onChange, max, min, setNotification, t],
+  );
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInnerValue(parseFloat(e.currentTarget.value));
+  }, []);
+
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        callChange(parseFloat(e.currentTarget.value));
+      }
+    },
+    [callChange],
+  );
+
+  const handleFocus = useCallback(() => {
+    isEditing.current = true;
+  }, []);
+
+  const handleBlur = useCallback(
+    (e: React.SyntheticEvent<HTMLInputElement>) => {
+      callChange(parseFloat(e.currentTarget.value));
+      isEditing.current = false;
+    },
+    [callChange],
+  );
+
+  return (
+    <Wrapper>
+      <FormWrapper inactive={!!disabled} className={className}>
+        <StyledInput
+          type="number"
+          value={innerValue}
+          disabled={disabled}
+          onChange={handleChange}
+          onKeyPress={handleKeyPress}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          min={min}
+          max={max}
+          step="any"
+        />
+        {suffix && (
+          <Text size="footnote" color={theme.content.weak} otherProperties={{ userSelect: "none" }}>
+            {suffix}
+          </Text>
+        )}
+      </FormWrapper>
+      {inputDescription && (
+        <Text size="footnote" color={theme.content.weak}>
+          {inputDescription}
+        </Text>
+      )}
+    </Wrapper>
+  );
+};
+
+const Wrapper = styled.div`
+  width: 100%;
+  text-align: center;
+`;
+
+type FormProps = { inactive: boolean };
+
+const FormWrapper = styled.div<FormProps>`
+  display: flex;
+  align-items: center;
+  background: ${({ theme }) => theme.bg[1]};
+  border: 1px solid ${({ theme }) => theme.outline.weak};
+  border-radius: 4px;
+  padding: ${metricsSizes.xs}px ${metricsSizes.s}px;
+  gap: 12px;
+  width: 100%;
+  color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
+  &:focus-within {
+    border-color: ${({ theme }) => theme.select.main};
+  }
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+`;
+
+const StyledInput = styled.input`
+  display: block;
+  border: none;
+  background: ${({ theme }) => theme.bg[1]};
+  outline: none;
+  color: inherit;
+  width: 100%;
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+  &[type="number"] {
+    -moz-appearance: textfield;
+  }
+`;
+
+export default NumberInput;

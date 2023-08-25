@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { styled } from "@reearth/services/theme";
 
 import Property from "..";
+import NumberInput from "../NumberInput";
 
 type SpacingValues = {
   top: number;
@@ -23,27 +24,26 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, onChange }) =
     value || { top: 0, left: 0, right: 0, bottom: 0 },
   );
 
-  const handleInputChange = (position: keyof SpacingValues, newValue: string) => {
+  const handleInputChange = (
+    position: keyof SpacingValues,
+    newValue: string | number | undefined,
+  ) => {
     const updatedValues = { ...spacingValues, [position]: newValue };
     setSpacingValues(updatedValues);
     onChange?.(updatedValues);
   };
 
-  function getSpacingPosition(spacingValue: SpacingValues, position: keyof SpacingValues): number {
-    return spacingValue[position];
-  }
-
   return (
     <Property name={name} description={description}>
       <StyledRectangle>
         {["top", "left", "right", "bottom"].map(position => (
-          <SpacingField key={position} position={position}>
-            <SpacingInputField
-              value={getSpacingPosition(spacingValues, position as keyof SpacingValues)}
-              onChange={e => handleInputChange(position as keyof SpacingValues, e.target.value)}
-            />
-            <ValueText>px</ValueText>
-          </SpacingField>
+          <SpacingField
+            value={getSpacingPosition(spacingValues, position as keyof SpacingValues)}
+            suffix="px"
+            key={position}
+            position={position}
+            onChange={newValue => handleInputChange(position as keyof SpacingValues, newValue)}
+          />
         ))}
       </StyledRectangle>
     </Property>
@@ -57,18 +57,12 @@ const StyledRectangle = styled.div`
   position: relative;
   width: 289px;
   height: 84px;
-  background: ${({ theme }) => theme.bg[1]};
   border: 1px dashed ${({ theme }) => theme.outline.weak};
   box-sizing: border-box;
 `;
 
-const SpacingField = styled.div<{ position: string }>`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+const SpacingField = styled(NumberInput)<{ position: string }>`
+  width: 40px;
   position: absolute;
   ${({ position }) =>
     position === "top"
@@ -80,18 +74,6 @@ const SpacingField = styled.div<{ position: string }>`
       : "bottom: 0; left: 50%; transform: translateX(-50%);"};
 `;
 
-const SpacingInputField = styled.input`
-  background: transparent;
-  color: ${({ theme }) => theme.content.main};
-  width: 14px;
-  height: 20px;
-  text-align: center;
-  border: none;
-  font-size: 12px;
-`;
-
-const ValueText = styled.span`
-  font-size: 12px;
-  color: ${({ theme }) => theme.content.weak};
-  line-height: 20px;
-`;
+function getSpacingPosition(spacingValue: SpacingValues, position: keyof SpacingValues): number {
+  return spacingValue[position];
+}

@@ -397,3 +397,5 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.
