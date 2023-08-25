@@ -1,31 +1,34 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
-import Component, { PluginAccordionProps } from ".";
+import PluginAccordion from ".";
 
-export default {
-  title: "classic/molecules/Settings/Project/PluginAccordion",
-  component: Component,
-} as Meta;
+const meta: Meta<typeof PluginAccordion> = {
+  component: PluginAccordion,
+};
 
-export const Default: Story<PluginAccordionProps> = args => <Component {...args} />;
+export default meta;
 
-Default.args = {
-  plugins: [
-    {
-      thumbnailUrl: `/sample.svg`,
-      title: "Sample",
-      isInstalled: true,
-      bodyMarkdown: "# Hoge ## Hoge",
-      author: "reearth",
-      pluginId: "id1",
-    },
-    {
-      thumbnailUrl: `/sample.svg`,
-      title: "Sample2",
-      isInstalled: false,
-      bodyMarkdown: "# Fuga ## Fuga",
-      author: "reearth",
-      pluginId: "id2",
-    },
-  ],
+type Story = StoryObj<typeof PluginAccordion>;
+
+export const Default: Story = {
+  args: {
+    plugins: [
+      {
+        thumbnailUrl: `/sample.svg`,
+        title: "Sample",
+        isInstalled: true,
+        bodyMarkdown: "# Hoge ## Hoge",
+        author: "reearth",
+        pluginId: "id1",
+      },
+      {
+        thumbnailUrl: `/sample.svg`,
+        title: "Sample2",
+        isInstalled: false,
+        bodyMarkdown: "# Fuga ## Fuga",
+        author: "reearth",
+        pluginId: "id2",
+      },
+    ],
+  },
 };

@@ -19,6 +19,8 @@ export interface Props {
   margin?: string;
 
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 const Button: React.FC<Props> = ({
@@ -32,6 +34,8 @@ const Button: React.FC<Props> = ({
   iconPosition = icon ? "left" : undefined,
   margin,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   const hasText = useMemo(() => {
     return !!text || !!children;
@@ -57,7 +61,9 @@ const Button: React.FC<Props> = ({
       text={hasText}
       disabled={disabled}
       margin={margin}
-      onClick={onClick}>
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}>
       {iconPosition === "left" && WrappedIcon}
       {size === "medium" ? (
         <Text size="body" customColor>

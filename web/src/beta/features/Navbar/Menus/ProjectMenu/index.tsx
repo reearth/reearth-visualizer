@@ -16,28 +16,28 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
   const menuItems: MenuItem[] = [
     {
       text: t("Project settings"),
-      linkTo: `/project-settings/${currentProject.id}`,
+      linkTo: `/beta/settings/projects/${currentProject.id}`,
     },
     {
       text: t("Story"),
-      linkTo: `/project-settings/${currentProject.id}/story`,
+      linkTo: `/beta/settings/projects/${currentProject.id}/story`,
     },
     {
       text: t("Public"),
-      linkTo: `/project-settings/${currentProject.id}/public`,
+      linkTo: `/beta/settings/projects/${currentProject.id}/public`,
     },
     {
       text: t("Workspace assets"),
-      linkTo: `/project-settings/${currentProject.id}/asset`,
+      linkTo: `/beta/settings/projects/${currentProject.id}/asset`,
     },
     {
       text: t("Plugin"),
-      linkTo: `/project-settings/${currentProject.id}/plugin`,
+      linkTo: `/beta/settings/projects/${currentProject.id}/plugin`,
     },
     { breakpoint: true },
     {
       text: t("Manage projects"),
-      linkTo: `/settings/workspaces/${workspaceId}/projects`,
+      linkTo: `/beta/settings/projects/${workspaceId}/projects`,
     },
   ];
 

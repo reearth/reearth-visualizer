@@ -35,7 +35,7 @@ export const AppRoutes = () => {
         <Routes>
           <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
           <Route
-            path="project-settings/:projectId/:fieldId?/:fieldParam?"
+            path="beta/settings/projects/:projectId/:fieldId?/:fieldParam?"
             element={<BetaProjectSettings />}
           />
           {/* Beta routes - end */}

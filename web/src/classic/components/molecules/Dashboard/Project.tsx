@@ -57,7 +57,7 @@ const Project: React.FC<Props> = ({ className, project }) => {
               <StyledLink
                 to={
                   project.projectType === "beta"
-                    ? `/project-settings/${id}`
+                    ? `/beta/settings/projects/${id}`
                     : `/settings/projects/${id}`
                 }>
                 <Button large buttonType="primary" icon="settings" />

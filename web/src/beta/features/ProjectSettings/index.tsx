@@ -28,7 +28,7 @@ export function isProjectSettingField(settingField: string): boolean {
 type Props = {
   projectId: string;
   workspaceId?: string;
-  fieldId?: (typeof projectSettingFields)[number]["id"];
+  fieldId?: "general" | "story" | "public" | "asset" | "plugin";
   fieldParam?: string;
 };
 
@@ -61,7 +61,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
       projectSettingFields.map(f => ({
         id: f.id,
         text: t(f.text),
-        linkTo: `/project-settings/${projectId}/${f.id === "general" ? "" : f.id}`,
+        linkTo: `/beta/settings/projects/${projectId}/${f.id === "general" ? "" : f.id}`,
       })),
     [projectId, t],
   );

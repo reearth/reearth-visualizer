@@ -16,7 +16,7 @@ import { StorySettingsType } from "./innerPages/StorySettings";
 type Props = {
   projectId: string;
   workspaceId?: string;
-  fieldId?: string;
+  fieldId?: "general" | "story" | "public" | "asset" | "plugin";
   fieldParam?: string;
 };
 
@@ -60,7 +60,22 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
     }
   }, [workspaceId, projectId, useDeleteProject, navigate]);
 
-  // Story
+  const handleUpdateProjectBasicAuth = useCallback(
+    async (settings: PublicBasicAuthSettingsType) => {
+      if (!projectId) return;
+      await useUpdateProjectBasicAuth({ projectId, ...settings });
+    },
+    [projectId, useUpdateProjectBasicAuth],
+  );
+
+  const handleUpdateProjectAlias = useCallback(
+    async (settings: PublicAliasSettingsType) => {
+      if (!projectId) return;
+      await useUpdateProjectAlias({ projectId, ...settings });
+    },
+    [projectId, useUpdateProjectAlias],
+  );
+
   const stories = useMemo(() => scene?.stories ?? [], [scene?.stories]);
   const currentStory = useMemo(
     () =>
@@ -81,7 +96,6 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
     [useUpdateStory, currentStory?.id, scene?.id],
   );
 
-  // Public
   const handleUpdateStoryBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {
       if (!scene?.id || !currentStory?.id) return;
@@ -97,23 +111,6 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
     [useUpdateStory, currentStory?.id, scene?.id],
   );
 
-  const handleUpdateProjectBasicAuth = useCallback(
-    async (settings: PublicBasicAuthSettingsType) => {
-      if (!projectId) return;
-      await useUpdateProjectBasicAuth({ projectId, ...settings });
-    },
-    [projectId, useUpdateProjectBasicAuth],
-  );
-
-  const handleUpdateProjectAlias = useCallback(
-    async (settings: PublicAliasSettingsType) => {
-      if (!projectId) return;
-      await useUpdateProjectAlias({ projectId, ...settings });
-    },
-    [projectId, useUpdateProjectAlias],
-  );
-
-  // Plugin
   const { getAccessToken } = useAuth();
   const [accessToken, setAccessToken] = useState<string>();
 

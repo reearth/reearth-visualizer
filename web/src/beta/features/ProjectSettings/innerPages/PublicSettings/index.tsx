@@ -66,13 +66,13 @@ const PublicSettings: React.FC<Props> = ({
       {
         id: "map",
         title: t("Map"),
-        linkTo: `/project-settings/${project.id}/public/`,
+        linkTo: `/beta/settings/projects/${project.id}/public/`,
         active: !currentStory,
       },
       ...stories.map(s => ({
         id: s.id,
         title: s.title,
-        linkTo: `/project-settings/${project.id}/public/${s.id}`,
+        linkTo: `/beta/settings/projects/${project.id}/public/${s.id}`,
         active: s.id === currentStory?.id,
       })),
     ],

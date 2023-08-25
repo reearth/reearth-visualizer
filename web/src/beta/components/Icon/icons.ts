@@ -34,6 +34,7 @@ import Plus from "./Icons/plus.svg";
 import Minus from "./Icons/minus.svg";
 import Alert from "./Icons/alert.svg";
 import DndHandle from "./Icons/dndHandle.svg";
+import Bin from "./Icons/bin.svg";
 
 // Dataset
 import File from "./Icons/fileIcon.svg";
@@ -172,4 +173,5 @@ export default {
   uploadZipPlugin: UploadZipPlugin,
   publicGitHubRepo: PublicGitHubRepo,
   marketplace: Marketplace,
+  bin: Bin,
 };

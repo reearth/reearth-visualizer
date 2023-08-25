@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 
-import Box from "@reearth/classic/components/atoms/Box";
-import Button from "@reearth/classic/components/atoms/Button";
-import Flex from "@reearth/classic/components/atoms/Flex";
-import Text from "@reearth/classic/components/atoms/Text";
-import { fonts } from "@reearth/classic/theme";
+import Button from "@reearth/beta/components/Button";
+import Flex from "@reearth/beta/components/Flex";
+import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -30,42 +28,44 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
   const t = useT();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
+
   return (
     <Wrapper align="center" justify="space-between" className={className}>
-      <Flex align="center">
+      <InfoWrapper>
         <TitleWrapper>
           {thumbnail && (
-            <Box borderRadius={8} mh="m">
+            <ThumbnailWrapper>
               <Thumbnail src={thumbnail} alt="plugin thumbnail" />
-            </Box>
+            </ThumbnailWrapper>
           )}
-          <Text size="m" weight="bold" otherProperties={{ marginRight: "20px", maxWidth: "200px" }}>
+          <Text
+            size="body"
+            weight="bold"
+            otherProperties={{ marginRight: "20px", maxWidth: "200px" }}>
             {title}
           </Text>
         </TitleWrapper>
-        <Text size="m">v{version}</Text>
-      </Flex>
-      <StyledButton
-        buttonType={isInstalled && hovered ? "danger" : "secondary"}
-        type="button"
-        large
-        icon={isInstalled ? (hovered ? "bin" : "check") : "install"}
-        text={isInstalled ? (hovered ? t("Uninstall") : t("Installed")) : t("Install")}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={isInstalled ? () => setIsModalOpen(true) : undefined}
-      />
+        <Text size="body">v{version}</Text>
+      </InfoWrapper>
+      {isInstalled && (
+        <StyledButton
+          buttonType={hovered ? "danger" : "secondary"}
+          icon={hovered ? "bin" : "checkmark"}
+          text={hovered ? t("Uninstall") : t("Installed")}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onClick={() => setIsModalOpen(true)}
+        />
+      )}
+
       <DeleteModal
         onCancel={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onProceed={onUninstall}
+        onProceed={() => {
+          onUninstall();
+          setIsModalOpen(false);
+        }}
       />
     </Wrapper>
   );
@@ -73,12 +73,22 @@ const PluginAccordionItemHeader: React.FC<PluginItemProps> = ({
 
 const Wrapper = styled(Flex)`
   width: 100%;
-  padding: ${props => `${props.theme.classic.metrics.xl}px 0`};
+  padding: ${({ theme }) => `${theme.metrics.xl}px 0`};
+`;
+
+const InfoWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const TitleWrapper = styled(Flex)`
   width: 250px;
   margin-right: 32px;
+`;
+
+const ThumbnailWrapper = styled.div`
+  border-radius: 8px;
+  margin: ${({ theme }) => theme.metrics.m};
 `;
 
 const Thumbnail = styled.img`
@@ -88,11 +98,7 @@ const Thumbnail = styled.img`
 `;
 
 const StyledButton = styled(Button)`
-  font-weight: ${fonts.weight.bold};
   width: 153px;
-  border-radius: ${props => props.theme.classic.metrics.s}px;
-  padding: ${({ theme }) => `${theme.classic.metrics.s}px ${theme.classic.metrics["2xl"]}`};
-  transition: all 0.3s;
 `;
 
 export default PluginAccordionItemHeader;

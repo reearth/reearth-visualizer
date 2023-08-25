@@ -104,7 +104,24 @@ const PluginSettings: React.FC<Props> = ({ isArchived, accessToken, extensions }
               // installFromPublicRepo={onInstallFromPublicRepo}
               // installByUploadingZipFile={onInstallFromFile}
               // uninstallPlugin={onUninstall}
-              installedPlugins={[]}
+              installedPlugins={[
+                {
+                  thumbnailUrl: `/sample.svg`,
+                  title: "Sample",
+                  isInstalled: true,
+                  bodyMarkdown: "# Hoge ## Hoge",
+                  author: "reearth",
+                  pluginId: "id1",
+                },
+                {
+                  thumbnailUrl: `/sample.svg`,
+                  title: "Sample2",
+                  isInstalled: false,
+                  bodyMarkdown: "# Fuga ## Fuga",
+                  author: "reearth",
+                  pluginId: "id2",
+                },
+              ]}
               installFromPublicRepo={() => {}}
               installByUploadingZipFile={() => {}}
               uninstallPlugin={() => {}}
