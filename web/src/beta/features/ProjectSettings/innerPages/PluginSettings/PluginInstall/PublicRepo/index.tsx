@@ -1,10 +1,10 @@
 import React from "react";
 
 import Button from "@reearth/beta/components/Button";
+import TextInput from "@reearth/beta/components/fields/TextInput";
 import { Icons } from "@reearth/beta/components/Icon";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
-import TextInput from "@reearth/beta/components/properties/TextInput";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";

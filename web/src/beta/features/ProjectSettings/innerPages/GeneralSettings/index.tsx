@@ -2,8 +2,8 @@ import { useCallback, useState, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
+import TextInput from "@reearth/beta/components/fields/TextInput";
 import Modal from "@reearth/beta/components/Modal";
-import TextInput from "@reearth/beta/components/properties/TextInput";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";

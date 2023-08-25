@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
-import TextInput from "@reearth/beta/components/properties/TextInput";
+import TextInput from "@reearth/beta/components/fields/TextInput";
 import { useT } from "@reearth/services/i18n";
 
 import { SettingsFields, ButtonWrapper } from "../common";
@@ -43,8 +43,6 @@ const PublicSettingsDetail: React.FC<Props> = ({
   const handleSubmitBasicAuthorization = useCallback(() => {
     onUpdateBasicAuth({
       ...localBasicAuthorization,
-      // TODO: test
-      isBasicAuthActive: true,
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
 
@@ -62,7 +60,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <TextInput
             name={t("Title")}
             value={settingsItem.publicTitle}
-            onChange={publicTitle => {
+            onChange={(publicTitle: string) => {
               setLocalPublicInfo(s => ({ ...s, publicTitle }));
             }}
             timeout={0}
@@ -83,10 +81,11 @@ const PublicSettingsDetail: React.FC<Props> = ({
       <Collapse title={t("Basic Authorization")} type="settings">
         <SettingsFields>
           <div>Enable basic authorization - Boolean Field</div>
+          {/* TODO: basicAuthUsername & basicAuthPassword can be updated only when isBasicAuthActive is true*/}
           <TextInput
             name={t("Username")}
             value={settingsItem.basicAuthUsername}
-            onChange={basicAuthUsername => {
+            onChange={(basicAuthUsername: string) => {
               setBasicAuthorization(s => ({ ...s, basicAuthUsername }));
             }}
             timeout={0}
@@ -94,7 +93,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <TextInput
             name={t("Password")}
             value={settingsItem.basicAuthPassword}
-            onChange={basicAuthPassword => {
+            onChange={(basicAuthPassword: string) => {
               setBasicAuthorization(s => ({ ...s, basicAuthPassword }));
             }}
             timeout={0}
@@ -115,7 +114,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <TextInput
             name={t("Site name")}
             value={settingsItem.alias}
-            onChange={alias => {
+            onChange={(alias: string) => {
               setLocalAlias(alias);
             }}
             timeout={0}

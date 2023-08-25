@@ -9,7 +9,7 @@ type Props = {};
 const ProjectSettingsPage: React.FC<Props> = () => {
   const { projectId, fieldId, fieldParam } = useParams<{
     projectId: string;
-    fieldId?: string;
+    fieldId?: "general" | "story" | "public" | "asset" | "plugin";
     fieldParam?: string;
   }>();
   const settingField = fieldId ?? "general";
