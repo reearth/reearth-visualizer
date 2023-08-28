@@ -8278,7 +8278,7 @@ type NLSLayerSimple implements NLSLayer {
     id: ID!
     layerType: String!
     sceneId: ID!
-    config: Any
+    config: JSON
     title: String!
     visible: Boolean!
     infobox: Infobox
@@ -8292,7 +8292,7 @@ type NLSLayerGroup implements NLSLayer {
     sceneId: ID!
     children: [NLSLayer]!
     childrenIds: [ID!]!
-    config: Any
+    config: JSON
     title: String!
     visible: Boolean!
     infobox: Infobox
@@ -8306,7 +8306,7 @@ input AddNLSLayerSimpleInput {
     parentLayerId: ID!
     layerType: String!
     sceneID: ID!
-    config: Any
+    config: JSON
     index: Int
 }
 
@@ -31316,9 +31316,9 @@ func (ec *executionContext) _NLSLayerGroup_config(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(interface{})
+	res := resTmp.(gqlmodel.JSON)
 	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
+	return ec.marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_NLSLayerGroup_config(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -31328,7 +31328,7 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_config(ctx context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
+			return nil, errors.New("field of type JSON does not have child fields")
 		},
 	}
 	return fc, nil
@@ -31769,9 +31769,9 @@ func (ec *executionContext) _NLSLayerSimple_config(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(interface{})
+	res := resTmp.(gqlmodel.JSON)
 	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
+	return ec.marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_NLSLayerSimple_config(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -31781,7 +31781,7 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_config(ctx context.Conte
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
+			return nil, errors.New("field of type JSON does not have child fields")
 		},
 	}
 	return fc, nil
@@ -53912,7 +53912,7 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("config"))
-			it.Config, err = ec.unmarshalOAny2interface(ctx, v)
+			it.Config, err = ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -71731,6 +71731,22 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx context.Context, v interface{}) (gqlmodel.JSON, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res gqlmodel.JSON
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx context.Context, sel ast.SelectionSet, v gqlmodel.JSON) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (*language.Tag, error) {

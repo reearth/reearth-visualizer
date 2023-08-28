@@ -13,7 +13,7 @@ type NLSLayerSimple implements NLSLayer {
     id: ID!
     layerType: String!
     sceneId: ID!
-    config: Any
+    config: JSON
     title: String!
     visible: Boolean!
     infobox: Infobox
@@ -27,7 +27,7 @@ type NLSLayerGroup implements NLSLayer {
     sceneId: ID!
     children: [NLSLayer]!
     childrenIds: [ID!]!
-    config: Any
+    config: JSON
     title: String!
     visible: Boolean!
     infobox: Infobox
@@ -41,7 +41,7 @@ input AddNLSLayerSimpleInput {
     parentLayerId: ID!
     layerType: String!
     sceneID: ID!
-    config: Any
+    config: JSON
     index: Int
 }
 

@@ -113,11 +113,11 @@ type AddMemberToTeamPayload struct {
 }
 
 type AddNLSLayerSimpleInput struct {
-	ParentLayerID ID          `json:"parentLayerId"`
-	LayerType     string      `json:"layerType"`
-	SceneID       ID          `json:"sceneID"`
-	Config        interface{} `json:"config"`
-	Index         *int        `json:"index"`
+	ParentLayerID ID     `json:"parentLayerId"`
+	LayerType     string `json:"layerType"`
+	SceneID       ID     `json:"sceneID"`
+	Config        JSON   `json:"config"`
+	Index         *int   `json:"index"`
 }
 
 type AddNLSLayerSimplePayload struct {
@@ -768,31 +768,31 @@ type MoveStoryPayload struct {
 }
 
 type NLSLayerGroup struct {
-	ID          ID          `json:"id"`
-	LayerType   string      `json:"layerType"`
-	SceneID     ID          `json:"sceneId"`
-	Children    []NLSLayer  `json:"children"`
-	ChildrenIds []ID        `json:"childrenIds"`
-	Config      interface{} `json:"config"`
-	Title       string      `json:"title"`
-	Visible     bool        `json:"visible"`
-	Infobox     *Infobox    `json:"infobox"`
-	Tags        []LayerTag  `json:"tags"`
-	Scene       *Scene      `json:"scene"`
+	ID          ID         `json:"id"`
+	LayerType   string     `json:"layerType"`
+	SceneID     ID         `json:"sceneId"`
+	Children    []NLSLayer `json:"children"`
+	ChildrenIds []ID       `json:"childrenIds"`
+	Config      JSON       `json:"config"`
+	Title       string     `json:"title"`
+	Visible     bool       `json:"visible"`
+	Infobox     *Infobox   `json:"infobox"`
+	Tags        []LayerTag `json:"tags"`
+	Scene       *Scene     `json:"scene"`
 }
 
 func (NLSLayerGroup) IsNLSLayer() {}
 
 type NLSLayerSimple struct {
-	ID        ID          `json:"id"`
-	LayerType string      `json:"layerType"`
-	SceneID   ID          `json:"sceneId"`
-	Config    interface{} `json:"config"`
-	Title     string      `json:"title"`
-	Visible   bool        `json:"visible"`
-	Infobox   *Infobox    `json:"infobox"`
-	Tags      []LayerTag  `json:"tags"`
-	Scene     *Scene      `json:"scene"`
+	ID        ID         `json:"id"`
+	LayerType string     `json:"layerType"`
+	SceneID   ID         `json:"sceneId"`
+	Config    JSON       `json:"config"`
+	Title     string     `json:"title"`
+	Visible   bool       `json:"visible"`
+	Infobox   *Infobox   `json:"infobox"`
+	Tags      []LayerTag `json:"tags"`
+	Scene     *Scene     `json:"scene"`
 }
 
 func (NLSLayerSimple) IsNLSLayer() {}

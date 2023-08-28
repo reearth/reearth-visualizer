@@ -18,16 +18,18 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple, parent *id.NLSLayerID) *NLSLay
 		Visible:   l.IsVisible(),
 		Infobox:   nil, // Temporarily
 		LayerType: string(l.LayerType()),
-		Config:    l.Config(),
+		Config:    JSON(*l.Config()),
 		Tags:      ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
 
-func ToNLSConfig(p interface{}) *nlslayer.Config {
-	if config, ok := p.(nlslayer.Config); ok {
-		return &config
+func ToNLSConfig(p JSON) *nlslayer.Config {
+	co := make(nlslayer.Config)
+
+	for key, value := range p {
+		co[key] = value
 	}
-	return nil
+	return &co
 }
 
 func ToNLSLayerType(p string) nlslayer.LayerType {
