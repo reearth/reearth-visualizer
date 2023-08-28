@@ -32,13 +32,13 @@ type Dataset struct {
 	common
 	commonSceneLock
 	sceneRepo         repo.Scene
-	workspaceRepo     accountrepo.Workspace
 	datasetRepo       repo.Dataset
 	datasetSchemaRepo repo.DatasetSchema
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
 	pluginRepo        repo.Plugin
-	policyRepo        repo.Policy
+	workspaceRepo     accountrepo.Workspace
+	policyRepo        accountrepo.Policy
 	datasource        gateway.DataSource
 	file              gateway.File
 	google            gateway.Google

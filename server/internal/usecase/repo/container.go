@@ -40,6 +40,15 @@ type Container struct {
 	Extensions     []plugin.ID
 }
 
+func (c *Container) AccountRepos() *accountrepo.Container {
+	return &accountrepo.Container{
+		Workspace: c.Workspace,
+		User:      c.User,
+		// TODO: Policy: c.Policy,
+		Transaction: c.Transaction,
+	}
+}
+
 func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {
 	if c == nil {
 		return c
