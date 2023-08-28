@@ -132,6 +132,17 @@ type AddPropertyItemInput struct {
 	NameFieldType  *ValueType  `json:"nameFieldType"`
 }
 
+type AddStyleInput struct {
+	SceneID ID     `json:"sceneId"`
+	Name    string `json:"name"`
+	Value   JSON   `json:"value"`
+}
+
+type AddStylePayload struct {
+	Scene *Scene `json:"scene"`
+	Style *Style `json:"Style"`
+}
+
 type AddWidgetInput struct {
 	SceneID     ID `json:"sceneId"`
 	PluginID    ID `json:"pluginId"`
@@ -1155,6 +1166,16 @@ type RemoveStoryBlockPayload struct {
 	Story   *Story     `json:"story"`
 }
 
+type RemoveStyleInput struct {
+	StyleID ID `json:"StyleId"`
+	SceneID ID `json:"sceneId"`
+}
+
+type RemoveStylePayload struct {
+	Scene   *Scene `json:"scene"`
+	StyleID ID     `json:"StyleId"`
+}
+
 type RemoveTagInput struct {
 	TagID ID `json:"tagID"`
 }
@@ -1191,6 +1212,7 @@ type Scene struct {
 	RootLayer         *LayerGroup              `json:"rootLayer"`
 	NewLayers         []NLSLayer               `json:"newLayers"`
 	Stories           []*Story                 `json:"stories"`
+	Styles            []*Style                 `json:"styles"`
 	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
 	TagIds            []ID                     `json:"tagIds"`
 	Tags              []Tag                    `json:"tags"`
@@ -1301,6 +1323,12 @@ type StoryPagePayload struct {
 
 type StoryPayload struct {
 	Story *Story `json:"story"`
+}
+
+type Style struct {
+	ID    ID     `json:"id"`
+	Name  string `json:"name"`
+	Value JSON   `json:"value"`
 }
 
 type SyncDatasetInput struct {
@@ -1522,6 +1550,18 @@ type UpdateStoryPageInput struct {
 	Layers          []ID    `json:"layers"`
 	SwipeableLayers []ID    `json:"swipeableLayers"`
 	Index           *int    `json:"index"`
+}
+
+type UpdateStyleInput struct {
+	StyleID ID     `json:"StyleId"`
+	SceneID ID     `json:"sceneId"`
+	Name    string `json:"name"`
+	Value   JSON   `json:"value"`
+}
+
+type UpdateStylePayload struct {
+	Scene *Scene `json:"scene"`
+	Style *Style `json:"Style"`
 }
 
 type UpdateTagInput struct {
