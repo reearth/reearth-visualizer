@@ -14,6 +14,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -23,8 +25,8 @@ type Project struct {
 	commonSceneLock
 	assetRepo         repo.Asset
 	projectRepo       repo.Project
-	userRepo          repo.User
-	workspaceRepo     repo.Workspace
+	userRepo          accountrepo.User
+	workspaceRepo     accountrepo.Workspace
 	sceneRepo         repo.Scene
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
@@ -59,7 +61,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Oper
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecasex.Pagination, _ *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, p *usecasex.Pagination, _ *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 	return i.projectRepo.FindByWorkspace(ctx, id, p)
 }
 

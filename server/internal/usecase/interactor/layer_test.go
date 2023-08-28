@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +17,7 @@ func TestCreateInfobox(t *testing.T) {
 	ctx := context.Background()
 
 	db := memory.New()
-	scene, _ := scene.New().NewID().Workspace(id.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewLayer(db)
 

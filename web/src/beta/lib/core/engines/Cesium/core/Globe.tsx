@@ -92,7 +92,6 @@ const terrainProviders: {
       ) => TerrainProvider | null);
 } = {
   cesium: ({ terrainCesiumIonAccessToken, terrainNormal }) =>
-    // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
     new CesiumTerrainProvider({
       url: IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,

@@ -1,10 +1,9 @@
 import type { ComponentType, ReactNode } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
-import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import { Theme } from "../../types";
+import { Theme, ValueType, ValueTypes } from "../../types";
 import type { Block, BlockProps, InfoboxProperty } from "../types";
 
 import builtin, { isBuiltinBlock } from "./builtin";

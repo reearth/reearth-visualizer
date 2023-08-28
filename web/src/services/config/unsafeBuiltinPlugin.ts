@@ -22,7 +22,7 @@ export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 
 export const loadUnsafeBuiltinPlugins = async (urls: string[]) => {
   return (
-    await Promise.all(
+    await Promise.allSettled(
       urls.map(async url => {
         try {
           const plugin: UnsafeBuiltinPlugin = (await import(/* @vite-ignore */ url)).default;
@@ -32,5 +32,15 @@ export const loadUnsafeBuiltinPlugins = async (urls: string[]) => {
         }
       }),
     )
-  ).filter(Boolean);
+  )
+    .map(val => {
+      switch (val.status) {
+        case "fulfilled":
+          return val.value;
+        case "rejected":
+          console.warn(val.reason);
+          return;
+      }
+    })
+    .filter((v): v is UnsafeBuiltinPlugin => !!v);
 };
