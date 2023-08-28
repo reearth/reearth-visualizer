@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { styled } from "@reearth/services/theme";
 
 import Property from "..";
-import NumberInput from "../NumberInput";
+import NumberInput from "../common/NumberInput";
 
 type SpacingValues = {
   top: number;
