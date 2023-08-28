@@ -12,12 +12,12 @@ package e2e
 // 	requestBody := GraphQLRequest{
 // 		OperationName: "addNLSLayerSimple",
 // 		Query: `mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {
-// 			addNLSLayerSimple(input: $input) { 
-// 				layers { 
+// 			addNLSLayerSimple(input: $input) {
+// 				layers {
 // 					id
-// 					__typename 
-// 				} 
-// 				__typename 
+// 					__typename
+// 				}
+// 				__typename
 // 			}
 // 		}`,
 // 		Variables: map[string]any{
@@ -78,7 +78,7 @@ package e2e
 // 	requestBody := GraphQLRequest{
 // 		OperationName: "removeNLSLayer",
 // 		Query: `mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {
-// 			removeNLSLayer(input: $input) { 
+// 			removeNLSLayer(input: $input) {
 // 				layerId
 // 			}
 // 		}`,
@@ -105,12 +105,12 @@ package e2e
 // 	requestBody := GraphQLRequest{
 // 		OperationName: "updateNLSLayer",
 // 		Query: `mutation UpdateNLSLayer($input: UpdateNLSLayerInput!) {
-// 			updateNLSLayer(input: $input) { 
-// 				layer { 
+// 			updateNLSLayer(input: $input) {
+// 				layer {
 // 					id
-// 					__typename 
-// 				} 
-// 				__typename 
+// 					__typename
+// 				}
+// 				__typename
 // 			}
 // 		}`,
 // 		Variables: map[string]any{
