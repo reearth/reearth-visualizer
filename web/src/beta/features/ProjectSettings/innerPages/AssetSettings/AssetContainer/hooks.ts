@@ -1,11 +1,10 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import useFileInput from "use-file-input";
 
+import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
 
 export type SortType = "date" | "name" | "size";
-
-export type LayoutTypes = "medium" | "small" | "list";
 
 export const fileFormats = ".kml,.czml,.topojson,.geojson,.json,.gltf,.glb";
 
@@ -21,22 +20,24 @@ export type Asset = {
 };
 
 export default ({
-  isMultipleSelectable,
   selectedAssets,
   sort,
-  smallCardOnly,
   searchTerm,
+  isLoading,
+  hasMoreAssets,
+  onGetMore,
   onCreateAssets,
   onAssetUrlSelect,
   onRemove,
   onSortChange,
   onSearch,
 }: {
-  isMultipleSelectable?: boolean;
   selectedAssets?: Asset[];
   sort?: { type?: SortType | null; reverse?: boolean };
-  smallCardOnly?: boolean;
   searchTerm?: string;
+  isLoading?: boolean;
+  hasMoreAssets?: boolean;
+  onGetMore?: () => void;
   onCreateAssets?: (files: FileList) => void;
   onAssetUrlSelect?: (asset?: string) => void;
   onRemove?: (assetIds: string[]) => void;
@@ -44,7 +45,6 @@ export default ({
   onSearch?: (term?: string | undefined) => void;
 }) => {
   const t = useT();
-  const [layoutType, setLayoutType] = useState<LayoutTypes>(smallCardOnly ? "small" : "medium");
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const sortOptions: { key: SortType; label: string }[] = useMemo(
@@ -71,7 +71,7 @@ export default ({
 
   const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
     accept: imageFormats + "," + fileFormats,
-    multiple: isMultipleSelectable,
+    multiple: true,
   });
 
   const handleUploadToAsset = useCallback(() => {
@@ -105,27 +105,28 @@ export default ({
     }
   }, [onSearch, localSearchTerm]);
 
-  const setLayoutTypeSmall = useCallback(() => setLayoutType("small"), []);
-  const setLayoutTypeMedium = useCallback(() => setLayoutType("medium"), []);
-  const setLayoutTypeList = useCallback(() => setLayoutType("list"), []);
   const openDeleteModal = useCallback(() => setDeleteModalVisible(true), []);
   const closeDeleteModal = useCallback(() => setDeleteModalVisible(false), []);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (wrapperRef.current && !isLoading && hasMoreAssets) autoFillPage(wrapperRef, onGetMore);
+  }, [hasMoreAssets, isLoading, onGetMore]);
+
   return {
-    layoutType,
     iconChoice,
     deleteModalVisible,
     sortOptions,
     localSearchTerm,
+    wrapperRef,
     handleSearchInputChange,
-    setLayoutTypeSmall,
-    setLayoutTypeMedium,
-    setLayoutTypeList,
     handleUploadToAsset,
     handleReverse,
     handleSearch,
     openDeleteModal,
     closeDeleteModal,
     handleRemove,
+    onScrollToBottom,
   };
 };

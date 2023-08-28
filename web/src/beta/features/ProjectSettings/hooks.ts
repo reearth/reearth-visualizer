@@ -133,7 +133,8 @@ export default ({ projectId, workspaceId, tab, subId }: Props) => {
 
   // Redirection for classic projects
   useEffect(() => {
-    if (!project?.coreSupport) {
+    if (!project) return;
+    if (!project.coreSupport) {
       switch (tab) {
         case "general":
           navigate(`/settings/projects/${projectId}`);

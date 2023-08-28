@@ -52,15 +52,7 @@ function pagination(
   };
 }
 
-export default ({
-  workspaceId,
-  initialAssetUrl,
-  allowDeletion,
-}: {
-  workspaceId?: string;
-  initialAssetUrl?: string | null;
-  allowDeletion?: boolean;
-}) => {
+export default ({ workspaceId }: { workspaceId?: string }) => {
   const t = useT();
   const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
@@ -82,8 +74,7 @@ export default ({
   const isRefetching = networkStatus === 3;
   const assets = data?.assets.edges?.map(e => e.node) as AssetNodes;
 
-  const initialAsset = assets?.find(a => a.url === initialAssetUrl);
-  const [selectedAssets, selectAsset] = useState<Asset[]>(initialAsset ? [initialAsset] : []);
+  const [selectedAssets, selectAsset] = useState<Asset[]>([]);
 
   const handleGetMoreAssets = useCallback(() => {
     if (hasMoreAssets) {
@@ -188,7 +179,6 @@ export default ({
 
   return {
     assets,
-    initialAsset,
     isLoading: loading ?? isRefetching,
     hasMoreAssets,
     sort,
@@ -197,7 +187,7 @@ export default ({
     selectAsset,
     handleGetMoreAssets,
     createAssets,
-    removeAssets: allowDeletion ? removeAssets : undefined,
+    removeAssets,
     handleSortChange,
     handleSearchTerm,
   };

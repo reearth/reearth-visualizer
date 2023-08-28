@@ -1,23 +1,13 @@
-import { useEffect, useRef } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import Loading from "@reearth/beta/components/Loading";
 import Text from "@reearth/beta/components/Text";
-import { autoFillPage, onScrollToBottom } from "@reearth/classic/util/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import AssetCard from "../AssetCard";
 import AssetDeleteModal from "../AssetDeleteModal";
-// import AssetSelect from "../AssetSelect";
 
-import useHooks, {
-  Asset as AssetType,
-  LayoutTypes,
-  SortType,
-  fileFormats,
-  imageFormats,
-} from "./hooks";
+import useHooks, { Asset as AssetType, SortType, fileFormats, imageFormats } from "./hooks";
 
 export type Asset = AssetType;
 
@@ -30,13 +20,9 @@ export type Props = {
   assets?: Asset[];
   selectedAssets?: Asset[];
   isLoading?: boolean;
-  isMultipleSelectable?: boolean;
-  videoOnly?: boolean;
-  height?: number;
   hasMoreAssets?: boolean;
   sort?: { type?: AssetSortType | null; reverse?: boolean };
   searchTerm?: string;
-  smallCardOnly?: boolean;
   onCreateAssets?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
   onGetMore?: () => void;
@@ -48,13 +34,11 @@ export type Props = {
 
 const AssetContainer: React.FC<Props> = ({
   assets,
-  isMultipleSelectable = false,
   selectedAssets,
   hasMoreAssets,
   isLoading,
   sort,
   searchTerm,
-  smallCardOnly,
   onCreateAssets,
   onRemove,
   onGetMore,
@@ -65,11 +49,12 @@ const AssetContainer: React.FC<Props> = ({
 }) => {
   const t = useT();
   const {
-    layoutType,
     // iconChoice,
     deleteModalVisible,
     // sortOptions,
     localSearchTerm,
+    wrapperRef,
+    onScrollToBottom,
     handleSearchInputChange,
     handleUploadToAsset,
     // handleReverse,
@@ -79,21 +64,17 @@ const AssetContainer: React.FC<Props> = ({
     handleRemove,
   } = useHooks({
     sort,
-    isMultipleSelectable,
     selectedAssets,
-    smallCardOnly,
     searchTerm,
+    isLoading,
+    hasMoreAssets,
+    onGetMore,
     onSortChange,
     onCreateAssets,
     onAssetUrlSelect,
     onRemove,
     onSearch,
   });
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreAssets) autoFillPage(wrapperRef, onGetMore);
-  }, [hasMoreAssets, isLoading, onGetMore]);
 
   return (
     <Wrapper>
@@ -103,11 +84,13 @@ const AssetContainer: React.FC<Props> = ({
             <StyledSearchInput value={localSearchTerm} onChange={handleSearchInputChange} />
             <Button size="small" icon="search" margin="0" onClick={() => handleSearch()} />
           </SearchWarper>
-          {/* <AssetSelect<AssetSortType>
+          {/* TODO: Select Field 
+          <AssetSelect<AssetSortType>
             value={sort?.type ?? "date"}
             items={sortOptions}
             onChange={onSortChange}
           />
+          TODO: Select Field 
           <StyledIcon icon={iconChoice} onClick={handleReverse} /> */}
         </LeftSection>
         <RightSection>
@@ -144,7 +127,7 @@ const AssetContainer: React.FC<Props> = ({
           <AssetListWrapper
             ref={wrapperRef}
             onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom(e, onGetMore)}>
-            <AssetList layoutType={layoutType}>
+            <AssetList>
               {assets?.map(a => (
                 <AssetCard
                   key={a.id}
@@ -218,8 +201,8 @@ const StyledSearchInput = styled.input`
   }
 `;
 
-const AssetWrapper = styled.div<{ height?: number }>`
-  max-height: ${({ height }) => height ?? ""}px;
+const AssetWrapper = styled.div`
+  max-height: calc(100vh - 240px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -228,17 +211,13 @@ const AssetWrapper = styled.div<{ height?: number }>`
 const AssetListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow-y: auto;
 `;
 
-const AssetList = styled.div<{ layoutType?: LayoutTypes }>`
+const AssetList = styled.div`
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 148px);
+  grid-template-columns: repeat(auto-fill, 144px);
   grid-template-rows: repeat(auto-fill, 119px);
   gap: ${({ theme }) => theme.spacing.normal}px;
   justify-content: space-between;

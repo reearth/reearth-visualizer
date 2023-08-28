@@ -23,7 +23,7 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
     handleSortChange,
     handleSearchTerm,
     removeAssets,
-  } = useHooks({ workspaceId, allowDeletion: true });
+  } = useHooks({ workspaceId });
 
   const handleSelect = useCallback(
     (asset?: Asset) => {
@@ -43,12 +43,9 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
         assets={assets}
         selectedAssets={selectedAssets}
         isLoading={isLoading}
-        isMultipleSelectable={true}
-        videoOnly={false}
         hasMoreAssets={hasMoreAssets}
         sort={sort}
         searchTerm={searchTerm}
-        smallCardOnly={false}
         onCreateAssets={createAssets}
         onRemove={removeAssets}
         onGetMore={handleGetMoreAssets}
