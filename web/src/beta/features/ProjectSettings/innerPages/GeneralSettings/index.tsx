@@ -77,7 +77,7 @@ const GeneralSettings: React.FC<Props> = ({
         {project.isArchived ? (
           <ArchivedSettingNotice />
         ) : (
-          <Collapse title={t("Project Info")} type="settings">
+          <Collapse title={t("Project Info")}>
             <SettingsFields>
               <TextInput
                 name={t("Name")}
@@ -99,7 +99,7 @@ const GeneralSettings: React.FC<Props> = ({
             </SettingsFields>
           </Collapse>
         )}
-        <Collapse title={t("Danger Zone")} type="settings">
+        <Collapse title={t("Danger Zone")}>
           <SettingsFields>
             {!project.isArchived ? (
               <DangerItem>

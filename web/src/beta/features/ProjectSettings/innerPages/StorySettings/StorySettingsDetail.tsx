@@ -25,7 +25,7 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
   }, [localPanelPosition, onUpdateStory]);
 
   return (
-    <Collapse title={t("Story Panel")} type="settings" alwaysOpen>
+    <Collapse title={t("Story Panel")} alwaysOpen>
       <SettingsFields>
         <div>Panel Position - Select Field {settingsItem.panelPosition}</div>
         <ButtonWrapper>

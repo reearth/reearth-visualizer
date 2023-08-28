@@ -55,7 +55,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
 
   return (
     <>
-      <Collapse title={t("Public Info")} type="settings">
+      <Collapse title={t("Public Info")}>
         <SettingsFields>
           <TextInput
             name={t("Title")}
@@ -78,7 +78,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Basic Authorization")} type="settings">
+      <Collapse title={t("Basic Authorization")}>
         <SettingsFields>
           <div>Enable basic authorization - Boolean Field</div>
           {/* TODO: basicAuthUsername & basicAuthPassword can be updated only when isBasicAuthActive is true*/}
@@ -109,7 +109,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Site Setting")} type="settings">
+      <Collapse title={t("Site Setting")}>
         <SettingsFields>
           <TextInput
             name={t("Site name")}

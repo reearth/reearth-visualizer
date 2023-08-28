@@ -5,14 +5,11 @@ import { styled, useTheme } from "@reearth/services/theme";
 import Icon from "../Icon";
 import Text from "../Text";
 
-type StyleType = "settings";
-
 const Collapse: React.FC<{
   title?: string;
   alwaysOpen?: boolean;
-  type?: StyleType;
   children?: ReactNode;
-}> = ({ title, alwaysOpen, type, children }) => {
+}> = ({ title, alwaysOpen, children }) => {
   const theme = useTheme();
   const [opened, setOpened] = useState(true);
   const handleOpen = useCallback(() => {
@@ -24,7 +21,7 @@ const Collapse: React.FC<{
   return (
     <Field>
       {title && (
-        <Header type={type} onClick={handleOpen} clickable={!alwaysOpen}>
+        <Header onClick={handleOpen} clickable={!alwaysOpen}>
           <Text size="body" color={theme.content.main}>
             {title}
           </Text>
@@ -33,7 +30,7 @@ const Collapse: React.FC<{
           )}
         </Header>
       )}
-      {opened && children && <Content type={type}>{children}</Content>}
+      {opened && children && <Content>{children}</Content>}
     </Field>
   );
 };
@@ -42,19 +39,12 @@ const Field = styled.div`
   background: ${({ theme }) => theme.bg[1]};
 `;
 
-const Header = styled.div<{ clickable?: boolean; type?: StyleType }>`
+const Header = styled.div<{ clickable?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: ${({ clickable }) => (clickable ? "pointer" : "cursor")};
-  ${({ type }) =>
-    type === "settings"
-      ? `
-        padding: 12px; 
-        line-height: 22px;`
-      : `
-        padding: 8px;
-      `}
+  padding: ${({ theme }) => theme.spacing.normal}px;
 `;
 
 const ArrowIcon = styled(Icon)<{ opened: boolean }>`
@@ -62,8 +52,8 @@ const ArrowIcon = styled(Icon)<{ opened: boolean }>`
   transition: all 0.2s;
 `;
 
-const Content = styled.div<{ type?: StyleType }>`
-  ${({ type }) => (type === "settings" ? "padding: 20px 24px" : "")}
+const Content = styled.div`
+  padding: ${({ theme }) => `${theme.spacing.largest}px ${theme.spacing.super}px`};
 `;
 
 export default Collapse;

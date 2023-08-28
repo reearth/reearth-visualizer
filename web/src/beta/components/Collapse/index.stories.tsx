@@ -17,24 +17,10 @@ export const Default: Story = {
   },
 };
 
-export const Empty: Story = {
-  args: {
-    title: "Title",
-  },
-};
-
 export const AlwaysOpen: Story = {
   args: {
     title: "Title",
     alwaysOpen: true,
-    children: <p>Item</p>,
-  },
-};
-
-export const StyleType: Story = {
-  args: {
-    title: "Settings",
-    type: "settings",
     children: <p>Item</p>,
   },
 };

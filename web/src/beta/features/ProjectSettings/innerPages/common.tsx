@@ -42,7 +42,7 @@ export const ButtonWrapper = styled.div`
 export const ArchivedSettingNotice: React.FC = () => {
   const t = useT();
   return (
-    <Collapse title={t("Notice")} type="settings" alwaysOpen>
+    <Collapse title={t("Notice")} alwaysOpen>
       <Text size="body">
         {t(
           "Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.",
