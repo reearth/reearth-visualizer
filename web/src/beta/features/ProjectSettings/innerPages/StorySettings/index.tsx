@@ -31,7 +31,7 @@ const StorySettings: React.FC<Props> = ({
       stories.map(s => ({
         id: s.id,
         title: s.title,
-        linkTo: `/beta/settings/projects/${projectId}/story/${s.id}`,
+        linkTo: `/settings/project/${projectId}/story/${s.id}`,
       })),
     [stories, projectId],
   );

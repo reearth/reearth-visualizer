@@ -35,7 +35,7 @@ export const AppRoutes = () => {
         <Routes>
           <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
           <Route
-            path="beta/settings/projects/:projectId/:fieldId?/:fieldParam?"
+            path="settings/project/:projectId/:tab?/:subId?"
             element={<BetaProjectSettings />}
           />
           {/* Beta routes - end */}
@@ -90,10 +90,10 @@ const redirects = [
   ["/settings/workspace/:workspaceId", "/settings/workspaces/:workspaceId"],
   ["/settings/workspace/:workspaceId/projects", "/settings/workspaces/:workspaceId/projects"],
   ["/settings/workspace/:workspaceId/asset", "/settings/workspaces/:workspaceId/asset"],
-  ["/settings/project/:projectId", "/settings/projects/:projectId"],
-  ["/settings/project/:projectId/public", "/settings/projects/:projectId/public"],
+  // ["/settings/project/:projectId", "/settings/projects/:projectId"],
+  // ["/settings/project/:projectId/public", "/settings/projects/:projectId/public"],
   ["/settings/project/:projectId/dataset", "/settings/projects/:projectId/dataset"],
-  ["/settings/project/:projectId/plugins", "/settings/projects/:projectId/plugins"],
+  // ["/settings/project/:projectId/plugins", "/settings/projects/:projectId/plugins"],
 ];
 
 function Redirect({ to }: { to: string }) {

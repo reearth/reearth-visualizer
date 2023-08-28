@@ -13,14 +13,16 @@ import {
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
+import { projectSettingsTab } from ".";
+
 type Props = {
   projectId: string;
   workspaceId?: string;
-  fieldId?: "general" | "story" | "public" | "asset" | "plugin";
-  fieldParam?: string;
+  tab?: projectSettingsTab;
+  subId?: string;
 };
 
-export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
+export default ({ projectId, workspaceId, tab, subId }: Props) => {
   const navigate = useNavigate();
 
   const {
@@ -34,6 +36,7 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
   const { useSceneQuery } = useSceneFetcher();
 
   const { project } = useProjectQuery(projectId);
+
   const { scene } = useSceneQuery({ sceneId: project?.scene?.id });
 
   const handleUpdateProject = useCallback(
@@ -79,12 +82,12 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
   const stories = useMemo(() => scene?.stories ?? [], [scene?.stories]);
   const currentStory = useMemo(
     () =>
-      fieldId === "story"
-        ? stories.find(s => s.id === fieldParam) ?? stories[0]
-        : fieldId === "public"
-        ? stories.find(s => s.id === fieldParam)
+      tab === "story"
+        ? stories.find(s => s.id === subId) ?? stories[0]
+        : tab === "public"
+        ? stories.find(s => s.id === subId)
         : undefined,
-    [fieldId, fieldParam, stories],
+    [tab, subId, stories],
   );
 
   const { useUpdateStory } = useStorytellingAPI();
@@ -127,6 +130,28 @@ export default ({ projectId, workspaceId, fieldId, fieldParam }: Props) => {
     }),
     [],
   );
+
+  // Redirection for classic projects
+  useEffect(() => {
+    if (!project?.coreSupport) {
+      switch (tab) {
+        case "general":
+          navigate(`/settings/projects/${projectId}`);
+          break;
+        case "public":
+          navigate(`/settings/projects/${projectId}/public`);
+          break;
+        case "asset":
+          navigate(`/settings/workspaces/${workspaceId}/asset`);
+          break;
+        case "plugins":
+          navigate(`/settings/projects/${projectId}/plugins`);
+          break;
+        default:
+          navigate(`/settings/projects/${projectId}`);
+      }
+    }
+  }, [project, projectId, tab, workspaceId, navigate]);
 
   return {
     sceneId: scene?.id,

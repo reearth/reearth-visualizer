@@ -176,7 +176,7 @@ export default (workspaceId: string) => {
         setProject(project);
         navigate(
           project.projectType === "beta"
-            ? `/beta/settings/projects/${project.id}`
+            ? `/settings/project/${project.id}`
             : `/settings/projects/${project.id}`,
         );
       }

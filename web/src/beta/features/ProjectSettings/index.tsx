@@ -13,26 +13,28 @@ import PublicSettings from "./innerPages/PublicSettings";
 import StorySettings from "./innerPages/StorySettings";
 import { MenuList, MenuItem } from "./MenuList";
 
-export const projectSettingFields = [
+export const projectSettingTabs = [
   { id: "general", text: "General" },
   { id: "story", text: "Story" },
   { id: "public", text: "Public" },
   { id: "asset", text: "Workspace Assets" },
-  { id: "plugin", text: "Plugin" },
-];
+  { id: "plugins", text: "Plugin" },
+] as const;
 
-export function isProjectSettingField(settingField: string): boolean {
-  return projectSettingFields.map(f => f.id).includes(settingField);
+export type projectSettingsTab = (typeof projectSettingTabs)[number]["id"];
+
+export function isProjectSettingTab(tab: string): tab is projectSettingsTab {
+  return projectSettingTabs.map(f => f.id).includes(tab as never);
 }
 
 type Props = {
   projectId: string;
   workspaceId?: string;
-  fieldId?: "general" | "story" | "public" | "asset" | "plugin";
-  fieldParam?: string;
+  tab?: projectSettingsTab;
+  subId?: string;
 };
 
-const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fieldParam }) => {
+const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, tab, subId }) => {
   const t = useT();
   const {
     sceneId,
@@ -52,16 +54,16 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
   } = useHooks({
     projectId,
     workspaceId,
-    fieldId,
-    fieldParam,
+    tab,
+    subId,
   });
 
-  const fields = useMemo(
+  const tabs = useMemo(
     () =>
-      projectSettingFields.map(f => ({
-        id: f.id,
-        text: t(f.text),
-        linkTo: `/beta/settings/projects/${projectId}/${f.id === "general" ? "" : f.id}`,
+      projectSettingTabs.map(tab => ({
+        id: tab.id,
+        text: t(tab.text),
+        linkTo: `/settings/project/${projectId}/${tab.id === "general" ? "" : tab.id}`,
       })),
     [projectId, t],
   );
@@ -75,18 +77,13 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
       <MainSection>
         <Menu>
           <MenuList>
-            {fields.map(field => (
-              <MenuItem
-                key={field.id}
-                linkTo={field.linkTo}
-                text={field.text}
-                active={field.id === fieldId}
-              />
+            {tabs.map(t => (
+              <MenuItem key={t.id} linkTo={t.linkTo} text={t.text} active={t.id === tab} />
             ))}
           </MenuList>
         </Menu>
         <Content>
-          {fieldId === "general" && project && (
+          {tab === "general" && project && (
             <GeneralSettings
               project={project}
               onUpdateProject={handleUpdateProject}
@@ -94,7 +91,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               onDeleteProject={handleDeleteProject}
             />
           )}
-          {fieldId === "story" && currentStory && (
+          {tab === "story" && currentStory && (
             <StorySettings
               projectId={projectId}
               stories={stories}
@@ -103,7 +100,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               onUpdateStory={handleUpdateStory}
             />
           )}
-          {fieldId === "public" && project && (
+          {tab === "public" && project && (
             <PublicSettings
               project={project}
               stories={stories}
@@ -116,14 +113,14 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, fieldId, fie
               onUpdateProjectAlias={handleUpdateProjectAlias}
             />
           )}
-          {fieldId === "plugin" && (
+          {tab === "plugins" && (
             <PluginSettings
               isArchived={!!project?.isArchived}
               accessToken={accessToken}
               extensions={extensions}
             />
           )}
-          {fieldId === "asset" && workspaceId && <AssetSettings workspaceId={workspaceId} />}
+          {tab === "asset" && workspaceId && <AssetSettings workspaceId={workspaceId} />}
         </Content>
       </MainSection>
     </Wrapper>
