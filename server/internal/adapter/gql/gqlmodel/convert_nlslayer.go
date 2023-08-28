@@ -50,6 +50,7 @@ func ToNLSLayerGroup(l *nlslayer.NLSLayerGroup, parent *id.NLSLayerID) *NLSLayer
 		SceneID:     IDFrom(l.Scene()),
 		Title:       l.Title(),
 		Visible:     l.IsVisible(),
+		Config:      JSON(*l.Config()),
 		Infobox:     nil, // Temporarily
 		Tags:        ToLayerTagList(l.Tags(), l.Scene()),
 		ChildrenIds: util.Map(l.Children().Layers(), IDFrom[id.NLSLayer]),
