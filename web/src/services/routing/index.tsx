@@ -90,10 +90,7 @@ const redirects = [
   ["/settings/workspace/:workspaceId", "/settings/workspaces/:workspaceId"],
   ["/settings/workspace/:workspaceId/projects", "/settings/workspaces/:workspaceId/projects"],
   ["/settings/workspace/:workspaceId/asset", "/settings/workspaces/:workspaceId/asset"],
-  // ["/settings/project/:projectId", "/settings/projects/:projectId"],
-  // ["/settings/project/:projectId/public", "/settings/projects/:projectId/public"],
   ["/settings/project/:projectId/dataset", "/settings/projects/:projectId/dataset"],
-  // ["/settings/project/:projectId/plugins", "/settings/projects/:projectId/plugins"],
 ];
 
 function Redirect({ to }: { to: string }) {
