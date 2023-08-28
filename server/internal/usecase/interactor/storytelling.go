@@ -17,6 +17,7 @@ import (
 	scene2 "github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -28,7 +29,7 @@ type Storytelling struct {
 	storytellingRepo repo.Storytelling
 	pluginRepo       repo.Plugin
 	propertyRepo     repo.Property
-	workspaceRepo    repo.Workspace
+	workspaceRepo    accountrepo.Workspace
 	policyRepo       repo.Policy
 	projectRepo      repo.Project
 	sceneRepo        repo.Scene
