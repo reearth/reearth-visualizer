@@ -23,6 +23,7 @@ type Container struct {
 	DatasetSchema  DatasetSchema
 	Dataset        Dataset
 	Layer          Layer
+	NLSLayer       NLSLayer
 	Lock           Lock
 	Plugin         Plugin
 	Project        Project
@@ -39,6 +40,15 @@ type Container struct {
 	Extensions     []plugin.ID
 }
 
+func (c *Container) AccountRepos() *accountrepo.Container {
+	return &accountrepo.Container{
+		Workspace: c.Workspace,
+		User:      c.User,
+		// TODO: Policy: c.Policy,
+		Transaction: c.Transaction,
+	}
+}
+
 func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {
 	if c == nil {
 		return c
@@ -50,6 +60,7 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		DatasetSchema:  c.DatasetSchema.Filtered(scene),
 		Dataset:        c.Dataset.Filtered(scene),
 		Layer:          c.Layer.Filtered(scene),
+		NLSLayer:       c.NLSLayer.Filtered(scene),
 		Lock:           c.Lock,
 		Plugin:         c.Plugin.Filtered(scene),
 		Policy:         c.Policy,

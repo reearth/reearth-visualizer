@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
@@ -23,7 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Container, error) {
+func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool) (*repo.Container, error) {
 	lock, err := NewLock(db.Collection("locks"))
 	if err != nil {
 		return nil, err
@@ -41,19 +42,20 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		DatasetSchema:  NewDatasetSchema(client),
 		Dataset:        NewDataset(client),
 		Layer:          NewLayer(client),
+		NLSLayer:       NewNLSLayer(client),
 		Plugin:         NewPlugin(client),
 		Project:        NewProject(client),
 		PropertySchema: NewPropertySchema(client),
 		Property:       NewProperty(client),
 		Scene:          NewScene(client),
 		Tag:            NewTag(client),
-		Workspace:      accountmongo.NewWorkspaceCompat(client),
-		User:           accountmongo.NewUser(client),
 		SceneLock:      NewSceneLock(client),
 		Policy:         NewPolicy(client),
 		Storytelling:   NewStorytelling(client),
 		Lock:           lock,
 		Transaction:    client.Transaction(),
+		Workspace:      account.Workspace,
+		User:           account.User,
 	}
 
 	// init
@@ -69,8 +71,8 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 	return c, nil
 }
 
-func NewWithExtensions(ctx context.Context, db *mongo.Database, useTransaction bool, src []string) (*repo.Container, error) {
-	c, err := New(ctx, db, useTransaction)
+func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool, src []string) (*repo.Container, error) {
+	c, err := New(ctx, db, account, useTransaction)
 	if err != nil {
 		return nil, err
 	}
