@@ -17,12 +17,11 @@ import { projectSettingsTab } from ".";
 
 type Props = {
   projectId: string;
-  workspaceId?: string;
   tab?: projectSettingsTab;
   subId?: string;
 };
 
-export default ({ projectId, workspaceId, tab, subId }: Props) => {
+export default ({ projectId, tab, subId }: Props) => {
   const navigate = useNavigate();
 
   const {
@@ -38,6 +37,8 @@ export default ({ projectId, workspaceId, tab, subId }: Props) => {
   const { project } = useProjectQuery(projectId);
 
   const { scene } = useSceneQuery({ sceneId: project?.scene?.id });
+
+  const workspaceId = useMemo(() => scene?.teamId, [scene?.teamId]);
 
   const handleUpdateProject = useCallback(
     async (settings: GeneralSettingsType & PublicSettingsType) => {
@@ -157,6 +158,7 @@ export default ({ projectId, workspaceId, tab, subId }: Props) => {
   return {
     sceneId: scene?.id,
     project,
+    workspaceId,
     stories,
     currentStory,
     accessToken,

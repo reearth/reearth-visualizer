@@ -29,16 +29,16 @@ export function isProjectSettingTab(tab: string): tab is projectSettingsTab {
 
 type Props = {
   projectId: string;
-  workspaceId?: string;
   tab?: projectSettingsTab;
   subId?: string;
 };
 
-const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, tab, subId }) => {
+const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
   const t = useT();
   const {
     sceneId,
     project,
+    workspaceId,
     stories,
     currentStory,
     accessToken,
@@ -53,7 +53,6 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, tab, subId }
     handleUpdateStoryAlias,
   } = useHooks({
     projectId,
-    workspaceId,
     tab,
     subId,
   });
