@@ -302,6 +302,8 @@ models:
         resolver: true
       rootLayer:
         resolver: true
+      newLayers:
+        resolver: true
       datasetSchemas:
         resolver: true
       tags:
@@ -390,3 +392,11 @@ models:
         resolver: true
       pluginExtension:
         resolver: true
+  NLSLayerSimple:
+    fields:
+      scene:
+        resolver: true
+  NLSLayerGroup:
+    fields:
+      scene:
+        resolver: true  

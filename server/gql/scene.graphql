@@ -13,6 +13,7 @@ type Scene implements Node {
   team: Team
   property: Property
   rootLayer: LayerGroup
+  newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
   datasetSchemas(first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
