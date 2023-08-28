@@ -67,9 +67,12 @@ func ToStyle(v *scene.Style) *Style {
 	}
 }
 
-func ToStyleValue(p interface{}) *scene.StyleValue {
-	if sv, ok := p.(scene.StyleValue); ok {
-		return &sv
-	}
-	return nil
+func ToStyleValue(p JSON) *scene.StyleValue {
+    sv := make(scene.StyleValue)
+
+    for key, value := range p {
+        sv[key] = value
+    }
+
+    return &sv
 }
