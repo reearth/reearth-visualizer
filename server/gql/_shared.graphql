@@ -6,6 +6,7 @@ scalar Lang
 scalar FileSize
 scalar TranslatedString
 scalar Cursor
+scalar JSON
 
 # Meta Type
 
