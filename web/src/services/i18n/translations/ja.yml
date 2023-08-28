@@ -1,6 +1,10 @@
+Cancel: キャンセル
+Apply: Apply
 Not found: ページが見つかりません
 Padding settings: ''
 Remove: 削除
+Scene: シーン
+Outline: アウトライン
 Published: 一般公開
 Unpublished: 非公開
 Unpublish: 非公開にする
@@ -32,14 +36,12 @@ Page: ページ
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Inspector: インスペクター
-Container Settings: Container Settings
+Container Settings: ''
 Angle: 角度
 Narrow: 狭い
 Wide: 広い
 Create New Workspace: 新規ワークスペース作成
 Create: 作成
-Cancel: キャンセル
-Apply: Apply
 Workspace Name: ワークスペース名
 Account Settings: アカウント設定
 Workspaces: ワークスペース
@@ -48,8 +50,9 @@ Manage Workspaces: ワークスペースを管理
 New Workspace: 新規ワークスペース
 Log out: ログアウト
 Project settings: プロジェクト設定
-Datasets: データセット
-Plugins: プラグイン
+Public: 公開設定
+Workspace assets: ''
+Plugin: ''
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
 Map: マップ
@@ -59,6 +62,69 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
+Project Settings: ''
+Date: 作成日時順
+File size: サイズ順
+Alphabetical: 名前順
+Upload file: ファイルアップロード
+Delete: 削除
+No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
+You are about to delete one or more assets from the current workspace.: 1つまたは複数のアセットを削除しようとしています。
+Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
+Failed to add one or more assets.: アセットの作成に失敗しました。
+Successfully added one or more assets.: アセットの追加に成功しました。
+Failed to delete one or more assets.: アセットの削除に失敗しまたした。
+One or more assets were successfully deleted.: アセットが削除されました。
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
+Project Info: プロジェクト情報
+Name: 名前
+Submit: ''
+Danger Zone: 重要操作
+Archive this project: プロジェクトの非編集化
+Mark this project as archived and read-only: プロジェクトを編集できないようにします。この設定はいつでも戻すことができます。
+Archive project: プロジェクトを非編集化する
+Unarchive this project: 非編集化を解除
+Unarchive this project to become editable again.: プロジェクトを回復
+Unarchive project: 非編集化を解除
+Delete this project: プロジェクトを削除
+Once you delete a project, there is no going back. Please be sure.: プロジェクトを削除すると復元はできません。慎重に行ってください。
+Delete project: プロジェクト削除
+I am sure I want to archive this project.: 本当に非編集化してもよいですか？
+Archiving your project will put it into a state where you cannot edit it or it's settings.: この操作をすると、プロジェクトの編集が行えなくなります。
+Once archived, you can unarchive the repository at any time.: この設定はいつでも戻すことができます。
+Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
+I am sure I want to unarchive this project.: 本当に非編集化を解除してもよろしいですか？
+This will bring this repository back to a state it can be editted and worked on by you and your team.: 非編集化を解除すると、チームの書き込み権限を持つユーザーによってプロジェクトの編集、設定変更が可能になります。
+I am sure I want to delete this project.: このプロジェクトを削除します。
+This action cannot be undone.: この操作は取り消すことができません。
+This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: 本当にプロジェクトを削除してもよろしいですか。
+Failed to install plugin.: プラグインのインストールに失敗しました。
+Successfully installed plugin!: プラグインがインストールされました。
+Failed to uninstall plugin.: プラグインの削除に失敗しました。
+Successfully removed plugin.: プラグインが削除されました。
+Plugin Marketplace: プラグインマーケットプレイス
+Public Installed: 公開インストール済み
+Personal Installed: 個人インストール済み
+Uninstall: アンインストール
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
+Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
+Installed: インストール済み
+Install: インストール
+Zip file from PC: PCからZipファイルをアップロード
+Public GitHub repository: GitHubパブリックレポジトリ
+Publish your plugin in the Marketplace: マーケットプレイスでプラグインを公開する
+Import GitHub repository: GitHubレポジトリからインポート
+'Repository url:': 'レポジトリURL:'
+Public Info: 公開詳細設定
+Title: ページタイトル
+Basic Authorization: ベーシック認証
+Username: ユーザー名
+Password: パスワード
+Site Setting: ''
+Site name: サイト名
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
+Story Panel: ''
 Double click here to write.: ダブルクリックで入力
 Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 aria-label-compass: コンパス
@@ -76,7 +142,6 @@ not set: 未設定
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
 Username or email: ユーザー名またはメールアドレス
-Password: パスワード
 Forgot password?: パスワードを忘れましたか？
 Don't have an account?: アカウントをお持ちではありませんか？
 Sign up: 登録
@@ -100,18 +165,8 @@ Enter a new password below to change your password.: 変更後の新しいパス
 New password: 新しいパスワード
 Reset password: パスワードをリセット
 Create your Account: アカウントを登録する
-Username: ユーザー名
 Already have an account?: 既にアカウントをお持ちの場合
 Log in: ログイン
-Date: 作成日時順
-File size: サイズ順
-Alphabetical: 名前順
-Upload file: ファイルアップロード
-Delete: 削除
-No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
-You are about to delete one or more assets from the current workspace.: 1つまたは複数のアセットを削除しようとしています。
-Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Assets Library: アセット
 Use URL: URL
 Add video URL: 映像URLを追加
@@ -127,6 +182,8 @@ Create New Project: 新規プロジェクト作成
 Project Name: プロジェクト名
 Description: プロジェクト概要
 Select thumbnail image: サムネイル画像を選択
+Datasets: データセット
+Plugins: プラグイン
 Choose Project Type: Choose Project Type
 classic: classic
 Create project with classic UI: Create project with classic UI
@@ -134,7 +191,6 @@ Beta: Beta
 Create project with the latest features and UI system (projects might break without prior notice): >-
   Create project with the latest features and UI system (projects might break
   without prior notice)
-Plugin Marketplace: プラグインマーケットプレイス
 timeSince: '{{timeSince}}に変更'
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: ワークスペースにプロジェクトがありません。クイックスタート内の「新規プロジェクト作成」ボタンをクリックして、プロジェクトを作成してください。
 Quick Start: クイックスタート
@@ -172,7 +228,6 @@ Create New Folder: 新規フォルダ作成
 Add Layer: ''
 Zoom To Layer: ''
 Delete the selected item.: 選択中の項目を削除
-Scene: シーン
 Layers: レイヤー
 Clusters: クラスター
 Delete widget: ウィジェットを削除
@@ -242,56 +297,16 @@ New password (for confirmation): 新しいパスワード
 Set your password now: 現在のパスワード
 Profile: プロフィール
 Profile picture: プロフィール画像
-Name: 名前
 Workspace List: ワークスペース一覧
 Assets: アセット
 Project List: プロジェクト一覧
-Public: 公開設定
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
-Basic Authorization: ベーシック認証
 Enable basic authorization: ベーシック認証を有効化する
 Change site name: サイト名を変更
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
-Danger Zone: 重要操作
-Unarchive this project: 非編集化を解除
-Archive this project: プロジェクトの非編集化
-Unarchive this project to become editable again.: プロジェクトを回復
-Mark this project as archived and read-only: プロジェクトを編集できないようにします。この設定はいつでも戻すことができます。
-Unarchive project: 非編集化を解除
-Archive project: プロジェクトを非編集化する
-Delete this project: プロジェクトを削除
-Once you delete a project, there is no going back. Please be sure.: プロジェクトを削除すると復元はできません。慎重に行ってください。
-Delete project: プロジェクト削除
-Archiving your project will put it into a state where you cannot edit it or it's settings.: この操作をすると、プロジェクトの編集が行えなくなります。
-Once archived, you can unarchive the repository at any time.: この設定はいつでも戻すことができます。
-This will bring this repository back to a state it can be editted and worked on by you and your team.: 非編集化を解除すると、チームの書き込み権限を持つユーザーによってプロジェクトの編集、設定変更が可能になります。
-This action cannot be undone.: この操作は取り消すことができません。
-This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: 本当にプロジェクトを削除してもよろしいですか。
-Please type your project name to continue.: 確認のためこのプロジェクトの名前と入力してください
-I am sure I want to delete this project.: このプロジェクトを削除します。
-I am sure I want to archive this project.: 本当に非編集化してもよいですか？
-I am sure I want to unarchive this project.: 本当に非編集化を解除してもよろしいですか？
 Delete this dataset: このデータセットを削除
 Are you sure you want to delete it?: 本当に削除してよろしいですか？
-Uninstall: アンインストール
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
-Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
-Installed: インストール済み
-Install: インストール
-Public Installed: 公開インストール済み
-Personal Installed: 個人インストール済み
-Zip file from PC: PCからZipファイルをアップロード
-Public GitHub repository: GitHubパブリックレポジトリ
-Publish your plugin in the Marketplace: マーケットプレイスでプラグインを公開する
-Import GitHub repository: GitHubレポジトリからインポート
-'Repository url:': 'レポジトリURL:'
-Project Info: プロジェクト情報
 Thumbnail: サムネイル画像
-Public Info: 公開詳細設定
 (These fields will be used for OGP as well as metadata for the public project): これらのフィールドは、SNS等に共有する際や公開プロジェクトの検索等に利用されます。
-Title: ページタイトル
 Site settings: サイト設定
-Site name: サイト名
 Access your project, copy or edit the URL below.: 公開ページにアクセスするには以下のURLをコピーしてください。
 Once your project is published from the editor page the URL details will be shown here.: 編集画面からプロジェクトが公開されると、URLの詳細がここに表示されます。
 This project is published with search engine indexing enabled.: このプロジェクトは、検索エンジンのインデックスを有効にした状態で公開されています。
@@ -319,10 +334,6 @@ This is your personal workspace. Your projects and resources will be managed in 
 All workspaces: すべてのワークスペース
 Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
 Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
-Failed to add one or more assets.: アセットの作成に失敗しました。
-Successfully added one or more assets.: アセットの追加に成功しました。
-Failed to delete one or more assets.: アセットの削除に失敗しまたした。
-One or more assets were successfully deleted.: アセットが削除されました。
 Successfully created workspace!: 新しいワークスペースの作成に成功しました！
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
@@ -338,7 +349,6 @@ Successfully published your project!: プロジェクトの公開に成功しま
 Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
 Successfully unpublished your project. Now nobody can access your project.: プロジェクトは非公開状態です。現在、誰も閲覧することはできません。
 Successfully copied to clipboard!: クリップボードにコピーしました。
-Outline: アウトライン
 Folder: 新規フォルダ
 Layer: レイヤー
 Widget: ウィジェット
@@ -359,10 +369,6 @@ Successfully archived the project.: プロジェクトを非編集状態にし�
 Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
 Failed to delete project.: プロジェクトの削除に失敗しました。
 Project was successfully deleted.: プロジェクトが削除されました。
-Failed to install plugin.: プラグインのインストールに失敗しました。
-Successfully installed plugin!: プラグインがインストールされました。
-Failed to uninstall plugin.: プラグインの削除に失敗しました。
-Successfully removed plugin.: プラグインが削除されました。
 Total Projects: 全てのプロジェクト
 New Project: 新規プロジェクト
 Failed to create workspace.: ワークスペースの作成に失敗しました。
@@ -377,6 +383,10 @@ Failed to delete member from the workspace.: メンバーの削除に失敗し�
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
 Failed to publish project.: プロジェクト公開に失敗しました。
+Failed to update project.: ''
+Successfully updated project!: ''
+Successfully archive project!: ''
+Successfully delete project!: ''
 Failed to update property.: プロパティのアップデートに失敗しました。
 Failed to create block.: ''
 Successfullly created a block!: ''
@@ -385,7 +395,9 @@ Block was successfully deleted.: ''
 Failed to move block.: ''
 Block was successfully moved.: ''
 Failed to create story.: ストーリーの作成に失敗しました。
-Successfullly created a story!: ''
+Successfully created a story!: ''
+Failed to update story.: ''
+Successfully updated a story!: ''
 Failed to create page.: ページの作成に失敗しました。
 Successfullly created a page!: ''
 Failed to delete page.: ''
