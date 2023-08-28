@@ -7,6 +7,7 @@ import { styled } from "@reearth/services/theme";
 
 import { InnerPage, ArchivedSettingNotice } from "../common";
 
+import useHooks from "./hooks";
 import PluginInstall from "./PluginInstall";
 
 export type PluginTabs = "Marketplace" | "Public" | "Personal";
@@ -18,6 +19,8 @@ export type PluginActions =
   | "market-publish";
 
 type Props = {
+  projectId: string;
+  sceneId?: string;
   isArchived: boolean;
   accessToken?: string;
   extensions?: {
@@ -26,7 +29,13 @@ type Props = {
   };
 };
 
-const PluginSettings: React.FC<Props> = ({ isArchived, accessToken, extensions }) => {
+const PluginSettings: React.FC<Props> = ({
+  projectId,
+  sceneId,
+  isArchived,
+  accessToken,
+  extensions,
+}) => {
   const t = useT();
   const currentLang = useLang();
 
@@ -40,6 +49,15 @@ const PluginSettings: React.FC<Props> = ({ isArchived, accessToken, extensions }
   );
 
   const [currentTab, setCurrentTab] = useState<PluginTabs>("Marketplace");
+
+  const {
+    personalPlugins,
+    marketplacePlugins,
+    handleInstallPluginByMarketplace,
+    handleInstallPluginFromPublicRepo,
+    handleInstallPluginFromFile,
+    handleUninstallPlugin,
+  } = useHooks({ projectId, sceneId });
 
   return (
     <InnerPage wide transparent>
@@ -65,14 +83,12 @@ const PluginSettings: React.FC<Props> = ({ isArchived, accessToken, extensions }
                 extensions?.library?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    // TODO: useTheme when we have light/dark for beta
                     theme={"dark"}
                     lang={currentLang}
                     accessToken={accessToken}
-                    // TODO: Connet
-                    // installedPlugins={marketplacePlugins}
-                    // onInstall={onInstallFromMarketplace}
-                    // onUninstall={onUninstall}
+                    installedPlugins={marketplacePlugins}
+                    onInstall={handleInstallPluginByMarketplace}
+                    onUninstall={handleUninstallPlugin}
                   />
                 ))}
             </>
@@ -84,14 +100,12 @@ const PluginSettings: React.FC<Props> = ({ isArchived, accessToken, extensions }
                 extensions?.installed?.map(ext => (
                   <ext.component
                     key={ext.id}
-                    // TODO: useTheme when we have light/dark for beta
                     theme={"dark"}
                     lang={currentLang}
                     accessToken={accessToken}
-                    // TODO: Connet
-                    // installedPlugins={marketplacePlugins}
-                    // onInstall={onInstallFromMarketplace}
-                    // onUninstall={onUninstall}
+                    installedPlugins={marketplacePlugins}
+                    onInstall={handleInstallPluginByMarketplace}
+                    onUninstall={handleUninstallPlugin}
                   />
                 ))}
             </>
@@ -99,15 +113,10 @@ const PluginSettings: React.FC<Props> = ({ isArchived, accessToken, extensions }
 
           {currentTab === "Personal" && (
             <PluginInstall
-              // TODO: Connet
-              // installedPlugins={personalPlugins}
-              // installFromPublicRepo={onInstallFromPublicRepo}
-              // installByUploadingZipFile={onInstallFromFile}
-              // uninstallPlugin={onUninstall}
-              installedPlugins={[]}
-              installFromPublicRepo={() => {}}
-              installByUploadingZipFile={() => {}}
-              uninstallPlugin={() => {}}
+              installedPlugins={personalPlugins}
+              installFromPublicRepo={handleInstallPluginFromPublicRepo}
+              installByUploadingZipFile={handleInstallPluginFromFile}
+              uninstallPlugin={handleUninstallPlugin}
             />
           )}
         </Wrapper>

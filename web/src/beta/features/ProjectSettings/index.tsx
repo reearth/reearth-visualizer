@@ -115,6 +115,8 @@ const ProjectSettings: React.FC<Props> = ({ projectId, workspaceId, tab, subId }
           )}
           {tab === "plugins" && (
             <PluginSettings
+              projectId={projectId}
+              sceneId={sceneId}
               isArchived={!!project?.isArchived}
               accessToken={accessToken}
               extensions={extensions}
