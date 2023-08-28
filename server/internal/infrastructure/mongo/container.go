@@ -41,6 +41,7 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		DatasetSchema:  NewDatasetSchema(client),
 		Dataset:        NewDataset(client),
 		Layer:          NewLayer(client),
+		NLSLayer:       NewNLSLayer(client),
 		Plugin:         NewPlugin(client),
 		Project:        NewProject(client),
 		PropertySchema: NewPropertySchema(client),
