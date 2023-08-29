@@ -80,6 +80,8 @@ export default () => {
           text: t("One or more assets were successfully deleted."),
         });
       }
+
+      return { status: !results || results.some(r => r.errors) ? "error" : "success" };
     },
     [removeAssetMutation, t, setNotification],
   );

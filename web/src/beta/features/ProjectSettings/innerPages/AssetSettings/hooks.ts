@@ -77,7 +77,12 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
   );
 
   const removeAssets = useCallback(
-    (assetIds: string[]) => useRemoveAssets(assetIds),
+    async (assetIds: string[]) => {
+      const { status } = await useRemoveAssets(assetIds);
+      if (status === "success") {
+        selectAsset([]);
+      }
+    },
     [useRemoveAssets],
   );
 
