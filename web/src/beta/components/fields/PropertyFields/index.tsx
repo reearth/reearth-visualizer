@@ -47,6 +47,8 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             name={sf.name}
             value={(value as SpacingValues) ?? ""}
             description={sf.description}
+            min={sf.min}
+            max={sf.max}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
         ) : (
