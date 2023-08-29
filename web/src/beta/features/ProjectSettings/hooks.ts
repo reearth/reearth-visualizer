@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useAuth } from "@reearth/services/auth";
+import { config } from "@reearth/services/config";
 
 import { GeneralSettingsType } from "./innerPages/GeneralSettings";
 import {
@@ -126,8 +127,8 @@ export default ({ projectId, tab, subId }: Props) => {
 
   const extensions = useMemo(
     () => ({
-      library: window.REEARTH_CONFIG?.extensions?.pluginLibrary,
-      installed: window.REEARTH_CONFIG?.extensions?.pluginInstalled,
+      library: config()?.extensions?.pluginLibrary,
+      installed: config()?.extensions?.pluginInstalled,
     }),
     [],
   );

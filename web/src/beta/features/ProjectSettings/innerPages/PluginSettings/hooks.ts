@@ -13,7 +13,6 @@ import { useT, useLang } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
 export type Plugin = {
-  fullId: string;
   id: string;
   version: string;
   title?: string;
@@ -42,10 +41,8 @@ export default ({ projectId, sceneId }: { projectId: string; sceneId?: string })
         .filter(p => p.plugin && p.plugin?.id !== "reearth" && p.plugin.id.split("~", 3).length < 3)
         .map((p): Plugin | undefined => {
           if (!p.plugin) return;
-          const fullId = p.plugin.id;
-          const [id, version] = fullId.split("~", 2);
+          const [id, version] = p.plugin.id.split("~", 2);
           return {
-            fullId,
             id,
             version,
             title: p.plugin.name,
