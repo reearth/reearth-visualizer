@@ -24,6 +24,7 @@ type Props = {
   children?: ReactNode;
   propertyId?: string;
   propertyItems?: Item[];
+  dndEnabled?: boolean;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
@@ -36,6 +37,7 @@ const BlockWrapper: React.FC<Props> = ({
   children,
   propertyId,
   propertyItems,
+  dndEnabled = true,
   onClick,
   onClickAway,
   onRemove,
@@ -76,6 +78,7 @@ const BlockWrapper: React.FC<Props> = ({
             editMode={editMode}
             propertyId={propertyId}
             panelSettings={panelSettings}
+            dndEnabled={dndEnabled}
             setShowPadding={setShowPadding}
             onEditModeToggle={handleEditModeToggle}
             onSettingsToggle={handleSettingsToggle}

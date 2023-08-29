@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import { getFieldValue } from "@reearth/beta/features/Editor/StoryPanel/Block/builtin/utils";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
+import { convert } from "@reearth/services/api/propertyApi/utils";
 import { StoryPageFragmentFragment } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -23,7 +25,7 @@ const ContentPage: React.FC<Props> = ({
   selectedPage,
   onPageSelect,
   onPageAdd,
-  onPageDuplicate,
+  // onPageDuplicate,
   onPageDelete,
   onPageMove,
 }) => {
@@ -57,6 +59,8 @@ const ContentPage: React.FC<Props> = ({
             await onPageMove(item.id, index);
           }}
           renderItem={(storyPage, i) => {
+            const title = (getFieldValue(convert(storyPage.property) ?? [], "title", "title") ??
+              t("Untitled")) as string;
             return (
               <PageItemWrapper
                 key={storyPage.id}
@@ -65,6 +69,7 @@ const ContentPage: React.FC<Props> = ({
                 <ListItem
                   key={i}
                   border
+                  actionPlacement="bottom-start"
                   onItemClick={() => onPageSelect(storyPage.id)}
                   onActionClick={() => setOpenedPageId(old => (old ? undefined : storyPage.id))}
                   onOpenChange={isOpen => {
@@ -74,17 +79,16 @@ const ContentPage: React.FC<Props> = ({
                   isOpenAction={openedPageId === storyPage.id}
                   actionContent={
                     <PopoverMenuContent
-                      width="120px"
-                      size="md"
+                      size="sm"
                       items={[
-                        {
-                          icon: "copy",
-                          name: "Duplicate",
-                          onClick: () => {
-                            setOpenedPageId(undefined);
-                            onPageDuplicate(storyPage.id);
-                          },
-                        },
+                        // {
+                        //   icon: "copy",
+                        //   name: "Duplicate",
+                        //   onClick: () => {
+                        //     setOpenedPageId(undefined);
+                        //     onPageDuplicate(storyPage.id);
+                        //   },
+                        // },
                         {
                           icon: "trash",
                           name: "Delete",
@@ -96,7 +100,7 @@ const ContentPage: React.FC<Props> = ({
                       ]}
                     />
                   }>
-                  {storyPage.title}
+                  {title}
                 </ListItem>
               </PageItemWrapper>
             );

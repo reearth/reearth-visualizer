@@ -1,12 +1,14 @@
-import { useMemo } from "react";
+import { MouseEvent, useMemo } from "react";
+
+import { ActionItem } from "../../../../ActionPanel";
 
 type Props = {
   title?: string;
   icon?: string;
   isSelected?: boolean;
   editMode: boolean;
-  onEditModeToggle: () => void;
-  onSettingsToggle: () => void;
+  onEditModeToggle: (e: MouseEvent<HTMLDivElement>) => void;
+  onSettingsToggle: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
 export default ({
@@ -17,10 +19,10 @@ export default ({
   onEditModeToggle,
   onSettingsToggle,
 }: Props) => {
-  const actionItems = useMemo(
+  const actionItems: ActionItem[] = useMemo(
     () => [
       {
-        blockName: title ?? "Story Block",
+        name: title ?? "Story Block",
         icon: icon ?? "plugin",
       },
       {

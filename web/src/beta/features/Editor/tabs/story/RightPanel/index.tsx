@@ -17,7 +17,10 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage }) => {
   const t = useT();
 
   const propertyItems = useMemo(
-    () => convert(selectedPage?.property)?.filter(p => p.schemaGroup !== "panel"),
+    () =>
+      convert(selectedPage?.property)?.filter(
+        p => p.schemaGroup !== "panel" && p.schemaGroup !== "title",
+      ),
     [selectedPage?.property],
   );
 
@@ -28,7 +31,6 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage }) => {
         {
           id: "story",
           title: t("Page Settings"),
-          //   maxHeight: !selectedWidget ? "100%" : "40%",
           children: selectedPage && (
             <Settings propertyId={selectedPage.propertyId} propertyItems={propertyItems} />
           ),

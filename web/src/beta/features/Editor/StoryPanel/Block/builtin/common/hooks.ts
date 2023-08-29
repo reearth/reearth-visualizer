@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
@@ -23,21 +23,31 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     }
   }, [isSelected, editMode]);
 
-  const handleEditModeToggle = useCallback(() => setEditMode(em => !em), []);
+  const handleEditModeToggle = useCallback((e?: MouseEvent<HTMLDivElement>) => {
+    e?.stopPropagation();
+    setEditMode(em => !em);
+  }, []);
 
-  const handleSettingsToggle = useCallback(() => setShowSettings(s => !s), []);
+  const handleSettingsToggle = useCallback((e?: MouseEvent<HTMLDivElement>) => {
+    e?.stopPropagation();
+    setShowSettings(s => !s);
+  }, []);
 
   const handleMouseEnter = useCallback(() => setHover(true), []);
 
   const handleMouseLeave = useCallback(() => setHover(false), []);
 
-  const handleBlockClick = useCallback(() => {
-    if (showSettings && isSelected) return;
-    onClick?.();
-  }, [onClick, showSettings, isSelected]);
+  const handleBlockClick = useCallback(
+    (e: MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      if (showSettings && isSelected) return;
+      onClick?.();
+    },
+    [onClick, showSettings, isSelected],
+  );
 
   const defaultSettings: Item | undefined = useMemo(
-    () => propertyItems?.find(i => i.schemaGroup === "default"),
+    () => propertyItems?.find(i => i.schemaGroup === "default" || i.schemaGroup === "title"),
     [propertyItems],
   );
 
