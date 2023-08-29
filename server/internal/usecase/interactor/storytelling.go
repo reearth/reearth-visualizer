@@ -42,6 +42,7 @@ type Storytelling struct {
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
 	return &Storytelling{
+		commonSceneLock:  commonSceneLock{sceneLockRepo: r.SceneLock},
 		storytellingRepo: r.Storytelling,
 		pluginRepo:       r.Plugin,
 		propertyRepo:     r.Property,
