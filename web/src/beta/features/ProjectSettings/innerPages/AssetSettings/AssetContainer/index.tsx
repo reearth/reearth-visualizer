@@ -49,14 +49,15 @@ const AssetContainer: React.FC<Props> = ({
 }) => {
   const t = useT();
   const {
-    // iconChoice,
     deleteModalVisible,
-    // sortOptions,
+
     localSearchTerm,
     wrapperRef,
     onScrollToBottom,
     handleSearchInputChange,
     handleUploadToAsset,
+    // iconChoice,
+    // sortOptions,
     // handleReverse,
     handleSearch,
     openDeleteModal,

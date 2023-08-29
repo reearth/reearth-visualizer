@@ -17,8 +17,8 @@ const AssetDeleteModal: React.FC<Props> = ({ isVisible, onClose, handleRemove })
       isVisible={isVisible}
       size="sm"
       onClose={onClose}
-      button1={<Button text={t("Delete")} buttonType="danger" onClick={handleRemove} />}
-      button2={<Button text={t("Cancel")} buttonType="secondary" onClick={onClose} />}>
+      button1={<Button text={t("Cancel")} buttonType="secondary" onClick={onClose} />}
+      button2={<Button text={t("Delete")} buttonType="danger" onClick={handleRemove} />}>
       <Text size="body">
         {t("You are about to delete one or more assets from the current workspace.")}
       </Text>

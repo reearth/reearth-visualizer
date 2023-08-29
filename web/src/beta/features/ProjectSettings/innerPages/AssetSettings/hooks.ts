@@ -1,19 +1,7 @@
-import { useApolloClient } from "@apollo/client";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useRef } from "react";
 
-// TODO: migrate to services API
-import {
-  GetAssetsQuery,
-  useCreateAssetMutation,
-  useRemoveAssetMutation,
-  useGetAssetsQuery,
-  Maybe,
-  AssetSortType as GQLSortType,
-} from "@reearth/classic/gql";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
-
-export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
+import { useAssetsFetcher } from "@reearth/services/api";
+import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
 
 export type AssetSortType = "date" | "name" | "size";
 
@@ -26,6 +14,8 @@ export type Asset = {
   contentType: string;
 };
 
+const assetsPerPage = 20;
+
 const enumTypeMapper: Partial<Record<GQLSortType, string>> = {
   [GQLSortType.Date]: "date",
   [GQLSortType.Name]: "name",
@@ -36,8 +26,6 @@ function toGQLEnum(val?: AssetSortType) {
   if (!val) return;
   return (Object.keys(enumTypeMapper) as GQLSortType[]).find(k => enumTypeMapper[k] === val);
 }
-
-const assetsPerPage = 20;
 
 function pagination(
   sort?: { type?: Maybe<AssetSortType>; reverse?: boolean },
@@ -54,95 +42,43 @@ function pagination(
 }
 
 export default ({ workspaceId }: { workspaceId?: string }) => {
-  const t = useT();
-  const [, setNotification] = useNotification();
   const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
-  const gqlCache = useApolloClient().cache;
-  const { data, refetch, loading, fetchMore, networkStatus } = useGetAssetsQuery({
-    variables: {
-      teamId: workspaceId ?? "",
-      pagination: pagination(sort),
-      sort: toGQLEnum(sort?.type),
-      keyword: searchTerm,
-    },
-    notifyOnNetworkStatusChange: true,
-    skip: !workspaceId,
-  });
-  const hasMoreAssets =
-    data?.assets.pageInfo?.hasNextPage || data?.assets.pageInfo?.hasPreviousPage;
-
-  const isRefetching = networkStatus === 3;
-  const assets = data?.assets.edges?.map(e => e.node) as AssetNodes;
-
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
+  const isGettingMore = useRef(false);
 
-  const handleGetMoreAssets = useCallback(() => {
-    if (hasMoreAssets) {
-      fetchMore({
+  const { useAssetsQuery, useCreateAssets, useRemoveAssets } = useAssetsFetcher();
+
+  const { assets, hasMoreAssets, loading, isRefetching, endCursor, fetchMore } = useAssetsQuery({
+    teamId: workspaceId ?? "",
+    pagination: pagination(sort),
+    sort: toGQLEnum(sort?.type),
+    keyword: searchTerm,
+  });
+
+  const handleGetMoreAssets = useCallback(async () => {
+    if (hasMoreAssets && !isGettingMore.current) {
+      isGettingMore.current = true;
+      await fetchMore({
         variables: {
-          pagination: pagination(sort, data?.assets.pageInfo.endCursor),
+          pagination: pagination(sort, endCursor),
         },
       });
+      isGettingMore.current = false;
     }
-  }, [data?.assets.pageInfo, sort, fetchMore, hasMoreAssets]);
+  }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
-  const [createAssetMutation] = useCreateAssetMutation();
   const createAssets = useCallback(
-    (files: FileList) =>
-      (async () => {
-        if (!workspaceId) return;
-
-        const results = await Promise.all(
-          Array.from(files).map(async file => {
-            const result = await createAssetMutation({ variables: { teamId: workspaceId, file } });
-            if (result.errors || !result.data?.createAsset) {
-              setNotification({
-                type: "error",
-                text: t("Failed to add one or more assets."),
-              });
-            }
-          }),
-        );
-        if (results) {
-          setNotification({
-            type: "success",
-            text: t("Successfully added one or more assets."),
-          });
-          await refetch();
-        }
-      })(),
-    [createAssetMutation, setNotification, refetch, workspaceId, t],
+    (files: FileList) => {
+      if (!files) return;
+      useCreateAssets({ teamId: workspaceId ?? "", file: files });
+    },
+    [workspaceId, useCreateAssets],
   );
 
-  const [removeAssetMutation] = useRemoveAssetMutation();
   const removeAssets = useCallback(
-    (assetIds: string[]) =>
-      (async () => {
-        if (!workspaceId) return;
-        const results = await Promise.all(
-          assetIds.map(async assetId => {
-            const result = await removeAssetMutation({
-              variables: { assetId },
-              refetchQueries: ["GetAssets"],
-            });
-            if (result.errors || result.data?.removeAsset) {
-              setNotification({
-                type: "error",
-                text: t("Failed to delete one or more assets."),
-              });
-            }
-          }),
-        );
-        if (results) {
-          setNotification({
-            type: "info",
-            text: t("One or more assets were successfully deleted."),
-          });
-          selectAsset([]);
-        }
-      })(),
-    [removeAssetMutation, workspaceId, setNotification, t],
+    (assetIds: string[]) => useRemoveAssets(assetIds),
+    [useRemoveAssets],
   );
 
   const handleSortChange = useCallback(
@@ -159,24 +95,6 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
   const handleSearchTerm = useCallback((term?: string) => {
     setSearchTerm(term);
   }, []);
-
-  useEffect(() => {
-    if (sort || searchTerm) {
-      selectAsset([]);
-      refetch({
-        sort: toGQLEnum(sort?.type),
-        keyword: searchTerm,
-      });
-    }
-  }, [sort, searchTerm, refetch]);
-
-  useEffect(() => {
-    return () => {
-      setSort(undefined);
-      setSearchTerm(undefined);
-      gqlCache.evict({ fieldName: "assets" });
-    };
-  }, [gqlCache]);
 
   return {
     assets,
