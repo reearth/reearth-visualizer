@@ -5,7 +5,7 @@ import { styled } from "@reearth/services/theme";
 import Property from "..";
 import NumberInput from "../common/NumberInput";
 
-type SpacingValues = {
+export type SpacingValues = {
   top: number;
   left: number;
   right: number;
@@ -16,10 +16,12 @@ type Props = {
   name?: string;
   description?: string;
   value?: SpacingValues;
+  min?: number;
+  max?: number;
   onChange?: (values: SpacingValues) => void;
 };
 
-const SpacingInput: React.FC<Props> = ({ name, description, value, onChange }) => {
+const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onChange }) => {
   const [spacingValues, setSpacingValues] = useState<SpacingValues>(
     value || { top: 0, left: 0, right: 0, bottom: 0 },
   );
@@ -42,6 +44,8 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, onChange }) =
             suffix="px"
             key={position}
             position={position}
+            min={min}
+            max={max}
             onChange={newValue => handleInputChange(position as keyof SpacingValues, newValue)}
           />
         ))}

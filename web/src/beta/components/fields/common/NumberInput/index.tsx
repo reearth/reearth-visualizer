@@ -65,7 +65,10 @@ const NumberInput: React.FC<Props> = ({
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setInnerValue(parseFloat(e.currentTarget.value));
+    const newValue = parseFloat(e.currentTarget.value);
+    setInnerValue(newValue);
+    const minWidth = Math.max(metricsSizes.xs, `${newValue}`.length * 10);
+    e.currentTarget.style.width = `${minWidth}px`;
   }, []);
 
   const handleKeyPress = useCallback(
@@ -128,13 +131,16 @@ type FormProps = { inactive: boolean };
 
 const FormWrapper = styled.div<FormProps>`
   display: flex;
+  flex-direction: row;
   align-items: center;
   background: ${({ theme }) => theme.bg[1]};
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   padding: ${metricsSizes.xs}px ${metricsSizes.s}px;
   gap: 12px;
-  width: 100%;
+  width: auto;
+  min-width: min-content;
+  max-width: 275px;
   color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
   &:focus-within {
     border-color: ${({ theme }) => theme.select.main};
