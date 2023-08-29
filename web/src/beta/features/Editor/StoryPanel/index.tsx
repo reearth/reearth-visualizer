@@ -1,6 +1,7 @@
 import { FC, Fragment } from "react";
 
 import PageIndicator from "@reearth/beta/features/Editor/StoryPanel/PageIndicator";
+import { convert } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import useHooks, {
@@ -42,14 +43,15 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
           onPageChange={pageInfo.onPageChange}
         />
       )}
-      <PageWrapper id={pageElementId}>
+      <PageWrapper id={pageElementId} onClick={() => console.log("page clicked")}>
         {selectedStory?.pages.map(p => (
           <Fragment key={p.id}>
             <StoryPage
               sceneId={sceneId}
               storyId={selectedStory.id}
               pageId={p.id}
-              pageTitle={p.title}
+              propertyId={p.property?.id}
+              propertyItems={convert(p.property)}
               installableStoryBlocks={installableStoryBlocks}
               selectedStoryBlockId={selectedStoryBlockId}
               onBlockSelect={handleStoryBlockSelect}
@@ -65,7 +67,7 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
 export default StoryPanel;
 
 const Wrapper = styled.div`
-  width: ${storyPanelWidth}px;
+  flex: 0 0 ${storyPanelWidth}px;
   background: #f1f1f1;
   color: ${({ theme }) => theme.content.weak};
 `;
@@ -73,7 +75,10 @@ const Wrapper = styled.div`
 const PageWrapper = styled.div`
   height: calc(100% - 8px);
   overflow-y: auto;
-  width: 442px;
+
+  :hover {
+    cursor: help;
+  }
 `;
 
 const PageGap = styled.div<{ height?: number }>`
