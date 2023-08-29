@@ -98,9 +98,21 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
           <FormButtonGroup>
             <ButtonWrapper
               buttonType="secondary"
+              text={t("Jump")}
+              // TODO: Handle onClick
+              // onClick={handleClose}
+              size="medium"
+              disabled={true}
+            />
+          </FormButtonGroup>
+          <FormButtonGroup>
+            <ButtonWrapper
+              buttonType="secondary"
+              // TODO: Translation doesn't exist for this
               text={t("Clean Capture")}
               onClick={handleClose}
               size="medium"
+              disabled={value ? false : true}
             />
             <ButtonWrapper
               buttonType="primary"
@@ -108,7 +120,6 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
               onClick={handleSave}
               size="medium"
             />
-            {/* TODO: Add Jump to Selection Button */}
           </FormButtonGroup>
         </PickerWrapper>
       </Popover.Provider>
@@ -146,6 +157,7 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 8px 0;
 `;
 
 const HeaderWrapper = styled.div`
