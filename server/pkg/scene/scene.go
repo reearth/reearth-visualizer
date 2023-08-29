@@ -17,6 +17,7 @@ type Scene struct {
 	updatedAt time.Time
 	property  PropertyID
 	clusters  *ClusterList
+	styles    *StyleList
 }
 
 func (s *Scene) ID() ID {
@@ -105,4 +106,11 @@ func (s *Scene) Clusters() *ClusterList {
 		return nil
 	}
 	return s.clusters
+}
+
+func (s *Scene) Styles() *StyleList {
+	if s == nil {
+		return nil
+	}
+	return s.styles
 }

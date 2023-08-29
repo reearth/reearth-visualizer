@@ -59,3 +59,16 @@ func (i *InfoboxField) UpgradePlugin(id plugin.ID) {
 	}
 	i.plugin = id
 }
+
+func (i *InfoboxField) Clone() *InfoboxField {
+	if i == nil {
+		return nil
+	}
+
+	return &InfoboxField{
+		id:        i.id,
+		plugin:    i.plugin,
+		extension: i.extension,
+		property:  i.property,
+	}
+}
