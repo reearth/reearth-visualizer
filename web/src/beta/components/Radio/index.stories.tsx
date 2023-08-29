@@ -1,9 +1,15 @@
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import Radio from ".";
 
-export default {
+const meta: Meta<typeof Radio> = {
   component: Radio,
-} as Meta;
+};
 
-export const Default = () => <Radio value="value">Radio</Radio>;
+export default meta;
+
+type Story = StoryObj<typeof Radio>;
+
+export const Default: Story = {
+  render: () => <Radio label={"test"} inactive={false} selected={false} />,
+};
