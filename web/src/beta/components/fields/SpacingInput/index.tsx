@@ -58,11 +58,11 @@ export default SpacingInput;
 
 const StyledRectangle = styled.div`
   display: flex;
-  position: relative;
-  width: 289px;
+  width: 100%;
   height: 84px;
   border: 1px dashed ${({ theme }) => theme.outline.weak};
   box-sizing: border-box;
+  position: relative;
 `;
 
 const SpacingField = styled(NumberInput)<{ position: string }>`

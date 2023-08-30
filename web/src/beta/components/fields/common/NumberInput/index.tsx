@@ -140,7 +140,7 @@ const FormWrapper = styled.div<FormProps>`
   gap: 12px;
   width: auto;
   min-width: min-content;
-  max-width: 275px;
+  max-width: 64px;
   color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
   &:focus-within {
     border-color: ${({ theme }) => theme.select.main};
@@ -155,6 +155,7 @@ const StyledInput = styled.input`
   outline: none;
   color: inherit;
   width: 100%;
+  max-width: 64px;
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;
