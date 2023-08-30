@@ -63,7 +63,6 @@ func MustParseSystemFromBytes(source []byte, scene *plugin.SceneID, tl *Translat
 }
 
 func ParseFromUrl(ctx context.Context, u *url.URL) (*Manifest, error) {
-	log.Debugf("manifest url: %s", u.JoinPath("reearth.yml").String())
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.JoinPath("reearth.yml").String(), nil)
 	if err != nil {
 		return nil, err
