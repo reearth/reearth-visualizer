@@ -17,24 +17,23 @@ export const storyPanelWidth = 442;
 type Props = {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
+  currentPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 };
 
-export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, onPageSelect }) => {
+export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, currentPage, onPageSelect }) => {
   const {
     pageInfo,
     pageHeight,
-    installableStoryBlocks,
-    selectedStoryBlockId,
-    showPageSettings,
-    setPageSettingsShow,
-    handlePageSettingsToggle,
-    handleStoryBlockSelect,
+    installableBlocks,
+    selectedPageId,
+    selectedBlockId,
+    handlePageSelect,
+    handleBlockSelect,
   } = useHooks({
     sceneId,
     selectedStory,
-    selectedPage,
+    currentPage,
     onPageSelect,
   });
 
@@ -55,18 +54,20 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
               position="left-bottom"
               icon="storyPage"
               noBorder
-              isSelected={showPageSettings === p.id}
-              onClick={() => handlePageSettingsToggle(p.id)}
-              onSettingsToggle={() => setPageSettingsShow(p.id)}>
+              isSelected={selectedPageId === p.id}
+              onClick={() => handlePageSelect(p.id)}
+              // showSettings
+              // onSettingsToggle={() => handlePageSelect(p.id)}
+            >
               <StoryPage
                 sceneId={sceneId}
                 storyId={selectedStory.id}
                 pageId={p.id}
                 propertyId={p.property?.id}
                 propertyItems={convert(p.property)}
-                installableStoryBlocks={installableStoryBlocks}
-                selectedStoryBlockId={selectedStoryBlockId}
-                onBlockSelect={handleStoryBlockSelect}
+                installableStoryBlocks={installableBlocks}
+                selectedStoryBlockId={selectedBlockId}
+                onBlockSelect={handleBlockSelect}
               />
               <PageGap height={pageHeight} />
             </SelectableArea>

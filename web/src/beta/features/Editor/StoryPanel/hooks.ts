@@ -10,35 +10,35 @@ export const pageElementId = "story-page";
 export default ({
   sceneId,
   selectedStory,
-  selectedPage,
+  currentPage,
   onPageSelect,
 }: {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
+  currentPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 }) => {
-  const [showPageSettings, setPageSettingsShow] = useState<string | undefined>(undefined);
-  const [selectedStoryBlockId, setSelectedStoryBlockId] = useState<string>();
+  const [selectedPageId, setSelectedPageId] = useState<string>();
+  const [selectedBlockId, setSelectedBlockId] = useState<string>();
 
-  const handlePageSettingsToggle = useCallback(
+  const handlePageSelect = useCallback(
     (pageId?: string) => {
-      if (selectedStoryBlockId) {
-        setSelectedStoryBlockId(undefined);
+      if (selectedBlockId) {
+        setSelectedBlockId(undefined);
       }
-      setPageSettingsShow(pid => (pageId && pid !== pageId ? pageId : undefined));
+      setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
     },
-    [selectedStoryBlockId],
+    [selectedBlockId],
   );
 
-  const handleStoryBlockSelect = useCallback(
+  const handleBlockSelect = useCallback(
     (blockId?: string) => {
-      if (showPageSettings) {
-        setPageSettingsShow(undefined);
+      if (selectedPageId) {
+        setSelectedPageId(undefined);
       }
-      setSelectedStoryBlockId(id => (!blockId || id === blockId ? undefined : blockId));
+      setSelectedBlockId(id => (!blockId || id === blockId ? undefined : blockId));
     },
-    [showPageSettings],
+    [selectedPageId],
   );
 
   const { useInstallableStoryBlocksQuery } = useStorytellingAPI();
@@ -46,22 +46,22 @@ export default ({
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
 
   useEffect(() => {
-    if (selectedPage) {
-      document.getElementById(selectedPage.id)?.scrollIntoView({ behavior: "smooth" });
+    if (currentPage) {
+      document.getElementById(currentPage.id)?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [selectedPage]);
+  }, [currentPage]);
 
   const pageInfo = useMemo(() => {
     const pages = selectedStory?.pages ?? [];
     if ((pages?.length ?? 0) < 2) return;
 
-    const currentIndex = pages.findIndex(p => p.id === selectedPage?.id);
+    const currentIndex = pages.findIndex(p => p.id === currentPage?.id);
     return {
       currentPage: currentIndex + 1,
       maxPage: pages.length,
       onPageChange: (page: number) => onPageSelect(pages[page - 1]?.id),
     };
-  }, [onPageSelect, selectedPage, selectedStory]);
+  }, [onPageSelect, currentPage, selectedStory]);
 
   const pageHeight = useMemo(() => {
     const element = document.getElementById(pageElementId);
@@ -71,11 +71,11 @@ export default ({
   return {
     pageInfo,
     pageHeight,
-    installableStoryBlocks,
-    selectedStoryBlockId,
-    showPageSettings,
-    setPageSettingsShow,
-    handlePageSettingsToggle,
-    handleStoryBlockSelect,
+    installableBlocks: installableStoryBlocks,
+    selectedPageId,
+    selectedBlockId,
+    setSelectedPageId,
+    handlePageSelect,
+    handleBlockSelect,
   };
 };
