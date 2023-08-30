@@ -64,7 +64,9 @@ Widgets: Widgets
 Error: Error
 Warning: Warning
 Notice: Notice
-You have reached a policy limit. Please contact an administrator of your Re:Earth system.: You have reached a policy limit. Please contact an administrator of your Re:Earth system.
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: >-
+  You have reached a policy limit. Please contact an administrator of your
+  Re:Earth system.
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Project Settings: Project Settings
 Date: Date
@@ -78,10 +80,6 @@ You haven't uploaded any assets yet. Click the upload button above and select a 
   a compatible file from your computer.
 You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
 Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
-Failed to add one or more assets.: Failed to add one or more assets.
-Successfully added one or more assets.: Successfully added one or more assets.
-Failed to delete one or more assets.: Failed to delete one or more assets.
-One or more assets were successfully deleted.: One or more assets were successfully deleted.
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
@@ -114,10 +112,6 @@ This will permanently delete the project. If the project was published, this als
   This will permanently delete the project. If the project was published, this
   also means websites and domains referencing the project will not be able to
   access it anymore.
-Failed to install plugin.: Failed to install plugin.
-Successfully installed plugin!: Successfully installed plugin!
-Failed to uninstall plugin.: Failed to uninstall plugin.
-Successfully removed plugin.: Successfully removed plugin.
 Plugin Marketplace: Plugin Marketplace
 Public Installed: Public Installed
 Personal Installed: Personal Installed
@@ -373,6 +367,10 @@ This is your personal workspace. Your projects and resources will be managed in 
 All workspaces: All workspaces
 Your account has been successfully verified! Feel free to login now.: Your account has been successfully verified! Feel free to login now.
 Could not verify your signup. Please start the process over.: Could not verify your signup. Please start the process over.
+Failed to add one or more assets.: Failed to add one or more assets.
+Successfully added one or more assets.: Successfully added one or more assets.
+Failed to delete one or more assets.: Failed to delete one or more assets.
+One or more assets were successfully deleted.: One or more assets were successfully deleted.
 Successfully created workspace!: Successfully created workspace!
 Failed to create project.: Failed to create project.
 Default: Default
@@ -408,6 +406,10 @@ Successfully archived the project.: Successfully archived the project.
 Successfully unarchived the project. You can now edit this project.: Successfully unarchived the project. You can now edit this project.
 Failed to delete project.: Failed to delete project.
 Project was successfully deleted.: Project was successfully deleted.
+Failed to install plugin.: Failed to install plugin.
+Successfully installed plugin!: Successfully installed plugin!
+Failed to uninstall plugin.: Failed to uninstall plugin.
+Successfully removed plugin.: Successfully removed plugin.
 Total Projects: Total Projects
 New Project: New Project
 Failed to create workspace.: Failed to create workspace.
@@ -421,6 +423,9 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
+Failed to upgrade plugin.: Failed to upgrade plugin.
+Successfully upgraded plugin!: Successfully upgraded plugin!
+Successfully uninstalled plugin.: Successfully uninstalled plugin.
 Failed to publish project.: Failed to publish project.
 Failed to update project.: Failed to update project.
 Successfully updated project!: Successfully updated project!

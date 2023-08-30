@@ -138,12 +138,12 @@ export default () => {
       if (errors) {
         setNotification({
           type: "error",
-          text: t("Failed to install plugin."),
+          text: t("Failed to upgrade plugin."),
         });
       } else {
         setNotification({
           type: "success",
-          text: t("Successfully installed plugin!"),
+          text: t("Successfully upgraded plugin!"),
         });
       }
     },
@@ -207,7 +207,7 @@ export default () => {
       } else {
         setNotification({
           type: "info",
-          text: t("Successfully removed plugin."),
+          text: t("Successfully uninstalled plugin."),
         });
       }
     },
