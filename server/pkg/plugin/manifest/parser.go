@@ -11,7 +11,6 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"github.com/reearth/reearth/server/pkg/plugin"
-	"github.com/reearth/reearthx/log"
 )
 
 var (
