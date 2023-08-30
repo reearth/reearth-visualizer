@@ -109,7 +109,7 @@ const ContentPage: React.FC<Props> = ({
       </SContentUp>
       <SContentBottom>
         <Action icon="square" title={`+ ${t("New Page")}`} onClick={() => onPageAdd(false)} />
-        <Action icon="swiper" title={`+ ${t("New Swipe")}`} onClick={() => onPageAdd(true)} />
+        {/* <Action icon="swiper" title={`+ ${t("New Swipe")}`} onClick={() => onPageAdd(true)} /> */}
       </SContentBottom>
     </SContent>
   );
