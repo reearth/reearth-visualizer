@@ -1,6 +1,11 @@
+Cancel: キャンセル
+Apply: Apply
 Not found: ページが見つかりません
 Padding settings: ''
 Remove: 削除
+Untitled: 無名
+Scene: シーン
+Outline: アウトライン
 Published: 一般公開
 Unpublished: 非公開
 Unpublish: 非公開にする
@@ -29,6 +34,7 @@ New Page: 新しいページ
 New Swipe: 新しいスワイプ
 Story: ストーリー
 Page: ページ
+Page Settings: ページ設定
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Inspector: インスペクター
@@ -38,8 +44,6 @@ Narrow: 狭い
 Wide: 広い
 Create New Workspace: 新規ワークスペース作成
 Create: 作成
-Cancel: キャンセル
-Apply: Apply
 Workspace Name: ワークスペース名
 Account Settings: アカウント設定
 Workspaces: ワークスペース
@@ -172,7 +176,6 @@ Create New Folder: 新規フォルダ作成
 Add Layer: ''
 Zoom To Layer: ''
 Delete the selected item.: 選択中の項目を削除
-Scene: シーン
 Layers: レイヤー
 Clusters: クラスター
 Delete widget: ウィジェットを削除
@@ -338,7 +341,6 @@ Successfully published your project!: プロジェクトの公開に成功しま
 Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
 Successfully unpublished your project. Now nobody can access your project.: プロジェクトは非公開状態です。現在、誰も閲覧することはできません。
 Successfully copied to clipboard!: クリップボードにコピーしました。
-Outline: アウトライン
 Folder: 新規フォルダ
 Layer: レイヤー
 Widget: ウィジェット

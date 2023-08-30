@@ -1,6 +1,11 @@
+Cancel: Cancel
+Apply: Apply
 Not found: Not found
 Padding settings: Padding settings
 Remove: Remove
+Untitled: Untitled
+Scene: Scene
+Outline: Outline
 Published: Published
 Unpublished: Unpublished
 Unpublish: Unpublish
@@ -33,6 +38,7 @@ New Page: New Page
 New Swipe: New Swipe
 Story: Story
 Page: Page
+Page Settings: Page Settings
 Align System: Align System
 Widget Manager: Widget Manager
 Inspector: Inspector
@@ -42,8 +48,6 @@ Narrow: Narrow
 Wide: Wide
 Create New Workspace: Create New Workspace
 Create: Create
-Cancel: Cancel
-Apply: Apply
 Workspace Name: Workspace Name
 Account Settings: Account Settings
 Workspaces: Workspaces
@@ -186,7 +190,6 @@ Create New Folder: Create New Folder
 Add Layer: Add Layer
 Zoom To Layer: Zoom To Layer
 Delete the selected item.: Delete the selected item.
-Scene: Scene
 Layers: Layers
 Clusters: Clusters
 Delete widget: Delete widget
@@ -377,7 +380,6 @@ Successfully published your project!: Successfully published your project!
 Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
 Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
 Successfully copied to clipboard!: Successfully copied to clipboard!
-Outline: Outline
 Folder: Folder
 Layer: Layer
 Widget: Widget
