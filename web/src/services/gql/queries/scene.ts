@@ -37,7 +37,7 @@ export const GET_SCENE = gql(`
             ...PropertyFragment
           }
           plugin {
-           ...PluginFragment
+            ...PluginFragment
           }
         }
         widgets {

@@ -2031,6 +2031,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
             - id: gap
               title: Gap
               type: number
@@ -2093,6 +2095,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
         - id: default
           title: Text
           fields:
@@ -2113,6 +2117,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
         - id: default
           title: MD Text
           fields:
@@ -2133,6 +2139,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
         - id: default
           title: Image
           fields:
@@ -2153,6 +2161,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
         - id: default
           title: Video
           fields:
@@ -2173,6 +2183,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
         - id: default
           title: Camera Button
           list: true
@@ -2204,6 +2216,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
         - id: default
           title: Link Button
           list: true
@@ -2235,6 +2249,8 @@ extensions:
               type: spacing
               title: Padding
               ui: padding
+              min: 0
+              max: 100
         - id: default
           title: Timeline
           fields:
