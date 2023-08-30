@@ -1,7 +1,7 @@
-import { Dispatch, Fragment, MouseEvent, SetStateAction, useCallback } from "react";
+import { Dispatch, Fragment, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
 
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
-import Icon from "@reearth/beta/components/Icon";
+import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
@@ -16,6 +16,8 @@ export type ActionItem = {
   onClick?: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
+export type ActionPosition = "left" | "right";
+
 type Props = {
   isSelected?: boolean;
   showSettings?: boolean;
@@ -24,8 +26,9 @@ type Props = {
   panelSettings?: Item;
   actionItems: ActionItem[];
   dndEnabled?: boolean;
+  position?: ActionPosition;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
-  onSettingsToggle: (e?: MouseEvent<HTMLDivElement>) => void;
+  onSettingsToggle?: (e?: MouseEvent<HTMLDivElement>) => void;
   onRemove?: () => void;
 };
 
@@ -37,6 +40,7 @@ const ActionPanel: React.FC<Props> = ({
   panelSettings,
   actionItems,
   dndEnabled,
+  position,
   setShowPadding,
   onSettingsToggle,
   onRemove,
@@ -47,12 +51,30 @@ const ActionPanel: React.FC<Props> = ({
     e?.stopPropagation();
   }, []);
 
+  const popoverContent = useMemo(() => {
+    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
+      {
+        name: t("Padding settings"),
+        icon: "padding",
+        onClick: () => setShowPadding(true),
+      },
+    ];
+    if (onRemove) {
+      menuItems.push({
+        name: t("Remove"),
+        icon: "trash",
+        onClick: onRemove,
+      });
+    }
+    return menuItems;
+  }, [t, setShowPadding, onRemove]);
+
   return (
-    <Wrapper isSelected={isSelected}>
+    <Wrapper isSelected={isSelected} position={position}>
       {dndEnabled && <DndHandle icon="dndHandle" size={16} onClick={handleClickFallback} />}
       <Popover.Provider
         open={showSettings}
-        onOpenChange={() => onSettingsToggle()}
+        onOpenChange={() => onSettingsToggle?.()}
         placement="bottom-start">
         <BlockOptions isSelected={isSelected}>
           {actionItems.map(
@@ -63,7 +85,7 @@ const ActionPanel: React.FC<Props> = ({
                     <OptionWrapper
                       showPointer={!isSelected || !!a.onClick}
                       onClick={a.onClick ?? handleClickFallback}>
-                      <OptionIcon icon={a.icon} size={16} />
+                      <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
                       {a.name && (
                         <OptionText size="footnote" customColor>
                           {a.name}
@@ -91,21 +113,7 @@ const ActionPanel: React.FC<Props> = ({
               )}
             </SettingsDropdown>
           ) : (
-            <PopoverMenuContent
-              size="sm"
-              items={[
-                {
-                  name: t("Padding settings"),
-                  icon: "padding",
-                  onClick: () => setShowPadding(true),
-                },
-                {
-                  name: t("Remove"),
-                  icon: "trash",
-                  onClick: onRemove,
-                },
-              ]}
-            />
+            <PopoverMenuContent size="sm" items={popoverContent} />
           )}
         </Popover.Content>
       </Popover.Provider>
@@ -115,14 +123,14 @@ const ActionPanel: React.FC<Props> = ({
 
 export default ActionPanel;
 
-const Wrapper = styled.div<{ isSelected?: boolean }>`
+const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   color: ${({ theme }) => theme.select.main};
   display: flex;
   align-items: center;
   gap: 4px;
   height: 24px;
   position: absolute;
-  right: -1px;
+  ${({ position }) => (position === "left" ? "left: -1px;" : "right: -1px;")}
   top: -25px;
   transition: all 0.2s;
 `;
@@ -146,9 +154,9 @@ const OptionText = styled(Text)`
   padding-right: 4px;
 `;
 
-const OptionIcon = styled(Icon)`
+const OptionIcon = styled(Icon)<{ border?: boolean }>`
   padding: 4px;
-  border-left: 1px solid #f1f1f1;
+  ${({ border }) => border && "border-left: 1px solid #f1f1f1;"}
 `;
 
 const SettingsDropdown = styled.div`

@@ -3,7 +3,7 @@ import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { ValueTypes } from "@reearth/beta/utils/value";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 
-import { getFieldValue } from "../utils";
+import { getFieldValue } from "../../../utils";
 
 type Props = {
   isSelected?: boolean;
@@ -12,30 +12,14 @@ type Props = {
 };
 
 export default ({ isSelected, propertyItems, onClick }: Props) => {
-  const [isHovered, setHover] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showPadding, setShowPadding] = useState(false);
 
   useEffect(() => {
     if (!isSelected && editMode) {
       setEditMode(false);
     }
   }, [isSelected, editMode]);
-
-  const handleEditModeToggle = useCallback((e?: MouseEvent<HTMLDivElement>) => {
-    e?.stopPropagation();
-    setEditMode(em => !em);
-  }, []);
-
-  const handleSettingsToggle = useCallback((e?: MouseEvent<HTMLDivElement>) => {
-    e?.stopPropagation();
-    setShowSettings(s => !s);
-  }, []);
-
-  const handleMouseEnter = useCallback(() => setHover(true), []);
-
-  const handleMouseLeave = useCallback(() => setHover(false), []);
 
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -51,29 +35,23 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     [propertyItems],
   );
 
-  const panelSettings: Item | undefined = useMemo(
-    () => propertyItems?.find(i => i.schemaGroup === "panel"),
-    [propertyItems],
-  );
-
   const padding = useMemo(
     () => getFieldValue(propertyItems ?? [], "padding", "panel") as ValueTypes["spacing"],
     [propertyItems],
   );
 
+  const handleEditModeToggle = () => setEditMode?.(em => !em);
+
+  const handleSettingsToggle = () => setShowSettings?.(s => !s);
+
   return {
-    isHovered,
     editMode,
     showSettings,
-    showPadding,
     defaultSettings,
-    panelSettings,
     padding,
-    setShowPadding,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleBlockClick,
+    setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
+    handleBlockClick,
   };
 };

@@ -5,9 +5,9 @@ import { ValueTypes } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../common/Wrapper";
-import { getFieldValue } from "../utils";
 
 export type Props = BlockProps;
 

@@ -4,10 +4,9 @@ import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
+import SelectableArea from "../../../SelectableArea";
 import Template from "../../Template";
 
-import ActionPanel from "./ActionPanel";
-import ClickAwayListener from "./click-away";
 import useHooks from "./hooks";
 
 type Spacing = {
@@ -43,19 +42,14 @@ const BlockWrapper: React.FC<Props> = ({
   onRemove,
 }) => {
   const {
-    isHovered,
     editMode,
     showSettings,
-    showPadding,
     defaultSettings,
-    panelSettings,
     padding,
-    setShowPadding,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleBlockClick,
+    setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
+    handleBlockClick,
   } = useHooks({
     isSelected,
     propertyItems,
@@ -63,55 +57,32 @@ const BlockWrapper: React.FC<Props> = ({
   });
 
   return (
-    <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
-      <Wrapper
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        isSelected={isSelected}>
-        {(isHovered || isSelected) && (
-          <ActionPanel
-            title={title}
-            icon={icon}
-            isSelected={isSelected}
-            showSettings={showSettings}
-            showPadding={showPadding}
-            editMode={editMode}
-            propertyId={propertyId}
-            panelSettings={panelSettings}
-            dndEnabled={dndEnabled}
-            setShowPadding={setShowPadding}
-            onEditModeToggle={handleEditModeToggle}
-            onSettingsToggle={handleSettingsToggle}
-            onRemove={onRemove}
-          />
-        )}
-        <Block padding={padding} onClick={handleBlockClick}>
-          {children ?? <Template icon={icon} />}
-        </Block>
-        {editMode && propertyId && defaultSettings && (
-          <EditorPanel>
-            <FieldComponents propertyId={propertyId} item={defaultSettings} />
-          </EditorPanel>
-        )}
-      </Wrapper>
-    </ClickAwayListener>
+    <SelectableArea
+      title={title}
+      icon={icon}
+      isSelected={isSelected}
+      propertyId={propertyId}
+      dndEnabled={dndEnabled}
+      showSettings={showSettings}
+      editMode={editMode}
+      setEditMode={setEditMode}
+      onEditModeToggle={handleEditModeToggle}
+      onSettingsToggle={handleSettingsToggle}
+      onRemove={onRemove}
+      onClickAway={onClickAway}>
+      <Block padding={padding} onClick={handleBlockClick}>
+        {children ?? <Template icon={icon} />}
+      </Block>
+      {editMode && propertyId && defaultSettings && (
+        <EditorPanel>
+          <FieldComponents propertyId={propertyId} item={defaultSettings} />
+        </EditorPanel>
+      )}
+    </SelectableArea>
   );
 };
 
 export default BlockWrapper;
-
-const Wrapper = styled.div<{ isSelected?: boolean }>`
-  border-width: 1px;
-  border-style: solid;
-  border-color: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "transparent")};
-  transition: all 0.3s;
-  padding: 1px;
-  position: relative;
-
-  :hover {
-    border-color: ${({ isSelected, theme }) => !isSelected && theme.select.weaker};
-  }
-`;
 
 const Block = styled.div<{ padding?: Spacing }>`
   display: flex;

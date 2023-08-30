@@ -10,6 +10,7 @@ import useHooks, {
   type StoryPageFragmentFragment,
 } from "./hooks";
 import StoryPage from "./Page";
+import SelectableArea from "./SelectableArea";
 
 export const storyPanelWidth = 442;
 
@@ -46,17 +47,19 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
       <PageWrapper id={pageElementId} onClick={() => console.log("page clicked")}>
         {selectedStory?.pages.map(p => (
           <Fragment key={p.id}>
-            <StoryPage
-              sceneId={sceneId}
-              storyId={selectedStory.id}
-              pageId={p.id}
-              propertyId={p.property?.id}
-              propertyItems={convert(p.property)}
-              installableStoryBlocks={installableStoryBlocks}
-              selectedStoryBlockId={selectedStoryBlockId}
-              onBlockSelect={handleStoryBlockSelect}
-            />
-            <PageGap height={pageHeight} />
+            <SelectableArea title={p.title} isSelected position="left" icon="storyPage" noBorder>
+              <StoryPage
+                sceneId={sceneId}
+                storyId={selectedStory.id}
+                pageId={p.id}
+                propertyId={p.property?.id}
+                propertyItems={convert(p.property)}
+                installableStoryBlocks={installableStoryBlocks}
+                selectedStoryBlockId={selectedStoryBlockId}
+                onBlockSelect={handleStoryBlockSelect}
+              />
+              <PageGap height={pageHeight} />
+            </SelectableArea>
           </Fragment>
         ))}
       </PageWrapper>

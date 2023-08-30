@@ -24,7 +24,7 @@ export default function StoryBlockComponent({
   const handleRemove = useCallback(() => onRemove?.(props.block?.id), [props.block?.id, onRemove]);
 
   return Builtin ? (
-    <Builtin {...props} onRemove={handleRemove} />
+    <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
     <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}

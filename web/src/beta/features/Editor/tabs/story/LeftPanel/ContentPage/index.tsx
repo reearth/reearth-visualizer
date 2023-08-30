@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import { getFieldValue } from "@reearth/beta/features/Editor/StoryPanel/Block/builtin/utils";
+import { getFieldValue } from "@reearth/beta/features/Editor/StoryPanel/utils";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
 import { convert } from "@reearth/services/api/propertyApi/utils";
