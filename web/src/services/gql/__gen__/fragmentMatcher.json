@@ -8,6 +8,10 @@
       "LayerTagGroup",
       "LayerTagItem"
     ],
+    "NLSLayer": [
+      "NLSLayerGroup",
+      "NLSLayerSimple"
+    ],
     "Node": [
       "Asset",
       "Dataset",
