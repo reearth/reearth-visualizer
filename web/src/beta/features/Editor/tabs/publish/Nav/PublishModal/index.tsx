@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import ToggleButton from "@reearth/beta/components/fields/Toggle";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
+import Toggle from "@reearth/beta/components/Toggle";
 import { useT } from "@reearth/services/i18n";
 import { styled, metricsSizes, useTheme } from "@reearth/services/theme";
 
@@ -174,7 +174,7 @@ const PublishModal: React.FC<Props> = ({
           <HideableSection showOptions={showOptions}>
             <Wrapper>
               <Subtitle size="body">{t("Search engine indexing")}</Subtitle>
-              <ToggleButton checked={searchIndex} onChange={handleSearchIndexChange} />
+              <Toggle checked={searchIndex} onChange={handleSearchIndexChange} />
             </Wrapper>
           </HideableSection>
         </>

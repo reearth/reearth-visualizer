@@ -1,10 +1,8 @@
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import React, { useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
-
-import Property from "..";
 
 import Toggle from ".";
 
@@ -21,7 +19,10 @@ type Story = StoryObj<typeof Toggle>;
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = (checked: boolean) => updateArgs({ checked: !checked });
+  const handleChange = useCallback(
+    (checked: boolean) => updateArgs({ checked: !checked }),
+    [updateArgs],
+  );
 
   return (
     <Wrapper>
@@ -29,15 +30,10 @@ export const Default: Story = (args: Props) => {
         <Toggle {...args} onChange={handleChange} />
       </div>
       <div>
-        <Property name="Switch Toggle">
-          <Toggle {...args} onChange={handleChange} />
-        </Property>
+        <Toggle {...args} checked={!args.checked} onChange={handleChange} />
       </div>
-
       <div>
-        <Property name="Switch Toggle" description="Switch toggle description">
-          <Toggle {...args} onChange={handleChange} />
-        </Property>
+        <Toggle {...args} checked={!args.checked} disabled={true} onChange={handleChange} />
       </div>
     </Wrapper>
   );

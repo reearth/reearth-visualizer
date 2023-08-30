@@ -8,7 +8,7 @@ type Props = {
   disabled?: boolean;
 };
 
-const ToggleButton: React.FC<Props> = ({ checked, onChange, disabled = false }) => {
+const Toggle: React.FC<Props> = ({ checked, onChange, disabled = false }) => {
   const handleClick = useCallback(
     () => !disabled && onChange(checked),
     [checked, onChange, disabled],
@@ -23,7 +23,7 @@ const ToggleButton: React.FC<Props> = ({ checked, onChange, disabled = false }) 
   );
 };
 
-export default ToggleButton;
+export default Toggle;
 
 const Wrapper = styled.div`
   display: flex;
