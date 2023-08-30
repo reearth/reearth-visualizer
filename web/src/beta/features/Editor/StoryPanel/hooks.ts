@@ -18,11 +18,28 @@ export default ({
   selectedPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 }) => {
+  const [showPageSettings, setPageSettingsShow] = useState<string | undefined>(undefined);
   const [selectedStoryBlockId, setSelectedStoryBlockId] = useState<string>();
 
-  const handleStoryBlockSelect = useCallback((blockId?: string) => {
-    setSelectedStoryBlockId(id => (!blockId || id === blockId ? undefined : blockId));
-  }, []);
+  const handlePageSettingsToggle = useCallback(
+    (pageId?: string) => {
+      if (selectedStoryBlockId) {
+        setSelectedStoryBlockId(undefined);
+      }
+      setPageSettingsShow(pid => (pageId && pid !== pageId ? pageId : undefined));
+    },
+    [selectedStoryBlockId],
+  );
+
+  const handleStoryBlockSelect = useCallback(
+    (blockId?: string) => {
+      if (showPageSettings) {
+        setPageSettingsShow(undefined);
+      }
+      setSelectedStoryBlockId(id => (!blockId || id === blockId ? undefined : blockId));
+    },
+    [showPageSettings],
+  );
 
   const { useInstallableStoryBlocksQuery } = useStorytellingAPI();
 
@@ -56,6 +73,9 @@ export default ({
     pageHeight,
     installableStoryBlocks,
     selectedStoryBlockId,
+    showPageSettings,
+    setPageSettingsShow,
+    handlePageSettingsToggle,
     handleStoryBlockSelect,
   };
 };

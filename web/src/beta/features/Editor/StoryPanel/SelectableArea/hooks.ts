@@ -1,4 +1,12 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Dispatch,
+  MouseEvent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 
@@ -19,9 +27,12 @@ export default ({ editMode, isSelected, propertyItems, setEditMode }: Props) => 
     }
   }, [isSelected, editMode, setEditMode]);
 
-  const handleMouseEnter = useCallback(() => setHover(true), []);
+  const handleMouseOver = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setHover(true);
+  }, []);
 
-  const handleMouseLeave = useCallback(() => setHover(false), []);
+  const handleMouseOut = useCallback(() => setHover(false), []);
 
   const panelSettings: Item | undefined = useMemo(
     () => propertyItems?.find(i => i.schemaGroup === "panel"),
@@ -33,7 +44,7 @@ export default ({ editMode, isSelected, propertyItems, setEditMode }: Props) => 
     showPadding,
     panelSettings,
     setShowPadding,
-    handleMouseEnter,
-    handleMouseLeave,
+    handleMouseOver,
+    handleMouseOut,
   };
 };

@@ -27,6 +27,9 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
     pageHeight,
     installableStoryBlocks,
     selectedStoryBlockId,
+    showPageSettings,
+    setPageSettingsShow,
+    handlePageSettingsToggle,
     handleStoryBlockSelect,
   } = useHooks({
     sceneId,
@@ -44,10 +47,17 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
           onPageChange={pageInfo.onPageChange}
         />
       )}
-      <PageWrapper id={pageElementId} onClick={() => console.log("page clicked")}>
+      <PageWrapper id={pageElementId} showingIndicator={!!pageInfo}>
         {selectedStory?.pages.map(p => (
           <Fragment key={p.id}>
-            <SelectableArea title={p.title} isSelected position="left" icon="storyPage" noBorder>
+            <SelectableArea
+              title={p.title}
+              position="left-bottom"
+              icon="storyPage"
+              noBorder
+              isSelected={showPageSettings === p.id}
+              onClick={() => handlePageSettingsToggle(p.id)}
+              onSettingsToggle={() => setPageSettingsShow(p.id)}>
               <StoryPage
                 sceneId={sceneId}
                 storyId={selectedStory.id}
@@ -75,13 +85,10 @@ const Wrapper = styled.div`
   color: ${({ theme }) => theme.content.weak};
 `;
 
-const PageWrapper = styled.div`
-  height: calc(100% - 8px);
+const PageWrapper = styled.div<{ showingIndicator?: boolean }>`
+  height: ${({ showingIndicator }) => (showingIndicator ? "calc(100% - 8px)" : "100%")};
   overflow-y: auto;
-
-  :hover {
-    cursor: help;
-  }
+  cursor: pointer;
 `;
 
 const PageGap = styled.div<{ height?: number }>`

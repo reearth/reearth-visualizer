@@ -16,7 +16,7 @@ export type ActionItem = {
   onClick?: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
-export type ActionPosition = "left" | "right";
+export type ActionPosition = "left-top" | "left-bottom" | "right-top" | "right-bottom";
 
 type Props = {
   isSelected?: boolean;
@@ -130,8 +130,26 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   gap: 4px;
   height: 24px;
   position: absolute;
-  ${({ position }) => (position === "left" ? "left: -1px;" : "right: -1px;")}
+  ${({ position }) =>
+    position === "left-top"
+      ? `
+  left: -1px;
   top: -25px;
+  `
+      : position === "left-bottom"
+      ? `
+  left: -1px;
+  top: 0;
+  `
+      : position === "right-bottom"
+      ? `
+  top: 0;
+  right: -1px;
+  `
+      : `
+  right: -1px;
+  top: -25px;
+  `}
   transition: all 0.2s;
 `;
 

@@ -43,30 +43,26 @@ const SelectableArea: React.FC<Props> = ({
   setEditMode,
   onEditModeToggle,
   onSettingsToggle,
+  onClick,
   onClickAway,
   onRemove,
 }) => {
-  const {
-    isHovered,
-    showPadding,
-    panelSettings,
-    setShowPadding,
-    handleMouseEnter,
-    handleMouseLeave,
-  } = useHooks({
-    editMode,
-    isSelected,
-    propertyItems,
-    setEditMode,
-  });
+  const { isHovered, showPadding, panelSettings, setShowPadding, handleMouseOver, handleMouseOut } =
+    useHooks({
+      editMode,
+      isSelected,
+      propertyItems,
+      setEditMode,
+    });
 
   return (
     <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
       <Wrapper
         isSelected={isSelected}
         noBorder={noBorder}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}>
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+        onClick={onClick}>
         {(isHovered || isSelected) && (
           <ActionPanel
             title={title}
