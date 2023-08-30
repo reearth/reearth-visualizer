@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
+import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
@@ -74,7 +75,7 @@ const BlockWrapper: React.FC<Props> = ({
         {children ?? <Template icon={icon} />}
       </Block>
       {editMode && propertyId && defaultSettings && (
-        <EditorPanel>
+        <EditorPanel onClick={stopClickPropagation}>
           <FieldComponents propertyId={propertyId} item={defaultSettings} />
         </EditorPanel>
       )}

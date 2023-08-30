@@ -1,10 +1,11 @@
-import { Dispatch, Fragment, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
+import { Dispatch, Fragment, MouseEvent, SetStateAction, useMemo } from "react";
 
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
+import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -28,7 +29,7 @@ type Props = {
   dndEnabled?: boolean;
   position?: ActionPosition;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
-  onSettingsToggle?: (e?: MouseEvent<HTMLDivElement>) => void;
+  onSettingsToggle?: () => void;
   onRemove?: () => void;
 };
 
@@ -46,10 +47,6 @@ const ActionPanel: React.FC<Props> = ({
   onRemove,
 }) => {
   const t = useT();
-
-  const handleClickFallback = useCallback((e?: MouseEvent<Element>) => {
-    e?.stopPropagation();
-  }, []);
 
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
@@ -70,8 +67,8 @@ const ActionPanel: React.FC<Props> = ({
   }, [t, setShowPadding, onRemove]);
 
   return (
-    <Wrapper isSelected={isSelected} position={position}>
-      {dndEnabled && <DndHandle icon="dndHandle" size={16} onClick={handleClickFallback} />}
+    <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
+      {dndEnabled && <DndHandle icon="dndHandle" size={16} />}
       <Popover.Provider
         open={showSettings}
         onOpenChange={() => onSettingsToggle?.()}
@@ -84,7 +81,7 @@ const ActionPanel: React.FC<Props> = ({
                   <Popover.Trigger asChild>
                     <OptionWrapper
                       showPointer={!isSelected || !!a.onClick}
-                      onClick={a.onClick ?? handleClickFallback}>
+                      onClick={a.onClick ?? stopClickPropagation}>
                       <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
                       {a.name && (
                         <OptionText size="footnote" customColor>
