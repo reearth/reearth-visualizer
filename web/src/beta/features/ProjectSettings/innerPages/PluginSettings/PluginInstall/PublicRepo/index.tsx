@@ -47,15 +47,15 @@ const PublicRepo: React.FC<Props> = ({
         title={t("Import GitHub repository")}
         isVisible={isOpen}
         onClose={handleClose}
-        button1={
+        button1={<Button buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}
+        button2={
           <Button
             buttonType="primary"
             text={t("Continue")}
             disabled={!repoUrl}
             onClick={handleSubmit}
           />
-        }
-        button2={<Button buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
+        }>
         {loading && <Loading overlay />}
         <TextInput
           name={t("Repository url:")}

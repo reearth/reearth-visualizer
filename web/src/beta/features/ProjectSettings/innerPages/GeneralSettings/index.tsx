@@ -158,7 +158,7 @@ const GeneralSettings: React.FC<Props> = ({
       <Modal
         isVisible={archiveModelVisible}
         title={t("Archive project")}
-        size="md"
+        size="sm"
         button1={
           <Button
             text={t("Cancel")}
@@ -197,7 +197,7 @@ const GeneralSettings: React.FC<Props> = ({
       <Modal
         isVisible={unarchiveModelVisible}
         title={t("Unarchive project")}
-        size="md"
+        size="sm"
         button1={
           <Button
             text={t("Cancel")}
@@ -241,7 +241,7 @@ const GeneralSettings: React.FC<Props> = ({
       <Modal
         isVisible={deleteModelVisible}
         title={t("Delete project")}
-        size="md"
+        size="sm"
         button1={
           <Button
             text={t("Cancel")}

@@ -18,6 +18,7 @@ const DeleteModal: React.FC<Props> = ({ isOpen, onProceed, onCancel }) => {
   const theme = useTheme();
   return (
     <Modal
+      size="sm"
       isVisible={isOpen}
       onClose={onCancel}
       button1={
