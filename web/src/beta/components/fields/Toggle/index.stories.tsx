@@ -53,7 +53,7 @@ const Wrapper = styled.div`
 `;
 
 Default.args = {
-  checked: false,
+  checked: true,
   disabled: false,
   onChange: () => console.log("clicked"),
 };
