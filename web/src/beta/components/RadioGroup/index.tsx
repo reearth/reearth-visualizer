@@ -1,10 +1,10 @@
-import { useState } from "react"; // Import React and useState
+import { useState } from "react";
 
 import Radio from "@reearth/beta/components/Radio";
 import { styled } from "@reearth/services/theme";
 
 type Option = {
-  value: string;
+  key: string;
   label: string;
 };
 
@@ -12,9 +12,10 @@ export type RadioGroupProps = {
   options: Option[];
   singleSelect?: boolean;
   layout?: "vertical" | "horizontal";
+  onChange?: (value: string[]) => void;
 };
 
-export default function RadioGroup({ options, singleSelect, layout }: RadioGroupProps) {
+const RadioGroup: React.FC<RadioGroupProps> = ({ options, singleSelect, layout, onChange }) => {
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
   const handleRadioChange = (value: string) => {
@@ -25,22 +26,23 @@ export default function RadioGroup({ options, singleSelect, layout }: RadioGroup
         selected.includes(value) ? selected.filter(v => v !== value) : [...selected, value],
       );
     }
+    if (onChange) onChange(selectedValues);
   };
 
   return (
     <RadioGroupContainer layout={layout}>
       {options.map(option => (
         <Radio
-          key={option.value}
+          key={option.key}
           label={option.label}
-          selected={selectedValues.includes(option.value)}
-          onChange={() => handleRadioChange(option.value)}
+          selected={selectedValues.includes(option.label)}
+          onChange={() => handleRadioChange(option.label)}
         />
       ))}
     </RadioGroupContainer>
   );
-}
-
+};
+export default RadioGroup;
 const RadioGroupContainer = styled.div<{ layout?: "vertical" | "horizontal" }>`
   display: flex;
   flex-direction: ${({ layout }) => (layout === "vertical" ? "column" : "row")};
