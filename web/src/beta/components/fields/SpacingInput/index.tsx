@@ -59,7 +59,7 @@ export default SpacingInput;
 const StyledRectangle = styled.div`
   display: flex;
   width: 100%;
-  height: 84px;
+  height: 94px;
   border: 1px dashed ${({ theme }) => theme.outline.weak};
   box-sizing: border-box;
   position: relative;
