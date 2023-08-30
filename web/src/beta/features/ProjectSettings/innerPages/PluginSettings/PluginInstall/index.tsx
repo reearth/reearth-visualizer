@@ -2,6 +2,7 @@ import React from "react";
 
 import { Icons } from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -42,7 +43,7 @@ const PluginInstall: React.FC<Props> = ({
       text: t("Publish your plugin in the Marketplace"),
       mode: "market-publish",
       icon: "marketplace",
-      url: window.REEARTH_CONFIG?.marketplaceUrl,
+      url: config()?.marketplaceUrl,
     },
   ];
 
