@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import { Extension } from "@reearth/services/config/extensions";
+import { ScenePlugin } from "@reearth/services/gql";
 import { useT, useLang } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -19,10 +20,10 @@ export type PluginActions =
   | "market-publish";
 
 type Props = {
-  projectId: string;
   sceneId?: string;
   isArchived: boolean;
   accessToken?: string;
+  plugins?: ScenePlugin[];
   extensions?: {
     library: Extension<"plugin-library">[] | undefined;
     installed: Extension<"plugin-installed">[] | undefined;
@@ -30,10 +31,10 @@ type Props = {
 };
 
 const PluginSettings: React.FC<Props> = ({
-  projectId,
   sceneId,
   isArchived,
   accessToken,
+  plugins,
   extensions,
 }) => {
   const t = useT();
@@ -57,7 +58,7 @@ const PluginSettings: React.FC<Props> = ({
     handleInstallPluginFromPublicRepo,
     handleInstallPluginFromFile,
     handleUninstallPlugin,
-  } = useHooks({ projectId, sceneId });
+  } = useHooks({ sceneId, plugins });
 
   return (
     <InnerPage wide transparent>

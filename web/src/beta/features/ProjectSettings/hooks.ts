@@ -39,7 +39,7 @@ export default ({ projectId, tab, subId }: Props) => {
 
   const { scene } = useSceneQuery({ sceneId: project?.scene?.id });
 
-  const workspaceId = useMemo(() => scene?.teamId, [scene?.teamId]);
+  const workspaceId = scene?.teamId;
 
   const handleUpdateProject = useCallback(
     async (settings: GeneralSettingsType & PublicSettingsType) => {
@@ -158,8 +158,9 @@ export default ({ projectId, tab, subId }: Props) => {
 
   return {
     sceneId: scene?.id,
-    project,
     workspaceId,
+    project,
+    plugins: scene?.plugins,
     stories,
     currentStory,
     accessToken,

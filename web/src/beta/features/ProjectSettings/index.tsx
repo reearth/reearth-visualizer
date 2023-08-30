@@ -37,8 +37,9 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
   const t = useT();
   const {
     sceneId,
-    project,
     workspaceId,
+    project,
+    plugins,
     stories,
     currentStory,
     accessToken,
@@ -114,10 +115,10 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
           )}
           {tab === "plugins" && (
             <PluginSettings
-              projectId={projectId}
               sceneId={sceneId}
               isArchived={!!project?.isArchived}
               accessToken={accessToken}
+              plugins={plugins}
               extensions={extensions}
             />
           )}

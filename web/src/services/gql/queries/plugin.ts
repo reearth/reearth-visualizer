@@ -1,25 +1,5 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
-export const GET_INSTALLED_PLUGINS = gql(`
-  query GetInstalledPlugins($projectId: ID!, $lang: Lang) {
-    scene(projectId: $projectId) {
-      id
-      plugins {
-        plugin {
-          id
-          version
-          name
-          description
-          translatedName(lang: $lang)
-          translatedDescription(lang: $lang)
-          author
-          repositoryUrl
-        }
-      }
-    }
-  }
-`);
-
 export const INSTALL_PLUGIN = gql(`
   mutation InstallPlugin($sceneId: ID!, $pluginId: ID!) {
     installPlugin(input: { sceneId: $sceneId, pluginId: $pluginId }) {

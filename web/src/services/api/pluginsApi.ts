@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import {
-  GET_INSTALLED_PLUGINS,
   INSTALL_PLUGIN,
   UPGRADE_PLUGIN,
   UPLOAD_PLUGIN,
@@ -94,59 +93,11 @@ export default () => {
     [lang],
   );
 
-  const useInstalledPluginsQuery = useCallback(
-    (projectId?: string) => {
-      const { data, ...rest } = useQuery(GET_INSTALLED_PLUGINS, {
-        variables: { projectId: projectId ?? "", lang },
-        skip: !projectId,
-      });
-
-      const marketplacePlugins: MarketplacePlugin[] | undefined = useMemo(
-        () =>
-          data?.scene?.plugins
-            .filter(
-              p => p.plugin && p.plugin?.id !== "reearth" && p.plugin.id.split("~", 3).length < 3,
-            )
-            .map((p): MarketplacePlugin | undefined => {
-              if (!p.plugin) return;
-              const [id, version] = p.plugin.id.split("~", 2);
-              return {
-                id,
-                version,
-                title: p.plugin.name,
-                author: p.plugin.author,
-              };
-            })
-            .filter((p): p is MarketplacePlugin => !!p) ?? [],
-        [data],
-      );
-
-      const personalPlugins = useMemo(
-        () =>
-          data?.scene?.plugins
-            .filter(
-              p => p.plugin && p.plugin.id !== "reearth" && p.plugin.id.split("~", 3).length == 3,
-            )
-            .map(p => ({
-              title: p.plugin?.translatedName ?? "",
-              bodyMarkdown: p.plugin?.translatedDescription ?? "",
-              author: p.plugin?.author ?? "",
-              isInstalled: true,
-              pluginId: p.plugin?.id ?? "",
-            })) ?? [],
-        [data],
-      );
-
-      return { marketplacePlugins, personalPlugins, ...rest };
-    },
-    [lang],
-  );
-
   const [installPluginMutation] = useMutation(INSTALL_PLUGIN, {
-    refetchQueries: ["GetInstalledPlugins"],
+    refetchQueries: ["GET_SCENE"],
   });
   const [upgradePluginMutation] = useMutation(UPGRADE_PLUGIN, {
-    refetchQueries: ["GetInstalledPlugins"],
+    refetchQueries: ["GET_SCENE"],
   });
 
   const useInstallPlugin = useCallback(
@@ -200,7 +151,7 @@ export default () => {
   );
 
   const [uploadPluginMutation] = useMutation(UPLOAD_PLUGIN, {
-    refetchQueries: ["GetInstalledPlugins"],
+    refetchQueries: ["GET_SCENE"],
   });
 
   const useUploadPlugin = useCallback(
@@ -237,7 +188,7 @@ export default () => {
   );
 
   const [uninstallPluginMutation] = useMutation(UNINSTALL_PLUGIN, {
-    refetchQueries: ["GetInstalledPlugins"],
+    refetchQueries: ["GET_SCENE"],
   });
 
   const useUninstallPlugin = useCallback(
@@ -265,7 +216,6 @@ export default () => {
 
   return {
     usePluginsQuery,
-    useInstalledPluginsQuery,
     useInstallPlugin,
     useUpgradePlugin,
     useUploadPlugin,

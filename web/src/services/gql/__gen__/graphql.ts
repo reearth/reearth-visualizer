@@ -18,6 +18,7 @@ export type Scalars = {
   Cursor: { input: string; output: string; }
   DateTime: { input: Date; output: Date; }
   FileSize: { input: number; output: number; }
+  JSON: { input: any; output: any; }
   Lang: { input: string; output: string; }
   TranslatedString: { input: { [lang in string]?: string } | null; output: { [lang in string]?: string } | null; }
   URL: { input: string; output: string; }
@@ -104,12 +105,37 @@ export type AddMemberToTeamPayload = {
   team: Team;
 };
 
+export type AddNlsLayerSimpleInput = {
+  config?: InputMaybe<Scalars['JSON']['input']>;
+  index?: InputMaybe<Scalars['Int']['input']>;
+  layerType: Scalars['String']['input'];
+  parentLayerId: Scalars['ID']['input'];
+  sceneID: Scalars['ID']['input'];
+};
+
+export type AddNlsLayerSimplePayload = {
+  __typename?: 'AddNLSLayerSimplePayload';
+  layers: NlsLayerSimple;
+};
+
 export type AddPropertyItemInput = {
   index?: InputMaybe<Scalars['Int']['input']>;
   nameFieldType?: InputMaybe<ValueType>;
   nameFieldValue?: InputMaybe<Scalars['Any']['input']>;
   propertyId: Scalars['ID']['input'];
   schemaGroupId: Scalars['ID']['input'];
+};
+
+export type AddStyleInput = {
+  name: Scalars['String']['input'];
+  sceneId: Scalars['ID']['input'];
+  value: Scalars['JSON']['input'];
+};
+
+export type AddStylePayload = {
+  __typename?: 'AddStylePayload';
+  Style: Style;
+  scene: Scene;
 };
 
 export type AddWidgetInput = {
@@ -832,8 +858,10 @@ export type Mutation = {
   addLayerGroup?: Maybe<AddLayerGroupPayload>;
   addLayerItem?: Maybe<AddLayerItemPayload>;
   addMemberToTeam?: Maybe<AddMemberToTeamPayload>;
+  addNLSLayerSimple?: Maybe<AddNlsLayerSimplePayload>;
   addPageLayer: StoryPagePayload;
   addPropertyItem?: Maybe<PropertyItemPayload>;
+  addStyle?: Maybe<AddStylePayload>;
   addWidget?: Maybe<AddWidgetPayload>;
   attachTagItemToGroup?: Maybe<AttachTagItemToGroupPayload>;
   attachTagToLayer?: Maybe<AttachTagToLayerPayload>;
@@ -875,11 +903,13 @@ export type Mutation = {
   removeLayer?: Maybe<RemoveLayerPayload>;
   removeMemberFromTeam?: Maybe<RemoveMemberFromTeamPayload>;
   removeMyAuth?: Maybe<UpdateMePayload>;
+  removeNLSLayer?: Maybe<RemoveNlsLayerPayload>;
   removePageLayer: StoryPagePayload;
   removePropertyField?: Maybe<PropertyFieldPayload>;
   removePropertyItem?: Maybe<PropertyItemPayload>;
   removeStoryBlock: RemoveStoryBlockPayload;
   removeStoryPage: DeleteStoryPagePayload;
+  removeStyle?: Maybe<RemoveStylePayload>;
   removeTag?: Maybe<RemoveTagPayload>;
   removeWidget?: Maybe<RemoveWidgetPayload>;
   signup?: Maybe<SignupPayload>;
@@ -891,11 +921,13 @@ export type Mutation = {
   updateLayer?: Maybe<UpdateLayerPayload>;
   updateMe?: Maybe<UpdateMePayload>;
   updateMemberOfTeam?: Maybe<UpdateMemberOfTeamPayload>;
+  updateNLSLayer?: Maybe<UpdateNlsLayerPayload>;
   updateProject?: Maybe<ProjectPayload>;
   updatePropertyItems?: Maybe<PropertyItemPayload>;
   updatePropertyValue?: Maybe<PropertyFieldPayload>;
   updateStory: StoryPayload;
   updateStoryPage: StoryPagePayload;
+  updateStyle?: Maybe<UpdateStylePayload>;
   updateTag?: Maybe<UpdateTagPayload>;
   updateTeam?: Maybe<UpdateTeamPayload>;
   updateWidget?: Maybe<UpdateWidgetPayload>;
@@ -936,6 +968,11 @@ export type MutationAddMemberToTeamArgs = {
 };
 
 
+export type MutationAddNlsLayerSimpleArgs = {
+  input: AddNlsLayerSimpleInput;
+};
+
+
 export type MutationAddPageLayerArgs = {
   input: PageLayerInput;
 };
@@ -943,6 +980,11 @@ export type MutationAddPageLayerArgs = {
 
 export type MutationAddPropertyItemArgs = {
   input: AddPropertyItemInput;
+};
+
+
+export type MutationAddStyleArgs = {
+  input: AddStyleInput;
 };
 
 
@@ -1151,6 +1193,11 @@ export type MutationRemoveMyAuthArgs = {
 };
 
 
+export type MutationRemoveNlsLayerArgs = {
+  input: RemoveNlsLayerInput;
+};
+
+
 export type MutationRemovePageLayerArgs = {
   input: PageLayerInput;
 };
@@ -1173,6 +1220,11 @@ export type MutationRemoveStoryBlockArgs = {
 
 export type MutationRemoveStoryPageArgs = {
   input: DeleteStoryPageInput;
+};
+
+
+export type MutationRemoveStyleArgs = {
+  input: RemoveStyleInput;
 };
 
 
@@ -1231,6 +1283,11 @@ export type MutationUpdateMemberOfTeamArgs = {
 };
 
 
+export type MutationUpdateNlsLayerArgs = {
+  input: UpdateNlsLayerInput;
+};
+
+
 export type MutationUpdateProjectArgs = {
   input: UpdateProjectInput;
 };
@@ -1253,6 +1310,11 @@ export type MutationUpdateStoryArgs = {
 
 export type MutationUpdateStoryPageArgs = {
   input: UpdateStoryPageInput;
+};
+
+
+export type MutationUpdateStyleArgs = {
+  input: UpdateStyleInput;
 };
 
 
@@ -1288,6 +1350,44 @@ export type MutationUploadFileToPropertyArgs = {
 
 export type MutationUploadPluginArgs = {
   input: UploadPluginInput;
+};
+
+export type NlsLayer = {
+  id: Scalars['ID']['output'];
+  infobox?: Maybe<Infobox>;
+  layerType: Scalars['String']['output'];
+  sceneId: Scalars['ID']['output'];
+  tags: Array<LayerTag>;
+  title: Scalars['String']['output'];
+  visible: Scalars['Boolean']['output'];
+};
+
+export type NlsLayerGroup = NlsLayer & {
+  __typename?: 'NLSLayerGroup';
+  children: Array<Maybe<NlsLayer>>;
+  childrenIds: Array<Scalars['ID']['output']>;
+  config?: Maybe<Scalars['JSON']['output']>;
+  id: Scalars['ID']['output'];
+  infobox?: Maybe<Infobox>;
+  layerType: Scalars['String']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+  tags: Array<LayerTag>;
+  title: Scalars['String']['output'];
+  visible: Scalars['Boolean']['output'];
+};
+
+export type NlsLayerSimple = NlsLayer & {
+  __typename?: 'NLSLayerSimple';
+  config?: Maybe<Scalars['JSON']['output']>;
+  id: Scalars['ID']['output'];
+  infobox?: Maybe<Infobox>;
+  layerType: Scalars['String']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+  tags: Array<LayerTag>;
+  title: Scalars['String']['output'];
+  visible: Scalars['Boolean']['output'];
 };
 
 export type Node = {
@@ -1865,6 +1965,15 @@ export type RemoveMyAuthInput = {
   auth: Scalars['String']['input'];
 };
 
+export type RemoveNlsLayerInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type RemoveNlsLayerPayload = {
+  __typename?: 'RemoveNLSLayerPayload';
+  layerId: Scalars['ID']['output'];
+};
+
 export type RemovePropertyFieldInput = {
   fieldId: Scalars['ID']['input'];
   itemId?: InputMaybe<Scalars['ID']['input']>;
@@ -1889,6 +1998,17 @@ export type RemoveStoryBlockPayload = {
   blockId: Scalars['ID']['output'];
   page: StoryPage;
   story: Story;
+};
+
+export type RemoveStyleInput = {
+  StyleId: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
+};
+
+export type RemoveStylePayload = {
+  __typename?: 'RemoveStylePayload';
+  StyleId: Scalars['ID']['output'];
+  scene: Scene;
 };
 
 export type RemoveTagInput = {
@@ -1924,6 +2044,7 @@ export type Scene = Node & {
   createdAt: Scalars['DateTime']['output'];
   datasetSchemas: DatasetSchemaConnection;
   id: Scalars['ID']['output'];
+  newLayers: Array<NlsLayer>;
   plugins: Array<ScenePlugin>;
   project?: Maybe<Project>;
   projectId: Scalars['ID']['output'];
@@ -1932,6 +2053,7 @@ export type Scene = Node & {
   rootLayer?: Maybe<LayerGroup>;
   rootLayerId: Scalars['ID']['output'];
   stories: Array<Story>;
+  styles: Array<Style>;
   tagIds: Array<Scalars['ID']['output']>;
   tags: Array<Tag>;
   team?: Maybe<Team>;
@@ -2054,6 +2176,13 @@ export type StoryPagePayload = {
 export type StoryPayload = {
   __typename?: 'StoryPayload';
   story: Story;
+};
+
+export type Style = {
+  __typename?: 'Style';
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  value: Scalars['JSON']['output'];
 };
 
 export type SyncDatasetInput = {
@@ -2242,6 +2371,17 @@ export type UpdateMemberOfTeamPayload = {
   team: Team;
 };
 
+export type UpdateNlsLayerInput = {
+  layerId: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  visible?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type UpdateNlsLayerPayload = {
+  __typename?: 'UpdateNLSLayerPayload';
+  layer: NlsLayer;
+};
+
 export type UpdateProjectInput = {
   alias?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2309,6 +2449,19 @@ export type UpdateStoryPageInput = {
   swipeable?: InputMaybe<Scalars['Boolean']['input']>;
   swipeableLayers?: InputMaybe<Array<Scalars['ID']['input']>>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateStyleInput = {
+  StyleId: Scalars['ID']['input'];
+  name: Scalars['String']['input'];
+  sceneId: Scalars['ID']['input'];
+  value: Scalars['JSON']['input'];
+};
+
+export type UpdateStylePayload = {
+  __typename?: 'UpdateStylePayload';
+  Style: Style;
+  scene: Scene;
 };
 
 export type UpdateTagInput = {
@@ -2714,14 +2867,6 @@ export type RemoveAssetMutationVariables = Exact<{
 
 export type RemoveAssetMutation = { __typename?: 'Mutation', removeAsset?: { __typename?: 'RemoveAssetPayload', assetId: string } | null };
 
-export type GetInstalledPluginsQueryVariables = Exact<{
-  projectId: Scalars['ID']['input'];
-  lang?: InputMaybe<Scalars['Lang']['input']>;
-}>;
-
-
-export type GetInstalledPluginsQuery = { __typename?: 'Query', scene?: { __typename?: 'Scene', id: string, plugins: Array<{ __typename?: 'ScenePlugin', plugin?: { __typename?: 'Plugin', id: string, version: string, name: string, description: string, translatedName: string, translatedDescription: string, author: string, repositoryUrl: string } | null }> } | null };
-
 export type InstallPluginMutationVariables = Exact<{
   sceneId: Scalars['ID']['input'];
   pluginId: Scalars['ID']['input'];
@@ -3076,7 +3221,6 @@ export const StoryFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind
 export const GetAssetsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAssets"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AssetSortType"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Pagination"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"teamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}}},{"kind":"Argument","name":{"kind":"Name","value":"keyword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pagination"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"teamId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"contentType"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"teamId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"contentType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<GetAssetsQuery, GetAssetsQueryVariables>;
 export const CreateAssetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateAsset"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createAsset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"teamId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"teamId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"asset"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"teamId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"contentType"}}]}}]}}]}}]} as unknown as DocumentNode<CreateAssetMutation, CreateAssetMutationVariables>;
 export const RemoveAssetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveAsset"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeAsset"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"assetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"assetId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assetId"}}]}}]}}]} as unknown as DocumentNode<RemoveAssetMutation, RemoveAssetMutationVariables>;
-export const GetInstalledPluginsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetInstalledPlugins"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lang"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Lang"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scene"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"plugins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"plugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"translatedName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"translatedDescription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lang"}}}]},{"kind":"Field","name":{"kind":"Name","value":"author"}},{"kind":"Field","name":{"kind":"Name","value":"repositoryUrl"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetInstalledPluginsQuery, GetInstalledPluginsQueryVariables>;
 export const InstallPluginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InstallPlugin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pluginId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"installPlugin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sceneId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"pluginId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pluginId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}}]}}]}}]}}]} as unknown as DocumentNode<InstallPluginMutation, InstallPluginMutationVariables>;
 export const UpgradePluginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpgradePlugin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pluginId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"toPluginId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"upgradePlugin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sceneId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"pluginId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pluginId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"toPluginId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"toPluginId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}}]}}]}}]}}]} as unknown as DocumentNode<UpgradePluginMutation, UpgradePluginMutationVariables>;
 export const UploadPluginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadPlugin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"url"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"URL"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadPlugin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sceneId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sceneId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"url"},"value":{"kind":"Variable","name":{"kind":"Name","value":"url"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"plugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"author"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scenePlugin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pluginId"}},{"kind":"Field","name":{"kind":"Name","value":"propertyId"}}]}}]}}]}}]} as unknown as DocumentNode<UploadPluginMutation, UploadPluginMutationVariables>;
