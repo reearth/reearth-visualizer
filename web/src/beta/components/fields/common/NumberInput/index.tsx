@@ -39,7 +39,7 @@ const NumberInput: React.FC<Props> = ({
     setInnerValue(value);
   }, [value]);
 
-  const callChange = useCallback(
+  const handleValueChange = useCallback(
     (newValue: number | undefined) => {
       if (!onChange || !isEditing.current) {
         return;
@@ -74,10 +74,10 @@ const NumberInput: React.FC<Props> = ({
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        callChange(parseFloat(e.currentTarget.value));
+        handleValueChange(parseFloat(e.currentTarget.value));
       }
     },
-    [callChange],
+    [handleValueChange],
   );
 
   const handleFocus = useCallback(() => {
@@ -86,15 +86,15 @@ const NumberInput: React.FC<Props> = ({
 
   const handleBlur = useCallback(
     (e: React.SyntheticEvent<HTMLInputElement>) => {
-      callChange(parseFloat(e.currentTarget.value));
+      handleValueChange(parseFloat(e.currentTarget.value));
       isEditing.current = false;
     },
-    [callChange],
+    [handleValueChange],
   );
 
   return (
     <Wrapper>
-      <FormWrapper inactive={!!disabled} className={className}>
+      <InputWrapper inactive={!!disabled} className={className}>
         <StyledInput
           type="number"
           value={innerValue}
@@ -112,7 +112,7 @@ const NumberInput: React.FC<Props> = ({
             {suffix}
           </Text>
         )}
-      </FormWrapper>
+      </InputWrapper>
       {inputDescription && (
         <Text size="footnote" color={theme.content.weak}>
           {inputDescription}
@@ -127,9 +127,7 @@ const Wrapper = styled.div`
   text-align: center;
 `;
 
-type FormProps = { inactive: boolean };
-
-const FormWrapper = styled.div<FormProps>`
+const InputWrapper = styled.div<{ inactive: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;

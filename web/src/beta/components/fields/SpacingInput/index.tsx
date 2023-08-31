@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -20,16 +20,20 @@ type Props = {
   max?: number;
   onChange?: (values: SpacingValues) => void;
 };
+type Position = keyof SpacingValues;
 
 const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onChange }) => {
   const [spacingValues, setSpacingValues] = useState<SpacingValues>(
     value || { top: 0, left: 0, right: 0, bottom: 0 },
   );
 
-  const handleInputChange = (
-    position: keyof SpacingValues,
-    newValue: string | number | undefined,
-  ) => {
+  const memoizedSpacingValues = useMemo(() => {
+    return ["top", "left", "right", "bottom"].map(position => {
+      return getSpacingPosition(spacingValues, position as Position);
+    });
+  }, [spacingValues]);
+
+  const handleInputChange = (position: Position, newValue?: number) => {
     const updatedValues = { ...spacingValues, [position]: newValue };
     setSpacingValues(updatedValues);
     onChange?.(updatedValues);
@@ -38,15 +42,15 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
   return (
     <Property name={name} description={description}>
       <StyledRectangle>
-        {["top", "left", "right", "bottom"].map(position => (
+        {["top", "left", "right", "bottom"].map((position, index) => (
           <SpacingField
-            value={getSpacingPosition(spacingValues, position as keyof SpacingValues)}
+            value={memoizedSpacingValues[index]}
             suffix="px"
             key={position}
             position={position}
             min={min}
             max={max}
-            onChange={newValue => handleInputChange(position as keyof SpacingValues, newValue)}
+            onChange={newValue => handleInputChange(position as Position, newValue)}
           />
         ))}
       </StyledRectangle>
@@ -78,6 +82,6 @@ const SpacingField = styled(NumberInput)<{ position: string }>`
       : "bottom: 0; left: 50%; transform: translateX(-50%);"};
 `;
 
-function getSpacingPosition(spacingValue: SpacingValues, position: keyof SpacingValues): number {
+function getSpacingPosition(spacingValue: SpacingValues, position: Position): number {
   return spacingValue[position];
 }
