@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
-import Toggle from "@reearth/beta/components/Toggle";
 import { useT } from "@reearth/services/i18n";
 import { styled, metricsSizes, useTheme } from "@reearth/services/theme";
 
@@ -173,8 +173,12 @@ const PublishModal: React.FC<Props> = ({
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
             <Wrapper>
-              <Subtitle size="body">{t("Search engine indexing")}</Subtitle>
-              <Toggle checked={searchIndex} onChange={handleSearchIndexChange} />
+              <ToggleField
+                name={t("Search engine indexing")}
+                description={"Page will be available as result on search engines"}
+                checked={searchIndex}
+                onChange={handleSearchIndexChange}
+              />
             </Wrapper>
           </HideableSection>
         </>
