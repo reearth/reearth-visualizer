@@ -5,7 +5,7 @@ import { styled, css } from "@reearth/services/theme";
 
 import "rc-slider/assets/index.css";
 
-type Props = {
+export type Props = {
   min: number;
   max: number;
   frame?: boolean;
