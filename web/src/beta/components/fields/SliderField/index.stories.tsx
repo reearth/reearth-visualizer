@@ -27,11 +27,10 @@ export const Default: Story = (args: Props) => {
       <div>
         <SliderField
           {...args}
-          name="With Frame"
+          name="Inverse of above"
           value={args.max - (args?.value || 0)}
-          description={"Invesere of above but controls are also opposite"}
+          description={undefined}
           onChange={handleChange}
-          frame
         />
       </div>
       <div>

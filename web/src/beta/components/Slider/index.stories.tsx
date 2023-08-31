@@ -27,8 +27,8 @@ export const Default: Story = (args: Props) => {
         <Slider {...args} onChange={handleChange} />
       </div>
       <div>
-        <Text size="footnote">With frame</Text>
-        <Slider {...args} onChange={handleChange} frame />
+        <Text size="footnote">Double Max</Text>
+        <Slider {...args} max={2 * args.max} onChange={handleChange} />
       </div>
       <div>
         <Text size="footnote">Disabled</Text>
@@ -43,7 +43,6 @@ Default.args = {
   min: 0,
   max: 100,
   step: 1,
-  frame: false,
 };
 
 const Wrapper = styled.div`

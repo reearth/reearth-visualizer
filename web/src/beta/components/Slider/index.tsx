@@ -1,39 +1,22 @@
 import RCSlider from "rc-slider";
 import React, { ComponentProps } from "react";
 
-import { styled, css } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import "rc-slider/assets/index.css";
 
 export type Props = {
   min: number;
   max: number;
-  frame?: boolean;
 } & Omit<ComponentProps<typeof RCSlider>, "defaultValue">;
 
-const Slider: React.FC<Props> = ({ frame = false, ...props }) => (
-  <Wrapper frame={frame}>
-    <StyledSlider {...props} />
-  </Wrapper>
-);
+// TODO: Show value on hover as well as on drag
+const Slider: React.FC<Props> = ({ ...props }) => <StyledSlider {...props} />;
 
-const Wrapper = styled.div<{ frame: boolean }>`
-  display: flex;
-  align-items: center;
-  border: ${({ frame, theme }) => (frame ? `solid 1px ${theme.outline.main}` : "none")};
-  border-radius: 3px;
-  background: ${({ frame, theme }) => (frame ? theme.bg[1] : "transparent")};
-  width: 100%;
-  flex: 1;
-  box-sizing: border-box;
-  ${({ frame }) =>
-    frame &&
-    css`
-      padding: 6px 12px;
-      margin-right: 5px;
-    `};
-`;
-
+// TODO: Update colors as per design
+// TODO: Add shadow background in the empty bar
+// TODO: Update height as per design
+// TODO: Fixed disabled state with opacity changes
 const StyledSlider = styled(RCSlider)`
   .rc-slider-handle {
     background-color: ${({ theme }) => theme.bg[2]};
