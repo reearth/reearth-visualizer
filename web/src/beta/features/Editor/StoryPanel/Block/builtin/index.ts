@@ -4,13 +4,16 @@ import { Component } from "..";
 
 import ImageBlock from "./Image";
 import TextBlock from "./Text";
+import TitleBlock from "./Title";
 import VideoBlock from "./Video";
 
+export const TITLE_BUILTIN_STORY_BLOCK_ID = "reearth/titleStoryBlock";
 export const IMAGE_BUILTIN_STORY_BLOCK_ID = "reearth/imageStoryBlock";
 export const TEXT_BUILTIN_STORY_BLOCK_ID = "reearth/textStoryBlock";
 export const VIDEO_BUILTIN_STORY_BLOCK_ID = "reearth/videoStoryBlock";
 
 export type ReEarthBuiltinStoryBlocks<T = unknown> = Record<
+  | typeof TITLE_BUILTIN_STORY_BLOCK_ID
   | typeof IMAGE_BUILTIN_STORY_BLOCK_ID
   | typeof TEXT_BUILTIN_STORY_BLOCK_ID
   | typeof VIDEO_BUILTIN_STORY_BLOCK_ID,
@@ -21,6 +24,7 @@ export type ReEarthBuiltinStoryBlocks<T = unknown> = Record<
 export type BuiltinStoryBlocks<T = unknown> = ReEarthBuiltinStoryBlocks<T>;
 
 const reearthBuiltin: BuiltinStoryBlocks<Component> = {
+  [TITLE_BUILTIN_STORY_BLOCK_ID]: TitleBlock,
   [IMAGE_BUILTIN_STORY_BLOCK_ID]: ImageBlock,
   [TEXT_BUILTIN_STORY_BLOCK_ID]: TextBlock,
   [VIDEO_BUILTIN_STORY_BLOCK_ID]: VideoBlock,

@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import Text from "@reearth/beta/components/Text";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
+import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../common/Wrapper";
-import { getFieldValue } from "../utils";
 
 export type Props = BlockProps;
 

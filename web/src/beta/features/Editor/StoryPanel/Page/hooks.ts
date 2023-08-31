@@ -1,17 +1,20 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { usePropertyFetcher } from "@reearth/services/api";
+import { Item } from "@reearth/services/api/propertyApi/utils";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 
 export default ({
   sceneId,
   storyId,
   pageId,
+  propertyItems,
 }: {
   sceneId?: string;
   storyId?: string;
   pageId?: string;
+  propertyItems?: Item[];
 }) => {
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
@@ -75,9 +78,18 @@ export default ({
     [storyId, pageId, useDeleteStoryBlock],
   );
 
+  const titleProperty = useMemo(
+    () => propertyItems?.find(i => i.schemaGroup === "title"),
+    [propertyItems],
+  );
+
+  const titleId = useMemo(() => `${pageId}/title`, [pageId]);
+
   return {
     openBlocksIndex,
     installedStoryBlocks,
+    titleId,
+    titleProperty,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handleBlockOpen,

@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import Text from "@reearth/beta/components/Text";
+import { Item } from "@reearth/services/api/propertyApi/utils";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
@@ -13,7 +13,8 @@ type Props = {
   sceneId?: string;
   storyId?: string;
   pageId?: string;
-  pageTitle?: string;
+  propertyId?: string;
+  propertyItems?: Item[];
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
   onBlockSelect: (blockId?: string) => void;
@@ -23,7 +24,8 @@ const StoryPage: React.FC<Props> = ({
   sceneId,
   storyId,
   pageId,
-  pageTitle,
+  propertyId,
+  propertyItems,
   installableStoryBlocks,
   selectedStoryBlockId,
   onBlockSelect,
@@ -31,6 +33,8 @@ const StoryPage: React.FC<Props> = ({
   const {
     openBlocksIndex,
     installedStoryBlocks,
+    titleId,
+    titleProperty,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handleBlockOpen,
@@ -39,13 +43,29 @@ const StoryPage: React.FC<Props> = ({
     sceneId,
     storyId,
     pageId,
+    propertyItems,
   });
 
   return (
     <Wrapper id={pageId}>
-      <Text size="h2" customColor>
-        {pageTitle ?? "No Title"}
-      </Text>
+      {titleProperty && (
+        <StoryBlock
+          block={{
+            id: titleId,
+            pluginId: "reearth",
+            extensionId: "titleStoryBlock",
+            title: titleProperty.title,
+            property: {
+              id: propertyId ?? "",
+              items: [titleProperty],
+            },
+          }}
+          isSelected={selectedStoryBlockId === titleId}
+          onClick={() => onBlockSelect(titleId)}
+          onClickAway={onBlockSelect}
+          onChange={handlePropertyValueUpdate}
+        />
+      )}
       <BlockAddBar
         openBlocks={openBlocksIndex === -1}
         installableStoryBlocks={installableStoryBlocks}
@@ -60,7 +80,7 @@ const StoryPage: React.FC<Props> = ({
               block={b}
               isSelected={selectedStoryBlockId === b.id}
               onClick={() => onBlockSelect(b.id)}
-              onClickAway={() => onBlockSelect()}
+              onClickAway={onBlockSelect}
               onChange={handlePropertyValueUpdate}
               onRemove={handleStoryBlockDelete}
             />
