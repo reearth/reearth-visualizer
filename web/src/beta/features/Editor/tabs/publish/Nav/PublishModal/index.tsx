@@ -175,7 +175,8 @@ const PublishModal: React.FC<Props> = ({
             <Wrapper>
               <ToggleField
                 name={t("Search engine indexing")}
-                description={"Page will be available as result on search engines"}
+                // TODO: Add japanese translation for the text below
+                description={t("Page will be available as result on search engines")}
                 checked={searchIndex}
                 onChange={handleSearchIndexChange}
               />
