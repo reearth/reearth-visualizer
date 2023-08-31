@@ -2,7 +2,7 @@ import TextInput from "@reearth/beta/components/fields/TextInput";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import ColorField from "../ColorField";
-import SpacingInput, { SpacingValues } from "../SpacingInput";
+import ToggleField from "../ToggleField";
 
 import useHooks from "./hooks";
 
@@ -19,6 +19,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
       {item?.schemaFields.map(sf => {
         const isList = item && "items" in item;
         const value = !isList ? item.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
+
         return sf.type === "string" ? (
           sf.ui === "color" ? (
             <ColorField
@@ -41,14 +42,12 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
               onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
             />
           )
-        ) : sf.type === "spacing" ? (
-          <SpacingInput
+        ) : sf.type == "bool" ? (
+          <ToggleField
             key={sf.id}
             name={sf.name}
-            value={(value as SpacingValues) ?? ""}
+            checked={value as boolean}
             description={sf.description}
-            min={sf.min}
-            max={sf.max}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
         ) : (
