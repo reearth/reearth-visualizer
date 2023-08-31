@@ -29,6 +29,7 @@ const NumberInput: React.FC<Props> = ({
 }) => {
   const [innerValue, setInnerValue] = useState<number | undefined>(value);
   const [, setNotification] = useNotification();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const isEditing = useRef(false);
   const t = useT();
@@ -38,6 +39,14 @@ const NumberInput: React.FC<Props> = ({
   useEffect(() => {
     setInnerValue(value);
   }, [value]);
+
+  useEffect(() => {
+    // Calculate and set the minimum width for the input field
+    if (inputRef.current) {
+      const minWidth = Math.max(metricsSizes.xs, inputRef.current.value.length * 10);
+      inputRef.current.style.width = `${minWidth}px`;
+    }
+  }, []);
 
   const handleValueChange = useCallback(
     (newValue: number | undefined) => {
@@ -65,9 +74,9 @@ const NumberInput: React.FC<Props> = ({
   );
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseFloat(e.currentTarget.value);
-    setInnerValue(newValue);
-    const minWidth = Math.max(metricsSizes.xs, `${newValue}`.length * 10);
+    const newValue = e.currentTarget.value;
+    setInnerValue(parseFloat(newValue));
+    const minWidth = Math.max(metricsSizes.xs, newValue.length * 10);
     e.currentTarget.style.width = `${minWidth}px`;
   }, []);
 
@@ -86,7 +95,8 @@ const NumberInput: React.FC<Props> = ({
 
   const handleBlur = useCallback(
     (e: React.SyntheticEvent<HTMLInputElement>) => {
-      handleValueChange(parseFloat(e.currentTarget.value));
+      const newValue = parseFloat(e.currentTarget.value);
+      handleValueChange(newValue);
       isEditing.current = false;
     },
     [handleValueChange],
@@ -104,8 +114,9 @@ const NumberInput: React.FC<Props> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           min={min}
+          ref={inputRef}
           max={max}
-          step="any"
+          step={"any"}
         />
         {suffix && (
           <Text size="footnote" color={theme.content.weak} otherProperties={{ userSelect: "none" }}>
@@ -153,7 +164,6 @@ const StyledInput = styled.input`
   outline: none;
   color: inherit;
   width: 100%;
-  max-width: 64px;
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;
