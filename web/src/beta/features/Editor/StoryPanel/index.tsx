@@ -1,6 +1,7 @@
 import { FC, Fragment } from "react";
 
-import PageIndicator from "@reearth/beta/features/Editor/tabs/story/PageIndicator";
+import PageIndicator from "@reearth/beta/features/Editor/StoryPanel/PageIndicator";
+import { convert } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import useHooks, {
@@ -9,27 +10,32 @@ import useHooks, {
   type StoryPageFragmentFragment,
 } from "./hooks";
 import StoryPage from "./Page";
+import SelectableArea from "./SelectableArea";
 
 export const storyPanelWidth = 442;
 
 type Props = {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
+  currentPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 };
 
-export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, onPageSelect }) => {
+export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, currentPage, onPageSelect }) => {
   const {
     pageInfo,
     pageHeight,
-    installableStoryBlocks,
-    selectedStoryBlockId,
-    handleStoryBlockSelect,
+    installableBlocks,
+    selectedPageId,
+    selectedBlockId,
+    showPageSettings,
+    handlePageSettingsToggle,
+    handlePageSelect,
+    handleBlockSelect,
   } = useHooks({
     sceneId,
     selectedStory,
-    selectedPage,
+    currentPage,
     onPageSelect,
   });
 
@@ -42,21 +48,37 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
           onPageChange={pageInfo.onPageChange}
         />
       )}
-      <PageWrapper id={pageElementId}>
-        {selectedStory?.pages.map(p => (
-          <Fragment key={p.id}>
-            <StoryPage
-              sceneId={sceneId}
-              storyId={selectedStory.id}
-              pageId={p.id}
-              pageTitle={p.title}
-              installableStoryBlocks={installableStoryBlocks}
-              selectedStoryBlockId={selectedStoryBlockId}
-              onBlockSelect={handleStoryBlockSelect}
-            />
-            <PageGap height={pageHeight} />
-          </Fragment>
-        ))}
+      <PageWrapper id={pageElementId} showingIndicator={!!pageInfo}>
+        {selectedStory?.pages.map(p => {
+          const propertyItems = convert(p.property);
+          return (
+            <Fragment key={p.id}>
+              <SelectableArea
+                title={p.title}
+                position="left-bottom"
+                icon="storyPage"
+                noBorder
+                isSelected={selectedPageId === p.id}
+                propertyId={p.property?.id}
+                propertyItems={propertyItems}
+                onClick={() => handlePageSelect(p.id)}
+                showSettings={showPageSettings}
+                onSettingsToggle={handlePageSettingsToggle}>
+                <StoryPage
+                  sceneId={sceneId}
+                  storyId={selectedStory.id}
+                  pageId={p.id}
+                  propertyId={p.property?.id}
+                  propertyItems={propertyItems}
+                  installableStoryBlocks={installableBlocks}
+                  selectedStoryBlockId={selectedBlockId}
+                  onBlockSelect={handleBlockSelect}
+                />
+                <PageGap height={pageHeight} />
+              </SelectableArea>
+            </Fragment>
+          );
+        })}
       </PageWrapper>
     </Wrapper>
   );
@@ -65,15 +87,15 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, selectedPage, on
 export default StoryPanel;
 
 const Wrapper = styled.div`
-  width: ${storyPanelWidth}px;
+  flex: 0 0 ${storyPanelWidth}px;
   background: #f1f1f1;
   color: ${({ theme }) => theme.content.weak};
 `;
 
-const PageWrapper = styled.div`
-  height: calc(100% - 8px);
+const PageWrapper = styled.div<{ showingIndicator?: boolean }>`
+  height: ${({ showingIndicator }) => (showingIndicator ? "calc(100% - 8px)" : "100%")};
   overflow-y: auto;
-  width: 442px;
+  cursor: pointer;
 `;
 
 const PageGap = styled.div<{ height?: number }>`

@@ -1,8 +1,10 @@
+Color Picker: カラーピッカー
 Cancel: キャンセル
 Apply: Apply
 Not found: ページが見つかりません
 Padding settings: ''
 Remove: 削除
+Untitled: 無名
 Scene: シーン
 Outline: アウトライン
 Published: 一般公開
@@ -30,13 +32,13 @@ Your project will be unpublished.: プロジェクトを非公開にする
 This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
 New Page: 新しいページ
-New Swipe: 新しいスワイプ
 Story: ストーリー
 Page: ページ
+Page Settings: ページ設定
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Inspector: インスペクター
-Container Settings: ''
+Container Settings: Container Settings
 Angle: 角度
 Narrow: 狭い
 Wide: 広い
@@ -51,8 +53,8 @@ New Workspace: 新規ワークスペース
 Log out: ログアウト
 Project settings: プロジェクト設定
 Public: 公開設定
-Workspace assets: ''
-Plugin: ''
+Workspace assets: ワークスペースのアセット
+Plugin: プラグイン
 Manage projects: プロジェクト管理
 Documentation: ヘルプ
 Map: マップ
@@ -62,7 +64,7 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
-Project Settings: ''
+Project Settings: プロジェクト設定
 Date: 作成日時順
 File size: サイズ順
 Alphabetical: 名前順
@@ -75,7 +77,7 @@ Please make sure no selected assets are in use. This cannot be undone.: 選択�
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
 Name: 名前
-Submit: ''
+Submit: 送る
 Danger Zone: 重要操作
 Archive this project: プロジェクトの非編集化
 Mark this project as archived and read-only: プロジェクトを編集できないようにします。この設定はいつでも戻すことができます。
@@ -113,10 +115,10 @@ Title: ページタイトル
 Basic Authorization: ベーシック認証
 Username: ユーザー名
 Password: パスワード
-Site Setting: ''
+Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
-Story Panel: ''
+Story Panel: ストーリーパネル
 Double click here to write.: ダブルクリックで入力
 Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 aria-label-compass: コンパス

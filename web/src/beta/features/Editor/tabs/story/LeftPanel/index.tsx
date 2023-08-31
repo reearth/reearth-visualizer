@@ -1,5 +1,5 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
-import ContentPage from "@reearth/beta/features/Editor/tabs/story/SidePanel/ContentPage";
+import ContentPage from "@reearth/beta/features/Editor/tabs/story/LeftPanel/ContentPage";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
@@ -13,7 +13,7 @@ type Props = {
   onPageMove: (id: string, targetIndex: number) => void;
 };
 
-const SidePanel: React.FC<Props> = ({
+const StoryLeftPanel: React.FC<Props> = ({
   selectedStory,
   selectedPage,
   onPageSelect,
@@ -55,4 +55,4 @@ const SidePanel: React.FC<Props> = ({
   );
 };
 
-export default SidePanel;
+export default StoryLeftPanel;
