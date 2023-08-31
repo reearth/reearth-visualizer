@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import ToggleButton from "@reearth/beta/components/fields/Toggle";
+import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
@@ -172,10 +172,12 @@ const PublishModal: React.FC<Props> = ({
             <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
-            <Wrapper>
-              <Subtitle size="body">{t("Search engine indexing")}</Subtitle>
-              <ToggleButton checked={searchIndex} onChange={handleSearchIndexChange} />
-            </Wrapper>
+            <ToggleField
+              name={t("Search engine indexing")}
+              description={t("Page will be available as result on search engines")}
+              checked={searchIndex}
+              onChange={handleSearchIndexChange}
+            />
           </HideableSection>
         </>
       ) : (
@@ -243,10 +245,4 @@ const UrlText = styled(Text)`
 
 const HideableSection = styled(Section)<{ showOptions?: boolean }>`
   display: ${props => (props.showOptions ? null : "none")};
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
 `;
