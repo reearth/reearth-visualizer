@@ -1,12 +1,10 @@
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import ToggleField from ".";
-
-type Props = React.ComponentProps<typeof ToggleField>;
+import ToggleField, { Props } from ".";
 
 const meta: Meta<typeof ToggleField> = {
   component: ToggleField,

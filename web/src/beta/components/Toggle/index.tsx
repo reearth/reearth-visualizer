@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-type Props = {
+export type Props = {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;

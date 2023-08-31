@@ -1,11 +1,7 @@
-import React from "react";
-
 import Property from "@reearth/beta/components/fields";
-import Toggle from "@reearth/beta/components/Toggle";
+import Toggle, { Props as ToggleProps } from "@reearth/beta/components/Toggle";
 
-type ToggleProps = React.ComponentProps<typeof Toggle>;
-
-type Props = {
+export type Props = {
   name?: string;
   description?: string;
 } & ToggleProps;
