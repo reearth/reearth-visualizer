@@ -28,6 +28,8 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, currentPage, onP
     installableBlocks,
     selectedPageId,
     selectedBlockId,
+    showPageSettings,
+    handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
   } = useHooks({
@@ -47,32 +49,36 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, currentPage, onP
         />
       )}
       <PageWrapper id={pageElementId} showingIndicator={!!pageInfo}>
-        {selectedStory?.pages.map(p => (
-          <Fragment key={p.id}>
-            <SelectableArea
-              title={p.title}
-              position="left-bottom"
-              icon="storyPage"
-              noBorder
-              isSelected={selectedPageId === p.id}
-              onClick={() => handlePageSelect(p.id)}
-              // showSettings
-              // onSettingsToggle={() => handlePageSelect(p.id)}
-            >
-              <StoryPage
-                sceneId={sceneId}
-                storyId={selectedStory.id}
-                pageId={p.id}
+        {selectedStory?.pages.map(p => {
+          const propertyItems = convert(p.property);
+          return (
+            <Fragment key={p.id}>
+              <SelectableArea
+                title={p.title}
+                position="left-bottom"
+                icon="storyPage"
+                noBorder
+                isSelected={selectedPageId === p.id}
                 propertyId={p.property?.id}
-                propertyItems={convert(p.property)}
-                installableStoryBlocks={installableBlocks}
-                selectedStoryBlockId={selectedBlockId}
-                onBlockSelect={handleBlockSelect}
-              />
-              <PageGap height={pageHeight} />
-            </SelectableArea>
-          </Fragment>
-        ))}
+                propertyItems={propertyItems}
+                onClick={() => handlePageSelect(p.id)}
+                showSettings={showPageSettings}
+                onSettingsToggle={handlePageSettingsToggle}>
+                <StoryPage
+                  sceneId={sceneId}
+                  storyId={selectedStory.id}
+                  pageId={p.id}
+                  propertyId={p.property?.id}
+                  propertyItems={propertyItems}
+                  installableStoryBlocks={installableBlocks}
+                  selectedStoryBlockId={selectedBlockId}
+                  onBlockSelect={handleBlockSelect}
+                />
+                <PageGap height={pageHeight} />
+              </SelectableArea>
+            </Fragment>
+          );
+        })}
       </PageWrapper>
     </Wrapper>
   );

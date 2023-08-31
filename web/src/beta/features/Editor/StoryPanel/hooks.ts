@@ -18,8 +18,14 @@ export default ({
   currentPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 }) => {
+  const [showPageSettings, setShowPageSettings] = useState(false);
   const [selectedPageId, setSelectedPageId] = useState<string>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
+
+  const handlePageSettingsToggle = useCallback(() => {
+    if (!selectedPageId) return;
+    setShowPageSettings(show => !show);
+  }, [selectedPageId]);
 
   const handlePageSelect = useCallback(
     (pageId?: string) => {
@@ -74,7 +80,8 @@ export default ({
     installableBlocks: installableStoryBlocks,
     selectedPageId,
     selectedBlockId,
-    setSelectedPageId,
+    showPageSettings,
+    handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
   };

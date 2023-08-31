@@ -65,6 +65,7 @@ const BlockWrapper: React.FC<Props> = ({
       propertyId={propertyId}
       dndEnabled={dndEnabled}
       showSettings={showSettings}
+      propertyItems={propertyItems}
       editMode={editMode}
       setEditMode={setEditMode}
       onEditModeToggle={handleEditModeToggle}
