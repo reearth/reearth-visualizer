@@ -172,15 +172,12 @@ const PublishModal: React.FC<Props> = ({
             <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
-            <Wrapper>
-              <ToggleField
-                name={t("Search engine indexing")}
-                // TODO: Add japanese translation for the text below
-                description={t("Page will be available as result on search engines")}
-                checked={searchIndex}
-                onChange={handleSearchIndexChange}
-              />
-            </Wrapper>
+            <ToggleField
+              name={t("Search engine indexing")}
+              description={t("Page will be available as result on search engines")}
+              checked={searchIndex}
+              onChange={handleSearchIndexChange}
+            />
           </HideableSection>
         </>
       ) : (
@@ -248,10 +245,4 @@ const UrlText = styled(Text)`
 
 const HideableSection = styled(Section)<{ showOptions?: boolean }>`
   display: ${props => (props.showOptions ? null : "none")};
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
 `;
