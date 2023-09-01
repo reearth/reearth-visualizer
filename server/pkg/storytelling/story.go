@@ -2,6 +2,7 @@ package storytelling
 
 import (
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/pkg/errors"
@@ -10,7 +11,11 @@ import (
 	"github.com/reearth/reearthx/util"
 )
 
-var ErrBasicAuthUserNamePasswordEmpty = errors.New("basic auth username or password is empty")
+var (
+	ErrBasicAuthUserNamePasswordEmpty       = errors.New("basic auth username or password is empty")
+	ErrInvalidAlias                   error = errors.New("invalid alias")
+	aliasRegexp                             = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
+)
 
 type Story struct {
 	id            StoryID
@@ -175,4 +180,46 @@ func (s *Story) ValidateProperties(pm property.Map) error {
 	}
 
 	return nil
+}
+
+func (s *Story) Properties() property.IDList {
+	if s == nil {
+		return nil
+	}
+	ids := []PropertyID{s.property}
+	ids = append(ids, s.Property())
+	ids = append(ids, s.pages.Properties()...)
+	return ids
+}
+
+func (s *Story) PublishmentStatus() PublishmentStatus {
+	return s.status
+}
+
+func (s *Story) UpdatePublishmentStatus(status PublishmentStatus) {
+	s.status = status
+}
+
+func (s *Story) SetPublishedAt(now time.Time) {
+	s.publishedAt = &now
+}
+
+func (s *Story) UpdateAlias(alias string) error {
+	if CheckAliasPattern(alias) {
+		s.alias = alias
+	} else {
+		return ErrInvalidAlias
+	}
+	return nil
+}
+
+func (s *Story) MatchWithPublicName(name string) bool {
+	if s == nil || name == "" || s.status == PublishmentStatusPrivate {
+		return false
+	}
+	return s.alias == name
+}
+
+func CheckAliasPattern(alias string) bool {
+	return alias != "" && aliasRegexp.Match([]byte(alias))
 }
