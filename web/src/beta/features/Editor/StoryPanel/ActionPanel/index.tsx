@@ -191,7 +191,7 @@ const SettingsHeading = styled.div`
 `;
 
 const SettingsContent = styled.div`
-  height: 100px;
+  min-height: 134px;
   width: 200px;
   padding: 8px;
   box-sizing: border-box;
