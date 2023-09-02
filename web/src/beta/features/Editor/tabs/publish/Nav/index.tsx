@@ -51,6 +51,7 @@ const Nav: React.FC<Props> = ({ projectId }) => {
     [publishStatus, t],
   );
 
+  const checkPublished: boolean = publishStatus === "limited" || publishStatus === "published";
   return (
     <>
       <StyledSecondaryNav>
@@ -90,13 +91,8 @@ const Nav: React.FC<Props> = ({ projectId }) => {
                   onClick: () => handleModalOpen("unpublishing"),
                 },
                 {
-                  name: t("Publish"),
-                  onClick: () =>
-                    handleModalOpen(
-                      publishStatus === "limited" || publishStatus === "published"
-                        ? "updating"
-                        : "publishing",
-                    ),
+                  name: checkPublished ? t("Update") : t("Publish"),
+                  onClick: () => handleModalOpen(checkPublished ? "updating" : "publishing"),
                 },
                 {
                   name: t("Publishing Settings"),
