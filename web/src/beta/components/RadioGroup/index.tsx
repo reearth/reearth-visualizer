@@ -1,48 +1,53 @@
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
-import Radio from "@reearth/beta/components/Radio";
+import RadioBox from "@reearth/beta/components/RadioBox";
 import { styled } from "@reearth/services/theme";
 
 type Option = {
   key: string;
-  label: string;
+  value: string;
+  selected: boolean;
 };
 
 export type RadioGroupProps = {
   options: Option[];
-  singleSelect?: boolean;
   layout?: "vertical" | "horizontal";
-  onChange?: (value: string[]) => void;
+  onChange?: (value: string) => void;
 };
 
-const RadioGroup: React.FC<RadioGroupProps> = ({ options, singleSelect, layout, onChange }) => {
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) => {
+  const [currentOptions, updateOptions] = useState<Option[]>(options);
+  const [key, setKey] = useState(0);
 
-  const handleRadioChange = (value: string) => {
-    if (singleSelect) {
-      setSelectedValues([value]);
-    } else {
-      setSelectedValues(selected =>
-        selected.includes(value) ? selected.filter(v => v !== value) : [...selected, value],
+  const handleRadioChange = useCallback(
+    (value: string) => {
+      updateOptions(
+        currentOptions.map(option => ({
+          ...option,
+          selected: !option.selected && option.value === value,
+        })),
       );
-    }
-    if (onChange) onChange(selectedValues);
-  };
-
+      setKey(prevKey => prevKey + 1);
+      onChange?.(value);
+    },
+    [currentOptions, onChange],
+  );
+  console.log(currentOptions);
   return (
     <RadioGroupContainer layout={layout}>
-      {options.map(option => (
-        <Radio
-          key={option.key}
-          label={option.label}
-          selected={selectedValues.includes(option.label)}
-          onChange={() => handleRadioChange(option.label)}
+      {currentOptions.map(option => (
+        <RadioBox
+          key={`${option.key}-${key}`}
+          value={option.value}
+          selected={option.selected}
+          onClick={() => handleRadioChange(option.value)}
         />
       ))}
     </RadioGroupContainer>
   );
 };
-export default RadioGroup;
+export default memo(RadioGroup);
+
 const RadioGroupContainer = styled.div<{ layout?: "vertical" | "horizontal" }>`
   display: flex;
   flex-direction: ${({ layout }) => (layout === "vertical" ? "column" : "row")};

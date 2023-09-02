@@ -1,36 +1,38 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
-import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
-import { styled } from "@reearth/services/theme";
+import { fonts, styled } from "@reearth/services/theme";
 
-type Props = {
+export type Props = {
   inactive?: boolean;
   selected?: boolean;
-  label?: string;
-  onChange?: () => void;
+  value: string;
+  onClick?: (value: string) => void;
 };
 
-export default function RadioBox({ inactive, selected, label, onChange }: Props) {
+const RadioBox: React.FC<Props> = ({ inactive, selected, value, onClick }: Props) => {
   const [isChecked, setIsChecked] = useState(selected ?? false);
 
-  const handleRadioChange = () => {
+  const handleRadioClick = useCallback(() => {
     setIsChecked(!isChecked);
-    if (!onChange) return;
-    onchange;
-  };
+    if (onClick) onClick(value);
+  }, [isChecked, onClick, value]);
 
   return (
     <Radio selected={isChecked} inactive={inactive}>
-      <RadioInput type="radio" checked={isChecked} onChange={handleRadioChange} />
+      <RadioInput type="radio" value={inactive ? undefined : value} onClick={handleRadioClick} />
       <RadioButton selected={isChecked} inactive={inactive}>
         {isChecked && <Checkmark selected={isChecked} inactive={inactive} />}
       </RadioButton>
-      <RadioText>{label}</RadioText>
+      <RadioText>{value}</RadioText>
     </Radio>
   );
-}
+};
+export default RadioBox;
 
-const Checkmark = styled.div<Props>`
+const Checkmark = styled.div<{
+  inactive?: boolean;
+  selected?: boolean;
+}>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -39,15 +41,17 @@ const Checkmark = styled.div<Props>`
     selected ? theme.select.main : inactive ? theme.content.weaker : theme.content.main};
 `;
 
-const Radio = styled.label<Props>`
+const Radio = styled.label<{
+  inactive?: boolean;
+  selected?: boolean;
+}>`
   display: flex;
   align-items: center;
   min-width: 30px;
   min-height: 30px;
   list-style: none;
-  padding: 6px;
-  font-size: ${fonts.sizes.m}px;
-  background: ${({ selected, theme }) => (selected ? theme.bg[1] : "none")};
+  padding: 4px;
+  font-size: ${fonts.sizes.footnote}px;
   cursor: pointer;
   box-sizing: border-box;
   border-radius: 2px;
@@ -61,14 +65,17 @@ const RadioInput = styled.input`
   position: absolute;
 `;
 
-const RadioButton = styled.span<Props>`
-  width: 20px;
-  height: 20px;
+const RadioButton = styled.span<{
+  inactive?: boolean;
+  selected?: boolean;
+}>`
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: 2px solid
     ${({ selected, inactive, theme }) =>
       selected ? theme.select.main : inactive ? theme.content.weaker : theme.content.main};
-  margin-right: 8px;
+  margin-right: 4px;
   display: flex;
   justify-content: center;
   align-items: center;

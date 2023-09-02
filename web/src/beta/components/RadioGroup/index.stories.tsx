@@ -15,14 +15,14 @@ export default meta;
 type Story = StoryObj<typeof RadioGroup>;
 
 const options = [
-  { key: "option1", label: "Option 1" },
-  { key: "option2", label: "Option 2" },
+  { key: "option1", value: "Option 1", selected: false },
+  { key: "option2", value: "Option 2", selected: false },
 ];
 
 export const VerticalSingleSelect: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback((value: string[]) => updateArgs({ value }), [updateArgs]);
+  const handleChange = useCallback((value: string) => updateArgs({ value }), [updateArgs]);
 
   return (
     <div>
@@ -34,13 +34,12 @@ VerticalSingleSelect.args = {
   options: options,
   layout: "vertical",
   onChange: () => console.log("clicked"),
-  singleSelect: true,
 };
 
 export const HorizontalMultiSelect: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback((value: string[]) => updateArgs({ value }), [updateArgs]);
+  const handleChange = useCallback((value: string) => updateArgs({ value }), [updateArgs]);
 
   return (
     <div>
@@ -52,5 +51,4 @@ HorizontalMultiSelect.args = {
   options: options,
   layout: "horizontal",
   onChange: () => console.log("clicked"),
-  singleSelect: false,
 };
