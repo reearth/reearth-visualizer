@@ -55,10 +55,10 @@ export default ({ projectId }: { projectId?: string }) => {
   }, [project?.publishmentStatus]);
 
   const handleProjectPublish = useCallback(
-    async (publishStatus: PublishStatus) => {
+    async (alias: string | undefined, publishStatus: PublishStatus) => {
       await usePublishProject(publishStatus, projectId, alias);
     },
-    [projectId, alias, usePublishProject],
+    [projectId, usePublishProject],
   );
 
   const handleOpenProjectSettings = useCallback(() => {
