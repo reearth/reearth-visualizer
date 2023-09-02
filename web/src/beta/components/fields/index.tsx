@@ -29,7 +29,7 @@ export default Property;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 `;
 
 const Description = styled(Text)`

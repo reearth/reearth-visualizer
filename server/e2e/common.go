@@ -30,7 +30,7 @@ func init() {
 }
 
 func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
-	e, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
+	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
 	return e
 }
 
@@ -54,12 +54,19 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 	return repos
 }
 
-func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container) {
-	repos := initRepos(t, useMongo, seeder)
-	return StartServerWithRepos(t, cfg, repos), repos
+func initGateway() *gateway.Container {
+	return &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	}
 }
 
-func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) *httpexpect.Expect {
+func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	repos := initRepos(t, useMongo, seeder)
+	gateways := initGateway()
+	return StartServerWithRepos(t, cfg, repos, gateways), repos, gateways
+}
+
+func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container, gateways *gateway.Container) *httpexpect.Expect {
 	t.Helper()
 
 	if testing.Short() {
@@ -74,12 +81,10 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 	}
 
 	srv := app.NewServer(ctx, &app.ServerConfig{
-		Config: cfg,
-		Repos:  repos,
-		Gateways: &gateway.Container{
-			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-		},
-		Debug: true,
+		Config:   cfg,
+		Repos:    repos,
+		Gateways: gateways,
+		Debug:    true,
 	})
 
 	ch := make(chan error)

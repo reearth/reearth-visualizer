@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 import { useWorkspaceFetcher, useMeFetcher, useProjectFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
-import { Workspace, useProject, useWorkspace } from "@reearth/services/state";
+import { Workspace, useWorkspace } from "@reearth/services/state";
+import { ProjectType } from "@reearth/types";
 
 export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: string }) => {
   const navigate = useNavigate();
   const { logout: handleLogout } = useAuth();
 
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace(); // todo: remove when we don't rely on jotai anymore
-  const [currentProject, setProject] = useProject(); // todo: remove when we don't rely on jotai anymore
 
   const [workspaceModalVisible, setWorkspaceModalVisible] = useState(false);
 
@@ -37,20 +37,25 @@ export default ({ projectId, workspaceId }: { projectId?: string; workspaceId?: 
   const handleWorkspaceModalOpen = useCallback(() => setWorkspaceModalVisible(true), []);
   const handleWorkspaceModalClose = useCallback(() => setWorkspaceModalVisible(false), []);
 
-  useEffect(() => {
-    setProject(p =>
-      p?.id !== project?.id
-        ? project
-          ? {
-              id: project.id,
-              name: project.name,
-              sceneId: project.scene?.id,
-              projectType: project.coreSupport ? "beta" : "classic",
-            }
-          : undefined
-        : p,
-    );
-  }, [project, setProject]);
+  const currentProject:
+    | {
+        id: string;
+        name: string;
+        sceneId?: string;
+        projectType: ProjectType;
+      }
+    | undefined = useMemo(
+    () =>
+      project
+        ? {
+            id: project.id,
+            name: project.name,
+            sceneId: project.scene?.id,
+            projectType: project.coreSupport ? "beta" : "classic",
+          }
+        : undefined,
+    [project],
+  );
 
   const handleWorkspaceChange = useCallback(
     (id: string) => {

@@ -2,20 +2,24 @@ import { ReactNode, useMemo } from "react";
 
 import { Tab } from "@reearth/beta/features/Navbar";
 
-import WidgetSidePanel from "./tabs/widgets/SidePanel";
+import { StoryPageFragmentFragment } from "./StoryPanel/hooks";
+import MapSidePanel from "./tabs/map/RightPanel";
+import StorySidePanel from "./tabs/story/RightPanel";
+import WidgetSidePanel from "./tabs/widgets/RightPanel";
 
 type Props = {
   tab: Tab;
   sceneId?: string;
+  selectedPage?: StoryPageFragmentFragment;
 };
 
-export default ({ tab, sceneId }: Props) => {
+export default ({ tab, sceneId, selectedPage }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
-        return <div>TODO: right panel</div>;
+        return <MapSidePanel />;
       case "story":
-        return <div>TODO: right panel</div>;
+        return <StorySidePanel selectedPage={selectedPage} />;
       case "widgets":
         return <WidgetSidePanel sceneId={sceneId} />;
 
@@ -23,7 +27,7 @@ export default ({ tab, sceneId }: Props) => {
       default:
         return undefined;
     }
-  }, [tab, sceneId]);
+  }, [tab, sceneId, selectedPage]);
 
   return {
     rightPanel,

@@ -75,6 +75,21 @@ func (r *Storytelling) FindByScene(_ context.Context, sId id.SceneID) (*storytel
 	return &result, nil
 }
 
+func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*storytelling.Story, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if name == "" {
+		return nil, nil
+	}
+	for _, s := range r.data {
+		if s.MatchWithPublicName(name) {
+			return s, nil
+		}
+	}
+	return nil, rerror.ErrNotFound
+}
+
 func (r *Storytelling) Save(_ context.Context, p storytelling.Story) error {
 	if !r.f.CanWrite(p.Scene()) {
 		return repo.ErrOperationDenied
