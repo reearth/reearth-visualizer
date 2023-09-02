@@ -19,7 +19,7 @@ const options = [
   { key: "option2", value: "Option 2", selected: false },
 ];
 
-export const VerticalSingleSelect: Story = (args: Props) => {
+export const VerticalRadioGroup: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback((value: string) => updateArgs({ value }), [updateArgs]);
@@ -30,13 +30,13 @@ export const VerticalSingleSelect: Story = (args: Props) => {
     </div>
   );
 };
-VerticalSingleSelect.args = {
+VerticalRadioGroup.args = {
   options: options,
   layout: "vertical",
   onChange: () => console.log("clicked"),
 };
 
-export const HorizontalMultiSelect: Story = (args: Props) => {
+export const HorizontalRadioGroup: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback((value: string) => updateArgs({ value }), [updateArgs]);
@@ -47,7 +47,7 @@ export const HorizontalMultiSelect: Story = (args: Props) => {
     </div>
   );
 };
-HorizontalMultiSelect.args = {
+HorizontalRadioGroup.args = {
   options: options,
   layout: "horizontal",
   onChange: () => console.log("clicked"),
