@@ -3,7 +3,7 @@ import { memo, useCallback, useState } from "react";
 import RadioBox from "@reearth/beta/components/RadioBox";
 import { styled } from "@reearth/services/theme";
 
-type Option = {
+export type Option = {
   key: string;
   value: string;
   selected: boolean;
@@ -32,7 +32,6 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) =>
     },
     [currentOptions, onChange],
   );
-  console.log(currentOptions);
   return (
     <RadioGroupContainer layout={layout}>
       {currentOptions.map(option => (
