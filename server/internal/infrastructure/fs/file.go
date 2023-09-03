@@ -100,6 +100,29 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 	return f.delete(ctx, filepath.Join(publishedDir, sanitize.Path(name+".json")))
 }
 
+// Stories
+
+func (f *fileRepo) ReadStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
+	return f.read(ctx, filepath.Join(storyDir, sanitize.Path(name+".json")))
+}
+
+func (f *fileRepo) UploadStory(ctx context.Context, reader io.Reader, name string) error {
+	_, err := f.upload(ctx, filepath.Join(storyDir, sanitize.Path(name+".json")), reader)
+	return err
+}
+
+func (f *fileRepo) MoveStory(ctx context.Context, oldName, name string) error {
+	return f.move(
+		ctx,
+		filepath.Join(storyDir, sanitize.Path(oldName+".json")),
+		filepath.Join(storyDir, sanitize.Path(name+".json")),
+	)
+}
+
+func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
+	return f.delete(ctx, filepath.Join(storyDir, sanitize.Path(name+".json")))
+}
+
 // helpers
 
 func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {

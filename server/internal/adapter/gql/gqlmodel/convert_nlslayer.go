@@ -6,7 +6,7 @@ import (
 	"github.com/reearth/reearthx/util"
 )
 
-func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple, parent *id.NLSLayerID) *NLSLayerSimple {
+func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 	if l == nil {
 		return nil
 	}
@@ -64,7 +64,7 @@ func ToNLSLayer(l nlslayer.NLSLayer, parent *id.NLSLayerID) NLSLayer {
 
 	switch la := l.(type) {
 	case *nlslayer.NLSLayerSimple:
-		return ToNLSLayerSimple(la, parent)
+		return ToNLSLayerSimple(la)
 	case *nlslayer.NLSLayerGroup:
 		return ToNLSLayerGroup(la, parent)
 	}
