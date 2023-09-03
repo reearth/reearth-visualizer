@@ -23,6 +23,7 @@ type Props = {
   children?: ReactNode;
   isVisible?: boolean;
   onClose?: () => void;
+  onTabChange?: (tabId: string) => void;
   sidebarTabs?: SidebarTab[];
 };
 
@@ -35,6 +36,7 @@ const Modal: React.FC<Props> = ({
   children,
   isVisible,
   onClose,
+  onTabChange,
   sidebarTabs,
 }) => {
   const [TabsFields, setTabsFields] = useState<SwitchField<SidebarTab>[]>([]);
@@ -56,8 +58,9 @@ const Modal: React.FC<Props> = ({
   const handleTabChange = useCallback(
     (tabId: string) => {
       handleActivate(tabId);
+      onTabChange?.(tabId);
     },
-    [handleActivate],
+    [handleActivate, onTabChange],
   );
 
   return (
@@ -79,11 +82,13 @@ const Modal: React.FC<Props> = ({
         )}
         <ContentWrapper>
           {tabs.length > 0 && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
-          <Content> {children}</Content>
-          <ButtonWrapper>
-            {tabs.find(tab => tab.active === true)?.tabButton1 ?? button1}
-            {tabs.find(tab => tab.active === true)?.tabButton2 ?? button2}
-          </ButtonWrapper>
+          {children && <Content> {children}</Content>}
+          {button1 || button2 ? (
+            <ButtonWrapper>
+              {tabs.find(tab => tab.active === true)?.tabButton1 ?? button1}
+              {tabs.find(tab => tab.active === true)?.tabButton2 ?? button2}
+            </ButtonWrapper>
+          ) : null}
         </ContentWrapper>
       </InnerWrapper>
     </Wrapper>
@@ -100,6 +105,7 @@ const NavBarWrapper = styled.div`
   padding: 16px;
   gap: 10px;
   background: ${({ theme }) => theme.bg[0]};
+  border-right: 1px solid ${({ theme }) => theme.bg[3]};
 `;
 
 const Tab = styled.button<{ isSelected?: boolean }>`
@@ -114,7 +120,7 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: ${({ theme }) => theme.bg[1]};
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const Content = styled.div`
