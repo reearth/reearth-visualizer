@@ -159,7 +159,8 @@ export default function DropDown({
 
   useEffect(() => {
     const button = buttonRef.current;
-    if (!button || !showDropDown) return;
+    const container = containerRef?.current;
+    if (!button || !showDropDown || !container) return;
 
     const handle = (event: MouseEvent) => {
       const target = event.target;
@@ -170,12 +171,12 @@ export default function DropDown({
         setShowDropDown(false);
       }
     };
-    document.addEventListener("click", handle);
+    container.addEventListener("click", handle);
 
     return () => {
-      document.removeEventListener("click", handle);
+      container.removeEventListener("click", handle);
     };
-  }, [dropDownRef, buttonRef, showDropDown, stopCloseOnClickSelf]);
+  }, [dropDownRef, buttonRef, showDropDown, stopCloseOnClickSelf, containerRef]);
 
   useEffect(() => {
     const container = scrollableContainerId
