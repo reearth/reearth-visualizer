@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
-import Toggle from "@reearth/beta/components/fields/Toggle";
+import Text from "@reearth/beta/components/Text";
+import Toggle from "@reearth/beta/components/Toggle";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { useT } from "@reearth/services/i18n";
 import { selectedWidgetAreaVar } from "@reearth/services/state";
@@ -37,12 +38,8 @@ const Nav: React.FC<Props> = ({
     <StyledSecondaryNav>
       <Devices selectedDevice={selectedDevice} onDeviceChange={onDeviceChange} />
       <AlignSystem>
-        <Toggle
-          label={t("Align System")}
-          size="sm"
-          checked={!!showWidgetEditor}
-          onChange={onShowWidgetEditor}
-        />
+        <Text size="body">{t("Align System")}</Text>
+        <Toggle checked={!!showWidgetEditor} onChange={onShowWidgetEditor} />
       </AlignSystem>
     </StyledSecondaryNav>
   );
@@ -57,4 +54,7 @@ const StyledSecondaryNav = styled(SecondaryNav)`
   padding-left: 8px;
 `;
 
-const AlignSystem = styled.div``;
+const AlignSystem = styled.div`
+  display: flex;
+  gap: 10px;
+`;

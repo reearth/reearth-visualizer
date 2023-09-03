@@ -5,6 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
@@ -304,4 +305,16 @@ func (p *Page) Duplicate() *Page {
 	page.id = NewPageID()
 	page.title = fmt.Sprintf("%s (copy)", page.title)
 	return page
+}
+
+func (p *Page) Properties() id.PropertyIDList {
+	if p == nil {
+		return nil
+	}
+	ids := make(id.PropertyIDList, 0, len(p.blocks)+1)
+	ids = append(ids, p.property)
+	for _, block := range p.blocks {
+		ids = append(ids, block.Property())
+	}
+	return ids
 }

@@ -1,13 +1,18 @@
 package e2e
 
 import (
+	"bytes"
+	"context"
+	"fmt"
 	"net/http"
+	"regexp"
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
+	"github.com/stretchr/testify/assert"
 )
 
 func createProject(e *httpexpect.Expect) string {
@@ -82,7 +87,8 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 			id
 			... on Scene {
 			  rootLayerId
-			  stories {
+			  propertyId
+		      stories {
 				id
 				pages {
 				  id
@@ -237,6 +243,42 @@ func deleteStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 		Value("data").Object().
 		Value("deleteStory").Object().
 		ValueEqual("storyId", storyID)
+
+	return requestBody, res
+}
+
+func publishStory(e *httpexpect.Expect, storyID, alias string) (GraphQLRequest, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "PublishStory",
+		Query: `mutation PublishStory($storyId: ID!, $alias: String, $status: PublishmentStatus!) {
+			publishStory( input: {storyId: $storyId, alias: $alias, status: $status} ) { 
+				story{
+					id
+					publishedAt
+				}
+			}
+		}`,
+		Variables: map[string]any{
+			"storyId": storyID,
+			"alias":   alias,
+			"status":  "PUBLIC",
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Value("data").Object().
+		Value("publishStory").Object().
+		Value("story").Object().
+		ValueEqual("id", storyID)
 
 	return requestBody, res
 }
@@ -955,4 +997,52 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].type").Equal("SPACING")
 	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].value").Equal(p)
+}
+
+func TestStoryPublishing(t *testing.T) {
+	e, _, g := StartServerAndRepos(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	pID := createProject(e)
+
+	_, _, sID := createScene(e, pID)
+
+	_, _, storyID := createStory(e, sID, "test", 0)
+
+	_, _, pageID := createPage(e, sID, storyID, "test", true)
+
+	_, _, blockID := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", nil)
+
+	_, res := fetchSceneForStories(e, sID)
+	blockPropID := res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].propertyId").Raw().(string)
+
+	_, _ = updatePropertyValue(e, blockPropID, "default", "", "text", "test value", "STRING")
+
+	p := map[string]any{"left": 0, "right": 1, "top": 2, "bottom": 3}
+	_, _ = updatePropertyValue(e, blockPropID, "panel", "", "padding", p, "SPACING")
+
+	_, _ = publishStory(e, storyID, "test-alias")
+
+	rc, err := g.File.ReadStoryFile(context.Background(), "test-alias")
+	assert.NoError(t, err)
+
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(rc)
+	assert.NoError(t, err)
+
+	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null}]}]}}`, sID, storyID, pageID, blockID))
+	assert.Regexp(t, pub, buf.String())
+
+	resString := e.GET("/p/test-alias/data.json").
+		WithHeader("Origin", "https://example.com").
+		Expect().
+		Status(http.StatusOK).
+		Body().
+		Raw()
+
+	assert.Regexp(t, pub, resString)
 }

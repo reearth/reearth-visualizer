@@ -9,7 +9,8 @@ type Props = {
   projectId?: string;
   workspaceId?: string;
   isDashboard?: boolean;
-  currentTab: Tab;
+  currentTab?: Tab;
+  page?: "editor" | "settings";
 };
 
 export const Tabs = ["map", "story", "widgets", "publish"] as const;
@@ -25,6 +26,7 @@ const Navbar: React.FC<Props> = ({
   workspaceId,
   currentTab = "map",
   isDashboard = false,
+  page = "editor",
 }) => {
   const {
     currentProject,
@@ -43,7 +45,7 @@ const Navbar: React.FC<Props> = ({
   const { rightSide } = useRightSide({
     currentTab,
     sceneId,
-    page: "editor",
+    page,
   });
 
   return (
@@ -56,6 +58,8 @@ const Navbar: React.FC<Props> = ({
         personalWorkspace={isPersonal}
         modalShown={workspaceModalVisible}
         workspaces={workspaces}
+        sceneId={sceneId}
+        page={page}
         onWorkspaceChange={handleWorkspaceChange}
         onWorkspaceCreate={handleWorkspaceCreate}
         onSignOut={handleLogout}

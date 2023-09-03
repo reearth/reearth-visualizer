@@ -13,6 +13,23 @@ func updatePropertyValue(e *httpexpect.Expect, propertyID, schemaGroupID, itemID
 					updatePropertyValue( input: { propertyId: $propertyId, schemaGroupId: $schemaGroupId, itemId: $itemId, fieldId: $fieldId, value: $value, type: $type } ) {
 					  property {
 						id
+						schema{
+							id
+							groups{
+								fields{
+									fieldId
+									type
+									title
+									description
+									prefix
+									suffix
+									defaultValue
+									ui
+									min
+									max
+								}
+							}
+						}
 					  }
 					  propertyField {	
 						id
