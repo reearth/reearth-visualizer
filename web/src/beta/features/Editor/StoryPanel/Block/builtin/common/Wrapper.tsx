@@ -17,13 +17,20 @@ type Spacing = {
   right: number;
 };
 
+type RenderItemProps = {
+  editMode: boolean;
+};
+
 type Props = {
   title?: string;
   icon?: string;
   isSelected?: boolean;
+  isEmpty?: boolean;
   children?: ReactNode;
   propertyId?: string;
   propertyItems?: Item[];
+  withCustomEditor?: boolean; // disable the default editor panel
+  renderItem?: (props: RenderItemProps) => ReactNode;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
@@ -33,9 +40,11 @@ const BlockWrapper: React.FC<Props> = ({
   title,
   icon,
   isSelected,
-  children,
+  isEmpty,
   propertyId,
   propertyItems,
+  withCustomEditor,
+  renderItem,
   onClick,
   onClickAway,
   onRemove,
@@ -61,7 +70,7 @@ const BlockWrapper: React.FC<Props> = ({
   });
 
   return (
-    <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
+    <ClickAwayListener enabled={isSelected && !editMode} onClickAway={onClickAway}>
       <Wrapper
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -82,10 +91,10 @@ const BlockWrapper: React.FC<Props> = ({
             onRemove={onRemove}
           />
         )}
-        <Block padding={padding} onClick={handleBlockClick}>
-          {children ?? <Template icon={icon} />}
+        <Block padding={padding} onClick={handleBlockClick} editMode={editMode}>
+          {!isEmpty && renderItem ? renderItem({ editMode }) : <Template icon={icon} />}
         </Block>
-        {editMode && propertyId && defaultSettings && (
+        {editMode && propertyId && defaultSettings && !withCustomEditor && (
           <EditorPanel>
             <FieldComponents propertyId={propertyId} item={defaultSettings} />
           </EditorPanel>
@@ -102,7 +111,6 @@ const Wrapper = styled.div<{ isSelected?: boolean }>`
   border-style: solid;
   border-color: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "transparent")};
   transition: all 0.3s;
-  padding: 1px;
   position: relative;
 
   :hover {
@@ -110,24 +118,18 @@ const Wrapper = styled.div<{ isSelected?: boolean }>`
   }
 `;
 
-const Block = styled.div<{ padding?: Spacing }>`
+const Block = styled.div<{ padding?: Spacing; editMode?: boolean }>`
   display: flex;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-  cursor: pointer;
+  cursor: ${({ editMode }) => (editMode ? "default" : "pointer")};
   color: black;
 `;
 
 const EditorPanel = styled.div`
   background: ${({ theme }) => theme.bg[1]};
   color: ${({ theme }) => theme.content.main};
-  height: 100px;
   padding: 12px;
-  z-index: 100;
-  position: absolute;
-  top: 100%;
-  left: -1px;
-  right: -1px;
 `;

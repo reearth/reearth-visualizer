@@ -32,9 +32,9 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
   const handleMouseLeave = useCallback(() => setHover(false), []);
 
   const handleBlockClick = useCallback(() => {
-    if (showSettings && isSelected) return;
+    if ((showSettings && isSelected) || editMode) return;
     onClick?.();
-  }, [onClick, showSettings, isSelected]);
+  }, [onClick, showSettings, isSelected, editMode]);
 
   const defaultSettings: Item | undefined = useMemo(
     () => propertyItems?.find(i => i.schemaGroup === "default"),

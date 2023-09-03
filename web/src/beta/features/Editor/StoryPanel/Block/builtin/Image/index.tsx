@@ -18,11 +18,12 @@ const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
       title={block?.title}
       icon={block?.extensionId}
       isSelected={isSelected}
+      isEmpty={!src}
       propertyId={block?.property?.id}
       propertyItems={block?.property?.items}
-      {...props}>
-      {src && <Image src={src} />}
-    </BlockWrapper>
+      renderItem={() => <Image src={src} />}
+      {...props}
+    />
   );
 };
 
