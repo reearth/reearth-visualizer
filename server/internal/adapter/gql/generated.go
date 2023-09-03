@@ -8268,6 +8268,7 @@ interface NLSLayer {
   id: ID!
   layerType: String!
   sceneId: ID!
+  config: JSON
   title: String!
   visible: Boolean!
   infobox: Infobox
@@ -8303,9 +8304,8 @@ type NLSLayerGroup implements NLSLayer {
 # InputType
 
 input AddNLSLayerSimpleInput {
-    parentLayerId: ID!
     layerType: String!
-    sceneID: ID!
+    sceneId: ID!
     config: JSON
     index: Int
 }
@@ -53877,21 +53877,13 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"parentLayerId", "layerType", "sceneID", "config", "index"}
+	fieldsInOrder := [...]string{"layerType", "sceneId", "config", "index"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "parentLayerId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentLayerId"))
-			it.ParentLayerID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "layerType":
 			var err error
 
@@ -53900,10 +53892,10 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 			if err != nil {
 				return it, err
 			}
-		case "sceneID":
+		case "sceneId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
@@ -68759,8 +68751,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 }
 
 func (ec *executionContext) unmarshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx context.Context, v interface{}) (gqlmodel.JSON, error) {
-	var res gqlmodel.JSON
-	err := res.UnmarshalGQL(v)
+	res, err := gqlmodel.UnmarshalJSON(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -68771,7 +68762,13 @@ func (ec *executionContext) marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 		}
 		return graphql.Null
 	}
-	return v
+	res := gqlmodel.MarshalJSON(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (language.Tag, error) {
@@ -71737,8 +71734,7 @@ func (ec *executionContext) unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋse
 	if v == nil {
 		return nil, nil
 	}
-	var res gqlmodel.JSON
-	err := res.UnmarshalGQL(v)
+	res, err := gqlmodel.UnmarshalJSON(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -71746,7 +71742,8 @@ func (ec *executionContext) marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 	if v == nil {
 		return graphql.Null
 	}
-	return v
+	res := gqlmodel.MarshalJSON(v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (*language.Tag, error) {

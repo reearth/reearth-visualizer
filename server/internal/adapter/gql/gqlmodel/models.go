@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/usecasex"
@@ -296,27 +297,28 @@ func (s *Scene) Plugin(pluginID ID) *ScenePlugin {
 
 type JSON map[string]any
 
-func (j *JSON) UnmarshalGQL(v interface{}) error {
-	switch v := v.(type) {
-	case string:
-		if err := json.Unmarshal([]byte(v), &j); err != nil {
-			return fmt.Errorf("cannot unmarshal string %v to JSON: %w", v, err)
+func MarshalJSON(b JSON) graphql.Marshaler {
+	return graphql.WriterFunc(func(w io.Writer) {
+		byteData, err := json.Marshal(b)
+		if err != nil {
+			log.Fatalf("failed to marshal JSON %v\n", string(byteData))
 		}
-		return nil
-	default:
-		return fmt.Errorf("JSON must be a string, got: %T", v)
-	}
+		_, err = w.Write(byteData)
+		if err != nil {
+			log.Fatalf("failed to write to io.Writer: %v\n", string(byteData))
+		}
+	})
 }
 
-func (j JSON) MarshalGQL(w io.Writer) {
-	b, err := json.Marshal(j)
+func UnmarshalJSON(v interface{}) (JSON, error) {
+	byteData, err := json.Marshal(v)
 	if err != nil {
-		log.Fatalf("failed to marshal JSON: %v", err)
-		return
+		return JSON{}, fmt.Errorf("failed while marshalling scheme")
 	}
-
-	_, err = w.Write(b)
+	tmp := make(map[string]interface{})
+	err = json.Unmarshal(byteData, &tmp)
 	if err != nil {
-		log.Fatalf("failed to write to io.Writer: %v", err)
+		return JSON{}, fmt.Errorf("failed while unmarshalling scheme")
 	}
+	return tmp, nil
 }

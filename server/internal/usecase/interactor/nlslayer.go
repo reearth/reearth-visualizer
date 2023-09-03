@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -47,7 +48,7 @@ func (i *NLSLayer) FetchByScene(ctx context.Context, sid id.SceneID, _ *usecase.
 	return i.nlslayerRepo.FindByScene(ctx, sid)
 }
 
-func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLayerSimpleInput, operator *usecase.Operator) (_ *nlslayer.NLSLayerSimple, _ *nlslayer.NLSLayerGroup, err error) {
+func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLayerSimpleInput, operator *usecase.Operator) (_ *nlslayer.NLSLayerSimple, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -60,37 +61,29 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		}
 	}()
 
-	parentLayer, err := i.nlslayerRepo.FindNLSLayerGroupByID(ctx, inp.ParentLayerID)
-	if err != nil {
-		return nil, nil, err
+	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+		return nil, interfaces.ErrOperationDenied
 	}
 
-	// check scene lock
-	if err := i.CheckSceneLock(ctx, parentLayer.Scene()); err != nil {
-		return nil, nil, err
-	}
+	log.Println("input: ", inp)
 
 	layerSimple, err := nlslayerops.LayerSimple{
-		SceneID:   parentLayer.Scene(),
+		SceneID:   inp.SceneID,
 		Config:    inp.Config,
 		LayerType: inp.LayerType,
 		Index:     inp.Index,
 	}.Initialize()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layerSimple)
 	if err != nil {
-		return nil, nil, err
-	}
-	err = i.nlslayerRepo.Save(ctx, parentLayer)
-	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	tx.Commit()
-	return layerSimple, parentLayer, nil
+	return layerSimple, nil
 }
 
 func (i *NLSLayer) fetchAllChildren(ctx context.Context, l nlslayer.NLSLayer) ([]id.NLSLayerID, error) {
@@ -190,11 +183,6 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 		return nil, err
 	}
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
-		return nil, err
-	}
-
-	// check scene lock
-	if err := i.CheckSceneLock(ctx, layer.Scene()); err != nil {
 		return nil, err
 	}
 
