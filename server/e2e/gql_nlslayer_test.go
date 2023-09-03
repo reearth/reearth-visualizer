@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -68,8 +67,6 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpe
 		Expect().
 		Status(http.StatusOK).
 		JSON()
-
-	fmt.Println("res: ", res.Raw())
 
 	layerId := res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
 	return requestBody, res, layerId
@@ -176,8 +173,6 @@ func TestNLSLayerCRUD(t *testing.T) {
 
 	pId := createProject(e)
 	_, _, sId := createScene(e, pId)
-
-	fmt.Println("sid: ", sId)
 
 	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
