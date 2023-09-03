@@ -35,6 +35,7 @@ const Nav: React.FC<Props> = ({ projectId }) => {
     alias,
     validAlias,
     validatingAlias,
+    publishProjectLoading,
     handleModalOpen,
     handleModalClose,
     setDropdown,
@@ -105,6 +106,7 @@ const Nav: React.FC<Props> = ({ projectId }) => {
       </StyledSecondaryNav>
       <PublishModal
         isVisible={modalOpen}
+        loading={publishProjectLoading}
         publishing={publishing}
         publishStatus={publishStatus}
         url={config()?.published?.split("{}")}
