@@ -20,6 +20,15 @@ func ToStory(s *storytelling.Story) *Story {
 		CreatedAt:         s.Id().Timestamp(),
 		UpdatedAt:         s.UpdatedAt(),
 		PublishedAt:       s.PublishedAt(),
+		PanelPosition:     ToStoryPosition(s.PanelPosition()),
+
+		IsBasicAuthActive: s.IsBasicAuthActive(),
+		BasicAuthUsername: s.BasicAuthUsername(),
+		BasicAuthPassword: s.BasicAuthPassword(),
+		PublicTitle:       s.PublicTitle(),
+		PublicDescription: s.PublicDescription(),
+		PublicImage:       s.PublicImage(),
+		PublicNoIndex:     s.PublicNoIndex(),
 	}
 }
 
@@ -92,4 +101,27 @@ func ToStoryPublishmentStatus(v storytelling.PublishmentStatus) PublishmentStatu
 		return PublishmentStatusPrivate
 	}
 	return ""
+}
+
+func ToStoryPosition(v storytelling.Position) Position {
+	switch v {
+	case storytelling.PositionLeft:
+		return PositionLeft
+	case storytelling.PositionRight:
+		return PositionRight
+	}
+	return ""
+}
+
+func FromStoryPositionRef(v *Position) *storytelling.Position {
+	if v == nil {
+		return nil
+	}
+	switch *v {
+	case PositionLeft:
+		return lo.ToPtr(storytelling.PositionLeft)
+	case PositionRight:
+		return lo.ToPtr(storytelling.PositionRight)
+	}
+	return nil
 }

@@ -25,14 +25,16 @@ export default function ({ sceneId, stories }: Props) {
     return (selectedStory?.pages ?? []).find(p => p.id === selectedPageId);
   }, [selectedPageId, selectedStory?.pages]);
 
-  const onPageSelect = useCallback((pageId: string) => {
+  const handlePageSelect = useCallback((pageId: string) => {
     setSelectedPageId(pageId);
   }, []);
-  const onPageDuplicate = useCallback(async (pageId: string) => {
+
+  const handlePageDuplicate = useCallback(async (pageId: string) => {
     console.log("onPageDuplicate", pageId);
     alert("not implemented");
   }, []);
-  const onPageDelete = useCallback(
+
+  const handlePageDelete = useCallback(
     async (pageId: string) => {
       if (!selectedStory) return;
       const pages = selectedStory?.pages ?? [];
@@ -49,7 +51,8 @@ export default function ({ sceneId, stories }: Props) {
     },
     [useDeleteStoryPage, sceneId, selectedPageId, selectedStory],
   );
-  const onPageAdd = useCallback(
+
+  const handlePageAdd = useCallback(
     async (isSwipeable: boolean) => {
       if (!selectedStory) return;
       await useCreateStoryPage({
@@ -64,7 +67,8 @@ export default function ({ sceneId, stories }: Props) {
     },
     [useCreateStoryPage, sceneId, selectedStory, t],
   );
-  const onPageMove = useCallback(
+
+  const handlePageMove = useCallback(
     async (id: string, targetIndex: number) => {
       if (!selectedStory) return;
       await useMoveStoryPage({
@@ -79,10 +83,10 @@ export default function ({ sceneId, stories }: Props) {
   return {
     selectedStory,
     selectedPage,
-    onPageSelect,
-    onPageDuplicate,
-    onPageDelete,
-    onPageAdd,
-    onPageMove,
+    handlePageSelect,
+    handlePageDuplicate,
+    handlePageDelete,
+    handlePageAdd,
+    handlePageMove,
   };
 }

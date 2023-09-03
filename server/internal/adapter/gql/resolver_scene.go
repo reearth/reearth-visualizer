@@ -53,6 +53,21 @@ func (r *sceneResolver) RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gq
 	return layerGroup, nil
 }
 
+func (r *sceneResolver) NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error) {
+	sid, err := gqlmodel.ToID[id.Scene](obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	nlslayer, err := usecases(ctx).NLSLayer.FetchByScene(ctx, sid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	res := gqlmodel.ToNLSLayers(nlslayer, nil)
+	return res, nil
+}
+
 func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
 	return loaders(ctx).Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
 }

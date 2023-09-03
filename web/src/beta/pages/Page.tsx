@@ -4,7 +4,6 @@ import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // 
 import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import { AuthenticatedPage } from "@reearth/services/auth";
 import { StoryFragmentFragment } from "@reearth/services/gql";
-import { useTheme } from "@reearth/services/theme";
 
 import Loading from "../components/Loading";
 
@@ -23,8 +22,6 @@ type Props = {
 };
 
 const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => {
-  const theme = useTheme();
-
   const { useMeQuery } = useMeFetcher();
   const { useProjectQuery } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
@@ -51,7 +48,7 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
   );
 
   return loading ? (
-    <Loading animationSize={80} animationColor={theme.select.main} />
+    <Loading animationSize={80} />
   ) : (
     <>
       <GlobalModal />

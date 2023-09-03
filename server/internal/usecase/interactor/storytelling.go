@@ -79,6 +79,10 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 
 	// TODO: Handel ordering
 
+	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		return nil, err
+	}
+
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, err
 	}
@@ -110,6 +114,32 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 
 	if inp.Title != nil && *inp.Title != "" {
 		story.Rename(*inp.Title)
+	}
+
+	if inp.PublicTitle != nil {
+		story.SetPublicTitle(*inp.PublicTitle)
+	}
+
+	if inp.PublicDescription != nil {
+		story.SetPublicDescription(*inp.PublicDescription)
+	}
+
+	if inp.PublicImage != nil {
+		story.SetPublicImage(*inp.PublicImage)
+	}
+
+	if inp.IsBasicAuthActive != nil {
+		if err := story.SetBasicAuth(*inp.IsBasicAuthActive, inp.BasicAuthUsername, inp.BasicAuthPassword); err != nil {
+			return nil, err
+		}
+	}
+
+	if inp.PublicNoIndex != nil {
+		story.SetPublicNoIndex(*inp.PublicNoIndex)
+	}
+
+	if inp.PanelPosition != nil {
+		story.SetPanelPosition(*inp.PanelPosition)
 	}
 
 	// TODO: Handel ordering
@@ -210,6 +240,10 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	}
 
 	story.Pages().AddAt(page, inp.Index)
+
+	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		return nil, nil, err
+	}
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, nil, err

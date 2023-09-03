@@ -1,11 +1,13 @@
 import { ReactNode, useMemo } from "react";
 
-import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/SidePanel";
+import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
+import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 type Props = {
   tab: Tab;
+  sceneId: string;
 
   // for story tab
   selectedStory?: StoryFragmentFragment;
@@ -19,6 +21,7 @@ type Props = {
 
 export default ({
   tab,
+  sceneId,
   selectedStory,
   selectedPage,
   onPageSelect,
@@ -29,8 +32,8 @@ export default ({
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
-      case "scene":
-        return <div>TODO: LeftPanel</div>;
+      case "map":
+        return <MapSidePanel sceneId={sceneId} />;
       case "story":
         return (
           <StorySidePanel
@@ -57,6 +60,7 @@ export default ({
     selectedPage,
     selectedStory,
     tab,
+    sceneId,
   ]);
 
   return {

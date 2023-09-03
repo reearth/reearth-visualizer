@@ -119,9 +119,9 @@ const ContentWrapper = styled.div`
 
 const Content = styled.div`
   display: flex;
-  padding: 24px;
+  padding: ${({ theme }) => theme.spacing.super}px;
   flex-direction: column;
-  gap: 20px;
+  gap: ${({ theme }) => theme.spacing.largest}px;
   align-self: stretch;
 `;
 
@@ -131,6 +131,8 @@ const ButtonWrapper = styled.div`
   align-self: stretch;
   justify-content: flex-end;
   border-top: 1px solid ${({ theme }) => theme.bg[3]};
+  gap: ${({ theme }) => theme.spacing.normal}px;
+  padding: ${({ theme }) => theme.spacing.normal}px;
 `;
 
 export default Modal;

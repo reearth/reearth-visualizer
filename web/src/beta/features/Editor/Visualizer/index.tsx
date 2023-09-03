@@ -1,15 +1,20 @@
+import { ReactNode } from "react";
+
 import { styled } from "@reearth/services/theme";
 
 import CanvasArea from "./CanvasArea";
 
 type Props = {
   sceneId?: string;
+  children?: ReactNode;
 };
 
-const Visualizer: React.FC<Props> = ({ sceneId }) => {
+const Visualizer: React.FC<Props> = ({ sceneId, children }) => {
   return (
     <Wrapper>
-      <CanvasArea sceneId={sceneId} isBuilt={false} inEditor={true} />
+      <CanvasArea sceneId={sceneId} isBuilt={false} inEditor={true}>
+        {children}
+      </CanvasArea>
     </Wrapper>
   );
 };

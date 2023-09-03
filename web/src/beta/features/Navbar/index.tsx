@@ -9,10 +9,11 @@ type Props = {
   projectId?: string;
   workspaceId?: string;
   isDashboard?: boolean;
-  currentTab: Tab;
+  currentTab?: Tab;
+  page?: "editor" | "settings";
 };
 
-export const Tabs = ["scene", "story", "widgets", "publish"] as const;
+export const Tabs = ["map", "story", "widgets", "publish"] as const;
 export type Tab = (typeof Tabs)[number];
 
 export function isTab(tab: string): tab is Tab {
@@ -23,8 +24,9 @@ const Navbar: React.FC<Props> = ({
   sceneId,
   projectId,
   workspaceId,
-  currentTab = "scene",
+  currentTab = "map",
   isDashboard = false,
+  page = "editor",
 }) => {
   const {
     currentProject,
@@ -43,7 +45,7 @@ const Navbar: React.FC<Props> = ({
   const { rightSide } = useRightSide({
     currentTab,
     sceneId,
-    page: "editor",
+    page,
   });
 
   return (
@@ -56,6 +58,8 @@ const Navbar: React.FC<Props> = ({
         personalWorkspace={isPersonal}
         modalShown={workspaceModalVisible}
         workspaces={workspaces}
+        sceneId={sceneId}
+        page={page}
         onWorkspaceChange={handleWorkspaceChange}
         onWorkspaceCreate={handleWorkspaceCreate}
         onSignOut={handleLogout}
@@ -80,4 +84,5 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.bg[0]};
   border-bottom: 0.5px solid ${({ theme }) => theme.outline.weak};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  z-index: 1;
 `;

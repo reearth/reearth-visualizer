@@ -33,27 +33,42 @@ func TestStoryBuilder(t *testing.T) {
 		Property(propertyID).
 		Pages(nil).
 		Status(PublishmentStatusPrivate).
-		PublishedAt(nil)
+		PublishedAt(nil).
+		PublicTitle("public title").
+		PublicDescription("public description").
+		PublicImage("/test.jpg").
+		PublicNoIndex(true).
+		PublicBasicAuth(true, "user", "pass")
 
 	s, err = b.Build()
 	assert.NoError(t, err)
 	assert.Equal(t, &Story{
-		id:          storyID,
-		property:    propertyID,
-		scene:       sceneID,
-		title:       "title",
-		alias:       "alias",
-		pages:       nil,
-		status:      PublishmentStatusPrivate,
-		publishedAt: nil,
-		updatedAt:   storyID.Timestamp(),
+		id:                storyID,
+		property:          propertyID,
+		scene:             sceneID,
+		title:             "title",
+		alias:             "alias",
+		pages:             nil,
+		status:            PublishmentStatusPrivate,
+		panelPosition:     PositionLeft,
+		publishedAt:       nil,
+		updatedAt:         storyID.Timestamp(),
+		publicTitle:       "public title",
+		publicDescription: "public description",
+		publicImage:       "/test.jpg",
+		publicNoIndex:     true,
+		isBasicAuthActive: true,
+		basicAuthUsername: "user",
+		basicAuthPassword: "pass",
 	}, s)
 
 	now := util.Now()
 	b = b.UpdatedAt(now)
+	b = b.PanelPosition(PositionRight)
 	s, err = b.Build()
 	assert.NoError(t, err)
 	assert.Equal(t, s.updatedAt, now)
+	assert.Equal(t, s.panelPosition, PositionRight)
 
 	assert.NotPanics(t, func() {
 		b.MustBuild()

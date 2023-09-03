@@ -141,11 +141,13 @@ const convertStyle = (val: any, convert: StyleProperty["convert"]) => {
 const useFeature = ({
   id,
   tileset,
+
   layer,
   evalFeature,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
+
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
 }) => {
