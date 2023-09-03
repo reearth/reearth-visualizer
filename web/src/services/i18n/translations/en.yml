@@ -1,8 +1,10 @@
+Color Picker: ''
 Cancel: Cancel
 Apply: Apply
 Not found: Not found
 Padding settings: Padding settings
 Remove: Remove
+Untitled: Untitled
 Scene: Scene
 Outline: Outline
 Published: Published
@@ -30,13 +32,14 @@ Embed Code: Embed Code
 '* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
 more options: more options
 Search engine indexing: Search engine indexing
+Page will be available as result on search engines: ''
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
 New Page: New Page
-New Swipe: New Swipe
 Story: Story
 Page: Page
+Page Settings: Page Settings
 Align System: Align System
 Widget Manager: Widget Manager
 Inspector: Inspector
@@ -55,8 +58,8 @@ New Workspace: New Workspace
 Log out: Log out
 Project settings: Project settings
 Public: Public
-Workspace assets: Workspace assets
-Plugin: Plugin
+Workspace assets: ''
+Plugin: ''
 Manage projects: Manage projects
 Documentation: Documentation
 Map: Map
@@ -64,11 +67,9 @@ Widgets: Widgets
 Error: Error
 Warning: Warning
 Notice: Notice
-You have reached a policy limit. Please contact an administrator of your Re:Earth system.: >-
-  You have reached a policy limit. Please contact an administrator of your
-  Re:Earth system.
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
-Project Settings: Project Settings
+Project Settings: ''
 Date: Date
 File size: File size
 Alphabetical: Alphabetical
@@ -85,7 +86,7 @@ Most project settings are hidden when the project is archived. Please unarchive 
   unarchive the project to view and edit these settings.
 Project Info: Project Info
 Name: Name
-Submit: Submit
+Submit: ''
 Danger Zone: Danger Zone
 Archive this project: Archive this project
 Mark this project as archived and read-only: Mark this project as archived and read-only
@@ -132,12 +133,12 @@ Title: Title
 Basic Authorization: Basic Authorization
 Username: Username
 Password: Password
-Site Setting: Site Setting
+Site Setting: ''
 Site name: Site name
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
   You are about to change the site name for your project. Only alphanumeric
   characters and hyphens are allows.
-Story Panel: Story Panel
+Story Panel: ''
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 aria-label-compass: compass
@@ -447,14 +448,14 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
-Failed to upgrade plugin.: Failed to upgrade plugin.
-Successfully upgraded plugin!: Successfully upgraded plugin!
-Successfully uninstalled plugin.: Successfully uninstalled plugin.
+Failed to upgrade plugin.: ''
+Successfully upgraded plugin!: ''
+Successfully uninstalled plugin.: ''
 Failed to publish project.: Failed to publish project.
-Failed to update project.: Failed to update project.
-Successfully updated project!: Successfully updated project!
-Successfully archive project!: Successfully archive project!
-Successfully delete project!: Successfully delete project!
+Failed to update project.: ''
+Successfully updated project!: ''
+Successfully archive project!: ''
+Successfully delete project!: ''
 Failed to update property.: Failed to update property.
 Failed to create block.: Failed to create block.
 Successfullly created a block!: Successfullly created a block!
@@ -463,9 +464,9 @@ Block was successfully deleted.: Block was successfully deleted.
 Failed to move block.: Failed to move block.
 Block was successfully moved.: Block was successfully moved.
 Failed to create story.: Failed to create story.
-Successfully created a story!: Successfully created a story!
-Failed to update story.: Failed to update story.
-Successfully updated a story!: Successfully updated a story!
+Successfully created a story!: ''
+Failed to update story.: ''
+Successfully updated a story!: ''
 Failed to create page.: Failed to create page.
 Successfullly created a page!: Successfullly created a page!
 Failed to delete page.: Failed to delete page.
@@ -477,3 +478,5 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.

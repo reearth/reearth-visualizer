@@ -13,11 +13,9 @@ import Property from "..";
 import useHooks from "./hooks";
 import { Props, RGBA } from "./types";
 
-// Constants
 const channels = ["r", "g", "b", "a"];
 const hexPlaceholder = "#RRGGBBAA";
 
-// Component
 const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => {
   const t = useT();
   const theme = useTheme();
@@ -60,14 +58,14 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
           <PickerWrapper>
             <HeaderWrapper>
               <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
-                Color Picker
+                {t("Color Picker")}
               </PickerTitle>
               {handleClose && <CloseIcon icon="cancel" size={12} onClick={handleClose} />}
             </HeaderWrapper>
             <SelectorPickerWrapper>
               <ColorPicker className="colorPicker" color={rgba} onChange={handleChange} />
               <RgbaInputWrapper>
-                <Text size="footnote"> RGBA</Text>
+                <Text size="footnote">RGBA</Text>
                 <ValuesWrapper>
                   {channels.map(channel => (
                     <Input
@@ -104,7 +102,6 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
   );
 };
 
-// Styled Components
 const Wrapper = styled.div`
   text-align: center;
   width: 100%;

@@ -61,6 +61,7 @@ import WorkspaceAdd from "./Icons/workspaceAdd.svg";
 import Workspaces from "./Icons/workspaces.svg";
 
 // Storytelling tab
+import StoryPage from "./Icons/storyPage.svg";
 import Square from "./Icons/square.svg";
 import Swiper from "./Icons/swiper.svg";
 import Book from "./Icons/book.svg";
@@ -128,6 +129,7 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
+  storyPage: StoryPage,
   square: Square,
   swiper: Swiper,
   book: Book,

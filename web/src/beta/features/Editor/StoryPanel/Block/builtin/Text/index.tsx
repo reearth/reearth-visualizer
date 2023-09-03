@@ -3,10 +3,10 @@ import { useCallback, useMemo } from "react";
 import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
+import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
-import { getFieldValue } from "../utils";
 
 export type Props = BlockProps;
 
