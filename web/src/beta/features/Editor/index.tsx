@@ -58,12 +58,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     stories,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect, handleLayerUpdate } =
-    useLayers({
-      sceneId,
-      layers,
-    });
+  const { selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } = useLayers({
+    sceneId,
+    layers,
+  });
 
   const { leftPanel } = useLeftPanel({
     tab,

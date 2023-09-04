@@ -23,8 +23,7 @@ export type LayerUpdateProps = {
   visible?: boolean;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function ({ sceneId, layers }: Props) {
+export default function ({ layers }: Props) {
   const t = useT();
   const { useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } = useLayersFetcher();
   const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>(undefined);

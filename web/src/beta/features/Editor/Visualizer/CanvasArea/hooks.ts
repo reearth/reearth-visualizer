@@ -70,8 +70,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
 
   const layers = processLayers(scene);
 
-  console.log("layers: ", layers);
-
   // TODO: Use GQL value
   const rootLayerId = "";
 
@@ -185,6 +183,8 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   const useExperimentalSandbox = useMemo(() => {
     return !!sceneProperty?.experimental?.experimental_sandbox;
   }, [sceneProperty]);
+
+  console.log("final layers: ", layers);
 
   return {
     sceneId,

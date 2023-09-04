@@ -348,6 +348,10 @@ export function processLayers(
     defines: nlsLayer.config?.defines,
     events: nlsLayer.config?.events,
     data: nlsLayer.config?.data,
+    resource: nlsLayer.config?.resource,
+    marker: nlsLayer.config?.marker,
+    polygon: nlsLayer.config?.polygon,
+    polyline: nlsLayer.config?.polyline,
   }));
 }
 
