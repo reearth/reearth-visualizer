@@ -41,6 +41,7 @@ export default () => {
             projectId: data.node.projectId,
             property: data.node.property,
             rootLayerId: data.node.rootLayerId,
+            newLayers: data.node.newLayers,
             tags: data.node.tags,
             stories: data.node.stories,
             teamId: data.node.teamId,
