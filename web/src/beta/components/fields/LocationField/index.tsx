@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { LatLng } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import Property from "..";
 import NumberInput from "../common/NumberInput";
-
-export type LatLng = {
-  lat?: number;
-  lng?: number;
-};
 
 type Props = {
   name?: string;
@@ -30,7 +26,7 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
     if (newValue === undefined) return;
 
     setLocation(prevLocation => ({
-      ...prevLocation,
+      ...prevLocation!,
       [coordination === "Latitude" ? "lat" : "lng"]: newValue,
     }));
   }, []);

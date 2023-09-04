@@ -1,4 +1,6 @@
 import TextInput from "@reearth/beta/components/fields/TextInput";
+import { LatLng } from "@reearth/beta/utils/value";
+import LocationField from "@reearth/classic/components/molecules/EarthEditor/PropertyPane/PropertyField/LocationField";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import ColorField from "../ColorField";
@@ -58,6 +60,14 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             key={sf.id}
             name={sf.name}
             checked={value as boolean}
+            description={sf.description}
+            onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+          />
+        ) : sf.type == "latlng" ? (
+          <LocationField
+            key={sf.id}
+            name={sf.name}
+            value={value as LatLng}
             description={sf.description}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
