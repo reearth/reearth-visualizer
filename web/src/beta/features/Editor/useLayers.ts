@@ -58,7 +58,7 @@ export default function ({ sceneId, layers }: Props) {
         sceneId: inp.sceneId,
         config: inp.config,
         layerType: inp.layerType,
-        title: t(inp.layerType),
+        title: t(inp.title),
         index: inp.index,
       });
     },
