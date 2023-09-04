@@ -8268,6 +8268,7 @@ interface NLSLayer {
   id: ID!
   layerType: String!
   sceneId: ID!
+  config: JSON
   title: String!
   visible: Boolean!
   infobox: Infobox
@@ -8303,9 +8304,9 @@ type NLSLayerGroup implements NLSLayer {
 # InputType
 
 input AddNLSLayerSimpleInput {
-    parentLayerId: ID!
     layerType: String!
-    sceneID: ID!
+    title: String!
+    sceneId: ID!
     config: JSON
     index: Int
 }
@@ -8340,9 +8341,9 @@ type UpdateNLSLayerPayload {
 # }
 
 extend type Mutation {
-    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload
-    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload
-    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload
+    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
+    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
+    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
 }`, BuiltIn: false},
 	{Name: "../../../gql/plugin.graphql", Input: `type Plugin {
   id: ID!
@@ -27663,11 +27664,14 @@ func (ec *executionContext) _Mutation_addNLSLayerSimple(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*gqlmodel.AddNLSLayerSimplePayload)
 	fc.Result = res
-	return ec.marshalOAddNLSLayerSimplePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddNLSLayerSimplePayload(ctx, field.Selections, res)
+	return ec.marshalNAddNLSLayerSimplePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddNLSLayerSimplePayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_addNLSLayerSimple(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -27719,11 +27723,14 @@ func (ec *executionContext) _Mutation_removeNLSLayer(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*gqlmodel.RemoveNLSLayerPayload)
 	fc.Result = res
-	return ec.marshalORemoveNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSLayerPayload(ctx, field.Selections, res)
+	return ec.marshalNRemoveNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSLayerPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_removeNLSLayer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -27775,11 +27782,14 @@ func (ec *executionContext) _Mutation_updateNLSLayer(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*gqlmodel.UpdateNLSLayerPayload)
 	fc.Result = res
-	return ec.marshalOUpdateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx, field.Selections, res)
+	return ec.marshalNUpdateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateNLSLayer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -53877,21 +53887,13 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"parentLayerId", "layerType", "sceneID", "config", "index"}
+	fieldsInOrder := [...]string{"layerType", "title", "sceneId", "config", "index"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "parentLayerId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentLayerId"))
-			it.ParentLayerID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "layerType":
 			var err error
 
@@ -53900,10 +53902,18 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 			if err != nil {
 				return it, err
 			}
-		case "sceneID":
+		case "title":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sceneId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
@@ -61850,18 +61860,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_addNLSLayerSimple(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "removeNLSLayer":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_removeNLSLayer(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "updateNLSLayer":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateNLSLayer(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "installPlugin":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -67777,6 +67796,20 @@ func (ec *executionContext) unmarshalNAddNLSLayerSimpleInput2githubᚗcomᚋreea
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNAddNLSLayerSimplePayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddNLSLayerSimplePayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.AddNLSLayerSimplePayload) graphql.Marshaler {
+	return ec._AddNLSLayerSimplePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAddNLSLayerSimplePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddNLSLayerSimplePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddNLSLayerSimplePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AddNLSLayerSimplePayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNAddPropertyItemInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddPropertyItemInput(ctx context.Context, v interface{}) (gqlmodel.AddPropertyItemInput, error) {
 	res, err := ec.unmarshalInputAddPropertyItemInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -68759,8 +68792,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 }
 
 func (ec *executionContext) unmarshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx context.Context, v interface{}) (gqlmodel.JSON, error) {
-	var res gqlmodel.JSON
-	err := res.UnmarshalGQL(v)
+	res, err := gqlmodel.UnmarshalJSON(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -68771,7 +68803,13 @@ func (ec *executionContext) marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 		}
 		return graphql.Null
 	}
-	return v
+	res := gqlmodel.MarshalJSON(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (language.Tag, error) {
@@ -70130,6 +70168,20 @@ func (ec *executionContext) unmarshalNRemoveNLSLayerInput2githubᚗcomᚋreearth
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNRemoveNLSLayerPayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.RemoveNLSLayerPayload) graphql.Marshaler {
+	return ec._RemoveNLSLayerPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRemoveNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveNLSLayerPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RemoveNLSLayerPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNRemovePropertyFieldInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemovePropertyFieldInput(ctx context.Context, v interface{}) (gqlmodel.RemovePropertyFieldInput, error) {
 	res, err := ec.unmarshalInputRemovePropertyFieldInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -70883,6 +70935,20 @@ func (ec *executionContext) unmarshalNUpdateNLSLayerInput2githubᚗcomᚋreearth
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNUpdateNLSLayerPayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.UpdateNLSLayerPayload) graphql.Marshaler {
+	return ec._UpdateNLSLayerPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateNLSLayerPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateNLSLayerPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNUpdateProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateProjectInput(ctx context.Context, v interface{}) (gqlmodel.UpdateProjectInput, error) {
 	res, err := ec.unmarshalInputUpdateProjectInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -71365,13 +71431,6 @@ func (ec *executionContext) marshalOAddMemberToTeamPayload2ᚖgithubᚗcomᚋree
 	return ec._AddMemberToTeamPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOAddNLSLayerSimplePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddNLSLayerSimplePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddNLSLayerSimplePayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AddNLSLayerSimplePayload(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOAddStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddStylePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddStylePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -71737,8 +71796,7 @@ func (ec *executionContext) unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋse
 	if v == nil {
 		return nil, nil
 	}
-	var res gqlmodel.JSON
-	err := res.UnmarshalGQL(v)
+	res, err := gqlmodel.UnmarshalJSON(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -71746,7 +71804,8 @@ func (ec *executionContext) marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 	if v == nil {
 		return graphql.Null
 	}
-	return v
+	res := gqlmodel.MarshalJSON(v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, v interface{}) (*language.Tag, error) {
@@ -72184,13 +72243,6 @@ func (ec *executionContext) marshalORemoveMemberFromTeamPayload2ᚖgithubᚗcom�
 	return ec._RemoveMemberFromTeamPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalORemoveNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveNLSLayerPayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._RemoveNLSLayerPayload(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalORemoveStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveStylePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveStylePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -72388,13 +72440,6 @@ func (ec *executionContext) marshalOUpdateMemberOfTeamPayload2ᚖgithubᚗcomᚋ
 		return graphql.Null
 	}
 	return ec._UpdateMemberOfTeamPayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOUpdateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateNLSLayerPayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._UpdateNLSLayerPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOUpdateStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateStylePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateStylePayload) graphql.Marshaler {
