@@ -20,6 +20,8 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
       {item?.schemaFields.map(sf => {
         const isList = item && "items" in item;
         const value = !isList ? item.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
+        const min = sf?.min;
+        const max = sf?.max;
 
         return sf.type === "string" ? (
           sf.ui === "color" ? (
@@ -56,6 +58,8 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             key={sf.id}
             name={sf.name}
             value={value as number}
+            min={min as number}
+            max={max as number}
             description={sf.description}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
