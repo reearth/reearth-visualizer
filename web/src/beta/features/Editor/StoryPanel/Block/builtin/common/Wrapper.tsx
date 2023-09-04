@@ -23,7 +23,6 @@ type Props = {
   title?: string;
   icon?: string;
   isSelected?: boolean;
-  isEmpty?: boolean;
   children?: ReactNode;
   propertyId?: string;
   propertyItems?: Item[];
