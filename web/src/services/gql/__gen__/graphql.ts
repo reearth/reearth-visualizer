@@ -109,8 +109,8 @@ export type AddNlsLayerSimpleInput = {
   config?: InputMaybe<Scalars['JSON']['input']>;
   index?: InputMaybe<Scalars['Int']['input']>;
   layerType: Scalars['String']['input'];
-  parentLayerId: Scalars['ID']['input'];
-  sceneID: Scalars['ID']['input'];
+  sceneId: Scalars['ID']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type AddNlsLayerSimplePayload = {
@@ -858,7 +858,7 @@ export type Mutation = {
   addLayerGroup?: Maybe<AddLayerGroupPayload>;
   addLayerItem?: Maybe<AddLayerItemPayload>;
   addMemberToTeam?: Maybe<AddMemberToTeamPayload>;
-  addNLSLayerSimple?: Maybe<AddNlsLayerSimplePayload>;
+  addNLSLayerSimple: AddNlsLayerSimplePayload;
   addPageLayer: StoryPagePayload;
   addPropertyItem?: Maybe<PropertyItemPayload>;
   addStyle?: Maybe<AddStylePayload>;
@@ -903,7 +903,7 @@ export type Mutation = {
   removeLayer?: Maybe<RemoveLayerPayload>;
   removeMemberFromTeam?: Maybe<RemoveMemberFromTeamPayload>;
   removeMyAuth?: Maybe<UpdateMePayload>;
-  removeNLSLayer?: Maybe<RemoveNlsLayerPayload>;
+  removeNLSLayer: RemoveNlsLayerPayload;
   removePageLayer: StoryPagePayload;
   removePropertyField?: Maybe<PropertyFieldPayload>;
   removePropertyItem?: Maybe<PropertyItemPayload>;
@@ -921,7 +921,7 @@ export type Mutation = {
   updateLayer?: Maybe<UpdateLayerPayload>;
   updateMe?: Maybe<UpdateMePayload>;
   updateMemberOfTeam?: Maybe<UpdateMemberOfTeamPayload>;
-  updateNLSLayer?: Maybe<UpdateNlsLayerPayload>;
+  updateNLSLayer: UpdateNlsLayerPayload;
   updateProject?: Maybe<ProjectPayload>;
   updatePropertyItems?: Maybe<PropertyItemPayload>;
   updatePropertyValue?: Maybe<PropertyFieldPayload>;
@@ -1353,6 +1353,7 @@ export type MutationUploadPluginArgs = {
 };
 
 export type NlsLayer = {
+  config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
   infobox?: Maybe<Infobox>;
   layerType: Scalars['String']['output'];
@@ -3044,6 +3045,15 @@ export type DeleteStoryMutationVariables = Exact<{
 
 export type DeleteStoryMutation = { __typename?: 'Mutation', deleteStory: { __typename?: 'DeleteStoryPayload', storyId: string } };
 
+export type PublishStoryMutationVariables = Exact<{
+  storyId: Scalars['ID']['input'];
+  alias?: InputMaybe<Scalars['String']['input']>;
+  status: PublishmentStatus;
+}>;
+
+
+export type PublishStoryMutation = { __typename?: 'Mutation', publishStory: { __typename?: 'StoryPayload', story: { __typename?: 'Story', id: string, alias: string, publishmentStatus: PublishmentStatus } } };
+
 export type CreateStoryPageMutationVariables = Exact<{
   input: CreateStoryPageInput;
 }>;
@@ -3241,6 +3251,7 @@ export const CreateSceneDocument = {"kind":"Document","definitions":[{"kind":"Op
 export const CreateStoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateStoryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"story"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<CreateStoryMutation, CreateStoryMutationVariables>;
 export const UpdateStoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateStoryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"story"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateStoryMutation, UpdateStoryMutationVariables>;
 export const DeleteStoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteStory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteStoryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteStory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"storyId"}}]}}]}}]} as unknown as DocumentNode<DeleteStoryMutation, DeleteStoryMutationVariables>;
+export const PublishStoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PublishStory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alias"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"status"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PublishmentStatus"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publishStory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"storyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storyId"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"alias"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alias"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"Variable","name":{"kind":"Name","value":"status"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"story"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"publishmentStatus"}}]}}]}}]}}]} as unknown as DocumentNode<PublishStoryMutation, PublishStoryMutationVariables>;
 export const CreateStoryPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStoryPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateStoryPageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStoryPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"story"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<CreateStoryPageMutation, CreateStoryPageMutationVariables>;
 export const UpdateStoryPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStoryPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateStoryPageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStoryPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"story"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateStoryPageMutation, UpdateStoryPageMutationVariables>;
 export const DeleteStoryPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteStoryPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteStoryPageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeStoryPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"story"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<DeleteStoryPageMutation, DeleteStoryPageMutationVariables>;
