@@ -98,7 +98,7 @@ const Block = styled.div<{ padding?: Spacing }>`
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-  cursor: "pointer";
+  cursor: pointer;
   color: black;
 `;
 
