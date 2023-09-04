@@ -47,7 +47,7 @@ header h1 {
 
 .editor-input{
   outline: none;
-  padding: 15px 10px;
+  padding: 8px;
 }
 
 .editor-input-editorable{
@@ -59,7 +59,7 @@ header h1 {
   position: relative;
   text-overflow: ellipsis;
   top: -38px;
-  left: 10px;
+  left: 8px;
   min-height: 200px;
   user-select: none;
   pointer-events: none;
