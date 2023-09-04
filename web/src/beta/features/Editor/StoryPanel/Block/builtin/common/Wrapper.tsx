@@ -92,13 +92,13 @@ const BlockWrapper: React.FC<Props> = ({
 
 export default BlockWrapper;
 
-const Block = styled.div<{ padding?: Spacing; editMode?: boolean }>`
+const Block = styled.div<{ padding?: Spacing }>`
   display: flex;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-  cursor: ${({ editMode }) => (editMode ? "default" : "pointer")};
+  cursor: "pointer";
   color: black;
 `;
 
