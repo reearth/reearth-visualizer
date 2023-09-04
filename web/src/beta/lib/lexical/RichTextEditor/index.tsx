@@ -6,7 +6,6 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { EditorState } from "lexical";
-import { debounce } from "lodash-es";
 import { useMemo, useCallback, useRef } from "react";
 
 import { useT } from "@reearth/services/i18n";
@@ -69,8 +68,6 @@ const RichTextEditor: React.FC<Props> = ({
     [editorStateJSONStringRef, onChange],
   );
 
-  const debouncedOnStateChange = useMemo(() => debounce(onStateChange, 1000), [onStateChange]);
-
   const editorRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -98,7 +95,7 @@ const RichTextEditor: React.FC<Props> = ({
           <LinkPlugin />
           <AutoLinkPlugin />
           <ListMaxIndentLevelPlugin maxDepth={7} />
-          <OnChangePlugin onChange={debouncedOnStateChange} />
+          <OnChangePlugin onChange={onStateChange} />
           <SwitchEditModePlugin editable={editMode} />
           <FloatingLinkEditorPlugin scrollableContainerId={scrollableContainerId} />
         </div>

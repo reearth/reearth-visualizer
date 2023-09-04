@@ -1,3 +1,4 @@
+import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
 
 import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
@@ -31,6 +32,11 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
   );
 
+  const debouncedHandleTextUpdate = useMemo(
+    () => debounce(handleTextUpdate, 1000),
+    [handleTextUpdate],
+  );
+
   return (
     <BlockWrapper
       title={block?.title}
@@ -44,7 +50,7 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
         <RichTextEditor
           editMode={editMode}
           text={text}
-          onChange={handleTextUpdate}
+          onChange={debouncedHandleTextUpdate}
           scrollableContainerId="story-page"
         />
       )}
