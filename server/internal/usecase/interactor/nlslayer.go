@@ -3,7 +3,6 @@ package interactor
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -65,13 +64,12 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	log.Println("input: ", inp)
-
 	layerSimple, err := nlslayerops.LayerSimple{
 		SceneID:   inp.SceneID,
 		Config:    inp.Config,
 		LayerType: inp.LayerType,
 		Index:     inp.Index,
+		Title:     inp.Title,
 	}.Initialize()
 	if err != nil {
 		return nil, err

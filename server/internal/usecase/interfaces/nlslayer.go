@@ -10,6 +10,7 @@ import (
 
 type AddNLSLayerSimpleInput struct {
 	ParentLayerID id.NLSLayerID
+	Title         string
 	SceneID       id.SceneID
 	Index         *int
 	LayerType     nlslayer.LayerType
