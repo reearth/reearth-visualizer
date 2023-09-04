@@ -26,6 +26,7 @@ type Container struct {
 	Layer        Layer
 	NLSLayer     NLSLayer
 	Plugin       Plugin
+	Policy       Policy
 	Project      Project
 	Property     Property
 	Published    Published
