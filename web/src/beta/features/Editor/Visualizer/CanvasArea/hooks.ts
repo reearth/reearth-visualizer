@@ -70,6 +70,8 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
 
   const layers = processLayers(scene);
 
+  console.log("layers: ", layers);
+
   // TODO: Use GQL value
   const rootLayerId = "";
 
