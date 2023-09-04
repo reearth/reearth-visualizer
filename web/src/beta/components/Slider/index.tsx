@@ -10,18 +10,21 @@ export type Props = {
   max: number;
 } & Omit<ComponentProps<typeof RCSlider>, "defaultValue">;
 
-// TODO: Show tooltip on hover and drag
+const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
+
 const Slider: React.FC<Props> = ({ ...props }) => (
-  <SliderWrapper>
-    <StyledSlider {...props} />
-  </SliderWrapper>
+  <SliderStyled disabled={props.disabled as boolean}>
+    <SliderWithTooltip {...props} />
+  </SliderStyled>
 );
 
-const SliderWrapper = styled.div`
-  border: 1px solid red;
-`;
+const SliderStyled = styled.div<{ disabled: boolean }>`
+  .rc-slider-disabled {
+    background-color: transparent;
+    opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+    cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
+  }
 
-const StyledSlider = styled(RCSlider)`
   .rc-slider-rail {
     height: 8px;
   }
@@ -44,12 +47,19 @@ const StyledSlider = styled(RCSlider)`
     box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
   }
 
-  .rc-slider-handle:focus {
-    box-shadow: none;
+  .rc-slider-tooltip-arrow {
+    background-color: transparent;
+    border-top-color: ${({ theme }) => theme.bg[2]};
+    bottom: 2px;
+    margin-left: -8px;
+    border-width: 9px 8px 0;
   }
-  background-color: transparent;
-  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
-  cursor: ${({ disabled }) => (disabled ? "not-allowd" : "inherit")};
+
+  .rc-slider-tooltip-inner {
+    background-color: ${({ theme }) => theme.bg[2]};
+    color: ${({ theme }) => theme.content.main};
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+  }
 `;
 
 export default Slider;
