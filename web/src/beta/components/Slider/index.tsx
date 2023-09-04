@@ -5,12 +5,12 @@ import { styled } from "@reearth/services/theme";
 
 import "rc-slider/assets/index.css";
 
+const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
+
 export type Props = {
   min: number;
   max: number;
-} & Omit<ComponentProps<typeof RCSlider>, "defaultValue">;
-
-const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
+} & Omit<ComponentProps<typeof SliderWithTooltip>, "defaultValue">;
 
 const Slider: React.FC<Props> = ({ ...props }) => (
   <SliderStyled disabled={props.disabled as boolean}>
