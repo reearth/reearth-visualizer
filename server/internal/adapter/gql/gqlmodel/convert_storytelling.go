@@ -125,3 +125,15 @@ func FromStoryPositionRef(v *Position) *storytelling.Position {
 	}
 	return nil
 }
+
+func FromStoryPublishmentStatus(v PublishmentStatus) storytelling.PublishmentStatus {
+	switch v {
+	case PublishmentStatusPublic:
+		return storytelling.PublishmentStatusPublic
+	case PublishmentStatusLimited:
+		return storytelling.PublishmentStatusLimited
+	case PublishmentStatusPrivate:
+		return storytelling.PublishmentStatusPrivate
+	}
+	return ""
+}

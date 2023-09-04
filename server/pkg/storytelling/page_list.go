@@ -1,5 +1,7 @@
 package storytelling
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type PageList struct {
 	pages []*Page
 }
@@ -80,4 +82,15 @@ func (l *PageList) IndexOf(id PageID) int {
 		}
 	}
 	return -1
+}
+
+func (l *PageList) Properties() id.PropertyIDList {
+	if l == nil || l.pages == nil {
+		return nil
+	}
+	ids := make(id.PropertyIDList, 0, len(l.pages))
+	for _, page := range l.pages {
+		ids = append(ids, page.Properties()...)
+	}
+	return ids
 }

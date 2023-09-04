@@ -3,6 +3,7 @@ import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import ColorField from "../ColorField";
 import SliderField from "../SliderField";
+import SpacingInput, { SpacingValues } from "../SpacingInput";
 import ToggleField from "../ToggleField";
 
 import useHooks from "./hooks";
@@ -44,6 +45,16 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
               onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
             />
           )
+        ) : sf.type === "spacing" ? (
+          <SpacingInput
+            key={sf.id}
+            name={sf.name}
+            value={(value as SpacingValues) ?? ""}
+            description={sf.description}
+            min={sf.min}
+            max={sf.max}
+            onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+          />
         ) : sf.type == "bool" ? (
           <ToggleField
             key={sf.id}

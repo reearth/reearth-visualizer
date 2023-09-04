@@ -113,11 +113,11 @@ type AddMemberToTeamPayload struct {
 }
 
 type AddNLSLayerSimpleInput struct {
-	ParentLayerID ID     `json:"parentLayerId"`
-	LayerType     string `json:"layerType"`
-	SceneID       ID     `json:"sceneID"`
-	Config        JSON   `json:"config"`
-	Index         *int   `json:"index"`
+	LayerType string `json:"layerType"`
+	Title     string `json:"title"`
+	SceneID   ID     `json:"sceneId"`
+	Config    JSON   `json:"config"`
+	Index     *int   `json:"index"`
 }
 
 type AddNLSLayerSimplePayload struct {

@@ -87,7 +87,21 @@ func (r *mutationResolver) DeleteStory(ctx context.Context, input gqlmodel.Delet
 }
 
 func (r *mutationResolver) PublishStory(ctx context.Context, input gqlmodel.PublishStoryInput) (*gqlmodel.StoryPayload, error) {
-	return nil, ErrNotImplemented
+	sID, err := gqlmodel.ToID[id.Story](input.StoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).StoryTelling.Publish(ctx, interfaces.PublishStoryInput{
+		ID:     sID,
+		Alias:  input.Alias,
+		Status: gqlmodel.FromStoryPublishmentStatus(input.Status),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.StoryPayload{Story: gqlmodel.ToStory(res)}, nil
 }
 
 func (r *mutationResolver) MoveStory(ctx context.Context, input gqlmodel.MoveStoryInput) (*gqlmodel.MoveStoryPayload, error) {
