@@ -10,10 +10,11 @@ type LayerSimple struct {
 	LayerType nlslayer.LayerType
 	Config    *nlslayer.Config
 	Index     *int
+	Title     string
 }
 
 func (i LayerSimple) Initialize() (*nlslayer.NLSLayerSimple, error) {
-	builder := nlslayer.NewNLSLayerSimple().NewID().Scene(i.SceneID).LayerType(i.LayerType)
+	builder := nlslayer.NewNLSLayerSimple().NewID().Scene(i.SceneID).LayerType(i.LayerType).Title(i.Title)
 
 	var err error
 	if i.Config != nil {
