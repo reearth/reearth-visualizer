@@ -11,8 +11,8 @@ import (
 func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "AddNLSLayerSimple",
-		Query: `mutation AddNLSLayerSimple($layerType: String!, $sceneId: ID!, $config: JSON, $index: Int) {
-            addNLSLayerSimple(input: { layerType: $layerType, sceneId: $sceneId, config: $config, index: $index}) {
+		Query: `mutation AddNLSLayerSimple($layerType: String!, $sceneId: ID!, $config: JSON, $index: Int, $title: String!) {
+            addNLSLayerSimple(input: { layerType: $layerType, sceneId: $sceneId, config: $config, index: $index, title: $title}) {
                 layers {
                     id
 					sceneId
@@ -24,6 +24,7 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpe
 		Variables: map[string]any{
 			"layerType": "simple",
 			"sceneId":   sId,
+			"title":     "someTitle",
 			"config": map[string]any{
 				"data": map[string]any{
 					"type":           "ExampleType",
