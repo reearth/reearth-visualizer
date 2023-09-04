@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, createContext } from "react";
 
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
@@ -10,15 +10,13 @@ import Template from "../../Template";
 
 import useHooks from "./hooks";
 
+export const BlockContext = createContext<{ editMode?: boolean } | undefined>(undefined);
+
 type Spacing = {
   top: number;
   bottom: number;
   left: number;
   right: number;
-};
-
-type RenderItemProps = {
-  editMode: boolean;
 };
 
 type Props = {
@@ -30,8 +28,7 @@ type Props = {
   propertyId?: string;
   propertyItems?: Item[];
   dndEnabled?: boolean;
-  withCustomEditor?: boolean; // disable the default editor panel
-  renderItem?: (props: RenderItemProps) => ReactNode;
+  settingsEnabled?: boolean;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
@@ -41,12 +38,11 @@ const BlockWrapper: React.FC<Props> = ({
   title,
   icon,
   isSelected,
-  isEmpty,
+  children,
   propertyId,
   propertyItems,
   dndEnabled = true,
-  withCustomEditor,
-  renderItem,
+  settingsEnabled = true,
   onClick,
   onClickAway,
   onRemove,
@@ -67,29 +63,31 @@ const BlockWrapper: React.FC<Props> = ({
   });
 
   return (
-    <SelectableArea
-      title={title}
-      icon={icon}
-      isSelected={isSelected}
-      propertyId={propertyId}
-      dndEnabled={dndEnabled}
-      showSettings={showSettings}
-      propertyItems={propertyItems}
-      editMode={editMode}
-      setEditMode={setEditMode}
-      onEditModeToggle={handleEditModeToggle}
-      onSettingsToggle={handleSettingsToggle}
-      onRemove={onRemove}
-      onClickAway={onClickAway}>
-      <Block padding={padding} onClick={handleBlockClick}>
-        {!isEmpty && renderItem ? renderItem({ editMode }) : <Template icon={icon} />}
-      </Block>
-      {editMode && propertyId && defaultSettings && !withCustomEditor && (
-        <EditorPanel onClick={stopClickPropagation}>
-          <FieldComponents propertyId={propertyId} item={defaultSettings} />
-        </EditorPanel>
-      )}
-    </SelectableArea>
+    <BlockContext.Provider value={{ editMode }}>
+      <SelectableArea
+        title={title}
+        icon={icon}
+        isSelected={isSelected}
+        propertyId={propertyId}
+        dndEnabled={dndEnabled}
+        showSettings={showSettings}
+        propertyItems={propertyItems}
+        editMode={editMode}
+        setEditMode={setEditMode}
+        onEditModeToggle={handleEditModeToggle}
+        onSettingsToggle={handleSettingsToggle}
+        onRemove={onRemove}
+        onClickAway={onClickAway}>
+        <Block padding={padding} onClick={handleBlockClick}>
+          {children ?? <Template icon={icon} />}
+        </Block>
+        {editMode && propertyId && defaultSettings && settingsEnabled && (
+          <EditorPanel onClick={stopClickPropagation}>
+            <FieldComponents propertyId={propertyId} item={defaultSettings} />
+          </EditorPanel>
+        )}
+      </SelectableArea>
+    </BlockContext.Provider>
   );
 };
 

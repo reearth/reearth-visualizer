@@ -1,13 +1,13 @@
-import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
 
-import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
+
+import TextBlockEditor from "./Editor";
 
 export type Props = BlockProps;
 
@@ -32,30 +32,17 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
   );
 
-  const debouncedHandleTextUpdate = useMemo(
-    () => debounce(handleTextUpdate, 1000),
-    [handleTextUpdate],
-  );
-
   return (
     <BlockWrapper
       title={block?.title}
       icon={block?.extensionId}
       isSelected={isSelected}
-      isEmpty={false}
       propertyId={block?.property?.id}
       propertyItems={block?.property?.items}
-      withCustomEditor
-      renderItem={({ editMode }) => (
-        <RichTextEditor
-          editMode={editMode}
-          text={text}
-          onChange={debouncedHandleTextUpdate}
-          scrollableContainerId="story-page"
-        />
-      )}
-      {...props}
-    />
+      settingsEnabled={false}
+      {...props}>
+      <TextBlockEditor text={text} onUpdate={handleTextUpdate} />
+    </BlockWrapper>
   );
 };
 
