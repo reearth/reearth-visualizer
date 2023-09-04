@@ -56,12 +56,12 @@ header h1 {
 
 .editor-placeholder{
   overflow: hidden;
-  position: absolute;
+  position: relative;
   text-overflow: ellipsis;
-  top: 15px;
+  top: -38px;
   left: 10px;
+  min-height: 200px;
   user-select: none;
-  display: inline-block;
   pointer-events: none;
 }
 
