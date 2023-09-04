@@ -40,7 +40,6 @@ type NLSLayerGroup implements NLSLayer {
 
 input AddNLSLayerSimpleInput {
     layerType: String!
-    title: String!
     sceneId: ID!
     config: JSON
     index: Int
@@ -76,7 +75,7 @@ type UpdateNLSLayerPayload {
 # }
 
 extend type Mutation {
-    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
-    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
-    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
+    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload
+    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload
+    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload
 }

@@ -114,7 +114,6 @@ type AddMemberToTeamPayload struct {
 
 type AddNLSLayerSimpleInput struct {
 	LayerType string `json:"layerType"`
-	Title     string `json:"title"`
 	SceneID   ID     `json:"sceneId"`
 	Config    JSON   `json:"config"`
 	Index     *int   `json:"index"`

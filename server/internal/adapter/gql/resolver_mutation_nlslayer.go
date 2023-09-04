@@ -17,7 +17,6 @@ func (r *mutationResolver) AddNLSLayerSimple(ctx context.Context, input gqlmodel
 
 	inp := interfaces.AddNLSLayerSimpleInput{
 		SceneID:   sId,
-		Title:     input.Title,
 		Index:     input.Index,
 		LayerType: gqlmodel.ToNLSLayerType(input.LayerType),
 		Config:    gqlmodel.ToNLSConfig(input.Config),
