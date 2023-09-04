@@ -27,7 +27,6 @@ type EditorStateJSONString = string;
 type Props = {
   editMode?: boolean;
   text?: EditorStateJSONString;
-  hidePlaceholder?: boolean; // when in published page we don't want to show placeholder
   scrollableContainerId?: string;
   onChange?: (text: EditorStateJSONString) => void;
 };
@@ -35,7 +34,6 @@ type Props = {
 const RichTextEditor: React.FC<Props> = ({
   editMode = true,
   text,
-  hidePlaceholder,
   scrollableContainerId,
   onChange,
 }) => {
@@ -89,11 +87,9 @@ const RichTextEditor: React.FC<Props> = ({
               />
             }
             placeholder={
-              !hidePlaceholder ? (
-                <StyledPlaceholder className="editor-placeholder">
-                  {t("Write your story :)")}
-                </StyledPlaceholder>
-              ) : null
+              <StyledPlaceholder className="editor-placeholder">
+                {t("Write your story :)")}
+              </StyledPlaceholder>
             }
             ErrorBoundary={LexicalErrorBoundary}
           />
