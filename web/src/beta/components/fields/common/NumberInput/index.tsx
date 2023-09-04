@@ -149,7 +149,6 @@ const InputWrapper = styled.div<{ inactive: boolean }>`
   gap: 12px;
   width: auto;
   min-width: min-content;
-  max-width: 64px;
   color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
   &:focus-within {
     border-color: ${({ theme }) => theme.select.main};
