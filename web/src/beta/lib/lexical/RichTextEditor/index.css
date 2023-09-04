@@ -1,4 +1,4 @@
-@import 'https://fonts.googleapis.com/css?family=Reenie+Beanie';
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap';
 
 header {
   max-width: 580px;
@@ -1304,7 +1304,6 @@ button.toolbar-item.active i {
   padding: 20px 10px;
   position: relative;
   border: 1px solid #e8e8e8;
-  font-family: 'Reenie Beanie';
   font-size: 24px;
   border-bottom-right-radius: 60px 5px;
   display: block;

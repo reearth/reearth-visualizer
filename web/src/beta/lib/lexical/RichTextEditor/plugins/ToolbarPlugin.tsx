@@ -73,6 +73,7 @@ const FONT_FAMILY_OPTIONS: [string, string][] = [
   ["Times New Roman", "Times New Roman"],
   ["Trebuchet MS", "Trebuchet MS"],
   ["Verdana", "Verdana"],
+  ["Noto Sans JP", "Noto Sans JP"],
 ];
 
 const FONT_SIZE_OPTIONS: [string, string][] = [
