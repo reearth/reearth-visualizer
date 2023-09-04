@@ -2,6 +2,7 @@ import TextInput from "@reearth/beta/components/fields/TextInput";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import ColorField from "../ColorField";
+import SliderField from "../SliderField";
 import ToggleField from "../ToggleField";
 
 import useHooks from "./hooks";
@@ -47,6 +48,14 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             key={sf.id}
             name={sf.name}
             checked={value as boolean}
+            description={sf.description}
+            onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+          />
+        ) : sf.type == "number" ? (
+          <SliderField
+            key={sf.id}
+            name={sf.name}
+            value={value as number}
             description={sf.description}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />

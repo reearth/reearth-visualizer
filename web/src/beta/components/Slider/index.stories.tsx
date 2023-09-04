@@ -2,7 +2,6 @@ import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
-import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
 import Slider, { Props } from ".";
@@ -23,15 +22,12 @@ export const Default: Story = (args: Props) => {
   return (
     <Wrapper>
       <div>
-        <Text size="footnote">Without frame</Text>
         <Slider {...args} onChange={handleChange} />
       </div>
       <div>
-        <Text size="footnote">Double Max</Text>
         <Slider {...args} max={2 * args.max} onChange={handleChange} />
       </div>
       <div>
-        <Text size="footnote">Disabled</Text>
         <Slider {...args} disabled={true} onChange={handleChange} />
       </div>
     </Wrapper>
@@ -43,6 +39,7 @@ Default.args = {
   min: 0,
   max: 100,
   step: 1,
+  disabled: false,
 };
 
 const Wrapper = styled.div`
