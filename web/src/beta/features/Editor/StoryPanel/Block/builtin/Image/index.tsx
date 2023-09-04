@@ -21,7 +21,7 @@ const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
       propertyId={block?.property?.id}
       propertyItems={block?.property?.items}
       {...props}>
-      <Image src={src} />
+      {src && <Image src={src} />}
     </BlockWrapper>
   );
 };
