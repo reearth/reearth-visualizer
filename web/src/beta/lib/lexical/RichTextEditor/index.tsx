@@ -87,9 +87,9 @@ const RichTextEditor: React.FC<Props> = ({
             }
             placeholder={
               <StyledPlaceholder className="editor-placeholder">
-                {t(
-                  editMode ? "Write your story :)" : "Double click to start to write your story :)",
-                )}
+                {editMode
+                  ? t("Write your story :)")
+                  : t("Double click to start to write your story :)")}
               </StyledPlaceholder>
             }
             ErrorBoundary={LexicalErrorBoundary}

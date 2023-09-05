@@ -1,6 +1,8 @@
 Color Picker: カラーピッカー
 Cancel: キャンセル
 Apply: Apply
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.
 Not found: ページが見つかりません
 Padding settings: ''
 Remove: 削除
@@ -134,6 +136,7 @@ ellipse: 円錐
 Open timeline: タイムラインを開く
 Drop here: ここにドロップ
 Write your story :): ''
+Double click to start to write your story :): ''
 Normal: ''
 Heading 1: ''
 Heading 2: ''
@@ -439,5 +442,3 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
-You have passed the maximum value.: You have passed the maximum value.
-You have passed the minimum value.: You have passed the minimum value.
