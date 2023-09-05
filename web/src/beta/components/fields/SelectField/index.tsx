@@ -7,8 +7,6 @@ import { styled } from "@reearth/services/theme";
 
 import Property from "..";
 
-// import useHooks from "./hooks";
-
 export type SelectValue<T> = {
   value: T;
   key: string;
