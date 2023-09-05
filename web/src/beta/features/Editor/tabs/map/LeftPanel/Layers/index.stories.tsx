@@ -16,6 +16,7 @@ function LeftPanelLayers() {
       layers={layers}
       onLayerDelete={(_id: string) => {}}
       onLayerSelect={(_id: string) => {}}
+      openDataSourceManager={() => {}}
     />
   );
 }
