@@ -2,21 +2,20 @@ import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
 import type { Block, ClusterProperty } from "@reearth/beta/features/Published/types";
-import { LayerSelectionReason } from "@reearth/beta/lib/core/Map/Layers";
+import { InternalWidget, WidgetAlignment } from "@reearth/beta/lib/core/Crust/Widgets/types";
 import {
-  InternalWidget,
-  WidgetAlignSystem,
-  WidgetAlignment,
   BuiltinWidgets,
   isBuiltinWidget,
-} from "@reearth/classic/core/Crust";
+} from "@reearth/beta/lib/core/Crust/Widgets/Widget/builtin/index";
+import { WidgetAlignSystem } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
 import {
   convertLegacyLayer,
-  type Layer,
-  type LegacyLayer,
   convertLegacyCluster,
-} from "@reearth/classic/core/mantle";
-import type { ComputedLayer } from "@reearth/classic/core/mantle/types";
+} from "@reearth/beta/lib/core/mantle/compat/forward";
+import { LegacyLayer } from "@reearth/beta/lib/core/mantle/compat/types";
+import type { ComputedLayer } from "@reearth/beta/lib/core/mantle/types";
+import { Layer } from "@reearth/beta/lib/core/mantle/types/";
+import { LayerSelectionReason } from "@reearth/beta/lib/core/Map/Layers";
 import { config } from "@reearth/services/config";
 import { useSelected } from "@reearth/services/state";
 
@@ -40,14 +39,21 @@ export default (alias?: string) => {
   const pluginProperty = useMemo(
     () =>
       Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
-        (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
+        (a, b) => ({
+          ...a,
+          [b]: processProperty(data?.plugins?.[b]?.property),
+        }),
         {},
       ),
     [data?.plugins],
   );
 
   const legacyClusters = useMemo<ClusterProperty[]>(
-    () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
+    () =>
+      data?.clusters?.map(a => ({
+        ...processProperty(a.property),
+        id: a.id,
+      })) ?? [],
     [data],
   );
   const clusters = convertLegacyCluster(legacyClusters);

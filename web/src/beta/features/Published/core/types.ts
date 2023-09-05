@@ -65,8 +65,8 @@ export type Widget = {
 };
 
 export type WidgetAlignSystem = {
-  inner?: WidgetZone | null;
-  outer?: WidgetZone | null;
+  outer?: WidgetZone;
+  inner?: WidgetZone;
 };
 
 export type WidgetZone = {

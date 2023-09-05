@@ -11,8 +11,6 @@ const PublishPage: React.FC<{
 }> = ({ alias }) => {
   const core = useCore("published", alias);
 
-  console.log(alias);
-
   return (
     <>
       {typeof core === "boolean" &&
