@@ -17,8 +17,6 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.items],
   );
 
-  // Text block is very special, it will not edit values with field components
-  // from the common editor panel, but manage it by itself directly.
   const { handlePropertyValueUpdate } = usePropertyValueUpdate();
 
   const handleTextUpdate = useCallback(

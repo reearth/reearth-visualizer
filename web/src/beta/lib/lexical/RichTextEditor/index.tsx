@@ -57,6 +57,8 @@ const RichTextEditor: React.FC<Props> = ({
     [text],
   );
 
+  const isEmpty = useMemo(() => isContentEmpty(text), [text]);
+
   const onStateChange = useCallback(
     (editorState: EditorState) => {
       const editorStateJSONString = JSON.stringify(editorState);
@@ -80,12 +82,14 @@ const RichTextEditor: React.FC<Props> = ({
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className={`editor-input ${editMode ? "editor-input-editable" : ""}`}
+                className={`editor-input ${isEmpty || editMode ? "editor-input-minheight" : ""}`}
               />
             }
             placeholder={
               <StyledPlaceholder className="editor-placeholder">
-                {t("Write your story :)")}
+                {t(
+                  editMode ? "Write your story :)" : "Double click to start to write your story :)",
+                )}
               </StyledPlaceholder>
             }
             ErrorBoundary={LexicalErrorBoundary}
@@ -116,5 +120,14 @@ const isEditorStateJSONString = (str?: string) => {
     return JSON.parse(str).root !== undefined;
   } catch (e) {
     return false;
+  }
+};
+
+const isContentEmpty = (str?: string) => {
+  if (!str) return true;
+  try {
+    return JSON.parse(str).root.children[0].children[0].text === "";
+  } catch (e) {
+    return true;
   }
 };

@@ -50,7 +50,7 @@ header h1 {
   padding: 8px;
 }
 
-.editor-input-editable{
+.editor-input-minheight{
   min-height: 200px;
 }
 
