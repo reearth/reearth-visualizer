@@ -8309,6 +8309,7 @@ input AddNLSLayerSimpleInput {
     sceneId: ID!
     config: JSON
     index: Int
+    visible: Boolean
 }
 
 input RemoveNLSLayerInput {
@@ -53887,7 +53888,7 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"layerType", "title", "sceneId", "config", "index"}
+	fieldsInOrder := [...]string{"layerType", "title", "sceneId", "config", "index", "visible"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -53931,6 +53932,14 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("index"))
 			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "visible":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visible"))
+			it.Visible, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
