@@ -20,8 +20,6 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
     if (value) setLocation(value);
   }, [value]);
 
-  console.log(location);
-
   const handleChange = useCallback((coordination: string, newValue: number | undefined) => {
     if (newValue === undefined) return;
 
