@@ -30,8 +30,8 @@ export default function ({ sceneId }: useLayerProps) {
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId, pollInterval: 500 });
 
   const selectedLayer = useMemo(() => {
-    return nlsLayers.length ? nlsLayers[0] : undefined;
-  }, [nlsLayers]);
+    return nlsLayers.find(l => l.id === selectedLayerId) || undefined;
+  }, [nlsLayers, selectedLayerId]);
 
   const handleLayerSelect = useCallback((layerId: string) => {
     setSelectedLayerId(layerId);
