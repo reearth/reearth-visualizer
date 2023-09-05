@@ -1,10 +1,10 @@
 import Property from "@reearth/beta/components/fields";
-import Slider, { Props as ToggleProps } from "@reearth/beta/components/Slider";
+import Slider, { Props as SliderProps } from "@reearth/beta/components/Slider";
 
 export type Props = {
   name?: string;
   description?: string;
-} & ToggleProps;
+} & SliderProps;
 
 const SliderField: React.FC<Props> = ({ name, description, ...args }: Props) => {
   return (
