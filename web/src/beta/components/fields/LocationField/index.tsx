@@ -14,7 +14,7 @@ type Props = {
 };
 
 const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
-  const [location, setLocation] = useState<LatLng>();
+  const [location, setLocation] = useState<LatLng>(value || { lat: 0, lng: 0 });
 
   useEffect(() => {
     if (value) setLocation(value);
@@ -26,7 +26,7 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
     if (newValue === undefined) return;
 
     setLocation(prevLocation => ({
-      ...prevLocation!,
+      ...prevLocation,
       [coordination === "Latitude" ? "lat" : "lng"]: newValue,
     }));
   }, []);
