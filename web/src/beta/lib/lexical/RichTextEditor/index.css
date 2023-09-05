@@ -58,7 +58,7 @@ header h1 {
   overflow: hidden;
   position: relative;
   text-overflow: ellipsis;
-  top: -38px;
+  top: -30px;
   left: 8px;
   min-height: 200px;
   user-select: none;
