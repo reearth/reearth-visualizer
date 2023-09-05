@@ -3,6 +3,7 @@ interface NLSLayer {
   id: ID!
   layerType: String!
   sceneId: ID!
+  config: JSON
   title: String!
   visible: Boolean!
   infobox: Infobox
@@ -38,11 +39,12 @@ type NLSLayerGroup implements NLSLayer {
 # InputType
 
 input AddNLSLayerSimpleInput {
-    parentLayerId: ID!
     layerType: String!
-    sceneID: ID!
+    title: String!
+    sceneId: ID!
     config: JSON
     index: Int
+    visible: Boolean
 }
 
 input RemoveNLSLayerInput {
@@ -75,7 +77,7 @@ type UpdateNLSLayerPayload {
 # }
 
 extend type Mutation {
-    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload
-    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload
-    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload
+    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
+    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
+    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
 }
