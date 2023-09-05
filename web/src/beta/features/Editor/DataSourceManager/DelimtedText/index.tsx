@@ -5,6 +5,7 @@ import Text from "@reearth/beta/components/Text";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import RadioButton from "@reearth/classic/components/atoms/RadioButton";
 
+import { DataProps } from "..";
 import {
   ColJustiftBetween,
   AssetWrapper,
@@ -13,9 +14,7 @@ import {
   SourceTypeWrapper,
   SubmitWrapper,
   RadioButtonLabel,
-} from "./utils";
-
-import { DataProps } from ".";
+} from "../utils";
 
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [sourceType, setSourceType] = React.useState("url"); // ["url", "local", "value"]

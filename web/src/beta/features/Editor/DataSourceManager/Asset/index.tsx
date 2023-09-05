@@ -7,6 +7,7 @@ import Select from "@reearth/classic/components/atoms/Select";
 import { Option } from "@reearth/classic/components/atoms/SelectOption";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
 
+import { DataProps } from "..";
 import {
   ColJustiftBetween,
   AssetWrapper,
@@ -16,9 +17,7 @@ import {
   RadioButtonLabel,
   SubmitWrapper,
   TextArea,
-} from "./utils";
-
-import { DataProps } from ".";
+} from "../utils";
 
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [sourceType, setSourceType] = React.useState("url"); // ["url", "local", "value"]

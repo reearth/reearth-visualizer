@@ -3,9 +3,8 @@ import React from "react";
 import Button from "@reearth/beta/components/Button";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
-import { ColJustiftBetween, AssetWrapper, InputGroup, Input, SubmitWrapper } from "./utils";
-
-import { DataProps } from ".";
+import { DataProps } from "..";
+import { ColJustiftBetween, AssetWrapper, InputGroup, Input, SubmitWrapper } from "../utils";
 
 const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [value, setValue] = React.useState("");
