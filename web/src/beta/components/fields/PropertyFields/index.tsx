@@ -21,7 +21,6 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
       {item?.schemaFields.map(sf => {
         const isList = item && "items" in item;
         const value = !isList ? item.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
-        const { min, max } = sf;
 
         return sf.type === "string" ? (
           sf.ui === "color" ? (
@@ -64,15 +63,19 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
         ) : sf.type == "number" ? (
-          <SliderField
-            key={sf.id}
-            name={sf.name}
-            value={value as number}
-            min={min as number}
-            max={max as number}
-            description={sf.description}
-            onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
-          />
+          sf.ui == "slider" ? (
+            <SliderField
+              key={sf.id}
+              name={sf.name}
+              value={value as number}
+              min={sf.min as number}
+              max={sf.max as number}
+              description={sf.description}
+              onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+            />
+          ) : (
+            <p key={sf.id}>{sf.name} number field</p>
+          )
         ) : (
           <p key={sf.id}>{sf.name} field</p>
         );
