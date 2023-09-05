@@ -53,9 +53,9 @@ const SelectField: React.FC<Props<string | number>> = ({
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
         <Popover.Trigger asChild>
           <InputWrapper disabled={disabled} onClick={handlePopOver}>
-            <Input selected={selected ? true : false} open={open}>
+            <Select selected={selected ? true : false} open={open}>
               {selected ? selected.value : t("Please choose an option")}
-            </Input>
+            </Select>
             <ArrowDownIcon icon="arrowDown" size={12} />
           </InputWrapper>
         </Popover.Trigger>
@@ -79,7 +79,7 @@ const InputWrapper = styled.div<{ disabled: boolean }>`
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
-const Input = styled.div<{ open: boolean; selected: boolean }>`
+const Select = styled.div<{ open: boolean; selected: boolean }>`
   display: flex;
   padding: 4px 8px;
   border-radius: 4px;
