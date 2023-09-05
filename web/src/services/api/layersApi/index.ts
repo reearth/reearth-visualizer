@@ -1,5 +1,5 @@
-import { useMutation } from "@apollo/client";
-import { useCallback } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { useCallback, useMemo } from "react";
 
 import { MutationReturn } from "@reearth/services/api/types";
 import {
@@ -16,13 +16,31 @@ import {
   UPDATE_NLSLAYER,
   REMOVE_NLSLAYER,
 } from "@reearth/services/gql/queries/layer";
+import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
+import { useNotification } from "@reearth/services/state";
 
-import { useNotification } from "../state";
+import { SceneQueryProps } from "../sceneApi";
+
+import { getLayers } from "./utils";
+
+export type LayerQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+
+  const useGetLayersQuery = useCallback(({ sceneId, lang, pollInterval }: LayerQueryProps) => {
+    const { data, ...rest } = useQuery(GET_SCENE, {
+      variables: { sceneId: sceneId ?? "", lang },
+      skip: !sceneId,
+      pollInterval,
+    });
+
+    const nlsLayers = useMemo(() => getLayers(data), [data]);
+
+    return { nlsLayers, ...rest };
+  }, []);
 
   const [addNLSLayerSimpleMutation] = useMutation<
     AddNlsLayerSimpleMutation,
@@ -78,6 +96,7 @@ export default () => {
   );
 
   return {
+    useGetLayersQuery,
     useAddNLSLayerSimple,
     useUpdateNLSLayer,
     useRemoveNLSLayer,

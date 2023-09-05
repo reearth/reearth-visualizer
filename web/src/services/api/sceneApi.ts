@@ -23,6 +23,7 @@ export type SceneExtension = {
 export type SceneQueryProps = {
   sceneId?: string;
   lang?: string;
+  pollInterval?: number;
 };
 
 export default () => {

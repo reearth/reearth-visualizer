@@ -5,12 +5,12 @@ import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
-import { NlsLayerCommonFragment } from "@reearth/services/gql";
+import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { showDataSourceManagerVar, showPopOverLayerButtonVar } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 type LayersProps = {
-  layers: NlsLayerCommonFragment[];
+  layers: NLSLayer[];
   onLayerDelete: (id: string) => void;
   onLayerSelect: (id: string) => void; // Todo
 };

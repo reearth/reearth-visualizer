@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { useLayersFetcher } from "@reearth/services/api";
-import { NlsLayerCommonFragment } from "@reearth/services/gql";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 type Props = {
   sceneId: string;
-  layers: NlsLayerCommonFragment[];
+  nlsLayers: NLSLayer[];
 };
 
 export type LayerAddProps = {
@@ -24,14 +24,14 @@ export type LayerUpdateProps = {
   visible?: boolean;
 };
 
-export default function ({ layers }: Props) {
+export default function ({ nlsLayers }: Props) {
   const t = useT();
   const { useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } = useLayersFetcher();
   const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>(undefined);
 
   const selectedLayer = useMemo(() => {
-    return layers.length ? layers[0] : undefined;
-  }, [layers]);
+    return nlsLayers.length ? nlsLayers[0] : undefined;
+  }, [nlsLayers]);
 
   const handleLayerSelect = useCallback((layerId: string) => {
     setSelectedLayerId(layerId);
@@ -40,16 +40,18 @@ export default function ({ layers }: Props) {
   const handleLayerDelete = useCallback(
     async (layerId: string) => {
       if (!selectedLayer) return;
-      const deletedPageIndex = layers.findIndex(l => l.id === layerId);
+      const deletedPageIndex = nlsLayers.findIndex(l => l.id === layerId);
 
       await useRemoveNLSLayer({
         layerId: selectedLayer.id,
       });
       if (layerId === selectedLayerId) {
-        setSelectedLayerId(layers[deletedPageIndex + 1]?.id ?? layers[deletedPageIndex - 1]?.id);
+        setSelectedLayerId(
+          nlsLayers[deletedPageIndex + 1]?.id ?? nlsLayers[deletedPageIndex - 1]?.id,
+        );
       }
     },
-    [layers, selectedLayer, selectedLayerId, useRemoveNLSLayer],
+    [nlsLayers, selectedLayer, selectedLayerId, useRemoveNLSLayer],
   );
 
   const handleLayerAdd = useCallback(

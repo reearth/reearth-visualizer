@@ -4,7 +4,7 @@ import { useMemo, useEffect, useCallback, useState } from "react";
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
-import { useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
+import { useLayersFetcher, useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -22,6 +22,8 @@ import { BlockType } from "./type";
 
 export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
+  const { useGetLayersQuery } = useLayersFetcher();
+  const { nlsLayers } = useGetLayersQuery({ sceneId, pollInterval: 500 });
   const { useSceneQuery } = useSceneFetcher();
   const { scene } = useSceneQuery({ sceneId });
 
@@ -68,7 +70,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     [selected],
   );
 
-  const layers = processLayers(scene);
+  const layers = processLayers(nlsLayers);
 
   // TODO: Use GQL value
   const rootLayerId = "";
@@ -183,8 +185,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   const useExperimentalSandbox = useMemo(() => {
     return !!sceneProperty?.experimental?.experimental_sandbox;
   }, [sceneProperty]);
-
-  console.log("final layers: ", layers);
 
   return {
     sceneId,

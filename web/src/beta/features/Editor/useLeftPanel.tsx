@@ -3,16 +3,13 @@ import { ReactNode, useMemo } from "react";
 import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
-import {
-  NlsLayerCommonFragment,
-  StoryFragmentFragment,
-  StoryPageFragmentFragment,
-} from "@reearth/services/gql";
+import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 type Props = {
   tab: Tab;
   sceneId: string;
-  layers: NlsLayerCommonFragment[];
+  nlsLayers: NLSLayer[];
 
   // for story tab
   selectedStory?: StoryFragmentFragment;
@@ -23,8 +20,8 @@ type Props = {
   onPageAdd: (isSwipeable: boolean) => void;
   onPageMove: (id: string, targetIndex: number) => void;
 
-  // for layers
-  selectedLayer?: NlsLayerCommonFragment;
+  // for nlsLayers
+  selectedLayer?: NLSLayer;
   onLayerDelete: (id: string) => void;
   onLayerSelect: (id: string) => void;
 };
@@ -32,7 +29,7 @@ type Props = {
 export default ({
   tab,
   sceneId,
-  layers,
+  nlsLayers,
   selectedStory,
   selectedPage,
   onPageSelect,
@@ -49,7 +46,7 @@ export default ({
         return (
           <MapSidePanel
             sceneId={sceneId}
-            layers={layers}
+            layers={nlsLayers}
             onLayerDelete={onLayerDelete}
             onLayerSelect={onLayerSelect}
           />
@@ -74,7 +71,7 @@ export default ({
   }, [
     tab,
     sceneId,
-    layers,
+    nlsLayers,
     onLayerDelete,
     onLayerSelect,
     selectedStory,

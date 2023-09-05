@@ -113,7 +113,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             )}
           </>
         )}
-        {sourceType == "local" && <>TODO</>}
+        {/* {sourceType == "local" && <>TODO</>} */}
         {sourceType == "value" && (
           <>
             <InputGroup

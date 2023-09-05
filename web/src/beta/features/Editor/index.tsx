@@ -9,7 +9,7 @@ import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { NlsLayerCommonFragment, StoryFragmentFragment } from "@reearth/services/gql";
+import { StoryFragmentFragment } from "@reearth/services/gql";
 import { showDataSourceManagerVar, showPopOverLayerButtonVar } from "@reearth/services/state";
 import { metrics, styled } from "@reearth/services/theme";
 
@@ -24,10 +24,9 @@ type Props = {
   projectId?: string;
   workspaceId?: string;
   stories: StoryFragmentFragment[];
-  layers: NlsLayerCommonFragment[];
 };
 
-const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories, layers }) => {
+const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
   const showDataSourceManager = useReactiveVar(showDataSourceManagerVar);
 
   const handleDataSourceManagerCloser = () => {
@@ -36,6 +35,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   };
 
   const {
+    nlsLayers,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -43,7 +43,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
-  } = useHooks({ tab });
+  } = useHooks({ sceneId, tab });
 
   const {
     selectedStory,
@@ -60,13 +60,13 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
 
   const { selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } = useLayers({
     sceneId,
-    layers,
+    nlsLayers,
   });
 
   const { leftPanel } = useLeftPanel({
     tab,
     sceneId,
-    layers,
+    nlsLayers,
     selectedStory,
     selectedPage,
     selectedLayer,

@@ -15,6 +15,7 @@ import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAl
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import {
   type Maybe,
   type WidgetZone as WidgetZoneType,
@@ -331,13 +332,8 @@ export type RawNLSLayer = NlsLayerCommonFragment & {
   children?: RawNLSLayer[] | null | undefined;
 };
 
-export function processLayers(
-  scene?: Partial<Scene>,
-  parent?: RawNLSLayer | null | undefined,
-): Layer[] {
-  const newLayers = scene?.newLayers ?? [];
-
-  return newLayers.map(nlsLayer => ({
+export function processLayers(newLayers?: NLSLayer[], parent?: RawNLSLayer | null | undefined) {
+  return newLayers?.map(nlsLayer => ({
     type: "simple",
     id: nlsLayer.id,
     title: nlsLayer.title,
