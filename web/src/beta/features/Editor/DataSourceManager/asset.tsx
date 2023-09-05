@@ -62,14 +62,14 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               />
               <span style={{ fontSize: "0.75rem" }}>From URL</span>
             </label>
-            <label style={{ display: "flex", alignItems: "center" }}>
+            {/* <label style={{ display: "flex", alignItems: "center" }}>
               <RadioButton
                 value="local"
                 checked={sourceType == "local"}
                 handleChange={c => c && setSourceType("local")}
               />
               <span style={{ fontSize: "0.75rem" }}>From Local</span>
-            </label>
+            </label> */}
             <label style={{ display: "flex", alignItems: "center" }}>
               <RadioButton
                 value="value"
