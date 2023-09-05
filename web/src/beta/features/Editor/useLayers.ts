@@ -15,6 +15,7 @@ export type LayerAddProps = {
   layerType: string;
   sceneId: string;
   title: string;
+  visible?: boolean;
 };
 
 export type LayerUpdateProps = {
@@ -56,6 +57,7 @@ export default function ({ layers }: Props) {
       await useAddNLSLayerSimple({
         sceneId: inp.sceneId,
         config: inp.config,
+        visible: inp.visible,
         layerType: inp.layerType,
         title: t(inp.title),
         index: inp.index,

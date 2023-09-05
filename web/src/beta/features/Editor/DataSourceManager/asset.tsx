@@ -23,6 +23,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       layerType: "simple",
       sceneId,
       title: generateRandomString(5),
+      visible: true,
       config: {
         data: {
           url: sourceType === "url" && value !== "" ? value : null,

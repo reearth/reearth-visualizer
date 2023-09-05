@@ -111,6 +111,7 @@ export type AddNlsLayerSimpleInput = {
   layerType: Scalars['String']['input'];
   sceneId: Scalars['ID']['input'];
   title: Scalars['String']['input'];
+  visible?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type AddNlsLayerSimplePayload = {
