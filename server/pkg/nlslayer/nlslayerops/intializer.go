@@ -11,6 +11,7 @@ type LayerSimple struct {
 	Config    *nlslayer.Config
 	Index     *int
 	Title     string
+	Visible   *bool
 }
 
 func (i LayerSimple) Initialize() (*nlslayer.NLSLayerSimple, error) {
@@ -19,6 +20,12 @@ func (i LayerSimple) Initialize() (*nlslayer.NLSLayerSimple, error) {
 	var err error
 	if i.Config != nil {
 		builder.Config(i.Config)
+	}
+
+	if i.Visible != nil {
+		builder.IsVisible(*i.Visible)
+	} else {
+		builder.IsVisible(true)
 	}
 
 	var layerSimple *nlslayer.NLSLayerSimple
