@@ -1,7 +1,7 @@
 import { useReactiveVar } from "@apollo/client";
 import React from "react";
 
-import Icon, { Icons } from "@reearth/beta/components/Icon";
+import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
@@ -16,22 +16,20 @@ type LayersProps = {
 };
 
 const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete }) => {
-  const [addMenuOpen, setAddMenuOpen] = React.useState(false);
+  const [isAddMenuOpen, setAddMenuOpen] = React.useState(false);
+  const shouldShowLayerButton = useReactiveVar(showPopOverLayerButtonVar);
 
-  const showPopOverLayerButton = useReactiveVar(showPopOverLayerButtonVar);
+  const toggleAddMenu = () => setAddMenuOpen(prev => !prev);
 
   return (
-    <StyledLayerContainer>
-      <Popover.Provider
-        open={addMenuOpen}
-        onOpenChange={() => setAddMenuOpen(s => !s)}
-        placement="bottom-end">
+    <LayerContainer>
+      <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
         <Popover.Trigger asChild>
-          <StyledAddLayerIcon onClick={() => setAddMenuOpen(true)}>
+          <AddLayerIcon onClick={toggleAddMenu}>
             <Icon icon="addLayer" />
-          </StyledAddLayerIcon>
+          </AddLayerIcon>
         </Popover.Trigger>
-        {showPopOverLayerButton && (
+        {shouldShowLayerButton && (
           <Popover.Content>
             <PopoverMenuContent
               size="md"
@@ -54,82 +52,77 @@ const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete }) => {
           </Popover.Content>
         )}
       </Popover.Provider>
-      {layers.map(l => (
-        <ListItem
-          key={l.id}
-          item={l.title}
-          menu={[
-            {
-              name: "Delete",
-              icon: "bin",
-              onClick: () => onLayerDelete(l.id),
-            },
-          ]}
+      {layers.map(layer => (
+        <LayerItem
+          key={layer.id}
+          layerTitle={layer.title}
+          onDelete={() => onLayerDelete(layer.id)}
         />
       ))}
-    </StyledLayerContainer>
+    </LayerContainer>
   );
 };
 
-const ListItem: React.FC<{
-  item: string;
-  menu?: { name: string; icon: Icons; onClick: () => void }[];
-}> = ({ item, menu }) => {
-  const [menuOpen, setMenuOpen] = React.useState(false);
+type LayerItemProps = {
+  layerTitle: string;
+  onDelete: () => void;
+};
+
+const LayerItem: React.FC<LayerItemProps> = ({ layerTitle, onDelete }) => {
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
+
+  const toggleMenu = () => setMenuOpen(prev => !prev);
 
   return (
-    <StyledListItemContainer>
+    <ListItemContainer>
       <div>
-        <Text size="body">{item}</Text>
+        <Text size="body">{layerTitle}</Text>
       </div>
       <div>
-        {menu && (
-          <Popover.Provider
-            open={menuOpen}
-            onOpenChange={() => setMenuOpen(s => !s)}
-            placement="left-start">
-            <Popover.Trigger asChild>
-              <StyledMenuIcon onClick={() => setMenuOpen(true)}>
-                <Icon icon="actionbutton" />
-              </StyledMenuIcon>
-            </Popover.Trigger>
-            <Popover.Content>
-              <PopoverMenuContent
-                size="md"
-                items={menu.map(m => ({
-                  name: m.name,
-                  icon: m.icon,
-                  onClick: m.onClick,
-                }))}
-              />
-            </Popover.Content>
-          </Popover.Provider>
-        )}
+        <Popover.Provider open={isMenuOpen} onOpenChange={toggleMenu} placement="left-start">
+          <Popover.Trigger asChild>
+            <MenuIcon onClick={toggleMenu}>
+              <Icon icon="actionbutton" />
+            </MenuIcon>
+          </Popover.Trigger>
+          <Popover.Content>
+            <PopoverMenuContent
+              size="md"
+              items={[
+                {
+                  name: "Delete",
+                  icon: "bin",
+                  onClick: onDelete,
+                },
+              ]}
+            />
+          </Popover.Content>
+        </Popover.Provider>
       </div>
-    </StyledListItemContainer>
+    </ListItemContainer>
   );
 };
 
-const StyledLayerContainer = styled.div`
+const LayerContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledAddLayerIcon = styled.div`
+const AddLayerIcon = styled.div`
   padding: 2px;
   margin-bottom: 2px;
   align-self: flex-end;
   cursor: pointer;
 `;
 
-const StyledListItemContainer = styled.div`
+const ListItemContainer = styled.div`
   padding: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-const StyledMenuIcon = styled.div`
+const MenuIcon = styled.div`
   cursor: pointer;
 `;
 
