@@ -1,6 +1,9 @@
 Color Picker: ''
 Cancel: Cancel
 Apply: Apply
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.
+Please choose an option: ''
 Not found: Not found
 Padding settings: Padding settings
 Remove: Remove
@@ -454,5 +457,3 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
-You have passed the maximum value.: You have passed the maximum value.
-You have passed the minimum value.: You have passed the minimum value.
