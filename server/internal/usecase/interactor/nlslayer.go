@@ -70,6 +70,7 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		LayerType: inp.LayerType,
 		Index:     inp.Index,
 		Title:     inp.Title,
+		Visible:   inp.Visible,
 	}.Initialize()
 	if err != nil {
 		return nil, err

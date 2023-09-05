@@ -118,6 +118,7 @@ type AddNLSLayerSimpleInput struct {
 	SceneID   ID     `json:"sceneId"`
 	Config    JSON   `json:"config"`
 	Index     *int   `json:"index"`
+	Visible   *bool  `json:"visible"`
 }
 
 type AddNLSLayerSimplePayload struct {
