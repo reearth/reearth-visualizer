@@ -50,17 +50,16 @@ header h1 {
   padding: 8px;
 }
 
-.editor-input-editorable{
+.editor-input-editable{
   min-height: 200px;
 }
 
 .editor-placeholder{
   overflow: hidden;
-  position: relative;
+  position: absolute;
   text-overflow: ellipsis;
-  top: -30px;
+  top: 8px;
   left: 8px;
-  min-height: 200px;
   user-select: none;
   pointer-events: none;
 }
