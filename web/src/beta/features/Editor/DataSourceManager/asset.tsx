@@ -6,9 +6,17 @@ import RadioButton from "@reearth/classic/components/atoms/RadioButton";
 import Select from "@reearth/classic/components/atoms/Select";
 import { Option } from "@reearth/classic/components/atoms/SelectOption";
 import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
-import { styled } from "@reearth/services/theme";
 
-import { ColJustiftBetween, AssetWrapper, InputGroup, Input } from "./utils";
+import {
+  ColJustiftBetween,
+  AssetWrapper,
+  InputGroup,
+  Input,
+  SourceTypeWrapper,
+  RadioButtonLabel,
+  SubmitWrapper,
+  TextArea,
+} from "./utils";
 
 import { DataProps } from ".";
 
@@ -53,32 +61,24 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         <InputGroup
           label="Source Type"
           description="Select the type of data source you want to add.">
-          <div style={{ display: "flex", gap: "24px" }}>
-            <label style={{ display: "flex", alignItems: "center" }}>
+          <SourceTypeWrapper>
+            <RadioButtonLabel>
               <RadioButton
                 value="url"
                 checked={sourceType == "url"}
                 handleChange={c => c && setSourceType("url")}
               />
-              <span style={{ fontSize: "0.75rem" }}>From URL</span>
-            </label>
-            {/* <label style={{ display: "flex", alignItems: "center" }}>
-              <RadioButton
-                value="local"
-                checked={sourceType == "local"}
-                handleChange={c => c && setSourceType("local")}
-              />
-              <span style={{ fontSize: "0.75rem" }}>From Local</span>
-            </label> */}
-            <label style={{ display: "flex", alignItems: "center" }}>
+              From URL
+            </RadioButtonLabel>
+            <RadioButtonLabel>
               <RadioButton
                 value="value"
                 checked={sourceType == "value"}
                 handleChange={c => c && setSourceType("value")}
               />
-              <span style={{ fontSize: "0.75rem" }}>From Value</span>
-            </label>
-          </div>
+              From Value
+            </RadioButtonLabel>
+          </SourceTypeWrapper>
         </InputGroup>
         {sourceType == "url" && (
           <>
@@ -113,7 +113,6 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             )}
           </>
         )}
-        {/* {sourceType == "local" && <>TODO</>} */}
         {sourceType == "value" && (
           <>
             <InputGroup
@@ -138,13 +137,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           </>
         )}
       </AssetWrapper>
-      <div
-        style={{
-          marginTop: "24px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-        }}>
+      <SubmitWrapper>
         <Button
           text="Add to Layer"
           buttonType="primary"
@@ -152,20 +145,9 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           onClick={handleSubmit}
           disabled={(sourceType === "url" || sourceType === "value") && !value}
         />
-      </div>
+      </SubmitWrapper>
     </ColJustiftBetween>
   );
 };
-
-const TextArea = styled.textarea`
-  flex: auto;
-  background: transparent;
-  border: 1px solid #777;
-  border-radius: 4px;
-  outline: none;
-  padding: 5px 10px;
-  color: ${props => props.theme.content.main};
-  overflow: hidden;
-`;
 
 export default Asset;

@@ -57,3 +57,35 @@ export const ColJustiftBetween = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `;
+
+export const SourceTypeWrapper = styled.div`
+  display: flex;
+  gap: 24px;
+`;
+
+export const RadioButtonLabel = styled.label`
+  display: flex;
+  align-items: center;
+
+  span {
+    font-size: 0.75rem;
+  }
+`;
+
+export const SubmitWrapper = styled.div`
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+export const TextArea = styled.textarea`
+  flex: auto;
+  background: transparent;
+  border: 1px solid #777;
+  border-radius: 4px;
+  outline: none;
+  padding: 5px 10px;
+  color: ${props => props.theme.content.main};
+  overflow: hidden;
+`;

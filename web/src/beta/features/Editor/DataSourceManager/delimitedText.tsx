@@ -5,7 +5,15 @@ import Text from "@reearth/beta/components/Text";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import RadioButton from "@reearth/classic/components/atoms/RadioButton";
 
-import { ColJustiftBetween, AssetWrapper, InputGroup, Input } from "./utils";
+import {
+  ColJustiftBetween,
+  AssetWrapper,
+  InputGroup,
+  Input,
+  SourceTypeWrapper,
+  SubmitWrapper,
+  RadioButtonLabel,
+} from "./utils";
 
 import { DataProps } from ".";
 
@@ -53,16 +61,16 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         <InputGroup
           label="Source Type"
           description="Select the type of data source you want to add.">
-          <div style={{ display: "flex", gap: "24px" }}>
-            <label style={{ display: "flex", alignItems: "center" }}>
+          <SourceTypeWrapper>
+            <RadioButtonLabel>
               <RadioButton
                 value="url"
                 checked={sourceType == "url"}
                 handleChange={c => c && setSourceType("url")}
               />
-              <span style={{ fontSize: "0.75rem" }}>From URL</span>
-            </label>
-          </div>
+              From URL
+            </RadioButtonLabel>
+          </SourceTypeWrapper>
         </InputGroup>
         <InputGroup label="Resource URL" description="URL of the data source you want to add.">
           <Input
@@ -90,13 +98,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
       </AssetWrapper>
-      <div
-        style={{
-          marginTop: "24px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-        }}>
+      <SubmitWrapper>
         <Button
           text="Add to Layer"
           buttonType="primary"
@@ -104,7 +106,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           onClick={handleSubmit}
           disabled={(sourceType === "url" || sourceType === "value") && !value}
         />
-      </div>
+      </SubmitWrapper>
     </ColJustiftBetween>
   );
 };

@@ -3,7 +3,7 @@ import React from "react";
 import Button from "@reearth/beta/components/Button";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
-import { ColJustiftBetween, AssetWrapper, InputGroup, Input } from "./utils";
+import { ColJustiftBetween, AssetWrapper, InputGroup, Input, SubmitWrapper } from "./utils";
 
 import { DataProps } from ".";
 
@@ -50,13 +50,7 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
       </AssetWrapper>
-      <div
-        style={{
-          marginTop: "24px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-        }}>
+      <SubmitWrapper>
         <Button
           text="Add to Layer"
           buttonType="primary"
@@ -64,7 +58,7 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           onClick={handleSubmit}
           disabled={!value}
         />
-      </div>
+      </SubmitWrapper>
     </ColJustiftBetween>
   );
 };
