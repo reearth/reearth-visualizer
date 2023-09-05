@@ -332,7 +332,10 @@ export type RawNLSLayer = NlsLayerCommonFragment & {
   children?: RawNLSLayer[] | null | undefined;
 };
 
-export function processLayers(newLayers?: NLSLayer[], parent?: RawNLSLayer | null | undefined) {
+export function processLayers(
+  newLayers?: NLSLayer[],
+  parent?: RawNLSLayer | null | undefined,
+): Layer[] | undefined {
   return newLayers?.map(nlsLayer => ({
     type: "simple",
     id: nlsLayer.id,

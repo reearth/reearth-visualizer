@@ -15,8 +15,7 @@ type LayersProps = {
   onLayerSelect: (id: string) => void; // Todo
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete, onLayerSelect }) => {
+const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete }) => {
   const [addMenuOpen, setAddMenuOpen] = React.useState(false);
 
   const showPopOverLayerButton = useReactiveVar(showPopOverLayerButtonVar);

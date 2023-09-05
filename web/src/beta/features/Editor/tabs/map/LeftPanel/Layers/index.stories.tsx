@@ -3,7 +3,7 @@ import { t } from "i18next";
 
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
-import { NlsLayerCommonFragment } from "@reearth/services/gql";
+import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 import Layers from ".";
 
@@ -20,7 +20,7 @@ function LeftPanel() {
     },
   ];
 
-  const layers: NlsLayerCommonFragment[] = [
+  const layers: NLSLayer[] = [
     { id: "layer1", title: "blah", visible: true, layerType: "simple", tags: [] },
     { id: "layer2", title: "blehbleh", visible: true, layerType: "simple", tags: [] },
     { id: "layer3", title: "blah", visible: true, layerType: "Hehehah", tags: [] },
