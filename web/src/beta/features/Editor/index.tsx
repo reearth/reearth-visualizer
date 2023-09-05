@@ -1,5 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
-
 import Resizable from "@reearth/beta/components/Resizable";
 import StoryPanel from "@reearth/beta/features/Editor/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
@@ -9,14 +7,11 @@ import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { NlsLayerCommonFragment, StoryFragmentFragment } from "@reearth/services/gql";
-import { showDataSourceManagerVar, showPopOverLayerButtonVar } from "@reearth/services/state";
+import { StoryFragmentFragment } from "@reearth/services/gql";
 import { metrics, styled } from "@reearth/services/theme";
 
-import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import { navbarHeight } from "./SecondaryNav";
-import useLayers from "./useLayers";
 
 type Props = {
   sceneId: string;
@@ -24,17 +19,9 @@ type Props = {
   projectId?: string;
   workspaceId?: string;
   stories: StoryFragmentFragment[];
-  layers: NlsLayerCommonFragment[];
 };
 
-const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories, layers }) => {
-  const showDataSourceManager = useReactiveVar(showDataSourceManagerVar);
-
-  const handleDataSourceManagerCloser = () => {
-    showDataSourceManagerVar(false);
-    showPopOverLayerButtonVar(true);
-  };
-
+const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
   const {
     selectedDevice,
     selectedProjectType,
@@ -58,25 +45,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     stories,
   });
 
-  const { selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } = useLayers({
-    sceneId,
-    layers,
-  });
-
   const { leftPanel } = useLeftPanel({
     tab,
     sceneId,
-    layers,
     selectedStory,
     selectedPage,
-    selectedLayer,
     onPageSelect: handlePageSelect,
     onPageDuplicate: handlePageDuplicate,
     onPageDelete: handlePageDelete,
     onPageAdd: handlePageAdd,
     onPageMove: handlePageMove,
-    onLayerDelete: handleLayerDelete,
-    onLayerSelect: handleLayerSelect,
   });
 
   const { rightPanel } = useRightPanel({ tab, sceneId, selectedPage });
@@ -139,13 +117,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
             </Resizable>
           )}
         </MainSection>
-        {showDataSourceManager && (
-          <DataSourceManager
-            sceneId={sceneId}
-            onClose={handleDataSourceManagerCloser}
-            onSubmit={handleLayerAdd}
-          />
-        )}
       </Wrapper>
     </DndProvider>
   );

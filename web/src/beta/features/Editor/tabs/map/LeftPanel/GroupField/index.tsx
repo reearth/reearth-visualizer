@@ -1,39 +1,24 @@
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
-import { NlsLayerCommonFragment, PropertySchemaGroup } from "@reearth/services/gql";
+import { PropertySchemaGroup } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import Layers from "../Layers";
-
 type GroupSectionFieldProps = {
   groups: PropertySchemaGroup[];
-  layers: NlsLayerCommonFragment[];
-  onLayerDelete: (id: string) => void;
-  onLayerSelect: (id: string) => void;
 };
 
-const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
-  groups,
-  layers,
-  onLayerDelete,
-  onLayerSelect,
-}) => {
+const GroupSectionField: React.FC<GroupSectionFieldProps> = ({ groups }) => {
   const t = useT();
 
   return (
-    <>
-      <SidePanelSectionField title={t("Scene")}>
-        {groups.map(({ schemaGroupId, title }) => (
-          <GroupSectionFieldText key={schemaGroupId} size="footnote">
-            {title}
-          </GroupSectionFieldText>
-        ))}
-      </SidePanelSectionField>
-      <SidePanelSectionField title={t("Layers")}>
-        <Layers layers={layers} onLayerDelete={onLayerDelete} onLayerSelect={onLayerSelect} />
-      </SidePanelSectionField>
-    </>
+    <SidePanelSectionField title={t("Scene")}>
+      {groups.map(({ schemaGroupId, title }) => (
+        <GroupSectionFieldText key={schemaGroupId} size="footnote">
+          {title}
+        </GroupSectionFieldText>
+      ))}
+    </SidePanelSectionField>
   );
 };
 

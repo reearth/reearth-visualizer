@@ -38,7 +38,6 @@ import Bin from "./Icons/bin.svg";
 import Install from "./Icons/install.svg";
 import UploadSimple from "./Icons/uploadSimple.svg";
 import Search from "./Icons/search.svg";
-import AddLayerIcon from "./Icons/addLayer.svg";
 
 // MSIC
 import CheckCircle from "./Icons/checkCircle.svg";
@@ -108,7 +107,6 @@ import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import Marketplace from "./Icons/marketplace.svg";
 
 export default {
-  addLayer: AddLayerIcon,
   file: File,
   dl: InfoTable,
   infobox: Infobox,

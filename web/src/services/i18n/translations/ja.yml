@@ -1,14 +1,11 @@
 Color Picker: カラーピッカー
 Cancel: キャンセル
 Apply: Apply
-You have passed the maximum value.: You have passed the maximum value.
-You have passed the minimum value.: You have passed the minimum value.
 Not found: ページが見つかりません
 Padding settings: ''
 Remove: 削除
 Untitled: 無名
 Scene: シーン
-Layers: レイヤー
 Outline: アウトライン
 Published: 一般公開
 Unpublished: 非公開
@@ -226,6 +223,7 @@ Create New Folder: 新規フォルダ作成
 Add Layer: ''
 Zoom To Layer: ''
 Delete the selected item.: 選択中の項目を削除
+Layers: レイヤー
 Clusters: クラスター
 Delete widget: ウィジェットを削除
 You are about to delete the selected widget. You will lose all data tied to this widget.: ウィジェットを削除しようとしています。ウィジェットに関連するデータも削除されます。
@@ -387,12 +385,6 @@ Successfully added member(s) to the workspace!: このワークスペースに�
 Failed to delete member from the workspace.: メンバーの削除に失敗しました。
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
-Failed to add layer.: ''
-Successfully added a new layer: ''
-Failed to update the layer.: ''
-Successfully updated a the layer!: ''
-Failed to remove the layer.: ''
-Successfully removed a the layer!: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
@@ -423,3 +415,5 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.

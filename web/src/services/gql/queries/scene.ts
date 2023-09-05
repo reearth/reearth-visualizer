@@ -57,9 +57,6 @@ export const GET_SCENE = gql(`
         stories {
           ...StoryFragment
         }
-        newLayers {
-          ...NLSLayerCommon
-        }
       }
     }
   }

@@ -1,14 +1,11 @@
 Color Picker: ''
 Cancel: Cancel
 Apply: Apply
-You have passed the maximum value.: You have passed the maximum value.
-You have passed the minimum value.: You have passed the minimum value.
 Not found: Not found
 Padding settings: Padding settings
 Remove: Remove
 Untitled: Untitled
 Scene: Scene
-Layers: Layers
 Outline: Outline
 Published: Published
 Unpublished: Unpublished
@@ -253,6 +250,7 @@ Create New Folder: Create New Folder
 Add Layer: Add Layer
 Zoom To Layer: Zoom To Layer
 Delete the selected item.: Delete the selected item.
+Layers: Layers
 Clusters: Clusters
 Delete widget: Delete widget
 You are about to delete the selected widget. You will lose all data tied to this widget.: >-
@@ -426,12 +424,6 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
-Failed to add layer.: ''
-Successfully added a new layer: ''
-Failed to update the layer.: ''
-Successfully updated a the layer!: ''
-Failed to remove the layer.: ''
-Successfully removed a the layer!: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
@@ -462,3 +454,5 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.

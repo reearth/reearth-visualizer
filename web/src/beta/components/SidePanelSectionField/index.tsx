@@ -28,7 +28,7 @@ const SidePanelSectionField: React.FC<{
 };
 
 const Field = styled.div`
-  background: ${({ theme }) => theme.bg[0]};
+  background: ${({ theme }) => theme.bg[1]};
   border-radius: 4px;
 `;
 

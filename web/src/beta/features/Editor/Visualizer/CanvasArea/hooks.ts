@@ -17,7 +17,7 @@ import {
   selectedWidgetAreaVar,
 } from "@reearth/services/state";
 
-import { convertWidgets, processLayers } from "./convert";
+import { convertWidgets } from "./convert";
 import { BlockType } from "./type";
 
 export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
@@ -68,10 +68,28 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     [selected],
   );
 
-  const layers = processLayers(scene);
-
   // TODO: Use GQL value
   const rootLayerId = "";
+
+  const layers = useMemo(() => {
+    const l = {
+      type: "simple",
+      id: "123",
+      data: {
+        type: "geojson",
+        value: {
+          // GeoJSON
+          type: "Feature",
+          geometry: {
+            coordinates: [-15.209829106984472, 20.323569554406248, 10000],
+            type: "Point",
+          },
+        },
+      },
+      marker: {},
+    } as Layer;
+    return [l];
+  }, []);
 
   const widgets = convertWidgets(scene);
   // TODO: Fix to use exact type through GQL typing
@@ -183,8 +201,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
   const useExperimentalSandbox = useMemo(() => {
     return !!sceneProperty?.experimental?.experimental_sandbox;
   }, [sceneProperty]);
-
-  console.log("final layers: ", layers);
 
   return {
     sceneId,

@@ -3,16 +3,11 @@ import { ReactNode, useMemo } from "react";
 import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
-import {
-  NlsLayerCommonFragment,
-  StoryFragmentFragment,
-  StoryPageFragmentFragment,
-} from "@reearth/services/gql";
+import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 type Props = {
   tab: Tab;
   sceneId: string;
-  layers: NlsLayerCommonFragment[];
 
   // for story tab
   selectedStory?: StoryFragmentFragment;
@@ -22,17 +17,11 @@ type Props = {
   onPageDelete: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
   onPageMove: (id: string, targetIndex: number) => void;
-
-  // for layers
-  selectedLayer?: NlsLayerCommonFragment;
-  onLayerDelete: (id: string) => void;
-  onLayerSelect: (id: string) => void;
 };
 
 export default ({
   tab,
   sceneId,
-  layers,
   selectedStory,
   selectedPage,
   onPageSelect,
@@ -40,20 +29,11 @@ export default ({
   onPageDelete,
   onPageAdd,
   onPageMove,
-  onLayerDelete,
-  onLayerSelect,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
-        return (
-          <MapSidePanel
-            sceneId={sceneId}
-            layers={layers}
-            onLayerDelete={onLayerDelete}
-            onLayerSelect={onLayerSelect}
-          />
-        );
+        return <MapSidePanel sceneId={sceneId} />;
       case "story":
         return (
           <StorySidePanel
@@ -72,18 +52,15 @@ export default ({
         return undefined;
     }
   }, [
+    onPageAdd,
+    onPageDelete,
+    onPageDuplicate,
+    onPageMove,
+    onPageSelect,
+    selectedPage,
+    selectedStory,
     tab,
     sceneId,
-    layers,
-    onLayerDelete,
-    onLayerSelect,
-    selectedStory,
-    selectedPage,
-    onPageSelect,
-    onPageDuplicate,
-    onPageDelete,
-    onPageAdd,
-    onPageMove,
   ]);
 
   return {
