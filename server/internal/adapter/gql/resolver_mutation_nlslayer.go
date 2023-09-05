@@ -9,23 +9,28 @@ import (
 )
 
 func (r *mutationResolver) AddNLSLayerSimple(ctx context.Context, input gqlmodel.AddNLSLayerSimpleInput) (*gqlmodel.AddNLSLayerSimplePayload, error) {
-	lid, err := gqlmodel.ToID[id.NLSLayer](input.ParentLayerID)
+
+	sId, err := gqlmodel.ToID[id.Scene](input.SceneID)
 	if err != nil {
 		return nil, err
 	}
 
-	layer, parent, err := usecases(ctx).NLSLayer.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
-		ParentLayerID: lid,
-		Index:         input.Index,
-		LayerType:     gqlmodel.ToNLSLayerType(input.LayerType),
-		Config:        gqlmodel.ToNLSConfig(input.Config),
-	}, getOperator(ctx))
+	inp := interfaces.AddNLSLayerSimpleInput{
+		SceneID:   sId,
+		Title:     input.Title,
+		Index:     input.Index,
+		LayerType: gqlmodel.ToNLSLayerType(input.LayerType),
+		Config:    gqlmodel.ToNLSConfig(input.Config),
+		Visible:   input.Visible,
+	}
+
+	layer, err := usecases(ctx).NLSLayer.AddLayerSimple(ctx, inp, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
 	return &gqlmodel.AddNLSLayerSimplePayload{
-		Layers: gqlmodel.ToNLSLayerSimple(layer, parent.IDRef()),
+		Layers: gqlmodel.ToNLSLayerSimple(layer),
 	}, nil
 }
 

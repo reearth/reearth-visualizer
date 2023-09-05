@@ -2,16 +2,13 @@ import { useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-export type ToggleSize = "sm" | "md";
-
 export type Props = {
   checked: boolean;
   onChange: (checked: boolean) => void;
-  size?: ToggleSize;
   disabled?: boolean;
 };
 
-const ToggleButton: React.FC<Props> = ({ checked, onChange, size = "md", disabled = false }) => {
+const Toggle: React.FC<Props> = ({ checked, onChange, disabled = false }) => {
   const handleClick = useCallback(
     () => !disabled && onChange(checked),
     [checked, onChange, disabled],
@@ -19,14 +16,14 @@ const ToggleButton: React.FC<Props> = ({ checked, onChange, size = "md", disable
 
   return (
     <Wrapper>
-      <Switch size={size} checked={checked} disabled={disabled} onClick={handleClick}>
-        <TopSlider size={size} checked={checked} />
+      <Switch checked={checked} disabled={disabled} onClick={handleClick}>
+        <TopSlider checked={checked} />
       </Switch>
     </Wrapper>
   );
 };
 
-export default ToggleButton;
+export default Toggle;
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,13 +32,12 @@ const Wrapper = styled.div`
 `;
 
 const Switch = styled.label<{
-  size: ToggleSize;
   checked: boolean;
   disabled: boolean;
 }>`
-  cursor: pointer;
-  width: ${({ size }) => (size === "sm" ? "28px" : "40px")};
-  height: ${({ size }) => (size === "sm" ? "14px" : "20px")};
+  cursor: ${({ disabled }) => (!disabled ? "pointer" : "not-allowed")};
+  width: 24px;
+  height: 14px;
   background: ${({ checked, theme }) => (checked ? theme.select.main : theme.secondary.main)};
   border: 1px solid ${({ checked, theme }) => (checked ? theme.select.main : theme.secondary.main)};
   border-radius: 12px;
@@ -50,13 +46,12 @@ const Switch = styled.label<{
 `;
 
 const TopSlider = styled.div<{
-  size: ToggleSize;
   checked: boolean;
 }>`
-  width: ${({ size }) => (size === "sm" ? "14px" : "20px")};
-  height: ${({ size }) => (size === "sm" ? "14px" : "20px")};
+  width: 14px;
+  height: 14px;
   background: ${({ theme }) => theme.content.withBackground};
   transition: 0.4s;
   border-radius: 50%;
-  transform: ${({ checked }) => checked && "translateX(100%)"};
+  transform: ${({ checked }) => checked && "translateX(10px)"};
 `;

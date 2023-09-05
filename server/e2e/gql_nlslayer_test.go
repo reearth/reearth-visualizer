@@ -1,156 +1,203 @@
 package e2e
 
-// import (
-// 	"net/http"
-// 	"testing"
+import (
+	"net/http"
+	"testing"
 
-// 	"github.com/gavv/httpexpect/v2"
-// 	"github.com/reearth/reearth/server/internal/app/config"
-// )
+	"github.com/gavv/httpexpect/v2"
+	"github.com/reearth/reearth/server/internal/app/config"
+)
 
-// func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpexpect.Value, string) {
-// 	requestBody := GraphQLRequest{
-// 		OperationName: "addNLSLayerSimple",
-// 		Query: `mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {
-// 			addNLSLayerSimple(input: $input) {
-// 				layers {
-// 					id
-// 					__typename
-// 				}
-// 				__typename
-// 			}
-// 		}`,
-// 		Variables: map[string]any{
-// 			"input": map[string]any{
-// 				"parentLayerId": "parent12345",
-// 				"layerType":     "SimpleType",
-// 				"sceneID":       sId,
-// 				"config": map[string]any{
-// 					"data": map[string]any{
-// 						"type":           "ExampleType",
-// 						"url":            "https://example.com/data",
-// 						"value":          "sampleValue",
-// 						"layers":         "sampleLayerData",
-// 						"jsonProperties": []string{"prop1", "prop2"},
-// 						"updateInterval": 10,
-// 						"parameters": map[string]any{
-// 							"sampleKey": "sampleValue",
-// 						},
-// 						"time": map[string]any{
-// 							"property":          "time",
-// 							"interval":          5,
-// 							"updateClockOnLoad": true,
-// 						},
-// 						"csv": map[string]any{
-// 							"idColumn":              "id",
-// 							"latColumn":             "latitude",
-// 							"lngColumn":             "longitude",
-// 							"heightColumn":          "height",
-// 							"noHeader":              false,
-// 							"disableTypeConversion": true,
-// 						},
-// 					},
-// 					"properties": "sampleProperties",
-// 					"defines": map[string]string{
-// 						"defineKey": "defineValue",
-// 					},
-// 					"events": "sampleEvents",
-// 				},
-// 				"index": 0,
-// 			},
-// 		},
-// 	}
+func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "AddNLSLayerSimple",
+		Query: `mutation AddNLSLayerSimple($layerType: String!, $sceneId: ID!, $config: JSON, $index: Int, $title: String!) {
+            addNLSLayerSimple(input: { layerType: $layerType, sceneId: $sceneId, config: $config, index: $index, title: $title}) {
+                layers {
+                    id
+					sceneId
+					layerType
+					config
+                }
+            }
+        }`,
+		Variables: map[string]any{
+			"layerType": "simple",
+			"sceneId":   sId,
+			"title":     "someTitle",
+			"config": map[string]any{
+				"data": map[string]any{
+					"type":           "ExampleType",
+					"url":            "https://example.com/data",
+					"value":          "sampleValue",
+					"layers":         "sampleLayerData",
+					"jsonProperties": []string{"prop1", "prop2"},
+					"updateInterval": 10,
+					"parameters": map[string]any{
+						"sampleKey": "sampleValue",
+					},
+					"time": map[string]any{
+						"property":          "time",
+						"interval":          5,
+						"updateClockOnLoad": true,
+					},
+					"csv": map[string]any{
+						"idColumn":              "id",
+						"latColumn":             "latitude",
+						"lngColumn":             "longitude",
+						"heightColumn":          "height",
+						"noHeader":              false,
+						"disableTypeConversion": true,
+					},
+				},
+				"properties": "sampleProperties",
+				"defines": map[string]string{
+					"defineKey": "defineValue",
+				},
+				"events": "sampleEvents",
+			},
+			"index": 0,
+		},
+	}
 
-// 	res := e.POST("/api/graphql").
-// 		WithHeader("Origin", "https://example.com").
-// 		WithHeader("X-Reearth-Debug-User", uID.String()).
-// 		WithHeader("Content-Type", "application/json").
-// 		WithJSON(requestBody).
-// 		Expect().
-// 		Status(http.StatusOK).
-// 		JSON()
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
 
-// 	layerId := res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
-// 	return requestBody, res, layerId
-// }
+	layerId := res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
+	return requestBody, res, layerId
+}
 
-// func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
-// 	requestBody := GraphQLRequest{
-// 		OperationName: "removeNLSLayer",
-// 		Query: `mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {
-// 			removeNLSLayer(input: $input) {
-// 				layerId
-// 			}
-// 		}`,
-// 		Variables: map[string]any{
-// 			"input": map[string]any{
-// 				"layerId": layerId,
-// 			},
-// 		},
-// 	}
+func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "RemoveNLSLayer",
+		Query: `mutation RemoveNLSLayer($layerId: ID!) {
+			removeNLSLayer(input: {layerId: $layerId}) {
+				layerId
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId": layerId,
+		},
+	}
 
-// 	res := e.POST("/api/graphql").
-// 		WithHeader("Origin", "https://example.com").
-// 		WithHeader("X-Reearth-Debug-User", uID.String()).
-// 		WithHeader("Content-Type", "application/json").
-// 		WithJSON(requestBody).
-// 		Expect().
-// 		Status(http.StatusOK).
-// 		JSON()
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
 
-// 	return requestBody, res
-// }
+	return requestBody, res
+}
 
-// func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
-// 	requestBody := GraphQLRequest{
-// 		OperationName: "updateNLSLayer",
-// 		Query: `mutation UpdateNLSLayer($input: UpdateNLSLayerInput!) {
-// 			updateNLSLayer(input: $input) {
-// 				layer {
-// 					id
-// 					__typename
-// 				}
-// 				__typename
-// 			}
-// 		}`,
-// 		Variables: map[string]any{
-// 			"input": map[string]any{
-// 				"layerId": layerId,
-// 				"name":    "Updated Layer",
-// 				"visible": true,
-// 			},
-// 		},
-// 	}
+func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "UpdateNLSLayer",
+		Query: `mutation UpdateNLSLayer($layerId: ID!, $name: String, $visible: Boolean) {
+			updateNLSLayer(input: {layerId: $layerId, name: $name, visible: $visible}) {
+				layer {
+					id
+					__typename
+				}
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId": layerId,
+			"name":    "Updated Layer",
+			"visible": true,
+		},
+	}
 
-// 	res := e.POST("/api/graphql").
-// 		WithHeader("Origin", "https://example.com").
-// 		WithHeader("X-Reearth-Debug-User", uID.String()).
-// 		WithHeader("Content-Type", "application/json").
-// 		WithJSON(requestBody).
-// 		Expect().
-// 		Status(http.StatusOK).
-// 		JSON()
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
 
-// 	return requestBody, res
-// }
+	return requestBody, res
+}
 
-// func TestNLSLayerCRUD(t *testing.T) {
-// 	e := StartServer(t, &config.Config{
-// 		Origins: []string{"https://example.com"},
-// 		AuthSrv: config.AuthSrvConfig{
-// 			Disabled: true,
-// 		},
-// 	}, true, baseSeeder)
+func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *httpexpect.Value) {
+	fetchSceneRequestBody := GraphQLRequest{
+		OperationName: "GetScene",
+		Query: `query GetScene($sceneId: ID!) {
+		  node(id: $sceneId, type: SCENE) {
+			id
+			... on Scene {
+			  rootLayerId
+			  newLayers {
+				id
+				layerType
+				config
+		 	  }
+			  __typename
+			}
+			__typename
+		  }
+		}`,
+		Variables: map[string]any{
+			"sceneId": sID,
+		},
+	}
 
-// 	pId := createProject(e)
-// 	_, _, sId := createScene(e, pId)
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(fetchSceneRequestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
 
-// 	// Add NLSLayer
-// 	_, _, layerId := addNLSLayerSimple(e, sId)
+	return fetchSceneRequestBody, res
+}
 
-// 	// Update NLSLayer
-// 	_, _ = updateNLSLayer(e, layerId)
+func TestNLSLayerCRUD(t *testing.T) {
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
 
-// 	// Remove NLSLayer
-// 	_, _ = removeNLSLayer(e, layerId)
-// }
+	pId := createProject(e)
+	_, _, sId := createScene(e, pId)
+
+	// fetch scene
+	_, res := fetchSceneForNewLayers(e, sId)
+
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(0)
+
+	// Add NLSLayer
+	_, _, layerId := addNLSLayerSimple(e, sId)
+
+	_, res2 := fetchSceneForNewLayers(e, sId)
+
+	res2.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(1)
+
+	// Update NLSLayer
+	_, _ = updateNLSLayer(e, layerId)
+
+	// Remove NLSLayer
+	_, _ = removeNLSLayer(e, layerId)
+}

@@ -28,6 +28,7 @@ Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your project into a webpage': その他のWebサイトでこのプロジェクトを埋め込む場合は、こちらのコードを使用してください
 more options: その他の設定
 Search engine indexing: 検索可能にする
+Page will be available as result on search engines: ''
 Your project will be unpublished.: プロジェクトを非公開にする
 This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
@@ -414,3 +415,5 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.
