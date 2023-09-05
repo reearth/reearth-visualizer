@@ -186,6 +186,8 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     return !!sceneProperty?.experimental?.experimental_sandbox;
   }, [sceneProperty]);
 
+  console.log("layers: ", layers);
+
   return {
     sceneId,
     rootLayerId,

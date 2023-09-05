@@ -5,7 +5,7 @@ import Modal from "@reearth/beta/components/Modal";
 import { LayerAddProps } from "../useLayers";
 
 import Asset from "./Asset";
-import DelimitedText from "./DelimtedText";
+import DelimitedText from "./DelimitedText";
 import ThreeDTiles from "./ThreeDTiles";
 
 export type DataProps = {

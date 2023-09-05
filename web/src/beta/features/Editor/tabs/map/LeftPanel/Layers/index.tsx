@@ -1,4 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
 import React from "react";
 
 import Icon from "@reearth/beta/components/Icon";
@@ -6,18 +5,22 @@ import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { showDataSourceManagerVar, showPopOverLayerButtonVar } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 type LayersProps = {
   layers: NLSLayer[];
   onLayerDelete: (id: string) => void;
   onLayerSelect: (id: string) => void; // Todo
+  openDataSourceManager: () => void;
 };
 
-const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete }) => {
+const Layers: React.FC<LayersProps> = ({
+  layers,
+  onLayerDelete,
+  onLayerSelect,
+  openDataSourceManager,
+}) => {
   const [isAddMenuOpen, setAddMenuOpen] = React.useState(false);
-  const shouldShowLayerButton = useReactiveVar(showPopOverLayerButtonVar);
 
   const toggleAddMenu = () => setAddMenuOpen(prev => !prev);
 
@@ -29,34 +32,33 @@ const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete }) => {
             <Icon icon="addLayer" />
           </AddLayerIcon>
         </Popover.Trigger>
-        {shouldShowLayerButton && (
-          <Popover.Content>
-            <PopoverMenuContent
-              size="md"
-              items={[
-                {
-                  name: "Add Layer from Resource",
-                  icon: "file",
-                  onClick: () => {
-                    showDataSourceManagerVar(true);
-                    showPopOverLayerButtonVar(false);
-                  },
+
+        <Popover.Content>
+          <PopoverMenuContent
+            size="md"
+            items={[
+              {
+                name: "Add Layer from Resource",
+                icon: "file",
+                onClick: () => {
+                  openDataSourceManager();
                 },
-                {
-                  name: "Add Sketch Layer",
-                  icon: "pencilSimple",
-                  onClick: () => {},
-                },
-              ]}
-            />
-          </Popover.Content>
-        )}
+              },
+              {
+                name: "Add Sketch Layer",
+                icon: "pencilSimple",
+                onClick: () => {},
+              },
+            ]}
+          />
+        </Popover.Content>
       </Popover.Provider>
       {layers.map(layer => (
         <LayerItem
           key={layer.id}
           layerTitle={layer.title}
           onDelete={() => onLayerDelete(layer.id)}
+          onSelect={() => onLayerSelect(layer.id)}
         />
       ))}
     </LayerContainer>
@@ -66,15 +68,16 @@ const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete }) => {
 type LayerItemProps = {
   layerTitle: string;
   onDelete: () => void;
+  onSelect: () => void;
 };
 
-const LayerItem: React.FC<LayerItemProps> = ({ layerTitle, onDelete }) => {
+const LayerItem: React.FC<LayerItemProps> = ({ layerTitle, onDelete, onSelect }) => {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
 
   const toggleMenu = () => setMenuOpen(prev => !prev);
 
   return (
-    <ListItemContainer>
+    <ListItemContainer onClick={onSelect}>
       <div>
         <Text size="body">{layerTitle}</Text>
       </div>

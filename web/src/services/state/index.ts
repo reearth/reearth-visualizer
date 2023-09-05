@@ -23,8 +23,4 @@ export const selectedWidgetAreaVar = makeVar<WidgetAreaType | undefined>(undefin
 
 export const selectedLayerVar = makeVar<SelectedLayer | undefined>(undefined);
 
-export const showDataSourceManagerVar = makeVar<boolean>(false);
-
-export const showPopOverLayerButtonVar = makeVar<boolean>(true);
-
 export * from "./jotai";

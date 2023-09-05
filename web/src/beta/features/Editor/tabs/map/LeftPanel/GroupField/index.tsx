@@ -12,6 +12,7 @@ type GroupSectionFieldProps = {
   layers: NLSLayer[];
   onLayerDelete: (id: string) => void;
   onLayerSelect: (id: string) => void;
+  openDataSourceManager: () => void;
 };
 
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
@@ -19,6 +20,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   layers,
   onLayerDelete,
   onLayerSelect,
+  openDataSourceManager,
 }) => {
   const t = useT();
 
@@ -32,7 +34,12 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
         ))}
       </SidePanelSectionField>
       <SidePanelSectionField title={t("Layers")}>
-        <Layers layers={layers} onLayerDelete={onLayerDelete} onLayerSelect={onLayerSelect} />
+        <Layers
+          layers={layers}
+          onLayerDelete={onLayerDelete}
+          onLayerSelect={onLayerSelect}
+          openDataSourceManager={openDataSourceManager}
+        />
       </SidePanelSectionField>
     </>
   );

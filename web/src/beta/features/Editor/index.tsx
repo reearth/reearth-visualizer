@@ -1,4 +1,4 @@
-import { useReactiveVar } from "@apollo/client";
+import React, { useState } from "react";
 
 import Resizable from "@reearth/beta/components/Resizable";
 import StoryPanel from "@reearth/beta/features/Editor/StoryPanel";
@@ -10,7 +10,6 @@ import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { StoryFragmentFragment } from "@reearth/services/gql";
-import { showDataSourceManagerVar, showPopOverLayerButtonVar } from "@reearth/services/state";
 import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
@@ -27,11 +26,14 @@ type Props = {
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
-  const showDataSourceManager = useReactiveVar(showDataSourceManagerVar);
+  const [showDataSourceManager, setShowDataSourceManager] = useState(false);
 
   const handleDataSourceManagerCloser = () => {
-    showDataSourceManagerVar(false);
-    showPopOverLayerButtonVar(true);
+    setShowDataSourceManager(false);
+  };
+
+  const handleDataSourceManagerOpener = () => {
+    setShowDataSourceManager(true);
   };
 
   const {
@@ -76,6 +78,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onPageMove: handlePageMove,
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelect,
+    openDataSourceManager: handleDataSourceManagerOpener,
   });
 
   const { rightPanel } = useRightPanel({ tab, sceneId, selectedPage });
