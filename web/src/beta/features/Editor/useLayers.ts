@@ -1,12 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { useLayersFetcher } from "@reearth/services/api";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-type Props = {
+type useLayerProps = {
   sceneId: string;
-  nlsLayers: NLSLayer[];
 };
 
 export type LayerAddProps = {
@@ -24,10 +22,12 @@ export type LayerUpdateProps = {
   visible?: boolean;
 };
 
-export default function ({ nlsLayers }: Props) {
+export default function ({ sceneId }: useLayerProps) {
   const t = useT();
-  const { useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } = useLayersFetcher();
+  const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
+    useLayersFetcher();
   const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>(undefined);
+  const { nlsLayers = [] } = useGetLayersQuery({ sceneId, pollInterval: 500 });
 
   const selectedLayer = useMemo(() => {
     return nlsLayers.length ? nlsLayers[0] : undefined;
@@ -81,6 +81,7 @@ export default function ({ nlsLayers }: Props) {
   );
 
   return {
+    nlsLayers,
     selectedLayer,
     handleLayerAdd,
     handleLayerDelete,

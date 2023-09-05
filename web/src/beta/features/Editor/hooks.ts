@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
-import { useLayersFetcher } from "@reearth/services/api";
 import { useWidgetAlignEditorActivated } from "@reearth/services/state";
 
 import { Tab } from "../Navbar";
@@ -9,7 +8,7 @@ import { Tab } from "../Navbar";
 import { type ProjectType } from "./tabs/publish/Nav";
 import { type Device } from "./tabs/widgets/Nav";
 
-export default ({ sceneId, tab }: { sceneId: string; tab: Tab }) => {
+export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const [selectedDevice, setDevice] = useState<Device>("desktop");
 
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
@@ -57,12 +56,7 @@ export default ({ sceneId, tab }: { sceneId: string; tab: Tab }) => {
     [setWidgetEditor],
   );
 
-  const { useGetLayersQuery } = useLayersFetcher();
-
-  const { nlsLayers = [] } = useGetLayersQuery({ sceneId, pollInterval: 500 });
-
   return {
-    nlsLayers,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,

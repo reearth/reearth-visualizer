@@ -35,7 +35,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   };
 
   const {
-    nlsLayers,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -58,10 +57,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     stories,
   });
 
-  const { selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } = useLayers({
-    sceneId,
-    nlsLayers,
-  });
+  const { nlsLayers, selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } =
+    useLayers({
+      sceneId,
+    });
 
   const { leftPanel } = useLeftPanel({
     tab,

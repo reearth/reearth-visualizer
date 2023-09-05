@@ -71,7 +71,6 @@ const Layers: React.FC<LayersProps> = ({ layers, onLayerDelete }) => {
   );
 };
 
-// utils
 const ListItem: React.FC<{
   item: string;
   menu?: { name: string; icon: Icons; onClick: () => void }[];
