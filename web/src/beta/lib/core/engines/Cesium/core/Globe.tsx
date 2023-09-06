@@ -12,6 +12,7 @@ import { Globe as CesiumGlobe } from "resium";
 import { objKeys } from "@reearth/beta/utils/util";
 
 import type { SceneProperty, TerrainProperty } from "../..";
+import { toColor } from "../common";
 
 export type Props = {
   property?: SceneProperty;
@@ -49,8 +50,14 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     cesiumIonAccessToken,
   ]);
 
+  const baseColor = useMemo(
+    () => toColor(property?.atmosphere?.globeBaseColor),
+    [property?.atmosphere?.globeBaseColor],
+  );
+
   return (
     <CesiumGlobe
+      baseColor={baseColor}
       enableLighting={!!property?.atmosphere?.enable_lighting}
       showGroundAtmosphere={property?.atmosphere?.ground_atmosphere ?? true}
       atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
