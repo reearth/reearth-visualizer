@@ -1,41 +1,26 @@
-import { useCallback } from "react";
+import { useMemo } from "react";
 
+import { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
+import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../Builtin/Wrapper";
+import BlockWrapper from "../common/Wrapper";
 
-export type Props = BlockProps<Property>;
-
-type Spacing = {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};
-
-export type Property = {
-  src?: string;
-  padding: Spacing;
-};
-
-const ImageBlock: React.FC<Props> = ({ block, isSelected, onClick, onRemove }) => {
-  const {
-    // src = "https://upload.wikimedia.org/wikipedia/en/a/a5/Pok%C3%A9mon_Charmander_art.png",
-    src,
-    padding = { top: 10, bottom: 20, left: 30, right: 10 },
-  } = block?.property ?? {};
-
-  const handleRemove = useCallback(() => onRemove?.(block?.id), [block?.id, onRemove]);
+const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
+  const src = useMemo(
+    () => getFieldValue(block?.property?.items ?? [], "src") as ValueTypes["string"],
+    [block?.property?.items],
+  );
 
   return (
     <BlockWrapper
       title={block?.title}
       icon={block?.extensionId}
-      padding={src ? padding : undefined}
       isSelected={isSelected}
-      onClick={onClick}
-      onRemove={handleRemove}>
+      propertyId={block?.property?.id}
+      propertyItems={block?.property?.items}
+      {...props}>
       {src && <Image src={src} />}
     </BlockWrapper>
   );

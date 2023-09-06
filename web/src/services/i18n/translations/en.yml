@@ -1,6 +1,14 @@
+Color Picker: ''
+Cancel: Cancel
+Apply: Apply
+You have passed the maximum value.: You have passed the maximum value.
+You have passed the minimum value.: You have passed the minimum value.
 Not found: Not found
 Padding settings: Padding settings
 Remove: Remove
+Untitled: Untitled
+Scene: Scene
+Outline: Outline
 Published: Published
 Unpublished: Unpublished
 Unpublish: Unpublish
@@ -26,13 +34,14 @@ Embed Code: Embed Code
 '* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
 more options: more options
 Search engine indexing: Search engine indexing
+Page will be available as result on search engines: ''
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
 New Page: New Page
-New Swipe: New Swipe
 Story: Story
 Page: Page
+Page Settings: Page Settings
 Align System: Align System
 Widget Manager: Widget Manager
 Inspector: Inspector
@@ -42,8 +51,6 @@ Narrow: Narrow
 Wide: Wide
 Create New Workspace: Create New Workspace
 Create: Create
-Cancel: Cancel
-Apply: Apply
 Workspace Name: Workspace Name
 Account Settings: Account Settings
 Workspaces: Workspaces
@@ -52,8 +59,9 @@ Manage Workspaces: Manage Workspaces
 New Workspace: New Workspace
 Log out: Log out
 Project settings: Project settings
-Datasets: Datasets
-Plugins: Plugins
+Public: Public
+Workspace assets: ''
+Plugin: ''
 Manage projects: Manage projects
 Documentation: Documentation
 Map: Map
@@ -63,6 +71,76 @@ Warning: Warning
 Notice: Notice
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
+Project Settings: ''
+Date: Date
+File size: File size
+Alphabetical: Alphabetical
+Upload file: Upload file
+Delete: Delete
+No assets match your search.: No assets match your search.
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
+  You haven't uploaded any assets yet. Click the upload button above and select
+  a compatible file from your computer.
+You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
+Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
+  Most project settings are hidden when the project is archived. Please
+  unarchive the project to view and edit these settings.
+Project Info: Project Info
+Name: Name
+Submit: ''
+Danger Zone: Danger Zone
+Archive this project: Archive this project
+Mark this project as archived and read-only: Mark this project as archived and read-only
+Archive project: Archive project
+Unarchive this project: Unarchive this project
+Unarchive this project to become editable again.: Unarchive this project to become editable again.
+Unarchive project: Unarchive project
+Delete this project: Delete this project
+Once you delete a project, there is no going back. Please be sure.: Once you delete a project, there is no going back. Please be sure.
+Delete project: Delete project
+I am sure I want to archive this project.: I am sure I want to archive this project.
+Archiving your project will put it into a state where you cannot edit it or it's settings.: >-
+  Archiving your project will put it into a state where you cannot edit it or
+  it's settings.
+Once archived, you can unarchive the repository at any time.: Once archived, you can unarchive the repository at any time.
+Please type your project name to continue.: Please type your project name to continue.
+I am sure I want to unarchive this project.: I am sure I want to unarchive this project.
+This will bring this repository back to a state it can be editted and worked on by you and your team.: >-
+  This will bring this repository back to a state it can be editted and worked
+  on by you and your team.
+I am sure I want to delete this project.: I am sure I want to delete this project.
+This action cannot be undone.: This action cannot be undone.
+This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: >-
+  This will permanently delete the project. If the project was published, this
+  also means websites and domains referencing the project will not be able to
+  access it anymore.
+Plugin Marketplace: Plugin Marketplace
+Public Installed: Public Installed
+Personal Installed: Personal Installed
+Uninstall: Uninstall
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: >-
+  You are uninstalling the selected plugin. The data used by this plugin may
+  also be deleted.
+Please be sure before uninstalling.: Please be sure before uninstalling.
+Installed: Installed
+Install: Install
+Zip file from PC: Zip file from PC
+Public GitHub repository: Public GitHub repository
+Publish your plugin in the Marketplace: Publish your plugin in the Marketplace
+Import GitHub repository: Import GitHub repository
+'Repository url:': 'Repository url:'
+Public Info: Public Info
+Title: Title
+Basic Authorization: Basic Authorization
+Username: Username
+Password: Password
+Site Setting: ''
+Site name: Site name
+You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
+  You are about to change the site name for your project. Only alphanumeric
+  characters and hyphens are allows.
+Story Panel: ''
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 aria-label-compass: compass
@@ -76,11 +154,36 @@ Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
 Drop here: Drop here
+Write your story :): Write your story :)
+Double click to start to write your story :): Double click to start to write your story :)
+Normal: Normal
+Heading 1: Heading 1
+Heading 2: Heading 2
+Heading 3: Heading 3
+Bullet List: Bullet List
+Numbered List: Numbered List
+Quote: Quote
+Formatting options for font family: Formatting options for font family
+Formatting options for font size: Formatting options for font size
+Center Align: Center Align
+Justify Align: Justify Align
+Left Align: Left Align
+Right Align: Right Align
+Outdent: Outdent
+Indent: Indent
+Bulleted List: Bulleted List
+Insert Code Block: Insert Code Block
+Insert Link: Insert Link
+Text Color: Text Color
+Background Color: Background Color
+Strikethrough: Strikethrough
+Subscript: Subscript
+Superscript: Superscript
+Clear Formatting: Clear Formatting
 not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
-Password: Password
 Forgot password?: Forgot password?
 Don't have an account?: Don't have an account?
 Sign up: Sign up
@@ -106,20 +209,8 @@ Enter a new password below to change your password.: Enter a new password below 
 New password: New password
 Reset password: Reset password
 Create your Account: Create your Account
-Username: Username
 Already have an account?: Already have an account?
 Log in: Log in
-Date: Date
-File size: File size
-Alphabetical: Alphabetical
-Upload file: Upload file
-Delete: Delete
-No assets match your search.: No assets match your search.
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
-  You haven't uploaded any assets yet. Click the upload button above and select
-  a compatible file from your computer.
-You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
-Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
 Assets Library: Assets Library
 Use URL: Use URL
 Add video URL: Add video URL
@@ -137,6 +228,8 @@ Create New Project: Create New Project
 Project Name: Project Name
 Description: Description
 Select thumbnail image: Select thumbnail image
+Datasets: Datasets
+Plugins: Plugins
 Choose Project Type: Choose Project Type
 classic: classic
 Create project with classic UI: Create project with classic UI
@@ -144,7 +237,6 @@ Beta: Beta
 Create project with the latest features and UI system (projects might break without prior notice): >-
   Create project with the latest features and UI system (projects might break
   without prior notice)
-Plugin Marketplace: Plugin Marketplace
 timeSince: Edited {{timeSince}}
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: >-
   You have no projects in your workspace. Click the button above in the Quick
@@ -186,7 +278,6 @@ Create New Folder: Create New Folder
 Add Layer: Add Layer
 Zoom To Layer: Zoom To Layer
 Delete the selected item.: Delete the selected item.
-Scene: Scene
 Layers: Layers
 Clusters: Clusters
 Delete widget: Delete widget
@@ -242,7 +333,6 @@ List: List
 Padding: ''
 Gap Spacing: ''
 Align Center: ''
-Background Color: ''
 Enable Editor Mode: Enable Editor Mode
 Close: Close
 Add a tag group: Add a tag group
@@ -262,69 +352,16 @@ New password (for confirmation): New password (for confirmation)
 Set your password now: Set your password now
 Profile: Profile
 Profile picture: Profile picture
-Name: Name
 Workspace List: Workspace List
 Assets: Assets
 Project List: Project List
-Public: Public
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
-  Most project settings are hidden when the project is archived. Please
-  unarchive the project to view and edit these settings.
-Basic Authorization: Basic Authorization
 Enable basic authorization: Enable basic authorization
 Change site name: Change site name
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
-  You are about to change the site name for your project. Only alphanumeric
-  characters and hyphens are allows.
-Danger Zone: Danger Zone
-Unarchive this project: Unarchive this project
-Archive this project: Archive this project
-Unarchive this project to become editable again.: Unarchive this project to become editable again.
-Mark this project as archived and read-only: Mark this project as archived and read-only
-Unarchive project: Unarchive project
-Archive project: Archive project
-Delete this project: Delete this project
-Once you delete a project, there is no going back. Please be sure.: Once you delete a project, there is no going back. Please be sure.
-Delete project: Delete project
-Archiving your project will put it into a state where you cannot edit it or it's settings.: >-
-  Archiving your project will put it into a state where you cannot edit it or
-  it's settings.
-Once archived, you can unarchive the repository at any time.: Once archived, you can unarchive the repository at any time.
-This will bring this repository back to a state it can be editted and worked on by you and your team.: >-
-  This will bring this repository back to a state it can be editted and worked
-  on by you and your team.
-This action cannot be undone.: This action cannot be undone.
-This will permanently delete the project. If the project was published, this also means websites and domains referencing the project will not be able to access it anymore.: >-
-  This will permanently delete the project. If the project was published, this
-  also means websites and domains referencing the project will not be able to
-  access it anymore.
-Please type your project name to continue.: Please type your project name to continue.
-I am sure I want to delete this project.: I am sure I want to delete this project.
-I am sure I want to archive this project.: I am sure I want to archive this project.
-I am sure I want to unarchive this project.: I am sure I want to unarchive this project.
 Delete this dataset: Delete this dataset
 Are you sure you want to delete it?: Are you sure you want to delete it?
-Uninstall: Uninstall
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: >-
-  You are uninstalling the selected plugin. The data used by this plugin may
-  also be deleted.
-Please be sure before uninstalling.: Please be sure before uninstalling.
-Installed: Installed
-Install: Install
-Public Installed: Public Installed
-Personal Installed: Personal Installed
-Zip file from PC: Zip file from PC
-Public GitHub repository: Public GitHub repository
-Publish your plugin in the Marketplace: Publish your plugin in the Marketplace
-Import GitHub repository: Import GitHub repository
-'Repository url:': 'Repository url:'
-Project Info: Project Info
 Thumbnail: Thumbnail
-Public Info: Public Info
 (These fields will be used for OGP as well as metadata for the public project): (These fields will be used for OGP as well as metadata for the public project)
-Title: Title
 Site settings: Site settings
-Site name: Site name
 Access your project, copy or edit the URL below.: Access your project, copy or edit the URL below.
 Once your project is published from the editor page the URL details will be shown here.: >-
   Once your project is published from the editor page the URL details will be
@@ -377,7 +414,6 @@ Successfully published your project!: Successfully published your project!
 Successfully published your project with search engine indexing!: Successfully published your project with search engine indexing!
 Successfully unpublished your project. Now nobody can access your project.: Successfully unpublished your project. Now nobody can access your project.
 Successfully copied to clipboard!: Successfully copied to clipboard!
-Outline: Outline
 Folder: Folder
 Layer: Layer
 Widget: Widget
@@ -415,7 +451,14 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
+Failed to upgrade plugin.: ''
+Successfully upgraded plugin!: ''
+Successfully uninstalled plugin.: ''
 Failed to publish project.: Failed to publish project.
+Failed to update project.: ''
+Successfully updated project!: ''
+Successfully archive project!: ''
+Successfully delete project!: ''
 Failed to update property.: Failed to update property.
 Failed to create block.: Failed to create block.
 Successfullly created a block!: Successfullly created a block!
@@ -424,7 +467,9 @@ Block was successfully deleted.: Block was successfully deleted.
 Failed to move block.: Failed to move block.
 Block was successfully moved.: Block was successfully moved.
 Failed to create story.: Failed to create story.
-Successfullly created a story!: Successfullly created a story!
+Successfully created a story!: ''
+Failed to update story.: ''
+Successfully updated a story!: ''
 Failed to create page.: Failed to create page.
 Successfullly created a page!: Successfullly created a page!
 Failed to delete page.: Failed to delete page.

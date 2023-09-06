@@ -10,41 +10,64 @@ export const pageElementId = "story-page";
 export default ({
   sceneId,
   selectedStory,
-  selectedPage,
+  currentPage,
   onPageSelect,
 }: {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
+  currentPage?: StoryPageFragmentFragment;
   onPageSelect: (id: string) => void;
 }) => {
-  const [selectedStoryBlockId, setSelectedStoryBlockId] = useState<string>();
+  const [showPageSettings, setShowPageSettings] = useState(false);
+  const [selectedPageId, setSelectedPageId] = useState<string>();
+  const [selectedBlockId, setSelectedBlockId] = useState<string>();
 
-  const handleStoryBlockSelect = useCallback((blockId: string) => {
-    setSelectedStoryBlockId(id => (id === blockId ? undefined : blockId));
-  }, []);
+  const handlePageSettingsToggle = useCallback(() => {
+    if (!selectedPageId) return;
+    setShowPageSettings(show => !show);
+  }, [selectedPageId]);
+
+  const handlePageSelect = useCallback(
+    (pageId?: string) => {
+      if (selectedBlockId) {
+        setSelectedBlockId(undefined);
+      }
+      setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
+    },
+    [selectedBlockId],
+  );
+
+  const handleBlockSelect = useCallback(
+    (blockId?: string) => {
+      if (selectedPageId) {
+        setSelectedPageId(undefined);
+      }
+      setSelectedBlockId(id => (!blockId || id === blockId ? undefined : blockId));
+    },
+    [selectedPageId],
+  );
 
   const { useInstallableStoryBlocksQuery } = useStorytellingAPI();
 
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
 
   useEffect(() => {
-    if (selectedPage) {
-      document.getElementById(selectedPage.id)?.scrollIntoView({ behavior: "smooth" });
+    if (currentPage) {
+      document.getElementById(currentPage.id)?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [selectedPage]);
+  }, [currentPage]);
 
   const pageInfo = useMemo(() => {
     const pages = selectedStory?.pages ?? [];
     if ((pages?.length ?? 0) < 2) return;
 
-    const currentIndex = pages.findIndex(p => p.id === selectedPage?.id);
+    const currentIndex = pages.findIndex(p => p.id === currentPage?.id);
     return {
       currentPage: currentIndex + 1,
       maxPage: pages.length,
       onPageChange: (page: number) => onPageSelect(pages[page - 1]?.id),
     };
-  }, [onPageSelect, selectedPage, selectedStory]);
+  }, [onPageSelect, currentPage, selectedStory]);
 
   const pageHeight = useMemo(() => {
     const element = document.getElementById(pageElementId);
@@ -54,8 +77,12 @@ export default ({
   return {
     pageInfo,
     pageHeight,
-    installableStoryBlocks,
-    selectedStoryBlockId,
-    handleStoryBlockSelect,
+    installableBlocks: installableStoryBlocks,
+    selectedPageId,
+    selectedBlockId,
+    showPageSettings,
+    handlePageSettingsToggle,
+    handlePageSelect,
+    handleBlockSelect,
   };
 };

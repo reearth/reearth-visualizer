@@ -1,6 +1,10 @@
 package interfaces
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+)
 
 type ListOperation string
 
@@ -20,13 +24,14 @@ type Container struct {
 	Asset        Asset
 	Dataset      Dataset
 	Layer        Layer
+	NLSLayer     NLSLayer
 	Plugin       Plugin
 	Project      Project
 	Property     Property
 	Published    Published
 	Scene        Scene
 	Tag          Tag
-	Workspace    Workspace
-	User         User
 	StoryTelling Storytelling
+	User         accountinterfaces.User
+	Workspace    accountinterfaces.Workspace
 }

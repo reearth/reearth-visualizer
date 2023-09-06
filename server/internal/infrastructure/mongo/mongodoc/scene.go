@@ -9,6 +9,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type SceneDocument struct {
@@ -22,6 +23,7 @@ type SceneDocument struct {
 	UpdateAt    time.Time
 	Property    string
 	Clusters    []SceneClusterDocument
+	Styles      []SceneStyleDocument
 }
 
 type SceneWidgetDocument struct {
@@ -44,9 +46,15 @@ type SceneClusterDocument struct {
 	Property string
 }
 
+type SceneStyleDocument struct {
+	ID    string
+	Name  string
+	Value map[string]any
+}
+
 type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]
 
-func NewSceneConsumer(workspaces []id.WorkspaceID) *SceneConsumer {
+func NewSceneConsumer(workspaces []accountdomain.WorkspaceID) *SceneConsumer {
 	return NewConsumer[*SceneDocument, *scene.Scene](func(s *scene.Scene) bool {
 		return workspaces == nil || slices.Contains(workspaces, s.Workspace())
 	})
@@ -81,10 +89,13 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 	widgets := scene.Widgets().Widgets()
 	plugins := scene.Plugins().Plugins()
 	clusters := scene.Clusters().Clusters()
+	styles := scene.Styles().Styles()
 
 	widgetsDoc := make([]SceneWidgetDocument, 0, len(widgets))
 	pluginsDoc := make([]ScenePluginDocument, 0, len(plugins))
 	clsuterDoc := make([]SceneClusterDocument, 0, len(clusters))
+	styleDoc := make([]SceneStyleDocument, 0, len(styles))
+
 	for _, w := range widgets {
 		widgetsDoc = append(widgetsDoc, SceneWidgetDocument{
 			ID:        w.ID().String(),
@@ -111,6 +122,14 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		})
 	}
 
+	for _, sl := range styles {
+		styleDoc = append(styleDoc, SceneStyleDocument{
+			ID:    sl.ID().String(),
+			Name:  sl.Name(),
+			Value: *sl.Value(),
+		})
+	}
+
 	id := scene.ID().String()
 	return &SceneDocument{
 		ID:          id,
@@ -123,6 +142,7 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
 		Clusters:    clsuterDoc,
+		Styles:      styleDoc,
 	}, id
 }
 
@@ -139,7 +159,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := id.WorkspaceIDFrom(d.Team)
+	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
 	if err != nil {
 		return nil, err
 	}
@@ -151,6 +171,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	ws := make([]*scene.Widget, 0, len(d.Widgets))
 	ps := make([]*scene.Plugin, 0, len(d.Plugins))
 	clusters := make([]*scene.Cluster, 0, len(d.Clusters))
+	styles := make([]*scene.Style, 0, len(d.Styles))
 
 	for _, w := range d.Widgets {
 		wid, err := id.WidgetIDFrom(w.ID)
@@ -205,12 +226,28 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 
 	cl := scene.NewClusterListFrom(clusters)
 
+	for _, c := range d.Styles {
+		cid, err := id.StyleIDFrom(c.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		style, err := scene.NewStyle(cid, c.Name, (*scene.StyleValue)(&c.Value))
+		if err != nil {
+			return nil, err
+		}
+		styles = append(styles, style)
+	}
+
+	sl := scene.NewStyleListFrom(styles)
+
 	return scene.New().
 		ID(sid).
 		Project(projectID).
 		Workspace(tid).
 		RootLayer(lid).
 		Clusters(cl).
+		Styles(sl).
 		Widgets(scene.NewWidgets(ws, d.AlignSystem.Model())).
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).

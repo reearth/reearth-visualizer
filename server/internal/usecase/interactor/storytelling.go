@@ -3,15 +3,21 @@ package interactor
 import (
 	"context"
 	"errors"
+	"io"
+	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
+	scene2 "github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -19,17 +25,35 @@ import (
 
 type Storytelling struct {
 	common
+	commonSceneLock
 	storytellingRepo repo.Storytelling
 	pluginRepo       repo.Plugin
 	propertyRepo     repo.Property
+	workspaceRepo    accountrepo.Workspace
+	policyRepo       repo.Policy
+	projectRepo      repo.Project
+	sceneRepo        repo.Scene
+	layerRepo        repo.Layer
+	datasetRepo      repo.Dataset
+	tagRepo          repo.Tag
+	file             gateway.File
 	transaction      usecasex.Transaction
 }
 
-func NewStorytelling(r *repo.Container) interfaces.Storytelling {
+func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
 	return &Storytelling{
+		commonSceneLock:  commonSceneLock{sceneLockRepo: r.SceneLock},
 		storytellingRepo: r.Storytelling,
 		pluginRepo:       r.Plugin,
 		propertyRepo:     r.Property,
+		workspaceRepo:    r.Workspace,
+		policyRepo:       r.Policy,
+		projectRepo:      r.Project,
+		sceneRepo:        r.Scene,
+		layerRepo:        r.Layer,
+		datasetRepo:      r.Dataset,
+		tagRepo:          r.Tag,
+		file:             gr.File,
 		transaction:      r.Transaction,
 	}
 }
@@ -78,6 +102,10 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 	}
 
 	// TODO: Handel ordering
+
+	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		return nil, err
+	}
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, err
@@ -138,12 +166,29 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetPanelPosition(*inp.PanelPosition)
 	}
 
+	oldAlias := story.Alias()
+	if inp.Alias != nil && *inp.Alias != oldAlias {
+		if err := story.UpdateAlias(*inp.Alias); err != nil {
+			return nil, err
+		}
+	}
+
 	// TODO: Handel ordering
 
 	err = i.storytellingRepo.Save(ctx, *story)
 	if err != nil {
 		return nil, err
 	}
+
+	if story.PublishmentStatus() != storytelling.PublishmentStatusPrivate && inp.Alias != nil && story.Alias() != oldAlias {
+		if err := i.file.MoveStory(ctx, oldAlias, story.Alias()); err != nil {
+			// ignore ErrNotFound
+			if !errors.Is(err, rerror.ErrNotFound) {
+				return nil, err
+			}
+		}
+	}
+
 	tx.Commit()
 	return story, nil
 }
@@ -176,6 +221,140 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 	}
 
 	return &inp.StoryID, nil
+}
+
+func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	story, err := i.storytellingRepo.FindByID(ctx, inp.ID)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(story.Scene(), op); err != nil {
+		return nil, err
+	}
+	if err := i.CheckSceneLock(ctx, story.Scene()); err != nil {
+		return nil, err
+	}
+
+	scene, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, scene.Workspace())
+	if err != nil {
+		return nil, err
+	}
+
+	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate {
+		// enforce policy
+		if policyID := op.Policy(ws.Policy()); policyID != nil {
+			p, err := i.policyRepo.FindByID(ctx, *policyID)
+			if err != nil {
+				return nil, err
+			}
+			s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+			if err != nil {
+				return nil, err
+			}
+			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	prevAlias := story.Alias()
+	if inp.Alias == nil && prevAlias == "" && inp.Status != storytelling.PublishmentStatusPrivate {
+		return nil, interfaces.ErrProjectAliasIsNotSet
+	}
+
+	var prevPublishedAlias string
+	if story.PublishmentStatus() != storytelling.PublishmentStatusPrivate {
+		prevPublishedAlias = prevAlias
+	}
+
+	newAlias := prevAlias
+	if inp.Alias != nil && *inp.Alias != prevAlias {
+		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(rerror.ErrNotFound, err) {
+			return nil, err
+		} else if publishedStory != nil && story.Id() != publishedStory.Id() {
+			return nil, interfaces.ErrProjectAliasAlreadyUsed
+		}
+
+		if err := story.UpdateAlias(*inp.Alias); err != nil {
+			return nil, err
+		}
+		newAlias = *inp.Alias
+	}
+
+	// Lock
+	if err := i.UpdateSceneLock(ctx, scene.ID(), scene2.LockModeFree, scene2.LockModePublishing); err != nil {
+		return nil, err
+	}
+
+	defer i.ReleaseSceneLock(ctx, scene.ID())
+
+	if inp.Status == storytelling.PublishmentStatusPrivate {
+		// unpublish
+		if err = i.file.RemoveStory(ctx, prevPublishedAlias); err != nil {
+			return story, err
+		}
+	} else {
+		// publish
+		r, w := io.Pipe()
+
+		// Build
+		scenes := []id.SceneID{scene.ID()}
+		go func() {
+			var err error
+
+			defer func() {
+				_ = w.CloseWithError(err)
+			}()
+
+			err = builder.New(
+				repo.LayerLoaderFrom(i.layerRepo),
+				repo.PropertyLoaderFrom(i.propertyRepo),
+				repo.DatasetGraphLoaderFrom(i.datasetRepo),
+				repo.TagLoaderFrom(i.tagRepo),
+				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
+			).ForScene(scene).WithStory(story).Build(ctx, w, time.Now())
+		}()
+
+		// Save
+		if err := i.file.UploadStory(ctx, r, newAlias); err != nil {
+			return nil, err
+		}
+
+		// If project has been published before and alias is changed,
+		// remove old published data.
+		if prevPublishedAlias != "" && newAlias != prevPublishedAlias {
+			if err := i.file.RemoveStory(ctx, prevPublishedAlias); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	story.UpdatePublishmentStatus(inp.Status)
+	story.SetPublishedAt(time.Now())
+
+	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return story, nil
 }
 
 func (i *Storytelling) Move(_ context.Context, _ interfaces.MoveStoryInput, _ *usecase.Operator) (*id.StoryID, int, error) {
@@ -236,6 +415,10 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	}
 
 	story.Pages().AddAt(page, inp.Index)
+
+	if err = i.propertyRepo.Save(ctx, prop); err != nil {
+		return nil, nil, err
+	}
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, nil, err

@@ -17,6 +17,8 @@ type Props = {
   personalWorkspace: boolean;
   workspaces?: Workspace[];
   modalShown: boolean;
+  sceneId?: string;
+  page: "editor" | "settings";
   onSignOut: () => void;
   onWorkspaceCreate?: (data: { name: string }) => Promise<void>;
   onWorkspaceChange?: (workspaceId: string) => void;
@@ -31,6 +33,8 @@ const LeftSection: React.FC<Props> = ({
   personalWorkspace,
   workspaces,
   modalShown,
+  sceneId,
+  page,
   onSignOut,
   onWorkspaceCreate,
   onWorkspaceChange,
@@ -41,6 +45,9 @@ const LeftSection: React.FC<Props> = ({
     <Wrapper>
       <StyledLink to={`/dashboard/${currentWorkspace?.id}`}>
         {!dashboard && <StyledIcon icon="dashboard" size={20} />}
+      </StyledLink>
+      <StyledLink to={`/scene/${sceneId}/map`}>
+        {page === "settings" && <StyledIcon icon="scene" size={20} />}
       </StyledLink>
       <Profile
         username={username}

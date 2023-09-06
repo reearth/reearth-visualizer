@@ -23,6 +23,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/shp"
 	"github.com/reearth/reearth/server/pkg/tag"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -41,8 +42,8 @@ type Layer struct {
 	datasetSchemaRepo  repo.DatasetSchema
 	sceneRepo          repo.Scene
 	sceneLockRepo      repo.SceneLock
-	policyRepo         repo.Policy
-	workspaceRepo      repo.Workspace
+	policyRepo         accountrepo.Policy
+	workspaceRepo      accountrepo.Workspace
 	transaction        usecasex.Transaction
 }
 
