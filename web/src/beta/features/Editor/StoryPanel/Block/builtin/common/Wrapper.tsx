@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, createContext } from "react";
 
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
@@ -9,6 +9,8 @@ import SelectableArea from "../../../SelectableArea";
 import Template from "../../Template";
 
 import useHooks from "./hooks";
+
+export const BlockContext = createContext<{ editMode?: boolean } | undefined>(undefined);
 
 type Spacing = {
   top: number;
@@ -25,6 +27,7 @@ type Props = {
   propertyId?: string;
   propertyItems?: Item[];
   dndEnabled?: boolean;
+  settingsEnabled?: boolean;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
@@ -38,6 +41,7 @@ const BlockWrapper: React.FC<Props> = ({
   propertyId,
   propertyItems,
   dndEnabled = true,
+  settingsEnabled = true,
   onClick,
   onClickAway,
   onRemove,
@@ -58,29 +62,31 @@ const BlockWrapper: React.FC<Props> = ({
   });
 
   return (
-    <SelectableArea
-      title={title}
-      icon={icon}
-      isSelected={isSelected}
-      propertyId={propertyId}
-      dndEnabled={dndEnabled}
-      showSettings={showSettings}
-      propertyItems={propertyItems}
-      editMode={editMode}
-      setEditMode={setEditMode}
-      onEditModeToggle={handleEditModeToggle}
-      onSettingsToggle={handleSettingsToggle}
-      onRemove={onRemove}
-      onClickAway={onClickAway}>
-      <Block padding={padding} onClick={handleBlockClick}>
-        {children ?? <Template icon={icon} />}
-      </Block>
-      {editMode && propertyId && defaultSettings && (
-        <EditorPanel onClick={stopClickPropagation}>
-          <FieldComponents propertyId={propertyId} item={defaultSettings} />
-        </EditorPanel>
-      )}
-    </SelectableArea>
+    <BlockContext.Provider value={{ editMode }}>
+      <SelectableArea
+        title={title}
+        icon={icon}
+        isSelected={isSelected}
+        propertyId={propertyId}
+        dndEnabled={dndEnabled}
+        showSettings={showSettings}
+        propertyItems={propertyItems}
+        editMode={editMode}
+        setEditMode={setEditMode}
+        onEditModeToggle={handleEditModeToggle}
+        onSettingsToggle={handleSettingsToggle}
+        onRemove={onRemove}
+        onClickAway={onClickAway}>
+        <Block padding={padding} onClick={handleBlockClick}>
+          {children ?? <Template icon={icon} />}
+        </Block>
+        {editMode && propertyId && defaultSettings && settingsEnabled && (
+          <EditorPanel onClick={stopClickPropagation}>
+            <FieldComponents propertyId={propertyId} item={defaultSettings} />
+          </EditorPanel>
+        )}
+      </SelectableArea>
+    </BlockContext.Provider>
   );
 };
 
@@ -99,11 +105,5 @@ const Block = styled.div<{ padding?: Spacing }>`
 const EditorPanel = styled.div`
   background: ${({ theme }) => theme.bg[1]};
   color: ${({ theme }) => theme.content.main};
-  height: 100px;
   padding: 12px;
-  z-index: 100;
-  position: absolute;
-  top: 100%;
-  left: -1px;
-  right: -1px;
 `;

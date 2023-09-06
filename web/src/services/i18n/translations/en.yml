@@ -155,6 +155,32 @@ Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
 Drop here: Drop here
+Write your story :): Write your story :)
+Double click to start to write your story :): Double click to start to write your story :)
+Normal: Normal
+Heading 1: Heading 1
+Heading 2: Heading 2
+Heading 3: Heading 3
+Bullet List: Bullet List
+Numbered List: Numbered List
+Quote: Quote
+Formatting options for font family: Formatting options for font family
+Formatting options for font size: Formatting options for font size
+Center Align: Center Align
+Justify Align: Justify Align
+Left Align: Left Align
+Right Align: Right Align
+Outdent: Outdent
+Indent: Indent
+Bulleted List: Bulleted List
+Insert Code Block: Insert Code Block
+Insert Link: Insert Link
+Text Color: Text Color
+Background Color: Background Color
+Strikethrough: Strikethrough
+Subscript: Subscript
+Superscript: Superscript
+Clear Formatting: Clear Formatting
 not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
@@ -308,7 +334,6 @@ List: List
 Padding: ''
 Gap Spacing: ''
 Align Center: ''
-Background Color: ''
 Enable Editor Mode: Enable Editor Mode
 Close: Close
 Add a tag group: Add a tag group

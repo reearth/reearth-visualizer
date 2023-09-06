@@ -24,10 +24,10 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      if (showSettings && isSelected) return;
+      if ((showSettings && isSelected) || editMode) return;
       onClick?.();
     },
-    [onClick, showSettings, isSelected],
+    [onClick, showSettings, isSelected, editMode],
   );
 
   const defaultSettings: Item | undefined = useMemo(
