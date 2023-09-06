@@ -1,18 +1,4 @@
-import { TFunction } from "i18next";
-
-type PublishProps = {
-  publishStatus?: string;
-  publishStoryStatus?: string;
-  isStoryTabSelected?: boolean;
-  t: TFunction;
-};
-
-export const getPublishStatus = ({
-  publishStatus,
-  publishStoryStatus,
-  isStoryTabSelected,
-  t,
-}: PublishProps) => {
+export const getPublishStatus = (publishStatus, publishStoryStatus, isStoryTabSelected, t) => {
   const isPublishStory = publishStoryStatus === "limited" || publishStoryStatus === "published";
   const isPublishProject = publishStatus === "limited" || publishStatus === "published";
 

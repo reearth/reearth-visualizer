@@ -25,32 +25,26 @@ type Props = {
   isVisible: boolean;
   className?: string;
   loading?: boolean;
-  publishStatus?: PublishStatus;
+  publishStoryStatus?: PublishStatus;
   storyId?: string;
-  projectAlias?: string;
-  validAlias?: boolean;
+  storyAlias?: string;
   publishing?: publishingType;
-  validatingAlias?: boolean;
   url?: string[];
-  onPublish: (alias: string | undefined, publishStatus: PublishStatus) => void | Promise<void>;
+  onPublish: (alias: string | undefined, publishStoryStatus: PublishStatus) => void | Promise<void>;
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
-  onAliasValidate?: (alias: string) => void;
 };
 
 const PublishStoryModal: React.FC<Props> = ({
   isVisible,
   loading,
   publishing,
-  publishStatus,
-  projectAlias,
-  validAlias,
-  validatingAlias,
+  publishStoryStatus,
+  storyAlias,
   url,
   onClose,
   onPublish,
   onCopyToClipBoard,
-  onAliasValidate,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -58,7 +52,6 @@ const PublishStoryModal: React.FC<Props> = ({
   const {
     statusChanged,
     alias,
-    validation,
     showOptions,
     searchIndex,
     handlePublish,
@@ -66,15 +59,7 @@ const PublishStoryModal: React.FC<Props> = ({
     handleCopyToClipBoard,
     handleSearchIndexChange,
     setOptions,
-  } = useHooks(
-    publishing,
-    publishStatus,
-    projectAlias,
-    onPublish,
-    onClose,
-    onAliasValidate,
-    onCopyToClipBoard,
-  );
+  } = useHooks(publishing, publishStoryStatus, storyAlias, onPublish, onClose, onCopyToClipBoard);
 
   const purl = useMemo(() => {
     return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");
@@ -86,11 +71,8 @@ const PublishStoryModal: React.FC<Props> = ({
   );
 
   const publishDisabled = useMemo(
-    () =>
-      loading ||
-      ((publishing === "publishing" || publishing === "updating") &&
-        (!alias || !!validation || validatingAlias || !validAlias)),
-    [alias, loading, publishing, validation, validAlias, validatingAlias],
+    () => loading || publishing === "publishing" || publishing === "updating",
+    [loading, publishing],
   );
 
   const modalTitleText = useMemo(() => {
@@ -112,6 +94,8 @@ const PublishStoryModal: React.FC<Props> = ({
       ? t("Update")
       : t("Continue");
   }, [t, statusChanged, publishing]);
+
+  console.log(publishing);
 
   const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "Close"), [statusChanged]);
 

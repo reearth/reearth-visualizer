@@ -22,7 +22,7 @@ import { toGqlStatus } from "../toGqlStatus";
 import useBlocks from "./blocks";
 import usePages from "./pages";
 
-export default function useStorytellingAPI() {
+export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
 
@@ -70,7 +70,7 @@ export default function useStorytellingAPI() {
     [updateStoryMutation, t, setNotification],
   );
 
-  const [publishStoryMutation] = useMutation(PUBLISH_STORY);
+  const [publishStoryMutation, { loading: publishStoryLoading }] = useMutation(PUBLISH_STORY);
 
   const usePublishStory = useCallback(
     async (s: PublishStatus, storyId?: string, alias?: string) => {
@@ -103,6 +103,7 @@ export default function useStorytellingAPI() {
   );
 
   return {
+    publishStoryLoading,
     useCreateStory,
     useUpdateStory,
     useCreateStoryPage,
@@ -115,4 +116,4 @@ export default function useStorytellingAPI() {
     useMoveStoryBlock,
     usePublishStory,
   };
-}
+};

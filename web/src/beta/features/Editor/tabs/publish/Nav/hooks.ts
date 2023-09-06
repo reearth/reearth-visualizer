@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-import { useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
+import { useProjectFetcher, useSceneFetcher, useStoryTellingFetcher } from "@reearth/services/api";
 
 import { publishingType } from "./PublishModal";
 import { type PublishStatus } from "./PublishModal/hooks";
@@ -15,8 +15,11 @@ export default ({ projectId, sceneId }: { projectId?: string; sceneId: string })
   } = useProjectFetcher();
   const { project } = useProjectQuery(projectId);
   const { useSceneQuery } = useSceneFetcher();
+  const { usePublishStory, publishStoryLoading } = useStoryTellingFetcher();
 
   const { scene } = useSceneQuery({ sceneId });
+  const storyId = scene?.stories && scene?.stories[0].id;
+
   const [publishing, setPublishing] = useState<publishingType>("unpublishing");
 
   const [dropdownOpen, setDropdown] = useState(false);
@@ -26,6 +29,7 @@ export default ({ projectId, sceneId }: { projectId?: string; sceneId: string })
 
   const [validAlias, setValidAlias] = useState(false);
   const alias = useMemo(() => project?.alias ?? generateAlias(), [project?.alias, generateAlias]);
+  const storyAlias = scene?.stories.length ? scene?.stories[0]?.alias : generateAlias();
 
   const [checkProjectAlias, { loading: validatingAlias, data: checkProjectAliasData }] =
     useProjectAliasCheckLazyQuery();
@@ -80,6 +84,13 @@ export default ({ projectId, sceneId }: { projectId?: string; sceneId: string })
     [projectId, usePublishProject],
   );
 
+  const handleStoryPublish = useCallback(
+    async (alias: string | undefined, publishStatus: PublishStatus) => {
+      await usePublishStory(publishStatus, storyId, alias);
+    },
+    [storyId, usePublishStory],
+  );
+
   const handleOpenProjectSettings = useCallback(() => {
     setDropdown(false);
   }, []);
@@ -99,9 +110,11 @@ export default ({ projectId, sceneId }: { projectId?: string; sceneId: string })
     publishStatus,
     publishStoryStatus,
     publishProjectLoading,
+    publishStoryLoading,
     dropdownOpen,
     modalOpen,
     alias,
+    storyAlias,
     validAlias,
     validatingAlias,
     handleModalOpen,
@@ -110,5 +123,6 @@ export default ({ projectId, sceneId }: { projectId?: string; sceneId: string })
     handleProjectPublish,
     handleProjectAliasCheck,
     handleOpenProjectSettings,
+    handleStoryPublish,
   };
 };

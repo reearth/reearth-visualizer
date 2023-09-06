@@ -35,15 +35,18 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     dropdownOpen,
     modalOpen,
     alias,
+    storyAlias,
     validAlias,
     validatingAlias,
     publishProjectLoading,
+    publishStoryLoading,
     handleModalOpen,
     handleModalClose,
     setDropdown,
     handleProjectPublish,
     handleProjectAliasCheck,
     handleOpenProjectSettings,
+    handleStoryPublish,
   } = useHooks({ projectId, sceneId });
 
   const isStoryTabSelected = selectedProjectType === "story";
@@ -108,16 +111,13 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
       {selectedProjectType === "story" ? (
         <PublishStoryModal
           isVisible={modalOpen}
-          loading={publishProjectLoading}
+          loading={publishStoryLoading}
           publishing={publishing}
-          publishStatus={publishStatus}
+          publishStoryStatus={publishStoryStatus}
           url={config()?.published?.split("{}")}
-          projectAlias={alias}
-          validAlias={validAlias}
-          validatingAlias={validatingAlias}
+          storyAlias={storyAlias}
           onClose={handleModalClose}
-          onPublish={handleProjectPublish}
-          onAliasValidate={handleProjectAliasCheck}
+          onPublish={handleStoryPublish}
         />
       ) : (
         <PublishModal
