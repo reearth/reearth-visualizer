@@ -64,6 +64,7 @@ export type Props = {
   onCapture: () => void;
   onJump?: (input: CameraValue) => void;
   onClean: () => void;
+  onChange: (value: CameraValue) => void;
 };
 
 // Component
@@ -75,6 +76,7 @@ const ColorField: React.FC<Props> = ({
   onCapture,
   onJump,
   onClean,
+  onChange,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -84,23 +86,24 @@ const ColorField: React.FC<Props> = ({
   const handleJump = useCallback(() => {
     if (!value) return;
     onJump?.(value);
-  }, [value, onJump]);
-
-  //Actions
-  const handleClean = useCallback(() => {
-    onClean();
-    setOpen(false);
-  }, [onClean]);
+  }, [onJump, value]);
 
   const handleClose = useCallback(() => setOpen(false), []);
 
-  const handleSave = useCallback(() => {
-    onCapture();
-    setOpen(false);
-  }, [onCapture]);
-
   //events
   const handleClick = useCallback(() => setOpen(!open), [open]);
+
+  const updateField = useCallback(
+    (key: keyof CameraValue, update?: number) => {
+      if (update == undefined) return;
+      const updated = {
+        ...value,
+        [key]: update,
+      };
+      onChange(updated as CameraValue);
+    },
+    [onChange, value],
+  );
 
   // Notes:
   // from classic component, do we need to implement all the hooks as well?
@@ -139,7 +142,13 @@ const ColorField: React.FC<Props> = ({
               <Text size="footnote">{t("Position")}</Text>
               <ValuesWrapper>
                 {CAMERA_XYZ.map(({ name, field }) => (
-                  <NumberInput key={field} placeholder="-" inputDescription={name} />
+                  <NumberInput
+                    key={field}
+                    placeholder="-"
+                    inputDescription={name}
+                    value={value?.[field]}
+                    onChange={x => updateField(field, x)}
+                  />
                 ))}
               </ValuesWrapper>
             </ValueInputWrapper>
@@ -147,13 +156,24 @@ const ColorField: React.FC<Props> = ({
               <Text size="footnote">{t("Rotation")}</Text>
               <ValuesWrapper>
                 {CAMERA_ANGLE.map(({ name, field }) => (
-                  <NumberInput key={field} placeholder="-" inputDescription={name} />
+                  <NumberInput
+                    key={field}
+                    placeholder="-"
+                    inputDescription={name}
+                    value={value?.[field]}
+                    onChange={x => updateField(field, x)}
+                  />
                 ))}
               </ValuesWrapper>
             </ValueInputWrapper>
             <ValueInputWrapper>
               <Text size="footnote">{t("Angle")}</Text>
-              <Slider value={50} min={0} max={180} />
+              <Slider
+                value={value?.["fov"]}
+                min={0}
+                max={180}
+                onChange={x => updateField("fov", x)}
+              />
             </ValueInputWrapper>
           </MainBodyWrapper>
           <FormButtonGroup>
@@ -169,14 +189,14 @@ const ColorField: React.FC<Props> = ({
             <ButtonWrapper
               buttonType="secondary"
               text={t("Clean Capture")}
-              onClick={handleClean}
+              onClick={onClean}
               size="medium"
               disabled={!value}
             />
             <ButtonWrapper
               buttonType="primary"
               text={t("Capture")}
-              onClick={handleSave}
+              onClick={onCapture}
               size="medium"
             />
           </FormButtonGroup>
