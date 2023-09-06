@@ -30,11 +30,10 @@ export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
 
-  const useGetLayersQuery = useCallback(({ sceneId, lang, pollInterval }: LayerQueryProps) => {
+  const useGetLayersQuery = useCallback(({ sceneId, lang }: LayerQueryProps) => {
     const { data, ...rest } = useQuery(GET_SCENE, {
       variables: { sceneId: sceneId ?? "", lang },
       skip: !sceneId,
-      pollInterval,
     });
 
     const nlsLayers = useMemo(() => getLayers(data), [data]);
@@ -45,7 +44,9 @@ export default () => {
   const [addNLSLayerSimpleMutation] = useMutation<
     AddNlsLayerSimpleMutation,
     MutationAddNlsLayerSimpleArgs
-  >(ADD_NLSLAYERSIMPLE);
+  >(ADD_NLSLAYERSIMPLE, {
+    refetchQueries: ["GetScene"],
+  });
   const useAddNLSLayerSimple = useCallback(
     async (input: AddNlsLayerSimpleInput): Promise<MutationReturn<AddNlsLayerSimpleMutation>> => {
       const { data, errors } = await addNLSLayerSimpleMutation({ variables: { input } });

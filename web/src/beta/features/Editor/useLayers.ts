@@ -27,7 +27,7 @@ export default function ({ sceneId }: useLayerProps) {
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();
   const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>(undefined);
-  const { nlsLayers = [] } = useGetLayersQuery({ sceneId, pollInterval: 500 });
+  const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
 
   const selectedLayer = useMemo(() => {
     return nlsLayers.find(l => l.id === selectedLayerId) || undefined;

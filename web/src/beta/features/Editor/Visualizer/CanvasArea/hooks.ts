@@ -23,7 +23,7 @@ import { BlockType } from "./type";
 export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
-  const { nlsLayers } = useGetLayersQuery({ sceneId, pollInterval: 500 });
+  const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { useSceneQuery } = useSceneFetcher();
   const { scene } = useSceneQuery({ sceneId });
 
