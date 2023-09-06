@@ -1,11 +1,11 @@
 import React from "react";
 
 import Button from "@reearth/beta/components/Button";
+import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import RadioButton from "@reearth/classic/components/atoms/RadioButton";
 import Select from "@reearth/classic/components/atoms/Select";
 import { Option } from "@reearth/classic/components/atoms/SelectOption";
-import ToggleButton from "@reearth/classic/components/atoms/ToggleButton";
 
 import { DataProps } from "..";
 import {
@@ -104,8 +104,9 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               <InputGroup
                 label="Prioritize Performance"
                 description="URL of the data source you want to add.">
-                <ToggleButton
+                <Toggle
                   checked={prioritizePerformance}
+                  disabled={true}
                   onChange={v => setPrioritizePerformance(v)}
                 />
               </InputGroup>
