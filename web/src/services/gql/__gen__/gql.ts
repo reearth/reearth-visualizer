@@ -51,6 +51,7 @@ const documents = {
     "\n  mutation CreateStory($input: CreateStoryInput!) {\n    createStory(input: $input) {\n      story {\n        id\n      }\n    }\n  }\n": types.CreateStoryDocument,
     "\n  mutation UpdateStory($input: UpdateStoryInput!) {\n    updateStory(input: $input) {\n      story {\n        id\n      }\n    }\n  }\n": types.UpdateStoryDocument,
     "\n  mutation DeleteStory($input: DeleteStoryInput!) {\n    deleteStory(input: $input) {\n      storyId\n    }\n  }\n": types.DeleteStoryDocument,
+    "\n  mutation PublishStory($storyId: ID!, $alias: String, $status: PublishmentStatus!) {\n    publishStory(input: { storyId: $storyId, alias: $alias, status: $status }) {\n      story {\n        id\n        alias\n        publishmentStatus\n      }\n    }\n  }\n": types.PublishStoryDocument,
     "\n  mutation CreateStoryPage($input: CreateStoryPageInput!) {\n    createStoryPage(input: $input) {\n      story {\n        id\n      }\n    }\n  }\n": types.CreateStoryPageDocument,
     "\n  mutation UpdateStoryPage($input: UpdateStoryPageInput!) {\n    updateStoryPage(input: $input) {\n      story {\n        id\n      }\n    }\n  }\n": types.UpdateStoryPageDocument,
     "\n  mutation DeleteStoryPage($input: DeleteStoryPageInput!) {\n    removeStoryPage(input: $input) {\n      story {\n        id\n      }\n    }\n  }\n": types.DeleteStoryPageDocument,
@@ -235,6 +236,10 @@ export function gql(source: "\n  mutation UpdateStory($input: UpdateStoryInput!)
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation DeleteStory($input: DeleteStoryInput!) {\n    deleteStory(input: $input) {\n      storyId\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteStory($input: DeleteStoryInput!) {\n    deleteStory(input: $input) {\n      storyId\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation PublishStory($storyId: ID!, $alias: String, $status: PublishmentStatus!) {\n    publishStory(input: { storyId: $storyId, alias: $alias, status: $status }) {\n      story {\n        id\n        alias\n        publishmentStatus\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation PublishStory($storyId: ID!, $alias: String, $status: PublishmentStatus!) {\n    publishStory(input: { storyId: $storyId, alias: $alias, status: $status }) {\n      story {\n        id\n        alias\n        publishmentStatus\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

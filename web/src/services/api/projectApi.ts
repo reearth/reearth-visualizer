@@ -5,7 +5,6 @@ import { type PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/N
 import {
   UpdateProjectInput,
   ProjectPayload,
-  PublishmentStatus,
   Visualizer,
   DeleteProjectInput,
   ArchiveProjectMutationVariables,
@@ -28,6 +27,7 @@ import { useT } from "@reearth/services/i18n";
 
 import { useNotification } from "../state";
 
+import { toGqlStatus } from "./toGqlStatus";
 import { MutationReturn } from "./types";
 
 export type Project = ProjectPayload["project"];
@@ -252,12 +252,4 @@ export default () => {
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
   };
-};
-
-const toGqlStatus = (status?: PublishStatus) => {
-  return status === "limited"
-    ? PublishmentStatus.Limited
-    : status == "published"
-    ? PublishmentStatus.Public
-    : PublishmentStatus.Private;
 };

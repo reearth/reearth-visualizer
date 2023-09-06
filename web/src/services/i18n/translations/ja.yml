@@ -13,6 +13,7 @@ Layers: レイヤー
 Outline: アウトライン
 Published: 一般公開
 Unpublished: 非公開
+Story: ストーリー
 Unpublish: 非公開にする
 Publish: 公開
 Publishing Settings: 公開設定
@@ -37,7 +38,6 @@ Your project will be unpublished.: プロジェクトを非公開にする
 This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
 New Page: 新しいページ
-Story: ストーリー
 Page: ページ
 Page Settings: ページ設定
 Align System: アラインシステム
@@ -438,6 +438,10 @@ Failed to create story.: ストーリーの作成に失敗しました。
 Successfully created a story!: ''
 Failed to update story.: ''
 Successfully updated a story!: ''
+Failed to publish story.: ''
+Successfully published your story!: ''
+Successfully published your story with search engine indexing!: ''
+Successfully unpublished your story. Now nobody can access your story.: ''
 Failed to create page.: ページの作成に失敗しました。
 Successfullly created a page!: ''
 Failed to delete page.: ''
