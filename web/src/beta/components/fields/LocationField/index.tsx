@@ -35,11 +35,13 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <NumberInput
+        <NumberInput 
+         value={location.lat}
           inputDescription="Latitude"
           onChange={newValue => handleChange("Latitude", newValue)}
         />
-        <NumberInput
+        <NumberInput 
+        value={location.lng}
           inputDescription="Longtitude"
           onChange={newValue => handleChange("Longtitude", newValue)}
         />
