@@ -99,9 +99,12 @@ export default () => {
     [createNewProject, createScene, setNotification, t],
   );
 
-  const [publishProjectMutation] = useMutation(PUBLISH_PROJECT, {
-    refetchQueries: ["GetProject"],
-  });
+  const [publishProjectMutation, { loading: publishProjectLoading }] = useMutation(
+    PUBLISH_PROJECT,
+    {
+      refetchQueries: ["GetProject"],
+    },
+  );
 
   const usePublishProject = useCallback(
     async (s: PublishStatus, projectId?: string, alias?: string) => {
@@ -242,6 +245,7 @@ export default () => {
   );
 
   return {
+    publishProjectLoading,
     useProjectQuery,
     useProjectAliasCheckLazyQuery,
     useCreateProject,
