@@ -54,7 +54,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             max={sf.max}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
-        ) : sf.type == "bool" ? (
+        ) : sf.type === "bool" ? (
           <ToggleField
             key={sf.id}
             name={sf.name}
@@ -62,8 +62,8 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             description={sf.description}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
-        ) : sf.type == "number" ? (
-          sf.ui == "slider" ? (
+        ) : sf.type === "number" ? (
+          sf.ui === "slider" ? (
             <SliderField
               key={sf.id}
               name={sf.name}
