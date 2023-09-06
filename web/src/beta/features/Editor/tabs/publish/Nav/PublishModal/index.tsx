@@ -35,6 +35,8 @@ const PublishModal: React.FC<Props> = ({
   publishing,
   publishStatus,
   projectAlias,
+  validAlias,
+  validatingAlias,
   url,
   onClose,
   onPublish,
@@ -47,6 +49,7 @@ const PublishModal: React.FC<Props> = ({
   const {
     statusChanged,
     alias,
+    validation,
     showOptions,
     searchIndex,
     handlePublish,
@@ -73,16 +76,14 @@ const PublishModal: React.FC<Props> = ({
     [purl],
   );
 
-  // const publishDisabled = useMemo(
-  //   () =>
-  //     loading ||
-  //     (publishing === "unpublishing" && publishStatus === "unpublished") ||
-  //     ((publishing === "publishing" || publishing === "updating") &&
-  //       (!alias || !!validation || validatingAlias || !validAlias)),
-  //   [alias, loading, publishStatus, publishing, validation, validAlias, validatingAlias],
-  // );
+  const publishDisabled = useMemo(
+    () =>
+      loading ||
+      ((publishing === "publishing" || publishing === "updating") &&
+        (!alias || !!validation || validatingAlias || !validAlias)),
+    [alias, loading, publishing, validation, validAlias, validatingAlias],
+  );
 
-  console.log("publish modal", loading);
   const modalTitleText = useMemo(() => {
     return statusChanged
       ? t("Congratulations!")
@@ -126,7 +127,7 @@ const PublishModal: React.FC<Props> = ({
           <Button
             text={primaryButtonText}
             buttonType="primary"
-            disabled={loading}
+            disabled={publishDisabled}
             onClick={handlePublish}
           />
         )
