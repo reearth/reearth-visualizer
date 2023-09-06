@@ -1,6 +1,7 @@
-import React from "react";
+import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
@@ -9,10 +10,40 @@ import { styled, useTheme } from "@reearth/services/theme";
 
 import Property from "..";
 
-import useHooks from "./hooks";
-
+type CameraInput = {
+  name: string;
+  field: keyof CameraValue;
+};
 // Constants
-const fields = ["1", "2", "3"];
+const CAMERA_XYZ: CameraInput[] = [
+  {
+    name: "Latitude",
+    field: "lat",
+  },
+  {
+    name: "Longitude",
+    field: "lng",
+  },
+  {
+    name: "Height",
+    field: "height",
+  },
+];
+
+const CAMERA_ANGLE: CameraInput[] = [
+  {
+    name: "Heading",
+    field: "heading",
+  },
+  {
+    name: "Pitch",
+    field: "pitch",
+  },
+  {
+    name: "Roll",
+    field: "roll",
+  },
+];
 
 export type CameraValue = {
   lat: number;
@@ -28,19 +59,49 @@ export type Props = {
   name?: string;
   description?: string;
   value?: CameraValue;
-  onChange?: (value: string) => void;
+  disabled?: boolean;
+  onCapture: () => void;
+  onJump?: (input: CameraValue) => void;
+  onClean: () => void;
 };
 
 // Component
-const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => {
+const ColorField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  disabled,
+  onCapture,
+  onJump,
+  onClean,
+}) => {
   const t = useT();
   const theme = useTheme();
-  const { colorState, open, handleClose, handleSave, handleClick } = useHooks({
-    value,
-    onChange,
-  });
+
+  const [open, setOpen] = useState(false);
+
+  const handleJump = useCallback(() => {
+    if (!value) return;
+    onJump(value);
+  }, [value, onJump]);
+
+  //Actions
+  const handleClean = useCallback(() => {
+    onClean();
+    setOpen(false);
+  }, [onClean]);
+
+  const handleClose = useCallback(() => setOpen(false), []);
+
+  const handleSave = useCallback(() => {
+    onCapture();
+    setOpen(false);
+  }, [onCapture]);
+
+  //events
+  const handleClick = useCallback(() => setOpen(!open), [open]);
+
   // Notes:
-  // What's fov number?
   // from classic component, do we need to implement all the hooks as well?
   // src/classic/components/molecules/EarthEditor/PropertyPane/PropertyField/CameraField/hooks.ts ?
 
@@ -48,71 +109,65 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
     <Property name={name} description={description}>
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handleClick}>
         <Popover.Trigger asChild>
-          <InputWrapper>
+          <InputWrapper disabled={disabled}>
             <Input
-              value={colorState && t("Position Set")}
+              value={value ? t("Camera Set") : ""}
               placeholder={t("Not Set")}
               disabled={true}
             />
             <CaptureButton
               buttonType="secondary"
-              text="Capture"
+              text={t("Capture")}
               icon="cameraButtonStoryBlock"
-              size="medium"
+              size="small"
               iconPosition="left"
               onClick={handleClick}
+              disabled={disabled}
             />
           </InputWrapper>
         </Popover.Trigger>
         <PickerWrapper>
           <HeaderWrapper>
             <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
-              Color Pose Setting
+              {t("Camera Pose Setting")}
             </PickerTitle>
-            {handleClose && <CloseIcon icon="cancel" size={12} onClick={handleClose} />}
+            <CloseIcon icon="cancel" size={12} onClick={handleClose} />
           </HeaderWrapper>
           <MainBodyWrapper>
             <ValueInputWrapper>
-              {/* TODO: Need translation for the text below */}
-              <Text size="footnote">Position</Text>
+              <Text size="footnote">{t("Position")}</Text>
               <ValuesWrapper>
-                {fields.map(channel => (
-                  <>
-                    <InputValue key={channel} name={channel} type="number" placeholder="-" />
-                    {/* TODO: Need to add labels */}
-                    {/* <label>Label for key</label> */}
-                  </>
+                {CAMERA_XYZ.map(({ name, field }) => (
+                  <NumberInput key={field} placeholder="-" inputDescription={name} />
                 ))}
               </ValuesWrapper>
             </ValueInputWrapper>
             <ValueInputWrapper>
-              {/* TODO: Need translation for the text below */}
-              <Text size="footnote">Rotation</Text>
+              <Text size="footnote">{t("Rotation")}</Text>
               <ValuesWrapper>
-                {fields.map(channel => (
-                  <InputValue key={channel} name={channel} type="number" placeholder="-" />
+                {CAMERA_ANGLE.map(({ name, field }) => (
+                  <NumberInput key={field} placeholder="-" inputDescription={name} />
                 ))}
               </ValuesWrapper>
             </ValueInputWrapper>
+            {/* TODO: Add FOV field */}
           </MainBodyWrapper>
           <FormButtonGroup>
             <ButtonWrapper
               buttonType="secondary"
               text={t("Jump")}
-              // TODO: Handle onClick
-              // onClick={handleClose}
+              onClick={handleJump}
               size="medium"
-              disabled={true}
+              disabled={!value}
             />
           </FormButtonGroup>
           <FormButtonGroup>
             <ButtonWrapper
               buttonType="secondary"
-              // TODO: Translation doesn't exist for this
               text={t("Clean Capture")}
-              onClick={handleClose}
+              onClick={handleClean}
               size="medium"
-              disabled={value ? false : true}
+              disabled={!value}
             />
             <ButtonWrapper
               buttonType="primary"
@@ -127,19 +182,23 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
   );
 };
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ disabled?: boolean }>`
   display: flex;
   gap: 10px;
+  height: 28px;
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
-const Input = styled.input<{ type?: string }>`
+const Input = styled.input<{ disabled?: boolean }>`
   display: flex;
   padding: 4px 8px;
   border-radius: 4px;
+  font-size: 12px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   color: ${({ theme }) => theme.content.main};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
 `;
 
 const CaptureButton = styled(Button)`
@@ -149,15 +208,13 @@ const CaptureButton = styled(Button)`
 
 const PickerWrapper = styled(Popover.Content)`
   width: 286px;
-  height: 252px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   background: ${({ theme }) => theme.bg[1]};
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8px 0;
 `;
 
 const HeaderWrapper = styled.div`
@@ -202,18 +259,8 @@ const ValuesWrapper = styled.div`
   flex-direction: row;
   align-items: flex-start;
   gap: 4px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-`;
-
-const InputValue = styled(Input)`
-  width: 30%;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-  &:focus-visible {
-    border-color: ${({ theme }) => theme.outline.main};
-    outline: none;
-  }
+  padding-bottom: 4px;
+  width: 100%;
 `;
 
 const FormButtonGroup = styled.div`
@@ -228,7 +275,7 @@ const FormButtonGroup = styled.div`
 
 const ButtonWrapper = styled(Button)`
   height: 27px;
-  min-width: 135px;
+  width: 100%;
   padding: 0px;
   margin: 0px;
 `;
