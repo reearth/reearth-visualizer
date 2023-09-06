@@ -2,6 +2,7 @@ import TextInput from "@reearth/beta/components/fields/TextInput";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import ColorField from "../ColorField";
+import SliderField from "../SliderField";
 import SpacingInput, { SpacingValues } from "../SpacingInput";
 import ToggleField from "../ToggleField";
 
@@ -53,7 +54,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             max={sf.max}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
-        ) : sf.type == "bool" ? (
+        ) : sf.type === "bool" ? (
           <ToggleField
             key={sf.id}
             name={sf.name}
@@ -61,6 +62,20 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             description={sf.description}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
+        ) : sf.type === "number" ? (
+          sf.ui === "slider" ? (
+            <SliderField
+              key={sf.id}
+              name={sf.name}
+              value={value as number}
+              min={sf.min as number}
+              max={sf.max as number}
+              description={sf.description}
+              onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+            />
+          ) : (
+            <p key={sf.id}>{sf.name} number field</p>
+          )
         ) : (
           <p key={sf.id}>{sf.name} field</p>
         );
