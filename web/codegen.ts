@@ -25,6 +25,7 @@ const config: CodegenConfig = {
           URL: "string",
           Lang: "string",
           TranslatedString: "{ [lang in string]?: string } | null",
+          JSON: "any",
         },
       },
     },
