@@ -58,6 +58,16 @@ export const Default: Story = (args: Props) => {
       <div>
         <CameraField {...args} disabled={true} />
       </div>
+      <div>
+        <CameraField
+          {...args}
+          name="Camera field without controls"
+          onChange={handleChange}
+          onClean={undefined}
+          onJump={undefined}
+          onCapture={undefined}
+        />
+      </div>
     </Wrapper>
   );
 };

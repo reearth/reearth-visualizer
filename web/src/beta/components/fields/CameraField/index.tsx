@@ -61,14 +61,14 @@ export type Props = {
   description?: string;
   value?: CameraValue;
   disabled?: boolean;
-  onCapture: () => void;
+  onCapture?: () => void;
   onJump?: (input: CameraValue) => void;
-  onClean: () => void;
+  onClean?: () => void;
   onChange: (value: CameraValue) => void;
 };
 
 // Component
-const ColorField: React.FC<Props> = ({
+const CameraField: React.FC<Props> = ({
   name,
   description,
   value,
@@ -176,30 +176,38 @@ const ColorField: React.FC<Props> = ({
               />
             </ValueInputWrapper>
           </MainBodyWrapper>
-          <FormButtonGroup>
-            <ButtonWrapper
-              buttonType="secondary"
-              text={t("Jump")}
-              onClick={handleJump}
-              size="medium"
-              disabled={!value}
-            />
-          </FormButtonGroup>
-          <FormButtonGroup>
-            <ButtonWrapper
-              buttonType="secondary"
-              text={t("Clean Capture")}
-              onClick={onClean}
-              size="medium"
-              disabled={!value}
-            />
-            <ButtonWrapper
-              buttonType="primary"
-              text={t("Capture")}
-              onClick={onCapture}
-              size="medium"
-            />
-          </FormButtonGroup>
+          {onJump && (
+            <FormButtonGroup>
+              <ButtonWrapper
+                buttonType="secondary"
+                text={t("Jump")}
+                onClick={handleJump}
+                size="medium"
+                disabled={!value}
+              />
+            </FormButtonGroup>
+          )}
+          {(onClean || onCapture) && (
+            <FormButtonGroup>
+              {onClean && (
+                <ButtonWrapper
+                  buttonType="secondary"
+                  text={t("Clean Capture")}
+                  onClick={onClean}
+                  size="medium"
+                  disabled={!value}
+                />
+              )}
+              {onCapture && (
+                <ButtonWrapper
+                  buttonType="primary"
+                  text={t("Capture")}
+                  onClick={onCapture}
+                  size="medium"
+                />
+              )}
+            </FormButtonGroup>
+          )}
         </PickerWrapper>
       </Popover.Provider>
     </Property>
@@ -302,4 +310,4 @@ const ButtonWrapper = styled(Button)`
   margin: 0px;
 `;
 
-export default ColorField;
+export default CameraField;

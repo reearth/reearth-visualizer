@@ -1,6 +1,7 @@
 import TextInput from "@reearth/beta/components/fields/TextInput";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
+import CameraField, { CameraValue } from "../CameraField";
 import ColorField from "../ColorField";
 import SelectField from "../SelectField";
 import SliderField from "../SliderField";
@@ -84,6 +85,14 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
           ) : (
             <p key={sf.id}>{sf.name} number field</p>
           )
+        ) : sf.type === "camera" ? (
+          <CameraField
+            key={sf.id}
+            name={sf.name}
+            value={value as CameraValue}
+            description={sf.description}
+            onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+          />
         ) : (
           <p key={sf.id}>{sf.name} field</p>
         );
