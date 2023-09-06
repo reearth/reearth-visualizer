@@ -28,6 +28,18 @@ export const DELETE_STORY = gql(`
   }
 `);
 
+export const PUBLISH_STORY = gql(`
+  mutation PublishStory($storyId: ID!, $alias: String, $status: PublishmentStatus!) {
+    publishStory(input: { storyId: $storyId, alias: $alias, status: $status }) {
+      story {
+        id
+        alias
+        publishmentStatus
+      }
+    }
+  }
+`);
+
 export const CREATE_STORY_PAGE = gql(`
   mutation CreateStoryPage($input: CreateStoryPageInput!) {
     createStoryPage(input: $input) {
