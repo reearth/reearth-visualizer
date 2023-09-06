@@ -166,7 +166,7 @@ export default ({
     shadowMap.darkness = property?.atmosphere?.shadowDarkness ?? 0.3;
     shadowMap.size = property?.atmosphere?.shadowResolution ?? 2048;
     shadowMap.fadingEnabled = true;
-    shadowMap.maximumDistance = 5000;
+    shadowMap.maximumDistance = property?.atmosphere?.shadowMaximumDistance ?? 5000;
     shadowMap.normalOffset = true;
 
     // bias
@@ -222,6 +222,7 @@ export default ({
     property?.atmosphere?.softShadow,
     property?.atmosphere?.shadowDarkness,
     property?.atmosphere?.shadowResolution,
+    property?.atmosphere?.shadowMaximumDistance,
   ]);
 
   useEffect(() => {
