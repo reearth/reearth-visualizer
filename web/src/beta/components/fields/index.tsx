@@ -13,7 +13,7 @@ type Props = {
 const Property: React.FC<Props> = ({ name, description, children }) => {
   return (
     <Wrapper>
-      <Text size="footnote">{name ?? "Unknown field"}</Text>
+      <Text size="footnote">{name}</Text>
       {children}
       {description && (
         <Description size="xFootnote" customColor>

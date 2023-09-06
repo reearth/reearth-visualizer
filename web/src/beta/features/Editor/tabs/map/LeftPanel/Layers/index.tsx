@@ -1,28 +1,34 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 
+import TextInput from "@reearth/beta/components/fields/TextInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
+import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { styled } from "@reearth/services/theme";
 
 type LayersProps = {
   layers: NLSLayer[];
   onLayerDelete: (id: string) => void;
-  onLayerSelect: (id: string) => void; // Todo
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };
 
 const Layers: React.FC<LayersProps> = ({
   layers,
   onLayerDelete,
+  onLayerNameUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
 }) => {
-  const [isAddMenuOpen, setAddMenuOpen] = React.useState(false);
+  const [isAddMenuOpen, setAddMenuOpen] = useState(false);
 
-  const toggleAddMenu = () => setAddMenuOpen(prev => !prev);
+  const toggleAddMenu = useCallback(() => {
+    setAddMenuOpen(prev => !prev);
+  }, []);
 
   return (
     <LayerContainer>
@@ -57,9 +63,11 @@ const Layers: React.FC<LayersProps> = ({
       {layers.map(layer => (
         <LayerItem
           key={layer.id}
+          id={layer.id}
           layerTitle={layer.title}
           onDelete={() => onLayerDelete(layer.id)}
           onSelect={() => onLayerSelect(layer.id)}
+          onLayerNameUpdate={onLayerNameUpdate}
         />
       ))}
     </LayerContainer>
@@ -67,20 +75,62 @@ const Layers: React.FC<LayersProps> = ({
 };
 
 type LayerItemProps = {
+  id: string;
   layerTitle: string;
   onDelete: () => void;
   onSelect: () => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
 };
 
-const LayerItem: React.FC<LayerItemProps> = ({ layerTitle, onDelete, onSelect }) => {
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
+const LayerItem = ({ id, layerTitle, onDelete, onSelect, onLayerNameUpdate }: LayerItemProps) => {
+  const [isMenuOpen, setMenuOpen] = useState(false);
+  const toggleMenu = useCallback(() => {
+    setMenuOpen(prev => !prev);
+  }, []);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(layerTitle);
+  const [prevTitle, setPrevTitle] = useState(layerTitle);
 
-  const toggleMenu = () => setMenuOpen(prev => !prev);
+  const handleDoubleClick = useCallback(() => {
+    setIsEditing(true);
+    setPrevTitle(editedTitle);
+  }, [editedTitle]);
+
+  const handleTitleSubmit = useCallback(() => {
+    if (!editedTitle.trim()) {
+      return;
+    }
+    setIsEditing(false);
+    onLayerNameUpdate({ layerId: id, name: editedTitle });
+  }, [editedTitle, id, onLayerNameUpdate]);
+
+  const handleKeyUp = useCallback(
+    (e: { key: string }) => {
+      if (["Enter", "Return"].includes(e.key)) {
+        handleTitleSubmit();
+      }
+    },
+    [handleTitleSubmit],
+  );
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    setEditedTitle(prevTitle);
+  };
 
   return (
     <ListItemContainer onClick={onSelect}>
-      <div>
-        <Text size="body">{layerTitle}</Text>
+      <div onDoubleClick={handleDoubleClick}>
+        {isEditing ? (
+          <TextInput
+            value={editedTitle}
+            onChange={(newTitle: string) => setEditedTitle(newTitle)}
+            onKeyUp={handleKeyUp}
+            onBlur={handleBlur}
+          />
+        ) : (
+          <Text size="body">{layerTitle}</Text>
+        )}
       </div>
       <div>
         <Popover.Provider open={isMenuOpen} onOpenChange={toggleMenu} placement="left-start">

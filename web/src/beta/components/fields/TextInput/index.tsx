@@ -10,9 +10,19 @@ type Props = {
   value?: string;
   timeout?: number;
   onChange?: (text: string) => void;
+  onBlur?: () => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
-const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, onChange }) => {
+const TextInput: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  timeout = 1000,
+  onChange,
+  onBlur,
+  onKeyUp,
+}) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -38,15 +48,17 @@ const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, 
   const handleBlur = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     onChange?.(currentValue);
-  }, [currentValue, onChange]);
+    onBlur?.();
+  }, [currentValue, onChange, onBlur]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (onChange && e.key === "Enter" && currentValue !== value) {
-        onChange(currentValue);
+      if ((e.key === "Enter" || e.key === "Return") && currentValue !== value) {
+        onChange?.(currentValue);
       }
+      onKeyUp?.(e);
     },
-    [value, currentValue, onChange],
+    [value, currentValue, onChange, onKeyUp],
   );
 
   return (
@@ -55,7 +67,7 @@ const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, 
         value={currentValue ?? ""}
         onChange={handleChange}
         onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyDown}
       />
     </Property>
   );

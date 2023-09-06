@@ -1,5 +1,6 @@
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
+import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { PropertySchemaGroup } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
@@ -11,6 +12,7 @@ type GroupSectionFieldProps = {
   groups: PropertySchemaGroup[];
   layers: NLSLayer[];
   onLayerDelete: (id: string) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };
@@ -19,6 +21,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   groups,
   layers,
   onLayerDelete,
+  onLayerNameUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
 }) => {
@@ -37,6 +40,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
         <Layers
           layers={layers}
           onLayerDelete={onLayerDelete}
+          onLayerNameUpdate={onLayerNameUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
         />

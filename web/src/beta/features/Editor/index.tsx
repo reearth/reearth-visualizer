@@ -59,10 +59,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     stories,
   });
 
-  const { nlsLayers, selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } =
-    useLayers({
-      sceneId,
-    });
+  const {
+    nlsLayers,
+    selectedLayer,
+    handleLayerAdd,
+    handleLayerDelete,
+    handleLayerSelect,
+    handleLayerNameUpdate,
+  } = useLayers({
+    sceneId,
+  });
 
   const { leftPanel } = useLeftPanel({
     tab,
@@ -78,6 +84,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onPageMove: handlePageMove,
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelect,
+    onLayerNameUpdate: handleLayerNameUpdate,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
 
