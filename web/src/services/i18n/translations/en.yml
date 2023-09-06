@@ -1,3 +1,12 @@
+Camera Set: ''
+Not Set: Not Set
+Capture: Capture
+Camera Pose Setting: ''
+Position: ''
+Rotation: ''
+Angle: Angle
+Jump: Jump
+Clean Capture: ''
 Color Picker: ''
 Cancel: Cancel
 Apply: Apply
@@ -48,7 +57,6 @@ Align System: Align System
 Widget Manager: Widget Manager
 Inspector: Inspector
 Container Settings: Container Settings
-Angle: Angle
 Narrow: Narrow
 Wide: Wide
 Create New Workspace: Create New Workspace
@@ -291,7 +299,6 @@ Create Infobox: Create Infobox
 Dataset: Dataset
 Pose Set: Pose Set
 Position Set: Position Set
-Not Set: Not Set
 Latitude: Latitude
 Longtitude: Longtitude
 Altitude: Altitude
@@ -299,10 +306,8 @@ Heading: Heading
 Pitch: Pitch
 Roll: Roll
 Check Pose: Check Pose
-Jump: Jump
 Edit Pose: Edit Pose
 Edit Position: Edit Position
-Capture: Capture
 '#RRGGBBAA': '#RRGGBBAA'
 Red: Red
 Green: Green
