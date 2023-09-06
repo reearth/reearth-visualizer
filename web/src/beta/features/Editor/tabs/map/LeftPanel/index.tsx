@@ -11,7 +11,7 @@ type Props = {
   layers: NLSLayer[];
   onLayerDelete: (id: string) => void;
   onLayerSelect: (id: string) => void;
-  openDataSourceManager: () => void;
+  onDataSourceManagerOpen: () => void;
 };
 
 const MapSidePanel: React.FC<Props> = ({
@@ -19,7 +19,7 @@ const MapSidePanel: React.FC<Props> = ({
   layers,
   onLayerDelete,
   onLayerSelect,
-  openDataSourceManager,
+  onDataSourceManagerOpen,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -45,7 +45,7 @@ const MapSidePanel: React.FC<Props> = ({
               layers={layers}
               onLayerDelete={onLayerDelete}
               onLayerSelect={onLayerSelect}
-              openDataSourceManager={openDataSourceManager}
+              onDataSourceManagerOpen={onDataSourceManagerOpen}
             />
           ),
         },

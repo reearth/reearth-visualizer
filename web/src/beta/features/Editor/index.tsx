@@ -78,7 +78,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onPageMove: handlePageMove,
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelect,
-    openDataSourceManager: handleDataSourceManagerOpener,
+    onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
 
   const { rightPanel } = useRightPanel({ tab, sceneId, selectedPage });

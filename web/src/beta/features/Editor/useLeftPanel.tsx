@@ -24,7 +24,7 @@ type Props = {
   selectedLayer?: NLSLayer;
   onLayerDelete: (id: string) => void;
   onLayerSelect: (id: string) => void;
-  openDataSourceManager: () => void;
+  onDataSourceManagerOpen: () => void;
 };
 
 export default ({
@@ -40,7 +40,7 @@ export default ({
   onPageMove,
   onLayerDelete,
   onLayerSelect,
-  openDataSourceManager,
+  onDataSourceManagerOpen,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -51,7 +51,7 @@ export default ({
             layers={nlsLayers}
             onLayerDelete={onLayerDelete}
             onLayerSelect={onLayerSelect}
-            openDataSourceManager={openDataSourceManager}
+            onDataSourceManagerOpen={onDataSourceManagerOpen}
           />
         );
       case "story":
@@ -77,7 +77,7 @@ export default ({
     nlsLayers,
     onLayerDelete,
     onLayerSelect,
-    openDataSourceManager,
+    onDataSourceManagerOpen,
     selectedStory,
     selectedPage,
     onPageSelect,

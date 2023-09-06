@@ -11,14 +11,14 @@ type LayersProps = {
   layers: NLSLayer[];
   onLayerDelete: (id: string) => void;
   onLayerSelect: (id: string) => void; // Todo
-  openDataSourceManager: () => void;
+  onDataSourceManagerOpen: () => void;
 };
 
 const Layers: React.FC<LayersProps> = ({
   layers,
   onLayerDelete,
   onLayerSelect,
-  openDataSourceManager,
+  onDataSourceManagerOpen,
 }) => {
   const [isAddMenuOpen, setAddMenuOpen] = React.useState(false);
 
@@ -41,7 +41,8 @@ const Layers: React.FC<LayersProps> = ({
                 name: "Add Layer from Resource",
                 icon: "file",
                 onClick: () => {
-                  openDataSourceManager();
+                  onDataSourceManagerOpen();
+                  toggleAddMenu();
                 },
               },
               {
