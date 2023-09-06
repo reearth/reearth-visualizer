@@ -4,6 +4,7 @@ import Button from "@reearth/beta/components/Button";
 import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
+import Slider from "@reearth/beta/components/Slider";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -82,7 +83,7 @@ const ColorField: React.FC<Props> = ({
 
   const handleJump = useCallback(() => {
     if (!value) return;
-    onJump(value);
+    onJump?.(value);
   }, [value, onJump]);
 
   //Actions
@@ -150,7 +151,10 @@ const ColorField: React.FC<Props> = ({
                 ))}
               </ValuesWrapper>
             </ValueInputWrapper>
-            {/* TODO: Add FOV field */}
+            <ValueInputWrapper>
+              <Text size="footnote">{t("Angle")}</Text>
+              <Slider value={50} min={0} max={180} />
+            </ValueInputWrapper>
           </MainBodyWrapper>
           <FormButtonGroup>
             <ButtonWrapper
@@ -189,7 +193,7 @@ const InputWrapper = styled.div<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
-const Input = styled.input<{ disabled?: boolean }>`
+const Input = styled.input`
   display: flex;
   padding: 4px 8px;
   border-radius: 4px;
@@ -198,7 +202,6 @@ const Input = styled.input<{ disabled?: boolean }>`
   color: ${({ theme }) => theme.content.main};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
 `;
 
 const CaptureButton = styled(Button)`
@@ -207,7 +210,7 @@ const CaptureButton = styled(Button)`
 `;
 
 const PickerWrapper = styled(Popover.Content)`
-  width: 286px;
+  min-width: 286px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   background: ${({ theme }) => theme.bg[1]};
@@ -239,7 +242,7 @@ const CloseIcon = styled(Icon)`
 
 const MainBodyWrapper = styled.div`
   display: flex;
-  padding: 0 8px;
+  padding: 16px 8px;
   flex-direction: column;
   height: 100%;
   justify-content: space-evenly;
@@ -251,7 +254,6 @@ const ValueInputWrapper = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   gap: 8px;
-  margin-top: 8px;
 `;
 
 const ValuesWrapper = styled.div`
