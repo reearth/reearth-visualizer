@@ -2,6 +2,7 @@ import TextInput from "@reearth/beta/components/fields/TextInput";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import ColorField from "../ColorField";
+import SelectField from "../SelectField";
 import SliderField from "../SliderField";
 import SpacingInput, { SpacingValues } from "../SpacingInput";
 import ToggleField from "../ToggleField";
@@ -32,7 +33,14 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
               onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
             />
           ) : sf.ui === "selection" || sf.choices ? (
-            <p key={sf.id}>Selection or choices field</p>
+            <SelectField
+              key={sf.id}
+              name={sf.name}
+              value={(value as string) ?? ""}
+              description={sf.description}
+              options={sf.choices}
+              onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+            />
           ) : sf.ui === "buttons" ? (
             <p key={sf.id}>Button radio field</p>
           ) : (

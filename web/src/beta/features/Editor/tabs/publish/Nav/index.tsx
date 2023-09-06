@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-// import TabButton from "@reearth/beta/components/TabButton";
+import TabButton from "@reearth/beta/components/TabButton";
 import Text from "@reearth/beta/components/Text";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { config } from "@reearth/services/config";
@@ -24,7 +24,7 @@ type Props = {
   onProjectTypeChange: (type: ProjectType) => void;
 };
 
-const Nav: React.FC<Props> = ({ projectId }) => {
+const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeChange }) => {
   const t = useT();
 
   const {
@@ -57,7 +57,7 @@ const Nav: React.FC<Props> = ({ projectId }) => {
     <>
       <StyledSecondaryNav>
         <LeftSection>
-          {/* <TabButton
+          <TabButton
             selected={selectedProjectType === "default"}
             label={t("Scene")}
             onClick={() => onProjectTypeChange("default")}
@@ -66,7 +66,7 @@ const Nav: React.FC<Props> = ({ projectId }) => {
             selected={selectedProjectType === "story"}
             label={t("Story")}
             onClick={() => onProjectTypeChange("story")}
-          /> */}
+          />
         </LeftSection>
         <Popover.Provider
           open={dropdownOpen}
