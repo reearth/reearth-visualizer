@@ -33,6 +33,15 @@ export const Default: Story = (args: Props<string | number>) => {
           onChange={handleChange}
         />
       </div>
+      <div>
+        <SelectField
+          {...args}
+          name="Empty"
+          value={undefined}
+          description="Even if you try, you won't be able to select the value"
+          onChange={handleChange}
+        />
+      </div>
     </Wrapper>
   );
 };
@@ -52,7 +61,10 @@ Default.args = {
   disabled: false,
   value: undefined,
   options: [
-    { value: "item 1", key: "item_1" },
+    {
+      value: "item 1 akas bakas moti kiran kapoor takhat buland biba kaur",
+      key: "item_1",
+    },
     { value: "item 2", key: "item_2" },
     { value: "item 3", key: "item_3" },
   ],

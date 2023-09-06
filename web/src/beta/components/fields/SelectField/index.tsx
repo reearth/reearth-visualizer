@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
+import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -61,7 +62,11 @@ const SelectField: React.FC<Props<string | number>> = ({
         </Popover.Trigger>
         <PickerWrapper>
           {options.map(({ value, key }) => (
-            <Option selected={selected?.key == key} key={key} onClick={() => handleClick(key)}>
+            <Option
+              size="footnote"
+              selected={selected?.key == key}
+              key={key}
+              onClick={() => handleClick(key)}>
               {value}
             </Option>
           ))}
@@ -109,7 +114,7 @@ const ArrowDownIcon = styled(Icon)`
 `;
 
 const PickerWrapper = styled(Popover.Content)`
-  min-width: 200px;
+  min-width: 100px;
   gap: 10px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   outline: none;
@@ -121,15 +126,11 @@ const PickerWrapper = styled(Popover.Content)`
   justify-content: space-between;
 `;
 
-const Option = styled.div<{ selected: boolean }>`
-  padding: 4px 12px 4px 12px;
-  cursor: pointer;
-  font-size: 12px;
-  color: ${({ theme, selected }) => (selected ? theme.outline.weak : "inherit")};
+const Option = styled(Text)<{ selected: boolean }>`
+  padding: 4px 12px;
   cursor: ${({ selected }) => (selected ? "not-allowed" : "pointer")};
-
   &:hover {
-    background: ${({ theme }) => theme.select.main};
+    background: ${({ theme, selected }) => (selected ? theme.bg[2] : theme.select.main)};
   }
 `;
 
