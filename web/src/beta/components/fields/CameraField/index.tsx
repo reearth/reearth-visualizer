@@ -90,9 +90,9 @@ const ColorField: React.FC<Props> = ({
 
   const handleClose = useCallback(() => setOpen(false), []);
 
-  //events
   const handleClick = useCallback(() => setOpen(!open), [open]);
 
+  // Update on single field, updates the entire value object
   const updateField = useCallback(
     (key: keyof CameraValue, update?: number) => {
       if (update == undefined) return;
