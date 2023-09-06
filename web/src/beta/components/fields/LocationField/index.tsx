@@ -13,7 +13,7 @@ type Props = {
   onChange?: (location: LatLng) => void;
 };
 
-const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
+const LocationField: React.FC<Props> = ({ name, description, value, onChange }) => {
   const [location, setLocation] = useState<LatLng>(value || { lat: 0, lng: 0 });
 
   useEffect(() => {
@@ -28,6 +28,7 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
       [coordination === "Latitude" ? "lat" : "lng"]: newValue,
     }));
   }, []);
+
   useEffect(() => {
     if (location) onChange?.(location);
   }, [location, onChange]);
@@ -35,13 +36,13 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <NumberInput 
-         value={location.lat}
+        <NumberInput
+          value={location.lat}
           inputDescription="Latitude"
           onChange={newValue => handleChange("Latitude", newValue)}
         />
-        <NumberInput 
-        value={location.lng}
+        <NumberInput
+          value={location.lng}
           inputDescription="Longtitude"
           onChange={newValue => handleChange("Longtitude", newValue)}
         />
@@ -50,11 +51,10 @@ const TextInput: React.FC<Props> = ({ name, description, value, onChange }) => {
   );
 };
 
-export default TextInput;
+export default LocationField;
 
 const Wrapper = styled.div`
   display: flex;
   align-items: flex-start;
-  width: 289px;
   gap: 4px;
 `;

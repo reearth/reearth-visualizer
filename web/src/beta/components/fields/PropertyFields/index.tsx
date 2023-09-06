@@ -1,6 +1,6 @@
+import LocationField from "@reearth/beta/components/fields/LocationField";
 import TextInput from "@reearth/beta/components/fields/TextInput";
 import { LatLng } from "@reearth/beta/utils/value";
-import LocationField from "@reearth/classic/components/molecules/EarthEditor/PropertyPane/PropertyField/LocationField";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import ColorField from "../ColorField";
@@ -55,7 +55,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             max={sf.max}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
-        ) : sf.type == "bool" ? (
+        ) : sf.type === "bool" ? (
           <ToggleField
             key={sf.id}
             name={sf.name}
@@ -63,7 +63,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             description={sf.description}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
-        ) : sf.type == "latlng" ? (
+        ) : sf.type === "latlng" ? (
           <LocationField
             key={sf.id}
             name={sf.name}
