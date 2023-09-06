@@ -52,6 +52,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     [publishStatus, t],
   );
 
+  console.log(selectedProjectType);
   const checkPublished: boolean = publishStatus === "limited" || publishStatus === "published";
   return (
     <>
