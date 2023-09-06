@@ -136,6 +136,32 @@ Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
 Drop here: ここにドロップ
+Write your story :): ''
+Double click to start to write your story :): ''
+Normal: ''
+Heading 1: ''
+Heading 2: ''
+Heading 3: ''
+Bullet List: ''
+Numbered List: ''
+Quote: ''
+Formatting options for font family: ''
+Formatting options for font size: ''
+Center Align: ''
+Justify Align: ''
+Left Align: ''
+Right Align: ''
+Outdent: ''
+Indent: ''
+Bulleted List: ''
+Insert Code Block: ''
+Insert Link: ''
+Text Color: ''
+Background Color: 背景色
+Strikethrough: ''
+Subscript: ''
+Superscript: ''
+Clear Formatting: ''
 not set: 未設定
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
@@ -276,7 +302,6 @@ List: リスト
 Padding: 余白
 Gap Spacing: 間隔
 Align Center: 中央に配置
-Background Color: 背景色
 Enable Editor Mode: ウィジェットの配置を編集
 Close: 閉じる
 Add a tag group: タググループを追加
