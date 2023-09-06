@@ -12,13 +12,17 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
+import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
+import type { Layer } from "@reearth/beta/lib/core/Map";
 import { valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import {
   type Maybe,
   type WidgetZone as WidgetZoneType,
   type WidgetSection as WidgetSectionType,
   type WidgetArea as WidgetAreaType,
   type Scene,
+  EarthLayerFragment,
   PropertyFragmentFragment,
   PropertySchemaGroupFragmentFragment,
   PropertyItemFragmentFragment,
@@ -26,6 +30,7 @@ import {
   PropertySchemaFieldFragmentFragment,
   PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
+  NlsLayerCommonFragment,
 } from "@reearth/services/gql";
 
 type P = { [key in string]: any };
@@ -47,7 +52,9 @@ export type Datasets = {
   datasets: Record<string, any>[];
 };
 
-export type Widget = Omit<RawWidget, "layout" | "extended"> & { extended?: boolean };
+export type Widget = Omit<RawWidget, "layout" | "extended"> & {
+  extended?: boolean;
+};
 
 export const convertWidgets = (
   scene?: Partial<Scene>,
@@ -319,3 +326,65 @@ export const valueFromGQL = (val: any, type: GQLValueType) => {
   }
   return { type: t, value: newVal ?? undefined, ok };
 };
+
+export type RawNLSLayer = NlsLayerCommonFragment & {
+  __typename: "NLSLayerGroup";
+  children?: RawNLSLayer[] | null | undefined;
+};
+
+export function processLayers(
+  newLayers?: NLSLayer[],
+  parent?: RawNLSLayer | null | undefined,
+): Layer[] | undefined {
+  return newLayers?.map(nlsLayer => ({
+    type: "simple",
+    id: nlsLayer.id,
+    title: nlsLayer.title,
+    visible: nlsLayer.visible,
+    infobox: processInfobox(nlsLayer.infobox, parent?.infobox),
+    tags: processLayerTags(nlsLayer.tags),
+    properties: nlsLayer.config?.properties,
+    defines: nlsLayer.config?.defines,
+    events: nlsLayer.config?.events,
+    data: nlsLayer.config?.data,
+    resource: nlsLayer.config?.resource,
+    marker: nlsLayer.config?.marker,
+    polygon: nlsLayer.config?.polygon,
+    polyline: nlsLayer.config?.polyline,
+  }));
+}
+
+const processInfobox = (
+  orig: EarthLayerFragment["infobox"] | null | undefined,
+  parent: EarthLayerFragment["infobox"] | null | undefined,
+): Layer["infobox"] => {
+  const used = orig || parent;
+  if (!used) return;
+  return {
+    property: processProperty(parent?.property, orig?.property),
+    blocks: used.fields.map<Block>(f => ({
+      id: f.id,
+      pluginId: f.pluginId,
+      extensionId: f.extensionId,
+      property: processProperty(undefined, f.property),
+      propertyId: f.propertyId, // required by onBlockChange
+    })),
+  };
+};
+
+export function processLayerTags(
+  tags: {
+    tagId: string;
+    tag?: Maybe<{ label: string }>;
+    children?: { tagId: string; tag?: Maybe<{ label: string }> }[];
+  }[],
+): Tag[] {
+  return tags.map(t => ({
+    id: t.tagId,
+    label: t.tag?.label ?? "",
+    tags: t.children?.map(tt => ({
+      id: tt.tagId,
+      label: tt.tag?.label ?? "",
+    })),
+  }));
+}
