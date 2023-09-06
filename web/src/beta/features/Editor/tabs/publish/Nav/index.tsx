@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-// import TabButton from "@reearth/beta/components/TabButton";
 import TabButton from "@reearth/beta/components/TabButton";
 import Text from "@reearth/beta/components/Text";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
