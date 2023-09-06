@@ -74,7 +74,7 @@ const RichTextEditor: React.FC<Props> = ({
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className="editor-container" ref={editorRef}>
+      <div className="lexical editor-container" ref={editorRef}>
         {editMode && (
           <ToolbarPlugin containerRef={editorRef} scrollableContainerId={scrollableContainerId} />
         )}
@@ -101,7 +101,12 @@ const RichTextEditor: React.FC<Props> = ({
           <ListMaxIndentLevelPlugin maxDepth={7} />
           <OnChangePlugin onChange={onStateChange} />
           <SwitchEditModePlugin editable={editMode} />
-          <FloatingLinkEditorPlugin scrollableContainerId={scrollableContainerId} />
+          {editorRef.current && (
+            <FloatingLinkEditorPlugin
+              scrollableContainerId={scrollableContainerId}
+              anchorElem={editorRef.current}
+            />
+          )}
         </div>
       </div>
     </LexicalComposer>
