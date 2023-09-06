@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useParams } from "react-router-dom";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -6,6 +6,7 @@ import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import TabButton from "@reearth/beta/components/TabButton";
 import Text from "@reearth/beta/components/Text";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
+import { getPublishStatus } from "@reearth/beta/utils/publish-status";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -13,6 +14,7 @@ import { styled } from "@reearth/services/theme";
 import useHooks from "./hooks";
 import PublishModal from "./PublishModal";
 import { PublishStatus } from "./PublishModal/hooks";
+import PublishStoryModal from "./PublishModal/storyPublishModal";
 
 export { navbarHeight } from "@reearth/beta/features/Editor/SecondaryNav";
 
@@ -23,13 +25,13 @@ type Props = {
   selectedProjectType?: ProjectType;
   onProjectTypeChange: (type: ProjectType) => void;
 };
-
 const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeChange }) => {
   const t = useT();
-
+  const { sceneId } = useParams<{ sceneId: string }>();
   const {
     publishing,
     publishStatus,
+    publishStoryStatus,
     dropdownOpen,
     modalOpen,
     alias,
@@ -42,18 +44,16 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     handleProjectPublish,
     handleProjectAliasCheck,
     handleOpenProjectSettings,
-  } = useHooks({ projectId });
+  } = useHooks({ projectId, sceneId });
 
-  const text = useMemo(
-    () =>
-      publishStatus === "published" || publishStatus === "limited"
-        ? t("Published")
-        : t("Unpublished"),
-    [publishStatus, t],
+  const isStoryTabSelected = selectedProjectType === "story";
+  const { publishedName, disablePublish, publishText } = getPublishStatus(
+    publishStatus,
+    publishStoryStatus,
+    isStoryTabSelected,
+    t,
   );
 
-  console.log(selectedProjectType);
-  const checkPublished: boolean = publishStatus === "limited" || publishStatus === "published";
   return (
     <>
       <StyledSecondaryNav>
@@ -75,9 +75,9 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
           placement="bottom-end">
           <Popover.Trigger asChild>
             <Publishing onClick={() => setDropdown(!dropdownOpen)}>
-              <Status status={publishStatus} />
+              <Status status={isStoryTabSelected ? publishStoryStatus : publishStatus} />
               <Text size="body" customColor>
-                {text}
+                {publishText}
               </Text>
               <Icon icon="arrowDown" size={16} />
             </Publishing>
@@ -89,12 +89,12 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
               items={[
                 {
                   name: t("Unpublish"),
-                  disabled: publishStatus === "unpublished",
+                  disabled: disablePublish,
                   onClick: () => handleModalOpen("unpublishing"),
                 },
                 {
-                  name: checkPublished ? t("Update") : t("Publish"),
-                  onClick: () => handleModalOpen(checkPublished ? "updating" : "publishing"),
+                  name: publishedName,
+                  onClick: () => handleModalOpen(publishedName),
                 },
                 {
                   name: t("Publishing Settings"),
@@ -105,19 +105,35 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
           </Popover.Content>
         </Popover.Provider>
       </StyledSecondaryNav>
-      <PublishModal
-        isVisible={modalOpen}
-        loading={publishProjectLoading}
-        publishing={publishing}
-        publishStatus={publishStatus}
-        url={config()?.published?.split("{}")}
-        projectAlias={alias}
-        validAlias={validAlias}
-        validatingAlias={validatingAlias}
-        onClose={handleModalClose}
-        onPublish={handleProjectPublish}
-        onAliasValidate={handleProjectAliasCheck}
-      />
+      {selectedProjectType === "story" ? (
+        <PublishStoryModal
+          isVisible={modalOpen}
+          loading={publishProjectLoading}
+          publishing={publishing}
+          publishStatus={publishStatus}
+          url={config()?.published?.split("{}")}
+          projectAlias={alias}
+          validAlias={validAlias}
+          validatingAlias={validatingAlias}
+          onClose={handleModalClose}
+          onPublish={handleProjectPublish}
+          onAliasValidate={handleProjectAliasCheck}
+        />
+      ) : (
+        <PublishModal
+          isVisible={modalOpen}
+          loading={publishProjectLoading}
+          publishing={publishing}
+          publishStatus={publishStatus}
+          url={config()?.published?.split("{}")}
+          projectAlias={alias}
+          validAlias={validAlias}
+          validatingAlias={validatingAlias}
+          onClose={handleModalClose}
+          onPublish={handleProjectPublish}
+          onAliasValidate={handleProjectAliasCheck}
+        />
+      )}
     </>
   );
 };

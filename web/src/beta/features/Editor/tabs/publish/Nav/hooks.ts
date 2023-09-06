@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-import { useProjectFetcher } from "@reearth/services/api";
+import { useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 
 import { publishingType } from "./PublishModal";
 import { type PublishStatus } from "./PublishModal/hooks";
 
-export default ({ projectId }: { projectId?: string }) => {
+export default ({ projectId, sceneId }: { projectId?: string; sceneId: string }) => {
   const {
     useProjectQuery,
     useProjectAliasCheckLazyQuery,
@@ -14,7 +14,9 @@ export default ({ projectId }: { projectId?: string }) => {
     publishProjectLoading,
   } = useProjectFetcher();
   const { project } = useProjectQuery(projectId);
+  const { useSceneQuery } = useSceneFetcher();
 
+  const { scene } = useSceneQuery({ sceneId });
   const [publishing, setPublishing] = useState<publishingType>("unpublishing");
 
   const [dropdownOpen, setDropdown] = useState(false);
@@ -59,6 +61,18 @@ export default ({ projectId }: { projectId?: string }) => {
     return status;
   }, [project?.publishmentStatus]);
 
+  const publishStoryStatus = useMemo(() => {
+    const status = scene?.stories.reduce((result, data) => {
+      if (data.publishmentStatus === "PUBLIC") {
+        return "published";
+      } else if (data.publishmentStatus === "LIMITED") {
+        return "limited";
+      }
+      return result;
+    }, "unpublished");
+    return status;
+  }, [scene]);
+
   const handleProjectPublish = useCallback(
     async (alias: string | undefined, publishStatus: PublishStatus) => {
       await usePublishProject(publishStatus, projectId, alias);
@@ -83,6 +97,7 @@ export default ({ projectId }: { projectId?: string }) => {
   return {
     publishing,
     publishStatus,
+    publishStoryStatus,
     publishProjectLoading,
     dropdownOpen,
     modalOpen,
