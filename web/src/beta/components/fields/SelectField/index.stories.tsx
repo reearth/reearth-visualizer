@@ -14,7 +14,7 @@ export default meta;
 
 type Story = StoryObj<typeof SelectField>;
 
-export const Default: Story = (args: Props<string | number>) => {
+export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback((value: string) => updateArgs({ value: value }), [updateArgs]);
@@ -62,11 +62,11 @@ Default.args = {
   value: undefined,
   options: [
     {
-      value: "item 1 akas bakas moti kiran kapoor takhat buland biba kaur",
+      label: "item 1 akas bakas moti kiran kapoor takhat buland biba kaur",
       key: "item_1",
     },
-    { value: "item 2", key: "item_2" },
-    { value: "item 3", key: "item_3" },
+    { label: "item 2", key: "item_2" },
+    { label: "item 3", key: "item_3" },
   ],
   onChange: () => console.log("clicked"),
 };

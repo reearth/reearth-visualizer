@@ -8,13 +8,13 @@ import { styled } from "@reearth/services/theme";
 
 import Property from "..";
 
-export type SelectValue<T> = {
-  value: T;
+export type SelectValue = {
+  label: string;
   key: string;
 };
 
-export type Props<T> = {
-  options: SelectValue<T>[];
+export type Props = {
+  options?: SelectValue[];
   onChange: (key: string) => void;
   value?: string;
   disabled?: boolean;
@@ -23,7 +23,7 @@ export type Props<T> = {
   description?: string;
 };
 
-const SelectField: React.FC<Props<string | number>> = ({
+const SelectField: React.FC<Props> = ({
   options,
   onChange,
   value,
@@ -46,7 +46,7 @@ const SelectField: React.FC<Props<string | number>> = ({
   );
 
   const selected = useMemo(() => {
-    return options.find(({ key }) => key === value);
+    return options?.find(({ key }) => key === value);
   }, [options, value]);
 
   return (
@@ -55,13 +55,13 @@ const SelectField: React.FC<Props<string | number>> = ({
         <Popover.Trigger asChild>
           <InputWrapper disabled={disabled} onClick={handlePopOver}>
             <Select selected={selected ? true : false} open={open}>
-              {selected ? selected.value : t("Please choose an option")}
+              {selected ? selected.label : t("Please choose an option")}
             </Select>
             <ArrowDownIcon icon="arrowDown" size={12} />
           </InputWrapper>
         </Popover.Trigger>
         <PickerWrapper>
-          {options.map(({ value, key }) => (
+          {options?.map(({ label: value, key }) => (
             <Option
               size="footnote"
               selected={selected?.key == key}
