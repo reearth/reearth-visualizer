@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from "react";
 
-import RadioBox from "@reearth/beta/components/RadioBox";
+import RadioBox from "@reearth/beta/components/RadioGroup/RadioBox";
 import { styled } from "@reearth/services/theme";
 
 export type Option = {
