@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useCallback } from "react";
 
+import { PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/Nav/PublishModal/hooks";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryInput,
@@ -8,10 +9,15 @@ import {
   MutationCreateStoryArgs,
   UpdateStoryInput,
 } from "@reearth/services/gql/__gen__/graphql";
-import { CREATE_STORY, UPDATE_STORY } from "@reearth/services/gql/queries/storytelling";
+import {
+  CREATE_STORY,
+  PUBLISH_STORY,
+  UPDATE_STORY,
+} from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 
 import { useNotification } from "../../state";
+import { toGqlStatus } from "../toGqlStatus";
 
 import useBlocks from "./blocks";
 import usePages from "./pages";
@@ -64,6 +70,38 @@ export default function useStorytellingAPI() {
     [updateStoryMutation, t, setNotification],
   );
 
+  const [publishStoryMutation] = useMutation(PUBLISH_STORY);
+
+  const usePublishStory = useCallback(
+    async (s: PublishStatus, storyId?: string, alias?: string) => {
+      if (!storyId) return;
+
+      const gqlStatus = toGqlStatus(s);
+
+      const { data, errors } = await publishStoryMutation({
+        variables: { storyId, alias, status: gqlStatus },
+      });
+
+      if (errors || !data?.publishStory) {
+        setNotification({ type: "error", text: t("Failed to publish story.") });
+
+        return { status: "error" };
+      }
+
+      setNotification({
+        type: s === "limited" ? "success" : s == "published" ? "success" : "info",
+        text:
+          s === "limited"
+            ? t("Successfully published your story!")
+            : s == "published"
+            ? t("Successfully published your story with search engine indexing!")
+            : t("Successfully unpublished your story. Now nobody can access your story."),
+      });
+      return { data: data.publishStory.story, status: "success" };
+    },
+    [publishStoryMutation, t, setNotification],
+  );
+
   return {
     useCreateStory,
     useUpdateStory,
@@ -75,5 +113,6 @@ export default function useStorytellingAPI() {
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,
+    usePublishStory,
   };
 }
