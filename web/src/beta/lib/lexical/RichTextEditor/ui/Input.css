@@ -1,15 +1,15 @@
-.Input__wrapper {
+.lexical .Input__wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
 }
-.Input__label {
+.lexical .Input__label {
   display: flex;
   flex: 1;
   color: #666;
 }
-.Input__input {
+.lexical .Input__input {
   display: flex;
   flex: 2;
   border: 1px solid #999;
