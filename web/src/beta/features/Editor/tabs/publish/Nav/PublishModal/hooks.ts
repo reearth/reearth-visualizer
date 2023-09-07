@@ -15,7 +15,7 @@ export default (
   publishing?: publishingType,
   publishStatus?: PublishStatus,
   defaultAlias?: string,
-  onPublish?: (publishStatus: PublishStatus) => Promise<void>,
+  onPublish?: (alias: string | undefined, publishStatus: PublishStatus) => void | Promise<void>,
   onClose?: () => void,
   onAliasValidate?: (alias: string) => void,
   onCopyToClipBoard?: () => void,
@@ -95,15 +95,17 @@ export default (
 
   const handlePublish = useCallback(async () => {
     if (!publishing) return;
+    const a = publishing !== "unpublishing" ? alias || generateAlias() : undefined;
+
     const mode =
       publishing === "unpublishing" ? "unpublished" : !searchIndex ? "limited" : "published";
-    await onPublish?.(mode);
+    await onPublish?.(a, mode);
     if (publishing === "unpublishing") {
       handleClose?.();
     } else {
       setStatusChange(true);
     }
-  }, [onPublish, publishing, searchIndex, setStatusChange, handleClose]);
+  }, [alias, generateAlias, onPublish, publishing, searchIndex, setStatusChange, handleClose]);
 
   return {
     statusChanged,

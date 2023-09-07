@@ -23,7 +23,7 @@ type Props = {
   publishing?: publishingType;
   validatingAlias?: boolean;
   url?: string[];
-  onPublish: (publishStatus: PublishStatus) => Promise<void>;
+  onPublish: (alias: string | undefined, publishStatus: PublishStatus) => void | Promise<void>;
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
@@ -79,10 +79,9 @@ const PublishModal: React.FC<Props> = ({
   const publishDisabled = useMemo(
     () =>
       loading ||
-      (publishing === "unpublishing" && publishStatus === "unpublished") ||
       ((publishing === "publishing" || publishing === "updating") &&
         (!alias || !!validation || validatingAlias || !validAlias)),
-    [alias, loading, publishStatus, publishing, validation, validAlias, validatingAlias],
+    [alias, loading, publishing, validation, validAlias, validatingAlias],
   );
 
   const modalTitleText = useMemo(() => {
@@ -125,7 +124,12 @@ const PublishModal: React.FC<Props> = ({
       button1={<Button text={secondaryButtonText} buttonType="secondary" onClick={handleClose} />}
       button2={
         !statusChanged && (
-          <Button text={primaryButtonText} disabled={publishDisabled} onClick={handlePublish} />
+          <Button
+            text={primaryButtonText}
+            buttonType="primary"
+            disabled={publishDisabled}
+            onClick={handlePublish}
+          />
         )
       }
       onClose={handleClose}>
