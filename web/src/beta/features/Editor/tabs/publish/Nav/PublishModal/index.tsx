@@ -104,7 +104,6 @@ const PublishModal: React.FC<Props> = ({
       : t("Continue");
   }, [t, statusChanged, publishing]);
 
-  console.log(publishing);
   const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "Close"), [statusChanged]);
 
   const updateDescriptionText = useMemo(() => {

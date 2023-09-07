@@ -12,6 +12,14 @@ export const getPublishStatus = (publishStatus, publishStoryStatus, isStoryTabSe
     ? publishStoryStatus === "unpublished"
     : publishStatus === "unpublished";
 
+  const modelOpenProp = isStoryTabSelected
+    ? isPublishStory
+      ? t("updating")
+      : t("publishing")
+    : isPublishProject
+    ? t("updating")
+    : t("publishing");
+
   const publishText = isStoryTabSelected
     ? isPublishStory
       ? t("Published")
@@ -24,5 +32,6 @@ export const getPublishStatus = (publishStatus, publishStoryStatus, isStoryTabSe
     publishedName,
     disablePublish,
     publishText,
+    modelOpenProp,
   };
 };

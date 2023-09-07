@@ -50,7 +50,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
   } = useHooks({ projectId, sceneId });
 
   const isStoryTabSelected = selectedProjectType === "story";
-  const { publishedName, disablePublish, publishText } = getPublishStatus(
+  const { publishedName, disablePublish, publishText, modelOpenProp } = getPublishStatus(
     publishStatus,
     publishStoryStatus,
     isStoryTabSelected,
@@ -97,7 +97,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
                 },
                 {
                   name: publishedName,
-                  onClick: () => handleModalOpen(publishedName),
+                  onClick: () => handleModalOpen(modelOpenProp),
                 },
                 {
                   name: t("Publishing Settings"),

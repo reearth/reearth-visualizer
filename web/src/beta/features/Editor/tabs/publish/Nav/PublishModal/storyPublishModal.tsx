@@ -70,10 +70,10 @@ const PublishStoryModal: React.FC<Props> = ({
     [purl],
   );
 
-  const publishDisabled = useMemo(
-    () => loading || publishing === "publishing" || publishing === "updating",
-    [loading, publishing],
-  );
+  // const publishDisabled = useMemo(
+  //   () => loading || publishing === "publishing" || publishing === "updating",
+  //   [loading, publishing],
+  // );
 
   const modalTitleText = useMemo(() => {
     return statusChanged
@@ -94,8 +94,6 @@ const PublishStoryModal: React.FC<Props> = ({
       ? t("Update")
       : t("Continue");
   }, [t, statusChanged, publishing]);
-
-  console.log(publishing);
 
   const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "Close"), [statusChanged]);
 
@@ -120,7 +118,7 @@ const PublishStoryModal: React.FC<Props> = ({
           <Button
             text={primaryButtonText}
             buttonType="primary"
-            disabled={publishDisabled}
+            disabled={loading}
             onClick={handlePublish}
           />
         )
