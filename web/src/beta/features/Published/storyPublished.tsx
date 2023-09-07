@@ -1,5 +1,3 @@
-import Visualizer from "@reearth/beta/features/Editor/Visualizer";
-
 import StoryPanel from "../Editor/StoryPanel";
 import useStorytelling from "../Editor/useStorytelling";
 
@@ -17,7 +15,7 @@ export const StoryPublished = ({ selectedProjectType }: IStoryProps) => {
   });
 
   return (
-    <Visualizer sceneId={sceneId}>
+    <>
       {selectedProjectType === "story" && (
         <StoryPanel
           sceneId={sceneId}
@@ -26,6 +24,6 @@ export const StoryPublished = ({ selectedProjectType }: IStoryProps) => {
           onPageSelect={handlePageSelect}
         />
       )}
-    </Visualizer>
+    </>
   );
 };

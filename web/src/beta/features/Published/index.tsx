@@ -1,4 +1,5 @@
 import Error from "@reearth/beta/features/Published/publishedError";
+import VisualizerStory from "@reearth/beta/lib/core/Visualizer";
 import Visualizer from "@reearth/classic/components/molecules/Visualizer";
 import { config } from "@reearth/services/config";
 
@@ -28,7 +29,18 @@ export default function Published({ className, alias }: Props) {
   return error ? (
     <Error />
   ) : checkSelectedTab === "story" ? (
-    <StoryPublished selectedProjectType="story" />
+    <VisualizerStory
+      engine="cesium"
+      floatingWidgets={widgets?.floatingWidgets}
+      tags={tags}
+      sceneProperty={sceneProperty}
+      pluginProperty={pluginProperty}
+      ready={ready}
+      isBuilt
+      pluginBaseUrl={config()?.plugins}
+      meta={engineMeta}>
+      <StoryPublished selectedProjectType="story" />
+    </VisualizerStory>
   ) : (
     <Visualizer
       className={className}
