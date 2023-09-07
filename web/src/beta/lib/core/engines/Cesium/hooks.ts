@@ -132,6 +132,16 @@ export default ({
           : undefined,
         intensity: property.light?.lightIntensity,
       });
+    } else {
+      light = cesium.current?.cesiumElement?.scene.light;
+      if (light) {
+        light.color = property?.light?.lightColor
+          ? Color.fromCssColorString(property.light.lightColor)
+          : light.color;
+        light.intensity = property?.light?.lightIntensity
+          ? property.light.lightIntensity
+          : light.intensity;
+      }
     }
     return light;
   }, [
