@@ -89,12 +89,10 @@ const LayerItem = ({ id, layerTitle, onDelete, onSelect, onLayerNameUpdate }: La
   }, []);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(layerTitle);
-  const [prevTitle, setPrevTitle] = useState(layerTitle);
 
   const handleDoubleClick = useCallback(() => {
     setIsEditing(true);
-    setPrevTitle(editedTitle);
-  }, [editedTitle]);
+  }, []);
 
   const handleTitleSubmit = useCallback(() => {
     if (!editedTitle.trim()) {
@@ -113,10 +111,10 @@ const LayerItem = ({ id, layerTitle, onDelete, onSelect, onLayerNameUpdate }: La
     [handleTitleSubmit],
   );
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setIsEditing(false);
-    setEditedTitle(prevTitle);
-  };
+    handleTitleSubmit();
+  }, [handleTitleSubmit]);
 
   return (
     <ListItemContainer onClick={onSelect}>

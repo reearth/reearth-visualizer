@@ -51,7 +51,7 @@ const TextInput: React.FC<Props> = ({
     onBlur?.();
   }, [currentValue, onChange, onBlur]);
 
-  const handleKeyDown = useCallback(
+  const handleKeyUp = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if ((e.key === "Enter" || e.key === "Return") && currentValue !== value) {
         onChange?.(currentValue);
@@ -67,7 +67,7 @@ const TextInput: React.FC<Props> = ({
         value={currentValue ?? ""}
         onChange={handleChange}
         onBlur={handleBlur}
-        onKeyUp={handleKeyDown}
+        onKeyUp={handleKeyUp}
       />
     </Property>
   );
