@@ -545,6 +545,7 @@ export default function useHooks({
     ],
   );
 
+  const prevLayers = useRef<Layer[] | undefined>([]);
   useLayoutEffect(() => {
     const ids = new Set<string>();
 
@@ -556,14 +557,16 @@ export default function useHooks({
       layerMap.set(l.id, l);
     });
 
-    const deleted = Array.from(atomMap.keys()).filter(k => !ids.has(k));
-    deleted.forEach(k => {
+    const deleted = prevLayers.current?.filter(l => !ids.has(l.id)).map(l => l.id);
+    deleted?.forEach(k => {
       atomMap.delete(k);
       layerMap.delete(k);
       lazyLayerMap.delete(k);
       showLayer(k);
     });
-    setOverridenLayers(layers => layers.filter(l => !deleted.includes(l.id)));
+    setOverridenLayers(layers => layers.filter(l => !deleted?.includes(l.id)));
+
+    prevLayers.current = layers;
   }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
 
   useEffect(() => {
