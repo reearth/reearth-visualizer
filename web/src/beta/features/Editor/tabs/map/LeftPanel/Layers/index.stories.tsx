@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-
 import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
