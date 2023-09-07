@@ -41,10 +41,10 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   const handleDeviceChange = useCallback((newDevice: Device) => setDevice(newDevice), []);
 
-  const handleProjectTypeChange = useCallback(
-    (projectType: ProjectType) => setSelectedProjectType(projectType),
-    [],
-  );
+  const handleProjectTypeChange = useCallback((projectType: ProjectType) => {
+    setSelectedProjectType(projectType);
+    localStorage.setItem("selectedTab", projectType);
+  }, []);
 
   const visualizerWidth = useMemo(
     () => (tab === "widgets" ? devices[selectedDevice] : "100%"),

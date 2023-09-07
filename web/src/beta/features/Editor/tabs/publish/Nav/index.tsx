@@ -25,9 +25,10 @@ type Props = {
   selectedProjectType?: ProjectType;
   onProjectTypeChange: (type: ProjectType) => void;
 };
+
 const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeChange }) => {
   const t = useT();
-  const { sceneId } = useParams<{ sceneId: string }>();
+  const { sceneId } = useParams<{ sceneId?: string }>();
   const {
     publishing,
     publishStatus,
@@ -36,6 +37,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     modalOpen,
     alias,
     storyAlias,
+    scene,
     validAlias,
     validatingAlias,
     publishProjectLoading,
@@ -113,6 +115,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
           isVisible={modalOpen}
           loading={publishStoryLoading}
           publishing={publishing}
+          scene={scene}
           publishStoryStatus={publishStoryStatus}
           url={config()?.published?.split("{}")}
           storyAlias={storyAlias}

@@ -6,7 +6,7 @@ import { useProjectFetcher, useSceneFetcher, useStoryTellingFetcher } from "@ree
 import { publishingType } from "./PublishModal";
 import { type PublishStatus } from "./PublishModal/hooks";
 
-export default ({ projectId, sceneId }: { projectId?: string; sceneId: string }) => {
+export default ({ projectId, sceneId }: { projectId?: string; sceneId?: string }) => {
   const {
     useProjectQuery,
     useProjectAliasCheckLazyQuery,
@@ -65,8 +65,8 @@ export default ({ projectId, sceneId }: { projectId?: string; sceneId: string })
     return status;
   }, [project?.publishmentStatus]);
 
-  const publishStoryStatus = useMemo(() => {
-    const status = scene?.stories.reduce((result, data) => {
+  const publishStoryStatus = useMemo((): PublishStatus => {
+    const status: PublishStatus = scene?.stories.reduce((result, data) => {
       if (data.publishmentStatus === "PUBLIC") {
         return "published";
       } else if (data.publishmentStatus === "LIMITED") {
@@ -115,6 +115,7 @@ export default ({ projectId, sceneId }: { projectId?: string; sceneId: string })
     modalOpen,
     alias,
     storyAlias,
+    scene,
     validAlias,
     validatingAlias,
     handleModalOpen,

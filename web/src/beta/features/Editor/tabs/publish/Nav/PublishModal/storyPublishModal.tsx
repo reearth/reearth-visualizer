@@ -4,6 +4,7 @@ import Button from "@reearth/beta/components/Button";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
+import { Scene } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 
@@ -25,9 +26,10 @@ type Props = {
   isVisible: boolean;
   className?: string;
   loading?: boolean;
-  publishStoryStatus?: PublishStatus;
+  publishStoryStatus?: PublishStatus | undefined;
   storyId?: string;
   storyAlias?: string;
+  scene?: Scene;
   publishing?: publishingType;
   url?: string[];
   onPublish: (alias: string | undefined, publishStoryStatus: PublishStatus) => void | Promise<void>;
@@ -41,6 +43,7 @@ const PublishStoryModal: React.FC<Props> = ({
   publishing,
   publishStoryStatus,
   storyAlias,
+  scene,
   url,
   onClose,
   onPublish,
@@ -62,8 +65,9 @@ const PublishStoryModal: React.FC<Props> = ({
   } = useHooks(publishing, publishStoryStatus, storyAlias, onPublish, onClose, onCopyToClipBoard);
 
   const purl = useMemo(() => {
+    localStorage.setItem("storyData", JSON.stringify(scene));
     return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");
-  }, [alias, url]);
+  }, [scene, url, alias]);
 
   const embedCode = useMemo(
     () => `<iframe width="560" height="315" src="${purl}" frameBorder="0"></iframe>;`,
