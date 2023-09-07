@@ -5,8 +5,6 @@ import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/
 
 export type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
-export const pageElementId = "story-page";
-
 export default ({
   sceneId,
   selectedStory,
@@ -63,14 +61,8 @@ export default ({
     };
   }, [onPageSelect, currentPage, selectedStory]);
 
-  const pageHeight = useMemo(() => {
-    const element = document.getElementById(pageElementId);
-    return element?.clientHeight;
-  }, []);
-
   return {
     pageInfo,
-    pageHeight,
     installableBlocks: installableStoryBlocks,
     selectedPageId,
     selectedBlockId,
