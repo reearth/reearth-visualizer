@@ -1,13 +1,19 @@
 import { useCallback, useMemo, useState } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
-import { StoryFragmentFragment } from "@reearth/services/gql";
+import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 type Props = {
   sceneId: string;
   stories: StoryFragmentFragment[];
 };
+
+const getPage = (id?: string, pages?: StoryPageFragmentFragment[]) => {
+  if (!id || !pages || !pages.length) return;
+  return pages.find(p => p.id === id);
+};
+
 export default function ({ sceneId, stories }: Props) {
   const t = useT();
   const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = useStorytellingAPI();
@@ -22,12 +28,19 @@ export default function ({ sceneId, stories }: Props) {
       return selectedStory?.pages[0];
     }
 
-    return (selectedStory?.pages ?? []).find(p => p.id === selectedPageId);
+    return getPage(selectedPageId, selectedStory?.pages);
   }, [selectedPageId, selectedStory?.pages]);
 
-  const handlePageSelect = useCallback((pageId: string) => {
-    setSelectedPageId(pageId);
-  }, []);
+  const handlePageSelect = useCallback(
+    (pageId: string) => {
+      const newPage = getPage(pageId, selectedStory?.pages);
+      if (!newPage) return;
+      setSelectedPageId(pageId);
+      const element = document.getElementById(newPage?.id);
+      element?.scrollIntoView({ behavior: "smooth" });
+    },
+    [selectedStory?.pages],
+  );
 
   const handlePageDuplicate = useCallback(async (pageId: string) => {
     console.log("onPageDuplicate", pageId);
