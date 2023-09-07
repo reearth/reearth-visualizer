@@ -1,11 +1,11 @@
+import ColorField from "@reearth/beta/components/fields/ColorField";
+import NumberField from "@reearth/beta/components/fields/NumberField";
+import SelectField from "@reearth/beta/components/fields/SelectField";
+import SliderField from "@reearth/beta/components/fields/SliderField";
+import SpacingInput, { SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
 import TextInput from "@reearth/beta/components/fields/TextInput";
+import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
-
-import ColorField from "../ColorField";
-import SelectField from "../SelectField";
-import SliderField from "../SliderField";
-import SpacingInput, { SpacingValues } from "../SpacingInput";
-import ToggleField from "../ToggleField";
 
 import useHooks from "./hooks";
 
@@ -82,7 +82,16 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
               onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
             />
           ) : (
-            <p key={sf.id}>{sf.name} number field</p>
+            <NumberField
+              key={sf.id}
+              name={sf.name}
+              value={value as number}
+              suffix={sf.suffix}
+              min={sf.min as number}
+              max={sf.max as number}
+              description={sf.description}
+              onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+            />
           )
         ) : (
           <p key={sf.id}>{sf.name} field</p>
