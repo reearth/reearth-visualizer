@@ -124,6 +124,7 @@ export const context: Context = {
         fov: Math.PI * (60 / 180),
       },
       viewport: { west: 0, east: 0, north: 0, south: 0 },
+      getFovCenter: act("getFovCenter"),
       enableScreenSpaceController: act("enableScreenSpaceController"),
       flyTo: act("flyTo"),
       lookAt: act("lookAt"),
