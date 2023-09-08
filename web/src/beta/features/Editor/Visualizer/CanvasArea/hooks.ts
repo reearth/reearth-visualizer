@@ -4,7 +4,7 @@ import { useMemo, useEffect, useCallback, useState } from "react";
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
-import { useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
+import { useLayersFetcher, useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -17,11 +17,13 @@ import {
   selectedWidgetAreaVar,
 } from "@reearth/services/state";
 
-import { convertWidgets } from "./convert";
+import { convertWidgets, processLayers } from "./convert";
 import { BlockType } from "./type";
 
 export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
+  const { useGetLayersQuery } = useLayersFetcher();
+  const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { useSceneQuery } = useSceneFetcher();
   const { scene } = useSceneQuery({ sceneId });
 
@@ -68,28 +70,10 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     [selected],
   );
 
+  const layers = useMemo(() => processLayers(nlsLayers), [nlsLayers]);
+
   // TODO: Use GQL value
   const rootLayerId = "";
-
-  const layers = useMemo(() => {
-    const l = {
-      type: "simple",
-      id: "123",
-      data: {
-        type: "geojson",
-        value: {
-          // GeoJSON
-          type: "Feature",
-          geometry: {
-            coordinates: [-15.209829106984472, 20.323569554406248, 10000],
-            type: "Point",
-          },
-        },
-      },
-      marker: {},
-    } as Layer;
-    return [l];
-  }, []);
 
   const widgets = convertWidgets(scene);
   // TODO: Fix to use exact type through GQL typing

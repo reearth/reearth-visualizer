@@ -60,6 +60,7 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
+  getCameraFovCenter: (withTerrain?: boolean) => LatLngHeight | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
@@ -288,6 +289,7 @@ export type SceneProperty = {
   terrain?: TerrainProperty;
   atmosphere?: {
     enable_sun?: boolean;
+    enableMoon?: boolean;
     enable_lighting?: boolean;
     ground_atmosphere?: boolean;
     sky_atmosphere?: boolean;
@@ -295,13 +297,17 @@ export type SceneProperty = {
     shadowResolution?: 1024 | 2048 | 4096;
     softShadow?: boolean;
     shadowDarkness?: number;
+    shadowMaximumDistance?: number;
     fog?: boolean;
     fog_density?: number;
-    brightness_shift?: number;
     hue_shift?: number;
+    brightness_shift?: number;
     surturation_shift?: number;
+    skyboxBrightnessShift?: number;
+    skyboxSurturationShift?: number;
     globeShadowDarkness?: number;
     globeImageBasedLighting?: boolean;
+    globeBaseColor?: string;
   };
   timeline?: {
     animation?: boolean;
