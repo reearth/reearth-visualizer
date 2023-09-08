@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
@@ -7,8 +7,6 @@ import { StoryPageFragmentFragment } from "../hooks";
 import StoryPage from "../Page";
 
 export const pagesElementId = "story-page-content";
-
-const pageHeight = document.getElementById(pagesElementId)?.clientHeight;
 
 export type Props = {
   sceneId?: string;
@@ -45,6 +43,22 @@ const StoryContent: React.FC<Props> = ({
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const [pageGap, setPageGap] = useState<number>();
+
+  useLayoutEffect(() => {
+    const pageWrapperElement = document.getElementById(pagesElementId);
+    if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
+  }, [setPageGap]);
+
+  useEffect(() => {
+    const resizeCallback = () => {
+      const pageWrapperElement = document.getElementById(pagesElementId);
+      if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
+    };
+    window.addEventListener("resize", resizeCallback);
+    return () => window.removeEventListener("resize", resizeCallback);
+  }, []);
 
   useEffect(() => {
     const ids = pages?.map(p => p.id) as string[];
@@ -122,7 +136,7 @@ const StoryContent: React.FC<Props> = ({
             onPageSelect={onPageSelect}
             onBlockSelect={onBlockSelect}
           />
-          <PageGap height={pageHeight} />
+          <PageGap height={pageGap} />
         </Fragment>
       ))}
     </PagesWrapper>
