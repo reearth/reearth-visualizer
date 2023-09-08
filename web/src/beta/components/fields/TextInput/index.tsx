@@ -9,10 +9,18 @@ type Props = {
   description?: string;
   value?: string;
   timeout?: number;
+  placeholder?: string;
   onChange?: (text: string) => void;
 };
 
-const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, onChange }) => {
+const TextInput: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  timeout = 1000,
+  placeholder,
+  onChange,
+}) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -56,6 +64,7 @@ const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, 
         onChange={handleChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
+        placeholder={placeholder}
       />
     </Property>
   );
