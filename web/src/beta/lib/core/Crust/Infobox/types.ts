@@ -9,6 +9,7 @@ export type Infobox<BP = any> = {
   blocks?: Block<BP>[];
 };
 
+// TODO: Remove `default` property later.
 export type DeprecatedInfoboxProperty = { default?: InfoboxProperty };
 
 export type InfoboxProperty = {
