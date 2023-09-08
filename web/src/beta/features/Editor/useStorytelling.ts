@@ -1,33 +1,55 @@
 import { useCallback, useMemo, useState } from "react";
 
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
-import { StoryFragmentFragment } from "@reearth/services/gql";
+import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 type Props = {
   sceneId: string;
   stories: StoryFragmentFragment[];
 };
+
+const getPage = (id?: string, pages?: StoryPageFragmentFragment[]) => {
+  if (!id || !pages || !pages.length) return;
+  return pages.find(p => p.id === id);
+};
+
 export default function ({ sceneId, stories }: Props) {
   const t = useT();
   const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = useStorytellingAPI();
-  const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
+  const [currentPageId, setCurrentPageId] = useState<string | undefined>(undefined);
+  const [isAutoScrolling, setAutoScrolling] = useState(false);
 
   const selectedStory = useMemo(() => {
     return stories.length ? stories[0] : undefined;
   }, [stories]);
 
-  const selectedPage = useMemo(() => {
-    if (!selectedPageId && selectedStory?.pages?.length) {
+  const currentPage = useMemo(() => {
+    if (!currentPageId && selectedStory?.pages?.length) {
       return selectedStory?.pages[0];
     }
 
-    return (selectedStory?.pages ?? []).find(p => p.id === selectedPageId);
-  }, [selectedPageId, selectedStory?.pages]);
+    return getPage(currentPageId, selectedStory?.pages);
+  }, [currentPageId, selectedStory?.pages]);
 
-  const handlePageSelect = useCallback((pageId: string) => {
-    setSelectedPageId(pageId);
-  }, []);
+  const handleAutoScrollingChange = useCallback(
+    (isScrolling: boolean) => setAutoScrolling(isScrolling),
+    [],
+  );
+
+  const handleCurrentPageChange = useCallback(
+    (pageId: string, disableScrollIntoView?: boolean) => {
+      const newPage = getPage(pageId, selectedStory?.pages);
+      if (!newPage) return;
+      setCurrentPageId(pageId);
+      if (!disableScrollIntoView) {
+        const element = document.getElementById(newPage.id);
+        setAutoScrolling(true);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
+    },
+    [selectedStory?.pages],
+  );
 
   const handlePageDuplicate = useCallback(async (pageId: string) => {
     console.log("onPageDuplicate", pageId);
@@ -45,11 +67,11 @@ export default function ({ sceneId, stories }: Props) {
         storyId: selectedStory.id,
         pageId,
       });
-      if (pageId === selectedPageId) {
-        setSelectedPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
+      if (pageId === currentPageId) {
+        setCurrentPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
       }
     },
-    [useDeleteStoryPage, sceneId, selectedPageId, selectedStory],
+    [useDeleteStoryPage, sceneId, currentPageId, selectedStory],
   );
 
   const handlePageAdd = useCallback(
@@ -82,8 +104,10 @@ export default function ({ sceneId, stories }: Props) {
 
   return {
     selectedStory,
-    selectedPage,
-    handlePageSelect,
+    currentPage,
+    isAutoScrolling,
+    handleAutoScrollingChange,
+    handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,
