@@ -196,7 +196,7 @@ export const getRayEllipsoidIntersection = (
   return Ray.getPoint(ray, intersection.start, result);
 };
 
-const createRayFromCamera = (camera: any): Ray => {
+const createRayFromCamera = (camera: CesiumCamera): Ray => {
   const ray = new Ray();
   camera.positionWC.clone(ray.origin);
   camera.directionWC.clone(ray.direction);
