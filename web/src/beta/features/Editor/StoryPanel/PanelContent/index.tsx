@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useEffect, useMemo, useRef } from "react";
 
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
@@ -20,6 +20,7 @@ export type Props = {
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockSelect: (blockId?: string) => void;
+  onCurrentPageChange?: (pageId: string) => void;
 };
 
 const StoryContent: React.FC<Props> = ({
@@ -34,54 +35,83 @@ const StoryContent: React.FC<Props> = ({
   onPageSettingsToggle,
   onPageSelect,
   onBlockSelect,
+  onCurrentPageChange,
 }) => {
-  // const headingsRef = useRef<Element[]>();
-  // const scrollRef = useRef(0);
+  const scrollRef = useRef<number | undefined>(undefined);
 
   const pageHeight = useMemo(() => {
     const element = document.getElementById(pagesElementId);
     return element?.clientHeight;
   }, []);
 
+  useEffect(() => {
+    const ids = pages?.map(p => p.id) as string[];
+    const panelContentElement = document.getElementById(pagesElementId);
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          const id = entry.target.getAttribute("id") ?? "";
+          if (selectedPageId === id) return;
+
+          const diff = (scrollRef.current as number) - (panelContentElement?.scrollTop as number);
+          const isScrollingUp = diff > 0;
+
+          if (entry.isIntersecting) {
+            onCurrentPageChange?.(id);
+            scrollRef.current = panelContentElement?.scrollTop;
+            return;
+          }
+          const currentIndex = ids?.indexOf(id) as number;
+          const prevEntry = ids[currentIndex - 1];
+          if (isScrollingUp) {
+            const id = prevEntry;
+            onCurrentPageChange?.(id);
+          }
+        });
+      },
+      {
+        // rootMargin: "5% 0% 0% 0%",
+        root: panelContentElement,
+        // rootMargin: "0% 0% -85% 0%",
+        threshold: 0.2,
+      },
+    );
+    ids?.forEach(id => {
+      const e = document.getElementById(id);
+      if (e) {
+        observer.observe(e);
+      }
+    });
+    return () => {
+      ids?.forEach(id => {
+        const e = document.getElementById(id);
+        if (e) {
+          observer.unobserve(e);
+        }
+      });
+    };
+  }, [pages, selectedPageId, onCurrentPageChange]);
+
   return (
     <PagesWrapper id={pagesElementId} showingIndicator={showingIndicator}>
-      {pages?.map(p => {
-        // const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-        //   entries.map(entry => {
-        //     console.log("BBB: ", entry.boundingClientRect);
-        //     if (entry.isIntersecting && currentPage?.id !== p.id) {
-        //       // console.log("NEW PAGE:", p.id);
-        //       // console.log("NEW PAGE:", currentPage);
-        //       onPageSelect(p.id);
-        //     } else {
-        //       // entry.target.classList.remove('visible')
-        //     }
-        //   });
-        // };
-
-        // const observer = new IntersectionObserver(handleIntersection);
-        // const pageElement = document.getElementById(p.id);
-        // if (pageElement && p.id !== currentPage?.id) {
-        //   observer.observe(pageElement);
-        // }
-        return (
-          <Fragment key={p.id}>
-            <StoryPage
-              sceneId={sceneId}
-              storyId={storyId}
-              page={p}
-              selectedPageId={selectedPageId}
-              installableStoryBlocks={installableStoryBlocks}
-              selectedStoryBlockId={selectedStoryBlockId}
-              showPageSettings={showPageSettings}
-              onPageSettingsToggle={onPageSettingsToggle}
-              onPageSelect={onPageSelect}
-              onBlockSelect={onBlockSelect}
-            />
-            <PageGap height={pageHeight} />
-          </Fragment>
-        );
-      })}
+      {pages?.map(p => (
+        <Fragment key={p.id}>
+          <StoryPage
+            sceneId={sceneId}
+            storyId={storyId}
+            page={p}
+            selectedPageId={selectedPageId}
+            installableStoryBlocks={installableStoryBlocks}
+            selectedStoryBlockId={selectedStoryBlockId}
+            showPageSettings={showPageSettings}
+            onPageSettingsToggle={onPageSettingsToggle}
+            onPageSelect={onPageSelect}
+            onBlockSelect={onBlockSelect}
+          />
+          <PageGap height={pageHeight} />
+        </Fragment>
+      ))}
     </PagesWrapper>
   );
 };

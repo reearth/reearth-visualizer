@@ -8,19 +8,19 @@ import StoryContent from "./PanelContent";
 
 export const storyPanelWidth = 442;
 
-// const thresholdArray = steps =>
-//   Array(steps + 1)
-//     .fill(0)
-//     .map((_, index) => index / steps || 0);
-
 export type Props = {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
   currentPage?: StoryPageFragmentFragment;
-  onPageSelect: (id: string) => void;
+  onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 };
 
-export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, currentPage, onPageSelect }) => {
+export const StoryPanel: FC<Props> = ({
+  sceneId,
+  selectedStory,
+  currentPage,
+  onCurrentPageChange,
+}) => {
   const {
     pageInfo,
     installableBlocks,
@@ -30,11 +30,12 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, currentPage, onP
     handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
+    handleCurrentPageChange,
   } = useHooks({
     sceneId,
     selectedStory,
     currentPage,
-    onPageSelect,
+    onCurrentPageChange,
   });
 
   return (
@@ -58,6 +59,7 @@ export const StoryPanel: FC<Props> = ({ sceneId, selectedStory, currentPage, onP
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}
         onBlockSelect={handleBlockSelect}
+        onCurrentPageChange={handleCurrentPageChange}
       />
     </PanelWrapper>
   );

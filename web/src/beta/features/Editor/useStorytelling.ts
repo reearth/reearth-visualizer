@@ -17,27 +17,29 @@ const getPage = (id?: string, pages?: StoryPageFragmentFragment[]) => {
 export default function ({ sceneId, stories }: Props) {
   const t = useT();
   const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = useStorytellingAPI();
-  const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
+  const [currentPageId, setCurrentPageId] = useState<string | undefined>(undefined);
 
   const selectedStory = useMemo(() => {
     return stories.length ? stories[0] : undefined;
   }, [stories]);
 
-  const selectedPage = useMemo(() => {
-    if (!selectedPageId && selectedStory?.pages?.length) {
+  const currentPage = useMemo(() => {
+    if (!currentPageId && selectedStory?.pages?.length) {
       return selectedStory?.pages[0];
     }
 
-    return getPage(selectedPageId, selectedStory?.pages);
-  }, [selectedPageId, selectedStory?.pages]);
+    return getPage(currentPageId, selectedStory?.pages);
+  }, [currentPageId, selectedStory?.pages]);
 
-  const handlePageSelect = useCallback(
-    (pageId: string) => {
+  const handleCurrentPageChange = useCallback(
+    (pageId: string, disableScrollIntoView?: boolean) => {
       const newPage = getPage(pageId, selectedStory?.pages);
       if (!newPage) return;
-      setSelectedPageId(pageId);
-      const element = document.getElementById(newPage?.id);
-      element?.scrollIntoView({ behavior: "smooth" });
+      setCurrentPageId(pageId);
+      if (!disableScrollIntoView) {
+        const element = document.getElementById(newPage.id);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
     },
     [selectedStory?.pages],
   );
@@ -58,11 +60,11 @@ export default function ({ sceneId, stories }: Props) {
         storyId: selectedStory.id,
         pageId,
       });
-      if (pageId === selectedPageId) {
-        setSelectedPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
+      if (pageId === currentPageId) {
+        setCurrentPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
       }
     },
-    [useDeleteStoryPage, sceneId, selectedPageId, selectedStory],
+    [useDeleteStoryPage, sceneId, currentPageId, selectedStory],
   );
 
   const handlePageAdd = useCallback(
@@ -95,8 +97,8 @@ export default function ({ sceneId, stories }: Props) {
 
   return {
     selectedStory,
-    selectedPage,
-    handlePageSelect,
+    currentPage,
+    handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,

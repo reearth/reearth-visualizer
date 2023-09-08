@@ -9,12 +9,12 @@ export default ({
   sceneId,
   selectedStory,
   currentPage,
-  onPageSelect,
+  onCurrentPageChange,
 }: {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
   currentPage?: StoryPageFragmentFragment;
-  onPageSelect: (id: string) => void;
+  onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 }) => {
   const [showPageSettings, setShowPageSettings] = useState(false);
   const [selectedPageId, setSelectedPageId] = useState<string>();
@@ -49,6 +49,13 @@ export default ({
 
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
 
+  const handleCurrentPageChange = useCallback(
+    (pageId: string) => {
+      onCurrentPageChange(pageId, true); // true disables scrollIntoView
+    },
+    [onCurrentPageChange],
+  );
+
   const pageInfo = useMemo(() => {
     const pages = selectedStory?.pages ?? [];
     if ((pages?.length ?? 0) < 2) return;
@@ -57,9 +64,9 @@ export default ({
     return {
       currentPage: currentIndex + 1,
       maxPage: pages.length,
-      onPageChange: (page: number) => onPageSelect(pages[page - 1]?.id),
+      onPageChange: (pageIndex: number) => onCurrentPageChange(pages[pageIndex - 1]?.id),
     };
-  }, [onPageSelect, currentPage, selectedStory]);
+  }, [selectedStory, currentPage, onCurrentPageChange]);
 
   return {
     pageInfo,
@@ -70,5 +77,6 @@ export default ({
     handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
+    handleCurrentPageChange,
   };
 };
