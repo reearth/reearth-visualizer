@@ -30,7 +30,7 @@ import Widgets, {
 
 export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 
-export type { Block } from "./Infobox";
+export type { Infobox, Block } from "./Infobox";
 
 export type { ExternalPluginProps } from "./Plugins";
 

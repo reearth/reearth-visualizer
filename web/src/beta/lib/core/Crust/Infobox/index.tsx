@@ -13,7 +13,7 @@ import Frame from "./Frame";
 import useHooks from "./hooks";
 import type { ValueTypes, ValueType, Block, InfoboxProperty, Theme, BlockProps } from "./types";
 
-export type { InfoboxProperty, Block, LatLng, BlockProps } from "./types";
+export type { Infobox, InfoboxProperty, Block, LatLng, BlockProps } from "./types";
 
 export type Props = {
   className?: string;

@@ -144,7 +144,8 @@ export default function useHooks(
         ? {
             title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
             isEditable: !!selectedLayer.layer?.layer?.infobox,
-            visible: !!selectedLayer.layer?.layer?.infobox || !!defaultInfobox,
+            visible:
+              !!selectedLayer.layer?.layer?.infobox?.property?.default?.visible ?? !!defaultInfobox,
             property: selectedLayer.layer?.layer?.infobox?.property?.default,
             blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }

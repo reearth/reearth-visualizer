@@ -3,6 +3,7 @@ import {
   type WidgetSection,
   type WidgetArea,
   type Alignment,
+  type Block,
 } from "@reearth/beta/lib/core/Crust";
 import {
   BuiltinWidgets,
@@ -12,7 +13,7 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
-import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
+import type { Tag } from "@reearth/beta/lib/core/mantle";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";

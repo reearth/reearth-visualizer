@@ -7,7 +7,8 @@ import type {
   MultiPolygon,
 } from "geojson";
 
-import type { Infobox, Block, Tag } from "../compat/types";
+import { Block, Infobox } from "../../Crust";
+import type { Tag } from "../compat/types";
 
 import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
 import type { Events } from "./events";

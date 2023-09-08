@@ -4,7 +4,15 @@ import type { Typography } from "../types";
 
 export type { LatLng, Typography, ValueTypes, ValueType, Theme } from "../types";
 
+export type Infobox<BP = any> = {
+  property?: DeprecatedInfoboxProperty;
+  blocks?: Block<BP>[];
+};
+
+export type DeprecatedInfoboxProperty = { default?: InfoboxProperty };
+
 export type InfoboxProperty = {
+  // TODO: Deprecate `default` property
   showTitle?: boolean;
   title?: string;
   height?: number;
@@ -21,6 +29,7 @@ export type InfoboxProperty = {
   outlineWidth?: number;
   useMask?: boolean;
   defaultContent?: "description" | "attributes";
+  visible?: boolean;
   unselectOnClose?: boolean;
 };
 
