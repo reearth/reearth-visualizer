@@ -22,32 +22,24 @@ const LayerItem = ({ id, layerTitle, onDelete, onSelect, onLayerNameUpdate }: La
     setMenuOpen(prev => !prev);
   }, []);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(layerTitle);
+  const [newValue, setNewValue] = useState(layerTitle);
 
   const handleDoubleClick = useCallback(() => {
     setIsEditing(true);
   }, []);
 
+  const handleChange = useCallback((newTitle: string) => {
+    setNewValue(newTitle);
+  }, []);
+
   const handleTitleSubmit = useCallback(() => {
-    if (!editedTitle.trim()) {
-      return;
-    }
     setIsEditing(false);
-    onLayerNameUpdate({ layerId: id, name: editedTitle });
-  }, [editedTitle, id, onLayerNameUpdate]);
+    onLayerNameUpdate({ layerId: id, name: newValue });
+  }, [id, newValue, onLayerNameUpdate]);
 
-  const handleKeyUp = useCallback(
-    (e: { key: string }) => {
-      if (["Enter", "Return"].includes(e.key)) {
-        handleTitleSubmit();
-      }
-    },
-    [handleTitleSubmit],
-  );
-
-  const handleBlur = useCallback(() => {
-    setIsEditing(false);
+  const handleEditExit = useCallback(() => {
     handleTitleSubmit();
+    setIsEditing(false);
   }, [handleTitleSubmit]);
 
   return (
@@ -55,10 +47,11 @@ const LayerItem = ({ id, layerTitle, onDelete, onSelect, onLayerNameUpdate }: La
       <div onDoubleClick={handleDoubleClick}>
         {isEditing ? (
           <TextInput
-            value={editedTitle}
-            onChange={(newTitle: string) => setEditedTitle(newTitle)}
-            onKeyUp={handleKeyUp}
-            onBlur={handleBlur}
+            value={newValue}
+            timeout={0}
+            onChange={handleChange}
+            onExit={handleEditExit}
+            onBlur={handleEditExit}
           />
         ) : (
           <Text size="body">{layerTitle}</Text>

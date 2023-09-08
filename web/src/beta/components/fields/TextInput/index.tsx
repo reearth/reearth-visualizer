@@ -11,7 +11,7 @@ type Props = {
   timeout?: number;
   onChange?: (text: string) => void;
   onBlur?: () => void;
-  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const TextInput: React.FC<Props> = ({
@@ -21,7 +21,7 @@ const TextInput: React.FC<Props> = ({
   timeout = 1000,
   onChange,
   onBlur,
-  onKeyUp,
+  onExit,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -51,14 +51,14 @@ const TextInput: React.FC<Props> = ({
     onBlur?.();
   }, [currentValue, onChange, onBlur]);
 
-  const handleKeyUp = useCallback(
+  const handleExit = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if ((e.key === "Enter" || e.key === "Return") && currentValue !== value) {
         onChange?.(currentValue);
+        onExit?.(e);
       }
-      onKeyUp?.(e);
     },
-    [value, currentValue, onChange, onKeyUp],
+    [value, currentValue, onChange, onExit],
   );
 
   return (
@@ -67,7 +67,7 @@ const TextInput: React.FC<Props> = ({
         value={currentValue ?? ""}
         onChange={handleChange}
         onBlur={handleBlur}
-        onKeyUp={handleKeyUp}
+        onKeyUp={handleExit}
       />
     </Property>
   );
