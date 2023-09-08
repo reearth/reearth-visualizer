@@ -201,14 +201,14 @@ const createRayFromCamera = (camera: any): Ray => {
   camera.positionWC.clone(ray.origin);
   camera.directionWC.clone(ray.direction);
   return ray;
-}
+};
 
 export const getCameraEllipsoidIntersection = (
   scene: Scene,
   resultOrWindowPosition?: Cartesian2 | Cartesian3,
   result?: Cartesian3,
 ): Cartesian3 | undefined => {
-  let ray: Ray;
+  let ray: Ray | undefined;
   const { camera, globe } = scene;
 
   if (resultOrWindowPosition instanceof Cartesian2) {
@@ -234,7 +234,7 @@ export const cartesianToLatLngHeight = (cartesian: Cartesian3, scene: Scene): an
     lat: CesiumMath.toDegrees(cartographic.latitude),
     height: cartographic.height,
   };
-}
+};
 export const flyTo = (
   cesiumCamera?: CesiumCamera,
   camera?: {
