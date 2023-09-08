@@ -119,9 +119,12 @@ const NumberInput: React.FC<Props> = ({
           step={"any"}
         />
         {suffix && (
-          <Text size="footnote" color={theme.content.weak} otherProperties={{ userSelect: "none" }}>
+          <TextWrapper
+            size="footnote"
+            color={theme.content.weak}
+            otherProperties={{ userSelect: "none" }}>
             {suffix}
-          </Text>
+          </TextWrapper>
         )}
       </InputWrapper>
       {inputDescription && (
@@ -149,7 +152,6 @@ const InputWrapper = styled.div<{ inactive: boolean }>`
   gap: 12px;
   width: auto;
   min-width: min-content;
-  max-width: 64px;
   color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
   &:focus-within {
     border-color: ${({ theme }) => theme.select.main};
@@ -163,7 +165,8 @@ const StyledInput = styled.input`
   background: ${({ theme }) => theme.bg[1]};
   outline: none;
   color: inherit;
-  width: 100%;
+  min-width: 0;
+  flex-grow: 1;
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -171,6 +174,10 @@ const StyledInput = styled.input`
   &[type="number"] {
     -moz-appearance: textfield;
   }
+`;
+
+const TextWrapper = styled(Text)`
+  flex-shrink: 0;
 `;
 
 export default NumberInput;
