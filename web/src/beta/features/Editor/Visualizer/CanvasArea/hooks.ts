@@ -70,7 +70,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     [selected],
   );
 
-  const layers = processLayers(nlsLayers);
+  const layers = useMemo(() => processLayers(nlsLayers), [nlsLayers]);
 
   // TODO: Use GQL value
   const rootLayerId = "";
