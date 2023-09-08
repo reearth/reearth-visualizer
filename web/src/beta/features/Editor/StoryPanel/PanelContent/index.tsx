@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
@@ -7,6 +7,8 @@ import { StoryPageFragmentFragment } from "../hooks";
 import StoryPage from "../Page";
 
 export const pagesElementId = "story-page-content";
+
+const pageHeight = document.getElementById(pagesElementId)?.clientHeight;
 
 export type Props = {
   sceneId?: string;
@@ -43,11 +45,6 @@ const StoryContent: React.FC<Props> = ({
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
-
-  const pageHeight = useMemo(() => {
-    const element = document.getElementById(pagesElementId);
-    return element?.clientHeight;
-  }, []);
 
   useEffect(() => {
     const ids = pages?.map(p => p.id) as string[];
