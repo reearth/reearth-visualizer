@@ -48,8 +48,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
 
   const {
     selectedStory,
-    selectedPage,
-    handlePageSelect,
+    currentPage,
+    isAutoScrolling,
+    handleAutoScrollingChange,
+    handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,
@@ -75,9 +77,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     sceneId,
     nlsLayers,
     selectedStory,
-    selectedPage,
     selectedLayer,
-    onPageSelect: handlePageSelect,
+    currentPage,
+    onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
     onPageDelete: handlePageDelete,
     onPageAdd: handlePageAdd,
@@ -88,7 +90,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
 
-  const { rightPanel } = useRightPanel({ tab, sceneId, selectedPage });
+  const { rightPanel } = useRightPanel({ tab, sceneId, currentPage });
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
@@ -131,8 +133,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
                   <StoryPanel
                     sceneId={sceneId}
                     selectedStory={selectedStory}
-                    currentPage={selectedPage}
-                    onPageSelect={handlePageSelect}
+                    currentPage={currentPage}
+                    isAutoScrolling={isAutoScrolling}
+                    onAutoScrollingChange={handleAutoScrollingChange}
+                    onCurrentPageChange={handleCurrentPageChange}
                   />
                 )}
               </Visualizer>
