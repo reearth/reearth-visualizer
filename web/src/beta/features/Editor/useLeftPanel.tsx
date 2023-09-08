@@ -13,8 +13,8 @@ type Props = {
 
   // for story tab
   selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
-  onPageSelect: (id: string) => void;
+  currentPage?: StoryPageFragmentFragment;
+  onCurrentPageChange: (id: string) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
@@ -32,8 +32,8 @@ export default ({
   sceneId,
   nlsLayers,
   selectedStory,
-  selectedPage,
-  onPageSelect,
+  currentPage,
+  onCurrentPageChange,
   onPageDuplicate,
   onPageDelete,
   onPageAdd,
@@ -58,8 +58,8 @@ export default ({
         return (
           <StorySidePanel
             selectedStory={selectedStory}
-            selectedPage={selectedPage}
-            onPageSelect={onPageSelect}
+            selectedPage={currentPage}
+            onPageSelect={onCurrentPageChange}
             onPageDuplicate={onPageDuplicate}
             onPageDelete={onPageDelete}
             onPageAdd={onPageAdd}
@@ -79,8 +79,8 @@ export default ({
     onLayerSelect,
     onDataSourceManagerOpen,
     selectedStory,
-    selectedPage,
-    onPageSelect,
+    currentPage,
+    onCurrentPageChange,
     onPageDuplicate,
     onPageDelete,
     onPageAdd,
