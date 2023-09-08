@@ -12,6 +12,8 @@ export type Props = {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
   currentPage?: StoryPageFragmentFragment;
+  isAutoScrolling?: boolean;
+  onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 };
 
@@ -19,6 +21,8 @@ export const StoryPanel: FC<Props> = ({
   sceneId,
   selectedStory,
   currentPage,
+  isAutoScrolling,
+  onAutoScrollingChange,
   onCurrentPageChange,
 }) => {
   const {
@@ -56,6 +60,8 @@ export const StoryPanel: FC<Props> = ({
         selectedStoryBlockId={selectedBlockId}
         showPageSettings={showPageSettings}
         showingIndicator={!!pageInfo}
+        isAutoScrolling={isAutoScrolling}
+        onAutoScrollingChange={onAutoScrollingChange}
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}
         onBlockSelect={handleBlockSelect}

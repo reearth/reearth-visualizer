@@ -17,6 +17,8 @@ export type Props = {
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   showingIndicator?: boolean;
+  isAutoScrolling?: boolean;
+  onAutoScrollingChange: (isScrolling: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockSelect: (blockId?: string) => void;
@@ -32,12 +34,15 @@ const StoryContent: React.FC<Props> = ({
   selectedStoryBlockId,
   showPageSettings,
   showingIndicator,
+  isAutoScrolling,
+  onAutoScrollingChange,
   onPageSettingsToggle,
   onPageSelect,
   onBlockSelect,
   onCurrentPageChange,
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   const pageHeight = useMemo(() => {
     const element = document.getElementById(pagesElementId);
@@ -50,6 +55,7 @@ const StoryContent: React.FC<Props> = ({
 
     const observer = new IntersectionObserver(
       entries => {
+        if (isAutoScrolling) return; // to avoid conflicts with page selection in editor UI
         entries.forEach(entry => {
           const id = entry.target.getAttribute("id") ?? "";
           if (selectedPageId === id) return;
@@ -71,9 +77,7 @@ const StoryContent: React.FC<Props> = ({
         });
       },
       {
-        // rootMargin: "5% 0% 0% 0%",
         root: panelContentElement,
-        // rootMargin: "0% 0% -85% 0%",
         threshold: 0.2,
       },
     );
@@ -91,7 +95,19 @@ const StoryContent: React.FC<Props> = ({
         }
       });
     };
-  }, [pages, selectedPageId, onCurrentPageChange]);
+  }, [pages, selectedPageId, isAutoScrolling, onCurrentPageChange]);
+
+  useEffect(() => {
+    const wrapperElement = document.getElementById(pagesElementId);
+    if (isAutoScrolling) {
+      wrapperElement?.addEventListener("scroll", () => {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(function () {
+          onAutoScrollingChange(false);
+        }, 100);
+      });
+    }
+  }, [isAutoScrolling, onAutoScrollingChange]);
 
   return (
     <PagesWrapper id={pagesElementId} showingIndicator={showingIndicator}>

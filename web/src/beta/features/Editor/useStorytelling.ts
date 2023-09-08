@@ -18,6 +18,7 @@ export default function ({ sceneId, stories }: Props) {
   const t = useT();
   const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = useStorytellingAPI();
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(undefined);
+  const [isAutoScrolling, setAutoScrolling] = useState(false);
 
   const selectedStory = useMemo(() => {
     return stories.length ? stories[0] : undefined;
@@ -31,6 +32,11 @@ export default function ({ sceneId, stories }: Props) {
     return getPage(currentPageId, selectedStory?.pages);
   }, [currentPageId, selectedStory?.pages]);
 
+  const handleAutoScrollingChange = useCallback(
+    (isScrolling: boolean) => setAutoScrolling(isScrolling),
+    [],
+  );
+
   const handleCurrentPageChange = useCallback(
     (pageId: string, disableScrollIntoView?: boolean) => {
       const newPage = getPage(pageId, selectedStory?.pages);
@@ -38,6 +44,7 @@ export default function ({ sceneId, stories }: Props) {
       setCurrentPageId(pageId);
       if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
+        setAutoScrolling(true);
         element?.scrollIntoView({ behavior: "smooth" });
       }
     },
@@ -98,6 +105,8 @@ export default function ({ sceneId, stories }: Props) {
   return {
     selectedStory,
     currentPage,
+    isAutoScrolling,
+    handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
