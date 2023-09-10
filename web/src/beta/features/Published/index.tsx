@@ -4,7 +4,7 @@ import Visualizer from "@reearth/classic/components/molecules/Visualizer";
 import { config } from "@reearth/services/config";
 
 import useHooks from "./hooks";
-import { StoryPublished } from "./storyPublished";
+import StoryPanelPublished from "./StoryPanelPublish";
 
 export type Props = {
   className?: string;
@@ -39,7 +39,7 @@ export default function Published({ className, alias }: Props) {
       isBuilt
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}>
-      <StoryPublished selectedProjectType="story" />
+      <StoryPanelPublished />
     </VisualizerStory>
   ) : (
     <Visualizer
