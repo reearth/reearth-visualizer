@@ -1,10 +1,12 @@
 import ColorField from "@reearth/beta/components/fields/ColorField";
+import LocationField from "@reearth/beta/components/fields/LocationField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import SliderField from "@reearth/beta/components/fields/SliderField";
 import SpacingInput, { SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
 import TextInput from "@reearth/beta/components/fields/TextInput";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
+import { type LatLng } from "@reearth/beta/utils/value";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import useHooks from "./hooks";
@@ -93,6 +95,14 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
               onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
             />
           )
+        ) : sf.type === "latlng" ? (
+          <LocationField
+            key={sf.id}
+            name={sf.name}
+            value={value as LatLng}
+            description={sf.description}
+            onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+          />
         ) : (
           <p key={sf.id}>{sf.name} field</p>
         );
