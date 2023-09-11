@@ -60,6 +60,7 @@ func (r *mutationResolver) UpdateNLSLayer(ctx context.Context, input gqlmodel.Up
 		LayerID: lid,
 		Name:    input.Name,
 		Visible: input.Visible,
+		Config:  gqlmodel.ToNLSConfig(input.Config),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

@@ -3,6 +3,7 @@ package e2e
 import (
 	"net/http"
 	"testing"
+	"fmt"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
@@ -114,6 +115,37 @@ func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 			"layerId": layerId,
 			"name":    "Updated Layer",
 			"visible": true,
+			"config": map[string]any{
+				"data": map[string]any{
+					"type":           "ExampleType",
+					"url":            "https://example.com/data",
+					"value":          "secondSampleValue",
+					"layers":         "sampleLayerData",
+					"jsonProperties": []string{"prop1", "prop2"},
+					"updateInterval": 10,
+					"parameters": map[string]any{
+						"sampleKey": "sampleValue",
+					},
+					"time": map[string]any{
+						"property":          "time",
+						"interval":          5,
+						"updateClockOnLoad": true,
+					},
+					"csv": map[string]any{
+						"idColumn":              "id",
+						"latColumn":             "latitude",
+						"lngColumn":             "longitude",
+						"heightColumn":          "height",
+						"noHeader":              false,
+						"disableTypeConversion": true,
+					},
+				},
+				"properties": "sampleProperties",
+				"defines": map[string]string{
+					"defineKey": "defineValue",
+				},
+				"events": "sampleEvents",
+			},
 		},
 	}
 
@@ -197,6 +229,21 @@ func TestNLSLayerCRUD(t *testing.T) {
 
 	// Update NLSLayer
 	_, _ = updateNLSLayer(e, layerId)
+
+	_, res3 := fetchSceneForNewLayers(e, sId)
+
+	// t.Logf("Response after update: %v", res3.Raw())
+
+	res3.Object().
+    Value("data").Object().
+    Value("node").Object().
+    Value("newLayers").Array().First().Object().
+    Value("config").Object().
+    Value("data").Object().
+    Value("value").Equal("secondSampleValue")
+
+	fmt.Printf("Response after update: %v\n", res3.Raw())
+
 
 	// Remove NLSLayer
 	_, _ = removeNLSLayer(e, layerId)

@@ -619,7 +619,9 @@ func (i *Scene) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 		return nil, nil, rerror.ErrNotFound
 	}
 
-	style.Rename(param.Name)
+	if param.Name != nil {
+		style.Rename(*param.Name)
+	}
 
 	if param.Value != nil {
 		style.UpdateValue(param.Value)

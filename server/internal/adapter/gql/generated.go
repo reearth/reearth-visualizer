@@ -8320,6 +8320,7 @@ input UpdateNLSLayerInput {
     layerId: ID!
     name: String
     visible: Boolean
+    config: JSON
 }
 
 # Payload
@@ -8335,11 +8336,6 @@ type RemoveNLSLayerPayload {
 type UpdateNLSLayerPayload {
     layer: NLSLayer!
 }
-
-# TODO
-# extend type Query{
-#     newLayer(id: ID!): NLSLayer
-# }
 
 extend type Mutation {
     addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
@@ -9196,8 +9192,8 @@ input AddStyleInput {
 input UpdateStyleInput {
   StyleId: ID!
   sceneId: ID!
-  name: String!
-  value: JSON!
+  name: String
+  value: JSON
 }
 
 input RemoveStyleInput {
@@ -56644,7 +56640,7 @@ func (ec *executionContext) unmarshalInputUpdateNLSLayerInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"layerId", "name", "visible"}
+	fieldsInOrder := [...]string{"layerId", "name", "visible", "config"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -56672,6 +56668,14 @@ func (ec *executionContext) unmarshalInputUpdateNLSLayerInput(ctx context.Contex
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visible"))
 			it.Visible, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "config":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("config"))
+			it.Config, err = ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -57243,7 +57247,7 @@ func (ec *executionContext) unmarshalInputUpdateStyleInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -57251,7 +57255,7 @@ func (ec *executionContext) unmarshalInputUpdateStyleInput(ctx context.Context, 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			it.Value, err = ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
 			if err != nil {
 				return it, err
 			}

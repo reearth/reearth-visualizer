@@ -6,7 +6,6 @@ import (
 
 type NLSLayerSimple struct {
 	layerBase
-	config *Config
 }
 
 func (l *NLSLayerSimple) ID() ID {
@@ -103,14 +102,7 @@ func (l *NLSLayerSimple) Clone() Cloner {
 
 	clonedBase := l.layerBase.Clone()
 
-	var clonedConfig *Config
-	if l.config != nil {
-		clonedConfigItem := l.config.Clone()
-		clonedConfig = &clonedConfigItem
-	}
-
 	return &NLSLayerSimple{
 		layerBase: *clonedBase,
-		config:    clonedConfig,
 	}
 }
