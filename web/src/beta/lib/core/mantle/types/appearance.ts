@@ -9,6 +9,8 @@ import type {
   Typography,
 } from "./value";
 
+import { Feature } from ".";
+
 export type LayerAppearance<T> = {
   [K in keyof T]?: T[K] | LayerAppearance<T[K]> | ExpressionContainer;
 };
@@ -154,6 +156,7 @@ export type Cesium3DTilesAppearance = {
   specularEnvironmentMaps?: string;
   sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
   imageBasedLightIntensity?: number;
+  onLoadFeature?: (feature: Partial<Feature> | undefined) => void;
 };
 
 export type LegacyPhotooverlayAppearance = {

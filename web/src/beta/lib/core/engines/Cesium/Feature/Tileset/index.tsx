@@ -22,6 +22,7 @@ function Tileset({
   sceneProperty,
   meta,
   evalFeature,
+  onComputedFeatureFetch,
   ...props
 }: Props): JSX.Element | null {
   const { shadows, colorBlendMode, pbr } = property ?? {};
@@ -36,6 +37,7 @@ function Tileset({
     sceneProperty,
     meta,
     evalFeature,
+    onComputedFeatureFetch,
   });
   const boxProperty = useMemo(
     () => ({

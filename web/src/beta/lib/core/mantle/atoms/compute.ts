@@ -23,7 +23,10 @@ export type Command =
   | { type: "setLayer"; layer?: Layer }
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
-  | { type: "writeComputedFeatures"; value: { feature: Feature[]; computed: ComputedFeature[] } }
+  | {
+      type: "writeComputedFeatures";
+      value: { feature: Feature[]; computed: ComputedFeature[]; needComputingLayer?: boolean };
+    }
   | { type: "deleteFeatures"; features: string[] }
   | { type: "deleteComputedFeatures"; features: string[] }
   | { type: "override"; overrides?: Record<string, any> }
@@ -190,7 +193,11 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
   const writeComputedFeatures = atom(
     null,
-    async (get, set, value: { feature: Feature[]; computed: ComputedFeature[] }) => {
+    async (
+      get,
+      set,
+      value: { feature: Feature[]; computed: ComputedFeature[]; needComputingLayer?: boolean },
+    ) => {
       const currentLayer = get(layer);
       if (currentLayer?.type !== "simple" || !currentLayer.data) return;
 
@@ -208,21 +215,19 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
         layerId: currentLayer.id,
       });
 
-      const computedLayer = await evalLayer(currentLayer, {
-        getAllFeatures: async () => undefined,
-        getFeatures: async () => undefined,
-      });
-
-      if (!computedLayer) {
-        return;
-      }
+      const computedLayer = value.needComputingLayer
+        ? await evalLayer(currentLayer, {
+            getAllFeatures: async () => undefined,
+            getFeatures: async () => undefined,
+          })
+        : undefined;
 
       set(layerStatus, "ready");
 
       const prevResult = get(computedResult);
 
       const result = {
-        layer: computedLayer.layer,
+        layer: computedLayer?.layer,
         features: [...(prevResult?.features || []), ...value.computed],
       };
 
