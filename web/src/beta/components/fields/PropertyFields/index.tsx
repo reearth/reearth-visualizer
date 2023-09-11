@@ -4,7 +4,7 @@ import NumberField from "@reearth/beta/components/fields/NumberField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import SliderField from "@reearth/beta/components/fields/SliderField";
 import SpacingInput, { SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
-import TextInput from "@reearth/beta/components/fields/TextInput";
+import TextInput from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import { type LatLng } from "@reearth/beta/utils/value";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
