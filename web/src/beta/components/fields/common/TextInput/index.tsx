@@ -2,17 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import Property from "..";
-
-type Props = {
-  name?: string;
-  description?: string;
+export type Props = {
   value?: string;
+  placeholder?: string;
   timeout?: number;
   onChange?: (text: string) => void;
 };
 
-const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, onChange }) => {
+const TextInput: React.FC<Props> = ({ value, placeholder, timeout = 1000, onChange }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -50,14 +47,13 @@ const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, 
   );
 
   return (
-    <Property name={name} description={description}>
-      <StyledInput
-        value={currentValue ?? ""}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-      />
-    </Property>
+    <StyledInput
+      value={currentValue ?? ""}
+      placeholder={placeholder}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+    />
   );
 };
 
