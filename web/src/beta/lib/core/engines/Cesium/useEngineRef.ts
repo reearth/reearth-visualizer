@@ -27,6 +27,9 @@ import {
   zoom,
   lookAtWithoutAnimation,
   sampleTerrainHeight,
+  getCameraEllipsoidIntersection,
+  getCameraTerrainIntersection,
+  cartesianToLatLngHeight,
 } from "./common";
 import { getTag } from "./Feature";
 import { findEntity } from "./utils";
@@ -70,6 +73,23 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
+      },
+      getCameraFovCenter: withTerrain => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        try {
+          if (withTerrain) {
+            const cartesian = getCameraTerrainIntersection(viewer.scene);
+            if (cartesian) {
+              return cartesianToLatLngHeight(cartesian, viewer.scene);
+            }
+          }
+          const cartesian = new Cesium.Cartesian3();
+          getCameraEllipsoidIntersection(viewer.scene, cartesian);
+          return cartesianToLatLngHeight(cartesian, viewer.scene);
+        } catch (e) {
+          return undefined;
+        }
       },
       sampleTerrainHeight: async (lng, lat) => {
         const viewer = cesium.current?.cesiumElement;
