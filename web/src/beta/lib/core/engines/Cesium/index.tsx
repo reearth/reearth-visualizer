@@ -13,6 +13,7 @@ import {
   ScreenSpaceCameraController,
   Entity,
   PolylineGraphics,
+  Moon,
 } from "resium";
 
 import type { Engine, EngineProps, EngineRef } from "..";
@@ -193,7 +194,12 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         density={property?.atmosphere?.fog_density}
       />
       <Sun show={property?.atmosphere?.enable_sun ?? true} />
-      <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
+      <Moon show={property?.atmosphere?.enableMoon} />
+      <SkyAtmosphere
+        show={property?.atmosphere?.sky_atmosphere ?? true}
+        saturationShift={property?.atmosphere?.skyboxSurturationShift}
+        brightnessShift={property?.atmosphere?.skyboxBrightnessShift}
+      />
       <Globe property={property} cesiumIonAccessToken={cesiumIonAccessToken} />
       <featureContext.Provider value={context}>{ready ? children : null}</featureContext.Provider>
       <AmbientOcclusion

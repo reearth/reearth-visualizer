@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 import Resizable from "@reearth/beta/components/Resizable";
 import StoryPanel from "@reearth/beta/features/Editor/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
@@ -10,8 +12,10 @@ import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { StoryFragmentFragment } from "@reearth/services/gql";
 import { metrics, styled } from "@reearth/services/theme";
 
+import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import { navbarHeight } from "./SecondaryNav";
+import useLayers from "./useLayers";
 
 type Props = {
   sceneId: string;
@@ -22,6 +26,16 @@ type Props = {
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
+  const [showDataSourceManager, setShowDataSourceManager] = useState(false);
+
+  const handleDataSourceManagerCloser = () => {
+    setShowDataSourceManager(false);
+  };
+
+  const handleDataSourceManagerOpener = () => {
+    setShowDataSourceManager(true);
+  };
+
   const {
     selectedDevice,
     selectedProjectType,
@@ -30,12 +44,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
-  } = useHooks({ tab });
+  } = useHooks({ sceneId, tab });
 
   const {
     selectedStory,
-    selectedPage,
-    handlePageSelect,
+    currentPage,
+    isAutoScrolling,
+    handleAutoScrollingChange,
+    handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,
@@ -45,19 +61,29 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     stories,
   });
 
+  const { nlsLayers, selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } =
+    useLayers({
+      sceneId,
+    });
+
   const { leftPanel } = useLeftPanel({
     tab,
     sceneId,
+    nlsLayers,
     selectedStory,
-    selectedPage,
-    onPageSelect: handlePageSelect,
+    selectedLayer,
+    currentPage,
+    onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
     onPageDelete: handlePageDelete,
     onPageAdd: handlePageAdd,
     onPageMove: handlePageMove,
+    onLayerDelete: handleLayerDelete,
+    onLayerSelect: handleLayerSelect,
+    onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
 
-  const { rightPanel } = useRightPanel({ tab, sceneId, selectedPage });
+  const { rightPanel } = useRightPanel({ tab, sceneId, currentPage });
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
@@ -100,8 +126,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
                   <StoryPanel
                     sceneId={sceneId}
                     selectedStory={selectedStory}
-                    currentPage={selectedPage}
-                    onPageSelect={handlePageSelect}
+                    currentPage={currentPage}
+                    isAutoScrolling={isAutoScrolling}
+                    onAutoScrollingChange={handleAutoScrollingChange}
+                    onCurrentPageChange={handleCurrentPageChange}
                   />
                 )}
               </Visualizer>
@@ -117,6 +145,13 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
             </Resizable>
           )}
         </MainSection>
+        {showDataSourceManager && (
+          <DataSourceManager
+            sceneId={sceneId}
+            onClose={handleDataSourceManagerCloser}
+            onSubmit={handleLayerAdd}
+          />
+        )}
       </Wrapper>
     </DndProvider>
   );

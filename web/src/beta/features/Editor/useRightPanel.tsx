@@ -10,16 +10,16 @@ import WidgetSidePanel from "./tabs/widgets/RightPanel";
 type Props = {
   tab: Tab;
   sceneId?: string;
-  selectedPage?: StoryPageFragmentFragment;
+  currentPage?: StoryPageFragmentFragment;
 };
 
-export default ({ tab, sceneId, selectedPage }: Props) => {
+export default ({ tab, sceneId, currentPage }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
         return <MapSidePanel />;
       case "story":
-        return <StorySidePanel selectedPage={selectedPage} />;
+        return <StorySidePanel selectedPage={currentPage} />;
       case "widgets":
         return <WidgetSidePanel sceneId={sceneId} />;
 
@@ -27,7 +27,7 @@ export default ({ tab, sceneId, selectedPage }: Props) => {
       default:
         return undefined;
     }
-  }, [tab, sceneId, selectedPage]);
+  }, [tab, sceneId, currentPage]);
 
   return {
     rightPanel,

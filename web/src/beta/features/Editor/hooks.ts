@@ -8,7 +8,7 @@ import { Tab } from "../Navbar";
 import { type ProjectType } from "./tabs/publish/Nav";
 import { type Device } from "./tabs/widgets/Nav";
 
-export default ({ tab }: { tab: Tab }) => {
+export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const [selectedDevice, setDevice] = useState<Device>("desktop");
 
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
