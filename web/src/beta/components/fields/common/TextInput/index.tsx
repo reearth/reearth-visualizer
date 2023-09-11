@@ -9,7 +9,7 @@ export type Props = {
   onChange?: (text: string) => void;
 };
 
-const TextField: React.FC<Props> = ({ value, placeholder, timeout = 1000, onChange }) => {
+const TextInput: React.FC<Props> = ({ value, placeholder, timeout = 1000, onChange }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -57,7 +57,7 @@ const TextField: React.FC<Props> = ({ value, placeholder, timeout = 1000, onChan
   );
 };
 
-export default TextField;
+export default TextInput;
 
 const StyledInput = styled.input`
   outline: none;
