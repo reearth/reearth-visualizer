@@ -29,8 +29,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   const [showDataSourceManager, setShowDataSourceManager] = useState(false);
 
   const handleDataSourceManagerCloser = () => {
-    // TODO: Remove consol.log
-    console.log("data source manager clicked");
     setShowDataSourceManager(false);
   };
 
