@@ -2,7 +2,7 @@ import { useCallback, useState, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
-import TextInput from "@reearth/beta/components/fields/TextInput";
+import TextInput from "@reearth/beta/components/fields/TextField";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
