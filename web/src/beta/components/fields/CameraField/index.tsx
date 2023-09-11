@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
@@ -15,41 +15,11 @@ type CameraInput = {
   name: string;
   field: keyof CameraValue;
 };
-// Constants
-const CAMERA_XYZ: CameraInput[] = [
-  {
-    name: "Latitude",
-    field: "lat",
-  },
-  {
-    name: "Longitude",
-    field: "lng",
-  },
-  {
-    name: "Height",
-    field: "height",
-  },
-];
-
-const CAMERA_ANGLE: CameraInput[] = [
-  {
-    name: "Heading",
-    field: "heading",
-  },
-  {
-    name: "Pitch",
-    field: "pitch",
-  },
-  {
-    name: "Roll",
-    field: "roll",
-  },
-];
 
 export type CameraValue = {
   lat: number;
   lng: number;
-  height: number;
+  altitude: number;
   heading: number;
   pitch: number;
   roll: number;
@@ -67,7 +37,6 @@ export type Props = {
   onChange: (value: CameraValue) => void;
 };
 
-// Component
 const CameraField: React.FC<Props> = ({
   name,
   description,
@@ -92,7 +61,7 @@ const CameraField: React.FC<Props> = ({
 
   const handleClick = useCallback(() => setOpen(!open), [open]);
 
-  // Update on single field, updates the entire value object
+  // Update on single field updates the entire value object
   const updateField = useCallback(
     (key: keyof CameraValue, update?: number) => {
       if (update == undefined) return;
@@ -105,9 +74,42 @@ const CameraField: React.FC<Props> = ({
     [onChange, value],
   );
 
-  // Notes:
-  // from classic component, do we need to implement all the hooks as well?
-  // src/classic/components/molecules/EarthEditor/PropertyPane/PropertyField/CameraField/hooks.ts ?
+  const {
+    cameraAngleInput,
+    cameraXYZInput,
+  }: { cameraAngleInput: CameraInput[]; cameraXYZInput: CameraInput[] } = useMemo(
+    () => ({
+      cameraXYZInput: [
+        {
+          name: t("Latitude"),
+          field: "lat",
+        },
+        {
+          name: t("Longitude"),
+          field: "lng",
+        },
+        {
+          name: t("Altitude"),
+          field: "altitude",
+        },
+      ],
+      cameraAngleInput: [
+        {
+          name: t("Heading"),
+          field: "heading",
+        },
+        {
+          name: t("Pitch"),
+          field: "pitch",
+        },
+        {
+          name: t("Roll"),
+          field: "roll",
+        },
+      ],
+    }),
+    [t],
+  );
 
   return (
     <Property name={name} description={description}>
@@ -141,7 +143,7 @@ const CameraField: React.FC<Props> = ({
             <ValueInputWrapper>
               <Text size="footnote">{t("Position")}</Text>
               <ValuesWrapper>
-                {CAMERA_XYZ.map(({ name, field }) => (
+                {cameraXYZInput.map(({ name, field }) => (
                   <NumberInput
                     key={field}
                     placeholder="-"
@@ -155,7 +157,7 @@ const CameraField: React.FC<Props> = ({
             <ValueInputWrapper>
               <Text size="footnote">{t("Rotation")}</Text>
               <ValuesWrapper>
-                {CAMERA_ANGLE.map(({ name, field }) => (
+                {cameraAngleInput.map(({ name, field }) => (
                   <NumberInput
                     key={field}
                     placeholder="-"

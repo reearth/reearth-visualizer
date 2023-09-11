@@ -35,7 +35,7 @@ export const Default: Story = (args: Props) => {
       value: {
         lat: (Math.random() * 180).toFixed(2),
         lng: (Math.random() * 180).toFixed(2),
-        height: (Math.random() * 100).toFixed(2),
+        altitude: (Math.random() * 100).toFixed(2),
         heading: (Math.random() * 10).toFixed(2),
         pitch: (Math.random() * 10).toFixed(2),
         roll: (Math.random() * 10).toFixed(2),
