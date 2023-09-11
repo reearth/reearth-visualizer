@@ -62,26 +62,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           label="Source Type"
           description="Select the type of data source you want to add.">
           <SourceTypeWrapper>
-            {/* <RadioButtonLabel>
-              <RadioButton
-                value="url"
-                checked={sourceType == "url"}
-                handleChange={c => c && setSourceType("url")}
-              />
-              From URL
-            </RadioButtonLabel>
-            <RadioButtonLabel>
-              <RadioButton
-                value="value"
-                checked={sourceType == "value"}
-                handleChange={c => c && setSourceType("value")}
-              />
-              From Value
-            </RadioButtonLabel> */}
             <RadioGroup
               options={[
-                { key: "sourceType", value: "url", selected: true },
-                { key: "sourceType", value: "value", selected: true },
+                { value: "url", selected: true },
+                { value: "value", selected: false },
               ]}
               layout="horizontal"
               onChange={setSourceType}

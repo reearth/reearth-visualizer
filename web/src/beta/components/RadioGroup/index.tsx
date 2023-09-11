@@ -4,7 +4,7 @@ import RadioBox from "@reearth/beta/components/RadioGroup/RadioBox";
 import { styled } from "@reearth/services/theme";
 
 export type Option = {
-  key: string;
+  key?: string;
   value: string;
   selected: boolean;
 };
@@ -34,9 +34,9 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) =>
   );
   return (
     <RadioGroupContainer layout={layout}>
-      {currentOptions.map(option => (
+      {currentOptions.map((option, index) => (
         <RadioBox
-          key={`${option.key}-${key}`}
+          key={`${option.key}-${key}-${index}`}
           value={option.value}
           selected={option.selected}
           onClick={() => handleRadioChange(option.value)}
