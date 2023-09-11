@@ -39,6 +39,8 @@ const SelectField: React.FC<Props> = ({
 
   const handleClick = useCallback(
     (key: string) => {
+      // TODO: remove this
+      console.log("option clicked");
       setOpen(false);
       if (key != value) onChange(key);
     },
@@ -124,6 +126,8 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* TODO: Fix this */
+  z-index: 700;
 `;
 
 const Option = styled(Text)<{ selected: boolean }>`

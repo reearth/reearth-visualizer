@@ -1,5 +1,7 @@
 import useTransition, { TransitionStatus } from "@rot1024/use-transition";
 import { ReactNode, useRef, useCallback, useMemo } from "react";
+// TODO: Remove the line below
+// eslint-disable-next-line
 import { useClickAway, useKeyPressEvent } from "react-use";
 
 import Icon from "@reearth/beta/components/Icon";
@@ -17,7 +19,8 @@ export type Props = {
 
 const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, children }) => {
   const ref = useRef<HTMLDivElement>(null);
-  useClickAway(ref, () => onClose?.());
+  // useClickAway(ref, () => onClose?.());
+  // TODO: remove comment
 
   const modalWidth = useMemo(
     () => (size === "sm" ? "416px" : size === "lg" ? "778px" : "572px"),

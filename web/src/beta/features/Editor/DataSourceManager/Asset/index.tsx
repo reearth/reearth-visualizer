@@ -1,11 +1,10 @@
 import React from "react";
 
 import Button from "@reearth/beta/components/Button";
+import SelectField from "@reearth/beta/components/fields/SelectField";
 import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import RadioButton from "@reearth/classic/components/atoms/RadioButton";
-import Select from "@reearth/classic/components/atoms/Select";
-import { Option } from "@reearth/classic/components/atoms/SelectOption";
 
 import { DataProps } from "..";
 import {
@@ -81,17 +80,14 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         </InputGroup>
         {sourceType == "url" && (
           <>
-            <InputGroup
-              label="File Format"
-              description="File format of the data source you want to add.">
-              <Select value={fileFormat} onChange={setFileFormat}>
-                {["GeoJSON", "KML", "CZML"].map(op => (
-                  <Option key={op} value={op} label={op}>
-                    {op}
-                  </Option>
-                ))}
-              </Select>
-            </InputGroup>
+            <SelectField
+              value={fileFormat}
+              options={["GeoJSON", "KML", "CZML"].map(v => ({ key: v, label: v }))}
+              name="File Format"
+              description="File format of the data source you want to add."
+              onChange={setFileFormat}
+            />
+
             <InputGroup label="Resource URL" description="URL of the data source you want to add.">
               <Input
                 type="text"
@@ -115,17 +111,13 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         )}
         {sourceType == "value" && (
           <>
-            <InputGroup
-              label="File Format"
-              description="File format of the data source you want to add.">
-              <Select value={fileFormat} onChange={setFileFormat}>
-                {["GeoJSON", "KML", "CZML"].map(op => (
-                  <Option key={op} value={op} label={op}>
-                    {op}
-                  </Option>
-                ))}
-              </Select>
-            </InputGroup>
+            <SelectField
+              value={fileFormat}
+              options={["GeoJSON", "KML", "CZML"].map(v => ({ key: v, label: v }))}
+              name="File Format"
+              description="File format of the data source you want to add."
+              onChange={setFileFormat}
+            />
             <InputGroup label="Value" description="Description around.">
               <TextArea
                 placeholder="Write down your text"
