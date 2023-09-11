@@ -1,4 +1,4 @@
-import TextInput from "@reearth/beta/components/fields/TextInput";
+import TextInput from "@reearth/beta/components/fields/TextField";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { WidgetAreaPadding, WidgetAreaState } from "@reearth/services/state";
 
