@@ -1,9 +1,10 @@
 import React from "react";
 
 import Button from "@reearth/beta/components/Button";
+import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-import RadioButton from "@reearth/classic/components/atoms/RadioButton";
+//import RadioButton from "@reearth/classic/components/atoms/RadioButton";
 import Select from "@reearth/classic/components/atoms/Select";
 import { Option } from "@reearth/classic/components/atoms/SelectOption";
 
@@ -14,7 +15,7 @@ import {
   InputGroup,
   Input,
   SourceTypeWrapper,
-  RadioButtonLabel,
+  // RadioButtonLabel,
   SubmitWrapper,
   TextArea,
 } from "../utils";
@@ -61,7 +62,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           label="Source Type"
           description="Select the type of data source you want to add.">
           <SourceTypeWrapper>
-            <RadioButtonLabel>
+            {/* <RadioButtonLabel>
               <RadioButton
                 value="url"
                 checked={sourceType == "url"}
@@ -76,7 +77,15 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 handleChange={c => c && setSourceType("value")}
               />
               From Value
-            </RadioButtonLabel>
+            </RadioButtonLabel> */}
+            <RadioGroup
+              options={[
+                { key: "sourceType", value: "url", selected: true },
+                { key: "sourceType", value: "value", selected: true },
+              ]}
+              layout="horizontal"
+              onChange={setSourceType}
+            />
           </SourceTypeWrapper>
         </InputGroup>
         {sourceType == "url" && (
