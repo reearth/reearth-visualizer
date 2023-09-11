@@ -35,6 +35,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     alias,
     validAlias,
     validatingAlias,
+    publishProjectLoading,
     handleModalOpen,
     handleModalClose,
     setDropdown,
@@ -51,6 +52,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     [publishStatus, t],
   );
 
+  const checkPublished: boolean = publishStatus === "limited" || publishStatus === "published";
   return (
     <>
       <StyledSecondaryNav>
@@ -90,13 +92,8 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
                   onClick: () => handleModalOpen("unpublishing"),
                 },
                 {
-                  name: t("Publish"),
-                  onClick: () =>
-                    handleModalOpen(
-                      publishStatus === "limited" || publishStatus === "published"
-                        ? "updating"
-                        : "publishing",
-                    ),
+                  name: checkPublished ? t("Update") : t("Publish"),
+                  onClick: () => handleModalOpen(checkPublished ? "updating" : "publishing"),
                 },
                 {
                   name: t("Publishing Settings"),
@@ -109,6 +106,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
       </StyledSecondaryNav>
       <PublishModal
         isVisible={modalOpen}
+        loading={publishProjectLoading}
         publishing={publishing}
         publishStatus={publishStatus}
         url={config()?.published?.split("{}")}

@@ -1,6 +1,6 @@
 @import 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap';
 
-.lexical .editor-container {
+.lexical.editor-container {
   position: relative;
   display: block;
   width: 100%;

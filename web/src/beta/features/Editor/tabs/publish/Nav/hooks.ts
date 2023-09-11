@@ -7,7 +7,12 @@ import { publishingType } from "./PublishModal";
 import { type PublishStatus } from "./PublishModal/hooks";
 
 export default ({ projectId }: { projectId?: string }) => {
-  const { useProjectQuery, useProjectAliasCheckLazyQuery, usePublishProject } = useProjectFetcher();
+  const {
+    useProjectQuery,
+    useProjectAliasCheckLazyQuery,
+    usePublishProject,
+    publishProjectLoading,
+  } = useProjectFetcher();
   const { project } = useProjectQuery(projectId);
 
   const [publishing, setPublishing] = useState<publishingType>("unpublishing");
@@ -55,10 +60,10 @@ export default ({ projectId }: { projectId?: string }) => {
   }, [project?.publishmentStatus]);
 
   const handleProjectPublish = useCallback(
-    async (publishStatus: PublishStatus) => {
+    async (alias: string | undefined, publishStatus: PublishStatus) => {
       await usePublishProject(publishStatus, projectId, alias);
     },
-    [projectId, alias, usePublishProject],
+    [projectId, usePublishProject],
   );
 
   const handleOpenProjectSettings = useCallback(() => {
@@ -78,6 +83,7 @@ export default ({ projectId }: { projectId?: string }) => {
   return {
     publishing,
     publishStatus,
+    publishProjectLoading,
     dropdownOpen,
     modalOpen,
     alias,
