@@ -15711,7 +15711,7 @@ react-align@2.2.2:
   resolved "https://registry.yarnpkg.com/react-align/-/react-align-2.2.2.tgz#d245c0bde883da805f76c19c13ac1c67941a2b97"
   integrity sha512-cESpOZ/j7SmGvL94SLpX5d3a4Sdewxoh1IgjbTLe7kiwiPr/gGeK17coc6Mnl32rGk+oQaqUdNk5YSZbo1R8kQ==
 
-react-beautiful-dnd@13.1.1:
+react-beautiful-dnd@^13.1.1:
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.1.1.tgz#b0f3087a5840920abf8bb2325f1ffa46d8c4d0a2"
   integrity sha512-0Lvs4tq2VcrEjEgDXHjT98r+63drkKEgqyxdA7qD3mvKwga6a5SscbdLPO2IExotU1jW8L0Ksdl0Cj2AF67nPQ==

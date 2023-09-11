@@ -31,6 +31,7 @@ type Props = {
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
+  onDragEnd: () => void;
 };
 
 const ActionPanel: React.FC<Props> = ({
@@ -42,6 +43,7 @@ const ActionPanel: React.FC<Props> = ({
   actionItems,
   dndEnabled,
   position,
+  onDragEnd,
   setShowPadding,
   onSettingsToggle,
   onRemove,
@@ -68,7 +70,7 @@ const ActionPanel: React.FC<Props> = ({
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
-      {dndEnabled && <DndHandle icon="dndHandle" size={16} />}
+      {dndEnabled && <DndHandle onClick={onDragEnd} icon="dndHandle" size={16} />}
       <Popover.Provider
         open={showSettings}
         onOpenChange={() => onSettingsToggle?.()}

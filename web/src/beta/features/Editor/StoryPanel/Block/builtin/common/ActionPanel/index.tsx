@@ -23,6 +23,7 @@ type Props = {
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
+  onDragEnd?: any;
 };
 
 const BlockActionPanel: React.FC<Props> = ({
@@ -33,6 +34,7 @@ const BlockActionPanel: React.FC<Props> = ({
   dndEnabled,
   onEditModeToggle,
   onSettingsToggle,
+  onDragEnd,
   ...actionProps
 }) => {
   const { actionItems } = useHooks({
@@ -50,6 +52,7 @@ const BlockActionPanel: React.FC<Props> = ({
       isSelected={isSelected}
       actionItems={actionItems}
       onSettingsToggle={onSettingsToggle}
+      onDragEnd={onDragEnd}
       {...actionProps}
     />
   );
