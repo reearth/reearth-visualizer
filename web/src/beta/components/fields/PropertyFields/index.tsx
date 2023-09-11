@@ -9,6 +9,8 @@ import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import { type LatLng } from "@reearth/beta/utils/value";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
+import CameraField, { CameraValue } from "../CameraField";
+
 import useHooks from "./hooks";
 
 type Props = {
@@ -100,6 +102,14 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             key={sf.id}
             name={sf.name}
             value={value as LatLng}
+            description={sf.description}
+            onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
+          />
+        ) : sf.type === "camera" ? (
+          <CameraField
+            key={sf.id}
+            name={sf.name}
+            value={value as CameraValue}
             description={sf.description}
             onChange={handlePropertyValueUpdate(item.schemaGroup, propertyId, sf.id, sf.type)}
           />
