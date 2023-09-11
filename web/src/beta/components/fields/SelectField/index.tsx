@@ -124,8 +124,6 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* TODO: Fix z-index*/
-  z-index: 700;
 `;
 
 const Option = styled(Text)<{ selected: boolean }>`
