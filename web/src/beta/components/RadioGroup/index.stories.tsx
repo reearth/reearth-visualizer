@@ -15,8 +15,8 @@ export default meta;
 type Story = StoryObj<typeof RadioGroup>;
 
 const options = [
-  { key: "option1", value: "Option 1", selected: false },
-  { key: "option2", value: "Option 2", selected: false },
+  { label: "option1", value: "Option 1", selected: false },
+  { label: "option2", value: "Option 2", selected: false },
 ];
 
 export const VerticalRadioGroup: Story = (args: Props) => {

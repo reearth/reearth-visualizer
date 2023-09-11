@@ -7,9 +7,10 @@ export type Props = {
   selected?: boolean;
   value: string;
   onClick?: (value: string) => void;
+  label?: string;
 };
 
-const RadioBox: React.FC<Props> = ({ inactive, selected, value, onClick }: Props) => {
+const RadioBox: React.FC<Props> = ({ inactive, selected, value, label, onClick }: Props) => {
   const [isChecked, setIsChecked] = useState(selected ?? false);
 
   const handleRadioClick = useCallback(() => {
@@ -23,7 +24,7 @@ const RadioBox: React.FC<Props> = ({ inactive, selected, value, onClick }: Props
       <RadioButton selected={isChecked} inactive={inactive}>
         {isChecked && <Checkmark selected={isChecked} inactive={inactive} />}
       </RadioButton>
-      <RadioText>{value}</RadioText>
+      <RadioText>{label ?? value}</RadioText>
     </Radio>
   );
 };
