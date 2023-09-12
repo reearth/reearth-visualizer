@@ -64,12 +64,13 @@ export const Trigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement
 
 type ContentProps = {
   className?: string;
+  attachToRoot?: boolean;
 };
 
 export const Content = React.forwardRef<
   HTMLDivElement,
   React.HTMLProps<HTMLDivElement> & ContentProps
->(function Content({ style, className, ...props }, propRef) {
+>(function Content({ style, className, attachToRoot = false, ...props }, propRef) {
   const { context: floatingContext, ...context } = usePopoverContext();
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
   const { isMounted, styles: transitionStyles } = useTransitionStyles(floatingContext, {
@@ -79,7 +80,9 @@ export const Content = React.forwardRef<
   if (!isMounted) return null;
 
   return (
-    <FloatingPortal>
+    <FloatingPortal
+      // whether to render this inside the Trigger or outside the main div
+      root={attachToRoot ? (context.refs.domReference as React.MutableRefObject<null>) : null}>
       <FloatingFocusManager context={floatingContext} modal={context.modal}>
         <div
           ref={ref}
