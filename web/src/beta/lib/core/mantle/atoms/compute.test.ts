@@ -174,7 +174,11 @@ test("computeAtom", async () => {
   act(() => {
     result.current.set({
       type: "writeComputedFeatures",
-      value: { feature: features3, computed: toComputedFeature(features3) },
+      value: {
+        feature: features3,
+        computed: toComputedFeature(features3),
+        needComputingLayer: true,
+      },
     });
   });
 
