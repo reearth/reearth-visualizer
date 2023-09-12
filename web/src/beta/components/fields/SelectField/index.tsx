@@ -60,7 +60,7 @@ const SelectField: React.FC<Props> = ({
             <ArrowDownIcon icon="arrowDown" size={12} />
           </InputWrapper>
         </Popover.Trigger>
-        <PickerWrapper>
+        <PickerWrapper attachToRoot>
           {options?.map(({ label: value, key }) => (
             <Option
               size="footnote"
