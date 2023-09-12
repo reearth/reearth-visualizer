@@ -20,6 +20,23 @@ You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
 Please choose an option: ''
 Not found: ページが見つかりません
+Date: 作成日時順
+File size: サイズ順
+Alphabetical: 名前順
+File Format: ''
+File format of the data source you want to add.: ''
+Source Type: ''
+Select the type of data source you want to add.: ''
+From URL: ''
+From Value: ''
+Resource URL: リソースURL
+URL of the data source you want to add.: ''
+Input Text: ''
+Prioritize Performance: ''
+Value: ''
+Description around.: ''
+Write down your text: ''
+Add to Layer: ''
 Padding settings: ''
 Remove: 削除
 Untitled: 無名
@@ -84,9 +101,6 @@ Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
 Project Settings: プロジェクト設定
-Date: 作成日時順
-File size: サイズ順
-Alphabetical: 名前順
 Upload file: ファイルアップロード
 Delete: 削除
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
@@ -212,7 +226,6 @@ Add video URL: 映像URLを追加
 Save: 保存
 Select Asset: 選択
 Select: 選択
-Resource URL: リソースURL
 Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
 OK: 確認
