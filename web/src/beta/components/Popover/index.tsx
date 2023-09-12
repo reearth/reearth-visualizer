@@ -79,9 +79,7 @@ export const Content = React.forwardRef<
   if (!isMounted) return null;
 
   return (
-    <FloatingPortal
-      root={context.refs.reference as React.MutableRefObject<HTMLDivElement>}
-      preserveTabOrder>
+    <FloatingPortal root={context.refs.reference as React.MutableRefObject<null>}>
       <FloatingFocusManager context={floatingContext} modal={context.modal}>
         <div
           ref={ref}
