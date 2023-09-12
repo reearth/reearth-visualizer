@@ -19,6 +19,7 @@ const Slider: React.FC<Props> = ({ ...props }) => (
 );
 
 const SliderStyled = styled.div<{ disabled: boolean }>`
+  width: 100%;
   .rc-slider-disabled {
     background-color: transparent;
     opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};

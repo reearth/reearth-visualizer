@@ -1,16 +1,15 @@
 import { useMemo } from "react";
 
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
+import type { GQLStoryPage } from "@reearth/beta/lib/core/StoryPanel/hooks";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
-
-import { StoryPageFragmentFragment } from "../../../StoryPanel/hooks";
 
 import Settings from "./Settings";
 
 type Props = {
   sceneId?: string;
-  selectedPage?: StoryPageFragmentFragment;
+  selectedPage?: GQLStoryPage;
 };
 
 const StoryRightPanel: React.FC<Props> = ({ selectedPage }) => {

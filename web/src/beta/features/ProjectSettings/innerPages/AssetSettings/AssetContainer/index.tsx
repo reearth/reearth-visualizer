@@ -1,13 +1,18 @@
 import Button from "@reearth/beta/components/Button";
 import Loading from "@reearth/beta/components/Loading";
 import Text from "@reearth/beta/components/Text";
+import AssetCard from "@reearth/beta/features/Assets/AssetCard";
+import {
+  useManageAssets,
+  Asset as AssetType,
+  SortType,
+  fileFormats,
+  imageFormats,
+} from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import AssetCard from "../AssetCard";
 import AssetDeleteModal from "../AssetDeleteModal";
-
-import useHooks, { Asset as AssetType, SortType, fileFormats, imageFormats } from "./hooks";
 
 export type Asset = AssetType;
 
@@ -63,7 +68,7 @@ const AssetContainer: React.FC<Props> = ({
     openDeleteModal,
     closeDeleteModal,
     handleRemove,
-  } = useHooks({
+  } = useManageAssets({
     sort,
     selectedAssets,
     searchTerm,

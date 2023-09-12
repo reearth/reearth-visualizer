@@ -39,8 +39,8 @@ const LocationField: React.FC<Props> = ({ name, description, value, onChange }) 
         />
         <NumberInput
           value={location.lng}
-          inputDescription="Longtitude"
-          onChange={newValue => handleChange("Longtitude", newValue)}
+          inputDescription="Longitude"
+          onChange={newValue => handleChange("Longitude", newValue)}
         />
       </Wrapper>
     </Property>

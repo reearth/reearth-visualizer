@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import Resizable from "@reearth/beta/components/Resizable";
-import StoryPanel from "@reearth/beta/features/Editor/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar";
@@ -50,6 +49,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     selectedStory,
     currentPage,
     isAutoScrolling,
+    installableStoryBlocks,
     handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,
@@ -61,17 +61,23 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     stories,
   });
 
-  const { nlsLayers, selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } =
-    useLayers({
-      sceneId,
-    });
+  const {
+    nlsLayers,
+    selectedLayer,
+    handleLayerAdd,
+    handleLayerDelete,
+    handleLayerSelect,
+    handleLayerNameUpdate,
+  } = useLayers({
+    sceneId,
+  });
 
   const { leftPanel } = useLeftPanel({
     tab,
     sceneId,
     nlsLayers,
     selectedStory,
-    selectedLayer,
+    selectedLayerId: selectedLayer?.id,
     currentPage,
     onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
@@ -80,6 +86,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onPageMove: handlePageMove,
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelect,
+    onLayerNameUpdate: handleLayerNameUpdate,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
 
@@ -121,18 +128,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
               tab={tab}
               hasNav={!!secondaryNavbar}
               visualizerWidth={visualizerWidth}>
-              <Visualizer sceneId={sceneId}>
-                {selectedProjectType === "story" && (
-                  <StoryPanel
-                    sceneId={sceneId}
-                    selectedStory={selectedStory}
-                    currentPage={currentPage}
-                    isAutoScrolling={isAutoScrolling}
-                    onAutoScrollingChange={handleAutoScrollingChange}
-                    onCurrentPageChange={handleCurrentPageChange}
-                  />
-                )}
-              </Visualizer>
+              <Visualizer
+                sceneId={sceneId}
+                showStoryPanel={selectedProjectType === "story"}
+                selectedStory={selectedStory}
+                currentPage={currentPage}
+                isAutoScrolling={isAutoScrolling}
+                installableBlocks={installableStoryBlocks}
+                onAutoScrollingChange={handleAutoScrollingChange}
+                onCurrentPageChange={handleCurrentPageChange}
+              />
             </VisualizerWrapper>
           </Center>
           {rightPanel && (
