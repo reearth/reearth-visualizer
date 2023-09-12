@@ -12,6 +12,7 @@ import type {
   DataType,
   Feature,
   Layer,
+  LayerSimple,
 } from "../types";
 import { appearanceKeys } from "../types";
 
@@ -21,6 +22,7 @@ export type Atom = ReturnType<typeof computeAtom>;
 
 export type Command =
   | { type: "setLayer"; layer?: Layer }
+  | { type: "writeLayer"; value: Partial<Pick<LayerSimple, "properties">> }
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
   | {
@@ -68,6 +70,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
         currentLayer.type === "simple" && currentLayer.data
           ? get(dataAtoms.getAll)(currentLayer.id, currentLayer.data)?.flat() ?? []
           : [],
+      properties: currentLayer.type === "simple" ? currentLayer.properties : undefined,
       ...get(computedResult)?.layer,
     };
   });
@@ -177,6 +180,14 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     if (currentLayer?.type !== "simple" || !currentLayer.data) return;
 
     await set(dataAtoms.fetch, { data: currentLayer.data, range: value, layerId: currentLayer.id });
+  });
+
+  // For delegated data
+  const writeLayer = atom(null, async (_, set, value: Partial<Pick<LayerSimple, "properties">>) => {
+    set(layer, l => {
+      if (l?.type !== "simple" || !l.data) return;
+      return { ...(l || {}), ...value };
+    });
   });
 
   const writeFeatures = atom(null, async (get, set, value: Feature[]) => {
@@ -289,6 +300,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       switch (value.type) {
         case "setLayer":
           await s(set, value.layer);
+          break;
+        case "writeLayer":
+          await s(writeLayer, value.value);
           break;
         case "requestFetch":
           await s(requestFetch, value.range);
