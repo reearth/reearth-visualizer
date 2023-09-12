@@ -11,6 +11,7 @@ import Layers from "../Layers";
 type GroupSectionFieldProps = {
   groups: PropertySchemaGroup[];
   layers: NLSLayer[];
+  selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
@@ -20,6 +21,7 @@ type GroupSectionFieldProps = {
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   groups,
   layers,
+  selectedLayerId,
   onLayerDelete,
   onLayerNameUpdate,
   onLayerSelect,
@@ -29,22 +31,23 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
 
   return (
     <>
-      <SidePanelSectionField title={t("Scene")}>
+      <StyledSidePanelSectionField title={t("Scene")}>
         {groups.map(({ schemaGroupId, title }) => (
           <GroupSectionFieldText key={schemaGroupId} size="footnote">
             {title}
           </GroupSectionFieldText>
         ))}
-      </SidePanelSectionField>
-      <SidePanelSectionField title={t("Layers")}>
+      </StyledSidePanelSectionField>
+      <StyledSidePanelSectionField title={t("Layers")}>
         <Layers
           layers={layers}
+          selectedLayerId={selectedLayerId}
           onLayerDelete={onLayerDelete}
           onLayerNameUpdate={onLayerNameUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
         />
-      </SidePanelSectionField>
+      </StyledSidePanelSectionField>
     </>
   );
 };
@@ -53,6 +56,12 @@ const GroupSectionFieldText = styled(Text)`
   padding-left: 4px;
   padding-bottom: 4px;
   cursor: pointer;
+`;
+
+const StyledSidePanelSectionField = styled(SidePanelSectionField)`
+  background: inherit;
+  border-bottom: 1px solid ${({ theme }) => theme.outline.weaker};
+  border-radius: 0;
 `;
 
 export default GroupSectionField;

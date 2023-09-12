@@ -6,6 +6,7 @@ export type Props = {
   value?: string;
   placeholder?: string;
   timeout?: number;
+  autoFocus?: boolean;
   onChange?: (text: string) => void;
   onBlur?: () => void;
   onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -15,6 +16,7 @@ const TextInput: React.FC<Props> = ({
   value,
   placeholder,
   timeout = 1000,
+  autoFocus,
   onChange,
   onBlur,
   onExit,
@@ -49,21 +51,24 @@ const TextInput: React.FC<Props> = ({
 
   const handleExit = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if ((e.key === "Enter" || e.key === "Return") && currentValue !== value) {
+      if (e.key === "Escape") {
+        onExit?.(e);
+      } else if (e.key === "Enter" || e.key === "Return") {
         onChange?.(currentValue);
         onExit?.(e);
       }
     },
-    [value, currentValue, onChange, onExit],
+    [currentValue, onChange, onExit],
   );
 
   return (
     <StyledInput
       value={currentValue ?? ""}
       placeholder={placeholder}
+      autoFocus={autoFocus}
       onChange={handleChange}
       onBlur={handleBlur}
-      onKeyDown={handleExit}
+      onKeyUp={handleExit}
     />
   );
 };

@@ -11,6 +11,7 @@ import type { LayerNameUpdateProps } from "../../../useLayers";
 type Props = {
   sceneId: string;
   layers: NLSLayer[];
+  selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
@@ -20,6 +21,7 @@ type Props = {
 const MapSidePanel: React.FC<Props> = ({
   sceneId,
   layers,
+  selectedLayerId,
   onLayerDelete,
   onLayerSelect,
   onLayerNameUpdate,
@@ -47,6 +49,7 @@ const MapSidePanel: React.FC<Props> = ({
             <GroupSectionField
               groups={groups}
               layers={layers}
+              selectedLayerId={selectedLayerId}
               onLayerDelete={onLayerDelete}
               onLayerNameUpdate={onLayerNameUpdate}
               onLayerSelect={onLayerSelect}

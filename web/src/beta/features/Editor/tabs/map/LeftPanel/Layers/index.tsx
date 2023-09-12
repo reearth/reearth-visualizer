@@ -11,6 +11,7 @@ import LayerItem from "./LayerItem";
 
 type LayersProps = {
   layers: NLSLayer[];
+  selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
@@ -19,6 +20,7 @@ type LayersProps = {
 
 const Layers: React.FC<LayersProps> = ({
   layers,
+  selectedLayerId,
   onLayerDelete,
   onLayerNameUpdate,
   onLayerSelect,
@@ -65,6 +67,7 @@ const Layers: React.FC<LayersProps> = ({
           key={layer.id}
           id={layer.id}
           layerTitle={layer.title}
+          isSelected={layer.id === selectedLayerId}
           onDelete={() => onLayerDelete(layer.id)}
           onSelect={() => onLayerSelect(layer.id)}
           onLayerNameUpdate={onLayerNameUpdate}

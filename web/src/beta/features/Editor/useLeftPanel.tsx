@@ -13,7 +13,7 @@ type Props = {
   sceneId: string;
   nlsLayers: NLSLayer[];
 
-  // for story tab
+  // storytelling
   selectedStory?: StoryFragmentFragment;
   currentPage?: StoryPageFragmentFragment;
   onCurrentPageChange: (id: string) => void;
@@ -22,8 +22,8 @@ type Props = {
   onPageAdd: (isSwipeable: boolean) => void;
   onPageMove: (id: string, targetIndex: number) => void;
 
-  // for nlsLayers
-  selectedLayer?: NLSLayer;
+  // layers
+  selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
@@ -35,6 +35,7 @@ export default ({
   sceneId,
   nlsLayers,
   selectedStory,
+  selectedLayerId,
   currentPage,
   onCurrentPageChange,
   onPageDuplicate,
@@ -53,6 +54,7 @@ export default ({
           <MapSidePanel
             sceneId={sceneId}
             layers={nlsLayers}
+            selectedLayerId={selectedLayerId}
             onLayerDelete={onLayerDelete}
             onLayerNameUpdate={onLayerNameUpdate}
             onLayerSelect={onLayerSelect}
@@ -80,12 +82,13 @@ export default ({
     tab,
     sceneId,
     nlsLayers,
+    selectedStory,
+    selectedLayerId,
+    currentPage,
     onLayerDelete,
     onLayerNameUpdate,
     onLayerSelect,
     onDataSourceManagerOpen,
-    selectedStory,
-    currentPage,
     onCurrentPageChange,
     onPageDuplicate,
     onPageDelete,

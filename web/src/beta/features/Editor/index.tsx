@@ -77,7 +77,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     sceneId,
     nlsLayers,
     selectedStory,
-    selectedLayer,
+    selectedLayerId: selectedLayer?.id,
     currentPage,
     onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
