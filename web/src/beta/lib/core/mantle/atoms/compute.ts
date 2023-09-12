@@ -183,11 +183,10 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
   });
 
   // For delegated data
-  const writeLayer = atom(null, async (_, set, value: Partial<Pick<LayerSimple, "properties">>) => {
-    set(layer, l => {
-      if (l?.type !== "simple" || !l.data) return;
-      return { ...(l || {}), ...value };
-    });
+  const writeLayer = atom(null, (get, set, value: Partial<Pick<LayerSimple, "properties">>) => {
+    const currentLayer = get(layer);
+    if (currentLayer?.type !== "simple" || !currentLayer.data) return;
+    set(layer, { ...currentLayer, ...value });
   });
 
   const writeFeatures = atom(null, async (get, set, value: Feature[]) => {
