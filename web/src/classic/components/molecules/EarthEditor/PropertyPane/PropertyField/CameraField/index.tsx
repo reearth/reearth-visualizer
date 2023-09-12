@@ -126,7 +126,7 @@ const CameraField: React.FC<Props> = ({
                     onChange={handleLngChange}
                   />
                   <FloatText size="2xs" color={theme.classic.properties.contentsFloatText}>
-                    {t("Longtitude")}
+                    {t("Longitude")}
                   </FloatText>
                 </FormWrapper>
                 <FormWrapper>
