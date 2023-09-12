@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import Resizable from "@reearth/beta/components/Resizable";
-import StoryPanel from "@reearth/beta/features/Editor/StoryPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar";
@@ -48,8 +47,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
 
   const {
     selectedStory,
-    selectedPage,
-    handlePageSelect,
+    currentPage,
+    isAutoScrolling,
+    installableStoryBlocks,
+    handleAutoScrollingChange,
+    handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,
@@ -59,29 +61,36 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     stories,
   });
 
-  const { nlsLayers, selectedLayer, handleLayerAdd, handleLayerDelete, handleLayerSelect } =
-    useLayers({
-      sceneId,
-    });
+  const {
+    nlsLayers,
+    selectedLayer,
+    handleLayerAdd,
+    handleLayerDelete,
+    handleLayerSelect,
+    handleLayerNameUpdate,
+  } = useLayers({
+    sceneId,
+  });
 
   const { leftPanel } = useLeftPanel({
     tab,
     sceneId,
     nlsLayers,
     selectedStory,
-    selectedPage,
-    selectedLayer,
-    onPageSelect: handlePageSelect,
+    selectedLayerId: selectedLayer?.id,
+    currentPage,
+    onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
     onPageDelete: handlePageDelete,
     onPageAdd: handlePageAdd,
     onPageMove: handlePageMove,
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelect,
+    onLayerNameUpdate: handleLayerNameUpdate,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
 
-  const { rightPanel } = useRightPanel({ tab, sceneId, selectedPage });
+  const { rightPanel } = useRightPanel({ tab, sceneId, currentPage });
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
@@ -119,16 +128,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
               tab={tab}
               hasNav={!!secondaryNavbar}
               visualizerWidth={visualizerWidth}>
-              <Visualizer sceneId={sceneId}>
-                {selectedProjectType === "story" && (
-                  <StoryPanel
-                    sceneId={sceneId}
-                    selectedStory={selectedStory}
-                    currentPage={selectedPage}
-                    onPageSelect={handlePageSelect}
-                  />
-                )}
-              </Visualizer>
+              <Visualizer
+                sceneId={sceneId}
+                showStoryPanel={selectedProjectType === "story"}
+                selectedStory={selectedStory}
+                currentPage={currentPage}
+                isAutoScrolling={isAutoScrolling}
+                installableBlocks={installableStoryBlocks}
+                onAutoScrollingChange={handleAutoScrollingChange}
+                onCurrentPageChange={handleCurrentPageChange}
+              />
             </VisualizerWrapper>
           </Center>
           {rightPanel && (

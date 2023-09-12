@@ -20,6 +20,7 @@ import type {
   OverriddenLayer,
   Undefinable,
   WrappedRef,
+  Feature,
 } from "@reearth/beta/lib/core/Map";
 
 import { Block } from "../Infobox";
@@ -82,6 +83,8 @@ export type Reearth = {
         layerId: string | undefined,
         reason?: LayerSelectionReason | undefined,
       ) => void;
+      findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
+      findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
       selectionReason?: LayerSelectionReason;
       // For compat
       overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
@@ -131,6 +134,7 @@ export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
   readonly viewport: Rect | undefined;
+  readonly getFovCenter: (withTerrain?: boolean) => LatLngHeight | undefined;
   readonly zoomIn: (amount: number, options?: CameraOptions) => void;
   readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */

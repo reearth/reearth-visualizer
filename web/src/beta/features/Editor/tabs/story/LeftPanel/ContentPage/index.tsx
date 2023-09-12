@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import { getFieldValue } from "@reearth/beta/features/Editor/StoryPanel/utils";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
+import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { StoryPageFragmentFragment } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
@@ -70,13 +70,13 @@ const ContentPage: React.FC<Props> = ({
                   key={i}
                   border
                   actionPlacement="bottom-start"
+                  isSelected={selectedPage?.id === storyPage.id}
+                  isOpenAction={openedPageId === storyPage.id}
                   onItemClick={() => onPageSelect(storyPage.id)}
                   onActionClick={() => setOpenedPageId(old => (old ? undefined : storyPage.id))}
                   onOpenChange={isOpen => {
                     setOpenedPageId(isOpen ? storyPage.id : undefined);
                   }}
-                  isSelected={selectedPage?.id === storyPage.id}
-                  isOpenAction={openedPageId === storyPage.id}
                   actionContent={
                     <PopoverMenuContent
                       size="sm"
