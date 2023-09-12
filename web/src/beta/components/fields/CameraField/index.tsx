@@ -224,6 +224,7 @@ const InputWrapper = styled.div<{ disabled?: boolean }>`
 `;
 
 const Input = styled.input`
+  width: 100%;
   display: flex;
   padding: 4px 8px;
   border-radius: 4px;
