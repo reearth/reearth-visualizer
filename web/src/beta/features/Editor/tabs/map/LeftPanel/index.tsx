@@ -6,10 +6,14 @@ import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 
+import type { LayerNameUpdateProps } from "../../../useLayers";
+
 type Props = {
   sceneId: string;
   layers: NLSLayer[];
+  selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };
@@ -17,8 +21,10 @@ type Props = {
 const MapSidePanel: React.FC<Props> = ({
   sceneId,
   layers,
+  selectedLayerId,
   onLayerDelete,
   onLayerSelect,
+  onLayerNameUpdate,
   onDataSourceManagerOpen,
 }) => {
   const t = useT();
@@ -43,7 +49,9 @@ const MapSidePanel: React.FC<Props> = ({
             <GroupSectionField
               groups={groups}
               layers={layers}
+              selectedLayerId={selectedLayerId}
               onLayerDelete={onLayerDelete}
+              onLayerNameUpdate={onLayerNameUpdate}
               onLayerSelect={onLayerSelect}
               onDataSourceManagerOpen={onDataSourceManagerOpen}
             />

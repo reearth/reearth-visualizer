@@ -37,7 +37,7 @@ export type InstallableStoryBlock = {
   extensionId: string;
   icon?: string;
   singleOnly?: boolean;
-  type?: PluginExtensionType;
+  type?: "StoryBlock";
 };
 
 export type InstalledStoryBlock = {
@@ -177,7 +177,7 @@ const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
             extensionId: e.extensionId,
             icon: e.icon,
             singleOnly: !!e.singleOnly,
-            type: e.type,
+            type: "StoryBlock",
           };
         })
         .filter((sb): sb is InstallableStoryBlock => !!sb);
