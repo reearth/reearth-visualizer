@@ -3,7 +3,7 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
-import { StoryPageFragmentFragment } from "../hooks";
+import { GQLStoryPage } from "../hooks";
 import StoryPage from "../Page";
 
 export const pagesElementId = "story-page-content";
@@ -11,7 +11,7 @@ export const pagesElementId = "story-page-content";
 export type Props = {
   sceneId?: string;
   storyId?: string;
-  pages?: StoryPageFragmentFragment[];
+  pages?: GQLStoryPage[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;

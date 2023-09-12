@@ -50,7 +50,7 @@ export type {
 } from "./Widgets";
 export { isBuiltinWidget } from "./Widgets";
 
-export type CrustProps = {
+export type Props = {
   // common
   engineName?: string;
   isEditable?: boolean;
@@ -164,7 +164,7 @@ export default function Crust({
   renderInfoboxInsertionPopup,
   overrideSceneProperty,
   onLayerEdit,
-}: CrustProps): JSX.Element | null {
+}: Props): JSX.Element | null {
   const {
     renderBlock,
     renderWidget,
