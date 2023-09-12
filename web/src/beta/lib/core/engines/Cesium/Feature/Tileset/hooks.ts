@@ -25,6 +25,8 @@ import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
+import { LayerSimple } from "@reearth/beta/lib/core/Map";
+
 import type {
   ComputedFeature,
   ComputedLayer,
@@ -321,6 +323,7 @@ export const useHooks = ({
   meta,
   evalFeature,
   onComputedFeatureFetch,
+  onLayerFetch,
 }: {
   id: string;
   boxId: string;
@@ -332,6 +335,7 @@ export const useHooks = ({
   meta?: Record<string, unknown>;
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (f: Feature[], cf: ComputedFeature[]) => void;
+  onLayerFetch?: (value: Partial<Pick<LayerSimple, "properties">>) => void;
 }) => {
   const { viewer } = useCesium();
   const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping, apiKey } = property ?? {};
@@ -590,6 +594,13 @@ export const useHooks = ({
     sceneProperty?.light?.imageBasedLightIntensity,
   ]);
 
+  const handleReady = useCallback(
+    (tileset: Cesium3DTileset) => {
+      onLayerFetch?.({ properties: tileset.properties });
+    },
+    [onLayerFetch],
+  );
+
   return {
     tilesetUrl,
     ref,
@@ -597,5 +608,6 @@ export const useHooks = ({
     clippingPlanes,
     builtinBoxProps,
     imageBasedLighting,
+    handleReady,
   };
 };

@@ -200,6 +200,8 @@ export default function useHooks({
       // compat
       if (key === "pluginId") return layer.compat?.extensionId ? "reearth" : undefined;
       else if (key === "extensionId") return layer.compat?.extensionId;
+      // TODO: Support normal layer's properties
+      else if (key === "properties") return layer.type === "simple" ? layer.properties : undefined;
       else if (key === "property") return layer.compat?.property;
       else if (key === "propertyId") return layer.compat?.propertyId;
       else if (key === "isVisible") return layer.visible;
