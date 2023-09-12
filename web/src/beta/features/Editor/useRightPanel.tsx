@@ -1,8 +1,8 @@
 import { ReactNode, useMemo } from "react";
 
 import { Tab } from "@reearth/beta/features/Navbar";
+import type { GQLStoryPage } from "@reearth/beta/lib/core/StoryPanel/hooks";
 
-import { StoryPageFragmentFragment } from "./StoryPanel/hooks";
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
 import WidgetSidePanel from "./tabs/widgets/RightPanel";
@@ -10,7 +10,7 @@ import WidgetSidePanel from "./tabs/widgets/RightPanel";
 type Props = {
   tab: Tab;
   sceneId?: string;
-  currentPage?: StoryPageFragmentFragment;
+  currentPage?: GQLStoryPage;
 };
 
 export default ({ tab, sceneId, currentPage }: Props) => {
