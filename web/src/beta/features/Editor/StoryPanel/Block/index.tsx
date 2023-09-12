@@ -33,7 +33,7 @@ export default function StoryBlockComponent({
 }
 
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
-  border: 1px solid
+  border: px solid
     ${({ selected, editable, theme }) => (editable && selected ? theme.select.main : "transparent")};
 
   &:hover {

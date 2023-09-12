@@ -31,7 +31,7 @@ type Props = {
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
-  onDragEnd: () => void;
+  onDragEnd?: () => void;
 };
 
 const ActionPanel: React.FC<Props> = ({

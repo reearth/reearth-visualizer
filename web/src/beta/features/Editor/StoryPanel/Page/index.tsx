@@ -1,4 +1,5 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
@@ -56,65 +57,104 @@ const StoryPage: React.FC<Props> = ({
     propertyItems,
   });
 
+  const [itemData, setItemData] = useState(installedStoryBlocks);
+
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination } = result;
+    if (!destination) return;
+    if (source.droppableId === destination.droppableId && destination.index === source.index)
+      return;
+
+    let add;
+    const activeBlock = itemData;
+    if (source.droppableId === "droppable") {
+      add = activeBlock?.[source.index];
+      activeBlock?.splice(source.index, 1);
+    }
+    if (destination.droppableId === "droppable") {
+      activeBlock?.splice(destination.index, 0, add);
+    }
+    setItemData(activeBlock);
+  };
+
   return (
-    <SelectableArea
-      title={page?.title ?? t("Page")}
-      position="left-bottom"
-      icon="storyPage"
-      noBorder
-      isSelected={selectedPageId === page?.id}
-      propertyId={page?.property?.id}
-      propertyItems={propertyItems}
-      onClick={() => onPageSelect?.(page?.id)}
-      showSettings={showPageSettings}
-      onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id}>
-        {titleProperty && (
-          <StoryBlock
-            block={{
-              id: titleId,
-              pluginId: "reearth",
-              extensionId: "titleStoryBlock",
-              title: titleProperty.title,
-              property: {
-                id: page?.property?.id ?? "",
-                items: [titleProperty],
-              },
-            }}
-            isSelected={selectedStoryBlockId === titleId}
-            onClick={() => onBlockSelect(titleId)}
-            onClickAway={onBlockSelect}
-            onChange={handlePropertyValueUpdate}
-          />
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId="droppable" type="ITEM">
+        {provided => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            <SelectableArea
+              title={page?.title ?? t("Page")}
+              position="left-bottom"
+              icon="storyPage"
+              noBorder
+              isSelected={selectedPageId === page?.id}
+              propertyId={page?.property?.id}
+              propertyItems={propertyItems}
+              onClick={() => onPageSelect?.(page?.id)}
+              showSettings={showPageSettings}
+              onSettingsToggle={onPageSettingsToggle}>
+              <Wrapper id={page?.id}>
+                {titleProperty && (
+                  <StoryBlock
+                    block={{
+                      id: titleId,
+                      pluginId: "reearth",
+                      extensionId: "titleStoryBlock",
+                      title: titleProperty.title,
+                      property: {
+                        id: page?.property?.id ?? "",
+                        items: [titleProperty],
+                      },
+                    }}
+                    isSelected={selectedStoryBlockId === titleId}
+                    onClick={() => onBlockSelect(titleId)}
+                    onClickAway={onBlockSelect}
+                    onChange={handlePropertyValueUpdate}
+                  />
+                )}
+                <BlockAddBar
+                  openBlocks={openBlocksIndex === -1}
+                  installableStoryBlocks={installableStoryBlocks}
+                  onBlockOpen={() => handleBlockOpen(-1)}
+                  onBlockAdd={handleStoryBlockCreate(0)}
+                />
+
+                {installedStoryBlocks &&
+                  installedStoryBlocks.length > 0 &&
+                  itemData?.map((b, idx) => (
+                    <Draggable key={b.id} draggableId={b.id} index={idx}>
+                      {provided => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}>
+                          <Fragment key={idx}>
+                            <StoryBlock
+                              block={b}
+                              isSelected={selectedStoryBlockId === b.id}
+                              onClick={() => onBlockSelect(b.id)}
+                              onClickAway={onBlockSelect}
+                              onChange={handlePropertyValueUpdate}
+                              onRemove={handleStoryBlockDelete}
+                            />
+                            <BlockAddBar
+                              openBlocks={openBlocksIndex === idx}
+                              installableStoryBlocks={installableStoryBlocks}
+                              onBlockOpen={() => handleBlockOpen(idx)}
+                              onBlockAdd={handleStoryBlockCreate(idx + 1)}
+                            />
+                          </Fragment>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+              </Wrapper>
+            </SelectableArea>
+            {provided.placeholder}
+          </div>
         )}
-        <BlockAddBar
-          openBlocks={openBlocksIndex === -1}
-          installableStoryBlocks={installableStoryBlocks}
-          onBlockOpen={() => handleBlockOpen(-1)}
-          onBlockAdd={handleStoryBlockCreate(0)}
-        />
-        {installedStoryBlocks &&
-          installedStoryBlocks.length > 0 &&
-          installedStoryBlocks.map((b, idx) => (
-            <Fragment key={idx}>
-              <StoryBlock
-                block={b}
-                isSelected={selectedStoryBlockId === b.id}
-                onClick={() => onBlockSelect(b.id)}
-                onClickAway={onBlockSelect}
-                onChange={handlePropertyValueUpdate}
-                onRemove={handleStoryBlockDelete}
-              />
-              <BlockAddBar
-                openBlocks={openBlocksIndex === idx}
-                installableStoryBlocks={installableStoryBlocks}
-                onBlockOpen={() => handleBlockOpen(idx)}
-                onBlockAdd={handleStoryBlockCreate(idx + 1)}
-              />
-            </Fragment>
-          ))}
-      </Wrapper>
-    </SelectableArea>
+      </Droppable>
+    </DragDropContext>
   );
 };
 

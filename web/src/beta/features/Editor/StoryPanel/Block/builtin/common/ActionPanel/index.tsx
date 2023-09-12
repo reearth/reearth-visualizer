@@ -23,7 +23,7 @@ type Props = {
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
-  onDragEnd?: any;
+  onDragEnd?: () => void;
 };
 
 const BlockActionPanel: React.FC<Props> = ({
