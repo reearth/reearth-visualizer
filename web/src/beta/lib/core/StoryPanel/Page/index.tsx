@@ -71,7 +71,7 @@ const StoryPage: React.FC<Props> = ({
       add = activeBlock?.[source.index];
       activeBlock?.splice(source.index, 1);
     }
-    if (destination.droppableId === "droppable") {
+    if (destination.droppableId === "droppable" && add !== undefined) {
       activeBlock?.splice(destination.index, 0, add);
     }
     setItemData(activeBlock);

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Key, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { MutationReturn } from "@reearth/services/api/types";
 import {
@@ -30,7 +30,6 @@ import { SceneQueryProps } from "../sceneApi";
 export type StoryBlockQueryProps = SceneQueryProps;
 
 export type InstallableStoryBlock = {
-  id: Key | null | undefined;
   name: string;
   description?: string;
   pluginId: string;
