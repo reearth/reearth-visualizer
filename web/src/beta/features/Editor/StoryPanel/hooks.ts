@@ -1,17 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 
-import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 export type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
 export default ({
-  sceneId,
   selectedStory,
   currentPage,
   onCurrentPageChange,
 }: {
-  sceneId?: string;
   selectedStory?: StoryFragmentFragment;
   currentPage?: StoryPageFragmentFragment;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
@@ -45,10 +42,6 @@ export default ({
     [selectedPageId],
   );
 
-  const { useInstallableStoryBlocksQuery } = useStorytellingAPI();
-
-  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
-
   const handleCurrentPageChange = useCallback(
     (pageId: string) => {
       onCurrentPageChange(pageId, true); // true disables scrollIntoView
@@ -70,7 +63,6 @@ export default ({
 
   return {
     pageInfo,
-    installableBlocks: installableStoryBlocks,
     selectedPageId,
     selectedBlockId,
     showPageSettings,

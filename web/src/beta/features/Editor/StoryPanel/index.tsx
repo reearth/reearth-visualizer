@@ -1,18 +1,29 @@
 import { FC } from "react";
 
-import PageIndicator from "@reearth/beta/features/Editor/StoryPanel/PageIndicator";
 import { styled } from "@reearth/services/theme";
 
 import useHooks, { type StoryFragmentFragment, type StoryPageFragmentFragment } from "./hooks";
+import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
 
 export const storyPanelWidth = 442;
+
+export type InstallableStoryBlock = {
+  name: string;
+  description?: string;
+  pluginId: string;
+  extensionId: string;
+  icon?: string;
+  singleOnly?: boolean;
+  type?: "StoryBlock";
+};
 
 export type Props = {
   sceneId?: string;
   selectedStory?: StoryFragmentFragment;
   currentPage?: StoryPageFragmentFragment;
   isAutoScrolling?: boolean;
+  installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 };
@@ -22,12 +33,12 @@ export const StoryPanel: FC<Props> = ({
   selectedStory,
   currentPage,
   isAutoScrolling,
+  installableBlocks,
   onAutoScrollingChange,
   onCurrentPageChange,
 }) => {
   const {
     pageInfo,
-    installableBlocks,
     selectedPageId,
     selectedBlockId,
     showPageSettings,
@@ -36,7 +47,6 @@ export const StoryPanel: FC<Props> = ({
     handleBlockSelect,
     handleCurrentPageChange,
   } = useHooks({
-    sceneId,
     selectedStory,
     currentPage,
     onCurrentPageChange,
