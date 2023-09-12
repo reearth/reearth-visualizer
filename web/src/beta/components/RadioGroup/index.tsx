@@ -21,17 +21,21 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) =>
 
   const handleRadioChange = useCallback(
     (value: string) => {
+      const isAtLeastOneSelected = currentOptions.some(option => option.selected);
+
       updateOptions(
         currentOptions.map(option => ({
           ...option,
-          selected: !option.selected && option.value === value,
+          selected: (isAtLeastOneSelected || !option.selected) && option.value === value,
         })),
       );
+
       setKey(prevKey => prevKey + 1);
       onChange?.(value);
     },
     [currentOptions, onChange],
   );
+
   return (
     <RadioGroupContainer layout={layout}>
       {currentOptions.map((option, index) => (
@@ -46,6 +50,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) =>
     </RadioGroupContainer>
   );
 };
+
 export default memo(RadioGroup);
 
 const RadioGroupContainer = styled.div<{ layout?: "vertical" | "horizontal" }>`
