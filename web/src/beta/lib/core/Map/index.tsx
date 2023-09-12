@@ -24,7 +24,7 @@ export type {
 
 export type { MapRef as Ref } from "./hooks";
 
-export type Props = {
+export type MapProps = {
   engines?: Record<string, Engine>;
   engine?: string;
 } & Omit<LayersProps, "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes"> &
@@ -44,7 +44,7 @@ function Map(
     layerSelectionReason,
     onLayerSelect,
     ...props
-  }: Props,
+  }: MapProps,
   ref: Ref<MapRef>,
 ): JSX.Element | null {
   const currentEngine = engine ? engines?.[engine] : undefined;

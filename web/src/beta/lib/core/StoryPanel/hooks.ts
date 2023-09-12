@@ -2,7 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
-export type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+export type {
+  StoryFragmentFragment as GQLStory,
+  StoryPageFragmentFragment as GQLStoryPage,
+} from "@reearth/services/gql";
 
 export default ({
   selectedStory,
