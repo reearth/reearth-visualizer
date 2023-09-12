@@ -1,3 +1,18 @@
+Latitude: 緯度
+Longitude: 経度
+Altitude: 高度
+Heading: ヘッディング
+Pitch: ピッチ
+Roll: ロール
+Camera Set: ''
+Not Set: 未設定
+Capture: キャプチャ
+Camera Pose Setting: ''
+Position: ''
+Rotation: ''
+Angle: 角度
+Jump: ジャンプ
+Clean Capture: ''
 Color Picker: カラーピッカー
 Cancel: キャンセル
 Apply: Apply
@@ -8,6 +23,7 @@ Not found: ページが見つかりません
 Padding settings: ''
 Remove: 削除
 Untitled: 無名
+Page: ページ
 Scene: シーン
 Layers: レイヤー
 Outline: アウトライン
@@ -15,13 +31,13 @@ Published: 一般公開
 Unpublished: 非公開
 Story: ストーリー
 Unpublish: 非公開にする
+Update: 更新する
 Publish: 公開
 Publishing Settings: 公開設定
 Congratulations!: おめでとうございます！
 Publish your project: プロジェクトを公開する
 Update your project: プロジェクトを更新する
 Ok: 確認
-Update: 更新する
 Continue: 続ける
 Your published project will be updated. This means all current changes will overwrite the current published project.: 公開されたプロジェクトが更新されます。公開されているプロジェクトへ現在の内容が上書きされます。
 Your project will be published. This means anybody with the below URL will be able to view this project.: プロジェクトが公開されます。URLを知っている人は誰でもこのプロジェクトを見ることができるようになります。
@@ -38,13 +54,11 @@ Your project will be unpublished.: プロジェクトを非公開にする
 This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
 New Page: 新しいページ
-Page: ページ
 Page Settings: ページ設定
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Inspector: インスペクター
 Container Settings: Container Settings
-Angle: 角度
 Narrow: 狭い
 Wide: 広い
 Create New Workspace: 新規ワークスペース作成
@@ -262,24 +276,14 @@ Create Infobox: インフォボックス作成
 Dataset: データセット
 Pose Set: 設定済み
 Position Set: 設定済み
-Not Set: 未設定
-Latitude: 緯度
-Longtitude: 経度
-Altitude: 高度
-Heading: ヘッディング
-Pitch: ピッチ
-Roll: ロール
 Check Pose: 確認
-Jump: ジャンプ
 Edit Pose: 編集
 Edit Position: 編集
-Capture: キャプチャ
 '#RRGGBBAA': '#RRGGBBAA'
 Red: 赤
 Green: 緑
 Blue: 青
 Alpha: アルファ
-Longitude: 経度
 This field is linked to {{datasetField}}.: この値は{datasetField}にリンクされています
 This field is not editable currently.: この値は現在変更できません
 Linkable data: リンク先

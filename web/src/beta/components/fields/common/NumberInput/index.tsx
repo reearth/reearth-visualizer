@@ -15,6 +15,7 @@ export type Props = {
   inputDescription?: string;
   value?: number;
   onChange?: (value?: number | undefined) => void;
+  placeholder?: string;
 };
 
 const NumberInput: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const NumberInput: React.FC<Props> = ({
   min,
   max,
   disabled = false,
+  placeholder,
 }) => {
   const [innerValue, setInnerValue] = useState<number | undefined>(value);
   const [, setNotification] = useNotification();
@@ -117,6 +119,7 @@ const NumberInput: React.FC<Props> = ({
           ref={inputRef}
           max={max}
           step={"any"}
+          placeholder={placeholder}
         />
         {suffix && (
           <TextWrapper

@@ -70,13 +70,13 @@ const ContentPage: React.FC<Props> = ({
                   key={i}
                   border
                   actionPlacement="bottom-start"
+                  isSelected={selectedPage?.id === storyPage.id}
+                  isOpenAction={openedPageId === storyPage.id}
                   onItemClick={() => onPageSelect(storyPage.id)}
                   onActionClick={() => setOpenedPageId(old => (old ? undefined : storyPage.id))}
                   onOpenChange={isOpen => {
                     setOpenedPageId(isOpen ? storyPage.id : undefined);
                   }}
-                  isSelected={selectedPage?.id === storyPage.id}
-                  isOpenAction={openedPageId === storyPage.id}
                   actionContent={
                     <PopoverMenuContent
                       size="sm"
