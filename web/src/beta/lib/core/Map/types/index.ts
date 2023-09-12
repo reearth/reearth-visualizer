@@ -15,6 +15,7 @@ import type {
   LatLng,
   DataType,
   SelectedFeatureInfo,
+  Feature,
 } from "../../mantle";
 import type {
   FeatureComponentType,
@@ -96,6 +97,8 @@ export type EngineRef = {
   onTick: TickEvent;
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
+  findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
+  findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
 };
 
 export type EngineProps = {

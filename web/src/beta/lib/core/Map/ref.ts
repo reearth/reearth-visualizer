@@ -60,6 +60,8 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   inViewport: 1,
   onTick: 1,
   removeTickEventListener: 1,
+  findFeaturesByIds: 1,
+  findFeatureById: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
