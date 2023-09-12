@@ -13,18 +13,25 @@ export type Props = {
 const RadioBox: React.FC<Props> = ({ inactive, selected, value, label, onClick }: Props) => {
   const [isChecked, setIsChecked] = useState(selected ?? false);
 
-  const handleRadioClick = useCallback(() => {
-    setIsChecked(!isChecked);
-    if (onClick) onClick(value);
-  }, [isChecked, onClick, value]);
+  const handleRadioClick = useCallback(
+    (value: string) => {
+      setIsChecked(!isChecked);
+      if (onClick) onClick(value);
+    },
+    [isChecked, onClick],
+  );
 
   return (
     <Radio selected={isChecked} inactive={inactive}>
-      <RadioInput type="radio" value={inactive ? undefined : value} onClick={handleRadioClick} />
+      <RadioInput
+        type="radio"
+        value={inactive ? undefined : value}
+        onClick={() => handleRadioClick(value)}
+      />
       <RadioButton selected={isChecked} inactive={inactive}>
         {isChecked && <Checkmark selected={isChecked} inactive={inactive} />}
       </RadioButton>
-      <RadioText>{label ?? value}</RadioText>
+      <RadioText>{label}</RadioText>
     </Radio>
   );
 };

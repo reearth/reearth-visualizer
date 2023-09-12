@@ -4,9 +4,9 @@ import Button from "@reearth/beta/components/Button";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-//import RadioButton from "@reearth/classic/components/atoms/RadioButton";
 import Select from "@reearth/classic/components/atoms/Select";
 import { Option } from "@reearth/classic/components/atoms/SelectOption";
+import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
 import {
@@ -24,6 +24,8 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [fileFormat, setFileFormat] = React.useState("GeoJSON");
   const [value, setValue] = React.useState("");
   const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
+
+  const t = useT();
 
   const handleSubmit = () => {
     onSubmit({
@@ -63,8 +65,8 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <SourceTypeWrapper>
             <RadioGroup
               options={[
-                { label: "From URL", value: "url", selected: true },
-                { label: "From Value", value: "value", selected: false },
+                { label: t("From URL"), value: "url", selected: true },
+                { label: t("From Value"), value: "value", selected: false },
               ]}
               layout="horizontal"
               onChange={setSourceType}
