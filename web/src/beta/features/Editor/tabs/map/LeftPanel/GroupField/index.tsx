@@ -1,30 +1,31 @@
+import ListItem from "@reearth/beta/components/ListItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
-import Text from "@reearth/beta/components/Text";
 import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { PropertySchemaGroup } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import Layers from "../Layers";
 
 type GroupSectionFieldProps = {
-  groups: PropertySchemaGroup[];
   layers: NLSLayer[];
   selectedLayerId?: string;
+  selectedSceneSetting?: boolean;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
+  onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
 };
 
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
-  groups,
   layers,
   selectedLayerId,
+  selectedSceneSetting,
   onLayerDelete,
   onLayerNameUpdate,
   onLayerSelect,
+  onSceneSettingSelect,
   onDataSourceManagerOpen,
 }) => {
   const t = useT();
@@ -32,11 +33,14 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   return (
     <>
       <StyledSidePanelSectionField title={t("Scene")}>
-        {groups.map(({ schemaGroupId, title }) => (
+        {/* {groups.map(({ schemaGroupId, title }) => (
           <GroupSectionFieldText key={schemaGroupId} size="footnote">
             {title}
           </GroupSectionFieldText>
-        ))}
+        ))} */}
+        <ListItem isSelected={selectedSceneSetting} onItemClick={onSceneSettingSelect}>
+          {t("Main")}
+        </ListItem>
       </StyledSidePanelSectionField>
       <StyledSidePanelSectionField title={t("Layers")}>
         <Layers
@@ -51,12 +55,6 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
     </>
   );
 };
-
-const GroupSectionFieldText = styled(Text)`
-  padding-left: 4px;
-  padding-bottom: 4px;
-  cursor: pointer;
-`;
 
 const StyledSidePanelSectionField = styled(SidePanelSectionField)`
   background: inherit;
