@@ -1,39 +1,64 @@
 import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import DragAndDropList, {
+  Props as DragAndDropProps,
+} from "@reearth/beta/components/DragAndDropList";
 import Property from "@reearth/beta/components/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+type ListItem = {
+  id: string;
+  value: string;
+};
+
 export type Props = {
   name?: string;
   description?: string;
-  items: string[];
+  items: ListItem[];
   removeItem: (key: string) => void;
   addItem: () => void;
-};
+} & Pick<DragAndDropProps, "onItemDrop">;
 
 // TODO: where would the field rendering logic go??
 
-const ListField: React.FC<Props> = ({ name, description, items, removeItem, addItem }: Props) => {
+const ListField: React.FC<Props> = ({
+  name,
+  description,
+  items,
+  removeItem,
+  addItem,
+  onItemDrop,
+}: Props) => {
   const t = useT();
   const [selected, setSelected] = useState<string | null>(null);
 
   const deleteItem = useCallback(() => {
-    if (!selected) return;
+    if (selected == null || selected == undefined) return;
     removeItem(selected);
     setSelected(null);
   }, [selected, removeItem]);
 
+  const getId = useCallback(({ id }: ListItem) => {
+    return id;
+  }, []);
+
   return (
     <Property name={name} description={description}>
       <FieldWrapper>
-        {/* TODO: Make this drag and drop */}
-        {items.map(item => (
-          <Item onClick={() => setSelected(item)} key={item} selected={selected === item}>
-            {item}
-          </Item>
-        ))}
+        <DragAndDropList<ListItem>
+          uniqueKey="ListField"
+          items={items}
+          onItemDrop={onItemDrop}
+          getId={getId}
+          renderItem={({ id, value }) => (
+            <Item onClick={() => setSelected(id)} selected={selected === id}>
+              {value}
+            </Item>
+          )}
+          gap={0}
+        />
       </FieldWrapper>
       <ButtonGroup>
         <ButtonWrapper
@@ -42,7 +67,7 @@ const ListField: React.FC<Props> = ({ name, description, items, removeItem, addI
           buttonType="secondary"
           text={t("Remove")}
           size="medium"
-          disabled={!selected}
+          disabled={selected == null || selected == undefined}
         />
         <ButtonWrapper
           onClick={addItem}
