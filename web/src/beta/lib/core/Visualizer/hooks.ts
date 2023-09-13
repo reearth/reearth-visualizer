@@ -140,11 +140,10 @@ export default function useHooks(
   const defaultInfobox = selectedLayer.reason?.defaultInfobox;
   const infobox = useMemo(
     () =>
-      selectedLayer
+      selectedLayer.layer?.layer?.infobox
         ? {
             title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
             isEditable: !!selectedLayer.layer?.layer?.infobox,
-            visible: !!selectedLayer.layer?.layer?.infobox || !!defaultInfobox,
             property: selectedLayer.layer?.layer?.infobox?.property?.default,
             blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }
