@@ -40,8 +40,10 @@ Description around.: ''
 Write down your text: ''
 Add to Layer: ''
 Scene: Scene
+Main: ''
 Layers: Layers
 Outline: Outline
+Inspector: Inspector
 Published: Published
 Unpublished: Unpublished
 Story: Story
@@ -78,7 +80,6 @@ Page: Page
 Page Settings: Page Settings
 Align System: Align System
 Widget Manager: Widget Manager
-Inspector: Inspector
 Container Settings: Container Settings
 Narrow: Narrow
 Wide: Wide
@@ -184,6 +185,7 @@ Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
 Padding settings: Padding settings
+Remove: Remove
 Drop here: Drop here
 Write your story :): Write your story :)
 Double click to start to write your story :): Double click to start to write your story :)

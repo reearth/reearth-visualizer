@@ -40,8 +40,10 @@ Description around.: ''
 Write down your text: ''
 Add to Layer: ''
 Scene: シーン
+Main: ''
 Layers: レイヤー
 Outline: アウトライン
+Inspector: インスペクター
 Published: 一般公開
 Unpublished: 非公開
 Story: ストーリー
@@ -74,7 +76,6 @@ Page: ページ
 Page Settings: ページ設定
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
-Inspector: インスペクター
 Container Settings: Container Settings
 Narrow: 狭い
 Wide: 広い
@@ -164,7 +165,8 @@ Playback timeline: タイムラインを逆再生する
 Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
-Padding settings: ''
+Padding settings: 余白設定
+Remove: 削除
 Drop here: ここにドロップ
 Write your story :): ''
 Double click to start to write your story :): ''

@@ -10,7 +10,6 @@ import type { LayerNameUpdateProps } from "./useLayers";
 
 type Props = {
   tab: Tab;
-  sceneId: string;
   nlsLayers: NLSLayer[];
 
   // storytelling
@@ -22,6 +21,10 @@ type Props = {
   onPageAdd: (isSwipeable: boolean) => void;
   onPageMove: (id: string, targetIndex: number) => void;
 
+  // scene
+  selectedSceneSetting?: boolean;
+  onSceneSettingSelect: () => void;
+
   // layers
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
@@ -32,10 +35,10 @@ type Props = {
 
 export default ({
   tab,
-  sceneId,
   nlsLayers,
   selectedStory,
   selectedLayerId,
+  selectedSceneSetting,
   currentPage,
   onCurrentPageChange,
   onPageDuplicate,
@@ -45,6 +48,7 @@ export default ({
   onLayerDelete,
   onLayerNameUpdate,
   onLayerSelect,
+  onSceneSettingSelect,
   onDataSourceManagerOpen,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
@@ -52,12 +56,13 @@ export default ({
       case "map":
         return (
           <MapSidePanel
-            sceneId={sceneId}
             layers={nlsLayers}
             selectedLayerId={selectedLayerId}
+            selectedSceneSetting={selectedSceneSetting}
             onLayerDelete={onLayerDelete}
             onLayerNameUpdate={onLayerNameUpdate}
             onLayerSelect={onLayerSelect}
+            onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
           />
         );
@@ -80,14 +85,15 @@ export default ({
     }
   }, [
     tab,
-    sceneId,
     nlsLayers,
     selectedStory,
     selectedLayerId,
+    selectedSceneSetting,
     currentPage,
     onLayerDelete,
     onLayerNameUpdate,
     onLayerSelect,
+    onSceneSettingSelect,
     onDataSourceManagerOpen,
     onCurrentPageChange,
     onPageDuplicate,
