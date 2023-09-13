@@ -4,18 +4,16 @@ import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  widgetPropertyId: string;
+  id: string;
   propertyItems?: Item[];
 };
 
-const Settings: React.FC<Props> = ({ widgetPropertyId, propertyItems }) => {
-  console.log("PI", propertyItems);
-
+const Settings: React.FC<Props> = ({ id, propertyItems }) => {
   return (
     <Wrapper>
       {propertyItems?.map((i, idx) => (
         <SidePanelSectionField title={i.title ?? "Undefined"} key={idx}>
-          <FieldComponents propertyId={widgetPropertyId} item={i} />
+          <FieldComponents propertyId={id} item={i} />
         </SidePanelSectionField>
       ))}
     </Wrapper>
