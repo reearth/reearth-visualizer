@@ -20,6 +20,7 @@ import type {
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 
+import useTimelineManager from "./useTimelineManager";
 import useViewport from "./useViewport";
 
 const viewportMobileMaxWidth = 768;
@@ -157,8 +158,35 @@ export default function useHooks(
     }
   }, [infobox]);
 
+  // timeline manager
+  const timelineManager = useTimelineManager({
+    init: sceneProperty?.timeline,
+    engineClock: mapRef.current?.engine?.getClock(),
+  });
+
   // scene
-  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
+  const [overriddenSceneProperty, originalOverrideSceneProperty] =
+    useOverriddenProperty(sceneProperty);
+
+  const overrideSceneProperty = useCallback(
+    (pluginId: string, property: SceneProperty) => {
+      // Timeline related override should be handled by TimelineManager
+      if (property.timeline) {
+        timelineManager.commit({
+          cmd: "UPDATE",
+          payload: property.timeline,
+          commiter: {
+            source: "overrideSceneProperty",
+            id: pluginId,
+          },
+        });
+      }
+      // We can keep the logic the same as before.
+      // Just remember we will NOT use the timeline from overridden scene property directly.
+      originalOverrideSceneProperty(pluginId, property);
+    },
+    [timelineManager, originalOverrideSceneProperty],
+  );
 
   // clock
   const overriddenClock = useMemo(() => {
@@ -283,6 +311,7 @@ export default function useHooks(
     infobox,
     isLayerDragging,
     shouldRender,
+    timelineManager,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

@@ -16,6 +16,7 @@ import type {
   DataType,
   SelectedFeatureInfo,
 } from "../../mantle";
+import type { TimelineManager } from "../../Visualizer/useTimelineManager";
 import type {
   FeatureComponentType,
   ClusterComponentType,
@@ -96,6 +97,7 @@ export type EngineRef = {
   onTick: TickEvent;
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
+  timelineManager?: TimelineManager;
 };
 
 export type EngineProps = {
@@ -104,7 +106,6 @@ export type EngineProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SceneProperty;
-  overriddenClock?: Clock;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;
@@ -121,6 +122,7 @@ export type EngineProps = {
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
+  timelineManager?: TimelineManager;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,

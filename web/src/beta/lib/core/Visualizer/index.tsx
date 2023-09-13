@@ -191,6 +191,7 @@ const Visualizer: FC<PropsWithChildren<Props>> = memo(
       isLayerDragging,
       infobox,
       shouldRender,
+      timelineManager,
       handleLayerSelect,
       handleBlockSelect,
       handleCameraChange,
@@ -285,7 +286,6 @@ const Visualizer: FC<PropsWithChildren<Props>> = memo(
                 layers={layers}
                 engines={engines}
                 camera={camera}
-                overriddenClock={overriddenClock}
                 clusters={clusters}
                 hiddenLayers={hiddenLayers}
                 isLayerDragging={isLayerDragging}
@@ -300,6 +300,7 @@ const Visualizer: FC<PropsWithChildren<Props>> = memo(
                 layerSelectionReason={layerSelectionReason}
                 small={small}
                 ready={ready}
+                timelineManager={timelineManager}
                 onCameraChange={handleCameraChange}
                 onLayerDrag={handleLayerDrag}
                 onLayerDrop={handleLayerDrop}

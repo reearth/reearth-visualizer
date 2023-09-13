@@ -730,13 +730,6 @@ export default ({
     [selectionReason, engineAPI, onLayerEdit],
   );
 
-  const handleTick = useCallback(
-    (d: Date, clock: { start: Date; stop: Date }) => {
-      engineAPI.tickEventCallback?.current?.forEach(e => e(d, clock));
-    },
-    [engineAPI],
-  );
-
   useEffect(() => {
     if (!cesium.current?.cesiumElement) return;
     const allowCameraMove = !!(featureFlags & FEATURE_FLAGS.CAMERA_MOVE);
@@ -825,7 +818,6 @@ export default ({
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    handleTick,
   };
 };
 

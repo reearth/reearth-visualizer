@@ -34,7 +34,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     className,
     style,
     property,
-    overriddenClock,
     camera,
     small,
     ready,
@@ -48,6 +47,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     layersRef,
     featureFlags,
     requestingRenderMode,
+    timelineManager,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
@@ -73,7 +73,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    handleTick,
   } = useHooks({
     ref,
     property,
@@ -138,7 +137,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       onMouseLeave={mouseEventHandles.mouseleave}
       onWheel={mouseEventHandles.wheel}>
       <Event onMount={handleMount} onUnmount={handleUnmount} />
-      <Clock property={property} clock={overriddenClock} onTick={handleTick} />
+      <Clock property={property} timelineManager={timelineManager} />
       <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
       <Indicator property={property} />
       <ScreenSpaceEventHandler useDefault>
