@@ -79,8 +79,8 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <SourceTypeWrapper>
             <RadioGroup
               options={[
-                { label: t("From URL"), value: "url", selected: true },
-                { label: t("From Value"), value: "value", selected: false },
+                { label: t("From URL"), keyValue: "url" },
+                { label: t("From Value"), keyValue: "value" },
               ]}
               layout="horizontal"
               onChange={setSourceType}

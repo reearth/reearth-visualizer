@@ -5,8 +5,7 @@ import { styled } from "@reearth/services/theme";
 
 export type Option = {
   label?: string;
-  value: string;
-  selected: boolean;
+  keyValue: string;
 };
 
 export type RadioGroupProps = {
@@ -16,35 +15,33 @@ export type RadioGroupProps = {
 };
 
 const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) => {
-  const [currentOptions, updateOptions] = useState<Option[]>(options);
   const [key, setKey] = useState(0);
+  const [selectedValue, setSelectedValue] = useState<string | undefined>(
+    options.length > 0 ? options[0].keyValue : undefined,
+  );
 
   const handleRadioChange = useCallback(
     (value: string) => {
-      const isAtLeastOneSelected = currentOptions.some(option => option.selected);
-
-      updateOptions(
-        currentOptions.map(option => ({
-          ...option,
-          selected: (isAtLeastOneSelected || !option.selected) && option.value === value,
-        })),
-      );
+      if (value === selectedValue) {
+        return; // Prevent deselecting the option
+      }
 
       setKey(prevKey => prevKey + 1);
+      setSelectedValue(value);
       onChange?.(value);
     },
-    [currentOptions, onChange],
+    [onChange, selectedValue],
   );
 
   return (
     <RadioGroupContainer layout={layout}>
-      {currentOptions.map((option, index) => (
+      {options.map((option, index) => (
         <RadioBox
-          key={`${option.label}-${key}-${index}`}
-          keyValue={option.value}
-          selected={option.selected}
-          label={option.label}
-          onClick={() => handleRadioChange(option.value)}
+          key={`${option.keyValue}-${key}-${index}`}
+          keyValue={option.keyValue}
+          selected={option.keyValue === selectedValue}
+          label={option.label || option.keyValue}
+          onClick={() => handleRadioChange(option.keyValue)}
         />
       ))}
     </RadioGroupContainer>

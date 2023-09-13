@@ -10,26 +10,22 @@ export type Props = {
   label?: string;
 };
 
-const RadioBox: React.FC<Props> = ({ inactive, selected, keyValue, label, onClick }: Props) => {
-  const [isChecked, setIsChecked] = useState(selected ?? false);
+const RadioBox: React.FC<Props> = ({ selected, keyValue, label, onClick }: Props) => {
+  const [isChecked, setIsChecked] = useState(!!selected);
 
   const handleRadioClick = useCallback(
     (value: string) => {
       setIsChecked(!isChecked);
-      if (onClick) onClick(value);
+      onClick?.(value);
     },
     [isChecked, onClick],
   );
 
   return (
-    <Radio selected={isChecked} inactive={inactive}>
-      <RadioInput
-        type="radio"
-        value={inactive ? undefined : keyValue}
-        onClick={() => handleRadioClick(keyValue)}
-      />
-      <RadioButton selected={isChecked} inactive={inactive}>
-        {isChecked && <Checkmark selected={isChecked} inactive={inactive} />}
+    <Radio>
+      <RadioInput type="radio" value={keyValue} onClick={() => handleRadioClick(keyValue)} />
+      <RadioButton selected={isChecked}>
+        {isChecked && <RadioIndicator selected={isChecked} />}
       </RadioButton>
       <RadioText>{label}</RadioText>
     </Radio>
@@ -37,22 +33,17 @@ const RadioBox: React.FC<Props> = ({ inactive, selected, keyValue, label, onClic
 };
 export default RadioBox;
 
-const Checkmark = styled.div<{
-  inactive?: boolean;
+const RadioIndicator = styled.div<{
   selected?: boolean;
 }>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background-color: white;
-  background-color: ${({ selected, inactive, theme }) =>
-    selected ? theme.select.main : inactive ? theme.content.weaker : theme.content.main};
+  background-color: ${({ selected, theme }) => (selected ? theme.select.main : theme.content.main)};
 `;
 
-const Radio = styled.label<{
-  inactive?: boolean;
-  selected?: boolean;
-}>`
+const Radio = styled.label`
   display: flex;
   align-items: center;
   min-width: 30px;
@@ -74,15 +65,12 @@ const RadioInput = styled.input`
 `;
 
 const RadioButton = styled.span<{
-  inactive?: boolean;
   selected?: boolean;
 }>`
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid
-    ${({ selected, inactive, theme }) =>
-      selected ? theme.select.main : inactive ? theme.content.weaker : theme.content.main};
+  border: 2px solid ${({ selected, theme }) => (selected ? theme.select.main : theme.content.main)};
   margin-right: 4px;
   display: flex;
   justify-content: center;

@@ -32,5 +32,5 @@ Default.args = {
   label: "test",
   inactive: false,
   selected: false,
-  value: "test",
+  keyValue: "test",
 };
