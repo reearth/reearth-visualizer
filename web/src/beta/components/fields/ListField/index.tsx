@@ -35,7 +35,7 @@ const ListField: React.FC<Props> = ({
   const [selected, setSelected] = useState<string | null>(null);
 
   const deleteItem = useCallback(() => {
-    if (selected == null || selected == undefined) return;
+    if (!selected) return;
     removeItem(selected);
     setSelected(null);
   }, [selected, removeItem]);
@@ -67,7 +67,7 @@ const ListField: React.FC<Props> = ({
           buttonType="secondary"
           text={t("Remove")}
           size="medium"
-          disabled={selected == null || selected == undefined}
+          disabled={!selected}
         />
         <ButtonWrapper
           onClick={addItem}
