@@ -1,6 +1,8 @@
-import { Fragment, useMemo, useState, useEffect } from "react";
+import { Fragment, useMemo, useState, useEffect, useRef } from "react";
+import { useDragDropManager } from "react-dnd";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
+import { useScroll } from "@reearth/beta/components/DragAndDropList/scrollItem";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
@@ -58,10 +60,24 @@ const StoryPage: React.FC<Props> = ({
   });
 
   const [items, setItems] = useState(installedStoryBlocks);
+  const listRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     setItems(installedStoryBlocks);
   }, [installedStoryBlocks]);
+
+  const { updatePosition } = useScroll(listRef);
+
+  const dragDropManager = useDragDropManager();
+  const monitor = dragDropManager.getMonitor();
+
+  useEffect(() => {
+    const unsubscribe = monitor.subscribeToOffsetChange(() => {
+      const offset = monitor.getSourceClientOffset()?.y as number;
+      updatePosition({ position: offset, isScrollAllowed: true });
+    });
+    return unsubscribe;
+  }, [monitor, updatePosition]);
 
   return (
     <SelectableArea
