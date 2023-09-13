@@ -1,5 +1,6 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState, useEffect } from "react";
 
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
@@ -56,6 +57,12 @@ const StoryPage: React.FC<Props> = ({
     propertyItems,
   });
 
+  const [items, setItems] = useState(installedStoryBlocks);
+
+  useEffect(() => {
+    setItems(installedStoryBlocks);
+  }, [installedStoryBlocks]);
+
   return (
     <SelectableArea
       title={page?.title ?? t("Page")}
@@ -93,26 +100,46 @@ const StoryPage: React.FC<Props> = ({
           onBlockOpen={() => handleBlockOpen(-1)}
           onBlockAdd={handleStoryBlockCreate(0)}
         />
-        {installedStoryBlocks &&
-          installedStoryBlocks.length > 0 &&
-          installedStoryBlocks.map((b, idx) => (
-            <Fragment key={idx}>
-              <StoryBlock
-                block={b}
-                isSelected={selectedStoryBlockId === b.id}
-                onClick={() => onBlockSelect(b.id)}
-                onClickAway={onBlockSelect}
-                onChange={handlePropertyValueUpdate}
-                onRemove={handleStoryBlockDelete}
-              />
-              <BlockAddBar
-                openBlocks={openBlocksIndex === idx}
-                installableStoryBlocks={installableStoryBlocks}
-                onBlockOpen={() => handleBlockOpen(idx)}
-                onBlockAdd={handleStoryBlockCreate(idx + 1)}
-              />
-            </Fragment>
-          ))}
+
+        {installedStoryBlocks && installedStoryBlocks.length > 0 && (
+          <DragAndDropList
+            uniqueKey="LeftPanelPages"
+            gap={8}
+            items={items}
+            getId={item => item.id}
+            onItemDrop={async (item, index) => {
+              setItems(old => {
+                const items = [...old];
+                items.splice(
+                  old.findIndex(o => o.id === item.id),
+                  1,
+                );
+                items.splice(index, 0, item);
+                return items;
+              });
+            }}
+            renderItem={(block, i) => {
+              return (
+                <Fragment key={i}>
+                  <StoryBlock
+                    block={block}
+                    isSelected={selectedStoryBlockId === block.id}
+                    onClick={() => onBlockSelect(block.id)}
+                    onClickAway={onBlockSelect}
+                    onChange={handlePropertyValueUpdate}
+                    onRemove={handleStoryBlockDelete}
+                  />
+                  <BlockAddBar
+                    openBlocks={openBlocksIndex === i}
+                    installableStoryBlocks={installableStoryBlocks}
+                    onBlockOpen={() => handleBlockOpen(i)}
+                    onBlockAdd={handleStoryBlockCreate(i + 1)}
+                  />
+                </Fragment>
+              );
+            }}
+          />
+        )}
       </Wrapper>
     </SelectableArea>
   );
