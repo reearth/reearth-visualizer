@@ -5,12 +5,12 @@ import { fonts, styled } from "@reearth/services/theme";
 export type Props = {
   inactive?: boolean;
   selected?: boolean;
-  value: string;
+  keyValue: string;
   onClick?: (value: string) => void;
   label?: string;
 };
 
-const RadioBox: React.FC<Props> = ({ inactive, selected, value, label, onClick }: Props) => {
+const RadioBox: React.FC<Props> = ({ inactive, selected, keyValue, label, onClick }: Props) => {
   const [isChecked, setIsChecked] = useState(selected ?? false);
 
   const handleRadioClick = useCallback(
@@ -25,8 +25,8 @@ const RadioBox: React.FC<Props> = ({ inactive, selected, value, label, onClick }
     <Radio selected={isChecked} inactive={inactive}>
       <RadioInput
         type="radio"
-        value={inactive ? undefined : value}
-        onClick={() => handleRadioClick(value)}
+        value={inactive ? undefined : keyValue}
+        onClick={() => handleRadioClick(keyValue)}
       />
       <RadioButton selected={isChecked} inactive={inactive}>
         {isChecked && <Checkmark selected={isChecked} inactive={inactive} />}
