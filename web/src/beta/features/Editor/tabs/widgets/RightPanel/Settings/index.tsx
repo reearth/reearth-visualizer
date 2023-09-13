@@ -9,8 +9,6 @@ type Props = {
 };
 
 const Settings: React.FC<Props> = ({ widgetPropertyId, propertyItems }) => {
-  console.log("PI", propertyItems);
-
   return (
     <Wrapper>
       {propertyItems?.map((i, idx) => (

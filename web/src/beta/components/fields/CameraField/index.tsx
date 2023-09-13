@@ -31,26 +31,16 @@ export type Props = {
   description?: string;
   value?: CameraValue;
   disabled?: boolean;
-  onCapture?: () => void;
+  onSave: (value?: CameraValue) => void;
   onJump?: (input: CameraValue) => void;
-  onClean?: () => void;
-  onChange: (value: CameraValue) => void;
 };
 
-const CameraField: React.FC<Props> = ({
-  name,
-  description,
-  value,
-  disabled,
-  onCapture,
-  onJump,
-  onClean,
-  onChange,
-}) => {
+const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSave, onJump }) => {
   const t = useT();
   const theme = useTheme();
 
   const [open, setOpen] = useState(false);
+  const [currentCamera, setCurrentCamera] = useState<CameraValue | undefined>(value);
 
   const handleJump = useCallback(() => {
     if (!value) return;
@@ -61,17 +51,16 @@ const CameraField: React.FC<Props> = ({
 
   const handleClick = useCallback(() => setOpen(!open), [open]);
 
-  // Update on single field updates the entire value object
-  const updateField = useCallback(
+  const handleFieldUpdate = useCallback(
     (key: keyof CameraValue, update?: number) => {
-      if (update == undefined) return;
-      const updated = {
+      if (!update || !value) return;
+      const updated: CameraValue = {
         ...value,
         [key]: update,
       };
-      onChange(updated as CameraValue);
+      setCurrentCamera(updated);
     },
-    [onChange, value],
+    [value],
   );
 
   const {
@@ -149,7 +138,7 @@ const CameraField: React.FC<Props> = ({
                     placeholder="-"
                     inputDescription={name}
                     value={value?.[field]}
-                    onChange={x => updateField(field, x)}
+                    onChange={x => handleFieldUpdate(field, x)}
                   />
                 ))}
               </ValuesWrapper>
@@ -163,7 +152,7 @@ const CameraField: React.FC<Props> = ({
                     placeholder="-"
                     inputDescription={name}
                     value={value?.[field]}
-                    onChange={x => updateField(field, x)}
+                    onChange={x => handleFieldUpdate(field, x)}
                   />
                 ))}
               </ValuesWrapper>
@@ -174,42 +163,29 @@ const CameraField: React.FC<Props> = ({
                 value={value?.["fov"]}
                 min={0}
                 max={180}
-                onChange={x => updateField("fov", x)}
+                onChange={x => handleFieldUpdate("fov", x)}
               />
             </ValueInputWrapper>
           </MainBodyWrapper>
-          {onJump && (
-            <FormButtonGroup>
-              <ButtonWrapper
-                buttonType="secondary"
-                text={t("Jump")}
-                onClick={handleJump}
-                size="medium"
-                disabled={!value}
-              />
-            </FormButtonGroup>
-          )}
-          {(onClean || onCapture) && (
-            <FormButtonGroup>
-              {onClean && (
-                <ButtonWrapper
-                  buttonType="secondary"
-                  text={t("Clean Capture")}
-                  onClick={onClean}
-                  size="medium"
-                  disabled={!value}
-                />
-              )}
-              {onCapture && (
-                <ButtonWrapper
-                  buttonType="primary"
-                  text={t("Capture")}
-                  onClick={onCapture}
-                  size="medium"
-                />
-              )}
-            </FormButtonGroup>
-          )}
+          <FormButtonGroup>
+            <JumpButton
+              buttonType="secondary"
+              text={t("Jump")}
+              onClick={handleJump}
+              disabled={!value}
+            />
+            <StyledButton
+              buttonType="secondary"
+              text={t("Clean Capture")}
+              onClick={() => onSave()}
+              disabled={!value}
+            />
+            <StyledButton
+              buttonType="primary"
+              text={t("Capture")}
+              onClick={() => onSave(currentCamera)}
+            />
+          </FormButtonGroup>
         </PickerWrapper>
       </Popover.Provider>
     </Property>
@@ -241,7 +217,7 @@ const CaptureButton = styled(Button)`
 `;
 
 const PickerWrapper = styled(Popover.Content)`
-  min-width: 286px;
+  width: 286px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   background: ${({ theme }) => theme.bg[1]};
@@ -253,11 +229,10 @@ const PickerWrapper = styled(Popover.Content)`
 
 const HeaderWrapper = styled.div`
   display: flex;
-  padding: 4px 8px;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  height: 28px;
+  padding: 4px 8px;
   border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
 `;
 
@@ -273,7 +248,7 @@ const CloseIcon = styled(Icon)`
 
 const MainBodyWrapper = styled.div`
   display: flex;
-  padding: 16px 8px;
+  padding: 8px;
   flex-direction: column;
   height: 100%;
   justify-content: space-evenly;
@@ -298,19 +273,21 @@ const ValuesWrapper = styled.div`
 
 const FormButtonGroup = styled.div`
   display: flex;
-  flex-direction: row;
-  height: 28px;
   justify-content: center;
+  flex-wrap: wrap;
   border-top: 1px solid ${({ theme }) => theme.bg[3]};
   padding: 8px;
   gap: 8px;
 `;
 
-const ButtonWrapper = styled(Button)`
-  height: 27px;
-  width: 100%;
-  padding: 0px;
-  margin: 0px;
+const StyledButton = styled(Button)`
+  height: 28px;
+  margin: 0;
+  flex: 1;
+`;
+
+const JumpButton = styled(StyledButton)`
+  flex: 0 0 100%;
 `;
 
 export default CameraField;

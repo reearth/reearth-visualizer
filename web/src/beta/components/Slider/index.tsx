@@ -8,8 +8,8 @@ import "rc-slider/assets/index.css";
 const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
 
 export type Props = {
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
 } & Omit<ComponentProps<typeof SliderWithTooltip>, "defaultValue">;
 
 const Slider: React.FC<Props> = ({ ...props }) => (
