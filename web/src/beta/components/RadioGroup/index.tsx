@@ -22,9 +22,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) =>
 
   const handleRadioChange = useCallback(
     (value: string) => {
-      if (value === selectedValue) {
-        return; // Prevent deselecting the option
-      }
+      if (value === selectedValue) return;
 
       setKey(prevKey => prevKey + 1);
       setSelectedValue(value);
