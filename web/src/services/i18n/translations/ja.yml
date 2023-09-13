@@ -18,6 +18,8 @@ Cancel: キャンセル
 Apply: Apply
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Remove: 削除
+Add Item: ''
 Please choose an option: ''
 Not found: ページが見つかりません
 Date: 作成日時順
@@ -37,10 +39,6 @@ Value: ''
 Description around.: ''
 Write down your text: ''
 Add to Layer: ''
-Padding settings: ''
-Remove: 削除
-Untitled: 無名
-Page: ページ
 Scene: シーン
 Layers: レイヤー
 Outline: アウトライン
@@ -70,7 +68,9 @@ Page will be available as result on search engines: ''
 Your project will be unpublished.: プロジェクトを非公開にする
 This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
+Untitled: 無名
 New Page: 新しいページ
+Page: ページ
 Page Settings: ページ設定
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
@@ -164,6 +164,7 @@ Playback timeline: タイムラインを逆再生する
 Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
+Padding settings: ''
 Drop here: ここにドロップ
 Write your story :): ''
 Double click to start to write your story :): ''
