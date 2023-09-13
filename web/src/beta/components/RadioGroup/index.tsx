@@ -11,21 +11,18 @@ export type Option = {
 export type RadioGroupProps = {
   options: Option[];
   layout?: "vertical" | "horizontal";
+  selectedValue?: string;
   onChange?: (value: string) => void;
 };
 
-const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) => {
+const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, selectedValue, onChange }) => {
   const [key, setKey] = useState(0);
-  const [selectedValue, setSelectedValue] = useState<string | undefined>(
-    options.length > 0 ? options[0].keyValue : undefined,
-  );
 
   const handleRadioChange = useCallback(
     (value: string) => {
       if (value === selectedValue) return;
 
       setKey(prevKey => prevKey + 1);
-      setSelectedValue(value);
       onChange?.(value);
     },
     [onChange, selectedValue],
