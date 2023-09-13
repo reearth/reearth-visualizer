@@ -6,6 +6,7 @@ import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Slider from "@reearth/beta/components/Slider";
 import Text from "@reearth/beta/components/Text";
+// import { usePluginContext } from "@reearth/beta/lib/core/Crust/Plugins/context";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -32,20 +33,23 @@ export type Props = {
   value?: CameraValue;
   disabled?: boolean;
   onSave: (value?: CameraValue) => void;
-  onJump?: (input: CameraValue) => void;
 };
 
-const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSave, onJump }) => {
+const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSave }) => {
   const t = useT();
   const theme = useTheme();
 
   const [open, setOpen] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<CameraValue | undefined>(value);
 
+  // const { flyTo } = usePluginContext();
+
   const handleJump = useCallback(() => {
-    if (!value) return;
-    onJump?.(value);
-  }, [onJump, value]);
+    // if (!value) return;
+    // console.log("flyTo: ", flyTo);
+    // flyTo?.({ lat: 123, lng: 30, height: 10 });
+    // }, [flyTo]);
+  }, []);
 
   const handleClose = useCallback(() => setOpen(false), []);
 
@@ -172,7 +176,7 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
               buttonType="secondary"
               text={t("Jump")}
               onClick={handleJump}
-              disabled={!value}
+              // disabled={!value}
             />
             <StyledButton
               buttonType="secondary"

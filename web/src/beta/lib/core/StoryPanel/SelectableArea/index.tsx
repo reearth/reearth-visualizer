@@ -12,7 +12,7 @@ type Props = {
   title?: string;
   icon?: string;
   isSelected?: boolean;
-  children?: ReactNode;
+  children: ReactNode;
   propertyId?: string;
   propertyItems?: Item[];
   dndEnabled?: boolean;
@@ -20,6 +20,7 @@ type Props = {
   editMode?: boolean;
   position?: ActionPosition;
   noBorder?: boolean;
+  isSelectable?: boolean;
   setEditMode?: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
@@ -40,6 +41,7 @@ const SelectableArea: React.FC<Props> = ({
   editMode,
   position,
   noBorder,
+  isSelectable,
   setEditMode,
   onEditModeToggle,
   onSettingsToggle,
@@ -55,7 +57,9 @@ const SelectableArea: React.FC<Props> = ({
       setEditMode,
     });
 
-  return (
+  return !isSelectable ? (
+    children
+  ) : (
     <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
       <Wrapper
         isSelected={isSelected}

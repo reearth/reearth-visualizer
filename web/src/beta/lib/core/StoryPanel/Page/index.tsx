@@ -20,6 +20,7 @@ type Props = {
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
+  isEditable?: boolean;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockSelect: (blockId?: string) => void;
@@ -33,6 +34,7 @@ const StoryPage: React.FC<Props> = ({
   installableStoryBlocks,
   selectedStoryBlockId,
   showPageSettings,
+  isEditable,
   onPageSettingsToggle,
   onPageSelect,
   onBlockSelect,
@@ -65,8 +67,9 @@ const StoryPage: React.FC<Props> = ({
       isSelected={selectedPageId === page?.id}
       propertyId={page?.property?.id}
       propertyItems={propertyItems}
-      onClick={() => onPageSelect?.(page?.id)}
       showSettings={showPageSettings}
+      isSelectable={isEditable}
+      onClick={() => onPageSelect?.(page?.id)}
       onSettingsToggle={onPageSettingsToggle}>
       <Wrapper id={page?.id}>
         {titleProperty && (
@@ -81,18 +84,21 @@ const StoryPage: React.FC<Props> = ({
                 items: [titleProperty],
               },
             }}
+            isEditable={isEditable}
             isSelected={selectedStoryBlockId === titleId}
             onClick={() => onBlockSelect(titleId)}
             onClickAway={onBlockSelect}
             onChange={handlePropertyValueUpdate}
           />
         )}
-        <BlockAddBar
-          openBlocks={openBlocksIndex === -1}
-          installableStoryBlocks={installableStoryBlocks}
-          onBlockOpen={() => handleBlockOpen(-1)}
-          onBlockAdd={handleStoryBlockCreate(0)}
-        />
+        {isEditable && (
+          <BlockAddBar
+            openBlocks={openBlocksIndex === -1}
+            installableStoryBlocks={installableStoryBlocks}
+            onBlockOpen={() => handleBlockOpen(-1)}
+            onBlockAdd={handleStoryBlockCreate(0)}
+          />
+        )}
         {installedStoryBlocks &&
           installedStoryBlocks.length > 0 &&
           installedStoryBlocks.map((b, idx) => (
@@ -105,12 +111,14 @@ const StoryPage: React.FC<Props> = ({
                 onChange={handlePropertyValueUpdate}
                 onRemove={handleStoryBlockDelete}
               />
-              <BlockAddBar
-                openBlocks={openBlocksIndex === idx}
-                installableStoryBlocks={installableStoryBlocks}
-                onBlockOpen={() => handleBlockOpen(idx)}
-                onBlockAdd={handleStoryBlockCreate(idx + 1)}
-              />
+              {isEditable && (
+                <BlockAddBar
+                  openBlocks={openBlocksIndex === idx}
+                  installableStoryBlocks={installableStoryBlocks}
+                  onBlockOpen={() => handleBlockOpen(idx)}
+                  onBlockAdd={handleStoryBlockCreate(idx + 1)}
+                />
+              )}
             </Fragment>
           ))}
       </Wrapper>

@@ -18,6 +18,7 @@ export type Props = {
   showPageSettings?: boolean;
   showingIndicator?: boolean;
   isAutoScrolling?: boolean;
+  isEditable?: boolean;
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
@@ -35,6 +36,7 @@ const StoryContent: React.FC<Props> = ({
   showPageSettings,
   showingIndicator,
   isAutoScrolling,
+  isEditable,
   onAutoScrollingChange,
   onPageSettingsToggle,
   onPageSelect,
@@ -132,6 +134,7 @@ const StoryContent: React.FC<Props> = ({
             installableStoryBlocks={installableStoryBlocks}
             selectedStoryBlockId={selectedStoryBlockId}
             showPageSettings={showPageSettings}
+            isEditable={isEditable}
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
             onBlockSelect={onBlockSelect}
