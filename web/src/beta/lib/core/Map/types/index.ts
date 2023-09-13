@@ -15,6 +15,7 @@ import type {
   LatLng,
   DataType,
   SelectedFeatureInfo,
+  Feature,
 } from "../../mantle";
 import type {
   FeatureComponentType,
@@ -60,6 +61,7 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
+  getCameraFovCenter: (withTerrain?: boolean) => LatLngHeight | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
@@ -95,6 +97,8 @@ export type EngineRef = {
   onTick: TickEvent;
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
+  findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
+  findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
 };
 
 export type EngineProps = {

@@ -19,7 +19,7 @@ export type EvalContext = {
 
 export type EvalResult = {
   features?: ComputedFeature[];
-  layer: Partial<AppearanceTypes>;
+  layer?: Partial<AppearanceTypes>;
 };
 
 export async function evalLayer(
