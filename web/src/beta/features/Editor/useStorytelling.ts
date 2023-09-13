@@ -16,7 +16,14 @@ const getPage = (id?: string, pages?: StoryPageFragmentFragment[]) => {
 
 export default function ({ sceneId, stories }: Props) {
   const t = useT();
-  const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = useStorytellingAPI();
+  const {
+    useCreateStoryPage,
+    useDeleteStoryPage,
+    useMoveStoryPage,
+    useInstallableStoryBlocksQuery,
+  } = useStorytellingAPI();
+
+  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
   const [currentPageId, setCurrentPageId] = useState<string | undefined>(undefined);
   const [isAutoScrolling, setAutoScrolling] = useState(false);
 
@@ -106,6 +113,7 @@ export default function ({ sceneId, stories }: Props) {
     selectedStory,
     currentPage,
     isAutoScrolling,
+    installableStoryBlocks,
     handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,

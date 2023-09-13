@@ -1,11 +1,10 @@
 import React from "react";
 
 import Button from "@reearth/beta/components/Button";
+import SelectField from "@reearth/beta/components/fields/SelectField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-import Select from "@reearth/classic/components/atoms/Select";
-import { Option } from "@reearth/classic/components/atoms/SelectOption";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
@@ -19,13 +18,28 @@ import {
   TextArea,
 } from "../utils";
 
+const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) => void }> = ({
+  fileFormat,
+  setFileFormat,
+}) => {
+  const t = useT();
+  return (
+    <SelectField
+      value={fileFormat}
+      options={["GeoJSON", "KML", "CZML"].map(v => ({ key: v, label: v }))}
+      name={t("File Format")}
+      description={t("File format of the data source you want to add.")}
+      onChange={setFileFormat}
+    />
+  );
+};
+
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+  const t = useT();
   const [sourceType, setSourceType] = React.useState("url"); // ["url", "local", "value"]
   const [fileFormat, setFileFormat] = React.useState("GeoJSON");
   const [value, setValue] = React.useState("");
   const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
-
-  const t = useT();
 
   const handleSubmit = () => {
     onSubmit({
@@ -60,8 +74,8 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <ColJustiftBetween>
       <AssetWrapper>
         <InputGroup
-          label="Source Type"
-          description="Select the type of data source you want to add.">
+          label={t("Source Type")}
+          description={t("Select the type of data source you want to add.")}>
           <SourceTypeWrapper>
             <RadioGroup
               options={[
@@ -75,29 +89,21 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         </InputGroup>
         {sourceType == "url" && (
           <>
+            <SelectDataType fileFormat={fileFormat} setFileFormat={setFileFormat} />
             <InputGroup
-              label="File Format"
-              description="File format of the data source you want to add.">
-              <Select value={fileFormat} onChange={setFileFormat}>
-                {["GeoJSON", "KML", "CZML"].map(op => (
-                  <Option key={op} value={op} label={op}>
-                    {op}
-                  </Option>
-                ))}
-              </Select>
-            </InputGroup>
-            <InputGroup label="Resource URL" description="URL of the data source you want to add.">
+              label={t("Resource URL")}
+              description={t("URL of the data source you want to add.")}>
               <Input
                 type="text"
-                placeholder="Input Text"
+                placeholder={t("Input Text")}
                 value={value}
                 onChange={e => setValue(e.target.value)}
               />
             </InputGroup>
             {fileFormat === "GeoJSON" && (
               <InputGroup
-                label="Prioritize Performance"
-                description="URL of the data source you want to add.">
+                label={t("Prioritize Performance")}
+                description={t("URL of the data source you want to add.")}>
                 <Toggle
                   checked={prioritizePerformance}
                   disabled={true}
@@ -109,20 +115,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         )}
         {sourceType == "value" && (
           <>
-            <InputGroup
-              label="File Format"
-              description="File format of the data source you want to add.">
-              <Select value={fileFormat} onChange={setFileFormat}>
-                {["GeoJSON", "KML", "CZML"].map(op => (
-                  <Option key={op} value={op} label={op}>
-                    {op}
-                  </Option>
-                ))}
-              </Select>
-            </InputGroup>
-            <InputGroup label="Value" description="Description around.">
+            <SelectDataType fileFormat={fileFormat} setFileFormat={setFileFormat} />
+            <InputGroup label={t("Value")} description={t("Description around.")}>
               <TextArea
-                placeholder="Write down your text"
+                placeholder={t("Write down your text")}
                 rows={8}
                 value={value}
                 onChange={e => setValue(e.target.value)}
@@ -133,7 +129,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       </AssetWrapper>
       <SubmitWrapper>
         <Button
-          text="Add to Layer"
+          text={t("Add to Layer")}
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}

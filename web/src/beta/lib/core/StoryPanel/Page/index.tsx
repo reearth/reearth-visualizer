@@ -6,7 +6,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import { StoryPageFragmentFragment } from "../hooks";
+import { GQLStoryPage } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
@@ -15,7 +15,7 @@ import useHooks from "./hooks";
 type Props = {
   sceneId?: string;
   storyId?: string;
-  page?: StoryPageFragmentFragment;
+  page?: GQLStoryPage;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
