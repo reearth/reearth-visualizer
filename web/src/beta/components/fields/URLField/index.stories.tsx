@@ -9,11 +9,21 @@ const meta: Meta<Props> = {
 export default meta;
 type Story = StoryObj<typeof URLField>;
 
-export const AssetType: Story = {
+export const AssetImageType: Story = {
   args: {
     name: "Asset",
     description: "Defaul Asset Uploader",
     fileType: "Asset",
+    assetType: "Image",
+  },
+};
+
+export const AssetFileType: Story = {
+  args: {
+    name: "Asset",
+    description: "Defaul Asset Uploader",
+    fileType: "Asset",
+    assetType: "File",
   },
 };
 

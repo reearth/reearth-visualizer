@@ -10,6 +10,7 @@ import { type LatLng } from "@reearth/beta/utils/value";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 import CameraField, { CameraValue } from "../CameraField";
+import URLField from "../URLField";
 
 import useHooks from "./hooks";
 
@@ -63,6 +64,14 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
               onChange={handleChange}
             />
           )
+        ) : sf.type === "url" ? (
+          <URLField
+            key={sf.id}
+            name={sf.name}
+            value={(value as string) ?? ""}
+            description={sf.description}
+            onChange={handleChange}
+          />
         ) : sf.type === "spacing" ? (
           <SpacingInput
             key={sf.id}

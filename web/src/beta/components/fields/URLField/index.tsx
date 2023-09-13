@@ -1,11 +1,13 @@
 import React, { useCallback, useState, ComponentType } from "react";
 
 import Property from "@reearth/beta/components/fields";
-import TextField from "@reearth/beta/components/fields/TextInput";
-import Icon from "@reearth/beta/components/Icon";
+import TextInput from "@reearth/beta/components/fields/common/TextInput";
+import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import { Props as AssetModalPropsType } from "@reearth/classic/components/molecules/Common/AssetModal";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import Button from "../../Button";
 
 export type AssetModalProps = Pick<
   AssetModalPropsType,
@@ -15,7 +17,7 @@ export type AssetModalProps = Pick<
 export type Props = {
   value?: string;
   onChange?: (value: string | undefined) => void;
-  name: string;
+  name?: string;
   description?: string;
   fileType?: "Asset" | "URL";
   assetType?: "Image" | "File";
@@ -27,13 +29,15 @@ const URLField: React.FC<Props> = ({
   description,
   value,
   fileType,
-  // assetType,
+  assetType,
   assetModal: AssetModal,
   onChange,
 }) => {
   const t = useT();
   const [isAssetModalOpen, setAssetModalOpen] = useState(false);
-  const deleteValue = useCallback(() => onChange?.(undefined), [onChange]);
+  //const deleteValue = useCallback(() => onChange?.(undefined), [onChange]);
+
+  const { handleUploadToAsset } = useManageAssets({});
 
   const handleAssetModalOpen = useCallback(() => {
     setAssetModalOpen(!isAssetModalOpen);
@@ -54,14 +58,21 @@ const URLField: React.FC<Props> = ({
         onChange={onChange}
         placeholder={t("Not set")}
       />
-      {value ? (
-        <AssetButton icon="bin" size={18} onClick={deleteValue} />
-      ) : fileType === "Asset" ? (
-        <AssetButton icon="image" size={18} onClick={handleAssetModalOpen} />
-      ) : fileType === "URL" ? (
-        <AssetButton icon="video" size={18} onClick={handleAssetModalOpen} />
-      ) : (
-        <AssetButton icon="resource" size={18} onClick={handleAssetModalOpen} />
+      {fileType === "Asset" && (
+        <ButtonWrapper>
+          <AssetButton
+            icon={assetType === "Image" ? "imageStoryBlock" : "file"}
+            text={t("Choose")}
+            iconPosition="left"
+            onClick={handleAssetModalOpen}
+          />
+          <AssetButton
+            icon="uploadSimple"
+            text={t("Upload")}
+            iconPosition="left"
+            onClick={handleUploadToAsset}
+          />
+        </ButtonWrapper>
       )}
       {AssetModal && (
         <AssetModal
@@ -76,11 +87,12 @@ const URLField: React.FC<Props> = ({
   );
 };
 
-const AssetButton = styled(Icon)<{ active?: boolean }>`
+const AssetButton = styled(Button)<{ active?: boolean }>`
   cursor: pointer;
   margin-left: 6px;
   padding: 4px;
   border-radius: 6px;
+  width: 127px;
   color: ${props => props.theme.classic.main.text};
 
   &:hover {
@@ -88,6 +100,13 @@ const AssetButton = styled(Icon)<{ active?: boolean }>`
   }
 `;
 
-const StyledTextField = styled(TextField)<{ canUpload?: boolean }>``;
+const StyledTextField = styled(TextInput)<{ canUpload?: boolean }>``;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+`;
 
 export default URLField;
