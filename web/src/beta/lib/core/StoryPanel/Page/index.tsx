@@ -59,11 +59,11 @@ const StoryPage: React.FC<Props> = ({
     propertyItems,
   });
 
-  const [items, setItems] = useState(installedStoryBlocks);
+  const [items, setItems] = useState(installedStoryBlocks ? installedStoryBlocks : []);
   const listRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    setItems(installedStoryBlocks);
+    installedStoryBlocks && setItems(installedStoryBlocks);
   }, [installedStoryBlocks]);
 
   const { updatePosition } = useScroll(listRef);
