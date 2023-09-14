@@ -9,8 +9,8 @@ import { type ProjectType } from "./tabs/publish/Nav";
 import { type Device } from "./tabs/widgets/Nav";
 
 export default ({ tab }: { sceneId: string; tab: Tab }) => {
+  const [selectedSceneSetting, setSceneSetting] = useState(false);
   const [selectedDevice, setDevice] = useState<Device>("desktop");
-
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
     tab === "story" ? "story" : "default",
   );
@@ -56,11 +56,15 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     [setWidgetEditor],
   );
 
+  const handleSceneSettingSelect = useCallback(() => setSceneSetting(selected => !selected), []);
+
   return {
+    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
+    handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,

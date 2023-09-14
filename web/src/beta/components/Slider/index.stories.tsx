@@ -25,7 +25,7 @@ export const Default: Story = (args: Props) => {
         <Slider {...args} onChange={handleChange} />
       </div>
       <div>
-        <Slider {...args} max={2 * args.max} onChange={handleChange} />
+        <Slider {...args} max={args.max ? 2 * args.max : undefined} onChange={handleChange} />
       </div>
       <div>
         <Slider {...args} disabled={true} onChange={handleChange} />
