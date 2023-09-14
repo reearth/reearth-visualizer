@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
+import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
-import RadioButton from "@reearth/classic/components/atoms/RadioButton";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
@@ -14,7 +14,6 @@ import {
   InputGroup,
   Input,
   SourceTypeWrapper,
-  RadioButtonLabel,
   SubmitWrapper,
   TextArea,
 } from "../utils";
@@ -24,6 +23,7 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
   setFileFormat,
 }) => {
   const t = useT();
+
   return (
     <SelectField
       value={fileFormat}
@@ -41,6 +41,13 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [fileFormat, setFileFormat] = React.useState("GeoJSON");
   const [value, setValue] = React.useState("");
   const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
+  const DataSourceOptions = useMemo(
+    () => [
+      { label: t("From URL"), keyValue: "url" },
+      { label: t("From Value"), keyValue: "value" },
+    ],
+    [t],
+  );
 
   const handleSubmit = () => {
     onSubmit({
@@ -78,22 +85,11 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           label={t("Source Type")}
           description={t("Select the type of data source you want to add.")}>
           <SourceTypeWrapper>
-            <RadioButtonLabel>
-              <RadioButton
-                value="url"
-                checked={sourceType == "url"}
-                handleChange={c => c && setSourceType("url")}
-              />
-              {t("From URL")}
-            </RadioButtonLabel>
-            <RadioButtonLabel>
-              <RadioButton
-                value="value"
-                checked={sourceType == "value"}
-                handleChange={c => c && setSourceType("value")}
-              />
-              {t("From Value")}
-            </RadioButtonLabel>
+            <RadioGroup
+              options={DataSourceOptions}
+              selectedValue={sourceType}
+              onChange={setSourceType}
+            />
           </SourceTypeWrapper>
         </InputGroup>
         {sourceType == "url" && (
