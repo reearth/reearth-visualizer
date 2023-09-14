@@ -44,6 +44,8 @@ export const useCore = (
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       const f = async () => {
+        console.log("called");
+
         const url = dataUrl(actualAlias);
         try {
           const res = await fetch(url, {});

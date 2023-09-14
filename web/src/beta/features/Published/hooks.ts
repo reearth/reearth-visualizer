@@ -202,6 +202,7 @@ export default (alias?: string) => {
     ready,
     error,
     engineMeta,
+    storyJsonData: data,
   };
 };
 

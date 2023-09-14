@@ -22,11 +22,15 @@ export default function Published({ className, alias }: Props) {
     error,
     clusterProperty,
     engineMeta,
+    storyJsonData,
   } = useHooks(alias);
+
+  // eslint-disable-next-line no-prototype-builtins
+  const isStoryPublish = storyJsonData?.hasOwnProperty("story");
 
   return error ? (
     <Error />
-  ) : error ? (
+  ) : isStoryPublish ? (
     <VisualizerStory
       engine="cesium"
       floatingWidgets={widgets?.floatingWidgets}
