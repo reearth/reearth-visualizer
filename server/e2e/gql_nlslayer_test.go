@@ -1,9 +1,9 @@
 package e2e
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
-	"fmt"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
@@ -235,15 +235,14 @@ func TestNLSLayerCRUD(t *testing.T) {
 	// t.Logf("Response after update: %v", res3.Raw())
 
 	res3.Object().
-    Value("data").Object().
-    Value("node").Object().
-    Value("newLayers").Array().First().Object().
-    Value("config").Object().
-    Value("data").Object().
-    Value("value").Equal("secondSampleValue")
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("config").Object().
+		Value("data").Object().
+		Value("value").Equal("secondSampleValue")
 
 	fmt.Printf("Response after update: %v\n", res3.Raw())
-
 
 	// Remove NLSLayer
 	_, _ = removeNLSLayer(e, layerId)
