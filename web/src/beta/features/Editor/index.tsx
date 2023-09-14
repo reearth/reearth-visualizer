@@ -36,10 +36,12 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   };
 
   const {
+    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
+    handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
@@ -74,11 +76,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
 
   const { leftPanel } = useLeftPanel({
     tab,
-    sceneId,
     nlsLayers,
     selectedStory,
     selectedLayerId: selectedLayer?.id,
     currentPage,
+    selectedSceneSetting,
     onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
     onPageDelete: handlePageDelete,
@@ -87,10 +89,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelect,
     onLayerNameUpdate: handleLayerNameUpdate,
+    onSceneSettingSelect: handleSceneSettingSelect,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
 
-  const { rightPanel } = useRightPanel({ tab, sceneId, currentPage });
+  const { rightPanel } = useRightPanel({
+    tab,
+    sceneId,
+    currentPage,
+    showSceneSettings: selectedSceneSetting,
+  });
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,

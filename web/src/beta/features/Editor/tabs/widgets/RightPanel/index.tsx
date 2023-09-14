@@ -1,10 +1,10 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
+import Settings from "@reearth/beta/features/Editor/SidePanel/Settings";
 import { useT } from "@reearth/services/i18n";
 
 import ContainerSettings from "./ContainerSettings";
 import useHooks from "./hooks";
 import Manager, { ActionArea } from "./Manager";
-import Settings from "./Settings";
 
 // TODO: these are currently rough definition
 type Props = {
@@ -51,7 +51,7 @@ const SidePanel: React.FC<Props> = ({ sceneId }) => {
           title: t("Inspector"),
           hide: !selectedWidget,
           children: selectedWidget && (
-            <Settings widgetPropertyId={selectedWidget.propertyId} propertyItems={propertyItems} />
+            <Settings id={selectedWidget.propertyId} propertyItems={propertyItems} />
           ),
         },
         {
