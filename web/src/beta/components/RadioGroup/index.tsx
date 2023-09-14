@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 
 import RadioBox from "@reearth/beta/components/RadioGroup/RadioBox";
 import { styled } from "@reearth/services/theme";
@@ -21,13 +21,9 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   selectedValue,
   onChange,
 }) => {
-  const [key, setKey] = useState(0);
-
   const handleRadioChange = useCallback(
     (value: string) => {
       if (value === selectedValue) return;
-
-      setKey(prevKey => prevKey + 1);
       onChange?.(value);
     },
     [onChange, selectedValue],
@@ -35,9 +31,9 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 
   return (
     <RadioGroupContainer layout={layout}>
-      {options.map((option, index) => (
+      {options.map(option => (
         <RadioBox
-          key={`${option.keyValue}-${key}-${index}`}
+          key={option.keyValue}
           keyValue={option.keyValue}
           selected={option.keyValue === selectedValue}
           label={option.label}
