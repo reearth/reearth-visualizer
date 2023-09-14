@@ -31,5 +31,5 @@ export const Default: Story = (args: Props) => {
 Default.args = {
   label: "test",
   selected: false,
-  keyValue: "test",
+  key: "test",
 };
