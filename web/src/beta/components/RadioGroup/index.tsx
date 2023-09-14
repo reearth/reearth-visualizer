@@ -1,53 +1,52 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 
 import RadioBox from "@reearth/beta/components/RadioGroup/RadioBox";
 import { styled } from "@reearth/services/theme";
 
 export type Option = {
-  key: string;
-  value: string;
-  selected: boolean;
+  label?: string;
+  keyValue: string;
 };
 
 export type RadioGroupProps = {
   options: Option[];
   layout?: "vertical" | "horizontal";
+  selectedValue?: string;
   onChange?: (value: string) => void;
 };
 
-const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, onChange }) => {
-  const [currentOptions, updateOptions] = useState<Option[]>(options);
-  const [key, setKey] = useState(0);
-
+const RadioGroup: React.FC<RadioGroupProps> = ({
+  options,
+  layout = "horizontal",
+  selectedValue,
+  onChange,
+}) => {
   const handleRadioChange = useCallback(
     (value: string) => {
-      updateOptions(
-        currentOptions.map(option => ({
-          ...option,
-          selected: !option.selected && option.value === value,
-        })),
-      );
-      setKey(prevKey => prevKey + 1);
+      if (value === selectedValue) return;
       onChange?.(value);
     },
-    [currentOptions, onChange],
+    [onChange, selectedValue],
   );
+
   return (
     <RadioGroupContainer layout={layout}>
-      {currentOptions.map(option => (
+      {options.map(option => (
         <RadioBox
-          key={`${option.key}-${key}`}
-          value={option.value}
-          selected={option.selected}
-          onClick={() => handleRadioChange(option.value)}
+          key={option.keyValue}
+          selected={option.keyValue === selectedValue}
+          label={option.label}
+          onClick={() => handleRadioChange(option.keyValue)}
         />
       ))}
     </RadioGroupContainer>
   );
 };
+
 export default memo(RadioGroup);
 
 const RadioGroupContainer = styled.div<{ layout?: "vertical" | "horizontal" }>`
   display: flex;
   flex-direction: ${({ layout }) => (layout === "vertical" ? "column" : "row")};
+  gap: 12px;
 `;
