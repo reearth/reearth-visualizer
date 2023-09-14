@@ -4,12 +4,12 @@ import { fonts, styled } from "@reearth/services/theme";
 
 export type Props = {
   selected?: boolean;
-  keyValue: string;
+  key: string;
   onClick?: (value: string) => void;
   label?: string;
 };
 
-const RadioBox: React.FC<Props> = ({ selected, keyValue, label, onClick }: Props) => {
+const RadioBox: React.FC<Props> = ({ selected, key, label, onClick }: Props) => {
   const handleRadioClick = useCallback(
     (value: string) => {
       onClick?.(value);
@@ -19,7 +19,7 @@ const RadioBox: React.FC<Props> = ({ selected, keyValue, label, onClick }: Props
 
   return (
     <Radio>
-      <RadioInput type="radio" value={keyValue} onClick={() => handleRadioClick(keyValue)} />
+      <RadioInput type="radio" value={key} onClick={() => handleRadioClick(key)} />
       <RadioButton selected={selected}>
         {selected && <RadioIndicator selected={selected} />}
       </RadioButton>
