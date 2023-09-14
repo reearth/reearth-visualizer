@@ -86,6 +86,7 @@ export default (
   const generateAlias = useCallback(() => {
     const str = generateRandomString(10);
     changeAlias(str);
+    console.log(str);
     return str;
   }, []);
 
@@ -95,7 +96,7 @@ export default (
 
   const handlePublish = useCallback(async () => {
     if (!publishing) return;
-    const a = publishing !== "unpublishing" ? alias || generateAlias() : undefined;
+    const a = publishing !== "unpublishing" ? generateAlias() : undefined;
 
     const mode =
       publishing === "unpublishing" ? "unpublished" : !searchIndex ? "limited" : "published";
@@ -105,7 +106,7 @@ export default (
     } else {
       setStatusChange(true);
     }
-  }, [alias, generateAlias, onPublish, publishing, searchIndex, setStatusChange, handleClose]);
+  }, [generateAlias, onPublish, publishing, searchIndex, setStatusChange, handleClose]);
 
   return {
     statusChanged,

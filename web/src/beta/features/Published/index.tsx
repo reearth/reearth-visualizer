@@ -1,10 +1,10 @@
 import Error from "@reearth/beta/features/Published/publishedError";
+import StoryPanel from "@reearth/beta/lib/core/StoryPanel";
 import VisualizerStory from "@reearth/beta/lib/core/Visualizer";
 import Visualizer from "@reearth/classic/components/molecules/Visualizer";
 import { config } from "@reearth/services/config";
 
 import useHooks from "./hooks";
-import StoryPanelPublished from "./StoryPanelPublish";
 
 export type Props = {
   className?: string;
@@ -24,11 +24,9 @@ export default function Published({ className, alias }: Props) {
     engineMeta,
   } = useHooks(alias);
 
-  const checkSelectedTab = localStorage.getItem("selectedTab");
-
   return error ? (
     <Error />
-  ) : checkSelectedTab === "story" ? (
+  ) : error ? (
     <VisualizerStory
       engine="cesium"
       floatingWidgets={widgets?.floatingWidgets}
@@ -39,7 +37,7 @@ export default function Published({ className, alias }: Props) {
       isBuilt
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}>
-      <StoryPanelPublished />
+      <StoryPanel />
     </VisualizerStory>
   ) : (
     <Visualizer

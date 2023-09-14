@@ -26,8 +26,8 @@ export type StoryPanelProps = {
   currentPage?: GQLStoryPage;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
-  onAutoScrollingChange: (isScrolling: boolean) => void;
-  onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
+  onAutoScrollingChange?: (isScrolling: boolean) => void;
+  onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
 };
 
 export const StoryPanel: FC<StoryPanelProps> = ({
