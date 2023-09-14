@@ -30,7 +30,6 @@ export const Default: Story = (args: Props) => {
 
 Default.args = {
   label: "test",
-  inactive: false,
   selected: false,
   keyValue: "test",
 };
