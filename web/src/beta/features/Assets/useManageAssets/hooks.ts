@@ -19,7 +19,7 @@ export type Asset = {
   contentType: string;
 };
 
-export default ({
+export const useManageAssets = ({
   selectedAssets,
   sort,
   searchTerm,

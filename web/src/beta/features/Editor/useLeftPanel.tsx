@@ -6,40 +6,49 @@ import { Tab } from "@reearth/beta/features/Navbar";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
 
+import type { LayerNameUpdateProps } from "./useLayers";
+
 type Props = {
   tab: Tab;
-  sceneId: string;
   nlsLayers: NLSLayer[];
 
-  // for story tab
+  // storytelling
   selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
-  onPageSelect: (id: string) => void;
+  currentPage?: StoryPageFragmentFragment;
+  onCurrentPageChange: (id: string) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
   onPageMove: (id: string, targetIndex: number) => void;
 
-  // for nlsLayers
-  selectedLayer?: NLSLayer;
+  // scene
+  selectedSceneSetting?: boolean;
+  onSceneSettingSelect: () => void;
+
+  // layers
+  selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };
 
 export default ({
   tab,
-  sceneId,
   nlsLayers,
   selectedStory,
-  selectedPage,
-  onPageSelect,
+  selectedLayerId,
+  selectedSceneSetting,
+  currentPage,
+  onCurrentPageChange,
   onPageDuplicate,
   onPageDelete,
   onPageAdd,
   onPageMove,
   onLayerDelete,
+  onLayerNameUpdate,
   onLayerSelect,
+  onSceneSettingSelect,
   onDataSourceManagerOpen,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
@@ -47,10 +56,13 @@ export default ({
       case "map":
         return (
           <MapSidePanel
-            sceneId={sceneId}
             layers={nlsLayers}
+            selectedLayerId={selectedLayerId}
+            selectedSceneSetting={selectedSceneSetting}
             onLayerDelete={onLayerDelete}
+            onLayerNameUpdate={onLayerNameUpdate}
             onLayerSelect={onLayerSelect}
+            onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
           />
         );
@@ -58,8 +70,8 @@ export default ({
         return (
           <StorySidePanel
             selectedStory={selectedStory}
-            selectedPage={selectedPage}
-            onPageSelect={onPageSelect}
+            selectedPage={currentPage}
+            onPageSelect={onCurrentPageChange}
             onPageDuplicate={onPageDuplicate}
             onPageDelete={onPageDelete}
             onPageAdd={onPageAdd}
@@ -73,14 +85,17 @@ export default ({
     }
   }, [
     tab,
-    sceneId,
     nlsLayers,
-    onLayerDelete,
-    onLayerSelect,
-    onDataSourceManagerOpen,
     selectedStory,
-    selectedPage,
-    onPageSelect,
+    selectedLayerId,
+    selectedSceneSetting,
+    currentPage,
+    onLayerDelete,
+    onLayerNameUpdate,
+    onLayerSelect,
+    onSceneSettingSelect,
+    onDataSourceManagerOpen,
+    onCurrentPageChange,
     onPageDuplicate,
     onPageDelete,
     onPageAdd,

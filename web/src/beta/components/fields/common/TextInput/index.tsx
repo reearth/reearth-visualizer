@@ -2,17 +2,25 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import Property from "..";
-
-type Props = {
-  name?: string;
-  description?: string;
+export type Props = {
   value?: string;
+  placeholder?: string;
   timeout?: number;
+  autoFocus?: boolean;
   onChange?: (text: string) => void;
+  onBlur?: () => void;
+  onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
-const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, onChange }) => {
+const TextInput: React.FC<Props> = ({
+  value,
+  placeholder,
+  timeout = 1000,
+  autoFocus,
+  onChange,
+  onBlur,
+  onExit,
+}) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -38,26 +46,30 @@ const TextInput: React.FC<Props> = ({ name, description, value, timeout = 1000, 
   const handleBlur = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     onChange?.(currentValue);
-  }, [currentValue, onChange]);
+    onBlur?.();
+  }, [currentValue, onChange, onBlur]);
 
-  const handleKeyDown = useCallback(
+  const handleExit = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (onChange && e.key === "Enter" && currentValue !== value) {
-        onChange(currentValue);
+      if (e.key === "Escape") {
+        onExit?.(e);
+      } else if (e.key === "Enter" || e.key === "Return") {
+        onChange?.(currentValue);
+        onExit?.(e);
       }
     },
-    [value, currentValue, onChange],
+    [currentValue, onChange, onExit],
   );
 
   return (
-    <Property name={name} description={description}>
-      <StyledInput
-        value={currentValue ?? ""}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-      />
-    </Property>
+    <StyledInput
+      value={currentValue ?? ""}
+      placeholder={placeholder}
+      autoFocus={autoFocus}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onKeyUp={handleExit}
+    />
   );
 };
 
