@@ -6,6 +6,7 @@ import SliderField from "@reearth/beta/components/fields/SliderField";
 import SpacingInput, { SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
 import TextInput from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
+import { FlyTo } from "@reearth/beta/lib/core/types";
 import { type LatLng } from "@reearth/beta/utils/value";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 
@@ -16,9 +17,10 @@ import useHooks from "./hooks";
 type Props = {
   propertyId: string;
   item?: Item;
+  onFlyTo?: FlyTo;
 };
 
-const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
+const PropertyFields: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
   const { handlePropertyValueUpdate } = useHooks();
 
   return (
@@ -96,7 +98,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             <NumberField
               key={sf.id}
               name={sf.name}
-              value={value as number}
+              value={(value as number) ?? undefined}
               suffix={sf.suffix}
               min={sf.min}
               max={sf.max}
@@ -119,6 +121,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             value={value as CameraValue}
             description={sf.description}
             onSave={handleChange}
+            onFlyTo={onFlyTo}
           />
         ) : (
           <p key={sf.id}>{sf.name} field</p>
