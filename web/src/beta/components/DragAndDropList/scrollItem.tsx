@@ -40,7 +40,6 @@ export const useScroll = (ref: RefObject<HTMLElement | null>) => {
   const { position, isScrollAllowed } = config;
 
   const bounds = ref.current?.getBoundingClientRect();
-  console.log(bounds);
   const direction = getScrollDirection({
     position,
     upperBounds: bounds?.top,

@@ -57,6 +57,7 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
         return (
           <Item
             itemGroupKey={uniqueKey}
+            item={item}
             key={id}
             id={item.id}
             index={i}

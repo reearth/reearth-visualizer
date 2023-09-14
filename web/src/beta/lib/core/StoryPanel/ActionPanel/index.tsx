@@ -40,7 +40,6 @@ const ActionPanel: React.FC<Props> = ({
   propertyId,
   panelSettings,
   actionItems,
-  dndEnabled,
   position,
   setShowPadding,
   onSettingsToggle,
@@ -68,7 +67,6 @@ const ActionPanel: React.FC<Props> = ({
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
-      {dndEnabled && <DndHandle icon="dndHandle" size={16} />}
       <Popover.Provider
         open={showSettings}
         onOpenChange={() => onSettingsToggle?.()}
@@ -199,8 +197,4 @@ const SettingsContent = styled.div`
 
 const CancelIcon = styled(Icon)`
   cursor: pointer;
-`;
-
-const DndHandle = styled(Icon)`
-  cursor: move;
 `;

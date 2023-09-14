@@ -3,6 +3,7 @@ import type { FC, ReactNode } from "react";
 import { memo, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 type DragItem = {
@@ -15,6 +16,7 @@ type Props = {
   itemGroupKey: string;
   id: string;
   index: number;
+  item?: any;
   onItemMove: (dragIndex: number, hoverIndex: number) => void;
   onItemDropOnItem: (dropIndex: number) => void;
   onItemDropOutside: () => void;
@@ -26,6 +28,7 @@ const Item: FC<Props> = ({
   id,
   children,
   index,
+  item,
   onItemMove,
   onItemDropOnItem,
   onItemDropOutside,
@@ -72,7 +75,7 @@ const Item: FC<Props> = ({
     },
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     type: itemGroupKey,
     item: () => {
       return { id, index };
@@ -91,7 +94,16 @@ const Item: FC<Props> = ({
   });
 
   drag(drop(ref));
-  return (
+
+  // eslint-disable-next-line no-prototype-builtins
+  return item.hasOwnProperty("extensionId") ? (
+    <SItem ref={preview} data-handler-id={handlerId} isDragging={isDragging}>
+      <DndHandle ref={ref}>
+        <Icon icon="dndHandle" size={16} />
+      </DndHandle>
+      {children}
+    </SItem>
+  ) : (
     <SItem ref={ref} data-handler-id={handlerId} isDragging={isDragging}>
       {children}
     </SItem>
@@ -103,4 +115,9 @@ export default memo(Item);
 const SItem = styled.div<{ isDragging: boolean }>`
   ${({ isDragging }) => `opacity: ${isDragging ? 0 : 1};`}
   cursor: move;
+`;
+
+const DndHandle = styled.div`
+  cursor: move;
+  margin-left: 18em;
 `;
