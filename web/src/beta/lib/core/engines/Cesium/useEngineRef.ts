@@ -5,7 +5,7 @@ import { CesiumComponentRef } from "resium";
 
 import { TickEventCallback } from "@reearth/beta/lib/core/Map";
 
-import type { EngineRef, MouseEvents, MouseEvent } from "..";
+import type { EngineRef, MouseEvents, MouseEvent, Feature } from "..";
 
 import {
   getLocationFromScreen,
@@ -27,6 +27,9 @@ import {
   zoom,
   lookAtWithoutAnimation,
   sampleTerrainHeight,
+  getCameraEllipsoidIntersection,
+  getCameraTerrainIntersection,
+  cartesianToLatLngHeight,
 } from "./common";
 import { getTag } from "./Feature";
 import { findEntity } from "./utils";
@@ -70,6 +73,23 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
+      },
+      getCameraFovCenter: withTerrain => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        try {
+          if (withTerrain) {
+            const cartesian = getCameraTerrainIntersection(viewer.scene);
+            if (cartesian) {
+              return cartesianToLatLngHeight(cartesian, viewer.scene);
+            }
+          }
+          const cartesian = new Cesium.Cartesian3();
+          getCameraEllipsoidIntersection(viewer.scene, cartesian);
+          return cartesianToLatLngHeight(cartesian, viewer.scene);
+        } catch (e) {
+          return undefined;
+        }
       },
       sampleTerrainHeight: async (lng, lat) => {
         const viewer = cesium.current?.cesiumElement;
@@ -437,6 +457,38 @@ export default function useEngineRef(
             Cesium.Cartographic.fromDegrees(location.lng, location.lat),
           )
         );
+      },
+      findFeatureById: (layerId: string, featureId: string): Feature | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const entity = findEntity(viewer, layerId, featureId);
+        const tag = getTag(entity);
+        if (!tag?.featureId) {
+          return;
+        }
+        if (entity instanceof Cesium.Entity) {
+          // TODO: Return description for CZML
+          return {
+            type: "feature",
+            id: tag.featureId,
+            properties: entity.properties,
+          };
+        }
+        if (entity instanceof Cesium.Cesium3DTileFeature) {
+          return {
+            type: "feature",
+            id: tag.featureId,
+            properties: Object.fromEntries(
+              entity.getPropertyIds().map(key => [key, entity.getProperty(key)]),
+            ),
+          };
+        }
+        return;
+      },
+      findFeaturesByIds: (layerId: string, featureIds: string[]): Feature[] | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return featureIds.map(f => e.findFeatureById(layerId, f)).filter((v): v is Feature => !!v);
       },
       onTick: cb => {
         tickEventCallback.current.push(cb);

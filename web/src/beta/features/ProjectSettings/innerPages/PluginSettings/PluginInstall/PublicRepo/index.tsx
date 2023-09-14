@@ -1,7 +1,7 @@
 import React from "react";
 
 import Button from "@reearth/beta/components/Button";
-import TextInput from "@reearth/beta/components/fields/TextInput";
+import TextInput from "@reearth/beta/components/fields/TextField";
 import { Icons } from "@reearth/beta/components/Icon";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";

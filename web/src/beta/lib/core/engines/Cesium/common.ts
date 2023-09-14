@@ -183,6 +183,58 @@ export const getLocationFromScreen = (
   };
 };
 
+export const getRayEllipsoidIntersection = (
+  ray: Ray,
+  ellipsoid: Ellipsoid,
+  result?: Cartesian3,
+): Cartesian3 => {
+  const intersection = IntersectionTests.rayEllipsoid(ray, ellipsoid);
+  if (!intersection) {
+    const cartesian = IntersectionTests.grazingAltitudeLocation(ray, ellipsoid);
+    return result ? cartesian.clone(result) : cartesian;
+  }
+  return Ray.getPoint(ray, intersection.start, result);
+};
+
+const createRayFromCamera = (camera: CesiumCamera): Ray => {
+  const ray = new Ray();
+  camera.positionWC.clone(ray.origin);
+  camera.directionWC.clone(ray.direction);
+  return ray;
+};
+
+export const getCameraEllipsoidIntersection = (
+  scene: Scene,
+  resultOrWindowPosition?: Cartesian2 | Cartesian3,
+  result?: Cartesian3,
+): Cartesian3 | undefined => {
+  let ray: Ray | undefined;
+  const { camera, globe } = scene;
+
+  if (resultOrWindowPosition instanceof Cartesian2) {
+    ray = camera.getPickRay(resultOrWindowPosition, new Ray());
+    if (!ray) return undefined;
+  } else {
+    ray = createRayFromCamera(camera);
+    result = resultOrWindowPosition as Cartesian3;
+  }
+
+  return getRayEllipsoidIntersection(ray, globe.ellipsoid, result);
+};
+
+export const getCameraTerrainIntersection = (scene: Scene): any => {
+  const ray = createRayFromCamera(scene.camera);
+  return scene.globe.pick(ray, scene);
+};
+
+export const cartesianToLatLngHeight = (cartesian: Cartesian3, scene: Scene): any => {
+  const cartographic = Cartographic.fromCartesian(cartesian, scene.globe.ellipsoid);
+  return {
+    lng: CesiumMath.toDegrees(cartographic.longitude),
+    lat: CesiumMath.toDegrees(cartographic.latitude),
+    height: cartographic.height,
+  };
+};
 export const flyTo = (
   cesiumCamera?: CesiumCamera,
   camera?: {

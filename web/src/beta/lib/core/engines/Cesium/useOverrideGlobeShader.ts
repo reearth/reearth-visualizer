@@ -127,8 +127,10 @@ export const useOverrideGlobeShader = ({
       defines: baseFragmentShaderSource.defines,
     });
     return () => {
-      // Reset customized shader to default
-      makeGlobeShadersDirty(globe);
+      if (!globe.isDestroyed()) {
+        // Reset customized shader to default
+        makeGlobeShadersDirty(globe);
+      }
     };
   }, [
     sphericalHarmonicCoefficientsRefFunc,

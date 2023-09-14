@@ -112,6 +112,13 @@ export default function ({
     return engineRef?.getViewport();
   }, [engineRef]);
 
+  const getCameraFovCenter = useCallback(
+    (withTerrain?: boolean) => {
+      return engineRef?.getCameraFovCenter(withTerrain);
+    },
+    [engineRef],
+  );
+
   const layersInViewport = useCallback(() => {
     return layersRef?.findAll(layer => !!engineRef?.inViewport(layer?.property?.default?.location));
   }, [engineRef, layersRef]);
@@ -240,6 +247,20 @@ export default function ({
     [engineRef],
   );
 
+  const findFeatureById = useCallback(
+    (layerId: string, featureId: string) => {
+      return engineRef?.findFeatureById(layerId, featureId);
+    },
+    [engineRef],
+  );
+
+  const findFeaturesByIds = useCallback(
+    (layerId: string, featureIds: string[]) => {
+      return engineRef?.findFeaturesByIds(layerId, featureIds);
+    },
+    [engineRef],
+  );
+
   const addLayer = useCallback(
     (layer: NaiveLayer) => {
       return layersRef?.add(layer)?.id;
@@ -309,6 +330,7 @@ export default function ({
         zoomIn,
         zoomOut,
         cameraViewport,
+        getCameraFovCenter,
         rotateRight,
         orbit,
         captureScreen,
@@ -325,6 +347,8 @@ export default function ({
         moveRight,
         moveOverTerrain,
         flyToGround,
+        findFeatureById,
+        findFeaturesByIds,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -359,6 +383,7 @@ export default function ({
       zoomIn,
       zoomOut,
       cameraViewport,
+      getCameraFovCenter,
       rotateRight,
       orbit,
       captureScreen,
@@ -379,6 +404,8 @@ export default function ({
       pluginInstances,
       clientStorage,
       useExperimentalSandbox,
+      findFeatureById,
+      findFeaturesByIds,
     ],
   );
 

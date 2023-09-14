@@ -70,7 +70,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     [selected],
   );
 
-  const layers = processLayers(nlsLayers);
+  const layers = useMemo(() => processLayers(nlsLayers), [nlsLayers]);
 
   // TODO: Use GQL value
   const rootLayerId = "";
@@ -186,8 +186,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     return !!sceneProperty?.experimental?.experimental_sandbox;
   }, [sceneProperty]);
 
-  console.log("layers: ", layers);
-
   return {
     sceneId,
     rootLayerId,
@@ -210,6 +208,7 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady,
+    selectWidgetArea: selectedWidgetAreaVar,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -217,7 +216,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     onBlockRemove,
     onBlockInsert,
     onWidgetUpdate,
-    selectWidgetArea: selectedWidgetAreaVar,
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     onCameraChange,

@@ -22,11 +22,21 @@ function Tileset({
   sceneProperty,
   meta,
   evalFeature,
+  onComputedFeatureFetch,
+  onLayerFetch,
   ...props
 }: Props): JSX.Element | null {
   const { shadows, colorBlendMode, pbr } = property ?? {};
   const boxId = `${layer?.id}_box`;
-  const { tilesetUrl, ref, style, clippingPlanes, builtinBoxProps, imageBasedLighting } = useHooks({
+  const {
+    tilesetUrl,
+    ref,
+    style,
+    clippingPlanes,
+    builtinBoxProps,
+    imageBasedLighting,
+    handleReady,
+  } = useHooks({
     id,
     boxId,
     isVisible,
@@ -36,6 +46,8 @@ function Tileset({
     sceneProperty,
     meta,
     evalFeature,
+    onComputedFeatureFetch,
+    onLayerFetch,
   });
   const boxProperty = useMemo(
     () => ({
@@ -57,6 +69,7 @@ function Tileset({
         clippingPlanes={clippingPlanes}
         colorBlendMode={colorBlendModeFor3DTile(colorBlendMode)}
         imageBasedLighting={imageBasedLighting}
+        onReady={handleReady}
       />
       {builtinBoxProps && (
         <Box
