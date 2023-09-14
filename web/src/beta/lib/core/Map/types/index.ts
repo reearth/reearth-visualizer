@@ -17,6 +17,7 @@ import type {
   SelectedFeatureInfo,
   Feature,
 } from "../../mantle";
+import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 import type {
   FeatureComponentType,
   ClusterComponentType,
@@ -64,7 +65,7 @@ export type EngineRef = {
   getCameraFovCenter: (withTerrain?: boolean) => LatLngHeight | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
-  flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
+  flyTo: FlyTo;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
@@ -204,47 +205,6 @@ export type MouseEventHandles = {
 
 export type SceneMode = "3d" | "2d" | "columbus";
 export type IndicatorTypes = "default" | "crosshair" | "custom";
-
-export type FlyToDestination = {
-  /** Degrees */
-  lat?: number;
-  /** Degrees */
-  lng?: number;
-  /** Meters */
-  height?: number;
-  /** Radian */
-  heading?: number;
-  /** Radian */
-  pitch?: number;
-  /** Radian */
-  roll?: number;
-  /** Radian */
-  fov?: number;
-};
-
-export type LookAtDestination = {
-  /** Degrees */
-  lat?: number;
-  /** Degrees */
-  lng?: number;
-  /** Meters */
-  height?: number;
-  /** Radian */
-  heading?: number;
-  /** Radian */
-  pitch?: number;
-  /** Radian */
-  range?: number;
-  /** Radian */
-  fov?: number;
-};
-
-export type CameraOptions = {
-  /** Seconds */
-  duration?: number;
-  easing?: (time: number) => number;
-  withoutAnimation?: boolean;
-};
 
 export type TerrainProperty = {
   terrain?: boolean;

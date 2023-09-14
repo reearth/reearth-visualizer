@@ -2,16 +2,15 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import type { CameraPosition, NaiveLayer } from "@reearth/beta/lib/core/mantle";
 import {
-  type MouseEventHandles,
-  type MouseEvents,
   events,
   useGet,
-  CameraOptions,
-  LookAtDestination,
-  FlyToDestination,
-  LayerSelectionReason,
-  TickEventCallback,
+  type MouseEventHandles,
+  type MouseEvents,
+  type LayerSelectionReason,
+  type TickEventCallback,
 } from "@reearth/beta/lib/core/Map";
+
+import { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 
 import { commonReearth } from "./api";
 import { InteractionMode, ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
@@ -94,8 +93,8 @@ export default function ({
     [overrideSceneProperty],
   );
 
-  const flyTo = useCallback(
-    (target: string | FlyToDestination, options?: CameraOptions | undefined) => {
+  const flyTo: FlyTo = useCallback(
+    (target, options) => {
       engineRef?.flyTo(target, options);
     },
     [engineRef],
