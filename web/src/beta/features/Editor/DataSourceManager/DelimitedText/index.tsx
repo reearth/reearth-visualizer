@@ -65,7 +65,6 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <SourceTypeWrapper>
             <RadioGroup
               options={[{ label: t("From URL"), keyValue: "url" }]}
-              layout="horizontal"
               onChange={setSourceType}
             />
           </SourceTypeWrapper>

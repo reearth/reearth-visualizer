@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -11,21 +11,18 @@ export type Props = {
 };
 
 const RadioBox: React.FC<Props> = ({ selected, keyValue, label, onClick }: Props) => {
-  const [isChecked, setIsChecked] = useState(!!selected);
-
   const handleRadioClick = useCallback(
     (value: string) => {
-      setIsChecked(!isChecked);
       onClick?.(value);
     },
-    [isChecked, onClick],
+    [onClick],
   );
 
   return (
     <Radio>
       <RadioInput type="radio" value={keyValue} onClick={() => handleRadioClick(keyValue)} />
-      <RadioButton selected={isChecked}>
-        {isChecked && <RadioIndicator selected={isChecked} />}
+      <RadioButton selected={selected}>
+        {selected && <RadioIndicator selected={selected} />}
       </RadioButton>
       <RadioText>{label}</RadioText>
     </Radio>

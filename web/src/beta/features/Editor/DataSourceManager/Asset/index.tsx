@@ -87,7 +87,6 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <SourceTypeWrapper>
             <RadioGroup
               options={DataSourceOptions}
-              layout="horizontal"
               selectedValue={sourceType}
               onChange={setSourceType}
             />

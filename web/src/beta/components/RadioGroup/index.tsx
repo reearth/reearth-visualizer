@@ -15,7 +15,12 @@ export type RadioGroupProps = {
   onChange?: (value: string) => void;
 };
 
-const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, selectedValue, onChange }) => {
+const RadioGroup: React.FC<RadioGroupProps> = ({
+  options,
+  layout = "horizontal",
+  selectedValue,
+  onChange,
+}) => {
   const [key, setKey] = useState(0);
 
   const handleRadioChange = useCallback(
@@ -35,7 +40,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ options, layout, selectedValue,
           key={`${option.keyValue}-${key}-${index}`}
           keyValue={option.keyValue}
           selected={option.keyValue === selectedValue}
-          label={option.label || option.keyValue}
+          label={option.label}
           onClick={() => handleRadioChange(option.keyValue)}
         />
       ))}
