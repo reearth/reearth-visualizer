@@ -23,4 +23,6 @@ export const selectedWidgetAreaVar = makeVar<WidgetAreaType | undefined>(undefin
 
 export const selectedLayerVar = makeVar<SelectedLayer | undefined>(undefined);
 
+export const isVisualizerReadyVar = makeVar<boolean>(false);
+
 export * from "./jotai";

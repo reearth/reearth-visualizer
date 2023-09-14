@@ -1,6 +1,7 @@
-import { useCallback } from "react";
+import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
+import { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import StoryPanel, {
   type InstallableStoryBlock,
   type GQLStory,
@@ -10,10 +11,10 @@ import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
-import FovSlider from "./FovSlider";
 import useHooks from "./hooks";
 
 export type Props = {
+  visualizerRef?: MutableRefObject<MapRef | null>;
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
@@ -28,6 +29,7 @@ export type Props = {
 };
 
 const Visualizer: React.FC<Props> = ({
+  visualizerRef,
   sceneId,
   isBuilt,
   inEditor,
@@ -51,9 +53,6 @@ const Visualizer: React.FC<Props> = ({
     tags,
     selectedLayerId,
     blocks,
-    isCapturing,
-    sceneMode,
-    camera,
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
@@ -69,9 +68,6 @@ const Visualizer: React.FC<Props> = ({
     onWidgetUpdate,
     onWidgetAlignSystemUpdate,
     selectWidgetArea,
-    onIsCapturingChange,
-    onCameraChange,
-    onFovChange,
     handleDropLayer,
     zoomToLayer,
     handleMount,
@@ -89,6 +85,7 @@ const Visualizer: React.FC<Props> = ({
   return (
     <Wrapper>
       <CoreVisualizer
+        ref={visualizerRef}
         engine="cesium"
         isEditable={!isBuilt}
         isBuilt={!!isBuilt}
@@ -107,7 +104,6 @@ const Visualizer: React.FC<Props> = ({
         tags={tags}
         pluginProperty={pluginProperty}
         clusters={clusters}
-        camera={camera}
         ready={isBuilt || (!!layers && !!widgets)}
         pluginBaseUrl={config()?.plugins}
         widgetAlignSystemEditing={widgetAlignEditorActivated}
@@ -115,7 +111,6 @@ const Visualizer: React.FC<Props> = ({
         layerSelectionReason={layerSelectionReason}
         useExperimentalSandbox={useExperimentalSandbox}
         onLayerSelect={selectLayer}
-        onCameraChange={onCameraChange}
         onWidgetLayoutUpdate={onWidgetUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignSystemUpdate}
         onWidgetAreaSelect={selectWidgetArea}
@@ -140,12 +135,12 @@ const Visualizer: React.FC<Props> = ({
           />
         )}
       </CoreVisualizer>
-      <FovSlider
+      {/* <FovSlider
         visible={isCapturing && sceneMode && sceneMode !== "2d"}
         onIsCapturingChange={onIsCapturingChange}
         camera={camera}
         onFovChange={onFovChange}
-      />
+      /> */}
     </Wrapper>
   );
 };

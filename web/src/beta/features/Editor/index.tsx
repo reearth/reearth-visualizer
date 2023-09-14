@@ -36,6 +36,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
   };
 
   const {
+    visualizerRef,
     selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
@@ -137,6 +138,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
               hasNav={!!secondaryNavbar}
               visualizerWidth={visualizerWidth}>
               <Visualizer
+                visualizerRef={visualizerRef}
                 sceneId={sceneId}
                 showStoryPanel={selectedProjectType === "story"}
                 selectedStory={selectedStory}

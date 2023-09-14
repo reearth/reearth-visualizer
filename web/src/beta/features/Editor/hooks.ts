@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useReactiveVar } from "@apollo/client";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
-import { useWidgetAlignEditorActivated } from "@reearth/services/state";
+import { MapRef } from "@reearth/beta/lib/core/Map/ref";
+import { useWidgetAlignEditorActivated, isVisualizerReadyVar } from "@reearth/services/state";
 
 import { Tab } from "../Navbar";
 
@@ -9,11 +11,24 @@ import { type ProjectType } from "./tabs/publish/Nav";
 import { type Device } from "./tabs/widgets/Nav";
 
 export default ({ tab }: { sceneId: string; tab: Tab }) => {
+  const visualizerRef = useRef<MapRef | null>(null);
+
+  const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
+
   const [selectedSceneSetting, setSceneSetting] = useState(false);
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
     tab === "story" ? "story" : "default",
   );
+
+  useEffect(() => {
+    if (isVisualizerReady) {
+      // visualizerRef.current?.engine.flyTo({
+      //   lat: 11,
+      //   lng: 41,
+      // });
+    }
+  }, [isVisualizerReady, visualizerRef]);
 
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
 
@@ -59,6 +74,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const handleSceneSettingSelect = useCallback(() => setSceneSetting(selected => !selected), []);
 
   return {
+    visualizerRef,
     selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
