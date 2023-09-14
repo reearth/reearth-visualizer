@@ -223,7 +223,7 @@ export const getCameraEllipsoidIntersection = (
   return getRayEllipsoidIntersection(ray, globe.ellipsoid, result);
 };
 
-export const getCameraTerrainIntersection = (scene: Scene): any => {
+export const getCameraTerrainIntersection = (scene: Scene): Cartesian3 | undefined => {
   const ray = createRayFromCamera(scene.camera);
   return scene.globe.pick(ray, scene);
 };

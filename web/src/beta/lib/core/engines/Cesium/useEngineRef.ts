@@ -92,7 +92,11 @@ export default function useEngineRef(
             getCameraEllipsoidIntersection(viewer.scene, cartesian);
             center = cartesianToLatLngHeight(cartesian, viewer.scene);
           }
-          if (calcViewSize && viewer.scene.camera.frustum instanceof Cesium.PerspectiveFrustum) {
+          if (
+            calcViewSize &&
+            cartesian &&
+            viewer.scene.camera.frustum instanceof Cesium.PerspectiveFrustum
+          ) {
             const distance = Cesium.Cartesian3.distance(viewer.scene.camera.positionWC, cartesian);
             viewSize = distance * Math.tan(viewer.scene.camera.frustum.fov / 2);
           }
