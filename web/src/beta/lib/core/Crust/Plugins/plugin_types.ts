@@ -134,7 +134,7 @@ export type Camera = {
   /** Current camera position */
   readonly position: CameraPosition | undefined;
   readonly viewport: Rect | undefined;
-  readonly getFovInfo: (withTerrain?: boolean) =>
+  readonly getFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
     | {
         center?: LatLngHeight;
         viewSize?: number;

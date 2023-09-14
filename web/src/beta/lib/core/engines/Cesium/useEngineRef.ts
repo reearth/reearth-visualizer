@@ -74,7 +74,7 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
-      getCameraFovInfo: withTerrain => {
+      getCameraFovInfo: ({ withTerrain, calcViewSize }) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         try {
@@ -92,7 +92,7 @@ export default function useEngineRef(
             getCameraEllipsoidIntersection(viewer.scene, cartesian);
             center = cartesianToLatLngHeight(cartesian, viewer.scene);
           }
-          if (viewer.scene.camera.frustum instanceof Cesium.PerspectiveFrustum) {
+          if (calcViewSize && viewer.scene.camera.frustum instanceof Cesium.PerspectiveFrustum) {
             const distance = Cesium.Cartesian3.distance(viewer.scene.camera.positionWC, cartesian);
             viewSize = distance * Math.tan(viewer.scene.camera.frustum.fov / 2);
           }

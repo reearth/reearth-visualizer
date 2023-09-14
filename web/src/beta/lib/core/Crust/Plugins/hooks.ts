@@ -113,8 +113,8 @@ export default function ({
   }, [engineRef]);
 
   const getCameraFovInfo = useCallback(
-    (withTerrain?: boolean) => {
-      return engineRef?.getCameraFovInfo(withTerrain);
+    (options: { withTerrain?: boolean; calcViewSize?: boolean }) => {
+      return engineRef?.getCameraFovInfo(options);
     },
     [engineRef],
   );

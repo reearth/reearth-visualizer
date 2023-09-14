@@ -61,7 +61,7 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
-  getCameraFovInfo: (withTerrain?: boolean) =>
+  getCameraFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
     | {
         center?: LatLngHeight;
         viewSize?: number;
