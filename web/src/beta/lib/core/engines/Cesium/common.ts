@@ -38,6 +38,7 @@ import { useCallback, MutableRefObject } from "react";
 import { ClassificationType } from "@reearth/beta/lib/core/mantle";
 import { useCanvas, useImage } from "@reearth/beta/utils/image";
 import { tweenInterval } from "@reearth/beta/utils/raf";
+import { LatLngHeight } from "@reearth/beta/utils/value";
 
 import type { Camera, CameraOptions, Clock, FlyToDestination } from "..";
 
@@ -227,7 +228,7 @@ export const getCameraTerrainIntersection = (scene: Scene): any => {
   return scene.globe.pick(ray, scene);
 };
 
-export const cartesianToLatLngHeight = (cartesian: Cartesian3, scene: Scene): any => {
+export const cartesianToLatLngHeight = (cartesian: Cartesian3, scene: Scene): LatLngHeight => {
   const cartographic = Cartographic.fromCartesian(cartesian, scene.globe.ellipsoid);
   return {
     lng: CesiumMath.toDegrees(cartographic.longitude),

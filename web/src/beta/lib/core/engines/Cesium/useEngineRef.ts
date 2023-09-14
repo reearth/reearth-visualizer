@@ -74,19 +74,32 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
-      getCameraFovCenter: withTerrain => {
+      getCameraFovInfo: withTerrain => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         try {
+          let center;
+          let cartesian;
+          let viewSize;
           if (withTerrain) {
-            const cartesian = getCameraTerrainIntersection(viewer.scene);
+            cartesian = getCameraTerrainIntersection(viewer.scene);
             if (cartesian) {
-              return cartesianToLatLngHeight(cartesian, viewer.scene);
+              center = cartesianToLatLngHeight(cartesian, viewer.scene);
             }
           }
-          const cartesian = new Cesium.Cartesian3();
-          getCameraEllipsoidIntersection(viewer.scene, cartesian);
-          return cartesianToLatLngHeight(cartesian, viewer.scene);
+          if (!center) {
+            cartesian = new Cesium.Cartesian3();
+            getCameraEllipsoidIntersection(viewer.scene, cartesian);
+            center = cartesianToLatLngHeight(cartesian, viewer.scene);
+          }
+          if (viewer.scene.camera.frustum instanceof Cesium.PerspectiveFrustum) {
+            const distance = Cesium.Cartesian3.distance(viewer.scene.camera.positionWC, cartesian);
+            viewSize = distance * Math.tan(viewer.scene.camera.frustum.fov / 2);
+          }
+          return {
+            center,
+            viewSize,
+          };
         } catch (e) {
           return undefined;
         }
