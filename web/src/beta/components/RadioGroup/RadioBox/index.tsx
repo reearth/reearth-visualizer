@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import { fonts, styled } from "@reearth/services/theme";
 
 export type Props = {
-  inactive?: boolean;
   selected?: boolean;
   keyValue: string;
   onClick?: (value: string) => void;
