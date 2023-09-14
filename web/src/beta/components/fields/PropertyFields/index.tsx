@@ -25,7 +25,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
     <>
       {item?.schemaFields.map(sf => {
         const isList = item && "items" in item;
-        const value = !isList ? item.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
+        const value = (!isList && item.fields.find(f => f.id === sf.id)?.value) ?? sf.defaultValue;
 
         const handleChange = handlePropertyValueUpdate(
           item.schemaGroup,
@@ -77,7 +77,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
           <ToggleField
             key={sf.id}
             name={sf.name}
-            checked={value as boolean}
+            checked={!!value}
             description={sf.description}
             onChange={handleChange}
           />
