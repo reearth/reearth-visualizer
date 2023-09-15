@@ -10,7 +10,6 @@ Capture: Capture
 Camera Pose Setting: ''
 Position: ''
 Rotation: ''
-Angle: Angle
 Jump: Jump
 Clean Capture: ''
 Color Picker: ''
@@ -25,10 +24,10 @@ File size: File size
 Alphabetical: Alphabetical
 File Format: ''
 File format of the data source you want to add.: ''
-Source Type: ''
-Select the type of data source you want to add.: ''
 From URL: ''
 From Value: ''
+Source Type: ''
+Select the type of data source you want to add.: ''
 Resource URL: Resource URL
 URL of the data source you want to add.: ''
 Input Text: ''
@@ -79,6 +78,7 @@ Page Settings: Page Settings
 Align System: Align System
 Widget Manager: Widget Manager
 Container Settings: Container Settings
+Angle: Angle
 Narrow: Narrow
 Wide: Wide
 Create New Workspace: Create New Workspace
@@ -186,7 +186,6 @@ Padding settings: Padding settings
 Remove: Remove
 Drop here: Drop here
 Write your story :): Write your story :)
-Double click to start to write your story :): Double click to start to write your story :)
 Normal: Normal
 Heading 1: Heading 1
 Heading 2: Heading 2

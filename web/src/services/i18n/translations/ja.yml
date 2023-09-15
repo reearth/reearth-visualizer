@@ -10,7 +10,6 @@ Capture: キャプチャ
 Camera Pose Setting: ''
 Position: ''
 Rotation: ''
-Angle: 角度
 Jump: ジャンプ
 Clean Capture: ''
 Color Picker: カラーピッカー
@@ -25,10 +24,10 @@ File size: サイズ順
 Alphabetical: 名前順
 File Format: ''
 File format of the data source you want to add.: ''
-Source Type: ''
-Select the type of data source you want to add.: ''
 From URL: ''
 From Value: ''
+Source Type: ''
+Select the type of data source you want to add.: ''
 Resource URL: リソースURL
 URL of the data source you want to add.: ''
 Input Text: ''
@@ -75,6 +74,7 @@ Page Settings: ページ設定
 Align System: アラインシステム
 Widget Manager: ウィジェット管理
 Container Settings: Container Settings
+Angle: 角度
 Narrow: 狭い
 Wide: 広い
 Create New Workspace: 新規ワークスペース作成
@@ -167,7 +167,6 @@ Padding settings: 余白設定
 Remove: 削除
 Drop here: ここにドロップ
 Write your story :): ''
-Double click to start to write your story :): ''
 Normal: ''
 Heading 1: ''
 Heading 2: ''
