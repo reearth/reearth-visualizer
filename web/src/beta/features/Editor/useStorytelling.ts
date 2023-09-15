@@ -21,6 +21,7 @@ export default function ({ sceneId, stories }: Props) {
     useDeleteStoryPage,
     useMoveStoryPage,
     useInstallableStoryBlocksQuery,
+    useInstalledStoryBlocksQuery,
   } = useStorytellingAPI();
 
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
@@ -38,6 +39,16 @@ export default function ({ sceneId, stories }: Props) {
 
     return getPage(currentPageId, selectedStory?.pages);
   }, [currentPageId, selectedStory?.pages]);
+
+  const storyId = selectedStory && selectedStory?.id;
+  const pageId = currentPageId;
+
+  const { installedStoryBlocks } = useInstalledStoryBlocksQuery({
+    sceneId,
+    lang: undefined,
+    storyId,
+    pageId,
+  });
 
   const handleAutoScrollingChange = useCallback(
     (isScrolling: boolean) => setAutoScrolling(isScrolling),
@@ -114,6 +125,7 @@ export default function ({ sceneId, stories }: Props) {
     currentPage,
     isAutoScrolling,
     installableStoryBlocks,
+    installedStoryBlocks,
     handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,

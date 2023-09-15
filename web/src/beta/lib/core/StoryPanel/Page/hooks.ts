@@ -6,7 +6,6 @@ import { Item } from "@reearth/services/api/propertyApi/utils";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 
 export default ({
-  sceneId,
   storyId,
   pageId,
   propertyItems,
@@ -46,15 +45,7 @@ export default ({
     [useUpdatePropertyValue],
   );
 
-  const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
-    useStorytellingAPI();
-
-  const { installedStoryBlocks } = useInstalledStoryBlocksQuery({
-    sceneId,
-    lang: undefined,
-    storyId,
-    pageId,
-  });
+  const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingAPI();
 
   const handleStoryBlockCreate = useCallback(
     (index?: number) => async (extensionId?: string, pluginId?: string) => {
@@ -87,7 +78,6 @@ export default ({
 
   return {
     openBlocksIndex,
-    installedStoryBlocks,
     titleId,
     titleProperty,
     handleStoryBlockCreate,

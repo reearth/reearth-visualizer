@@ -1,6 +1,9 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import {
+  InstallableStoryBlock,
+  InstalledStoryBlock,
+} from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 import { GQLStoryPage } from "../hooks";
@@ -14,6 +17,7 @@ export type Props = {
   pages?: GQLStoryPage[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
+  installedStoryBlocks: InstalledStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   showingIndicator?: boolean;
@@ -31,6 +35,7 @@ const StoryContent: React.FC<Props> = ({
   pages,
   selectedPageId,
   installableStoryBlocks,
+  installedStoryBlocks,
   selectedStoryBlockId,
   showPageSettings,
   showingIndicator,
@@ -130,6 +135,7 @@ const StoryContent: React.FC<Props> = ({
             page={p}
             selectedPageId={selectedPageId}
             installableStoryBlocks={installableStoryBlocks}
+            installedStoryBlocks={installedStoryBlocks}
             selectedStoryBlockId={selectedStoryBlockId}
             showPageSettings={showPageSettings}
             onPageSettingsToggle={onPageSettingsToggle}

@@ -28,6 +28,19 @@ export default function Published({ className, alias }: Props) {
   // eslint-disable-next-line no-prototype-builtins
   const isStoryPublish = storyJsonData?.hasOwnProperty("story");
 
+  const pages = storyJsonData?.story?.pages;
+
+  const blocksArray = [];
+
+  for (const page of pages) {
+    const blocks = page.blocks;
+    blocksArray.push(...blocks); // Concatenate the blocks from each page into the array
+  }
+
+  // Now, blocksArray contains all the blocks from the pages
+  console.log(blocksArray);
+
+  console.log(storyJsonData);
   return error ? (
     <Error />
   ) : isStoryPublish ? (
@@ -41,7 +54,7 @@ export default function Published({ className, alias }: Props) {
       isBuilt
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}>
-      <StoryPanel />
+      <StoryPanel installedStoryBlocks={blocksArray} />
     </VisualizerStory>
   ) : (
     <Visualizer

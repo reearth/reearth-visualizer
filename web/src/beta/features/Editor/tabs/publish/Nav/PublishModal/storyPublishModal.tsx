@@ -43,7 +43,6 @@ const PublishStoryModal: React.FC<Props> = ({
   publishing,
   publishStoryStatus,
   storyAlias,
-  scene,
   url,
   onClose,
   onPublish,
@@ -65,19 +64,13 @@ const PublishStoryModal: React.FC<Props> = ({
   } = useHooks(publishing, publishStoryStatus, storyAlias, onPublish, onClose, onCopyToClipBoard);
 
   const purl = useMemo(() => {
-    localStorage.setItem("storyData", JSON.stringify(scene));
     return (url?.[0] ?? "") + (alias?.replace("/", "") ?? "") + (url?.[1] ?? "");
-  }, [scene, url, alias]);
+  }, [url, alias]);
 
   const embedCode = useMemo(
     () => `<iframe width="560" height="315" src="${purl}" frameBorder="0"></iframe>;`,
     [purl],
   );
-
-  // const publishDisabled = useMemo(
-  //   () => loading || publishing === "publishing" || publishing === "updating",
-  //   [loading, publishing],
-  // );
 
   const modalTitleText = useMemo(() => {
     return statusChanged

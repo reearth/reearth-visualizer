@@ -7,6 +7,7 @@ import StoryPanel, {
   type GQLStoryPage,
 } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
+import { InstalledStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
@@ -23,6 +24,7 @@ export type Props = {
   currentPage?: GQLStoryPage;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
+  installedStoryBlocks: InstalledStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 };
@@ -36,6 +38,7 @@ const Visualizer: React.FC<Props> = ({
   currentPage,
   isAutoScrolling,
   installableBlocks,
+  installedStoryBlocks,
   onAutoScrollingChange,
   onCurrentPageChange,
 }) => {
@@ -135,6 +138,7 @@ const Visualizer: React.FC<Props> = ({
             currentPage={currentPage}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
+            installedStoryBlocks={installedStoryBlocks}
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
           />

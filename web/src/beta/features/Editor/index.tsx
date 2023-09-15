@@ -52,6 +52,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     currentPage,
     isAutoScrolling,
     installableStoryBlocks,
+    installedStoryBlocks,
     handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,
@@ -143,6 +144,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
                 currentPage={currentPage}
                 isAutoScrolling={isAutoScrolling}
                 installableBlocks={installableStoryBlocks}
+                installedStoryBlocks={installedStoryBlocks}
                 onAutoScrollingChange={handleAutoScrollingChange}
                 onCurrentPageChange={handleCurrentPageChange}
               />

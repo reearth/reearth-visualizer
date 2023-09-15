@@ -1,5 +1,6 @@
 import { Typography } from "@reearth/beta/lib/core/mantle/types/value";
 import type { SceneProperty } from "@reearth/classic/components/molecules/Visualizer";
+import { Story } from "@reearth/services/gql";
 
 export type PublishedData = {
   schemaVersion: number;
@@ -12,6 +13,7 @@ export type PublishedData = {
   widgetAlignSystem?: WidgetAlignSystem;
   clusters: Cluster[];
   tags?: Tag[];
+  story?: Story;
 };
 
 export type Plugin = {

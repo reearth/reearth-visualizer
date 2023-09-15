@@ -43,7 +43,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   const handleProjectTypeChange = useCallback((projectType: ProjectType) => {
     setSelectedProjectType(projectType);
-    localStorage.setItem("selectedTab", projectType);
   }, []);
 
   const visualizerWidth = useMemo(

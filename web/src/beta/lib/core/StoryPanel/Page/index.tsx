@@ -1,7 +1,10 @@
 import { Fragment, useMemo } from "react";
 
 import { convert } from "@reearth/services/api/propertyApi/utils";
-import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import {
+  InstallableStoryBlock,
+  InstalledStoryBlock,
+} from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -18,6 +21,7 @@ type Props = {
   page?: GQLStoryPage;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
+  installedStoryBlocks: InstalledStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   onPageSettingsToggle?: () => void;
@@ -31,6 +35,7 @@ const StoryPage: React.FC<Props> = ({
   page,
   selectedPageId,
   installableStoryBlocks,
+  installedStoryBlocks,
   selectedStoryBlockId,
   showPageSettings,
   onPageSettingsToggle,
@@ -42,7 +47,6 @@ const StoryPage: React.FC<Props> = ({
 
   const {
     openBlocksIndex,
-    installedStoryBlocks,
     titleId,
     titleProperty,
     handleStoryBlockCreate,
@@ -56,6 +60,7 @@ const StoryPage: React.FC<Props> = ({
     propertyItems,
   });
 
+  console.log("installed value", installedStoryBlocks);
   return (
     <SelectableArea
       title={page?.title ?? t("Page")}
