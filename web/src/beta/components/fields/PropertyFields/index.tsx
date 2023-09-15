@@ -1,26 +1,26 @@
+import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import LocationField from "@reearth/beta/components/fields/LocationField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import SliderField from "@reearth/beta/components/fields/SliderField";
-import SpacingInput, { SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
+import SpacingInput, { type SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
 import TextInput from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import { FlyTo } from "@reearth/beta/lib/core/types";
-import { type LatLng } from "@reearth/beta/utils/value";
-import { type Item } from "@reearth/services/api/propertyApi/utils";
-
-import CameraField, { CameraValue } from "../CameraField";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera, LatLng } from "@reearth/beta/utils/value";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
 
 import useHooks from "./hooks";
 
 type Props = {
   propertyId: string;
   item?: Item;
+  currentCamera?: Camera;
   onFlyTo?: FlyTo;
 };
 
-const PropertyFields: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
+const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFlyTo }) => {
   const { handlePropertyValueUpdate } = useHooks();
 
   return (
@@ -118,8 +118,9 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, onFlyTo }) => {
           <CameraField
             key={sf.id}
             name={sf.name}
-            value={value as CameraValue}
+            value={value as Camera}
             description={sf.description}
+            currentCamera={currentCamera}
             onSave={handleChange}
             onFlyTo={onFlyTo}
           />

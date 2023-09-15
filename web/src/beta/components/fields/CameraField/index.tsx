@@ -4,9 +4,10 @@ import Button from "@reearth/beta/components/Button";
 import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
-import Slider from "@reearth/beta/components/Slider";
+// import Slider from "@reearth/beta/components/Slider";
 import Text from "@reearth/beta/components/Text";
-// import { usePluginContext } from "@reearth/beta/lib/core/Crust/Plugins/context";
+import { FlyTo } from "@reearth/beta/lib/core/types";
+import { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -14,55 +15,51 @@ import Property from "..";
 
 type CameraInput = {
   name: string;
-  field: keyof CameraValue;
-};
-
-export type CameraValue = {
-  lat: number;
-  lng: number;
-  altitude: number;
-  heading: number;
-  pitch: number;
-  roll: number;
-  fov: number;
+  field: keyof Camera;
 };
 
 export type Props = {
   name?: string;
   description?: string;
-  value?: CameraValue;
+  value?: Camera;
   disabled?: boolean;
-  onSave: (value?: CameraValue) => void;
+  currentCamera?: Camera;
+  onSave: (value?: Camera) => void;
+  onFlyTo?: FlyTo;
 };
 
-const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSave }) => {
+const CameraField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  disabled,
+  currentCamera,
+  onSave,
+  onFlyTo,
+}) => {
   const t = useT();
   const theme = useTheme();
 
   const [open, setOpen] = useState(false);
-  const [currentCamera, setCurrentCamera] = useState<CameraValue | undefined>(value);
-
-  // const { flyTo } = usePluginContext();
+  const [newCamera, setNewCamera] = useState<Camera | undefined>(currentCamera ?? value);
 
   const handleJump = useCallback(() => {
-    // if (!value) return;
-    // console.log("flyTo: ", flyTo);
-    // flyTo?.({ lat: 123, lng: 30, height: 10 });
-    // }, [flyTo]);
-  }, []);
+    if (!value || !newCamera || value === newCamera) return;
+    onFlyTo?.(newCamera);
+  }, [value, newCamera, onFlyTo]);
 
   const handleClose = useCallback(() => setOpen(false), []);
 
   const handleClick = useCallback(() => setOpen(!open), [open]);
 
   const handleFieldUpdate = useCallback(
-    (key: keyof CameraValue, update?: number) => {
+    (key: keyof Camera, update?: number) => {
       if (!update || !value) return;
-      const updated: CameraValue = {
+      const updated: Camera = {
         ...value,
         [key]: update,
       };
-      setCurrentCamera(updated);
+      setNewCamera(updated);
     },
     [value],
   );
@@ -83,7 +80,7 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
         },
         {
           name: t("Altitude"),
-          field: "altitude",
+          field: "height",
         },
       ],
       cameraAngleInput: [
@@ -141,7 +138,8 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
                     key={field}
                     placeholder="-"
                     inputDescription={name}
-                    value={value?.[field]}
+                    defaultValue={currentCamera?.[field]}
+                    value={newCamera?.[field]}
                     onChange={x => handleFieldUpdate(field, x)}
                   />
                 ))}
@@ -155,21 +153,23 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
                     key={field}
                     placeholder="-"
                     inputDescription={name}
-                    value={value?.[field]}
+                    defaultValue={currentCamera?.[field]}
+                    value={newCamera?.[field]}
                     onChange={x => handleFieldUpdate(field, x)}
                   />
                 ))}
               </ValuesWrapper>
             </ValueInputWrapper>
-            <ValueInputWrapper>
+            {/* <ValueInputWrapper>
               <Text size="footnote">{t("Angle")}</Text>
               <Slider
-                value={value?.["fov"]}
+                defaultValue={currentCamera?.["fov"]}
+                value={newCamera?.["fov"]}
                 min={0}
                 max={180}
                 onChange={x => handleFieldUpdate("fov", x)}
               />
-            </ValueInputWrapper>
+            </ValueInputWrapper> */}
           </MainBodyWrapper>
           <FormButtonGroup>
             <JumpButton
@@ -187,7 +187,7 @@ const CameraField: React.FC<Props> = ({ name, description, value, disabled, onSa
             <StyledButton
               buttonType="primary"
               text={t("Capture")}
-              onClick={() => onSave(currentCamera)}
+              onClick={() => onSave(newCamera)}
             />
           </FormButtonGroup>
         </PickerWrapper>

@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 import Resizable from "@reearth/beta/components/Resizable";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
@@ -25,16 +23,6 @@ type Props = {
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
-  const [showDataSourceManager, setShowDataSourceManager] = useState(false);
-
-  const handleDataSourceManagerCloser = () => {
-    setShowDataSourceManager(false);
-  };
-
-  const handleDataSourceManagerOpener = () => {
-    setShowDataSourceManager(true);
-  };
-
   const {
     visualizerRef,
     selectedSceneSetting,
@@ -42,10 +30,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
+    showDataSourceManager,
+    currentCamera,
+    handleDataSourceManagerCloser,
+    handleDataSourceManagerOpener,
     handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
+    handleFlyTo,
+    handleCameraUpdate,
   } = useHooks({ sceneId, tab });
 
   const {
@@ -98,7 +92,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     tab,
     sceneId,
     currentPage,
+    currentCamera,
     showSceneSettings: selectedSceneSetting,
+    onFlyTo: handleFlyTo,
   });
 
   const { secondaryNavbar } = useSecondaryNavbar({
@@ -145,8 +141,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
                 currentPage={currentPage}
                 isAutoScrolling={isAutoScrolling}
                 installableBlocks={installableStoryBlocks}
+                currentCamera={currentCamera}
                 onAutoScrollingChange={handleAutoScrollingChange}
                 onCurrentPageChange={handleCurrentPageChange}
+                onCameraChange={handleCameraUpdate}
               />
             </VisualizerWrapper>
           </Center>

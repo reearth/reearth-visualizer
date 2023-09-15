@@ -8,6 +8,7 @@ import StoryPanel, {
   type GQLStoryPage,
 } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
+import { Camera } from "@reearth/beta/utils/value";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
@@ -18,6 +19,7 @@ export type Props = {
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
+  currentCamera?: Camera;
   // storytelling
   showStoryPanel?: boolean;
   selectedStory?: GQLStory;
@@ -26,6 +28,7 @@ export type Props = {
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
+  onCameraChange: (camera: Camera) => void;
 };
 
 const Visualizer: React.FC<Props> = ({
@@ -33,6 +36,7 @@ const Visualizer: React.FC<Props> = ({
   sceneId,
   isBuilt,
   inEditor,
+  currentCamera,
   showStoryPanel,
   selectedStory,
   currentPage,
@@ -40,6 +44,7 @@ const Visualizer: React.FC<Props> = ({
   installableBlocks,
   onAutoScrollingChange,
   onCurrentPageChange,
+  onCameraChange,
 }) => {
   const {
     rootLayerId,
@@ -110,6 +115,8 @@ const Visualizer: React.FC<Props> = ({
         meta={engineMeta}
         layerSelectionReason={layerSelectionReason}
         useExperimentalSandbox={useExperimentalSandbox}
+        camera={currentCamera}
+        onCameraChange={onCameraChange}
         onLayerSelect={selectLayer}
         onWidgetLayoutUpdate={onWidgetUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignSystemUpdate}

@@ -1,7 +1,8 @@
 import { makeVar } from "@apollo/client";
 
 import type { WidgetAreaType } from "@reearth/beta/lib/core/Crust";
-import { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { Camera } from "@reearth/beta/utils/value";
 
 export type SelectedWidget = {
   id: string;
@@ -17,12 +18,13 @@ export type SelectedLayer = {
   layerSelectionReason?: LayerSelectionReason;
 };
 
-export const selectedWidgetVar = makeVar<SelectedWidget | undefined>(undefined);
-
-export const selectedWidgetAreaVar = makeVar<WidgetAreaType | undefined>(undefined);
-
-export const selectedLayerVar = makeVar<SelectedLayer | undefined>(undefined);
-
+// Visualizer
 export const isVisualizerReadyVar = makeVar<boolean>(false);
+export const currentCameraVar = makeVar<Camera | undefined>(undefined);
+
+// Selected
+export const selectedWidgetVar = makeVar<SelectedWidget | undefined>(undefined);
+export const selectedWidgetAreaVar = makeVar<WidgetAreaType | undefined>(undefined);
+export const selectedLayerVar = makeVar<SelectedLayer | undefined>(undefined);
 
 export * from "./jotai";

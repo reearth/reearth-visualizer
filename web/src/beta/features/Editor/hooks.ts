@@ -2,18 +2,25 @@ import { useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
-import { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import { useWidgetAlignEditorActivated, isVisualizerReadyVar } from "@reearth/services/state";
+import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera } from "@reearth/beta/utils/value";
+import {
+  useWidgetAlignEditorActivated,
+  isVisualizerReadyVar,
+  currentCameraVar,
+} from "@reearth/services/state";
 
-import { Tab } from "../Navbar";
+import type { Tab } from "../Navbar";
 
-import { type ProjectType } from "./tabs/publish/Nav";
-import { type Device } from "./tabs/widgets/Nav";
+import type { ProjectType } from "./tabs/publish/Nav";
+import type { Device } from "./tabs/widgets/Nav";
 
 export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const visualizerRef = useRef<MapRef | null>(null);
 
   const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
+  const currentCamera = useReactiveVar(currentCameraVar);
 
   const [selectedSceneSetting, setSceneSetting] = useState(false);
   const [selectedDevice, setDevice] = useState<Device>("desktop");
@@ -21,14 +28,15 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     tab === "story" ? "story" : "default",
   );
 
-  useEffect(() => {
-    if (isVisualizerReady) {
-      // visualizerRef.current?.engine.flyTo({
-      //   lat: 11,
-      //   lng: 41,
-      // });
-    }
-  }, [isVisualizerReady, visualizerRef]);
+  const [showDataSourceManager, setShowDataSourceManager] = useState(false);
+
+  const handleDataSourceManagerCloser = useCallback(() => {
+    setShowDataSourceManager(false);
+  }, []);
+
+  const handleDataSourceManagerOpener = useCallback(() => {
+    setShowDataSourceManager(true);
+  }, []);
 
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
 
@@ -73,6 +81,16 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   const handleSceneSettingSelect = useCallback(() => setSceneSetting(selected => !selected), []);
 
+  const handleFlyTo: FlyTo = useCallback(
+    (target, options) => {
+      if (!isVisualizerReady) return;
+      visualizerRef.current?.engine.flyTo(target, options);
+    },
+    [isVisualizerReady],
+  );
+
+  const handleCameraUpdate = useCallback((camera: Camera) => currentCameraVar(camera), []);
+
   return {
     visualizerRef,
     selectedSceneSetting,
@@ -80,9 +98,15 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
+    showDataSourceManager,
+    currentCamera,
+    handleDataSourceManagerCloser,
+    handleDataSourceManagerOpener,
     handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
+    handleFlyTo,
+    handleCameraUpdate,
   };
 };
