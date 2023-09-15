@@ -62,7 +62,12 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
-  getCameraFovCenter: (withTerrain?: boolean) => LatLngHeight | undefined;
+  getCameraFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+    | {
+        center?: LatLngHeight;
+        viewSize?: number;
+      }
+    | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   flyTo: FlyTo;
