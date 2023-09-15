@@ -1,12 +1,13 @@
 import { Fragment, useMemo } from "react";
 
+import type { Spacing } from "@reearth/beta/utils/value";
 import { convert } from "@reearth/services/api/propertyApi/utils";
-import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import { GQLStoryPage } from "../hooks";
+import type { GQLStoryPage } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
@@ -68,8 +69,9 @@ const StoryPage: React.FC<Props> = ({
       propertyId={page?.property?.id}
       propertyItems={propertyItems}
       showSettings={showPageSettings}
-      isSelectable={isEditable}
+      isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
+      onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
       <Wrapper id={page?.id}>
         {titleProperty && (
@@ -106,6 +108,7 @@ const StoryPage: React.FC<Props> = ({
               <StoryBlock
                 block={b}
                 isSelected={selectedStoryBlockId === b.id}
+                isEditable={isEditable}
                 onClick={() => onBlockSelect(b.id)}
                 onClickAway={onBlockSelect}
                 onChange={handlePropertyValueUpdate}
@@ -128,10 +131,16 @@ const StoryPage: React.FC<Props> = ({
 
 export default StoryPage;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ padding?: Spacing }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
+
   padding: 20px;
+  padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
+  padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
+  padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
+  padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
+
   box-sizing: border-box;
 `;

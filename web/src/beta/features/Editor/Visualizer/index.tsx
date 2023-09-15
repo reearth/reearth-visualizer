@@ -1,14 +1,14 @@
 import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
-import { MapRef } from "@reearth/beta/lib/core/Map/ref";
+import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import StoryPanel, {
   type InstallableStoryBlock,
   type GQLStory,
   type GQLStoryPage,
 } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
-import { Camera } from "@reearth/beta/utils/value";
+import type { Camera } from "@reearth/beta/utils/value";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
@@ -137,6 +137,7 @@ const Visualizer: React.FC<Props> = ({
             currentPage={currentPage}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
+            isEditable={!!inEditor}
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
           />

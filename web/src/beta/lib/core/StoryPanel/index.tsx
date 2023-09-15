@@ -53,6 +53,7 @@ export const StoryPanel: FC<StoryPanelProps> = ({
   } = useHooks({
     selectedStory,
     currentPage,
+    isEditable,
     onCurrentPageChange,
   });
 
