@@ -60,7 +60,7 @@ const SelectField: React.FC<Props> = ({
             <ArrowDownIcon icon="arrowDown" size={12} />
           </InputWrapper>
         </Popover.Trigger>
-        <PickerWrapper>
+        <PickerWrapper attachToRoot>
           {options?.map(({ label: value, key }) => (
             <Option
               size="footnote"
@@ -78,7 +78,6 @@ const SelectField: React.FC<Props> = ({
 
 const InputWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
-  gap: 10px;
   position: relative;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};

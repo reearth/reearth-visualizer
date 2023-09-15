@@ -1,3 +1,18 @@
+Latitude: Latitude
+Longitude: Longitude
+Altitude: Altitude
+Heading: Heading
+Pitch: Pitch
+Roll: Roll
+Camera Set: ''
+Not Set: Not Set
+Capture: Capture
+Camera Pose Setting: ''
+Position: ''
+Rotation: ''
+Angle: Angle
+Jump: Jump
+Clean Capture: ''
 Color Picker: ''
 Cancel: Cancel
 Apply: Apply
@@ -5,23 +20,39 @@ You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
 Please choose an option: ''
 Not found: Not found
-Padding settings: Padding settings
-Remove: Remove
-Untitled: Untitled
+Date: Date
+File size: File size
+Alphabetical: Alphabetical
+File Format: ''
+File format of the data source you want to add.: ''
+Source Type: ''
+Select the type of data source you want to add.: ''
+From URL: ''
+From Value: ''
+Resource URL: Resource URL
+URL of the data source you want to add.: ''
+Input Text: ''
+Prioritize Performance: ''
+Value: ''
+Description around.: ''
+Write down your text: ''
+Add to Layer: ''
 Scene: Scene
+Main: ''
 Layers: Layers
 Outline: Outline
+Inspector: Inspector
 Published: Published
 Unpublished: Unpublished
 Story: Story
 Unpublish: Unpublish
+Update: Update
 Publish: Publish
 Publishing Settings: Publishing Settings
 Congratulations!: Congratulations!
 Publish your project: Publish your project
 Update your project: Update your project
 Ok: Ok
-Update: Update
 Continue: Continue
 Your published project will be updated. This means all current changes will overwrite the current published project.: >-
   Your published project will be updated. This means all current changes will
@@ -41,14 +72,13 @@ Page will be available as result on search engines: ''
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
+Untitled: Untitled
 New Page: New Page
 Page: Page
 Page Settings: Page Settings
 Align System: Align System
 Widget Manager: Widget Manager
-Inspector: Inspector
 Container Settings: Container Settings
-Angle: Angle
 Narrow: Narrow
 Wide: Wide
 Create New Workspace: Create New Workspace
@@ -74,9 +104,6 @@ Notice: Notice
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Project Settings: ''
-Date: Date
-File size: File size
-Alphabetical: Alphabetical
 Upload file: Upload file
 Delete: Delete
 No assets match your search.: No assets match your search.
@@ -155,6 +182,8 @@ Playback timeline: Playback timeline
 Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
+Padding settings: Padding settings
+Remove: Remove
 Drop here: Drop here
 Write your story :): Write your story :)
 Double click to start to write your story :): Double click to start to write your story :)
@@ -219,7 +248,6 @@ Add video URL: Add video URL
 Save: Save
 Select Asset: Select Asset
 Select: Select
-Resource URL: Resource URL
 Your browser is too small: Your browser is too small
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: >-
   Re:Earth needs at least 900px width to be used effectively. Please resize your
@@ -291,24 +319,14 @@ Create Infobox: Create Infobox
 Dataset: Dataset
 Pose Set: Pose Set
 Position Set: Position Set
-Not Set: Not Set
-Latitude: Latitude
-Longtitude: Longtitude
-Altitude: Altitude
-Heading: Heading
-Pitch: Pitch
-Roll: Roll
 Check Pose: Check Pose
-Jump: Jump
 Edit Pose: Edit Pose
 Edit Position: Edit Position
-Capture: Capture
 '#RRGGBBAA': '#RRGGBBAA'
 Red: Red
 Green: Green
 Blue: Blue
 Alpha: Alpha
-Longitude: Longitude
 This field is linked to {{datasetField}}.: This field is linked to {{datasetField}}.
 This field is not editable currently.: This field is not editable currently.
 Linkable data: Linkable data

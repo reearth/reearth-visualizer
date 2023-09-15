@@ -17,7 +17,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   flyTo: 1,
   flyToGround: 1,
   getCamera: 1,
-  getCameraFovCenter: 1,
+  getCameraFovInfo: 1,
   getClock: 1,
   getLocationFromScreen: 1,
   sampleTerrainHeight: 1,
@@ -60,6 +60,8 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   inViewport: 1,
   onTick: 1,
   removeTickEventListener: 1,
+  findFeaturesByIds: 1,
+  findFeatureById: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {

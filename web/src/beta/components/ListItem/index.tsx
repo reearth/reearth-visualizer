@@ -1,5 +1,5 @@
 import { Placement } from "@floating-ui/react";
-import { FC, ReactNode } from "react";
+import { FC, MouseEvent, ReactNode } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -16,7 +16,7 @@ type Props = {
   isOpenAction?: boolean;
   actionPlacement?: Placement;
   clamp?: Clamp;
-  onItemClick: (id: string) => void;
+  onItemClick: (e?: MouseEvent<Element>) => void;
   onActionClick?: () => void;
   onOpenChange?: (isOpen: boolean) => void;
 };
@@ -35,11 +35,7 @@ const ListItem: FC<Props> = ({
 }) => {
   return (
     <Wrapper>
-      <Inner
-        border={border}
-        isSelected={isSelected}
-        clamp={clamp}
-        onClick={() => onItemClick("id")}>
+      <Inner border={border} isSelected={isSelected} clamp={clamp} onClick={onItemClick}>
         <StyledText size="footnote">{children}</StyledText>
       </Inner>
       {actionContent && (

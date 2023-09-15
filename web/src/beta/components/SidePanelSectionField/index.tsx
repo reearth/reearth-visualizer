@@ -6,14 +6,15 @@ import Icon from "../Icon";
 import Text from "../Text";
 
 const SidePanelSectionField: React.FC<{
+  className?: string;
   title?: string;
   children?: ReactNode;
-}> = ({ title, children }) => {
+}> = ({ className, title, children }) => {
   const theme = useTheme();
   const [opened, setOpened] = useState(true);
 
   return (
-    <Field>
+    <Field className={className}>
       {title && (
         <Header onClick={() => setOpened(!opened)}>
           <Text size="body" color={theme.content.main}>

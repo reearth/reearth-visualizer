@@ -15,6 +15,7 @@ import type {
   LatLng,
   DataType,
   SelectedFeatureInfo,
+  Feature,
 } from "../../mantle";
 import type { TimelineManager } from "../../Visualizer/useTimelineManager";
 import type {
@@ -61,7 +62,12 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
-  getCameraFovCenter: (withTerrain?: boolean) => LatLngHeight | undefined;
+  getCameraFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+    | {
+        center?: LatLngHeight;
+        viewSize?: number;
+      }
+    | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
@@ -98,6 +104,8 @@ export type EngineRef = {
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
   timelineManager?: TimelineManager;
+  findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
+  findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
 };
 
 export type EngineProps = {

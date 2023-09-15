@@ -328,7 +328,7 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   cameraViewport,
-  getCameraFovCenter,
+  getCameraFovInfo,
   orbit,
   rotateRight,
   captureScreen,
@@ -345,6 +345,8 @@ export function commonReearth({
   moveRight,
   moveOverTerrain,
   flyToGround,
+  findFeatureById,
+  findFeaturesByIds,
 }: {
   engineName?: string;
   events: Events<ReearthEventType>;
@@ -373,7 +375,7 @@ export function commonReearth({
   rotateRight: GlobalThis["reearth"]["camera"]["rotateRight"];
   orbit: GlobalThis["reearth"]["camera"]["orbit"];
   cameraViewport?: () => GlobalThis["reearth"]["camera"]["viewport"];
-  getCameraFovCenter: GlobalThis["reearth"]["camera"]["getFovCenter"];
+  getCameraFovInfo: GlobalThis["reearth"]["camera"]["getFovInfo"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
   sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
@@ -390,6 +392,8 @@ export function commonReearth({
   moveRight: GlobalThis["reearth"]["camera"]["moveRight"];
   moveOverTerrain: GlobalThis["reearth"]["camera"]["moveOverTerrain"];
   flyToGround: GlobalThis["reearth"]["camera"]["flyToGround"];
+  findFeatureById: GlobalThis["reearth"]["layers"]["findFeatureById"];
+  findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -409,7 +413,7 @@ export function commonReearth({
         get viewport() {
           return cameraViewport?.();
         },
-        getFovCenter: getCameraFovCenter,
+        getFovInfo: getCameraFovInfo,
         enableScreenSpaceController: enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -465,7 +469,7 @@ export function commonReearth({
       get viewport() {
         return cameraViewport?.();
       },
-      getFovCenter: getCameraFovCenter,
+      getFovInfo: getCameraFovInfo,
       enableScreenSpaceController: enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
@@ -572,6 +576,8 @@ export function commonReearth({
       get add() {
         return addLayer;
       },
+      findFeatureById,
+      findFeaturesByIds,
     },
     plugins: {
       get instances() {

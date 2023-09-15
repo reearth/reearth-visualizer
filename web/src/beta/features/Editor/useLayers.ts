@@ -16,10 +16,9 @@ export type LayerAddProps = {
   visible?: boolean;
 };
 
-export type LayerUpdateProps = {
+export type LayerNameUpdateProps = {
   layerId: string;
   name: string;
-  visible?: boolean;
 };
 
 export default function ({ sceneId }: useLayerProps) {
@@ -29,13 +28,15 @@ export default function ({ sceneId }: useLayerProps) {
   const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>(undefined);
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
 
-  const selectedLayer = useMemo(() => {
-    return nlsLayers.find(l => l.id === selectedLayerId) || undefined;
-  }, [nlsLayers, selectedLayerId]);
+  const selectedLayer = useMemo(
+    () => nlsLayers.find(l => l.id === selectedLayerId) || undefined,
+    [nlsLayers, selectedLayerId],
+  );
 
-  const handleLayerSelect = useCallback((layerId: string) => {
-    setSelectedLayerId(layerId);
-  }, []);
+  const handleLayerSelect = useCallback(
+    (layerId: string) => setSelectedLayerId(prevId => (prevId === layerId ? undefined : layerId)),
+    [],
+  );
 
   const handleLayerDelete = useCallback(
     async (layerId: string) => {
@@ -68,16 +69,14 @@ export default function ({ sceneId }: useLayerProps) {
     [t, useAddNLSLayerSimple],
   );
 
-  const handleLayerUpdate = useCallback(
-    async (inp: LayerUpdateProps) => {
-      if (!selectedLayer) return;
+  const handleLayerNameUpdate = useCallback(
+    async (inp: LayerNameUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
         name: inp.name,
-        visible: inp.visible,
       });
     },
-    [selectedLayer, useUpdateNLSLayer],
+    [useUpdateNLSLayer],
   );
 
   return {
@@ -86,6 +85,6 @@ export default function ({ sceneId }: useLayerProps) {
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
-    handleLayerUpdate,
+    handleLayerNameUpdate,
   };
 }
