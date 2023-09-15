@@ -60,7 +60,6 @@ const StoryPage: React.FC<Props> = ({
     propertyItems,
   });
 
-  console.log("installed value", installedStoryBlocks);
   return (
     <SelectableArea
       title={page?.title ?? t("Page")}

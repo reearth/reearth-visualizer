@@ -10,6 +10,7 @@ import type {
   ClusterProperty,
 } from "@reearth/classic/components/molecules/Visualizer";
 import { config } from "@reearth/services/config";
+import { StoryPage } from "@reearth/services/gql";
 
 import {
   PublishedData,
@@ -191,6 +192,26 @@ export default (alias?: string) => {
     [],
   );
 
+  const getInstalledStoryBlocks = (page: StoryPage | undefined) => {
+    return page?.blocks.map(b => {
+      return {
+        id: b.id,
+        pluginId: "reearth",
+        extensionId: "imageStoryBlock",
+        title: "Image Block",
+        description: "Storytelling Image Block",
+        icon: "",
+        property: {
+          id: b.property?.id ?? "",
+          items: [],
+        },
+      };
+    });
+  };
+
+  const installedStoryBlocks = getInstalledStoryBlocks(data?.story?.pages[0]);
+
+  console.log("ops", installedStoryBlocks);
   return {
     alias: actualAlias,
     sceneProperty,
@@ -203,6 +224,7 @@ export default (alias?: string) => {
     error,
     engineMeta,
     storyJsonData: data,
+    installedStoryBlocks,
   };
 };
 
