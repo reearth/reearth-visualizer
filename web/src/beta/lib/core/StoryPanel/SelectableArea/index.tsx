@@ -1,10 +1,11 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction, MouseEvent, useCallback } from "react";
 
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
 import ClickAwayListener from "../ClickAwayListener";
+import { useStoryPageContext } from "../Page";
 
 import useHooks from "./hooks";
 
@@ -47,7 +48,7 @@ const SelectableArea: React.FC<Props> = ({
   onClickAway,
   onRemove,
 }) => {
-  const { isHovered, showPadding, panelSettings, setShowPadding, handleMouseOver, handleMouseOut } =
+  const { showPadding, panelSettings, setShowPadding, isHovered, handleMouseOver, handleMouseOut } =
     useHooks({
       editMode,
       isSelected,
@@ -55,32 +56,46 @@ const SelectableArea: React.FC<Props> = ({
       setEditMode,
     });
 
+  const { handleOnMouseOut, handleOnMouseOver } = useStoryPageContext();
+
+  const handleIsMouseOver = useCallback(
+    (e: MouseEvent<HTMLDivElement>) => {
+      handleMouseOver(e);
+      handleOnMouseOver(e);
+    },
+    [handleMouseOver, handleOnMouseOver],
+  );
+
+  const handleIsMouseOut = () => {
+    handleMouseOut();
+    handleOnMouseOut();
+  };
+
   return (
     <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
       <Wrapper
         isSelected={isSelected}
         noBorder={noBorder}
-        onMouseOver={handleMouseOver}
-        onMouseOut={handleMouseOut}
+        onMouseOver={handleIsMouseOver}
+        onMouseOut={handleIsMouseOut}
         onClick={onClick}>
-        {(isHovered || isSelected) && (
-          <ActionPanel
-            title={title}
-            icon={icon}
-            isSelected={isSelected}
-            showSettings={showSettings}
-            showPadding={showPadding}
-            editMode={editMode}
-            propertyId={propertyId}
-            panelSettings={panelSettings}
-            dndEnabled={dndEnabled}
-            position={position}
-            setShowPadding={setShowPadding}
-            onEditModeToggle={onEditModeToggle}
-            onSettingsToggle={onSettingsToggle}
-            onRemove={onRemove}
-          />
-        )}
+        <ActionPanel
+          title={title}
+          isHovered={isHovered}
+          icon={icon}
+          isSelected={isSelected}
+          showSettings={showSettings}
+          showPadding={showPadding}
+          editMode={editMode}
+          propertyId={propertyId}
+          panelSettings={panelSettings}
+          dndEnabled={dndEnabled}
+          position={position}
+          setShowPadding={setShowPadding}
+          onEditModeToggle={onEditModeToggle}
+          onSettingsToggle={onSettingsToggle}
+          onRemove={onRemove}
+        />
         {children}
       </Wrapper>
     </ClickAwayListener>

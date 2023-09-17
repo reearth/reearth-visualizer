@@ -1,5 +1,6 @@
 import { Dispatch, Fragment, MouseEvent, SetStateAction, useMemo } from "react";
 
+import { useItemContext } from "@reearth/beta/components/DragAndDropList/Item";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -9,6 +10,8 @@ import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import { useStoryPageContext } from "../Page";
 
 export type ActionItem = {
   icon: string;
@@ -28,6 +31,7 @@ type Props = {
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
+  isHovered?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
@@ -41,12 +45,17 @@ const ActionPanel: React.FC<Props> = ({
   panelSettings,
   actionItems,
   position,
+  dndEnabled,
+  isHovered,
   setShowPadding,
   onSettingsToggle,
   onRemove,
 }) => {
   const t = useT();
+  const { isHovered: showDndHandle } = useStoryPageContext();
+  const { ref } = useItemContext();
 
+  console.log(" isOn", isHovered);
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
       {
@@ -67,51 +76,58 @@ const ActionPanel: React.FC<Props> = ({
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
-      <Popover.Provider
-        open={showSettings}
-        onOpenChange={() => onSettingsToggle?.()}
-        placement="bottom-start">
-        <BlockOptions isSelected={isSelected}>
-          {actionItems.map(
-            (a, idx) =>
-              !a.hide && (
-                <Fragment key={idx}>
-                  <Popover.Trigger asChild>
-                    <OptionWrapper
-                      showPointer={!isSelected || !!a.onClick}
-                      onClick={a.onClick ?? stopClickPropagation}>
-                      <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
-                      {a.name && (
-                        <OptionText size="footnote" customColor>
-                          {a.name}
-                        </OptionText>
-                      )}
-                    </OptionWrapper>
-                  </Popover.Trigger>
-                </Fragment>
-              ),
-          )}
-        </BlockOptions>
-        <Popover.Content>
-          {showPadding ? (
-            <SettingsDropdown>
-              <SettingsHeading>
-                <Text size="footnote" customColor>
-                  {panelSettings?.title}
-                </Text>
-                <CancelIcon icon="cancel" size={14} onClick={() => setShowPadding(false)} />
-              </SettingsHeading>
-              {propertyId && panelSettings && (
-                <SettingsContent>
-                  <FieldComponents propertyId={propertyId} item={panelSettings} />
-                </SettingsContent>
-              )}
-            </SettingsDropdown>
-          ) : (
-            <PopoverMenuContent size="sm" items={popoverContent} />
-          )}
-        </Popover.Content>
-      </Popover.Provider>
+      {(isHovered || isSelected) && (
+        <Popover.Provider
+          open={showSettings}
+          onOpenChange={() => onSettingsToggle?.()}
+          placement="bottom-start">
+          <BlockOptions isSelected={isSelected}>
+            {actionItems.map(
+              (a, idx) =>
+                !a.hide && (
+                  <Fragment key={idx}>
+                    <Popover.Trigger asChild>
+                      <OptionWrapper
+                        showPointer={!isSelected || !!a.onClick}
+                        onClick={a.onClick ?? stopClickPropagation}>
+                        <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
+                        {a.name && (
+                          <OptionText size="footnote" customColor>
+                            {a.name}
+                          </OptionText>
+                        )}
+                      </OptionWrapper>
+                    </Popover.Trigger>
+                  </Fragment>
+                ),
+            )}
+          </BlockOptions>
+          <Popover.Content>
+            {showPadding ? (
+              <SettingsDropdown>
+                <SettingsHeading>
+                  <Text size="footnote" customColor>
+                    {panelSettings?.title}
+                  </Text>
+                  <CancelIcon icon="cancel" size={14} onClick={() => setShowPadding(false)} />
+                </SettingsHeading>
+                {propertyId && panelSettings && (
+                  <SettingsContent>
+                    <FieldComponents propertyId={propertyId} item={panelSettings} />
+                  </SettingsContent>
+                )}
+              </SettingsDropdown>
+            ) : (
+              <PopoverMenuContent size="sm" items={popoverContent} />
+            )}
+          </Popover.Content>
+        </Popover.Provider>
+      )}
+      {dndEnabled && showDndHandle && (
+        <DndHandle ref={ref}>
+          <Icon icon="dndHandle" size={16} />
+        </DndHandle>
+      )}
     </Wrapper>
   );
 };
@@ -197,4 +213,8 @@ const SettingsContent = styled.div`
 
 const CancelIcon = styled(Icon)`
   cursor: pointer;
+`;
+
+const DndHandle = styled.div`
+  cursor: move;
 `;

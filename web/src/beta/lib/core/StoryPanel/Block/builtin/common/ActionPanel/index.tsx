@@ -19,6 +19,7 @@ type Props = {
   panelSettings?: Item;
   dndEnabled?: boolean;
   position?: ActionPosition;
+  isHovered?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
@@ -31,6 +32,7 @@ const BlockActionPanel: React.FC<Props> = ({
   isSelected,
   editMode,
   dndEnabled,
+  isHovered,
   onEditModeToggle,
   onSettingsToggle,
   ...actionProps
@@ -50,6 +52,7 @@ const BlockActionPanel: React.FC<Props> = ({
       isSelected={isSelected}
       actionItems={actionItems}
       onSettingsToggle={onSettingsToggle}
+      isHovered={isHovered}
       {...actionProps}
     />
   );

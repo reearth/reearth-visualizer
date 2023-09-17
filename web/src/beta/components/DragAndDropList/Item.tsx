@@ -1,9 +1,8 @@
 import type { Identifier } from "dnd-core";
 import type { FC, ReactNode } from "react";
-import { memo, useRef } from "react";
+import { memo, useRef, createContext, useContext } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 type DragItem = {
@@ -23,6 +22,11 @@ type Props = {
   children: ReactNode;
 };
 
+const ItemContext = createContext({
+  ref: null,
+});
+
+export const useItemContext = () => useContext(ItemContext);
 const Item: FC<Props> = ({
   itemGroupKey,
   id,
@@ -34,6 +38,7 @@ const Item: FC<Props> = ({
   onItemDropOutside,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: itemGroupKey,
     collect(monitor) {
@@ -94,15 +99,13 @@ const Item: FC<Props> = ({
   });
 
   drag(drop(ref));
-
   // eslint-disable-next-line no-prototype-builtins
   return item.hasOwnProperty("extensionId") ? (
-    <SItem ref={preview} data-handler-id={handlerId} isDragging={isDragging}>
-      <DndHandle ref={ref}>
-        <Icon icon="dndHandle" size={16} />
-      </DndHandle>
-      {children}
-    </SItem>
+    <ItemContext.Provider value={{ ref }}>
+      <SItem ref={preview} data-handler-id={handlerId} isDragging={isDragging}>
+        {children}
+      </SItem>
+    </ItemContext.Provider>
   ) : (
     <SItem ref={ref} data-handler-id={handlerId} isDragging={isDragging}>
       {children}
@@ -115,9 +118,4 @@ export default memo(Item);
 const SItem = styled.div<{ isDragging: boolean }>`
   ${({ isDragging }) => `opacity: ${isDragging ? 0 : 1};`}
   cursor: move;
-`;
-
-const DndHandle = styled.div`
-  cursor: move;
-  margin-left: 18em;
 `;
