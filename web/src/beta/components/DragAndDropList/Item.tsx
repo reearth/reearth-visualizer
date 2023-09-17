@@ -22,9 +22,7 @@ type Props = {
   children: ReactNode;
 };
 
-const ItemContext = createContext({
-  ref: null,
-});
+const ItemContext = createContext<React.RefObject<HTMLDivElement> | null>(null);
 
 export const useItemContext = () => useContext(ItemContext);
 const Item: FC<Props> = ({
@@ -101,7 +99,7 @@ const Item: FC<Props> = ({
   drag(drop(ref));
   // eslint-disable-next-line no-prototype-builtins
   return item.hasOwnProperty("extensionId") ? (
-    <ItemContext.Provider value={{ ref }}>
+    <ItemContext.Provider value={ref}>
       <SItem ref={preview} data-handler-id={handlerId} isDragging={isDragging}>
         {children}
       </SItem>

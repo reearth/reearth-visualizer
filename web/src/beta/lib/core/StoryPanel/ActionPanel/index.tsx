@@ -53,9 +53,8 @@ const ActionPanel: React.FC<Props> = ({
 }) => {
   const t = useT();
   const { isHovered: showDndHandle } = useStoryPageContext();
-  const { ref } = useItemContext();
+  const ref = useItemContext();
 
-  console.log(" isOn", isHovered);
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
       {
