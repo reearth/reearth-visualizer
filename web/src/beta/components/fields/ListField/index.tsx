@@ -5,6 +5,7 @@ import DragAndDropList, {
   Props as DragAndDropProps,
 } from "@reearth/beta/components/DragAndDropList";
 import Property from "@reearth/beta/components/fields";
+import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -20,8 +21,6 @@ export type Props = {
   removeItem: (key: string) => void;
   addItem: () => void;
 } & Pick<DragAndDropProps, "onItemDrop">;
-
-// TODO: where would the field rendering logic go??
 
 const ListField: React.FC<Props> = ({
   name,
@@ -54,7 +53,7 @@ const ListField: React.FC<Props> = ({
           getId={getId}
           renderItem={({ id, value }) => (
             <Item onClick={() => setSelected(id)} selected={selected === id}>
-              {value}
+              <Text size="xFootnote">{value}</Text>
             </Item>
           )}
           gap={0}
@@ -89,10 +88,11 @@ const FieldWrapper = styled.div`
   overflow: auto;
 `;
 
-const Item = styled.p<{ selected: boolean }>`
+const Item = styled.div<{ selected: boolean }>`
+  display: flex;
+  align-items: center;
   padding: 0 12px;
   height: 28px;
-  font-size: 12px;
   cursor: pointer;
   background: ${({ theme, selected }) => (selected ? theme.select.main : "inherit")};
   &:hover {
