@@ -15,8 +15,8 @@ input AddStyleInput {
 input UpdateStyleInput {
   StyleId: ID!
   sceneId: ID!
-  name: String!
-  value: JSON!
+  name: String
+  value: JSON
 }
 
 input RemoveStyleInput {

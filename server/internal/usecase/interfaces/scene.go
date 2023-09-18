@@ -70,6 +70,6 @@ type AddStyleInput struct {
 type UpdateStyleInput struct {
 	StyleID id.StyleID
 	SceneID id.SceneID
-	Name    string
+	Name    *string
 	Value   *scene.StyleValue
 }
