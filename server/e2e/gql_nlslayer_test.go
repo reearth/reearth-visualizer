@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -102,8 +101,8 @@ func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateNLSLayer",
-		Query: `mutation UpdateNLSLayer($layerId: ID!, $name: String, $visible: Boolean) {
-			updateNLSLayer(input: {layerId: $layerId, name: $name, visible: $visible}) {
+		Query: `mutation UpdateNLSLayer($layerId: ID!, $name: String, $visible: Boolean, $config: JSON) {
+			updateNLSLayer(input: {layerId: $layerId, name: $name, visible: $visible, config: $config}) {
 				layer {
 					id
 					__typename
@@ -232,8 +231,6 @@ func TestNLSLayerCRUD(t *testing.T) {
 
 	_, res3 := fetchSceneForNewLayers(e, sId)
 
-	// t.Logf("Response after update: %v", res3.Raw())
-
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -241,8 +238,6 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("config").Object().
 		Value("data").Object().
 		Value("value").Equal("secondSampleValue")
-
-	fmt.Printf("Response after update: %v\n", res3.Raw())
 
 	// Remove NLSLayer
 	_, _ = removeNLSLayer(e, layerId)
