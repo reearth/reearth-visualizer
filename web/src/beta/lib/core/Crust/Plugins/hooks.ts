@@ -112,9 +112,9 @@ export default function ({
     return engineRef?.getViewport();
   }, [engineRef]);
 
-  const getCameraFovCenter = useCallback(
-    (withTerrain?: boolean) => {
-      return engineRef?.getCameraFovCenter(withTerrain);
+  const getCameraFovInfo = useCallback(
+    (options: { withTerrain?: boolean; calcViewSize?: boolean }) => {
+      return engineRef?.getCameraFovInfo(options);
     },
     [engineRef],
   );
@@ -330,7 +330,7 @@ export default function ({
         zoomIn,
         zoomOut,
         cameraViewport,
-        getCameraFovCenter,
+        getCameraFovInfo,
         rotateRight,
         orbit,
         captureScreen,
@@ -383,7 +383,7 @@ export default function ({
       zoomIn,
       zoomOut,
       cameraViewport,
-      getCameraFovCenter,
+      getCameraFovInfo,
       rotateRight,
       orbit,
       captureScreen,
