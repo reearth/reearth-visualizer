@@ -1,3 +1,4 @@
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 export const InputGroup: React.FC<{
@@ -88,4 +89,25 @@ export const TextArea = styled.textarea`
   padding: 5px 10px;
   color: ${props => props.theme.content.main};
   overflow: hidden;
+`;
+
+export const LayerWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+export const DeleteLayerIcon = styled(Icon)`
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid #777;
+  padding: 7px 6px;
+  border-radius: 4px;
+  outline: none;
+`;
+
+export const AddLayerWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  margin-top: 5px;
+  justify-content: flex-start;
 `;
