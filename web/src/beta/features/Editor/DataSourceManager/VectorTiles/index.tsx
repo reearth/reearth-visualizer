@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { useT } from "@reearth/services/i18n";
+import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
 import { DataProps } from "..";
 import {
@@ -16,9 +16,6 @@ import {
 } from "../utils";
 
 const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
-  const t = useT();
-  console.log(t);
-
   const [urlValue, setUrlValue] = useState("");
   const [layerValue, setLayerValue] = useState("");
   const [layers, setLayers] = useState<string[]>([]);
@@ -33,15 +30,37 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const handleDeleteLayer = (idx: number) => {
     const updatedLayers = [...layers];
-    const deleted = updatedLayers.splice(idx, 1);
-    console.log(deleted);
-
+    updatedLayers.splice(idx, 1);
     setLayers(updatedLayers);
   };
 
-  console.log("added layers", layers);
   const handleSubmit = () => {
-    console.log("clicked", sceneId, onClose, onSubmit);
+    onSubmit({
+      layerType: "simple",
+      sceneId,
+      title: generateRandomString(5),
+      visible: true,
+      config: {
+        data: {
+          url: urlValue !== "" ? urlValue : null,
+          type: "mvt",
+          layers: layers,
+        },
+        resource: {
+          clampToGround: true,
+        },
+        marker: {
+          heightReference: "clamp",
+        },
+        polygon: {
+          heightReference: "clamp",
+        },
+        polyline: {
+          clampToGround: true,
+        },
+      },
+    });
+    onClose();
   };
 
   return (
