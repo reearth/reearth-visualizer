@@ -1,4 +1,7 @@
+import { useCallback, useState } from "react";
+
 import ColorField from "@reearth/beta/components/fields/ColorField";
+import ListField from "@reearth/beta/components/fields/ListField";
 import LocationField from "@reearth/beta/components/fields/LocationField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -21,8 +24,56 @@ type Props = {
 const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
   const { handlePropertyValueUpdate } = useHooks();
 
+  // Just for the ListItem Property
+  const isList = item && "items" in item;
+  const [listItems, setListItems] = useState<Array<{ id: string; value: string }>>([]);
+
+  const addItem = useCallback(() => {
+    if (!isList) return;
+    // TODO: Won't be a random string. Need fields
+    const randomId = (Math.random() + 1).toString(36).substring(7);
+    setListItems([
+      ...listItems,
+      {
+        id: randomId,
+        value: `Item ${randomId}`,
+      },
+    ]);
+  }, [isList, listItems, setListItems]);
+
+  const removeItem = useCallback(
+    (key: string) => {
+      if (!isList) return;
+      setListItems(listItems.filter(({ id }) => id != key));
+    },
+    [isList, listItems, setListItems],
+  );
+
+  const onItemDrop = useCallback(
+    (item: { id: string; value: string }, index: number) => {
+      if (!isList) return;
+      const items = [...listItems];
+      items.splice(
+        items.findIndex(x => x.id === item.id),
+        1,
+      );
+      items.splice(index, 0, item);
+      setListItems(listItems);
+    },
+    [isList, listItems, setListItems],
+  );
+
   return (
     <>
+      {isList && (
+        <ListField
+          name={item.title}
+          items={listItems}
+          addItem={addItem}
+          removeItem={removeItem}
+          onItemDrop={onItemDrop}
+        />
+      )}
       {item?.schemaFields.map(sf => {
         const isList = item && "items" in item;
         const value = !isList ? item.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
