@@ -44,7 +44,7 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: urlValue !== "" ? urlValue : null,
           type: "mvt",
-          layers: layers,
+          layers: layers.length <= 1 ? layers[0] : layers,
         },
         resource: {
           clampToGround: true,
