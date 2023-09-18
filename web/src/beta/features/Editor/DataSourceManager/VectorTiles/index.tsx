@@ -19,36 +19,69 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   console.log(t);
 
+  const [urlValue, setUrlValue] = useState("");
+  const [layerValue, setLayerValue] = useState("");
+  const [layers, setLayers] = useState<string[]>([]);
+
+  const handleAddLayer = () => {
+    const exist = layers.some((layer: string) => layer === layerValue);
+    if (layerValue.trim() !== "") {
+      if (!exist) setLayers(prev => [...prev, layerValue]);
+      setLayerValue("");
+    }
+  };
+
+  const handleDeleteLayer = (idx: number) => {
+    const updatedLayers = [...layers];
+    const deleted = updatedLayers.splice(idx, 1);
+    console.log(deleted);
+
+    setLayers(updatedLayers);
+  };
+
+  console.log("added layers", layers);
   const handleSubmit = () => {
     console.log("clicked", sceneId, onClose, onSubmit);
   };
 
-  const [value, setValue] = useState("");
   return (
     <ColJustiftBetween>
       <AssetWrapper>
         <InputGroup label="Resource URL" description="URL of the data source you want to add.">
           <Input
             type="text"
-            placeholder="Input Text"
-            value={value}
-            onChange={e => setValue(e.target.value)}
+            placeholder="https://"
+            value={urlValue}
+            onChange={e => setUrlValue(e.target.value)}
           />
         </InputGroup>
         <InputGroup
           label="Choose layer to add"
           description="Layer of the data source you want to add.">
+          {layers.map((layer, index) => (
+            <LayerWrapper key={index}>
+              <Input type="text" placeholder={`${layer}`} disabled={true} />
+              <DeleteLayerIcon icon="bin" size={16} onClick={() => handleDeleteLayer(index)} />
+            </LayerWrapper>
+          ))}
           <LayerWrapper>
             <Input
               type="text"
               placeholder="layer name"
-              value={value}
-              onChange={e => setValue(e.target.value)}
+              value={layerValue}
+              onChange={e => setLayerValue(e.target.value)}
             />
             <DeleteLayerIcon icon="bin" size={16} />
           </LayerWrapper>
           <AddLayerWrapper>
-            <Button icon="plus" text="Layer" buttonType="primary" size="medium" disabled={!value} />
+            <Button
+              icon="plus"
+              text="Layer"
+              buttonType="primary"
+              size="small"
+              onClick={handleAddLayer}
+              disabled={!layerValue}
+            />
           </AddLayerWrapper>
         </InputGroup>
       </AssetWrapper>
@@ -58,7 +91,7 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}
-          disabled={!value}
+          disabled={!urlValue}
         />
       </SubmitWrapper>
     </ColJustiftBetween>
