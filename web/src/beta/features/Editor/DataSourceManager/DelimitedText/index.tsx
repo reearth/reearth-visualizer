@@ -81,7 +81,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         <Text size="body">Point coordinates</Text>
         <InputGroup label="Latitude Field" description="Description around">
           <Input
-            type="number"
+            type="text"
             placeholder="Input Text"
             value={lat}
             onChange={e => setLat(e.target.value)}
@@ -89,7 +89,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         </InputGroup>
         <InputGroup label="Longitude Field" description="Description around">
           <Input
-            type="number"
+            type="text"
             placeholder="Input Text"
             value={long}
             onChange={e => setLong(e.target.value)}
