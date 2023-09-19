@@ -68,8 +68,8 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
           <URLField
             key={sf.id}
             name={sf.name}
-            assetType={"Image"}
-            fileType="Asset"
+            assetType={sf.ui == "image" ? "Image" : sf.ui == "file" ? "File" : undefined}
+            fileType={sf.ui == "video" ? "URL" : "Asset"}
             value={(value as string) ?? ""}
             description={sf.description}
             onChange={handleChange}
