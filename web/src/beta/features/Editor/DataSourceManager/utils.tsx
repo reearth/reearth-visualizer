@@ -52,7 +52,7 @@ export const AssetWrapper = styled.div`
   gap: 16px;
 `;
 
-export const ColJustiftBetween = styled.div`
+export const ColJustifyBetween = styled.div`
   display: flex;
   height: 100%;
   flex-direction: column;

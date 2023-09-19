@@ -8,7 +8,7 @@ import useHooks from "../hooks";
 import {
   AddLayerWrapper,
   AssetWrapper,
-  ColJustiftBetween,
+  ColJustifyBetween,
   DeleteLayerIcon,
   Input,
   InputGroup,
@@ -59,7 +59,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustiftBetween>
+    <ColJustifyBetween>
       <AssetWrapper>
         <InputGroup label="Resource URL" description="URL of the data source you want to add.">
           <Input
@@ -114,7 +114,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           disabled={!urlValue}
         />
       </SubmitWrapper>
-    </ColJustiftBetween>
+    </ColJustifyBetween>
   );
 };
 

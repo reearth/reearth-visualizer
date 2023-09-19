@@ -4,7 +4,7 @@ import Button from "@reearth/beta/components/Button";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
 import { DataProps } from "..";
-import { ColJustiftBetween, AssetWrapper, InputGroup, Input, SubmitWrapper } from "../utils";
+import { ColJustifyBetween, AssetWrapper, InputGroup, Input, SubmitWrapper } from "../utils";
 
 const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [value, setValue] = React.useState("");
@@ -38,7 +38,7 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustiftBetween>
+    <ColJustifyBetween>
       <AssetWrapper>
         <InputGroup label="Resource URL" description="URL of the data source you want to add.">
           <Input
@@ -58,7 +58,7 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           disabled={!value}
         />
       </SubmitWrapper>
-    </ColJustiftBetween>
+    </ColJustifyBetween>
   );
 };
 
