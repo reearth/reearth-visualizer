@@ -118,7 +118,7 @@ export const convert = (
   property: PropertyFragmentFragment | null | undefined,
   merged?: MergedPropertyFragmentFragment | null,
 ) => {
-  if (!property?.schema) return;
+  if (!property?.schema) return null;
   const {
     items,
     schema: { groups: schemaGroups },

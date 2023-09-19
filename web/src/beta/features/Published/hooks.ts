@@ -196,14 +196,14 @@ export default (alias?: string) => {
     return page?.blocks.map(b => {
       return {
         id: b.id,
-        pluginId: "reearth",
-        extensionId: "imageStoryBlock",
-        title: "Image Block",
-        description: "Storytelling Image Block",
+        pluginId: b.plugin,
+        extensionId: b.extensionId,
+        title: "",
+        description: "",
         icon: "",
         property: {
-          id: b.property?.id ?? "",
-          items: [],
+          id: b?.property?.id ?? "",
+          items: [b?.property],
         },
       };
     });
@@ -211,7 +211,7 @@ export default (alias?: string) => {
 
   const installedStoryBlocks = getInstalledStoryBlocks(data?.story?.pages[0]);
 
-  console.log("ops", installedStoryBlocks);
+  console.log("installedStoryBlocks", installedStoryBlocks);
   return {
     alias: actualAlias,
     sceneProperty,

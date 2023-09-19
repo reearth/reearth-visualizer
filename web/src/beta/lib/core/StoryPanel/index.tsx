@@ -1,7 +1,6 @@
 import { FC } from "react";
 
 import { InstalledStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
-import { StoryPage } from "@reearth/services/gql";
 import { styled } from "@reearth/services/theme";
 
 import useHooks, { type GQLStory, type GQLStoryPage } from "./hooks";
@@ -29,7 +28,6 @@ export type StoryPanelProps = {
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
   installedStoryBlocks: InstalledStoryBlock[];
-  publishPage?: StoryPage[];
   onAutoScrollingChange?: (isScrolling: boolean) => void;
   onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
 };
@@ -41,7 +39,6 @@ export const StoryPanel: FC<StoryPanelProps> = ({
   isAutoScrolling,
   installableBlocks,
   installedStoryBlocks,
-  publishPage,
   onAutoScrollingChange,
   onCurrentPageChange,
 }) => {
@@ -60,6 +57,8 @@ export const StoryPanel: FC<StoryPanelProps> = ({
     onCurrentPageChange,
   });
 
+  console.log("installed onlt", installedStoryBlocks);
+
   return (
     <PanelWrapper>
       {!!pageInfo && (
@@ -73,7 +72,6 @@ export const StoryPanel: FC<StoryPanelProps> = ({
         sceneId={sceneId}
         storyId={selectedStory?.id}
         pages={selectedStory?.pages}
-        publishPage={publishPage}
         selectedPageId={selectedPageId}
         installableStoryBlocks={installableBlocks}
         installedStoryBlocks={installedStoryBlocks}

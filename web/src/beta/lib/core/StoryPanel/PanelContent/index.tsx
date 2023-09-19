@@ -15,7 +15,6 @@ export type Props = {
   sceneId?: string;
   storyId?: string;
   pages?: GQLStoryPage[];
-  publishPage: GQLStoryPage[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   installedStoryBlocks: InstalledStoryBlock[];
@@ -34,7 +33,6 @@ const StoryContent: React.FC<Props> = ({
   sceneId,
   storyId,
   pages,
-  publishPage,
   selectedPageId,
   installableStoryBlocks,
   installedStoryBlocks,
@@ -129,30 +127,24 @@ const StoryContent: React.FC<Props> = ({
 
   return (
     <PagesWrapper id={pagesElementId} showingIndicator={showingIndicator}>
-      {pages?.length
-        ? pages?.map(p => (
-            <Fragment key={p.id}>
-              <StoryPage
-                sceneId={sceneId}
-                storyId={storyId}
-                page={p}
-                selectedPageId={selectedPageId}
-                installableStoryBlocks={installableStoryBlocks}
-                installedStoryBlocks={installedStoryBlocks}
-                selectedStoryBlockId={selectedStoryBlockId}
-                showPageSettings={showPageSettings}
-                onPageSettingsToggle={onPageSettingsToggle}
-                onPageSelect={onPageSelect}
-                onBlockSelect={onBlockSelect}
-              />
-              <PageGap height={pageGap} />
-            </Fragment>
-          ))
-        : publishPage?.map(p => (
-            <Fragment key={p.id}>
-              <p>hello</p>
-            </Fragment>
-          ))}
+      {pages?.map(p => (
+        <Fragment key={p.id}>
+          <StoryPage
+            sceneId={sceneId}
+            storyId={storyId}
+            page={p}
+            selectedPageId={selectedPageId}
+            installableStoryBlocks={installableStoryBlocks}
+            installedStoryBlocks={installedStoryBlocks}
+            selectedStoryBlockId={selectedStoryBlockId}
+            showPageSettings={showPageSettings}
+            onPageSettingsToggle={onPageSettingsToggle}
+            onPageSelect={onPageSelect}
+            onBlockSelect={onBlockSelect}
+          />
+          <PageGap height={pageGap} />
+        </Fragment>
+      ))}
     </PagesWrapper>
   );
 };
