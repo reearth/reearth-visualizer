@@ -85,7 +85,6 @@ const InputWrapper = styled.div<{ disabled: boolean }>`
 `;
 
 const Select = styled.div<{ open: boolean; selected: boolean }>`
-  display: flex;
   padding: 4px 8px;
   /* The width + placement of the arrow icon */
   padding-right: 22px;
@@ -95,6 +94,7 @@ const Select = styled.div<{ open: boolean; selected: boolean }>`
   line-height: 2.33;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 12px;
   color: ${({ theme, selected }) => (selected ? theme.content.main : theme.content.weaker)};
   background: ${({ theme }) => theme.bg[1]};
