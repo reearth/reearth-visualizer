@@ -1015,7 +1015,10 @@ func TestStoryPublishing(t *testing.T) {
 
 	_, _, pageID := createPage(e, sID, storyID, "test", true)
 
-	_, _, blockID := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", nil)
+	extensionId := "textStoryBlock"
+	pluginId := "reearth"
+
+	_, _, blockID := createBlock(e, sID, storyID, pageID, pluginId, extensionId, nil)
 
 	_, res := fetchSceneForStories(e, sID)
 	blockPropID := res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].propertyId").Raw().(string)
@@ -1034,7 +1037,7 @@ func TestStoryPublishing(t *testing.T) {
 	_, err = buf.ReadFrom(rc)
 	assert.NoError(t, err)
 
-	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null}]}]}}`, sID, storyID, pageID, blockID))
+	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}]}]}}`, sID, storyID, pageID, blockID, extensionId, pluginId))
 	assert.Regexp(t, pub, buf.String())
 
 	resString := e.GET("/p/test-alias/data.json").
