@@ -55,6 +55,7 @@ input UpdateNLSLayerInput {
     layerId: ID!
     name: String
     visible: Boolean
+    config: JSON
 }
 
 # Payload
@@ -70,11 +71,6 @@ type RemoveNLSLayerPayload {
 type UpdateNLSLayerPayload {
     layer: NLSLayer!
 }
-
-# TODO
-# extend type Query{
-#     newLayer(id: ID!): NLSLayer
-# }
 
 extend type Mutation {
     addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!

@@ -22,6 +22,7 @@ type UpdateNLSLayerInput struct {
 	LayerID id.NLSLayerID
 	Name    *string
 	Visible *bool
+	Config  *nlslayer.Config
 }
 
 type NLSLayer interface {
