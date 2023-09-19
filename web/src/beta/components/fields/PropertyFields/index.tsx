@@ -28,6 +28,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
   const isList = item && "items" in item;
   const [listItems, setListItems] = useState<Array<{ id: string; value: string }>>([]);
 
+  // TODO: Will go in the hooks
   const addItem = useCallback(() => {
     if (!isList) return;
     // TODO: Won't be a random string. Need fields
@@ -74,6 +75,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
           onItemDrop={onItemDrop}
         />
       )}
+      {/* TODO: Wrong logic. Need to fix */}
       {isList &&
         listItems.length > 0 &&
         item?.schemaFields.map(sf => {
