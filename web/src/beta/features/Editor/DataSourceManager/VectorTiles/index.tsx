@@ -103,7 +103,7 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               buttonType="primary"
               size="small"
               onClick={handleLayerInput}
-              disabled={layers.length < 1}
+              disabled={!layerValue && !layers.length}
             />
           </AddLayerWrapper>
         </InputGroup>

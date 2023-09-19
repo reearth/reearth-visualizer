@@ -6,11 +6,22 @@ export default () => {
   const [layers, setLayers] = useState<string[]>([]);
   const [layerInput, setLayerInput] = useState(false);
 
+  const handleonAddLayer = () => {
+    if (layerValue.trim() !== "") {
+      const exist = layers.some((layer: string) => layer === layerValue);
+      if (!exist) setLayers(prev => [...prev, layerValue]);
+      setLayerValue("");
+    }
+  };
+
+  const handleLayerInput = () => {
+    handleonAddLayer();
+    setLayerInput(true);
+  };
+
   const handleAddLayer = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const exist = layers.some((layer: string) => layer === layerValue);
-      if (!exist && layerValue.trim() !== "") setLayers(prev => [...prev, layerValue]);
-      setLayerValue("");
+      handleonAddLayer();
       setLayerInput(false);
     }
   };
@@ -19,10 +30,6 @@ export default () => {
     const updatedLayers = [...layers];
     updatedLayers.splice(idx, 1);
     setLayers(updatedLayers);
-  };
-
-  const handleLayerInput = () => {
-    setLayerInput(true);
   };
 
   return {
