@@ -1,18 +1,15 @@
-import React, { useCallback, useState, ComponentType } from "react";
+import React, { useCallback, useState } from "react";
 
+import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
+import useHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
+import { Asset } from "@reearth/beta/features/Assets/types";
 import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
-import { Props as AssetModalPropsType } from "@reearth/classic/components/molecules/Common/AssetModal";
+import ChooseAssetModal from "@reearth/beta/features/Modals/ChooseAssetModal";
 import { useT } from "@reearth/services/i18n";
+import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-
-import Button from "../../Button";
-
-export type AssetModalProps = Pick<
-  AssetModalPropsType,
-  "isOpen" | "videoOnly" | "initialAssetUrl" | "onSelect" | "toggleAssetModal"
->;
 
 export type Props = {
   value?: string;
@@ -21,28 +18,59 @@ export type Props = {
   description?: string;
   fileType?: "Asset" | "URL";
   assetType?: "Image" | "File";
-  assetModal?: ComponentType<AssetModalProps>;
 };
 
-const URLField: React.FC<Props> = ({
-  name,
-  description,
-  value,
-  fileType,
-  assetType,
-  assetModal: AssetModal,
-  onChange,
-}) => {
+const URLField: React.FC<Props> = ({ name, description, value, fileType, assetType, onChange }) => {
   const t = useT();
-  const [isAssetModalOpen, setAssetModalOpen] = useState(false);
-  //const deleteValue = useCallback(() => onChange?.(undefined), [onChange]);
+  const [open, setOpen] = useState(false);
+  const [currentWorkspace] = useWorkspace();
 
-  const { handleUploadToAsset } = useManageAssets({});
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    searchTerm,
+    selectedAssets,
+    selectAsset,
+    handleGetMoreAssets,
+    createAssets,
+    handleSortChange,
+    handleSearchTerm,
+  } = useHooks({ workspaceId: currentWorkspace?.id });
 
-  const handleAssetModalOpen = useCallback(() => {
-    setAssetModalOpen(!isAssetModalOpen);
-  }, [isAssetModalOpen]);
+  const {
+    localSearchTerm,
+    wrapperRef,
+    onScrollToBottom,
+    sortOptions,
+    handleSearchInputChange,
+    handleUploadToAsset,
+    handleSearch,
+  } = useManageAssets({
+    selectedAssets,
+    searchTerm,
+    isLoading,
+    hasMoreAssets,
+    onGetMore: handleGetMoreAssets,
+    onSortChange: handleSortChange,
+    onCreateAssets: createAssets,
+    onSearch: handleSearchTerm,
+  });
 
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const handleClick = useCallback(() => setOpen(!open), [open]);
+
+  const handleSelect = useCallback(
+    (asset?: Asset) => {
+      if (!asset) return;
+      if (!selectedAssets.includes(asset)) selectAsset([asset]);
+      else selectAsset([]);
+    },
+    [selectedAssets, selectAsset],
+  );
   const handleChange = useCallback(
     (value?: string) => {
       if (!value) return;
@@ -54,7 +82,7 @@ const URLField: React.FC<Props> = ({
   return (
     <Property name={name} description={description}>
       <StyledTextField
-        value={value ? t("Field set") : undefined}
+        value={value !== null ? t("Field set") : undefined}
         onChange={onChange}
         placeholder={t("Not set")}
       />
@@ -64,7 +92,7 @@ const URLField: React.FC<Props> = ({
             icon={assetType === "Image" ? "imageStoryBlock" : "file"}
             text={t("Choose")}
             iconPosition="left"
-            onClick={handleAssetModalOpen}
+            onClick={handleClick}
           />
           <AssetButton
             icon="uploadSimple"
@@ -74,13 +102,26 @@ const URLField: React.FC<Props> = ({
           />
         </ButtonWrapper>
       )}
-      {AssetModal && (
-        <AssetModal
-          isOpen={isAssetModalOpen}
-          videoOnly={fileType == "URL"}
-          initialAssetUrl={value}
+      {open && (
+        <ChooseAssetModal
+          open={open}
+          onClose={handleClose}
+          assetType={assetType}
+          sortOptions={sortOptions}
+          handleSearch={handleSearch}
+          handleSearchInputChange={handleSearchInputChange}
+          localSearchTerm={localSearchTerm}
+          onGetMore={handleGetMoreAssets}
+          onScrollToBottom={onScrollToBottom}
+          selectedAssets={selectedAssets}
+          wrapperRef={wrapperRef}
+          assets={assets}
+          isLoading={isLoading}
+          hasMoreAssets={hasMoreAssets}
+          searchTerm={searchTerm}
+          onSelectAsset={handleSelect}
           onSelect={handleChange}
-          toggleAssetModal={handleAssetModalOpen}
+          onSortChange={handleSortChange}
         />
       )}
     </Property>
