@@ -12,6 +12,8 @@ export type SpacingValues = {
   bottom: number;
 };
 
+const SPACING_POSITIONS = ["top", "left", "right", "bottom"];
+
 type Props = {
   name?: string;
   description?: string;
@@ -27,11 +29,11 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
     value || { top: 0, left: 0, right: 0, bottom: 0 },
   );
 
-  const memoizedSpacingValues = useMemo(() => {
-    return ["top", "left", "right", "bottom"].map(position => {
-      return getSpacingPosition(spacingValues, position as Position);
-    });
-  }, [spacingValues]);
+  const memoizedSpacingValues = useMemo(
+    () =>
+      SPACING_POSITIONS.map(position => getSpacingPosition(spacingValues, position as Position)),
+    [spacingValues],
+  );
 
   const handleInputChange = (position: Position, newValue?: number) => {
     const updatedValues = { ...spacingValues, [position]: newValue };
@@ -42,7 +44,7 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
   return (
     <Property name={name} description={description}>
       <StyledRectangle>
-        {["top", "left", "right", "bottom"].map((position, index) => (
+        {SPACING_POSITIONS.map((position, index) => (
           <SpacingField
             value={memoizedSpacingValues[index]}
             suffix="px"
