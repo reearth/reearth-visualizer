@@ -1,5 +1,5 @@
 import { useReactiveVar } from "@apollo/client";
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
@@ -9,12 +9,12 @@ import { config } from "@reearth/services/config";
 import {
   useSceneMode,
   useIsCapturing,
-  useCamera,
   useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
   selectedWidgetAreaVar,
+  isVisualizerReadyVar,
 } from "@reearth/services/state";
 
 import { convertWidgets, processLayers } from "./convert";
@@ -29,17 +29,15 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
 
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
-  const [camera, onCameraChange] = useCamera();
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
-  const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
-  const [isVisualizerReady, setIsVisualizerReady] = useState(false);
-  const handleMount = useCallback(() => {
-    setIsVisualizerReady(true);
-  }, []);
+  const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
+  const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
+
+  const handleMount = useCallback(() => isVisualizerReadyVar(true), []);
 
   const onBlockMove = useCallback(
     async (_id: string, _fromIndex: number, _toIndex: number) => {
@@ -123,10 +121,10 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     [],
   );
 
-  const onFovChange = useCallback(
-    (fov: number) => camera && onCameraChange({ ...camera, fov }),
-    [camera, onCameraChange],
-  );
+  // const onFovChange = useCallback(
+  //   (fov: number) => camera && onCameraChange({ ...camera, fov }),
+  //   [camera, onCameraChange],
+  // );
 
   useEffect(() => {
     sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
@@ -201,7 +199,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     blocks,
     isCapturing,
     sceneMode,
-    camera,
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
@@ -218,8 +215,6 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     onWidgetUpdate,
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
-    onCameraChange,
-    onFovChange,
     handleDropLayer,
     zoomToLayer,
     handleMount,

@@ -1,22 +1,25 @@
-import { useCallback } from "react";
+import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
+import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import StoryPanel, {
   type InstallableStoryBlock,
   type GQLStory,
   type GQLStoryPage,
 } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
+import type { Camera } from "@reearth/beta/utils/value";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
-import FovSlider from "./FovSlider";
 import useHooks from "./hooks";
 
 export type Props = {
+  visualizerRef?: MutableRefObject<MapRef | null>;
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
+  currentCamera?: Camera;
   // storytelling
   showStoryPanel?: boolean;
   selectedStory?: GQLStory;
@@ -26,12 +29,15 @@ export type Props = {
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
   handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
+  onCameraChange: (camera: Camera) => void;
 };
 
 const Visualizer: React.FC<Props> = ({
+  visualizerRef,
   sceneId,
   isBuilt,
   inEditor,
+  currentCamera,
   showStoryPanel,
   selectedStory,
   currentPage,
@@ -40,6 +46,7 @@ const Visualizer: React.FC<Props> = ({
   onAutoScrollingChange,
   onCurrentPageChange,
   handleMoveBlock,
+  onCameraChange,
 }) => {
   const {
     rootLayerId,
@@ -53,9 +60,6 @@ const Visualizer: React.FC<Props> = ({
     tags,
     selectedLayerId,
     blocks,
-    isCapturing,
-    sceneMode,
-    camera,
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
@@ -71,9 +75,6 @@ const Visualizer: React.FC<Props> = ({
     onWidgetUpdate,
     onWidgetAlignSystemUpdate,
     selectWidgetArea,
-    onIsCapturingChange,
-    onCameraChange,
-    onFovChange,
     handleDropLayer,
     zoomToLayer,
     handleMount,
@@ -91,6 +92,7 @@ const Visualizer: React.FC<Props> = ({
   return (
     <Wrapper>
       <CoreVisualizer
+        ref={visualizerRef}
         engine="cesium"
         isEditable={!isBuilt}
         isBuilt={!!isBuilt}
@@ -109,15 +111,15 @@ const Visualizer: React.FC<Props> = ({
         tags={tags}
         pluginProperty={pluginProperty}
         clusters={clusters}
-        camera={camera}
         ready={isBuilt || (!!layers && !!widgets)}
         pluginBaseUrl={config()?.plugins}
         widgetAlignSystemEditing={widgetAlignEditorActivated}
         meta={engineMeta}
         layerSelectionReason={layerSelectionReason}
         useExperimentalSandbox={useExperimentalSandbox}
-        onLayerSelect={selectLayer}
+        camera={currentCamera}
         onCameraChange={onCameraChange}
+        onLayerSelect={selectLayer}
         onWidgetLayoutUpdate={onWidgetUpdate}
         onWidgetAlignmentUpdate={onWidgetAlignSystemUpdate}
         onWidgetAreaSelect={selectWidgetArea}
@@ -137,18 +139,19 @@ const Visualizer: React.FC<Props> = ({
             currentPage={currentPage}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
+            isEditable={!!inEditor}
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
             handleMoveBlock={handleMoveBlock}
           />
         )}
       </CoreVisualizer>
-      <FovSlider
+      {/* <FovSlider
         visible={isCapturing && sceneMode && sceneMode !== "2d"}
         onIsCapturingChange={onIsCapturingChange}
         camera={camera}
         onFovChange={onFovChange}
-      />
+      /> */}
     </Wrapper>
   );
 };

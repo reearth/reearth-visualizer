@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { LatLng } from "@reearth/beta/utils/value";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import Property from "..";
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const LocationField: React.FC<Props> = ({ name, description, value, onChange }) => {
+  const t = useT();
   const [location, setLocation] = useState<LatLng>(value || { lat: 0, lng: 0 });
 
   const handleChange = useCallback(
@@ -34,12 +36,12 @@ const LocationField: React.FC<Props> = ({ name, description, value, onChange }) 
       <Wrapper>
         <NumberInput
           value={location.lat}
-          inputDescription="Latitude"
+          inputDescription={t("Latitude")}
           onChange={newValue => handleChange("Latitude", newValue)}
         />
         <NumberInput
           value={location.lng}
-          inputDescription="Longitude"
+          inputDescription={t("Longitude")}
           onChange={newValue => handleChange("Longitude", newValue)}
         />
       </Wrapper>

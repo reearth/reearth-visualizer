@@ -7,7 +7,6 @@ import (
 type NLSLayerGroup struct {
 	layerBase
 	children *IDList
-	config   *Config
 	root     bool
 }
 
@@ -123,16 +122,9 @@ func (l *NLSLayerGroup) Clone() Cloner {
 		clonedChildren = l.children.Clone()
 	}
 
-	var clonedConfig *Config
-	if l.config != nil {
-		clonedConfigItem := l.config.Clone()
-		clonedConfig = &clonedConfigItem
-	}
-
 	return &NLSLayerGroup{
 		layerBase: *clonedBase,
 		children:  clonedChildren,
-		config:    clonedConfig,
 		root:      l.root,
 	}
 }

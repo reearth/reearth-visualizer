@@ -1,21 +1,21 @@
+Current Position: Current Position
 Latitude: Latitude
 Longitude: Longitude
-Altitude: Altitude
+Height: Height
+Current Rotation: Current Rotation
 Heading: Heading
 Pitch: Pitch
 Roll: Roll
-Camera Set: ''
-Not Set: Not Set
-Capture: Capture
-Camera Pose Setting: ''
-Position: ''
-Rotation: ''
-Angle: Angle
-Jump: Jump
-Clean Capture: ''
-Color Picker: ''
+Camera Position Editor: Camera Position Editor
 Cancel: Cancel
+Capture: Capture
+Location: Location
+Rotation: Rotation
 Apply: Apply
+Position Set: Position Set
+Not set: Not set
+Edit: Edit
+Color Picker: Color Picker
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
 Please choose an option: ''
@@ -25,10 +25,10 @@ File size: File size
 Alphabetical: Alphabetical
 File Format: ''
 File format of the data source you want to add.: ''
-Source Type: ''
-Select the type of data source you want to add.: ''
 From URL: ''
 From Value: ''
+Source Type: ''
+Select the type of data source you want to add.: ''
 Resource URL: Resource URL
 URL of the data source you want to add.: ''
 Input Text: ''
@@ -79,6 +79,7 @@ Page Settings: Page Settings
 Align System: Align System
 Widget Manager: Widget Manager
 Container Settings: Container Settings
+Angle: Angle
 Narrow: Narrow
 Wide: Wide
 Create New Workspace: Create New Workspace
@@ -186,7 +187,6 @@ Padding settings: Padding settings
 Remove: Remove
 Drop here: Drop here
 Write your story :): Write your story :)
-Double click to start to write your story :): Double click to start to write your story :)
 Normal: Normal
 Heading 1: Heading 1
 Heading 2: Heading 2
@@ -318,8 +318,10 @@ Container: ''
 Create Infobox: Create Infobox
 Dataset: Dataset
 Pose Set: Pose Set
-Position Set: Position Set
+Not Set: Not Set
+Altitude: Altitude
 Check Pose: Check Pose
+Jump: Jump
 Edit Pose: Edit Pose
 Edit Position: Edit Position
 '#RRGGBBAA': '#RRGGBBAA'
@@ -341,7 +343,6 @@ No selectable items: No selectable items
 Font family: Font family
 Font size: Font size
 Field set: Field set
-Not set: Not set
 Basic: Basic
 Template: Template
 template: template

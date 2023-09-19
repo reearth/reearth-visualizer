@@ -2,8 +2,6 @@ export type {
   Camera,
   Typography,
   LatLng,
-  FlyToDestination,
-  LookAtDestination,
   Clock,
   ValueTypes,
   ValueType,

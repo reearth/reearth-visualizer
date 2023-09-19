@@ -1,40 +1,30 @@
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
-import Slider from "@reearth/beta/components/Slider";
 import Text from "@reearth/beta/components/Text";
+// import Slider from "@reearth/beta/components/Slider";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import Property from "..";
 
-type CameraInput = {
-  name: string;
-  field: keyof CameraValue;
-};
+import CapturePanel from "./CapturePanel";
+import EditPanel from "./EditPanel";
 
-export type CameraValue = {
-  lat: number;
-  lng: number;
-  altitude: number;
-  heading: number;
-  pitch: number;
-  roll: number;
-  fov: number;
-};
+type Panel = "editor" | "capture" | undefined;
 
 export type Props = {
   name?: string;
   description?: string;
-  value?: CameraValue;
+  value?: Camera;
   disabled?: boolean;
-  onCapture?: () => void;
-  onJump?: (input: CameraValue) => void;
-  onClean?: () => void;
-  onChange: (value: CameraValue) => void;
+  currentCamera?: Camera;
+  onSave: (value?: Camera) => void;
+  onFlyTo?: FlyTo;
 };
 
 const CameraField: React.FC<Props> = ({
@@ -42,175 +32,94 @@ const CameraField: React.FC<Props> = ({
   description,
   value,
   disabled,
-  onCapture,
-  onJump,
-  onClean,
-  onChange,
+  currentCamera,
+  onSave,
+  onFlyTo,
 }) => {
   const t = useT();
-  const theme = useTheme();
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<Panel>(undefined);
+  const [newCamera, setNewCamera] = useState<Camera | undefined>(currentCamera ?? value);
 
-  const handleJump = useCallback(() => {
-    if (!value) return;
-    onJump?.(value);
-  }, [onJump, value]);
-
-  const handleClose = useCallback(() => setOpen(false), []);
-
-  const handleClick = useCallback(() => setOpen(!open), [open]);
-
-  // Update on single field updates the entire value object
-  const updateField = useCallback(
-    (key: keyof CameraValue, update?: number) => {
-      if (update == undefined) return;
-      const updated = {
+  const handleFieldUpdate = useCallback(
+    (key: keyof Camera, update?: number) => {
+      if (!update || !value) return;
+      const updated: Camera = {
         ...value,
         [key]: update,
       };
-      onChange(updated as CameraValue);
+      setNewCamera(updated);
+      onFlyTo?.(updated);
     },
-    [onChange, value],
+    [value, onFlyTo],
   );
 
-  const {
-    cameraAngleInput,
-    cameraXYZInput,
-  }: { cameraAngleInput: CameraInput[]; cameraXYZInput: CameraInput[] } = useMemo(
-    () => ({
-      cameraXYZInput: [
-        {
-          name: t("Latitude"),
-          field: "lat",
-        },
-        {
-          name: t("Longitude"),
-          field: "lng",
-        },
-        {
-          name: t("Altitude"),
-          field: "altitude",
-        },
-      ],
-      cameraAngleInput: [
-        {
-          name: t("Heading"),
-          field: "heading",
-        },
-        {
-          name: t("Pitch"),
-          field: "pitch",
-        },
-        {
-          name: t("Roll"),
-          field: "roll",
-        },
-      ],
-    }),
-    [t],
+  const handleClose = useCallback(() => setOpen(undefined), []);
+
+  const handleClick = useCallback(
+    (panel: Panel) => setOpen(current => (current === panel ? undefined : panel)),
+    [],
   );
+
+  const handleSave = useCallback(
+    (value?: Camera) => {
+      onSave(value);
+      setOpen(undefined);
+    },
+    [onSave],
+  );
+
+  const handleFlyto = useCallback(() => value && onFlyTo?.(value), [value, onFlyTo]);
+
+  const handleRemoveSetting = useCallback(() => {
+    if (!value) return;
+    handleSave();
+  }, [value, handleSave]);
 
   return (
     <Property name={name} description={description}>
-      <Popover.Provider open={open} placement="bottom-start" onOpenChange={handleClick}>
+      <Popover.Provider open={!!open} placement="bottom-start">
         <Popover.Trigger asChild>
           <InputWrapper disabled={disabled}>
-            <Input
-              value={value ? t("Camera Set") : ""}
-              placeholder={t("Not Set")}
-              disabled={true}
+            <Input positionSet={!!value}>
+              {value && <ZoomToIcon icon="zoomToLayer" size={10} onClick={handleFlyto} />}
+              <Text size="footnote" customColor>
+                {value ? t("Position Set") : t("Not set")}
+              </Text>
+              <DeleteIcon icon="bin" size={10} disabled={!value} onClick={handleRemoveSetting} />
+            </Input>
+            <TriggerButton
+              buttonType="secondary"
+              text={t("Edit")}
+              icon="pencilSimple"
+              size="small"
+              iconPosition="left"
+              onClick={() => handleClick("editor")}
+              disabled={disabled}
             />
-            <CaptureButton
+            <TriggerButton
               buttonType="secondary"
               text={t("Capture")}
               icon="cameraButtonStoryBlock"
               size="small"
               iconPosition="left"
-              onClick={handleClick}
+              onClick={() => handleClick("capture")}
               disabled={disabled}
             />
           </InputWrapper>
         </Popover.Trigger>
-        <PickerWrapper>
-          <HeaderWrapper>
-            <PickerTitle size="footnote" weight="regular" color={theme.content.main}>
-              {t("Camera Pose Setting")}
-            </PickerTitle>
-            <CloseIcon icon="cancel" size={12} onClick={handleClose} />
-          </HeaderWrapper>
-          <MainBodyWrapper>
-            <ValueInputWrapper>
-              <Text size="footnote">{t("Position")}</Text>
-              <ValuesWrapper>
-                {cameraXYZInput.map(({ name, field }) => (
-                  <NumberInput
-                    key={field}
-                    placeholder="-"
-                    inputDescription={name}
-                    value={value?.[field]}
-                    onChange={x => updateField(field, x)}
-                  />
-                ))}
-              </ValuesWrapper>
-            </ValueInputWrapper>
-            <ValueInputWrapper>
-              <Text size="footnote">{t("Rotation")}</Text>
-              <ValuesWrapper>
-                {cameraAngleInput.map(({ name, field }) => (
-                  <NumberInput
-                    key={field}
-                    placeholder="-"
-                    inputDescription={name}
-                    value={value?.[field]}
-                    onChange={x => updateField(field, x)}
-                  />
-                ))}
-              </ValuesWrapper>
-            </ValueInputWrapper>
-            <ValueInputWrapper>
-              <Text size="footnote">{t("Angle")}</Text>
-              <Slider
-                value={value?.["fov"]}
-                min={0}
-                max={180}
-                onChange={x => updateField("fov", x)}
-              />
-            </ValueInputWrapper>
-          </MainBodyWrapper>
-          {onJump && (
-            <FormButtonGroup>
-              <ButtonWrapper
-                buttonType="secondary"
-                text={t("Jump")}
-                onClick={handleJump}
-                size="medium"
-                disabled={!value}
-              />
-            </FormButtonGroup>
-          )}
-          {(onClean || onCapture) && (
-            <FormButtonGroup>
-              {onClean && (
-                <ButtonWrapper
-                  buttonType="secondary"
-                  text={t("Clean Capture")}
-                  onClick={onClean}
-                  size="medium"
-                  disabled={!value}
-                />
-              )}
-              {onCapture && (
-                <ButtonWrapper
-                  buttonType="primary"
-                  text={t("Capture")}
-                  onClick={onCapture}
-                  size="medium"
-                />
-              )}
-            </FormButtonGroup>
-          )}
-        </PickerWrapper>
+        <Popover.Content autoFocus={false}>
+          {open === "capture" ? (
+            <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
+          ) : open === "editor" ? (
+            <EditPanel
+              camera={newCamera}
+              onSave={handleSave}
+              onChange={handleFieldUpdate}
+              onClose={handleClose}
+            />
+          ) : null}
+        </Popover.Content>
       </Popover.Provider>
     </Property>
   );
@@ -223,94 +132,39 @@ const InputWrapper = styled.div<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
-const Input = styled.input`
-  width: 100%;
+const Input = styled.div<{ positionSet?: boolean }>`
   display: flex;
-  padding: 4px 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  flex: 1;
+  padding: 0 8px;
   border-radius: 4px;
-  font-size: 12px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   color: ${({ theme }) => theme.content.main};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+
+  color: ${({ theme, positionSet }) => (positionSet ? theme.content.main : theme.content.weak)};
 `;
 
-const CaptureButton = styled(Button)`
+const TriggerButton = styled(Button)`
   margin: 0;
-  background: ${({ theme }) => theme.bg[1]};
 `;
 
-const PickerWrapper = styled(Popover.Content)`
-  min-width: 286px;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  background: ${({ theme }) => theme.bg[1]};
-  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+const ZoomToIcon = styled(Icon)`
+  :hover {
+    cursor: pointer;
+  }
 `;
 
-const HeaderWrapper = styled.div`
-  display: flex;
-  padding: 4px 8px;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  height: 28px;
-  border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
-`;
-
-const PickerTitle = styled(Text)`
-  text-align: center;
-  margin-right: auto;
-`;
-
-const CloseIcon = styled(Icon)`
-  margin-left: auto;
-  cursor: pointer;
-`;
-
-const MainBodyWrapper = styled.div`
-  display: flex;
-  padding: 16px 8px;
-  flex-direction: column;
-  height: 100%;
-  justify-content: space-evenly;
-`;
-
-const ValueInputWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 8px;
-`;
-
-const ValuesWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 4px;
-  padding-bottom: 4px;
-  width: 100%;
-`;
-
-const FormButtonGroup = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 28px;
-  justify-content: center;
-  border-top: 1px solid ${({ theme }) => theme.bg[3]};
-  padding: 8px;
-  gap: 8px;
-`;
-
-const ButtonWrapper = styled(Button)`
-  height: 27px;
-  width: 100%;
-  padding: 0px;
-  margin: 0px;
+const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
+  ${({ disabled, theme }) =>
+    disabled
+      ? `color: ${theme.content.weaker};`
+      : `:hover {
+    cursor: pointer;
+      }`}
 `;
 
 export default CameraField;
