@@ -21,7 +21,7 @@ const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
 
   const panelContent: { [key: string]: RowType } = useMemo(() => {
     return {
-      [t("CurrentPosition")]: [
+      [t("Current Position")]: [
         { id: "lat", description: t("Latitude") },
         { id: "lng", description: t("Longitude") },
         { id: "height", description: t("Height") },

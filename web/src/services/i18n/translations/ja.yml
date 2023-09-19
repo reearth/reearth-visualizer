@@ -1,20 +1,21 @@
+Current Position: 現地
 Latitude: 緯度
 Longitude: 経度
-Altitude: 高度
+Height: 高さ
+Current Rotation: ''
 Heading: ヘッディング
 Pitch: ピッチ
 Roll: ロール
-Camera Set: ''
-Not Set: 未設定
-Capture: キャプチャ
-Camera Pose Setting: ''
-Position: ''
-Rotation: ''
-Jump: ジャンプ
-Clean Capture: ''
-Color Picker: カラーピッカー
+Camera Position Editor: ''
 Cancel: キャンセル
+Capture: キャプチャ
+Location: ''
+Rotation: ''
 Apply: Apply
+Position Set: 設定済み
+Not set: 未設定
+Edit: 編集
+Color Picker: カラーピッカー
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
 Please choose an option: ''
@@ -22,7 +23,7 @@ Not found: ページが見つかりません
 Date: 作成日時順
 File size: サイズ順
 Alphabetical: 名前順
-File Format: ''
+File Format: ファイルフォーマット
 File format of the data source you want to add.: ''
 From URL: ''
 From Value: ''
@@ -35,7 +36,7 @@ Prioritize Performance: ''
 Value: ''
 Description around.: ''
 Write down your text: ''
-Add to Layer: ''
+Add to Layer: レイヤー追加
 Scene: シーン
 Main: ''
 Layers: レイヤー
@@ -277,7 +278,7 @@ Add: 追加
 Stories: ストーリー
 Delete Selected Layer: 選択中のレイヤーを削除
 Create New Folder: 新規フォルダ作成
-Add Layer: ''
+Add Layer: レイヤー追加
 Zoom To Layer: ''
 Delete the selected item.: 選択中の項目を削除
 Clusters: クラスター
@@ -288,8 +289,10 @@ Container: ''
 Create Infobox: インフォボックス作成
 Dataset: データセット
 Pose Set: 設定済み
-Position Set: 設定済み
+Not Set: 未設定
+Altitude: 高度
 Check Pose: 確認
+Jump: ジャンプ
 Edit Pose: 編集
 Edit Position: 編集
 '#RRGGBBAA': '#RRGGBBAA'
@@ -311,7 +314,6 @@ No selectable items: 選択可能なアイテムがありません
 Font family: フォント
 Font size: サイズ
 Field set: 設定
-Not set: 未設定
 Basic: インフォボックス
 Template: テンプレート
 template: テンプレート
