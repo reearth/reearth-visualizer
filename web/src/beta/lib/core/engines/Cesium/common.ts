@@ -40,7 +40,8 @@ import { useCanvas, useImage } from "@reearth/beta/utils/image";
 import { tweenInterval } from "@reearth/beta/utils/raf";
 import { LatLngHeight } from "@reearth/beta/utils/value";
 
-import type { Camera, CameraOptions, Clock, FlyToDestination } from "..";
+import type { Camera, Clock } from "..";
+import type { CameraOptions, FlyToDestination } from "../../types";
 
 export const layerIdField = `__reearth_layer_id`;
 

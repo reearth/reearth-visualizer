@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -12,6 +12,8 @@ export type SpacingValues = {
   bottom: number;
 };
 
+const SPACING_POSITIONS = ["top", "left", "right", "bottom"];
+
 type Props = {
   name?: string;
   description?: string;
@@ -20,6 +22,7 @@ type Props = {
   max?: number;
   onChange?: (values: SpacingValues) => void;
 };
+
 type Position = keyof SpacingValues;
 
 const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onChange }) => {
@@ -27,11 +30,11 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
     value || { top: 0, left: 0, right: 0, bottom: 0 },
   );
 
-  const memoizedSpacingValues = useMemo(() => {
-    return ["top", "left", "right", "bottom"].map(position => {
-      return getSpacingPosition(spacingValues, position as Position);
-    });
-  }, [spacingValues]);
+  const memoizedSpacingValues = useMemo(
+    () =>
+      SPACING_POSITIONS.map(position => getSpacingPosition(spacingValues, position as Position)),
+    [spacingValues],
+  );
 
   const handleInputChange = (position: Position, newValue?: number) => {
     const updatedValues = { ...spacingValues, [position]: newValue };
@@ -42,7 +45,7 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
   return (
     <Property name={name} description={description}>
       <StyledRectangle>
-        {["top", "left", "right", "bottom"].map((position, index) => (
+        {SPACING_POSITIONS.map((position, index) => (
           <SpacingField
             value={memoizedSpacingValues[index]}
             suffix="px"
@@ -50,6 +53,7 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
             position={position}
             min={min}
             max={max}
+            expandWithContent
             onChange={newValue => handleInputChange(position as Position, newValue)}
           />
         ))}
@@ -70,7 +74,6 @@ const StyledRectangle = styled.div`
 `;
 
 const SpacingField = styled(NumberInput)<{ position: string }>`
-  width: 40px;
   position: absolute;
   ${({ position }) =>
     position === "top"
