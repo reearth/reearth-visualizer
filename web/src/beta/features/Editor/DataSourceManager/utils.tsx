@@ -96,13 +96,14 @@ export const LayerWrapper = styled.div`
   gap: 8px;
 `;
 
-export const DeleteLayerIcon = styled(Icon)`
-  cursor: pointer;
+export const DeleteLayerIcon = styled(Icon)<{ disabled?: boolean }>`
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   background: transparent;
   border: 1px solid #777;
   padding: 7px 6px;
   border-radius: 4px;
   outline: none;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)}; // Reduce opacity for disabled state
 `;
 
 export const AddLayerWrapper = styled.div`

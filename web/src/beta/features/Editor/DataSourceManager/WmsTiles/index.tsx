@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
 import { DataProps } from "..";
+import useHooks from "../hooks";
 import {
   AddLayerWrapper,
   AssetWrapper,
@@ -16,23 +17,17 @@ import {
 } from "../utils";
 
 const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
-  const [urlValue, setUrlValue] = useState("");
-  const [layerValue, setLayerValue] = useState("");
-  const [layers, setLayers] = useState<string[]>([]);
-
-  const handleAddLayer = () => {
-    const exist = layers.some((layer: string) => layer === layerValue);
-    if (layerValue.trim() !== "") {
-      if (!exist) setLayers(prev => [...prev, layerValue]);
-      setLayerValue("");
-    }
-  };
-
-  const handleDeleteLayer = (idx: number) => {
-    const updatedLayers = [...layers];
-    updatedLayers.splice(idx, 1);
-    setLayers(updatedLayers);
-  };
+  const {
+    urlValue,
+    layerValue,
+    layerInput,
+    layers,
+    setUrlValue,
+    setLayerValue,
+    handleAddLayer,
+    handleDeleteLayer,
+    handleLayerInput,
+  } = useHooks();
 
   const handleSubmit = () => {
     onSubmit({
@@ -83,23 +78,29 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               <DeleteLayerIcon icon="bin" size={16} onClick={() => handleDeleteLayer(index)} />
             </LayerWrapper>
           ))}
-          <LayerWrapper>
-            <Input
-              type="text"
-              placeholder="layer name"
-              value={layerValue}
-              onChange={e => setLayerValue(e.target.value)}
-            />
-            <DeleteLayerIcon icon="bin" size={16} />
-          </LayerWrapper>
+          {!layers.length || layerInput ? (
+            <LayerWrapper>
+              <Input
+                type="text"
+                placeholder="layer name"
+                value={layerValue}
+                onChange={e => setLayerValue(e.target.value)}
+                onKeyDown={handleAddLayer}
+              />
+              <DeleteLayerIcon disabled={true} icon="bin" size={16} />
+            </LayerWrapper>
+          ) : (
+            <></>
+          )}
+
           <AddLayerWrapper>
             <Button
               icon="plus"
               text="Layer"
               buttonType="primary"
               size="small"
-              onClick={handleAddLayer}
-              disabled={!layerValue}
+              onClick={handleLayerInput}
+              disabled={layers.length < 1}
             />
           </AddLayerWrapper>
         </InputGroup>
