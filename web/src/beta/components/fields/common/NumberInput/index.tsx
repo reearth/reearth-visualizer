@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";

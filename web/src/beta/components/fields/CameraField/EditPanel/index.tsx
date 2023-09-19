@@ -1,44 +1,48 @@
 import Button from "@reearth/beta/components/Button";
 import NumberInput from "@reearth/beta/components/fields/common/NumberInput";
 import Text from "@reearth/beta/components/Text";
-import { Camera } from "@reearth/beta/utils/value";
+import type { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import PanelCommon from "./PanelCommon";
+import PanelCommon from "../PanelCommon";
+
+import useHooks from "./hooks";
 
 type Props = {
   camera?: Camera;
   onSave: (value?: Camera) => void;
+  onChange?: (key: keyof Camera, update?: number) => void;
   onClose: () => void;
 };
 
-const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
+const EditPanel: React.FC<Props> = ({ camera, onSave, onChange, onClose }) => {
   const t = useT();
+
+  const { panelContent, handleChange } = useHooks({ camera, onChange });
 
   return (
     <PanelCommon title={t("Camera Position Editor")} onClose={onClose}>
-      <FieldGroup>
-        <Text size="footnote">{t("Current Position")}</Text>
-        <InputWrapper>
-          <StyledNumberInput inputDescription={t("Latitude")} value={camera?.lat} disabled />
-          <StyledNumberInput inputDescription={t("Longitude")} value={camera?.lng} disabled />
-          <StyledNumberInput inputDescription={t("Height")} value={camera?.height} disabled />
-        </InputWrapper>
-      </FieldGroup>
-      <FieldGroup>
-        <Text size="footnote">{t("Current Rotation")}</Text>
-        <InputWrapper>
-          <StyledNumberInput inputDescription={t("Heading")} value={camera?.heading} disabled />
-          <StyledNumberInput inputDescription={t("Pitch")} value={camera?.pitch} disabled />
-          <StyledNumberInput inputDescription={t("Roll")} value={camera?.roll} disabled />
-        </InputWrapper>
-      </FieldGroup>
+      {Object.keys(panelContent).map(group => (
+        <FieldGroup key={group}>
+          <Text size="footnote">{group}</Text>
+          <InputWrapper>
+            {panelContent[group].map(field => (
+              <StyledNumberInput
+                key={field.id}
+                inputDescription={field.description}
+                value={camera?.[field.id]}
+                onChange={handleChange(field.id)}
+              />
+            ))}
+          </InputWrapper>
+        </FieldGroup>
+      ))}
       <Divider />
       <ButtonWrapper>
         <StyledButton text={t("Cancel")} size="small" onClick={onClose} />
         <StyledButton
-          text={t("Capture")}
+          text={t("Apply")}
           size="small"
           buttonType="primary"
           onClick={() => onSave(camera)}
@@ -48,7 +52,7 @@ const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
   );
 };
 
-export default CapturePanel;
+export default EditPanel;
 
 const FieldGroup = styled.div`
   display: flex;

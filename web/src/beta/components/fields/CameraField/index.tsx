@@ -108,7 +108,7 @@ const CameraField: React.FC<Props> = ({
             />
           </InputWrapper>
         </Popover.Trigger>
-        <Popover.Content>
+        <Popover.Content autoFocus={false}>
           {open === "capture" ? (
             <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
           ) : open === "editor" ? (
