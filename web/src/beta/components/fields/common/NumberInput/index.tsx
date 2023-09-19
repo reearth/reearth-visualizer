@@ -9,32 +9,31 @@ import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metric
 export type Props = {
   className?: string;
   value?: number;
-  defaultValue?: number;
   inputDescription?: string;
   suffix?: string;
   min?: number;
   max?: number;
   disabled?: boolean;
   placeholder?: string;
+  expandWithContent?: boolean;
   onChange?: (value?: number | undefined) => void;
 };
 
 const NumberInput: React.FC<Props> = ({
   className,
   value,
-  // defaultValue,
   inputDescription,
   suffix,
   min,
   max,
   disabled = false,
   placeholder,
+  expandWithContent,
   onChange,
 }) => {
   const [innerValue, setInnerValue] = useState<number | undefined>(value);
   const [, setNotification] = useNotification();
-  // const inputRef = useRef<HTMLInputElement | null>(null);
-  // const [widthSet, setWidth] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const isEditing = useRef(false);
   const t = useT();
@@ -45,14 +44,13 @@ const NumberInput: React.FC<Props> = ({
     setInnerValue(value);
   }, [value]);
 
-  // useEffect(() => {
-  //   // Calculate and set the minimum width for the input field
-  //   setWidth(true);
-  //   if (inputRef.current && widthSet) {
-  //     const minWidth = Math.max(metricsSizes.xs, inputRef.current.value.length * 10);
-  //     inputRef.current.style.width = `${minWidth}px`;
-  //   }
-  // }, [widthSet]);
+  useEffect(() => {
+    // Calculate and set the minimum width for the input field
+    if (inputRef.current && expandWithContent) {
+      const minWidth = Math.max(metricsSizes.xs, inputRef.current.value.length * 10);
+      inputRef.current.style.width = `${minWidth}px`;
+    }
+  }, [expandWithContent]);
 
   const handleValueChange = useCallback(
     (newValue: number | undefined) => {
@@ -110,20 +108,20 @@ const NumberInput: React.FC<Props> = ({
 
   return (
     <Wrapper className={className}>
-      <InputWrapper inactive={!!disabled}>
+      <InputWrapper inactive={!!disabled} expandWithContent={expandWithContent}>
         <StyledInput
+          ref={inputRef}
           type="number"
+          step="any"
           value={innerValue}
           disabled={disabled}
+          min={min}
+          max={max}
+          placeholder={placeholder}
           onChange={handleChange}
           onKeyPress={handleKeyPress}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          min={min}
-          // ref={inputRef}
-          max={max}
-          step={"any"}
-          placeholder={placeholder}
         />
         {suffix && (
           <TextWrapper
@@ -148,7 +146,7 @@ const Wrapper = styled.div`
   min-width: 0;
 `;
 
-const InputWrapper = styled.div<{ inactive: boolean }>`
+const InputWrapper = styled.div<{ inactive: boolean; expandWithContent?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -158,12 +156,13 @@ const InputWrapper = styled.div<{ inactive: boolean }>`
   border-radius: 4px;
   padding: ${metricsSizes.xs}px ${metricsSizes.s}px;
   gap: 12px;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
   color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
+  ${({ expandWithContent }) => expandWithContent && "min-width: min-content;"}
 
   :focus-within {
     border-color: ${({ theme }) => theme.select.main};
   }
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
 `;
 
 const StyledInput = styled.input`

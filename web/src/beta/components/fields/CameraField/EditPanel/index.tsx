@@ -32,6 +32,7 @@ const EditPanel: React.FC<Props> = ({ camera, onSave, onChange, onClose }) => {
                 key={field.id}
                 inputDescription={field.description}
                 value={camera?.[field.id]}
+                suffix={field.suffix}
                 onChange={handleChange(field.id)}
               />
             ))}

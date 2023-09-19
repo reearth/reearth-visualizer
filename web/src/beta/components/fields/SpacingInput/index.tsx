@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -22,6 +22,7 @@ type Props = {
   max?: number;
   onChange?: (values: SpacingValues) => void;
 };
+
 type Position = keyof SpacingValues;
 
 const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onChange }) => {
@@ -52,6 +53,7 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
             position={position}
             min={min}
             max={max}
+            expandWithContent
             onChange={newValue => handleInputChange(position as Position, newValue)}
           />
         ))}
@@ -72,7 +74,6 @@ const StyledRectangle = styled.div`
 `;
 
 const SpacingField = styled(NumberInput)<{ position: string }>`
-  width: 40px;
   position: absolute;
   ${({ position }) =>
     position === "top"
