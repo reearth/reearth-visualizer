@@ -12,7 +12,7 @@ type Props = {
   title?: string;
   icon?: string;
   isSelected?: boolean;
-  children?: ReactNode;
+  children: ReactNode;
   propertyId?: string;
   propertyItems?: Item[];
   dndEnabled?: boolean;
@@ -20,6 +20,7 @@ type Props = {
   editMode?: boolean;
   position?: ActionPosition;
   noBorder?: boolean;
+  isEditable?: boolean;
   setEditMode?: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
@@ -40,6 +41,7 @@ const SelectableArea: React.FC<Props> = ({
   editMode,
   position,
   noBorder,
+  isEditable,
   setEditMode,
   onEditModeToggle,
   onSettingsToggle,
@@ -55,7 +57,9 @@ const SelectableArea: React.FC<Props> = ({
       setEditMode,
     });
 
-  return (
+  return !isEditable ? (
+    <>{children}</>
+  ) : (
     <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
       <Wrapper
         isSelected={isSelected}
@@ -91,12 +95,7 @@ export default SelectableArea;
 
 const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean }>`
   ${({ noBorder, isSelected, theme }) =>
-    !noBorder &&
-    `
-border-width: 1px;
-border-style: solid;
-border-color: ${isSelected ? theme.select.main : "transparent"};
-`}
+    !noBorder && `border: 1px solid ${isSelected ? theme.select.main : "transparent"};`}
   transition: all 0.3s;
   padding: 1px;
   position: relative;

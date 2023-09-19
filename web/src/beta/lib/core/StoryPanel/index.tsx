@@ -24,6 +24,7 @@ export type StoryPanelProps = {
   sceneId?: string;
   selectedStory?: GQLStory;
   currentPage?: GQLStoryPage;
+  isEditable?: boolean;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
@@ -34,6 +35,7 @@ export const StoryPanel: FC<StoryPanelProps> = ({
   sceneId,
   selectedStory,
   currentPage,
+  isEditable,
   isAutoScrolling,
   installableBlocks,
   onAutoScrollingChange,
@@ -51,6 +53,7 @@ export const StoryPanel: FC<StoryPanelProps> = ({
   } = useHooks({
     selectedStory,
     currentPage,
+    isEditable,
     onCurrentPageChange,
   });
 
@@ -73,6 +76,7 @@ export const StoryPanel: FC<StoryPanelProps> = ({
         showPageSettings={showPageSettings}
         showingIndicator={!!pageInfo}
         isAutoScrolling={isAutoScrolling}
+        isEditable={isEditable}
         onAutoScrollingChange={onAutoScrollingChange}
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}

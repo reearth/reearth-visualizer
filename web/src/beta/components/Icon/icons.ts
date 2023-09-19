@@ -39,6 +39,7 @@ import Install from "./Icons/install.svg";
 import UploadSimple from "./Icons/uploadSimple.svg";
 import Search from "./Icons/search.svg";
 import AddLayerIcon from "./Icons/addLayer.svg";
+import ZoomToLayer from "./Icons/zoomToLayer.svg";
 
 // MSIC
 import CheckCircle from "./Icons/checkCircle.svg";
@@ -109,6 +110,7 @@ import Marketplace from "./Icons/marketplace.svg";
 
 export default {
   addLayer: AddLayerIcon,
+  zoomToLayer: ZoomToLayer,
   file: File,
   dl: InfoTable,
   infobox: Infobox,

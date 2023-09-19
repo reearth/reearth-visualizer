@@ -10,7 +10,7 @@ const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
 export type Props = {
   min?: number;
   max?: number;
-} & Omit<ComponentProps<typeof SliderWithTooltip>, "defaultValue">;
+} & ComponentProps<typeof SliderWithTooltip>;
 
 const Slider: React.FC<Props> = ({ ...props }) => (
   <SliderStyled disabled={props.disabled as boolean}>

@@ -1478,6 +1478,7 @@ type UpdateNLSLayerInput struct {
 	LayerID ID      `json:"layerId"`
 	Name    *string `json:"name"`
 	Visible *bool   `json:"visible"`
+	Config  JSON    `json:"config"`
 }
 
 type UpdateNLSLayerPayload struct {
@@ -1554,10 +1555,10 @@ type UpdateStoryPageInput struct {
 }
 
 type UpdateStyleInput struct {
-	StyleID ID     `json:"StyleId"`
-	SceneID ID     `json:"sceneId"`
-	Name    string `json:"name"`
-	Value   JSON   `json:"value"`
+	StyleID ID      `json:"StyleId"`
+	SceneID ID      `json:"sceneId"`
+	Name    *string `json:"name"`
+	Value   JSON    `json:"value"`
 }
 
 type UpdateStylePayload struct {
