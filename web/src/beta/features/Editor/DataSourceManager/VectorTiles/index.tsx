@@ -2,6 +2,7 @@ import { FC } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
+import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
 import useHooks from "../hooks";
@@ -28,6 +29,8 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     handleDeleteLayer,
     handleLayerInput,
   } = useHooks();
+
+  const t = useT();
 
   const handleSubmit = () => {
     onSubmit({
@@ -61,7 +64,9 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   return (
     <ColJustifyBetween>
       <AssetWrapper>
-        <InputGroup label="Resource URL" description="URL of the data source you want to add.">
+        <InputGroup
+          label={t("Resource URL")}
+          description={t("URL of the data source you want to add.")}>
           <Input
             type="text"
             placeholder="https://"
@@ -70,33 +75,31 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           />
         </InputGroup>
         <InputGroup
-          label="Choose layer to add"
-          description="Layer of the data source you want to add.">
-          {layers.map((layer, index) => (
+          label={t("Choose layer to add")}
+          description={t("Layer of the data source you want to add.")}>
+          {layers.map((layer: string, index: number) => (
             <LayerWrapper key={index}>
               <Input type="text" placeholder={`${layer}`} disabled={true} />
               <DeleteLayerIcon icon="bin" size={16} onClick={() => handleDeleteLayer(index)} />
             </LayerWrapper>
           ))}
-          {!layers.length || layerInput ? (
+          {(!layers.length || layerInput) && (
             <LayerWrapper>
               <Input
                 type="text"
-                placeholder="layer name"
+                placeholder={t("layer name")}
                 value={layerValue}
                 onChange={e => setLayerValue(e.target.value)}
                 onKeyDown={handleAddLayer}
               />
               <DeleteLayerIcon disabled={true} icon="bin" size={16} />
             </LayerWrapper>
-          ) : (
-            <></>
           )}
 
           <AddLayerWrapper>
             <Button
               icon="plus"
-              text="Layer"
+              text={t("Layer")}
               buttonType="primary"
               size="small"
               onClick={handleLayerInput}
@@ -107,7 +110,7 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       </AssetWrapper>
       <SubmitWrapper>
         <Button
-          text="Add to Layer"
+          text={t("Add to Layer")}
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}
