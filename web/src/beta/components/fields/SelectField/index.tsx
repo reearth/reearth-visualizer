@@ -31,7 +31,6 @@ const SelectField: React.FC<Props> = ({
   disabled = false,
   name,
   description,
-  placeholder,
 }) => {
   const t = useT();
 
@@ -57,7 +56,7 @@ const SelectField: React.FC<Props> = ({
         <Popover.Trigger asChild>
           <InputWrapper disabled={disabled} onClick={handlePopOver}>
             <Select selected={selected ? true : false} open={open}>
-              {selected ? selected.label : placeholder ? placeholder : t("Please choose an option")}
+              {selected ? selected.label : t("Please choose an option")}
             </Select>
             <ArrowIcon icon="arrowDown" open={open} size={12} />
           </InputWrapper>

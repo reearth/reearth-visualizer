@@ -40,7 +40,6 @@ export const Default: Story = (args: Props) => {
           name="Empty"
           value={undefined}
           description="Even if you try, you won't be able to select the value"
-          placeholder="This is a disabled field, so can't click this one"
           onChange={handleChange}
         />
       </div>
