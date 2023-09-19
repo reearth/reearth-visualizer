@@ -58,6 +58,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
+    handleMoveBlock,
   } = useStorytelling({
     sceneId,
     stories,
@@ -145,6 +146,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
                 installableBlocks={installableStoryBlocks}
                 onAutoScrollingChange={handleAutoScrollingChange}
                 onCurrentPageChange={handleCurrentPageChange}
+                handleMoveBlock={handleMoveBlock}
               />
             </VisualizerWrapper>
           </Center>

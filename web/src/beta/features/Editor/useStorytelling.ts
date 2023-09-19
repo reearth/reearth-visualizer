@@ -20,6 +20,7 @@ export default function ({ sceneId, stories }: Props) {
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
+    useMoveStoryBlock,
     useInstallableStoryBlocksQuery,
   } = useStorytellingAPI();
 
@@ -109,6 +110,19 @@ export default function ({ sceneId, stories }: Props) {
     [useMoveStoryPage, selectedStory],
   );
 
+  const handleMoveBlock = useCallback(
+    async (id: string, targetIndex: number, blockId: string) => {
+      if (!selectedStory) return;
+      await useMoveStoryBlock({
+        storyId: selectedStory.id,
+        pageId: id,
+        index: targetIndex,
+        blockId,
+      });
+    },
+    [useMoveStoryBlock, selectedStory],
+  );
+
   return {
     selectedStory,
     currentPage,
@@ -120,5 +134,6 @@ export default function ({ sceneId, stories }: Props) {
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
+    handleMoveBlock,
   };
 }

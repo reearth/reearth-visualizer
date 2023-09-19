@@ -36,6 +36,7 @@ type Props = {
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockSelect: (blockId?: string) => void;
+  handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryPageContext = createContext({
@@ -58,6 +59,7 @@ const StoryPage: React.FC<Props> = ({
   onPageSettingsToggle,
   onPageSelect,
   onBlockSelect,
+  handleMoveBlock,
 }) => {
   const t = useT();
   const propertyItems = useMemo(() => convert(page?.property), [page?.property]);
@@ -157,6 +159,7 @@ const StoryPage: React.FC<Props> = ({
                     items.splice(index, 0, item);
                     return items;
                   });
+                  await handleMoveBlock(page?.id || "", index, item.id);
                 }}
                 renderItem={(block, i) => {
                   return (

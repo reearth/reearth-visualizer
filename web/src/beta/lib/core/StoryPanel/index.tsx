@@ -28,6 +28,7 @@ export type StoryPanelProps = {
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
+  handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
 };
 
 export const StoryPanel: FC<StoryPanelProps> = ({
@@ -38,6 +39,7 @@ export const StoryPanel: FC<StoryPanelProps> = ({
   installableBlocks,
   onAutoScrollingChange,
   onCurrentPageChange,
+  handleMoveBlock,
 }) => {
   const {
     pageInfo,
@@ -78,6 +80,7 @@ export const StoryPanel: FC<StoryPanelProps> = ({
         onPageSelect={handlePageSelect}
         onBlockSelect={handleBlockSelect}
         onCurrentPageChange={handleCurrentPageChange}
+        handleMoveBlock={handleMoveBlock}
       />
     </PanelWrapper>
   );

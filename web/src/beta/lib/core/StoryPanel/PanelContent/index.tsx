@@ -23,6 +23,7 @@ export type Props = {
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockSelect: (blockId?: string) => void;
   onCurrentPageChange?: (pageId: string) => void;
+  handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryContent: React.FC<Props> = ({
@@ -40,6 +41,7 @@ const StoryContent: React.FC<Props> = ({
   onPageSelect,
   onBlockSelect,
   onCurrentPageChange,
+  handleMoveBlock,
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
@@ -135,6 +137,7 @@ const StoryContent: React.FC<Props> = ({
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
             onBlockSelect={onBlockSelect}
+            handleMoveBlock={handleMoveBlock}
           />
           <PageGap height={pageGap} />
         </Fragment>
