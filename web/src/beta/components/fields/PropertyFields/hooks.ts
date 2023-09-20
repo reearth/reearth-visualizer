@@ -4,7 +4,8 @@ import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { usePropertyFetcher } from "@reearth/services/api";
 
 export default () => {
-  const { useUpdatePropertyValue } = usePropertyFetcher();
+  const { useUpdatePropertyValue, useAddPropertyItem, useRemovePropertyItem, useMovePropertyItem } =
+    usePropertyFetcher();
 
   const handlePropertyValueUpdate = useCallback(
     (
@@ -21,7 +22,31 @@ export default () => {
     [useUpdatePropertyValue],
   );
 
+  const handleAddPropertyItem = useCallback(
+    (propertyId: string, schemaGroupId: string) => {
+      return useAddPropertyItem(propertyId, schemaGroupId);
+    },
+    [useAddPropertyItem],
+  );
+
+  const handleRemovePropertyItem = useCallback(
+    (propertyId: string, schemaGroupId: string, itemId: string) => {
+      return useRemovePropertyItem(propertyId, schemaGroupId, itemId);
+    },
+    [useRemovePropertyItem],
+  );
+
+  const handleMovePropertyItem = useCallback(
+    (propertyId: string, schemaGroupId: string, itemId: string, index: number) => {
+      return useMovePropertyItem(propertyId, schemaGroupId, itemId, index);
+    },
+    [useMovePropertyItem],
+  );
+
   return {
     handlePropertyValueUpdate,
+    handleAddPropertyItem,
+    handleRemovePropertyItem,
+    handleMovePropertyItem,
   };
 };

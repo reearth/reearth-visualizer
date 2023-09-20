@@ -1,8 +1,10 @@
+import { TRANSFORMERS } from "@lexical/markdown";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { EditorState } from "lexical";
@@ -101,6 +103,7 @@ const RichTextEditor: React.FC<Props> = ({
           <ListMaxIndentLevelPlugin maxDepth={7} />
           <OnChangePlugin onChange={onStateChange} />
           <SwitchEditModePlugin editable={editMode} />
+          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
           {editorRef.current && (
             <FloatingLinkEditorPlugin
               scrollableContainerId={scrollableContainerId}

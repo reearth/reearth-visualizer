@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
@@ -22,71 +22,108 @@ type Props = {
 };
 
 const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
-  const { handlePropertyValueUpdate } = useHooks();
+  const {
+    handlePropertyValueUpdate,
+    handleAddPropertyItem,
+    handleRemovePropertyItem,
+    handleMovePropertyItem,
+  } = useHooks();
 
   // Just for the ListItem Property
   const isList = item && "items" in item;
-  const [listItems, setListItems] = useState<Array<{ id: string; value: string }>>([]);
 
-  // TODO: Will go in the hooks
-  const addItem = useCallback(() => {
+  // TODO: Only applies to list, should be refactored
+  const [selected, setSelected] = useState<string | undefined>();
+
+  const propertyListItems: Array<{ id: string; value: string }> = useMemo(
+    () =>
+      isList
+        ? item.items
+            .filter(i => "id" in i)
+            .map(i => {
+              const representativeField = item?.representativeField
+                ? i.fields.find(f => f.id === item.representativeField)
+                : undefined;
+              const nameSchemaField = item?.schemaFields?.find(
+                sf => sf.id === item.representativeField,
+              );
+
+              const value = representativeField?.value || nameSchemaField?.defaultValue;
+
+              const choice = nameSchemaField?.choices
+                ? nameSchemaField?.choices?.find(c => c.key === value)?.label
+                : undefined;
+
+              const title = choice || value;
+
+              return {
+                id: i.id,
+                value: title as string,
+              };
+            })
+        : [],
+    [isList, item],
+  );
+
+  // TODO: Will go in the hooks. Uses the common propertyId and schemaGroup param
+  const addItem = useCallback(async () => {
     if (!isList) return;
-    // TODO: Won't be a random string. Need fields
-    const randomId = (Math.random() + 1).toString(36).substring(7);
-    setListItems([
-      ...listItems,
-      {
-        id: randomId,
-        value: `Item ${randomId}`,
-      },
-    ]);
-  }, [isList, listItems, setListItems]);
+    handleAddPropertyItem(propertyId, item.schemaGroup);
+  }, [isList, propertyId, item?.schemaGroup, handleAddPropertyItem]);
 
   const removeItem = useCallback(
-    (key: string) => {
+    (id: string) => {
       if (!isList) return;
-      setListItems(listItems.filter(({ id }) => id != key));
+      handleRemovePropertyItem(propertyId, item.schemaGroup, id);
     },
-    [isList, listItems, setListItems],
+    [isList, propertyId, item?.schemaGroup, handleRemovePropertyItem],
   );
 
   const onItemDrop = useCallback(
-    (item: { id: string; value: string }, index: number) => {
+    ({ id }: { id: string }, index: number) => {
       if (!isList) return;
-      const items = [...listItems];
-      items.splice(
-        items.findIndex(x => x.id === item.id),
-        1,
-      );
-      items.splice(index, 0, item);
-      setListItems(listItems);
+      handleMovePropertyItem(propertyId, item.schemaGroup, id, index);
     },
-    [isList, listItems, setListItems],
+    [isList, propertyId, item?.schemaGroup, handleMovePropertyItem],
   );
+
+  // TODO: Double check this
+  const showFields = useMemo(() => {
+    return isList ? (selected ? item.items.find(({ id }) => id == selected) : false) : true;
+  }, [item, selected, isList]);
+
+  // TODO: Remove debugging code
+  console.log(isList, item);
 
   return (
     <>
       {isList && (
         <ListField
           name={item.title}
-          items={listItems}
+          items={propertyListItems}
           addItem={addItem}
           removeItem={removeItem}
           onItemDrop={onItemDrop}
+          selected={selected}
+          onSelect={setSelected}
         />
       )}
-      {/* TODO: Wrong logic. Need to fix */}
-      {isList &&
-        listItems.length > 0 &&
+      {showFields &&
         item?.schemaFields.map(sf => {
           const isList = item && "items" in item;
-          const value = !isList ? item.fields.find(f => f.id === sf.id)?.value : sf.defaultValue;
+          // if it's a list and there's no selected, return empty. TODO: Could very well be optimized
+
+          // TODO: fix type errors here
+          const value = isList
+            ? item.items.find(({ id }) => selected == id)?.fields.find(f => f.id == sf.id)?.value
+            : item.fields.find(f => f.id === sf.id)?.value;
 
           const handleChange = handlePropertyValueUpdate(
             item.schemaGroup,
             propertyId,
             sf.id,
             sf.type,
+            selected,
           );
 
           return sf.type === "string" ? (
@@ -146,6 +183,8 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
                 max={sf.max}
                 description={sf.description}
                 onChange={handleChange}
+                // TODO: Where should the step come from?
+                step={0.1}
               />
             ) : (
               <NumberField
