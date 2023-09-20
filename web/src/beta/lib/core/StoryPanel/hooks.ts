@@ -1,19 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 
-import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 
-export type {
-  StoryFragmentFragment as GQLStory,
-  StoryPageFragmentFragment as GQLStoryPage,
-} from "@reearth/services/gql";
+export type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 
 export default ({
   selectedStory,
   currentPage,
+  isEditable,
   onCurrentPageChange,
 }: {
-  selectedStory?: StoryFragmentFragment;
-  currentPage?: StoryPageFragmentFragment;
+  selectedStory?: Story;
+  currentPage?: Page;
+  isEditable?: boolean;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 }) => {
   const [showPageSettings, setShowPageSettings] = useState(false);
@@ -21,28 +20,30 @@ export default ({
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
 
   const handlePageSettingsToggle = useCallback(() => {
-    if (!selectedPageId) return;
+    if (!selectedPageId && !isEditable) return;
     setShowPageSettings(show => !show);
-  }, [selectedPageId]);
+  }, [selectedPageId, isEditable]);
 
   const handlePageSelect = useCallback(
     (pageId?: string) => {
+      if (!isEditable) return;
       if (selectedBlockId) {
         setSelectedBlockId(undefined);
       }
       setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
     },
-    [selectedBlockId],
+    [selectedBlockId, isEditable],
   );
 
   const handleBlockSelect = useCallback(
     (blockId?: string) => {
+      if (!isEditable) return;
       if (selectedPageId) {
         setSelectedPageId(undefined);
       }
       setSelectedBlockId(id => (!blockId || id === blockId ? undefined : blockId));
     },
-    [selectedPageId],
+    [selectedPageId, isEditable],
   );
 
   const handleCurrentPageChange = useCallback(

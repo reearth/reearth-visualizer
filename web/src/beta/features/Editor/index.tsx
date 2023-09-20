@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 import Resizable from "@reearth/beta/components/Resizable";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
@@ -8,7 +6,6 @@ import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { StoryFragmentFragment } from "@reearth/services/gql";
 import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
@@ -21,30 +18,26 @@ type Props = {
   tab: Tab;
   projectId?: string;
   workspaceId?: string;
-  stories: StoryFragmentFragment[];
 };
 
-const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
-  const [showDataSourceManager, setShowDataSourceManager] = useState(false);
-
-  const handleDataSourceManagerCloser = () => {
-    setShowDataSourceManager(false);
-  };
-
-  const handleDataSourceManagerOpener = () => {
-    setShowDataSourceManager(true);
-  };
-
+const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
+    visualizerRef,
     selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
     showWidgetEditor,
+    showDataSourceManager,
+    currentCamera,
+    handleDataSourceManagerCloser,
+    handleDataSourceManagerOpener,
     handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
+    handleFlyTo,
+    handleCameraUpdate,
   } = useHooks({ sceneId, tab });
 
   const {
@@ -60,7 +53,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     handlePageMove,
   } = useStorytelling({
     sceneId,
-    stories,
+    onFlyTo: handleFlyTo,
   });
 
   const {
@@ -97,7 +90,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     tab,
     sceneId,
     currentPage,
+    currentCamera,
     showSceneSettings: selectedSceneSetting,
+    onFlyTo: handleFlyTo,
   });
 
   const { secondaryNavbar } = useSecondaryNavbar({
@@ -137,14 +132,18 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
               hasNav={!!secondaryNavbar}
               visualizerWidth={visualizerWidth}>
               <Visualizer
+                inEditor
+                visualizerRef={visualizerRef}
                 sceneId={sceneId}
                 showStoryPanel={selectedProjectType === "story"}
                 selectedStory={selectedStory}
                 currentPage={currentPage}
                 isAutoScrolling={isAutoScrolling}
                 installableBlocks={installableStoryBlocks}
+                currentCamera={currentCamera}
                 onAutoScrollingChange={handleAutoScrollingChange}
                 onCurrentPageChange={handleCurrentPageChange}
+                onCameraChange={handleCameraUpdate}
               />
             </VisualizerWrapper>
           </Center>
