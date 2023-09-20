@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import DragAndDropList, {
@@ -18,8 +18,10 @@ export type Props = {
   name?: string;
   description?: string;
   items: ListItem[];
-  removeItem: (key: string) => void;
+  removeItem: (id: string) => void;
   addItem: () => void;
+  onSelect: (id: string) => void;
+  selected?: string;
 } & Pick<DragAndDropProps, "onItemDrop">;
 
 const ListField: React.FC<Props> = ({
@@ -29,19 +31,25 @@ const ListField: React.FC<Props> = ({
   removeItem,
   addItem,
   onItemDrop,
+  onSelect,
+  selected,
 }: Props) => {
   const t = useT();
-  const [selected, setSelected] = useState<string | null>(null);
 
   const deleteItem = useCallback(() => {
     if (!selected) return;
     removeItem(selected);
-    setSelected(null);
   }, [selected, removeItem]);
 
   const getId = useCallback(({ id }: ListItem) => {
     return id;
   }, []);
+
+  const disableRemoveButton = useMemo(() => {
+    if (!selected) return true;
+
+    return !items.find(({ id }) => id == selected);
+  }, [items, selected]);
 
   return (
     <Property name={name} description={description}>
@@ -52,7 +60,7 @@ const ListField: React.FC<Props> = ({
           onItemDrop={onItemDrop}
           getId={getId}
           renderItem={({ id, value }) => (
-            <Item onClick={() => setSelected(id)} selected={selected === id}>
+            <Item onClick={() => onSelect(id)} selected={selected === id}>
               <Text size="xFootnote">{value}</Text>
             </Item>
           )}
@@ -66,7 +74,7 @@ const ListField: React.FC<Props> = ({
           buttonType="secondary"
           text={t("Remove")}
           size="medium"
-          disabled={!selected}
+          disabled={disableRemoveButton}
         />
         <ButtonWrapper
           onClick={addItem}

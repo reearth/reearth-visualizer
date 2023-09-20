@@ -50,10 +50,18 @@ export const Default: Story = (args: Props) => {
     [updateArgs, args.items],
   );
 
+  const onSelect = useCallback((id: string) => updateArgs({ selected: id }), [updateArgs]);
+
   return (
     <Wrapper>
       <div>
-        <ListField {...args} addItem={addItem} removeItem={removeItem} onItemDrop={onItemDrop} />
+        <ListField
+          {...args}
+          addItem={addItem}
+          removeItem={removeItem}
+          onItemDrop={onItemDrop}
+          onSelect={onSelect}
+        />
       </div>
     </Wrapper>
   );
