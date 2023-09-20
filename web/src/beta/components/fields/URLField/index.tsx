@@ -4,7 +4,11 @@ import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import useHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
-import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
+import {
+  FILE_FORMATS,
+  IMAGE_FORMATS,
+  VIDEO_FORMATS,
+} from "@reearth/beta/features/Assets/constants";
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import ChooseAssetModal from "@reearth/beta/features/Modals/ChooseAssetModal";
@@ -84,20 +88,28 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
       if (!inputValue) return;
 
       if (
-        !checkIfFileType(inputValue, FILE_FORMATS) &&
-        !checkIfFileType(inputValue, IMAGE_FORMATS)
+        fileType === "asset" &&
+        !(checkIfFileType(inputValue, FILE_FORMATS) || checkIfFileType(inputValue, IMAGE_FORMATS))
       ) {
         setNotification({
           type: "error",
-          text: t("wrong URL Format"),
+          text: t("wrong File URL Format"),
+        });
+        setCurrentValue(undefined);
+        return;
+      } else if (fileType === "URL" && !checkIfFileType(inputValue, VIDEO_FORMATS)) {
+        setNotification({
+          type: "error",
+          text: t("wrong Video URL  Format"),
         });
         setCurrentValue(undefined);
         return;
       }
+
       setCurrentValue(inputValue);
       onChange?.(inputValue);
     },
-    [onChange, setNotification, t],
+    [fileType, onChange, setNotification, t],
   );
 
   return (
