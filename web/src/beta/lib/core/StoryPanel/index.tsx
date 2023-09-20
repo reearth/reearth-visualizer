@@ -1,5 +1,3 @@
-import { FC } from "react";
-
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { InstalledStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
@@ -43,7 +41,7 @@ export type StoryPanelProps = {
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 };
 
-export const StoryPanel: FC<StoryPanelProps> = ({
+export const StoryPanel: React.FC<StoryPanelProps> = ({
   selectedStory,
   currentPage,
   isEditable,

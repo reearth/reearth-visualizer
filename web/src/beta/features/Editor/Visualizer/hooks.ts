@@ -4,7 +4,7 @@ import { useMemo, useEffect, useCallback } from "react";
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
-import { ValueType } from "@reearth/beta/utils/value";
+import type { ValueType } from "@reearth/beta/utils/value";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -25,7 +25,7 @@ import {
 } from "@reearth/services/state";
 
 import { convertWidgets, processLayers } from "./convert";
-import { BlockType } from "./type";
+import type { BlockType } from "./type";
 
 export default ({
   sceneId,
