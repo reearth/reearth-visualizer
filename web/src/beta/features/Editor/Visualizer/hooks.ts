@@ -9,7 +9,7 @@ import {
   useLayersFetcher,
   useSceneFetcher,
   useWidgetsFetcher,
-  useStorytellingFetcher,
+  useStoryTellingFetcher,
   usePropertyFetcher,
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
@@ -42,7 +42,7 @@ export default ({
   const { useGetLayersQuery } = useLayersFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
-    useStorytellingFetcher();
+    useStoryTellingFetcher();
   const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
