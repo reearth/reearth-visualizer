@@ -1,37 +1,45 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import {
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type {
   InstallableStoryBlock,
   InstalledStoryBlock,
 } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
-import { GQLStoryPage } from "../hooks";
+import type { Page } from "../hooks";
 import StoryPage from "../Page";
 
-export const pagesElementId = "story-page-content";
+export const PAGES_ELEMENT_ID = "story-page-content";
 
 export type Props = {
-  sceneId?: string;
-  storyId?: string;
-  pages?: GQLStoryPage[];
+  pages?: Page[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
-  installedStoryBlocks: InstalledStoryBlock[];
+  installedStoryBlocks?: InstalledStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   showingIndicator?: boolean;
   isAutoScrolling?: boolean;
+  isEditable?: boolean;
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockSelect: (blockId?: string) => void;
+  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockSelect?: (blockId?: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
   onCurrentPageChange?: (pageId: string) => void;
 };
 
 const StoryContent: React.FC<Props> = ({
-  sceneId,
-  storyId,
   pages,
   selectedPageId,
   installableStoryBlocks,
@@ -40,10 +48,14 @@ const StoryContent: React.FC<Props> = ({
   showPageSettings,
   showingIndicator,
   isAutoScrolling,
+  isEditable,
   onAutoScrollingChange,
   onPageSettingsToggle,
   onPageSelect,
+  onBlockCreate,
+  onBlockDelete,
   onBlockSelect,
+  onPropertyUpdate,
   onCurrentPageChange,
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
@@ -52,13 +64,13 @@ const StoryContent: React.FC<Props> = ({
   const [pageGap, setPageGap] = useState<number>();
 
   useLayoutEffect(() => {
-    const pageWrapperElement = document.getElementById(pagesElementId);
+    const pageWrapperElement = document.getElementById(PAGES_ELEMENT_ID);
     if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
   }, [setPageGap]);
 
   useEffect(() => {
     const resizeCallback = () => {
-      const pageWrapperElement = document.getElementById(pagesElementId);
+      const pageWrapperElement = document.getElementById(PAGES_ELEMENT_ID);
       if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
     };
     window.addEventListener("resize", resizeCallback);
@@ -67,7 +79,7 @@ const StoryContent: React.FC<Props> = ({
 
   useEffect(() => {
     const ids = pages?.map(p => p.id) as string[];
-    const panelContentElement = document.getElementById(pagesElementId);
+    const panelContentElement = document.getElementById(PAGES_ELEMENT_ID);
 
     const observer = new IntersectionObserver(
       entries => {
@@ -114,7 +126,7 @@ const StoryContent: React.FC<Props> = ({
   }, [pages, selectedPageId, isAutoScrolling, onCurrentPageChange]);
 
   useEffect(() => {
-    const wrapperElement = document.getElementById(pagesElementId);
+    const wrapperElement = document.getElementById(PAGES_ELEMENT_ID);
     if (isAutoScrolling) {
       wrapperElement?.addEventListener("scroll", () => {
         clearTimeout(scrollTimeoutRef.current);
@@ -126,21 +138,23 @@ const StoryContent: React.FC<Props> = ({
   }, [isAutoScrolling, onAutoScrollingChange]);
 
   return (
-    <PagesWrapper id={pagesElementId} showingIndicator={showingIndicator}>
+    <PagesWrapper id={PAGES_ELEMENT_ID} showingIndicator={showingIndicator} isEditable={isEditable}>
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage
-            sceneId={sceneId}
-            storyId={storyId}
             page={p}
             selectedPageId={selectedPageId}
             installableStoryBlocks={installableStoryBlocks}
             installedStoryBlocks={installedStoryBlocks}
             selectedStoryBlockId={selectedStoryBlockId}
             showPageSettings={showPageSettings}
+            isEditable={isEditable}
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
+            onBlockCreate={onBlockCreate}
+            onBlockDelete={onBlockDelete}
             onBlockSelect={onBlockSelect}
+            onPropertyUpdate={onPropertyUpdate}
           />
           <PageGap height={pageGap} />
         </Fragment>
@@ -151,10 +165,10 @@ const StoryContent: React.FC<Props> = ({
 
 export default StoryContent;
 
-const PagesWrapper = styled.div<{ showingIndicator?: boolean }>`
+const PagesWrapper = styled.div<{ showingIndicator?: boolean; isEditable?: boolean }>`
   height: ${({ showingIndicator }) => (showingIndicator ? "calc(100% - 8px)" : "100%")};
   overflow-y: auto;
-  cursor: pointer;
+  cursor: ${({ isEditable }) => (isEditable ? "pointer" : "default")};
 `;
 
 const PageGap = styled.div<{ height?: number }>`

@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from "react";
 
-import { convert } from "@reearth/services/api/propertyApi/utils";
-import {
+import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type {
   InstallableStoryBlock,
   InstalledStoryBlock,
 } from "@reearth/services/api/storytellingApi/blocks";
@@ -9,53 +9,54 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import { GQLStoryPage } from "../hooks";
+import type { Page } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
 import useHooks from "./hooks";
 
 type Props = {
-  sceneId?: string;
-  storyId?: string;
-  page?: GQLStoryPage;
+  page?: Page;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
-  installedStoryBlocks: InstalledStoryBlock[];
+  installedStoryBlocks?: InstalledStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
+  isEditable?: boolean;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockSelect: (blockId?: string) => void;
+  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockSelect?: (blockId?: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 const StoryPage: React.FC<Props> = ({
-  sceneId,
-  storyId,
   page,
   selectedPageId,
   installableStoryBlocks,
   installedStoryBlocks,
   selectedStoryBlockId,
   showPageSettings,
+  isEditable,
   onPageSettingsToggle,
   onPageSelect,
+  onBlockCreate,
+  onBlockDelete,
   onBlockSelect,
+  onPropertyUpdate,
 }) => {
   const t = useT();
-  const propertyItems = useMemo(() => convert(page?.property), [page?.property]);
+  const propertyItems = useMemo(() => page?.property.items, [page?.property]);
 
-  const {
-    openBlocksIndex,
-    titleId,
-    titleProperty,
-    handleStoryBlockCreate,
-    handleStoryBlockDelete,
-    handleBlockOpen,
-    handlePropertyValueUpdate,
-  } = useHooks({
-    sceneId,
-    storyId,
+  const { openBlocksIndex, titleId, titleProperty, handleBlockOpen } = useHooks({
     pageId: page?.id,
     propertyItems,
   });
@@ -69,8 +70,10 @@ const StoryPage: React.FC<Props> = ({
       isSelected={selectedPageId === page?.id}
       propertyId={page?.property?.id}
       propertyItems={propertyItems}
-      onClick={() => onPageSelect?.(page?.id)}
       showSettings={showPageSettings}
+      isEditable={isEditable}
+      onClick={() => onPageSelect?.(page?.id)}
+      onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
       <Wrapper id={page?.id}>
         {titleProperty && (
@@ -85,18 +88,21 @@ const StoryPage: React.FC<Props> = ({
                 items: [titleProperty],
               },
             }}
+            isEditable={isEditable}
             isSelected={selectedStoryBlockId === titleId}
-            onClick={() => onBlockSelect(titleId)}
+            onClick={() => onBlockSelect?.(titleId)}
             onClickAway={onBlockSelect}
-            onChange={handlePropertyValueUpdate}
+            onChange={onPropertyUpdate}
           />
         )}
-        <BlockAddBar
-          openBlocks={openBlocksIndex === -1}
-          installableStoryBlocks={installableStoryBlocks}
-          onBlockOpen={() => handleBlockOpen(-1)}
-          onBlockAdd={handleStoryBlockCreate(0)}
-        />
+        {isEditable && (
+          <BlockAddBar
+            openBlocks={openBlocksIndex === -1}
+            installableStoryBlocks={installableStoryBlocks}
+            onBlockOpen={() => handleBlockOpen(-1)}
+            onBlockAdd={onBlockCreate?.(0)}
+          />
+        )}
         {installedStoryBlocks &&
           installedStoryBlocks.length > 0 &&
           installedStoryBlocks.map((b, idx) => (
@@ -104,17 +110,20 @@ const StoryPage: React.FC<Props> = ({
               <StoryBlock
                 block={b}
                 isSelected={selectedStoryBlockId === b.id}
-                onClick={() => onBlockSelect(b.id)}
+                isEditable={isEditable}
+                onClick={() => onBlockSelect?.(b.id)}
                 onClickAway={onBlockSelect}
-                onChange={handlePropertyValueUpdate}
-                onRemove={handleStoryBlockDelete}
+                onChange={onPropertyUpdate}
+                onRemove={onBlockDelete}
               />
-              <BlockAddBar
-                openBlocks={openBlocksIndex === idx}
-                installableStoryBlocks={installableStoryBlocks}
-                onBlockOpen={() => handleBlockOpen(idx)}
-                onBlockAdd={handleStoryBlockCreate(idx + 1)}
-              />
+              {isEditable && (
+                <BlockAddBar
+                  openBlocks={openBlocksIndex === idx}
+                  installableStoryBlocks={installableStoryBlocks}
+                  onBlockOpen={() => handleBlockOpen(idx)}
+                  onBlockAdd={onBlockCreate?.(idx + 1)}
+                />
+              )}
             </Fragment>
           ))}
       </Wrapper>
@@ -124,10 +133,16 @@ const StoryPage: React.FC<Props> = ({
 
 export default StoryPage;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ padding?: Spacing }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
+
   padding: 20px;
+  padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
+  padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
+  padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
+  padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
+
   box-sizing: border-box;
 `;

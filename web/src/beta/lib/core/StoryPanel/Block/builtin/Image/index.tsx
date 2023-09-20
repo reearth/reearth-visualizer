@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
-import { ValueTypes } from "@reearth/beta/utils/value";
+import type { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { getFieldValue } from "../../../utils";
-import { CommonProps as BlockProps } from "../../types";
+import type { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../common/Wrapper";
 
 const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {

@@ -9,6 +9,7 @@ type NLSLayer interface {
 	ID() ID
 	LayerType() LayerType
 	Scene() SceneID
+	Config() *Config
 	Title() string
 	IsVisible() bool
 	SetVisible(bool)
@@ -17,6 +18,7 @@ type NLSLayer interface {
 	SetInfobox(*pl.Infobox)
 	Tags() *pl.TagList
 	Rename(string)
+	UpdateConfig(*Config)
 }
 
 func ToNLSLayerGroup(l NLSLayer) *NLSLayerGroup {
@@ -63,6 +65,7 @@ type layerBase struct {
 	visible   bool
 	infobox   *pl.Infobox
 	tags      *pl.TagList
+	config    *Config
 }
 
 func (l *layerBase) ID() ID {
@@ -85,6 +88,10 @@ func (l *layerBase) LayerType() LayerType {
 
 func (l *layerBase) Scene() SceneID {
 	return l.scene
+}
+
+func (l *layerBase) Config() *Config {
+	return l.config
 }
 
 func (l *layerBase) Title() string {
@@ -136,9 +143,21 @@ func (l *layerBase) Rename(name string) {
 	l.title = name
 }
 
+func (l *layerBase) UpdateConfig(newConfig *Config) {
+	if l == nil || newConfig == nil {
+		return
+	}
+	l.config = newConfig
+}
+
 func (l *layerBase) Clone() *layerBase {
 	if l == nil {
 		return nil
+	}
+	var clonedConfig *Config
+	if l.config != nil {
+		clonedConfigItem := l.config.Clone()
+		clonedConfig = &clonedConfigItem
 	}
 
 	cloned := &layerBase{
@@ -147,6 +166,7 @@ func (l *layerBase) Clone() *layerBase {
 		scene:     l.scene,
 		title:     l.title,
 		visible:   l.visible,
+		config:    clonedConfig,
 	}
 
 	if l.infobox != nil {

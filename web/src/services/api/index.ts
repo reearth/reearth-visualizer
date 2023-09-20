@@ -7,4 +7,4 @@ export { default as usePluginsFetcher } from "./pluginsApi";
 export { default as usePropertyFetcher } from "./propertyApi";
 export { default as useAssetsFetcher } from "./assetsApi";
 export { default as useLayersFetcher } from "./layersApi";
-export { default as useStoryTellingFetcher } from "./storytellingApi";
+export { default as useStorytellingFetcher } from "./storytellingApi";

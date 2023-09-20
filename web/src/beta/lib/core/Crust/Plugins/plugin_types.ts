@@ -9,11 +9,8 @@ import type {
   LayerSimple,
 } from "@reearth/beta/lib/core/mantle";
 import type {
-  CameraOptions,
-  FlyToDestination,
   LayerEditEvent,
   LayersRef,
-  LookAtDestination,
   LayerSelectionReason,
   LazyLayer,
   DefaultInfobox,
@@ -23,6 +20,7 @@ import type {
   Feature,
 } from "@reearth/beta/lib/core/Map";
 
+import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
 import { Block } from "../Infobox";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";

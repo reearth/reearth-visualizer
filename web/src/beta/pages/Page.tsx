@@ -3,7 +3,6 @@ import React, { ReactNode, useMemo } from "react";
 import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
 import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import { AuthenticatedPage } from "@reearth/services/auth";
-import { StoryFragmentFragment } from "@reearth/services/gql";
 
 import Loading from "../components/Loading";
 
@@ -11,7 +10,6 @@ type RenderItemProps = {
   sceneId?: string;
   projectId?: string;
   workspaceId?: string;
-  stories: StoryFragmentFragment[];
 };
 
 type Props = {
@@ -56,7 +54,6 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
         sceneId,
         projectId: currentProjectId,
         workspaceId: currentWorkspaceId,
-        stories: scene?.stories ?? [],
       })}
     </>
   );

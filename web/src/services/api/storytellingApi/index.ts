@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useCallback } from "react";
 
 import { PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/Nav/PublishModal/hooks";
@@ -9,6 +9,7 @@ import {
   MutationCreateStoryArgs,
   UpdateStoryInput,
 } from "@reearth/services/gql/__gen__/graphql";
+import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import {
   CREATE_STORY,
   PUBLISH_STORY,
@@ -17,23 +18,27 @@ import {
 import { useT } from "@reearth/services/i18n";
 
 import { useNotification } from "../../state";
+import { SceneQueryProps } from "../sceneApi";
 import { toGqlStatus } from "../toGqlStatus";
 
 import useBlocks from "./blocks";
 import usePages from "./pages";
+import { getStories } from "./utils";
+
+export type StoryQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
 
-  const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = usePages();
-  const {
-    useInstallableStoryBlocksQuery,
-    useInstalledStoryBlocksQuery,
-    useCreateStoryBlock,
-    useDeleteStoryBlock,
-    useMoveStoryBlock,
-  } = useBlocks();
+  const useStoriesQuery = useCallback(({ sceneId, lang }: StoryQueryProps) => {
+    const { data, ...rest } = useQuery(GET_SCENE, {
+      variables: { sceneId: sceneId ?? "", lang },
+      skip: !sceneId,
+    });
+
+    return { stories: getStories(data), ...rest };
+  }, []);
 
   const [createStoryMutation] = useMutation<CreateStoryMutation, MutationCreateStoryArgs>(
     CREATE_STORY,
@@ -70,7 +75,7 @@ export default () => {
     [updateStoryMutation, t, setNotification],
   );
 
-  const [publishStoryMutation, { loading: publishStoryLoading }] = useMutation(PUBLISH_STORY);
+  const [publishStoryMutation] = useMutation(PUBLISH_STORY);
 
   const usePublishStory = useCallback(
     async (s: PublishStatus, storyId?: string, alias?: string) => {
@@ -102,8 +107,18 @@ export default () => {
     [publishStoryMutation, t, setNotification],
   );
 
+  const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = usePages();
+
+  const {
+    useInstallableStoryBlocksQuery,
+    useInstalledStoryBlocksQuery,
+    useCreateStoryBlock,
+    useDeleteStoryBlock,
+    useMoveStoryBlock,
+  } = useBlocks();
+
   return {
-    publishStoryLoading,
+    useStoriesQuery,
     useCreateStory,
     useUpdateStory,
     useCreateStoryPage,

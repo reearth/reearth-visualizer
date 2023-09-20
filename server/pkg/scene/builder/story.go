@@ -21,9 +21,11 @@ type pageJSON struct {
 }
 
 type blockJSON struct {
-	ID       string                  `json:"id"`
-	Property propertyJSON            `json:"property"`
-	Plugins  map[string]propertyJSON `json:"plugins"`
+	ID          string                  `json:"id"`
+	Property    propertyJSON            `json:"property"`
+	Plugins     map[string]propertyJSON `json:"plugins"`
+	ExtensionId string                  `json:"extensionId"`
+	PluginId    string                  `json:"pluginId"`
 }
 
 func (b *Builder) storyJSON(ctx context.Context, p []*property.Property) (*storyJSON, error) {
@@ -58,8 +60,10 @@ func (b *Builder) pageJSON(ctx context.Context, page storytelling.Page, p []*pro
 
 func (b *Builder) blockJSON(ctx context.Context, block storytelling.Block, p []*property.Property) blockJSON {
 	return blockJSON{
-		ID:       block.ID().String(),
-		Property: b.property(ctx, findProperty(p, block.Property())),
-		Plugins:  nil,
+		ID:          block.ID().String(),
+		Property:    b.property(ctx, findProperty(p, block.Property())),
+		Plugins:     nil,
+		ExtensionId: block.Extension().String(),
+		PluginId:    block.Plugin().String(),
 	}
 }
