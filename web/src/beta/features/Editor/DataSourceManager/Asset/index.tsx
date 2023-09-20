@@ -50,6 +50,15 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   );
 
   const handleSubmit = () => {
+    let parsedValue = null;
+
+    if (sourceType === "value" && value !== "") {
+      try {
+        parsedValue = JSON.parse(value);
+      } catch (error) {
+        parsedValue = value;
+      }
+    }
     onSubmit({
       layerType: "simple",
       sceneId,
@@ -59,7 +68,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: sourceType === "url" && value !== "" ? value : null,
           type: fileFormat.toLowerCase(),
-          value: sourceType === "value" && value !== "" ? JSON.parse(value) : null,
+          value: parsedValue,
         },
         resource: {
           clampToGround: true,
