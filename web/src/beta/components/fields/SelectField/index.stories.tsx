@@ -29,6 +29,7 @@ export const Default: Story = (args: Props) => {
           {...args}
           name="Disabled"
           description="Props are controlled by the field above"
+          placeholder="This is a disabled field"
           disabled={true}
           onChange={handleChange}
         />
@@ -51,13 +52,14 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 10%;
   margin-left: 2rem;
+  margin-right: 2rem;
   margin-top: 2rem;
   height: 300px;
 `;
 
 Default.args = {
   name: "Select Field",
-  description: "Select from the options",
+  description: "Select from the options ",
   disabled: false,
   value: undefined,
   options: [
