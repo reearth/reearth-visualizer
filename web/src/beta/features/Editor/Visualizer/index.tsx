@@ -2,13 +2,10 @@ import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import StoryPanel, {
-  type InstallableStoryBlock,
-  type GQLStory,
-  type GQLStoryPage,
-} from "@reearth/beta/lib/core/StoryPanel";
+import StoryPanel, { type InstallableStoryBlock } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { Page, Story } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
@@ -22,8 +19,8 @@ export type Props = {
   currentCamera?: Camera;
   // storytelling
   showStoryPanel?: boolean;
-  selectedStory?: GQLStory;
-  currentPage?: GQLStoryPage;
+  selectedStory?: Story;
+  currentPage?: Page;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
@@ -64,6 +61,10 @@ const Visualizer: React.FC<Props> = ({
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
+    installedStoryBlocks,
+    handleStoryBlockCreate,
+    handleStoryBlockDelete,
+    handlePropertyValueUpdate,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -76,7 +77,7 @@ const Visualizer: React.FC<Props> = ({
     handleDropLayer,
     zoomToLayer,
     handleMount,
-  } = useHooks({ sceneId, isBuilt });
+  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, pageId: currentPage?.id });
 
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
@@ -132,12 +133,15 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
-            sceneId={sceneId}
             selectedStory={selectedStory}
             currentPage={currentPage}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
+            installedBlocks={installedStoryBlocks}
             isEditable={!!inEditor}
+            onBlockCreate={handleStoryBlockCreate}
+            onBlockDelete={handleStoryBlockDelete}
+            onPropertyUpdate={handlePropertyValueUpdate}
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
           />

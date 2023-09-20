@@ -30,6 +30,13 @@ export type Typography = {
   underline?: boolean;
 };
 
+export type Spacing = {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
+};
+
 export type Coordinates = LatLngHeight[];
 
 export type Polygon = LatLngHeight[][];
@@ -100,6 +107,7 @@ export type ValueTypes = {
   rect: Rect;
   ref: string;
   tiletype: string;
+  spacing: Spacing;
 };
 
 export type ValueType = keyof ValueTypes;
