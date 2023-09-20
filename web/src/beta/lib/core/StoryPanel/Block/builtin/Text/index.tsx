@@ -4,7 +4,6 @@ import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
-import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
 
 import TextBlockEditor from "./Editor";
@@ -20,17 +19,15 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.items],
   );
 
-  const { handlePropertyValueUpdate } = usePropertyValueUpdate();
-
   const handleTextUpdate = useCallback(
     (text: string) => {
       const schemaGroup = block?.property?.items?.find(
         i => i.schemaGroup === "default",
       )?.schemaGroup;
       if (!block?.property?.id || !schemaGroup) return;
-      handlePropertyValueUpdate(schemaGroup, block?.property?.id, "text", "string")(text);
+      props?.handleUpdatePropertyValue(schemaGroup, block?.property?.id, "text", "string")(text);
     },
-    [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
+    [block?.property?.id, block?.property?.items, props],
   );
 
   return (

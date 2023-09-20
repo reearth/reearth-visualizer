@@ -36,6 +36,14 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
+  handleUpdatePropertyValue?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 const StoryPage: React.FC<Props> = ({
@@ -52,6 +60,7 @@ const StoryPage: React.FC<Props> = ({
   onBlockDelete,
   onBlockSelect,
   onPropertyUpdate,
+  handleUpdatePropertyValue,
 }) => {
   const t = useT();
   const propertyItems = useMemo(() => page?.property.items, [page?.property]);
@@ -93,6 +102,7 @@ const StoryPage: React.FC<Props> = ({
             onClick={() => onBlockSelect?.(titleId)}
             onClickAway={onBlockSelect}
             onChange={onPropertyUpdate}
+            handleUpdatePropertyValue={handleUpdatePropertyValue}
           />
         )}
         {isEditable && (
@@ -115,6 +125,7 @@ const StoryPage: React.FC<Props> = ({
                 onClickAway={onBlockSelect}
                 onChange={onPropertyUpdate}
                 onRemove={onBlockDelete}
+                handleUpdatePropertyValue={handleUpdatePropertyValue}
               />
               {isEditable && (
                 <BlockAddBar

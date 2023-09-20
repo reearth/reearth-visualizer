@@ -37,6 +37,14 @@ export type CommonProps = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
+  handleUpdatePropertyValue?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 export type SharedProperties = {

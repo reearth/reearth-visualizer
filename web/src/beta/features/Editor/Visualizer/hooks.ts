@@ -239,6 +239,21 @@ export default ({
     [useUpdatePropertyValue],
   );
 
+  const handleUpdatePropertyValue = useCallback(
+    (
+      schemaGroupId: string,
+      propertyId: string,
+      fieldId: string,
+      vt: ValueType,
+      itemId?: string,
+    ) => {
+      return async (v?: ValueTypes[ValueType]) => {
+        await useUpdatePropertyValue(propertyId, schemaGroupId, itemId, fieldId, "en", v, vt);
+      };
+    },
+    [useUpdatePropertyValue],
+  );
+
   const engineMeta = useMemo(
     () => ({
       cesiumIonAccessToken: config()?.cesiumIonAccessToken,
@@ -276,6 +291,7 @@ export default ({
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
+    handleUpdatePropertyValue,
     selectLayer,
     selectBlock,
     onBlockChange,

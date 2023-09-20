@@ -9,6 +9,7 @@ import type {
   Alignment,
   ClusterProperty,
 } from "@reearth/classic/components/molecules/Visualizer";
+import { convert } from "@reearth/services/api/propertyApi/utils";
 import { config } from "@reearth/services/config";
 import { StoryPage } from "@reearth/services/gql";
 
@@ -174,7 +175,6 @@ export default (alias?: string) => {
             tiles: [{ id: "___default_tile___" }],
           };
         }
-
         setData(d);
       } catch (e) {
         // TODO: display error for users
@@ -192,26 +192,103 @@ export default (alias?: string) => {
     [],
   );
 
+  const property = {
+    id: "01habny9br9ag1rrm28aqh2y7x",
+    items: [
+      {
+        id: "01habnydteenb47k5jvzbtsfkk",
+        schemaGroupId: "default",
+        fields: [
+          {
+            id: "01habny9br9ag1rrm28aqh2y7x_01habnydteenb47k5jvzbtsfkk_text",
+            fieldId: "text",
+            type: "STRING",
+            value:
+              '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"\\"But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example,","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}',
+            links: null,
+          },
+        ],
+      },
+    ],
+    schema: {
+      id: "reearth/textStoryBlock",
+      groups: [
+        {
+          schemaGroupId: "panel",
+          title: "Panel Setting",
+          translatedTitle: "Panel Setting",
+          isList: false,
+          representativeFieldId: null,
+          isAvailableIf: null,
+          fields: [
+            {
+              fieldId: "padding",
+              title: "Padding",
+              description: "",
+              translatedTitle: "Padding",
+              translatedDescription: "",
+              prefix: null,
+              suffix: null,
+              type: "SPACING",
+              defaultValue: null,
+              ui: "PADDING",
+              min: 0,
+              max: 100,
+              choices: null,
+              isAvailableIf: null,
+            },
+          ],
+        },
+        {
+          schemaGroupId: "default",
+          title: "Text",
+          translatedTitle: "Text",
+          isList: false,
+          representativeFieldId: null,
+          isAvailableIf: null,
+          fields: [
+            {
+              fieldId: "text",
+              title: "Content",
+              description: "",
+              translatedTitle: "Content",
+              translatedDescription: "",
+              prefix: null,
+              suffix: null,
+              type: "STRING",
+              defaultValue: null,
+              ui: "MULTILINE",
+              min: null,
+              max: null,
+              choices: null,
+              isAvailableIf: null,
+            },
+          ],
+        },
+      ],
+    },
+  };
+
   const getInstalledStoryBlocks = (page: StoryPage | undefined) => {
     return page?.blocks.map(b => {
       return {
         id: b.id,
-        pluginId: b.plugin,
+        pluginId: "reearth",
         extensionId: b.extensionId,
         title: "",
         description: "",
         icon: "",
         property: {
-          id: b?.property?.id ?? "",
-          items: [b?.property],
+          id: "01habny9br9ag1rrm28aqh2y7x",
+          items: convert(property, null),
         },
       };
     });
   };
 
   const installedStoryBlocks = getInstalledStoryBlocks(data?.story?.pages[0]);
+  console.log(installedStoryBlocks);
 
-  console.log("installedStoryBlocks", installedStoryBlocks);
   return {
     alias: actualAlias,
     sceneProperty,

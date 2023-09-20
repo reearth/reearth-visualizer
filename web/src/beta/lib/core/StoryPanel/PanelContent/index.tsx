@@ -37,6 +37,14 @@ export type Props = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
   onCurrentPageChange?: (pageId: string) => void;
+  handleUpdatePropertyValue?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 const StoryContent: React.FC<Props> = ({
@@ -57,6 +65,7 @@ const StoryContent: React.FC<Props> = ({
   onBlockSelect,
   onPropertyUpdate,
   onCurrentPageChange,
+  handleUpdatePropertyValue,
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
@@ -137,6 +146,7 @@ const StoryContent: React.FC<Props> = ({
     }
   }, [isAutoScrolling, onAutoScrollingChange]);
 
+  console.log("data", installedStoryBlocks);
   return (
     <PagesWrapper id={PAGES_ELEMENT_ID} showingIndicator={showingIndicator} isEditable={isEditable}>
       {pages?.map(p => (
@@ -155,6 +165,7 @@ const StoryContent: React.FC<Props> = ({
             onBlockDelete={onBlockDelete}
             onBlockSelect={onBlockSelect}
             onPropertyUpdate={onPropertyUpdate}
+            handleUpdatePropertyValue={handleUpdatePropertyValue}
           />
           <PageGap height={pageGap} />
         </Fragment>

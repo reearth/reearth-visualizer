@@ -77,6 +77,7 @@ const Visualizer: React.FC<Props> = ({
     handleDropLayer,
     zoomToLayer,
     handleMount,
+    handleUpdatePropertyValue,
   } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, pageId: currentPage?.id });
 
   const renderInfoboxInsertionPopUp = useCallback<
@@ -144,6 +145,7 @@ const Visualizer: React.FC<Props> = ({
             onPropertyUpdate={handlePropertyValueUpdate}
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
+            handleUpdatePropertyValue={handleUpdatePropertyValue}
           />
         )}
       </CoreVisualizer>
