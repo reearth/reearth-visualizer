@@ -1,9 +1,9 @@
 import { ReactNode, useMemo } from "react";
 
 import type { Tab } from "@reearth/beta/features/Navbar";
-import type { GQLStoryPage } from "@reearth/beta/lib/core/StoryPanel/hooks";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
@@ -12,7 +12,7 @@ import WidgetSidePanel from "./tabs/widgets/RightPanel";
 type Props = {
   tab: Tab;
   sceneId?: string;
-  currentPage?: GQLStoryPage;
+  currentPage?: Page;
   showSceneSettings?: boolean;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;

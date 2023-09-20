@@ -2,15 +2,14 @@ import { useMemo } from "react";
 
 import Settings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
-import type { GQLStoryPage } from "@reearth/beta/lib/core/StoryPanel/hooks";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
-import { convert } from "@reearth/services/api/propertyApi/utils";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 type Props = {
   sceneId?: string;
-  selectedPage?: GQLStoryPage;
+  selectedPage?: Page;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
 };
@@ -20,7 +19,7 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, onFlyTo
 
   const propertyItems = useMemo(
     () =>
-      convert(selectedPage?.property)?.filter(
+      selectedPage?.property.items?.filter(
         p => p.schemaGroup !== "panel" && p.schemaGroup !== "title",
       ),
     [selectedPage?.property],
@@ -35,7 +34,7 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, onFlyTo
           title: t("Page Settings"),
           children: selectedPage && (
             <Settings
-              propertyId={selectedPage.propertyId}
+              propertyId={selectedPage.property.id}
               propertyItems={propertyItems}
               currentCamera={currentCamera}
               onFlyTo={onFlyTo}

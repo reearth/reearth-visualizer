@@ -1,13 +1,12 @@
 import { Fragment, useMemo } from "react";
 
 import type { Spacing } from "@reearth/beta/utils/value";
-import { convert } from "@reearth/services/api/propertyApi/utils";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import type { GQLStoryPage } from "../hooks";
+import type { Page } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
@@ -16,7 +15,7 @@ import useHooks from "./hooks";
 type Props = {
   sceneId?: string;
   storyId?: string;
-  page?: GQLStoryPage;
+  page?: Page;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -41,7 +40,7 @@ const StoryPage: React.FC<Props> = ({
   onBlockSelect,
 }) => {
   const t = useT();
-  const propertyItems = useMemo(() => convert(page?.property), [page?.property]);
+  const propertyItems = useMemo(() => page?.property.items, [page?.property]);
 
   const {
     openBlocksIndex,

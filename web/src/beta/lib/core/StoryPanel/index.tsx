@@ -2,13 +2,13 @@ import { FC } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import useHooks, { type GQLStory, type GQLStoryPage } from "./hooks";
+import useHooks, { type Story, type Page } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
 
 export const storyPanelWidth = 442;
 
-export { type GQLStory, type GQLStoryPage } from "./hooks";
+export { type Story, type Page } from "./hooks";
 
 export type InstallableStoryBlock = {
   name: string;
@@ -22,8 +22,8 @@ export type InstallableStoryBlock = {
 
 export type StoryPanelProps = {
   sceneId?: string;
-  selectedStory?: GQLStory;
-  currentPage?: GQLStoryPage;
+  selectedStory?: Story;
+  currentPage?: Page;
   isEditable?: boolean;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];

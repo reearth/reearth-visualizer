@@ -6,14 +6,13 @@ import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
 import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
-import { convert } from "@reearth/services/api/propertyApi/utils";
-import { StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  storyPages: StoryPageFragmentFragment[];
-  selectedPage?: StoryPageFragmentFragment;
+  storyPages: Page[];
+  selectedPage?: Page;
   onPageSelect: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
   onPageDuplicate: (id: string) => void;
@@ -59,7 +58,7 @@ const ContentPage: React.FC<Props> = ({
             await onPageMove(item.id, index);
           }}
           renderItem={(storyPage, i) => {
-            const title = (getFieldValue(convert(storyPage.property) ?? [], "title", "title") ??
+            const title = (getFieldValue(storyPage.property.items ?? [], "title", "title") ??
               t("Untitled")) as string;
             return (
               <PageItemWrapper
