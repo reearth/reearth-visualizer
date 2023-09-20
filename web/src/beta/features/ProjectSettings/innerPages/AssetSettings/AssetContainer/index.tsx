@@ -3,7 +3,7 @@ import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
-import { fileFormats, imageFormats } from "@reearth/beta/features/Assets/constants";
+import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
@@ -133,9 +133,9 @@ const AssetContainer: React.FC<Props> = ({
                   key={a.id}
                   name={a.name}
                   icon={
-                    checkIfFileType(a.url, fileFormats)
+                    checkIfFileType(a.url, FILE_FORMATS)
                       ? "file"
-                      : checkIfFileType(a.url, imageFormats)
+                      : checkIfFileType(a.url, IMAGE_FORMATS)
                       ? undefined
                       : "assetNoSupport"
                   }

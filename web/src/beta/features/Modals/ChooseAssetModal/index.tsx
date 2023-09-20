@@ -7,7 +7,7 @@ import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
-import { fileFormats, imageFormats } from "@reearth/beta/features/Assets/constants";
+import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
@@ -25,7 +25,7 @@ const getValue: { [key: string]: string } = {
 
 export type Props = {
   className?: string;
-  assetType?: "File" | "Image";
+  assetType?: "file" | "image";
   assets?: Asset[];
   selectedAssets?: Asset[];
   isLoading?: boolean;
@@ -84,9 +84,9 @@ const ChooseAssetModal: React.FC<Props> = ({
       return assets;
     }
     return assets?.filter(asset => {
-      const isFile = checkIfFileType(asset.url, fileFormats);
-      const isImage = checkIfFileType(asset.url, imageFormats);
-      return (assetType === "File" && isFile) || (assetType === "Image" && isImage);
+      const isFile = checkIfFileType(asset.url, FILE_FORMATS);
+      const isImage = checkIfFileType(asset.url, IMAGE_FORMATS);
+      return (assetType === "file" && isFile) || (assetType === "image" && isImage);
     });
   }, [assetType, assets]);
 
@@ -175,9 +175,9 @@ const ChooseAssetModal: React.FC<Props> = ({
                   key={a.id}
                   name={a.name}
                   icon={
-                    checkIfFileType(a.url, fileFormats)
+                    checkIfFileType(a.url, FILE_FORMATS)
                       ? "file"
-                      : checkIfFileType(a.url, imageFormats)
+                      : checkIfFileType(a.url, IMAGE_FORMATS)
                       ? undefined
                       : "assetNoSupport"
                   }

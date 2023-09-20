@@ -13,8 +13,8 @@ export const AssetImageType: Story = {
   args: {
     name: "Asset",
     description: "Defaul Asset Uploader",
-    fileType: "Asset",
-    assetType: "Image",
+    fileType: "asset",
+    assetType: "image",
   },
 };
 
@@ -22,8 +22,8 @@ export const AssetFileType: Story = {
   args: {
     name: "Asset",
     description: "Defaul Asset Uploader",
-    fileType: "Asset",
-    assetType: "File",
+    fileType: "asset",
+    assetType: "file",
   },
 };
 

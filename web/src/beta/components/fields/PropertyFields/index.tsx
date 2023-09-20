@@ -70,8 +70,8 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
           <URLField
             key={sf.id}
             name={sf.name}
-            assetType={sf.ui === "image" ? "Image" : sf.ui === "file" ? "File" : undefined}
-            fileType={sf.ui === "video" || sf.ui === undefined ? "URL" : "Asset"}
+            assetType={sf.ui === "image" ? "image" : sf.ui === "file" ? "file" : undefined}
+            fileType={sf.ui === "video" || sf.ui === undefined ? "URL" : "asset"}
             value={(value as string) ?? ""}
             description={sf.description}
             onChange={handleChange}

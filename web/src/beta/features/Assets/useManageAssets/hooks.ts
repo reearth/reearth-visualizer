@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import useFileInput from "use-file-input";
 
-import { fileFormats, imageFormats } from "@reearth/beta/features/Assets/constants";
+import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
@@ -60,7 +60,7 @@ export const useManageAssets = ({
       : "filterTime";
 
   const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
-    accept: imageFormats + "," + fileFormats,
+    accept: IMAGE_FORMATS + "," + FILE_FORMATS,
     multiple: true,
   });
 

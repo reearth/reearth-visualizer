@@ -4,11 +4,13 @@ import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import useHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
+import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import ChooseAssetModal from "@reearth/beta/features/Modals/ChooseAssetModal";
+import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
-import { useWorkspace } from "@reearth/services/state";
+import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
@@ -16,15 +18,16 @@ export type Props = {
   onChange?: (value: string | undefined) => void;
   name?: string;
   description?: string;
-  fileType?: "Asset" | "URL";
-  assetType?: "Image" | "File";
+  fileType?: "asset" | "URL";
+  assetType?: "image" | "file";
 };
 
 const URLField: React.FC<Props> = ({ name, description, value, fileType, assetType, onChange }) => {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [currentWorkspace] = useWorkspace();
-
+  const [, setNotification] = useNotification();
+  const [CurrentValue, setCurrentValue] = useState(value);
   const {
     assets,
     isLoading,
@@ -71,25 +74,39 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     },
     [selectedAssets, selectAsset],
   );
+
+  const handleUpload = useCallback(() => {
+    handleUploadToAsset();
+  }, [handleUploadToAsset]);
+
   const handleChange = useCallback(
-    (value?: string) => {
-      if (!value) return;
-      onChange?.(value);
+    (inputValue?: string) => {
+      if (!inputValue) return;
+
+      if (
+        !checkIfFileType(inputValue, FILE_FORMATS) &&
+        !checkIfFileType(inputValue, IMAGE_FORMATS)
+      ) {
+        setNotification({
+          type: "error",
+          text: t("wrong URL Format"),
+        });
+        setCurrentValue(undefined);
+        return;
+      }
+      setCurrentValue(inputValue);
+      onChange?.(inputValue);
     },
-    [onChange],
+    [onChange, setNotification, t],
   );
 
   return (
     <Property name={name} description={description}>
-      <StyledTextField
-        value={value !== null ? t("Field set") : undefined}
-        onChange={onChange}
-        placeholder={t("Not set")}
-      />
-      {fileType === "Asset" && (
+      <TextInput value={CurrentValue} onChange={handleChange} placeholder={t("Not set")} />
+      {fileType === "asset" && (
         <ButtonWrapper>
           <AssetButton
-            icon={assetType === "Image" ? "imageStoryBlock" : "file"}
+            icon={assetType === "image" ? "imageStoryBlock" : "file"}
             text={t("Choose")}
             iconPosition="left"
             onClick={handleClick}
@@ -98,7 +115,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
             icon="uploadSimple"
             text={t("Upload")}
             iconPosition="left"
-            onClick={handleUploadToAsset}
+            onClick={handleUpload}
           />
         </ButtonWrapper>
       )}
@@ -134,14 +151,7 @@ const AssetButton = styled(Button)<{ active?: boolean }>`
   padding: 4px;
   border-radius: 6px;
   width: 127px;
-  color: ${props => props.theme.classic.main.text};
-
-  &:hover {
-    background: ${props => props.theme.classic.main.bg};
-  }
 `;
-
-const StyledTextField = styled(TextInput)<{ canUpload?: boolean }>``;
 
 const ButtonWrapper = styled.div`
   display: flex;
