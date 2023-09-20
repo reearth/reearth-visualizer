@@ -3,14 +3,14 @@ import { useMemo } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent, { MenuItem } from "@reearth/beta/components/PopoverMenuContent";
-import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
   openBlocks: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
   onBlockOpen: () => void;
-  onBlockAdd: (extensionId: string, pluginId: string) => void;
+  onBlockAdd?: (extensionId: string, pluginId: string) => void;
 };
 
 const BlockAddBar: React.FC<Props> = ({
@@ -26,7 +26,7 @@ const BlockAddBar: React.FC<Props> = ({
           name: sb.name,
           icon: "plugin",
           onClick: () => {
-            onBlockAdd(sb.extensionId, sb.pluginId);
+            onBlockAdd?.(sb.extensionId, sb.pluginId);
             onBlockOpen();
           },
         };

@@ -61,6 +61,10 @@ const Visualizer: React.FC<Props> = ({
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
+    installedStoryBlocks,
+    handleStoryBlockCreate,
+    handleStoryBlockDelete,
+    handlePropertyValueUpdate,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -73,7 +77,7 @@ const Visualizer: React.FC<Props> = ({
     handleDropLayer,
     zoomToLayer,
     handleMount,
-  } = useHooks({ sceneId, isBuilt });
+  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, pageId: currentPage?.id });
 
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
@@ -129,12 +133,15 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
-            sceneId={sceneId}
             selectedStory={selectedStory}
             currentPage={currentPage}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
+            installedBlocks={installedStoryBlocks}
             isEditable={!!inEditor}
+            onBlockCreate={handleStoryBlockCreate}
+            onBlockDelete={handleStoryBlockDelete}
+            onPropertyUpdate={handlePropertyValueUpdate}
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
           />

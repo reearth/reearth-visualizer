@@ -1,5 +1,7 @@
 import { FC } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { InstalledStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 import useHooks, { type Story, type Page } from "./hooks";
@@ -21,24 +23,37 @@ export type InstallableStoryBlock = {
 };
 
 export type StoryPanelProps = {
-  sceneId?: string;
   selectedStory?: Story;
   currentPage?: Page;
   isEditable?: boolean;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
+  installedBlocks?: InstalledStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
+  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 };
 
 export const StoryPanel: FC<StoryPanelProps> = ({
-  sceneId,
   selectedStory,
   currentPage,
   isEditable,
   isAutoScrolling,
   installableBlocks,
+  installedBlocks,
   onAutoScrollingChange,
+  onBlockCreate,
+  onBlockDelete,
+  onPropertyUpdate,
   onCurrentPageChange,
 }) => {
   const {
@@ -67,11 +82,10 @@ export const StoryPanel: FC<StoryPanelProps> = ({
         />
       )}
       <StoryContent
-        sceneId={sceneId}
-        storyId={selectedStory?.id}
         pages={selectedStory?.pages}
         selectedPageId={selectedPageId}
         installableStoryBlocks={installableBlocks}
+        installedStoryBlocks={installedBlocks}
         selectedStoryBlockId={selectedBlockId}
         showPageSettings={showPageSettings}
         showingIndicator={!!pageInfo}
@@ -80,7 +94,10 @@ export const StoryPanel: FC<StoryPanelProps> = ({
         onAutoScrollingChange={onAutoScrollingChange}
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}
+        onBlockCreate={onBlockCreate}
+        onBlockDelete={onBlockDelete}
         onBlockSelect={handleBlockSelect}
+        onPropertyUpdate={onPropertyUpdate}
         onCurrentPageChange={handleCurrentPageChange}
       />
     </PanelWrapper>

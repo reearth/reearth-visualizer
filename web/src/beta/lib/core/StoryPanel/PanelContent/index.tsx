@@ -1,6 +1,10 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type {
+  InstallableStoryBlock,
+  InstalledStoryBlock,
+} from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 import type { Page } from "../hooks";
@@ -9,11 +13,10 @@ import StoryPage from "../Page";
 export const PAGES_ELEMENT_ID = "story-page-content";
 
 export type Props = {
-  sceneId?: string;
-  storyId?: string;
   pages?: Page[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
+  installedStoryBlocks?: InstalledStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   showingIndicator?: boolean;
@@ -22,16 +25,25 @@ export type Props = {
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockSelect: (blockId?: string) => void;
+  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockSelect?: (blockId?: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
   onCurrentPageChange?: (pageId: string) => void;
 };
 
 const StoryContent: React.FC<Props> = ({
-  sceneId,
-  storyId,
   pages,
   selectedPageId,
   installableStoryBlocks,
+  installedStoryBlocks,
   selectedStoryBlockId,
   showPageSettings,
   showingIndicator,
@@ -40,7 +52,10 @@ const StoryContent: React.FC<Props> = ({
   onAutoScrollingChange,
   onPageSettingsToggle,
   onPageSelect,
+  onBlockCreate,
+  onBlockDelete,
   onBlockSelect,
+  onPropertyUpdate,
   onCurrentPageChange,
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
@@ -127,17 +142,19 @@ const StoryContent: React.FC<Props> = ({
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage
-            sceneId={sceneId}
-            storyId={storyId}
             page={p}
             selectedPageId={selectedPageId}
             installableStoryBlocks={installableStoryBlocks}
+            installedStoryBlocks={installedStoryBlocks}
             selectedStoryBlockId={selectedStoryBlockId}
             showPageSettings={showPageSettings}
             isEditable={isEditable}
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
+            onBlockCreate={onBlockCreate}
+            onBlockDelete={onBlockDelete}
             onBlockSelect={onBlockSelect}
+            onPropertyUpdate={onPropertyUpdate}
           />
           <PageGap height={pageGap} />
         </Fragment>
