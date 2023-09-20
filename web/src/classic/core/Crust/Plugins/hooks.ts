@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { CameraPosition, NaiveLayer } from "@reearth/classic/core/mantle";
 import {
   type MouseEventHandles,
@@ -86,8 +87,8 @@ export default function ({
     [overrideSceneProperty],
   );
 
-  const flyTo = useCallback(
-    (target: string | FlyToDestination, options?: CameraOptions | undefined) => {
+  const flyTo: FlyTo = useCallback(
+    (target, options) => {
       engineRef?.flyTo(target, options);
     },
     [engineRef],

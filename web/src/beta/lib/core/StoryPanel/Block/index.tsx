@@ -4,7 +4,7 @@ import type { Layer } from "@reearth/beta/lib/core/mantle";
 import { styled } from "@reearth/services/theme";
 
 import builtin, { isBuiltinStoryBlock } from "./builtin";
-import { CommonProps, BlockProps } from "./types";
+import type { CommonProps, BlockProps } from "./types";
 
 export type Props = {
   renderBlock?: (block: BlockProps) => ReactNode;
@@ -36,7 +36,7 @@ const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid
     ${({ selected, editable, theme }) => (editable && selected ? theme.select.main : "transparent")};
 
-  &:hover {
-    border-color: ${({ editable, theme }) => (editable ? theme.outline.main : null)};
+  :hover {
+    ${({ editable, theme }) => editable && `border-color: ${theme.outline.main}`};
   }
 `;

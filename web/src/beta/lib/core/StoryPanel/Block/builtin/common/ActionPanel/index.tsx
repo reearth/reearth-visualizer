@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
 
 import ActionPanel, { type ActionPosition } from "../../../../ActionPanel";
 

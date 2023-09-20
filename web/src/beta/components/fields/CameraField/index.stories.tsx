@@ -2,9 +2,10 @@ import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useCallback } from "react";
 
+import { Camera } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import CameraField, { Props, CameraValue } from ".";
+import CameraField, { type Props } from ".";
 
 const meta: Meta<typeof CameraField> = {
   component: CameraField,
@@ -17,43 +18,14 @@ type Story = StoryObj<typeof CameraField>;
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback(
-    (value: CameraValue) => updateArgs({ value: value }),
-    [updateArgs],
-  );
+  const handleSave = useCallback((value?: Camera) => updateArgs({ value: value }), [updateArgs]);
 
-  const handleClean = useCallback(() => updateArgs({ value: undefined }), [updateArgs]);
-
-  const handleJump = useCallback(
-    (value: CameraValue) => console.log("Jumping to camera value", value),
-    [],
-  );
-
-  const handleCapture = useCallback(() => {
-    console.log("on capture updates a random value");
-    updateArgs({
-      value: {
-        lat: (Math.random() * 180).toFixed(2),
-        lng: (Math.random() * 180).toFixed(2),
-        altitude: (Math.random() * 100).toFixed(2),
-        heading: (Math.random() * 10).toFixed(2),
-        pitch: (Math.random() * 10).toFixed(2),
-        roll: (Math.random() * 10).toFixed(2),
-        fov: (Math.random() * 180).toFixed(2),
-      },
-    });
-  }, [updateArgs]);
+  const handleFlyTo = useCallback(() => updateArgs({ value: undefined }), [updateArgs]);
 
   return (
     <Wrapper>
       <div>
-        <CameraField
-          {...args}
-          onChange={handleChange}
-          onClean={handleClean}
-          onJump={handleJump}
-          onCapture={handleCapture}
-        />
+        <CameraField {...args} onSave={handleSave} onFlyTo={handleFlyTo} />
       </div>
       <div>
         <CameraField {...args} disabled={true} />
@@ -62,10 +34,8 @@ export const Default: Story = (args: Props) => {
         <CameraField
           {...args}
           name="Camera field without controls"
-          onChange={handleChange}
-          onClean={undefined}
-          onJump={undefined}
-          onCapture={undefined}
+          onSave={handleSave}
+          onFlyTo={undefined}
         />
       </div>
     </Wrapper>
@@ -77,10 +47,8 @@ Default.args = {
   description: "Camera field description",
   value: undefined,
   disabled: false,
-  onCapture: () => console.log("captured"),
-  onJump: (input: CameraValue) => console.log("Jump to", input),
-  onClean: () => console.log("clean camera value"),
-  onChange: (value: CameraValue) => console.log("updated camera value", value),
+  onSave: (value?: Camera) => console.log("saved camera value: ", value),
+  onFlyTo: target => console.log("Fly to", target),
 };
 
 const Wrapper = styled.div`
