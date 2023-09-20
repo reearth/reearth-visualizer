@@ -59,7 +59,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: sourceType === "url" && value !== "" ? value : null,
           type: fileFormat.toLowerCase(),
-          value: sourceType === "value" && value !== "" ? value : null,
+          value: sourceType === "value" && value !== "" ? JSON.parse(value) : null,
         },
         resource: {
           clampToGround: true,
