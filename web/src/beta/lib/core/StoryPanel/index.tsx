@@ -70,7 +70,6 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
     onCurrentPageChange,
   });
 
-  console.log("actual story telling", installedBlocks);
   return (
     <PanelWrapper>
       {!!pageInfo && (

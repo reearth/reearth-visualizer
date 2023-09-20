@@ -28,8 +28,7 @@ export default function Published({ className, alias }: Props) {
 
   // eslint-disable-next-line no-prototype-builtins
   const isStoryPublish = storyJsonData?.hasOwnProperty("story");
-
-  console.log("published", installedStoryBlocks);
+  const selectedStory = storyJsonData?.story;
 
   return error ? (
     <Error />
@@ -44,7 +43,7 @@ export default function Published({ className, alias }: Props) {
       isBuilt
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}>
-      <StoryPanel installedBlocks={installedStoryBlocks} />
+      <StoryPanel selectedStory={selectedStory} installedBlocks={installedStoryBlocks} />
     </VisualizerStory>
   ) : (
     <Visualizer
