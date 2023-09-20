@@ -4,7 +4,14 @@ import { useMemo, useEffect, useCallback } from "react";
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
-import { useLayersFetcher, useSceneFetcher, useWidgetsFetcher } from "@reearth/services/api";
+import type { ValueType } from "@reearth/beta/utils/value";
+import {
+  useLayersFetcher,
+  useSceneFetcher,
+  useWidgetsFetcher,
+  useStorytellingFetcher,
+  usePropertyFetcher,
+} from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -18,13 +25,28 @@ import {
 } from "@reearth/services/state";
 
 import { convertWidgets, processLayers } from "./convert";
-import { BlockType } from "./type";
+import type { BlockType } from "./type";
 
-export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) => {
+export default ({
+  sceneId,
+  isBuilt,
+  storyId,
+  pageId,
+}: {
+  sceneId?: string;
+  isBuilt?: boolean;
+  storyId?: string;
+  pageId?: string;
+}) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
-  const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { useSceneQuery } = useSceneFetcher();
+  const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
+    useStorytellingFetcher();
+  const { useUpdatePropertyValue } = usePropertyFetcher();
+
+  const { nlsLayers } = useGetLayersQuery({ sceneId });
+
   const { scene } = useSceneQuery({ sceneId });
 
   const [sceneMode, setSceneMode] = useSceneMode();
@@ -173,6 +195,50 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     [sceneId, useUpdateWidgetAlignSystem],
   );
 
+  const { installedStoryBlocks } = useInstalledStoryBlocksQuery({
+    sceneId,
+    lang: undefined,
+    storyId,
+    pageId,
+  });
+
+  const handleStoryBlockCreate = useCallback(
+    (index?: number) => async (extensionId?: string, pluginId?: string) => {
+      if (!extensionId || !pluginId || !storyId || !pageId) return;
+      await useCreateStoryBlock({
+        pluginId,
+        extensionId,
+        storyId,
+        pageId,
+        index,
+      });
+    },
+    [storyId, pageId, useCreateStoryBlock],
+  );
+
+  const handleStoryBlockDelete = useCallback(
+    async (blockId?: string) => {
+      if (!blockId || !storyId || !pageId) return;
+      await useDeleteStoryBlock({ blockId, pageId, storyId });
+    },
+    [storyId, pageId, useDeleteStoryBlock],
+  );
+
+  const handlePropertyValueUpdate = useCallback(
+    async (
+      propertyId?: string,
+      schemaItemId?: string,
+      fieldId?: string,
+      itemId?: string,
+      vt?: ValueType,
+      v?: ValueTypes[ValueType],
+    ) => {
+      if (!propertyId || !schemaItemId || !fieldId || !vt) return;
+      await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
+    },
+    [useUpdatePropertyValue],
+  );
+
   const engineMeta = useMemo(
     () => ({
       cesiumIonAccessToken: config()?.cesiumIonAccessToken,
@@ -206,6 +272,10 @@ export default ({ sceneId, isBuilt }: { sceneId?: string; isBuilt?: boolean }) =
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
+    installedStoryBlocks,
+    handleStoryBlockCreate,
+    handleStoryBlockDelete,
+    handlePropertyValueUpdate,
     selectLayer,
     selectBlock,
     onBlockChange,

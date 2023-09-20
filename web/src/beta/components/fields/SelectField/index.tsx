@@ -18,6 +18,7 @@ export type Props = {
   onChange: (key: string) => void;
   value?: string;
   disabled?: boolean;
+  placeholder?: string;
   // Property field
   name?: string;
   description?: string;
@@ -57,7 +58,7 @@ const SelectField: React.FC<Props> = ({
             <Select selected={selected ? true : false} open={open}>
               {selected ? selected.label : t("Please choose an option")}
             </Select>
-            <ArrowDownIcon icon="arrowDown" size={12} />
+            <ArrowIcon icon="arrowDown" open={open} size={12} />
           </InputWrapper>
         </Popover.Trigger>
         <PickerWrapper attachToRoot>
@@ -84,11 +85,16 @@ const InputWrapper = styled.div<{ disabled: boolean }>`
 `;
 
 const Select = styled.div<{ open: boolean; selected: boolean }>`
-  display: flex;
-  padding: 4px 8px;
+  padding: 7px 8px;
+  /* The width + placement of the arrow icon */
+  padding-right: 22px;
   border-radius: 4px;
   width: 100%;
   font-size: 12px;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: ${({ theme, selected }) => (selected ? theme.content.main : theme.content.weaker)};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
@@ -105,11 +111,11 @@ const Select = styled.div<{ open: boolean; selected: boolean }>`
   }
 `;
 
-const ArrowDownIcon = styled(Icon)`
+const ArrowIcon = styled(Icon)<{ open: boolean }>`
   position: absolute;
   right: 10px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: ${({ open }) => (open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)")};
 `;
 
 const PickerWrapper = styled(Popover.Content)`
@@ -123,6 +129,8 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* TODO: Need standardized z-index */
+  z-index: 1;
 `;
 
 const Option = styled(Text)<{ selected: boolean }>`

@@ -1,11 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 
-import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 
-export type {
-  StoryFragmentFragment as GQLStory,
-  StoryPageFragmentFragment as GQLStoryPage,
-} from "@reearth/services/gql";
+export type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 
 export default ({
   selectedStory,
@@ -13,8 +10,8 @@ export default ({
   isEditable,
   onCurrentPageChange,
 }: {
-  selectedStory?: StoryFragmentFragment;
-  currentPage?: StoryPageFragmentFragment;
+  selectedStory?: Story;
+  currentPage?: Page;
   isEditable?: boolean;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 }) => {

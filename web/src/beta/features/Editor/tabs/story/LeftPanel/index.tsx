@@ -1,11 +1,11 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import ContentPage from "@reearth/beta/features/Editor/tabs/story/LeftPanel/ContentPage";
-import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import { Page, Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 type Props = {
-  selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
+  selectedStory?: Story;
+  selectedPage?: Page;
   onPageSelect: (id: string) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
