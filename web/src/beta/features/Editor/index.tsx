@@ -6,7 +6,6 @@ import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import Visualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { StoryFragmentFragment } from "@reearth/services/gql";
 import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
@@ -19,10 +18,9 @@ type Props = {
   tab: Tab;
   projectId?: string;
   workspaceId?: string;
-  stories: StoryFragmentFragment[];
 };
 
-const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories }) => {
+const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
     selectedSceneSetting,
@@ -56,7 +54,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     handleMoveBlock,
   } = useStorytelling({
     sceneId,
-    stories,
+    onFlyTo: handleFlyTo,
   });
 
   const {
@@ -75,7 +73,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
     nlsLayers,
     selectedStory,
     selectedLayerId: selectedLayer?.id,
-    currentPage,
+    currentPageId: currentPage?.id,
     selectedSceneSetting,
     onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
@@ -140,7 +138,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab, stories
                 sceneId={sceneId}
                 showStoryPanel={selectedProjectType === "story"}
                 selectedStory={selectedStory}
-                currentPage={currentPage}
+                currentPageId={currentPage?.id}
                 isAutoScrolling={isAutoScrolling}
                 installableBlocks={installableStoryBlocks}
                 currentCamera={currentCamera}

@@ -4,7 +4,7 @@ import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
 import type { LayerNameUpdateProps } from "./useLayers";
 
@@ -13,8 +13,8 @@ type Props = {
   nlsLayers: NLSLayer[];
 
   // storytelling
-  selectedStory?: StoryFragmentFragment;
-  currentPage?: StoryPageFragmentFragment;
+  selectedStory?: Story;
+  currentPageId?: string;
   onCurrentPageChange: (id: string) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
@@ -39,7 +39,7 @@ export default ({
   selectedStory,
   selectedLayerId,
   selectedSceneSetting,
-  currentPage,
+  currentPageId,
   onCurrentPageChange,
   onPageDuplicate,
   onPageDelete,
@@ -70,7 +70,7 @@ export default ({
         return (
           <StorySidePanel
             selectedStory={selectedStory}
-            selectedPage={currentPage}
+            selectedPageId={currentPageId}
             onPageSelect={onCurrentPageChange}
             onPageDuplicate={onPageDuplicate}
             onPageDelete={onPageDelete}
@@ -89,7 +89,7 @@ export default ({
     selectedStory,
     selectedLayerId,
     selectedSceneSetting,
-    currentPage,
+    currentPageId,
     onLayerDelete,
     onLayerNameUpdate,
     onLayerSelect,

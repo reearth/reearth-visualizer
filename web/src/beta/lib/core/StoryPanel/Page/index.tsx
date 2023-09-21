@@ -1,35 +1,32 @@
 import {
   Fragment,
   useMemo,
-  useState,
-  useEffect,
   MouseEvent,
   useRef,
   createContext,
   useContext,
+  useState,
+  useEffect,
 } from "react";
 import { useDragDropManager } from "react-dnd";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import { useScroll } from "@reearth/beta/components/DragAndDropList/scrollItem";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import type { Spacing } from "@reearth/beta/utils/value";
-import { convert } from "@reearth/services/api/propertyApi/utils";
+import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import type { GQLStoryPage } from "../hooks";
+import type { Page } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
 import useHooks from "./hooks";
 
 type Props = {
-  sceneId?: string;
-  storyId?: string;
-  page?: GQLStoryPage;
+  page?: Page;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -37,7 +34,17 @@ type Props = {
   isEditable?: boolean;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockSelect: (blockId?: string) => void;
+  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockSelect?: (blockId?: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
   handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
 };
 
@@ -50,9 +57,8 @@ const StoryPageContext = createContext({
 });
 
 export const useStoryPageContext = () => useContext(StoryPageContext);
+
 const StoryPage: React.FC<Props> = ({
-  sceneId,
-  storyId,
   page,
   selectedPageId,
   installableStoryBlocks,
@@ -61,37 +67,36 @@ const StoryPage: React.FC<Props> = ({
   isEditable,
   onPageSettingsToggle,
   onPageSelect,
+  onBlockCreate,
+  onBlockDelete,
   onBlockSelect,
+  onPropertyUpdate,
   handleMoveBlock,
 }) => {
   const t = useT();
-  const propertyItems = useMemo(() => convert(page?.property), [page?.property]);
+  const propertyItems = useMemo(() => page?.property.items, [page?.property]);
+
+  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
 
   const {
     openBlocksIndex,
-    installedStoryBlocks,
     titleId,
     titleProperty,
     isHovered,
     handleOnMouseOver,
     handleOnMouseOut,
-    handleStoryBlockCreate,
-    handleStoryBlockDelete,
     handleBlockOpen,
-    handlePropertyValueUpdate,
   } = useHooks({
-    sceneId,
-    storyId,
     pageId: page?.id,
     propertyItems,
   });
 
-  const [items, setItems] = useState(installedStoryBlocks ? installedStoryBlocks : []);
+  const [items, setItems] = useState(storyBlocks ? storyBlocks : []);
   const listRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    installedStoryBlocks && setItems(installedStoryBlocks);
-  }, [installedStoryBlocks]);
+    storyBlocks && setItems(storyBlocks);
+  }, [storyBlocks]);
 
   const { updatePosition } = useScroll(listRef);
 
@@ -137,9 +142,9 @@ const StoryPage: React.FC<Props> = ({
                 }}
                 isEditable={isEditable}
                 isSelected={selectedStoryBlockId === titleId}
-                onClick={() => onBlockSelect(titleId)}
+                onClick={() => onBlockSelect?.(titleId)}
                 onClickAway={onBlockSelect}
-                onChange={handlePropertyValueUpdate}
+                onChange={onPropertyUpdate}
               />
             )}
             {isEditable && (
@@ -147,11 +152,10 @@ const StoryPage: React.FC<Props> = ({
                 openBlocks={openBlocksIndex === -1}
                 installableStoryBlocks={installableStoryBlocks}
                 onBlockOpen={() => handleBlockOpen(-1)}
-                onBlockAdd={handleStoryBlockCreate(0)}
+                onBlockAdd={onBlockCreate?.(0)}
               />
             )}
-
-            {installedStoryBlocks && installedStoryBlocks.length > 0 && (
+            {storyBlocks && storyBlocks.length > 0 && (
               <DragAndDropList
                 uniqueKey="LeftPanelPages"
                 gap={8}
@@ -169,24 +173,24 @@ const StoryPage: React.FC<Props> = ({
                   });
                   await handleMoveBlock(page?.id || "", index, item.id);
                 }}
-                renderItem={(b, i) => {
+                renderItem={(b, idx) => {
                   return (
-                    <Fragment key={i}>
+                    <Fragment key={idx}>
                       <StoryBlock
                         block={b}
                         isSelected={selectedStoryBlockId === b.id}
                         isEditable={isEditable}
-                        onClick={() => onBlockSelect(b.id)}
+                        onClick={() => onBlockSelect?.(b.id)}
                         onClickAway={onBlockSelect}
-                        onChange={handlePropertyValueUpdate}
-                        onRemove={handleStoryBlockDelete}
+                        onChange={onPropertyUpdate}
+                        onRemove={onBlockDelete}
                       />
                       {isEditable && (
                         <BlockAddBar
-                          openBlocks={openBlocksIndex === i}
+                          openBlocks={openBlocksIndex === idx}
                           installableStoryBlocks={installableStoryBlocks}
-                          onBlockOpen={() => handleBlockOpen(i)}
-                          onBlockAdd={handleStoryBlockCreate(i + 1)}
+                          onBlockOpen={() => handleBlockOpen(idx)}
+                          onBlockAdd={onBlockCreate?.(idx + 1)}
                         />
                       )}
                     </Fragment>

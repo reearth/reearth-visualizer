@@ -1,17 +1,16 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
-import { GQLStoryPage } from "../hooks";
+import type { Page } from "../hooks";
 import StoryPage from "../Page";
 
 export const PAGES_ELEMENT_ID = "story-page-content";
 
 export type Props = {
-  sceneId?: string;
-  storyId?: string;
-  pages?: GQLStoryPage[];
+  pages?: Page[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -22,14 +21,28 @@ export type Props = {
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockSelect: (blockId?: string) => void;
+  onBlockCreate?: (
+    index?: number,
+  ) => (
+    pageId?: string | undefined,
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+  ) => Promise<void>;
+  onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
+  onBlockSelect?: (blockId?: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
   onCurrentPageChange?: (pageId: string) => void;
   handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryContent: React.FC<Props> = ({
-  sceneId,
-  storyId,
   pages,
   selectedPageId,
   installableStoryBlocks,
@@ -41,7 +54,10 @@ const StoryContent: React.FC<Props> = ({
   onAutoScrollingChange,
   onPageSettingsToggle,
   onPageSelect,
+  onBlockCreate,
+  onBlockDelete,
   onBlockSelect,
+  onPropertyUpdate,
   onCurrentPageChange,
   handleMoveBlock,
 }) => {
@@ -129,8 +145,6 @@ const StoryContent: React.FC<Props> = ({
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage
-            sceneId={sceneId}
-            storyId={storyId}
             page={p}
             selectedPageId={selectedPageId}
             installableStoryBlocks={installableStoryBlocks}
@@ -139,8 +153,11 @@ const StoryContent: React.FC<Props> = ({
             isEditable={isEditable}
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
+            onBlockCreate={onBlockCreate}
+            onBlockDelete={onBlockDelete}
             onBlockSelect={onBlockSelect}
             handleMoveBlock={handleMoveBlock}
+            onPropertyUpdate={onPropertyUpdate}
           />
           <PageGap height={pageGap} />
         </Fragment>

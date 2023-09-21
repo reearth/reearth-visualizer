@@ -1,11 +1,11 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import ContentPage from "@reearth/beta/features/Editor/tabs/story/LeftPanel/ContentPage";
-import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 type Props = {
-  selectedStory?: StoryFragmentFragment;
-  selectedPage?: StoryPageFragmentFragment;
+  selectedStory?: Story;
+  selectedPageId?: string;
   onPageSelect: (id: string) => void;
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
@@ -15,7 +15,7 @@ type Props = {
 
 const StoryLeftPanel: React.FC<Props> = ({
   selectedStory,
-  selectedPage,
+  selectedPageId,
   onPageSelect,
   onPageDuplicate,
   onPageDelete,
@@ -41,7 +41,7 @@ const StoryLeftPanel: React.FC<Props> = ({
           children: (
             <ContentPage
               storyPages={selectedStory?.pages ?? []}
-              selectedPage={selectedPage}
+              selectedPageId={selectedPageId}
               onPageAdd={onPageAdd}
               onPageSelect={onPageSelect}
               onPageDuplicate={onPageDuplicate}

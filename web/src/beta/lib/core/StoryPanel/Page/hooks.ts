@@ -1,21 +1,8 @@
 import { useCallback, useMemo, useState, MouseEvent } from "react";
 
-import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import { usePropertyFetcher } from "@reearth/services/api";
-import { Item } from "@reearth/services/api/propertyApi/utils";
-import useStorytellingAPI from "@reearth/services/api/storytellingApi";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
 
-export default ({
-  sceneId,
-  storyId,
-  pageId,
-  propertyItems,
-}: {
-  sceneId?: string;
-  storyId?: string;
-  pageId?: string;
-  propertyItems?: Item[];
-}) => {
+export default ({ pageId, propertyItems }: { pageId?: string; propertyItems?: Item[] }) => {
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
   const [isHovered, setHover] = useState(false);
 
@@ -37,55 +24,6 @@ export default ({
     [openBlocksIndex],
   );
 
-  const { useUpdatePropertyValue } = usePropertyFetcher();
-
-  const handlePropertyValueUpdate = useCallback(
-    async (
-      propertyId?: string,
-      schemaItemId?: string,
-      fieldId?: string,
-      itemId?: string,
-      vt?: ValueType,
-      v?: ValueTypes[ValueType],
-    ) => {
-      if (!propertyId || !schemaItemId || !fieldId || !vt) return;
-      await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
-    },
-    [useUpdatePropertyValue],
-  );
-
-  const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
-    useStorytellingAPI();
-
-  const { installedStoryBlocks } = useInstalledStoryBlocksQuery({
-    sceneId,
-    lang: undefined,
-    storyId,
-    pageId,
-  });
-
-  const handleStoryBlockCreate = useCallback(
-    (index?: number) => async (extensionId?: string, pluginId?: string) => {
-      if (!extensionId || !pluginId || !storyId || !pageId) return;
-      await useCreateStoryBlock({
-        pluginId,
-        extensionId,
-        storyId,
-        pageId,
-        index,
-      });
-    },
-    [storyId, pageId, useCreateStoryBlock],
-  );
-
-  const handleStoryBlockDelete = useCallback(
-    async (blockId?: string) => {
-      if (!blockId || !storyId || !pageId) return;
-      await useDeleteStoryBlock({ blockId, pageId, storyId });
-    },
-    [storyId, pageId, useDeleteStoryBlock],
-  );
-
   const titleProperty = useMemo(
     () => propertyItems?.find(i => i.schemaGroup === "title"),
     [propertyItems],
@@ -95,15 +33,11 @@ export default ({
 
   return {
     openBlocksIndex,
-    installedStoryBlocks,
     titleId,
     titleProperty,
     isHovered,
     handleOnMouseOver,
     handleOnMouseOut,
-    handleStoryBlockCreate,
-    handleStoryBlockDelete,
     handleBlockOpen,
-    handlePropertyValueUpdate,
   };
 };

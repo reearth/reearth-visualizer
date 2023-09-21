@@ -1,22 +1,25 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera } from "@reearth/beta/utils/value";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
-import { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 type Props = {
   sceneId: string;
-  stories: StoryFragmentFragment[];
+  onFlyTo: FlyTo;
 };
 
-const getPage = (id?: string, pages?: StoryPageFragmentFragment[]) => {
+const getPage = (id?: string, pages?: Page[]) => {
   if (!id || !pages || !pages.length) return;
   return pages.find(p => p.id === id);
 };
 
-export default function ({ sceneId, stories }: Props) {
+export default function ({ sceneId, onFlyTo }: Props) {
   const t = useT();
   const {
+    useStoriesQuery,
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
@@ -24,39 +27,49 @@ export default function ({ sceneId, stories }: Props) {
     useInstallableStoryBlocksQuery,
   } = useStorytellingAPI();
 
+  const { stories } = useStoriesQuery({ sceneId });
+
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
-  const [currentPageId, setCurrentPageId] = useState<string | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState<Page | undefined>(undefined);
   const [isAutoScrolling, setAutoScrolling] = useState(false);
 
   const selectedStory = useMemo(() => {
-    return stories.length ? stories[0] : undefined;
+    return stories?.length ? stories[0] : undefined;
   }, [stories]);
-
-  const currentPage = useMemo(() => {
-    if (!currentPageId && selectedStory?.pages?.length) {
-      return selectedStory?.pages[0];
-    }
-
-    return getPage(currentPageId, selectedStory?.pages);
-  }, [currentPageId, selectedStory?.pages]);
 
   const handleAutoScrollingChange = useCallback(
     (isScrolling: boolean) => setAutoScrolling(isScrolling),
     [],
   );
 
+  useEffect(() => {
+    if (!currentPage) {
+      setCurrentPage(selectedStory?.pages?.[0]);
+    }
+  }, [currentPage, selectedStory?.pages]);
+
   const handleCurrentPageChange = useCallback(
     (pageId: string, disableScrollIntoView?: boolean) => {
       const newPage = getPage(pageId, selectedStory?.pages);
       if (!newPage) return;
-      setCurrentPageId(pageId);
+
+      setCurrentPage(newPage);
+
       if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
         setAutoScrolling(true);
         element?.scrollIntoView({ behavior: "smooth" });
       }
+      const camera = newPage.property.items?.find(i => i.schemaGroup === "cameraAnimation");
+      if (camera && "fields" in camera) {
+        const destination = camera.fields.find(f => f.id === "cameraPosition")?.value as Camera;
+        if (!destination) return;
+
+        const duration = camera.fields.find(f => f.id === "cameraDuration")?.value as number;
+        onFlyTo({ ...destination }, { duration });
+      }
     },
-    [selectedStory?.pages],
+    [selectedStory?.pages, onFlyTo],
   );
 
   const handlePageDuplicate = useCallback(async (pageId: string) => {
@@ -75,11 +88,11 @@ export default function ({ sceneId, stories }: Props) {
         storyId: selectedStory.id,
         pageId,
       });
-      if (pageId === currentPageId) {
-        setCurrentPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
+      if (pageId === currentPage?.id) {
+        setCurrentPage(pages[deletedPageIndex + 1] ?? pages[deletedPageIndex - 1]);
       }
     },
-    [useDeleteStoryPage, sceneId, currentPageId, selectedStory],
+    [sceneId, currentPage?.id, selectedStory, useDeleteStoryPage],
   );
 
   const handlePageAdd = useCallback(
@@ -90,7 +103,7 @@ export default function ({ sceneId, stories }: Props) {
         storyId: selectedStory.id,
         swipeable: isSwipeable,
         title: t("Page"),
-        index: selectedStory.pages.length,
+        index: selectedStory.pages?.length,
         layers: [],
         swipeableLayers: [],
       });

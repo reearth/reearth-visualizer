@@ -234,7 +234,7 @@ const toField = (
   return {
     id: schemaField.fieldId,
     type,
-    value,
+    value: value,
     mergedValue: mergedValue?.value,
     overridden: !!merged?.overridden,
     link:
