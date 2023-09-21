@@ -24,6 +24,10 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
 }: Props<Item>) {
   const [movingItems, setMovingItems] = useState<Item[]>(items);
 
+  const customDragHandler = (item: Item): boolean => {
+    // eslint-disable-next-line no-prototype-builtins
+    return item.hasOwnProperty("extensionId");
+  };
   useEffect(() => {
     setMovingItems(items);
   }, [items]);
@@ -54,16 +58,17 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
     <SWrapper gap={gap}>
       {movingItems.map((item, i) => {
         const id = getId(item);
+        const shouldUseCustomHandler = customDragHandler(item); // Determine whether to use custom handler
         return (
           <Item
             itemGroupKey={uniqueKey}
-            item={item}
             key={id}
             id={item.id}
             index={i}
             onItemMove={onItemMove}
             onItemDropOnItem={onItemDropOnItem}
-            onItemDropOutside={onItemDropOutside}>
+            onItemDropOutside={onItemDropOutside}
+            shouldUseCustomHandler={shouldUseCustomHandler}>
             {renderItem(item, i)}
           </Item>
         );

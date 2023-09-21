@@ -15,7 +15,7 @@ type Props = {
   itemGroupKey: string;
   id: string;
   index: number;
-  item?: any;
+  shouldUseCustomHandler?: boolean;
   onItemMove: (dragIndex: number, hoverIndex: number) => void;
   onItemDropOnItem: (dropIndex: number) => void;
   onItemDropOutside: () => void;
@@ -30,7 +30,7 @@ const Item: FC<Props> = ({
   id,
   children,
   index,
-  item,
+  shouldUseCustomHandler,
   onItemMove,
   onItemDropOnItem,
   onItemDropOutside,
@@ -97,8 +97,7 @@ const Item: FC<Props> = ({
   });
 
   drag(drop(ref));
-  // eslint-disable-next-line no-prototype-builtins
-  return item.hasOwnProperty("extensionId") ? (
+  return shouldUseCustomHandler ? (
     <ItemContext.Provider value={ref}>
       <SItem ref={preview} data-handler-id={handlerId} isDragging={isDragging}>
         {children}
