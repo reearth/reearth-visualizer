@@ -30,13 +30,9 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   const [showDataSourceManager, setShowDataSourceManager] = useState(false);
 
-  const handleDataSourceManagerCloser = useCallback(() => {
-    setShowDataSourceManager(false);
-  }, []);
+  const handleDataSourceManagerCloser = useCallback(() => setShowDataSourceManager(false), []);
 
-  const handleDataSourceManagerOpener = useCallback(() => {
-    setShowDataSourceManager(true);
-  }, []);
+  const handleDataSourceManagerOpener = useCallback(() => setShowDataSourceManager(true), []);
 
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
 
@@ -84,6 +80,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const handleFlyTo: FlyTo = useCallback(
     (target, options) => {
       if (!isVisualizerReady) return;
+      console.log("FLY TO CALLBACK");
       visualizerRef.current?.engine.flyTo(target, options);
     },
     [isVisualizerReady],

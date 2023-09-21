@@ -1,8 +1,7 @@
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import { InstalledStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
-import useHooks, { type Story, type Page } from "./hooks";
+import useHooks, { type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
 
@@ -22,14 +21,19 @@ export type InstallableStoryBlock = {
 
 export type StoryPanelProps = {
   selectedStory?: Story;
-  currentPage?: Page;
+  currentPageId?: string;
   isEditable?: boolean;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
-  installedBlocks?: InstalledStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
-  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
-  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockCreate?: (
+    index?: number,
+  ) => (
+    pageId?: string | undefined,
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+  ) => Promise<void>;
+  onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -43,11 +47,10 @@ export type StoryPanelProps = {
 
 export const StoryPanel: React.FC<StoryPanelProps> = ({
   selectedStory,
-  currentPage,
+  currentPageId,
   isEditable,
   isAutoScrolling,
   installableBlocks,
-  installedBlocks,
   onAutoScrollingChange,
   onBlockCreate,
   onBlockDelete,
@@ -65,7 +68,7 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
     handleCurrentPageChange,
   } = useHooks({
     selectedStory,
-    currentPage,
+    currentPageId,
     isEditable,
     onCurrentPageChange,
   });
@@ -83,7 +86,6 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
         pages={selectedStory?.pages}
         selectedPageId={selectedPageId}
         installableStoryBlocks={installableBlocks}
-        installedStoryBlocks={installedBlocks}
         selectedStoryBlockId={selectedBlockId}
         showPageSettings={showPageSettings}
         showingIndicator={!!pageInfo}
