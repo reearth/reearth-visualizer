@@ -100,7 +100,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
       } else if (fileType === "URL" && !checkIfFileType(inputValue, VIDEO_FORMATS)) {
         setNotification({
           type: "error",
-          text: t("wrong Video URL  Format"),
+          text: t("wrong Video URL Format"),
         });
         setCurrentValue(undefined);
         return;
