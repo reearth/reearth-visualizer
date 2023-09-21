@@ -12,7 +12,7 @@ import { styled } from "@reearth/services/theme";
 
 type Props = {
   storyPages: Page[];
-  selectedPage?: Page;
+  selectedPageId?: string;
   onPageSelect: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
   onPageDuplicate: (id: string) => void;
@@ -21,7 +21,7 @@ type Props = {
 };
 const ContentPage: React.FC<Props> = ({
   storyPages,
-  selectedPage,
+  selectedPageId,
   onPageSelect,
   onPageAdd,
   // onPageDuplicate,
@@ -69,7 +69,7 @@ const ContentPage: React.FC<Props> = ({
                   key={i}
                   border
                   actionPlacement="bottom-start"
-                  isSelected={selectedPage?.id === storyPage.id}
+                  isSelected={selectedPageId === storyPage.id}
                   isOpenAction={openedPageId === storyPage.id}
                   onItemClick={() => onPageSelect(storyPage.id)}
                   onActionClick={() => setOpenedPageId(old => (old ? undefined : storyPage.id))}

@@ -1,10 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import type {
-  InstallableStoryBlock,
-  InstalledStoryBlock,
-} from "@reearth/services/api/storytellingApi/blocks";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
 import type { Page } from "../hooks";
@@ -16,7 +13,6 @@ export type Props = {
   pages?: Page[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
-  installedStoryBlocks?: InstalledStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   showingIndicator?: boolean;
@@ -25,8 +21,14 @@ export type Props = {
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
-  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockCreate?: (
+    index?: number,
+  ) => (
+    pageId?: string | undefined,
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+  ) => Promise<void>;
+  onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -43,7 +45,6 @@ const StoryContent: React.FC<Props> = ({
   pages,
   selectedPageId,
   installableStoryBlocks,
-  installedStoryBlocks,
   selectedStoryBlockId,
   showPageSettings,
   showingIndicator,
@@ -145,7 +146,6 @@ const StoryContent: React.FC<Props> = ({
             page={p}
             selectedPageId={selectedPageId}
             installableStoryBlocks={installableStoryBlocks}
-            installedStoryBlocks={installedStoryBlocks}
             selectedStoryBlockId={selectedStoryBlockId}
             showPageSettings={showPageSettings}
             isEditable={isEditable}

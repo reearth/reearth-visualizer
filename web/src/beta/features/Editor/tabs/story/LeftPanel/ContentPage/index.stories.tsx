@@ -30,6 +30,6 @@ export const Default: Story = {
   args: {
     // need API mock
     storyPages: dummyPages,
-    selectedPage: dummyPages[1],
+    selectedPageId: dummyPages[1].id,
   },
 };

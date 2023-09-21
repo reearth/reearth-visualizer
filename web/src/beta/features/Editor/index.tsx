@@ -72,7 +72,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     nlsLayers,
     selectedStory,
     selectedLayerId: selectedLayer?.id,
-    currentPage,
+    currentPageId: currentPage?.id,
     selectedSceneSetting,
     onCurrentPageChange: handleCurrentPageChange,
     onPageDuplicate: handlePageDuplicate,
@@ -137,7 +137,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 sceneId={sceneId}
                 showStoryPanel={selectedProjectType === "story"}
                 selectedStory={selectedStory}
-                currentPage={currentPage}
+                currentPageId={currentPage?.id}
                 isAutoScrolling={isAutoScrolling}
                 installableBlocks={installableStoryBlocks}
                 currentCamera={currentCamera}
