@@ -89,3 +89,9 @@ export const TextArea = styled.textarea`
   color: ${props => props.theme.content.main};
   overflow: hidden;
 `;
+
+export const FileButtonWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+  width: 100%;
+`;
