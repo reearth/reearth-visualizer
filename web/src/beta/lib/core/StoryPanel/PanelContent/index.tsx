@@ -93,7 +93,6 @@ const StoryContent: React.FC<Props> = ({
           const isScrollingUp = diff > 0;
 
           if (entry.isIntersecting) {
-            console.log("INTERSECTION OBVSERSERERER");
             onCurrentPageChange?.(id);
             scrollRef.current = panelContentElement?.scrollTop;
             return;
@@ -138,8 +137,6 @@ const StoryContent: React.FC<Props> = ({
       });
     }
   }, [isAutoScrolling, onAutoScrollingChange]);
-
-  useEffect(() => console.log(pages), [pages]);
 
   return (
     <PagesWrapper id={PAGES_ELEMENT_ID} showingIndicator={showingIndicator} isEditable={isEditable}>

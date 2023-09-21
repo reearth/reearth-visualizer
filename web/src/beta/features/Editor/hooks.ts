@@ -80,7 +80,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const handleFlyTo: FlyTo = useCallback(
     (target, options) => {
       if (!isVisualizerReady) return;
-      console.log("FLY TO CALLBACK");
       visualizerRef.current?.engine.flyTo(target, options);
     },
     [isVisualizerReady],
