@@ -1,20 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
 
-import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
-export type {
-  StoryFragmentFragment as GQLStory,
-  StoryPageFragmentFragment as GQLStoryPage,
-} from "@reearth/services/gql";
+export type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 
 export default ({
   selectedStory,
-  currentPage,
+  currentPageId,
   isEditable,
   onCurrentPageChange,
 }: {
-  selectedStory?: StoryFragmentFragment;
-  currentPage?: StoryPageFragmentFragment;
+  selectedStory?: Story;
+  currentPageId?: string;
   isEditable?: boolean;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 }) => {
@@ -60,13 +57,13 @@ export default ({
     const pages = selectedStory?.pages ?? [];
     if ((pages?.length ?? 0) < 2) return;
 
-    const currentIndex = pages.findIndex(p => p.id === currentPage?.id);
+    const currentIndex = pages.findIndex(p => p.id === currentPageId);
     return {
       currentPage: currentIndex + 1,
       maxPage: pages.length,
       onPageChange: (pageIndex: number) => onCurrentPageChange(pages[pageIndex - 1]?.id),
     };
-  }, [selectedStory, currentPage, onCurrentPageChange]);
+  }, [selectedStory, currentPageId, onCurrentPageChange]);
 
   return {
     pageInfo,

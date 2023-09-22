@@ -1,14 +1,13 @@
-import { FC } from "react";
-
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import useHooks, { type GQLStory, type GQLStoryPage } from "./hooks";
+import useHooks, { type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
 
 export const storyPanelWidth = 442;
 
-export { type GQLStory, type GQLStoryPage } from "./hooks";
+export { type Story, type Page } from "./hooks";
 
 export type InstallableStoryBlock = {
   name: string;
@@ -21,24 +20,41 @@ export type InstallableStoryBlock = {
 };
 
 export type StoryPanelProps = {
-  sceneId?: string;
-  selectedStory?: GQLStory;
-  currentPage?: GQLStoryPage;
+  selectedStory?: Story;
+  currentPageId?: string;
   isEditable?: boolean;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
+  onBlockCreate?: (
+    index?: number,
+  ) => (
+    pageId?: string | undefined,
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+  ) => Promise<void>;
+  onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 };
 
-export const StoryPanel: FC<StoryPanelProps> = ({
-  sceneId,
+export const StoryPanel: React.FC<StoryPanelProps> = ({
   selectedStory,
-  currentPage,
+  currentPageId,
   isEditable,
   isAutoScrolling,
   installableBlocks,
   onAutoScrollingChange,
+  onBlockCreate,
+  onBlockDelete,
+  onPropertyUpdate,
   onCurrentPageChange,
 }) => {
   const {
@@ -52,7 +68,7 @@ export const StoryPanel: FC<StoryPanelProps> = ({
     handleCurrentPageChange,
   } = useHooks({
     selectedStory,
-    currentPage,
+    currentPageId,
     isEditable,
     onCurrentPageChange,
   });
@@ -67,8 +83,6 @@ export const StoryPanel: FC<StoryPanelProps> = ({
         />
       )}
       <StoryContent
-        sceneId={sceneId}
-        storyId={selectedStory?.id}
         pages={selectedStory?.pages}
         selectedPageId={selectedPageId}
         installableStoryBlocks={installableBlocks}
@@ -80,7 +94,10 @@ export const StoryPanel: FC<StoryPanelProps> = ({
         onAutoScrollingChange={onAutoScrollingChange}
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}
+        onBlockCreate={onBlockCreate}
+        onBlockDelete={onBlockDelete}
         onBlockSelect={handleBlockSelect}
+        onPropertyUpdate={onPropertyUpdate}
         onCurrentPageChange={handleCurrentPageChange}
       />
     </PanelWrapper>
