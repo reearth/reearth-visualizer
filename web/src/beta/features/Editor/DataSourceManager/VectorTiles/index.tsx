@@ -1,10 +1,11 @@
-import { FC, KeyboardEvent } from "react";
+import { FC } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
+import useHooks from "../hooks";
 import {
   AddLayerWrapper,
   AssetWrapper,
@@ -16,32 +17,19 @@ import {
   SubmitWrapper,
 } from "../utils";
 
-type VectorTilesProps = {
-  urlValue: string;
-  layerValue: string;
-  layerInput: boolean;
-  layers: string[];
-  setUrlValue: (value: string) => void;
-  setLayerValue: (value: string) => void;
-  handleAddLayer: (e: KeyboardEvent<HTMLInputElement>) => void;
-  handleDeleteLayer: (value: number) => void;
-  handleLayerInput: () => void;
-} & DataProps;
+const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+  const {
+    urlValue,
+    layerValue,
+    layerInput,
+    layers,
+    setUrlValue,
+    setLayerValue,
+    handleAddLayer,
+    handleDeleteLayer,
+    handleLayerInput,
+  } = useHooks();
 
-const VectorTiles: FC<VectorTilesProps> = ({
-  sceneId,
-  urlValue,
-  layerValue,
-  layerInput,
-  layers,
-  onSubmit,
-  onClose,
-  setUrlValue,
-  setLayerValue,
-  handleAddLayer,
-  handleDeleteLayer,
-  handleLayerInput,
-}) => {
   const t = useT();
 
   const handleSubmit = () => {
@@ -54,7 +42,7 @@ const VectorTiles: FC<VectorTilesProps> = ({
         data: {
           url: urlValue !== "" ? urlValue : null,
           type: "mvt",
-          layers: layers.length <= 1 ? layers[0] : layers,
+          layers: layers.length === 1 ? layers[0] : layers,
         },
         resource: {
           clampToGround: true,
