@@ -8,7 +8,7 @@ import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
 import {
-  ColJustiftBetween,
+  ColJustifyBetween,
   AssetWrapper,
   InputGroup,
   Input,
@@ -57,7 +57,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustiftBetween>
+    <ColJustifyBetween>
       <AssetWrapper>
         <InputGroup
           label="Source Type"
@@ -105,7 +105,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           disabled={(sourceType === "url" || sourceType === "value") && !value}
         />
       </SubmitWrapper>
-    </ColJustiftBetween>
+    </ColJustifyBetween>
   );
 };
 

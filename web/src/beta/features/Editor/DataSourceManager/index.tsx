@@ -7,6 +7,8 @@ import { LayerAddProps } from "../useLayers";
 import Asset from "./Asset";
 import DelimitedText from "./DelimitedText";
 import ThreeDTiles from "./ThreeDTiles";
+import VectorTiles from "./VectorTiles";
+import WmsTiles from "./WmsTiles";
 
 export type DataProps = {
   sceneId: string;
@@ -36,6 +38,16 @@ const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) 
           content: <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "threeDTiles",
           label: "3D Tiles",
+        },
+        {
+          content: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+          id: "wms",
+          label: "WMS",
+        },
+        {
+          content: <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+          id: "vectorTiles",
+          label: "Vector Tile",
         },
       ]}
     />
