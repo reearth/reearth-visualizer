@@ -156,7 +156,7 @@ const StoryContent: React.FC<Props> = ({
             onBlockSelect={onBlockSelect}
             onPropertyUpdate={onPropertyUpdate}
           />
-          <PageGap height={pageGap} />
+          <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
         </Fragment>
       ))}
     </PagesWrapper>
