@@ -40,7 +40,7 @@ const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) 
         {
           content: <Asset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "asset",
-          label: "Asset",
+          label: "Common",
         },
         {
           content: <DelimitedText sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,

@@ -38,14 +38,14 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
 
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
-  const [sourceType, setSourceType] = React.useState("url"); // ["url", "local", "value"]
+  const [sourceType, setSourceType] = React.useState("local"); // ["url", "local", "value"]
   const [fileFormat, setFileFormat] = React.useState("GeoJSON");
   const [value, setValue] = React.useState("");
   const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
   const DataSourceOptions = useMemo(
     () => [
-      { label: t("From URL"), keyValue: "url" },
-      { label: t("From Local"), keyValue: "local" },
+      { label: t("From Assets"), keyValue: "local" },
+      { label: t("From Web"), keyValue: "url" },
       { label: t("From Value"), keyValue: "value" },
     ],
     [t],
