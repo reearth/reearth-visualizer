@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
@@ -31,57 +31,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
   const [open, setOpen] = useState(false);
   const [currentWorkspace] = useWorkspace();
   const [, setNotification] = useNotification();
-  const [CurrentValue, setCurrentValue] = useState(value);
-  const {
-    assets,
-    isLoading,
-    hasMoreAssets,
-    searchTerm,
-    selectedAssets,
-    selectAsset,
-    handleGetMoreAssets,
-    createAssets,
-    handleSortChange,
-    handleSearchTerm,
-  } = useHooks({ workspaceId: currentWorkspace?.id });
-
-  const {
-    localSearchTerm,
-    wrapperRef,
-    onScrollToBottom,
-    sortOptions,
-    handleSearchInputChange,
-    handleUploadToAsset,
-    handleSearch,
-  } = useManageAssets({
-    selectedAssets,
-    searchTerm,
-    isLoading,
-    hasMoreAssets,
-    onGetMore: handleGetMoreAssets,
-    onSortChange: handleSortChange,
-    onCreateAssets: createAssets,
-    onSearch: handleSearchTerm,
-  });
-
-  const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
-
-  const handleClick = useCallback(() => setOpen(!open), [open]);
-
-  const handleSelect = useCallback(
-    (asset?: Asset) => {
-      if (!asset) return;
-      if (!selectedAssets.includes(asset)) selectAsset([asset]);
-      else selectAsset([]);
-    },
-    [selectedAssets, selectAsset],
-  );
-
-  const handleUpload = useCallback(() => {
-    handleUploadToAsset();
-  }, [handleUploadToAsset]);
+  const [currentValue, setCurrentValue] = useState(value);
 
   const handleChange = useCallback(
     (inputValue?: string) => {
@@ -112,9 +62,71 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     [fileType, onChange, setNotification, t],
   );
 
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    searchTerm,
+    selectedAssets,
+    selectAsset,
+    handleGetMoreAssets,
+    handleFileSelect,
+    handleSortChange,
+    handleSearchTerm,
+  } = useHooks({ workspaceId: currentWorkspace?.id, onAssetSelect: handleChange });
+
+  const {
+    localSearchTerm,
+    wrapperRef,
+    sortOptions,
+    onScrollToBottom,
+    handleSearchInputChange,
+    handleSearch,
+  } = useManageAssets({
+    selectedAssets,
+    searchTerm,
+    isLoading,
+    hasMoreAssets,
+    onGetMore: handleGetMoreAssets,
+    onSortChange: handleSortChange,
+    onSearch: handleSearchTerm,
+  });
+
+  const handleReset = useCallback(() => {
+    const selectedAsset = assets?.find(a => a.url === currentValue);
+    if (selectedAsset) {
+      selectAsset([selectedAsset]);
+    }
+  }, [currentValue, assets, selectAsset]);
+
+  useEffect(() => {
+    if (value) {
+      setCurrentValue(value);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    handleReset();
+  }, [handleReset]);
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    handleReset();
+  }, [handleReset]);
+
+  const handleClick = useCallback(() => setOpen(!open), [open]);
+
+  const handleSelect = useCallback(
+    (asset?: Asset) => {
+      if (!asset) return;
+      selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
+    },
+    [selectedAssets, selectAsset],
+  );
+
   return (
     <Property name={name} description={description}>
-      <TextInput value={CurrentValue} onChange={handleChange} placeholder={t("Not set")} />
+      <TextInput value={currentValue} onChange={handleChange} placeholder={t("Not set")} />
       {fileType === "asset" && (
         <ButtonWrapper>
           <AssetButton
@@ -127,27 +139,27 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
             icon="uploadSimple"
             text={t("Upload")}
             iconPosition="left"
-            onClick={handleUpload}
+            onClick={handleFileSelect}
           />
         </ButtonWrapper>
       )}
       {open && (
         <ChooseAssetModal
           open={open}
-          onClose={handleClose}
           assetType={assetType}
           sortOptions={sortOptions}
-          handleSearch={handleSearch}
-          handleSearchInputChange={handleSearchInputChange}
           localSearchTerm={localSearchTerm}
-          onGetMore={handleGetMoreAssets}
-          onScrollToBottom={onScrollToBottom}
           selectedAssets={selectedAssets}
           wrapperRef={wrapperRef}
           assets={assets}
           isLoading={isLoading}
           hasMoreAssets={hasMoreAssets}
           searchTerm={searchTerm}
+          onClose={handleClose}
+          handleSearch={handleSearch}
+          handleSearchInputChange={handleSearchInputChange}
+          onGetMore={handleGetMoreAssets}
+          onScrollToBottom={onScrollToBottom}
           onSelectAsset={handleSelect}
           onSelect={handleChange}
           onSortChange={handleSortChange}
@@ -159,17 +171,14 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
 
 const AssetButton = styled(Button)<{ active?: boolean }>`
   cursor: pointer;
-  margin-left: 6px;
   padding: 4px;
-  border-radius: 6px;
-  width: 127px;
+  flex: 1;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: space-between;
   gap: 4px;
-  align-self: stretch;
 `;
 
 export default URLField;

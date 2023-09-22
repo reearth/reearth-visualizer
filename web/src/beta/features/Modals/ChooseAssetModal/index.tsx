@@ -31,24 +31,24 @@ export type Props = {
   isLoading?: boolean;
   hasMoreAssets?: boolean;
   searchTerm?: string;
+  open?: boolean;
+  workspaceId?: string;
+  localSearchTerm?: string;
+  wrapperRef?: React.RefObject<HTMLDivElement>;
+  sortOptions: {
+    key: string;
+    label: string;
+  }[];
   onGetMore?: () => void;
   onSelectAsset?: (asset?: Asset) => void;
   onSelect?: (value: string) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
-  open?: boolean;
   onClose: () => void;
-  workspaceId?: string;
-  localSearchTerm?: string;
-  wrapperRef?: React.RefObject<HTMLDivElement>;
   onScrollToBottom?: (
     { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
     onLoadMore?: (() => void) | undefined,
     threshold?: number,
   ) => void;
-  sortOptions: {
-    key: string;
-    label: string;
-  }[];
   handleSearchInputChange?: (value: string) => void;
   handleSearch?: () => void;
 };
@@ -57,20 +57,20 @@ const ChooseAssetModal: React.FC<Props> = ({
   className,
   assetType,
   open,
-  onClose,
   assets,
   selectedAssets,
   hasMoreAssets,
   isLoading,
   searchTerm,
+  localSearchTerm,
+  wrapperRef,
+  sortOptions,
+  onClose,
   onGetMore,
   onSelect,
   onSelectAsset,
   onSortChange,
-  localSearchTerm,
-  wrapperRef,
   onScrollToBottom,
-  sortOptions,
   handleSearchInputChange,
   handleSearch,
 }) => {

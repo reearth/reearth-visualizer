@@ -1,8 +1,11 @@
 import { useCallback, useState, useRef } from "react";
+import useFileInput from "use-file-input";
 
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
+
+import { FILE_FORMATS, IMAGE_FORMATS } from "../constants";
 
 const assetsPerPage = 20;
 
@@ -31,7 +34,13 @@ function pagination(
   };
 }
 
-export default ({ workspaceId }: { workspaceId?: string }) => {
+export default ({
+  workspaceId,
+  onAssetSelect,
+}: {
+  workspaceId?: string;
+  onAssetSelect?: (inputValue?: string) => void;
+}) => {
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
@@ -58,12 +67,15 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
     }
   }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
-  const createAssets = useCallback(
-    (files: FileList) => {
+  const handleAssetsCreate = useCallback(
+    async (files?: FileList) => {
       if (!files) return;
-      useCreateAssets({ teamId: workspaceId ?? "", file: files });
+      const result = await useCreateAssets({ teamId: workspaceId ?? "", file: files });
+      const assetUrl = result?.data[0].data?.createAsset?.asset.url;
+
+      onAssetSelect?.(assetUrl);
     },
-    [workspaceId, useCreateAssets],
+    [workspaceId, useCreateAssets, onAssetSelect],
   );
 
   const removeAssets = useCallback(
@@ -91,6 +103,11 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
     setSearchTerm(term);
   }, []);
 
+  const handleFileSelect = useFileInput(files => handleAssetsCreate?.(files), {
+    accept: IMAGE_FORMATS + "," + FILE_FORMATS,
+    multiple: true,
+  });
+
   return {
     assets,
     isLoading: loading ?? isRefetching,
@@ -100,7 +117,7 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
     selectedAssets,
     selectAsset,
     handleGetMoreAssets,
-    createAssets,
+    handleFileSelect,
     removeAssets,
     handleSortChange,
     handleSearchTerm,
