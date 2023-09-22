@@ -208,7 +208,6 @@ export default ({
 
   const handleStoryBlockDelete = useCallback(
     async (pageId?: string, blockId?: string) => {
-      console.log(pageId, blockId, storyId);
       if (!blockId || !storyId || !pageId) return;
       await useDeleteStoryBlock({ blockId, pageId, storyId });
     },
