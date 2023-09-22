@@ -1,3 +1,4 @@
+import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 export const InputGroup: React.FC<{
@@ -51,7 +52,7 @@ export const AssetWrapper = styled.div`
   gap: 16px;
 `;
 
-export const ColJustiftBetween = styled.div`
+export const ColJustifyBetween = styled.div`
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -88,4 +89,26 @@ export const TextArea = styled.textarea`
   padding: 5px 10px;
   color: ${props => props.theme.content.main};
   overflow: hidden;
+`;
+
+export const LayerWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+export const DeleteLayerIcon = styled(Icon)<{ disabled?: boolean }>`
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  background: transparent;
+  border: 1px solid #777;
+  padding: 7px 6px;
+  border-radius: 4px;
+  outline: none;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)}; // Reduce opacity for disabled state
+`;
+
+export const AddLayerWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  margin-top: 5px;
+  justify-content: flex-start;
 `;

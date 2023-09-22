@@ -34,8 +34,10 @@ type Props = {
   isEditable?: boolean;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
-  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockCreate?: (
+    index?: number,
+  ) => (pageId?: string, extensionId?: string, pluginId?: string) => Promise<void>;
+  onBlockDelete?: (pageId?: string, blockId?: string) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
