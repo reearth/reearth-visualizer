@@ -137,7 +137,7 @@ const ChooseAssetModal: React.FC<Props> = ({
           onClick={() => onClose?.()}
         />
       }>
-      <ControlWarper>
+      <ControlWarpper>
         <SortWrapper>
           <Text size="xFootnote">Sort By</Text>
           <SelectField
@@ -149,11 +149,11 @@ const ChooseAssetModal: React.FC<Props> = ({
             onChange={handleSortChange}
           />
         </SortWrapper>
-        <SearchWarper>
+        <SearchWarpper>
           <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
-          <SearchButton icon="search" margin="0" onClick={() => handleSearch?.()} />
-        </SearchWarper>
-      </ControlWarper>
+          <SearchButton icon="search" margin="0" onClick={handleSearch} />
+        </SearchWarpper>
+      </ControlWarpper>
       <AssetWrapper>
         {!isLoading && (!assets || assets.length < 1) ? (
           <Template>
@@ -197,7 +197,6 @@ const ChooseAssetModal: React.FC<Props> = ({
 
 const StyledModal = styled(Modal)`
   width: 730px;
-  height: 421px;
 `;
 const AssetWrapper = styled.div`
   max-height: calc(100vh - 240px);
@@ -206,7 +205,7 @@ const AssetWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const ControlWarper = styled.div`
+const ControlWarpper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -219,7 +218,7 @@ const SortWrapper = styled.div`
   left: 0px;
 `;
 
-const SearchWarper = styled.div`
+const SearchWarpper = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
@@ -235,22 +234,6 @@ const AssetListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  :hover::-webkit-scrollbar {
-    display: block;
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background-color: transparent;
-    background-color: ${({ theme }) => theme.bg[1]};
-    width: 8px;
-  }
-  ::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    background-color: ${({ theme }) => theme.bg[2]};
-  }
 `;
 
 const AssetList = styled.div`
@@ -260,13 +243,14 @@ const AssetList = styled.div`
   grid-template-rows: repeat(auto-fill, 119px);
   gap: ${({ theme }) => theme.spacing.small}px;
   justify-content: space-between;
+  min-height: 373px;
 `;
 
 const Template = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 458px;
+  min-height: 373px;
 `;
 
 const TemplateText = styled(Text)`

@@ -21,7 +21,7 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
     selectedAssets,
     selectAsset,
     handleGetMoreAssets,
-    createAssets,
+    handleFileSelect,
     handleSortChange,
     handleSearchTerm,
     removeAssets,
@@ -48,7 +48,7 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
         hasMoreAssets={hasMoreAssets}
         sort={sort}
         searchTerm={searchTerm}
-        onCreateAssets={createAssets}
+        onFileUpload={handleFileSelect}
         onRemove={removeAssets}
         onGetMore={handleGetMoreAssets}
         onSelect={handleSelect}
