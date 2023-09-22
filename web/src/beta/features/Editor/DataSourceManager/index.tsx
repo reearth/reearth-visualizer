@@ -6,6 +6,7 @@ import { LayerAddProps } from "../useLayers";
 
 import Asset from "./Asset";
 import DelimitedText from "./DelimitedText";
+import useHooks from "./hooks";
 import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";
 import WmsTiles from "./WmsTiles";
@@ -17,6 +18,18 @@ export type DataProps = {
 };
 
 const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) => {
+  const {
+    urlValue,
+    layerValue,
+    layerInput,
+    layers,
+    setUrlValue,
+    setLayerValue,
+    handleAddLayer,
+    handleDeleteLayer,
+    handleLayerInput,
+  } = useHooks();
+
   return (
     <Modal
       size="md"
@@ -40,12 +53,42 @@ const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) 
           label: "3D Tiles",
         },
         {
-          content: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+          content: (
+            <WmsTiles
+              urlValue={urlValue}
+              layerValue={layerValue}
+              layerInput={layerInput}
+              layers={layers}
+              setUrlValue={setUrlValue}
+              setLayerValue={setLayerValue}
+              handleAddLayer={handleAddLayer}
+              handleDeleteLayer={handleDeleteLayer}
+              handleLayerInput={handleLayerInput}
+              sceneId={sceneId}
+              onSubmit={onSubmit}
+              onClose={onClose}
+            />
+          ),
           id: "wms",
           label: "WMS",
         },
         {
-          content: <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+          content: (
+            <VectorTiles
+              urlValue={urlValue}
+              layerValue={layerValue}
+              layerInput={layerInput}
+              layers={layers}
+              setUrlValue={setUrlValue}
+              setLayerValue={setLayerValue}
+              handleAddLayer={handleAddLayer}
+              handleDeleteLayer={handleDeleteLayer}
+              handleLayerInput={handleLayerInput}
+              sceneId={sceneId}
+              onSubmit={onSubmit}
+              onClose={onClose}
+            />
+          ),
           id: "vectorTiles",
           label: "Vector Tile",
         },

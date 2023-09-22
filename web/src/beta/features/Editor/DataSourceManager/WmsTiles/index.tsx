@@ -1,11 +1,10 @@
-import { FC } from "react";
+import { FC, KeyboardEvent } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
-import useHooks from "../hooks";
 import {
   AddLayerWrapper,
   AssetWrapper,
@@ -17,19 +16,32 @@ import {
   SubmitWrapper,
 } from "../utils";
 
-const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
-  const {
-    urlValue,
-    layerValue,
-    layerInput,
-    layers,
-    setUrlValue,
-    setLayerValue,
-    handleAddLayer,
-    handleDeleteLayer,
-    handleLayerInput,
-  } = useHooks();
+type WMSProps = {
+  urlValue: string;
+  layerValue: string;
+  layerInput: boolean;
+  layers: string[];
+  setUrlValue: (value: string) => void;
+  setLayerValue: (value: string) => void;
+  handleAddLayer: (e: KeyboardEvent<HTMLInputElement>) => void;
+  handleDeleteLayer: (value: number) => void;
+  handleLayerInput: () => void;
+} & DataProps;
 
+const WmsTiles: FC<WMSProps> = ({
+  sceneId,
+  urlValue,
+  layerValue,
+  layerInput,
+  layers,
+  onSubmit,
+  onClose,
+  setUrlValue,
+  setLayerValue,
+  handleAddLayer,
+  handleDeleteLayer,
+  handleLayerInput,
+}) => {
   const t = useT();
 
   const handleSubmit = () => {
