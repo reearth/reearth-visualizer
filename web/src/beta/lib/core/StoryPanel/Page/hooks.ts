@@ -1,17 +1,9 @@
-import { useCallback, useMemo, useState, MouseEvent } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 
 export default ({ pageId, propertyItems }: { pageId?: string; propertyItems?: Item[] }) => {
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
-  const [isHovered, setHover] = useState(false);
-
-  const handleOnMouseOver = useCallback((e: MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    setHover(true);
-  }, []);
-
-  const handleOnMouseOut = useCallback(() => setHover(false), []);
 
   const handleBlockOpen = useCallback(
     (index: number) => {
@@ -35,9 +27,6 @@ export default ({ pageId, propertyItems }: { pageId?: string; propertyItems?: It
     openBlocksIndex,
     titleId,
     titleProperty,
-    isHovered,
-    handleOnMouseOver,
-    handleOnMouseOut,
     handleBlockOpen,
   };
 };
