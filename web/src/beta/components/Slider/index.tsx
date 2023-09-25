@@ -12,11 +12,14 @@ export type Props = {
   max?: number;
 } & Omit<ComponentProps<typeof SliderWithTooltip>, "defaultValue">;
 
-const Slider: React.FC<Props> = ({ ...props }) => (
-  <SliderStyled disabled={props.disabled as boolean}>
-    <SliderWithTooltip {...props} />
-  </SliderStyled>
-);
+const Slider: React.FC<Props> = ({ ...props }) => {
+  const calculatedStep = props.step ? props.step : props.max ? props.max / 10 : 0.1;
+  return (
+    <SliderStyled disabled={props.disabled as boolean}>
+      <SliderWithTooltip step={calculatedStep} {...props} />
+    </SliderStyled>
+  );
+};
 
 const SliderStyled = styled.div<{ disabled: boolean }>`
   width: 100%;
