@@ -87,7 +87,6 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
     [isList, propertyId, item?.schemaGroup, handleMovePropertyItem],
   );
 
-  // TODO: Double check this
   const showFields = useMemo(() => {
     return isList ? (selected ? item.items.find(({ id }) => id == selected) : false) : true;
   }, [item, selected, isList]);
