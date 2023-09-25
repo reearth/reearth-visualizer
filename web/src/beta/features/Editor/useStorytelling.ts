@@ -123,7 +123,7 @@ export default function ({ sceneId, onFlyTo }: Props) {
     [useMoveStoryPage, selectedStory],
   );
 
-  const handleMoveBlock = useCallback(
+  const handleStoryBlockMove = useCallback(
     async (id: string, targetIndex: number, blockId: string) => {
       if (!selectedStory) return;
       await useMoveStoryBlock({
@@ -147,6 +147,6 @@ export default function ({ sceneId, onFlyTo }: Props) {
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
-    handleMoveBlock,
+    handleStoryBlockMove,
   };
 }

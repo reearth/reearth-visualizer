@@ -25,7 +25,7 @@ export type Props = {
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
-  handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
+  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
 };
 
@@ -42,7 +42,7 @@ const Visualizer: React.FC<Props> = ({
   installableBlocks,
   onAutoScrollingChange,
   onCurrentPageChange,
-  handleMoveBlock,
+  onStoryBlockMove,
   onCameraChange,
 }) => {
   const {
@@ -144,7 +144,7 @@ const Visualizer: React.FC<Props> = ({
             onPropertyUpdate={handlePropertyValueUpdate}
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
-            handleMoveBlock={handleMoveBlock}
+            onStoryBlockMove={onStoryBlockMove}
           />
         )}
       </CoreVisualizer>

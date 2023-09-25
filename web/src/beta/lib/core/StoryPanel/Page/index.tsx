@@ -35,7 +35,7 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  handleMoveBlock: (id: string, targetId: number, blockId: string) => void;
+  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryPage: React.FC<Props> = ({
@@ -51,7 +51,7 @@ const StoryPage: React.FC<Props> = ({
   onBlockDelete,
   onBlockSelect,
   onPropertyUpdate,
-  handleMoveBlock,
+  onStoryBlockMove,
 }) => {
   const t = useT();
   const propertyItems = useMemo(() => page?.property.items, [page?.property]);
@@ -113,7 +113,7 @@ const StoryPage: React.FC<Props> = ({
         )}
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
-            uniqueKey="LeftPanelPages"
+            uniqueKey="LeftStoryPanel"
             gap={8}
             items={items}
             getId={item => item.id}
@@ -127,7 +127,7 @@ const StoryPage: React.FC<Props> = ({
                 items.splice(index, 0, item);
                 return items;
               });
-              await handleMoveBlock(page?.id || "", index, item.id);
+              await onStoryBlockMove(page?.id || "", index, item.id);
             }}
             renderItem={(b, idx) => {
               return (
