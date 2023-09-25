@@ -1,10 +1,7 @@
 import { Fragment, useMemo } from "react";
 
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import type {
-  InstallableStoryBlock,
-  InstalledStoryBlock,
-} from "@reearth/services/api/storytellingApi/blocks";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -19,14 +16,15 @@ type Props = {
   page?: Page;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
-  installedStoryBlocks?: InstalledStoryBlock[];
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   isEditable?: boolean;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
-  onBlockCreate?: (index?: number) => (extensionId?: string, pluginId?: string) => Promise<void>;
-  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockCreate?: (
+    index?: number,
+  ) => (pageId?: string, extensionId?: string, pluginId?: string) => Promise<void>;
+  onBlockDelete?: (pageId?: string, blockId?: string) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -42,7 +40,6 @@ const StoryPage: React.FC<Props> = ({
   page,
   selectedPageId,
   installableStoryBlocks,
-  installedStoryBlocks,
   selectedStoryBlockId,
   showPageSettings,
   isEditable,
@@ -55,6 +52,8 @@ const StoryPage: React.FC<Props> = ({
 }) => {
   const t = useT();
   const propertyItems = useMemo(() => page?.property.items, [page?.property]);
+
+  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
 
   const { openBlocksIndex, titleId, titleProperty, handleBlockOpen } = useHooks({
     pageId: page?.id,
@@ -88,6 +87,7 @@ const StoryPage: React.FC<Props> = ({
                 items: [titleProperty],
               },
             }}
+            pageId={page?.id}
             isEditable={isEditable}
             isSelected={selectedStoryBlockId === titleId}
             onClick={() => onBlockSelect?.(titleId)}
@@ -97,35 +97,36 @@ const StoryPage: React.FC<Props> = ({
         )}
         {isEditable && (
           <BlockAddBar
+            pageId={page?.id}
             openBlocks={openBlocksIndex === -1}
             installableStoryBlocks={installableStoryBlocks}
             onBlockOpen={() => handleBlockOpen(-1)}
             onBlockAdd={onBlockCreate?.(0)}
           />
         )}
-        {installedStoryBlocks &&
-          installedStoryBlocks.length > 0 &&
-          installedStoryBlocks.map((b, idx) => (
-            <Fragment key={idx}>
-              <StoryBlock
-                block={b}
-                isSelected={selectedStoryBlockId === b.id}
-                isEditable={isEditable}
-                onClick={() => onBlockSelect?.(b.id)}
-                onClickAway={onBlockSelect}
-                onChange={onPropertyUpdate}
-                onRemove={onBlockDelete}
+        {storyBlocks?.map((b, idx) => (
+          <Fragment key={idx}>
+            <StoryBlock
+              block={b}
+              pageId={page?.id}
+              isSelected={selectedStoryBlockId === b.id}
+              isEditable={isEditable}
+              onClick={() => onBlockSelect?.(b.id)}
+              onClickAway={onBlockSelect}
+              onChange={onPropertyUpdate}
+              onRemove={onBlockDelete}
+            />
+            {isEditable && (
+              <BlockAddBar
+                pageId={page?.id}
+                openBlocks={openBlocksIndex === idx}
+                installableStoryBlocks={installableStoryBlocks}
+                onBlockOpen={() => handleBlockOpen(idx)}
+                onBlockAdd={onBlockCreate?.(idx + 1)}
               />
-              {isEditable && (
-                <BlockAddBar
-                  openBlocks={openBlocksIndex === idx}
-                  installableStoryBlocks={installableStoryBlocks}
-                  onBlockOpen={() => handleBlockOpen(idx)}
-                  onBlockAdd={onBlockCreate?.(idx + 1)}
-                />
-              )}
-            </Fragment>
-          ))}
+            )}
+          </Fragment>
+        ))}
       </Wrapper>
     </SelectableArea>
   );

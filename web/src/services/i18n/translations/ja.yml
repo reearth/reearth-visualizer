@@ -37,6 +37,10 @@ Value: ''
 Description around.: ''
 Write down your text: ''
 Add to Layer: レイヤー追加
+Choose layer to add: ''
+Layer of the data source you want to add.: ''
+layer name: ''
+Layer: レイヤー
 Scene: シーン
 Main: ''
 Layers: レイヤー
@@ -396,7 +400,6 @@ Successfully published your project with search engine indexing!: 検索エン�
 Successfully unpublished your project. Now nobody can access your project.: プロジェクトは非公開状態です。現在、誰も閲覧することはできません。
 Successfully copied to clipboard!: クリップボードにコピーしました。
 Folder: 新規フォルダ
-Layer: レイヤー
 Widget: ウィジェット
 Infobox: インフォボックス
 Tag: タグ
