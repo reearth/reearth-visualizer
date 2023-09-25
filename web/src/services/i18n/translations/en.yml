@@ -37,9 +37,9 @@ Value: ''
 Description around.: ''
 Write down your text: ''
 Add to Layer: ''
-Choose layer to add: 'Choose layer to add'
-Layer of the data source you want to add.: 'Layer of the data source you want to add'
-layer name: 'Layer name'
+Choose layer to add: Choose layer to add
+Layer of the data source you want to add.: Layer of the data source you want to add
+layer name: Layer name
 Layer: Layer
 Scene: Scene
 Main: ''
@@ -200,6 +200,7 @@ Numbered List: Numbered List
 Quote: Quote
 Formatting options for font family: Formatting options for font family
 Formatting options for font size: Formatting options for font size
+Formatting options for line height: Formatting options for line height
 Center Align: Center Align
 Justify Align: Justify Align
 Left Align: Left Align

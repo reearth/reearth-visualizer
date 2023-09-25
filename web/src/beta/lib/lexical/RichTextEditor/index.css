@@ -685,6 +685,11 @@
   min-width: unset;
 }
 
+.lexical .dropdown .item.lineheight-item,
+.lexical .dropdown .item.lineheight-item .text {
+  min-width: unset;
+}
+
 .lexical .dropdown .item .active {
   display: flex;
   width: 20px;

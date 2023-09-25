@@ -90,6 +90,20 @@ const FONT_SIZE_OPTIONS: [string, string][] = [
   ["20px", "20px"],
 ];
 
+const LINE_HEIGHT_OPTIONS: [string, string][] = [
+  ["1.0", "1.0"],
+  ["1.1", "1.1"],
+  ["1.2", "1.2"],
+  ["1.3", "1.3"],
+  ["1.4", "1.4"],
+  ["1.5", "1.5"],
+  ["1.6", "1.6"],
+  ["1.7", "1.7"],
+  ["1.8", "1.8"],
+  ["1.9", "1.9"],
+  ["2.0", "2.0"],
+];
+
 function dropDownActiveClass(active: boolean) {
   if (active) return "active dropdown-item-active";
   else return "";
@@ -278,6 +292,56 @@ function FontDropDown({
   );
 }
 
+function LineHeightDropDown({
+  containerRef,
+  scrollableContainerId,
+  editor,
+  value,
+  style,
+  disabled = false,
+}: {
+  containerRef: RefObject<HTMLDivElement>;
+  scrollableContainerId?: string;
+  editor: LexicalEditor;
+  value: string;
+  style: string;
+  disabled?: boolean;
+}): JSX.Element {
+  const t = useT();
+  const handleClick = useCallback(
+    (option: string) => {
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          $patchStyleText(selection, {
+            [style]: option,
+          });
+        }
+      });
+    },
+    [editor, style],
+  );
+
+  return (
+    <DropDown
+      containerRef={containerRef}
+      scrollableContainerId={scrollableContainerId}
+      disabled={disabled}
+      buttonClassName={"toolbar-item " + style}
+      buttonIconClassName={"icon block-type justify-align"}
+      buttonAriaLabel={t("Formatting options for line height")}>
+      {LINE_HEIGHT_OPTIONS.map(([option, text]) => (
+        <DropDownItem
+          className={`item ${dropDownActiveClass(value === option)} ${"lineheight-item"}`}
+          onClick={() => handleClick(option)}
+          key={option}>
+          <span className="text">{text}</span>
+        </DropDownItem>
+      ))}
+    </DropDown>
+  );
+}
+
 function ElementFormatDropdown({
   containerRef,
   scrollableContainerId,
@@ -324,8 +388,8 @@ function ElementFormatDropdown({
       containerRef={containerRef}
       scrollableContainerId={scrollableContainerId}
       disabled={disabled}
-      buttonLabel={formatOptions[value].name}
-      buttonIconClassName={`icon ${formatOptions[value].icon}`}
+      buttonLabel={formatOptions[value]?.name}
+      buttonIconClassName={`icon ${formatOptions[value]?.icon}`}
       buttonClassName="toolbar-item spaced alignment"
       buttonAriaLabel="Formatting options for text alignment">
       <DropDownItem
@@ -394,6 +458,7 @@ export default function ToolbarPlugin({
   const [rootType, setRootType] = useState<keyof typeof rootTypeToRootName>("root");
   const [fontSize, setFontSize] = useState<string>("15px");
   const [fontColor, setFontColor] = useState<string>("#000");
+  const [lineHeight, setLineHeight] = useState<string>("1.2");
   const [bgColor, setBgColor] = useState<string>("#fff");
   const [fontFamily, setFontFamily] = useState<string>("Arial");
   const [elementFormat, setElementFormat] = useState<ElementFormatType>("left");
@@ -488,6 +553,7 @@ export default function ToolbarPlugin({
       setFontColor($getSelectionStyleValueForProperty(selection, "color", "#000"));
       setBgColor($getSelectionStyleValueForProperty(selection, "background-color", "#fff"));
       setFontFamily($getSelectionStyleValueForProperty(selection, "font-family", "Arial"));
+      setLineHeight($getSelectionStyleValueForProperty(selection, "line-height", "1.2"));
       setElementFormat(
         ($isElementNode(node) ? node.getFormatType() : parent?.getFormatType()) || "left",
       );
@@ -691,6 +757,14 @@ export default function ToolbarPlugin({
           disabled={!isEditable}
           style={"font-size"}
           value={fontSize}
+          editor={editor}
+        />
+        <LineHeightDropDown
+          containerRef={containerRef}
+          scrollableContainerId={scrollableContainerId}
+          disabled={!isEditable}
+          style={"line-height"}
+          value={lineHeight}
           editor={editor}
         />
         <Divider />
