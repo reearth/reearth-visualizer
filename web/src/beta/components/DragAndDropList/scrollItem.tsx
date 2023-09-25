@@ -22,7 +22,7 @@ function getScrollDirection({
   if (position > lowerBounds - BOUND_HEIGHT) {
     return "bottom";
   }
-  if (position < upperBounds + BOUND_HEIGHT) {
+  if (position > upperBounds + BOUND_HEIGHT) {
     return "top";
   }
   return "stable";
