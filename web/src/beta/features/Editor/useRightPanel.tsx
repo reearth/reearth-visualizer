@@ -1,7 +1,9 @@
 import { ReactNode, useMemo } from "react";
 
-import { Tab } from "@reearth/beta/features/Navbar";
-import type { GQLStoryPage } from "@reearth/beta/lib/core/StoryPanel/hooks";
+import type { Tab } from "@reearth/beta/features/Navbar";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera } from "@reearth/beta/utils/value";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
@@ -10,17 +12,39 @@ import WidgetSidePanel from "./tabs/widgets/RightPanel";
 type Props = {
   tab: Tab;
   sceneId?: string;
-  currentPage?: GQLStoryPage;
+  currentPage?: Page;
   showSceneSettings?: boolean;
+  currentCamera?: Camera;
+  onFlyTo?: FlyTo;
 };
 
-export default ({ tab, sceneId, currentPage, showSceneSettings }: Props) => {
+export default ({
+  tab,
+  sceneId,
+  currentPage,
+  showSceneSettings,
+  currentCamera,
+  onFlyTo,
+}: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
-        return <MapSidePanel sceneId={sceneId} showSceneSettings={showSceneSettings} />;
+        return (
+          <MapSidePanel
+            sceneId={sceneId}
+            showSceneSettings={showSceneSettings}
+            currentCamera={currentCamera}
+            onFlyTo={onFlyTo}
+          />
+        );
       case "story":
-        return <StorySidePanel selectedPage={currentPage} />;
+        return (
+          <StorySidePanel
+            selectedPage={currentPage}
+            currentCamera={currentCamera}
+            onFlyTo={onFlyTo}
+          />
+        );
       case "widgets":
         return <WidgetSidePanel sceneId={sceneId} />;
 
@@ -28,7 +52,7 @@ export default ({ tab, sceneId, currentPage, showSceneSettings }: Props) => {
       default:
         return undefined;
     }
-  }, [tab, sceneId, currentPage, showSceneSettings]);
+  }, [tab, sceneId, currentPage, showSceneSettings, currentCamera, onFlyTo]);
 
   return {
     rightPanel,

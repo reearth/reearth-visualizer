@@ -1,19 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 
-import type { StoryFragmentFragment, StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
-export type {
-  StoryFragmentFragment as GQLStory,
-  StoryPageFragmentFragment as GQLStoryPage,
-} from "@reearth/services/gql";
+export type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 
 export default ({
   selectedStory,
-  currentPage,
+  currentPageId,
+  isEditable,
   onCurrentPageChange,
 }: {
-  selectedStory?: StoryFragmentFragment;
-  currentPage?: StoryPageFragmentFragment;
+  selectedStory?: Story;
+  currentPageId?: string;
+  isEditable?: boolean;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
 }) => {
   const [showPageSettings, setShowPageSettings] = useState(false);
@@ -21,28 +20,30 @@ export default ({
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
 
   const handlePageSettingsToggle = useCallback(() => {
-    if (!selectedPageId) return;
+    if (!selectedPageId && !isEditable) return;
     setShowPageSettings(show => !show);
-  }, [selectedPageId]);
+  }, [selectedPageId, isEditable]);
 
   const handlePageSelect = useCallback(
     (pageId?: string) => {
+      if (!isEditable) return;
       if (selectedBlockId) {
         setSelectedBlockId(undefined);
       }
       setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
     },
-    [selectedBlockId],
+    [selectedBlockId, isEditable],
   );
 
   const handleBlockSelect = useCallback(
     (blockId?: string) => {
+      if (!isEditable) return;
       if (selectedPageId) {
         setSelectedPageId(undefined);
       }
       setSelectedBlockId(id => (!blockId || id === blockId ? undefined : blockId));
     },
-    [selectedPageId],
+    [selectedPageId, isEditable],
   );
 
   const handleCurrentPageChange = useCallback(
@@ -56,13 +57,13 @@ export default ({
     const pages = selectedStory?.pages ?? [];
     if ((pages?.length ?? 0) < 2) return;
 
-    const currentIndex = pages.findIndex(p => p.id === currentPage?.id);
+    const currentIndex = pages.findIndex(p => p.id === currentPageId);
     return {
       currentPage: currentIndex + 1,
       maxPage: pages.length,
       onPageChange: (pageIndex: number) => onCurrentPageChange(pages[pageIndex - 1]?.id),
     };
-  }, [selectedStory, currentPage, onCurrentPageChange]);
+  }, [selectedStory, currentPageId, onCurrentPageChange]);
 
   return {
     pageInfo,

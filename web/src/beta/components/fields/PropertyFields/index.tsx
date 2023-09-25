@@ -1,27 +1,29 @@
 import { useState, useMemo } from "react";
 
+import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
 import LocationField from "@reearth/beta/components/fields/LocationField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import SliderField from "@reearth/beta/components/fields/SliderField";
-import SpacingInput, { SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
+import SpacingInput, { type SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
 import TextInput from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
-import { type LatLng } from "@reearth/beta/utils/value";
-import { type Item } from "@reearth/services/api/propertyApi/utils";
-
-import CameraField, { CameraValue } from "../CameraField";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera, LatLng } from "@reearth/beta/utils/value";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
 
 import useHooks from "./hooks";
 
 type Props = {
   propertyId: string;
   item: Item;
+  currentCamera?: Camera;
+  onFlyTo?: FlyTo;
 };
 
-const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
+const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFlyTo }) => {
   const {
     handlePropertyValueUpdate,
     handleAddPropertyItem,
@@ -134,7 +136,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             <ToggleField
               key={sf.id}
               name={sf.name}
-              checked={value as boolean}
+              checked={!!value}
               description={sf.description}
               onChange={handleChange}
             />
@@ -153,7 +155,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
               <NumberField
                 key={sf.id}
                 name={sf.name}
-                value={value as number}
+                value={(value as number) ?? undefined}
                 suffix={sf.suffix}
                 min={sf.min}
                 max={sf.max}
@@ -173,9 +175,11 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
             <CameraField
               key={sf.id}
               name={sf.name}
-              value={value as CameraValue}
+              value={value as Camera}
               description={sf.description}
-              onChange={handleChange}
+              currentCamera={currentCamera}
+              onSave={handleChange}
+              onFlyTo={onFlyTo}
             />
           ) : (
             <p key={sf.id}>{sf.name} field</p>

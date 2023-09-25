@@ -6,14 +6,13 @@ import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
 import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
-import { convert } from "@reearth/services/api/propertyApi/utils";
-import { StoryPageFragmentFragment } from "@reearth/services/gql";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  storyPages: StoryPageFragmentFragment[];
-  selectedPage?: StoryPageFragmentFragment;
+  storyPages: Page[];
+  selectedPageId?: string;
   onPageSelect: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
   onPageDuplicate: (id: string) => void;
@@ -22,7 +21,7 @@ type Props = {
 };
 const ContentPage: React.FC<Props> = ({
   storyPages,
-  selectedPage,
+  selectedPageId,
   onPageSelect,
   onPageAdd,
   // onPageDuplicate,
@@ -59,7 +58,7 @@ const ContentPage: React.FC<Props> = ({
             await onPageMove(item.id, index);
           }}
           renderItem={(storyPage, i) => {
-            const title = (getFieldValue(convert(storyPage.property) ?? [], "title", "title") ??
+            const title = (getFieldValue(storyPage.property.items ?? [], "title", "title") ??
               t("Untitled")) as string;
             return (
               <PageItemWrapper
@@ -70,7 +69,7 @@ const ContentPage: React.FC<Props> = ({
                   key={i}
                   border
                   actionPlacement="bottom-start"
-                  isSelected={selectedPage?.id === storyPage.id}
+                  isSelected={selectedPageId === storyPage.id}
                   isOpenAction={openedPageId === storyPage.id}
                   onItemClick={() => onPageSelect(storyPage.id)}
                   onActionClick={() => setOpenedPageId(old => (old ? undefined : storyPage.id))}

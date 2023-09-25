@@ -23,6 +23,7 @@ type Props = {
   title?: string;
   icon?: string;
   isSelected?: boolean;
+  isEditable?: boolean;
   children?: ReactNode;
   propertyId?: string;
   propertyItems?: Item[];
@@ -37,6 +38,7 @@ const BlockWrapper: React.FC<Props> = ({
   title,
   icon,
   isSelected,
+  isEditable,
   children,
   propertyId,
   propertyItems,
@@ -72,12 +74,13 @@ const BlockWrapper: React.FC<Props> = ({
         showSettings={showSettings}
         propertyItems={propertyItems}
         editMode={editMode}
+        isEditable={isEditable}
         setEditMode={setEditMode}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
         onRemove={onRemove}
         onClickAway={onClickAway}>
-        <Block padding={padding} onClick={handleBlockClick}>
+        <Block padding={padding} isEditable={isEditable} onClick={handleBlockClick}>
           {children ?? <Template icon={icon} />}
         </Block>
         {editMode && propertyId && defaultSettings && settingsEnabled && (
@@ -92,13 +95,13 @@ const BlockWrapper: React.FC<Props> = ({
 
 export default BlockWrapper;
 
-const Block = styled.div<{ padding?: Spacing }>`
+const Block = styled.div<{ padding?: Spacing; isEditable?: boolean }>`
   display: flex;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-  cursor: pointer;
+  cursor: ${({ isEditable }) => (isEditable ? "pointer" : "default")};
   color: black;
 `;
 

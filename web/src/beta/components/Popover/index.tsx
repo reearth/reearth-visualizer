@@ -83,7 +83,7 @@ export const Content = React.forwardRef<
     <FloatingPortal
       // whether to render this inside the Trigger or outside the main div
       root={attachToRoot ? (context.refs.domReference as React.MutableRefObject<null>) : null}>
-      <FloatingFocusManager context={floatingContext} modal={context.modal}>
+      <FloatingFocusManager context={floatingContext} modal={context.modal} initialFocus={-1}>
         <div
           ref={ref}
           className={className}
