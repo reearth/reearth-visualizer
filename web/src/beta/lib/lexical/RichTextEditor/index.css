@@ -800,6 +800,10 @@
   background-image: url(images/icons/code.svg);
 }
 
+.lexical .icon.lineheight {
+  background-image: url(images/icons/regular.svg);
+}
+
 .lexical .switches {
   z-index: 6;
   position: fixed;

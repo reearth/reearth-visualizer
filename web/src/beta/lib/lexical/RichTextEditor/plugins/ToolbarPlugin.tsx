@@ -328,7 +328,7 @@ function LineHeightDropDown({
       scrollableContainerId={scrollableContainerId}
       disabled={disabled}
       buttonClassName={"toolbar-item " + style}
-      buttonIconClassName={"icon block-type justify-align"}
+      buttonIconClassName={"icon block-type lineheight"}
       buttonAriaLabel={t("Formatting options for line height")}>
       {LINE_HEIGHT_OPTIONS.map(([option, text]) => (
         <DropDownItem
