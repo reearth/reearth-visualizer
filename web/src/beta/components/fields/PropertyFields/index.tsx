@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
@@ -18,7 +18,7 @@ import useHooks from "./hooks";
 
 type Props = {
   propertyId: string;
-  item?: Item;
+  item: Item;
 };
 
 const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
@@ -27,7 +27,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
     handleAddPropertyItem,
     handleRemovePropertyItem,
     handleMovePropertyItem,
-  } = useHooks();
+  } = useHooks(propertyId, item.schemaGroup);
 
   // Just for the ListItem Property
   const isList = item && "items" in item;
@@ -35,6 +35,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
   // TODO: Only applies to list, should be refactored
   const [selected, setSelected] = useState<string | undefined>();
 
+  // TODO: Only applies to list, should be refactored
   const propertyListItems: Array<{ id: string; value: string }> = useMemo(
     () =>
       isList
@@ -65,34 +66,9 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
     [isList, item],
   );
 
-  // TODO: Will go in the hooks. Uses the common propertyId and schemaGroup param
-  const addItem = useCallback(async () => {
-    if (!isList) return;
-    handleAddPropertyItem(propertyId, item.schemaGroup);
-  }, [isList, propertyId, item?.schemaGroup, handleAddPropertyItem]);
-
-  const removeItem = useCallback(
-    (id: string) => {
-      if (!isList) return;
-      handleRemovePropertyItem(propertyId, item.schemaGroup, id);
-    },
-    [isList, propertyId, item?.schemaGroup, handleRemovePropertyItem],
-  );
-
-  const onItemDrop = useCallback(
-    ({ id }: { id: string }, index: number) => {
-      if (!isList) return;
-      handleMovePropertyItem(propertyId, item.schemaGroup, id, index);
-    },
-    [isList, propertyId, item?.schemaGroup, handleMovePropertyItem],
-  );
-
   const showFields = useMemo(() => {
     return isList ? (selected ? item.items.find(({ id }) => id == selected) : false) : true;
   }, [item, selected, isList]);
-
-  // TODO: Remove debugging code
-  console.log(isList, item);
 
   return (
     <>
@@ -100,30 +76,20 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
         <ListField
           name={item.title}
           items={propertyListItems}
-          addItem={addItem}
-          removeItem={removeItem}
-          onItemDrop={onItemDrop}
+          addItem={handleAddPropertyItem}
+          removeItem={handleRemovePropertyItem}
+          onItemDrop={handleMovePropertyItem}
           selected={selected}
           onSelect={setSelected}
         />
       )}
       {showFields &&
         item?.schemaFields.map(sf => {
-          const isList = item && "items" in item;
-          // if it's a list and there's no selected, return empty. TODO: Could very well be optimized
-
-          // TODO: fix type errors here
           const value = isList
             ? item.items.find(({ id }) => selected == id)?.fields.find(f => f.id == sf.id)?.value
             : item.fields.find(f => f.id === sf.id)?.value;
 
-          const handleChange = handlePropertyValueUpdate(
-            item.schemaGroup,
-            propertyId,
-            sf.id,
-            sf.type,
-            selected,
-          );
+          const handleChange = handlePropertyValueUpdate(sf.id, sf.type, selected);
 
           return sf.type === "string" ? (
             sf.ui === "color" ? (
@@ -182,8 +148,6 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item }) => {
                 max={sf.max}
                 description={sf.description}
                 onChange={handleChange}
-                // TODO: Where should the step come from?
-                step={0.1}
               />
             ) : (
               <NumberField
