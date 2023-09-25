@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -36,12 +36,20 @@ const BlockAddBar: React.FC<Props> = ({
     [installableStoryBlocks, pageId, onBlockAdd, onBlockOpen],
   );
 
+  const handleBlockOpen = useCallback(
+    (e: React.MouseEvent<Element> | undefined) => {
+      e?.stopPropagation();
+      onBlockOpen();
+    },
+    [onBlockOpen],
+  );
+
   return (
     <Wrapper>
       <Popover.Provider open={openBlocks} placement="bottom-start" onOpenChange={onBlockOpen}>
         <Popover.Trigger asChild>
           <Bar persist={openBlocks}>
-            <StyledIcon icon="plus" size={16} onClick={onBlockOpen} />
+            <StyledIcon icon="plus" size={16} onClick={handleBlockOpen} />
             <Line />
           </Bar>
         </Popover.Trigger>
