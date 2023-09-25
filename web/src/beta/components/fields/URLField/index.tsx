@@ -43,7 +43,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
       ) {
         setNotification({
           type: "error",
-          text: t("wrong File URL Format"),
+          text: t("Wrong file format"),
         });
         setCurrentValue(undefined);
         return;
