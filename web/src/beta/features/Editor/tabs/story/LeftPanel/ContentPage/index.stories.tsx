@@ -13,7 +13,10 @@ const dummyPages = [...Array(25)].map((_, i) => ({
   title: `Page ${i}`,
   swipeable: i % 2 === 0,
   blocks: [],
-  propertyId: "1234",
+  property: {
+    id: "1234",
+    items: [],
+  },
 }));
 
 export const Default: Story = {
@@ -27,6 +30,6 @@ export const Default: Story = {
   args: {
     // need API mock
     storyPages: dummyPages,
-    selectedPage: dummyPages[1],
+    selectedPageId: dummyPages[1].id,
   },
 };

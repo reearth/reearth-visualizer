@@ -9,7 +9,7 @@ import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
 import {
-  ColJustiftBetween,
+  ColJustifyBetween,
   AssetWrapper,
   InputGroup,
   Input,
@@ -50,6 +50,15 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   );
 
   const handleSubmit = () => {
+    let parsedValue = null;
+
+    if (sourceType === "value" && value !== "") {
+      try {
+        parsedValue = JSON.parse(value);
+      } catch (error) {
+        parsedValue = value;
+      }
+    }
     onSubmit({
       layerType: "simple",
       sceneId,
@@ -59,7 +68,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: sourceType === "url" && value !== "" ? value : null,
           type: fileFormat.toLowerCase(),
-          value: sourceType === "value" && value !== "" ? value : null,
+          value: parsedValue,
         },
         resource: {
           clampToGround: true,
@@ -79,7 +88,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustiftBetween>
+    <ColJustifyBetween>
       <AssetWrapper>
         <InputGroup
           label={t("Source Type")}
@@ -141,7 +150,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           disabled={(sourceType === "url" || sourceType === "value") && !value}
         />
       </SubmitWrapper>
-    </ColJustiftBetween>
+    </ColJustifyBetween>
   );
 };
 

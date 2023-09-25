@@ -193,6 +193,10 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 		layer.SetVisible(*inp.Visible)
 	}
 
+	if inp.Config != nil {
+		layer.UpdateConfig(inp.Config)
+	}
+
 	err = i.nlslayerRepo.Save(ctx, layer)
 	if err != nil {
 		return nil, err

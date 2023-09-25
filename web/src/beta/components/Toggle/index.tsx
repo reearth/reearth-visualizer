@@ -1,5 +1,3 @@
-import { useCallback } from "react";
-
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
@@ -8,20 +6,13 @@ export type Props = {
   disabled?: boolean;
 };
 
-const Toggle: React.FC<Props> = ({ checked, onChange, disabled = false }) => {
-  const handleClick = useCallback(
-    () => !disabled && onChange(checked),
-    [checked, onChange, disabled],
-  );
-
-  return (
-    <Wrapper>
-      <Switch checked={checked} disabled={disabled} onClick={handleClick}>
-        <TopSlider checked={checked} />
-      </Switch>
-    </Wrapper>
-  );
-};
+const Toggle: React.FC<Props> = ({ checked, onChange, disabled = false }) => (
+  <Wrapper>
+    <Switch checked={checked} disabled={disabled} onClick={() => onChange(!checked)}>
+      <TopSlider checked={checked} />
+    </Switch>
+  </Wrapper>
+);
 
 export default Toggle;
 

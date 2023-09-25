@@ -8,7 +8,7 @@ import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
 import {
-  ColJustiftBetween,
+  ColJustifyBetween,
   AssetWrapper,
   InputGroup,
   Input,
@@ -57,7 +57,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <ColJustiftBetween>
+    <ColJustifyBetween>
       <AssetWrapper>
         <InputGroup
           label="Source Type"
@@ -81,7 +81,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         <Text size="body">Point coordinates</Text>
         <InputGroup label="Latitude Field" description="Description around">
           <Input
-            type="number"
+            type="text"
             placeholder="Input Text"
             value={lat}
             onChange={e => setLat(e.target.value)}
@@ -89,7 +89,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         </InputGroup>
         <InputGroup label="Longitude Field" description="Description around">
           <Input
-            type="number"
+            type="text"
             placeholder="Input Text"
             value={long}
             onChange={e => setLong(e.target.value)}
@@ -105,7 +105,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           disabled={(sourceType === "url" || sourceType === "value") && !value}
         />
       </SubmitWrapper>
-    </ColJustiftBetween>
+    </ColJustifyBetween>
   );
 };
 

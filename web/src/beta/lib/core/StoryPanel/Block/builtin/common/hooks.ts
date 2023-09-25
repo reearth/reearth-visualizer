@@ -1,6 +1,6 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-import { ValueTypes } from "@reearth/beta/utils/value";
+import type { ValueTypes } from "@reearth/beta/utils/value";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 
 import { getFieldValue } from "../../../utils";

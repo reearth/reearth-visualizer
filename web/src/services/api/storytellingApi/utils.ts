@@ -1,0 +1,67 @@
+import { GetSceneQuery } from "@reearth/services/gql";
+
+import { type Item, convert } from "../propertyApi/utils";
+
+export type Block = {
+  id: string;
+  pluginId: string;
+  extensionId: string;
+  property: {
+    id: string;
+    items: Item[] | undefined;
+  };
+};
+
+export type Page = {
+  id: string;
+  title: string;
+  swipeable: boolean;
+  property: {
+    id: string;
+    items: Item[] | undefined;
+  };
+  blocks?: Block[];
+};
+
+export type Story = {
+  id: string;
+  title?: string;
+  publicTitle?: string;
+  publicDescription?: string;
+  publicImage?: string;
+  isBasicAuthActive?: boolean;
+  basicAuthUsername?: string;
+  basicAuthPassword?: string;
+  panelPosition?: "left" | "right";
+  alias?: string;
+  pages?: Page[];
+};
+
+export const getStories = (rawScene?: GetSceneQuery) => {
+  const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
+
+  return scene?.stories.map(s => {
+    return {
+      ...s,
+      panelPosition: s.panelPosition === "RIGHT" ? "right" : "left",
+      pages: s.pages.map(p => {
+        return {
+          ...p,
+          property: {
+            id: p.property?.id,
+            items: convert(p.property, null),
+          },
+          blocks: p.blocks.map(b => {
+            return {
+              ...b,
+              property: {
+                id: b.property?.id,
+                items: convert(b.property, null),
+              },
+            };
+          }),
+        };
+      }),
+    } as Story;
+  });
+};
