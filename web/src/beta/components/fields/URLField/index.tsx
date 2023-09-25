@@ -75,22 +75,16 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     handleSearchTerm,
   } = useHooks({ workspaceId: currentWorkspace?.id, onAssetSelect: handleChange });
 
-  const {
-    localSearchTerm,
-    wrapperRef,
-    sortOptions,
-    onScrollToBottom,
-    handleSearchInputChange,
-    handleSearch,
-  } = useManageAssets({
-    selectedAssets,
-    searchTerm,
-    isLoading,
-    hasMoreAssets,
-    onGetMore: handleGetMoreAssets,
-    onSortChange: handleSortChange,
-    onSearch: handleSearchTerm,
-  });
+  const { localSearchTerm, wrapperRef, onScrollToBottom, handleSearchInputChange, handleSearch } =
+    useManageAssets({
+      selectedAssets,
+      searchTerm,
+      isLoading,
+      hasMoreAssets,
+      onGetMore: handleGetMoreAssets,
+      onSortChange: handleSortChange,
+      onSearch: handleSearchTerm,
+    });
 
   const handleReset = useCallback(() => {
     const selectedAsset = assets?.find(a => a.url === currentValue);
@@ -147,7 +141,6 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
         <ChooseAssetModal
           open={open}
           assetType={assetType}
-          sortOptions={sortOptions}
           localSearchTerm={localSearchTerm}
           selectedAssets={selectedAssets}
           wrapperRef={wrapperRef}
@@ -162,7 +155,6 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
           onScrollToBottom={onScrollToBottom}
           onSelectAsset={handleSelect}
           onSelect={handleChange}
-          onSortChange={handleSortChange}
         />
       )}
     </Property>
