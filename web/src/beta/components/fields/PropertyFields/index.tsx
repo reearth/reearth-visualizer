@@ -87,9 +87,10 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
       )}
       {showFields &&
         item?.schemaFields.map(sf => {
-          const value = isList
-            ? item.items.find(({ id }) => selected == id)?.fields.find(f => f.id == sf.id)?.value
-            : item.fields.find(f => f.id === sf.id)?.value;
+          const value =
+            (isList
+              ? item.items.find(({ id }) => selected == id)?.fields.find(f => f.id == sf.id)?.value
+              : item.fields.find(f => f.id === sf.id)?.value) ?? sf.defaultValue;
 
           const handleChange = handlePropertyValueUpdate(sf.id, sf.type, selected);
 
@@ -155,7 +156,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
               <NumberField
                 key={sf.id}
                 name={sf.name}
-                value={(value as number) ?? undefined}
+                value={(value as number) ?? ""}
                 suffix={sf.suffix}
                 min={sf.min}
                 max={sf.max}
