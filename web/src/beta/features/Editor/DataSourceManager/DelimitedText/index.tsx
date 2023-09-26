@@ -88,7 +88,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
         <SelectField
           value={fileFormat}
-          options={["csv"].map(v => ({ key: v, label: v }))}
+          options={["CSV"].map(v => ({ key: v, label: v }))}
           name={t("File Format")}
           description={t("File format of the data source you want to add.")}
           onChange={setFileFormat}
