@@ -1,7 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import useFileInput from "use-file-input";
 
-import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
@@ -13,7 +11,6 @@ export const useManageAssets = ({
   isLoading,
   hasMoreAssets,
   onGetMore,
-  onCreateAssets,
   onAssetUrlSelect,
   onRemove,
   onSortChange,
@@ -25,7 +22,6 @@ export const useManageAssets = ({
   isLoading?: boolean;
   hasMoreAssets?: boolean;
   onGetMore?: () => void | Promise<void>;
-  onCreateAssets?: (files: FileList) => void;
   onAssetUrlSelect?: (asset?: string) => void;
   onRemove?: (assetIds: string[]) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
@@ -58,15 +54,6 @@ export const useManageAssets = ({
       : sort?.reverse
       ? "filterTimeReverse"
       : "filterTime";
-
-  const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
-    accept: IMAGE_FORMATS + "," + FILE_FORMATS,
-    multiple: true,
-  });
-
-  const handleUploadToAsset = useCallback(() => {
-    handleFileSelect();
-  }, [handleFileSelect]);
 
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
@@ -111,7 +98,6 @@ export const useManageAssets = ({
     localSearchTerm,
     wrapperRef,
     handleSearchInputChange,
-    handleUploadToAsset,
     handleReverse,
     handleSearch,
     openDeleteModal,

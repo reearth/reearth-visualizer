@@ -29,6 +29,7 @@ export type Props = {
   onSelect?: (asset?: Asset) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string) => void;
+  onFileUpload?: () => void;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -38,7 +39,7 @@ const AssetContainer: React.FC<Props> = ({
   isLoading,
   sort,
   searchTerm,
-  onCreateAssets,
+  onFileUpload,
   onRemove,
   onGetMore,
   onAssetUrlSelect,
@@ -54,7 +55,6 @@ const AssetContainer: React.FC<Props> = ({
     wrapperRef,
     onScrollToBottom,
     handleSearchInputChange,
-    handleUploadToAsset,
     // iconChoice,
     // sortOptions,
     // handleReverse,
@@ -70,7 +70,6 @@ const AssetContainer: React.FC<Props> = ({
     hasMoreAssets,
     onGetMore,
     onSortChange,
-    onCreateAssets,
     onAssetUrlSelect,
     onRemove,
     onSearch,
@@ -82,7 +81,7 @@ const AssetContainer: React.FC<Props> = ({
         <LeftSection>
           <SearchWarper>
             <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
-            <Button size="small" icon="search" margin="0" onClick={() => handleSearch()} />
+            <Button size="small" icon="search" margin="0" onClick={handleSearch} />
           </SearchWarper>
           {/* TODO: Select Field 
           <AssetSelect<SortType>
@@ -99,7 +98,7 @@ const AssetContainer: React.FC<Props> = ({
             icon="uploadSimple"
             size="small"
             buttonType={"secondary"}
-            onClick={handleUploadToAsset}
+            onClick={onFileUpload}
           />
           <Button
             text={t("Delete")}

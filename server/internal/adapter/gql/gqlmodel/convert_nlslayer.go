@@ -24,6 +24,9 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 }
 
 func ToNLSConfig(p JSON) *nlslayer.Config {
+	if p == nil {
+		return nil
+	}
 	co := make(nlslayer.Config)
 
 	for key, value := range p {

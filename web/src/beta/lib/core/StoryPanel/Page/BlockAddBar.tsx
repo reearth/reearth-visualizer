@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -9,13 +9,15 @@ import { styled } from "@reearth/services/theme";
 type Props = {
   openBlocks: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
+  pageId?: string;
   onBlockOpen: () => void;
-  onBlockAdd?: (extensionId: string, pluginId: string) => void;
+  onBlockAdd?: (pageId?: string, extensionId?: string, pluginId?: string) => void;
 };
 
 const BlockAddBar: React.FC<Props> = ({
   installableStoryBlocks,
   openBlocks,
+  pageId,
   onBlockOpen,
   onBlockAdd,
 }) => {
@@ -26,12 +28,20 @@ const BlockAddBar: React.FC<Props> = ({
           name: sb.name,
           icon: "plugin",
           onClick: () => {
-            onBlockAdd?.(sb.extensionId, sb.pluginId);
+            onBlockAdd?.(pageId, sb.extensionId, sb.pluginId);
             onBlockOpen();
           },
         };
       }) ?? [],
-    [installableStoryBlocks, onBlockAdd, onBlockOpen],
+    [installableStoryBlocks, pageId, onBlockAdd, onBlockOpen],
+  );
+
+  const handleBlockOpen = useCallback(
+    (e: React.MouseEvent<Element> | undefined) => {
+      e?.stopPropagation();
+      onBlockOpen();
+    },
+    [onBlockOpen],
   );
 
   return (
@@ -39,7 +49,7 @@ const BlockAddBar: React.FC<Props> = ({
       <Popover.Provider open={openBlocks} placement="bottom-start" onOpenChange={onBlockOpen}>
         <Popover.Trigger asChild>
           <Bar persist={openBlocks}>
-            <StyledIcon icon="plus" size={16} onClick={onBlockOpen} />
+            <StyledIcon icon="plus" size={16} onClick={handleBlockOpen} />
             <Line />
           </Bar>
         </Popover.Trigger>
