@@ -87,7 +87,9 @@ const NumberInput: React.FC<Props> = ({
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        handleValueChange(parseFloat(e.currentTarget.value));
+        const value = parseFloat(e.currentTarget.value);
+
+        handleValueChange(isNaN(value) ? undefined : value);
       }
     },
     [handleValueChange],
