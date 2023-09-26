@@ -21,23 +21,31 @@ You have passed the minimum value.: You have passed the minimum value.
 Remove: Remove
 Add Item: ''
 Please choose an option: ''
+Wrong file format: Wrong file format
+Choose: Choose
+Upload: Upload
 Not found: Not found
-Date: Date
-File size: File size
-Alphabetical: Alphabetical
+Last Uploaded: Last Uploaded
+First Uploaded: First Uploaded
+A To Z: A To Z
+Z To A: Z To A
+Size Small to Large: Size Small to Large
+Size Large to Small: Size Large to Small
 File Format: ''
 File format of the data source you want to add.: ''
-From URL: ''
+From Assets: ''
+From Web: ''
 From Value: ''
 Source Type: ''
 Select the type of data source you want to add.: ''
 Resource URL: Resource URL
 URL of the data source you want to add.: ''
 Input Text: ''
-Prioritize Performance: ''
 Value: ''
 Description around.: ''
 Write down your text: ''
+Asset: ''
+Prioritize Performance: ''
 Add to Layer: ''
 Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
@@ -88,6 +96,13 @@ Container Settings: Container Settings
 Angle: Angle
 Narrow: Narrow
 Wide: Wide
+Please select an asset before clicking Select.: Please select an asset before clicking Select.
+Select Image: Select Image
+Select: Select
+No assets match your search.: No assets match your search.
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
+  You haven't uploaded any assets yet. Click the upload button above and select
+  a compatible file from your computer.
 Create New Workspace: Create New Workspace
 Create: Create
 Workspace Name: Workspace Name
@@ -113,10 +128,6 @@ Something went wrong. Please try again later.: Something went wrong. Please try 
 Project Settings: ''
 Upload file: Upload file
 Delete: Delete
-No assets match your search.: No assets match your search.
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
-  You haven't uploaded any assets yet. Click the upload button above and select
-  a compatible file from your computer.
 You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
 Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
@@ -248,12 +259,14 @@ Reset password: Reset password
 Create your Account: Create your Account
 Already have an account?: Already have an account?
 Log in: Log in
+Date: Date
+File size: File size
+Alphabetical: Alphabetical
 Assets Library: Assets Library
 Use URL: Use URL
 Add video URL: Add video URL
 Save: Save
 Select Asset: Select Asset
-Select: Select
 Your browser is too small: Your browser is too small
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: >-
   Re:Earth needs at least 900px width to be used effectively. Please resize your
@@ -516,14 +529,3 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
-Choose: Choose
-Upload: Upload
-Last Uploaded: Last Uploaded
-First Uploaded: First Uploaded
-A To Z: A To Z
-Z To A: Z To A
-Size Small to Large: Size Small to Large
-Size Large to Small: Size Large to Small
-Please select an asset before clicking Select.: Please select an asset before clicking Select.
-Select Image: Select Image
-Wrong file format: Wrong file format

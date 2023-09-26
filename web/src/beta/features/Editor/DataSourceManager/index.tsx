@@ -35,11 +35,6 @@ const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) 
           label: "Delimited Text",
         },
         {
-          content: <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
-          id: "threeDTiles",
-          label: "3D Tiles",
-        },
-        {
           content: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "wms",
           label: "WMS",
@@ -48,6 +43,11 @@ const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) 
           content: <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "vectorTiles",
           label: "Vector Tile",
+        },
+        {
+          content: <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
+          id: "threeDTiles",
+          label: "3D Tiles",
         },
       ]}
     />
