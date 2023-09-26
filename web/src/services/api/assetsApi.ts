@@ -55,6 +55,7 @@ export default () => {
           text: t("Successfully added one or more assets."),
         });
       }
+      return { data: results, result: "success" };
     },
     [createAssetMutation, t, setNotification],
   );

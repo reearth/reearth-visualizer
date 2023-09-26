@@ -10,6 +10,7 @@ import SliderField from "@reearth/beta/components/fields/SliderField";
 import SpacingInput, { type SpacingValues } from "@reearth/beta/components/fields/SpacingInput";
 import TextInput from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
+import URLField from "@reearth/beta/components/fields/URLField";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera, LatLng } from "@reearth/beta/utils/value";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
@@ -123,6 +124,16 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
                 onChange={handleChange}
               />
             )
+          ) : sf.type === "url" ? (
+            <URLField
+              key={sf.id}
+              name={sf.name}
+              assetType={sf.ui === "image" ? "image" : sf.ui === "file" ? "file" : undefined}
+              fileType={sf.ui === "video" || sf.ui === undefined ? "URL" : "asset"}
+              value={(value as string) ?? ""}
+              description={sf.description}
+              onChange={handleChange}
+            />
           ) : sf.type === "spacing" ? (
             <SpacingInput
               key={sf.id}
@@ -156,7 +167,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
               <NumberField
                 key={sf.id}
                 name={sf.name}
-                value={(value as number) ?? ""}
+                value={(value as number) ?? undefined}
                 suffix={sf.suffix}
                 min={sf.min}
                 max={sf.max}
