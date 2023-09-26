@@ -1,6 +1,7 @@
 import { Rectangle, Cartographic, Math as CesiumMath } from "cesium";
 import { useRef, useEffect, useMemo, useState, useCallback, RefObject, useReducer } from "react";
-import { initialize, pageview } from "react-ga";
+import reactGA from "react-ga";
+import reactGA4 from "react-ga4";
 import { useSet } from "react-use";
 
 import { useDrop, DropOptions } from "@reearth/classic/util/use-dnd";
@@ -206,11 +207,15 @@ export default ({
 
   // GA
   const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
-
   useEffect(() => {
     if (!isPublished || !enableGA || !trackingId) return;
-    initialize(trackingId);
-    pageview(window.location.pathname);
+    if (trackingId.startsWith("G-")) {
+      reactGA4.initialize(trackingId);
+      reactGA4.send({ hitType: "pageview", page: window.location.pathname });
+    } else {
+      reactGA.initialize(trackingId);
+      reactGA.pageview(window.location.pathname);
+    }
   }, [isPublished, enableGA, trackingId]);
 
   const { overriddenAlignSystem, moveWidget } = useWidgetAlignSystem({
