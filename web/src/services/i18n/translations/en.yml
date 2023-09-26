@@ -18,6 +18,8 @@ Edit: Edit
 Color Picker: Color Picker
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Remove: Remove
+Add Item: ''
 Please choose an option: ''
 Not found: Not found
 Date: Date
@@ -188,7 +190,6 @@ Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
 Padding settings: Padding settings
-Remove: Remove
 Drop here: Drop here
 Write your story :): Write your story :)
 Normal: Normal

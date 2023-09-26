@@ -18,6 +18,8 @@ Edit: 編集
 Color Picker: カラーピッカー
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Remove: 削除
+Add Item: ''
 Please choose an option: ''
 Not found: ページが見つかりません
 Date: 作成日時順
@@ -169,7 +171,6 @@ Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
 Padding settings: 余白設定
-Remove: 削除
 Drop here: ここにドロップ
 Write your story :): ''
 Normal: ''
