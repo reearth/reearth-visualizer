@@ -3,7 +3,6 @@ import React from "react";
 import Button from "@reearth/beta/components/Button";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Text from "@reearth/beta/components/Text";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
@@ -14,6 +13,7 @@ import {
   Input,
   SourceTypeWrapper,
   SubmitWrapper,
+  generateTitle,
 } from "../utils";
 
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
@@ -28,7 +28,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateRandomString(5),
+      title: generateTitle(value, sourceType),
       visible: true,
       config: {
         data: {

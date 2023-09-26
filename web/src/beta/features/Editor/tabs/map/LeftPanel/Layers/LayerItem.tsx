@@ -5,6 +5,7 @@ import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
 import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import { styled } from "@reearth/services/theme";
 
 type LayerItemProps = {
   id: string;
@@ -90,10 +91,19 @@ const LayerItem = ({
           onBlur={handleEditExit}
         />
       ) : (
-        <Text size="body">{layerTitle}</Text>
+        <TitleContainer>
+          <Text size="body">{layerTitle}</Text>
+        </TitleContainer>
       )}
     </ListItem>
   );
 };
+
+const TitleContainer = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+`;
 
 export default LayerItem;

@@ -1,7 +1,6 @@
 import { FC } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
@@ -15,6 +14,7 @@ import {
   InputGroup,
   LayerWrapper,
   SubmitWrapper,
+  generateTitle,
 } from "../utils";
 
 const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
@@ -36,7 +36,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateRandomString(5),
+      title: generateTitle(urlValue),
       visible: true,
       config: {
         data: {

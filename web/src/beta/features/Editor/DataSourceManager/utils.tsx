@@ -1,4 +1,5 @@
 import Icon from "@reearth/beta/components/Icon";
+import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { styled } from "@reearth/services/theme";
 
 export const InputGroup: React.FC<{
@@ -112,3 +113,23 @@ export const AddLayerWrapper = styled.div`
   margin-top: 5px;
   justify-content: flex-start;
 `;
+
+export const generateTitle = (url?: string, sourceType?: string): string => {
+  if (url && url.trim() !== "") {
+    try {
+      const urlObject = new URL(url);
+      const pathParts = urlObject.pathname.split("/");
+      const lastPart = pathParts.pop() || "";
+      const fileName = lastPart.split(".")[0];
+      return fileName;
+    } catch (error) {
+      console.error("Invalid URL", error);
+    }
+  }
+
+  if (sourceType === "url") {
+    console.warn("SourceType is 'url' but either URL is invalid or not provided.");
+  }
+
+  return generateRandomString(5);
+};

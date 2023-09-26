@@ -2374,6 +2374,7 @@ export type UpdateMemberOfTeamPayload = {
 };
 
 export type UpdateNlsLayerInput = {
+  config?: InputMaybe<Scalars['JSON']['input']>;
   layerId: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   visible?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2455,9 +2456,9 @@ export type UpdateStoryPageInput = {
 
 export type UpdateStyleInput = {
   StyleId: Scalars['ID']['input'];
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   sceneId: Scalars['ID']['input'];
-  value: Scalars['JSON']['input'];
+  value?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateStylePayload = {
