@@ -22,7 +22,7 @@ export default function StoryBlockComponent({
 }: Props): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
   const Builtin = isBuiltinStoryBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
-
+  console.log(props.block);
   const handleRemove = useCallback(
     () => onRemove?.(pageId, props.block?.id),
     [pageId, props.block?.id, onRemove],

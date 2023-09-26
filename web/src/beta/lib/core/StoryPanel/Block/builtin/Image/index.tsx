@@ -1,21 +1,21 @@
 import { useMemo } from "react";
 
+import type { CommonProps as BlockProps } from "@reearth//beta/lib/core/StoryPanel/Block/types";
+import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
+import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
 import type { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
-
-import { getFieldValue } from "../../../utils";
-import type { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../common/Wrapper";
 
 const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => getFieldValue(block?.property?.items ?? [], "src") as ValueTypes["string"],
     [block?.property?.items],
   );
+  const title = useMemo(() => block?.property?.items?.[1]?.title, [block?.property?.items]);
 
   return (
     <BlockWrapper
-      title={block?.title}
+      title={title}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}

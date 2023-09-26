@@ -32,10 +32,11 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     },
     [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
   );
+  const title = useMemo(() => block?.property?.items?.[1]?.title, [block?.property?.items]);
 
   return (
     <BlockWrapper
-      title={block?.title}
+      title={title}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}
