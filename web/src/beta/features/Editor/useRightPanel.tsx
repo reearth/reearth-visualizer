@@ -3,6 +3,7 @@ import { ReactNode, useMemo } from "react";
 import type { Tab } from "@reearth/beta/features/Navbar";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 
 import MapSidePanel from "./tabs/map/RightPanel";
@@ -12,6 +13,7 @@ import WidgetSidePanel from "./tabs/widgets/RightPanel";
 type Props = {
   tab: Tab;
   sceneId?: string;
+  nlsLayers: NLSLayer[];
   currentPage?: Page;
   showSceneSettings?: boolean;
   currentCamera?: Camera;
@@ -21,6 +23,7 @@ type Props = {
 export default ({
   tab,
   sceneId,
+  nlsLayers,
   currentPage,
   showSceneSettings,
   currentCamera,
@@ -42,6 +45,7 @@ export default ({
           <StorySidePanel
             selectedPage={currentPage}
             currentCamera={currentCamera}
+            layers={nlsLayers}
             onFlyTo={onFlyTo}
           />
         );
@@ -52,7 +56,7 @@ export default ({
       default:
         return undefined;
     }
-  }, [tab, sceneId, currentPage, showSceneSettings, currentCamera, onFlyTo]);
+  }, [tab, sceneId, showSceneSettings, currentCamera, onFlyTo, currentPage, nlsLayers]);
 
   return {
     rightPanel,
