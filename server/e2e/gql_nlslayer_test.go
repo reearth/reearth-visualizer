@@ -239,6 +239,33 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("value").Equal("secondSampleValue")
 
+	// Save current config before update
+	savedConfig := res3.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("config").Raw()
+
+	// Perform update with nil config
+	updateReq, _ := updateNLSLayer(e, layerId)
+	updateReq.Variables["config"] = nil
+	e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(updateReq).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	// Fetch the layer again and compare the config with the saved config
+	_, res4 := fetchSceneForNewLayers(e, sId)
+	res4.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("config").Equal(savedConfig)
+
 	// Remove NLSLayer
 	_, _ = removeNLSLayer(e, layerId)
 }

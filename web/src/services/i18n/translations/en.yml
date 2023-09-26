@@ -18,6 +18,8 @@ Edit: Edit
 Color Picker: Color Picker
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Remove: Remove
+Add Item: ''
 Please choose an option: ''
 Not found: Not found
 Date: Date
@@ -188,7 +190,6 @@ Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
 Padding settings: Padding settings
-Remove: Remove
 Drop here: Drop here
 Write your story :): Write your story :)
 Normal: Normal
@@ -514,3 +515,16 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
+Choose: Choose
+Upload: Upload
+Last Uploaded: Last Uploaded
+First Uploaded: First Uploaded
+A To Z: A To Z
+Z To A: Z To A
+Size Small to Large: Size Small to Large
+Size Large to Small: Size Large to Small
+Please select an asset before clicking Select.: Please select an asset before clicking Select.
+Select Image: Select Image
+Wrong file format: Wrong file format
+wrong Video URL Format: wrong Video URL Format
+

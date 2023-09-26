@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 
+import useHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
+import { Asset } from "@reearth/beta/features/Assets/types";
+
 import { InnerPage } from "../common";
 
-import AssetContainer, { type Asset } from "./AssetContainer";
-import useHooks from "./hooks";
+import AssetContainer from "./AssetContainer";
 
 type Props = {
   workspaceId?: string;
@@ -19,7 +21,7 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
     selectedAssets,
     selectAsset,
     handleGetMoreAssets,
-    createAssets,
+    handleFileSelect,
     handleSortChange,
     handleSearchTerm,
     removeAssets,
@@ -46,7 +48,7 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
         hasMoreAssets={hasMoreAssets}
         sort={sort}
         searchTerm={searchTerm}
-        onCreateAssets={createAssets}
+        onFileUpload={handleFileSelect}
         onRemove={removeAssets}
         onGetMore={handleGetMoreAssets}
         onSelect={handleSelect}
