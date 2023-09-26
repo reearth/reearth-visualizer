@@ -90,6 +90,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
+  const handleOnChange = (value?: string) => {
+    setValue(value || "");
+  };
+
   return (
     <ColJustifyBetween>
       <AssetWrapper>
@@ -117,17 +121,6 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 onChange={e => setValue(e.target.value)}
               />
             </InputGroup>
-            {fileFormat === "GeoJSON" && (
-              <InputGroup
-                label={t("Prioritize Performance")}
-                description={t("URL of the data source you want to add.")}>
-                <Toggle
-                  checked={prioritizePerformance}
-                  disabled={true}
-                  onChange={v => setPrioritizePerformance(v)}
-                />
-              </InputGroup>
-            )}
           </>
         )}
         {sourceType == "value" && (
@@ -146,10 +139,22 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         {sourceType == "local" && (
           <>
             <SelectDataType fileFormat={fileFormat} setFileFormat={setFileFormat} />
-            <URLField fileType="asset" value={value} onChange={setValue} />
+            <URLField fileType="asset" name={t("Asset")} value={value} onChange={handleOnChange} />
           </>
         )}
       </AssetWrapper>
+
+      {fileFormat === "GeoJSON" && (
+        <InputGroup
+          label={t("Prioritize Performance")}
+          description={t("URL of the data source you want to add.")}>
+          <Toggle
+            checked={prioritizePerformance}
+            disabled={true}
+            onChange={v => setPrioritizePerformance(v)}
+          />
+        </InputGroup>
+      )}
       <SubmitWrapper>
         <Button
           text={t("Add to Layer")}

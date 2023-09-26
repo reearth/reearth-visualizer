@@ -67,6 +67,10 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
+  const handleOnChange = (value?: string) => {
+    setValue(value || "");
+  };
+
   return (
     <ColJustifyBetween>
       <AssetWrapper>
@@ -100,7 +104,9 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             />
           </InputGroup>
         )}
-        {sourceType == "local" && <URLField fileType="asset" value={value} onChange={setValue} />}
+        {sourceType == "local" && (
+          <URLField fileType="asset" value={value} name={t("Asset")} onChange={handleOnChange} />
+        )}
         <Text size="body">Point coordinates</Text>
         <InputGroup label="Latitude Field" description="Description around">
           <Input
