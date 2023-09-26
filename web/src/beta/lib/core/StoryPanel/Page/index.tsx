@@ -113,7 +113,7 @@ const StoryPage: React.FC<Props> = ({
         )}
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
-            uniqueKey="LeftStoryPanel"
+            uniqueKey="storyPanel"
             gap={8}
             items={items}
             getId={item => item.id}
