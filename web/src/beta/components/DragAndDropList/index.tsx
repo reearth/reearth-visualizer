@@ -7,7 +7,7 @@ import { styled } from "@reearth/services/theme";
 import Item from "./Item";
 import { useScroll } from "./scrollItem";
 
-type Props<Item extends { id: string } = { id: string }> = {
+export type Props<Item extends { id: string } = { id: string }> = {
   uniqueKey: string;
   items: Item[];
   getId: (item: Item) => string;
