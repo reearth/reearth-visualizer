@@ -69,7 +69,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
   );
 
   const showFields = useMemo(() => {
-    return isList ? (selected ? item.items.find(({ id }) => id == selected) : false) : true;
+    return isList ? (selected ? item.items.find(({ id }) => id === selected) : false) : true;
   }, [item, selected, isList]);
 
   return (
