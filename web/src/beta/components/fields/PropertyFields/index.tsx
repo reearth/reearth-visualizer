@@ -167,7 +167,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
               <NumberField
                 key={sf.id}
                 name={sf.name}
-                value={(value as number) ?? undefined}
+                value={(value as number) ?? ""}
                 suffix={sf.suffix}
                 min={sf.min}
                 max={sf.max}
