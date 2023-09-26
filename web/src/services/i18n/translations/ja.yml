@@ -21,10 +21,16 @@ You have passed the minimum value.: You have passed the minimum value.
 Remove: 削除
 Add Item: ''
 Please choose an option: ''
+Wrong file format: Wrong file format
+Choose: 選択
+Upload: アップロード
 Not found: ページが見つかりません
-Date: 作成日時順
-File size: サイズ順
-Alphabetical: 名前順
+Last Uploaded: Last Uploaded
+First Uploaded: First Uploaded
+A To Z: A To Z
+Z To A: Z To A
+Size Small to Large: Size Small to Large
+Size Large to Small: Size Large to Small
 File Format: ファイルフォーマット
 File format of the data source you want to add.: ''
 From URL: ''
@@ -43,9 +49,9 @@ Choose layer to add: ''
 Layer of the data source you want to add.: ''
 layer name: ''
 Layer: レイヤー
+Layers: レイヤー
 Scene: シーン
 Main: ''
-Layers: レイヤー
 Outline: アウトライン
 Inspector: インスペクター
 Published: 一般公開
@@ -84,6 +90,11 @@ Container Settings: Container Settings
 Angle: 角度
 Narrow: 狭い
 Wide: 広い
+Please select an asset before clicking Select.: Please select an asset before clicking Select.
+Select Image: イメージ選択
+Select: 選択
+No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
+You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
 Create New Workspace: 新規ワークスペース作成
 Create: 作成
 Workspace Name: ワークスペース名
@@ -109,8 +120,6 @@ Something went wrong. Please try again later.: 何らかの問題が発生しま
 Project Settings: プロジェクト設定
 Upload file: ファイルアップロード
 Delete: 削除
-No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
-You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
 You are about to delete one or more assets from the current workspace.: 1つまたは複数のアセットを削除しようとしています。
 Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
@@ -227,12 +236,14 @@ Reset password: パスワードをリセット
 Create your Account: アカウントを登録する
 Already have an account?: 既にアカウントをお持ちの場合
 Log in: ログイン
+Date: 作成日時順
+File size: サイズ順
+Alphabetical: 名前順
 Assets Library: アセット
 Use URL: URL
 Add video URL: 映像URLを追加
 Save: 保存
 Select Asset: 選択
-Select: 選択
 Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
 OK: 確認
@@ -477,14 +488,3 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
-Choose: 選択
-Upload: アップロード
-Last Uploaded: Last Uploaded
-First Uploaded: First Uploaded
-A To Z: A To Z
-Z To A: Z To A
-Size Small to Large: Size Small to Large
-Size Large to Small: Size Large to Small
-Please select an asset before clicking Select.: Please select an asset before clicking Select.
-Select Image: イメージ選択
-Wrong file format: Wrong file format

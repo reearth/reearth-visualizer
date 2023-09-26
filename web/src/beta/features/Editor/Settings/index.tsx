@@ -14,7 +14,7 @@ type Props = {
   propertyId: string;
   propertyItems?: Item[];
   currentCamera?: Camera;
-  layers: NLSLayer[];
+  layers?: NLSLayer[];
   onFlyTo?: FlyTo;
 };
 
