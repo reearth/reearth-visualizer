@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { PublishStatus } from "@reearth/beta/features/Editor/tabs/publish/Nav/PublishModal/hooks";
 import { MutationReturn } from "@reearth/services/api/types";
@@ -37,7 +37,9 @@ export default () => {
       skip: !sceneId,
     });
 
-    return { stories: getStories(data), ...rest };
+    const stories = useMemo(() => getStories(data), [data]);
+
+    return { stories, ...rest };
   }, []);
 
   const [createStoryMutation] = useMutation<CreateStoryMutation, MutationCreateStoryArgs>(

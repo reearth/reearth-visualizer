@@ -2,7 +2,12 @@ import { useMutation } from "@apollo/client";
 import { useCallback } from "react";
 
 import { ValueType, ValueTypes, valueToGQL, valueTypeToGQL } from "@reearth/beta/utils/value";
-import { UPDATE_PROPERTY_VALUE } from "@reearth/services/gql/queries/property";
+import {
+  UPDATE_PROPERTY_VALUE,
+  ADD_PROPERTY_ITEM,
+  REMOVE_PROPERTY_ITEM,
+  MOVE_PROPERTY_ITEM,
+} from "@reearth/services/gql/queries/property";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
@@ -13,6 +18,9 @@ export default () => {
   const [, setNotification] = useNotification();
 
   const [updatePropertyValue] = useMutation(UPDATE_PROPERTY_VALUE);
+  const [addPropertyItem] = useMutation(ADD_PROPERTY_ITEM);
+  const [removePropertyItem] = useMutation(REMOVE_PROPERTY_ITEM);
+  const [movePropertyItem] = useMutation(MOVE_PROPERTY_ITEM);
 
   const useUpdatePropertyValue = useCallback(
     async (
@@ -55,7 +63,87 @@ export default () => {
     [updatePropertyValue, setNotification, t],
   );
 
+  const useAddPropertyItem = useCallback(
+    async (propertyId: string, schemaGroupId: string) => {
+      const { data, errors } = await addPropertyItem({
+        variables: {
+          propertyId,
+          schemaGroupId,
+        },
+        refetchQueries: ["GetScene"],
+      });
+
+      if (errors || !data?.addPropertyItem) {
+        console.log("GraphQL: Failed to update property", errors);
+        setNotification({ type: "error", text: t("Failed to update property.") });
+
+        return { status: "error" };
+      }
+
+      return {
+        data: data.addPropertyItem.property,
+        status: "success",
+      };
+    },
+    [addPropertyItem, setNotification, t],
+  );
+
+  const useRemovePropertyItem = useCallback(
+    async (propertyId: string, schemaGroupId: string, itemId: string) => {
+      const { data, errors } = await removePropertyItem({
+        variables: {
+          propertyId,
+          schemaGroupId,
+          itemId,
+        },
+        refetchQueries: ["GetScene"],
+      });
+
+      if (errors || !data?.removePropertyItem) {
+        console.log("GraphQL: Failed to update property", errors);
+        setNotification({ type: "error", text: t("Failed to update property.") });
+
+        return { status: "error" };
+      }
+
+      return {
+        data: data.removePropertyItem.property,
+        status: "success",
+      };
+    },
+    [removePropertyItem, setNotification, t],
+  );
+
+  const useMovePropertyItem = useCallback(
+    async (propertyId: string, schemaGroupId: string, itemId: string, index: number) => {
+      const { data, errors } = await movePropertyItem({
+        variables: {
+          propertyId,
+          schemaGroupId,
+          itemId,
+          index,
+        },
+        refetchQueries: ["GetScene"],
+      });
+
+      if (errors || !data?.movePropertyItem) {
+        console.log("GraphQL: Failed to update property", errors);
+        setNotification({ type: "error", text: t("Failed to update property.") });
+
+        return { status: "error" };
+      }
+
+      return {
+        data: data.movePropertyItem.property,
+        status: "success",
+      };
+    },
+    [movePropertyItem, setNotification, t],
+  );
   return {
     useUpdatePropertyValue,
+    useAddPropertyItem,
+    useRemovePropertyItem,
+    useMovePropertyItem,
   };
 };

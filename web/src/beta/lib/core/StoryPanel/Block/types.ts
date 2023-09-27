@@ -28,7 +28,7 @@ export type CommonProps = {
   theme?: Theme;
   onClick?: () => void;
   onClickAway?: () => void;
-  onRemove?: (id?: string) => void;
+  onRemove?: (pageId?: string, id?: string) => void;
   onChange?: (
     propertyId?: string,
     schemaItemId?: string,

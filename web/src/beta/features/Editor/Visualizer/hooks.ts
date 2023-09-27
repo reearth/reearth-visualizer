@@ -31,18 +31,15 @@ export default ({
   sceneId,
   isBuilt,
   storyId,
-  pageId,
 }: {
   sceneId?: string;
   isBuilt?: boolean;
   storyId?: string;
-  pageId?: string;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
   const { useSceneQuery } = useSceneFetcher();
-  const { useInstalledStoryBlocksQuery, useCreateStoryBlock, useDeleteStoryBlock } =
-    useStoryTellingFetcher();
+  const { useCreateStoryBlock, useDeleteStoryBlock } = useStoryTellingFetcher();
   const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
@@ -195,15 +192,8 @@ export default ({
     [sceneId, useUpdateWidgetAlignSystem],
   );
 
-  const { installedStoryBlocks } = useInstalledStoryBlocksQuery({
-    sceneId,
-    lang: undefined,
-    storyId,
-    pageId,
-  });
-
   const handleStoryBlockCreate = useCallback(
-    (index?: number) => async (extensionId?: string, pluginId?: string) => {
+    (index?: number) => async (pageId?: string, extensionId?: string, pluginId?: string) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
       await useCreateStoryBlock({
         pluginId,
@@ -213,15 +203,15 @@ export default ({
         index,
       });
     },
-    [storyId, pageId, useCreateStoryBlock],
+    [storyId, useCreateStoryBlock],
   );
 
   const handleStoryBlockDelete = useCallback(
-    async (blockId?: string) => {
+    async (pageId?: string, blockId?: string) => {
       if (!blockId || !storyId || !pageId) return;
       await useDeleteStoryBlock({ blockId, pageId, storyId });
     },
-    [storyId, pageId, useDeleteStoryBlock],
+    [storyId, useDeleteStoryBlock],
   );
 
   const handlePropertyValueUpdate = useCallback(
@@ -287,7 +277,6 @@ export default ({
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
-    installedStoryBlocks,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
