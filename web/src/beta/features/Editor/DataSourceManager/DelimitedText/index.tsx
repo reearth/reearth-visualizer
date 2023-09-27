@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -8,7 +8,7 @@ import Text from "@reearth/beta/components/Text";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
-import { DataProps } from "..";
+import { DataProps, FileFormatType, SourceType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -21,11 +21,11 @@ import {
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
-  const [sourceType, setSourceType] = React.useState("local"); // ["url", "local", "value"]
+  const [sourceType, setSourceType] = React.useState<SourceType>("local");
   const [value, setValue] = React.useState("");
   const [lat, setLat] = React.useState("");
   const [long, setLong] = React.useState("");
-  const [fileFormat, setFileFormat] = React.useState("csv");
+  const [fileFormat, setFileFormat] = React.useState<FileFormatType>("CSV");
 
   const DataSourceOptions = useMemo(
     () => [
@@ -34,6 +34,8 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     ],
     [t],
   );
+
+  const FileFormatOptions = useMemo(() => ["CSV"], []);
 
   const handleSubmit = () => {
     onSubmit({
@@ -67,9 +69,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
-  const handleOnChange = (value?: string) => {
-    setValue(value || "");
-  };
+  const handleOnChange = useCallback((value?: string) => setValue(value || ""), []);
 
   return (
     <ColJustifyBetween>
@@ -81,21 +81,23 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             <RadioGroup
               options={DataSourceOptions}
               selectedValue={sourceType}
-              onChange={setSourceType}
+              onChange={(newValue: string) => setSourceType(newValue as SourceType)}
             />
           </SourceTypeWrapper>
         </InputGroup>
 
         <SelectField
           value={fileFormat}
-          options={["CSV"].map(v => ({ key: v, label: v }))}
+          options={FileFormatOptions.map(v => ({ key: v, label: v }))}
           name={t("File Format")}
           description={t("File format of the data source you want to add.")}
-          onChange={setFileFormat}
+          onChange={(f: string) => setFileFormat(f as FileFormatType)}
         />
 
         {sourceType == "url" && (
-          <InputGroup label="Resource URL" description="URL of the data source you want to add.">
+          <InputGroup
+            label={t("Resource URL")}
+            description={t("URL of the data source you want to add.")}>
             <Input
               type="text"
               placeholder="Input Text"

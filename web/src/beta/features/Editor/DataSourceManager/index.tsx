@@ -16,6 +16,10 @@ export type DataProps = {
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
 
+export type SourceType = "url" | "local" | "value";
+
+export type FileFormatType = "CSV" | "GeoJSON" | "KML" | "CZML";
+
 const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) => {
   return (
     <Modal

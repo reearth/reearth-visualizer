@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -8,7 +8,7 @@ import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
-import { DataProps } from "..";
+import { DataProps, FileFormatType, SourceType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -38,8 +38,8 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
 
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
-  const [sourceType, setSourceType] = React.useState("local"); // ["url", "local", "value"]
-  const [fileFormat, setFileFormat] = React.useState("GeoJSON");
+  const [sourceType, setSourceType] = React.useState<SourceType>("local");
+  const [fileFormat, setFileFormat] = React.useState<FileFormatType>("GeoJSON");
   const [value, setValue] = React.useState("");
   const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
   const DataSourceOptions = useMemo(
@@ -90,9 +90,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
-  const handleOnChange = (value?: string) => {
-    setValue(value || "");
-  };
+  const handleOnChange = useCallback((value?: string) => setValue(value || ""), []);
 
   return (
     <ColJustifyBetween>
@@ -104,13 +102,16 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             <RadioGroup
               options={DataSourceOptions}
               selectedValue={sourceType}
-              onChange={setSourceType}
+              onChange={(newValue: string) => setSourceType(newValue as SourceType)}
             />
           </SourceTypeWrapper>
         </InputGroup>
         {sourceType == "url" && (
           <>
-            <SelectDataType fileFormat={fileFormat} setFileFormat={setFileFormat} />
+            <SelectDataType
+              fileFormat={fileFormat}
+              setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
+            />
             <InputGroup
               label={t("Resource URL")}
               description={t("URL of the data source you want to add.")}>
@@ -125,7 +126,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         )}
         {sourceType == "value" && (
           <>
-            <SelectDataType fileFormat={fileFormat} setFileFormat={setFileFormat} />
+            <SelectDataType
+              fileFormat={fileFormat}
+              setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
+            />
             <InputGroup label={t("Value")} description={t("Description around.")}>
               <TextArea
                 placeholder={t("Write down your text")}
@@ -138,7 +142,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         )}
         {sourceType == "local" && (
           <>
-            <SelectDataType fileFormat={fileFormat} setFileFormat={setFileFormat} />
+            <SelectDataType
+              fileFormat={fileFormat}
+              setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
+            />
             <URLField fileType="asset" name={t("Asset")} value={value} onChange={handleOnChange} />
           </>
         )}
