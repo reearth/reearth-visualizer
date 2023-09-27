@@ -1,6 +1,8 @@
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
-import Component, { Props } from ".";
+import { styled } from "@reearth/services/theme";
+
+import Markdown, { Props } from ".";
 
 const markdown = `
 > A block quote with ~strikethrough~ and a URL: https://reactjs.org.
@@ -9,20 +11,47 @@ const markdown = `
 * [ ] todo
 * [x] done
 
+
+[Link](https://reactjs.org)
+
+### Image 
+![Alt text](https://images.pexels.com/photos/5656637/pexels-photo-5656637.jpeg?auto=compress&cs=tinysrgb&w=200)
+
 A table:
 
 | a | b |
 | - | - |
 `;
 
-export default {
-  component: Component,
-  parameters: { actions: { argTypesRegex: "^on.*" } },
-} as Meta;
+const meta: Meta<typeof Markdown> = {
+  component: Markdown,
+};
 
-export const Default: Story<Props> = args => <Component {...args} />;
+export default meta;
+
+type Story = StoryObj<typeof Markdown>;
+
+export const Default: Story = (args: Props) => {
+  return (
+    <Wrapper>
+      <div>
+        <Markdown {...args} />
+      </div>
+    </Wrapper>
+  );
+};
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10%;
+  margin-left: 2rem;
+  margin-top: 2rem;
+  height: 300px;
+`;
 
 Default.args = {
   children: markdown,
-  backgroundColor: "#fff",
+  onClick: () => console.log("clicked"),
+  onDoubleClick: () => console.log("double clicked clicked"),
 };
