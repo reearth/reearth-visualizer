@@ -1,6 +1,6 @@
 import type { Identifier } from "dnd-core";
 import type { FC, ReactNode } from "react";
-import { memo, useRef } from "react";
+import { memo, useRef, createContext, useContext } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
@@ -15,22 +15,30 @@ type Props = {
   itemGroupKey: string;
   id: string;
   index: number;
+  shouldUseCustomHandler?: boolean;
   onItemMove: (dragIndex: number, hoverIndex: number) => void;
   onItemDropOnItem: (dropIndex: number) => void;
   onItemDropOutside: () => void;
   children: ReactNode;
 };
 
+const ItemContext = createContext<React.RefObject<HTMLDivElement> | null>(null);
+
+export const useItemContext = () => useContext(ItemContext);
+
 const Item: FC<Props> = ({
   itemGroupKey,
   id,
   children,
   index,
+  shouldUseCustomHandler,
   onItemMove,
   onItemDropOnItem,
   onItemDropOutside,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: itemGroupKey,
     collect(monitor) {
@@ -39,14 +47,14 @@ const Item: FC<Props> = ({
       };
     },
     hover(item: DragItem, monitor) {
-      if (!ref.current) return;
+      if (!contentRef.current) return;
 
       const dragIndex = item.index;
       const hoverIndex = index;
       if (dragIndex === hoverIndex) return;
 
       // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverBoundingRect = contentRef.current?.getBoundingClientRect();
 
       // Determine mouse position
       const clientOffset = monitor.getClientOffset();
@@ -72,7 +80,7 @@ const Item: FC<Props> = ({
     },
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     type: itemGroupKey,
     item: () => {
       return { id, index };
@@ -90,10 +98,17 @@ const Item: FC<Props> = ({
     },
   });
 
-  drag(drop(ref));
-  return (
+  drag(ref);
+  drop(contentRef);
+  return shouldUseCustomHandler ? (
+    <ItemContext.Provider value={ref}>
+      <SItem ref={preview} data-handler-id={handlerId} isDragging={isDragging}>
+        <div ref={contentRef}>{children}</div>
+      </SItem>
+    </ItemContext.Provider>
+  ) : (
     <SItem ref={ref} data-handler-id={handlerId} isDragging={isDragging}>
-      {children}
+      <div ref={contentRef}>{children}</div>
     </SItem>
   );
 };

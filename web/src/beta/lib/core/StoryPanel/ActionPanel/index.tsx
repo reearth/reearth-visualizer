@@ -1,5 +1,6 @@
 import { Dispatch, Fragment, MouseEvent, SetStateAction, useMemo } from "react";
 
+import { useItemContext } from "@reearth/beta/components/DragAndDropList/Item";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -28,6 +29,7 @@ type Props = {
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
+  isHovered?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
@@ -40,13 +42,14 @@ const ActionPanel: React.FC<Props> = ({
   propertyId,
   panelSettings,
   actionItems,
-  dndEnabled,
   position,
+  dndEnabled,
   setShowPadding,
   onSettingsToggle,
   onRemove,
 }) => {
   const t = useT();
+  const ref = useItemContext();
 
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
@@ -68,7 +71,11 @@ const ActionPanel: React.FC<Props> = ({
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
-      {dndEnabled && <DndHandle icon="dndHandle" size={16} />}
+      {dndEnabled && (
+        <DndHandle ref={ref}>
+          <Icon icon="dndHandle" size={16} />
+        </DndHandle>
+      )}
       <Popover.Provider
         open={showSettings}
         onOpenChange={() => onSettingsToggle?.()}
@@ -201,6 +208,6 @@ const CancelIcon = styled(Icon)`
   cursor: pointer;
 `;
 
-const DndHandle = styled(Icon)`
+const DndHandle = styled.div`
   cursor: move;
 `;
