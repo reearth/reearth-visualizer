@@ -1,5 +1,6 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState, useEffect } from "react";
 
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
@@ -34,6 +35,7 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
+  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryPage: React.FC<Props> = ({
@@ -49,6 +51,7 @@ const StoryPage: React.FC<Props> = ({
   onBlockDelete,
   onBlockSelect,
   onPropertyUpdate,
+  onStoryBlockMove,
 }) => {
   const t = useT();
   const propertyItems = useMemo(() => page?.property.items, [page?.property]);
@@ -59,6 +62,12 @@ const StoryPage: React.FC<Props> = ({
     pageId: page?.id,
     propertyItems,
   });
+
+  const [items, setItems] = useState(storyBlocks ? storyBlocks : []);
+
+  useEffect(() => {
+    storyBlocks && setItems(storyBlocks);
+  }, [storyBlocks]);
 
   return (
     <SelectableArea
@@ -87,7 +96,6 @@ const StoryPage: React.FC<Props> = ({
                 items: [titleProperty],
               },
             }}
-            pageId={page?.id}
             isEditable={isEditable}
             isSelected={selectedStoryBlockId === titleId}
             onClick={() => onBlockSelect?.(titleId)}
@@ -97,36 +105,55 @@ const StoryPage: React.FC<Props> = ({
         )}
         {isEditable && (
           <BlockAddBar
-            pageId={page?.id}
             openBlocks={openBlocksIndex === -1}
             installableStoryBlocks={installableStoryBlocks}
             onBlockOpen={() => handleBlockOpen(-1)}
             onBlockAdd={onBlockCreate?.(0)}
           />
         )}
-        {storyBlocks?.map((b, idx) => (
-          <Fragment key={idx}>
-            <StoryBlock
-              block={b}
-              pageId={page?.id}
-              isSelected={selectedStoryBlockId === b.id}
-              isEditable={isEditable}
-              onClick={() => onBlockSelect?.(b.id)}
-              onClickAway={onBlockSelect}
-              onChange={onPropertyUpdate}
-              onRemove={onBlockDelete}
-            />
-            {isEditable && (
-              <BlockAddBar
-                pageId={page?.id}
-                openBlocks={openBlocksIndex === idx}
-                installableStoryBlocks={installableStoryBlocks}
-                onBlockOpen={() => handleBlockOpen(idx)}
-                onBlockAdd={onBlockCreate?.(idx + 1)}
-              />
-            )}
-          </Fragment>
-        ))}
+        {storyBlocks && storyBlocks.length > 0 && (
+          <DragAndDropList
+            uniqueKey="storyPanel"
+            gap={8}
+            items={items}
+            getId={item => item.id}
+            onItemDrop={async (item, index) => {
+              setItems(old => {
+                const items = [...old];
+                items.splice(
+                  old.findIndex(o => o.id === item.id),
+                  1,
+                );
+                items.splice(index, 0, item);
+                return items;
+              });
+              await onStoryBlockMove(page?.id || "", index, item.id);
+            }}
+            renderItem={(b, idx) => {
+              return (
+                <Fragment key={idx}>
+                  <StoryBlock
+                    block={b}
+                    isSelected={selectedStoryBlockId === b.id}
+                    isEditable={isEditable}
+                    onClick={() => onBlockSelect?.(b.id)}
+                    onClickAway={onBlockSelect}
+                    onChange={onPropertyUpdate}
+                    onRemove={onBlockDelete}
+                  />
+                  {isEditable && (
+                    <BlockAddBar
+                      openBlocks={openBlocksIndex === idx}
+                      installableStoryBlocks={installableStoryBlocks}
+                      onBlockOpen={() => handleBlockOpen(idx)}
+                      onBlockAdd={onBlockCreate?.(idx + 1)}
+                    />
+                  )}
+                </Fragment>
+              );
+            }}
+          />
+        )}
       </Wrapper>
     </SelectableArea>
   );

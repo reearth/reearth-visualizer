@@ -49,7 +49,7 @@ const SelectableArea: React.FC<Props> = ({
   onClickAway,
   onRemove,
 }) => {
-  const { isHovered, showPadding, panelSettings, setShowPadding, handleMouseOver, handleMouseOut } =
+  const { showPadding, panelSettings, setShowPadding, isHovered, handleMouseOver, handleMouseOut } =
     useHooks({
       editMode,
       isSelected,

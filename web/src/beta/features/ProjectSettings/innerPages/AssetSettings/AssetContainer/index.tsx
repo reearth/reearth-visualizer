@@ -1,22 +1,16 @@
 import Button from "@reearth/beta/components/Button";
+import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
-import {
-  useManageAssets,
-  Asset as AssetType,
-  SortType,
-  fileFormats,
-  imageFormats,
-} from "@reearth/beta/features/Assets/useManageAssets/hooks";
+import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
+import { Asset, SortType } from "@reearth/beta/features/Assets/types";
+import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
+import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import AssetDeleteModal from "../AssetDeleteModal";
-
-export type Asset = AssetType;
-
-export type AssetSortType = SortType;
 
 export type Props = {
   workspaceId?: string;
@@ -26,7 +20,7 @@ export type Props = {
   selectedAssets?: Asset[];
   isLoading?: boolean;
   hasMoreAssets?: boolean;
-  sort?: { type?: AssetSortType | null; reverse?: boolean };
+  sort?: { type?: SortType | null; reverse?: boolean };
   searchTerm?: string;
   onCreateAssets?: (files: FileList) => void;
   onRemove?: (assetIds: string[]) => void;
@@ -35,6 +29,7 @@ export type Props = {
   onSelect?: (asset?: Asset) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
   onSearch?: (term?: string) => void;
+  onFileUpload?: () => void;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -44,7 +39,7 @@ const AssetContainer: React.FC<Props> = ({
   isLoading,
   sort,
   searchTerm,
-  onCreateAssets,
+  onFileUpload,
   onRemove,
   onGetMore,
   onAssetUrlSelect,
@@ -60,7 +55,6 @@ const AssetContainer: React.FC<Props> = ({
     wrapperRef,
     onScrollToBottom,
     handleSearchInputChange,
-    handleUploadToAsset,
     // iconChoice,
     // sortOptions,
     // handleReverse,
@@ -76,7 +70,6 @@ const AssetContainer: React.FC<Props> = ({
     hasMoreAssets,
     onGetMore,
     onSortChange,
-    onCreateAssets,
     onAssetUrlSelect,
     onRemove,
     onSearch,
@@ -87,11 +80,11 @@ const AssetContainer: React.FC<Props> = ({
       <NavBar>
         <LeftSection>
           <SearchWarper>
-            <StyledSearchInput value={localSearchTerm} onChange={handleSearchInputChange} />
-            <Button size="small" icon="search" margin="0" onClick={() => handleSearch()} />
+            <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
+            <Button size="small" icon="search" margin="0" onClick={handleSearch} />
           </SearchWarper>
           {/* TODO: Select Field 
-          <AssetSelect<AssetSortType>
+          <AssetSelect<SortType>
             value={sort?.type ?? "date"}
             items={sortOptions}
             onChange={onSortChange}
@@ -105,7 +98,7 @@ const AssetContainer: React.FC<Props> = ({
             icon="uploadSimple"
             size="small"
             buttonType={"secondary"}
-            onClick={handleUploadToAsset}
+            onClick={onFileUpload}
           />
           <Button
             text={t("Delete")}
@@ -139,9 +132,9 @@ const AssetContainer: React.FC<Props> = ({
                   key={a.id}
                   name={a.name}
                   icon={
-                    checkIfFileType(a.url, fileFormats)
+                    checkIfFileType(a.url, FILE_FORMATS)
                       ? "file"
-                      : checkIfFileType(a.url, imageFormats)
+                      : checkIfFileType(a.url, IMAGE_FORMATS)
                       ? undefined
                       : "assetNoSupport"
                   }
@@ -193,20 +186,6 @@ const SearchWarper = styled.div`
   gap: ${({ theme }) => theme.spacing.micro}px;
 `;
 
-const StyledSearchInput = styled.input`
-  outline: none;
-  background: ${({ theme }) => theme.bg[1]};
-  color: ${({ theme }) => theme.content.main};
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 4px 8px;
-  transition: all 0.3s;
-
-  :focus {
-    border-color: ${({ theme }) => theme.outline.main};
-  }
-`;
-
 const AssetWrapper = styled.div`
   max-height: calc(100vh - 240px);
   display: flex;
@@ -242,21 +221,3 @@ const TemplateText = styled(Text)`
 `;
 
 export default AssetContainer;
-
-function checkIfFileType(url: string, fileTypes: string) {
-  const formats = fileTypes.split(/,.|\./).splice(1);
-  let regexString = "\\.(";
-
-  for (let i = 0; i < formats.length; i++) {
-    if (i === formats.length - 1) {
-      regexString += formats[i];
-    } else {
-      regexString += formats[i] + "|";
-    }
-  }
-  regexString += ")$";
-
-  const regex = new RegExp(regexString);
-
-  return regex.test(url);
-}

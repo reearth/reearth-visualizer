@@ -43,6 +43,7 @@ export type StoryPanelProps = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
+  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
 };
 
 export const StoryPanel: React.FC<StoryPanelProps> = ({
@@ -56,6 +57,7 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   onBlockDelete,
   onPropertyUpdate,
   onCurrentPageChange,
+  onStoryBlockMove,
 }) => {
   const {
     pageInfo,
@@ -99,6 +101,7 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
         onBlockSelect={handleBlockSelect}
         onPropertyUpdate={onPropertyUpdate}
         onCurrentPageChange={handleCurrentPageChange}
+        onStoryBlockMove={onStoryBlockMove}
       />
     </PanelWrapper>
   );

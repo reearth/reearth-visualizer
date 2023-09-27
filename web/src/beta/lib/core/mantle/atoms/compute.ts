@@ -170,8 +170,19 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     set(computedResult, result);
   });
 
-  const set = atom(null, async (_get, set, value: Layer | undefined) => {
-    set(layer, value);
+  const set = atom(null, async (get, set, value: Layer | undefined) => {
+    set(layer, l =>
+      value
+        ? {
+            ...value,
+            ...("properties" in value
+              ? { properties: value.properties }
+              : l && "properties" in l
+              ? { properties: l.properties }
+              : {}),
+          }
+        : undefined,
+    );
     await set(compute, undefined);
   });
 
