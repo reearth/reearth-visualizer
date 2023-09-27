@@ -51,6 +51,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
+    handleStoryBlockMove: onStoryBlockMove,
   } = useStorytelling({
     sceneId,
     onFlyTo: handleFlyTo,
@@ -144,6 +145,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 currentCamera={currentCamera}
                 onAutoScrollingChange={handleAutoScrollingChange}
                 onCurrentPageChange={handleCurrentPageChange}
+                onStoryBlockMove={onStoryBlockMove}
                 onCameraChange={handleCameraUpdate}
               />
             </VisualizerWrapper>
