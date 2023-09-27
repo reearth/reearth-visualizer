@@ -1,23 +1,8 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import useFileInput from "use-file-input";
 
+import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useT } from "@reearth/services/i18n";
-
-export type SortType = "date" | "name" | "size";
-
-export const fileFormats = ".kml,.czml,.topojson,.geojson,.json,.gltf,.glb";
-
-export const imageFormats = ".jpg,.jpeg,.png,.gif,.svg,.tiff,.webp";
-
-export type Asset = {
-  id: string;
-  teamId: string;
-  name: string;
-  size: number;
-  url: string;
-  contentType: string;
-};
 
 export const useManageAssets = ({
   selectedAssets,
@@ -26,7 +11,6 @@ export const useManageAssets = ({
   isLoading,
   hasMoreAssets,
   onGetMore,
-  onCreateAssets,
   onAssetUrlSelect,
   onRemove,
   onSortChange,
@@ -37,8 +21,7 @@ export const useManageAssets = ({
   searchTerm?: string;
   isLoading?: boolean;
   hasMoreAssets?: boolean;
-  onGetMore?: () => void;
-  onCreateAssets?: (files: FileList) => void;
+  onGetMore?: () => void | Promise<void>;
   onAssetUrlSelect?: (asset?: string) => void;
   onRemove?: (assetIds: string[]) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
@@ -47,11 +30,14 @@ export const useManageAssets = ({
   const t = useT();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
-  const sortOptions: { key: SortType; label: string }[] = useMemo(
+  const sortOptions: { key: string; label: string }[] = useMemo(
     () => [
-      { key: "date", label: t("Date") },
-      { key: "size", label: t("File size") },
-      { key: "name", label: t("Alphabetical") },
+      { key: "date", label: t("Last Uploaded") },
+      { key: "date-reverse", label: t("First Uploaded") },
+      { key: "name", label: t("A To Z") },
+      { key: "name-reverse", label: t("Z To A") },
+      { key: "size", label: t("Size Small to Large") },
+      { key: "size-reverse", label: t("Size Large to Small") },
     ],
     [t],
   );
@@ -69,15 +55,6 @@ export const useManageAssets = ({
       ? "filterTimeReverse"
       : "filterTime";
 
-  const handleFileSelect = useFileInput(files => onCreateAssets?.(files), {
-    accept: imageFormats + "," + fileFormats,
-    multiple: true,
-  });
-
-  const handleUploadToAsset = useCallback(() => {
-    handleFileSelect();
-  }, [handleFileSelect]);
-
   const handleRemove = useCallback(() => {
     if (selectedAssets?.length) {
       onRemove?.(selectedAssets.map(a => a.id));
@@ -92,8 +69,8 @@ export const useManageAssets = ({
 
   const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm ?? "");
   const handleSearchInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setLocalSearchTerm(e.currentTarget.value);
+    (value: string) => {
+      setLocalSearchTerm(value);
     },
     [setLocalSearchTerm],
   );
@@ -121,7 +98,6 @@ export const useManageAssets = ({
     localSearchTerm,
     wrapperRef,
     handleSearchInputChange,
-    handleUploadToAsset,
     handleReverse,
     handleSearch,
     openDeleteModal,

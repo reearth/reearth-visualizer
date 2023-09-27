@@ -1,18 +1,11 @@
 import { useCallback, useState, useRef } from "react";
+import useFileInput from "use-file-input";
 
+import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
 
-export type AssetSortType = "date" | "name" | "size";
-
-export type Asset = {
-  id: string;
-  teamId: string;
-  name: string;
-  size: number;
-  url: string;
-  contentType: string;
-};
+import { FILE_FORMATS, IMAGE_FORMATS } from "../constants";
 
 const assetsPerPage = 20;
 
@@ -22,13 +15,13 @@ const enumTypeMapper: Partial<Record<GQLSortType, string>> = {
   [GQLSortType.Size]: "size",
 };
 
-function toGQLEnum(val?: AssetSortType) {
+function toGQLEnum(val?: SortType) {
   if (!val) return;
   return (Object.keys(enumTypeMapper) as GQLSortType[]).find(k => enumTypeMapper[k] === val);
 }
 
 function pagination(
-  sort?: { type?: Maybe<AssetSortType>; reverse?: boolean },
+  sort?: { type?: Maybe<SortType>; reverse?: boolean },
   endCursor?: string | null,
 ) {
   const reverseOrder = !sort?.type || sort?.type === "date" ? !sort?.reverse : !!sort?.reverse;
@@ -41,8 +34,14 @@ function pagination(
   };
 }
 
-export default ({ workspaceId }: { workspaceId?: string }) => {
-  const [sort, setSort] = useState<{ type?: AssetSortType; reverse?: boolean }>();
+export default ({
+  workspaceId,
+  onAssetSelect,
+}: {
+  workspaceId?: string;
+  onAssetSelect?: (inputValue?: string) => void;
+}) => {
+  const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
   const isGettingMore = useRef(false);
@@ -68,12 +67,15 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
     }
   }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
-  const createAssets = useCallback(
-    (files: FileList) => {
+  const handleAssetsCreate = useCallback(
+    async (files?: FileList) => {
       if (!files) return;
-      useCreateAssets({ teamId: workspaceId ?? "", file: files });
+      const result = await useCreateAssets({ teamId: workspaceId ?? "", file: files });
+      const assetUrl = result?.data[0].data?.createAsset?.asset.url;
+
+      onAssetSelect?.(assetUrl);
     },
-    [workspaceId, useCreateAssets],
+    [workspaceId, useCreateAssets, onAssetSelect],
   );
 
   const removeAssets = useCallback(
@@ -90,7 +92,7 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
     (type?: string, reverse?: boolean) => {
       if (!type && reverse === undefined) return;
       setSort({
-        type: (type as AssetSortType) ?? sort?.type,
+        type: (type as SortType) ?? sort?.type,
         reverse: !!reverse,
       });
     },
@@ -101,6 +103,11 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
     setSearchTerm(term);
   }, []);
 
+  const handleFileSelect = useFileInput(files => handleAssetsCreate?.(files), {
+    accept: IMAGE_FORMATS + "," + FILE_FORMATS,
+    multiple: true,
+  });
+
   return {
     assets,
     isLoading: loading ?? isRefetching,
@@ -110,7 +117,7 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
     selectedAssets,
     selectAsset,
     handleGetMoreAssets,
-    createAssets,
+    handleFileSelect,
     removeAssets,
     handleSortChange,
     handleSearchTerm,
