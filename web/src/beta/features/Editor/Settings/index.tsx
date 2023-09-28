@@ -45,14 +45,13 @@ const Settings: React.FC<Props> = ({
   const pageId = selectedPage?.id;
   const handleLayerCheck = (layerId: string) => {
     setLayerChecked(prev => {
-      const exist = prev.includes(layerId);
-      if (!exist) {
-        const updatedLayers = [...prev, layerId];
-        pageId && onPageUpdate?.(pageId, updatedLayers);
-        return updatedLayers;
-      } else {
-        return prev.filter(id => id !== layerId);
-      }
+      const updatedLayers = prev.includes(layerId)
+        ? prev.filter(id => id !== layerId)
+        : [...prev, layerId];
+
+      pageId && onPageUpdate?.(pageId, updatedLayers);
+
+      return updatedLayers;
     });
   };
 
