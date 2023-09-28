@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, MouseEvent, SetStateAction, useMemo } from "react";
+import { Dispatch, Fragment, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
 
 import { useItemContext } from "@reearth/beta/components/DragAndDropList/Item";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
@@ -51,6 +51,11 @@ const ActionPanel: React.FC<Props> = ({
   const t = useT();
   const ref = useItemContext();
 
+  const handleRemove = useCallback(() => {
+    onRemove?.();
+    onSettingsToggle?.();
+  }, [onRemove, onSettingsToggle]);
+
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
       {
@@ -63,11 +68,11 @@ const ActionPanel: React.FC<Props> = ({
       menuItems.push({
         name: t("Remove"),
         icon: "trash",
-        onClick: onRemove,
+        onClick: handleRemove,
       });
     }
     return menuItems;
-  }, [t, setShowPadding, onRemove]);
+  }, [t, setShowPadding, onRemove, handleRemove]);
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
@@ -128,6 +133,7 @@ const ActionPanel: React.FC<Props> = ({
 export default ActionPanel;
 
 const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
+  z-index: 1;
   color: ${({ theme }) => theme.select.main};
   display: flex;
   align-items: center;
