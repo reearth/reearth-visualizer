@@ -82,7 +82,7 @@ const ActionPanel: React.FC<Props> = ({
         </DndHandle>
       )}
       <Popover.Provider
-        open={showSettings}
+        open={showSettings && isSelected}
         onOpenChange={() => onSettingsToggle?.()}
         placement="bottom-start">
         <BlockOptions isSelected={isSelected}>
@@ -133,7 +133,7 @@ const ActionPanel: React.FC<Props> = ({
 export default ActionPanel;
 
 const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
-  background: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "#f1f1f1")};
+  ${({ isSelected }) => !isSelected && "background: #f1f1f1;"}
   z-index: 1;
   color: ${({ theme }) => theme.select.main};
   display: flex;
@@ -161,15 +161,14 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   right: -1px;
   top: -25px;
   `}
-  transition: all 0.2s;
 `;
 
 const BlockOptions = styled.div<{ isSelected?: boolean }>`
+  background: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "#f1f1f1")};
   color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.select.main)};
   display: flex;
   align-items: center;
   height: 24px;
-  transition: all 0.2s;
 `;
 
 const OptionWrapper = styled.div<{ showPointer?: boolean }>`
@@ -183,8 +182,9 @@ const OptionText = styled(Text)`
 `;
 
 const OptionIcon = styled(Icon)<{ border?: boolean }>`
-  padding: 4px;
   ${({ border }) => border && "border-left: 1px solid #f1f1f1;"}
+  padding: 4px;
+  transition: none;
 `;
 
 const SettingsDropdown = styled.div`
@@ -215,5 +215,8 @@ const CancelIcon = styled(Icon)`
 `;
 
 const DndHandle = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
   cursor: move;
 `;
