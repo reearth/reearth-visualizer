@@ -26,7 +26,7 @@ type Props = {
     pluginId?: string | undefined,
     index?: number | undefined,
   ) => Promise<void> | undefined;
-  onBlockDelete?: (pageId?: string, blockId?: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string | undefined) => Promise<void> | undefined;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -61,6 +61,8 @@ const StoryPage: React.FC<Props> = ({
     titleId,
     titleProperty,
     propertyItems,
+    padding,
+    gap,
     storyBlocks,
     items,
     setItems,
@@ -70,6 +72,8 @@ const StoryPage: React.FC<Props> = ({
     page,
     onBlockCreate,
   });
+
+  console.log(propertyItems);
 
   return (
     <SelectableArea
@@ -85,7 +89,7 @@ const StoryPage: React.FC<Props> = ({
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id}>
+      <Wrapper id={page?.id} padding={padding} gap={gap}>
         {titleProperty && (
           <StoryBlock
             block={{
@@ -163,10 +167,11 @@ const StoryPage: React.FC<Props> = ({
 
 export default StoryPage;
 
-const Wrapper = styled.div<{ padding?: Spacing }>`
+const Wrapper = styled.div<{ padding?: Spacing; gap?: number }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
+  ${({ gap }) => gap && `gap: ${gap}px;`}
 
   padding: 20px;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};

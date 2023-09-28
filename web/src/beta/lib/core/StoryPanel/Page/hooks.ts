@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { ValueTypes } from "@reearth/beta/utils/value";
+
 import type { Page } from "../hooks";
+import { getFieldValue } from "../utils";
 
 export type { Page } from "../hooks";
 
@@ -22,6 +25,21 @@ export default ({
 
   const propertyItems = useMemo(() => page?.property.items, [page?.property]);
 
+  const padding = useMemo(
+    () => getFieldValue(propertyItems ?? [], "padding", "panel") as ValueTypes["spacing"],
+    [propertyItems],
+  );
+
+  const gap = useMemo(
+    () => getFieldValue(propertyItems ?? [], "gap", "panel") as ValueTypes["number"],
+    [propertyItems],
+  );
+
+  const titleProperty = useMemo(
+    () => propertyItems?.find(i => i.schemaGroup === "title"),
+    [propertyItems],
+  );
+
   const handleBlockOpen = useCallback(
     (index: number) => {
       if (openBlocksIndex === index) {
@@ -31,11 +49,6 @@ export default ({
       }
     },
     [openBlocksIndex],
-  );
-
-  const titleProperty = useMemo(
-    () => propertyItems?.find(i => i.schemaGroup === "title"),
-    [propertyItems],
   );
 
   const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);
@@ -55,6 +68,8 @@ export default ({
     titleId,
     titleProperty,
     propertyItems,
+    padding,
+    gap,
     storyBlocks,
     items,
     setItems,

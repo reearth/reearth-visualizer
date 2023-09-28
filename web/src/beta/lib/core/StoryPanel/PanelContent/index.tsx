@@ -59,12 +59,13 @@ const StoryContent: React.FC<Props> = ({
   onCurrentPageChange,
   onStoryBlockMove,
 }) => {
-  const { pageGap, handleBlockCreate } = useHooks({
+  const { pageGap, handleBlockCreate, handleBlockDelete } = useHooks({
     pages,
     selectedPageId,
     isAutoScrolling,
     onAutoScrollingChange,
     onBlockCreate,
+    onBlockDelete,
     onCurrentPageChange,
   });
 
@@ -82,7 +83,7 @@ const StoryContent: React.FC<Props> = ({
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
             onBlockCreate={handleBlockCreate(p.id)}
-            onBlockDelete={onBlockDelete}
+            onBlockDelete={handleBlockDelete(p.id)}
             onBlockSelect={onBlockSelect}
             onStoryBlockMove={onStoryBlockMove}
             onPropertyUpdate={onPropertyUpdate}

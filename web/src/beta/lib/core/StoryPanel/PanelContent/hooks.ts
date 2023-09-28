@@ -12,6 +12,7 @@ export default ({
   isAutoScrolling,
   onAutoScrollingChange,
   onBlockCreate,
+  onBlockDelete,
   onCurrentPageChange,
 }: {
   pages?: Page[];
@@ -24,6 +25,7 @@ export default ({
     pluginId?: string | undefined,
     index?: number | undefined,
   ) => Promise<void>;
+  onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onCurrentPageChange?: (pageId: string) => void;
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
@@ -40,6 +42,11 @@ export default ({
       ) =>
         onBlockCreate?.(pageId, extensionId, pluginId, index),
     [onBlockCreate],
+  );
+
+  const handleBlockDelete = useCallback(
+    (pageId: string) => (blockId?: string) => onBlockDelete?.(pageId, blockId),
+    [onBlockDelete],
   );
 
   useLayoutEffect(() => {
@@ -119,5 +126,6 @@ export default ({
   return {
     pageGap,
     handleBlockCreate,
+    handleBlockDelete,
   };
 };
