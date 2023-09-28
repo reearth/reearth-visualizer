@@ -111,6 +111,7 @@ const StoryPage: React.FC<Props> = ({
         )}
         {isEditable && (
           <BlockAddBar
+            alwaysShow={storyBlocks && storyBlocks.length < 1}
             openBlocks={openBlocksIndex === -1}
             installableStoryBlocks={installableStoryBlocks}
             onBlockOpen={() => handleBlockOpen(-1)}
@@ -120,7 +121,7 @@ const StoryPage: React.FC<Props> = ({
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
-            gap={8}
+            gap={gap}
             items={items}
             getId={item => item.id}
             onItemDrop={async (item, index) => {
