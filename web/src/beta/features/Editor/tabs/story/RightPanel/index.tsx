@@ -17,7 +17,13 @@ type Props = {
   onPageUpdate?: (id: string, layers: string[]) => void;
 };
 
-const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, layers, onFlyTo }) => {
+const StoryRightPanel: React.FC<Props> = ({
+  selectedPage,
+  currentCamera,
+  layers,
+  onPageUpdate,
+  onFlyTo,
+}) => {
   const t = useT();
   const [hasStory, setHasStory] = useState(false);
 
@@ -49,6 +55,7 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, layers,
               layers={layers}
               hasStory={hasStory}
               selectedPage={selectedPage}
+              onPageUpdate={onPageUpdate}
               onFlyTo={onFlyTo}
             />
           ),

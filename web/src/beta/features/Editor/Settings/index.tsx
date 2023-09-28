@@ -33,22 +33,23 @@ const Settings: React.FC<Props> = ({
   onPageUpdate,
 }) => {
   const t = useT();
-  const [layerCheck, setLayerCheck] = useState<string[]>([]);
+  const [layerChecked, setLayerChecked] = useState<string[]>([]);
 
-  const filterLayers = layers?.filter(item => selectedPage?.layersIds?.includes(item.id));
+  // const filterLayers = layers?.filter(item => selectedPage?.layersIds?.includes(item.id));
 
-  console.log(filterLayers);
+  const pageId = selectedPage?.id;
   const handleLayerCheck = (layerId: string) => {
-    console.log(onPageUpdate);
-    const exist = layerCheck.includes(layerId);
-    if (exist) {
-      setLayerCheck(prev => prev.filter(id => id !== layerId));
-    } else {
-      setLayerCheck(prev => [...prev, layerId]);
-    }
+    setLayerChecked(prev => {
+      const exist = prev.includes(layerId);
+      if (!exist) {
+        const updatedLayers = [...prev, layerId];
+        pageId && onPageUpdate?.(pageId, updatedLayers);
+        return updatedLayers;
+      } else {
+        return prev.filter(id => id !== layerId);
+      }
+    });
   };
-
-  console.log(layerCheck);
 
   return (
     <Wrapper>
@@ -58,7 +59,7 @@ const Settings: React.FC<Props> = ({
             <Layer key={idx}>
               <CheckBoxField
                 onClick={() => handleLayerCheck(layer.id)}
-                checked={layerCheck.includes(layer.id)}
+                checked={layerChecked.includes(layer.id)}
                 label={layer.title}
               />
             </Layer>
