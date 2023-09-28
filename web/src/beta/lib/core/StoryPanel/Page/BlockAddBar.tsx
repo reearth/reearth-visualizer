@@ -9,15 +9,13 @@ import { styled } from "@reearth/services/theme";
 type Props = {
   openBlocks: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
-  pageId?: string;
   onBlockOpen: () => void;
-  onBlockAdd?: (pageId?: string, extensionId?: string, pluginId?: string) => void;
+  onBlockAdd?: (extensionId?: string, pluginId?: string) => void;
 };
 
 const BlockAddBar: React.FC<Props> = ({
   installableStoryBlocks,
   openBlocks,
-  pageId,
   onBlockOpen,
   onBlockAdd,
 }) => {
@@ -28,12 +26,12 @@ const BlockAddBar: React.FC<Props> = ({
           name: sb.name,
           icon: "plugin",
           onClick: () => {
-            onBlockAdd?.(pageId, sb.extensionId, sb.pluginId);
+            onBlockAdd?.(sb.extensionId, sb.pluginId);
             onBlockOpen();
           },
         };
       }) ?? [],
-    [installableStoryBlocks, pageId, onBlockAdd, onBlockOpen],
+    [installableStoryBlocks, onBlockAdd, onBlockOpen],
   );
 
   const handleBlockOpen = useCallback(

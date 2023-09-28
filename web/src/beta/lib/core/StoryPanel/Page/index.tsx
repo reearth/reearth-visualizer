@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState, useEffect } from "react";
+import { Fragment } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
@@ -7,11 +7,10 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import type { Page } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
-import useHooks from "./hooks";
+import useHooks, { type Page } from "./hooks";
 
 type Props = {
   page?: Page;
@@ -23,8 +22,10 @@ type Props = {
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
-    index?: number,
-  ) => (pageId?: string, extensionId?: string, pluginId?: string) => Promise<void>;
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void> | undefined;
   onBlockDelete?: (pageId?: string, blockId?: string) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
@@ -54,20 +55,21 @@ const StoryPage: React.FC<Props> = ({
   onStoryBlockMove,
 }) => {
   const t = useT();
-  const propertyItems = useMemo(() => page?.property.items, [page?.property]);
 
-  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
-
-  const { openBlocksIndex, titleId, titleProperty, handleBlockOpen } = useHooks({
-    pageId: page?.id,
+  const {
+    openBlocksIndex,
+    titleId,
+    titleProperty,
     propertyItems,
+    storyBlocks,
+    items,
+    setItems,
+    handleBlockOpen,
+    handleBlockCreate,
+  } = useHooks({
+    page,
+    onBlockCreate,
   });
-
-  const [items, setItems] = useState(storyBlocks ? storyBlocks : []);
-
-  useEffect(() => {
-    storyBlocks && setItems(storyBlocks);
-  }, [storyBlocks]);
 
   return (
     <SelectableArea
@@ -108,7 +110,7 @@ const StoryPage: React.FC<Props> = ({
             openBlocks={openBlocksIndex === -1}
             installableStoryBlocks={installableStoryBlocks}
             onBlockOpen={() => handleBlockOpen(-1)}
-            onBlockAdd={onBlockCreate?.(0)}
+            onBlockAdd={handleBlockCreate(0)}
           />
         )}
         {storyBlocks && storyBlocks.length > 0 && (
@@ -146,7 +148,7 @@ const StoryPage: React.FC<Props> = ({
                       openBlocks={openBlocksIndex === idx}
                       installableStoryBlocks={installableStoryBlocks}
                       onBlockOpen={() => handleBlockOpen(idx)}
-                      onBlockAdd={onBlockCreate?.(idx + 1)}
+                      onBlockAdd={handleBlockCreate(idx + 1)}
                     />
                   )}
                 </Fragment>
