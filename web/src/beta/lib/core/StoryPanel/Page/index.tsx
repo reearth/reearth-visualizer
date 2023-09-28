@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState, useEffect } from "react";
+import { Fragment } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
@@ -7,11 +7,10 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import type { Page } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
-import useHooks from "./hooks";
+import useHooks, { type Page } from "./hooks";
 
 type Props = {
   page?: Page;
@@ -23,9 +22,11 @@ type Props = {
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
-    index?: number,
-  ) => (pageId?: string, extensionId?: string, pluginId?: string) => Promise<void>;
-  onBlockDelete?: (pageId?: string, blockId?: string) => Promise<void>;
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void> | undefined;
+  onBlockDelete?: (blockId?: string | undefined) => Promise<void> | undefined;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -54,20 +55,23 @@ const StoryPage: React.FC<Props> = ({
   onStoryBlockMove,
 }) => {
   const t = useT();
-  const propertyItems = useMemo(() => page?.property.items, [page?.property]);
 
-  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
-
-  const { openBlocksIndex, titleId, titleProperty, handleBlockOpen } = useHooks({
-    pageId: page?.id,
+  const {
+    openBlocksIndex,
+    titleId,
+    titleProperty,
     propertyItems,
+    padding,
+    gap,
+    storyBlocks,
+    items,
+    setItems,
+    handleBlockOpen,
+    handleBlockCreate,
+  } = useHooks({
+    page,
+    onBlockCreate,
   });
-
-  const [items, setItems] = useState(storyBlocks ? storyBlocks : []);
-
-  useEffect(() => {
-    storyBlocks && setItems(storyBlocks);
-  }, [storyBlocks]);
 
   return (
     <SelectableArea
@@ -83,7 +87,7 @@ const StoryPage: React.FC<Props> = ({
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id}>
+      <Wrapper id={page?.id} padding={padding} gap={gap} isEditable={isEditable}>
         {titleProperty && (
           <StoryBlock
             block={{
@@ -105,16 +109,17 @@ const StoryPage: React.FC<Props> = ({
         )}
         {isEditable && (
           <BlockAddBar
+            alwaysShow={storyBlocks && storyBlocks.length < 1}
             openBlocks={openBlocksIndex === -1}
             installableStoryBlocks={installableStoryBlocks}
             onBlockOpen={() => handleBlockOpen(-1)}
-            onBlockAdd={onBlockCreate?.(0)}
+            onBlockAdd={handleBlockCreate(0)}
           />
         )}
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
-            gap={8}
+            gap={gap}
             items={items}
             getId={item => item.id}
             onItemDrop={async (item, index) => {
@@ -146,7 +151,7 @@ const StoryPage: React.FC<Props> = ({
                       openBlocks={openBlocksIndex === idx}
                       installableStoryBlocks={installableStoryBlocks}
                       onBlockOpen={() => handleBlockOpen(idx)}
-                      onBlockAdd={onBlockCreate?.(idx + 1)}
+                      onBlockAdd={handleBlockCreate(idx + 1)}
                     />
                   )}
                 </Fragment>
@@ -161,16 +166,23 @@ const StoryPage: React.FC<Props> = ({
 
 export default StoryPage;
 
-const Wrapper = styled.div<{ padding?: Spacing }>`
+const Wrapper = styled.div<{ padding?: Spacing; gap?: number; isEditable?: boolean }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
+  ${({ gap }) => gap && `gap: ${gap}px;`}
 
-  padding: 20px;
-  padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
-  padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
-  padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
-  padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
+  padding-top: ${({ padding, isEditable }) => calculatePadding(padding?.top, isEditable)};
+  padding-bottom: ${({ padding, isEditable }) => calculatePadding(padding?.bottom, isEditable)};
+  padding-left: ${({ padding, isEditable }) => calculatePadding(padding?.left, isEditable)};
+  padding-right: ${({ padding, isEditable }) => calculatePadding(padding?.right, isEditable)};
 
   box-sizing: border-box;
 `;
+
+const calculatePadding = (value?: number, editorMode?: boolean) => {
+  if (!value) {
+    return editorMode ? "4px" : "0px";
+  }
+  return editorMode && value < 4 ? "4px" : value + "px";
+};

@@ -51,13 +51,13 @@ Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
 Layer: Layer
-Scene: Scene
-Main: ''
 Layers: Layers
 Outline: Outline
+Add Layer from Resource: ''
 Inspector: Inspector
 Published: Published
 Unpublished: Unpublished
+Scene: Scene
 Story: Story
 Unpublish: Unpublish
 Update: Update

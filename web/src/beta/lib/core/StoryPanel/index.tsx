@@ -27,11 +27,10 @@ export type StoryPanelProps = {
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
   onBlockCreate?: (
-    index?: number,
-  ) => (
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
+    index?: number | undefined,
   ) => Promise<void>;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onPropertyUpdate?: (
