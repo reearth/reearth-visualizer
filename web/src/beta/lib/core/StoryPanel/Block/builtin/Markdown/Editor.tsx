@@ -45,7 +45,7 @@ const MdBlockEditor: React.FC<Props> = ({ text, onUpdate }) => {
       onChange={onChange}
     />
   ) : (
-    <StyledMarkdown empty={!!value}>{value ? value : t("Add markdown text here")}</StyledMarkdown>
+    <StyledMarkdown empty={!!value}>{value || t("Add markdown text here")}</StyledMarkdown>
   );
 };
 
