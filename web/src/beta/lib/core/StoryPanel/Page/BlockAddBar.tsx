@@ -7,8 +7,9 @@ import type { InstallableStoryBlock } from "@reearth/services/api/storytellingAp
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  openBlocks: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
+  openBlocks: boolean;
+  alwaysShow?: boolean;
   onBlockOpen: () => void;
   onBlockAdd?: (extensionId?: string, pluginId?: string) => void;
 };
@@ -16,6 +17,7 @@ type Props = {
 const BlockAddBar: React.FC<Props> = ({
   installableStoryBlocks,
   openBlocks,
+  alwaysShow,
   onBlockOpen,
   onBlockAdd,
 }) => {
@@ -46,7 +48,7 @@ const BlockAddBar: React.FC<Props> = ({
     <Wrapper>
       <Popover.Provider open={openBlocks} placement="bottom-start" onOpenChange={onBlockOpen}>
         <Popover.Trigger asChild>
-          <Bar persist={openBlocks}>
+          <Bar persist={alwaysShow || openBlocks}>
             <StyledIcon icon="plus" size={16} onClick={handleBlockOpen} />
             <Line />
           </Bar>
