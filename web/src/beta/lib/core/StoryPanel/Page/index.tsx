@@ -26,7 +26,7 @@ type Props = {
     pluginId?: string | undefined,
     index?: number | undefined,
   ) => Promise<void> | undefined;
-  onBlockDelete?: (pageId?: string, blockId?: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string | undefined) => Promise<void> | undefined;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -61,6 +61,8 @@ const StoryPage: React.FC<Props> = ({
     titleId,
     titleProperty,
     propertyItems,
+    padding,
+    gap,
     storyBlocks,
     items,
     setItems,
@@ -85,7 +87,7 @@ const StoryPage: React.FC<Props> = ({
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id}>
+      <Wrapper id={page?.id} padding={padding} gap={gap} isEditable={isEditable}>
         {titleProperty && (
           <StoryBlock
             block={{
@@ -107,6 +109,7 @@ const StoryPage: React.FC<Props> = ({
         )}
         {isEditable && (
           <BlockAddBar
+            alwaysShow={storyBlocks && storyBlocks.length < 1}
             openBlocks={openBlocksIndex === -1}
             installableStoryBlocks={installableStoryBlocks}
             onBlockOpen={() => handleBlockOpen(-1)}
@@ -116,7 +119,7 @@ const StoryPage: React.FC<Props> = ({
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
-            gap={8}
+            gap={gap}
             items={items}
             getId={item => item.id}
             onItemDrop={async (item, index) => {
@@ -163,16 +166,23 @@ const StoryPage: React.FC<Props> = ({
 
 export default StoryPage;
 
-const Wrapper = styled.div<{ padding?: Spacing }>`
+const Wrapper = styled.div<{ padding?: Spacing; gap?: number; isEditable?: boolean }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
+  ${({ gap }) => gap && `gap: ${gap}px;`}
 
-  padding: 20px;
-  padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
-  padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
-  padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
-  padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
+  padding-top: ${({ padding, isEditable }) => calculatePadding(padding?.top, isEditable)};
+  padding-bottom: ${({ padding, isEditable }) => calculatePadding(padding?.bottom, isEditable)};
+  padding-left: ${({ padding, isEditable }) => calculatePadding(padding?.left, isEditable)};
+  padding-right: ${({ padding, isEditable }) => calculatePadding(padding?.right, isEditable)};
 
   box-sizing: border-box;
 `;
+
+const calculatePadding = (value?: number, editorMode?: boolean) => {
+  if (!value) {
+    return editorMode ? "4px" : "0px";
+  }
+  return editorMode && value < 4 ? "4px" : value + "px";
+};
