@@ -1,4 +1,4 @@
-import ListItem from "@reearth/beta/components/ListItem";
+// import ListItem from "@reearth/beta/components/ListItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -21,27 +21,27 @@ type GroupSectionFieldProps = {
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   layers,
   selectedLayerId,
-  selectedSceneSetting,
+  // selectedSceneSetting,
   onLayerDelete,
   onLayerNameUpdate,
   onLayerSelect,
-  onSceneSettingSelect,
+  // onSceneSettingSelect,
   onDataSourceManagerOpen,
 }) => {
   const t = useT();
 
   return (
     <>
-      <StyledSidePanelSectionField title={t("Scene")}>
-        {/* {groups.map(({ schemaGroupId, title }) => (
+      {/* <StyledSidePanelSectionField title={t("Scene")}> */}
+      {/* {groups.map(({ schemaGroupId, title }) => (
           <GroupSectionFieldText key={schemaGroupId} size="footnote">
             {title}
           </GroupSectionFieldText>
         ))} */}
-        <ListItem isSelected={selectedSceneSetting} onItemClick={onSceneSettingSelect}>
+      {/* <ListItem isSelected={selectedSceneSetting} onItemClick={onSceneSettingSelect}>
           {t("Main")}
         </ListItem>
-      </StyledSidePanelSectionField>
+      </StyledSidePanelSectionField> */}
       <StyledSidePanelSectionField title={t("Layers")}>
         <Layers
           layers={layers}
