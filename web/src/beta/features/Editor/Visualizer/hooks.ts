@@ -193,7 +193,7 @@ export default ({
   );
 
   const handleStoryBlockCreate = useCallback(
-    (index?: number) => async (pageId?: string, extensionId?: string, pluginId?: string) => {
+    async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
       await useCreateStoryBlock({
         pluginId,

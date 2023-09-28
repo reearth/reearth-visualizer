@@ -50,12 +50,12 @@ Layer of the data source you want to add.: ''
 layer name: ''
 Layer: レイヤー
 Layers: レイヤー
-Scene: シーン
-Main: ''
 Outline: アウトライン
+Add Layer from Resource: ''
 Inspector: インスペクター
 Published: 一般公開
 Unpublished: 非公開
+Scene: シーン
 Story: ストーリー
 Unpublish: 非公開にする
 Update: 更新する
