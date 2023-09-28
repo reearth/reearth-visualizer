@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import CheckBoxField from "@reearth/beta/components/CheckboxField";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
@@ -35,7 +35,12 @@ const Settings: React.FC<Props> = ({
   const t = useT();
   const [layerChecked, setLayerChecked] = useState<string[]>([]);
 
-  // const filterLayers = layers?.filter(item => selectedPage?.layersIds?.includes(item.id));
+  useEffect(() => {
+    if (selectedPage && layers) {
+      const selectedLayerIds = selectedPage.layersIds || [];
+      setLayerChecked(selectedLayerIds);
+    }
+  }, [selectedPage, layers]);
 
   const pageId = selectedPage?.id;
   const handleLayerCheck = (layerId: string) => {
