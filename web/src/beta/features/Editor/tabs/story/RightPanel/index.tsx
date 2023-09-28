@@ -18,7 +18,13 @@ type Props = {
   onFlyTo?: FlyTo;
 };
 
-const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, layers, onFlyTo }) => {
+const StoryRightPanel: React.FC<Props> = ({
+  selectedPage,
+  currentCamera,
+  layers,
+  tab,
+  onFlyTo,
+}) => {
   const t = useT();
 
   const propertyItems = useMemo(
