@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Settings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
@@ -14,10 +14,12 @@ type Props = {
   currentCamera?: Camera;
   layers: NLSLayer[];
   onFlyTo?: FlyTo;
+  onPageUpdate?: (id: string, layers: string[]) => void;
 };
 
 const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, layers, onFlyTo }) => {
   const t = useT();
+  const [hasStory, setHasStory] = useState(false);
 
   const propertyItems = useMemo(
     () =>
@@ -26,6 +28,11 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, layers,
       ),
     [selectedPage?.property],
   );
+
+  useEffect(() => {
+    const containsStory = window.location.pathname.includes("/story");
+    setHasStory(containsStory);
+  }, []);
 
   return (
     <SidePanelCommon
@@ -40,6 +47,8 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, layers,
               propertyItems={propertyItems}
               currentCamera={currentCamera}
               layers={layers}
+              hasStory={hasStory}
+              selectedPage={selectedPage}
               onFlyTo={onFlyTo}
             />
           ),

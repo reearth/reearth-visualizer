@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import CheckBoxField from "@reearth/beta/components/CheckboxField";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
@@ -7,6 +7,7 @@ import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
+import { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -15,7 +16,10 @@ type Props = {
   propertyItems?: Item[];
   currentCamera?: Camera;
   layers?: NLSLayer[];
+  selectedPage?: Page;
+  hasStory?: boolean;
   onFlyTo?: FlyTo;
+  onPageUpdate?: (id: string, layers: string[]) => void;
 };
 
 const Settings: React.FC<Props> = ({
@@ -23,16 +27,28 @@ const Settings: React.FC<Props> = ({
   propertyItems,
   currentCamera,
   layers,
+  selectedPage,
+  hasStory,
   onFlyTo,
+  onPageUpdate,
 }) => {
   const t = useT();
-  const [layerCheck, setLayerCheck] = useState(true);
-  const [hasStory, setHasStory] = useState(false);
+  const [layerCheck, setLayerCheck] = useState<string[]>([]);
 
-  useEffect(() => {
-    const containsStory = window.location.pathname.includes("/story");
-    setHasStory(containsStory);
-  }, []);
+  const filterLayers = layers?.filter(item => selectedPage?.layersIds?.includes(item.id));
+
+  console.log(filterLayers);
+  const handleLayerCheck = (layerId: string) => {
+    console.log(onPageUpdate);
+    const exist = layerCheck.includes(layerId);
+    if (exist) {
+      setLayerCheck(prev => prev.filter(id => id !== layerId));
+    } else {
+      setLayerCheck(prev => [...prev, layerId]);
+    }
+  };
+
+  console.log(layerCheck);
 
   return (
     <Wrapper>
@@ -40,7 +56,11 @@ const Settings: React.FC<Props> = ({
         <SidePanelSectionField title={t("Layers")}>
           {layers?.map((layer, idx) => (
             <Layer key={idx}>
-              <CheckBoxField onClick={setLayerCheck} checked={layerCheck} label={layer.title} />
+              <CheckBoxField
+                onClick={() => handleLayerCheck(layer.id)}
+                checked={layerCheck.includes(layer.id)}
+                label={layer.title}
+              />
             </Layer>
           ))}
         </SidePanelSectionField>
