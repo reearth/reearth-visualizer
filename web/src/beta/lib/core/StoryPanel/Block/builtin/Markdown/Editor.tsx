@@ -45,7 +45,7 @@ const MdBlockEditor: React.FC<Props> = ({ text, onUpdate }) => {
       onChange={onChange}
     />
   ) : (
-    <StyledMarkdown empty={!!value}>{value || t("Add markdown text here")}</StyledMarkdown>
+    <StyledMarkdown empty={!value}>{value || t("Add markdown text here")}</StyledMarkdown>
   );
 };
 
@@ -53,14 +53,15 @@ const StyledTextArea = styled.textarea`
   width: 100%;
   resize: none;
   overflow: hidden;
-  min-height: 115px;
+  ${({ value }) => !value && "min-height: 115px;"}
   border: none;
   font-size: 14px;
   padding: 0px;
+  outline: none;
 `;
 
 const StyledMarkdown = styled(Markdown)<{ empty: boolean }>`
-  min-height: 115px;
+  ${({ empty }) => empty && "min-height: 115px;"}
   font-size: 14px;
   opacity: ${({ empty }) => (empty ? 1 : 0.6)};
 `;
