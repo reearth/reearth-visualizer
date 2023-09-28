@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import Settings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
+import { Tab } from "@reearth/beta/features/Navbar";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -12,7 +13,8 @@ type Props = {
   sceneId?: string;
   selectedPage?: Page;
   currentCamera?: Camera;
-  layers: NLSLayer[];
+  layers?: NLSLayer[];
+  tab?: Tab;
   onFlyTo?: FlyTo;
 };
 
@@ -40,6 +42,7 @@ const StoryRightPanel: React.FC<Props> = ({ selectedPage, currentCamera, layers,
               propertyItems={propertyItems}
               currentCamera={currentCamera}
               layers={layers}
+              tab={tab}
               onFlyTo={onFlyTo}
             />
           ),

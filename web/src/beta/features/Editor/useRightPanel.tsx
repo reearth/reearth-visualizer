@@ -46,6 +46,7 @@ export default ({
             selectedPage={currentPage}
             currentCamera={currentCamera}
             layers={nlsLayers}
+            tab={tab}
             onFlyTo={onFlyTo}
           />
         );

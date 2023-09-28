@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import CheckBoxField from "@reearth/beta/components/CheckboxField";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
@@ -10,11 +10,14 @@ import type { Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { Tab } from "../../Navbar";
+
 type Props = {
   propertyId: string;
   propertyItems?: Item[];
   currentCamera?: Camera;
   layers?: NLSLayer[];
+  tab?: Tab;
   onFlyTo?: FlyTo;
 };
 
@@ -23,20 +26,15 @@ const Settings: React.FC<Props> = ({
   propertyItems,
   currentCamera,
   layers,
+  tab,
   onFlyTo,
 }) => {
   const t = useT();
   const [layerCheck, setLayerCheck] = useState(true);
-  const [hasStory, setHasStory] = useState(false);
-
-  useEffect(() => {
-    const containsStory = window.location.pathname.includes("/story");
-    setHasStory(containsStory);
-  }, []);
 
   return (
     <Wrapper>
-      {hasStory && (
+      {tab == "story" && (
         <SidePanelSectionField title={t("Layers")}>
           {layers?.map((layer, idx) => (
             <Layer key={idx}>
