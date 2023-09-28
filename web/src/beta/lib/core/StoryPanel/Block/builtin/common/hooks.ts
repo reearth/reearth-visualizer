@@ -17,7 +17,7 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
 
   useEffect(() => {
     if (!isSelected && editMode) {
-      setEditMode(true);
+      setEditMode(false);
     }
   }, [isSelected, editMode]);
 

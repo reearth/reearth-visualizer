@@ -15,7 +15,7 @@ const VideoPlayer: React.FC<Props> = ({ isSelected, src }) => {
       url={src}
       width="100%"
       playsinline
-      light={ctx?.editMode}
+      light={!ctx?.editMode}
       pip
       controls
       isselected={isSelected}
