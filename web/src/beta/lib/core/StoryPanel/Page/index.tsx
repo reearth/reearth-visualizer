@@ -73,8 +73,6 @@ const StoryPage: React.FC<Props> = ({
     onBlockCreate,
   });
 
-  console.log(propertyItems);
-
   return (
     <SelectableArea
       title={page?.title ?? t("Page")}
