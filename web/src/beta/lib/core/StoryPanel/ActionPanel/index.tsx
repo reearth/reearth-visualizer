@@ -133,6 +133,7 @@ const ActionPanel: React.FC<Props> = ({
 export default ActionPanel;
 
 const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
+  background: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "#f1f1f1")};
   z-index: 1;
   color: ${({ theme }) => theme.select.main};
   display: flex;
@@ -164,7 +165,6 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
 `;
 
 const BlockOptions = styled.div<{ isSelected?: boolean }>`
-  background: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "transparent")};
   color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.select.main)};
   display: flex;
   align-items: center;
