@@ -11,11 +11,9 @@ const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
     () => getFieldValue(block?.property?.items ?? [], "src") as ValueTypes["string"],
     [block?.property?.items],
   );
-  const title = useMemo(() => block?.property?.items?.[1]?.title, [block?.property?.items]);
 
   return (
     <BlockWrapper
-      title={title}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}

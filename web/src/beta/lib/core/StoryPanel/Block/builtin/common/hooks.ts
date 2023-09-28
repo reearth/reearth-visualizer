@@ -17,9 +17,11 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
 
   useEffect(() => {
     if (!isSelected && editMode) {
-      setEditMode(false);
+      setEditMode(true);
     }
   }, [isSelected, editMode]);
+
+  const title = useMemo(() => propertyItems?.[1]?.title, [propertyItems]);
 
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -45,6 +47,7 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
   const handleSettingsToggle = () => setShowSettings?.(s => !s);
 
   return {
+    title,
     editMode,
     showSettings,
     defaultSettings,
