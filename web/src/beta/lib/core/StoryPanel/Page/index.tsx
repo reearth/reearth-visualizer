@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment } from "react";
 
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
@@ -51,14 +51,11 @@ const StoryPage: React.FC<Props> = ({
   onPropertyUpdate,
 }) => {
   const t = useT();
-  const propertyItems = useMemo(() => page?.property.items, [page?.property]);
 
-  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
-
-  const { openBlocksIndex, titleId, titleProperty, handleBlockOpen } = useHooks({
-    pageId: page?.id,
-    propertyItems,
-  });
+  const { openBlocksIndex, titleId, title, propertyId, property, storyBlocks, handleBlockOpen } =
+    useHooks({
+      page,
+    });
 
   return (
     <SelectableArea
@@ -67,34 +64,31 @@ const StoryPage: React.FC<Props> = ({
       icon="storyPage"
       noBorder
       isSelected={selectedPageId === page?.id}
-      propertyId={page?.property?.id}
-      propertyItems={propertyItems}
+      propertyId={propertyId}
+      property={property}
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
       <Wrapper id={page?.id}>
-        {titleProperty && (
-          <StoryBlock
-            block={{
-              id: titleId,
-              pluginId: "reearth",
-              extensionId: "titleStoryBlock",
-              title: titleProperty.title,
-              property: {
-                id: page?.property?.id ?? "",
-                items: [titleProperty],
-              },
-            }}
-            pageId={page?.id}
-            isEditable={isEditable}
-            isSelected={selectedStoryBlockId === titleId}
-            onClick={() => onBlockSelect?.(titleId)}
-            onClickAway={onBlockSelect}
-            onChange={onPropertyUpdate}
-          />
-        )}
+        <StoryBlock
+          block={{
+            id: titleId,
+            pluginId: "reearth",
+            extensionId: "titleStoryBlock",
+            name: t("Title"),
+            propertyId: page?.propertyId ?? "",
+            property: { title },
+          }}
+          pageId={page?.id}
+          isEditable={isEditable}
+          isSelected={selectedStoryBlockId === titleId}
+          onClick={() => onBlockSelect?.(titleId)}
+          onClickAway={onBlockSelect}
+          onChange={onPropertyUpdate}
+        />
+
         {isEditable && (
           <BlockAddBar
             pageId={page?.id}

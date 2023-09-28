@@ -52,6 +52,7 @@ const Visualizer: React.FC<Props> = ({
     clusters,
     layers,
     widgets,
+    story,
     tags,
     selectedLayerId,
     blocks,
@@ -76,7 +77,7 @@ const Visualizer: React.FC<Props> = ({
     handleDropLayer,
     zoomToLayer,
     handleMount,
-  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id });
+  } = useHooks({ sceneId, storyId: selectedStory?.id, isBuilt });
 
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
@@ -132,7 +133,7 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
-            selectedStory={selectedStory}
+            selectedStory={story}
             currentPageId={currentPageId}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}

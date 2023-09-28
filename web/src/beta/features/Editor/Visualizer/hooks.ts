@@ -24,17 +24,17 @@ import {
   isVisualizerReadyVar,
 } from "@reearth/services/state";
 
-import { convertWidgets, processLayers } from "./convert";
+import { convertStory, convertWidgets, processLayers } from "./convert";
 import type { BlockType } from "./type";
 
 export default ({
   sceneId,
-  isBuilt,
   storyId,
+  isBuilt,
 }: {
   sceneId?: string;
-  isBuilt?: boolean;
   storyId?: string;
+  isBuilt?: boolean;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
@@ -192,6 +192,8 @@ export default ({
     [sceneId, useUpdateWidgetAlignSystem],
   );
 
+  const story = useMemo(() => convertStory(scene, storyId), [scene, storyId]);
+
   const handleStoryBlockCreate = useCallback(
     (index?: number) => async (pageId?: string, extensionId?: string, pluginId?: string) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
@@ -252,6 +254,7 @@ export default ({
     tags,
     widgets,
     layers,
+    story,
     blocks,
     isCapturing,
     sceneMode,

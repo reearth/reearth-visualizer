@@ -2033,10 +2033,12 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
             - id: gap
               title: Gap
               type: number
               suffix: px
+              defaultValue: 12
         - id: title
           title: Title Setting
           fields:
@@ -2097,6 +2099,7 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
         - id: default
           title: Text
           fields:
@@ -2119,6 +2122,7 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
         - id: default
           title: MD Text
           fields:
@@ -2141,6 +2145,7 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
         - id: default
           title: Image
           fields:
@@ -2163,6 +2168,7 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
         - id: default
           title: Video
           fields:
@@ -2185,6 +2191,7 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
         - id: default
           title: Camera Button
           list: true
@@ -2218,6 +2225,7 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
         - id: default
           title: Link Button
           list: true
@@ -2251,6 +2259,7 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 12, bottom: 12, left: 12, right: 12 }
         - id: default
           title: Timeline
           fields:

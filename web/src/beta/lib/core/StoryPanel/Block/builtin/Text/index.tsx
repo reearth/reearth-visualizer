@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 
-import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
@@ -16,30 +15,27 @@ export type Props = BlockProps;
 
 const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
-    () => getFieldValue(block?.property?.items ?? [], "text") as ValueTypes["string"],
-    [block?.property?.items],
+    () => block?.property?.text as ValueTypes["string"],
+    [block?.property?.text],
   );
 
   const { handlePropertyValueUpdate } = usePropertyValueUpdate();
 
   const handleTextUpdate = useCallback(
     (text: string) => {
-      const schemaGroup = block?.property?.items?.find(
-        i => i.schemaGroup === "default",
-      )?.schemaGroup;
-      if (!block?.property?.id || !schemaGroup) return;
-      handlePropertyValueUpdate(schemaGroup, block?.property?.id, "text", "string")(text);
+      if (!block?.propertyId) return;
+      handlePropertyValueUpdate("default", block?.propertyId, "text", "string")(text);
     },
-    [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
+    [block?.propertyId, handlePropertyValueUpdate],
   );
 
   return (
     <BlockWrapper
-      title={block?.title}
+      name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}
-      propertyItems={block?.property?.items}
+      property={block?.property}
       settingsEnabled={false}
       {...props}>
       <TextBlockEditor text={text} onUpdate={handleTextUpdate} />

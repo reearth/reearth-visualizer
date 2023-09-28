@@ -5,7 +5,6 @@ import { ValueTypes } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
 import BlockWrapper from "../common/Wrapper";
 
@@ -14,22 +13,22 @@ export type Props = BlockProps;
 const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const t = useT();
   const text = useMemo(
-    () => getFieldValue(block?.property?.items ?? [], "title") as ValueTypes["string"],
-    [block?.property?.items],
+    () => block?.property?.title as ValueTypes["string"],
+    [block?.property?.title],
   );
 
   const color = useMemo(
-    () => getFieldValue(block?.property?.items ?? [], "color") as ValueTypes["string"],
-    [block?.property?.items],
+    () => block?.property?.color as ValueTypes["string"],
+    [block?.property?.color],
   );
 
   return (
     <BlockWrapper
-      title={block?.title}
+      name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}
-      propertyItems={block?.property?.items}
+      property={block?.property}
       dndEnabled={false}
       {...props}>
       <Title size="h2" hasText={!!text} color={color} customColor>

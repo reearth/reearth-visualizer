@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 
-import type { Item } from "@reearth/services/api/propertyApi/utils";
+import { Page } from "../types";
 
-export default ({ pageId, propertyItems }: { pageId?: string; propertyItems?: Item[] }) => {
+export default ({ page }: { page?: Page; property?: any }) => {
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
   const handleBlockOpen = useCallback(
@@ -16,17 +16,23 @@ export default ({ pageId, propertyItems }: { pageId?: string; propertyItems?: It
     [openBlocksIndex],
   );
 
-  const titleProperty = useMemo(
-    () => propertyItems?.find(i => i.schemaGroup === "title"),
-    [propertyItems],
-  );
+  const property = useMemo(() => page?.property, [page?.property]);
 
-  const titleId = useMemo(() => `${pageId}/title`, [pageId]);
+  const propertyId = useMemo(() => page?.propertyId, [page?.propertyId]);
+
+  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
+
+  const title = useMemo(() => property?.title?.title, [property]);
+
+  const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);
 
   return {
     openBlocksIndex,
     titleId,
-    titleProperty,
+    title,
+    propertyId,
+    property,
+    storyBlocks,
     handleBlockOpen,
   };
 };

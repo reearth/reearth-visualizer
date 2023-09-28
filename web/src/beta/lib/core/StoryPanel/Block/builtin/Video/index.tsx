@@ -4,11 +4,11 @@ import BlockWrapper from "../common/Wrapper";
 const VideoBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
   return (
     <BlockWrapper
-      title={block?.title}
+      name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}
-      propertyItems={block?.property?.items}
+      property={block?.property}
       {...props}
     />
   );
