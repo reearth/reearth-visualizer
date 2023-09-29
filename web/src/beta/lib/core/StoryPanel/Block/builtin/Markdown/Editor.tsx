@@ -63,7 +63,7 @@ const StyledTextArea = styled.textarea`
 const StyledMarkdown = styled(Markdown)<{ empty: boolean }>`
   ${({ empty }) => empty && "min-height: 115px;"}
   font-size: 14px;
-  opacity: ${({ empty }) => (empty ? 1 : 0.6)};
+  opacity: ${({ empty }) => (!empty ? 1 : 0.6)};
 `;
 
 export default MdBlockEditor;

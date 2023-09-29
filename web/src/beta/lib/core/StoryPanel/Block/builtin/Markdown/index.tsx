@@ -7,7 +7,7 @@ import { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
 
-import MdBlocEditor from "./Editor";
+import MdEditor from "./Editor";
 
 export type Props = BlockProps;
 
@@ -39,7 +39,7 @@ const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       propertyItems={block?.property?.items}
       settingsEnabled={false}
       {...props}>
-      <MdBlocEditor text={text} onUpdate={handleTextUpdate} />
+      <MdEditor text={text} onUpdate={handleTextUpdate} />
     </BlockWrapper>
   );
 };
