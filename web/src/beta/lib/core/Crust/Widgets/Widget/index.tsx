@@ -2,6 +2,8 @@ import { ComponentType, ReactNode, useMemo } from "react";
 
 import type { TickEvent } from "@reearth/beta/lib/core/Map";
 
+import { TimelineCommiter, TimelineManager } from "../../../Visualizer/useTimelineManager";
+
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {
   Theme,
@@ -36,7 +38,7 @@ export type Props = {
 
 export type Context = {
   clock?: Clock;
-  overriddenClock?: Partial<Clock>;
+  timelineManager?: TimelineManager;
   updateClockOnLoad?: boolean;
   camera?: Camera;
   initialCamera?: Camera;
@@ -52,7 +54,7 @@ export type Context = {
     featureId: string | undefined,
     options?: { reason?: string },
   ) => void;
-  onPlay?: () => void;
+  onPlay?: (commiter?: TimelineCommiter) => void;
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;
   onTimeChange?: (time: Date) => void;

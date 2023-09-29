@@ -38,6 +38,7 @@ export default function ({
   floatingWidgets,
   camera,
   interactionMode,
+  timelineManager,
   overrideInteractionMode,
   useExperimentalSandbox,
   overrideSceneProperty,
@@ -62,19 +63,22 @@ export default function ({
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useCallback(() => {
-    const clock = engineRef?.getClock();
     return {
-      startTime: clock?.start,
-      stopTime: clock?.stop,
-      currentTime: clock?.current,
-      playing: clock?.playing,
-      paused: !clock?.playing,
-      speed: clock?.speed,
-      play: engineRef?.play,
-      pause: engineRef?.pause,
-      tick: engineRef?.tick,
+      startTime: timelineManager?.timeline?.start,
+      stopTime: timelineManager?.timeline?.stop,
+      currentTime: timelineManager?.timeline?.current,
+      playing: !!timelineManager?.timeline?.animation,
+      paused: !timelineManager?.timeline?.animation,
+      speed: timelineManager?.timeline?.multiplier,
+      play: () => {
+        timelineManager?.commit({ cmd: "PLAY", commiter: { source: "pluginAPI" } });
+      },
+      pause: () => {
+        timelineManager?.commit({ cmd: "PAUSE", commiter: { source: "pluginAPI" } });
+      },
+      tick: timelineManager?.tick,
     };
-  }, [engineRef]);
+  }, [timelineManager]);
   const getInteractionMode = useGet(
     useMemo<InteractionMode>(
       () => ({ mode: interactionMode, override: overrideInteractionMode }),

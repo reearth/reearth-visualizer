@@ -2,30 +2,27 @@ import { useCallback, useRef, useState, useMemo } from "react";
 
 import { convertTime, truncMinutes } from "@reearth/beta/utils/time";
 
-import { Clock } from "../Map";
+import { EngineRef, WrappedRef } from "../Map";
 
 export type TimelineManager = {
   readonly timeline: Timeline;
   readonly overriddenTimeline: Timeline;
   commit: (props: TimelineCommit) => void;
-  on: (type: TimelineEventTypes, cb: () => void, commiter: TimelineCommiter) => void;
-  off: (type: TimelineEventTypes, cb: () => void, commiter: TimelineCommiter) => void;
+  onTick: TickEvent;
+  offTick: TickEvent;
+  onCommiterChange: (cb: () => void) => void;
+  offCommiterChange: (cb: () => void) => void;
   // for connect engine onTick
-  onTick: (d: Date, clock: { start: Date; stop: Date }) => void;
+  handleTick: (d: Date, clock: { start: Date; stop: Date }) => void;
+  tick: (() => Date | void | undefined) | undefined;
 };
 
 export type Timeline = TimeDate & TimelineOptions;
+
 type TimeDate = {
   current?: Date;
   start?: Date;
   stop?: Date;
-};
-
-type TimelineData = TimeString & TimelineOptions;
-type TimeString = {
-  current?: string;
-  start?: string;
-  stop?: string;
 };
 
 type TimelineOptions = {
@@ -40,29 +37,40 @@ type TimelineCommand = "PLAY" | "PAUSE" | "UPDATE";
 
 type TimelineCommit = {
   cmd: TimelineCommand;
-  payload: Partial<TimelineData> | undefined;
+  payload?:
+    | ({
+        current?: Date | string | undefined;
+        start?: Date | string | undefined;
+        stop?: Date | string | undefined;
+      } & Partial<TimelineOptions>)
+    | undefined;
   commiter: TimelineCommiter;
 };
 
-type TimelineCommiter = {
-  source: "overrideSceneProperty";
+export type TimelineCommiter = {
+  source: "overrideSceneProperty" | "widgetContext" | "pluginAPI";
   id?: string;
 };
 
-type TimelineEventTypes = "commiterchange" | "tick";
+export type TickEvent = (cb: TickEventCallback) => void;
+export type TickEventCallback = (current: Date, clock: { start: Date; stop: Date }) => void;
 
 const DEFAULT_RANGE = 86400000; // a day
 
 type Props = {
-  init?: Partial<TimelineData>;
-  engineClock?: Clock;
+  init?: {
+    current?: string;
+    start?: string;
+    stop?: string;
+  } & Partial<TimelineOptions>;
+  engineRef?: WrappedRef<EngineRef>;
 };
 
-export default ({ init, engineClock }: Props) => {
-  const [time, setTime] = useState<TimeString>({
-    start: init?.start,
-    stop: init?.stop,
-    current: init?.current,
+export default ({ init, engineRef }: Props) => {
+  const [time, setTime] = useState<TimeDate>({
+    start: convertTime(init?.start),
+    stop: convertTime(init?.stop),
+    current: convertTime(init?.current),
   });
 
   const [options, setOptions] = useState<TimelineOptions>({
@@ -73,11 +81,11 @@ export default ({ init, engineClock }: Props) => {
     rangeType: init?.rangeType ?? "unbounded",
   });
 
-  const timeDates = useMemo(() => {
+  const validTimes = useMemo(() => {
     const { start, stop, current } = time;
-    const startTime = convertTime(start)?.getTime();
-    const stopTime = convertTime(stop)?.getTime();
-    const currentTime = convertTime(current)?.getTime();
+    const startTime = start?.getTime();
+    const stopTime = stop?.getTime();
+    const currentTime = current?.getTime();
 
     // TODO: validate time
     const now = Date.now();
@@ -110,10 +118,22 @@ export default ({ init, engineClock }: Props) => {
   const lastCommiter = useRef<TimelineCommiter>();
 
   const commit = useCallback(({ cmd, payload, commiter }: TimelineCommit) => {
+    console.log("commit", cmd, payload, commiter);
     if (!cmd) return;
 
     if (cmd === "UPDATE") {
-      setTime({ start: payload?.start, stop: payload?.stop, current: payload?.current });
+      setTime(t => ({
+        start: payload?.start === undefined ? t.start : convertTime(payload?.start),
+        stop: payload?.stop === undefined ? t.stop : convertTime(payload?.stop),
+        current: payload?.current === undefined ? t.current : convertTime(payload?.current),
+      }));
+      setOptions(o => ({
+        animation: payload?.animation === undefined ? o.animation : payload.animation,
+        step: payload?.step === undefined ? o.step : payload.step,
+        stepType: payload?.stepType === undefined ? o.stepType : payload.stepType,
+        multiplier: payload?.multiplier === undefined ? o.multiplier : payload.multiplier,
+        rangeType: payload?.rangeType === undefined ? o.rangeType : payload.rangeType,
+      }));
     } else if (cmd === "PLAY") {
       setOptions(o => ({ ...o, animation: true }));
     } else if (cmd === "PAUSE") {
@@ -125,37 +145,42 @@ export default ({ init, engineClock }: Props) => {
       lastCommiter.current &&
       (commiter.source !== lastCommiter.current.source || commiter.id !== lastCommiter.current.id)
     ) {
-      eventCallbacks.current.commiterchange.forEach(c => c.cb());
+      commiterChangeEventCallbacks.current.forEach(cb => cb());
     }
     lastCommiter.current = commiter;
   }, []);
 
-  const eventCallbacks = useRef<{
-    [key in TimelineEventTypes]: { commiter: TimelineCommiter; cb: () => void }[];
-  }>({ tick: [], commiterchange: [] });
-
-  const on = useCallback((type: TimelineEventTypes, cb: () => void, commiter: TimelineCommiter) => {
-    if (type !== "tick" && type !== "commiterchange") return;
-    eventCallbacks.current[type].push({ commiter, cb });
+  const tickEventCallbacks = useRef<TickEventCallback[]>([]);
+  const onTick = useCallback((cb: TickEventCallback) => {
+    tickEventCallbacks.current.push(cb);
+  }, []);
+  const offTick = useCallback((cb: TickEventCallback) => {
+    tickEventCallbacks.current = tickEventCallbacks.current.filter(c => c !== cb);
   }, []);
 
-  const off = useCallback(
-    (type: TimelineEventTypes, cb: () => void, commiter: TimelineCommiter) => {
-      if (type !== "tick" && type !== "commiterchange") return;
-      eventCallbacks.current[type] = eventCallbacks.current[type].filter(
-        c =>
-          !(c.commiter.source === commiter.source && c.commiter.id === commiter.id && c.cb === cb),
-      );
-    },
-    [],
-  );
-
-  const onTick = useCallback(() => {
-    eventCallbacks.current.tick.forEach(c => c.cb());
+  const commiterChangeEventCallbacks = useRef<(() => void)[]>([]);
+  const onCommiterChange = useCallback((cb: () => void) => {
+    commiterChangeEventCallbacks.current.push(cb);
+  }, []);
+  const offCommiterChange = useCallback((cb: () => void) => {
+    commiterChangeEventCallbacks.current = commiterChangeEventCallbacks.current.filter(
+      c => c !== cb,
+    );
   }, []);
 
-  const timelineManager = useMemo(
-    () => ({
+  const handleTick = useCallback(() => {
+    console.log("handleTick");
+    tickEventCallbacks.current.forEach(cb => {
+      const engineClock = engineRef?.getClock();
+      if (engineClock?.current && engineClock?.start && engineClock?.stop) {
+        cb(engineClock.current, { start: engineClock?.start, stop: engineClock?.stop });
+      }
+    });
+  }, [engineRef]);
+
+  const timelineManager = useMemo(() => {
+    const engineClock = engineRef?.getClock();
+    return {
       get timeline() {
         return {
           get start() {
@@ -185,16 +210,28 @@ export default ({ init, engineClock }: Props) => {
         };
       },
       overriddenTimeline: {
-        ...timeDates,
+        ...validTimes,
         ...options,
       },
       commit,
-      on,
-      off,
       onTick,
-    }),
-    [engineClock, options, timeDates, commit, off, on, onTick],
-  );
+      offTick,
+      onCommiterChange,
+      offCommiterChange,
+      handleTick,
+      tick: engineRef?.tick,
+    };
+  }, [
+    options,
+    validTimes,
+    engineRef,
+    commit,
+    onTick,
+    offTick,
+    onCommiterChange,
+    offCommiterChange,
+    handleTick,
+  ]);
 
   return timelineManager;
 };

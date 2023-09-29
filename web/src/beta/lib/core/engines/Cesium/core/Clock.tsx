@@ -2,25 +2,19 @@ import { Clock as CesiumClock, ClockRange, ClockStep, JulianDate } from "cesium"
 import { useCallback, useEffect, useMemo } from "react";
 import { Clock, useCesium } from "resium";
 
-// import { truncMinutes } from "@reearth/beta/utils/time";
-
 import type { SceneProperty } from "../..";
 import { type TimelineManager } from "../../../Visualizer/useTimelineManager";
 
 export type Props = {
   property?: SceneProperty;
-  // clock?: ClockType;
   timelineManager?: TimelineManager;
 };
 
-export default function ReearthClock({
-  property,
-  // clock,
-  timelineManager,
-}: Props): JSX.Element | null {
+export default function ReearthClock({ property, timelineManager }: Props): JSX.Element | null {
   const { visible } = property?.timeline ?? {};
   const { start, stop, current, animation, stepType, rangeType, multiplier, step } =
     timelineManager?.overriddenTimeline ?? {};
+  console.log("aaa", animation);
   const startTime = useMemo(() => (start ? JulianDate.fromDate(start) : undefined), [start]);
   const stopTime = useMemo(() => (stop ? JulianDate.fromDate(stop) : undefined), [stop]);
   const currentTime = useMemo(
@@ -38,14 +32,8 @@ export default function ReearthClock({
       const start = JulianDate.toDate(clock.startTime);
       const stop = JulianDate.toDate(clock.stopTime);
 
-      // // Truncate minutes for displaying correctly time on timeline widget
-      // const truncatedStart = truncMinutes(new Date(start));
-      // if (viewer && start.toISOString() !== truncatedStart.toISOString()) {
-      //   viewer.clock.startTime = JulianDate.fromDate(truncatedStart);
-      // }
-
       // NOTE: Must not update state. This event will be called every frame.
-      timelineManager?.onTick?.(JulianDate.toDate(clock.currentTime), {
+      timelineManager?.handleTick?.(JulianDate.toDate(clock.currentTime), {
         start,
         stop,
       });
@@ -68,9 +56,12 @@ export default function ReearthClock({
     viewer.forceResize();
   }, [viewer, visible]);
 
+  console.log("animation", animation);
+
   return (
     <Clock
       shouldAnimate={animation}
+      canAnimate={animation}
       startTime={startTime}
       stopTime={stopTime}
       currentTime={currentTime}

@@ -265,6 +265,7 @@ const Visualizer = memo(
                   mapRef={mapRef}
                   externalPlugin={{ pluginBaseUrl, pluginProperty }}
                   useExperimentalSandbox={useExperimentalSandbox}
+                  timelineManager={timelineManager}
                   onWidgetLayoutUpdate={onWidgetLayoutUpdate}
                   onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
                   onWidgetAreaSelect={onWidgetAreaSelect}

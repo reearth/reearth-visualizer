@@ -1,3 +1,4 @@
+import { clone } from "lodash-es";
 import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
@@ -160,7 +161,7 @@ export default function useHooks(
   // timeline manager
   const timelineManager = useTimelineManager({
     init: sceneProperty?.timeline,
-    engineClock: mapRef.current?.engine?.getClock(),
+    engineRef: mapRef.current?.engine,
   });
 
   // scene
@@ -171,14 +172,18 @@ export default function useHooks(
     (pluginId: string, property: SceneProperty) => {
       // Timeline related override should be handled by TimelineManager
       if (property.timeline) {
-        timelineManager.commit({
-          cmd: "UPDATE",
-          payload: property.timeline,
-          commiter: {
-            source: "overrideSceneProperty",
-            id: pluginId,
-          },
-        });
+        const filteredTimeline = clone(property.timeline);
+        delete filteredTimeline.visible;
+        if (Object.keys(filteredTimeline).length > 0) {
+          timelineManager?.commit({
+            cmd: "UPDATE",
+            payload: filteredTimeline,
+            commiter: {
+              source: "overrideSceneProperty",
+              id: pluginId,
+            },
+          });
+        }
       }
       // We can keep the logic the same as before.
       // Just remember we will NOT use the timeline from overridden scene property directly.

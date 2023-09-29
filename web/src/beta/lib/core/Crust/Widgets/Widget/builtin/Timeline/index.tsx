@@ -21,8 +21,7 @@ const Timeline = ({
   onExtend,
   onVisibilityChange,
   context: {
-    clock,
-    overriddenClock,
+    timelineManager,
     onPlay,
     onPause,
     onSpeedChange,
@@ -33,8 +32,7 @@ const Timeline = ({
 }: Props): JSX.Element | null => {
   const { isOpened, currentTime, range, speed, events, visible } = useTimeline({
     widget,
-    clock,
-    overriddenClock,
+    timelineManager,
     isMobile,
     onPlay,
     onPause,
