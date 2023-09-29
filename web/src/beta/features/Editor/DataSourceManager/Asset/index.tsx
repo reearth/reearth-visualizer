@@ -8,7 +8,7 @@ import Toggle from "@reearth/beta/components/Toggle";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
-import { DataProps, FileFormatType, SourceType } from "..";
+import { DataProps, DataSourceOptType, FileFormatType, SourceType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -42,7 +42,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [fileFormat, setFileFormat] = React.useState<FileFormatType>("GeoJSON");
   const [value, setValue] = React.useState("");
   const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
-  const DataSourceOptions = useMemo(
+  const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
       { label: t("From Assets"), keyValue: "local" },
       { label: t("From Web"), keyValue: "url" },

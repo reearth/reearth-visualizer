@@ -8,7 +8,7 @@ import Text from "@reearth/beta/components/Text";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
-import { DataProps, FileFormatType, SourceType } from "..";
+import { DataProps, FileFormatType, SourceType, DataSourceOptType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -27,15 +27,13 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [long, setLong] = React.useState("");
   const [fileFormat, setFileFormat] = React.useState<FileFormatType>("CSV");
 
-  const DataSourceOptions = useMemo(
+  const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
       { label: t("From Assets"), keyValue: "local" },
       { label: t("From Web"), keyValue: "url" },
     ],
     [t],
   );
-
-  const FileFormatOptions = useMemo(() => ["CSV"], []);
 
   const handleSubmit = () => {
     onSubmit({
@@ -88,7 +86,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
         <SelectField
           value={fileFormat}
-          options={FileFormatOptions.map(v => ({ key: v, label: v }))}
+          options={["CSV"].map(v => ({ key: v, label: v }))}
           name={t("File Format")}
           description={t("File format of the data source you want to add.")}
           onChange={(f: string) => setFileFormat(f as FileFormatType)}
