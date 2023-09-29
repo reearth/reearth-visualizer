@@ -148,6 +148,7 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   top: -25px;
   `}
   transition: all 0.2s;
+  z-index: 1;
 `;
 
 const BlockOptions = styled.div<{ isSelected?: boolean }>`

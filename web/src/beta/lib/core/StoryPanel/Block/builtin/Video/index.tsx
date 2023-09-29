@@ -11,7 +11,6 @@ const VideoBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
     () => getFieldValue(block?.property?.items ?? [], "src") as ValueTypes["string"],
     [block?.property?.items],
   );
-
   return (
     <BlockWrapper
       icon={block?.extensionId}
@@ -19,7 +18,7 @@ const VideoBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
       propertyId={block?.property?.id}
       propertyItems={block?.property?.items}
       {...props}>
-      {src && <VideoPlayer isSelected={isSelected} src={src} />}
+      {src && <VideoPlayer isSelected={isSelected} src={src} inEditor={!!props.isEditable} />}
     </BlockWrapper>
   );
 };

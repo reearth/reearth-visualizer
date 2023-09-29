@@ -1,26 +1,25 @@
-import { useContext } from "react";
 import Player from "react-player";
 
-import { BlockContext } from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
+import Overlay from "@reearth/beta/components/Overlay";
+import { styled } from "@reearth/services/theme";
 
 type Props = {
   isSelected?: boolean;
   src?: string;
+  inEditor?: boolean;
 };
-const VideoPlayer: React.FC<Props> = ({ isSelected, src }) => {
-  const ctx = useContext(BlockContext);
-
+const VideoPlayer: React.FC<Props> = ({ isSelected, src, inEditor }) => {
   return (
-    <Player
-      url={src}
-      width="100%"
-      playsinline
-      light={ctx?.editMode}
-      pip
-      controls
-      isselected={isSelected}
-    />
+    <StyledWrapper>
+      <Overlay show={inEditor} />
+      <Player url={src} width="100%" playsinline pip controls light isselected={isSelected} />
+    </StyledWrapper>
   );
 };
 
 export default VideoPlayer;
+
+const StyledWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
