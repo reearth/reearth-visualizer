@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -18,11 +18,14 @@ const getPage = (id?: string, pages?: Page[]) => {
 
 export default function ({ sceneId, onFlyTo }: Props) {
   const t = useT();
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
   const {
     useStoriesQuery,
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
+    useMoveStoryBlock,
     useInstallableStoryBlocksQuery,
   } = useStorytellingAPI();
 
@@ -65,7 +68,12 @@ export default function ({ sceneId, onFlyTo }: Props) {
         if (!destination) return;
 
         const duration = camera.fields.find(f => f.id === "cameraDuration")?.value as number;
-        onFlyTo({ ...destination }, { duration });
+        const delay = (camera.fields.find(f => f.id === "cameraDelay")?.value ?? 0) as number;
+
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+          onFlyTo({ ...destination }, { duration });
+        }, delay * 1000);
       }
     },
     [selectedStory?.pages, onFlyTo],
@@ -122,6 +130,19 @@ export default function ({ sceneId, onFlyTo }: Props) {
     [useMoveStoryPage, selectedStory],
   );
 
+  const handleStoryBlockMove = useCallback(
+    async (id: string, targetIndex: number, blockId: string) => {
+      if (!selectedStory) return;
+      await useMoveStoryBlock({
+        storyId: selectedStory.id,
+        pageId: id,
+        index: targetIndex,
+        blockId,
+      });
+    },
+    [useMoveStoryBlock, selectedStory],
+  );
+
   return {
     selectedStory,
     currentPage,
@@ -133,5 +154,6 @@ export default function ({ sceneId, onFlyTo }: Props) {
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
+    handleStoryBlockMove,
   };
 }

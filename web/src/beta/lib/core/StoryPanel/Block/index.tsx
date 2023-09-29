@@ -7,7 +7,6 @@ import builtin, { isBuiltinStoryBlock } from "./builtin";
 import type { CommonProps, BlockProps } from "./types";
 
 export type Props = {
-  pageId?: string;
   renderBlock?: (block: BlockProps) => ReactNode;
   layer?: Layer;
 } & CommonProps;
@@ -15,17 +14,13 @@ export type Props = {
 export type Component = ComponentType<CommonProps>;
 
 export default function StoryBlockComponent({
-  pageId,
   renderBlock,
   onRemove,
   ...props
 }: Props): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
   const Builtin = isBuiltinStoryBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
-  const handleRemove = useCallback(
-    () => onRemove?.(pageId, props.block?.id),
-    [pageId, props.block?.id, onRemove],
-  );
+  const handleRemove = useCallback(() => onRemove?.(props.block?.id), [props.block?.id, onRemove]);
 
   return Builtin ? (
     <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />

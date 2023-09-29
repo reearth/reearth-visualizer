@@ -29,6 +29,7 @@ export const storyPageFragment = gql`
       id
       ...PropertyFragment
     }
+    layersIds
     blocks {
       id
       pluginId
