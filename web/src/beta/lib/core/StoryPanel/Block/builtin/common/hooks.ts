@@ -21,6 +21,8 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     }
   }, [isSelected, editMode]);
 
+  const title = useMemo(() => propertyItems?.[1]?.title, [propertyItems]);
+
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
@@ -45,6 +47,7 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
   const handleSettingsToggle = () => setShowSettings?.(s => !s);
 
   return {
+    title,
     editMode,
     showSettings,
     defaultSettings,

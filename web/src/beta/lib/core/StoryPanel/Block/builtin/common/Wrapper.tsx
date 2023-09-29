@@ -20,7 +20,6 @@ type Spacing = {
 };
 
 type Props = {
-  title?: string;
   icon?: string;
   isSelected?: boolean;
   isEditable?: boolean;
@@ -35,7 +34,6 @@ type Props = {
 };
 
 const BlockWrapper: React.FC<Props> = ({
-  title,
   icon,
   isSelected,
   isEditable,
@@ -49,6 +47,7 @@ const BlockWrapper: React.FC<Props> = ({
   onRemove,
 }) => {
   const {
+    title,
     editMode,
     showSettings,
     defaultSettings,
@@ -62,7 +61,6 @@ const BlockWrapper: React.FC<Props> = ({
     propertyItems,
     onClick,
   });
-
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea
