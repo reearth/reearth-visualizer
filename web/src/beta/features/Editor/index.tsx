@@ -90,6 +90,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const { rightPanel } = useRightPanel({
     tab,
     sceneId,
+    nlsLayers,
     currentPage,
     currentCamera,
     showSceneSettings: selectedSceneSetting,
