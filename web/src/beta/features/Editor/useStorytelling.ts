@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -18,6 +18,8 @@ const getPage = (id?: string, pages?: Page[]) => {
 
 export default function ({ sceneId, onFlyTo }: Props) {
   const t = useT();
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
   const {
     useStoriesQuery,
     useCreateStoryPage,
@@ -67,7 +69,12 @@ export default function ({ sceneId, onFlyTo }: Props) {
         if (!destination) return;
 
         const duration = camera.fields.find(f => f.id === "cameraDuration")?.value as number;
-        onFlyTo({ ...destination }, { duration });
+        const delay = (camera.fields.find(f => f.id === "cameraDelay")?.value ?? 0) as number;
+
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+          onFlyTo({ ...destination }, { duration });
+        }, delay * 1000);
       }
     },
     [selectedStory?.pages, onFlyTo],

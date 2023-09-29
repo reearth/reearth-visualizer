@@ -11,13 +11,15 @@ import { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { Tab } from "../../Navbar";
+
 type Props = {
   propertyId: string;
   propertyItems?: Item[];
   currentCamera?: Camera;
   layers?: NLSLayer[];
   selectedPage?: Page;
-  hasStory?: boolean;
+  tab?: Tab;
   onFlyTo?: FlyTo;
   onPageUpdate?: (id: string, layers: string[]) => void;
 };
@@ -27,8 +29,8 @@ const Settings: React.FC<Props> = ({
   propertyItems,
   currentCamera,
   layers,
+  tab,
   selectedPage,
-  hasStory,
   onFlyTo,
   onPageUpdate,
 }) => {
@@ -57,7 +59,7 @@ const Settings: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      {hasStory && (
+      {tab == "story" && (
         <SidePanelSectionField title={t("Layers")}>
           {layers?.map((layer, idx) => (
             <Layer key={idx}>
@@ -70,6 +72,7 @@ const Settings: React.FC<Props> = ({
           ))}
         </SidePanelSectionField>
       )}
+
       {propertyItems?.map((i, idx) => (
         <SidePanelSectionField title={i.title ?? "Undefined"} key={idx}>
           <FieldComponents

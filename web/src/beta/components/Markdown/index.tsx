@@ -58,6 +58,7 @@ const Wrapper = styled.div<{ styles?: Typography; dark: boolean }>`
     border-bottom: none;
   }
 
+  /* TODO: Fix hardcoded colors here */
   code {
     background-color: ${({ dark }) =>
       dark ? "rgba(240, 246, 252, 0.15)" : "rgba(27, 31, 35, 0.05)"};

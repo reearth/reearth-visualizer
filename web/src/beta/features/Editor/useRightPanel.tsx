@@ -48,6 +48,7 @@ export default ({
             selectedPage={currentPage}
             currentCamera={currentCamera}
             layers={nlsLayers}
+            tab={tab}
             onFlyTo={onFlyTo}
             onPageUpdate={onPageUpdate}
           />
@@ -64,9 +65,9 @@ export default ({
     sceneId,
     showSceneSettings,
     currentCamera,
-    onFlyTo,
     currentPage,
     nlsLayers,
+    onFlyTo,
     onPageUpdate,
   ]);
 

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import Settings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
+import { Tab } from "@reearth/beta/features/Navbar";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -12,7 +13,8 @@ type Props = {
   sceneId?: string;
   selectedPage?: Page;
   currentCamera?: Camera;
-  layers: NLSLayer[];
+  layers?: NLSLayer[];
+  tab?: Tab;
   onFlyTo?: FlyTo;
   onPageUpdate?: (id: string, layers: string[]) => void;
 };
@@ -22,10 +24,10 @@ const StoryRightPanel: React.FC<Props> = ({
   currentCamera,
   layers,
   onPageUpdate,
+  tab,
   onFlyTo,
 }) => {
   const t = useT();
-  const [hasStory, setHasStory] = useState(false);
 
   const propertyItems = useMemo(
     () =>
@@ -34,11 +36,6 @@ const StoryRightPanel: React.FC<Props> = ({
       ),
     [selectedPage?.property],
   );
-
-  useEffect(() => {
-    const containsStory = window.location.pathname.includes("/story");
-    setHasStory(containsStory);
-  }, []);
 
   return (
     <SidePanelCommon
@@ -53,8 +50,8 @@ const StoryRightPanel: React.FC<Props> = ({
               propertyItems={propertyItems}
               currentCamera={currentCamera}
               layers={layers}
-              hasStory={hasStory}
               selectedPage={selectedPage}
+              tab={tab}
               onPageUpdate={onPageUpdate}
               onFlyTo={onFlyTo}
             />

@@ -101,6 +101,12 @@ const PagesWrapper = styled.div<{ showingIndicator?: boolean; isEditable?: boole
   height: ${({ showingIndicator }) => (showingIndicator ? "calc(100% - 8px)" : "100%")};
   overflow-y: auto;
   cursor: ${({ isEditable }) => (isEditable ? "pointer" : "default")};
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 `;
 
 const PageGap = styled.div<{ height?: number }>`

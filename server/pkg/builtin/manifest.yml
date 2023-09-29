@@ -2070,18 +2070,6 @@ extensions:
               type: string
               ui: datetime
               title: Time
-  - id: storyBlock
-    name: Block
-    type: storyBlock
-    description: Storytelling Block
-    schema:
-      groups:
-        - id: default
-          title: Basic
-          fields:
-            - id: title
-              type: string
-              title: Title
   - id: textStoryBlock
     name: Text Block
     type: storyBlock
@@ -2105,7 +2093,7 @@ extensions:
               title: Content
               ui: multiline
   - id: mdTextStoryBlock
-    name: MD Test Block
+    name: MD Text Block
     type: storyBlock
     description: Storytelling MD Text Block
     schema:
