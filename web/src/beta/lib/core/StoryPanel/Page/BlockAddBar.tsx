@@ -26,7 +26,7 @@ const BlockAddBar: React.FC<Props> = ({
       installableStoryBlocks?.map?.(sb => {
         return {
           name: sb.name,
-          icon: "plugin",
+          icon: sb.extensionId ?? "plugin",
           onClick: () => {
             onBlockAdd?.(sb.extensionId, sb.pluginId);
             onBlockOpen();

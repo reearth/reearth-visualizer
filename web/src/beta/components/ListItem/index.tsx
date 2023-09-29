@@ -36,7 +36,11 @@ const ListItem: FC<Props> = ({
   return (
     <Wrapper>
       <Inner border={border} isSelected={isSelected} clamp={clamp} onClick={onItemClick}>
-        <StyledText size="footnote">{children}</StyledText>
+        {typeof children === "string" ? (
+          <StyledText size="footnote">{children}</StyledText>
+        ) : (
+          children
+        )}
       </Inner>
       {actionContent && (
         <Popover.Provider
