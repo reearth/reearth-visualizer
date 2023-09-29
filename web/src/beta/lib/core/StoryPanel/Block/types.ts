@@ -1,17 +1,14 @@
 import { Theme } from "@reearth/beta/lib/core/Crust/types";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import { type Item } from "@reearth/services/api/propertyApi/utils";
 
 export type Block<P = unknown> = {
   id: string;
-  title?: string;
+  name?: string;
   pluginId?: string;
   extensionId?: string;
-  property?: {
-    id: string;
-    items?: P;
-  };
+  propertyId?: string;
+  property?: P;
 };
 
 export type BlockProps<P = unknown> = {
@@ -24,7 +21,7 @@ export type CommonProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
-  block?: Block<Item[]>;
+  block?: Block<any>;
   theme?: Theme;
   onClick?: () => void;
   onClickAway?: () => void;

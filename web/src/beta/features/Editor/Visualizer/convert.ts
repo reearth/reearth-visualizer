@@ -31,6 +31,8 @@ import {
   PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
+  StoryPage,
+  StoryBlock,
 } from "@reearth/services/gql";
 
 type P = { [key in string]: any };
@@ -177,6 +179,29 @@ export const convertWidgets = (
   };
 };
 
+export const convertStory = (scene?: Partial<Scene>, storyId?: string) => {
+  const story = scene?.stories?.find(s => s.id === storyId);
+  if (!story) return undefined;
+
+  const storyPages = (pages: StoryPage[]) =>
+    pages.map(p => ({
+      ...p,
+      property: processProperty(undefined, p.property),
+      blocks: storyBlocks(p.blocks),
+    }));
+
+  const storyBlocks = (blocks: StoryBlock[]) =>
+    blocks.map(b => ({
+      ...b,
+      property: processProperty(undefined, b.property),
+    }));
+
+  return {
+    ...story,
+    pages: storyPages(story.pages),
+  };
+};
+
 export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
   orig?: PropertyFragmentFragment | null | undefined,
@@ -204,7 +229,7 @@ export const processProperty = (
     }),
     {},
   );
-
+  console.log("ALL ITEMS: ", allItems);
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
       .map(([key, value]) => {
@@ -213,7 +238,13 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroupList") &&
           (!parent || parent.__typename === "PropertyGroupList")
         ) {
+          console.log("HERE", value);
           const used = orig || parent;
+
+          // HERE WE WANT TO GO THROUGH THE SCEHMA AHDN TEHN REDUCE BASED ONIF THERE IS A VALUE
+          // THIS IS BEACUSE WE ARE MISSING OUT ON ANY DEFAULT VALUES
+          // I STILL DON"T KNOW WHY WE DONT CARE ABOUT DEFAULTVALUES UP UNTIL NOW.......
+
           return [
             key,
             used?.groups.map(g => ({
@@ -227,8 +258,10 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroup") &&
           (!parent || parent.__typename === "PropertyGroup")
         ) {
+          console.log("ThHERJALEKJSLDFKJSDAFLKJ", value);
           return [key, processPropertyGroups(schema, parent, orig, linkedDatasetId, datasets)];
         }
+        console.log("key: ", key, value);
         return [key, null];
       })
       .filter(([, value]) => !!value),
@@ -265,9 +298,12 @@ const processPropertyGroups = (
 
   return Object.fromEntries(
     Object.entries(allFields)
-      .map(([key, { parent, orig }]) => {
+      .map(([key, { schema, parent, orig }]) => {
+        // console.log("parentma:", parent);
+        // console.log("orig:", orig);
         const used = orig || parent;
-        if (!used) return [key, null];
+        if (!used) return [key, valueFromGQL(schema.defaultValue, schema.type)];
+        console.log("schema:", schema);
 
         const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
         const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;

@@ -5,6 +5,7 @@ import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import LayerItem from "./LayerItem";
@@ -26,6 +27,7 @@ const Layers: React.FC<LayersProps> = ({
   onLayerSelect,
   onDataSourceManagerOpen,
 }) => {
+  const t = useT();
   const [isAddMenuOpen, setAddMenuOpen] = useState(false);
 
   const toggleAddMenu = useCallback(() => {
@@ -46,18 +48,18 @@ const Layers: React.FC<LayersProps> = ({
             size="md"
             items={[
               {
-                name: "Add Layer from Resource",
+                name: t("Add Layer from Resource"),
                 icon: "file",
                 onClick: () => {
                   onDataSourceManagerOpen();
                   toggleAddMenu();
                 },
               },
-              {
-                name: "Add Sketch Layer",
-                icon: "pencilSimple",
-                onClick: () => {},
-              },
+              // {
+              //   name: t("Add Sketch Layer"),
+              //   icon: "pencilSimple",
+              //   onClick: () => {},
+              // },
             ]}
           />
         </Popover.Content>

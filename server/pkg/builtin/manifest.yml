@@ -1839,6 +1839,7 @@ extensions:
               title: Duration
               suffix: s
               min: 0
+              defaultValue: 1
             - id: cameraDelay
               type: number
               title: Delay
@@ -2060,6 +2061,7 @@ extensions:
               title: Duration
               suffix: s
               min: 0
+              defaultValue: 100
             - id: cameraDelay
               type: number
               title: Delay
@@ -2072,18 +2074,6 @@ extensions:
               type: string
               ui: datetime
               title: Time
-  - id: storyBlock
-    name: Block
-    type: storyBlock
-    description: Storytelling Block
-    schema:
-      groups:
-        - id: default
-          title: Basic
-          fields:
-            - id: title
-              type: string
-              title: Title
   - id: textStoryBlock
     name: Text Block
     type: storyBlock
@@ -2108,7 +2098,7 @@ extensions:
               title: Content
               ui: multiline
   - id: mdTextStoryBlock
-    name: MD Test Block
+    name: MD Text Block
     type: storyBlock
     description: Storytelling MD Text Block
     schema:

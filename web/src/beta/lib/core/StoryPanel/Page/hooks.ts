@@ -1,9 +1,24 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Page } from "../types";
 
-export default ({ page }: { page?: Page; property?: any }) => {
+export type { Page } from "../types";
+
+export default ({
+  page,
+  onBlockCreate,
+}: {
+  page?: Page;
+  onBlockCreate?: (
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void> | undefined;
+}) => {
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
+  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
+
+  const [items, setItems] = useState(storyBlocks ? storyBlocks : []);
 
   const handleBlockOpen = useCallback(
     (index: number) => {
@@ -20,11 +35,23 @@ export default ({ page }: { page?: Page; property?: any }) => {
 
   const propertyId = useMemo(() => page?.propertyId, [page?.propertyId]);
 
-  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
+  const padding = useMemo(() => property.panel.padding, [property.panel.padding]);
 
-  const title = useMemo(() => property?.title?.title, [property]);
+  const gap = useMemo(() => property.panel.gap, [property.panel.gap]);
+
+  const title = useMemo(() => property?.title?.title, [property.title.title]);
 
   const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);
+
+  const handleBlockCreate = useCallback(
+    (index: number) => (extensionId?: string | undefined, pluginId?: string | undefined) =>
+      onBlockCreate?.(extensionId, pluginId, index),
+    [onBlockCreate],
+  );
+
+  useEffect(() => {
+    storyBlocks && setItems(storyBlocks);
+  }, [storyBlocks]);
 
   return {
     openBlocksIndex,
@@ -33,6 +60,11 @@ export default ({ page }: { page?: Page; property?: any }) => {
     propertyId,
     property,
     storyBlocks,
+    padding,
+    gap,
+    items,
+    setItems,
     handleBlockOpen,
+    handleBlockCreate,
   };
 };

@@ -1,8 +1,7 @@
 import { ReactNode, createContext } from "react";
 
-import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
+// import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
-import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import SelectableArea from "../../../SelectableArea";
@@ -20,13 +19,13 @@ type Spacing = {
 };
 
 type Props = {
-  title?: string;
+  name?: string;
   icon?: string;
   isSelected?: boolean;
   isEditable?: boolean;
   children?: ReactNode;
   propertyId?: string;
-  propertyItems?: Item[];
+  property?: any;
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   onClick?: () => void;
@@ -35,13 +34,13 @@ type Props = {
 };
 
 const BlockWrapper: React.FC<Props> = ({
-  title,
+  name,
   icon,
   isSelected,
   isEditable,
   children,
   propertyId,
-  propertyItems,
+  property,
   dndEnabled = true,
   settingsEnabled = true,
   onClick,
@@ -59,20 +58,20 @@ const BlockWrapper: React.FC<Props> = ({
     handleBlockClick,
   } = useHooks({
     isSelected,
-    propertyItems,
+    property,
     onClick,
   });
 
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea
-        title={title}
+        title={name}
         icon={icon}
         isSelected={isSelected}
         propertyId={propertyId}
         dndEnabled={dndEnabled}
         showSettings={showSettings}
-        propertyItems={propertyItems}
+        property={property}
         editMode={editMode}
         isEditable={isEditable}
         setEditMode={setEditMode}
@@ -85,7 +84,11 @@ const BlockWrapper: React.FC<Props> = ({
         </Block>
         {editMode && propertyId && defaultSettings && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
-            <FieldComponents propertyId={propertyId} item={defaultSettings} />
+            {/* <FieldComponents propertyId={propertyId} item={defaultSettings} />
+            <NewFieldsComponent /> // This will need to be updated when support is needed
+            // currently need: camera, color, text, url, spacing
+            // will need: Time, toggle, 
+            // Should just setup support for ALL (like the FieldCompoennts component) */}
           </EditorPanel>
         )}
       </SelectableArea>

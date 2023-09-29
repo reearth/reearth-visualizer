@@ -1,17 +1,12 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-import type { ValueTypes } from "@reearth/beta/utils/value";
-import type { Item } from "@reearth/services/api/propertyApi/utils";
-
-import { getFieldValue } from "../../../utils";
-
 type Props = {
   isSelected?: boolean;
-  propertyItems?: Item[];
+  property?: any;
   onClick: (() => void) | undefined;
 };
 
-export default ({ isSelected, propertyItems, onClick }: Props) => {
+export default ({ isSelected, property, onClick }: Props) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -30,15 +25,9 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     [onClick, showSettings, isSelected, editMode],
   );
 
-  const defaultSettings: Item | undefined = useMemo(
-    () => propertyItems?.find(i => i.schemaGroup === "default" || i.schemaGroup === "title"),
-    [propertyItems],
-  );
+  const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
 
-  const padding = useMemo(
-    () => getFieldValue(propertyItems ?? [], "padding", "panel") as ValueTypes["spacing"],
-    [propertyItems],
-  );
+  const padding = useMemo(() => property?.padding, [property]);
 
   const handleEditModeToggle = () => setEditMode?.(em => !em);
 
