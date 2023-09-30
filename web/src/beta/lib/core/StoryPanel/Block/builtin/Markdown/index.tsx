@@ -21,22 +21,18 @@ const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
 
   const handleTextUpdate = useCallback(
     (text: string) => {
-      const schemaGroup = block?.property?.items?.find(
-        i => i.schemaGroup === "default",
-      )?.schemaGroup;
-      if (!block?.property?.id || !schemaGroup) return;
-      handlePropertyValueUpdate(schemaGroup, block?.property?.id, "text", "string")(text);
+      if (!block?.propertyId) return;
+      handlePropertyValueUpdate("default", block?.propertyId, "text", "string")(text);
     },
-    [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
+    [block?.propertyId, handlePropertyValueUpdate],
   );
 
   return (
     <BlockWrapper
-      title={block?.title}
       icon={block?.extensionId}
       isSelected={isSelected}
-      propertyId={block?.property?.id}
-      propertyItems={block?.property?.items}
+      propertyId={block?.propertyId}
+      property={block?.property}
       settingsEnabled={false}
       {...props}>
       <MdEditor text={text} onUpdate={handleTextUpdate} />
