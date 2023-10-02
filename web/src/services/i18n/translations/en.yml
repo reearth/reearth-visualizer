@@ -525,6 +525,8 @@ Failed to delete page.: Failed to delete page.
 Page was successfully deleted.: Page was successfully deleted.
 Failed to move page.: Failed to move page.
 Page was successfully moved.: Page was successfully moved.
+Failed to update page.: ''
+Successfullly updated a page!: ''
 Failed to add widget.: Failed to add widget.
 Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
