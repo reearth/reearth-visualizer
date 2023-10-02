@@ -25,7 +25,6 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
 
   return (
     <BlockWrapper
-      title={block?.title}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}

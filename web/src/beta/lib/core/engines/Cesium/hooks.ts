@@ -746,12 +746,13 @@ export default ({
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
-    viewer.scene.postProcessStages.fxaa.enabled = property?.render?.antialias === "high";
+    // TODO: FXAA doesn't support alpha blending in Cesium, so we will enable FXAA when this is fixed.
+    // viewer.scene.postProcessStages.fxaa.enabled = property?.render?.antialias === "high";
     viewer.scene.msaaSamples =
       property?.render?.antialias === "extreme"
         ? 8
         : property?.render?.antialias === "high"
-        ? 0
+        ? 6
         : property?.render?.antialias === "medium"
         ? 4
         : 1; // default as 1

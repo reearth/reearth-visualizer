@@ -934,8 +934,8 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].blocks").Equal([]any{})
 
-	_, _, blockID1 := createBlock(e, sID, storyID, pageID, "reearth", "storyBlock", nil)
-	_, _, blockID2 := createBlock(e, sID, storyID, pageID, "reearth", "storyBlock", nil)
+	_, _, blockID1 := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", nil)
+	_, _, blockID2 := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", nil)
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().
@@ -947,7 +947,7 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 	res.Object().
 		Path("$.data.node.stories[0].pages[0].blocks[:].id").Equal([]string{blockID2, blockID1})
 
-	_, _, blockID3 := createBlock(e, sID, storyID, pageID, "reearth", "storyBlock", lo.ToPtr(1))
+	_, _, blockID3 := createBlock(e, sID, storyID, pageID, "reearth", "textStoryBlock", lo.ToPtr(1))
 
 	_, res = fetchSceneForStories(e, sID)
 	res.Object().

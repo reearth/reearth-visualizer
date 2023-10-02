@@ -7,14 +7,11 @@ import { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
 
-import TextBlockEditor from "./Editor";
+import MdEditor from "./Editor";
 
 export type Props = BlockProps;
 
-// Text block is very special, it will not edit values with field components
-// from the common editor panel, but manage it by itself directly.
-
-const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
+const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
     () => getFieldValue(block?.property?.items ?? [], "text") as ValueTypes["string"],
     [block?.property?.items],
@@ -41,9 +38,9 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       propertyItems={block?.property?.items}
       settingsEnabled={false}
       {...props}>
-      <TextBlockEditor text={text} onUpdate={handleTextUpdate} />
+      <MdEditor text={text} onUpdate={handleTextUpdate} />
     </BlockWrapper>
   );
 };
 
-export default TextBlock;
+export default MdBlock;

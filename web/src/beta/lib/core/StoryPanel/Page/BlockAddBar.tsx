@@ -7,17 +7,17 @@ import type { InstallableStoryBlock } from "@reearth/services/api/storytellingAp
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  openBlocks: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
-  pageId?: string;
+  openBlocks: boolean;
+  alwaysShow?: boolean;
   onBlockOpen: () => void;
-  onBlockAdd?: (pageId?: string, extensionId?: string, pluginId?: string) => void;
+  onBlockAdd?: (extensionId?: string, pluginId?: string) => void;
 };
 
 const BlockAddBar: React.FC<Props> = ({
   installableStoryBlocks,
   openBlocks,
-  pageId,
+  alwaysShow,
   onBlockOpen,
   onBlockAdd,
 }) => {
@@ -26,14 +26,14 @@ const BlockAddBar: React.FC<Props> = ({
       installableStoryBlocks?.map?.(sb => {
         return {
           name: sb.name,
-          icon: "plugin",
+          icon: sb.extensionId ?? "plugin",
           onClick: () => {
-            onBlockAdd?.(pageId, sb.extensionId, sb.pluginId);
+            onBlockAdd?.(sb.extensionId, sb.pluginId);
             onBlockOpen();
           },
         };
       }) ?? [],
-    [installableStoryBlocks, pageId, onBlockAdd, onBlockOpen],
+    [installableStoryBlocks, onBlockAdd, onBlockOpen],
   );
 
   const handleBlockOpen = useCallback(
@@ -48,7 +48,7 @@ const BlockAddBar: React.FC<Props> = ({
     <Wrapper>
       <Popover.Provider open={openBlocks} placement="bottom-start" onOpenChange={onBlockOpen}>
         <Popover.Trigger asChild>
-          <Bar persist={openBlocks}>
+          <Bar persist={alwaysShow || openBlocks}>
             <StyledIcon icon="plus" size={16} onClick={handleBlockOpen} />
             <Line />
           </Bar>
