@@ -83,7 +83,7 @@ export type Reearth = {
       ) => void;
       findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
       findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
-      selectFeature?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
+      selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
       selectionReason?: LayerSelectionReason;
       // For compat
       overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
