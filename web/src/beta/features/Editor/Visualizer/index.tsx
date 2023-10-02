@@ -99,7 +99,9 @@ const Visualizer: React.FC<Props> = ({
     const handleDisplayLayer = () => {
       const filteredLayers = layers?.filter(layer => currentPage?.layersIds?.includes(layer.id));
       const results =
-        currentPage?.layersIds?.length && tab === "story" ? filteredLayers : layers || [];
+        currentPage?.layersIds?.length && (tab === "story" || tab === "publish")
+          ? filteredLayers
+          : layers || [];
       setLayersData(results);
     };
 
