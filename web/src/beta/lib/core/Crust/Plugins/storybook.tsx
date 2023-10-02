@@ -94,11 +94,13 @@ export const context: Context = {
       captureScreen: act("captureScreen"),
       getLocationFromScreen: act("getLocationFromScreen"),
       sampleTerrainHeight: act("sampleTerrainHeight"),
+      pickManyFromViewport: act("pickManyFromViewport"),
     },
     layers: {
       hide: act("layers.hide"),
       show: act("layers.show"),
       select: act("layers.select"),
+      selectFeature: act("layers.selectFeature"),
       add: act("layers.add"),
       findById: act("layers.findById"),
       findByIds: act("layers.findByIds"),

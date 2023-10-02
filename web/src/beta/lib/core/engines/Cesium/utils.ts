@@ -12,10 +12,13 @@ import {
   JulianDate,
   Model,
   ImageryLayerFeatureInfo,
+  Scene,
+  Viewer,
+  Cesium3DTilePointFeature,
 } from "cesium";
 
 import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox";
-import { DefaultInfobox } from "@reearth/beta/lib/core/Map";
+import { ComputedFeature, DefaultInfobox } from "@reearth/beta/lib/core/Map";
 
 import { getTag } from "./Feature";
 import type { InternalCesium3DTileFeature } from "./types";
@@ -50,15 +53,27 @@ export const translationWithClamping = (
   }
 };
 
+export const getModelFromTileContent = (c: Cesium3DTileContent) => {
+  if (!c.featuresLength && "_model" in c && c._model instanceof Model) {
+    return c._model;
+  }
+  return;
+};
+
 export function lookupFeatures(
   c: Cesium3DTileContent,
-  cb: (feature: InternalCesium3DTileFeature, content: Cesium3DTileContent) => void | Promise<void>,
+  cb: (
+    feature: InternalCesium3DTileFeature,
+    content: Cesium3DTileContent,
+    batchId?: number,
+  ) => void | Promise<void>,
 ) {
   if (!c) return;
 
   // Use model, if featuresLength is 0.
-  if (!c.featuresLength && "_model" in c && c._model instanceof Model) {
-    return cb(c._model, c);
+  const model = getModelFromTileContent(c);
+  if (model) {
+    return cb(model, c);
   }
 
   const length = c.featuresLength;
@@ -67,7 +82,7 @@ export function lookupFeatures(
     if (!f) {
       continue;
     }
-    cb(f, c);
+    cb(f, c, i);
   }
   c.innerContents?.forEach(c => lookupFeatures(c, cb));
   return;
@@ -94,6 +109,29 @@ const findFeatureFrom3DTile = (
     if (t) {
       return t;
     }
+  }
+};
+
+const findFeaturesFrom3DTile = <T = InternalCesium3DTileFeature>(
+  tile: Cesium3DTile,
+  featureId: string[],
+  convert?: (f: InternalCesium3DTileFeature) => T,
+  targets: Set<T> = new Set(),
+) => {
+  lookupFeatures(tile.content, f => {
+    const tag = getTag(f);
+    if (featureId.includes(tag?.featureId ?? "")) {
+      const r = convert?.(f);
+      if (r) {
+        targets.add(r);
+      } else {
+        targets.add(f as T);
+      }
+    }
+  });
+
+  for (const child of tile.children) {
+    findFeaturesFrom3DTile(child, featureId, convert, targets);
   }
 };
 
@@ -151,6 +189,63 @@ export function findEntity(
   return;
 }
 
+export function findFeaturesFromLayer<T = Entity | Cesium3DTileset | InternalCesium3DTileFeature>(
+  viewer: CesiumViewer,
+  layerId: string,
+  featureId: string[],
+  convert?: (e: Entity | Cesium3DTileset | InternalCesium3DTileFeature) => T,
+): NonNullable<T>[] | undefined {
+  const filterEntity = (es: Entity[]) => {
+    const result: T[] = [];
+    for (const e of es) {
+      const tag = getTag(e);
+      if (tag?.layerId === layerId && featureId.includes(tag.featureId || "")) {
+        const f = convert?.(e);
+        if (f) {
+          result.push(f);
+        } else if (e) {
+          result.push(e as T);
+        }
+      }
+    }
+    return result;
+  };
+  const entity = filterEntity(viewer.entities.values);
+  if (entity.length) return entity as NonNullable<T>[];
+
+  let datasources: T[] = [];
+  for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
+    for (let i = 0; i < ds.length; i++) {
+      const entities = ds.get(i).entities.values;
+      const e = filterEntity(entities);
+      if (e.length) {
+        datasources = datasources.concat(e);
+      }
+    }
+  }
+
+  if (datasources.length) {
+    return datasources as NonNullable<T>[];
+  }
+
+  const targets: Set<T> = new Set();
+  // Find Cesium3DTileFeature
+  for (let i = 0; i < viewer.scene.primitives.length; i++) {
+    const prim = viewer.scene.primitives.get(i);
+    if (!(prim instanceof Cesium3DTileset) || !prim.ready) {
+      continue;
+    }
+
+    findFeaturesFrom3DTile(prim.root, featureId, convert, targets);
+  }
+
+  if (targets.size) {
+    return Array.from(targets.values()) as NonNullable<T>[];
+  }
+
+  return;
+}
+
 export const getEntityContent = (
   entity: Entity | ImageryLayerFeatureInfo,
   time: JulianDate,
@@ -190,3 +285,55 @@ function propertiesToTableContent(properties: Record<string, any>): { key: strin
     [],
   );
 }
+
+// Just a shortcut to the private property.
+export function getPixelRatio(scene: Scene): number {
+  return (
+    scene as Scene & {
+      pixelRatio: number;
+    }
+  ).pixelRatio;
+}
+
+export const convertObjToComputedFeature = (
+  viewer: Viewer,
+  obj: object,
+): [layerId: string | undefined, feature: ComputedFeature] | undefined => {
+  if (obj instanceof Cesium3DTileFeature || obj instanceof Cesium3DTilePointFeature) {
+    const tag = getTag(obj);
+    return [
+      tag?.layerId,
+      tag?.computedFeature ?? {
+        type: "computedFeature",
+        id: tag?.featureId ?? "",
+        properties: Object.fromEntries(obj.getPropertyIds().map(id => [id, obj.getProperty(id)])),
+      },
+    ];
+  }
+
+  if (obj instanceof Model) {
+    const tag = getTag(obj);
+    return [
+      tag?.layerId,
+      {
+        type: "computedFeature",
+        id: tag?.featureId ?? "",
+        properties: {},
+      },
+    ];
+  }
+
+  if (obj instanceof Entity) {
+    const tag = getTag(obj);
+    return [
+      tag?.layerId,
+      tag?.computedFeature ?? {
+        type: "computedFeature",
+        id: tag?.featureId ?? "",
+        properties: obj.properties?.getValue(viewer.clock.currentTime),
+      },
+    ];
+  }
+
+  return;
+};

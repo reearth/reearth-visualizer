@@ -20,6 +20,7 @@ import {
   defaultValue,
   ImageBasedLighting,
   Cesium3DTileContent,
+  Color,
 } from "cesium";
 import { isEqual, pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -47,6 +48,7 @@ import {
   extractSimpleLayerData,
   generateIDWithMD5,
   toColor,
+  getTag,
 } from "../utils";
 
 import { GoogleMaps } from "./types";
@@ -169,13 +171,25 @@ const useFeature = ({
     async (feature?: CachedFeature) => {
       const layer = cachedCalculatedLayerRef?.current?.layer;
       if (layer?.type === "simple" && feature?.feature) {
+        const raw = feature.raw;
+        const tag = getTag(raw);
+
         const computedFeature = evalFeature(layer, feature?.feature);
 
         const style = computedFeature?.["3dtiles"];
 
-        const raw = feature.raw;
-
         COMMON_STYLE_PROPERTIES.forEach(({ name, convert }) => {
+          if (name === "color") {
+            if (tag?.isFeatureSelected) {
+              raw.color =
+                typeof layer["3dtiles"]?.selectedFeatureColor === "string"
+                  ? toColor(layer["3dtiles"]?.selectedFeatureColor) ?? raw.color
+                  : raw.color;
+              return;
+            }
+
+            raw.color = Color.WHITE;
+          }
           const val = convertStyle(style?.[name], convert);
           if (val !== undefined) {
             raw[name] = val;
@@ -202,7 +216,12 @@ const useFeature = ({
           );
         }
 
-        attachTag(feature.raw, { layerId, featureId: feature.feature.id, computedFeature });
+        attachTag(feature.raw, {
+          layerId,
+          featureId: feature.feature.id,
+          computedFeature,
+          isFeatureSelected: tag?.isFeatureSelected,
+        });
 
         return computedFeature;
       }
@@ -230,7 +249,7 @@ const useFeature = ({
 
           await attachComputedFeature(feature);
 
-          // NOTE: Don't pass a large object
+          // NOTE: Don't pass a large object like `properties`.
           features.add(pick(feature.feature, ["id", "type", "range"]));
         });
         onComputedFeatureFetch?.(Array.from(features.values()), []);
@@ -253,6 +272,7 @@ const useFeature = ({
     skippedComputingAt.current = Date.now();
   }, [pickedAppearance]);
 
+  const prevUpdateStyle = useRef(layer?.layer._updateStyle);
   const computeFeatureAsync = useCallback(
     async (f: CachedFeature, startedComputingAt: number) =>
       new Promise(resolve =>
@@ -263,7 +283,11 @@ const useFeature = ({
           }
 
           const pickedProperties = pick(f.feature.properties, TILESET_APPEARANCE_FIELDS);
-          if (pickedAppearance && !isEqual(pickedProperties, pickedAppearance)) {
+          if (
+            pickedAppearance &&
+            (!isEqual(pickedProperties, pickedAppearance) ||
+              prevUpdateStyle.current !== layer?.layer._updateStyle)
+          ) {
             Object.entries(pickedAppearance).forEach(([k, v]) => {
               f.feature.properties[k] = v;
             });
@@ -272,7 +296,7 @@ const useFeature = ({
           resolve(undefined);
         }),
       ),
-    [pickedAppearance, attachComputedFeature],
+    [pickedAppearance, attachComputedFeature, layer?.layer._updateStyle],
   );
 
   const computeFeatures = useCallback(
@@ -296,9 +320,10 @@ const useFeature = ({
       if (!skipped) {
         await Promise.all(tempAsyncProcesses);
       }
+      prevUpdateStyle.current = layer?.layer._updateStyle;
       tempAsyncProcesses.length = 0;
     },
-    [computeFeatureAsync],
+    [computeFeatureAsync, layer?.layer._updateStyle],
   );
 
   const { requestRender } = useContext();
@@ -310,7 +335,7 @@ const useFeature = ({
       requestRender?.();
     };
     compute();
-  }, [computeFeatures, requestRender]);
+  }, [computeFeatures, requestRender, layer?.layer._updateStyle]);
 };
 
 export const useHooks = ({

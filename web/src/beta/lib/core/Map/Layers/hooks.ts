@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
   type MutableRefObject,
+  RefObject,
 } from "react";
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
@@ -20,7 +21,7 @@ import { objectFromGetter } from "@reearth/beta/utils/object";
 import { computeAtom, convertLegacyLayer, SelectedFeatureInfo } from "../../mantle";
 import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { FORCE_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../hooks";
-import { RequestingRenderMode } from "../types";
+import { EngineRef, RequestingRenderMode } from "../types";
 import { useGet } from "../utils";
 
 import { computedLayerKeys, layerKeys } from "./keys";
@@ -66,7 +67,14 @@ export type Ref = {
   show: (...layers: string[]) => void;
   select: (
     layerId: string | undefined,
-    featureId?: string,
+    reason?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
+  ) => void;
+  selectFeature: (
+    layers: {
+      layerId?: string;
+      featureId?: string[];
+    }[],
     reason?: LayerSelectionReason,
     info?: SelectedFeatureInfo,
   ) => void;
@@ -104,6 +112,7 @@ export default function useHooks({
   selectionReason,
   requestingRenderMode,
   onLayerSelect,
+  engineRef,
 }: {
   layers?: Layer[];
   ref?: ForwardedRef<Ref>;
@@ -121,6 +130,7 @@ export default function useHooks({
     reason: LayerSelectionReason | undefined,
     info: SelectedFeatureInfo | undefined,
   ) => void;
+  engineRef?: RefObject<EngineRef>;
 }) {
   const layerMap = useMemo(() => new Map<string, Layer>(), []);
   const [overriddenLayers, setOverridenLayers] = useState<OverriddenLayer[]>([]);
@@ -241,14 +251,6 @@ export default function useHooks({
     [findById],
   );
 
-  const { select, selectedLayer } = useSelection({
-    flattenedLayers,
-    selectedLayerId,
-    selectedReason: selectionReason,
-    getLazyLayer: findById,
-    onLayerSelect,
-  });
-
   const add = useCallback(
     (layer: NaiveLayer): LazyLayer | undefined => {
       if (!isValidLayer(layer)) return;
@@ -312,12 +314,15 @@ export default function useHooks({
     [layerMap],
   );
 
+  const overriddenLayersRef = useRef(overriddenLayers);
+  overriddenLayersRef.current = overriddenLayers;
+
   const override = useCallback(
     (id: string, layer?: (Partial<Layer> & { property?: any }) | null) => {
       const originalLayer = layerMap.get(id);
       if (!originalLayer) return;
 
-      const overriddenLayer: any = overriddenLayers.find(l => l.id === id);
+      const overriddenLayer: any = overriddenLayersRef.current.find(l => l.id === id);
       // prevents unnecessary copying of data value
       const dataValue = (layer as any)?.data?.value ?? overriddenLayer?.data?.value;
       const res = deepAssign(
@@ -373,8 +378,26 @@ export default function useHooks({
         return [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
       });
     },
-    [layerMap, overriddenLayers],
+    [layerMap],
   );
+
+  const updateStyle = useCallback(
+    (layerId: string) => {
+      const overriddenLayer = overriddenLayersRef.current.find(l => l.id === layerId);
+      override(layerId, { _updateStyle: (overriddenLayer?._updateStyle ?? -1) + 1 });
+    },
+    [override],
+  );
+
+  const { select, selectFeature, selectedLayer } = useSelection({
+    flattenedLayers,
+    selectedLayerId,
+    selectedReason: selectionReason,
+    getLazyLayer: findById,
+    onLayerSelect,
+    updateStyle,
+    engineRef,
+  });
 
   const deleteLayer = useCallback(
     (...ids: string[]) => {
@@ -499,7 +522,7 @@ export default function useHooks({
     [showLayer],
   );
 
-  const overriddenLayersRef = useCallback(() => overriddenLayers, [overriddenLayers]);
+  const overriddenLayersGetter = useCallback(() => overriddenLayers, [overriddenLayers]);
 
   useImperativeHandle(
     ref,
@@ -521,8 +544,9 @@ export default function useHooks({
       hide: hideLayers,
       show: showLayers,
       select,
+      selectFeature,
       selectedLayer,
-      overriddenLayers: overriddenLayersRef,
+      overriddenLayers: overriddenLayersGetter,
     }),
     [
       findById,
@@ -542,8 +566,9 @@ export default function useHooks({
       hideLayers,
       showLayers,
       select,
+      selectFeature,
       selectedLayer,
-      overriddenLayersRef,
+      overriddenLayersGetter,
     ],
   );
 
@@ -656,6 +681,8 @@ function useSelection({
   selectedReason: initialSelectedReason,
   getLazyLayer,
   onLayerSelect,
+  engineRef,
+  updateStyle,
 }: {
   flattenedLayers?: Layer[];
   selectedLayerId?: {
@@ -671,6 +698,8 @@ function useSelection({
     reason: LayerSelectionReason | undefined,
     info: SelectedFeatureInfo | undefined,
   ) => void;
+  engineRef?: RefObject<EngineRef>;
+  updateStyle: (layerId: string) => void;
 }) {
   const [[selectedLayerId, selectedReason, selectedFeatureInfo], setSelectedLayer] = useState<
     [
@@ -694,7 +723,7 @@ function useSelection({
 
   const selectedLayerForRef = useCallback(() => {
     return selectedLayerId?.layerId ? getLazyLayer(selectedLayerId.layerId) : undefined;
-  }, [getLazyLayer, selectedLayerId]);
+  }, [getLazyLayer, selectedLayerId?.layerId]);
 
   useEffect(() => {
     const actualSelectedLayer = selectedLayerForRef();
@@ -713,7 +742,14 @@ function useSelection({
       selectedReason,
       selectedFeatureInfo,
     );
-  }, [onLayerSelect, selectedLayerId, selectedReason, selectedLayerForRef, selectedFeatureInfo]);
+  }, [
+    onLayerSelect,
+    selectedLayerId?.layerId,
+    selectedLayerId?.featureId,
+    selectedReason,
+    selectedLayerForRef,
+    selectedFeatureInfo,
+  ]);
 
   useEffect(() => {
     setSelectedLayer(s =>
@@ -726,17 +762,11 @@ function useSelection({
   }, [flattenedLayers]);
 
   const select = useCallback(
-    (
-      layerId?: unknown,
-      featureId?: unknown,
-      options?: LayerSelectionReason,
-      info?: SelectedFeatureInfo,
-    ) => {
+    (layerId?: unknown, options?: LayerSelectionReason, info?: SelectedFeatureInfo) => {
       if (typeof layerId === "string")
         setSelectedLayer([
           {
             layerId: layerId || undefined,
-            featureId: typeof featureId === "string" ? featureId || undefined : undefined,
           },
           options,
           info,
@@ -747,8 +777,74 @@ function useSelection({
     [],
   );
 
+  const selectedFeatureIds = useRef<{ layerId: string; featureIds: string[] }[]>([]);
+  const selectFeature = useCallback(
+    (
+      layers: {
+        layerId?: string;
+        featureId?: string[];
+      }[],
+      options?: LayerSelectionReason,
+      info?: SelectedFeatureInfo,
+    ) => {
+      selectedFeatureIds.current.forEach(id => {
+        engineRef?.current?.unselectFeatures(id.layerId, id.featureIds);
+        updateStyle(id.layerId);
+      });
+
+      selectedFeatureIds.current = [];
+
+      if (layers.length === 1) {
+        const [{ layerId, featureId }] = layers;
+        // TODO: Support multi select feature for ReEarth
+        if (typeof layerId === "string" && (!featureId || featureId.length === 1))
+          setSelectedLayer(s =>
+            s[0]?.layerId !== layerId || s[0]?.featureId !== featureId?.[0]
+              ? [
+                  {
+                    layerId: layerId || undefined,
+                    featureId: featureId?.[0] || undefined,
+                  },
+                  options,
+                  info,
+                ]
+              : s,
+          );
+        else if (options) setSelectedLayer(s => [s[0], options, info]);
+        else
+          setSelectedLayer(s => (!s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined]));
+      } else {
+        setSelectedLayer(s => (!s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined]));
+      }
+
+      for (const { layerId, featureId } of layers) {
+        if (!layerId || !featureId) continue;
+
+        let selectedFeatureIdsIndex = selectedFeatureIds.current.findIndex(
+          f => f.layerId === layerId,
+        );
+        if (selectedFeatureIdsIndex === -1) {
+          selectedFeatureIdsIndex =
+            selectedFeatureIds.current.push({
+              layerId,
+              featureIds: [],
+            }) - 1;
+        }
+
+        if (featureId.length) {
+          engineRef?.current?.selectFeatures(layerId, featureId);
+          updateStyle(layerId);
+          selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds =
+            selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds.concat(featureId);
+        }
+      }
+    },
+    [engineRef, updateStyle],
+  );
+
   return {
     selectedLayer: selectedLayerForRef,
     select,
+    selectFeature,
   };
 }

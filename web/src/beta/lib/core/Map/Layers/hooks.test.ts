@@ -743,7 +743,26 @@ test("select", () => {
   handleLayerSelect.mockClear();
   result.current.ref.current?.select(
     "x",
-    "y",
+    { reason: "reason" },
+    { feature: { id: "abc" } as ComputedFeature },
+  );
+  rerender({ layers: initialLayers });
+  expect(result.current.ref.current?.selectedLayer()).toEqual({
+    id: "x",
+  });
+  expect(handleLayerSelect).toBeCalledWith(
+    "x",
+    undefined,
+    expect.any(Function),
+    { reason: "reason" },
+    { feature: { id: "abc" } },
+  );
+  expect(handleLayerSelect).toBeCalledTimes(1);
+
+  // select feature
+  handleLayerSelect.mockClear();
+  result.current.ref.current?.selectFeature(
+    [{ layerId: "x", featureId: ["y"] }],
     { reason: "reason" },
     { feature: { id: "abc" } as ComputedFeature },
   );
