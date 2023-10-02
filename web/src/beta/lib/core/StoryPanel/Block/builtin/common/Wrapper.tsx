@@ -19,6 +19,7 @@ type Spacing = {
 };
 
 type Props = {
+  name?: string;
   icon?: string;
   isSelected?: boolean;
   isEditable?: boolean;
@@ -33,6 +34,7 @@ type Props = {
 };
 
 const BlockWrapper: React.FC<Props> = ({
+  name,
   icon,
   isSelected,
   isEditable,
@@ -56,6 +58,7 @@ const BlockWrapper: React.FC<Props> = ({
     handleSettingsToggle,
     handleBlockClick,
   } = useHooks({
+    name,
     isSelected,
     property,
     onClick,

@@ -193,6 +193,7 @@ export const convertStory = (scene?: Partial<Scene>, storyId?: string) => {
   const storyBlocks = (blocks: StoryBlock[]) =>
     blocks.map(b => ({
       ...b,
+      name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.title,
       property: processProperty(undefined, b.property),
     }));
 
@@ -229,7 +230,7 @@ export const processProperty = (
     }),
     {},
   );
-  console.log("ALL ITEMS: ", allItems);
+  // console.log("ALL ITEMS: ", allItems);
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
       .map(([key, value]) => {
@@ -303,7 +304,7 @@ const processPropertyGroups = (
         // console.log("orig:", orig);
         const used = orig || parent;
         if (!used) return [key, valueFromGQL(schema.defaultValue, schema.type)];
-        console.log("schema:", schema);
+        // console.log("schema:", schema);
 
         const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
         const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;

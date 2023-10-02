@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Page } from "../types";
 
@@ -16,9 +16,8 @@ export default ({
   ) => Promise<void> | undefined;
 }) => {
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
-  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
 
-  const [items, setItems] = useState(storyBlocks ? storyBlocks : []);
+  const [storyBlocks, setStoryBlocks] = useState(page?.blocks ?? []);
 
   const handleBlockOpen = useCallback(
     (index: number) => {
@@ -35,11 +34,11 @@ export default ({
 
   const propertyId = useMemo(() => page?.propertyId, [page?.propertyId]);
 
-  const padding = useMemo(() => property.panel.padding, [property.panel.padding]);
+  const padding = useMemo(() => property?.panel?.padding, [property?.panel?.padding]);
 
-  const gap = useMemo(() => property.panel.gap, [property.panel.gap]);
+  const gap = useMemo(() => property?.panel?.gap, [property?.panel?.gap]);
 
-  const title = useMemo(() => property?.title?.title, [property.title.title]);
+  const title = useMemo(() => property?.title?.title, [property?.title?.title]);
 
   const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);
 
@@ -49,21 +48,16 @@ export default ({
     [onBlockCreate],
   );
 
-  useEffect(() => {
-    storyBlocks && setItems(storyBlocks);
-  }, [storyBlocks]);
-
   return {
     openBlocksIndex,
     titleId,
     title,
     propertyId,
     property,
-    storyBlocks,
     padding,
     gap,
-    items,
-    setItems,
+    storyBlocks,
+    setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
   };

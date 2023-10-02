@@ -10,6 +10,7 @@ const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
 
   return (
     <BlockWrapper
+      name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.property?.id}

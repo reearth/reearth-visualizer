@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 
-import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
@@ -13,8 +12,8 @@ export type Props = BlockProps;
 
 const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
-    () => getFieldValue(block?.property?.items ?? [], "text") as ValueTypes["string"],
-    [block?.property?.items],
+    () => block?.property?.text as ValueTypes["string"],
+    [block?.property?.text],
   );
 
   const { handlePropertyValueUpdate } = usePropertyValueUpdate();
@@ -29,6 +28,7 @@ const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
 
   return (
     <BlockWrapper
+      name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.propertyId}

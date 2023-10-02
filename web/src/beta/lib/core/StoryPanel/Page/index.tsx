@@ -39,7 +39,7 @@ type Props = {
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
 };
 
-const StoryPage: React.FC<Props> = ({
+const StoryPanel: React.FC<Props> = ({
   page,
   selectedPageId,
   installableStoryBlocks,
@@ -62,11 +62,10 @@ const StoryPage: React.FC<Props> = ({
     title,
     propertyId,
     property,
-    storyBlocks,
     padding,
     gap,
-    items,
-    setItems,
+    storyBlocks,
+    setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
   } = useHooks({
@@ -118,10 +117,10 @@ const StoryPage: React.FC<Props> = ({
           <DragAndDropList
             uniqueKey="storyPanel"
             gap={gap}
-            items={items}
+            items={storyBlocks}
             getId={item => item.id}
             onItemDrop={async (item, index) => {
-              setItems(old => {
+              setStoryBlocks(old => {
                 const items = [...old];
                 items.splice(
                   old.findIndex(o => o.id === item.id),
@@ -162,7 +161,7 @@ const StoryPage: React.FC<Props> = ({
   );
 };
 
-export default StoryPage;
+export default StoryPanel;
 
 const Wrapper = styled.div<{ padding?: Spacing; gap?: number; isEditable?: boolean }>`
   display: flex;

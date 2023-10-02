@@ -1,12 +1,13 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 type Props = {
+  name?: string;
   isSelected?: boolean;
   property?: any;
   onClick: (() => void) | undefined;
 };
 
-export default ({ isSelected, property, onClick }: Props) => {
+export default ({ name, isSelected, property, onClick }: Props) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -16,7 +17,7 @@ export default ({ isSelected, property, onClick }: Props) => {
     }
   }, [isSelected, editMode]);
 
-  const title = useMemo(() => property?.title, [property?.title]);
+  const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
