@@ -1,13 +1,15 @@
-import { MutableRefObject, useCallback } from "react";
+import { MutableRefObject, useCallback, useEffect, useState } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import StoryPanel, { type InstallableStoryBlock } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
-import type { Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
+
+import { Tab } from "../../Navbar";
 
 import useHooks from "./hooks";
 
@@ -20,7 +22,8 @@ export type Props = {
   // storytelling
   showStoryPanel?: boolean;
   selectedStory?: Story;
-  currentPageId?: string;
+  currentPage?: Page;
+  tab?: Tab;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
@@ -37,7 +40,8 @@ const Visualizer: React.FC<Props> = ({
   currentCamera,
   showStoryPanel,
   selectedStory,
-  currentPageId,
+  currentPage,
+  tab,
   isAutoScrolling,
   installableBlocks,
   onAutoScrollingChange,
@@ -89,6 +93,19 @@ const Visualizer: React.FC<Props> = ({
     [blocks],
   );
 
+  const [layersData, setLayersData] = useState(layers);
+
+  useEffect(() => {
+    const handleDisplayLayer = () => {
+      const filteredLayers = layers?.filter(layer => currentPage?.layersIds?.includes(layer.id));
+      const results =
+        currentPage?.layersIds?.length && tab === "story" ? filteredLayers : layers || [];
+      setLayersData(results);
+    };
+
+    handleDisplayLayer();
+  }, [currentPage, layers, tab]);
+
   return (
     <Wrapper>
       <CoreVisualizer
@@ -97,7 +114,7 @@ const Visualizer: React.FC<Props> = ({
         isEditable={!isBuilt}
         isBuilt={!!isBuilt}
         inEditor={!!inEditor}
-        layers={layers}
+        layers={layersData}
         widgetAlignSystem={widgets?.alignSystem}
         floatingWidgets={widgets?.floating}
         widgetLayoutConstraint={widgets?.layoutConstraint}
@@ -135,7 +152,7 @@ const Visualizer: React.FC<Props> = ({
         {showStoryPanel && (
           <StoryPanel
             selectedStory={selectedStory}
-            currentPageId={currentPageId}
+            currentPageId={currentPage?.id}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
             isEditable={!!inEditor}
