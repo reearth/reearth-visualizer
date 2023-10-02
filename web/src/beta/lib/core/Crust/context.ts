@@ -69,7 +69,7 @@ export function widgetContextFromMapRef({
     onFlyTo: (...args) => engine()?.flyTo(...args),
     onLookAt: (...args) => engine()?.lookAt(...args),
     onLayerSelect: (layerId, featureId, options) => {
-      layers()?.selectFeature(
+      layers()?.selectFeatures(
         [{ layerId, featureId: featureId ? [featureId] : undefined }],
         options,
       );

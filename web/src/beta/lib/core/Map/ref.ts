@@ -85,7 +85,7 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   override: 1,
   replace: 1,
   select: 1,
-  selectFeature: 1,
+  selectFeatures: 1,
   selectedLayer: 1,
   show: 1,
   walk: 1,

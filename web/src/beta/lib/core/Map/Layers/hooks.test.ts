@@ -761,7 +761,7 @@ test("select", () => {
 
   // select feature
   handleLayerSelect.mockClear();
-  result.current.ref.current?.selectFeature(
+  result.current.ref.current?.selectFeatures(
     [{ layerId: "x", featureId: ["y"] }],
     { reason: "reason" },
     { feature: { id: "abc" } as ComputedFeature },

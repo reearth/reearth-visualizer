@@ -311,7 +311,7 @@ export function commonReearth({
   selectedFeature,
   layerSelectionReason,
   selectLayer,
-  selectFeature,
+  selectFeatures,
   showLayer,
   hideLayer,
   addLayer,
@@ -357,7 +357,7 @@ export function commonReearth({
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   selectLayer: LayersRef["select"];
-  selectFeature: LayersRef["selectFeature"];
+  selectFeatures: LayersRef["selectFeatures"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
@@ -487,8 +487,8 @@ export function commonReearth({
       get select() {
         return selectLayer;
       },
-      get selectFeature() {
-        return selectFeature;
+      get selectFeatures() {
+        return selectFeatures;
       },
       get show() {
         return showLayer;

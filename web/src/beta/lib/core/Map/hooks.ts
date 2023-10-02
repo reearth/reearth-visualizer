@@ -86,7 +86,7 @@ export default function ({
       reason?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
-      layersRef.current?.selectFeature(
+      layersRef.current?.selectFeatures(
         [{ layerId, featureId: featureId ? [featureId] : undefined }],
         reason,
         info,

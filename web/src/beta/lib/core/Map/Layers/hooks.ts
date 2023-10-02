@@ -70,7 +70,7 @@ export type Ref = {
     reason?: LayerSelectionReason,
     info?: SelectedFeatureInfo,
   ) => void;
-  selectFeature: (
+  selectFeatures: (
     layers: {
       layerId?: string;
       featureId?: string[];
@@ -389,7 +389,7 @@ export default function useHooks({
     [override],
   );
 
-  const { select, selectFeature, selectedLayer } = useSelection({
+  const { select, selectFeatures, selectedLayer } = useSelection({
     flattenedLayers,
     selectedLayerId,
     selectedReason: selectionReason,
@@ -544,7 +544,7 @@ export default function useHooks({
       hide: hideLayers,
       show: showLayers,
       select,
-      selectFeature,
+      selectFeatures,
       selectedLayer,
       overriddenLayers: overriddenLayersGetter,
     }),
@@ -566,7 +566,7 @@ export default function useHooks({
       hideLayers,
       showLayers,
       select,
-      selectFeature,
+      selectFeatures,
       selectedLayer,
       overriddenLayersGetter,
     ],
@@ -778,7 +778,7 @@ function useSelection({
   );
 
   const selectedFeatureIds = useRef<{ layerId: string; featureIds: string[] }[]>([]);
-  const selectFeature = useCallback(
+  const selectFeatures = useCallback(
     (
       layers: {
         layerId?: string;
@@ -845,6 +845,6 @@ function useSelection({
   return {
     selectedLayer: selectedLayerForRef,
     select,
-    selectFeature,
+    selectFeatures,
   };
 }

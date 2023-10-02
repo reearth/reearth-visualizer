@@ -281,9 +281,9 @@ export default function ({
     [layersRef],
   );
 
-  const selectFeature = useCallback(
+  const selectFeatures = useCallback(
     (layers: { layerId?: string; featureId?: string[] }[]) => {
-      layersRef?.selectFeature(layers);
+      layersRef?.selectFeatures(layers);
     },
     [layersRef],
   );
@@ -337,7 +337,7 @@ export default function ({
         hideLayer,
         addLayer,
         selectLayer,
-        selectFeature,
+        selectFeatures,
         overrideLayerProperty,
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
@@ -392,7 +392,7 @@ export default function ({
       hideLayer,
       addLayer,
       selectLayer,
-      selectFeature,
+      selectFeatures,
       overrideLayerProperty,
       overrideScenePropertyCommon,
       layersInViewport,
