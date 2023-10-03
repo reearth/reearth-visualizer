@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import useHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
+import useHooks from "@reearth/beta/features/Assets/AssetHooks/hooks";
 import { Asset } from "@reearth/beta/features/Assets/types";
 
 import { InnerPage } from "../common";
@@ -23,8 +23,6 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
     handleGetMoreAssets,
     handleFileSelect,
     handleSortChange,
-    handleSearchTerm,
-    removeAssets,
   } = useHooks({ workspaceId });
 
   const handleSelect = useCallback(
@@ -49,11 +47,9 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
         sort={sort}
         searchTerm={searchTerm}
         onFileUpload={handleFileSelect}
-        onRemove={removeAssets}
         onGetMore={handleGetMoreAssets}
         onSelect={handleSelect}
         onSortChange={handleSortChange}
-        onSearch={handleSearchTerm}
       />
     </InnerPage>
   );

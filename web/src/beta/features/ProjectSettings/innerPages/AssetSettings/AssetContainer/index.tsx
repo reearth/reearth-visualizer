@@ -3,9 +3,9 @@ import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
+import useHooks from "@reearth/beta/features/Assets/AssetHooks/hooks";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
-import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -14,7 +14,6 @@ import AssetDeleteModal from "../AssetDeleteModal";
 
 export type Props = {
   workspaceId?: string;
-  allowDeletion?: boolean;
   className?: string;
   assets?: Asset[];
   selectedAssets?: Asset[];
@@ -22,35 +21,28 @@ export type Props = {
   hasMoreAssets?: boolean;
   sort?: { type?: SortType | null; reverse?: boolean };
   searchTerm?: string;
-  onCreateAssets?: (files: FileList) => void;
-  onRemove?: (assetIds: string[]) => void;
   onGetMore?: () => void;
   onAssetUrlSelect?: (asset?: string) => void;
   onSelect?: (asset?: Asset) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
-  onSearch?: (term?: string) => void;
   onFileUpload?: () => void;
 };
 
 const AssetContainer: React.FC<Props> = ({
+  workspaceId,
   assets,
   selectedAssets,
   hasMoreAssets,
   isLoading,
-  sort,
   searchTerm,
   onFileUpload,
-  onRemove,
   onGetMore,
   onAssetUrlSelect,
   onSelect,
-  onSortChange,
-  onSearch,
 }) => {
   const t = useT();
   const {
     deleteModalVisible,
-
     localSearchTerm,
     wrapperRef,
     onScrollToBottom,
@@ -62,18 +54,7 @@ const AssetContainer: React.FC<Props> = ({
     openDeleteModal,
     closeDeleteModal,
     handleRemove,
-  } = useManageAssets({
-    sort,
-    selectedAssets,
-    searchTerm,
-    isLoading,
-    hasMoreAssets,
-    onGetMore,
-    onSortChange,
-    onAssetUrlSelect,
-    onRemove,
-    onSearch,
-  });
+  } = useHooks({ workspaceId: workspaceId, onAssetSelect: onAssetUrlSelect });
 
   return (
     <Wrapper>

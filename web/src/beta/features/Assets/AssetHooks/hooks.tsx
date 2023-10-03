@@ -1,9 +1,11 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useMemo, useEffect } from "react";
 import useFileInput from "use-file-input";
 
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
+import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
 
 import { FILE_FORMATS, IMAGE_FORMATS } from "../constants";
 
@@ -54,6 +56,37 @@ export default ({
     sort: toGQLEnum(sort?.type),
     keyword: searchTerm,
   });
+
+  const t = useT();
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm ?? "");
+  const openDeleteModal = useCallback(() => setDeleteModalVisible(true), []);
+  const closeDeleteModal = useCallback(() => setDeleteModalVisible(false), []);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const sortOptions: { key: string; label: string }[] = useMemo(
+    () => [
+      { key: "date", label: t("Last Uploaded") },
+      { key: "date-reverse", label: t("First Uploaded") },
+      { key: "name", label: t("A To Z") },
+      { key: "name-reverse", label: t("Z To A") },
+      { key: "size", label: t("Size Small to Large") },
+      { key: "size-reverse", label: t("Size Large to Small") },
+    ],
+    [t],
+  );
+
+  const iconChoice =
+    sort?.type === "name"
+      ? sort?.reverse
+        ? "filterNameReverse"
+        : "filterName"
+      : sort?.type === "size"
+      ? sort?.reverse
+        ? "filterSizeReverse"
+        : "filterSize"
+      : sort?.reverse
+      ? "filterTimeReverse"
+      : "filterTime";
 
   const handleGetMoreAssets = useCallback(async () => {
     if (hasMoreAssets && !isGettingMore.current) {
@@ -108,9 +141,44 @@ export default ({
     multiple: true,
   });
 
+  const handleRemove = useCallback(() => {
+    if (selectedAssets?.length) {
+      removeAssets?.(selectedAssets.map(a => a.id));
+      handleFileSelect?.();
+      setDeleteModalVisible(false);
+    }
+  }, [selectedAssets, removeAssets, handleFileSelect]);
+
+  const handleReverse = useCallback(() => {
+    handleSortChange?.(undefined, !sort?.reverse);
+  }, [handleSortChange, sort?.reverse]);
+
+  const handleSearchInputChange = useCallback(
+    (value: string) => {
+      setLocalSearchTerm(value);
+    },
+    [setLocalSearchTerm],
+  );
+  const handleSearch = useCallback(() => {
+    if (!localSearchTerm || localSearchTerm.length < 1) {
+      handleSearchTerm?.(undefined);
+    } else {
+      handleSearchTerm?.(localSearchTerm);
+    }
+  }, [localSearchTerm, handleSearchTerm]);
+
+  const isLoading = useMemo(() => {
+    return loading ?? isRefetching;
+  }, [isRefetching, loading]);
+
+  useEffect(() => {
+    if (wrapperRef.current && !isLoading && hasMoreAssets)
+      autoFillPage(wrapperRef, handleGetMoreAssets);
+  }, [handleGetMoreAssets, hasMoreAssets, isLoading]);
+
   return {
     assets,
-    isLoading: loading ?? isRefetching,
+    isLoading,
     hasMoreAssets,
     sort,
     searchTerm,
@@ -121,5 +189,17 @@ export default ({
     removeAssets,
     handleSortChange,
     handleSearchTerm,
+    onScrollToBottom,
+    deleteModalVisible,
+    openDeleteModal,
+    closeDeleteModal,
+    sortOptions,
+    iconChoice,
+    handleRemove,
+    handleReverse,
+    handleSearchInputChange,
+    handleSearch,
+    localSearchTerm,
+    wrapperRef,
   };
 };

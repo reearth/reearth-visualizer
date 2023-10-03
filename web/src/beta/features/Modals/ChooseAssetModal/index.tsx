@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
@@ -6,60 +6,50 @@ import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
+import useHooks from "@reearth/beta/features/Assets/AssetHooks/hooks";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
+import { useNotification, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
   assetType?: "file" | "image";
-  assets?: Asset[];
-  selectedAssets?: Asset[];
-  isLoading?: boolean;
-  hasMoreAssets?: boolean;
-  searchTerm?: string;
   open?: boolean;
-  workspaceId?: string;
-  localSearchTerm?: string;
-  wrapperRef?: React.RefObject<HTMLDivElement>;
-  onGetMore?: () => void;
-  onSelectAsset?: (asset?: Asset) => void;
   onSelect?: (value: string) => void;
-  onClose: () => void;
-  onScrollToBottom?: (
-    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-    onLoadMore?: (() => void) | undefined,
-    threshold?: number,
-  ) => void;
-  handleSearchInputChange?: (value: string) => void;
-  handleSearch?: () => void;
+  currentWorkspace?: Workspace;
+  currentValue?: string;
+  onModalClose: () => void;
 };
 
 const ChooseAssetModal: React.FC<Props> = ({
   className,
+  currentWorkspace,
+  currentValue,
   assetType,
   open,
-  assets,
-  selectedAssets,
-  hasMoreAssets,
-  isLoading,
-  searchTerm,
-  localSearchTerm,
-  wrapperRef,
-  onClose,
-  onGetMore,
   onSelect,
-  onSelectAsset,
-  onScrollToBottom,
-  handleSearchInputChange,
-  handleSearch,
+  onModalClose,
 }) => {
   const t = useT();
 
   const [, setNotification] = useNotification();
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    searchTerm,
+    selectedAssets,
+    selectAsset,
+    localSearchTerm,
+    wrapperRef,
+    onScrollToBottom,
+    handleSearchInputChange,
+    handleSearch,
+    handleGetMoreAssets,
+  } = useHooks({ workspaceId: currentWorkspace?.id });
 
   const filteredAssets = useMemo(() => {
     if (!assetType) {
@@ -72,6 +62,18 @@ const ChooseAssetModal: React.FC<Props> = ({
     });
   }, [assetType, assets]);
 
+  const handleReset = useCallback(() => {
+    const selectedAsset = assets?.find(a => a.url === currentValue);
+    if (selectedAsset) {
+      selectAsset([selectedAsset]);
+    }
+  }, [currentValue, assets, selectAsset]);
+
+  const onClose = useCallback(() => {
+    onModalClose();
+    handleReset();
+  }, [handleReset, onModalClose]);
+
   const handleSelectButtonClick = useCallback(() => {
     if (selectedAssets && selectedAssets.length > 0) {
       onSelect?.(selectedAssets[0].url);
@@ -83,6 +85,17 @@ const ChooseAssetModal: React.FC<Props> = ({
       });
     }
   }, [onClose, onSelect, selectedAssets, setNotification, t]);
+
+  const onSelectAsset = useCallback(
+    (asset?: Asset) => {
+      if (!asset) return;
+      selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
+    },
+    [selectedAssets, selectAsset],
+  );
+  useEffect(() => {
+    handleReset();
+  }, [handleReset]);
 
   return (
     <StyledModal
@@ -128,7 +141,9 @@ const ChooseAssetModal: React.FC<Props> = ({
         ) : (
           <AssetListWrapper
             ref={wrapperRef}
-            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, onGetMore)}>
+            onScroll={e =>
+              !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
+            }>
             <AssetList>
               {filteredAssets?.map(a => (
                 <AssetCard
@@ -185,7 +200,7 @@ const SearchButton = styled(Button)`
 const AssetListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const AssetList = styled.div`
