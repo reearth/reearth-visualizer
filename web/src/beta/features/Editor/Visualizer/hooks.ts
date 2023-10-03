@@ -250,8 +250,8 @@ export default ({
   useEffect(() => {
     const handleDisplayLayer = () => {
       const filteredLayers = layers?.filter(layer => currentPage?.layersIds?.includes(layer.id));
-      const results =
-        currentPage?.layersIds?.length && showStoryPanel ? filteredLayers : layers || [];
+      const layerPages = (currentPage?.layersIds?.length ?? 0) > 0 ? filteredLayers : [];
+      const results = showStoryPanel ? layerPages : layers;
       setLayersData(results);
     };
 
