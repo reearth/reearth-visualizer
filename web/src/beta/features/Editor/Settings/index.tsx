@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import CheckBoxField from "@reearth/beta/components/CheckboxField";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
@@ -12,6 +10,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import { Tab } from "../../Navbar";
+
+import useHooks from "./hooks";
 
 type Props = {
   propertyId: string;
@@ -35,43 +35,11 @@ const Settings: React.FC<Props> = ({
   onPageUpdate,
 }) => {
   const t = useT();
-  const [layerChecked, setLayerChecked] = useState<string[]>([]);
-  const [allLayersChecked, setAllLayersChecked] = useState(false);
-
-  useEffect(() => {
-    if (selectedPage && layers) {
-      const selectedLayerIds = selectedPage.layersIds || [];
-      setLayerChecked(selectedLayerIds);
-    }
-  }, [selectedPage, layers]);
-
-  const pageId = selectedPage?.id;
-  const handleLayerCheck = (layerId: string) => {
-    if (!pageId) return;
-    setLayerChecked(prev => {
-      const updatedLayers = prev.includes(layerId)
-        ? prev.filter(id => id !== layerId)
-        : [...prev, layerId];
-
-      onPageUpdate?.(pageId, updatedLayers);
-      const allLayersSelected = layers?.every(layer => updatedLayers.includes(layer.id));
-      setAllLayersChecked(allLayersSelected);
-      return updatedLayers ? updatedLayers : prev;
-    });
-  };
-
-  const handleAllLayersCheck = () => {
-    if (!pageId || !layers) return;
-    if (allLayersChecked) {
-      setLayerChecked([]);
-    } else {
-      const allLayerIds = layers.map(layer => layer.id);
-      setLayerChecked(allLayerIds);
-    }
-    setAllLayersChecked(prev => !prev);
-    onPageUpdate?.(pageId, allLayersChecked ? [] : layers.map(layer => layer.id));
-  };
-
+  const { allLayersChecked, layerChecked, handleAllLayersCheck, handleLayerCheck } = useHooks({
+    layers,
+    selectedPage,
+    onPageUpdate,
+  });
   return (
     <Wrapper>
       {tab == "story" && (
