@@ -49,15 +49,12 @@ const Modal: React.FC<Props> = ({
       }));
       setTabsFields(convertedFields);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { handleActivate, fields: tabs } = useManageSwitchState({
     fields: TabsFields,
   });
-
-  console.log("tab", tabs);
 
   const handleTabChange = useCallback(
     (tabId: string) => {
