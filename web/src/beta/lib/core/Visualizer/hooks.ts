@@ -20,8 +20,8 @@ import type {
   DefaultInfobox,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
+import { TimelineAPI } from "../Map/useTimelineManager";
 
-import useTimelineManager from "./useTimelineManager";
 import useViewport from "./useViewport";
 
 const viewportMobileMaxWidth = 768;
@@ -159,10 +159,11 @@ export default function useHooks(
   }, [infobox]);
 
   // timeline manager
-  const timelineManager = useTimelineManager({
-    init: sceneProperty?.timeline,
-    engineRef: mapRef.current?.engine,
-  });
+  // const { timelineManager, timelineAPI } = useTimelineManager({
+  //   init: sceneProperty?.timeline,
+  //   engineRef: mapRef.current?.engine,
+  // });
+  const timelineAPI: TimelineAPI = useRef();
 
   // scene
   const [overriddenSceneProperty, originalOverrideSceneProperty] =
@@ -175,10 +176,26 @@ export default function useHooks(
         const filteredTimeline = clone(property.timeline);
         delete filteredTimeline.visible;
         if (Object.keys(filteredTimeline).length > 0) {
-          timelineManager?.commit({
-            cmd: "UPDATE",
-            payload: filteredTimeline,
-            commiter: {
+          timelineAPI?.current?.commit({
+            cmd: "SET_TIME",
+            payload: {
+              start: filteredTimeline.start,
+              stop: filteredTimeline.stop,
+              current: filteredTimeline.current,
+            },
+            committer: {
+              source: "overrideSceneProperty",
+              id: pluginId,
+            },
+          });
+          timelineAPI?.current?.commit({
+            cmd: "SET_OPTIONS",
+            payload: {
+              stepType: filteredTimeline.stepType,
+              multiplier: filteredTimeline.multiplier,
+              rangeType: filteredTimeline.rangeType,
+            },
+            committer: {
               source: "overrideSceneProperty",
               id: pluginId,
             },
@@ -189,7 +206,7 @@ export default function useHooks(
       // Just remember we will NOT use the timeline from overridden scene property directly.
       originalOverrideSceneProperty(pluginId, property);
     },
-    [timelineManager, originalOverrideSceneProperty],
+    [timelineAPI, originalOverrideSceneProperty],
   );
 
   // clock
@@ -315,7 +332,7 @@ export default function useHooks(
     infobox,
     isLayerDragging,
     shouldRender,
-    timelineManager,
+    timelineAPI,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

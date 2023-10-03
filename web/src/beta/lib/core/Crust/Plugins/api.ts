@@ -9,6 +9,7 @@ import {
 } from "@reearth/beta/lib/core/Map";
 import { merge } from "@reearth/beta/utils/object";
 
+import { TimelineAPI } from "../../Map/useTimelineManager";
 import type { Block } from "../Infobox";
 import type { MapRef } from "../types";
 import type { Widget, WidgetLocationOptions } from "../Widgets";
@@ -54,6 +55,7 @@ export function exposed({
   moveWidget,
   pluginPostMessage,
   clientStorage,
+  timelineAPI,
 }: {
   render: (
     html: string,
@@ -93,6 +95,7 @@ export function exposed({
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
   clientStorage: ClientStorage;
+  timelineAPI?: TimelineAPI;
 }): GlobalThis {
   return merge({
     console: {
@@ -172,6 +175,107 @@ export function exposed({
               startEventLoop?.();
               return result;
             };
+          },
+        }),
+        clock: merge(commonReearth.clock, {
+          get play() {
+            return () => {
+              timelineAPI?.current?.commit({
+                cmd: "PLAY",
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+            };
+          },
+          get pause() {
+            return () =>
+              timelineAPI?.current?.commit({
+                cmd: "PAUSE",
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setTime() {
+            return (time: {
+              start?: Date | string;
+              stop?: Date | string;
+              current?: Date | string;
+            }) =>
+              timelineAPI?.current?.commit({
+                cmd: "SET_TIME",
+                payload: { ...time },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setSpeed() {
+            return (speed: number) =>
+              timelineAPI?.current?.commit({
+                cmd: "SET_OPTIONS",
+                payload: { multiplier: speed },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setStepType() {
+            return (stepType: "fixed" | "rate") =>
+              timelineAPI?.current?.commit({
+                cmd: "SET_OPTIONS",
+                payload: { stepType },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setRangeType() {
+            return (rangeType: "unbounded" | "clamped" | "bounced") =>
+              timelineAPI?.current?.commit({
+                cmd: "SET_OPTIONS",
+                payload: { rangeType },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
           },
         }),
         plugin: {

@@ -34,6 +34,7 @@ import type {
   LayerEditEvent,
 } from "..";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
+import { TimelineManager } from "../../Map/useTimelineManager";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
@@ -57,6 +58,7 @@ export default ({
   featureFlags,
   requestingRenderMode,
   shouldRender,
+  timelineManager,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -79,6 +81,7 @@ export default ({
   featureFlags: number;
   requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
+  timelineManager?: TimelineManager;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -722,12 +725,13 @@ export default ({
   const context = useMemo<FeatureContext>(
     () => ({
       selectionReason,
+      timelineManager,
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       requestRender: engineAPI.requestRender,
     }),
-    [selectionReason, engineAPI, onLayerEdit],
+    [selectionReason, engineAPI, onLayerEdit, timelineManager],
   );
 
   useEffect(() => {
@@ -802,6 +806,23 @@ export default ({
           : NO_REQUEST_RENDER;
     }
   }, [isLayerDragging, shouldRender, requestingRenderMode]);
+
+  // cesium timeline & animation widget
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer) return;
+    if (viewer.animation?.container) {
+      (viewer.animation.container as HTMLDivElement).style.visibility = property?.timeline?.visible
+        ? "visible"
+        : "hidden";
+    }
+    if (viewer.timeline?.container) {
+      (viewer.timeline.container as HTMLDivElement).style.visibility = property?.timeline?.visible
+        ? "visible"
+        : "hidden";
+    }
+    viewer.forceResize();
+  }, [property]);
 
   return {
     backgroundColor,

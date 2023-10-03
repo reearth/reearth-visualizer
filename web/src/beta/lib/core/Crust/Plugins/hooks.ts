@@ -10,6 +10,7 @@ import {
   type TickEventCallback,
 } from "@reearth/beta/lib/core/Map";
 
+import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 
 import { commonReearth } from "./api";
@@ -20,7 +21,7 @@ import usePluginInstances from "./usePluginInstances";
 
 export type SelectedReearthEventType = Pick<
   ReearthEventType,
-  "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents | "layeredit"
+  "cameramove" | "select" | "tick" | "timelinecommit" | "resize" | keyof MouseEvents | "layeredit"
 >;
 
 export default function ({
@@ -38,7 +39,7 @@ export default function ({
   floatingWidgets,
   camera,
   interactionMode,
-  timelineManager,
+  timelineAPI,
   overrideInteractionMode,
   useExperimentalSandbox,
   overrideSceneProperty,
@@ -64,21 +65,67 @@ export default function ({
   const getCamera = useGet(camera);
   const getClock = useCallback(() => {
     return {
-      startTime: timelineManager?.timeline?.start,
-      stopTime: timelineManager?.timeline?.stop,
-      currentTime: timelineManager?.timeline?.current,
-      playing: !!timelineManager?.timeline?.animation,
-      paused: !timelineManager?.timeline?.animation,
-      speed: timelineManager?.timeline?.multiplier,
+      get startTime() {
+        return timelineAPI?.current?.timeline?.start;
+      },
+      get stopTime() {
+        return timelineAPI?.current?.timeline?.stop;
+      },
+      get currentTime() {
+        return timelineAPI?.current?.timeline?.current;
+      },
+      get playing() {
+        return !!timelineAPI?.current?.options?.animation;
+      },
+      get paused() {
+        return !timelineAPI?.current?.options?.animation;
+      },
+      get speed() {
+        return timelineAPI?.current?.options?.multiplier;
+      },
       play: () => {
-        timelineManager?.commit({ cmd: "PLAY", commiter: { source: "pluginAPI" } });
+        timelineAPI?.current?.commit({
+          cmd: "PLAY",
+          committer: { source: "pluginAPI", id: "window" },
+        });
       },
       pause: () => {
-        timelineManager?.commit({ cmd: "PAUSE", commiter: { source: "pluginAPI" } });
+        timelineAPI?.current?.commit({
+          cmd: "PAUSE",
+          committer: { source: "pluginAPI", id: "window" },
+        });
       },
-      tick: timelineManager?.tick,
+      setTime: (time: { start?: Date | string; stop?: Date | string; current?: Date | string }) => {
+        timelineAPI?.current?.commit({
+          cmd: "SET_TIME",
+          payload: { ...time },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      setSpeed: (speed: number) => {
+        timelineAPI?.current?.commit({
+          cmd: "SET_OPTIONS",
+          payload: { multiplier: speed },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      setStepType: (stepType: "rate" | "fixed") => {
+        timelineAPI?.current?.commit({
+          cmd: "SET_OPTIONS",
+          payload: { stepType },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      setRangeType: (rangeType: "unbounded" | "clamped" | "bounced") => {
+        timelineAPI?.current?.commit({
+          cmd: "SET_OPTIONS",
+          payload: { rangeType },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      tick: timelineAPI?.current?.tick,
     };
-  }, [timelineManager]);
+  }, [timelineAPI]);
   const getInteractionMode = useGet(
     useMemo<InteractionMode>(
       () => ({ mode: interactionMode, override: overrideInteractionMode }),
@@ -356,6 +403,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
+      timelineAPI,
       useExperimentalSandbox,
     }),
     [
@@ -406,6 +454,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
+      timelineAPI,
       useExperimentalSandbox,
       findFeatureById,
       findFeaturesByIds,
@@ -445,9 +494,16 @@ export default function ({
 
   const onTickEvent = useCallback(
     (fn: TickEventCallback) => {
-      mapRef?.current?.engine.onTick?.(fn);
+      timelineAPI?.current?.onTick(fn);
     },
-    [mapRef],
+    [timelineAPI],
+  );
+
+  const onTimelineCommitEvent = useCallback(
+    (fn: (committer: TimelineCommitter) => void) => {
+      timelineAPI?.current?.onCommit(fn);
+    },
+    [timelineAPI],
   );
 
   useEffect(() => {
@@ -480,7 +536,10 @@ export default function ({
     onTickEvent(e => {
       emit("tick", e);
     });
-  }, [emit, onMouseEvent, onLayerEdit, onTickEvent]);
+    onTimelineCommitEvent(e => {
+      emit("timelinecommit", e);
+    });
+  }, [emit, onMouseEvent, onLayerEdit, onTickEvent, onTimelineCommitEvent]);
 
   // expose plugin API for developers
   useEffect(() => {

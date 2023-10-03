@@ -4,8 +4,8 @@ import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { Clock, LayerEditEvent, LayerSelectionReason } from "../Map";
+import type { TimelineAPI } from "../Map/useTimelineManager";
 import type { Viewport } from "../Visualizer";
-import type { TimelineManager } from "../Visualizer/useTimelineManager";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
@@ -92,7 +92,7 @@ export type Props = {
   externalPlugin: ExternalPluginProps;
   useExperimentalSandbox?: boolean;
   // timeline manager
-  timelineManager?: TimelineManager;
+  timelineAPI?: TimelineAPI;
   // widget events
   onWidgetLayoutUpdate?: (
     id: string,
@@ -153,7 +153,7 @@ export default function Crust({
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
-  timelineManager,
+  timelineAPI,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
@@ -183,7 +183,7 @@ export default function Crust({
     camera,
     sceneProperty,
     selectedLayerId,
-    timelineManager,
+    timelineAPI,
   });
 
   return (
@@ -206,7 +206,7 @@ export default function Crust({
       overrideInteractionMode={overrideInteractionMode}
       useExperimentalSandbox={useExperimentalSandbox}
       overrideSceneProperty={overrideSceneProperty}
-      timelineManager={timelineManager}
+      timelineAPI={timelineAPI}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}

@@ -191,7 +191,7 @@ const Visualizer = memo(
         isLayerDragging,
         infobox,
         shouldRender,
-        timelineManager,
+        timelineAPI,
         handleLayerSelect,
         handleBlockSelect,
         handleCameraChange,
@@ -265,7 +265,7 @@ const Visualizer = memo(
                   mapRef={mapRef}
                   externalPlugin={{ pluginBaseUrl, pluginProperty }}
                   useExperimentalSandbox={useExperimentalSandbox}
-                  timelineManager={timelineManager}
+                  timelineAPI={timelineAPI}
                   onWidgetLayoutUpdate={onWidgetLayoutUpdate}
                   onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
                   onWidgetAreaSelect={onWidgetAreaSelect}
@@ -301,7 +301,7 @@ const Visualizer = memo(
                   layerSelectionReason={layerSelectionReason}
                   small={small}
                   ready={ready}
-                  timelineManager={timelineManager}
+                  timelineAPI={timelineAPI}
                   onCameraChange={handleCameraChange}
                   onLayerDrag={handleLayerDrag}
                   onLayerDrop={handleLayerDrop}

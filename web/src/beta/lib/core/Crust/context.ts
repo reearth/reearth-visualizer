@@ -1,6 +1,6 @@
 import { RefObject, useMemo } from "react";
 
-import { TimelineCommiter, TimelineManager } from "../Visualizer/useTimelineManager";
+import { TimelineAPI, TimelineCommitter } from "../Map/useTimelineManager";
 
 import { Camera, MapRef, SceneProperty } from "./types";
 import { Context as WidgetContext } from "./Widgets";
@@ -10,7 +10,7 @@ export const useWidgetContext = ({
   camera,
   selectedLayerId,
   sceneProperty,
-  timelineManager,
+  timelineAPI,
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -19,9 +19,9 @@ export const useWidgetContext = ({
         camera,
         selectedLayerId,
         sceneProperty,
-        timelineManager,
+        timelineAPI,
       }),
-    [camera, mapRef, sceneProperty, selectedLayerId, timelineManager],
+    [camera, mapRef, sceneProperty, selectedLayerId, timelineAPI],
   );
 
 export function widgetContextFromMapRef({
@@ -29,7 +29,7 @@ export function widgetContextFromMapRef({
   camera,
   selectedLayerId,
   sceneProperty,
-  timelineManager,
+  timelineAPI,
 }: {
   mapRef?: RefObject<MapRef>;
   camera?: Camera;
@@ -38,7 +38,7 @@ export function widgetContextFromMapRef({
     featureId?: string;
   };
   sceneProperty?: SceneProperty;
-  timelineManager?: TimelineManager;
+  timelineAPI?: TimelineAPI;
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
@@ -48,7 +48,7 @@ export function widgetContextFromMapRef({
     get clock() {
       return engine()?.getClock();
     },
-    timelineManager,
+    timelineAPI,
     initialCamera: sceneProperty?.default?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,
@@ -71,34 +71,34 @@ export function widgetContextFromMapRef({
     onFlyTo: (...args) => engine()?.flyTo(...args),
     onLookAt: (...args) => engine()?.lookAt(...args),
     onLayerSelect: (...args) => layers()?.select(...args),
-    onPause: (commiter?: TimelineCommiter) =>
-      timelineManager?.commit({
+    onPause: (committer?: TimelineCommitter) =>
+      timelineAPI?.current?.commit({
         cmd: "PAUSE",
-        commiter: { source: commiter?.source ?? "widgetContext", id: commiter?.id },
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),
-    onPlay: (commiter?: TimelineCommiter) =>
-      timelineManager?.commit({
+    onPlay: (committer?: TimelineCommitter) =>
+      timelineAPI?.current?.commit({
         cmd: "PLAY",
-        commiter: { source: commiter?.source ?? "widgetContext", id: commiter?.id },
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),
-    onSpeedChange: (speed, commiter?: TimelineCommiter) =>
-      timelineManager?.commit({
-        cmd: "UPDATE",
+    onSpeedChange: (speed, committer?: TimelineCommitter) =>
+      timelineAPI?.current?.commit({
+        cmd: "SET_OPTIONS",
         payload: {
           multiplier: speed,
           stepType: "rate",
         },
-        commiter: { source: commiter?.source ?? "widgetContext", id: commiter?.id },
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),
-    onTick: cb => timelineManager?.onTick(cb),
-    removeTickEventListener: cb => timelineManager?.offTick(cb),
-    onTimeChange: (time, commiter?: TimelineCommiter) =>
-      timelineManager?.commit({
-        cmd: "UPDATE",
+    onTick: cb => timelineAPI?.current?.onTick(cb),
+    removeTickEventListener: cb => timelineAPI?.current?.offTick(cb),
+    onTimeChange: (time, committer?: TimelineCommitter) =>
+      timelineAPI?.current?.commit({
+        cmd: "SET_TIME",
         payload: {
           current: time,
         },
-        commiter: { source: commiter?.source ?? "widgetContext", id: commiter?.id },
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),
     onZoomIn: (...args) => engine()?.zoomIn(...args),
     onZoomOut: (...args) => engine()?.zoomOut(...args),

@@ -1,20 +1,17 @@
 import { Clock as CesiumClock, ClockRange, ClockStep, JulianDate } from "cesium";
-import { useCallback, useEffect, useMemo } from "react";
-import { Clock, useCesium } from "resium";
+import { useCallback, useMemo } from "react";
+import { Clock } from "resium";
 
-import type { SceneProperty } from "../..";
-import { type TimelineManager } from "../../../Visualizer/useTimelineManager";
+import { type TimelineManager } from "../../../Map/useTimelineManager";
 
 export type Props = {
-  property?: SceneProperty;
   timelineManager?: TimelineManager;
 };
 
-export default function ReearthClock({ property, timelineManager }: Props): JSX.Element | null {
-  const { visible } = property?.timeline ?? {};
-  const { start, stop, current, animation, stepType, rangeType, multiplier, step } =
-    timelineManager?.overriddenTimeline ?? {};
-  console.log("aaa", animation);
+export default function ReearthClock({ timelineManager }: Props): JSX.Element | null {
+  const { start, stop, current } = timelineManager?.computedTimeline ?? {};
+  const { animation, stepType, rangeType, multiplier } = timelineManager?.options ?? {};
+
   const startTime = useMemo(() => (start ? JulianDate.fromDate(start) : undefined), [start]);
   const stopTime = useMemo(() => (stop ? JulianDate.fromDate(stop) : undefined), [stop]);
   const currentTime = useMemo(
@@ -23,9 +20,7 @@ export default function ReearthClock({ property, timelineManager }: Props): JSX.
   );
   const clockStep =
     stepType === "fixed" ? ClockStep.TICK_DEPENDENT : ClockStep.SYSTEM_CLOCK_MULTIPLIER;
-  const clockMultiplier = stepType === "fixed" ? step ?? 1 : multiplier ?? 1;
-
-  const { viewer } = useCesium();
+  const clockMultiplier = multiplier ?? 1;
 
   const handleTick = useCallback(
     (clock: CesiumClock) => {
@@ -40,23 +35,6 @@ export default function ReearthClock({ property, timelineManager }: Props): JSX.
     },
     [timelineManager],
   );
-
-  useEffect(() => {
-    if (!viewer) return;
-    if (viewer.animation?.container) {
-      (viewer.animation.container as HTMLDivElement).style.visibility = visible
-        ? "visible"
-        : "hidden";
-    }
-    if (viewer.timeline?.container) {
-      (viewer.timeline.container as HTMLDivElement).style.visibility = visible
-        ? "visible"
-        : "hidden";
-    }
-    viewer.forceResize();
-  }, [viewer, visible]);
-
-  console.log("animation", animation);
 
   return (
     <Clock

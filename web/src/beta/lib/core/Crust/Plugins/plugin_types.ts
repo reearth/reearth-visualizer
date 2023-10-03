@@ -20,6 +20,7 @@ import type {
   Feature,
 } from "@reearth/beta/lib/core/Map";
 
+import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
 import { Block } from "../Infobox";
 import { InteractionModeType } from "../types";
@@ -176,6 +177,14 @@ export type Clock = {
   readonly tick?: () => Date | void;
   readonly play?: () => void;
   readonly pause?: () => void;
+  readonly setTime?: (time: {
+    start?: Date | string;
+    stop?: Date | string;
+    current?: Date | string;
+  }) => void;
+  readonly setSpeed?: (speed: number) => void;
+  readonly setRangeType?: (rangeType: "unbounded" | "clamped" | "bounced") => void;
+  readonly setStepType?: (stepType: "rate" | "fixed") => void;
 };
 
 export type InteractionMode = {
@@ -210,6 +219,7 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
+  timelinecommit: [props: TimelineCommitter];
   resize: [props: ViewportSize];
   modalclose: [];
   popupclose: [];

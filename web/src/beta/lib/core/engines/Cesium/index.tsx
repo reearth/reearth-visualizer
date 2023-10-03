@@ -86,6 +86,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     featureFlags,
     requestingRenderMode,
     shouldRender,
+    timelineManager,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
@@ -137,9 +138,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       onMouseLeave={mouseEventHandles.mouseleave}
       onWheel={mouseEventHandles.wheel}>
       <Event onMount={handleMount} onUnmount={handleUnmount} />
-      <Clock property={property} timelineManager={timelineManager} />
+      <Clock timelineManager={timelineManager} />
       <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
-      <Indicator property={property} />
+      <Indicator property={property} timelineManager={timelineManager} />
       <ScreenSpaceEventHandler useDefault>
         {/* remove default click event */}
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />

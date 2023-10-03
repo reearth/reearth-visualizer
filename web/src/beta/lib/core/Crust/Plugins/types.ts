@@ -13,7 +13,7 @@ import type {
 } from "@reearth/beta/lib/core/Map";
 import type { Viewport } from "@reearth/beta/lib/core/Visualizer";
 
-import { TimelineManager } from "../../Visualizer/useTimelineManager";
+import { TimelineAPI } from "../../Map/useTimelineManager";
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 
@@ -36,7 +36,7 @@ export type Props = PropsWithChildren<{
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
   useExperimentalSandbox?: boolean;
-  timelineManager?: TimelineManager;
+  timelineAPI?: TimelineAPI;
   overrideSceneProperty: (id: string, property: any) => void;
   camera?: Camera;
   interactionMode: InteractionModeType;
@@ -48,6 +48,7 @@ export type Context = {
   reearth: CommonReearth;
   pluginInstances: PluginInstances;
   clientStorage: ClientStorage;
+  timelineAPI?: TimelineAPI;
   useExperimentalSandbox?: boolean;
   overrideSceneProperty: (id: string, property: any) => void;
 };

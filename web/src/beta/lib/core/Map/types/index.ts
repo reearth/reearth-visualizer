@@ -18,13 +18,13 @@ import type {
   Feature,
 } from "../../mantle";
 import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
-import type { TimelineManager } from "../../Visualizer/useTimelineManager";
 import type {
   FeatureComponentType,
   ClusterComponentType,
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
+import type { TimelineAPI, TimelineManager } from "../useTimelineManager";
 
 export type {
   FeatureComponentProps,
@@ -131,6 +131,7 @@ export type EngineProps = {
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
+  timelineAPI?: TimelineAPI;
   timelineManager?: TimelineManager;
   onLayerSelect?: (
     layerId: string | undefined,

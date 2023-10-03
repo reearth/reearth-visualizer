@@ -1,4 +1,4 @@
-import { Entity, type DataSource, Color } from "cesium";
+import { Entity, type DataSource, Color, JulianDate } from "cesium";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { KmlDataSource, CzmlDataSource, GeoJsonDataSource, useCesium } from "resium";
 
@@ -73,7 +73,7 @@ export default function Resource({
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
 
-  const { requestRender } = useContext();
+  const { requestRender, timelineManager } = useContext();
 
   const handleChange = useCallback(
     (e: DataSource) => {
@@ -107,33 +107,50 @@ export default function Resource({
   );
 
   const initialClock = useRef({
-    start: viewer?.clock.startTime,
-    stop: viewer?.clock.stopTime,
-    current: viewer?.clock.currentTime,
+    start: timelineManager?.timeline?.start,
+    stop: timelineManager?.timeline?.stop,
+    current: timelineManager?.timeline?.current,
   });
   const handleLoad = useCallback(
     (ds: DataSource) => {
-      if (!viewer?.clock) return;
       if (!updateClock) {
         if (
           initialClock.current.current &&
           initialClock.current.start &&
           initialClock.current.stop
         ) {
-          viewer.clock.currentTime = initialClock.current.current;
-          viewer.clock.startTime = initialClock.current.start;
-          viewer.clock.stopTime = initialClock.current.stop;
+          timelineManager?.commit({
+            cmd: "SET_TIME",
+            payload: {
+              start: initialClock.current.start,
+              stop: initialClock.current.stop,
+              current: initialClock.current.current,
+            },
+            committer: {
+              source: "featureResource",
+              id: layer?.id,
+            },
+          });
         }
         return;
       }
       if (ds.clock) {
-        viewer.clock.currentTime = ds.clock.currentTime;
-        viewer.clock.startTime = ds.clock.startTime;
-        viewer.clock.stopTime = ds.clock.stopTime;
+        timelineManager?.commit({
+          cmd: "SET_TIME",
+          payload: {
+            start: JulianDate.toDate(ds.clock.currentTime),
+            stop: JulianDate.toDate(ds.clock.startTime),
+            current: JulianDate.toDate(ds.clock.stopTime),
+          },
+          committer: {
+            source: "featureResource",
+            id: layer?.id,
+          },
+        });
       }
       requestRender?.();
     },
-    [updateClock, viewer?.clock, requestRender],
+    [updateClock, timelineManager, layer?.id, requestRender],
   );
 
   // convert hexCodeColorString to ColorValue?s
