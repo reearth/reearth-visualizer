@@ -1,5 +1,5 @@
 import { useReactiveVar } from "@apollo/client";
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
@@ -12,6 +12,7 @@ import {
   useStorytellingFetcher,
   usePropertyFetcher,
 } from "@reearth/services/api";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -31,10 +32,14 @@ export default ({
   sceneId,
   isBuilt,
   storyId,
+  currentPage,
+  showStoryPanel,
 }: {
   sceneId?: string;
   isBuilt?: boolean;
   storyId?: string;
+  currentPage?: Page;
+  showStoryPanel?: boolean;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
@@ -240,6 +245,19 @@ export default ({
     return !!sceneProperty?.experimental?.experimental_sandbox;
   }, [sceneProperty]);
 
+  const [layersData, setLayersData] = useState(layers);
+
+  useEffect(() => {
+    const handleDisplayLayer = () => {
+      const filteredLayers = layers?.filter(layer => currentPage?.layersIds?.includes(layer.id));
+      const results =
+        currentPage?.layersIds?.length && showStoryPanel ? filteredLayers : layers || [];
+      setLayersData(results);
+    };
+
+    handleDisplayLayer();
+  }, [currentPage, layers, showStoryPanel]);
+
   return {
     sceneId,
     rootLayerId,
@@ -262,6 +280,7 @@ export default ({
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
+    layersData,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,

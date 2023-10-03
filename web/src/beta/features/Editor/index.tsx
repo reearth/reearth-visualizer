@@ -139,7 +139,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 inEditor
                 visualizerRef={visualizerRef}
                 sceneId={sceneId}
-                tab={tab}
                 showStoryPanel={selectedProjectType === "story"}
                 selectedStory={selectedStory}
                 currentPage={currentPage}

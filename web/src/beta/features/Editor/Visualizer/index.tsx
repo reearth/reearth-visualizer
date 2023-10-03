@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useState } from "react";
+import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
@@ -8,8 +8,6 @@ import type { Camera } from "@reearth/beta/utils/value";
 import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
-
-import { Tab } from "../../Navbar";
 
 import useHooks from "./hooks";
 
@@ -23,7 +21,6 @@ export type Props = {
   showStoryPanel?: boolean;
   selectedStory?: Story;
   currentPage?: Page;
-  tab?: Tab;
   isAutoScrolling?: boolean;
   installableBlocks?: InstallableStoryBlock[];
   onAutoScrollingChange: (isScrolling: boolean) => void;
@@ -41,7 +38,6 @@ const Visualizer: React.FC<Props> = ({
   showStoryPanel,
   selectedStory,
   currentPage,
-  tab,
   isAutoScrolling,
   installableBlocks,
   onAutoScrollingChange,
@@ -67,6 +63,7 @@ const Visualizer: React.FC<Props> = ({
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
+    layersData,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -82,7 +79,7 @@ const Visualizer: React.FC<Props> = ({
     handleDropLayer,
     zoomToLayer,
     handleMount,
-  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id });
+  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, currentPage, showStoryPanel });
 
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
@@ -92,21 +89,6 @@ const Visualizer: React.FC<Props> = ({
     ),
     [blocks],
   );
-
-  const [layersData, setLayersData] = useState(layers);
-
-  useEffect(() => {
-    const handleDisplayLayer = () => {
-      const filteredLayers = layers?.filter(layer => currentPage?.layersIds?.includes(layer.id));
-      const results =
-        currentPage?.layersIds?.length && (tab === "story" || showStoryPanel)
-          ? filteredLayers
-          : layers || [];
-      setLayersData(results);
-    };
-
-    handleDisplayLayer();
-  }, [currentPage, layers, tab, showStoryPanel]);
 
   return (
     <Wrapper>
