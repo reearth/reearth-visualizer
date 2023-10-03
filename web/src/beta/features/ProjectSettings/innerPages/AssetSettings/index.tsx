@@ -21,7 +21,6 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
     selectedAssets,
     selectAsset,
     handleGetMoreAssets,
-    handleFileSelect,
     handleSortChange,
   } = useHooks({ workspaceId });
 
@@ -46,7 +45,6 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
         hasMoreAssets={hasMoreAssets}
         sort={sort}
         searchTerm={searchTerm}
-        onFileUpload={handleFileSelect}
         onGetMore={handleGetMoreAssets}
         onSelect={handleSelect}
         onSortChange={handleSortChange}

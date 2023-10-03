@@ -93,6 +93,7 @@ const ChooseAssetModal: React.FC<Props> = ({
     },
     [selectedAssets, selectAsset],
   );
+
   useEffect(() => {
     handleReset();
   }, [handleReset]);

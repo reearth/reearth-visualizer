@@ -6,6 +6,7 @@ import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import useHooks from "@reearth/beta/features/Assets/AssetHooks/hooks";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
+import useFileUploaderHook from "@reearth/beta/features/Assets/useAssetUploader/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -25,7 +26,6 @@ export type Props = {
   onAssetUrlSelect?: (asset?: string) => void;
   onSelect?: (asset?: Asset) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
-  onFileUpload?: () => void;
 };
 
 const AssetContainer: React.FC<Props> = ({
@@ -35,7 +35,6 @@ const AssetContainer: React.FC<Props> = ({
   hasMoreAssets,
   isLoading,
   searchTerm,
-  onFileUpload,
   onGetMore,
   onAssetUrlSelect,
   onSelect,
@@ -56,6 +55,10 @@ const AssetContainer: React.FC<Props> = ({
     handleRemove,
   } = useHooks({ workspaceId: workspaceId, onAssetSelect: onAssetUrlSelect });
 
+  const { handleFileSelect } = useFileUploaderHook({
+    workspaceId: workspaceId,
+    onAssetSelect: onAssetUrlSelect,
+  });
   return (
     <Wrapper>
       <NavBar>
@@ -79,7 +82,7 @@ const AssetContainer: React.FC<Props> = ({
             icon="uploadSimple"
             size="small"
             buttonType={"secondary"}
-            onClick={onFileUpload}
+            onClick={handleFileSelect}
           />
           <Button
             text={t("Delete")}

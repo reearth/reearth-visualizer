@@ -111,16 +111,6 @@ export default ({
     [workspaceId, useCreateAssets, onAssetSelect],
   );
 
-  const removeAssets = useCallback(
-    async (assetIds: string[]) => {
-      const { status } = await useRemoveAssets(assetIds);
-      if (status === "success") {
-        selectAsset([]);
-      }
-    },
-    [useRemoveAssets],
-  );
-
   const handleSortChange = useCallback(
     (type?: string, reverse?: boolean) => {
       if (!type && reverse === undefined) return;
@@ -141,13 +131,16 @@ export default ({
     multiple: true,
   });
 
-  const handleRemove = useCallback(() => {
+  const handleRemove = useCallback(async () => {
     if (selectedAssets?.length) {
-      removeAssets?.(selectedAssets.map(a => a.id));
+      const { status } = await useRemoveAssets(selectedAssets.map(a => a.id));
+      if (status === "success") {
+        selectAsset([]);
+      }
       handleFileSelect?.();
       setDeleteModalVisible(false);
     }
-  }, [selectedAssets, removeAssets, handleFileSelect]);
+  }, [selectedAssets, useRemoveAssets, handleFileSelect]);
 
   const handleReverse = useCallback(() => {
     handleSortChange?.(undefined, !sort?.reverse);
@@ -185,10 +178,7 @@ export default ({
     selectedAssets,
     selectAsset,
     handleGetMoreAssets,
-    handleFileSelect,
-    removeAssets,
     handleSortChange,
-    handleSearchTerm,
     onScrollToBottom,
     deleteModalVisible,
     openDeleteModal,
