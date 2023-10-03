@@ -36,6 +36,7 @@ const Settings: React.FC<Props> = ({
 }) => {
   const t = useT();
   const [layerChecked, setLayerChecked] = useState<string[]>([]);
+  const [allLayersChecked, setAllLayersChecked] = useState(false);
 
   useEffect(() => {
     if (selectedPage && layers) {
@@ -46,30 +47,53 @@ const Settings: React.FC<Props> = ({
 
   const pageId = selectedPage?.id;
   const handleLayerCheck = (layerId: string) => {
+    if (!pageId) return;
     setLayerChecked(prev => {
       const updatedLayers = prev.includes(layerId)
         ? prev.filter(id => id !== layerId)
         : [...prev, layerId];
 
-      pageId && onPageUpdate?.(pageId, updatedLayers);
-
-      return updatedLayers;
+      onPageUpdate?.(pageId, updatedLayers);
+      const allLayersSelected = layers?.every(layer => updatedLayers.includes(layer.id));
+      setAllLayersChecked(allLayersSelected);
+      return updatedLayers ? updatedLayers : prev;
     });
+  };
+
+  const handleAllLayersCheck = () => {
+    if (!pageId || !layers) return;
+    if (allLayersChecked) {
+      setLayerChecked([]);
+    } else {
+      const allLayerIds = layers.map(layer => layer.id);
+      setLayerChecked(allLayerIds);
+    }
+    setAllLayersChecked(prev => !prev);
+    onPageUpdate?.(pageId, allLayersChecked ? [] : layers.map(layer => layer.id));
   };
 
   return (
     <Wrapper>
       {tab == "story" && (
         <SidePanelSectionField title={t("Layers")}>
-          {layers?.map((layer, idx) => (
-            <Layer key={idx}>
+          <LayerWrapper>
+            <AllLayers>
               <CheckBoxField
-                onClick={() => handleLayerCheck(layer.id)}
-                checked={layerChecked.includes(layer.id)}
-                label={layer.title}
+                label={t("All Layers")}
+                onClick={handleAllLayersCheck}
+                checked={allLayersChecked}
               />
-            </Layer>
-          ))}
+            </AllLayers>
+            {layers?.map((layer, idx) => (
+              <Layer key={idx}>
+                <CheckBoxField
+                  onClick={() => handleLayerCheck(layer.id)}
+                  checked={layerChecked.includes(layer.id)}
+                  label={layer.title}
+                />
+              </Layer>
+            ))}
+          </LayerWrapper>
         </SidePanelSectionField>
       )}
 
@@ -101,6 +125,16 @@ const Item = styled.div`
   border-radius: 4px;
 `;
 
+const LayerWrapper = styled.div`
+  border: 1px solid ${({ theme }) => theme.outline.weak};
+  border-radius: 4px;
+`;
+
 const Layer = styled.div`
-  padding: 4px;
+  padding: 6px 4px;
+`;
+
+const AllLayers = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
+  padding: 6px 4px;
 `;
