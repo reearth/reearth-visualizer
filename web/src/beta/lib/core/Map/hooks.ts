@@ -50,8 +50,9 @@ export default function ({
       mapRef({
         engineRef,
         layersRef,
+        timelineManagerRef,
       }),
-    [],
+    [timelineManagerRef],
   );
 
   // Order in which selectedLayerId prop propagates from the outside: Map -> Layers -> Engine
