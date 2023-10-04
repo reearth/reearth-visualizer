@@ -180,9 +180,9 @@ export type Clock = {
   readonly play?: () => void;
   readonly pause?: () => void;
   readonly setTime?: (time: {
-    start?: Date | string;
-    stop?: Date | string;
-    current?: Date | string;
+    start: Date | string;
+    stop: Date | string;
+    current: Date | string;
   }) => void;
   readonly setSpeed?: (speed: number) => void;
   readonly setRangeType?: (rangeType: "unbounded" | "clamped" | "bounced") => void;

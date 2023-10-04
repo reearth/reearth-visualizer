@@ -169,30 +169,51 @@ export default function useHooks(
         const filteredTimeline = clone(property.timeline);
         delete filteredTimeline.visible;
         if (Object.keys(filteredTimeline).length > 0) {
-          timelineManagerRef?.current?.commit({
-            cmd: "SET_TIME",
-            payload: {
-              start: filteredTimeline.start,
-              stop: filteredTimeline.stop,
-              current: filteredTimeline.current,
-            },
-            committer: {
-              source: "overrideSceneProperty",
-              id: pluginId,
-            },
-          });
-          timelineManagerRef?.current?.commit({
-            cmd: "SET_OPTIONS",
-            payload: {
-              stepType: filteredTimeline.stepType,
-              multiplier: filteredTimeline.multiplier,
-              rangeType: filteredTimeline.rangeType,
-            },
-            committer: {
-              source: "overrideSceneProperty",
-              id: pluginId,
-            },
-          });
+          if (
+            filteredTimeline.current !== undefined ||
+            filteredTimeline.start !== undefined ||
+            filteredTimeline.stop !== undefined
+          ) {
+            timelineManagerRef?.current?.commit({
+              cmd: "SET_TIME",
+              payload: {
+                start: filteredTimeline.start,
+                stop: filteredTimeline.stop,
+                current: filteredTimeline.current,
+              },
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+          if (
+            filteredTimeline.multiplier !== undefined ||
+            filteredTimeline.stepType !== undefined ||
+            filteredTimeline.rangeType !== undefined
+          ) {
+            timelineManagerRef?.current?.commit({
+              cmd: "SET_OPTIONS",
+              payload: {
+                stepType: filteredTimeline.stepType,
+                multiplier: filteredTimeline.multiplier,
+                rangeType: filteredTimeline.rangeType,
+              },
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+          if (filteredTimeline.animation !== undefined) {
+            timelineManagerRef?.current?.commit({
+              cmd: filteredTimeline.animation ? "PLAY" : "PAUSE",
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
         }
       }
       originalOverrideSceneProperty(pluginId, property);
