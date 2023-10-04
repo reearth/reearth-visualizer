@@ -78,16 +78,19 @@ const FONT_FAMILY_OPTIONS: [string, string][] = [
 
 const FONT_SIZE_OPTIONS: [string, string][] = [
   ["10px", "10px"],
-  ["11px", "11px"],
   ["12px", "12px"],
-  ["13px", "13px"],
   ["14px", "14px"],
-  ["15px", "15px"],
   ["16px", "16px"],
-  ["17px", "17px"],
   ["18px", "18px"],
-  ["19px", "19px"],
   ["20px", "20px"],
+  ["22px", "22px"],
+  ["24px", "24px"],
+  ["26px", "26px"],
+  ["28px", "28px"],
+  ["32px", "32px"],
+  ["36px", "36px"],
+  ["40px", "40px"],
+  ["64px", "64px"],
 ];
 
 const LINE_HEIGHT_OPTIONS: [string, string][] = [
@@ -497,7 +500,7 @@ export default function ToolbarPlugin({
   const [activeEditor, setActiveEditor] = useState(editor);
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>("paragraph");
   const [rootType, setRootType] = useState<keyof typeof rootTypeToRootName>("root");
-  const [fontSize, setFontSize] = useState<string>("15px");
+  const [fontSize, setFontSize] = useState<string>("16px");
   const [fontColor, setFontColor] = useState<string>("#000");
   const [lineHeight, setLineHeight] = useState<string>("1.2");
   const [bgColor, setBgColor] = useState<string>("#fff");
@@ -590,7 +593,7 @@ export default function ToolbarPlugin({
         }
       }
       // Handle buttons
-      setFontSize($getSelectionStyleValueForProperty(selection, "font-size", "15px"));
+      setFontSize($getSelectionStyleValueForProperty(selection, "font-size", "16px"));
       setFontColor($getSelectionStyleValueForProperty(selection, "color", "#000"));
       setBgColor($getSelectionStyleValueForProperty(selection, "background-color", "#fff"));
       setFontFamily($getSelectionStyleValueForProperty(selection, "font-family", "Arial"));
