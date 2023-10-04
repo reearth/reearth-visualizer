@@ -49,7 +49,7 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 		Scene:        NewScene(r, g),
 		Tag:          NewTag(r),
 		StoryTelling: NewStorytelling(r, g),
-		Workspace:    accountinteractor.NewWorkspace(ar),
+		Workspace:    accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
 		User:         accountinteractor.NewUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain),
 	}
 }
