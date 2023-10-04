@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { Story } from "@reearth/beta/lib/core/StoryPanel/types";
 
-export type { Story, Page } from "@reearth/beta/lib/core/StoryPanel/types";
+export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 export default ({
   selectedStory,

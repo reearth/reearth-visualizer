@@ -14,6 +14,7 @@ import {
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
+import { Story, StoryBlock, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 import { valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import {
@@ -31,8 +32,8 @@ import {
   PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
-  StoryPage,
-  StoryBlock,
+  StoryPage as GqlStoryPage,
+  StoryBlock as GqlStoryBlock,
 } from "@reearth/services/gql";
 
 type P = { [key in string]: any };
@@ -179,26 +180,32 @@ export const convertWidgets = (
   };
 };
 
-export const convertStory = (scene?: Partial<Scene>, storyId?: string) => {
+export const convertStory = (scene?: Partial<Scene>, storyId?: string): Story | undefined => {
   const story = scene?.stories?.find(s => s.id === storyId);
   if (!story) return undefined;
 
-  const storyPages = (pages: StoryPage[]) =>
+  const storyPages = (pages: GqlStoryPage[]): StoryPage[] =>
     pages.map(p => ({
-      ...p,
+      id: p.id,
+      title: p.title,
+      propertyId: p.propertyId,
       property: processProperty(undefined, p.property),
       blocks: storyBlocks(p.blocks),
     }));
 
-  const storyBlocks = (blocks: StoryBlock[]) =>
+  const storyBlocks = (blocks: GqlStoryBlock[]): StoryBlock[] =>
     blocks.map(b => ({
-      ...b,
+      id: b.id,
+      pluginId: b.pluginId,
+      extensionId: b.extensionId,
       name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.title,
+      propertyId: b.propertyId,
       property: processProperty(undefined, b.property),
     }));
 
   return {
-    ...story,
+    id: story.id,
+    title: story.title,
     pages: storyPages(story.pages),
   };
 };
@@ -230,22 +237,22 @@ export const processProperty = (
     }),
     {},
   );
-  // console.log("ALL ITEMS: ", allItems);
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
       .map(([key, value]) => {
         const { schema, orig, parent } = value;
+        if (!orig && !parent) {
+          return [
+            key,
+            processPropertyGroups(schema, undefined, undefined, linkedDatasetId, datasets),
+          ];
+        }
+
         if (
           (!orig || orig.__typename === "PropertyGroupList") &&
           (!parent || parent.__typename === "PropertyGroupList")
         ) {
-          console.log("HERE", value);
           const used = orig || parent;
-
-          // HERE WE WANT TO GO THROUGH THE SCEHMA AHDN TEHN REDUCE BASED ONIF THERE IS A VALUE
-          // THIS IS BEACUSE WE ARE MISSING OUT ON ANY DEFAULT VALUES
-          // I STILL DON"T KNOW WHY WE DONT CARE ABOUT DEFAULTVALUES UP UNTIL NOW.......
-
           return [
             key,
             used?.groups.map(g => ({
@@ -259,10 +266,8 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroup") &&
           (!parent || parent.__typename === "PropertyGroup")
         ) {
-          console.log("ThHERJALEKJSLDFKJSDAFLKJ", value);
           return [key, processPropertyGroups(schema, parent, orig, linkedDatasetId, datasets)];
         }
-        console.log("key: ", key, value);
         return [key, null];
       })
       .filter(([, value]) => !!value),
@@ -300,11 +305,10 @@ const processPropertyGroups = (
   return Object.fromEntries(
     Object.entries(allFields)
       .map(([key, { schema, parent, orig }]) => {
-        // console.log("parentma:", parent);
-        // console.log("orig:", orig);
         const used = orig || parent;
-        if (!used) return [key, valueFromGQL(schema.defaultValue, schema.type)];
-        // console.log("schema:", schema);
+        if (!used) {
+          return [key, schema.defaultValue ? valueFromGQL(schema.defaultValue, schema.type) : null];
+        }
 
         const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
         const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;

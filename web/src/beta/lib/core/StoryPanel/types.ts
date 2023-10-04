@@ -1,22 +1,23 @@
 export type Story = {
   id: string;
   title?: string;
-  pages: Page[];
+  pages: StoryPage[];
 };
 
-export type Page = {
+export type StoryPage = {
   id: string;
   title?: string;
   swipeable?: boolean;
-  propertyId: string;
-  property: any;
-  blocks: Block[];
+  propertyId?: string;
+  property?: unknown;
+  blocks: StoryBlock[];
 };
 
-export type Block = {
+export type StoryBlock = {
   id: string;
+  name?: string | null;
   pluginId: string;
   extensionId: string;
-  propertyId: string;
-  property: any;
+  propertyId?: string;
+  property?: unknown;
 };

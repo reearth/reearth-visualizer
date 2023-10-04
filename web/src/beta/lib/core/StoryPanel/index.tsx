@@ -7,7 +7,7 @@ import StoryContent from "./PanelContent";
 
 export const storyPanelWidth = 442;
 
-export { type Story, type Page } from "./hooks";
+export { type Story, type StoryPage } from "./hooks";
 
 export type InstallableStoryBlock = {
   name: string;
