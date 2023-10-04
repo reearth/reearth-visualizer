@@ -39,7 +39,7 @@ const Modal: React.FC<Props> = ({
   onTabChange,
   sidebarTabs,
 }) => {
-  const [TabsFields] = useState<SwitchField<SidebarTab>[]>(
+  const [tabsFields] = useState<SwitchField<SidebarTab>[]>(
     sidebarTabs?.map((tab, index) => ({
       active: index === 0,
       ...tab,
@@ -47,7 +47,7 @@ const Modal: React.FC<Props> = ({
   );
 
   const { handleActivate, fields: tabs } = useManageSwitchState({
-    fields: TabsFields,
+    fields: tabsFields,
   });
 
   const handleTabChange = useCallback(
