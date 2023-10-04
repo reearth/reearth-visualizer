@@ -96,17 +96,6 @@ export default ({
     }
   }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
-  // const handleAssetsCreate = useCallback(
-  //   async (files?: FileList) => {
-  //     if (!files) return;
-  //     const result = await useCreateAssets({ teamId: workspaceId ?? "", file: files });
-  //     const assetUrl = result?.data[0].data?.createAsset?.asset.url;
-
-  //     onAssetSelect?.(assetUrl);
-  //   },
-  //   [workspaceId, useCreateAssets, onAssetSelect],
-  // );
-
   const onSortChange = useCallback(
     (type?: string, reverse?: boolean) => {
       if (!type && reverse === undefined) return;
@@ -122,18 +111,12 @@ export default ({
     setSearchTerm(term);
   }, []);
 
-  // const handleFileSelect = useFileInput(files => handleAssetsCreate?.(files), {
-  //   accept: IMAGE_FORMATS + "," + FILE_FORMATS,
-  //   multiple: true,
-  // });
-
   const onRemove = useCallback(async () => {
     if (selectedAssets?.length) {
       const { status } = await useRemoveAssets(selectedAssets.map(a => a.id));
       if (status === "success") {
         selectAsset([]);
       }
-      // handleFileSelect?.();
       setDeleteModalVisible(false);
     }
   }, [selectedAssets, useRemoveAssets]);
