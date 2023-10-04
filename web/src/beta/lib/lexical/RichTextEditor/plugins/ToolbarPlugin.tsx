@@ -28,7 +28,7 @@ import {
   $getNearestNodeOfType,
   mergeRegister,
 } from "@lexical/utils";
-import type { ElementFormatType, LexicalEditor } from "lexical";
+import type { ElementFormatType, LexicalEditor, RangeSelection } from "lexical";
 import {
   $createParagraphNode,
   $getSelection,
@@ -78,16 +78,19 @@ const FONT_FAMILY_OPTIONS: [string, string][] = [
 
 const FONT_SIZE_OPTIONS: [string, string][] = [
   ["10px", "10px"],
-  ["11px", "11px"],
   ["12px", "12px"],
-  ["13px", "13px"],
   ["14px", "14px"],
-  ["15px", "15px"],
   ["16px", "16px"],
-  ["17px", "17px"],
   ["18px", "18px"],
-  ["19px", "19px"],
   ["20px", "20px"],
+  ["22px", "22px"],
+  ["24px", "24px"],
+  ["26px", "26px"],
+  ["28px", "28px"],
+  ["32px", "32px"],
+  ["36px", "36px"],
+  ["40px", "40px"],
+  ["64px", "64px"],
 ];
 
 const LINE_HEIGHT_OPTIONS: [string, string][] = [
@@ -103,6 +106,51 @@ const LINE_HEIGHT_OPTIONS: [string, string][] = [
   ["1.9", "1.9"],
   ["2.0", "2.0"],
 ];
+
+// Fix for $patchStyleText not updating the style correctly
+// https://github.com/facebook/lexical/issues/4491#issuecomment-1701890592
+function $customPatchStyleText(selection: RangeSelection, cssProperty: string, cssValue: string) {
+  $patchStyleText(selection, { [cssProperty]: cssValue });
+
+  const newStyle = replaceCssStyle(selection.style, cssProperty, cssValue);
+  selection.setStyle(newStyle);
+}
+
+function replaceCssStyle(
+  existingCssStyle: string,
+  cssProperty: string,
+  newCssValue: string,
+): string {
+  const cssArr = existingCssStyle
+    .split(";")
+    .filter(prop => !!prop)
+    .map(prop => prop.trim());
+
+  let found = false;
+
+  const newCssArr = cssArr.map(prop => {
+    const propertySplit = prop.split(":");
+    if (propertySplit.length !== 2) {
+      return "";
+    }
+
+    const [property, value] = propertySplit.map(p => p.trim());
+
+    if (property === cssProperty) {
+      found = true;
+      return `${property}: ${newCssValue}`;
+    } else {
+      return `${property}: ${value}`;
+    }
+  });
+
+  // If the property was not found in the existing styles, add it
+  if (!found) {
+    newCssArr.push(`${cssProperty}: ${newCssValue}`);
+  }
+
+  return newCssArr.filter(value => value !== "").join("; ");
+}
 
 function dropDownActiveClass(active: boolean) {
   if (active) return "active dropdown-item-active";
@@ -253,9 +301,7 @@ function FontDropDown({
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          $patchStyleText(selection, {
-            [style]: option,
-          });
+          $customPatchStyleText(selection, style, option);
         }
       });
     },
@@ -313,9 +359,7 @@ function LineHeightDropDown({
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          $patchStyleText(selection, {
-            [style]: option,
-          });
+          $customPatchStyleText(selection, style, option);
         }
       });
     },
@@ -456,7 +500,7 @@ export default function ToolbarPlugin({
   const [activeEditor, setActiveEditor] = useState(editor);
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>("paragraph");
   const [rootType, setRootType] = useState<keyof typeof rootTypeToRootName>("root");
-  const [fontSize, setFontSize] = useState<string>("15px");
+  const [fontSize, setFontSize] = useState<string>("16px");
   const [fontColor, setFontColor] = useState<string>("#000");
   const [lineHeight, setLineHeight] = useState<string>("1.2");
   const [bgColor, setBgColor] = useState<string>("#fff");
@@ -549,7 +593,7 @@ export default function ToolbarPlugin({
         }
       }
       // Handle buttons
-      setFontSize($getSelectionStyleValueForProperty(selection, "font-size", "15px"));
+      setFontSize($getSelectionStyleValueForProperty(selection, "font-size", "16px"));
       setFontColor($getSelectionStyleValueForProperty(selection, "color", "#000"));
       setBgColor($getSelectionStyleValueForProperty(selection, "background-color", "#fff"));
       setFontFamily($getSelectionStyleValueForProperty(selection, "font-family", "Arial"));
