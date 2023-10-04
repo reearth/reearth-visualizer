@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
-	"github.com/reearth/reearthx/rerror"
 )
 
 type Policy struct {
@@ -34,12 +33,12 @@ func workspaceMemberCountEnforcer(r *repo.Container) accountinteractor.Workspace
 		}
 
 		policy, err := r.Policy.FindByID(ctx, *policyID)
-		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		if err != nil {
 			return err
 		}
 
 		if policy == nil {
-			return nil
+			return errors.New("invalid policy")
 		}
 
 		return policy.EnforceMemberCount(ws.Members().Count() + 1)
