@@ -39,7 +39,7 @@ export default function ({
   floatingWidgets,
   camera,
   interactionMode,
-  timelineAPI,
+  timelineRef,
   overrideInteractionMode,
   useExperimentalSandbox,
   overrideSceneProperty,
@@ -66,66 +66,66 @@ export default function ({
   const getClock = useCallback(() => {
     return {
       get startTime() {
-        return timelineAPI?.current?.timeline?.start;
+        return timelineRef?.current?.timeline?.start;
       },
       get stopTime() {
-        return timelineAPI?.current?.timeline?.stop;
+        return timelineRef?.current?.timeline?.stop;
       },
       get currentTime() {
-        return timelineAPI?.current?.timeline?.current;
+        return timelineRef?.current?.timeline?.current;
       },
       get playing() {
-        return !!timelineAPI?.current?.options?.animation;
+        return !!timelineRef?.current?.options?.animation;
       },
       get paused() {
-        return !timelineAPI?.current?.options?.animation;
+        return !timelineRef?.current?.options?.animation;
       },
       get speed() {
-        return timelineAPI?.current?.options?.multiplier;
+        return timelineRef?.current?.options?.multiplier;
       },
       play: () => {
-        timelineAPI?.current?.commit({
+        timelineRef?.current?.commit({
           cmd: "PLAY",
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       pause: () => {
-        timelineAPI?.current?.commit({
+        timelineRef?.current?.commit({
           cmd: "PAUSE",
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setTime: (time: { start?: Date | string; stop?: Date | string; current?: Date | string }) => {
-        timelineAPI?.current?.commit({
+        timelineRef?.current?.commit({
           cmd: "SET_TIME",
           payload: { ...time },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setSpeed: (speed: number) => {
-        timelineAPI?.current?.commit({
+        timelineRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { multiplier: speed },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setStepType: (stepType: "rate" | "fixed") => {
-        timelineAPI?.current?.commit({
+        timelineRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { stepType },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setRangeType: (rangeType: "unbounded" | "clamped" | "bounced") => {
-        timelineAPI?.current?.commit({
+        timelineRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { rangeType },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
-      tick: timelineAPI?.current?.tick,
+      tick: timelineRef?.current?.tick,
     };
-  }, [timelineAPI]);
+  }, [timelineRef]);
   const getInteractionMode = useGet(
     useMemo<InteractionMode>(
       () => ({ mode: interactionMode, override: overrideInteractionMode }),
@@ -403,7 +403,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
-      timelineAPI,
+      timelineRef,
       useExperimentalSandbox,
     }),
     [
@@ -454,7 +454,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
-      timelineAPI,
+      timelineRef,
       useExperimentalSandbox,
       findFeatureById,
       findFeaturesByIds,
@@ -494,16 +494,16 @@ export default function ({
 
   const onTickEvent = useCallback(
     (fn: TickEventCallback) => {
-      timelineAPI?.current?.onTick(fn);
+      timelineRef?.current?.onTick(fn);
     },
-    [timelineAPI],
+    [timelineRef],
   );
 
   const onTimelineCommitEvent = useCallback(
     (fn: (committer: TimelineCommitter) => void) => {
-      timelineAPI?.current?.onCommit(fn);
+      timelineRef?.current?.onCommit(fn);
     },
-    [timelineAPI],
+    [timelineRef],
   );
 
   useEffect(() => {

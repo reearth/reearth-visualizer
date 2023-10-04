@@ -22,7 +22,7 @@ export const REQUEST_RENDER_ONCE = 1;
 export default function ({
   ref,
   sceneProperty,
-  timelineAPI,
+  timelineRef,
   onLayerSelect,
 }: {
   ref: Ref<MapRef>;
@@ -31,7 +31,7 @@ export default function ({
     featureId?: string;
   };
   sceneProperty?: SceneProperty;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -109,7 +109,7 @@ export default function ({
   const timelineManager = useTimelineManager({
     init: sceneProperty?.timeline,
     engineRef,
-    timelineAPI,
+    timelineRef,
   });
 
   return {

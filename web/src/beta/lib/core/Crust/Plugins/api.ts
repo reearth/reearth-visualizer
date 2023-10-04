@@ -55,7 +55,7 @@ export function exposed({
   moveWidget,
   pluginPostMessage,
   clientStorage,
-  timelineAPI,
+  timelineRef,
 }: {
   render: (
     html: string,
@@ -95,7 +95,7 @@ export function exposed({
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
   clientStorage: ClientStorage;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
 }): GlobalThis {
   return merge({
     console: {
@@ -180,7 +180,7 @@ export function exposed({
         clock: merge(commonReearth.clock, {
           get play() {
             return () => {
-              timelineAPI?.current?.commit({
+              timelineRef?.current?.commit({
                 cmd: "PLAY",
                 committer: {
                   source: "pluginAPI",
@@ -196,7 +196,7 @@ export function exposed({
           },
           get pause() {
             return () =>
-              timelineAPI?.current?.commit({
+              timelineRef?.current?.commit({
                 cmd: "PAUSE",
                 committer: {
                   source: "pluginAPI",
@@ -215,7 +215,7 @@ export function exposed({
               stop?: Date | string;
               current?: Date | string;
             }) =>
-              timelineAPI?.current?.commit({
+              timelineRef?.current?.commit({
                 cmd: "SET_TIME",
                 payload: { ...time },
                 committer: {
@@ -231,7 +231,7 @@ export function exposed({
           },
           get setSpeed() {
             return (speed: number) =>
-              timelineAPI?.current?.commit({
+              timelineRef?.current?.commit({
                 cmd: "SET_OPTIONS",
                 payload: { multiplier: speed },
                 committer: {
@@ -247,7 +247,7 @@ export function exposed({
           },
           get setStepType() {
             return (stepType: "fixed" | "rate") =>
-              timelineAPI?.current?.commit({
+              timelineRef?.current?.commit({
                 cmd: "SET_OPTIONS",
                 payload: { stepType },
                 committer: {
@@ -263,7 +263,7 @@ export function exposed({
           },
           get setRangeType() {
             return (rangeType: "unbounded" | "clamped" | "bounced") =>
-              timelineAPI?.current?.commit({
+              timelineRef?.current?.commit({
                 cmd: "SET_OPTIONS",
                 payload: { rangeType },
                 committer: {

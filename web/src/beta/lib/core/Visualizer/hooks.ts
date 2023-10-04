@@ -158,12 +158,7 @@ export default function useHooks(
     }
   }, [infobox]);
 
-  // timeline manager
-  // const { timelineManager, timelineAPI } = useTimelineManager({
-  //   init: sceneProperty?.timeline,
-  //   engineRef: mapRef.current?.engine,
-  // });
-  const timelineAPI: TimelineAPI = useRef();
+  const timelineRef: TimelineAPI = useRef();
 
   // scene
   const [overriddenSceneProperty, originalOverrideSceneProperty] =
@@ -171,12 +166,11 @@ export default function useHooks(
 
   const overrideSceneProperty = useCallback(
     (pluginId: string, property: SceneProperty) => {
-      // Timeline related override should be handled by TimelineManager
       if (property.timeline) {
         const filteredTimeline = clone(property.timeline);
         delete filteredTimeline.visible;
         if (Object.keys(filteredTimeline).length > 0) {
-          timelineAPI?.current?.commit({
+          timelineRef?.current?.commit({
             cmd: "SET_TIME",
             payload: {
               start: filteredTimeline.start,
@@ -188,7 +182,7 @@ export default function useHooks(
               id: pluginId,
             },
           });
-          timelineAPI?.current?.commit({
+          timelineRef?.current?.commit({
             cmd: "SET_OPTIONS",
             payload: {
               stepType: filteredTimeline.stepType,
@@ -202,11 +196,9 @@ export default function useHooks(
           });
         }
       }
-      // We can keep the logic the same as before.
-      // Just remember we will NOT use the timeline from overridden scene property directly.
       originalOverrideSceneProperty(pluginId, property);
     },
-    [timelineAPI, originalOverrideSceneProperty],
+    [timelineRef, originalOverrideSceneProperty],
   );
 
   // clock
@@ -332,7 +324,7 @@ export default function useHooks(
     infobox,
     isLayerDragging,
     shouldRender,
-    timelineAPI,
+    timelineRef,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

@@ -38,7 +38,7 @@ export type Props = {
 
 export type Context = {
   clock?: Clock;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
   updateClockOnLoad?: boolean;
   camera?: Camera;
   initialCamera?: Camera;

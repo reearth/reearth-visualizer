@@ -92,7 +92,7 @@ export type Props = {
   externalPlugin: ExternalPluginProps;
   useExperimentalSandbox?: boolean;
   // timeline manager
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
   // widget events
   onWidgetLayoutUpdate?: (
     id: string,
@@ -153,7 +153,7 @@ export default function Crust({
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
-  timelineAPI,
+  timelineRef,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
@@ -183,7 +183,7 @@ export default function Crust({
     camera,
     sceneProperty,
     selectedLayerId,
-    timelineAPI,
+    timelineRef,
   });
 
   return (
@@ -206,7 +206,7 @@ export default function Crust({
       overrideInteractionMode={overrideInteractionMode}
       useExperimentalSandbox={useExperimentalSandbox}
       overrideSceneProperty={overrideSceneProperty}
-      timelineAPI={timelineAPI}
+      timelineRef={timelineRef}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}

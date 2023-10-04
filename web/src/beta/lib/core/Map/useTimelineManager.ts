@@ -13,7 +13,6 @@ export type TimelineManager = {
   offTick: TickEvent;
   onCommit: (cb: (committer: TimelineCommitter) => void) => void;
   offCommit: (cb: (committer: TimelineCommitter) => void) => void;
-  // for connect engine onTick
   handleTick: (d: Date, clock: { start: Date; stop: Date }) => void;
   tick: (() => Date | void | undefined) | undefined;
 };
@@ -69,10 +68,10 @@ type Props = {
     rangeType?: "unbounded" | "clamped" | "bounced";
   };
   engineRef?: RefObject<EngineRef>;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
 };
 
-export default ({ init, engineRef, timelineAPI }: Props) => {
+export default ({ init, engineRef, timelineRef }: Props) => {
   const [time, setTime] = useState<Timeline>({
     start: convertTime(init?.start),
     stop: convertTime(init?.stop),
@@ -181,8 +180,8 @@ export default ({ init, engineRef, timelineAPI }: Props) => {
     };
   }, [options, validTimes, engineRef, commit, onTick, offTick, onCommit, offCommit, handleTick]);
 
-  if (timelineAPI) {
-    timelineAPI.current = timelineManager;
+  if (timelineRef) {
+    timelineRef.current = timelineManager;
   }
 
   return timelineManager;

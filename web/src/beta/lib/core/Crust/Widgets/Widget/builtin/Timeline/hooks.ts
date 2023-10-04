@@ -22,7 +22,7 @@ const DEFAULT_SPEED = 1;
 
 export const useTimeline = ({
   widget,
-  timelineAPI,
+  timelineRef,
   isMobile,
   onPlay,
   onPause,
@@ -34,7 +34,7 @@ export const useTimeline = ({
   onVisibilityChange,
 }: {
   widget: Widget;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
   isMobile?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
@@ -54,18 +54,18 @@ export const useTimeline = ({
   const widgetId = widget.id;
   const [range, setRange] = useState(() =>
     makeRange(
-      timelineAPI?.current?.timeline?.start?.getTime(),
-      timelineAPI?.current?.timeline?.stop?.getTime(),
+      timelineRef?.current?.timeline?.start?.getTime(),
+      timelineRef?.current?.timeline?.stop?.getTime(),
     ),
   );
   const [isOpened, setIsOpened] = useState(true);
   const [currentTime, setCurrentTime] = useState(() =>
-    getOrNewDate(timelineAPI?.current?.timeline?.current).getTime(),
+    getOrNewDate(timelineRef?.current?.timeline?.current).getTime(),
   );
   const isClockInitialized = useRef(false);
-  const clockStartTime = timelineAPI?.current?.timeline?.start?.getTime();
-  const clockStopTime = timelineAPI?.current?.timeline?.stop?.getTime();
-  const clockSpeed = timelineAPI?.current?.options?.multiplier || DEFAULT_SPEED;
+  const clockStartTime = timelineRef?.current?.timeline?.start?.getTime();
+  const clockStopTime = timelineRef?.current?.timeline?.stop?.getTime();
+  const clockSpeed = timelineRef?.current?.options?.multiplier || DEFAULT_SPEED;
 
   const [speed, setSpeed] = useState(clockSpeed);
 
@@ -141,10 +141,10 @@ export const useTimeline = ({
       const absSpeed = Math.abs(speed);
       // Maybe we need to throttle changing speed.
       onSpeedChange?.(
-        (timelineAPI?.current?.options?.multiplier ?? 1) > 0 ? absSpeed : absSpeed * -1,
+        (timelineRef?.current?.options?.multiplier ?? 1) > 0 ? absSpeed : absSpeed * -1,
       );
     },
-    [onSpeedChange, timelineAPI],
+    [onSpeedChange, timelineRef],
   );
 
   // Initialize clock value
@@ -167,8 +167,8 @@ export const useTimeline = ({
     });
   }, []);
 
-  const overriddenStart = timelineAPI?.current?.computedTimeline?.start?.getTime();
-  const overriddenStop = timelineAPI?.current?.computedTimeline?.stop?.getTime();
+  const overriddenStart = timelineRef?.current?.computedTimeline?.start?.getTime();
+  const overriddenStop = timelineRef?.current?.computedTimeline?.stop?.getTime();
 
   // Sync cesium clock.
   useEffect(() => {
@@ -203,7 +203,7 @@ export const useTimeline = ({
     onTimeChangeRef.current = onTimeChange;
   }, [onTimeChange]);
 
-  const overriddenCurrentTime = timelineAPI?.current?.computedTimeline?.current?.getTime();
+  const overriddenCurrentTime = timelineRef?.current?.computedTimeline?.current?.getTime();
   useEffect(() => {
     if (overriddenCurrentTime) {
       const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);

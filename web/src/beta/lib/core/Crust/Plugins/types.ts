@@ -36,7 +36,7 @@ export type Props = PropsWithChildren<{
   alignSystem?: WidgetAlignSystem;
   floatingWidgets?: InternalWidget[];
   useExperimentalSandbox?: boolean;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
   overrideSceneProperty: (id: string, property: any) => void;
   camera?: Camera;
   interactionMode: InteractionModeType;
@@ -48,7 +48,7 @@ export type Context = {
   reearth: CommonReearth;
   pluginInstances: PluginInstances;
   clientStorage: ClientStorage;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
   useExperimentalSandbox?: boolean;
   overrideSceneProperty: (id: string, property: any) => void;
 };

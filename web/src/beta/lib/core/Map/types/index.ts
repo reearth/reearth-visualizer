@@ -131,7 +131,7 @@ export type EngineProps = {
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
   timelineManager?: TimelineManager;
   onLayerSelect?: (
     layerId: string | undefined,

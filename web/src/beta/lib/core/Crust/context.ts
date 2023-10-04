@@ -10,7 +10,7 @@ export const useWidgetContext = ({
   camera,
   selectedLayerId,
   sceneProperty,
-  timelineAPI,
+  timelineRef,
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -19,9 +19,9 @@ export const useWidgetContext = ({
         camera,
         selectedLayerId,
         sceneProperty,
-        timelineAPI,
+        timelineRef,
       }),
-    [camera, mapRef, sceneProperty, selectedLayerId, timelineAPI],
+    [camera, mapRef, sceneProperty, selectedLayerId, timelineRef],
   );
 
 export function widgetContextFromMapRef({
@@ -29,7 +29,7 @@ export function widgetContextFromMapRef({
   camera,
   selectedLayerId,
   sceneProperty,
-  timelineAPI,
+  timelineRef,
 }: {
   mapRef?: RefObject<MapRef>;
   camera?: Camera;
@@ -38,7 +38,7 @@ export function widgetContextFromMapRef({
     featureId?: string;
   };
   sceneProperty?: SceneProperty;
-  timelineAPI?: TimelineAPI;
+  timelineRef?: TimelineAPI;
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
@@ -48,7 +48,7 @@ export function widgetContextFromMapRef({
     get clock() {
       return engine()?.getClock();
     },
-    timelineAPI,
+    timelineRef,
     initialCamera: sceneProperty?.default?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,
@@ -72,17 +72,17 @@ export function widgetContextFromMapRef({
     onLookAt: (...args) => engine()?.lookAt(...args),
     onLayerSelect: (...args) => layers()?.select(...args),
     onPause: (committer?: TimelineCommitter) =>
-      timelineAPI?.current?.commit({
+      timelineRef?.current?.commit({
         cmd: "PAUSE",
         committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),
     onPlay: (committer?: TimelineCommitter) =>
-      timelineAPI?.current?.commit({
+      timelineRef?.current?.commit({
         cmd: "PLAY",
         committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),
     onSpeedChange: (speed, committer?: TimelineCommitter) =>
-      timelineAPI?.current?.commit({
+      timelineRef?.current?.commit({
         cmd: "SET_OPTIONS",
         payload: {
           multiplier: speed,
@@ -90,10 +90,10 @@ export function widgetContextFromMapRef({
         },
         committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),
-    onTick: cb => timelineAPI?.current?.onTick(cb),
-    removeTickEventListener: cb => timelineAPI?.current?.offTick(cb),
+    onTick: cb => timelineRef?.current?.onTick(cb),
+    removeTickEventListener: cb => timelineRef?.current?.offTick(cb),
     onTimeChange: (time, committer?: TimelineCommitter) =>
-      timelineAPI?.current?.commit({
+      timelineRef?.current?.commit({
         cmd: "SET_TIME",
         payload: {
           current: time,
