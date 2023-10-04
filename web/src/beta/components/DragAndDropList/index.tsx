@@ -74,7 +74,7 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
     <SWrapper gap={gap} ref={listRef}>
       {movingItems.map((item, i) => {
         const id = getId(item);
-        const shouldUseCustomHandler = customDragHandler(item); // Determine whether to use custom handler
+        const shouldUseCustomHandler = customDragHandler(item);
         return (
           <Item
             itemGroupKey={uniqueKey}
