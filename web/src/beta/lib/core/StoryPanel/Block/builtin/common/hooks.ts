@@ -1,7 +1,7 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 type Props = {
-  name?: string;
+  name?: string | null;
   isSelected?: boolean;
   property?: any;
   onClick: (() => void) | undefined;

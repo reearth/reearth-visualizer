@@ -9,7 +9,7 @@ export type StoryPage = {
   title?: string;
   swipeable?: boolean;
   propertyId?: string;
-  property?: unknown;
+  property?: any;
   blocks: StoryBlock[];
 };
 
@@ -19,5 +19,5 @@ export type StoryBlock = {
   pluginId: string;
   extensionId: string;
   propertyId?: string;
-  property?: unknown;
+  property?: any;
 };

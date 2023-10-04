@@ -1,14 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { Page } from "../types";
+import { StoryPage } from "../types";
 
-export type { Page } from "../types";
+export type { StoryPage } from "../types";
 
 export default ({
   page,
   onBlockCreate,
 }: {
-  page?: Page;
+  page?: StoryPage;
   onBlockCreate?: (
     extensionId?: string | undefined,
     pluginId?: string | undefined,

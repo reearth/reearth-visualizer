@@ -10,10 +10,10 @@ import StoryBlock from "../Block";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
-import useHooks, { type Page } from "./hooks";
+import useHooks, { type StoryPage } from "./hooks";
 
 type Props = {
-  page?: Page;
+  page?: StoryPage;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;

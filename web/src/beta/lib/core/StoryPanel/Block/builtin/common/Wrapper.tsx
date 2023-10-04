@@ -19,7 +19,7 @@ type Spacing = {
 };
 
 type Props = {
-  name?: string;
+  name?: string | null;
   icon?: string;
   isSelected?: boolean;
   isEditable?: boolean;

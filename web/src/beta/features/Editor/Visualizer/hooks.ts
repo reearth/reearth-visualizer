@@ -194,8 +194,6 @@ export default ({
 
   const story = useMemo(() => convertStory(scene, storyId), [scene, storyId]);
 
-  console.log("SSSSS", story);
-
   const handleStoryBlockCreate = useCallback(
     async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
