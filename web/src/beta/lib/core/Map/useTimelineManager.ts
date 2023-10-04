@@ -85,7 +85,7 @@ export default ({ init, engineRef, timelineManagerRef }: Props) => {
     rangeType: init?.rangeType ?? "unbounded",
   });
 
-  const validTimes = useMemo(() => {
+  const computedTimeline = useMemo(() => {
     const { start, stop, current } = time;
     const startTime = start?.getTime() ?? new Date().getTime();
     const stopTime = stop?.getTime() ?? new Date().getTime();
@@ -153,23 +153,19 @@ export default ({ init, engineRef, timelineManagerRef }: Props) => {
 
   const timelineManager = useMemo(() => {
     return {
-      get timeline() {
-        return {
-          get start() {
-            return engineRef?.current?.getClock()?.start;
-          },
-          get stop() {
-            return engineRef?.current?.getClock()?.stop;
-          },
-          get current() {
-            return engineRef?.current?.getClock()?.current;
-          },
-        };
-      },
-      computedTimeline: {
-        ...validTimes,
+      timeline: {
+        get start() {
+          return engineRef?.current?.getClock()?.start;
+        },
+        get stop() {
+          return engineRef?.current?.getClock()?.stop;
+        },
+        get current() {
+          return engineRef?.current?.getClock()?.current;
+        },
       },
       options,
+      computedTimeline,
       commit,
       onTick,
       offTick,
@@ -178,7 +174,17 @@ export default ({ init, engineRef, timelineManagerRef }: Props) => {
       handleTick,
       tick: engineRef?.current?.tick,
     };
-  }, [options, validTimes, engineRef, commit, onTick, offTick, onCommit, offCommit, handleTick]);
+  }, [
+    options,
+    computedTimeline,
+    engineRef,
+    commit,
+    onTick,
+    offTick,
+    onCommit,
+    offCommit,
+    handleTick,
+  ]);
 
   if (timelineManagerRef) {
     timelineManagerRef.current = timelineManager;
