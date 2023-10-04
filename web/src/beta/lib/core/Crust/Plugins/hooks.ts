@@ -83,6 +83,12 @@ export default function ({
       get speed() {
         return timelineManagerRef?.current?.options?.multiplier;
       },
+      get stepType() {
+        return timelineManagerRef?.current?.options?.stepType;
+      },
+      get rangeType() {
+        return timelineManagerRef?.current?.options?.rangeType;
+      },
       play: () => {
         timelineManagerRef?.current?.commit({
           cmd: "PLAY",
