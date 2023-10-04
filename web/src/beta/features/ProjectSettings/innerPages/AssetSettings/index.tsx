@@ -14,14 +14,22 @@ type Props = {
 const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
   const {
     assets,
+    wrapperRef,
     isLoading,
     hasMoreAssets,
-    sort,
     searchTerm,
+    localSearchTerm,
+    deleteModalVisible,
     selectedAssets,
     selectAsset,
-    handleGetMoreAssets,
-    handleSortChange,
+    onGetMoreAssets,
+    onSortChange,
+    onScrollToBottom,
+    onSearchInputChange,
+    onSearch,
+    openDeleteModal,
+    closeDeleteModal,
+    onRemove,
   } = useHooks({ workspaceId });
 
   const handleSelect = useCallback(
@@ -39,15 +47,24 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
   return (
     <InnerPage wide transparent>
       <AssetContainer
+        workspaceId={workspaceId}
         assets={assets}
+        wrapperRef={wrapperRef}
         selectedAssets={selectedAssets}
         isLoading={isLoading}
+        openDeleteModal={openDeleteModal}
+        deleteModalVisible={deleteModalVisible}
         hasMoreAssets={hasMoreAssets}
-        sort={sort}
         searchTerm={searchTerm}
-        onGetMore={handleGetMoreAssets}
+        localSearchTerm={localSearchTerm}
+        onGetMore={onGetMoreAssets}
         onSelect={handleSelect}
-        onSortChange={handleSortChange}
+        onSortChange={onSortChange}
+        onScrollToBottom={onScrollToBottom}
+        closeDeleteModal={closeDeleteModal}
+        handleRemove={onRemove}
+        handleSearch={onSearch}
+        handleSearchInputChange={onSearchInputChange}
       />
     </InnerPage>
   );

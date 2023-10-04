@@ -24,10 +24,10 @@ export default ({
     },
     [workspaceId, useCreateAssets, onAssetSelect],
   );
-  const handleFileSelect = useFileInput(files => handleAssetsCreate?.(files), {
+  const onFileUpload = useFileInput(files => handleAssetsCreate?.(files), {
     accept: IMAGE_FORMATS + "," + FILE_FORMATS,
     multiple: true,
   });
 
-  return { handleFileSelect };
+  return { onFileUpload };
 };

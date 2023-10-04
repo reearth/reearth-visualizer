@@ -1,13 +1,10 @@
 import { useCallback, useState, useRef, useMemo, useEffect } from "react";
-import useFileInput from "use-file-input";
 
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
-
-import { FILE_FORMATS, IMAGE_FORMATS } from "../constants";
 
 const assetsPerPage = 20;
 
@@ -38,7 +35,6 @@ function pagination(
 
 export default ({
   workspaceId,
-  onAssetSelect,
 }: {
   workspaceId?: string;
   onAssetSelect?: (inputValue?: string) => void;
@@ -48,7 +44,7 @@ export default ({
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
   const isGettingMore = useRef(false);
 
-  const { useAssetsQuery, useCreateAssets, useRemoveAssets } = useAssetsFetcher();
+  const { useAssetsQuery, useRemoveAssets } = useAssetsFetcher();
 
   const { assets, hasMoreAssets, loading, isRefetching, endCursor, fetchMore } = useAssetsQuery({
     teamId: workspaceId ?? "",
@@ -88,7 +84,7 @@ export default ({
       ? "filterTimeReverse"
       : "filterTime";
 
-  const handleGetMoreAssets = useCallback(async () => {
+  const onGetMoreAssets = useCallback(async () => {
     if (hasMoreAssets && !isGettingMore.current) {
       isGettingMore.current = true;
       await fetchMore({
@@ -100,18 +96,18 @@ export default ({
     }
   }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
-  const handleAssetsCreate = useCallback(
-    async (files?: FileList) => {
-      if (!files) return;
-      const result = await useCreateAssets({ teamId: workspaceId ?? "", file: files });
-      const assetUrl = result?.data[0].data?.createAsset?.asset.url;
+  // const handleAssetsCreate = useCallback(
+  //   async (files?: FileList) => {
+  //     if (!files) return;
+  //     const result = await useCreateAssets({ teamId: workspaceId ?? "", file: files });
+  //     const assetUrl = result?.data[0].data?.createAsset?.asset.url;
 
-      onAssetSelect?.(assetUrl);
-    },
-    [workspaceId, useCreateAssets, onAssetSelect],
-  );
+  //     onAssetSelect?.(assetUrl);
+  //   },
+  //   [workspaceId, useCreateAssets, onAssetSelect],
+  // );
 
-  const handleSortChange = useCallback(
+  const onSortChange = useCallback(
     (type?: string, reverse?: boolean) => {
       if (!type && reverse === undefined) return;
       setSort({
@@ -126,33 +122,33 @@ export default ({
     setSearchTerm(term);
   }, []);
 
-  const handleFileSelect = useFileInput(files => handleAssetsCreate?.(files), {
-    accept: IMAGE_FORMATS + "," + FILE_FORMATS,
-    multiple: true,
-  });
+  // const handleFileSelect = useFileInput(files => handleAssetsCreate?.(files), {
+  //   accept: IMAGE_FORMATS + "," + FILE_FORMATS,
+  //   multiple: true,
+  // });
 
-  const handleRemove = useCallback(async () => {
+  const onRemove = useCallback(async () => {
     if (selectedAssets?.length) {
       const { status } = await useRemoveAssets(selectedAssets.map(a => a.id));
       if (status === "success") {
         selectAsset([]);
       }
-      handleFileSelect?.();
+      // handleFileSelect?.();
       setDeleteModalVisible(false);
     }
-  }, [selectedAssets, useRemoveAssets, handleFileSelect]);
+  }, [selectedAssets, useRemoveAssets]);
 
-  const handleReverse = useCallback(() => {
-    handleSortChange?.(undefined, !sort?.reverse);
-  }, [handleSortChange, sort?.reverse]);
+  const onReverse = useCallback(() => {
+    onSortChange?.(undefined, !sort?.reverse);
+  }, [onSortChange, sort?.reverse]);
 
-  const handleSearchInputChange = useCallback(
+  const onSearchInputChange = useCallback(
     (value: string) => {
       setLocalSearchTerm(value);
     },
     [setLocalSearchTerm],
   );
-  const handleSearch = useCallback(() => {
+  const onSearch = useCallback(() => {
     if (!localSearchTerm || localSearchTerm.length < 1) {
       handleSearchTerm?.(undefined);
     } else {
@@ -166,30 +162,30 @@ export default ({
 
   useEffect(() => {
     if (wrapperRef.current && !isLoading && hasMoreAssets)
-      autoFillPage(wrapperRef, handleGetMoreAssets);
-  }, [handleGetMoreAssets, hasMoreAssets, isLoading]);
+      autoFillPage(wrapperRef, onGetMoreAssets);
+  }, [onGetMoreAssets, hasMoreAssets, isLoading]);
 
   return {
+    wrapperRef,
     assets,
-    isLoading,
-    hasMoreAssets,
-    sort,
-    searchTerm,
-    selectedAssets,
-    selectAsset,
-    handleGetMoreAssets,
-    handleSortChange,
-    onScrollToBottom,
-    deleteModalVisible,
-    openDeleteModal,
-    closeDeleteModal,
     sortOptions,
     iconChoice,
-    handleRemove,
-    handleReverse,
-    handleSearchInputChange,
-    handleSearch,
+    sort,
+    searchTerm,
     localSearchTerm,
-    wrapperRef,
+    isLoading,
+    hasMoreAssets,
+    selectedAssets,
+    deleteModalVisible,
+    closeDeleteModal,
+    selectAsset,
+    onGetMoreAssets,
+    onSortChange,
+    onScrollToBottom,
+    openDeleteModal,
+    onRemove,
+    onReverse,
+    onSearchInputChange,
+    onSearch,
   };
 };

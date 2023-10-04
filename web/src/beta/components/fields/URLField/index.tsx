@@ -48,7 +48,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     },
     [fileType, onChange, setNotification, t],
   );
-  const { handleFileSelect } = useHooks({
+  const { onFileUpload } = useHooks({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
   });
@@ -77,7 +77,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
             icon="uploadSimple"
             text={t("Upload")}
             iconPosition="left"
-            onClick={handleFileSelect}
+            onClick={onFileUpload}
           />
         </ButtonWrapper>
       )}

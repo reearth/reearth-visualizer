@@ -46,9 +46,9 @@ const ChooseAssetModal: React.FC<Props> = ({
     localSearchTerm,
     wrapperRef,
     onScrollToBottom,
-    handleSearchInputChange,
-    handleSearch,
-    handleGetMoreAssets,
+    onSearchInputChange,
+    onSearch,
+    onGetMoreAssets,
   } = useHooks({ workspaceId: currentWorkspace?.id });
 
   const filteredAssets = useMemo(() => {
@@ -124,8 +124,8 @@ const ChooseAssetModal: React.FC<Props> = ({
       }>
       <ControlWarpper>
         <SearchWarpper>
-          <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
-          <SearchButton icon="search" margin="0" onClick={handleSearch} />
+          <TextInput value={localSearchTerm} onChange={onSearchInputChange} />
+          <SearchButton icon="search" margin="0" onClick={onSearch} />
         </SearchWarpper>
       </ControlWarpper>
       <AssetWrapper>
@@ -142,9 +142,7 @@ const ChooseAssetModal: React.FC<Props> = ({
         ) : (
           <AssetListWrapper
             ref={wrapperRef}
-            onScroll={e =>
-              !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
-            }>
+            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, onGetMoreAssets)}>
             <AssetList>
               {filteredAssets?.map(a => (
                 <AssetCard
