@@ -425,14 +425,14 @@ export function useAPI({
         moveWidget: onWidgetMove,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
-        timelineRef: ctx.timelineRef,
+        timelineManagerRef: ctx.timelineManagerRef,
       });
     };
   }, [
     ctx?.reearth,
     ctx?.pluginInstances,
     ctx?.clientStorage,
-    ctx?.timelineRef,
+    ctx?.timelineManagerRef,
     ctx?.overrideSceneProperty,
     extensionId,
     extensionType,

@@ -17,7 +17,7 @@ export type TimelineManager = {
   tick: (() => Date | void | undefined) | undefined;
 };
 
-export type TimelineAPI = MutableRefObject<TimelineManager | undefined>;
+export type TimelineManagerRef = MutableRefObject<TimelineManager | undefined>;
 
 export type Timeline = {
   current?: Date;
@@ -68,10 +68,10 @@ type Props = {
     rangeType?: "unbounded" | "clamped" | "bounced";
   };
   engineRef?: RefObject<EngineRef>;
-  timelineRef?: TimelineAPI;
+  timelineManagerRef?: TimelineManagerRef;
 };
 
-export default ({ init, engineRef, timelineRef }: Props) => {
+export default ({ init, engineRef, timelineManagerRef }: Props) => {
   const [time, setTime] = useState<Timeline>({
     start: convertTime(init?.start),
     stop: convertTime(init?.stop),
@@ -180,8 +180,8 @@ export default ({ init, engineRef, timelineRef }: Props) => {
     };
   }, [options, validTimes, engineRef, commit, onTick, offTick, onCommit, offCommit, handleTick]);
 
-  if (timelineRef) {
-    timelineRef.current = timelineManager;
+  if (timelineManagerRef) {
+    timelineManagerRef.current = timelineManager;
   }
 
   return timelineManager;

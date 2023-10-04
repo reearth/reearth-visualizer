@@ -3,7 +3,6 @@ import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useS
 import { useWindowSize } from "react-use";
 
 // TODO: Move these utils
-import { convertTime, truncMinutes } from "@reearth/beta/utils/time";
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
 import type { Block, BuiltinWidgets, InteractionModeType } from "../Crust";
@@ -20,7 +19,7 @@ import type {
   DefaultInfobox,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
-import { TimelineAPI } from "../Map/useTimelineManager";
+import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
 
@@ -158,7 +157,7 @@ export default function useHooks(
     }
   }, [infobox]);
 
-  const timelineRef: TimelineAPI = useRef();
+  const timelineManagerRef: TimelineManagerRef = useRef();
 
   // scene
   const [overriddenSceneProperty, originalOverrideSceneProperty] =
@@ -170,7 +169,7 @@ export default function useHooks(
         const filteredTimeline = clone(property.timeline);
         delete filteredTimeline.visible;
         if (Object.keys(filteredTimeline).length > 0) {
-          timelineRef?.current?.commit({
+          timelineManagerRef?.current?.commit({
             cmd: "SET_TIME",
             payload: {
               start: filteredTimeline.start,
@@ -182,7 +181,7 @@ export default function useHooks(
               id: pluginId,
             },
           });
-          timelineRef?.current?.commit({
+          timelineManagerRef?.current?.commit({
             cmd: "SET_OPTIONS",
             payload: {
               stepType: filteredTimeline.stepType,
@@ -198,47 +197,8 @@ export default function useHooks(
       }
       originalOverrideSceneProperty(pluginId, property);
     },
-    [timelineRef, originalOverrideSceneProperty],
+    [timelineManagerRef, originalOverrideSceneProperty],
   );
-
-  // clock
-  const overriddenClock = useMemo(() => {
-    const { start, stop, current } = overriddenSceneProperty.timeline || {};
-    const startTime = convertTime(start)?.getTime();
-    const stopTime = convertTime(stop)?.getTime();
-    const currentTime = convertTime(current)?.getTime();
-
-    const DEFAULT_NEXT_RANGE = 86400000; // a day
-
-    // To avoid out of range error in Cesium, we need to turn back a hour.
-    const now = Date.now() - 3600000;
-
-    const convertedStartTime = startTime
-      ? Math.min(now, startTime)
-      : stopTime
-      ? Math.min(now, stopTime - DEFAULT_NEXT_RANGE)
-      : now - DEFAULT_NEXT_RANGE;
-
-    const convertedStopTime = stopTime
-      ? Math.min(stopTime, now)
-      : startTime
-      ? Math.min(now, startTime + DEFAULT_NEXT_RANGE)
-      : now;
-
-    return {
-      start: start || stop ? truncMinutes(new Date(convertedStartTime)) : undefined,
-      stop: start || stop ? new Date(convertedStopTime) : undefined,
-      current:
-        start || stop || current
-          ? new Date(
-              Math.max(
-                Math.min(convertedStopTime, currentTime || convertedStartTime),
-                convertedStartTime,
-              ),
-            )
-          : undefined,
-    };
-  }, [overriddenSceneProperty]);
 
   // block
   const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
@@ -319,12 +279,11 @@ export default function useHooks(
     featureFlags,
     isMobile,
     overriddenSceneProperty,
-    overriddenClock,
     isDroppable,
     infobox,
     isLayerDragging,
     shouldRender,
-    timelineRef,
+    timelineManagerRef,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

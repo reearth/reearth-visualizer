@@ -39,7 +39,7 @@ export default function ({
   floatingWidgets,
   camera,
   interactionMode,
-  timelineRef,
+  timelineManagerRef,
   overrideInteractionMode,
   useExperimentalSandbox,
   overrideSceneProperty,
@@ -66,66 +66,66 @@ export default function ({
   const getClock = useCallback(() => {
     return {
       get startTime() {
-        return timelineRef?.current?.timeline?.start;
+        return timelineManagerRef?.current?.timeline?.start;
       },
       get stopTime() {
-        return timelineRef?.current?.timeline?.stop;
+        return timelineManagerRef?.current?.timeline?.stop;
       },
       get currentTime() {
-        return timelineRef?.current?.timeline?.current;
+        return timelineManagerRef?.current?.timeline?.current;
       },
       get playing() {
-        return !!timelineRef?.current?.options?.animation;
+        return !!timelineManagerRef?.current?.options?.animation;
       },
       get paused() {
-        return !timelineRef?.current?.options?.animation;
+        return !timelineManagerRef?.current?.options?.animation;
       },
       get speed() {
-        return timelineRef?.current?.options?.multiplier;
+        return timelineManagerRef?.current?.options?.multiplier;
       },
       play: () => {
-        timelineRef?.current?.commit({
+        timelineManagerRef?.current?.commit({
           cmd: "PLAY",
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       pause: () => {
-        timelineRef?.current?.commit({
+        timelineManagerRef?.current?.commit({
           cmd: "PAUSE",
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setTime: (time: { start?: Date | string; stop?: Date | string; current?: Date | string }) => {
-        timelineRef?.current?.commit({
+        timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: { ...time },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setSpeed: (speed: number) => {
-        timelineRef?.current?.commit({
+        timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { multiplier: speed },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setStepType: (stepType: "rate" | "fixed") => {
-        timelineRef?.current?.commit({
+        timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { stepType },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
       setRangeType: (rangeType: "unbounded" | "clamped" | "bounced") => {
-        timelineRef?.current?.commit({
+        timelineManagerRef?.current?.commit({
           cmd: "SET_OPTIONS",
           payload: { rangeType },
           committer: { source: "pluginAPI", id: "window" },
         });
       },
-      tick: timelineRef?.current?.tick,
+      tick: timelineManagerRef?.current?.tick,
     };
-  }, [timelineRef]);
+  }, [timelineManagerRef]);
   const getInteractionMode = useGet(
     useMemo<InteractionMode>(
       () => ({ mode: interactionMode, override: overrideInteractionMode }),
@@ -403,7 +403,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
-      timelineRef,
+      timelineManagerRef,
       useExperimentalSandbox,
     }),
     [
@@ -454,7 +454,7 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
-      timelineRef,
+      timelineManagerRef,
       useExperimentalSandbox,
       findFeatureById,
       findFeaturesByIds,
@@ -494,16 +494,16 @@ export default function ({
 
   const onTickEvent = useCallback(
     (fn: TickEventCallback) => {
-      timelineRef?.current?.onTick(fn);
+      timelineManagerRef?.current?.onTick(fn);
     },
-    [timelineRef],
+    [timelineManagerRef],
   );
 
   const onTimelineCommitEvent = useCallback(
     (fn: (committer: TimelineCommitter) => void) => {
-      timelineRef?.current?.onCommit(fn);
+      timelineManagerRef?.current?.onCommit(fn);
     },
-    [timelineRef],
+    [timelineManagerRef],
   );
 
   useEffect(() => {

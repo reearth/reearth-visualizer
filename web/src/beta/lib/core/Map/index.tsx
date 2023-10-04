@@ -42,7 +42,7 @@ function Map(
     overrides,
     selectedLayerId,
     layerSelectionReason,
-    timelineRef,
+    timelineManagerRef,
     sceneProperty,
     onLayerSelect,
     ...props
@@ -63,7 +63,7 @@ function Map(
     ref,
     selectedLayerId,
     sceneProperty,
-    timelineRef,
+    timelineManagerRef,
     onLayerSelect,
   });
 
@@ -82,7 +82,7 @@ function Map(
       onLayerSelect={handleEngineLayerSelect}
       layersRef={layersRef}
       requestingRenderMode={requestingRenderMode}
-      timelineRef={timelineRef}
+      timelineManagerRef={timelineManagerRef}
       timelineManager={timelineManager}
       {...props}>
       <Layers

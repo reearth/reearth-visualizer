@@ -3,8 +3,8 @@ import type { ReactNode, RefObject } from "react";
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import type { Clock, LayerEditEvent, LayerSelectionReason } from "../Map";
-import type { TimelineAPI } from "../Map/useTimelineManager";
+import type { LayerEditEvent, LayerSelectionReason } from "../Map";
+import type { TimelineManagerRef } from "../Map/useTimelineManager";
 import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
@@ -60,7 +60,6 @@ export type Props = {
   isMobile?: boolean;
   mapRef?: RefObject<MapRef>;
   sceneProperty?: SceneProperty;
-  overriddenClock: Clock;
   viewport?: Viewport;
   camera?: Camera;
   interactionMode: InteractionModeType;
@@ -92,7 +91,7 @@ export type Props = {
   externalPlugin: ExternalPluginProps;
   useExperimentalSandbox?: boolean;
   // timeline manager
-  timelineRef?: TimelineAPI;
+  timelineManagerRef?: TimelineManagerRef;
   // widget events
   onWidgetLayoutUpdate?: (
     id: string,
@@ -153,7 +152,7 @@ export default function Crust({
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
-  timelineRef,
+  timelineManagerRef,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
@@ -183,7 +182,7 @@ export default function Crust({
     camera,
     sceneProperty,
     selectedLayerId,
-    timelineRef,
+    timelineManagerRef,
   });
 
   return (
@@ -206,7 +205,7 @@ export default function Crust({
       overrideInteractionMode={overrideInteractionMode}
       useExperimentalSandbox={useExperimentalSandbox}
       overrideSceneProperty={overrideSceneProperty}
-      timelineRef={timelineRef}
+      timelineManagerRef={timelineManagerRef}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}

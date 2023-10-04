@@ -186,12 +186,11 @@ const Visualizer = memo(
         featureFlags,
         isMobile,
         overriddenSceneProperty,
-        overriddenClock,
         isDroppable,
         isLayerDragging,
         infobox,
         shouldRender,
-        timelineRef,
+        timelineManagerRef,
         handleLayerSelect,
         handleBlockSelect,
         handleCameraChange,
@@ -242,7 +241,6 @@ const Visualizer = memo(
                   inEditor={inEditor}
                   sceneProperty={overriddenSceneProperty}
                   overrideSceneProperty={overrideSceneProperty}
-                  overriddenClock={overriddenClock}
                   blocks={infobox?.blocks}
                   camera={camera}
                   interactionMode={interactionMode}
@@ -265,7 +263,7 @@ const Visualizer = memo(
                   mapRef={mapRef}
                   externalPlugin={{ pluginBaseUrl, pluginProperty }}
                   useExperimentalSandbox={useExperimentalSandbox}
-                  timelineRef={timelineRef}
+                  timelineManagerRef={timelineManagerRef}
                   onWidgetLayoutUpdate={onWidgetLayoutUpdate}
                   onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
                   onWidgetAreaSelect={onWidgetAreaSelect}
@@ -301,7 +299,7 @@ const Visualizer = memo(
                   layerSelectionReason={layerSelectionReason}
                   small={small}
                   ready={ready}
-                  timelineRef={timelineRef}
+                  timelineManagerRef={timelineManagerRef}
                   onCameraChange={handleCameraChange}
                   onLayerDrag={handleLayerDrag}
                   onLayerDrop={handleLayerDrop}

@@ -11,7 +11,7 @@ import type {
   RequestingRenderMode,
   SceneProperty,
 } from "./types";
-import useTimelineManager, { TimelineAPI } from "./useTimelineManager";
+import useTimelineManager, { TimelineManagerRef } from "./useTimelineManager";
 
 export type { MapRef } from "./ref";
 
@@ -22,7 +22,7 @@ export const REQUEST_RENDER_ONCE = 1;
 export default function ({
   ref,
   sceneProperty,
-  timelineRef,
+  timelineManagerRef,
   onLayerSelect,
 }: {
   ref: Ref<MapRef>;
@@ -31,7 +31,7 @@ export default function ({
     featureId?: string;
   };
   sceneProperty?: SceneProperty;
-  timelineRef?: TimelineAPI;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -109,7 +109,7 @@ export default function ({
   const timelineManager = useTimelineManager({
     init: sceneProperty?.timeline,
     engineRef,
-    timelineRef,
+    timelineManagerRef,
   });
 
   return {

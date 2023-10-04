@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 
 import type { TimeEventHandler } from "@reearth/beta/lib/core/Crust/Widgets/Widget/builtin/Timeline/UI";
 import { TickEvent, TickEventCallback } from "@reearth/beta/lib/core/Map";
-import { TimelineAPI } from "@reearth/beta/lib/core/Map/useTimelineManager";
+import { TimelineManagerRef } from "@reearth/beta/lib/core/Map/useTimelineManager";
 
 import type { Widget } from "../../types";
 import { useVisible } from "../../useVisible";
@@ -22,7 +22,7 @@ const DEFAULT_SPEED = 1;
 
 export const useTimeline = ({
   widget,
-  timelineRef,
+  timelineManagerRef,
   isMobile,
   onPlay,
   onPause,
@@ -34,7 +34,7 @@ export const useTimeline = ({
   onVisibilityChange,
 }: {
   widget: Widget;
-  timelineRef?: TimelineAPI;
+  timelineManagerRef?: TimelineManagerRef;
   isMobile?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
@@ -54,18 +54,18 @@ export const useTimeline = ({
   const widgetId = widget.id;
   const [range, setRange] = useState(() =>
     makeRange(
-      timelineRef?.current?.timeline?.start?.getTime(),
-      timelineRef?.current?.timeline?.stop?.getTime(),
+      timelineManagerRef?.current?.timeline?.start?.getTime(),
+      timelineManagerRef?.current?.timeline?.stop?.getTime(),
     ),
   );
   const [isOpened, setIsOpened] = useState(true);
   const [currentTime, setCurrentTime] = useState(() =>
-    getOrNewDate(timelineRef?.current?.timeline?.current).getTime(),
+    getOrNewDate(timelineManagerRef?.current?.timeline?.current).getTime(),
   );
   const isClockInitialized = useRef(false);
-  const clockStartTime = timelineRef?.current?.timeline?.start?.getTime();
-  const clockStopTime = timelineRef?.current?.timeline?.stop?.getTime();
-  const clockSpeed = timelineRef?.current?.options?.multiplier || DEFAULT_SPEED;
+  const clockStartTime = timelineManagerRef?.current?.timeline?.start?.getTime();
+  const clockStopTime = timelineManagerRef?.current?.timeline?.stop?.getTime();
+  const clockSpeed = timelineManagerRef?.current?.options?.multiplier || DEFAULT_SPEED;
 
   const [speed, setSpeed] = useState(clockSpeed);
 
@@ -141,10 +141,10 @@ export const useTimeline = ({
       const absSpeed = Math.abs(speed);
       // Maybe we need to throttle changing speed.
       onSpeedChange?.(
-        (timelineRef?.current?.options?.multiplier ?? 1) > 0 ? absSpeed : absSpeed * -1,
+        (timelineManagerRef?.current?.options?.multiplier ?? 1) > 0 ? absSpeed : absSpeed * -1,
       );
     },
-    [onSpeedChange, timelineRef],
+    [onSpeedChange, timelineManagerRef],
   );
 
   // Initialize clock value
@@ -167,8 +167,8 @@ export const useTimeline = ({
     });
   }, []);
 
-  const overriddenStart = timelineRef?.current?.computedTimeline?.start?.getTime();
-  const overriddenStop = timelineRef?.current?.computedTimeline?.stop?.getTime();
+  const overriddenStart = timelineManagerRef?.current?.computedTimeline?.start?.getTime();
+  const overriddenStop = timelineManagerRef?.current?.computedTimeline?.stop?.getTime();
 
   // Sync cesium clock.
   useEffect(() => {
@@ -203,7 +203,7 @@ export const useTimeline = ({
     onTimeChangeRef.current = onTimeChange;
   }, [onTimeChange]);
 
-  const overriddenCurrentTime = timelineRef?.current?.computedTimeline?.current?.getTime();
+  const overriddenCurrentTime = timelineManagerRef?.current?.computedTimeline?.current?.getTime();
   useEffect(() => {
     if (overriddenCurrentTime) {
       const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);

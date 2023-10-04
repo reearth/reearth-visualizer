@@ -24,7 +24,7 @@ import type {
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
-import type { TimelineAPI, TimelineManager } from "../useTimelineManager";
+import type { TimelineManagerRef, TimelineManager } from "../useTimelineManager";
 
 export type {
   FeatureComponentProps,
@@ -131,7 +131,7 @@ export type EngineProps = {
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
-  timelineRef?: TimelineAPI;
+  timelineManagerRef?: TimelineManagerRef;
   timelineManager?: TimelineManager;
   onLayerSelect?: (
     layerId: string | undefined,
