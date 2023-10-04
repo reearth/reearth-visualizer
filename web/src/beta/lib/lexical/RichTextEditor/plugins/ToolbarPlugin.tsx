@@ -28,7 +28,7 @@ import {
   $getNearestNodeOfType,
   mergeRegister,
 } from "@lexical/utils";
-import type { ElementFormatType, LexicalEditor } from "lexical";
+import type { ElementFormatType, LexicalEditor, RangeSelection } from "lexical";
 import {
   $createParagraphNode,
   $getSelection,
@@ -103,6 +103,51 @@ const LINE_HEIGHT_OPTIONS: [string, string][] = [
   ["1.9", "1.9"],
   ["2.0", "2.0"],
 ];
+
+// Fix for $patchStyleText not updating the style correctly
+// https://github.com/facebook/lexical/issues/4491#issuecomment-1701890592
+function $customPatchStyleText(selection: RangeSelection, cssProperty: string, cssValue: string) {
+  $patchStyleText(selection, { [cssProperty]: cssValue });
+
+  const newStyle = replaceCssStyle(selection.style, cssProperty, cssValue);
+  selection.setStyle(newStyle);
+}
+
+function replaceCssStyle(
+  existingCssStyle: string,
+  cssProperty: string,
+  newCssValue: string,
+): string {
+  const cssArr = existingCssStyle
+    .split(";")
+    .filter(prop => !!prop)
+    .map(prop => prop.trim());
+
+  let found = false;
+
+  const newCssArr = cssArr.map(prop => {
+    const propertySplit = prop.split(":");
+    if (propertySplit.length !== 2) {
+      return "";
+    }
+
+    const [property, value] = propertySplit.map(p => p.trim());
+
+    if (property === cssProperty) {
+      found = true;
+      return `${property}: ${newCssValue}`;
+    } else {
+      return `${property}: ${value}`;
+    }
+  });
+
+  // If the property was not found in the existing styles, add it
+  if (!found) {
+    newCssArr.push(`${cssProperty}: ${newCssValue}`);
+  }
+
+  return newCssArr.filter(value => value !== "").join("; ");
+}
 
 function dropDownActiveClass(active: boolean) {
   if (active) return "active dropdown-item-active";
@@ -253,9 +298,7 @@ function FontDropDown({
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          $patchStyleText(selection, {
-            [style]: option,
-          });
+          $customPatchStyleText(selection, style, option);
         }
       });
     },
@@ -313,9 +356,7 @@ function LineHeightDropDown({
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          $patchStyleText(selection, {
-            [style]: option,
-          });
+          $customPatchStyleText(selection, style, option);
         }
       });
     },
