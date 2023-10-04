@@ -35,11 +35,12 @@ const Settings: React.FC<Props> = ({
   onPageUpdate,
 }) => {
   const t = useT();
-  const { allLayersChecked, layerChecked, handleAllLayersCheck, handleLayerCheck } = useHooks({
+  const { allCheckedLayers, checkedLayers, handleAllLayersCheck, handleLayerCheck } = useHooks({
     layers,
     selectedPage,
     onPageUpdate,
   });
+
   return (
     <Wrapper>
       {tab == "story" && (
@@ -49,14 +50,14 @@ const Settings: React.FC<Props> = ({
               <CheckBoxField
                 label={t("All Layers")}
                 onClick={handleAllLayersCheck}
-                checked={allLayersChecked}
+                checked={allCheckedLayers}
               />
             </AllLayers>
             {layers?.map((layer, idx) => (
               <Layer key={idx}>
                 <CheckBoxField
                   onClick={() => handleLayerCheck(layer.id)}
-                  checked={layerChecked.includes(layer.id)}
+                  checked={checkedLayers.includes(layer.id)}
                   label={layer.title}
                 />
               </Layer>
