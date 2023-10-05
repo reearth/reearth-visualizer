@@ -5,10 +5,10 @@ import { convertTime } from "@reearth/beta/utils/time";
 import { EngineRef } from ".";
 
 type TimelineManager = {
-  readonly timeline: Timeline;
+  readonly timeline: EngineClock;
   readonly options: TimelineOptions;
   readonly computedTimeline: Timeline;
-  commit: (props: TimelineCommit) => void;
+  commit: (commit: TimelineCommit) => void;
   onTick: TickEvent;
   offTick: TickEvent;
   onCommit: (cb: (committer: TimelineCommitter) => void) => void;
@@ -20,9 +20,15 @@ type TimelineManager = {
 export type TimelineManagerRef = MutableRefObject<TimelineManager | undefined>;
 
 export type Timeline = {
-  current?: Date;
-  start?: Date;
-  stop?: Date;
+  current: Date;
+  start: Date;
+  stop: Date;
+};
+
+type EngineClock = {
+  current: Date | undefined;
+  start: Date | undefined;
+  stop: Date | undefined;
 };
 
 type TimelineOptions = {
@@ -32,17 +38,25 @@ type TimelineOptions = {
   rangeType?: "unbounded" | "clamped" | "bounced";
 };
 
-type TimelineCommand = "PLAY" | "PAUSE" | "SET_TIME" | "SET_OPTIONS";
-
-type TimelineCommit = {
-  cmd: TimelineCommand;
-  payload?:
-    | ({
-        current?: Date | string | undefined;
-        start?: Date | string | undefined;
-        stop?: Date | string | undefined;
-      } & Partial<TimelineOptions>)
-    | undefined;
+type PlayCommand = {
+  cmd: "PLAY";
+};
+type PauseCommand = {
+  cmd: "PAUSE";
+};
+type SetTimeCommand = {
+  cmd: "SET_TIME";
+  payload: {
+    current: Date | string;
+    start: Date | string;
+    stop: Date | string;
+  };
+};
+type SetOptionsCommand = {
+  cmd: "SET_OPTIONS";
+  payload: Partial<Pick<TimelineOptions, "multiplier" | "rangeType" | "stepType">>;
+};
+type TimelineCommit = (PlayCommand | PauseCommand | SetTimeCommand | SetOptionsCommand) & {
   committer: TimelineCommitter;
 };
 
@@ -78,9 +92,9 @@ type Props = {
 
 export default ({ init, engineRef, timelineManagerRef }: Props) => {
   const [time, setTime] = useState<Timeline>({
-    start: convertTime(init?.start),
-    stop: convertTime(init?.stop),
-    current: convertTime(init?.current),
+    start: convertTime(init?.start) ?? new Date(),
+    stop: convertTime(init?.stop) ?? new Date(),
+    current: convertTime(init?.current) ?? new Date(),
   });
 
   const [options, setOptions] = useState<TimelineOptions>({
@@ -92,9 +106,9 @@ export default ({ init, engineRef, timelineManagerRef }: Props) => {
 
   const computedTimeline = useMemo(() => {
     const { start, stop, current } = time;
-    const startTime = start?.getTime() ?? new Date().getTime();
-    const stopTime = stop?.getTime() ?? new Date().getTime();
-    const currentTime = current?.getTime() ?? new Date().getTime();
+    const startTime = start.getTime();
+    const stopTime = stop.getTime();
+    const currentTime = current.getTime();
 
     const convertedStartTime = startTime > currentTime ? currentTime : startTime;
     const convertedStopTime = stopTime <= currentTime ? currentTime + DEFAULT_RANGE : stopTime;
@@ -106,29 +120,30 @@ export default ({ init, engineRef, timelineManagerRef }: Props) => {
     };
   }, [time]);
 
-  const commit = useCallback(({ cmd, payload, committer }: TimelineCommit) => {
-    if (!cmd) return;
+  const commit = useCallback((commit: TimelineCommit) => {
+    if (!commit.cmd) return;
 
-    if (cmd === "PLAY") {
+    if (commit.cmd === "PLAY") {
       setOptions(o => ({ ...o, animation: true }));
-    } else if (cmd === "PAUSE") {
+    } else if (commit.cmd === "PAUSE") {
       setOptions(o => ({ ...o, animation: false }));
-    } else if (cmd === "SET_TIME") {
+    } else if (commit.cmd === "SET_TIME") {
       setTime(t => ({
-        start: payload?.start === undefined ? t.start : convertTime(payload?.start),
-        stop: payload?.stop === undefined ? t.stop : convertTime(payload?.stop),
-        current: payload?.current === undefined ? t.current : convertTime(payload?.current),
+        start: convertTime(commit.payload.start) ?? t.start,
+        stop: convertTime(commit.payload.stop) ?? t.stop,
+        current: convertTime(commit.payload.current) ?? t.current,
       }));
-    } else if (cmd === "SET_OPTIONS") {
+    } else if (commit.cmd === "SET_OPTIONS") {
       setOptions(o => ({
         ...o,
-        stepType: payload?.stepType === undefined ? o.stepType : payload.stepType,
-        multiplier: payload?.multiplier === undefined ? o.multiplier : payload.multiplier,
-        rangeType: payload?.rangeType === undefined ? o.rangeType : payload.rangeType,
+        stepType: commit.payload?.stepType === undefined ? o.stepType : commit.payload.stepType,
+        multiplier:
+          commit.payload?.multiplier === undefined ? o.multiplier : commit.payload.multiplier,
+        rangeType: commit.payload?.rangeType === undefined ? o.rangeType : commit.payload.rangeType,
       }));
     }
 
-    commitEventCallbacks.current.forEach(cb => cb(committer));
+    commitEventCallbacks.current.forEach(cb => cb(commit.committer));
   }, []);
 
   const tickEventCallbacks = useRef<TickEventCallback[]>([]);

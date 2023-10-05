@@ -177,9 +177,11 @@ export default function useHooks(
             timelineManagerRef?.current?.commit({
               cmd: "SET_TIME",
               payload: {
-                start: filteredTimeline.start,
-                stop: filteredTimeline.stop,
-                current: filteredTimeline.current,
+                start:
+                  filteredTimeline.start ?? timelineManagerRef?.current?.computedTimeline.start,
+                stop: filteredTimeline.stop ?? timelineManagerRef?.current?.computedTimeline.stop,
+                current:
+                  filteredTimeline.current ?? timelineManagerRef?.current?.computedTimeline.current,
               },
               committer: {
                 source: "overrideSceneProperty",

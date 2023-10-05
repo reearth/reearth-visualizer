@@ -96,7 +96,9 @@ export function widgetContextFromMapRef({
       timelineManagerRef?.current?.commit({
         cmd: "SET_TIME",
         payload: {
+          start: timelineManagerRef.current?.computedTimeline.start,
           current: time,
+          stop: timelineManagerRef.current?.computedTimeline.stop,
         },
         committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
       }),

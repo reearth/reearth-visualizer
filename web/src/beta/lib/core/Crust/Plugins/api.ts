@@ -210,11 +210,7 @@ export function exposed({
               });
           },
           get setTime() {
-            return (time: {
-              start?: Date | string;
-              stop?: Date | string;
-              current?: Date | string;
-            }) =>
+            return (time: { start: Date | string; stop: Date | string; current: Date | string }) =>
               timelineManagerRef?.current?.commit({
                 cmd: "SET_TIME",
                 payload: { ...time },

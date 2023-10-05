@@ -101,7 +101,7 @@ export default function ({
           committer: { source: "pluginAPI", id: "window" },
         });
       },
-      setTime: (time: { start?: Date | string; stop?: Date | string; current?: Date | string }) => {
+      setTime: (time: { start: Date | string; stop: Date | string; current: Date | string }) => {
         timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: { ...time },
