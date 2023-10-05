@@ -47,7 +47,12 @@ type TimelineCommit = {
 };
 
 export type TimelineCommitter = {
-  source: "overrideSceneProperty" | "widgetContext" | "pluginAPI" | "featureResource";
+  source:
+    | "overrideSceneProperty"
+    | "widgetContext"
+    | "pluginAPI"
+    | "featureResource"
+    | "storyTimelineBlock";
   id?: string;
 };
 
