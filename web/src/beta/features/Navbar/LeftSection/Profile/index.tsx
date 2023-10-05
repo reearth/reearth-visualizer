@@ -59,12 +59,12 @@ const Menu: React.FC<MenuProps> = ({ label, items, nested }) => {
             <Menu label={value} items={items} nested />
           ) : linkTo ? (
             <StyledLinkButton to={linkTo}>
-              {icon ? <StyledIcon icon={icon} size={20} /> : null}
+              {icon && <StyledIcon icon={icon} size={20} />}
               {value}
             </StyledLinkButton>
           ) : (
             <Option size="body" key={index} onClick={onClick}>
-              {icon ? <StyledIcon icon={icon} size={20} /> : null}
+              {icon && <StyledIcon icon={icon} size={20} />}
               {value}
             </Option>
           ),

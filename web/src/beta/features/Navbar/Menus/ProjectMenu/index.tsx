@@ -87,12 +87,12 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
             <Spacer key={index} />
           ) : linkTo ? (
             <StyledLinkButton to={linkTo}>
-              {icon ? <StyledIcon icon={icon} size={20} /> : null}
+              {icon && <StyledIcon icon={icon} size={20} />}
               {value}
             </StyledLinkButton>
           ) : (
             <Option size="body" key={index} onClick={onClick}>
-              {icon ? <StyledIcon icon={icon} size={20} /> : null}
+              {icon && <StyledIcon icon={icon} size={20} />}
               {value}
             </Option>
           ),
