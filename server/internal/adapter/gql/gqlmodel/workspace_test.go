@@ -3,6 +3,7 @@ package gqlmodel
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
@@ -33,8 +34,8 @@ func TestToPolicy(t *testing.T) {
 		AssetStorageSize:      lo.ToPtr(int64(5)),
 		DatasetCount:          lo.ToPtr(6),
 		DatasetSchemaCount:    lo.ToPtr(7),
-	}, ToPolicy(workspace.NewPolicy(workspace.PolicyOption{
-		ID:                    workspace.PolicyID("x"),
+	}, ToPolicy(policy.New(policy.Option{
+		ID:                    policy.ID("x"),
 		Name:                  "aaa",
 		ProjectCount:          lo.ToPtr(1),
 		MemberCount:           lo.ToPtr(2),
