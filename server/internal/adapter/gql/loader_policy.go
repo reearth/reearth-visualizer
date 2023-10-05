@@ -5,27 +5,27 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/util"
 )
 
 type PolicyLoader struct {
-	usecase accountinterfaces.Workspace
+	usecase interfaces.Policy
 }
 
-func NewPolicyLoader(usecase accountinterfaces.Workspace) *PolicyLoader {
+func NewPolicyLoader(usecase interfaces.Policy) *PolicyLoader {
 	return &PolicyLoader{usecase: usecase}
 }
 
 func (c *PolicyLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Policy, []error) {
-	uids := util.Map(ids, func(i gqlmodel.ID) workspace.PolicyID { return workspace.PolicyID(i) })
-	res, err := c.usecase.FetchPolicy(ctx, uids, getAcOperator(ctx))
+	uids := util.Map(ids, func(i gqlmodel.ID) policy.ID { return policy.ID(i) })
+	res, err := c.usecase.FetchPolicy(ctx, uids)
 	if err != nil {
 		return nil, []error{err}
 	}
 
-	return util.Map(res, func(p *workspace.Policy) *gqlmodel.Policy {
+	return util.Map(res, func(p *policy.Policy) *gqlmodel.Policy {
 		return gqlmodel.ToPolicy(p)
 	}), nil
 }
