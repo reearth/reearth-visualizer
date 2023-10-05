@@ -5,7 +5,6 @@ import { useDragDropManager } from "react-dnd";
 import { styled } from "@reearth/services/theme";
 
 import Item from "./Item";
-import { useScroll } from "./scrollItem";
 
 export type Props<Item extends { id: string } = { id: string }> = {
   uniqueKey: string;
@@ -27,18 +26,17 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   const [movingItems, setMovingItems] = useState<Item[]>(items);
   const listRef = useRef<null | HTMLDivElement>(null);
 
-  const { updatePosition } = useScroll(listRef);
-
   const dragDropManager = useDragDropManager();
   const monitor = dragDropManager.getMonitor();
+  const [, setIsMonitor] = useState(0);
 
   useEffect(() => {
     const unsubscribe = monitor.subscribeToOffsetChange(() => {
       const offset = monitor.getSourceClientOffset()?.y as number;
-      updatePosition({ position: offset, isScrollAllowed: true });
+      setIsMonitor(offset);
     });
     return unsubscribe;
-  }, [monitor, updatePosition]);
+  }, [monitor]);
 
   const customDragHandler = (item: Item): boolean => {
     // eslint-disable-next-line no-prototype-builtins
