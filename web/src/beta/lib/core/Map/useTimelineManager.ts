@@ -4,7 +4,7 @@ import { convertTime } from "@reearth/beta/utils/time";
 
 import { EngineRef } from ".";
 
-export type TimelineManager = {
+type TimelineManager = {
   readonly timeline: Timeline;
   readonly options: TimelineOptions;
   readonly computedTimeline: Timeline;
@@ -190,5 +190,5 @@ export default ({ init, engineRef, timelineManagerRef }: Props) => {
     timelineManagerRef.current = timelineManager;
   }
 
-  return timelineManager;
+  return null;
 };

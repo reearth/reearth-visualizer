@@ -107,7 +107,7 @@ export default function ({
     );
   }, [onLayerSelect, selectedLayer]);
 
-  const timelineManager = useTimelineManager({
+  useTimelineManager({
     init: sceneProperty?.timeline,
     engineRef,
     timelineManagerRef,
@@ -118,7 +118,6 @@ export default function ({
     layersRef,
     selectedLayer,
     requestingRenderMode,
-    timelineManager,
     handleLayerSelect,
     handleEngineLayerSelect,
   };

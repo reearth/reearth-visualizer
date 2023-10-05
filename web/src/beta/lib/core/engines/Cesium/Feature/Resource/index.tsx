@@ -73,7 +73,7 @@ export default function Resource({
   const actualType = ext ? types[ext] : type !== "auto" ? type : undefined;
   const Component = actualType ? comps[actualType] : undefined;
 
-  const { requestRender, timelineManager } = useContext();
+  const { requestRender, timelineManagerRef } = useContext();
 
   const handleChange = useCallback(
     (e: DataSource) => {
@@ -107,9 +107,9 @@ export default function Resource({
   );
 
   const initialClock = useRef({
-    start: timelineManager?.timeline?.start,
-    stop: timelineManager?.timeline?.stop,
-    current: timelineManager?.timeline?.current,
+    start: timelineManagerRef?.current?.timeline?.start,
+    stop: timelineManagerRef?.current?.timeline?.stop,
+    current: timelineManagerRef?.current?.timeline?.current,
   });
   const handleLoad = useCallback(
     (ds: DataSource) => {
@@ -119,7 +119,7 @@ export default function Resource({
           initialClock.current.start &&
           initialClock.current.stop
         ) {
-          timelineManager?.commit({
+          timelineManagerRef?.current?.commit({
             cmd: "SET_TIME",
             payload: {
               start: initialClock.current.start,
@@ -135,7 +135,7 @@ export default function Resource({
         return;
       }
       if (ds.clock) {
-        timelineManager?.commit({
+        timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: {
             start: JulianDate.toDate(ds.clock.currentTime),
@@ -150,7 +150,7 @@ export default function Resource({
       }
       requestRender?.();
     },
-    [updateClock, timelineManager, layer?.id, requestRender],
+    [updateClock, timelineManagerRef, layer?.id, requestRender],
   );
 
   // convert hexCodeColorString to ColorValue?s

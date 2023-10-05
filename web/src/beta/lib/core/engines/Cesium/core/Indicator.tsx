@@ -7,19 +7,19 @@ import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 import type { SceneProperty } from "../..";
-import { TimelineManager } from "../../../Map/useTimelineManager";
+import { TimelineManagerRef } from "../../../Map/useTimelineManager";
 import { useIcon } from "../common";
 
 export type Props = {
   className?: string;
   property?: SceneProperty;
-  timelineManager?: TimelineManager;
+  timelineManagerRef?: TimelineManagerRef;
 };
 
 export default function Indicator({
   className,
   property,
-  timelineManager,
+  timelineManagerRef,
 }: Props): JSX.Element | null {
   const { viewer } = useCesium();
   const [isVisible, setIsVisible] = useState(true);
@@ -46,8 +46,8 @@ export default function Indicator({
     const handleTick = () => {
       if (viewer.isDestroyed()) return;
       const selected = viewer.selectedEntity;
-      const currentTime = timelineManager?.timeline?.current
-        ? JulianDate.fromDate(timelineManager.timeline.current)
+      const currentTime = timelineManagerRef?.current?.timeline?.current
+        ? JulianDate.fromDate(timelineManagerRef?.current?.timeline.current)
         : undefined;
       if (
         !selected?.isShowing ||
@@ -82,11 +82,12 @@ export default function Indicator({
       }
     };
 
+    const timelineManager = timelineManagerRef?.current;
     timelineManager?.onTick(handleTick);
     return () => {
       timelineManager?.offTick(handleTick);
     };
-  }, [viewer, timelineManager]);
+  }, [viewer, timelineManagerRef]);
 
   return transiton !== "unmounted" && pos ? (
     indicator_type === "crosshair" ? (

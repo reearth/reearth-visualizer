@@ -34,7 +34,7 @@ import type {
   LayerEditEvent,
 } from "..";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
-import { TimelineManager } from "../../Map/useTimelineManager";
+import { TimelineManagerRef } from "../../Map/useTimelineManager";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
@@ -58,7 +58,7 @@ export default ({
   featureFlags,
   requestingRenderMode,
   shouldRender,
-  timelineManager,
+  timelineManagerRef,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -81,7 +81,7 @@ export default ({
   featureFlags: number;
   requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
-  timelineManager?: TimelineManager;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -725,13 +725,13 @@ export default ({
   const context = useMemo<FeatureContext>(
     () => ({
       selectionReason,
-      timelineManager,
+      timelineManagerRef,
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       requestRender: engineAPI.requestRender,
     }),
-    [selectionReason, engineAPI, onLayerEdit, timelineManager],
+    [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
   );
 
   useEffect(() => {

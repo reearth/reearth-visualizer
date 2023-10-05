@@ -56,7 +56,6 @@ function Map(
     layersRef,
     selectedLayer,
     requestingRenderMode,
-    timelineManager,
     handleLayerSelect,
     handleEngineLayerSelect,
   } = useHooks({
@@ -83,7 +82,6 @@ function Map(
       layersRef={layersRef}
       requestingRenderMode={requestingRenderMode}
       timelineManagerRef={timelineManagerRef}
-      timelineManager={timelineManager}
       {...props}>
       <Layers
         ref={layersRef}

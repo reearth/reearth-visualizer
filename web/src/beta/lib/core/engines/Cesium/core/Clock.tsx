@@ -2,15 +2,15 @@ import { Clock as CesiumClock, ClockRange, ClockStep, JulianDate } from "cesium"
 import { useCallback, useMemo } from "react";
 import { Clock } from "resium";
 
-import { type TimelineManager } from "../../../Map/useTimelineManager";
+import { TimelineManagerRef } from "../../../Map/useTimelineManager";
 
 export type Props = {
-  timelineManager?: TimelineManager;
+  timelineManagerRef?: TimelineManagerRef;
 };
 
-export default function ReearthClock({ timelineManager }: Props): JSX.Element | null {
-  const { start, stop, current } = timelineManager?.computedTimeline ?? {};
-  const { animation, stepType, rangeType, multiplier } = timelineManager?.options ?? {};
+export default function ReearthClock({ timelineManagerRef }: Props): JSX.Element | null {
+  const { start, stop, current } = timelineManagerRef?.current?.computedTimeline ?? {};
+  const { animation, stepType, rangeType, multiplier } = timelineManagerRef?.current?.options ?? {};
 
   const startTime = useMemo(() => (start ? JulianDate.fromDate(start) : undefined), [start]);
   const stopTime = useMemo(() => (stop ? JulianDate.fromDate(stop) : undefined), [stop]);
@@ -28,12 +28,12 @@ export default function ReearthClock({ timelineManager }: Props): JSX.Element | 
       const stop = JulianDate.toDate(clock.stopTime);
 
       // NOTE: Must not update state. This event will be called every frame.
-      timelineManager?.handleTick?.(JulianDate.toDate(clock.currentTime), {
+      timelineManagerRef?.current?.handleTick?.(JulianDate.toDate(clock.currentTime), {
         start,
         stop,
       });
     },
-    [timelineManager],
+    [timelineManagerRef],
   );
 
   return (

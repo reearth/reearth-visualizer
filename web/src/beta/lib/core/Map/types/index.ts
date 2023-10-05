@@ -24,7 +24,7 @@ import type {
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
-import type { TimelineManagerRef, TimelineManager } from "../useTimelineManager";
+import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
   FeatureComponentProps,
@@ -104,7 +104,6 @@ export type EngineRef = {
   onTick: TickEvent;
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
-  timelineManager?: TimelineManager;
   findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
   findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
 };
@@ -132,7 +131,6 @@ export type EngineProps = {
   layersRef?: RefObject<LayersRef>;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   timelineManagerRef?: TimelineManagerRef;
-  timelineManager?: TimelineManager;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
