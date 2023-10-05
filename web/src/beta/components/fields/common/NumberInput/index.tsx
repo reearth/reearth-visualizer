@@ -79,9 +79,14 @@ const NumberInput: React.FC<Props> = ({
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.currentTarget.value;
-    const strippedValue = newValue.replace(/^0+/, "");
-    setInnerValue(parseFloat(strippedValue));
-    const minWidth = Math.max(metricsSizes.xs, strippedValue.length * 10);
+    const parsedValue = parseFloat(newValue);
+    if (!isNaN(parsedValue) || parsedValue === 0) {
+      setInnerValue(parsedValue);
+    } else {
+      setInnerValue(undefined);
+    }
+    e.currentTarget.value = parsedValue.toString();
+    const minWidth = Math.max(metricsSizes.xs, newValue.length * 10);
     e.currentTarget.style.width = `${minWidth}px`;
   }, []);
 
