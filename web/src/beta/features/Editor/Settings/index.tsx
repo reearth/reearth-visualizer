@@ -41,28 +41,31 @@ const Settings: React.FC<Props> = ({
     onPageUpdate,
   });
 
+  console.log(allCheckedLayers);
   return (
     <Wrapper>
       {tab == "story" && (
         <SidePanelSectionField title={t("Layers")}>
-          <LayerWrapper>
-            <AllLayers>
-              <CheckBoxField
-                label={t("All Layers")}
-                onClick={handleAllLayersCheck}
-                checked={allCheckedLayers}
-              />
-            </AllLayers>
-            {layers?.map((layer, idx) => (
-              <Layer key={idx}>
+          {layers && layers?.length > 0 && (
+            <LayerWrapper>
+              <AllLayers>
                 <CheckBoxField
-                  onClick={() => handleLayerCheck(layer.id)}
-                  checked={checkedLayers.includes(layer.id)}
-                  label={layer.title}
+                  label={t("All Layers")}
+                  onClick={handleAllLayersCheck}
+                  checked={allCheckedLayers}
                 />
-              </Layer>
-            ))}
-          </LayerWrapper>
+              </AllLayers>
+              {layers?.map((layer, idx) => (
+                <Layer key={idx}>
+                  <CheckBoxField
+                    onClick={() => handleLayerCheck(layer.id)}
+                    checked={checkedLayers.includes(layer.id)}
+                    label={layer.title}
+                  />
+                </Layer>
+              ))}
+            </LayerWrapper>
+          )}
         </SidePanelSectionField>
       )}
 
