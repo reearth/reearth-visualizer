@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import useHooks from "@reearth/beta/features/Assets/AssetHooks/hooks";
+import useHooks from "@reearth/beta/features/Assets/hooks";
 import { Asset } from "@reearth/beta/features/Assets/types";
 
 import { InnerPage } from "../common";
@@ -22,14 +22,14 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
     deleteModalVisible,
     selectedAssets,
     selectAsset,
-    onGetMoreAssets,
-    onSortChange,
+    handleGetMoreAssets,
+    handleSortChange,
     onScrollToBottom,
-    onSearchInputChange,
-    onSearch,
+    handleSearchInputChange,
+    handleSearch,
     openDeleteModal,
     closeDeleteModal,
-    onRemove,
+    handleRemove,
   } = useHooks({ workspaceId });
 
   const handleSelect = useCallback(
@@ -57,14 +57,14 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
         hasMoreAssets={hasMoreAssets}
         searchTerm={searchTerm}
         localSearchTerm={localSearchTerm}
-        onGetMore={onGetMoreAssets}
+        onGetMore={handleGetMoreAssets}
         onSelect={handleSelect}
-        onSortChange={onSortChange}
+        onSortChange={handleSortChange}
         onScrollToBottom={onScrollToBottom}
         closeDeleteModal={closeDeleteModal}
-        handleRemove={onRemove}
-        handleSearch={onSearch}
-        handleSearchInputChange={onSearchInputChange}
+        handleRemove={handleRemove}
+        handleSearch={handleSearch}
+        handleSearchInputChange={handleSearchInputChange}
       />
     </InnerPage>
   );

@@ -71,20 +71,23 @@ export default ({
     [t],
   );
 
-  const iconChoice =
-    sort?.type === "name"
-      ? sort?.reverse
-        ? "filterNameReverse"
-        : "filterName"
-      : sort?.type === "size"
-      ? sort?.reverse
-        ? "filterSizeReverse"
-        : "filterSize"
-      : sort?.reverse
-      ? "filterTimeReverse"
-      : "filterTime";
+  const iconChoice = useMemo(
+    () =>
+      sort?.type === "name"
+        ? sort?.reverse
+          ? "filterNameReverse"
+          : "filterName"
+        : sort?.type === "size"
+        ? sort?.reverse
+          ? "filterSizeReverse"
+          : "filterSize"
+        : sort?.reverse
+        ? "filterTimeReverse"
+        : "filterTime",
+    [sort?.reverse, sort?.type],
+  );
 
-  const onGetMoreAssets = useCallback(async () => {
+  const handleGetMoreAssets = useCallback(async () => {
     if (hasMoreAssets && !isGettingMore.current) {
       isGettingMore.current = true;
       await fetchMore({
@@ -96,7 +99,7 @@ export default ({
     }
   }, [endCursor, sort, fetchMore, hasMoreAssets, isGettingMore]);
 
-  const onSortChange = useCallback(
+  const handleSortChange = useCallback(
     (type?: string, reverse?: boolean) => {
       if (!type && reverse === undefined) return;
       setSort({
@@ -111,7 +114,7 @@ export default ({
     setSearchTerm(term);
   }, []);
 
-  const onRemove = useCallback(async () => {
+  const handleRemove = useCallback(async () => {
     if (selectedAssets?.length) {
       const { status } = await useRemoveAssets(selectedAssets.map(a => a.id));
       if (status === "success") {
@@ -121,17 +124,17 @@ export default ({
     }
   }, [selectedAssets, useRemoveAssets]);
 
-  const onReverse = useCallback(() => {
-    onSortChange?.(undefined, !sort?.reverse);
-  }, [onSortChange, sort?.reverse]);
+  const handleReverse = useCallback(() => {
+    handleSortChange?.(undefined, !sort?.reverse);
+  }, [handleSortChange, sort?.reverse]);
 
-  const onSearchInputChange = useCallback(
+  const handleSearchInputChange = useCallback(
     (value: string) => {
       setLocalSearchTerm(value);
     },
     [setLocalSearchTerm],
   );
-  const onSearch = useCallback(() => {
+  const handleSearch = useCallback(() => {
     if (!localSearchTerm || localSearchTerm.length < 1) {
       handleSearchTerm?.(undefined);
     } else {
@@ -145,8 +148,8 @@ export default ({
 
   useEffect(() => {
     if (wrapperRef.current && !isLoading && hasMoreAssets)
-      autoFillPage(wrapperRef, onGetMoreAssets);
-  }, [onGetMoreAssets, hasMoreAssets, isLoading]);
+      autoFillPage(wrapperRef, handleGetMoreAssets);
+  }, [handleGetMoreAssets, hasMoreAssets, isLoading]);
 
   return {
     wrapperRef,
@@ -162,13 +165,13 @@ export default ({
     deleteModalVisible,
     closeDeleteModal,
     selectAsset,
-    onGetMoreAssets,
-    onSortChange,
+    handleGetMoreAssets,
+    handleSortChange,
     onScrollToBottom,
     openDeleteModal,
-    onRemove,
-    onReverse,
-    onSearchInputChange,
-    onSearch,
+    handleRemove,
+    handleReverse,
+    handleSearchInputChange,
+    handleSearch,
   };
 };

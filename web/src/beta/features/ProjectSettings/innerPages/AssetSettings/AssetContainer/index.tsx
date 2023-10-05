@@ -63,7 +63,7 @@ const AssetContainer: React.FC<Props> = ({
 }) => {
   const t = useT();
 
-  const { onFileUpload } = useFileUploaderHook({
+  const { handleFileUpload } = useFileUploaderHook({
     workspaceId: workspaceId,
     onAssetSelect: onAssetUrlSelect,
   });
@@ -90,7 +90,7 @@ const AssetContainer: React.FC<Props> = ({
             icon="uploadSimple"
             size="small"
             buttonType={"secondary"}
-            onClick={onFileUpload}
+            onClick={handleFileUpload}
           />
           <Button
             text={t("Delete")}

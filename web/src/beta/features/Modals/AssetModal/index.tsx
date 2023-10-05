@@ -6,8 +6,8 @@ import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
-import useHooks from "@reearth/beta/features/Assets/AssetHooks/hooks";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
+import useHooks from "@reearth/beta/features/Assets/hooks";
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
@@ -46,9 +46,9 @@ const ChooseAssetModal: React.FC<Props> = ({
     localSearchTerm,
     wrapperRef,
     onScrollToBottom,
-    onSearchInputChange,
-    onSearch,
-    onGetMoreAssets,
+    handleSearchInputChange,
+    handleSearch,
+    handleGetMoreAssets,
   } = useHooks({ workspaceId: currentWorkspace?.id });
 
   const filteredAssets = useMemo(() => {
@@ -124,8 +124,8 @@ const ChooseAssetModal: React.FC<Props> = ({
       }>
       <ControlWarpper>
         <SearchWarpper>
-          <TextInput value={localSearchTerm} onChange={onSearchInputChange} />
-          <SearchButton icon="search" margin="0" onClick={onSearch} />
+          <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
+          <SearchButton icon="search" margin="0" onClick={handleSearch} />
         </SearchWarpper>
       </ControlWarpper>
       <AssetWrapper>
@@ -142,7 +142,9 @@ const ChooseAssetModal: React.FC<Props> = ({
         ) : (
           <AssetListWrapper
             ref={wrapperRef}
-            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, onGetMoreAssets)}>
+            onScroll={e =>
+              !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
+            }>
             <AssetList>
               {filteredAssets?.map(a => (
                 <AssetCard
@@ -171,6 +173,7 @@ const ChooseAssetModal: React.FC<Props> = ({
 
 const StyledModal = styled(Modal)`
   width: 730px;
+  max-height: 577;
 `;
 const AssetWrapper = styled.div`
   max-height: calc(100vh - 240px);
