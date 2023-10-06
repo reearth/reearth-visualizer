@@ -40,9 +40,8 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
       return plugin?.extensions
         .filter(
           e =>
-            (e.type === PluginExtensionType.Widget &&
-              AVAILABLE_WIDGET_IDS.includes(`reearth/${e.extensionId}`)) ||
-            plugin.id !== "reearth",
+            e.type === PluginExtensionType.Widget &&
+            (AVAILABLE_WIDGET_IDS.includes(`reearth/${e.extensionId}`) || plugin.id !== "reearth"),
         )
         .map((e): InstallableWidget => {
           return {
