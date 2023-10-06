@@ -86,6 +86,7 @@ export type Props = {
   selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
   zoomedLayerId?: string;
+  showStoryPanel?: boolean;
   onCameraChange?: (camera: Camera) => void;
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
@@ -155,6 +156,7 @@ const Visualizer = memo(
         layerSelectionReason,
         useExperimentalSandbox,
         children,
+        showStoryPanel,
         onLayerDrop,
         onLayerSelect,
         onCameraChange,
@@ -294,6 +296,7 @@ const Visualizer = memo(
                   style={style}
                   featureFlags={featureFlags}
                   shouldRender={shouldRender}
+                  showStoryPanel={showStoryPanel}
                   // overrides={overrides} // not used for now
                   property={overriddenSceneProperty}
                   selectedLayerId={selectedLayerId}

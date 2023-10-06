@@ -132,6 +132,7 @@ const Visualizer: React.FC<Props> = ({
         onLayerDrop={handleDropLayer}
         onZoomToLayer={zoomToLayer}
         onMount={handleMount}
+        showStoryPanel={showStoryPanel}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel

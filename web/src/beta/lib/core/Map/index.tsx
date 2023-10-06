@@ -27,6 +27,7 @@ export type { MapRef as Ref } from "./hooks";
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
+  showStoryPanel?: boolean;
 } & Omit<LayersProps, "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes"> &
   Omit<EngineProps, "selectionReason" | "onLayerSelect">;
 
@@ -42,6 +43,7 @@ function Map(
     overrides,
     selectedLayerId,
     layerSelectionReason,
+    showStoryPanel,
     onLayerSelect,
     ...props
   }: Props,
@@ -96,6 +98,7 @@ function Map(
         requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
         engineRef={engineRef}
+        showStoryPanel={showStoryPanel}
       />
     </Engine>
   ) : null;

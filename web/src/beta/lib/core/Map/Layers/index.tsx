@@ -47,6 +47,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
     info: SelectedFeatureInfo | undefined,
   ) => void;
   engineRef?: RefObject<EngineRef>;
+  showStoryPanel?: boolean;
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (
@@ -58,6 +59,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     requestingRenderMode,
     onLayerSelect,
     engineRef,
+    showStoryPanel,
     ...props
   },
   ref,
@@ -80,6 +82,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
       layers={flattenedLayers}
       atomMap={atomMap}
       isHidden={isHidden}
+      showStoryPanel={showStoryPanel}
     />
   );
 };
