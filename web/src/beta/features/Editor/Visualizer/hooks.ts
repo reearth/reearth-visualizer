@@ -33,7 +33,6 @@ export default ({
   isBuilt,
   storyId,
   currentPage,
-  showStoryPanel,
 }: {
   sceneId?: string;
   isBuilt?: boolean;
@@ -259,13 +258,11 @@ export default ({
         ...layer,
         hidden: !currentPage?.layersIds?.includes(layer.id),
       }));
-      const layerPages = (currentPage?.layersIds?.length ?? 0) > 0 ? updatedLayers : [];
-      const results = showStoryPanel ? layerPages : layers;
-      setLayersData(results?.filter(layer => !layer.hidden));
+      setLayersData(updatedLayers);
     };
 
     handleDisplayLayer();
-  }, [currentPage, layers, showStoryPanel]);
+  }, [currentPage, layers]);
 
   return {
     sceneId,

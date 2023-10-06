@@ -64,6 +64,8 @@ export default function ClusteredLayers({
 
   const renderLayer = useCallback(
     (layer: Layer) => {
+      if (layer.hidden) return;
+
       const a = atomMap?.get(layer.id);
       return !layer.id || !a ? null : (
         <LayerComponent
