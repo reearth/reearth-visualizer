@@ -63,6 +63,7 @@ export type Tag = {
   legacyLocationPropertyKey?: string;
   originalProperties?: any;
   computedFeature?: ComputedFeature;
+  isFeatureSelected?: boolean;
 };
 
 export const EntityExt = forwardRef(EntityExtComponent);
@@ -175,6 +176,7 @@ const tagObj: { [k in keyof Tag]: 1 } = {
   unselectable: 1,
   originalProperties: 1,
   computedFeature: 1,
+  isFeatureSelected: 1,
 };
 
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];

@@ -62,6 +62,11 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   removeTickEventListener: 1,
   findFeaturesByIds: 1,
   findFeatureById: 1,
+  findComputedFeatureById: 1,
+  findComputedFeaturesByIds: 1,
+  selectFeatures: 1,
+  unselectFeatures: 1,
+  pickManyFromViewport: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -80,6 +85,7 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   override: 1,
   replace: 1,
   select: 1,
+  selectFeatures: 1,
   selectedLayer: 1,
   show: 1,
   walk: 1,
