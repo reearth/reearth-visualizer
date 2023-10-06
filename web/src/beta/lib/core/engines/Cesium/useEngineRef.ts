@@ -533,7 +533,14 @@ export default function useEngineRef(
             tag.computedFeature ?? {
               type: "computedFeature",
               id: tag.featureId,
-              properties: entity.properties,
+              properties:
+                entity.properties &&
+                Object.fromEntries(
+                  entity.properties.propertyNames.map(key => [
+                    key,
+                    entity.properties?.getValue(viewer.clock.currentTime)?.[key],
+                  ]),
+                ),
             }
           );
         }
