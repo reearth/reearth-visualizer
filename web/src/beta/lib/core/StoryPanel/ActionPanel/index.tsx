@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, MouseEvent, SetStateAction, useMemo } from "react";
+import { Dispatch, Fragment, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
 
 import { useItemContext } from "@reearth/beta/components/DragAndDropList/Item";
 import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
@@ -51,6 +51,11 @@ const ActionPanel: React.FC<Props> = ({
   const t = useT();
   const ref = useItemContext();
 
+  const handleRemove = useCallback(() => {
+    onRemove?.();
+    onSettingsToggle?.();
+  }, [onRemove, onSettingsToggle]);
+
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
       {
@@ -63,11 +68,11 @@ const ActionPanel: React.FC<Props> = ({
       menuItems.push({
         name: t("Remove"),
         icon: "trash",
-        onClick: onRemove,
+        onClick: handleRemove,
       });
     }
     return menuItems;
-  }, [t, setShowPadding, onRemove]);
+  }, [t, setShowPadding, onRemove, handleRemove]);
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
@@ -77,7 +82,7 @@ const ActionPanel: React.FC<Props> = ({
         </DndHandle>
       )}
       <Popover.Provider
-        open={showSettings}
+        open={showSettings && isSelected}
         onOpenChange={() => onSettingsToggle?.()}
         placement="bottom-start">
         <BlockOptions isSelected={isSelected}>
@@ -128,6 +133,8 @@ const ActionPanel: React.FC<Props> = ({
 export default ActionPanel;
 
 const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
+  ${({ isSelected }) => !isSelected && "background: #f1f1f1;"}
+  z-index: 1;
   color: ${({ theme }) => theme.select.main};
   display: flex;
   align-items: center;
@@ -154,16 +161,15 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   right: -1px;
   top: -25px;
   `}
-  transition: all 0.2s;
+  z-index: 1;
 `;
 
 const BlockOptions = styled.div<{ isSelected?: boolean }>`
-  background: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "transparent")};
+  background: ${({ isSelected, theme }) => (isSelected ? theme.select.main : "#f1f1f1")};
   color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.select.main)};
   display: flex;
   align-items: center;
   height: 24px;
-  transition: all 0.2s;
 `;
 
 const OptionWrapper = styled.div<{ showPointer?: boolean }>`
@@ -177,8 +183,9 @@ const OptionText = styled(Text)`
 `;
 
 const OptionIcon = styled(Icon)<{ border?: boolean }>`
-  padding: 4px;
   ${({ border }) => border && "border-left: 1px solid #f1f1f1;"}
+  padding: 4px;
+  transition: none;
 `;
 
 const SettingsDropdown = styled.div`
@@ -209,5 +216,8 @@ const CancelIcon = styled(Icon)`
 `;
 
 const DndHandle = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
   cursor: move;
 `;

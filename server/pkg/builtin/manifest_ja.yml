@@ -1001,3 +1001,94 @@ extensions:
               always: 常に
               desktop: デスクトップのみ
               mobile: モバイルのみ
+  story:
+    name: ストーリー
+    description: ストーリーテリングのストーリー
+  storyPage:
+    name: ストーリーページ
+    description: ストーリーテリングのページ
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+          gap:
+            title: 空隙
+      title:
+        title: タイトル設定
+        fields:
+          title:
+            title: タイトル
+          color:
+            title: 色
+      cameraAnimation:
+        title: カメラアニメーション
+        fields:
+          cameraPosition:
+            title: カメラ位置
+          cameraDuration:
+            title: カメラ移動時間
+          cameraDelay:
+            title: カメラ待機時間
+      timePoint:
+        title: タイムポイント
+        fields:
+          timePoint:
+            title: 時間
+  textStoryBlock:
+    name: テキスト
+    description: ストーリーテリングのテキストブロック
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+      default:
+        title: テキスト
+        fields:
+          text:
+            title: コンテンツ
+  mdTextStoryBlock:
+    name: マークダウン
+    description: ストーリーテリングのマークダウンブロック
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+      default:
+        title: マークダウン
+        fields:
+          text:
+            title: コンテンツ
+  imageStoryBlock:
+    name: 画像
+    description: ストーリーテリングの画像ブロック
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+      default:
+        title: 画像
+        fields:
+          text:
+            title: コンテンツ
+  videoStoryBlock:
+    name: 動画
+    description: ストーリーテリングの動画ブロック
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+      default:
+        title: 動画
+        fields:
+          text:
+            title: コンテンツ

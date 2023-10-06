@@ -1,6 +1,7 @@
 package gqlmodel
 
 import (
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
@@ -51,7 +52,7 @@ func FromRole(r Role) workspace.Role {
 	return workspace.Role("")
 }
 
-func ToPolicy(p *workspace.Policy) *Policy {
+func ToPolicy(p *policy.Policy) *Policy {
 	if p == nil {
 		return nil
 	}

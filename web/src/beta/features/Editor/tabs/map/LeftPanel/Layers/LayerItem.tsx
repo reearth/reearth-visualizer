@@ -3,7 +3,6 @@ import { MouseEvent, useCallback, useState } from "react";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import Text from "@reearth/beta/components/Text";
 import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 
 type LayerItemProps = {
@@ -90,7 +89,7 @@ const LayerItem = ({
           onBlur={handleEditExit}
         />
       ) : (
-        <Text size="body">{layerTitle}</Text>
+        layerTitle
       )}
     </ListItem>
   );

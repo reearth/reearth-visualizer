@@ -9,7 +9,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/layer/layerops"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
@@ -37,8 +37,8 @@ type Dataset struct {
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
 	pluginRepo        repo.Plugin
+	policyRepo        repo.Policy
 	workspaceRepo     accountrepo.Workspace
-	policyRepo        accountrepo.Policy
 	datasource        gateway.DataSource
 	file              gateway.File
 	google            gateway.Google
@@ -190,7 +190,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		return nil, err
 	}
 
-	var policy *workspace.Policy
+	var policy *policy.Policy
 	if policyID := o.Policy(ws.Policy()); policyID != nil {
 		p, err := i.policyRepo.FindByID(ctx, *policyID)
 		if err != nil {
