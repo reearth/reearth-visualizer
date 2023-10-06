@@ -121,13 +121,17 @@ function pickFramebufferEnd(
   // in spiral to find only a single object. Precision issue maybe?
   const objects = new Set<object>();
   for (let index = 0; index < pixels.length; index += 4) {
-    colorScratch.red = Color.byteToFloat(pixels[index]);
-    colorScratch.green = Color.byteToFloat(pixels[index + 1]);
-    colorScratch.blue = Color.byteToFloat(pixels[index + 2]);
-    colorScratch.alpha = Color.byteToFloat(pixels[index + 3]);
-    const object = context.getObjectByPickColor(colorScratch);
-    if (object != null) {
-      objects.add(object);
+    try {
+      colorScratch.red = Color.byteToFloat(pixels[index]);
+      colorScratch.green = Color.byteToFloat(pixels[index + 1]);
+      colorScratch.blue = Color.byteToFloat(pixels[index + 2]);
+      colorScratch.alpha = Color.byteToFloat(pixels[index + 3]);
+      const object = context.getObjectByPickColor(colorScratch);
+      if (object != null) {
+        objects.add(object);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
   return Array.from(objects.values());
@@ -199,7 +203,7 @@ function getIntersection(
   result.y = y1;
   result.width = x2 - x1;
   result.height = y2 - y1;
-  return result;
+  return result.clone(new BoundingRectangle());
 }
 
 const pickTilesetPassState = new Cesium3DTilePassState({

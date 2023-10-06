@@ -556,17 +556,20 @@ export default function useEngineRef(
       ): ComputedFeature[] | undefined => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return findFeaturesFromLayer(viewer, layerId, featureIds, e => {
-          return convertObjToComputedFeature(viewer, e)?.[1];
-        });
+        return findFeaturesFromLayer(
+          viewer,
+          layerId,
+          featureIds,
+          e => convertObjToComputedFeature(viewer, e)?.[1],
+        );
       },
       selectFeatures: (layerId: string, featureId: string[]) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         findFeaturesFromLayer(viewer, layerId, featureId, entity => {
           const tag = getTag(entity) ?? {};
-          tag.isFeatureSelected = true;
-          attachTag(entity, tag);
+          const updatedTag = { ...tag, isFeatureSelected: true };
+          attachTag(entity, updatedTag);
           return entity;
         });
       },

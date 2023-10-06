@@ -11,6 +11,7 @@ import {
   useState,
   type MutableRefObject,
   RefObject,
+  SetStateAction,
 } from "react";
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
@@ -675,6 +676,11 @@ function compat(layer: unknown): Layer | undefined {
     : (layer as Layer);
 }
 
+type SelectedLayer = [
+  { layerId?: string; featureId?: string } | undefined,
+  LayerSelectionReason | undefined,
+  SelectedFeatureInfo | undefined,
+];
 function useSelection({
   flattenedLayers,
   selectedLayerId: initialSelectedLayerId,
@@ -701,13 +707,8 @@ function useSelection({
   engineRef?: RefObject<EngineRef>;
   updateStyle: (layerId: string) => void;
 }) {
-  const [[selectedLayerId, selectedReason, selectedFeatureInfo], setSelectedLayer] = useState<
-    [
-      { layerId?: string; featureId?: string } | undefined,
-      LayerSelectionReason | undefined,
-      SelectedFeatureInfo | undefined,
-    ]
-  >([initialSelectedLayerId, initialSelectedReason, undefined]);
+  const [[selectedLayerId, selectedReason, selectedFeatureInfo], setSelectedLayer] =
+    useState<SelectedLayer>([initialSelectedLayerId, initialSelectedReason, undefined]);
 
   useEffect(() => {
     setSelectedLayer(s => {
@@ -778,7 +779,8 @@ function useSelection({
   );
 
   const selectedFeatureIds = useRef<{ layerId: string; featureIds: string[] }[]>([]);
-  const selectFeatures = useCallback(
+
+  const updateSelectedLayerForFeature = useCallback(
     (
       layers: {
         layerId?: string;
@@ -787,12 +789,8 @@ function useSelection({
       options?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
-      selectedFeatureIds.current.forEach(id => {
-        engineRef?.current?.unselectFeatures(id.layerId, id.featureIds);
-        updateStyle(id.layerId);
-      });
-
-      selectedFeatureIds.current = [];
+      const resetSelect: SetStateAction<SelectedLayer> = s =>
+        !s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined];
 
       if (layers.length === 1) {
         const [{ layerId, featureId }] = layers;
@@ -811,12 +809,21 @@ function useSelection({
               : s,
           );
         else if (options) setSelectedLayer(s => [s[0], options, info]);
-        else
-          setSelectedLayer(s => (!s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined]));
+        else setSelectedLayer(resetSelect);
       } else {
-        setSelectedLayer(s => (!s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined]));
+        setSelectedLayer(resetSelect);
       }
+    },
+    [],
+  );
 
+  const updateEngineFeatures = useCallback(
+    (
+      layers: {
+        layerId?: string;
+        featureId?: string[];
+      }[],
+    ) => {
       for (const { layerId, featureId } of layers) {
         if (!layerId || !featureId) continue;
 
@@ -840,6 +847,29 @@ function useSelection({
       }
     },
     [engineRef, updateStyle],
+  );
+
+  const selectFeatures = useCallback(
+    (
+      layers: {
+        layerId?: string;
+        featureId?: string[];
+      }[],
+      options?: LayerSelectionReason,
+      info?: SelectedFeatureInfo,
+    ) => {
+      selectedFeatureIds.current.forEach(id => {
+        engineRef?.current?.unselectFeatures(id.layerId, id.featureIds);
+        updateStyle(id.layerId);
+      });
+
+      selectedFeatureIds.current = [];
+
+      updateSelectedLayerForFeature(layers, options, info);
+
+      updateEngineFeatures(layers);
+    },
+    [engineRef, updateStyle, updateEngineFeatures, updateSelectedLayerForFeature],
   );
 
   return {
