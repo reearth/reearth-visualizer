@@ -370,7 +370,7 @@ export default function useHooks({
         // If layer property is overridden, feature is legacy layer.
         // So we can set layer id to prevent unnecessary render.
         // TODO: fix: Cannot add property id, object is not extensible
-        // rawLayer.data.value.id = id;
+        rawLayer.data.value.id = id;
       }
 
       const layer2 = { id, ...omit(rawLayer, "id", "type", "children") } as Layer;
