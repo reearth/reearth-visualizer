@@ -95,6 +95,7 @@ function Map(
         sceneProperty={props.property}
         requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
+        engineRef={engineRef}
       />
     </Engine>
   ) : null;

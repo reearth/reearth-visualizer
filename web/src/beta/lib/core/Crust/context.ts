@@ -68,7 +68,12 @@ export function widgetContextFromMapRef({
     onCameraRotateRight: (...args) => engine()?.rotateRight(...args),
     onFlyTo: (...args) => engine()?.flyTo(...args),
     onLookAt: (...args) => engine()?.lookAt(...args),
-    onLayerSelect: (...args) => layers()?.select(...args),
+    onLayerSelect: (layerId, featureId, options) => {
+      layers()?.selectFeatures(
+        [{ layerId, featureId: featureId ? [featureId] : undefined }],
+        options,
+      );
+    },
     onPause: (...args) => engine()?.pause(...args),
     onPlay: (...args) => engine()?.play(...args),
     onSpeedChange: (...args) => engine()?.changeSpeed(...args),
