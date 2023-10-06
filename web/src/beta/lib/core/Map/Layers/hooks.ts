@@ -365,11 +365,11 @@ export default function useHooks({
         rawLayer.type === "simple" &&
         rawLayer.data?.value &&
         // If data isn't cachable, reuse layer id for performance.
-        DATA_CACHE_KEYS.some(k => !rawLayer.data?.[k])
+        DATA_CACHE_KEYS.some(k => !rawLayer.data?.[k]) &&
+        Object.isExtensible(rawLayer.data.value)
       ) {
         // If layer property is overridden, feature is legacy layer.
         // So we can set layer id to prevent unnecessary render.
-        // TODO: fix: Cannot add property id, object is not extensible
         rawLayer.data.value.id = id;
       }
 
