@@ -92,8 +92,14 @@ export default ({
     [selected],
   );
 
-  const layers = useMemo(() => processLayers(nlsLayers), [nlsLayers]);
-
+  const layers = useMemo(
+    () =>
+      processLayers(nlsLayers)?.map(layer => ({
+        ...layer,
+        hidden: false,
+      })),
+    [nlsLayers],
+  );
   // TODO: Use GQL value
   const rootLayerId = "";
 
@@ -249,10 +255,13 @@ export default ({
 
   useEffect(() => {
     const handleDisplayLayer = () => {
-      const filteredLayers = layers?.filter(layer => currentPage?.layersIds?.includes(layer.id));
-      const layerPages = (currentPage?.layersIds?.length ?? 0) > 0 ? filteredLayers : [];
+      const updatedLayers = layers?.map(layer => ({
+        ...layer,
+        hidden: !currentPage?.layersIds?.includes(layer.id),
+      }));
+      const layerPages = (currentPage?.layersIds?.length ?? 0) > 0 ? updatedLayers : [];
       const results = showStoryPanel ? layerPages : layers;
-      setLayersData(results);
+      setLayersData(results?.filter(layer => !layer.hidden));
     };
 
     handleDisplayLayer();
