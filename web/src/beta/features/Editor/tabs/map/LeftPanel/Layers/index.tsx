@@ -34,36 +34,41 @@ const Layers: React.FC<LayersProps> = ({
     setAddMenuOpen(prev => !prev);
   }, []);
 
+  console.log(selectedLayerId);
   return (
     <LayerContainer>
-      <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
-        <Popover.Trigger asChild>
-          <AddLayerIcon onClick={toggleAddMenu}>
-            <Icon icon="addLayer" />
-          </AddLayerIcon>
-        </Popover.Trigger>
+      <ActionWrapper>
+        <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId} />
+        <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
+          <Popover.Trigger asChild>
+            <AddLayerIcon onClick={toggleAddMenu}>
+              <Icon icon="addLayer" />
+            </AddLayerIcon>
+          </Popover.Trigger>
 
-        <Popover.Content>
-          <PopoverMenuContent
-            size="md"
-            items={[
-              {
-                name: t("Add Layer from Resource"),
-                icon: "file",
-                onClick: () => {
-                  onDataSourceManagerOpen();
-                  toggleAddMenu();
+          <Popover.Content>
+            <PopoverMenuContent
+              size="md"
+              items={[
+                {
+                  name: t("Add Layer from Resource"),
+                  icon: "file",
+                  onClick: () => {
+                    onDataSourceManagerOpen();
+                    toggleAddMenu();
+                  },
                 },
-              },
-              // {
-              //   name: t("Add Sketch Layer"),
-              //   icon: "pencilSimple",
-              //   onClick: () => {},
-              // },
-            ]}
-          />
-        </Popover.Content>
-      </Popover.Provider>
+                // {
+                //   name: t("Add Sketch Layer"),
+                //   icon: "pencilSimple",
+                //   onClick: () => {},
+                // },
+              ]}
+            />
+          </Popover.Content>
+        </Popover.Provider>
+      </ActionWrapper>
+
       {layers.map(layer => (
         <LayerItem
           key={layer.id}
@@ -84,6 +89,12 @@ const LayerContainer = styled.div`
   flex-direction: column;
 `;
 
+const ActionWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: right;
+`;
+
 const AddLayerIcon = styled.div`
   padding: 2px;
   margin-bottom: 2px;
@@ -91,4 +102,10 @@ const AddLayerIcon = styled.div`
   cursor: pointer;
 `;
 
+const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
+  padding: 3px;
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  color: ${({ disabled, theme }) => (disabled ? theme.content.weak : theme.content.strong)};
+  border-radius: 5px;
+`;
 export default Layers;
