@@ -6,7 +6,7 @@ import { usePropertyFetcher } from "@reearth/services/api";
 // Unlick common story blocks which will use the auto generted field components editor,
 // Some special story blocks will use the custom editor components and need to update date directly.
 export default () => {
-  const { useUpdatePropertyValue } = usePropertyFetcher();
+  const { useUpdatePropertyValue, useAddPropertyItem } = usePropertyFetcher();
 
   const handlePropertyValueUpdate = useCallback(
     (
@@ -23,7 +23,15 @@ export default () => {
     [useUpdatePropertyValue],
   );
 
+  const handleAddPropertyItem = useCallback(
+    (propertyId: string, schemaGroup: string) => {
+      return useAddPropertyItem(propertyId, schemaGroup);
+    },
+    [useAddPropertyItem],
+  );
+
   return {
     handlePropertyValueUpdate,
+    handleAddPropertyItem,
   };
 };
