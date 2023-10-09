@@ -31,6 +31,7 @@ type Props = {
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 };
 
 export default ({
@@ -50,6 +51,7 @@ export default ({
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onZoomToLayer,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -64,6 +66,7 @@ export default ({
             onLayerSelect={onLayerSelect}
             onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
+            onZoomToLayer={onZoomToLayer}
           />
         );
       case "story":
@@ -86,15 +89,16 @@ export default ({
   }, [
     tab,
     nlsLayers,
-    selectedStory,
     selectedLayerId,
     selectedSceneSetting,
-    currentPageId,
     onLayerDelete,
     onLayerNameUpdate,
     onLayerSelect,
     onSceneSettingSelect,
     onDataSourceManagerOpen,
+    onZoomToLayer,
+    selectedStory,
+    currentPageId,
     onCurrentPageChange,
     onPageDuplicate,
     onPageDelete,

@@ -19,7 +19,6 @@ import {
   useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
-  useZoomedLayerId,
   selectedWidgetAreaVar,
   isVisualizerReadyVar,
 } from "@reearth/services/state";
@@ -51,7 +50,6 @@ export default ({
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
-  const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
   const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
   const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
@@ -244,7 +242,6 @@ export default ({
     sceneId,
     rootLayerId,
     selectedLayerId,
-    zoomedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
@@ -275,7 +272,6 @@ export default ({
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     handleDropLayer,
-    zoomToLayer,
     handleMount,
   };
 };

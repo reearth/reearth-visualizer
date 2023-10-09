@@ -9,6 +9,7 @@ import {
   useWidgetAlignEditorActivated,
   isVisualizerReadyVar,
   currentCameraVar,
+  useZoomedLayerId,
 } from "@reearth/services/state";
 
 import type { Tab } from "../Navbar";
@@ -21,6 +22,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
   const currentCamera = useReactiveVar(currentCameraVar);
+  const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
   const [selectedSceneSetting, setSceneSetting] = useState(false);
   const [selectedDevice, setDevice] = useState<Device>("desktop");
@@ -96,6 +98,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     showWidgetEditor,
     showDataSourceManager,
     currentCamera,
+    zoomedLayerId,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
     handleSceneSettingSelect,
@@ -104,5 +107,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     handleWidgetEditorToggle,
     handleFlyTo,
     handleCameraUpdate,
+    zoomToLayer,
   };
 };

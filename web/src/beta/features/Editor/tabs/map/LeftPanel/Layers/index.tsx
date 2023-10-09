@@ -17,6 +17,7 @@ type LayersProps = {
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 };
 
 const Layers: React.FC<LayersProps> = ({
@@ -26,6 +27,7 @@ const Layers: React.FC<LayersProps> = ({
   onLayerNameUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
+  onZoomToLayer,
 }) => {
   const t = useT();
   const [isAddMenuOpen, setAddMenuOpen] = useState(false);
@@ -34,11 +36,18 @@ const Layers: React.FC<LayersProps> = ({
     setAddMenuOpen(prev => !prev);
   }, []);
 
-  console.log(selectedLayerId);
+  const handleZoomLayer = () => {
+    if (selectedLayerId) {
+      console.log(selectedLayerId);
+      onZoomToLayer?.(selectedLayerId);
+    }
+  };
   return (
     <LayerContainer>
       <ActionWrapper>
-        <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId} />
+        <ZoomLayer onClick={handleZoomLayer}>
+          <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId} />
+        </ZoomLayer>
         <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
           <Popover.Trigger asChild>
             <AddLayerIcon onClick={toggleAddMenu}>
@@ -101,7 +110,7 @@ const AddLayerIcon = styled.div`
   align-self: flex-end;
   cursor: pointer;
 `;
-
+const ZoomLayer = styled.div``;
 const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 3px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};

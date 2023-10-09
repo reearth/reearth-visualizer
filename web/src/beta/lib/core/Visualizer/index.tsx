@@ -306,6 +306,8 @@ const Visualizer = memo(
                   onLayerSelect={handleLayerSelect}
                   onLayerEdit={handleLayerEdit}
                   onMount={onMount}
+                  onZoomToLayer={onZoomToLayer}
+                  zoomedLayerId={zoomedLayerId}
                 />
               </Filled>
             </VisualizerProvider>

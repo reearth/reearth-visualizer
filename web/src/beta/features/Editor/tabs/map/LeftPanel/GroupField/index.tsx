@@ -16,6 +16,7 @@ type GroupSectionFieldProps = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 };
 
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
@@ -27,6 +28,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   onLayerSelect,
   // onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onZoomToLayer,
 }) => {
   const t = useT();
 
@@ -50,6 +52,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
           onLayerNameUpdate={onLayerNameUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
+          onZoomToLayer={onZoomToLayer}
         />
       </StyledSidePanelSectionField>
     </>

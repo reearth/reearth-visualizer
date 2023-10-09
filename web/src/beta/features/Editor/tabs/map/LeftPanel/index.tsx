@@ -14,6 +14,7 @@ type Props = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 };
 
 const MapSidePanel: React.FC<Props> = ({
@@ -25,6 +26,7 @@ const MapSidePanel: React.FC<Props> = ({
   onLayerNameUpdate,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onZoomToLayer,
 }) => {
   const t = useT();
 
@@ -45,6 +47,7 @@ const MapSidePanel: React.FC<Props> = ({
               onLayerSelect={onLayerSelect}
               onSceneSettingSelect={onSceneSettingSelect}
               onDataSourceManagerOpen={onDataSourceManagerOpen}
+              onZoomToLayer={onZoomToLayer}
             />
           ),
         },

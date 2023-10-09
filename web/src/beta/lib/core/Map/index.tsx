@@ -27,6 +27,8 @@ export type { MapRef as Ref } from "./hooks";
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
+  onZoomToLayer?: (layerId: string | undefined) => void;
+  zoomedLayerId?: string;
 } & Omit<LayersProps, "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes"> &
   Omit<EngineProps, "selectionReason" | "onLayerSelect">;
 
@@ -42,6 +44,8 @@ function Map(
     overrides,
     selectedLayerId,
     layerSelectionReason,
+    zoomedLayerId,
+    onZoomToLayer,
     onLayerSelect,
     ...props
   }: Props,
@@ -60,6 +64,8 @@ function Map(
     ref,
     selectedLayerId,
     onLayerSelect,
+    zoomedLayerId,
+    onZoomToLayer,
   });
 
   const selectedLayerIdForEngine = useMemo(

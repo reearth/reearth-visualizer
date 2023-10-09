@@ -20,6 +20,8 @@ export const REQUEST_RENDER_ONCE = 1;
 export default function ({
   ref,
   onLayerSelect,
+  zoomedLayerId,
+  onZoomToLayer,
 }: {
   ref: Ref<MapRef>;
   selectedLayerId?: {
@@ -33,6 +35,8 @@ export default function ({
     options?: LayerSelectionReason,
     info?: SelectedFeatureInfo,
   ) => void;
+  zoomedLayerId?: string;
+  onZoomToLayer?: (layerId: string | undefined) => void;
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
@@ -104,6 +108,13 @@ export default function ({
       selectedLayer.info,
     );
   }, [onLayerSelect, selectedLayer]);
+
+  useEffect(() => {
+    if (zoomedLayerId) {
+      engineRef.current?.lookAtLayer(zoomedLayerId);
+      onZoomToLayer?.(undefined);
+    }
+  }, [zoomedLayerId, onZoomToLayer]);
 
   return {
     engineRef,
