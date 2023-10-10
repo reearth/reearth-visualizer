@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -44,8 +43,6 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		return nil, err
 	}
 
-	log.Debugfc(ctx, "Reached herer2!")
-
 	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
@@ -53,13 +50,9 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		}
 	}()
 
-	log.Debugfc(ctx, "Reached here 3!")
-
 	// if err := i.CanWriteScene(param.SceneID, operator); err != nil {
 	// 	return nil, interfaces.ErrOperationDenied
 	// }
-
-	log.Debugfc(ctx, "Reached here 4!")
 
 	style, err := sceneops.Style{
 		SceneID: param.SceneID,
@@ -70,8 +63,6 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		return nil, err
 	}
 
-	log.Debugfc(ctx, "style: %v", style)
-
 	if err := i.styleRepo.Save(ctx, *style); err != nil {
 		return nil, err
 	}
@@ -81,17 +72,14 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 }
 
 func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInput, operator *usecase.Operator) (*scene.Style, error) {
-	log.Debugfc(ctx, "Reached HERE Dogga")
 
 	tx, err := i.transaction.Begin(ctx)
-	log.Debugfc(ctx, "Reached HERE Dragon")
 
 	if err != nil {
 		return nil, err
 	}
 
 	ctx = tx.Context()
-
 
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
@@ -101,16 +89,10 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 
 	style, err := i.styleRepo.FindByID(ctx, param.StyleID)
 	if err != nil {
-		log.Debugfc(ctx, "err: %v", err)
-		log.Debugfc(ctx, "style: %v", style)
 		return nil, err
 	}
-	// if err := i.CanWriteScene(style.Scene(), operator); err != nil {
-	// 	return nil, err
-	// }
 
-	if param.Name != nil {	
-		log.Debugfc(ctx, "Reached here 5!!")
+	if param.Name != nil {
 		style.Rename(*param.Name)
 	}
 
