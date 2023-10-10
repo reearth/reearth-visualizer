@@ -1,6 +1,8 @@
 import { Fragment } from "react";
 
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { Camera } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
@@ -38,6 +40,8 @@ export type Props = {
   ) => Promise<void>;
   onCurrentPageChange?: (pageId: string) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
+  currentCamera?: Camera;
+  onFlyTo: FlyTo;
 };
 
 const StoryContent: React.FC<Props> = ({
@@ -58,6 +62,8 @@ const StoryContent: React.FC<Props> = ({
   onPropertyUpdate,
   onCurrentPageChange,
   onStoryBlockMove,
+  currentCamera,
+  onFlyTo,
 }) => {
   const { pageGap, handleBlockCreate, handleBlockDelete } = useHooks({
     pages,
@@ -87,6 +93,8 @@ const StoryContent: React.FC<Props> = ({
             onBlockSelect={onBlockSelect}
             onStoryBlockMove={onStoryBlockMove}
             onPropertyUpdate={onPropertyUpdate}
+            currentCamera={currentCamera}
+            onFlyTo={onFlyTo}
           />
           <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
         </Fragment>

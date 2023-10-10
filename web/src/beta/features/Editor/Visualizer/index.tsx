@@ -3,6 +3,7 @@ import { MutableRefObject, useCallback } from "react";
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import StoryPanel, { type InstallableStoryBlock } from "@reearth/beta/lib/core/StoryPanel";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
@@ -27,6 +28,7 @@ export type Props = {
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
+  onFlyTo?: FlyTo;
 };
 
 const Visualizer: React.FC<Props> = ({
@@ -44,6 +46,7 @@ const Visualizer: React.FC<Props> = ({
   onCurrentPageChange,
   onStoryBlockMove,
   onCameraChange,
+  onFlyTo,
 }) => {
   const {
     rootLayerId,
@@ -145,6 +148,8 @@ const Visualizer: React.FC<Props> = ({
             onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
             onStoryBlockMove={onStoryBlockMove}
+            currentCamera={currentCamera}
+            onFlyTo={onFlyTo}
           />
         )}
       </CoreVisualizer>

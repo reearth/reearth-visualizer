@@ -11,7 +11,7 @@ import CameraEditor, { Props as EditorProps } from "./Editor";
 
 export type Props = BlockProps;
 
-const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
+const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyTo, ...props }) => {
   const { handlePropertyValueUpdate, handleAddPropertyItem, handleRemovePropertyItem } =
     usePropertyValueUpdate();
 
@@ -74,6 +74,8 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
         onUpdate={handleUpdate}
         onDeleteItem={handleDeleteItem}
         onAddItem={handleAddItem}
+        currentCamera={currentCamera}
+        onFlyTo={onFlyTo}
       />
     </BlockWrapper>
   );

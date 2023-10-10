@@ -6,6 +6,7 @@ import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import TextField from "@reearth/beta/components/fields/TextField";
 import { Camera } from "@reearth/beta/lib/core/engines";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -29,9 +30,18 @@ export type Props = {
   ) => void;
   onDeleteItem: (id: string) => void;
   onAddItem: () => void;
+  currentCamera?: Camera;
+  onFlyTo: FlyTo;
 };
 
-const CameraBlockEditor: React.FC<Props> = ({ items, onUpdate, onDeleteItem, onAddItem }) => {
+const CameraBlockEditor: React.FC<Props> = ({
+  items,
+  onUpdate,
+  onDeleteItem,
+  onAddItem,
+  currentCamera,
+  onFlyTo,
+}) => {
   const t = useT();
   const context = useContext(BlockContext);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -47,8 +57,9 @@ const CameraBlockEditor: React.FC<Props> = ({ items, onUpdate, onDeleteItem, onA
 
   const handleClick = (itemId: string) => {
     if (!context?.editMode) {
-      // TODO: Implement camera flyto event
-      console.log("Camera fly to", itemId);
+      const item = items.find(i => i.id === itemId);
+      if (!item?.cameraPosition) return;
+      onFlyTo(item.cameraPosition);
       return;
     }
     if (itemId === selected) {
@@ -114,7 +125,8 @@ const CameraBlockEditor: React.FC<Props> = ({ items, onUpdate, onDeleteItem, onA
                 name={t("Camera pos")}
                 value={editorProperties.cameraPosition}
                 onSave={value => onUpdate(selected, "cameraPosition", "camera", value as Camera)}
-                // TODO: Implement onFlyTo
+                currentCamera={currentCamera}
+                onFlyTo={onFlyTo}
               />
               <TextField
                 name={t("Button Title")}

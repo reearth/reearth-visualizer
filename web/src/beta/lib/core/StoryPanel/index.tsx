@@ -1,4 +1,6 @@
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { Camera } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import useHooks, { type Story } from "./hooks";
@@ -43,6 +45,8 @@ export type StoryPanelProps = {
   ) => Promise<void>;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
+  currentCamera?: Camera;
+  onFlyTo: FlyTo;
 };
 
 export const StoryPanel: React.FC<StoryPanelProps> = ({
@@ -57,6 +61,8 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   onPropertyUpdate,
   onCurrentPageChange,
   onStoryBlockMove,
+  currentCamera,
+  onFlyTo,
 }) => {
   const {
     pageInfo,
@@ -101,6 +107,8 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
         onPropertyUpdate={onPropertyUpdate}
         onCurrentPageChange={handleCurrentPageChange}
         onStoryBlockMove={onStoryBlockMove}
+        currentCamera={currentCamera}
+        onFlyTo={onFlyTo}
       />
     </PanelWrapper>
   );
