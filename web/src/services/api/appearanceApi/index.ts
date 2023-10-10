@@ -55,7 +55,7 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully added a new appearance") });
+      setNotification({ type: "success", text: t("Successfully added a new appearance!") });
 
       return { data, status: "success" };
     },
@@ -74,7 +74,7 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully updated a the layer!") });
+      setNotification({ type: "success", text: t("Successfully updated a the appearance!") });
 
       return { data, status: "success" };
     },
@@ -93,7 +93,7 @@ export default () => {
 
         return { status: "error", errors };
       }
-      setNotification({ type: "success", text: t("Successfully removed a the layer!") });
+      setNotification({ type: "success", text: t("Successfully removed a the appearance!") });
 
       return { data, status: "success" };
     },
