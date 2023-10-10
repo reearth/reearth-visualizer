@@ -99,11 +99,12 @@ const ChooseAssetModal: React.FC<Props> = ({
   }, [handleReset]);
 
   return (
-    <StyledModal
+    <Modal
       title={t("Select Image")}
       className={className}
       isVisible={open}
       onClose={onClose}
+      size="lg"
       button1={
         <Button
           size="medium"
@@ -167,13 +168,10 @@ const ChooseAssetModal: React.FC<Props> = ({
           </AssetListWrapper>
         )}
       </AssetWrapper>
-    </StyledModal>
+    </Modal>
   );
 };
 
-const StyledModal = styled(Modal)`
-  width: 730px;
-`;
 const AssetWrapper = styled.div`
   max-height: 531px;
   display: flex;
