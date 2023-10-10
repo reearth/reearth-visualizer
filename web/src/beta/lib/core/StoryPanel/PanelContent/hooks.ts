@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import type { Page } from "../hooks";
 
@@ -10,15 +10,13 @@ export default ({
   pages,
   selectedPageId,
   isAutoScrolling,
-  onAutoScrollingChange,
   onBlockCreate,
   onBlockDelete,
   onCurrentPageChange,
 }: {
   pages?: Page[];
   selectedPageId?: string;
-  isAutoScrolling?: boolean;
-  onAutoScrollingChange: (isScrolling: boolean) => void;
+  isAutoScrolling?: MutableRefObject<boolean>;
   onBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
@@ -69,7 +67,20 @@ export default ({
 
     const observer = new IntersectionObserver(
       entries => {
-        if (isAutoScrolling) return; // to avoid conflicts with page selection in editor UI
+        // to avoid conflicts with page selection in editor
+        if (isAutoScrolling?.current) {
+          const wrapperElement = document.getElementById(PAGES_ELEMENT_ID);
+
+          wrapperElement?.addEventListener("scroll", () => {
+            clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = setTimeout(function () {
+              isAutoScrolling.current = false;
+            }, 100);
+          });
+
+          return;
+        }
+
         entries.forEach(entry => {
           const id = entry.target.getAttribute("id") ?? "";
           if (selectedPageId === id) return;
@@ -110,18 +121,6 @@ export default ({
       });
     };
   }, [pages, selectedPageId, isAutoScrolling, onCurrentPageChange]);
-
-  useEffect(() => {
-    const wrapperElement = document.getElementById(PAGES_ELEMENT_ID);
-    if (isAutoScrolling) {
-      wrapperElement?.addEventListener("scroll", () => {
-        clearTimeout(scrollTimeoutRef.current);
-        scrollTimeoutRef.current = setTimeout(function () {
-          onAutoScrollingChange(false);
-        }, 100);
-      });
-    }
-  }, [isAutoScrolling, onAutoScrollingChange]);
 
   return {
     pageGap,
