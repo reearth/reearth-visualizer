@@ -16,7 +16,7 @@ type Props = {
   isOpenAction?: boolean;
   actionPlacement?: Placement;
   clamp?: Clamp;
-  value: string;
+  value?: string;
   onItemClick: (e?: MouseEvent<Element>) => void;
   onActionClick?: () => void;
   onOpenChange?: (isOpen: boolean) => void;

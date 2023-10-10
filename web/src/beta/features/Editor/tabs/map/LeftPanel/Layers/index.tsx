@@ -34,7 +34,6 @@ const Layers: React.FC<LayersProps> = ({
     setAddMenuOpen(prev => !prev);
   }, []);
 
-  console.log("", layers);
   return (
     <LayerContainer>
       <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
