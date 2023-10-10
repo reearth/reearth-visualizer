@@ -51,7 +51,7 @@ export default () => {
     async (input: AddStyleInput): Promise<MutationReturn<AddStyleMutation>> => {
       const { data, errors } = await addAppearanceMutation({ variables: { input } });
       if (errors || !data?.addStyle?.style?.id) {
-        setNotification({ type: "error", text: t("Failed to add layer.") });
+        setNotification({ type: "error", text: t("Failed to add appearance.") });
 
         return { status: "error", errors };
       }
@@ -70,7 +70,7 @@ export default () => {
       if (!input.styleId) return { status: "error" };
       const { data, errors } = await updateAppearanceMutation({ variables: { input } });
       if (errors || !data?.updateStyle) {
-        setNotification({ type: "error", text: t("Failed to update the layer.") });
+        setNotification({ type: "error", text: t("Failed to update the appearance.") });
 
         return { status: "error", errors };
       }
@@ -89,7 +89,7 @@ export default () => {
       if (!input.styleId) return { status: "error" };
       const { data, errors } = await removeAppearanceMutation({ variables: { input } });
       if (errors || !data?.removeStyle) {
-        setNotification({ type: "error", text: t("Failed to remove the layer.") });
+        setNotification({ type: "error", text: t("Failed to remove the appearance.") });
 
         return { status: "error", errors };
       }
