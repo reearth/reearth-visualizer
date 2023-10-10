@@ -71,22 +71,6 @@ export default ({
     [t],
   );
 
-  const iconChoice = useMemo(
-    () =>
-      sort?.type === "name"
-        ? sort?.reverse
-          ? "filterNameReverse"
-          : "filterName"
-        : sort?.type === "size"
-        ? sort?.reverse
-          ? "filterSizeReverse"
-          : "filterSize"
-        : sort?.reverse
-        ? "filterTimeReverse"
-        : "filterTime",
-    [sort?.reverse, sort?.type],
-  );
-
   const handleGetMoreAssets = useCallback(async () => {
     if (hasMoreAssets && !isGettingMore.current) {
       isGettingMore.current = true;
@@ -155,7 +139,6 @@ export default ({
     wrapperRef,
     assets,
     sortOptions,
-    iconChoice,
     sort,
     searchTerm,
     localSearchTerm,

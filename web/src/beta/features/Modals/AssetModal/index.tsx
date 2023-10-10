@@ -173,10 +173,9 @@ const ChooseAssetModal: React.FC<Props> = ({
 
 const StyledModal = styled(Modal)`
   width: 730px;
-  max-height: 577;
 `;
 const AssetWrapper = styled.div`
-  max-height: calc(100vh - 240px);
+  max-height: 531px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
