@@ -73,7 +73,6 @@ export default function ({
       reason?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
-      console.log("handleLayerSelect");
       selectLayer({ layerId, featureId, layer: await layer?.(), reason, info });
     },
     [],
