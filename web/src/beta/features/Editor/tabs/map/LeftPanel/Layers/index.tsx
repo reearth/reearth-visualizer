@@ -34,6 +34,7 @@ const Layers: React.FC<LayersProps> = ({
     setAddMenuOpen(prev => !prev);
   }, []);
 
+  console.log("", layers);
   return (
     <LayerContainer>
       <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
@@ -69,6 +70,7 @@ const Layers: React.FC<LayersProps> = ({
           key={layer.id}
           id={layer.id}
           layerTitle={layer.title}
+          visible={layer.visible}
           isSelected={layer.id === selectedLayerId}
           onDelete={() => onLayerDelete(layer.id)}
           onSelect={() => onLayerSelect(layer.id)}

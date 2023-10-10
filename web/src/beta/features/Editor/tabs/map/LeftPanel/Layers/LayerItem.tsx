@@ -9,6 +9,7 @@ type LayerItemProps = {
   id: string;
   layerTitle: string;
   isSelected: boolean;
+  visible: boolean;
   onDelete: () => void;
   onSelect: () => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
@@ -18,6 +19,7 @@ const LayerItem = ({
   id,
   layerTitle,
   isSelected,
+  visible,
   onDelete,
   onSelect,
   onLayerNameUpdate,
@@ -25,6 +27,8 @@ const LayerItem = ({
   const [isActionOpen, setActionOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newValue, setNewValue] = useState(layerTitle);
+  const [isVisible, setIsVisible] = useState(visible);
+  const [value, setValue] = useState(isVisible ? "V" : "");
 
   const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
 
@@ -59,6 +63,13 @@ const LayerItem = ({
     [layerTitle, newValue, handleTitleSubmit],
   );
 
+  const handleLayerVisibilityUpdate = useCallback(() => {
+    const newVisibility = !isVisible;
+    onLayerNameUpdate({ layerId: id, visible: newVisibility });
+    setIsVisible(newVisibility);
+    setValue(isVisible ? "" : "V");
+  }, [id, isVisible, onLayerNameUpdate]);
+
   return (
     <ListItem
       isSelected={isSelected}
@@ -66,7 +77,9 @@ const LayerItem = ({
       actionPlacement="bottom-start"
       onItemClick={handleClick}
       onActionClick={handleActionMenuToggle}
+      onLayerUpdate={handleLayerVisibilityUpdate}
       onOpenChange={isOpen => setActionOpen(!!isOpen)}
+      value={value}
       actionContent={
         <PopoverMenuContent
           size="sm"

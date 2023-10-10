@@ -16,9 +16,11 @@ type Props = {
   isOpenAction?: boolean;
   actionPlacement?: Placement;
   clamp?: Clamp;
+  value: string;
   onItemClick: (e?: MouseEvent<Element>) => void;
   onActionClick?: () => void;
   onOpenChange?: (isOpen: boolean) => void;
+  onLayerUpdate?: () => void;
 };
 
 const ListItem: FC<Props> = ({
@@ -29,9 +31,11 @@ const ListItem: FC<Props> = ({
   isOpenAction,
   actionPlacement,
   clamp,
+  value,
   onItemClick,
   onActionClick,
   onOpenChange,
+  onLayerUpdate,
 }) => {
   return (
     <Wrapper>
@@ -42,8 +46,10 @@ const ListItem: FC<Props> = ({
           children
         )}
       </Inner>
-      <HideLayer isSelected={isSelected}>V</HideLayer>
 
+      <HideLayer onClick={onLayerUpdate} isSelected={isSelected}>
+        {value}
+      </HideLayer>
       {actionContent && (
         <Popover.Provider
           open={isOpenAction}
@@ -69,7 +75,11 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const Inner = styled.button<{ border?: boolean; isSelected?: boolean; clamp?: Clamp }>`
+const Inner = styled.button<{
+  border?: boolean;
+  isSelected?: boolean;
+  clamp?: Clamp;
+}>`
   display: flex;
   width: 100%;
   min-height: 38px;
@@ -112,13 +122,13 @@ const Button = styled.button<{ clamp?: Clamp }>`
 `;
 
 const HideLayer = styled.div<{ isSelected?: boolean }>`
-  padding: 4px 8px;
+  padding: 2px 9px;
   cursor: pointer;
   border-radius: 4px;
   color: ${({ theme }) => theme.content.strong};
   background: ${({ theme, isSelected }) => (!isSelected ? theme.bg[2] : "none")};
   position: absolute;
-  right: 20px;
+  right: 30px;
   top: 50%;
   transform: translateY(-50%);
   :hover {

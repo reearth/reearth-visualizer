@@ -18,7 +18,8 @@ export type LayerAddProps = {
 
 export type LayerNameUpdateProps = {
   layerId: string;
-  name: string;
+  name?: string;
+  visible?: boolean;
 };
 
 export default function ({ sceneId }: useLayerProps) {
@@ -74,6 +75,7 @@ export default function ({ sceneId }: useLayerProps) {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
         name: inp.name,
+        visible: inp.visible,
       });
     },
     [useUpdateNLSLayer],
