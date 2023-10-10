@@ -81,6 +81,7 @@ type ResolverRoot interface {
 	Story() StoryResolver
 	StoryBlock() StoryBlockResolver
 	StoryPage() StoryPageResolver
+	Style() StyleResolver
 	TagGroup() TagGroupResolver
 	TagItem() TagItemResolver
 	Team() TeamResolver
@@ -126,7 +127,6 @@ type ComplexityRoot struct {
 	}
 
 	AddStylePayload struct {
-		Scene func(childComplexity int) int
 		Style func(childComplexity int) int
 	}
 
@@ -949,7 +949,6 @@ type ComplexityRoot struct {
 	}
 
 	RemoveStylePayload struct {
-		Scene   func(childComplexity int) int
 		StyleID func(childComplexity int) int
 	}
 
@@ -1078,9 +1077,11 @@ type ComplexityRoot struct {
 	}
 
 	Style struct {
-		ID    func(childComplexity int) int
-		Name  func(childComplexity int) int
-		Value func(childComplexity int) int
+		ID      func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Scene   func(childComplexity int) int
+		SceneID func(childComplexity int) int
+		Value   func(childComplexity int) int
 	}
 
 	SyncDatasetPayload struct {
@@ -1174,7 +1175,6 @@ type ComplexityRoot struct {
 	}
 
 	UpdateStylePayload struct {
-		Scene func(childComplexity int) int
 		Style func(childComplexity int) int
 	}
 
@@ -1545,7 +1545,7 @@ type SceneResolver interface {
 	RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.LayerGroup, error)
 	NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error)
 	Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error)
-
+	Styles(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Style, error)
 	DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error)
 
 	Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.Tag, error)
@@ -1577,6 +1577,9 @@ type StoryPageResolver interface {
 	Property(ctx context.Context, obj *gqlmodel.StoryPage) (*gqlmodel.Property, error)
 
 	Scene(ctx context.Context, obj *gqlmodel.StoryPage) (*gqlmodel.Scene, error)
+}
+type StyleResolver interface {
+	Scene(ctx context.Context, obj *gqlmodel.Style) (*gqlmodel.Scene, error)
 }
 type TagGroupResolver interface {
 	Tags(ctx context.Context, obj *gqlmodel.TagGroup) ([]*gqlmodel.TagItem, error)
@@ -1705,14 +1708,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AddNLSLayerSimplePayload.Layers(childComplexity), true
 
-	case "AddStylePayload.scene":
-		if e.complexity.AddStylePayload.Scene == nil {
-			break
-		}
-
-		return e.complexity.AddStylePayload.Scene(childComplexity), true
-
-	case "AddStylePayload.Style":
+	case "AddStylePayload.style":
 		if e.complexity.AddStylePayload.Style == nil {
 			break
 		}
@@ -6116,14 +6112,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RemoveStoryBlockPayload.Story(childComplexity), true
 
-	case "RemoveStylePayload.scene":
-		if e.complexity.RemoveStylePayload.Scene == nil {
-			break
-		}
-
-		return e.complexity.RemoveStylePayload.Scene(childComplexity), true
-
-	case "RemoveStylePayload.StyleId":
+	case "RemoveStylePayload.styleId":
 		if e.complexity.RemoveStylePayload.StyleID == nil {
 			break
 		}
@@ -6765,6 +6754,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Style.Name(childComplexity), true
 
+	case "Style.scene":
+		if e.complexity.Style.Scene == nil {
+			break
+		}
+
+		return e.complexity.Style.Scene(childComplexity), true
+
+	case "Style.sceneId":
+		if e.complexity.Style.SceneID == nil {
+			break
+		}
+
+		return e.complexity.Style.SceneID(childComplexity), true
+
 	case "Style.value":
 		if e.complexity.Style.Value == nil {
 			break
@@ -7139,14 +7142,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UpdateNLSLayerPayload.Layer(childComplexity), true
 
-	case "UpdateStylePayload.scene":
-		if e.complexity.UpdateStylePayload.Scene == nil {
-			break
-		}
-
-		return e.complexity.UpdateStylePayload.Scene(childComplexity), true
-
-	case "UpdateStylePayload.Style":
+	case "UpdateStylePayload.style":
 		if e.complexity.UpdateStylePayload.Style == nil {
 			break
 		}
@@ -9179,6 +9175,8 @@ extend type Mutation {
   id: ID!
   name: String!
   value: JSON!
+  sceneId: ID!
+  scene: Scene
 }
 
 # InputType
@@ -9190,32 +9188,27 @@ input AddStyleInput {
 }
 
 input UpdateStyleInput {
-  StyleId: ID!
-  sceneId: ID!
+  styleId: ID!
   name: String
   value: JSON
 }
 
 input RemoveStyleInput {
-  StyleId: ID!
-  sceneId: ID!
+  styleId: ID!
 }
 
 # Payload
 
 type AddStylePayload {
-  scene: Scene!
-  Style: Style!
+  style: Style!
 }
 
 type UpdateStylePayload {
-  scene: Scene!
-  Style: Style!
+  style: Style!
 }
 
 type RemoveStylePayload {
-  scene: Scene!
-  StyleId: ID!
+  styleId: ID!
 }
 
 #extend type Query{ }
@@ -12572,96 +12565,8 @@ func (ec *executionContext) fieldContext_AddNLSLayerSimplePayload_layers(ctx con
 	return fc, nil
 }
 
-func (ec *executionContext) _AddStylePayload_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddStylePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AddStylePayload_scene(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Scene, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Scene)
-	fc.Result = res
-	return ec.marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_AddStylePayload_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "AddStylePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Scene_id(ctx, field)
-			case "projectId":
-				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_Scene_propertyId(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Scene_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
-			case "widgets":
-				return ec.fieldContext_Scene_widgets(ctx, field)
-			case "plugins":
-				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "project":
-				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
-			case "property":
-				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
-			case "newLayers":
-				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stories":
-				return ec.fieldContext_Scene_stories(ctx, field)
-			case "styles":
-				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _AddStylePayload_Style(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddStylePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AddStylePayload_Style(ctx, field)
+func (ec *executionContext) _AddStylePayload_style(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddStylePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AddStylePayload_style(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12691,7 +12596,7 @@ func (ec *executionContext) _AddStylePayload_Style(ctx context.Context, field gr
 	return ec.marshalNStyle2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStyle(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_AddStylePayload_Style(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_AddStylePayload_style(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "AddStylePayload",
 		Field:      field,
@@ -12705,6 +12610,10 @@ func (ec *executionContext) fieldContext_AddStylePayload_Style(ctx context.Conte
 				return ec.fieldContext_Style_name(ctx, field)
 			case "value":
 				return ec.fieldContext_Style_value(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_Style_sceneId(ctx, field)
+			case "scene":
+				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
 		},
@@ -29810,10 +29719,8 @@ func (ec *executionContext) fieldContext_Mutation_addStyle(ctx context.Context, 
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "scene":
-				return ec.fieldContext_AddStylePayload_scene(ctx, field)
-			case "Style":
-				return ec.fieldContext_AddStylePayload_Style(ctx, field)
+			case "style":
+				return ec.fieldContext_AddStylePayload_style(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type AddStylePayload", field.Name)
 		},
@@ -29868,10 +29775,8 @@ func (ec *executionContext) fieldContext_Mutation_updateStyle(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "scene":
-				return ec.fieldContext_UpdateStylePayload_scene(ctx, field)
-			case "Style":
-				return ec.fieldContext_UpdateStylePayload_Style(ctx, field)
+			case "style":
+				return ec.fieldContext_UpdateStylePayload_style(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UpdateStylePayload", field.Name)
 		},
@@ -29926,10 +29831,8 @@ func (ec *executionContext) fieldContext_Mutation_removeStyle(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "scene":
-				return ec.fieldContext_RemoveStylePayload_scene(ctx, field)
-			case "StyleId":
-				return ec.fieldContext_RemoveStylePayload_StyleId(ctx, field)
+			case "styleId":
+				return ec.fieldContext_RemoveStylePayload_styleId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type RemoveStylePayload", field.Name)
 		},
@@ -42073,96 +41976,8 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(ctx conte
 	return fc, nil
 }
 
-func (ec *executionContext) _RemoveStylePayload_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveStylePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RemoveStylePayload_scene(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Scene, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Scene)
-	fc.Result = res
-	return ec.marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_RemoveStylePayload_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "RemoveStylePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Scene_id(ctx, field)
-			case "projectId":
-				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_Scene_propertyId(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Scene_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
-			case "widgets":
-				return ec.fieldContext_Scene_widgets(ctx, field)
-			case "plugins":
-				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "project":
-				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
-			case "property":
-				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
-			case "newLayers":
-				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stories":
-				return ec.fieldContext_Scene_stories(ctx, field)
-			case "styles":
-				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _RemoveStylePayload_StyleId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveStylePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RemoveStylePayload_StyleId(ctx, field)
+func (ec *executionContext) _RemoveStylePayload_styleId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveStylePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RemoveStylePayload_styleId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -42192,7 +42007,7 @@ func (ec *executionContext) _RemoveStylePayload_StyleId(ctx context.Context, fie
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RemoveStylePayload_StyleId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RemoveStylePayload_styleId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RemoveStylePayload",
 		Field:      field,
@@ -43328,7 +43143,7 @@ func (ec *executionContext) _Scene_styles(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Styles, nil
+		return ec.resolvers.Scene().Styles(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43349,8 +43164,8 @@ func (ec *executionContext) fieldContext_Scene_styles(ctx context.Context, field
 	fc = &graphql.FieldContext{
 		Object:     "Scene",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -43359,6 +43174,10 @@ func (ec *executionContext) fieldContext_Scene_styles(ctx context.Context, field
 				return ec.fieldContext_Style_name(ctx, field)
 			case "value":
 				return ec.fieldContext_Style_value(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_Style_sceneId(ctx, field)
+			case "scene":
+				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
 		},
@@ -46942,6 +46761,135 @@ func (ec *executionContext) fieldContext_Style_value(ctx context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Style_sceneId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Style) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Style_sceneId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SceneID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Style_sceneId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Style",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Style_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Style) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Style_scene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Style().Scene(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Scene)
+	fc.Result = res
+	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Style_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Style",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Scene_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Scene_projectId(ctx, field)
+			case "teamId":
+				return ec.fieldContext_Scene_teamId(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_Scene_propertyId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Scene_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Scene_updatedAt(ctx, field)
+			case "rootLayerId":
+				return ec.fieldContext_Scene_rootLayerId(ctx, field)
+			case "widgets":
+				return ec.fieldContext_Scene_widgets(ctx, field)
+			case "plugins":
+				return ec.fieldContext_Scene_plugins(ctx, field)
+			case "widgetAlignSystem":
+				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "project":
+				return ec.fieldContext_Scene_project(ctx, field)
+			case "team":
+				return ec.fieldContext_Scene_team(ctx, field)
+			case "property":
+				return ec.fieldContext_Scene_property(ctx, field)
+			case "rootLayer":
+				return ec.fieldContext_Scene_rootLayer(ctx, field)
+			case "newLayers":
+				return ec.fieldContext_Scene_newLayers(ctx, field)
+			case "stories":
+				return ec.fieldContext_Scene_stories(ctx, field)
+			case "styles":
+				return ec.fieldContext_Scene_styles(ctx, field)
+			case "datasetSchemas":
+				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
+			case "tagIds":
+				return ec.fieldContext_Scene_tagIds(ctx, field)
+			case "tags":
+				return ec.fieldContext_Scene_tags(ctx, field)
+			case "clusters":
+				return ec.fieldContext_Scene_clusters(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _SyncDatasetPayload_sceneId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SyncDatasetPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_SyncDatasetPayload_sceneId(ctx, field)
 	if err != nil {
@@ -49538,96 +49486,8 @@ func (ec *executionContext) fieldContext_UpdateNLSLayerPayload_layer(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateStylePayload_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateStylePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateStylePayload_scene(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Scene, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Scene)
-	fc.Result = res
-	return ec.marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UpdateStylePayload_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UpdateStylePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Scene_id(ctx, field)
-			case "projectId":
-				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_Scene_propertyId(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Scene_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
-			case "widgets":
-				return ec.fieldContext_Scene_widgets(ctx, field)
-			case "plugins":
-				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "project":
-				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
-			case "property":
-				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
-			case "newLayers":
-				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stories":
-				return ec.fieldContext_Scene_stories(ctx, field)
-			case "styles":
-				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UpdateStylePayload_Style(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateStylePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateStylePayload_Style(ctx, field)
+func (ec *executionContext) _UpdateStylePayload_style(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateStylePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateStylePayload_style(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -49657,7 +49517,7 @@ func (ec *executionContext) _UpdateStylePayload_Style(ctx context.Context, field
 	return ec.marshalNStyle2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStyle(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UpdateStylePayload_Style(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateStylePayload_style(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UpdateStylePayload",
 		Field:      field,
@@ -49671,6 +49531,10 @@ func (ec *executionContext) fieldContext_UpdateStylePayload_Style(ctx context.Co
 				return ec.fieldContext_Style_name(ctx, field)
 			case "value":
 				return ec.fieldContext_Style_value(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_Style_sceneId(ctx, field)
+			case "scene":
+				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
 		},
@@ -56112,26 +55976,18 @@ func (ec *executionContext) unmarshalInputRemoveStyleInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"StyleId", "sceneId"}
+	fieldsInOrder := [...]string{"styleId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "StyleId":
+		case "styleId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("StyleId"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("styleId"))
 			it.StyleID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "sceneId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
-			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -57220,26 +57076,18 @@ func (ec *executionContext) unmarshalInputUpdateStyleInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"StyleId", "sceneId", "name", "value"}
+	fieldsInOrder := [...]string{"styleId", "name", "value"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "StyleId":
+		case "styleId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("StyleId"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("styleId"))
 			it.StyleID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "sceneId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
-			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -58188,16 +58036,9 @@ func (ec *executionContext) _AddStylePayload(ctx context.Context, sel ast.Select
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("AddStylePayload")
-		case "scene":
+		case "style":
 
-			out.Values[i] = ec._AddStylePayload_scene(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "Style":
-
-			out.Values[i] = ec._AddStylePayload_Style(ctx, field, obj)
+			out.Values[i] = ec._AddStylePayload_style(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -65000,16 +64841,9 @@ func (ec *executionContext) _RemoveStylePayload(ctx context.Context, sel ast.Sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("RemoveStylePayload")
-		case "scene":
+		case "styleId":
 
-			out.Values[i] = ec._RemoveStylePayload_scene(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "StyleId":
-
-			out.Values[i] = ec._RemoveStylePayload_StyleId(ctx, field, obj)
+			out.Values[i] = ec._RemoveStylePayload_styleId(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -65281,12 +65115,25 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 
 			})
 		case "styles":
+			field := field
 
-			out.Values[i] = ec._Scene_styles(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Scene_styles(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "datasetSchemas":
 			field := field
 
@@ -66115,22 +65962,46 @@ func (ec *executionContext) _Style(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Style_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 
 			out.Values[i] = ec._Style_name(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "value":
 
 			out.Values[i] = ec._Style_value(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
+		case "sceneId":
+
+			out.Values[i] = ec._Style_sceneId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "scene":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Style_scene(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -66872,16 +66743,9 @@ func (ec *executionContext) _UpdateStylePayload(ctx context.Context, sel ast.Sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UpdateStylePayload")
-		case "scene":
+		case "style":
 
-			out.Values[i] = ec._UpdateStylePayload_scene(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "Style":
-
-			out.Values[i] = ec._UpdateStylePayload_Style(ctx, field, obj)
+			out.Values[i] = ec._UpdateStylePayload_style(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
