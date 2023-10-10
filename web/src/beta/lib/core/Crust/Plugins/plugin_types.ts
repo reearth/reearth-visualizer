@@ -84,6 +84,7 @@ export type Reearth = {
       ) => void;
       findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
       findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+      selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
       selectionReason?: LayerSelectionReason;
       // For compat
       overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
@@ -127,6 +128,13 @@ export type Scene = {
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
   readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  readonly pickManyFromViewport: (
+    windowPosition: [x: number, y: number],
+    windowWidth: number,
+    windowHeight: number,
+    // TODO: Get condition as expression for plugin
+    condition?: (f: ComputedFeature) => boolean,
+  ) => ComputedFeature[] | undefined;
 };
 
 export type Camera = {

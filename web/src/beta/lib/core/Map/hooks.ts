@@ -80,6 +80,7 @@ export default function ({
       reason?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
+      console.log("handleLayerSelect");
       selectLayer({ layerId, featureId, layer: await layer?.(), reason, info });
     },
     [],
@@ -92,7 +93,11 @@ export default function ({
       reason?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
-      layersRef.current?.select(layerId, featureId, reason, info);
+      layersRef.current?.selectFeatures(
+        [{ layerId, featureId: featureId ? [featureId] : undefined }],
+        reason,
+        info,
+      );
     },
     [],
   );
