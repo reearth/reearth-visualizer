@@ -82,7 +82,7 @@ const CameraBlockEditor: React.FC<Props> = ({ items, onUpdate, onDeleteItem, onA
               bgColor={bgColor}
               icon="cameraButtonStoryBlock"
               buttonType="primary"
-              text={title ?? "New Camera"}
+              text={title ?? t("New Camera")}
               size="small"
               onClick={() => handleClick(id)}
             />
@@ -95,7 +95,7 @@ const CameraBlockEditor: React.FC<Props> = ({ items, onUpdate, onDeleteItem, onA
             <Button
               icon="trash"
               buttonType="secondary"
-              text="Remove"
+              text={t("Remove")}
               size="small"
               disabled={!editorProperties}
               onClick={() => onDeleteItem(selected)}
@@ -103,7 +103,7 @@ const CameraBlockEditor: React.FC<Props> = ({ items, onUpdate, onDeleteItem, onA
             <Button
               icon="plus"
               buttonType="primary"
-              text="New Item"
+              text={t("New Item")}
               size="small"
               onClick={() => onAddItem()}
             />
