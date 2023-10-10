@@ -52,9 +52,11 @@ Layer of the data source you want to add.: Layer of the data source you want to 
 layer name: Layer name
 Layer: Layer
 Layers: Layers
+Appearance: ''
 Outline: Outline
 Add Layer from Resource: ''
 Inspector: Inspector
+Layer Property Inspector: ''
 Published: Published
 Unpublished: Unpublished
 Scene: Scene
@@ -97,7 +99,7 @@ Angle: Angle
 Narrow: Narrow
 Wide: Wide
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
-Select Image: Select Image
+Select Asset: Select Asset
 Select: Select
 No assets match your search.: No assets match your search.
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
@@ -267,7 +269,6 @@ Assets Library: Assets Library
 Use URL: Use URL
 Add video URL: Add video URL
 Save: Save
-Select Asset: Select Asset
 Your browser is too small: Your browser is too small
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: >-
   Re:Earth needs at least 900px width to be used effectively. Please resize your
@@ -491,11 +492,12 @@ Failed to delete member from the workspace.: Failed to delete member from the wo
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
 Failed to add layer.: ''
-Successfully added a new layer: ''
+Successfully added a new appearance: ''
 Failed to update the layer.: ''
 Successfully updated a the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
+Successfully added a new layer: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''

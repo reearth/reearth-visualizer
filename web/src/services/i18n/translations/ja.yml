@@ -52,9 +52,11 @@ Layer of the data source you want to add.: ''
 layer name: ''
 Layer: レイヤー
 Layers: レイヤー
+Appearance: ''
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
+Layer Property Inspector: ''
 Published: 一般公開
 Unpublished: 非公開
 Scene: シーン
@@ -93,7 +95,7 @@ Angle: 角度
 Narrow: 狭い
 Wide: 広い
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
-Select Image: イメージ選択
+Select Asset: 選択
 Select: 選択
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
@@ -246,7 +248,6 @@ Assets Library: アセット
 Use URL: URL
 Add video URL: 映像URLを追加
 Save: 保存
-Select Asset: 選択
 Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
 OK: 確認
@@ -452,11 +453,12 @@ Failed to delete member from the workspace.: メンバーの削除に失敗し�
 Successfully removed member from the workspace.: このワークスペースからひとりのメンバーを削除しました。
 Some error has occurred. Please wait a moment and try again.: エラーが発生しました。少し待ってからもう一度試してみてください。
 Failed to add layer.: ''
-Successfully added a new layer: ''
+Successfully added a new appearance: ''
 Failed to update the layer.: ''
 Successfully updated a the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
+Successfully added a new layer: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
