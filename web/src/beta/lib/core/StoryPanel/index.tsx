@@ -1,3 +1,5 @@
+import { MutableRefObject } from "react";
+
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
@@ -23,9 +25,8 @@ export type StoryPanelProps = {
   selectedStory?: Story;
   currentPageId?: string;
   isEditable?: boolean;
-  isAutoScrolling?: boolean;
+  isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
-  onAutoScrollingChange: (isScrolling: boolean) => void;
   onBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
@@ -51,7 +52,6 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   isEditable,
   isAutoScrolling,
   installableBlocks,
-  onAutoScrollingChange,
   onBlockCreate,
   onBlockDelete,
   onPropertyUpdate,
@@ -92,7 +92,6 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
         showingIndicator={!!pageInfo}
         isAutoScrolling={isAutoScrolling}
         isEditable={isEditable}
-        onAutoScrollingChange={onAutoScrollingChange}
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}
         onBlockCreate={onBlockCreate}
