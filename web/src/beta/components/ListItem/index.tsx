@@ -42,6 +42,8 @@ const ListItem: FC<Props> = ({
           children
         )}
       </Inner>
+      <HideLayer isSelected={isSelected}>V</HideLayer>
+
       {actionContent && (
         <Popover.Provider
           open={isOpenAction}
@@ -63,6 +65,7 @@ export default ListItem;
 
 const Wrapper = styled.div`
   position: relative;
+  display: flex;
   width: 100%;
 `;
 
@@ -103,6 +106,21 @@ const Button = styled.button<{ clamp?: Clamp }>`
   border-radius: ${({ clamp }) =>
     clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
 
+  :hover {
+    background: ${({ theme }) => theme.bg[2]};
+  }
+`;
+
+const HideLayer = styled.div<{ isSelected?: boolean }>`
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: ${({ theme }) => theme.content.strong};
+  background: ${({ theme, isSelected }) => (!isSelected ? theme.bg[2] : "none")};
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
   :hover {
     background: ${({ theme }) => theme.bg[2]};
   }
