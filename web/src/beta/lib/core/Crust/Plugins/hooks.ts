@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import type { CameraPosition, NaiveLayer } from "@reearth/beta/lib/core/mantle";
+import type { CameraPosition, ComputedFeature, NaiveLayer } from "@reearth/beta/lib/core/mantle";
 import {
   events,
   useGet,
@@ -275,12 +275,15 @@ export default function ({
   );
 
   const selectLayer = useCallback(
-    (
-      layerId: string | undefined,
-      featureId?: string | undefined,
-      reason?: LayerSelectionReason | undefined,
-    ) => {
-      layersRef?.select(layerId, featureId, reason);
+    (layerId: string | undefined, reason?: LayerSelectionReason | undefined) => {
+      layersRef?.select(layerId, reason);
+    },
+    [layersRef],
+  );
+
+  const selectFeatures = useCallback(
+    (layers: { layerId?: string; featureId?: string[] }[]) => {
+      layersRef?.selectFeatures(layers);
     },
     [layersRef],
   );
@@ -297,6 +300,19 @@ export default function ({
       layersRef?.hide(...args);
     },
     [layersRef],
+  );
+
+  const pickManyFromViewport = useCallback(
+    (
+      windowPosition: [x: number, y: number],
+      windowWidth: number,
+      windowHeight: number,
+      // TODO: Get condition as expression for plugin
+      condition?: (f: ComputedFeature) => boolean,
+    ) => {
+      return engineRef?.pickManyFromViewport(windowPosition, windowWidth, windowHeight, condition);
+    },
+    [engineRef],
   );
 
   const value = useMemo<Context>(
@@ -321,6 +337,7 @@ export default function ({
         hideLayer,
         addLayer,
         selectLayer,
+        selectFeatures,
         overrideLayerProperty,
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
@@ -348,6 +365,7 @@ export default function ({
         flyToGround,
         findFeatureById,
         findFeaturesByIds,
+        pickManyFromViewport,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -374,6 +392,7 @@ export default function ({
       hideLayer,
       addLayer,
       selectLayer,
+      selectFeatures,
       overrideLayerProperty,
       overrideScenePropertyCommon,
       layersInViewport,
@@ -405,6 +424,7 @@ export default function ({
       useExperimentalSandbox,
       findFeatureById,
       findFeaturesByIds,
+      pickManyFromViewport,
     ],
   );
 

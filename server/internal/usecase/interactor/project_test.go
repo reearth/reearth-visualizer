@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -22,8 +23,8 @@ import (
 func TestProject_Create(t *testing.T) {
 	ctx := context.Background()
 
-	po := workspace.NewPolicy(workspace.PolicyOption{
-		ID:           workspace.PolicyID("policy"),
+	po := policy.New(policy.Option{
+		ID:           policy.ID("policy"),
 		ProjectCount: lo.ToPtr(2),
 	})
 
@@ -34,7 +35,7 @@ func TestProject_Create(t *testing.T) {
 		policyRepo:    memory.NewPolicyWith(po),
 	}
 
-	ws := workspace.New().NewID().Policy(workspace.PolicyID("policy").Ref()).MustBuild()
+	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	wsid2 := workspace.NewID()
 	_ = uc.workspaceRepo.Save(ctx, ws)
 	pId1, pId2 := project.NewID(), project.NewID()
@@ -133,6 +134,6 @@ func TestProject_Create(t *testing.T) {
 			WritableWorkspaces: workspace.IDList{ws.ID()},
 		},
 	})
-	assert.Same(t, workspace.ErrPolicyViolation, err)
+	assert.Same(t, policy.ErrPolicyViolation, err)
 	assert.Nil(t, got)
 }

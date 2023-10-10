@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
 import useManageSwitchState, { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
@@ -39,20 +39,15 @@ const Modal: React.FC<Props> = ({
   onTabChange,
   sidebarTabs,
 }) => {
-  const [TabsFields, setTabsFields] = useState<SwitchField<SidebarTab>[]>([]);
-
-  useEffect(() => {
-    if (sidebarTabs) {
-      const convertedFields: SwitchField<SidebarTab>[] = sidebarTabs.map((tab, index) => ({
-        active: index === 0,
-        ...tab,
-      }));
-      setTabsFields(convertedFields);
-    }
-  }, [sidebarTabs]);
+  const [tabsFields] = useState<SwitchField<SidebarTab>[]>(
+    sidebarTabs?.map((tab, index) => ({
+      active: index === 0,
+      ...tab,
+    })) || [],
+  );
 
   const { handleActivate, fields: tabs } = useManageSwitchState({
-    fields: TabsFields,
+    fields: tabsFields,
   });
 
   const handleTabChange = useCallback(

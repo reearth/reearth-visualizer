@@ -1,9 +1,9 @@
-import { forwardRef, type ForwardRefRenderFunction, type MutableRefObject } from "react";
+import { forwardRef, RefObject, type ForwardRefRenderFunction, type MutableRefObject } from "react";
 
 import { SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
-import type { ComputedLayer, RequestingRenderMode } from "../types";
+import type { ComputedLayer, EngineRef, RequestingRenderMode } from "../types";
 
 import useHooks, { LayerSelectionReason, type Ref } from "./hooks";
 
@@ -46,6 +46,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
     reason: LayerSelectionReason | undefined,
     info: SelectedFeatureInfo | undefined,
   ) => void;
+  engineRef?: RefObject<EngineRef>;
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (
@@ -56,6 +57,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     selectionReason,
     requestingRenderMode,
     onLayerSelect,
+    engineRef,
     ...props
   },
   ref,
@@ -68,6 +70,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     selectionReason,
     requestingRenderMode,
     onLayerSelect,
+    engineRef,
   });
 
   return (

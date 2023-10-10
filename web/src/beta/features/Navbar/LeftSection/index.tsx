@@ -26,7 +26,6 @@ type Props = {
   onModalClose?: (r?: boolean) => void;
 };
 const LeftSection: React.FC<Props> = ({
-  username,
   dashboard,
   currentProject,
   currentWorkspace,
@@ -50,7 +49,6 @@ const LeftSection: React.FC<Props> = ({
         {page === "settings" && <StyledIcon icon="scene" size={20} />}
       </StyledLink>
       <Profile
-        username={username}
         currentWorkspace={currentWorkspace}
         personalWorkspace={personalWorkspace}
         workspaces={workspaces}
@@ -100,6 +98,6 @@ const StyledIcon = styled(Icon)`
 
 const Separator = styled.div`
   color: ${props => props.theme.content.weak};
-  margin: 0px 12px;
+  margin: 0px 4px;
   user-select: none;
 `;
