@@ -33,6 +33,7 @@ type Container struct {
 	Scene        Scene
 	Tag          Tag
 	StoryTelling Storytelling
+	Style        Style
 	User         accountinterfaces.User
 	Workspace    accountinterfaces.Workspace
 }
