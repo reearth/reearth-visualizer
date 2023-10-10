@@ -5,7 +5,7 @@ import { CesiumComponentRef } from "resium";
 
 import { TickEventCallback } from "@reearth/beta/lib/core/Map";
 
-import type { EngineRef, MouseEvents, MouseEvent, Feature } from "..";
+import type { EngineRef, MouseEvents, MouseEvent, Feature, ComputedFeature } from "..";
 
 import {
   getLocationFromScreen,
@@ -31,8 +31,9 @@ import {
   getCameraTerrainIntersection,
   cartesianToLatLngHeight,
 } from "./common";
-import { getTag } from "./Feature";
-import { findEntity } from "./utils";
+import { attachTag, getTag } from "./Feature";
+import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
+import { convertObjToComputedFeature, findEntity, findFeaturesFromLayer } from "./utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -505,7 +506,106 @@ export default function useEngineRef(
       findFeaturesByIds: (layerId: string, featureIds: string[]): Feature[] | undefined => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return featureIds.map(f => e.findFeatureById(layerId, f)).filter((v): v is Feature => !!v);
+        return findFeaturesFromLayer(viewer, layerId, featureIds, e => {
+          const f = convertObjToComputedFeature(viewer, e)?.[1];
+          return f
+            ? ({
+                ...f,
+                type: "feature",
+              } as Feature)
+            : undefined;
+        });
+      },
+      findComputedFeatureById: (
+        layerId: string,
+        featureId: string,
+      ): ComputedFeature | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const entity = findEntity(viewer, layerId, featureId);
+        const tag = getTag(entity);
+        if (!tag?.featureId) {
+          return;
+        }
+        if (entity instanceof Cesium.Entity) {
+          // TODO: Return description for CZML
+          return (
+            tag.computedFeature ?? {
+              type: "computedFeature",
+              id: tag.featureId,
+              properties:
+                entity.properties &&
+                Object.fromEntries(
+                  entity.properties.propertyNames.map(key => [
+                    key,
+                    entity.properties?.getValue(viewer.clock.currentTime)?.[key],
+                  ]),
+                ),
+            }
+          );
+        }
+        if (entity instanceof Cesium.Cesium3DTileFeature) {
+          return (
+            tag.computedFeature ?? {
+              type: "computedFeature",
+              id: tag.featureId,
+              properties: Object.fromEntries(
+                entity.getPropertyIds().map(key => [key, entity.getProperty(key)]),
+              ),
+            }
+          );
+        }
+        return;
+      },
+      findComputedFeaturesByIds: (
+        layerId: string,
+        featureIds: string[],
+      ): ComputedFeature[] | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return findFeaturesFromLayer(
+          viewer,
+          layerId,
+          featureIds,
+          e => convertObjToComputedFeature(viewer, e)?.[1],
+        );
+      },
+      selectFeatures: (layerId: string, featureId: string[]) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        findFeaturesFromLayer(viewer, layerId, featureId, entity => {
+          const tag = getTag(entity) ?? {};
+          const updatedTag = { ...tag, isFeatureSelected: true };
+          attachTag(entity, updatedTag);
+          return entity;
+        });
+      },
+      unselectFeatures: (layerId: string, featureId: string[]) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        findFeaturesFromLayer(viewer, layerId, featureId, entity => {
+          const tag = getTag(entity) ?? {};
+          tag.isFeatureSelected = false;
+          attachTag(entity, tag);
+          return entity;
+        });
+      },
+      pickManyFromViewport: (
+        windowPosition: [x: number, y: number],
+        windowWidth: number,
+        windowHeight: number,
+        // TODO: Get condition as expression for plugin
+        condition?: (f: PickedFeature) => boolean,
+      ): PickedFeature[] | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return pickManyFromViewportAsFeature(
+          viewer,
+          new Cesium.Cartesian2(windowPosition[0], windowPosition[1]),
+          windowWidth,
+          windowHeight,
+          condition,
+        );
       },
       onTick: cb => {
         tickEventCallback.current.push(cb);

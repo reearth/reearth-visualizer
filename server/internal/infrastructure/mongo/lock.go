@@ -40,18 +40,18 @@ func (r *Lock) Lock(ctx context.Context, name string) error {
 	}
 
 	lockID := uuid.NewString()
-	log.Infofc(ctx, "lock: trying to lock: id=%s, name=%s, host=%s", name, lockID, r.hostid)
+	log.Debugfc(ctx, "lock: trying to lock: id=%s, name=%s, host=%s", name, lockID, r.hostid)
 
 	if err := retry.Do(
 		func() error { return r.l.XLock(ctx, name, lockID, r.details()) },
 		retry.RetryIf(func(err error) bool { return errors.Is(err, lock.ErrAlreadyLocked) }),
 	); err != nil {
-		log.Infofc(ctx, "lock: failed to lock: name=%s, id=%s, host=%s, err=%s", name, lockID, r.hostid, err)
+		log.Debugfc(ctx, "lock: failed to lock: name=%s, id=%s, host=%s, err=%s", name, lockID, r.hostid, err)
 		return repo.ErrFailedToLock
 	}
 
 	r.setLockID(name, lockID)
-	log.Infofc(ctx, "lock: locked: name=%s, id=%s, host=%s", name, lockID, r.hostid)
+	log.Debugfc(ctx, "lock: locked: name=%s, id=%s, host=%s", name, lockID, r.hostid)
 	return nil
 }
 
@@ -66,7 +66,7 @@ func (r *Lock) Unlock(ctx context.Context, name string) error {
 	}
 
 	r.deleteLockID(name)
-	log.Infofc(ctx, "lock: unlocked: name=%s, id=%s, host=%s", name, lockID, r.hostid)
+	log.Debugfc(ctx, "lock: unlocked: name=%s, id=%s, host=%s", name, lockID, r.hostid)
 	return nil
 }
 

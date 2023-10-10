@@ -145,6 +145,7 @@ export type Cesium3DTilesAppearance = {
   colorBlendMode?: "highlight" | "replace" | "mix" | "default";
   edgeWidth?: number;
   edgeColor?: string;
+  selectedFeatureColor?: string; // This doesn't support expression
   tileset?: string;
   apiKey?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
