@@ -9,20 +9,31 @@ import { Asset } from "@reearth/beta/features/Assets/types";
 import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import ChooseAssetModal from "@reearth/beta/features/Modals/ChooseAssetModal";
 import { checkIfFileType } from "@reearth/beta/utils/util";
+import { useAppearancesFetcher } from "@reearth/services/api";
+import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
   value?: string;
-  onChange?: (value: string | undefined) => void;
   name?: string;
   description?: string;
-  fileType?: "asset" | "URL";
-  assetType?: "image" | "file";
+  fileType?: "asset" | "URL" | "appearance";
+  assetType?: "image" | "file" | "appearance";
+  sceneId?: string;
+  onChange?: (value: string | undefined) => void;
 };
 
-const URLField: React.FC<Props> = ({ name, description, value, fileType, assetType, onChange }) => {
+const URLField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  fileType,
+  assetType,
+  sceneId,
+  onChange,
+}) => {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [currentWorkspace] = useWorkspace();
@@ -57,12 +68,17 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     hasMoreAssets,
     searchTerm,
     selectedAssets,
+    selectedAppearances,
+    selectAppearance,
     selectAsset,
     handleGetMoreAssets,
     handleFileSelect,
     handleSortChange,
     handleSearchTerm,
   } = useHooks({ workspaceId: currentWorkspace?.id, onAssetSelect: handleChange });
+
+  const { useGetAppearancesQuery } = useAppearancesFetcher();
+  const { appearances } = useGetAppearancesQuery({ sceneId });
 
   const { localSearchTerm, wrapperRef, onScrollToBottom, handleSearchInputChange, handleSearch } =
     useManageAssets({
@@ -99,12 +115,20 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
 
   const handleClick = useCallback(() => setOpen(!open), [open]);
 
-  const handleSelect = useCallback(
+  const handleSelectAsset = useCallback(
     (asset?: Asset) => {
       if (!asset) return;
       selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
     },
     [selectedAssets, selectAsset],
+  );
+
+  const handleSelectAppearance = useCallback(
+    (appearance?: NLSAppearance) => {
+      if (!appearance) return;
+      selectAppearance(!selectedAppearances.includes(appearance) ? [appearance] : []);
+    },
+    [selectAppearance, selectedAppearances],
   );
 
   return (
@@ -126,14 +150,17 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
           />
         </ButtonWrapper>
       )}
+      {fileType === "appearance" && <AssetButton icon="appearance" onClick={handleClick} />}
       {open && (
         <ChooseAssetModal
           open={open}
           assetType={assetType}
           localSearchTerm={localSearchTerm}
           selectedAssets={selectedAssets}
+          selectedAppearances={selectedAppearances}
           wrapperRef={wrapperRef}
           assets={assets}
+          appearances={appearances}
           isLoading={isLoading}
           hasMoreAssets={hasMoreAssets}
           searchTerm={searchTerm}
@@ -142,7 +169,8 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
           handleSearchInputChange={handleSearchInputChange}
           onGetMore={handleGetMoreAssets}
           onScrollToBottom={onScrollToBottom}
-          onSelectAsset={handleSelect}
+          onSelectAsset={handleSelectAsset}
+          onSelectAppearance={handleSelectAppearance}
           onSelect={handleChange}
         />
       )}

@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
+import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 
@@ -8,7 +9,7 @@ type useLayerProps = {
 };
 
 export type LayerAddProps = {
-  config?: any;
+  config?: Omit<LayerSimple, "type" | "id">;
   index?: any;
   layerType: string;
   sceneId: string;
@@ -19,6 +20,11 @@ export type LayerAddProps = {
 export type LayerNameUpdateProps = {
   layerId: string;
   name: string;
+};
+
+export type LayerConfigUpdateProps = {
+  layerId: string;
+  config: Omit<LayerSimple, "type" | "id">;
 };
 
 export default function ({ sceneId }: useLayerProps) {
@@ -79,12 +85,24 @@ export default function ({ sceneId }: useLayerProps) {
     [useUpdateNLSLayer],
   );
 
+  const handleLayerConfigUpdate = useCallback(
+    async (inp: LayerConfigUpdateProps) => {
+      await useUpdateNLSLayer({
+        layerId: inp.layerId,
+        config: inp.config,
+      });
+    },
+    [useUpdateNLSLayer],
+  );
+
   return {
     nlsLayers,
     selectedLayer,
+    setSelectedLayerId,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
     handleLayerNameUpdate,
+    handleLayerConfigUpdate,
   };
 }

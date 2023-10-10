@@ -11,6 +11,7 @@ import {
   useWidgetsFetcher,
   useStorytellingFetcher,
   usePropertyFetcher,
+  useAppearancesFetcher,
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
@@ -38,11 +39,13 @@ export default ({
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
+  const { useGetAppearancesQuery } = useAppearancesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
   const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
+  const { appearances } = useGetAppearancesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
@@ -87,7 +90,7 @@ export default ({
     [selected],
   );
 
-  const layers = useMemo(() => processLayers(nlsLayers), [nlsLayers]);
+  const layers = useMemo(() => processLayers(nlsLayers, appearances), [appearances, nlsLayers]);
 
   // TODO: Use GQL value
   const rootLayerId = "";
@@ -170,7 +173,7 @@ export default ({
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
 
-      console.log("Layer has been draped!");
+      console.log("Layer has been dropped!");
     },
     [],
   );

@@ -34,3 +34,12 @@ export const URLType: Story = {
     fileType: "URL",
   },
 };
+
+export const AppearanceType: Story = {
+  args: {
+    name: "URL",
+    description: "Defaul URL Input wrapper",
+    fileType: "appearance",
+    assetType: "appearance",
+  },
+};

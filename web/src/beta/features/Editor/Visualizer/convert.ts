@@ -14,7 +14,8 @@ import {
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
-import { valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { DEFAULT_APPEARANCE, valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import {
   type Maybe,
@@ -334,24 +335,39 @@ export type RawNLSLayer = NlsLayerCommonFragment & {
 
 export function processLayers(
   newLayers?: NLSLayer[],
+  appearances?: NLSAppearance[],
   parent?: RawNLSLayer | null | undefined,
 ): Layer[] | undefined {
-  return newLayers?.map(nlsLayer => ({
-    type: "simple",
-    id: nlsLayer.id,
-    title: nlsLayer.title,
-    visible: nlsLayer.visible,
-    infobox: processInfobox(nlsLayer.infobox, parent?.infobox),
-    tags: processLayerTags(nlsLayer.tags),
-    properties: nlsLayer.config?.properties,
-    defines: nlsLayer.config?.defines,
-    events: nlsLayer.config?.events,
-    data: nlsLayer.config?.data,
-    resource: nlsLayer.config?.resource,
-    marker: nlsLayer.config?.marker,
-    polygon: nlsLayer.config?.polygon,
-    polyline: nlsLayer.config?.polyline,
-  }));
+  const getAppearanceValue = (id?: string) => {
+    const appearanceValue = appearances?.find(a => a.id === id)?.value;
+    if (typeof appearanceValue === "object") {
+      try {
+        return appearanceValue;
+      } catch (e) {
+        console.error("Error parsing appearance JSON:", e);
+      }
+    }
+
+    return DEFAULT_APPEARANCE;
+  };
+
+  return newLayers?.map(nlsLayer => {
+    const appearance = getAppearanceValue(nlsLayer.config?.appearanceId);
+    return {
+      type: "simple",
+      id: nlsLayer.id,
+      title: nlsLayer.title,
+      visible: nlsLayer.visible,
+      infobox: processInfobox(nlsLayer.infobox, parent?.infobox),
+      tags: processLayerTags(nlsLayer.tags),
+      properties: nlsLayer.config?.properties,
+      defines: nlsLayer.config?.defines,
+      events: nlsLayer.config?.events,
+      data: nlsLayer.config?.data,
+      resource: nlsLayer.config?.resource,
+      ...appearance,
+    };
+  });
 }
 
 const processInfobox = (

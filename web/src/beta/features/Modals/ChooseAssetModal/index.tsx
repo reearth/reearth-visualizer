@@ -9,15 +9,18 @@ import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { checkIfFileType } from "@reearth/beta/utils/util";
+import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
   className?: string;
-  assetType?: "file" | "image";
+  assetType?: "appearance" | "image" | "file";
   assets?: Asset[];
+  appearances?: NLSAppearance[];
   selectedAssets?: Asset[];
+  selectedAppearances?: NLSAppearance[];
   isLoading?: boolean;
   hasMoreAssets?: boolean;
   searchTerm?: string;
@@ -27,10 +30,11 @@ export type Props = {
   wrapperRef?: React.RefObject<HTMLDivElement>;
   onGetMore?: () => void;
   onSelectAsset?: (asset?: Asset) => void;
+  onSelectAppearance?: (appearance?: NLSAppearance) => void;
   onSelect?: (value: string) => void;
   onClose: () => void;
   onScrollToBottom?: (
-    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+    event: React.UIEvent<HTMLDivElement, UIEvent>,
     onLoadMore?: (() => void) | undefined,
     threshold?: number,
   ) => void;
@@ -40,12 +44,14 @@ export type Props = {
 
 const ChooseAssetModal: React.FC<Props> = ({
   className,
-  assetType,
   open,
-  assets,
-  selectedAssets,
-  hasMoreAssets,
+  assetType = "image",
+  assets = [],
+  appearances = [],
+  selectedAssets = [],
+  selectedAppearances = [],
   isLoading,
+  hasMoreAssets,
   searchTerm,
   localSearchTerm,
   wrapperRef,
@@ -53,28 +59,31 @@ const ChooseAssetModal: React.FC<Props> = ({
   onGetMore,
   onSelect,
   onSelectAsset,
+  onSelectAppearance,
   onScrollToBottom,
   handleSearchInputChange,
   handleSearch,
 }) => {
   const t = useT();
-
   const [, setNotification] = useNotification();
 
-  const filteredAssets = useMemo(() => {
-    if (!assetType) {
-      return assets;
-    }
-    return assets?.filter(asset => {
-      const isFile = checkIfFileType(asset.url, FILE_FORMATS);
-      const isImage = checkIfFileType(asset.url, IMAGE_FORMATS);
-      return (assetType === "file" && isFile) || (assetType === "image" && isImage);
-    });
-  }, [assetType, assets]);
+  // Unified assets based on assetType
+  const unifiedAssets = useMemo(
+    () => (assetType === "appearance" ? appearances : assets),
+    [appearances, assets, assetType],
+  );
+
+  // Unified selection based on assetType
+  const unifiedSelectedAssets = useMemo(
+    () => (assetType === "appearance" ? selectedAppearances : selectedAssets),
+    [selectedAppearances, selectedAssets, assetType],
+  );
 
   const handleSelectButtonClick = useCallback(() => {
-    if (selectedAssets && selectedAssets.length > 0) {
-      onSelect?.(selectedAssets[0].url);
+    if (unifiedSelectedAssets && unifiedSelectedAssets.length > 0) {
+      onSelect?.(
+        assetType === "appearance" ? unifiedSelectedAssets[0].id : unifiedSelectedAssets[0].name,
+      );
       onClose?.();
     } else {
       setNotification({
@@ -82,11 +91,11 @@ const ChooseAssetModal: React.FC<Props> = ({
         text: t("Please select an asset before clicking Select."),
       });
     }
-  }, [onClose, onSelect, selectedAssets, setNotification, t]);
+  }, [unifiedSelectedAssets, onSelect, assetType, onClose, setNotification, t]);
 
   return (
     <StyledModal
-      title={t("Select Image")}
+      title={t("Select Asset")}
       className={className}
       isVisible={open}
       onClose={onClose}
@@ -95,9 +104,7 @@ const ChooseAssetModal: React.FC<Props> = ({
           size="medium"
           buttonType="primary"
           text={t("Select")}
-          onClick={() => {
-            handleSelectButtonClick();
-          }}
+          onClick={handleSelectButtonClick}
         />
       }
       button2={
@@ -115,7 +122,7 @@ const ChooseAssetModal: React.FC<Props> = ({
         </SearchWarpper>
       </ControlWarpper>
       <AssetWrapper>
-        {!isLoading && (!assets || assets.length < 1) ? (
+        {!isLoading && (!unifiedAssets || unifiedAssets.length < 1) ? (
           <Template>
             <TemplateText size="body">
               {searchTerm
@@ -130,20 +137,25 @@ const ChooseAssetModal: React.FC<Props> = ({
             ref={wrapperRef}
             onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, onGetMore)}>
             <AssetList>
-              {filteredAssets?.map(a => (
+              {unifiedAssets.map(a => (
                 <AssetCard
                   key={a.id}
                   name={a.name}
                   icon={
-                    checkIfFileType(a.url, FILE_FORMATS)
+                    assetType === "appearance"
+                      ? "appearance"
+                      : checkIfFileType((a as Asset).url, FILE_FORMATS)
                       ? "file"
-                      : checkIfFileType(a.url, IMAGE_FORMATS)
+                      : checkIfFileType((a as Asset).url, IMAGE_FORMATS)
                       ? undefined
                       : "assetNoSupport"
                   }
-                  url={a.url}
-                  onSelect={() => onSelectAsset?.(a)}
-                  selected={selectedAssets?.includes(a)}
+                  onSelect={() =>
+                    assetType === "appearance"
+                      ? onSelectAppearance?.(a as NLSAppearance)
+                      : onSelectAsset?.(a as Asset)
+                  }
+                  selected={unifiedSelectedAssets.some(ua => ua.id === a.id)}
                 />
               ))}
             </AssetList>

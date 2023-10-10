@@ -40,6 +40,9 @@ import UploadSimple from "./Icons/uploadSimple.svg";
 import Search from "./Icons/search.svg";
 import AddLayerIcon from "./Icons/addLayer.svg";
 import ZoomToLayer from "./Icons/zoomToLayer.svg";
+import AppearanceIcon from "./Icons/appearance.svg";
+import AddAppearanceButtonIcon from "./Icons/addAppearanceButton.svg";
+import LayerInspector from "./Icons/layerInspector.svg";
 
 // MSIC
 import CheckCircle from "./Icons/checkCircle.svg";
@@ -109,6 +112,9 @@ import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import Marketplace from "./Icons/marketplace.svg";
 
 export default {
+  addAppearance: AddAppearanceButtonIcon,
+  appearance: AppearanceIcon,
+  layerInspector: LayerInspector,
   addLayer: AddLayerIcon,
   zoomToLayer: ZoomToLayer,
   file: File,

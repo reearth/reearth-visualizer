@@ -226,3 +226,23 @@ export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
   string: "",
 };
+
+export const DEFAULT_APPEARANCE = {
+  resource: {
+    clampToGround: true,
+  },
+  marker: {
+    style: "point",
+    pointColor: {
+      expression: {
+        conditions: [["true", "color('red')"]],
+      },
+    },
+  },
+  polygon: {
+    heightReference: "clamp",
+  },
+  polyline: {
+    clampToGround: true,
+  },
+};

@@ -32,7 +32,13 @@ const getSize = (size: number, delta: number, minSize?: number) => {
   return size + delta;
 };
 
-export default (direction: Direction, gutter: Gutter, initialSize: number, minSize: number) => {
+export default (
+  direction: Direction,
+  gutter: Gutter,
+  initialSize: number,
+  minSize: number,
+  onResizeEndCallback?: (newSize: number) => void,
+) => {
   const [startingSize, setStartingSize] = useState(initialSize);
 
   const [isResizing, setIsResizing] = useState(false);
@@ -95,7 +101,9 @@ export default (direction: Direction, gutter: Gutter, initialSize: number, minSi
     setPosition({ x: 0, y: 0 });
     setStartingSize(size);
     setDifference(0);
-  }, [isResizing, size]);
+
+    if (onResizeEndCallback) onResizeEndCallback(size);
+  }, [isResizing, size, onResizeEndCallback]);
 
   const bindEventListeners = useCallback(() => {
     if (typeof window === "undefined") return;

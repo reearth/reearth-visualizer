@@ -12,7 +12,7 @@ export type SidePanelContent = {
   maxHeight?: CSSProperties["maxHeight"];
 };
 type Props = {
-  location: "left" | "right";
+  location: "left" | "right" | "bottom";
   contents: SidePanelContent[];
 };
 
@@ -37,7 +37,7 @@ const SidePanel: React.FC<Props> = ({ location, contents }) => {
 
 export default SidePanel;
 
-const Wrapper = styled.div<{ location: "left" | "right" }>`
+const Wrapper = styled.div<{ location: "left" | "right" | "bottom" }>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -49,6 +49,7 @@ const Wrapper = styled.div<{ location: "left" | "right" }>`
   // for Resizable gutter width
   ${({ location }) => location === "left" && `padding-right: 0;`}
   ${({ location }) => location === "right" && `padding-left: 0;`}
+  ${({ location }) => location === "bottom" && `padding-left: 0; padding-right: 0;`}
 `;
 
 const Section = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`

@@ -26,6 +26,7 @@ export type LayerSimple = {
   properties?: any;
   defines?: Record<string, string>;
   events?: Events;
+  appearanceId?: string;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 
@@ -43,7 +44,6 @@ export type LayerCommon = {
   tags?: Tag[];
   creator?: string;
   compat?: LayerCompat;
-  _updateStyle?: number;
 };
 
 export type LayerCompat = { extensionId?: string; property?: any; propertyId?: string };

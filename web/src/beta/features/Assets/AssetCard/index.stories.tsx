@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+
 import AssetCard from ".";
 
 const meta: Meta<typeof AssetCard> = {
@@ -23,5 +25,26 @@ export const Selected: Story = {
     url: `/sample.svg`,
     name: "hoge",
     selected: true,
+  },
+};
+
+export const EditableName: Story = {
+  args: {
+    url: `/sample.svg`,
+    name: "hoge",
+    selected: true,
+    isNameEditable: true,
+    actionContent: (
+      <PopoverMenuContent
+        size="sm"
+        items={[
+          {
+            name: "Delete",
+            icon: "bin",
+            onClick: undefined,
+          },
+        ]}
+      />
+    ),
   },
 };
