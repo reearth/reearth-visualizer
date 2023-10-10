@@ -3,6 +3,8 @@ import { Color } from "cesium";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
 
+import { LayerAppearanceTypes } from "../lib/core/mantle";
+
 export type LatLng = {
   lat: number;
   lng: number;
@@ -227,17 +229,12 @@ export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   string: "",
 };
 
-export const DEFAULT_APPEARANCE = {
+export const DEFAULT_APPEARANCE: Partial<LayerAppearanceTypes> = {
   resource: {
     clampToGround: true,
   },
   marker: {
-    style: "point",
-    pointColor: {
-      expression: {
-        conditions: [["true", "color('red')"]],
-      },
-    },
+    heightReference: "clamp",
   },
   polygon: {
     heightReference: "clamp",

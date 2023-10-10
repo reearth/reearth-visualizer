@@ -44,18 +44,6 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           type: "mvt",
           layers: layers.length === 1 ? layers[0] : layers,
         },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
-        },
       },
     });
     onClose();

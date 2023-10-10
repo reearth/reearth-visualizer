@@ -44,18 +44,6 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           type: "wms",
           layers: layers.length === 1 ? layers[0] : layers,
         },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
-        },
       },
     });
     onClose();

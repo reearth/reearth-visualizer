@@ -15,6 +15,7 @@ import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAl
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_APPEARANCE, valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { LayerAppearanceTypes } from "@reearth/classic/core/mantle";
 import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import {
@@ -339,7 +340,9 @@ export function processLayers(
   parent?: RawNLSLayer | null | undefined,
 ): Layer[] | undefined {
   const getAppearanceValue = (id?: string) => {
-    const appearanceValue = appearances?.find(a => a.id === id)?.value;
+    const appearanceValue: Partial<LayerAppearanceTypes> = appearances?.find(
+      a => a.id === id,
+    )?.value;
     if (typeof appearanceValue === "object") {
       try {
         return appearanceValue;

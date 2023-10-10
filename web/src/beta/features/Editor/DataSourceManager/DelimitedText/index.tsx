@@ -48,18 +48,6 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             lngColumn: long,
           },
         },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
-        },
       },
     });
     onClose();
