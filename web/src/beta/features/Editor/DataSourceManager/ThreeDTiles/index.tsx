@@ -17,7 +17,7 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: value !== "" ? value : null,
+          url: value !== "" ? value : undefined,
           type: "3dtiles",
         },
         resource: {

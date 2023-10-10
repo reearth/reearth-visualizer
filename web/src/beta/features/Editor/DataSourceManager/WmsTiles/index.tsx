@@ -40,7 +40,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: urlValue !== "" ? urlValue : null,
+          url: urlValue !== "" ? urlValue : undefined,
           type: "wms",
           layers: layers.length === 1 ? layers[0] : layers,
         },
