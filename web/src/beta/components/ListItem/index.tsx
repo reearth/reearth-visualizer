@@ -71,7 +71,6 @@ export default ListItem;
 
 const Wrapper = styled.div`
   position: relative;
-  display: flex;
   width: 100%;
 `;
 
@@ -122,6 +121,8 @@ const Button = styled.button<{ clamp?: Clamp }>`
 `;
 
 const HideLayer = styled.div<{ isSelected?: boolean }>`
+  min-width: 10px;
+  min-height: 20px;
   padding: 2px 9px;
   cursor: pointer;
   border-radius: 4px;
