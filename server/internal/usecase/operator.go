@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
@@ -15,7 +16,7 @@ type Operator struct {
 	ReadableScenes scene.IDList
 	WritableScenes scene.IDList
 	OwningScenes   scene.IDList
-	DefaultPolicy  *workspace.PolicyID
+	DefaultPolicy  *policy.ID
 }
 
 func (o *Operator) Workspaces(r workspace.Role) accountdomain.WorkspaceIDList {
@@ -94,7 +95,7 @@ func (o *Operator) AddNewScene(ws accountdomain.WorkspaceID, scene id.SceneID) {
 	}
 }
 
-func (o *Operator) Policy(p *workspace.PolicyID) *workspace.PolicyID {
+func (o *Operator) Policy(p *policy.ID) *policy.ID {
 	if p == nil && o.DefaultPolicy != nil && *o.DefaultPolicy != "" {
 		return util.CloneRef(o.DefaultPolicy)
 	}

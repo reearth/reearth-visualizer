@@ -1,12 +1,5 @@
 import type { Tag } from "@reearth/beta/lib/core/mantle/compat";
-import {
-  Events,
-  Layer,
-  LayerSelectionReason,
-  LayersRef,
-  NaiveLayer,
-  LazyLayer,
-} from "@reearth/beta/lib/core/Map";
+import { Events, Layer, LayersRef, NaiveLayer, LazyLayer } from "@reearth/beta/lib/core/Map";
 import { merge } from "@reearth/beta/utils/object";
 
 import type { Block } from "../Infobox";
@@ -318,6 +311,7 @@ export function commonReearth({
   selectedFeature,
   layerSelectionReason,
   selectLayer,
+  selectFeatures,
   showLayer,
   hideLayer,
   addLayer,
@@ -347,6 +341,7 @@ export function commonReearth({
   flyToGround,
   findFeatureById,
   findFeaturesByIds,
+  pickManyFromViewport,
 }: {
   engineName?: string;
   events: Events<ReearthEventType>;
@@ -362,6 +357,7 @@ export function commonReearth({
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   selectLayer: LayersRef["select"];
+  selectFeatures: LayersRef["selectFeatures"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
@@ -394,6 +390,7 @@ export function commonReearth({
   flyToGround: GlobalThis["reearth"]["camera"]["flyToGround"];
   findFeatureById: GlobalThis["reearth"]["layers"]["findFeatureById"];
   findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
+  pickManyFromViewport: GlobalThis["reearth"]["scene"]["pickManyFromViewport"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -451,6 +448,7 @@ export function commonReearth({
       captureScreen,
       getLocationFromScreen,
       sampleTerrainHeight,
+      pickManyFromViewport,
     },
     get viewport() {
       return viewport?.();
@@ -487,9 +485,10 @@ export function commonReearth({
         return layersInViewport;
       },
       get select() {
-        // For compat
-        return (id: string | undefined, reason?: LayerSelectionReason | undefined) =>
-          selectLayer?.(id, id, reason);
+        return selectLayer;
+      },
+      get selectFeatures() {
+        return selectFeatures;
       },
       get show() {
         return showLayer;

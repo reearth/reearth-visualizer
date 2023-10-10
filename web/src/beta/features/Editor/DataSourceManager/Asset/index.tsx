@@ -146,7 +146,13 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               fileFormat={fileFormat}
               setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
             />
-            <URLField fileType="asset" name={t("Asset")} value={value} onChange={handleOnChange} />
+            <URLField
+              fileType="asset"
+              assetType={"file"}
+              name={t("Asset")}
+              value={value}
+              onChange={handleOnChange}
+            />
           </>
         )}
       </AssetWrapper>
