@@ -43,6 +43,7 @@ export type LayerCommon = {
   tags?: Tag[];
   creator?: string;
   compat?: LayerCompat;
+  _updateStyle?: number;
 };
 
 export type LayerCompat = { extensionId?: string; property?: any; propertyId?: string };
