@@ -7,7 +7,7 @@ import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset } from "@reearth/beta/features/Assets/types";
-import useFileUploaderHook from "@reearth/beta/features/Assets/useAssetUploader/hooks";
+import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";

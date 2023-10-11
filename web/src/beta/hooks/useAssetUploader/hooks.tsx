@@ -3,7 +3,7 @@ import useFileInput from "use-file-input";
 
 import { useAssetsFetcher } from "@reearth/services/api";
 
-import { FILE_FORMATS, IMAGE_FORMATS } from "../constants";
+import { FILE_FORMATS, IMAGE_FORMATS } from "../../features/Assets/constants";
 
 export default ({
   workspaceId,

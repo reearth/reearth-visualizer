@@ -4,8 +4,8 @@ import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import useHooks from "@reearth/beta/features/Assets/useAssetUploader/hooks";
 import AssetModal from "@reearth/beta/features/Modals/AssetModal";
+import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
@@ -48,7 +48,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     },
     [fileType, onChange, setNotification, t],
   );
-  const { handleFileUpload } = useHooks({
+  const { handleFileUpload } = useFileUploaderHook({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
   });
