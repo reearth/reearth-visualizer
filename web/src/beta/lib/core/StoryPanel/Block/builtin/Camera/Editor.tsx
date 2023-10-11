@@ -5,6 +5,7 @@ import Button from "@reearth/beta/components/Button";
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import TextField from "@reearth/beta/components/fields/TextField";
+import Text from "@reearth/beta/components/Text";
 import { Camera } from "@reearth/beta/lib/core/engines";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { useT } from "@reearth/services/i18n";
@@ -84,6 +85,11 @@ const CameraBlockEditor: React.FC<Props> = ({
 
   return (
     <Wrapper>
+      {items.length === 0 && (
+        <PlaceHolderText size="body" customColor>
+          {t("Add Camera Buttons here")}
+        </PlaceHolderText>
+      )}
       <ButtonWrapper>
         {items.map(({ title, color, bgColor, id }) => {
           return (
@@ -153,6 +159,11 @@ const CameraBlockEditor: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
+`;
+
+const PlaceHolderText = styled(Text)`
+  opacity: 0.5;
+  padding: 10px 4px;
 `;
 
 const ButtonWrapper = styled.div`
