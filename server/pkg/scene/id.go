@@ -23,6 +23,7 @@ var NewID = id.NewSceneID
 var NewWidgetID = id.NewWidgetID
 var NewClusterID = id.NewClusterID
 var NewLayerID = id.NewLayerID
+var NewStyleID = id.NewStyleID
 var NewPropertyID = id.NewPropertyID
 var NewPluginID = id.NewPluginID
 var NewProjectID = id.NewProjectID
