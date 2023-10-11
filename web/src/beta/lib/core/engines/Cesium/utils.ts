@@ -321,6 +321,25 @@ export function getPixelRatio(scene: Scene): number {
   ).pixelRatio;
 }
 
+export const convertEntityProperties = (viewer: Viewer, entity: Entity) => {
+  return (
+    entity.properties &&
+    Object.fromEntries(
+      entity.properties.propertyNames.map(key => [
+        key,
+        entity.properties?.getValue(viewer.clock.currentTime)?.[key],
+      ]),
+    )
+  );
+};
+
+export const convertCesium3DTileFeatureProperties = (
+  viewer: Viewer,
+  feature: Cesium3DTileFeature | Cesium3DTilePointFeature,
+) => {
+  return Object.fromEntries(feature.getPropertyIds().map(id => [id, feature.getProperty(id)]));
+};
+
 export const convertObjToComputedFeature = (
   viewer: Viewer,
   obj: object,
@@ -332,7 +351,7 @@ export const convertObjToComputedFeature = (
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: Object.fromEntries(obj.getPropertyIds().map(id => [id, obj.getProperty(id)])),
+        properties: convertCesium3DTileFeatureProperties(viewer, obj),
       },
     ];
   }
@@ -356,7 +375,7 @@ export const convertObjToComputedFeature = (
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: obj.properties?.getValue(viewer.clock.currentTime),
+        properties: convertEntityProperties(viewer, obj),
       },
     ];
   }
