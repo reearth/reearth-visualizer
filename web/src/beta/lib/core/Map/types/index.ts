@@ -26,6 +26,7 @@ import type {
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
+import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
   FeatureComponentProps,
@@ -129,7 +130,6 @@ export type EngineProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SceneProperty;
-  overriddenClock?: Clock;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;
@@ -146,6 +146,7 @@ export type EngineProps = {
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,

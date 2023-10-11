@@ -73,6 +73,7 @@ export type Data = {
   jsonProperties?: string[];
   updateInterval?: number; // milliseconds
   parameters?: Record<string, any>;
+  idProperty?: string;
   time?: {
     property?: string;
     interval?: number; // milliseconds
