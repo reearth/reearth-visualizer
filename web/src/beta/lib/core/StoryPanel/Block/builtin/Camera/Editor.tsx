@@ -1,11 +1,11 @@
 import { debounce } from "lodash-es";
-import { useContext, useLayoutEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
+import ListField from "@reearth/beta/components/fields/ListField";
 import TextField from "@reearth/beta/components/fields/TextField";
-import Text from "@reearth/beta/components/Text";
 import { Camera } from "@reearth/beta/lib/core/engines";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { useT } from "@reearth/services/i18n";
@@ -29,67 +29,49 @@ export type Props = {
     fieldType: "string" | "camera",
     value: string | Camera,
   ) => void;
-  onDeleteItem: (id: string) => void;
+  onRemoveItem: (id: string) => void;
   onAddItem: () => void;
+  onMoveItem: ({ id }: { id: string }, index: number) => void;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
+  inEditor: boolean;
 };
 
 const CameraBlockEditor: React.FC<Props> = ({
   items,
   onUpdate,
-  onDeleteItem,
+  onRemoveItem,
   onAddItem,
+  onMoveItem,
   currentCamera,
   onFlyTo,
+  inEditor,
 }) => {
   const t = useT();
   const context = useContext(BlockContext);
-  const [editorOpen, setEditorOpen] = useState(false);
   const [selected, setSelected] = useState(items[0]?.id);
 
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
-  useLayoutEffect(() => {
-    if (!context?.editMode) {
-      setEditorOpen(false);
-    }
-  }, [context?.editMode]);
-
   const handleClick = (itemId: string) => {
-    if (!context?.editMode) {
-      const item = items.find(i => i.id === itemId);
-      if (!item?.cameraPosition) return;
-      onFlyTo?.(item.cameraPosition);
+    if (inEditor) {
+      setSelected(itemId);
       return;
     }
-    if (itemId === selected) {
-      setEditorOpen(!editorOpen);
-      return;
-    }
-    setSelected(itemId);
-    setEditorOpen(true);
+    const item = items.find(i => i.id === itemId);
+    if (!item?.cameraPosition) return;
+    onFlyTo?.(item.cameraPosition);
   };
-
-  const showEditor = useMemo(() => {
-    // if not in editing mode
-    if (!context?.editMode) return false;
-    // if there are no items, we have to show add new item button
-    if (items.length === 0) return true;
-    // local state management
-    if (!editorOpen) return false;
-    return true;
-  }, [editorOpen, context?.editMode, items]);
 
   const debounceOnUpdate = useMemo(() => debounce(onUpdate, 500), [onUpdate]);
 
+  const listItems = useMemo(
+    () => items.map(({ id, title }) => ({ id, value: title ?? "New Camera" })),
+    [items],
+  );
+
   return (
     <Wrapper>
-      {items.length === 0 && (
-        <PlaceHolderText size="body" customColor>
-          {t("Add Camera Buttons here")}
-        </PlaceHolderText>
-      )}
       <ButtonWrapper>
         {items.map(({ title, color, bgColor, id }) => {
           return (
@@ -106,51 +88,42 @@ const CameraBlockEditor: React.FC<Props> = ({
           );
         })}
       </ButtonWrapper>
-      {showEditor && (
+      {context?.editMode && (
         <EditorWrapper>
-          <ButtonGroup>
-            <Button
-              icon="trash"
-              buttonType="secondary"
-              text={t("Remove")}
-              size="small"
-              disabled={!editorProperties}
-              onClick={() => onDeleteItem(selected)}
+          <ListField
+            name={t("Buttons List")}
+            items={listItems}
+            addItem={onAddItem}
+            removeItem={onRemoveItem}
+            onItemDrop={onMoveItem}
+            selected={selected}
+            onSelect={setSelected}
+            atLeastOneItem
+          />
+          <FieldGroup disabled={!editorProperties}>
+            <CameraField
+              name={t("Camera pos")}
+              value={editorProperties?.cameraPosition}
+              onSave={value => onUpdate(selected, "cameraPosition", "camera", value as Camera)}
+              currentCamera={currentCamera}
+              onFlyTo={onFlyTo}
             />
-            <Button
-              icon="plus"
-              buttonType="primary"
-              text={t("New Item")}
-              size="small"
-              onClick={() => onAddItem()}
+            <TextField
+              name={t("Button Title")}
+              value={editorProperties?.title}
+              onChange={value => debounceOnUpdate(selected, "title", "string", value)}
             />
-          </ButtonGroup>
-          {editorProperties && (
-            <FieldGroup>
-              <CameraField
-                name={t("Camera pos")}
-                value={editorProperties.cameraPosition}
-                onSave={value => onUpdate(selected, "cameraPosition", "camera", value as Camera)}
-                currentCamera={currentCamera}
-                onFlyTo={onFlyTo}
-              />
-              <TextField
-                name={t("Button Title")}
-                value={editorProperties.title}
-                onChange={value => debounceOnUpdate(selected, "title", "string", value)}
-              />
-              <ColorField
-                name={t("Button Color")}
-                value={editorProperties.color}
-                onChange={value => debounceOnUpdate(selected, "color", "string", value)}
-              />
-              <ColorField
-                name={t("Button Background Color")}
-                value={editorProperties.bgColor}
-                onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
-              />
-            </FieldGroup>
-          )}
+            <ColorField
+              name={t("Button Color")}
+              value={editorProperties?.color}
+              onChange={value => debounceOnUpdate(selected, "color", "string", value)}
+            />
+            <ColorField
+              name={t("Button Background Color")}
+              value={editorProperties?.bgColor}
+              onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
+            />
+          </FieldGroup>
         </EditorWrapper>
       )}
     </Wrapper>
@@ -159,11 +132,6 @@ const CameraBlockEditor: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   width: 100%;
-`;
-
-const PlaceHolderText = styled(Text)`
-  opacity: 0.5;
-  padding: 10px 4px;
 `;
 
 const ButtonWrapper = styled.div`
@@ -191,21 +159,14 @@ const EditorWrapper = styled.div`
   background: ${({ theme }) => theme.bg[1]};
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 4px;
-
-  > button {
-    width: 100%;
-  }
-`;
-
-const FieldGroup = styled.div`
+const FieldGroup = styled.div<{ disabled: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 10px;
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
 `;
 
 export default CameraBlockEditor;

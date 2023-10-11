@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 
@@ -12,8 +12,12 @@ import CameraEditor, { Props as EditorProps } from "./Editor";
 export type Props = BlockProps;
 
 const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyTo, ...props }) => {
-  const { handlePropertyValueUpdate, handleAddPropertyItem, handleRemovePropertyItem } =
-    usePropertyValueUpdate();
+  const {
+    handlePropertyValueUpdate,
+    handleAddPropertyItem,
+    handleRemovePropertyItem,
+    handleMovePropertyItem,
+  } = usePropertyValueUpdate();
 
   const items = useMemo(
     () => getFieldValue(block?.property?.items ?? [], "") as EditorProps["items"],
@@ -49,7 +53,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyT
     [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
   );
 
-  const handleDeleteItem = useCallback(
+  const handleRemoveItem = useCallback(
     (itemId: string) => {
       const schemaGroup = block?.property?.items?.find(
         i => i.schemaGroup === "default",
@@ -60,6 +64,28 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyT
     },
     [block?.property?.id, block?.property?.items, handleRemovePropertyItem],
   );
+
+  const handleMoveItem = useCallback(
+    ({ id }: { id: string }, index: number) => {
+      const schemaGroup = block?.property?.items?.find(
+        i => i.schemaGroup === "default",
+      )?.schemaGroup;
+      if (!block?.property?.id || !id || !schemaGroup) return;
+
+      handleMovePropertyItem(block.property.id, schemaGroup, { id }, index);
+    },
+    [block?.property?.id, block?.property?.items, handleMovePropertyItem],
+  );
+
+  // if there's no item add 1 button.
+  useEffect(() => {
+    if (items.length === 0) {
+      handleAddItem();
+      return;
+    }
+  }, [items.length, handleAddItem]);
+
+  console.log("isEditable", props.isEditable);
 
   return (
     <BlockWrapper
@@ -72,10 +98,12 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyT
       <CameraEditor
         items={items}
         onUpdate={handleUpdate}
-        onDeleteItem={handleDeleteItem}
+        onRemoveItem={handleRemoveItem}
         onAddItem={handleAddItem}
+        onMoveItem={handleMoveItem}
         currentCamera={currentCamera}
         onFlyTo={onFlyTo}
+        inEditor={!!props.isEditable}
       />
     </BlockWrapper>
   );
