@@ -33,7 +33,13 @@ import {
 } from "./common";
 import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
-import { convertObjToComputedFeature, findEntity, findFeaturesFromLayer } from "./utils";
+import {
+  convertCesium3DTileFeatureProperties,
+  convertEntityProperties,
+  convertObjToComputedFeature,
+  findEntity,
+  findFeaturesFromLayer,
+} from "./utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -489,16 +495,17 @@ export default function useEngineRef(
           return {
             type: "feature",
             id: tag.featureId,
-            properties: entity.properties,
+            properties: convertEntityProperties(viewer, entity),
           };
         }
-        if (entity instanceof Cesium.Cesium3DTileFeature) {
+        if (
+          entity instanceof Cesium.Cesium3DTileFeature ||
+          entity instanceof Cesium.Cesium3DTilePointFeature
+        ) {
           return {
             type: "feature",
             id: tag.featureId,
-            properties: Object.fromEntries(
-              entity.getPropertyIds().map(key => [key, entity.getProperty(key)]),
-            ),
+            properties: convertCesium3DTileFeatureProperties(viewer, entity),
           };
         }
         return;
@@ -533,25 +540,19 @@ export default function useEngineRef(
             tag.computedFeature ?? {
               type: "computedFeature",
               id: tag.featureId,
-              properties:
-                entity.properties &&
-                Object.fromEntries(
-                  entity.properties.propertyNames.map(key => [
-                    key,
-                    entity.properties?.getValue(viewer.clock.currentTime)?.[key],
-                  ]),
-                ),
+              properties: convertEntityProperties(viewer, entity),
             }
           );
         }
-        if (entity instanceof Cesium.Cesium3DTileFeature) {
+        if (
+          entity instanceof Cesium.Cesium3DTileFeature ||
+          entity instanceof Cesium.Cesium3DTilePointFeature
+        ) {
           return (
             tag.computedFeature ?? {
               type: "computedFeature",
               id: tag.featureId,
-              properties: Object.fromEntries(
-                entity.getPropertyIds().map(key => [key, entity.getProperty(key)]),
-              ),
+              properties: convertCesium3DTileFeatureProperties(viewer, entity),
             }
           );
         }
