@@ -145,7 +145,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 onCurrentPageChange={handleCurrentPageChange}
                 onStoryBlockMove={onStoryBlockMove}
                 onCameraChange={handleCameraUpdate}
-                onFlyTo={handleFlyTo}
               />
             </VisualizerWrapper>
           </Center>

@@ -1,8 +1,7 @@
 import { Fragment } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
-import type { Spacing, ValueType, ValueTypes, Camera } from "@reearth/beta/utils/value";
+import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -38,8 +37,6 @@ type Props = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
-  currentCamera?: Camera;
-  onFlyTo?: FlyTo;
 };
 
 const StoryPage: React.FC<Props> = ({
@@ -56,8 +53,6 @@ const StoryPage: React.FC<Props> = ({
   onBlockSelect,
   onPropertyUpdate,
   onStoryBlockMove,
-  currentCamera,
-  onFlyTo,
 }) => {
   const t = useT();
 
@@ -150,8 +145,6 @@ const StoryPage: React.FC<Props> = ({
                     onClickAway={onBlockSelect}
                     onChange={onPropertyUpdate}
                     onRemove={onBlockDelete}
-                    currentCamera={currentCamera}
-                    onFlyTo={onFlyTo}
                   />
                   {isEditable && (
                     <BlockAddBar

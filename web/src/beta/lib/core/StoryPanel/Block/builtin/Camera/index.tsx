@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import { useVisualizer } from "@reearth/beta/lib/core/Visualizer/context";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { getFieldValue } from "../../../utils";
@@ -11,13 +12,18 @@ import CameraEditor, { Props as EditorProps } from "./Editor";
 
 export type Props = BlockProps;
 
-const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyTo, ...props }) => {
+const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const {
     handlePropertyValueUpdate,
     handleAddPropertyItem,
     handleRemovePropertyItem,
     handleMovePropertyItem,
   } = usePropertyValueUpdate();
+
+  const visualizer = useVisualizer();
+
+  const currentCamera = useMemo(() => visualizer.current?.engine.getCamera(), [visualizer]);
+  const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
 
   const items = useMemo(
     () => getFieldValue(block?.property?.items ?? [], "") as EditorProps["items"],
@@ -85,8 +91,6 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyT
     }
   }, [items.length, handleAddItem]);
 
-  console.log("isEditable", props.isEditable);
-
   return (
     <BlockWrapper
       icon={block?.extensionId}
@@ -102,7 +106,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, currentCamera, onFlyT
         onAddItem={handleAddItem}
         onMoveItem={handleMoveItem}
         currentCamera={currentCamera}
-        onFlyTo={onFlyTo}
+        onFlyTo={handleFlyTo}
         inEditor={!!props.isEditable}
       />
     </BlockWrapper>
