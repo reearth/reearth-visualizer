@@ -3,7 +3,7 @@ import { MouseEvent, useCallback, useState } from "react";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type { LayerUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import { styled } from "@reearth/services/theme";
 
 type LayerItemProps = {
@@ -13,7 +13,7 @@ type LayerItemProps = {
   visible: boolean;
   onDelete: () => void;
   onSelect: () => void;
-  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerUpdate: (inp: LayerUpdateProps) => void;
 };
 
 const LayerItem = ({
@@ -23,7 +23,7 @@ const LayerItem = ({
   visible,
   onDelete,
   onSelect,
-  onLayerNameUpdate,
+  onLayerUpdate,
 }: LayerItemProps) => {
   const [isActionOpen, setActionOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,8 +49,8 @@ const LayerItem = ({
 
   const handleTitleSubmit = useCallback(() => {
     setIsEditing(false);
-    onLayerNameUpdate({ layerId: id, name: newValue });
-  }, [id, newValue, onLayerNameUpdate]);
+    onLayerUpdate({ layerId: id, name: newValue });
+  }, [id, newValue, onLayerUpdate]);
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
@@ -64,12 +64,12 @@ const LayerItem = ({
     [layerTitle, newValue, handleTitleSubmit],
   );
 
-  const handleLayerVisibilityUpdate = useCallback(() => {
+  const handleUpdateVisibility = useCallback(() => {
     const newVisibility = !isVisible;
-    onLayerNameUpdate({ layerId: id, visible: newVisibility });
+    onLayerUpdate({ layerId: id, visible: newVisibility });
     setIsVisible(newVisibility);
     setValue(isVisible ? "" : "V");
-  }, [id, isVisible, onLayerNameUpdate]);
+  }, [id, isVisible, onLayerUpdate]);
 
   return (
     <ListItem
@@ -103,7 +103,7 @@ const LayerItem = ({
       ) : (
         layerTitle
       )}
-      <HideLayer onClick={handleLayerVisibilityUpdate}>{value}</HideLayer>
+      <HideLayer onClick={handleUpdateVisibility}>{value}</HideLayer>
     </ListItem>
   );
 };

@@ -1,6 +1,6 @@
 // import ListItem from "@reearth/beta/components/ListItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
-import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type { LayerUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -12,7 +12,7 @@ type GroupSectionFieldProps = {
   selectedLayerId?: string;
   selectedSceneSetting?: boolean;
   onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerUpdate: (inp: LayerUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
@@ -23,7 +23,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   selectedLayerId,
   // selectedSceneSetting,
   onLayerDelete,
-  onLayerNameUpdate,
+  onLayerUpdate,
   onLayerSelect,
   // onSceneSettingSelect,
   onDataSourceManagerOpen,
@@ -47,7 +47,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
           layers={layers}
           selectedLayerId={selectedLayerId}
           onLayerDelete={onLayerDelete}
-          onLayerNameUpdate={onLayerNameUpdate}
+          onLayerUpdate={onLayerUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
         />

@@ -6,7 +6,7 @@ import { Tab } from "@reearth/beta/features/Navbar";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
-import type { LayerNameUpdateProps } from "./useLayers";
+import type { LayerUpdateProps } from "./useLayers";
 
 type Props = {
   tab: Tab;
@@ -28,7 +28,7 @@ type Props = {
   // layers
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerUpdate: (inp: LayerUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };
@@ -46,7 +46,7 @@ export default ({
   onPageAdd,
   onPageMove,
   onLayerDelete,
-  onLayerNameUpdate,
+  onLayerUpdate,
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
@@ -60,7 +60,7 @@ export default ({
             selectedLayerId={selectedLayerId}
             selectedSceneSetting={selectedSceneSetting}
             onLayerDelete={onLayerDelete}
-            onLayerNameUpdate={onLayerNameUpdate}
+            onLayerUpdate={onLayerUpdate}
             onLayerSelect={onLayerSelect}
             onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
@@ -91,7 +91,7 @@ export default ({
     selectedSceneSetting,
     currentPageId,
     onLayerDelete,
-    onLayerNameUpdate,
+    onLayerUpdate,
     onLayerSelect,
     onSceneSettingSelect,
     onDataSourceManagerOpen,

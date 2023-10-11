@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type { LayerUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 import Layers from ".";
@@ -16,7 +16,7 @@ function LeftPanelLayers() {
     <Layers
       layers={layers}
       onLayerDelete={(_id: string) => {}}
-      onLayerNameUpdate={(_inp: LayerNameUpdateProps) => {}}
+      onLayerUpdate={(_inp: LayerUpdateProps) => {}}
       onLayerSelect={(_id: string) => {}}
       onDataSourceManagerOpen={() => {}}
     />

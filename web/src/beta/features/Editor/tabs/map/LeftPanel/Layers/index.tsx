@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type { LayerUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -14,7 +14,7 @@ type LayersProps = {
   layers: NLSLayer[];
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerUpdate: (inp: LayerUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };
@@ -23,7 +23,7 @@ const Layers: React.FC<LayersProps> = ({
   layers,
   selectedLayerId,
   onLayerDelete,
-  onLayerNameUpdate,
+  onLayerUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
 }) => {
@@ -73,7 +73,7 @@ const Layers: React.FC<LayersProps> = ({
           isSelected={layer.id === selectedLayerId}
           onDelete={() => onLayerDelete(layer.id)}
           onSelect={() => onLayerSelect(layer.id)}
-          onLayerNameUpdate={onLayerNameUpdate}
+          onLayerUpdate={onLayerUpdate}
         />
       ))}
     </LayerContainer>

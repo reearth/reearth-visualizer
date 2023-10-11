@@ -16,7 +16,7 @@ export type LayerAddProps = {
   visible?: boolean;
 };
 
-export type LayerNameUpdateProps = {
+export type LayerUpdateProps = {
   layerId: string;
   name?: string;
   visible?: boolean;
@@ -70,8 +70,8 @@ export default function ({ sceneId }: useLayerProps) {
     [t, useAddNLSLayerSimple],
   );
 
-  const handleLayerNameUpdate = useCallback(
-    async (inp: LayerNameUpdateProps) => {
+  const handleLayerUpdate = useCallback(
+    async (inp: LayerUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
         name: inp.name,
@@ -87,6 +87,6 @@ export default function ({ sceneId }: useLayerProps) {
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
-    handleLayerNameUpdate,
+    handleLayerUpdate,
   };
 }
