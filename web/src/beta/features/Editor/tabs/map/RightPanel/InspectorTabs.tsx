@@ -1,16 +1,16 @@
 import React, { useCallback, useState } from "react";
 
 import TabMenu, { TabObject } from "@reearth/beta/components/TabMenu";
-import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n"; // If needed
 
 import { LayerConfigUpdateProps } from "../../../useLayers";
 
-import AppearanceSelector from "./AppearanceSelector";
+import AppearanceSelector from "./LayerStyleSelector";
 
 type Props = {
-  appearances?: NLSAppearance[];
+  layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
   selectedLayerId: string;
   sceneId?: string;
@@ -19,13 +19,13 @@ type Props = {
 
 const InspectorTabs: React.FC<Props> = ({
   layers,
-  appearances,
+  layerStyles,
   selectedLayerId,
   sceneId,
   onLayerConfigUpdate,
 }) => {
   const t = useT();
-  const [selectedTab, setSelectedTab] = useState("appearanceSelector");
+  const [selectedTab, setSelectedTab] = useState("layerStyleSelector");
 
   const handleTabChange = useCallback((newTab: string) => {
     setSelectedTab(newTab);
@@ -33,17 +33,17 @@ const InspectorTabs: React.FC<Props> = ({
 
   const tabs: TabObject[] = [
     {
-      id: "appearanceSelector",
+      id: "layerStyleSelector",
       component: (
         <AppearanceSelector
-          appearances={appearances}
+          layerStyles={layerStyles}
           layers={layers}
           sceneId={sceneId}
           selectedLayerId={selectedLayerId}
           onLayerConfigUpdate={onLayerConfigUpdate}
         />
       ),
-      icon: "appearance",
+      icon: "layerStyle",
     },
     {
       id: t("Layer Property Inspector"),

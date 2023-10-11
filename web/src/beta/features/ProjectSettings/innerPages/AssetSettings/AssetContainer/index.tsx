@@ -1,8 +1,8 @@
 import Button from "@reearth/beta/components/Button";
+import AssetCard from "@reearth/beta/components/CatalogCard";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Text from "@reearth/beta/components/Text";
-import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";

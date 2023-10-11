@@ -2,43 +2,43 @@ import { ReactNode, useMemo } from "react";
 
 import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/BottomPanel";
 import type { Tab } from "@reearth/beta/features/Navbar";
-import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
-import { AppearanceAddProps, AppearanceNameUpdateProps } from "./useAppearances";
+import { LayerStyleAddProps, LayerStyleNameUpdateProps } from "./useLayerStyles";
 
 type Props = {
   tab: Tab;
   sceneId?: string;
-  appearances: NLSAppearance[];
+  layerStyles: LayerStyle[];
 
-  // appearances
-  selectedAppearanceId?: string;
-  onAppearanceAdd: (inp: AppearanceAddProps) => void;
-  onAppearanceDelete: (id: string) => void;
-  onAppearanceNameUpdate: (inp: AppearanceNameUpdateProps) => void;
-  onAppearanceSelect: (id: string) => void;
+  // layerStyles
+  selectedLayerStyleId?: string;
+  onLayerStyleAdd: (inp: LayerStyleAddProps) => void;
+  onLayerStyleDelete: (id: string) => void;
+  onLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
+  onLayerStyleSelect: (id: string) => void;
 };
 
 export default ({
   tab,
-  appearances,
-  selectedAppearanceId,
-  onAppearanceAdd,
-  onAppearanceDelete,
-  onAppearanceNameUpdate,
-  onAppearanceSelect,
+  layerStyles,
+  selectedLayerStyleId,
+  onLayerStyleAdd,
+  onLayerStyleDelete,
+  onLayerStyleNameUpdate,
+  onLayerStyleSelect,
 }: Props) => {
   const bottomPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
       case "map":
         return (
           <MapSidePanel
-            appearances={appearances}
-            onAppearanceAdd={onAppearanceAdd}
-            onAppearanceDelete={onAppearanceDelete}
-            onAppearanceNameUpdate={onAppearanceNameUpdate}
-            onAppearanceSelect={onAppearanceSelect}
-            selectedAppearanceId={selectedAppearanceId}
+            layerStyles={layerStyles}
+            onLayerStyleAdd={onLayerStyleAdd}
+            onLayerStyleDelete={onLayerStyleDelete}
+            onLayerStyleNameUpdate={onLayerStyleNameUpdate}
+            onLayerStyleSelect={onLayerStyleSelect}
+            selectedLayerStyleId={selectedLayerStyleId}
           />
         );
       case "story":
@@ -49,12 +49,12 @@ export default ({
     }
   }, [
     tab,
-    appearances,
-    onAppearanceAdd,
-    onAppearanceDelete,
-    onAppearanceNameUpdate,
-    onAppearanceSelect,
-    selectedAppearanceId,
+    layerStyles,
+    onLayerStyleAdd,
+    onLayerStyleDelete,
+    onLayerStyleNameUpdate,
+    onLayerStyleSelect,
+    selectedLayerStyleId,
   ]);
 
   return {

@@ -1,7 +1,7 @@
 const metrics = {
-  propertyMenuWidth: 240,
+  propertyMenuWidth: 308,
   propertyMenuMinWidth: 200,
-  appearancePanelMinWidth: 145,
+  layerStylePanelMinWidth: 145,
 };
 
 export const metricsSizes = {

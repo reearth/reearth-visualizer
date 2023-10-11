@@ -1,6 +1,6 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
-export const ADD_APPEARANCE = gql(`
+export const ADD_LAYERSTYLE = gql(`
   mutation AddStyle($input: AddStyleInput!) {
     addStyle(input: $input) {
       style {
@@ -11,7 +11,7 @@ export const ADD_APPEARANCE = gql(`
   }
 `);
 
-export const UPDATE_APPEARANCE = gql(`
+export const UPDATE_LAYERSTYLE = gql(`
   mutation UpdateStyle($input: UpdateStyleInput!) {
     updateStyle(input: $input) {
       style {
@@ -22,7 +22,7 @@ export const UPDATE_APPEARANCE = gql(`
   }
 `);
 
-export const REMOVE_APPEARANCE = gql(`
+export const REMOVE_LAYERSTYLE = gql(`
   mutation RemoveStyle($input: RemoveStyleInput!) {
     removeStyle(input: $input) {
       styleId

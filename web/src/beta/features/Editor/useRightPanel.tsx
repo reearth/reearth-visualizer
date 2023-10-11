@@ -3,18 +3,18 @@ import { ReactNode, useMemo } from "react";
 import type { Tab } from "@reearth/beta/features/Navbar";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
-import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
 import WidgetSidePanel from "./tabs/widgets/RightPanel";
-import { AppearanceValueUpdateProps } from "./useAppearances";
 import { LayerConfigUpdateProps } from "./useLayers";
+import { LayerStyleValueUpdateProps } from "./useLayerStyles";
 
 type Props = {
-  appearances: NLSAppearance[];
+  layerStyles: LayerStyle[];
   tab: Tab;
   sceneId?: string;
   nlsLayers: NLSLayer[];
@@ -22,24 +22,24 @@ type Props = {
   showSceneSettings?: boolean;
   currentCamera?: Camera;
   selectedLayerId?: string;
-  selectedAppearanceId?: string;
+  selectedLayerStyleId?: string;
   onFlyTo?: FlyTo;
-  onAppearanceValueUpdate?: (inp: AppearanceValueUpdateProps) => void;
+  onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
 };
 
 export default ({
-  appearances,
+  layerStyles,
   tab,
   sceneId,
   nlsLayers,
   currentPage,
   showSceneSettings,
-  selectedAppearanceId,
+  selectedLayerStyleId,
   selectedLayerId,
   currentCamera,
   onFlyTo,
-  onAppearanceValueUpdate,
+  onLayerStyleValueUpdate,
   onLayerConfigUpdate,
 }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
@@ -47,15 +47,15 @@ export default ({
       case "map":
         return (
           <MapSidePanel
-            appearances={appearances}
+            layerStyles={layerStyles}
             layers={nlsLayers}
             sceneId={sceneId}
             showSceneSettings={showSceneSettings}
             currentCamera={currentCamera}
-            selectedAppearanceId={selectedAppearanceId}
+            selectedLayerStyleId={selectedLayerStyleId}
             selectedLayerId={selectedLayerId}
             onFlyTo={onFlyTo}
-            onAppearanceValueUpdate={onAppearanceValueUpdate}
+            onLayerStyleValueUpdate={onLayerStyleValueUpdate}
             onLayerConfigUpdate={onLayerConfigUpdate}
           />
         );
@@ -78,16 +78,16 @@ export default ({
     }
   }, [
     tab,
-    appearances,
+    layerStyles,
     sceneId,
     showSceneSettings,
     currentCamera,
-    selectedAppearanceId,
+    selectedLayerStyleId,
     selectedLayerId,
     currentPage,
     nlsLayers,
     onFlyTo,
-    onAppearanceValueUpdate,
+    onLayerStyleValueUpdate,
     onLayerConfigUpdate,
   ]);
 

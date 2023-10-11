@@ -12,12 +12,12 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
+import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_APPEARANCE, valueTypeFromGQL } from "@reearth/beta/utils/value";
-import { LayerAppearanceTypes } from "@reearth/classic/core/mantle";
-import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import {
   type Maybe,
   type WidgetZone as WidgetZoneType,
@@ -336,18 +336,18 @@ export type RawNLSLayer = NlsLayerCommonFragment & {
 
 export function processLayers(
   newLayers?: NLSLayer[],
-  appearances?: NLSAppearance[],
+  layerStyles?: LayerStyle[],
   parent?: RawNLSLayer | null | undefined,
 ): Layer[] | undefined {
-  const getAppearanceValue = (id?: string) => {
-    const appearanceValue: Partial<LayerAppearanceTypes> = appearances?.find(
+  const getLayerStyleValue = (id?: string) => {
+    const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
       a => a.id === id,
     )?.value;
-    if (typeof appearanceValue === "object") {
+    if (typeof layerStyleValue === "object") {
       try {
-        return appearanceValue;
+        return layerStyleValue;
       } catch (e) {
-        console.error("Error parsing appearance JSON:", e);
+        console.error("Error parsing layerStyle JSON:", e);
       }
     }
 
@@ -355,7 +355,7 @@ export function processLayers(
   };
 
   return newLayers?.map(nlsLayer => {
-    const appearance = getAppearanceValue(nlsLayer.config?.appearanceId);
+    const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
     return {
       type: "simple",
       id: nlsLayer.id,
@@ -367,7 +367,7 @@ export function processLayers(
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
       data: nlsLayer.config?.data,
-      ...appearance,
+      ...layerStyle,
     };
   });
 }

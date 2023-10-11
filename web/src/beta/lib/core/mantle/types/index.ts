@@ -26,7 +26,7 @@ export type LayerSimple = {
   properties?: any;
   defines?: Record<string, string>;
   events?: Events;
-  appearanceId?: string;
+  layerStyleId?: string;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 

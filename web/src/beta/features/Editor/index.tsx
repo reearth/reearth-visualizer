@@ -14,8 +14,8 @@ import { metrics, styled } from "@reearth/services/theme";
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import { navbarHeight } from "./SecondaryNav";
-import useAppearances from "./useAppearances";
 import useLayers from "./useLayers";
+import useLayerStyles from "./useLayerStyles";
 
 type Props = {
   sceneId: string;
@@ -74,24 +74,24 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   });
 
   const handleLayerSelected = (layerId: string) => {
-    setSelectedAppearanceId(undefined);
+    setSelectedLayerStyleId(undefined);
     handleLayerSelect(layerId);
   };
 
   const {
-    appearances,
-    selectedAppearance,
-    setSelectedAppearanceId,
-    handleAppearanceAdd,
-    handleAppearanceDelete,
-    handleAppearanceNameUpdate,
-    handleAppearanceValueUpdate,
-    handleAppearanceSelect,
-  } = useAppearances({ sceneId });
+    layerStyles,
+    selectedLayerStyle,
+    setSelectedLayerStyleId,
+    handleLayerStyleAdd,
+    handleLayerStyleDelete,
+    handleLayerStyleNameUpdate,
+    handleLayerStyleValueUpdate,
+    handleLayerStyleSelect,
+  } = useLayerStyles({ sceneId });
 
-  const handleAppearanceSelected = (appearanceId: string) => {
+  const handleLayerStyleSelected = (layerStyleId: string) => {
     setSelectedLayerId(undefined);
-    handleAppearanceSelect(appearanceId);
+    handleLayerStyleSelect(layerStyleId);
   };
 
   const { leftPanel } = useLeftPanel({
@@ -114,29 +114,29 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   });
 
   const { rightPanel } = useRightPanel({
-    appearances,
+    layerStyles,
     tab,
     sceneId,
     nlsLayers,
     currentPage,
     currentCamera,
     showSceneSettings: selectedSceneSetting,
-    selectedAppearanceId: selectedAppearance?.id,
+    selectedLayerStyleId: selectedLayerStyle?.id,
     selectedLayerId: selectedLayer?.id,
     onFlyTo: handleFlyTo,
-    onAppearanceValueUpdate: handleAppearanceValueUpdate,
+    onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
   });
 
   const { bottomPanel } = useBottomPanel({
     tab,
     sceneId,
-    appearances,
-    selectedAppearanceId: selectedAppearance?.id,
-    onAppearanceAdd: handleAppearanceAdd,
-    onAppearanceDelete: handleAppearanceDelete,
-    onAppearanceNameUpdate: handleAppearanceNameUpdate,
-    onAppearanceSelect: handleAppearanceSelected,
+    layerStyles,
+    selectedLayerStyleId: selectedLayerStyle?.id,
+    onLayerStyleAdd: handleLayerStyleAdd,
+    onLayerStyleDelete: handleLayerStyleDelete,
+    onLayerStyleNameUpdate: handleLayerStyleNameUpdate,
+    onLayerStyleSelect: handleLayerStyleSelected,
   });
 
   const { secondaryNavbar } = useSecondaryNavbar({
@@ -211,8 +211,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             <Resizable
               direction="horizontal"
               gutter="start"
-              initialSize={metrics.appearancePanelMinWidth}
-              minSize={metrics.appearancePanelMinWidth}>
+              initialSize={metrics.layerStylePanelMinWidth}
+              minSize={metrics.layerStylePanelMinWidth}>
               {bottomPanel}
             </Resizable>
           )}

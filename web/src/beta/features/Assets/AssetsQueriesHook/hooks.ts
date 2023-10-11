@@ -3,7 +3,6 @@ import useFileInput from "use-file-input";
 
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
 import { useAssetsFetcher } from "@reearth/services/api";
-import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
 
 import { FILE_FORMATS, IMAGE_FORMATS } from "../constants";
@@ -45,7 +44,6 @@ export default ({
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
-  const [selectedAppearances, selectAppearance] = useState<NLSAppearance[]>([]);
 
   const isGettingMore = useRef(false);
 
@@ -118,8 +116,6 @@ export default ({
     sort,
     searchTerm,
     selectedAssets,
-    selectedAppearances,
-    selectAppearance,
     selectAsset,
     handleGetMoreAssets,
     handleFileSelect,

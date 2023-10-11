@@ -7,7 +7,7 @@ import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
 
-import { AppearanceNameUpdateProps } from "../../Editor/useAppearances";
+import { LayerStyleNameUpdateProps } from "../../features/Editor/useLayerStyles";
 
 export type Props = {
   id?: string;
@@ -24,10 +24,10 @@ export type Props = {
   onSelect?: (selected: boolean) => void;
   onActionClick?: () => void;
   onOpenChange?: (isOpen: boolean) => void;
-  onAppearanceNameUpdate?: (inp: AppearanceNameUpdateProps) => void;
+  onLayerStyleNameUpdate?: (inp: LayerStyleNameUpdateProps) => void;
 };
 
-const AssetCard: React.FC<Props> = ({
+const CatalogCard: React.FC<Props> = ({
   id,
   className,
   name,
@@ -42,7 +42,7 @@ const AssetCard: React.FC<Props> = ({
   onSelect,
   onActionClick,
   onOpenChange,
-  onAppearanceNameUpdate,
+  onLayerStyleNameUpdate,
 }) => {
   const [isOpenAction, setIsOpenAction] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -71,8 +71,8 @@ const AssetCard: React.FC<Props> = ({
 
   const handleNameSubmit = useCallback(() => {
     isNameEditable && setIsEditing(false);
-    onAppearanceNameUpdate?.({ styleId: id || "", name: newName });
-  }, [id, isNameEditable, newName, onAppearanceNameUpdate]);
+    onLayerStyleNameUpdate?.({ styleId: id || "", name: newName });
+  }, [id, isNameEditable, newName, onLayerStyleNameUpdate]);
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
@@ -98,7 +98,7 @@ const AssetCard: React.FC<Props> = ({
     <Wrapper
       className={className}
       selected={selected}
-      isAppearanceIcon={icon === "appearance"}
+      isLayerStyleIcon={icon === "layerStyle"}
       onClick={() => onSelect?.(!selected)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
@@ -141,16 +141,16 @@ const AssetCard: React.FC<Props> = ({
   );
 };
 
-const Wrapper = styled.div<{ selected?: boolean; isAppearanceIcon?: boolean }>`
+const Wrapper = styled.div<{ selected?: boolean; isLayerStyleIcon?: boolean }>`
   display: flex;
   flex-direction: column;
-  background: ${({ theme, isAppearanceIcon }) => (isAppearanceIcon ? theme.bg[0] : theme.bg[2])};
+  background: ${({ theme, isLayerStyleIcon }) => (isLayerStyleIcon ? theme.bg[0] : theme.bg[2])};
   box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.25);
   border: 2px solid ${({ selected, theme }) => (selected ? `${theme.select.main}` : "transparent")};
   padding: ${({ theme }) => theme.spacing.small}px;
   width: 100%;
-  max-width: ${({ isAppearanceIcon }) => (isAppearanceIcon ? "calc(148px * 0.7)" : "148px")};
-  max-height: ${({ isAppearanceIcon }) => (isAppearanceIcon ? "calc(148px * 0.7)" : "148px")};
+  max-width: ${({ isLayerStyleIcon }) => (isLayerStyleIcon ? "calc(148px * 0.7)" : "148px")};
+  max-height: ${({ isLayerStyleIcon }) => (isLayerStyleIcon ? "calc(148px * 0.7)" : "148px")};
   height: 100%;
   position: relative;
   cursor: pointer;
@@ -221,4 +221,4 @@ const StyledPopoverContent = styled(Popover.Content)`
   position: relative;
 `;
 
-export default AssetCard;
+export default CatalogCard;

@@ -11,7 +11,7 @@ import {
   useWidgetsFetcher,
   useStorytellingFetcher,
   usePropertyFetcher,
-  useAppearancesFetcher,
+  useLayerStylesFetcher,
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
@@ -39,13 +39,13 @@ export default ({
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
-  const { useGetAppearancesQuery } = useAppearancesFetcher();
+  const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
   const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
-  const { appearances } = useGetAppearancesQuery({ sceneId });
+  const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
@@ -90,7 +90,7 @@ export default ({
     [selected],
   );
 
-  const layers = useMemo(() => processLayers(nlsLayers, appearances), [appearances, nlsLayers]);
+  const layers = useMemo(() => processLayers(nlsLayers, layerStyles), [layerStyles, nlsLayers]);
 
   // TODO: Use GQL value
   const rootLayerId = "";

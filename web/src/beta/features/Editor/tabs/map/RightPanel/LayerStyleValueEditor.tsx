@@ -2,40 +2,43 @@ import MonacoEditor from "@monaco-editor/react";
 import { FC, useCallback, useState, useEffect } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { useAppearancesFetcher } from "@reearth/services/api";
+import { useLayerStylesFetcher } from "@reearth/services/api";
 import { styled } from "@reearth/services/theme";
 
-import { AppearanceValueUpdateProps } from "../../../useAppearances";
+import { LayerStyleValueUpdateProps } from "../../../useLayerStyles";
 
-type AppearanceEditorProps = {
-  selectedAppearanceId?: string;
+type LayerStyleEditorProps = {
+  selectedLayerStyleId?: string;
   sceneId?: string;
-  onAppearanceValueUpdate?: (inp: AppearanceValueUpdateProps) => void;
+  onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
 };
 
-const AppearanceEditor: FC<AppearanceEditorProps> = ({
-  selectedAppearanceId,
+const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
+  selectedLayerStyleId,
   sceneId,
-  onAppearanceValueUpdate,
+  onLayerStyleValueUpdate,
 }) => {
   const [styleCode, setStyleCode] = useState<string | undefined>("{}");
 
-  const { useGetAppearancesQuery } = useAppearancesFetcher();
-  const { appearances = [] } = useGetAppearancesQuery({ sceneId });
+  const { useGetLayerStylesQuery } = useLayerStylesFetcher();
+  const { layerStyles = [] } = useGetLayerStylesQuery({ sceneId });
 
   useEffect(() => {
-    const selectedAppearance = appearances.find(a => a.id === selectedAppearanceId);
-    if (selectedAppearance?.value) {
-      setStyleCode(JSON.stringify(selectedAppearance.value, null, 2));
+    const selectedLayerStyle = layerStyles.find(a => a.id === selectedLayerStyleId);
+    if (selectedLayerStyle?.value) {
+      setStyleCode(JSON.stringify(selectedLayerStyle.value, null, 2));
     }
-  }, [selectedAppearanceId, appearances]);
+  }, [selectedLayerStyleId, layerStyles]);
 
   const handleSubmit = useCallback(() => {
-    if (onAppearanceValueUpdate && styleCode && JSON.parse(styleCode)) {
-      selectedAppearanceId &&
-        onAppearanceValueUpdate({ styleId: selectedAppearanceId, value: JSON.parse(styleCode) });
+    if (onLayerStyleValueUpdate && styleCode && JSON.parse(styleCode)) {
+      selectedLayerStyleId &&
+        onLayerStyleValueUpdate({
+          styleId: selectedLayerStyleId,
+          value: JSON.parse(styleCode),
+        });
     }
-  }, [onAppearanceValueUpdate, styleCode, selectedAppearanceId]);
+  }, [onLayerStyleValueUpdate, styleCode, selectedLayerStyleId]);
 
   return (
     <EditorContainer>
@@ -74,7 +77,7 @@ const EditorContainer = styled.div`
 
 const CenteredButton = styled(Button)`
   align-self: center;
-  margin-top: 16px; // Adjust as per your need
+  margin-top: 16px;
 `;
 
-export default AppearanceEditor;
+export default LayerStyleEditor;

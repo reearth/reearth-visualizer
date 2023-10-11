@@ -8,9 +8,10 @@ import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/const
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
 import ChooseAssetModal from "@reearth/beta/features/Modals/ChooseAssetModal";
+import ChooseLayerStyleModal from "@reearth/beta/features/Modals/ChooseLayerStyleModal";
 import { checkIfFileType } from "@reearth/beta/utils/util";
-import { useAppearancesFetcher } from "@reearth/services/api";
-import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
+import { useLayerStylesFetcher } from "@reearth/services/api";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -19,8 +20,8 @@ export type Props = {
   value?: string;
   name?: string;
   description?: string;
-  fileType?: "asset" | "URL" | "appearance";
-  assetType?: "image" | "file" | "appearance";
+  fileType?: "asset" | "URL" | "layerStyle";
+  assetType?: "image" | "file" | "layerStyle";
   sceneId?: string;
   onChange?: (value: string | undefined) => void;
 };
@@ -68,17 +69,19 @@ const URLField: React.FC<Props> = ({
     hasMoreAssets,
     searchTerm,
     selectedAssets,
-    selectedAppearances,
-    selectAppearance,
     selectAsset,
     handleGetMoreAssets,
     handleFileSelect,
     handleSortChange,
     handleSearchTerm,
-  } = useHooks({ workspaceId: currentWorkspace?.id, onAssetSelect: handleChange });
+  } = useHooks({
+    workspaceId: currentWorkspace?.id,
+    onAssetSelect: handleChange,
+  });
 
-  const { useGetAppearancesQuery } = useAppearancesFetcher();
-  const { appearances } = useGetAppearancesQuery({ sceneId });
+  const { useGetLayerStylesQuery } = useLayerStylesFetcher();
+  const { layerStyles } = useGetLayerStylesQuery({ sceneId });
+  const [selectedLayerStyles, selectLayerStyle] = useState<LayerStyle[]>([]);
 
   const { localSearchTerm, wrapperRef, onScrollToBottom, handleSearchInputChange, handleSearch } =
     useManageAssets({
@@ -99,9 +102,7 @@ const URLField: React.FC<Props> = ({
   }, [currentValue, assets, selectAsset]);
 
   useEffect(() => {
-    if (value) {
-      setCurrentValue(value);
-    }
+    setCurrentValue(value ?? "");
   }, [value]);
 
   useEffect(() => {
@@ -123,12 +124,12 @@ const URLField: React.FC<Props> = ({
     [selectedAssets, selectAsset],
   );
 
-  const handleSelectAppearance = useCallback(
-    (appearance?: NLSAppearance) => {
-      if (!appearance) return;
-      selectAppearance(!selectedAppearances.includes(appearance) ? [appearance] : []);
+  const handleSelectLayerStyle = useCallback(
+    (layerStyle?: LayerStyle) => {
+      if (!layerStyle) return;
+      selectLayerStyle(!selectedLayerStyles.includes(layerStyle) ? [layerStyle] : []);
     },
-    [selectAppearance, selectedAppearances],
+    [selectLayerStyle, selectedLayerStyles],
   );
 
   return (
@@ -150,17 +151,15 @@ const URLField: React.FC<Props> = ({
           />
         </ButtonWrapper>
       )}
-      {fileType === "appearance" && <AssetButton icon="appearance" onClick={handleClick} />}
-      {open && (
+      {fileType === "layerStyle" && <AssetButton icon="layerStyle" onClick={handleClick} />}
+      {open && assetType !== "layerStyle" && (
         <ChooseAssetModal
           open={open}
           assetType={assetType}
           localSearchTerm={localSearchTerm}
           selectedAssets={selectedAssets}
-          selectedAppearances={selectedAppearances}
           wrapperRef={wrapperRef}
           assets={assets}
-          appearances={appearances}
           isLoading={isLoading}
           hasMoreAssets={hasMoreAssets}
           searchTerm={searchTerm}
@@ -170,7 +169,23 @@ const URLField: React.FC<Props> = ({
           onGetMore={handleGetMoreAssets}
           onScrollToBottom={onScrollToBottom}
           onSelectAsset={handleSelectAsset}
-          onSelectAppearance={handleSelectAppearance}
+          onSelect={handleChange}
+        />
+      )}
+      {open && fileType === "layerStyle" && (
+        <ChooseLayerStyleModal
+          open={open}
+          localSearchTerm={localSearchTerm}
+          selectedLayerStyles={selectedLayerStyles}
+          wrapperRef={wrapperRef}
+          layerStyles={layerStyles}
+          isLoading={isLoading}
+          searchTerm={searchTerm}
+          onClose={handleClose}
+          handleSearch={handleSearch}
+          handleSearchInputChange={handleSearchInputChange}
+          onScrollToBottom={onScrollToBottom}
+          onSelectLayerStyle={handleSelectLayerStyle}
           onSelect={handleChange}
         />
       )}

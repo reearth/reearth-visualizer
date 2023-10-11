@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import AssetCard from "@reearth/beta/components/CatalogCard";
@@ -6,31 +6,24 @@ import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
-import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import { Asset } from "@reearth/beta/features/Assets/types";
-import { checkIfFileType } from "@reearth/beta/utils/util";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
-  className?: string;
-  assetType?: "file" | "image";
-  assets?: Asset[];
-  selectedAssets?: Asset[];
-  isLoading?: boolean;
-  hasMoreAssets?: boolean;
+  layerStyles?: LayerStyle[];
+  selectedLayerStyles?: LayerStyle[];
   searchTerm?: string;
   open?: boolean;
-  workspaceId?: string;
+  isLoading?: boolean;
   localSearchTerm?: string;
   wrapperRef?: React.RefObject<HTMLDivElement>;
-  onGetMore?: () => void;
-  onSelectAsset?: (asset?: Asset) => void;
+  onSelectLayerStyle?: (layerStyle?: LayerStyle) => void;
   onSelect?: (value: string) => void;
   onClose: () => void;
   onScrollToBottom?: (
-    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+    event: React.UIEvent<HTMLDivElement, UIEvent>,
     onLoadMore?: (() => void) | undefined,
     threshold?: number,
   ) => void;
@@ -38,43 +31,27 @@ export type Props = {
   handleSearch?: () => void;
 };
 
-const ChooseAssetModal: React.FC<Props> = ({
-  className,
-  assetType,
+const ChooseLayerStyleModal: React.FC<Props> = ({
   open,
-  assets,
-  selectedAssets,
-  hasMoreAssets,
+  layerStyles = [],
+  selectedLayerStyles = [],
   isLoading,
   searchTerm,
   localSearchTerm,
   wrapperRef,
   onClose,
-  onGetMore,
   onSelect,
-  onSelectAsset,
+  onSelectLayerStyle,
   onScrollToBottom,
   handleSearchInputChange,
   handleSearch,
 }) => {
   const t = useT();
-
   const [, setNotification] = useNotification();
 
-  const filteredAssets = useMemo(() => {
-    if (!assetType) {
-      return assets;
-    }
-    return assets?.filter(asset => {
-      const isFile = checkIfFileType(asset.url, FILE_FORMATS);
-      const isImage = checkIfFileType(asset.url, IMAGE_FORMATS);
-      return (assetType === "file" && isFile) || (assetType === "image" && isImage);
-    });
-  }, [assetType, assets]);
-
   const handleSelectButtonClick = useCallback(() => {
-    if (selectedAssets && selectedAssets.length > 0) {
-      onSelect?.(selectedAssets[0].url);
+    if (selectedLayerStyles && selectedLayerStyles.length > 0) {
+      onSelect?.(selectedLayerStyles[0].id);
       onClose?.();
     } else {
       setNotification({
@@ -82,12 +59,11 @@ const ChooseAssetModal: React.FC<Props> = ({
         text: t("Please select an asset before clicking Select."),
       });
     }
-  }, [onClose, onSelect, selectedAssets, setNotification, t]);
+  }, [selectedLayerStyles, onSelect, onClose, setNotification, t]);
 
   return (
     <StyledModal
-      title={t("Select Image")}
-      className={className}
+      title={t("Select Asset")}
       isVisible={open}
       onClose={onClose}
       button1={
@@ -95,9 +71,7 @@ const ChooseAssetModal: React.FC<Props> = ({
           size="medium"
           buttonType="primary"
           text={t("Select")}
-          onClick={() => {
-            handleSelectButtonClick();
-          }}
+          onClick={handleSelectButtonClick}
         />
       }
       button2={
@@ -115,35 +89,26 @@ const ChooseAssetModal: React.FC<Props> = ({
         </SearchWarpper>
       </ControlWarpper>
       <AssetWrapper>
-        {!isLoading && (!assets || assets.length < 1) ? (
+        {!isLoading && (!layerStyles || layerStyles.length < 1) ? (
           <Template>
             <TemplateText size="body">
               {searchTerm
                 ? t("No assets match your search.")
                 : t(
-                    "You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.",
+                    "You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.",
                   )}
             </TemplateText>
           </Template>
         ) : (
-          <AssetListWrapper
-            ref={wrapperRef}
-            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, onGetMore)}>
+          <AssetListWrapper ref={wrapperRef} onScroll={e => !isLoading && onScrollToBottom?.(e)}>
             <AssetList>
-              {filteredAssets?.map(a => (
+              {layerStyles.map(a => (
                 <AssetCard
                   key={a.id}
                   name={a.name}
-                  icon={
-                    checkIfFileType(a.url, FILE_FORMATS)
-                      ? "file"
-                      : checkIfFileType(a.url, IMAGE_FORMATS)
-                      ? undefined
-                      : "assetNoSupport"
-                  }
-                  url={a.url}
-                  onSelect={() => onSelectAsset?.(a)}
-                  selected={selectedAssets?.includes(a)}
+                  icon={"layerStyle"}
+                  onSelect={() => onSelectLayerStyle?.(a as LayerStyle)}
+                  selected={selectedLayerStyles.some(ua => ua.id === a.id)}
                 />
               ))}
             </AssetList>
@@ -209,4 +174,4 @@ const TemplateText = styled(Text)`
   text-align: center;
   width: 390px;
 `;
-export default ChooseAssetModal;
+export default ChooseLayerStyleModal;

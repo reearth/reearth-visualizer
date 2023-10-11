@@ -5,40 +5,40 @@ import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import { FlyTo } from "@reearth/beta/lib/core/types";
 import { Camera } from "@reearth/beta/utils/value";
 import { useSceneFetcher } from "@reearth/services/api";
-import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-import { AppearanceValueUpdateProps } from "../../../useAppearances";
 import { LayerConfigUpdateProps } from "../../../useLayers";
+import { LayerStyleValueUpdateProps } from "../../../useLayerStyles";
 
-import AppearanceEditor from "./AppearanceValueEditor";
 import InspectorTabs from "./InspectorTabs";
+import LayerStyleEditor from "./LayerStyleValueEditor";
 
 type Props = {
-  appearances?: NLSAppearance[];
+  layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
   sceneId?: string;
   selectedLayerId?: string;
-  selectedAppearanceId?: string;
+  selectedLayerStyleId?: string;
   showSceneSettings?: boolean;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
-  onAppearanceValueUpdate?: (inp: AppearanceValueUpdateProps) => void;
+  onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
 };
 
 const MapRightPanel: React.FC<Props> = ({
   layers,
-  appearances,
+  layerStyles,
   sceneId,
   showSceneSettings,
-  selectedAppearanceId,
+  selectedLayerStyleId,
   selectedLayerId,
   currentCamera,
   onFlyTo,
-  onAppearanceValueUpdate,
+  onLayerStyleValueUpdate,
   onLayerConfigUpdate,
 }) => {
   const t = useT();
@@ -69,18 +69,18 @@ const MapRightPanel: React.FC<Props> = ({
               )}
               {selectedLayerId && (
                 <InspectorTabs
-                  appearances={appearances}
+                  layerStyles={layerStyles}
                   layers={layers}
                   sceneId={sceneId}
                   selectedLayerId={selectedLayerId}
                   onLayerConfigUpdate={onLayerConfigUpdate}
                 />
               )}
-              {selectedAppearanceId && (
-                <AppearanceEditor
-                  selectedAppearanceId={selectedAppearanceId}
+              {selectedLayerStyleId && (
+                <LayerStyleEditor
+                  selectedLayerStyleId={selectedLayerStyleId}
                   sceneId={sceneId}
-                  onAppearanceValueUpdate={onAppearanceValueUpdate}
+                  onLayerStyleValueUpdate={onLayerStyleValueUpdate}
                 />
               )}
             </>

@@ -1,19 +1,19 @@
 import { GetSceneQuery } from "../../gql";
 
-export type NLSAppearance = {
+export type LayerStyle = {
   id: string;
   name: string;
   value?: any;
 };
 
-export const getAppearances = (rawScene?: GetSceneQuery) => {
+export const getLayerStyles = (rawScene?: GetSceneQuery) => {
   const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
 
-  return scene?.styles?.map((l): NLSAppearance => {
+  return scene?.styles?.map((s): LayerStyle => {
     return {
-      id: l.id,
-      name: l.name,
-      value: l.value,
+      id: s.id,
+      name: s.name,
+      value: s.value,
     };
   });
 };
