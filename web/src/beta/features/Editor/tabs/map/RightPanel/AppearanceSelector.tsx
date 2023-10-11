@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useState, useEffect } from "react";
 
 import URLField from "@reearth/beta/components/fields/URLField";
 import { NLSAppearance } from "@reearth/services/api/appearanceApi/utils";
@@ -23,10 +23,16 @@ const AppearanceSelector: FC<AppearanceSelectorProps> = ({
   onLayerConfigUpdate,
 }) => {
   const t = useT();
-  const intialAppearanceId = layers?.find(a => a.id === selectedLayerId)?.config?.appearanceId;
-  const intialAppearanceName = appearances?.find(a => a.id === intialAppearanceId)?.name || "";
 
-  const [urlFieldValue, setUrlFieldValue] = useState(intialAppearanceName);
+  const [urlFieldValue, setUrlFieldValue] = useState("");
+
+  useEffect(() => {
+    const initialAppearanceId = layers?.find(a => a.id === selectedLayerId)?.config?.appearanceId;
+    const newInitialAppearanceName =
+      appearances?.find(a => a.id === initialAppearanceId)?.name || "";
+
+    setUrlFieldValue(newInitialAppearanceName);
+  }, [selectedLayerId, layers, appearances]);
 
   const handleUrlFieldChange = useCallback(
     (value?: string) => {
