@@ -491,13 +491,18 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
+Failed to add appearance.: ''
+Successfully added a new appearance!: ''
+Failed to update the appearance.: ''
+Successfully updated a the appearance!: ''
+Failed to remove the appearance.: ''
+Successfully removed a the appearance!: ''
 Failed to add layer.: ''
-Successfully added a new appearance: ''
+Successfully added a new layer: ''
 Failed to update the layer.: ''
 Successfully updated a the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
-Successfully added a new layer: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
