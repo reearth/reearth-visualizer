@@ -43,6 +43,7 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Dataset:        NewDataset(client),
 		Layer:          NewLayer(client),
 		NLSLayer:       NewNLSLayer(client),
+		Style:          NewStyle(client),
 		Plugin:         NewPlugin(client),
 		Project:        NewProject(client),
 		PropertySchema: NewPropertySchema(client),

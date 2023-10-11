@@ -1,3 +1,5 @@
+import { MutableRefObject } from "react";
+
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -25,9 +27,8 @@ export type StoryPanelProps = {
   selectedStory?: Story;
   currentPageId?: string;
   isEditable?: boolean;
-  isAutoScrolling?: boolean;
+  isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
-  onAutoScrollingChange: (isScrolling: boolean) => void;
   onBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
@@ -55,7 +56,6 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   isEditable,
   isAutoScrolling,
   installableBlocks,
-  onAutoScrollingChange,
   onBlockCreate,
   onBlockDelete,
   onPropertyUpdate,
@@ -98,7 +98,6 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
         showingIndicator={!!pageInfo}
         isAutoScrolling={isAutoScrolling}
         isEditable={isEditable}
-        onAutoScrollingChange={onAutoScrollingChange}
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}
         onBlockCreate={onBlockCreate}

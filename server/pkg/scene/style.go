@@ -4,17 +4,7 @@ type Style struct {
 	id    StyleID
 	name  string
 	value *StyleValue
-}
-
-func NewStyle(sid StyleID, name string, sv *StyleValue) (*Style, error) {
-	if sid.IsNil() {
-		return nil, ErrInvalidID
-	}
-	return &Style{
-		id:    sid,
-		name:  name,
-		value: sv,
-	}, nil
+	scene ID
 }
 
 func (s *Style) ID() StyleID {
@@ -50,4 +40,8 @@ func (s *Style) UpdateValue(sv *StyleValue) {
 		return
 	}
 	s.value = sv
+}
+
+func (l *Style) Scene() ID {
+	return l.scene
 }
