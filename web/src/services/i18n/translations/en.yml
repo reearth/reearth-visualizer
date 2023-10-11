@@ -52,7 +52,7 @@ Layer of the data source you want to add.: Layer of the data source you want to 
 layer name: Layer name
 Layer: Layer
 Layers: Layers
-Appearance: ''
+LayerStyle: ''
 Outline: Outline
 Add Layer from Resource: ''
 Inspector: Inspector
@@ -99,12 +99,14 @@ Angle: Angle
 Narrow: Narrow
 Wide: Wide
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
-Select Asset: Select Asset
+Select Image: ''
 Select: Select
 No assets match your search.: No assets match your search.
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
   You haven't uploaded any assets yet. Click the upload button above and select
   a compatible file from your computer.
+Select Asset: Select Asset
+You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
 Create: Create
 Workspace Name: Workspace Name
@@ -491,18 +493,18 @@ Successfully added member(s) to the workspace!: Successfully added member(s) to 
 Failed to delete member from the workspace.: Failed to delete member from the workspace.
 Successfully removed member from the workspace.: Successfully removed member from the workspace.
 Some error has occurred. Please wait a moment and try again.: Some error has occurred. Please wait a moment and try again.
-Failed to add appearance.: ''
-Successfully added a new appearance!: ''
-Failed to update the appearance.: ''
-Successfully updated a the appearance!: ''
-Failed to remove the appearance.: ''
-Successfully removed a the appearance!: ''
 Failed to add layer.: ''
 Successfully added a new layer: ''
 Failed to update the layer.: ''
 Successfully updated a the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
+Failed to add layerStyle.: ''
+Successfully added a new layerStyle!: ''
+Failed to update the layerStyle.: ''
+Successfully updated a the layerStyle!: ''
+Failed to remove the layerStyle.: ''
+Successfully removed a the layerStyle!: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
