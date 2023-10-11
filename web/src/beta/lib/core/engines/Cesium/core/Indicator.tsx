@@ -1,5 +1,5 @@
 import useTransition, { TransitionStatus } from "@rot1024/use-transition";
-import { BoundingSphere, Cartesian3, SceneTransforms, Cartesian2 } from "cesium";
+import { BoundingSphere, Cartesian3, SceneTransforms, Cartesian2, JulianDate } from "cesium";
 import { useEffect, useState } from "react";
 import { useCesium } from "resium";
 
@@ -7,14 +7,20 @@ import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
 import type { SceneProperty } from "../..";
+import { TimelineManagerRef } from "../../../Map/useTimelineManager";
 import { useIcon } from "../common";
 
 export type Props = {
   className?: string;
   property?: SceneProperty;
+  timelineManagerRef?: TimelineManagerRef;
 };
 
-export default function Indicator({ className, property }: Props): JSX.Element | null {
+export default function Indicator({
+  className,
+  property,
+  timelineManagerRef,
+}: Props): JSX.Element | null {
   const { viewer } = useCesium();
   const [isVisible, setIsVisible] = useState(true);
   const [pos, setPos] = useState<Cartesian2>();
@@ -40,9 +46,12 @@ export default function Indicator({ className, property }: Props): JSX.Element |
     const handleTick = () => {
       if (viewer.isDestroyed()) return;
       const selected = viewer.selectedEntity;
+      const currentTime = timelineManagerRef?.current?.timeline?.current
+        ? JulianDate.fromDate(timelineManagerRef?.current?.timeline.current)
+        : undefined;
       if (
         !selected?.isShowing ||
-        !selected.isAvailable(viewer.clock.currentTime) ||
+        (currentTime && !selected.isAvailable(currentTime)) ||
         !selected.position
       ) {
         setIsVisible(false);
@@ -60,8 +69,8 @@ export default function Indicator({ className, property }: Props): JSX.Element |
       // https://github.com/CesiumGS/cesium/blob/main/Source/DataSources/BoundingSphereState.js#L24
       if (state !== 2 /* BoundingSphereState.FAILED */) {
         position = boundingSphere.center;
-      } else if (selected.position) {
-        position = selected.position.getValue(viewer.clock.currentTime, position);
+      } else if (selected.position && currentTime) {
+        position = selected.position.getValue(currentTime, position);
       }
 
       if (position) {
@@ -73,12 +82,12 @@ export default function Indicator({ className, property }: Props): JSX.Element |
       }
     };
 
-    viewer.clock.onTick.addEventListener(handleTick);
+    const timelineManager = timelineManagerRef?.current;
+    timelineManager?.onTick(handleTick);
     return () => {
-      if (viewer.isDestroyed()) return;
-      viewer.clock.onTick.removeEventListener(handleTick);
+      timelineManager?.offTick(handleTick);
     };
-  }, [viewer]);
+  }, [viewer, timelineManagerRef]);
 
   return transiton !== "unmounted" && pos ? (
     indicator_type === "crosshair" ? (
