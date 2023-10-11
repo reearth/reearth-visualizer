@@ -41,7 +41,6 @@ const Settings: React.FC<Props> = ({
     onPageUpdate,
   });
 
-  console.log(allCheckedLayers);
   return (
     <Wrapper>
       {tab == "story" && (

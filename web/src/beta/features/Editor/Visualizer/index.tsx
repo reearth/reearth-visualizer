@@ -61,7 +61,6 @@ const Visualizer: React.FC<Props> = ({
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
-    layersData,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -96,7 +95,7 @@ const Visualizer: React.FC<Props> = ({
         isEditable={!isBuilt}
         isBuilt={!!isBuilt}
         inEditor={!!inEditor}
-        layers={layersData}
+        layers={layers}
         widgetAlignSystem={widgets?.alignSystem}
         floatingWidgets={widgets?.floating}
         widgetLayoutConstraint={widgets?.layoutConstraint}

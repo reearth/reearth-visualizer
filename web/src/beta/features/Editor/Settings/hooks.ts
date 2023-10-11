@@ -9,19 +9,18 @@ type SettingProps = {
   selectedPage?: Page;
 };
 export default ({ layers, selectedPage, onPageUpdate }: SettingProps) => {
-  const pageId = selectedPage?.id;
-
-  const allLayerIds = useMemo(() => {
-    return layers?.map(layer => layer.id) || [];
-  }, [layers]);
+  const pageId = useMemo(() => {
+    return selectedPage?.id;
+  }, [selectedPage?.id]);
 
   const selectedLayerIds = useMemo(() => {
     return selectedPage?.layersIds || [];
   }, [selectedPage]);
 
   const allLayersSelected = useMemo(() => {
-    return selectedLayerIds.length === allLayerIds.length;
-  }, [selectedLayerIds, allLayerIds]);
+    const allLayerIds = layers?.map(layer => layer.id) || [];
+    return selectedLayerIds.length >= allLayerIds.length;
+  }, [layers, selectedLayerIds.length]);
 
   const [checkedLayers, setCheckedLayer] = useState<string[]>(selectedLayerIds);
   const [allCheckedLayers, setAllCheckedLayers] = useState(allLayersSelected);

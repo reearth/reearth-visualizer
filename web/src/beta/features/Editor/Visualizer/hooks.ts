@@ -1,5 +1,5 @@
 import { useReactiveVar } from "@apollo/client";
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
 import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
@@ -33,6 +33,7 @@ export default ({
   isBuilt,
   storyId,
   currentPage,
+  showStoryPanel,
 }: {
   sceneId?: string;
   isBuilt?: boolean;
@@ -91,14 +92,17 @@ export default ({
     [selected],
   );
 
-  const layers = useMemo(
-    () =>
-      processLayers(nlsLayers)?.map(layer => ({
-        ...layer,
-        hidden: false,
-      })),
-    [nlsLayers],
-  );
+  const layers = useMemo(() => {
+    const processedLayers = processLayers(nlsLayers);
+    if (showStoryPanel) {
+      return processedLayers;
+    }
+    return processedLayers?.map(layer => ({
+      ...layer,
+      hidden: !currentPage?.layersIds?.includes(layer.id),
+    }));
+  }, [nlsLayers, showStoryPanel, currentPage?.layersIds]);
+
   // TODO: Use GQL value
   const rootLayerId = "";
 
@@ -250,20 +254,6 @@ export default ({
     return !!sceneProperty?.experimental?.experimental_sandbox;
   }, [sceneProperty]);
 
-  const [layersData, setLayersData] = useState(layers);
-
-  useEffect(() => {
-    const handleDisplayLayer = () => {
-      const updatedLayers = layers?.map(layer => ({
-        ...layer,
-        hidden: !currentPage?.layersIds?.includes(layer.id),
-      }));
-      setLayersData(updatedLayers);
-    };
-
-    handleDisplayLayer();
-  }, [currentPage, layers]);
-
   return {
     sceneId,
     rootLayerId,
@@ -286,7 +276,6 @@ export default ({
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
-    layersData,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
