@@ -22,6 +22,7 @@ export type Props = {
   addItem: () => void;
   onSelect: (id: string) => void;
   selected?: string;
+  atLeastOneItem?: boolean;
 } & Pick<DragAndDropProps, "onItemDrop">;
 
 const ListField: React.FC<Props> = ({
@@ -33,6 +34,7 @@ const ListField: React.FC<Props> = ({
   onItemDrop,
   onSelect,
   selected,
+  atLeastOneItem,
 }: Props) => {
   const t = useT();
 
@@ -46,10 +48,10 @@ const ListField: React.FC<Props> = ({
   }, []);
 
   const disableRemoveButton = useMemo(() => {
-    if (!selected) return true;
+    if (!selected || (atLeastOneItem && items.length === 1)) return true;
 
     return !items.find(({ id }) => id == selected);
-  }, [items, selected]);
+  }, [items, selected, atLeastOneItem]);
 
   return (
     <Property name={name} description={description}>
