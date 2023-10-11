@@ -39,7 +39,7 @@ type Props = {
   ) => Promise<void>;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   currentCamera?: Camera;
-  onFlyTo: FlyTo;
+  onFlyTo?: FlyTo;
 };
 
 const StoryPage: React.FC<Props> = ({

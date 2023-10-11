@@ -40,7 +40,7 @@ export type Props = {
   onCurrentPageChange?: (pageId: string) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   currentCamera?: Camera;
-  onFlyTo: FlyTo;
+  onFlyTo?: FlyTo;
 };
 
 const StoryContent: React.FC<Props> = ({

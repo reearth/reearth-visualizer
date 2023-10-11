@@ -31,7 +31,7 @@ export type Props = {
   onDeleteItem: (id: string) => void;
   onAddItem: () => void;
   currentCamera?: Camera;
-  onFlyTo: FlyTo;
+  onFlyTo?: FlyTo;
 };
 
 const CameraBlockEditor: React.FC<Props> = ({
@@ -59,7 +59,7 @@ const CameraBlockEditor: React.FC<Props> = ({
     if (!context?.editMode) {
       const item = items.find(i => i.id === itemId);
       if (!item?.cameraPosition) return;
-      onFlyTo(item.cameraPosition);
+      onFlyTo?.(item.cameraPosition);
       return;
     }
     if (itemId === selected) {

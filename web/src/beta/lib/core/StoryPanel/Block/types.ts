@@ -40,7 +40,7 @@ export type CommonProps = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
   currentCamera?: Camera;
-  onFlyTo: FlyTo;
+  onFlyTo?: FlyTo;
 };
 
 export type SharedProperties = {

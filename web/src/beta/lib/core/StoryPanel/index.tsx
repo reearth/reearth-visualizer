@@ -47,7 +47,7 @@ export type StoryPanelProps = {
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   currentCamera?: Camera;
-  onFlyTo: FlyTo;
+  onFlyTo?: FlyTo;
 };
 
 export const StoryPanel: React.FC<StoryPanelProps> = ({
