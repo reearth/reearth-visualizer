@@ -1,7 +1,9 @@
+import { useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer/context";
 import { ValueTypes } from "@reearth/beta/utils/value";
+import { currentCameraVar } from "@reearth/services/state";
 
 import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
@@ -22,7 +24,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
 
   const visualizer = useVisualizer();
 
-  const currentCamera = useMemo(() => visualizer.current?.engine.getCamera(), [visualizer]);
+  const currentCamera = useReactiveVar(currentCameraVar);
   const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
 
   const items = useMemo(
