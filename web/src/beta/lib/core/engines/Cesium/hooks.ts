@@ -34,6 +34,7 @@ import type {
   LayerEditEvent,
 } from "..";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
+import { TimelineManagerRef } from "../../Map/useTimelineManager";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
@@ -57,6 +58,7 @@ export default ({
   featureFlags,
   requestingRenderMode,
   shouldRender,
+  timelineManagerRef,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -79,6 +81,7 @@ export default ({
   featureFlags: number;
   requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -722,19 +725,13 @@ export default ({
   const context = useMemo<FeatureContext>(
     () => ({
       selectionReason,
+      timelineManagerRef,
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       requestRender: engineAPI.requestRender,
     }),
-    [selectionReason, engineAPI, onLayerEdit],
-  );
-
-  const handleTick = useCallback(
-    (d: Date, clock: { start: Date; stop: Date }) => {
-      engineAPI.tickEventCallback?.current?.forEach(e => e(d, clock));
-    },
-    [engineAPI],
+    [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
   );
 
   useEffect(() => {
@@ -810,6 +807,23 @@ export default ({
     }
   }, [isLayerDragging, shouldRender, requestingRenderMode]);
 
+  // cesium timeline & animation widget
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer) return;
+    if (viewer.animation?.container) {
+      (viewer.animation.container as HTMLDivElement).style.visibility = property?.timeline?.visible
+        ? "visible"
+        : "hidden";
+    }
+    if (viewer.timeline?.container) {
+      (viewer.timeline.container as HTMLDivElement).style.visibility = property?.timeline?.visible
+        ? "visible"
+        : "hidden";
+    }
+    viewer.forceResize();
+  }, [property]);
+
   return {
     backgroundColor,
     cesium,
@@ -826,7 +840,6 @@ export default ({
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    handleTick,
   };
 };
 

@@ -44,6 +44,8 @@ function Map(
     selectedLayerId,
     layerSelectionReason,
     showStoryPanel,
+    timelineManagerRef,
+    sceneProperty,
     onLayerSelect,
     ...props
   }: Props,
@@ -61,6 +63,8 @@ function Map(
   } = useHooks({
     ref,
     selectedLayerId,
+    sceneProperty,
+    timelineManagerRef,
     onLayerSelect,
   });
 
@@ -79,6 +83,7 @@ function Map(
       onLayerSelect={handleEngineLayerSelect}
       layersRef={layersRef}
       requestingRenderMode={requestingRenderMode}
+      timelineManagerRef={timelineManagerRef}
       {...props}>
       <Layers
         ref={layersRef}
