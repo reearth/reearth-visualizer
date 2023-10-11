@@ -367,7 +367,6 @@ export function processLayers(
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
       data: nlsLayer.config?.data,
-      resource: nlsLayer.config?.resource,
       ...appearance,
     };
   });
