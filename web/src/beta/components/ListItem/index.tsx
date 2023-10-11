@@ -16,11 +16,9 @@ type Props = {
   isOpenAction?: boolean;
   actionPlacement?: Placement;
   clamp?: Clamp;
-  value?: string;
   onItemClick: (e?: MouseEvent<Element>) => void;
   onActionClick?: () => void;
   onOpenChange?: (isOpen: boolean) => void;
-  onLayerUpdate?: () => void;
 };
 
 const ListItem: FC<Props> = ({
@@ -31,11 +29,9 @@ const ListItem: FC<Props> = ({
   isOpenAction,
   actionPlacement,
   clamp,
-  value,
   onItemClick,
   onActionClick,
   onOpenChange,
-  onLayerUpdate,
 }) => {
   return (
     <Wrapper>
@@ -47,9 +43,6 @@ const ListItem: FC<Props> = ({
         )}
       </Inner>
 
-      <HideLayer onClick={onLayerUpdate} isSelected={isSelected}>
-        {value}
-      </HideLayer>
       {actionContent && (
         <Popover.Provider
           open={isOpenAction}
@@ -83,6 +76,7 @@ const Inner = styled.button<{
   width: 100%;
   min-height: 38px;
   align-items: center;
+  color: #e0e0e0;
   border: 1px solid ${({ border, theme }) => (border ? theme.outline.weakest : "transparent")};
   border-radius: ${({ clamp }) =>
     clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
@@ -115,23 +109,6 @@ const Button = styled.button<{ clamp?: Clamp }>`
   border-radius: ${({ clamp }) =>
     clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
 
-  :hover {
-    background: ${({ theme }) => theme.bg[2]};
-  }
-`;
-
-const HideLayer = styled.div<{ isSelected?: boolean }>`
-  min-width: 10px;
-  min-height: 20px;
-  padding: 2px 9px;
-  cursor: pointer;
-  border-radius: 4px;
-  color: ${({ theme }) => theme.content.strong};
-  background: ${({ theme, isSelected }) => (!isSelected ? theme.bg[2] : "none")};
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
   :hover {
     background: ${({ theme }) => theme.bg[2]};
   }
