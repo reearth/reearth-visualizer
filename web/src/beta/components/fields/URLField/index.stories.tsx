@@ -39,7 +39,7 @@ export const AppearanceType: Story = {
   args: {
     name: "URL",
     description: "Defaul URL Input wrapper",
-    fileType: "appearance",
-    assetType: "appearance",
+    fileType: "layerStyle",
+    assetType: "layerStyle",
   },
 };
