@@ -8,20 +8,63 @@ import Component, { LayerSimple, Layer, FeatureComponentProps, Ref } from ".";
 test("simple", () => {
   const Feature = vi.fn((_: FeatureComponentProps) => <div>Hello</div>);
   const layers: LayerSimple[] = [
-    { id: "a", type: "simple", visible: true },
+    { id: "a", type: "simple" },
     { id: "b", type: "simple" },
   ];
   const { rerender } = render(<Component layers={layers} Feature={Feature} />);
 
   expect(screen.getAllByText("Hello")[0]).toBeVisible();
-  expect(Feature).toBeCalledTimes(1);
+  expect(screen.getAllByText("Hello")).toHaveLength(2);
+  expect(Feature).toBeCalledTimes(2);
+  expect(Feature.mock.calls[0][0]).toEqual({
+    isHidden: false,
+    isSelected: false,
+    layer: {
+      id: "a",
+      features: [],
+      layer: layers[0],
+      status: "ready",
+      originalFeatures: [],
+    },
+    onFeatureDelete: expect.any(Function),
+    onFeatureFetch: expect.any(Function),
+    onLayerFetch: expect.any(Function),
+    onComputedFeatureFetch: expect.any(Function),
+    onComputedFeatureDelete: expect.any(Function),
+    onFeatureRequest: expect.any(Function),
+    evalFeature: expect.any(Function),
+  });
+  expect(Feature.mock.calls[1][0]).toEqual({
+    isHidden: false,
+    isSelected: false,
+    layer: {
+      id: "b",
+      features: [],
+      layer: layers[1],
+      status: "ready",
+      originalFeatures: [],
+    },
+    onFeatureDelete: expect.any(Function),
+    onFeatureFetch: expect.any(Function),
+    onLayerFetch: expect.any(Function),
+    onComputedFeatureFetch: expect.any(Function),
+    onComputedFeatureDelete: expect.any(Function),
+    onFeatureRequest: expect.any(Function),
+    evalFeature: expect.any(Function),
+  });
 
   Feature.mockClear();
 
-  const layers2: LayerSimple[] = [{ id: "c", type: "simple", visible: true }];
+  const layers2: LayerSimple[] = [{ id: "c", type: "simple" }];
   rerender(<Component layers={layers2} Feature={Feature} />);
   expect(screen.getByText("Hello")).toBeVisible();
-  expect(Feature).toBeCalledTimes(1);
+  expect(Feature.mock.calls[0][0].layer).toEqual({
+    id: "c",
+    features: [],
+    layer: layers2[0],
+    status: "ready",
+    originalFeatures: [],
+  });
 });
 
 test("tree", () => {
