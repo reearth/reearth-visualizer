@@ -1,83 +1,55 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import SelectField from "@reearth/beta/components/fields/SelectField";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
+import useHooks from "@reearth/beta/features/Assets/hooks";
 import { Asset } from "@reearth/beta/features/Assets/types";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
+import { useNotification, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-
-const getValue: { [key: string]: string } = {
-  "date-reverse": "date",
-  "name-reverse": "name",
-  "size-reverse": "size",
-  date: "date",
-  size: "size",
-  name: "name",
-};
 
 export type Props = {
   className?: string;
   assetType?: "file" | "image";
-  assets?: Asset[];
-  selectedAssets?: Asset[];
-  isLoading?: boolean;
-  hasMoreAssets?: boolean;
-  searchTerm?: string;
   open?: boolean;
-  workspaceId?: string;
-  localSearchTerm?: string;
-  wrapperRef?: React.RefObject<HTMLDivElement>;
-  sortOptions: {
-    key: string;
-    label: string;
-  }[];
-  onSortChange?: (type?: string, reverse?: boolean) => void;
-  onGetMore?: () => void;
-  onSelectAsset?: (asset?: Asset) => void;
   onSelect?: (value: string) => void;
-  onClose: () => void;
-  onScrollToBottom?: (
-    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
-    onLoadMore?: (() => void) | undefined,
-    threshold?: number,
-  ) => void;
-  handleSearchInputChange?: (value: string) => void;
-  handleSearch?: () => void;
+  currentWorkspace?: Workspace;
+  currentValue?: string;
+  onModalClose: () => void;
 };
 
 const ChooseAssetModal: React.FC<Props> = ({
   className,
+  currentWorkspace,
+  currentValue,
   assetType,
   open,
-  assets,
-  selectedAssets,
-  hasMoreAssets,
-  isLoading,
-  searchTerm,
-  localSearchTerm,
-  wrapperRef,
-  sortOptions,
-  onSortChange,
-  onClose,
-  onGetMore,
   onSelect,
-  onSelectAsset,
-  onScrollToBottom,
-  handleSearchInputChange,
-  handleSearch,
+  onModalClose,
 }) => {
   const t = useT();
-  const [selectedSortOption, setSelectedSortOption] = useState("Last Uploaded");
-  const [reverseSort, setReverseSort] = useState(false);
+
   const [, setNotification] = useNotification();
+  const {
+    assets,
+    isLoading,
+    hasMoreAssets,
+    searchTerm,
+    selectedAssets,
+    selectAsset,
+    localSearchTerm,
+    wrapperRef,
+    onScrollToBottom,
+    handleSearchInputChange,
+    handleSearch,
+    handleGetMoreAssets,
+  } = useHooks({ workspaceId: currentWorkspace?.id });
 
   const filteredAssets = useMemo(() => {
     if (!assetType) {
@@ -90,16 +62,17 @@ const ChooseAssetModal: React.FC<Props> = ({
     });
   }, [assetType, assets]);
 
-  const handleSortChange = useCallback(
-    (selectedLabel: string) => {
-      setSelectedSortOption(selectedLabel);
-      const value = getValue[selectedLabel];
-      const reverse = selectedLabel.toLowerCase().includes("reverse");
-      setReverseSort(reverse);
-      onSortChange?.(value, reverseSort);
-    },
-    [onSortChange, reverseSort],
-  );
+  const handleReset = useCallback(() => {
+    const selectedAsset = assets?.find(a => a.url === currentValue);
+    if (selectedAsset) {
+      selectAsset([selectedAsset]);
+    }
+  }, [currentValue, assets, selectAsset]);
+
+  const onClose = useCallback(() => {
+    onModalClose();
+    handleReset();
+  }, [handleReset, onModalClose]);
 
   const handleSelectButtonClick = useCallback(() => {
     if (selectedAssets && selectedAssets.length > 0) {
@@ -113,12 +86,25 @@ const ChooseAssetModal: React.FC<Props> = ({
     }
   }, [onClose, onSelect, selectedAssets, setNotification, t]);
 
+  const onSelectAsset = useCallback(
+    (asset?: Asset) => {
+      if (!asset) return;
+      selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
+    },
+    [selectedAssets, selectAsset],
+  );
+
+  useEffect(() => {
+    handleReset();
+  }, [handleReset]);
+
   return (
-    <StyledModal
+    <Modal
       title={t("Select Image")}
       className={className}
       isVisible={open}
       onClose={onClose}
+      size="lg"
       button1={
         <Button
           size="medium"
@@ -138,17 +124,6 @@ const ChooseAssetModal: React.FC<Props> = ({
         />
       }>
       <ControlWarpper>
-        <SortWrapper>
-          <Text size="xFootnote">Sort By</Text>
-          <SelectField
-            value={selectedSortOption}
-            options={sortOptions.map(option => ({
-              key: option.key,
-              label: option.label,
-            }))}
-            onChange={handleSortChange}
-          />
-        </SortWrapper>
         <SearchWarpper>
           <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
           <SearchButton icon="search" margin="0" onClick={handleSearch} />
@@ -168,7 +143,9 @@ const ChooseAssetModal: React.FC<Props> = ({
         ) : (
           <AssetListWrapper
             ref={wrapperRef}
-            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, onGetMore)}>
+            onScroll={e =>
+              !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
+            }>
             <AssetList>
               {filteredAssets?.map(a => (
                 <AssetCard
@@ -191,15 +168,12 @@ const ChooseAssetModal: React.FC<Props> = ({
           </AssetListWrapper>
         )}
       </AssetWrapper>
-    </StyledModal>
+    </Modal>
   );
 };
 
-const StyledModal = styled(Modal)`
-  width: 730px;
-`;
 const AssetWrapper = styled.div`
-  max-height: calc(100vh - 240px);
+  max-height: 531px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -215,7 +189,6 @@ const SearchWarpper = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-  right: 0;
 `;
 
 const SearchButton = styled(Button)`
@@ -226,7 +199,7 @@ const SearchButton = styled(Button)`
 const AssetListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const AssetList = styled.div`
@@ -250,12 +223,4 @@ const TemplateText = styled(Text)`
   text-align: center;
   width: 390px;
 `;
-
-const SortWrapper = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  left: 0px;
-`;
-
 export default ChooseAssetModal;
