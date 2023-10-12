@@ -2,6 +2,8 @@ type Style {
   id: ID!
   name: String!
   value: JSON!
+  sceneId: ID!
+  scene: Scene
 }
 
 # InputType
@@ -13,32 +15,27 @@ input AddStyleInput {
 }
 
 input UpdateStyleInput {
-  StyleId: ID!
-  sceneId: ID!
+  styleId: ID!
   name: String
   value: JSON
 }
 
 input RemoveStyleInput {
-  StyleId: ID!
-  sceneId: ID!
+  styleId: ID!
 }
 
 # Payload
 
 type AddStylePayload {
-  scene: Scene!
-  Style: Style!
+  style: Style!
 }
 
 type UpdateStylePayload {
-  scene: Scene!
-  Style: Style!
+  style: Style!
 }
 
 type RemoveStylePayload {
-  scene: Scene!
-  StyleId: ID!
+  styleId: ID!
 }
 
 #extend type Query{ }

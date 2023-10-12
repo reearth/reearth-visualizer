@@ -273,6 +273,7 @@ export function useAPI({
         "tick",
         "resize",
         "layeredit",
+        "timelinecommit",
       ]);
     }
 
@@ -424,12 +425,14 @@ export function useAPI({
         moveWidget: onWidgetMove,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
+        timelineManagerRef: ctx.timelineManagerRef,
       });
     };
   }, [
     ctx?.reearth,
     ctx?.pluginInstances,
     ctx?.clientStorage,
+    ctx?.timelineManagerRef,
     ctx?.overrideSceneProperty,
     extensionId,
     extensionType,

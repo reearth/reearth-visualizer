@@ -15,6 +15,7 @@ func New() *repo.Container {
 		Dataset:        NewDataset(),
 		Layer:          NewLayer(),
 		NLSLayer:       NewNLSLayer(),
+		Style:          NewStyle(),
 		Plugin:         NewPlugin(),
 		Project:        NewProject(),
 		PropertySchema: NewPropertySchema(),
