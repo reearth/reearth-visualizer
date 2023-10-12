@@ -368,14 +368,15 @@ export const convertObjToComputedFeature = (
     ];
   }
 
-  if (obj instanceof Entity) {
-    const tag = getTag(obj);
+  if (obj instanceof Entity || ("id" in obj && obj.id instanceof Entity)) {
+    const entity = (obj instanceof Entity ? obj : obj.id) as Entity;
+    const tag = getTag(entity);
     return [
       tag?.layerId,
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: convertEntityProperties(viewer, obj),
+        properties: convertEntityProperties(viewer, entity),
       },
     ];
   }
