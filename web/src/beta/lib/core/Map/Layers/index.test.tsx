@@ -9,7 +9,7 @@ test("simple", () => {
   const Feature = vi.fn((_: FeatureComponentProps) => <div>Hello</div>);
   const layers: LayerSimple[] = [
     { id: "a", type: "simple", visible: true },
-    { id: "b", type: "simple", visible: false },
+    { id: "b", type: "simple" },
   ];
   const { rerender } = render(<Component layers={layers} Feature={Feature} />);
 
