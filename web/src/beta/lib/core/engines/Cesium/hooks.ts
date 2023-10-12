@@ -34,6 +34,7 @@ import type {
   LayerEditEvent,
 } from "..";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
+import { TimelineManagerRef } from "../../Map/useTimelineManager";
 
 import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
@@ -57,6 +58,7 @@ export default ({
   featureFlags,
   requestingRenderMode,
   shouldRender,
+  timelineManagerRef,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -79,6 +81,7 @@ export default ({
   featureFlags: number;
   requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -314,8 +317,6 @@ export default ({
   const prevSelectedEntity = useRef<Entity | Cesium3DTileset | InternalCesium3DTileFeature>();
   // manage layer selection
   useEffect(() => {
-    if (!(featureFlags & FEATURE_FLAGS.SINGLE_SELECTION)) return;
-
     const viewer = cesium.current?.cesiumElement;
     if (!viewer || viewer.isDestroyed()) return;
 
@@ -334,10 +335,12 @@ export default ({
     const entity =
       findEntity(viewer, undefined, selectedLayerId?.featureId) ||
       findEntity(viewer, selectedLayerId?.layerId);
+
+    if (prevSelectedEntity.current === entity) return;
+
     if (!entity || entity instanceof Entity) {
       viewer.selectedEntity = entity;
     }
-    if (prevSelectedEntity.current === entity) return;
     prevSelectedEntity.current = entity;
 
     // TODO: Support layers.selectFeature API for MVT
@@ -508,6 +511,8 @@ export default ({
 
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
+
+      viewer.selectedEntity = undefined;
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
@@ -722,19 +727,13 @@ export default ({
   const context = useMemo<FeatureContext>(
     () => ({
       selectionReason,
+      timelineManagerRef,
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       requestRender: engineAPI.requestRender,
     }),
-    [selectionReason, engineAPI, onLayerEdit],
-  );
-
-  const handleTick = useCallback(
-    (d: Date, clock: { start: Date; stop: Date }) => {
-      engineAPI.tickEventCallback?.current?.forEach(e => e(d, clock));
-    },
-    [engineAPI],
+    [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
   );
 
   useEffect(() => {
@@ -810,6 +809,23 @@ export default ({
     }
   }, [isLayerDragging, shouldRender, requestingRenderMode]);
 
+  // cesium timeline & animation widget
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer) return;
+    if (viewer.animation?.container) {
+      (viewer.animation.container as HTMLDivElement).style.visibility = property?.timeline?.visible
+        ? "visible"
+        : "hidden";
+    }
+    if (viewer.timeline?.container) {
+      (viewer.timeline.container as HTMLDivElement).style.visibility = property?.timeline?.visible
+        ? "visible"
+        : "hidden";
+    }
+    viewer.forceResize();
+  }, [property]);
+
   return {
     backgroundColor,
     cesium,
@@ -826,7 +842,6 @@ export default ({
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    handleTick,
   };
 };
 
