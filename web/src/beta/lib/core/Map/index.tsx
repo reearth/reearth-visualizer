@@ -46,6 +46,8 @@ function Map(
     layerSelectionReason,
     zoomedLayerId,
     onZoomToLayer,
+    timelineManagerRef,
+    sceneProperty,
     onLayerSelect,
     ...props
   }: Props,
@@ -63,6 +65,8 @@ function Map(
   } = useHooks({
     ref,
     selectedLayerId,
+    sceneProperty,
+    timelineManagerRef,
     onLayerSelect,
     zoomedLayerId,
     onZoomToLayer,
@@ -83,6 +87,7 @@ function Map(
       onLayerSelect={handleEngineLayerSelect}
       layersRef={layersRef}
       requestingRenderMode={requestingRenderMode}
+      timelineManagerRef={timelineManagerRef}
       {...props}>
       <Layers
         ref={layersRef}

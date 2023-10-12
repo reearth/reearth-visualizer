@@ -147,7 +147,15 @@ func (l *layerBase) UpdateConfig(newConfig *Config) {
 	if l == nil || newConfig == nil {
 		return
 	}
-	l.config = newConfig
+
+	if l.config == nil {
+		l.config = newConfig
+		return
+	}
+
+	for key, value := range *newConfig {
+		(*l.config)[key] = value
+	}
 }
 
 func (l *layerBase) Clone() *layerBase {
