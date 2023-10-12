@@ -310,6 +310,8 @@ models:
         resolver: true
       stories:
         resolver: true
+      styles:
+        resolver: true
   SceneWidget:
     fields:
       plugin:
@@ -397,6 +399,10 @@ models:
       scene:
         resolver: true
   NLSLayerGroup:
+    fields:
+      scene:
+        resolver: true
+  Style:
     fields:
       scene:
         resolver: true  

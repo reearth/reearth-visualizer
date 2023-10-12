@@ -39,7 +39,7 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
   return (
     <Property name={name} description={description}>
       <Wrapper ref={wrapperRef}>
-        <Popover.Provider open={open} placement="bottom-start" onOpenChange={handleClick}>
+        <Popover.Provider open={open} placement="bottom-start">
           <Popover.Trigger asChild>
             <InputWrapper ref={pickerRef}>
               <Layers onClick={handleClick}>
