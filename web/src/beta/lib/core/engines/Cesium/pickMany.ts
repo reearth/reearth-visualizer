@@ -296,7 +296,7 @@ export const pickManyFromViewportAsFeature = (
   for (const obj of objs) {
     const [layerId, f] = convertObjToComputedFeature(viewer, obj) ?? [];
     const pickedFeature = f ? { ...f, layerId } : undefined;
-    if (!pickedFeature || !condition?.(pickedFeature)) {
+    if (!pickedFeature || (condition && !condition(pickedFeature))) {
       continue;
     }
     result.push(pickedFeature);
