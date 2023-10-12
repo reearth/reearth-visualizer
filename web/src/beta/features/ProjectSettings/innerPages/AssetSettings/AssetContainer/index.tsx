@@ -1,11 +1,13 @@
+import { RefObject } from "react";
+
 import Button from "@reearth/beta/components/Button";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Text from "@reearth/beta/components/Text";
 import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import { Asset, SortType } from "@reearth/beta/features/Assets/types";
-import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
+import { Asset } from "@reearth/beta/features/Assets/types";
+import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -14,67 +16,57 @@ import AssetDeleteModal from "../AssetDeleteModal";
 
 export type Props = {
   workspaceId?: string;
-  allowDeletion?: boolean;
+  wrapperRef?: RefObject<HTMLDivElement>;
   className?: string;
   assets?: Asset[];
   selectedAssets?: Asset[];
   isLoading?: boolean;
+  deleteModalVisible?: boolean;
+  localSearchTerm?: string;
   hasMoreAssets?: boolean;
-  sort?: { type?: SortType | null; reverse?: boolean };
   searchTerm?: string;
-  onCreateAssets?: (files: FileList) => void;
-  onRemove?: (assetIds: string[]) => void;
   onGetMore?: () => void;
   onAssetUrlSelect?: (asset?: string) => void;
   onSelect?: (asset?: Asset) => void;
   onSortChange?: (type?: string, reverse?: boolean) => void;
-  onSearch?: (term?: string) => void;
-  onFileUpload?: () => void;
+  onScrollToBottom?: (
+    { currentTarget }: React.UIEvent<HTMLDivElement, UIEvent>,
+    onLoadMore?: (() => void) | undefined,
+    threshold?: number,
+  ) => void;
+  handleSearchInputChange?: (value: string) => void;
+  handleSearch?: () => void;
+  openDeleteModal?: () => void;
+  closeDeleteModal?: () => void;
+  handleRemove?: () => Promise<void>;
 };
 
 const AssetContainer: React.FC<Props> = ({
+  workspaceId,
+  wrapperRef,
   assets,
   selectedAssets,
   hasMoreAssets,
   isLoading,
-  sort,
+  deleteModalVisible,
+  localSearchTerm,
   searchTerm,
-  onFileUpload,
-  onRemove,
   onGetMore,
   onAssetUrlSelect,
   onSelect,
-  onSortChange,
-  onSearch,
+  onScrollToBottom,
+  handleSearchInputChange,
+  handleSearch,
+  openDeleteModal,
+  closeDeleteModal,
+  handleRemove,
 }) => {
   const t = useT();
-  const {
-    deleteModalVisible,
 
-    localSearchTerm,
-    wrapperRef,
-    onScrollToBottom,
-    handleSearchInputChange,
-    // iconChoice,
-    // sortOptions,
-    // handleReverse,
-    handleSearch,
-    openDeleteModal,
-    closeDeleteModal,
-    handleRemove,
-  } = useManageAssets({
-    sort,
-    selectedAssets,
-    searchTerm,
-    isLoading,
-    hasMoreAssets,
-    onGetMore,
-    onSortChange,
-    onAssetUrlSelect,
-    onRemove,
-    onSearch,
+  const { handleFileUpload } = useFileUploaderHook({
+    workspaceId: workspaceId,
+    onAssetSelect: onAssetUrlSelect,
   });
-
   return (
     <Wrapper>
       <NavBar>
@@ -98,7 +90,7 @@ const AssetContainer: React.FC<Props> = ({
             icon="uploadSimple"
             size="small"
             buttonType={"secondary"}
-            onClick={onFileUpload}
+            onClick={handleFileUpload}
           />
           <Button
             text={t("Delete")}
@@ -125,7 +117,7 @@ const AssetContainer: React.FC<Props> = ({
         ) : (
           <AssetListWrapper
             ref={wrapperRef}
-            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom(e, onGetMore)}>
+            onScroll={e => !isLoading && hasMoreAssets && onScrollToBottom?.(e, onGetMore)}>
             <AssetList>
               {assets?.map(a => (
                 <AssetCard
@@ -149,7 +141,7 @@ const AssetContainer: React.FC<Props> = ({
         )}
       </AssetWrapper>
       <AssetDeleteModal
-        isVisible={deleteModalVisible}
+        isVisible={!!deleteModalVisible}
         onClose={closeDeleteModal}
         handleRemove={handleRemove}
       />
