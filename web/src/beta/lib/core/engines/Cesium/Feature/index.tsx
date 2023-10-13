@@ -100,12 +100,13 @@ export default function Feature({
       !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
     const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
 
+    const isVisible = layer.layer.visible !== false || isHidden;
     const componentId =
       urlMD5 +
       generateIDWithMD5(
         `${layer.id}_${
           f?.id ?? ""
-        }_${k}_${isHidden}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
+        }_${k}_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
           JSON.stringify(f?.[k]) ?? ""
         }`,
       );
@@ -144,18 +145,13 @@ export default function Feature({
           geometry={f?.geometry}
           feature={f}
           layer={layer}
-          isVisible={layer.layer.visible !== false ? !isHidden : isHidden}
+          isVisible={isVisible}
         />
       );
 
       // Cache the component output
       if (cacheable) {
         CACHED_COMPONENTS.set(componentId, component);
-      }
-
-      // clear cache
-      if (cacheable) {
-        CACHED_COMPONENTS.delete(componentId);
       }
 
       return component;
