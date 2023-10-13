@@ -94,7 +94,7 @@ export default ({
     const processedLayers = processLayers(nlsLayers);
     return processedLayers?.map(layer => ({
       ...layer,
-      hidden: !currentPage?.layersIds?.includes(layer.id),
+      isIncluded: !currentPage?.layersIds?.includes(layer.id),
     }));
   }, [nlsLayers, currentPage?.layersIds]);
 
