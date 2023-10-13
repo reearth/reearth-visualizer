@@ -100,7 +100,6 @@ export default ({
     }));
   }, [nlsLayers, showStoryPanel, currentPage?.layersIds]);
 
-  console.log(layers);
   // TODO: Use GQL value
   const rootLayerId = "";
 
