@@ -15,7 +15,6 @@ export type Props = {
   clusters?: Cluster[];
   delegatedDataTypes?: DataType[];
   sceneProperty?: any;
-  showStoryPanel?: boolean;
   clusterComponent?: ClusterComponentType;
   Feature?: LayerProps["Feature"];
 } & Omit<CommonProps, "isSelected" | "isHidden" | "selectedFeatureId">;
@@ -55,7 +54,6 @@ export default function ClusteredLayers({
   overrides,
   delegatedDataTypes,
   isHidden,
-  showStoryPanel,
   ...props
 }: Props): JSX.Element | null {
   const Cluster = clusterComponent;
@@ -66,8 +64,6 @@ export default function ClusteredLayers({
 
   const renderLayer = useCallback(
     (layer: Layer) => {
-      if (showStoryPanel && layer.isIncluded) return;
-
       const a = atomMap?.get(layer.id);
       return !layer.id || !a ? null : (
         <LayerComponent
@@ -84,7 +80,6 @@ export default function ClusteredLayers({
       );
     },
     [
-      showStoryPanel,
       atomMap,
       props,
       overrides,

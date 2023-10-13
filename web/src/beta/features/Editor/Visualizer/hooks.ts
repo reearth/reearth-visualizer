@@ -33,11 +33,13 @@ export default ({
   isBuilt,
   storyId,
   currentPage,
+  showStoryPanel,
 }: {
   sceneId?: string;
   isBuilt?: boolean;
   storyId?: string;
   currentPage?: Page;
+  showStoryPanel?: boolean;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
@@ -94,10 +96,11 @@ export default ({
     const processedLayers = processLayers(nlsLayers);
     return processedLayers?.map(layer => ({
       ...layer,
-      isIncluded: !currentPage?.layersIds?.includes(layer.id),
+      visible: showStoryPanel ? currentPage?.layersIds?.includes(layer.id) : true,
     }));
-  }, [nlsLayers, currentPage?.layersIds]);
+  }, [nlsLayers, showStoryPanel, currentPage?.layersIds]);
 
+  console.log(layers);
   // TODO: Use GQL value
   const rootLayerId = "";
 

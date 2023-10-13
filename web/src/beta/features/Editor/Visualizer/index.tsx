@@ -76,7 +76,7 @@ const Visualizer: React.FC<Props> = ({
     handleDropLayer,
     zoomToLayer,
     handleMount,
-  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, currentPage });
+  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, currentPage, showStoryPanel });
 
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
@@ -129,7 +129,6 @@ const Visualizer: React.FC<Props> = ({
         onLayerDrop={handleDropLayer}
         onZoomToLayer={zoomToLayer}
         onMount={handleMount}
-        showStoryPanel={showStoryPanel}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel

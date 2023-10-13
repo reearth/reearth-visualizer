@@ -26,14 +26,12 @@ export type LayerSimple = {
   properties?: any;
   defines?: Record<string, string>;
   events?: Events;
-  isIncluded?: boolean;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 
 export type LayerGroup = {
   type: "group";
   children: Layer[];
-  isIncluded?: boolean;
 } & LayerCommon;
 
 export type LayerCommon = {
