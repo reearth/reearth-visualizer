@@ -100,7 +100,8 @@ export default function Feature({
       !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
     const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
 
-    const isVisible = layer.layer.visible !== false || isHidden;
+    const isVisible = layer.layer.visible !== false && !isHidden;
+
     const componentId =
       urlMD5 +
       generateIDWithMD5(
