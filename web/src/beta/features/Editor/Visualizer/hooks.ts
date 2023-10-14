@@ -94,9 +94,10 @@ export default ({
 
   const layers = useMemo(() => {
     const processedLayers = processLayers(nlsLayers);
+    if (!showStoryPanel) return processedLayers;
     return processedLayers?.map(layer => ({
       ...layer,
-      visible: showStoryPanel ? currentPage?.layersIds?.includes(layer.id) : true,
+      visible: currentPage?.layersIds?.includes(layer.id),
     }));
   }, [nlsLayers, showStoryPanel, currentPage?.layersIds]);
 
