@@ -51,6 +51,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
   const { handleFileUpload } = useFileUploaderHook({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
+    assetType: assetType,
   });
 
   useEffect(() => {
