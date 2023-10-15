@@ -4,7 +4,7 @@ import useFileInput from "use-file-input";
 import { useAssetsFetcher } from "@reearth/services/api";
 
 import { FILE_FORMATS, IMAGE_FORMATS } from "../../features/Assets/constants";
-
+//pass the asset type
 export default ({
   workspaceId,
   onAssetSelect,
