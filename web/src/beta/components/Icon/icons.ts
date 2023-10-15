@@ -81,6 +81,7 @@ import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
 import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
 import MdTextStoryBlock from "./Icons/mdTextStoryBlock.svg";
 import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg";
+import TimelineStoryBlock from "./Icons/timelineStoryBlock.svg";
 
 // Widget tab
 import Desktop from "./Icons/desktop.svg";
@@ -168,6 +169,7 @@ export default {
   imageStoryBlock: ImageStoryBlock,
   mdTextStoryBlock: MdTextStoryBlock,
   cameraButtonStoryBlock: CameraButtonStoryBlock,
+  timelineStoryBlock: TimelineStoryBlock,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,
