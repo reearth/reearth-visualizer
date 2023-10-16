@@ -304,51 +304,46 @@ const processPropertyGroups = (
   );
 
   return Object.fromEntries(
-    Object.entries(allFields).map(
-      ([key, { schema, parent, orig }]): [
-        key: string,
-        { type?: string; ui?: string; title?: string; description?: string; value?: any },
-      ] => {
-        const used = orig || parent;
+    Object.entries(allFields).map(([key, { schema, parent, orig }]) => {
+      const used = orig || parent;
 
-        const fieldMeta = {
-          type: valueTypeFromGQL(schema.type) || undefined,
-          ui: toUi(schema.ui) || undefined,
-          title: schema.translatedTitle || undefined,
-          description: schema.translatedDescription || undefined,
-        };
+      const fieldMeta = {
+        type: valueTypeFromGQL(schema.type) || undefined,
+        ui: toUi(schema.ui) || undefined,
+        title: schema.translatedTitle || undefined,
+        description: schema.translatedDescription || undefined,
+      };
 
-        if (!used) {
-          return [
-            key,
-            {
-              ...fieldMeta,
-              value: schema.defaultValue ?? valueFromGQL(schema.defaultValue, schema.type)?.value,
-            },
-          ];
-        }
-
-        const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
-        const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
-        if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
-          return [
-            key,
-            {
-              ...fieldMeta,
-              value: datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId),
-            },
-          ];
-        }
-
+      if (!used) {
         return [
           key,
           {
             ...fieldMeta,
-            value: valueFromGQL(used.value, used.type)?.value,
+            value: schema.defaultValue ?? valueFromGQL(schema.defaultValue, schema.type)?.value,
           },
         ];
-      },
-    ),
+      }
+
+      const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
+      const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
+      if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
+        return [
+          key,
+          {
+            ...fieldMeta,
+            value: datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId),
+          },
+        ];
+      }
+
+      return [
+        key,
+        {
+          ...fieldMeta,
+          value: valueFromGQL(used.value, used.type)?.value,
+        },
+      ];
+    }),
   );
 };
 
