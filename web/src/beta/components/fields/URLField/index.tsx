@@ -3,11 +3,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import useHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import { Asset } from "@reearth/beta/features/Assets/types";
-import { useManageAssets } from "@reearth/beta/features/Assets/useManageAssets/hooks";
-import ChooseAssetModal from "@reearth/beta/features/Modals/ChooseAssetModal";
+import AssetModal from "@reearth/beta/features/Modals/AssetModal";
+import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
@@ -50,37 +48,10 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     },
     [fileType, onChange, setNotification, t],
   );
-
-  const {
-    assets,
-    isLoading,
-    hasMoreAssets,
-    searchTerm,
-    selectedAssets,
-    selectAsset,
-    handleGetMoreAssets,
-    handleFileSelect,
-    handleSortChange,
-    handleSearchTerm,
-  } = useHooks({ workspaceId: currentWorkspace?.id, onAssetSelect: handleChange });
-
-  const { localSearchTerm, wrapperRef, onScrollToBottom, handleSearchInputChange, handleSearch } =
-    useManageAssets({
-      selectedAssets,
-      searchTerm,
-      isLoading,
-      hasMoreAssets,
-      onGetMore: handleGetMoreAssets,
-      onSortChange: handleSortChange,
-      onSearch: handleSearchTerm,
-    });
-
-  const handleReset = useCallback(() => {
-    const selectedAsset = assets?.find(a => a.url === currentValue);
-    if (selectedAsset) {
-      selectAsset([selectedAsset]);
-    }
-  }, [currentValue, assets, selectAsset]);
+  const { handleFileUpload } = useFileUploaderHook({
+    workspaceId: currentWorkspace?.id,
+    onAssetSelect: handleChange,
+  });
 
   useEffect(() => {
     if (value) {
@@ -88,24 +59,8 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     }
   }, [value]);
 
-  useEffect(() => {
-    handleReset();
-  }, [handleReset]);
-
-  const handleClose = useCallback(() => {
-    setOpen(false);
-    handleReset();
-  }, [handleReset]);
-
   const handleClick = useCallback(() => setOpen(!open), [open]);
-
-  const handleSelect = useCallback(
-    (asset?: Asset) => {
-      if (!asset) return;
-      selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
-    },
-    [selectedAssets, selectAsset],
-  );
+  const handleModalClose = useCallback(() => setOpen(false), []);
 
   return (
     <Property name={name} description={description}>
@@ -122,27 +77,17 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
             icon="uploadSimple"
             text={t("Upload")}
             iconPosition="left"
-            onClick={handleFileSelect}
+            onClick={handleFileUpload}
           />
         </ButtonWrapper>
       )}
       {open && (
-        <ChooseAssetModal
+        <AssetModal
           open={open}
+          onModalClose={handleModalClose}
           assetType={assetType}
-          localSearchTerm={localSearchTerm}
-          selectedAssets={selectedAssets}
-          wrapperRef={wrapperRef}
-          assets={assets}
-          isLoading={isLoading}
-          hasMoreAssets={hasMoreAssets}
-          searchTerm={searchTerm}
-          onClose={handleClose}
-          handleSearch={handleSearch}
-          handleSearchInputChange={handleSearchInputChange}
-          onGetMore={handleGetMoreAssets}
-          onScrollToBottom={onScrollToBottom}
-          onSelectAsset={handleSelect}
+          currentWorkspace={currentWorkspace}
+          currentValue={currentValue}
           onSelect={handleChange}
         />
       )}
