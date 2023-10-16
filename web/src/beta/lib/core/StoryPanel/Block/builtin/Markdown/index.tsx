@@ -4,7 +4,7 @@ import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
-import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
+import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import BlockWrapper from "../common/Wrapper";
 
 import MdEditor from "./Editor";

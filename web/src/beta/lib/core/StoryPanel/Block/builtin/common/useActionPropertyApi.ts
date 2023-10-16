@@ -4,7 +4,7 @@ import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { usePropertyFetcher } from "@reearth/services/api";
 
 // Unlick common story blocks which will use the auto generted field components editor,
-// Some special story blocks will use the custom editor components and need to update date directly.
+// Some special story blocks will use the custom editor components and need to update directly.
 export default () => {
   const { useUpdatePropertyValue, useAddPropertyItem, useRemovePropertyItem, useMovePropertyItem } =
     usePropertyFetcher();

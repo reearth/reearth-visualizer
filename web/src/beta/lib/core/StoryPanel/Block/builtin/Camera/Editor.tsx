@@ -29,9 +29,9 @@ export type Props = {
     fieldType: "string" | "camera",
     value: string | Camera,
   ) => void;
-  onRemoveItem: (id: string) => void;
-  onAddItem: () => void;
-  onMoveItem: ({ id }: { id: string }, index: number) => void;
+  onItemRemove: (id: string) => void;
+  onItemAdd: () => void;
+  onItemMove: ({ id }: { id: string }, index: number) => void;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
   inEditor: boolean;
@@ -40,9 +40,9 @@ export type Props = {
 const CameraBlockEditor: React.FC<Props> = ({
   items,
   onUpdate,
-  onRemoveItem,
-  onAddItem,
-  onMoveItem,
+  onItemRemove,
+  onItemAdd,
+  onItemMove,
   currentCamera,
   onFlyTo,
   inEditor,
@@ -93,9 +93,9 @@ const CameraBlockEditor: React.FC<Props> = ({
           <ListField
             name={t("Buttons List")}
             items={listItems}
-            addItem={onAddItem}
-            removeItem={onRemoveItem}
-            onItemDrop={onMoveItem}
+            addItem={onItemAdd}
+            removeItem={onItemRemove}
+            onItemDrop={onItemMove}
             selected={selected}
             onSelect={setSelected}
             atLeastOneItem

@@ -7,7 +7,7 @@ import { currentCameraVar } from "@reearth/services/state";
 
 import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
-import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
+import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import BlockWrapper from "../common/Wrapper";
 
 import CameraEditor, { Props as EditorProps } from "./Editor";
@@ -32,12 +32,6 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.items],
   );
 
-  const handleAddItem = useCallback(() => {
-    const schemaGroup = block?.property?.items?.find(i => i.schemaGroup === "default")?.schemaGroup;
-    if (!block?.property?.id || !schemaGroup) return;
-    handleAddPropertyItem(block.property.id, schemaGroup);
-  }, [block?.property?.id, block?.property?.items, handleAddPropertyItem]);
-
   const handleUpdate = useCallback(
     (
       itemId: string,
@@ -61,7 +55,13 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
   );
 
-  const handleRemoveItem = useCallback(
+  const handleItemAdd = useCallback(() => {
+    const schemaGroup = block?.property?.items?.find(i => i.schemaGroup === "default")?.schemaGroup;
+    if (!block?.property?.id || !schemaGroup) return;
+    handleAddPropertyItem(block.property.id, schemaGroup);
+  }, [block?.property?.id, block?.property?.items, handleAddPropertyItem]);
+
+  const handleItemRemove = useCallback(
     (itemId: string) => {
       const schemaGroup = block?.property?.items?.find(
         i => i.schemaGroup === "default",
@@ -73,7 +73,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.id, block?.property?.items, handleRemovePropertyItem],
   );
 
-  const handleMoveItem = useCallback(
+  const handleItemMove = useCallback(
     ({ id }: { id: string }, index: number) => {
       const schemaGroup = block?.property?.items?.find(
         i => i.schemaGroup === "default",
@@ -86,12 +86,13 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   );
 
   // if there's no item add 1 button.
+  // TODO: Shoudl be added block creationAPI for generic blocks that require at least 1 item
   useEffect(() => {
     if (items.length === 0) {
-      handleAddItem();
+      handleItemAdd();
       return;
     }
-  }, [items.length, handleAddItem]);
+  }, [items.length, handleItemAdd]);
 
   return (
     <BlockWrapper
@@ -104,9 +105,9 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       <CameraEditor
         items={items}
         onUpdate={handleUpdate}
-        onRemoveItem={handleRemoveItem}
-        onAddItem={handleAddItem}
-        onMoveItem={handleMoveItem}
+        onItemRemove={handleItemRemove}
+        onItemAdd={handleItemAdd}
+        onItemMove={handleItemMove}
         currentCamera={currentCamera}
         onFlyTo={handleFlyTo}
         inEditor={!!props.isEditable}
