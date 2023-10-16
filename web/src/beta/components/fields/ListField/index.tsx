@@ -41,7 +41,9 @@ const ListField: React.FC<Props> = ({
   const deleteItem = useCallback(() => {
     if (!selected) return;
     removeItem(selected);
-  }, [selected, removeItem]);
+    // Select the first item in items after removing the item
+    onSelect(items[0]?.id);
+  }, [selected, removeItem, items, onSelect]);
 
   const getId = useCallback(({ id }: ListItem) => {
     return id;
