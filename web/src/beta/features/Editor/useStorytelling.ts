@@ -26,6 +26,7 @@ export default function ({ sceneId, onFlyTo }: Props) {
     useDeleteStoryPage,
     useMoveStoryPage,
     useMoveStoryBlock,
+    useUpdateStoryPage,
     useInstallableStoryBlocksQuery,
   } = useStorytellingAPI();
 
@@ -138,6 +139,19 @@ export default function ({ sceneId, onFlyTo }: Props) {
     [useMoveStoryBlock, selectedStory],
   );
 
+  const handlePageUpdate = useCallback(
+    async (pageId: string, layers: string[]) => {
+      if (!selectedStory) return;
+      await useUpdateStoryPage({
+        sceneId,
+        storyId: selectedStory.id,
+        pageId,
+        layers,
+      });
+    },
+    [sceneId, selectedStory, useUpdateStoryPage],
+  );
+
   return {
     selectedStory,
     currentPage,
@@ -149,5 +163,6 @@ export default function ({ sceneId, onFlyTo }: Props) {
     handlePageAdd,
     handlePageMove,
     handleStoryBlockMove,
+    handlePageUpdate,
   };
 }

@@ -109,7 +109,8 @@ export default () => {
     [publishStoryMutation, t, setNotification],
   );
 
-  const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage } = usePages();
+  const { useCreateStoryPage, useDeleteStoryPage, useMoveStoryPage, useUpdateStoryPage } =
+    usePages();
 
   const {
     useInstallableStoryBlocksQuery,
@@ -126,6 +127,7 @@ export default () => {
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
+    useUpdateStoryPage,
     useInstallableStoryBlocksQuery,
     useInstalledStoryBlocksQuery,
     useCreateStoryBlock,
