@@ -76,7 +76,7 @@ const Inner = styled.button<{
   width: 100%;
   min-height: 38px;
   align-items: center;
-  color: #e0e0e0;
+  color: ${({ theme }) => theme.content.main};
   border: 1px solid ${({ border, theme }) => (border ? theme.outline.weakest : "transparent")};
   border-radius: ${({ clamp }) =>
     clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
