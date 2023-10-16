@@ -1,9 +1,6 @@
-import { useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer/context";
 import { ValueTypes } from "@reearth/beta/utils/value";
-import { currentCameraVar } from "@reearth/services/state";
 
 import { getFieldValue } from "../../../utils";
 import { CommonProps as BlockProps } from "../../types";
@@ -21,11 +18,6 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     handleRemovePropertyItem,
     handleMovePropertyItem,
   } = usePropertyValueUpdate();
-
-  const visualizer = useVisualizer();
-
-  const currentCamera = useReactiveVar(currentCameraVar);
-  const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
 
   const items = useMemo(
     () => getFieldValue(block?.property?.items ?? [], "") as EditorProps["items"],
@@ -86,7 +78,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   );
 
   // if there's no item add 1 button.
-  // TODO: Shoudl be added block creationAPI for generic blocks that require at least 1 item
+  // TODO: Should be added to block creationAPI for generic blocks that require at least 1 item
   useEffect(() => {
     if (items.length === 0) {
       handleItemAdd();
@@ -108,8 +100,6 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
         onItemRemove={handleItemRemove}
         onItemAdd={handleItemAdd}
         onItemMove={handleItemMove}
-        currentCamera={currentCamera}
-        onFlyTo={handleFlyTo}
         inEditor={!!props.isEditable}
       />
     </BlockWrapper>

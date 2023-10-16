@@ -1,3 +1,4 @@
+import { useReactiveVar } from "@apollo/client";
 import { debounce } from "lodash-es";
 import { useContext, useMemo, useState } from "react";
 
@@ -7,8 +8,9 @@ import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
 import TextField from "@reearth/beta/components/fields/TextField";
 import { Camera } from "@reearth/beta/lib/core/engines";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
+import { useVisualizer } from "@reearth/beta/lib/core/Visualizer/context";
 import { useT } from "@reearth/services/i18n";
+import { currentCameraVar } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import { BlockContext } from "../common/Wrapper";
@@ -32,8 +34,6 @@ export type Props = {
   onItemRemove: (id: string) => void;
   onItemAdd: () => void;
   onItemMove: ({ id }: { id: string }, index: number) => void;
-  currentCamera?: Camera;
-  onFlyTo?: FlyTo;
   inEditor: boolean;
 };
 
@@ -43,13 +43,15 @@ const CameraBlockEditor: React.FC<Props> = ({
   onItemRemove,
   onItemAdd,
   onItemMove,
-  currentCamera,
-  onFlyTo,
   inEditor,
 }) => {
   const t = useT();
   const context = useContext(BlockContext);
   const [selected, setSelected] = useState(items[0]?.id);
+
+  const visualizer = useVisualizer();
+  const currentCamera = useReactiveVar(currentCameraVar);
+  const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
 
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
@@ -60,7 +62,7 @@ const CameraBlockEditor: React.FC<Props> = ({
     }
     const item = items.find(i => i.id === itemId);
     if (!item?.cameraPosition) return;
-    onFlyTo?.(item.cameraPosition);
+    handleFlyTo?.(item.cameraPosition);
   };
 
   const debounceOnUpdate = useMemo(() => debounce(onUpdate, 500), [onUpdate]);
@@ -106,7 +108,7 @@ const CameraBlockEditor: React.FC<Props> = ({
               value={editorProperties?.cameraPosition}
               onSave={value => onUpdate(selected, "cameraPosition", "camera", value as Camera)}
               currentCamera={currentCamera}
-              onFlyTo={onFlyTo}
+              onFlyTo={handleFlyTo}
             />
             <TextField
               name={t("Button Title")}
