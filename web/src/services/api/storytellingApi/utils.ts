@@ -21,6 +21,7 @@ export type Page = {
     items: Item[] | undefined;
   };
   blocks?: Block[];
+  layersIds?: string[];
 };
 
 export type Story = {
