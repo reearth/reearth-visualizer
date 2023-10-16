@@ -16,12 +16,14 @@ type Props = {
   layers?: NLSLayer[];
   tab?: Tab;
   onFlyTo?: FlyTo;
+  onPageUpdate?: (id: string, layers: string[]) => void;
 };
 
 const StoryRightPanel: React.FC<Props> = ({
   selectedPage,
   currentCamera,
   layers,
+  onPageUpdate,
   tab,
   onFlyTo,
 }) => {
@@ -48,7 +50,9 @@ const StoryRightPanel: React.FC<Props> = ({
               propertyItems={propertyItems}
               currentCamera={currentCamera}
               layers={layers}
+              selectedPage={selectedPage}
               tab={tab}
+              onPageUpdate={onPageUpdate}
               onFlyTo={onFlyTo}
             />
           ),
