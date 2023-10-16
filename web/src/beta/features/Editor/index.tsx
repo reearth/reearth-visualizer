@@ -51,6 +51,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handlePageAdd,
     handlePageMove,
     handleStoryBlockMove: onStoryBlockMove,
+    handlePageUpdate,
   } = useStorytelling({
     sceneId,
     onFlyTo: handleFlyTo,
@@ -95,6 +96,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentCamera,
     showSceneSettings: selectedSceneSetting,
     onFlyTo: handleFlyTo,
+    onPageUpdate: handlePageUpdate,
   });
 
   const { secondaryNavbar } = useSecondaryNavbar({
@@ -139,7 +141,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 sceneId={sceneId}
                 showStoryPanel={selectedProjectType === "story"}
                 selectedStory={selectedStory}
-                currentPageId={currentPage?.id}
+                currentPage={currentPage}
                 isAutoScrolling={isAutoScrolling}
                 installableBlocks={installableStoryBlocks}
                 currentCamera={currentCamera}
