@@ -16,10 +16,14 @@ export type LayerAddProps = {
   visible?: boolean;
 };
 
-export type LayerUpdateProps = {
+export type LayerNameUpdateProps = {
   layerId: string;
-  name?: string;
-  visible?: boolean;
+  name: string;
+};
+
+export type LayerVisibilityUpdateProps = {
+  layerId: string;
+  visible: boolean;
 };
 
 export default function ({ sceneId }: useLayerProps) {
@@ -71,7 +75,7 @@ export default function ({ sceneId }: useLayerProps) {
   );
 
   const handleLayerNameUpdate = useCallback(
-    async (inp: LayerUpdateProps) => {
+    async (inp: LayerNameUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
         name: inp.name,
@@ -81,7 +85,7 @@ export default function ({ sceneId }: useLayerProps) {
   );
 
   const handleLayerVisibilityUpdate = useCallback(
-    async (inp: LayerUpdateProps) => {
+    async (inp: LayerVisibilityUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
         visible: inp.visible,

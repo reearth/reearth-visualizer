@@ -3,7 +3,10 @@ import { MouseEvent, useCallback, useState } from "react";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import type { LayerUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type {
+  LayerNameUpdateProps,
+  LayerVisibilityUpdateProps,
+} from "@reearth/beta/features/Editor/useLayers";
 import { styled } from "@reearth/services/theme";
 
 type LayerItemProps = {
@@ -13,8 +16,8 @@ type LayerItemProps = {
   visible: boolean;
   onDelete: () => void;
   onSelect: () => void;
-  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
-  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
 };
 
 const LayerItem = ({

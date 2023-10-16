@@ -6,7 +6,7 @@ import { Tab } from "@reearth/beta/features/Navbar";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
-import type { LayerUpdateProps } from "./useLayers";
+import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "./useLayers";
 
 type Props = {
   tab: Tab;
@@ -28,8 +28,8 @@ type Props = {
   // layers
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
-  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };

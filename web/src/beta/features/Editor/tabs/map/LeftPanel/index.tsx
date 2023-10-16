@@ -3,18 +3,18 @@ import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/LeftPanel/
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-import type { LayerUpdateProps } from "../../../useLayers";
+import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "../../../useLayers";
 
 type Props = {
   layers: NLSLayer[];
   selectedLayerId?: string;
   selectedSceneSetting?: boolean;
   onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
-  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
 };
 
 const MapSidePanel: React.FC<Props> = ({

@@ -3,7 +3,10 @@ import { useCallback, useState } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import type { LayerUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type {
+  LayerNameUpdateProps,
+  LayerVisibilityUpdateProps,
+} from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -14,10 +17,10 @@ type LayersProps = {
   layers: NLSLayer[];
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
-  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
 };
 
 const Layers: React.FC<LayersProps> = ({

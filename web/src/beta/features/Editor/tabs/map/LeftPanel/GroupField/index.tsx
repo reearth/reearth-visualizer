@@ -1,6 +1,9 @@
 // import ListItem from "@reearth/beta/components/ListItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
-import type { LayerUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type {
+  LayerNameUpdateProps,
+  LayerVisibilityUpdateProps,
+} from "@reearth/beta/features/Editor/useLayers";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -12,11 +15,11 @@ type GroupSectionFieldProps = {
   selectedLayerId?: string;
   selectedSceneSetting?: boolean;
   onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
-  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
 };
 
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
