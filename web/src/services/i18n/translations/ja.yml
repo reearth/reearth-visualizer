@@ -52,6 +52,7 @@ Layer of the data source you want to add.: ''
 layer name: ''
 Layer: レイヤー
 Layers: レイヤー
+All Layers: ''
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
@@ -486,8 +487,11 @@ Failed to delete page.: ''
 Page was successfully deleted.: ''
 Failed to move page.: ''
 Page was successfully moved.: ''
+Failed to update page.: ''
+Successfullly updated a page!: ''
 Failed to add widget.: ウィジェットの作成に失敗しました。
 Failed to update widget.: ウィジェットのアップデートに失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
+Sort By: Sort By
