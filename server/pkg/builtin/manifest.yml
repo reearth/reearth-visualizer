@@ -1839,7 +1839,6 @@ extensions:
               title: Duration
               suffix: s
               min: 0
-              defaultValue: 1
             - id: cameraDelay
               type: number
               title: Delay
@@ -2034,12 +2033,10 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
             - id: gap
               title: Gap
               type: number
               suffix: px
-              defaultValue: 0
         - id: title
           title: Title Setting
           fields:
@@ -2061,7 +2058,6 @@ extensions:
               title: Duration
               suffix: s
               min: 0
-              defaultValue: 0
             - id: cameraDelay
               type: number
               title: Delay
@@ -2089,7 +2085,6 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
         - id: default
           title: Text
           fields:
@@ -2112,7 +2107,6 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
         - id: default
           title: MD Text
           fields:
@@ -2135,7 +2129,6 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
         - id: default
           title: Image
           fields:
@@ -2158,7 +2151,6 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
         - id: default
           title: Video
           fields:
@@ -2181,7 +2173,6 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
         - id: default
           title: Camera Button
           list: true
@@ -2215,7 +2206,6 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
         - id: default
           title: Link Button
           list: true
@@ -2249,7 +2239,6 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 4, bottom: 4, left: 4, right: 4 }
         - id: default
           title: Timeline
           fields:
