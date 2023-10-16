@@ -28,18 +28,3 @@ export type CommonProps = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
 };
-
-export type SharedProperties = {
-  id: string;
-  title: string;
-  fields: {
-    padding?: Spacing;
-  };
-}[];
-
-type Spacing = {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};

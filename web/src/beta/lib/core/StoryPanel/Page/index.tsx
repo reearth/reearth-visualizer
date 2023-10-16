@@ -61,9 +61,7 @@ const StoryPanel: React.FC<Props> = ({
     titleId,
     title,
     propertyId,
-    property,
-    padding,
-    gap,
+    panelSettings,
     storyBlocks,
     setStoryBlocks,
     handleBlockOpen,
@@ -81,13 +79,16 @@ const StoryPanel: React.FC<Props> = ({
       noBorder
       isSelected={selectedPageId === page?.id}
       propertyId={propertyId}
-      property={property}
+      panelSettings={panelSettings}
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id} padding={padding} gap={gap}>
+      <Wrapper
+        id={page?.id}
+        padding={panelSettings?.padding?.value}
+        gap={panelSettings?.gap?.value}>
         <StoryBlock
           block={{
             id: titleId,
@@ -116,7 +117,7 @@ const StoryPanel: React.FC<Props> = ({
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
-            gap={gap}
+            gap={panelSettings.gap}
             items={storyBlocks}
             getId={item => item.id}
             onItemDrop={async (item, index) => {

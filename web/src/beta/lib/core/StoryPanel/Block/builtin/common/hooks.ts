@@ -30,7 +30,7 @@ export default ({ name, isSelected, property, onClick }: Props) => {
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
 
-  const padding = useMemo(() => property?.padding, [property]);
+  const padding = useMemo(() => property?.panel?.padding, [property]);
 
   const handleEditModeToggle = () => setEditMode?.(em => !em);
 

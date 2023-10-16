@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { StoryPage } from "../types";
 
@@ -19,6 +19,8 @@ export default ({
 
   const [storyBlocks, setStoryBlocks] = useState(page?.blocks ?? []);
 
+  useEffect(() => page?.blocks && setStoryBlocks(page.blocks), [page?.blocks]);
+
   const handleBlockOpen = useCallback(
     (index: number) => {
       if (openBlocksIndex === index) {
@@ -34,9 +36,13 @@ export default ({
 
   const propertyId = useMemo(() => page?.propertyId, [page?.propertyId]);
 
-  const padding = useMemo(() => property?.panel?.padding, [property?.panel?.padding]);
-
-  const gap = useMemo(() => property?.panel?.gap, [property?.panel?.gap]);
+  const panelSettings = useMemo(
+    () => ({
+      padding: property?.panel?.padding,
+      gap: property?.panel?.gap,
+    }),
+    [property?.panel],
+  );
 
   const title = useMemo(() => property?.title?.title, [property?.title?.title]);
 
@@ -54,8 +60,7 @@ export default ({
     title,
     propertyId,
     property,
-    padding,
-    gap,
+    panelSettings,
     storyBlocks,
     setStoryBlocks,
     handleBlockOpen,

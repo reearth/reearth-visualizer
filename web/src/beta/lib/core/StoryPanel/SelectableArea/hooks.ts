@@ -39,11 +39,8 @@ export default ({ editMode, isSelected, property, setEditMode, onClickAway }: Pr
   }, [onClickAway]);
 
   const panelSettings = useMemo(() => {
-    return {
-      padding: property?.padding,
-      gap: property?.gap,
-    };
-  }, [property]);
+    return property?.panel;
+  }, [property?.panel]);
 
   return {
     isHovered,

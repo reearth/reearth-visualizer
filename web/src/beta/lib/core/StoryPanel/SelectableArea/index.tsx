@@ -13,7 +13,7 @@ type Props = {
   isSelected?: boolean;
   children: ReactNode;
   propertyId?: string;
-  property?: any;
+  panelSettings?: any;
   dndEnabled?: boolean;
   showSettings?: boolean;
   editMode?: boolean;
@@ -34,7 +34,7 @@ const SelectableArea: React.FC<Props> = ({
   isSelected,
   children,
   propertyId,
-  property,
+  panelSettings,
   dndEnabled,
   showSettings,
   editMode,
@@ -51,7 +51,6 @@ const SelectableArea: React.FC<Props> = ({
   const {
     isHovered,
     showPadding,
-    panelSettings,
     setShowPadding,
     handleMouseOver,
     handleMouseOut,
@@ -59,7 +58,6 @@ const SelectableArea: React.FC<Props> = ({
   } = useHooks({
     editMode,
     isSelected,
-    property,
     setEditMode,
     onClickAway,
   });

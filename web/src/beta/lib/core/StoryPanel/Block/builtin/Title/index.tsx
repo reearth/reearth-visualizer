@@ -18,8 +18,8 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   );
 
   const color = useMemo(
-    () => block?.property?.color as ValueTypes["string"],
-    [block?.property?.color],
+    () => block?.property?.value as ValueTypes["string"],
+    [block?.property?.value],
   );
 
   return (
@@ -27,7 +27,7 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
-      propertyId={block?.property?.id}
+      propertyId={block?.propertyId}
       property={block?.property}
       dndEnabled={false}
       {...props}>

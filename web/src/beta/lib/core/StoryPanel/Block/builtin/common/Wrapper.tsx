@@ -1,6 +1,7 @@
 import { ReactNode, createContext } from "react";
 
-// import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
+// import NumberField from "@reearth/beta/components/fields/NumberField";
+// import SpacingInput from "@reearth/beta/components/fields/SpacingInput";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
 
@@ -51,8 +52,8 @@ const BlockWrapper: React.FC<Props> = ({
     title,
     editMode,
     showSettings,
-    defaultSettings,
-    padding,
+    // defaultSettings,
+    panelSettings,
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
@@ -63,6 +64,12 @@ const BlockWrapper: React.FC<Props> = ({
     property,
     onClick,
   });
+
+  // console.log("PP", property);
+
+  // console.log("padding", padding);
+  // console.log("defaultSettings", defaultSettings);
+
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea
@@ -72,7 +79,7 @@ const BlockWrapper: React.FC<Props> = ({
         propertyId={propertyId}
         dndEnabled={dndEnabled}
         showSettings={showSettings}
-        property={property}
+        panelSettings={panelSettings}
         editMode={editMode}
         isEditable={isEditable}
         setEditMode={setEditMode}
@@ -80,11 +87,18 @@ const BlockWrapper: React.FC<Props> = ({
         onSettingsToggle={handleSettingsToggle}
         onRemove={onRemove}
         onClickAway={onClickAway}>
-        <Block padding={padding} isEditable={isEditable} onClick={handleBlockClick}>
+        <Block
+          padding={panelSettings?.padding?.value}
+          isEditable={isEditable}
+          onClick={handleBlockClick}>
           {children ?? <Template icon={icon} />}
         </Block>
-        {editMode && propertyId && defaultSettings && settingsEnabled && (
+        {editMode && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
+            {/* {Object.keys(property).map(field => {
+              return field === "title" ? 
+            })} */}
+            <h1>sldkjfalskdfj</h1>
             {/* <FieldComponents propertyId={propertyId} item={defaultSettings} />
             <NewFieldsComponent /> // This will need to be updated when support is needed
             // currently need: camera, color, text, url, spacing

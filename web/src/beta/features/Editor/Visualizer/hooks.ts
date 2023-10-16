@@ -192,7 +192,10 @@ export default ({
     [sceneId, useUpdateWidgetAlignSystem],
   );
 
-  const story = useMemo(() => convertStory(scene, storyId), [scene, storyId]);
+  const story = useMemo(
+    () => convertStory(scene?.stories.find(s => s.id === storyId)),
+    [storyId, scene?.stories],
+  );
 
   const handleStoryBlockCreate = useCallback(
     async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {

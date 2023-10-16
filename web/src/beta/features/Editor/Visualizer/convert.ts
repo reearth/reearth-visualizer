@@ -32,6 +32,7 @@ import {
   PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
+  Story as GqlStory,
   StoryPage as GqlStoryPage,
   StoryBlock as GqlStoryBlock,
 } from "@reearth/services/gql";
@@ -180,8 +181,7 @@ export const convertWidgets = (
   };
 };
 
-export const convertStory = (scene?: Partial<Scene>, storyId?: string): Story | undefined => {
-  const story = scene?.stories?.find(s => s.id === storyId);
+export const convertStory = (story?: GqlStory): Story | undefined => {
   if (!story) return undefined;
 
   const storyPages = (pages: GqlStoryPage[]): StoryPage[] =>
@@ -199,7 +199,7 @@ export const convertStory = (scene?: Partial<Scene>, storyId?: string): Story | 
       pluginId: b.pluginId,
       extensionId: b.extensionId,
       name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.title,
-      propertyId: b.propertyId,
+      propertyId: b.property?.id,
       property: processProperty(undefined, b.property),
     }));
 
@@ -304,21 +304,52 @@ const processPropertyGroups = (
 
   return Object.fromEntries(
     Object.entries(allFields)
-      .map(([key, { schema, parent, orig }]) => {
-        const used = orig || parent;
-        if (!used) {
-          return [key, schema.defaultValue ? valueFromGQL(schema.defaultValue, schema.type) : null];
-        }
+      .map(
+        ([key, { schema, parent, orig }]): [
+          key: string,
+          { type?: string; ui?: string; title?: string; description?: string; value?: any },
+        ] => {
+          const used = orig || parent;
 
-        const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
-        const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
-        if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
-          return [key, datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId)];
-        }
+          const fieldMeta = {
+            type: valueTypeFromGQL(schema.type) || undefined,
+            ui: schema.ui || undefined,
+            title: schema.translatedTitle || undefined,
+            description: schema.translatedDescription || undefined,
+          };
 
-        return [key, valueFromGQL(used.value, used.type)?.value];
-      })
-      .filter(([, value]) => typeof value !== "undefined" && value !== null),
+          if (!used) {
+            return [
+              key,
+              {
+                ...fieldMeta,
+                value: schema.defaultValue ?? valueFromGQL(schema.defaultValue, schema.type)?.value,
+              },
+            ];
+          }
+
+          const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
+          const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
+          if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
+            return [
+              key,
+              {
+                ...fieldMeta,
+                value: datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId),
+              },
+            ];
+          }
+
+          return [
+            key,
+            {
+              ...fieldMeta,
+              value: valueFromGQL(used.value, used.type)?.value,
+            },
+          ];
+        },
+      )
+      .filter(([, { value }]) => typeof value !== "undefined" && value !== null),
   );
 };
 

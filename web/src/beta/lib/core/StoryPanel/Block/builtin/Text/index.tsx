@@ -15,8 +15,8 @@ export type Props = BlockProps;
 
 const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
-    () => block?.property?.text as ValueTypes["string"],
-    [block?.property?.text],
+    () => block?.property?.value as ValueTypes["string"],
+    [block?.property?.value],
   );
 
   const { handlePropertyValueUpdate } = usePropertyValueUpdate();
@@ -34,7 +34,7 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
-      propertyId={block?.property?.id}
+      propertyId={block?.propertyId}
       property={block?.property}
       settingsEnabled={false}
       {...props}>
