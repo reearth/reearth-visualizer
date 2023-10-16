@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, MutableRefObject } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
@@ -15,9 +15,8 @@ export type Props = {
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   showingIndicator?: boolean;
-  isAutoScrolling?: boolean;
+  isAutoScrolling?: MutableRefObject<boolean>;
   isEditable?: boolean;
-  onAutoScrollingChange: (isScrolling: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
@@ -49,7 +48,6 @@ const StoryContent: React.FC<Props> = ({
   showingIndicator,
   isAutoScrolling,
   isEditable,
-  onAutoScrollingChange,
   onPageSettingsToggle,
   onPageSelect,
   onBlockCreate,
@@ -63,7 +61,6 @@ const StoryContent: React.FC<Props> = ({
     pages,
     selectedPageId,
     isAutoScrolling,
-    onAutoScrollingChange,
     onBlockCreate,
     onBlockDelete,
     onCurrentPageChange,

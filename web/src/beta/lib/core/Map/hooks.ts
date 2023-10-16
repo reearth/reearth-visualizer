@@ -9,7 +9,9 @@ import type {
   LayerSelectionReason,
   ComputedLayer,
   RequestingRenderMode,
+  SceneProperty,
 } from "./types";
+import useTimelineManager, { TimelineManagerRef } from "./useTimelineManager";
 
 export type { MapRef } from "./ref";
 
@@ -19,6 +21,8 @@ export const REQUEST_RENDER_ONCE = 1;
 
 export default function ({
   ref,
+  sceneProperty,
+  timelineManagerRef,
   onLayerSelect,
 }: {
   ref: Ref<MapRef>;
@@ -26,6 +30,8 @@ export default function ({
     layerId?: string;
     featureId?: string;
   };
+  sceneProperty?: SceneProperty;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -44,8 +50,9 @@ export default function ({
       mapRef({
         engineRef,
         layersRef,
+        timelineManagerRef,
       }),
-    [],
+    [timelineManagerRef],
   );
 
   // Order in which selectedLayerId prop propagates from the outside: Map -> Layers -> Engine
@@ -104,6 +111,12 @@ export default function ({
       selectedLayer.info,
     );
   }, [onLayerSelect, selectedLayer]);
+
+  useTimelineManager({
+    init: sceneProperty?.timeline,
+    engineRef,
+    timelineManagerRef,
+  });
 
   return {
     engineRef,

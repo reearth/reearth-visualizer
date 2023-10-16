@@ -107,10 +107,3 @@ func (s *Scene) Clusters() *ClusterList {
 	}
 	return s.clusters
 }
-
-func (s *Scene) Styles() *StyleList {
-	if s == nil {
-		return nil
-	}
-	return s.styles
-}

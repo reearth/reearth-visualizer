@@ -26,6 +26,7 @@ export default function ({ sceneId, onFlyTo }: Props) {
     useDeleteStoryPage,
     useMoveStoryPage,
     useMoveStoryBlock,
+    useUpdateStoryPage,
     useInstallableStoryBlocksQuery,
   } = useStorytellingAPI();
 
@@ -33,16 +34,11 @@ export default function ({ sceneId, onFlyTo }: Props) {
 
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
   const [currentPage, setCurrentPage] = useState<Page | undefined>(undefined);
-  const [isAutoScrolling, setAutoScrolling] = useState(false);
+  const isAutoScrolling = useRef(false);
 
   const selectedStory = useMemo(() => {
     return stories?.length ? stories[0] : undefined;
   }, [stories]);
-
-  const handleAutoScrollingChange = useCallback(
-    (isScrolling: boolean) => setAutoScrolling(isScrolling),
-    [],
-  );
 
   useEffect(() => {
     if (!currentPage) {
@@ -59,7 +55,7 @@ export default function ({ sceneId, onFlyTo }: Props) {
 
       if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
-        setAutoScrolling(true);
+        isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
       const camera = newPage.property.items?.find(i => i.schemaGroup === "cameraAnimation");
@@ -143,17 +139,30 @@ export default function ({ sceneId, onFlyTo }: Props) {
     [useMoveStoryBlock, selectedStory],
   );
 
+  const handlePageUpdate = useCallback(
+    async (pageId: string, layers: string[]) => {
+      if (!selectedStory) return;
+      await useUpdateStoryPage({
+        sceneId,
+        storyId: selectedStory.id,
+        pageId,
+        layers,
+      });
+    },
+    [sceneId, selectedStory, useUpdateStoryPage],
+  );
+
   return {
     selectedStory,
     currentPage,
     isAutoScrolling,
     installableStoryBlocks,
-    handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
     handleStoryBlockMove,
+    handlePageUpdate,
   };
 }
