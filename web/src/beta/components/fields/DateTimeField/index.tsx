@@ -12,15 +12,15 @@ export type Props = {
 };
 
 const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) => {
-  const datePlaceholder = "DD/MM/YYYY";
+  const datePlaceholder = "YYYY-MM-DD";
   const timePlaceholder = "00:00:00";
   return (
     <Property name={name} description={description}>
       <Wrapper>
         <TextInput value={value} placeholder={datePlaceholder} onChange={onChange} />
-        <Button icon="calender" />
+        <Button size="small" icon="calender" />
         <TextInput value={value} placeholder={timePlaceholder} onChange={onChange} />
-        <Button icon="clock" />
+        <Button size="small" icon="clock" />
       </Wrapper>
     </Property>
   );
@@ -30,6 +30,6 @@ export default DateTimeField;
 
 const Wrapper = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 4px;
 `;
