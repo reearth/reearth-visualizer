@@ -13,7 +13,8 @@ type LayerItemProps = {
   visible: boolean;
   onDelete: () => void;
   onSelect: () => void;
-  onLayerUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
 };
 
 const LayerItem = ({
@@ -23,7 +24,8 @@ const LayerItem = ({
   visible,
   onDelete,
   onSelect,
-  onLayerUpdate,
+  onLayerNameUpdate,
+  onLayerVisibilityUpate,
 }: LayerItemProps) => {
   const [isActionOpen, setActionOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,8 +51,8 @@ const LayerItem = ({
 
   const handleTitleSubmit = useCallback(() => {
     setIsEditing(false);
-    onLayerUpdate({ layerId: id, name: newValue });
-  }, [id, newValue, onLayerUpdate]);
+    onLayerNameUpdate({ layerId: id, name: newValue });
+  }, [id, newValue, onLayerNameUpdate]);
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
@@ -66,10 +68,10 @@ const LayerItem = ({
 
   const handleUpdateVisibility = useCallback(() => {
     const newVisibility = !isVisible;
-    onLayerUpdate({ layerId: id, visible: newVisibility });
+    onLayerVisibilityUpate({ layerId: id, visible: newVisibility });
     setIsVisible(newVisibility);
     setValue(isVisible ? "" : "V");
-  }, [id, isVisible, onLayerUpdate]);
+  }, [id, isVisible, onLayerVisibilityUpate]);
 
   return (
     <ListItem

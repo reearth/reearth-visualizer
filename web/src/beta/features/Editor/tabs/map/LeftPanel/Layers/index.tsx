@@ -14,18 +14,20 @@ type LayersProps = {
   layers: NLSLayer[];
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
-  onLayerUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
+  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
 };
 
 const Layers: React.FC<LayersProps> = ({
   layers,
   selectedLayerId,
   onLayerDelete,
-  onLayerUpdate,
+  onLayerNameUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
 }) => {
   const t = useT();
   const [isAddMenuOpen, setAddMenuOpen] = useState(false);
@@ -73,7 +75,8 @@ const Layers: React.FC<LayersProps> = ({
           isSelected={layer.id === selectedLayerId}
           onDelete={() => onLayerDelete(layer.id)}
           onSelect={() => onLayerSelect(layer.id)}
-          onLayerUpdate={onLayerUpdate}
+          onLayerNameUpdate={onLayerNameUpdate}
+          onLayerVisibilityUpate={onLayerVisibilityUpate}
         />
       ))}
     </LayerContainer>

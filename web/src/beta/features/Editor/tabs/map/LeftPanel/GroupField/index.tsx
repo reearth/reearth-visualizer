@@ -12,10 +12,11 @@ type GroupSectionFieldProps = {
   selectedLayerId?: string;
   selectedSceneSetting?: boolean;
   onLayerDelete: (id: string) => void;
-  onLayerUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
+  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
 };
 
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
@@ -23,10 +24,11 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   selectedLayerId,
   // selectedSceneSetting,
   onLayerDelete,
-  onLayerUpdate,
+  onLayerNameUpdate,
   onLayerSelect,
   // onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
 }) => {
   const t = useT();
 
@@ -47,9 +49,10 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
           layers={layers}
           selectedLayerId={selectedLayerId}
           onLayerDelete={onLayerDelete}
-          onLayerUpdate={onLayerUpdate}
+          onLayerNameUpdate={onLayerNameUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
+          onLayerVisibilityUpate={onLayerVisibilityUpate}
         />
       </StyledSidePanelSectionField>
     </>

@@ -16,9 +16,10 @@ function LeftPanelLayers() {
     <Layers
       layers={layers}
       onLayerDelete={(_id: string) => {}}
-      onLayerUpdate={(_inp: LayerUpdateProps) => {}}
+      onLayerNameUpdate={(_inp: LayerUpdateProps) => {}}
       onLayerSelect={(_id: string) => {}}
       onDataSourceManagerOpen={() => {}}
+      onLayerVisibilityUpate={(_inp: LayerUpdateProps) => {}}
     />
   );
 }

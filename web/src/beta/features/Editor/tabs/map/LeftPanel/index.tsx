@@ -10,10 +10,11 @@ type Props = {
   selectedLayerId?: string;
   selectedSceneSetting?: boolean;
   onLayerDelete: (id: string) => void;
-  onLayerUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
+  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
 };
 
 const MapSidePanel: React.FC<Props> = ({
@@ -22,9 +23,10 @@ const MapSidePanel: React.FC<Props> = ({
   selectedSceneSetting,
   onLayerDelete,
   onLayerSelect,
-  onLayerUpdate,
+  onLayerNameUpdate,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
 }) => {
   const t = useT();
 
@@ -41,10 +43,11 @@ const MapSidePanel: React.FC<Props> = ({
               selectedLayerId={selectedLayerId}
               selectedSceneSetting={selectedSceneSetting}
               onLayerDelete={onLayerDelete}
-              onLayerUpdate={onLayerUpdate}
+              onLayerNameUpdate={onLayerNameUpdate}
               onLayerSelect={onLayerSelect}
               onSceneSettingSelect={onSceneSettingSelect}
               onDataSourceManagerOpen={onDataSourceManagerOpen}
+              onLayerVisibilityUpate={onLayerVisibilityUpate}
             />
           ),
         },

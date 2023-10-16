@@ -28,7 +28,8 @@ type Props = {
   // layers
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
-  onLayerUpdate: (inp: LayerUpdateProps) => void;
+  onLayerNameUpdate: (inp: LayerUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
 };
@@ -46,10 +47,11 @@ export default ({
   onPageAdd,
   onPageMove,
   onLayerDelete,
-  onLayerUpdate,
+  onLayerNameUpdate,
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -60,7 +62,8 @@ export default ({
             selectedLayerId={selectedLayerId}
             selectedSceneSetting={selectedSceneSetting}
             onLayerDelete={onLayerDelete}
-            onLayerUpdate={onLayerUpdate}
+            onLayerNameUpdate={onLayerNameUpdate}
+            onLayerVisibilityUpate={onLayerVisibilityUpate}
             onLayerSelect={onLayerSelect}
             onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
@@ -86,15 +89,16 @@ export default ({
   }, [
     tab,
     nlsLayers,
-    selectedStory,
     selectedLayerId,
     selectedSceneSetting,
-    currentPageId,
     onLayerDelete,
-    onLayerUpdate,
+    onLayerNameUpdate,
+    onLayerVisibilityUpate,
     onLayerSelect,
     onSceneSettingSelect,
     onDataSourceManagerOpen,
+    selectedStory,
+    currentPageId,
     onCurrentPageChange,
     onPageDuplicate,
     onPageDelete,

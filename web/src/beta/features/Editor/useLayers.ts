@@ -70,11 +70,20 @@ export default function ({ sceneId }: useLayerProps) {
     [t, useAddNLSLayerSimple],
   );
 
-  const handleLayerUpdate = useCallback(
+  const handleLayerNameUpdate = useCallback(
     async (inp: LayerUpdateProps) => {
       await useUpdateNLSLayer({
         layerId: inp.layerId,
         name: inp.name,
+      });
+    },
+    [useUpdateNLSLayer],
+  );
+
+  const handleLayerVisibilityUpdate = useCallback(
+    async (inp: LayerUpdateProps) => {
+      await useUpdateNLSLayer({
+        layerId: inp.layerId,
         visible: inp.visible,
       });
     },
@@ -87,6 +96,7 @@ export default function ({ sceneId }: useLayerProps) {
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
-    handleLayerUpdate,
+    handleLayerNameUpdate,
+    handleLayerVisibilityUpdate,
   };
 }

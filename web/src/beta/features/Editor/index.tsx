@@ -63,7 +63,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
-    handleLayerUpdate,
+    handleLayerNameUpdate,
+    handleLayerVisibilityUpdate,
   } = useLayers({
     sceneId,
   });
@@ -82,7 +83,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPageMove: handlePageMove,
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelect,
-    onLayerUpdate: handleLayerUpdate,
+    onLayerNameUpdate: handleLayerNameUpdate,
+    onLayerVisibilityUpate: handleLayerVisibilityUpdate,
     onSceneSettingSelect: handleSceneSettingSelect,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
   });
