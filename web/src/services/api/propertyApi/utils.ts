@@ -252,7 +252,7 @@ const toField = (
   };
 };
 
-const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] => {
+export const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] => {
   switch (ui) {
     case PropertySchemaFieldUi.Color:
       return "color";

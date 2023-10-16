@@ -30,7 +30,12 @@ export default ({ name, isSelected, property, onClick }: Props) => {
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
 
-  const padding = useMemo(() => property?.panel?.padding, [property]);
+  const groupId = useMemo(
+    () => (property?.default ? "default" : property?.title ? "title" : undefined),
+    [property],
+  );
+
+  const panelSettings = useMemo(() => ({ padding: property?.panel?.padding }), [property?.panel]);
 
   const handleEditModeToggle = () => setEditMode?.(em => !em);
 
@@ -38,10 +43,11 @@ export default ({ name, isSelected, property, onClick }: Props) => {
 
   return {
     title,
+    groupId,
     editMode,
     showSettings,
     defaultSettings,
-    padding,
+    panelSettings,
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,

@@ -1,10 +1,9 @@
 import { ReactNode, createContext } from "react";
 
-// import NumberField from "@reearth/beta/components/fields/NumberField";
-// import SpacingInput from "@reearth/beta/components/fields/SpacingInput";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
 
+import { FieldComponent } from "../../../hooks/useFieldComponent";
 import SelectableArea from "../../../SelectableArea";
 import Template from "../../Template";
 
@@ -50,9 +49,10 @@ const BlockWrapper: React.FC<Props> = ({
 }) => {
   const {
     title,
+    groupId,
     editMode,
     showSettings,
-    // defaultSettings,
+    defaultSettings,
     panelSettings,
     setEditMode,
     handleEditModeToggle,
@@ -64,11 +64,6 @@ const BlockWrapper: React.FC<Props> = ({
     property,
     onClick,
   });
-
-  // console.log("PP", property);
-
-  // console.log("padding", padding);
-  // console.log("defaultSettings", defaultSettings);
 
   return (
     <BlockContext.Provider value={{ editMode }}>
@@ -93,17 +88,20 @@ const BlockWrapper: React.FC<Props> = ({
           onClick={handleBlockClick}>
           {children ?? <Template icon={icon} />}
         </Block>
-        {editMode && propertyId && settingsEnabled && (
+        {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
-            {/* {Object.keys(property).map(field => {
-              return field === "title" ? 
-            })} */}
-            <h1>sldkjfalskdfj</h1>
-            {/* <FieldComponents propertyId={propertyId} item={defaultSettings} />
-            <NewFieldsComponent /> // This will need to be updated when support is needed
-            // currently need: camera, color, text, url, spacing
-            // will need: Time, toggle, 
-            // Should just setup support for ALL (like the FieldCompoennts component) */}
+            {Object.keys(defaultSettings).map(fieldId => {
+              const field = defaultSettings[fieldId];
+              return (
+                <FieldComponent
+                  key={groupId + propertyId}
+                  propertyId={propertyId}
+                  groupId={groupId}
+                  fieldId={fieldId}
+                  field={field}
+                />
+              );
+            })}
           </EditorPanel>
         )}
       </SelectableArea>

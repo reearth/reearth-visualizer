@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 
+import usePropertyValueUpdate from "../../../hooks/usePropertyValueUpdate";
 import { CommonProps as BlockProps } from "../../types";
-import usePropertyValueUpdate from "../common/usePropertyValueUpdate";
 import BlockWrapper from "../common/Wrapper";
 
 import MdEditor from "./Editor";
@@ -12,8 +12,8 @@ export type Props = BlockProps;
 
 const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(
-    () => block?.property?.text as ValueTypes["string"],
-    [block?.property?.text],
+    () => block?.property?.default?.text?.value as ValueTypes["string"],
+    [block?.property?.default?.text?.value],
   );
 
   const { handlePropertyValueUpdate } = usePropertyValueUpdate();

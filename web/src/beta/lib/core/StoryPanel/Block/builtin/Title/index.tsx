@@ -12,14 +12,17 @@ export type Props = BlockProps;
 
 const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const t = useT();
+
+  const property = useMemo(() => block?.property, [block?.property]);
+
   const title = useMemo(
-    () => block?.property?.title as ValueTypes["string"],
-    [block?.property?.title],
+    () => property?.title?.title?.value as ValueTypes["string"],
+    [property?.title?.title?.value],
   );
 
   const color = useMemo(
-    () => block?.property?.value as ValueTypes["string"],
-    [block?.property?.value],
+    () => property?.title?.color?.value as ValueTypes["string"],
+    [property?.title?.color?.value],
   );
 
   return (
@@ -28,7 +31,7 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.propertyId}
-      property={block?.property}
+      property={property}
       dndEnabled={false}
       {...props}>
       <Title size="h2" hasText={!!title} color={color} customColor>

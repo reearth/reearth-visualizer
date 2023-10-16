@@ -1,8 +1,6 @@
 import { Dispatch, Fragment, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
 
 import { useItemContext } from "@reearth/beta/components/DragAndDropList/Item";
-import NumberField from "@reearth/beta/components/fields/NumberField";
-import SpacingInput from "@reearth/beta/components/fields/SpacingInput";
 import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
@@ -11,7 +9,7 @@ import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import useHooks from "./hooks";
+import { FieldComponent } from "../hooks/useFieldComponent";
 
 export type ActionItem = {
   icon: string;
@@ -52,8 +50,6 @@ const ActionPanel: React.FC<Props> = ({
 }) => {
   const t = useT();
   const ref = useItemContext();
-
-  const { handlePropertyValueUpdate } = useHooks();
 
   const handleRemove = useCallback(() => {
     onRemove?.();
@@ -125,34 +121,15 @@ const ActionPanel: React.FC<Props> = ({
                 <SettingsContent>
                   {Object.keys(panelSettings).map(fieldId => {
                     const field = panelSettings[fieldId];
+                    const groupId = "panel";
                     return (
-                      <>
-                        <Text size="footnote">{field?.title}</Text>
-                        {field.type === "spacing" ? (
-                          <SpacingInput
-                            value={field?.value}
-                            onChange={handlePropertyValueUpdate(
-                              propertyId,
-                              "panel",
-                              fieldId,
-                              field?.type,
-                            )}
-                          />
-                        ) : field.type === "number" ? (
-                          <NumberField
-                            key={fieldId}
-                            value={field?.value}
-                            onChange={handlePropertyValueUpdate(
-                              propertyId,
-                              "panel",
-                              fieldId,
-                              field?.type,
-                            )}
-                          />
-                        ) : (
-                          <div key={fieldId}>NOT SUPPORTED</div>
-                        )}
-                      </>
+                      <FieldComponent
+                        key={groupId + propertyId}
+                        propertyId={propertyId}
+                        groupId={groupId}
+                        fieldId={fieldId}
+                        field={field}
+                      />
                     );
                   })}
                 </SettingsContent>

@@ -7,8 +7,8 @@ import type { ValueTypes } from "@reearth/beta/utils/value";
 
 const VideoBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
-    () => block?.property?.value as ValueTypes["string"],
-    [block?.property?.value],
+    () => block?.property?.default?.src?.value as ValueTypes["string"],
+    [block?.property?.default?.src?.value],
   );
 
   return (

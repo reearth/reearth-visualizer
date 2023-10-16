@@ -117,7 +117,7 @@ const StoryPanel: React.FC<Props> = ({
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
-            gap={panelSettings.gap}
+            gap={panelSettings?.gap?.value}
             items={storyBlocks}
             getId={item => item.id}
             onItemDrop={async (item, index) => {

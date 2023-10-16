@@ -1,5 +1,3 @@
-import { Spacing } from "@reearth/beta/utils/value";
-
 export type Story = {
   id: string;
   title?: string;
@@ -12,23 +10,16 @@ export type StoryPage = {
   swipeable?: boolean;
   propertyId?: string;
   property?: any;
-  propertySchema?: any;
   blocks: StoryBlock[];
 };
 
-export type StoryBlock<ValueType = any> = {
+export type StoryBlock = {
   id: string;
   name?: string | null;
   pluginId: string;
   extensionId: string;
   propertyId?: string;
-  property?: {
-    title?: Field<string>;
-    padding?: Field<Spacing>;
-    gap?: Field<number>;
-    value?: Field<ValueType>;
-  };
-  propertySchema?: any;
+  property?: any;
 };
 
 export type Field<V = any> = {

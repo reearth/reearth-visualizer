@@ -44,7 +44,7 @@ export default ({
     [property?.panel],
   );
 
-  const title = useMemo(() => property?.title?.title, [property?.title?.title]);
+  const title = useMemo(() => property?.title, [property?.title]);
 
   const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);
 
