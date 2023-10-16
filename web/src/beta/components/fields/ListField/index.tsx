@@ -65,7 +65,7 @@ const ListField: React.FC<Props> = ({
           getId={getId}
           renderItem={({ id, value }) => (
             <Item onClick={() => onSelect(id)} selected={selected === id}>
-              <Text size="xFootnote">{value}</Text>
+              <StyledText size="xFootnote">{value}</StyledText>
             </Item>
           )}
           gap={0}
@@ -110,6 +110,14 @@ const Item = styled.div<{ selected: boolean }>`
   &:hover {
     background: ${({ theme, selected }) => (selected ? theme.select.main : theme.bg[2])};
   }
+`;
+
+const StyledText = styled(Text)`
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const ButtonGroup = styled.div`
