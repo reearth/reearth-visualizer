@@ -21,6 +21,7 @@ import {
   useWidgetAlignEditorActivated,
   selectedWidgetAreaVar,
   isVisualizerReadyVar,
+  useZoomedLayerId,
 } from "@reearth/services/state";
 
 import { convertWidgets, processLayers } from "./convert";
@@ -50,6 +51,7 @@ export default ({
   const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
+  const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
   const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
   const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
@@ -259,6 +261,7 @@ export default ({
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
+    zoomedLayerId,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -273,5 +276,6 @@ export default ({
     onIsCapturingChange,
     handleDropLayer,
     handleMount,
+    zoomToLayer,
   };
 };

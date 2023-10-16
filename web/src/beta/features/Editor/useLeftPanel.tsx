@@ -3,6 +3,7 @@ import { ReactNode, useMemo } from "react";
 import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
+import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
@@ -31,7 +32,7 @@ type Props = {
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
-  onZoomToLayer?: (layerId: string | undefined) => void;
+  onFlyTo?: FlyTo;
 };
 
 export default ({
@@ -51,7 +52,7 @@ export default ({
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
-  onZoomToLayer,
+  onFlyTo,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -66,7 +67,7 @@ export default ({
             onLayerSelect={onLayerSelect}
             onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
-            onZoomToLayer={onZoomToLayer}
+            onFlyTo={onFlyTo}
           />
         );
       case "story":
@@ -96,7 +97,7 @@ export default ({
     onLayerSelect,
     onSceneSettingSelect,
     onDataSourceManagerOpen,
-    onZoomToLayer,
+    onFlyTo,
     selectedStory,
     currentPageId,
     onCurrentPageChange,

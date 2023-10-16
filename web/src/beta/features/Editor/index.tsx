@@ -30,8 +30,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     showWidgetEditor,
     showDataSourceManager,
     currentCamera,
-    zoomedLayerId,
-    zoomToLayer,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
     handleSceneSettingSelect,
@@ -86,7 +84,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerNameUpdate: handleLayerNameUpdate,
     onSceneSettingSelect: handleSceneSettingSelect,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
-    onZoomToLayer: zoomToLayer,
+    onFlyTo: handleFlyTo,
   });
 
   const { rightPanel } = useRightPanel({
@@ -148,8 +146,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 onCurrentPageChange={handleCurrentPageChange}
                 onStoryBlockMove={onStoryBlockMove}
                 onCameraChange={handleCameraUpdate}
-                onZoomToLayer={zoomToLayer}
-                zoomedLayerId={zoomedLayerId}
               />
             </VisualizerWrapper>
           </Center>

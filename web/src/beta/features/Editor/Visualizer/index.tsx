@@ -23,11 +23,9 @@ export type Props = {
   currentPageId?: string;
   isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
-  zoomedLayerId?: string;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
-  onZoomToLayer?: (layerId: string | undefined) => void;
 };
 
 const Visualizer: React.FC<Props> = ({
@@ -41,11 +39,9 @@ const Visualizer: React.FC<Props> = ({
   currentPageId,
   isAutoScrolling,
   installableBlocks,
-  zoomedLayerId,
   onCurrentPageChange,
   onStoryBlockMove,
   onCameraChange,
-  onZoomToLayer,
 }) => {
   const {
     rootLayerId,
@@ -64,6 +60,7 @@ const Visualizer: React.FC<Props> = ({
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
+    zoomedLayerId,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -78,6 +75,7 @@ const Visualizer: React.FC<Props> = ({
     selectWidgetArea,
     handleDropLayer,
     handleMount,
+    zoomToLayer,
   } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id });
 
   const renderInfoboxInsertionPopUp = useCallback<
@@ -129,7 +127,7 @@ const Visualizer: React.FC<Props> = ({
         onBlockDelete={onBlockRemove}
         onBlockInsert={onBlockInsert}
         onLayerDrop={handleDropLayer}
-        onZoomToLayer={onZoomToLayer}
+        onZoomToLayer={zoomToLayer}
         onMount={handleMount}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (

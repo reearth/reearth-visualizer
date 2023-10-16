@@ -4,6 +4,7 @@ import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -17,7 +18,7 @@ type LayersProps = {
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
-  onZoomToLayer?: (layerId: string | undefined) => void;
+  onFlyTo?: FlyTo;
 };
 
 const Layers: React.FC<LayersProps> = ({
@@ -27,7 +28,7 @@ const Layers: React.FC<LayersProps> = ({
   onLayerNameUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
-  onZoomToLayer,
+  onFlyTo,
 }) => {
   const t = useT();
   const [isAddMenuOpen, setAddMenuOpen] = useState(false);
@@ -36,16 +37,16 @@ const Layers: React.FC<LayersProps> = ({
     setAddMenuOpen(prev => !prev);
   }, []);
 
-  const handleZoomLayer = () => {
+  const handleZoomToLayer = () => {
     if (selectedLayerId) {
-      console.log(selectedLayerId);
-      onZoomToLayer?.(selectedLayerId);
+      onFlyTo?.(selectedLayerId);
     }
   };
+
   return (
     <LayerContainer>
       <ActionWrapper>
-        <ZoomLayer onClick={handleZoomLayer}>
+        <ZoomLayer onClick={handleZoomToLayer}>
           <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId} />
         </ZoomLayer>
         <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
