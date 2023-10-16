@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import DragAndDropList, {
@@ -41,9 +41,7 @@ const ListField: React.FC<Props> = ({
   const deleteItem = useCallback(() => {
     if (!selected) return;
     removeItem(selected);
-    // Select the first item in items after removing the item
-    onSelect(items[0]?.id);
-  }, [selected, removeItem, items, onSelect]);
+  }, [selected, removeItem]);
 
   const getId = useCallback(({ id }: ListItem) => {
     return id;
@@ -54,6 +52,16 @@ const ListField: React.FC<Props> = ({
 
     return !items.find(({ id }) => id == selected);
   }, [items, selected, atLeastOneItem]);
+
+  // if atleastOneItem is true, make sure one item is always selected
+  useEffect(() => {
+    if (!atLeastOneItem) return;
+
+    const updateSelected = !selected || !items.find(({ id }) => id === selected);
+    if (updateSelected) {
+      onSelect(items[0]?.id);
+    }
+  }, [selected, items, atLeastOneItem, onSelect]);
 
   return (
     <Property name={name} description={description}>
