@@ -2,8 +2,12 @@ import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
+import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
 import TextInput from "@reearth/beta/components/fields/TextField";
+import ToggleField from "@reearth/beta/components/fields/ToggleField";
+import URLField from "@reearth/beta/components/fields/URLField";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { SettingsFields, ButtonWrapper } from "../common";
 
@@ -65,8 +69,26 @@ const PublicSettingsDetail: React.FC<Props> = ({
             }}
             timeout={0}
           />
-          <div>Description - TextArea Field</div>
-          <div>Thumbnail - Image Upload Field</div>
+          <TextAreaField
+            name={t("Description")}
+            value={localPublicInfo.publicDescription ?? ""}
+            onChange={(publicDescription: string) => {
+              setLocalPublicInfo(s => ({ ...s, publicDescription }));
+            }}
+            minHeight={108}
+          />
+          <ThumbnailField>
+            <URLField
+              name={t("Thumbnail")}
+              fileType="asset"
+              assetType="image"
+              value={localPublicInfo.publicImage}
+              onChange={publicImage => {
+                setLocalPublicInfo(s => ({ ...s, publicImage }));
+              }}
+            />
+            <img src={localPublicInfo.publicImage} />
+          </ThumbnailField>
           <ButtonWrapper>
             <Button
               text={t("Submit")}
@@ -80,8 +102,13 @@ const PublicSettingsDetail: React.FC<Props> = ({
       </Collapse>
       <Collapse title={t("Basic Authorization")}>
         <SettingsFields>
-          <div>Enable basic authorization - Boolean Field</div>
-          {/* TODO: basicAuthUsername & basicAuthPassword can be updated only when isBasicAuthActive is true*/}
+          <ToggleField
+            name={t("Enable Basic Authorization")}
+            checked={localBasicAuthorization.isBasicAuthActive}
+            onChange={isBasicAuthActive => {
+              setBasicAuthorization(s => ({ ...s, isBasicAuthActive }));
+            }}
+          />
           <TextInput
             name={t("Username")}
             value={settingsItem.basicAuthUsername}
@@ -89,6 +116,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
               setBasicAuthorization(s => ({ ...s, basicAuthUsername }));
             }}
             timeout={0}
+            disabled={!localBasicAuthorization.isBasicAuthActive}
           />
           <TextInput
             name={t("Password")}
@@ -97,6 +125,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
               setBasicAuthorization(s => ({ ...s, basicAuthPassword }));
             }}
             timeout={0}
+            disabled={!localBasicAuthorization.isBasicAuthActive}
           />
           <ButtonWrapper>
             <Button
@@ -136,5 +165,19 @@ const PublicSettingsDetail: React.FC<Props> = ({
     </>
   );
 };
+
+const ThumbnailField = styled.div`
+  display: flex;
+  gap: 20px;
+
+  & > img,
+  div {
+    width: 100%;
+  }
+
+  & > img {
+    border-radius: 4px;
+  }
+`;
 
 export default PublicSettingsDetail;
