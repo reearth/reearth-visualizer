@@ -92,9 +92,4 @@ const StyledInput = styled.input`
     border-color: ${({ theme }) => theme.outline.main};
   }
   color-scheme: dark;
- @media (prefers-color-scheme: dark) {
-body {
-    color:#fff;
-    background:#333333
-}
 `;
