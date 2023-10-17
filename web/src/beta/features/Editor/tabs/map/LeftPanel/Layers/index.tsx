@@ -46,9 +46,12 @@ const Layers: React.FC<LayersProps> = ({
   return (
     <LayerContainer>
       <ActionWrapper>
-        <ZoomLayer onClick={handleZoomToLayer}>
-          <StyledIcon icon="zoomToLayer" size={16} disabled={!selectedLayerId} />
-        </ZoomLayer>
+        <StyledIcon
+          onClick={handleZoomToLayer}
+          icon="zoomToLayer"
+          size={16}
+          disabled={!selectedLayerId}
+        />
         <Popover.Provider open={isAddMenuOpen} onOpenChange={toggleAddMenu} placement="bottom-end">
           <Popover.Trigger asChild>
             <AddLayerIcon onClick={toggleAddMenu}>
@@ -111,7 +114,6 @@ const AddLayerIcon = styled.div`
   align-self: flex-end;
   cursor: pointer;
 `;
-const ZoomLayer = styled.div``;
 const StyledIcon = styled(Icon)<{ disabled?: boolean }>`
   padding: 3px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};

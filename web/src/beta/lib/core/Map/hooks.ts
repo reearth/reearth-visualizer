@@ -24,8 +24,6 @@ export default function ({
   sceneProperty,
   timelineManagerRef,
   onLayerSelect,
-  zoomedLayerId,
-  onZoomToLayer,
 }: {
   ref: Ref<MapRef>;
   selectedLayerId?: {
@@ -115,13 +113,6 @@ export default function ({
       selectedLayer.info,
     );
   }, [onLayerSelect, selectedLayer]);
-
-  useEffect(() => {
-    if (zoomedLayerId) {
-      engineRef.current?.lookAtLayer(zoomedLayerId);
-      onZoomToLayer?.(undefined);
-    }
-  }, [zoomedLayerId, onZoomToLayer]);
 
   useTimelineManager({
     init: sceneProperty?.timeline,
