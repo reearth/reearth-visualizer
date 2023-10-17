@@ -31,8 +31,8 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <TextInput type="time" value={value} onChange={setTime} />
         <TextInput type="date" value={value} onChange={setDate} />
+        <TextInput type="time" value={value} onChange={setTime} />
       </Wrapper>
     </Property>
   );
