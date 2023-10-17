@@ -62,6 +62,7 @@ const BlockWrapper: React.FC<Props> = ({
     name,
     isSelected,
     property,
+    isEditable,
     onClick,
   });
 

@@ -1,13 +1,24 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-type Props = {
+import { Spacing } from "@reearth/beta/lib/core/mantle";
+
+import { calculatePaddingValue } from "../../../utils";
+
+export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };
+
+export default ({
+  name,
+  isSelected,
+  property,
+  isEditable,
+  onClick,
+}: {
   name?: string | null;
   isSelected?: boolean;
   property?: any;
+  isEditable?: boolean;
   onClick: (() => void) | undefined;
-};
-
-export default ({ name, isSelected, property, onClick }: Props) => {
+}) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -35,11 +46,23 @@ export default ({ name, isSelected, property, onClick }: Props) => {
     [property],
   );
 
-  const panelSettings = useMemo(() => ({ padding: property?.panel?.padding }), [property?.panel]);
+  const panelSettings = useMemo(
+    () => ({
+      padding: {
+        ...property?.panel?.padding,
+        value: calculatePaddingValue(
+          DEFAULT_BLOCK_PADDING,
+          property?.panel?.padding.value,
+          isEditable,
+        ),
+      },
+    }),
+    [property?.panel, isEditable],
+  );
 
-  const handleEditModeToggle = () => setEditMode?.(em => !em);
+  const handleEditModeToggle = useCallback(() => setEditMode?.(em => !em), []);
 
-  const handleSettingsToggle = () => setShowSettings?.(s => !s);
+  const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
 
   return {
     title,

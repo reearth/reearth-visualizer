@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { Spacing } from "../../mantle";
 import { StoryPage } from "../types";
+import { calculatePaddingValue } from "../utils";
 
 export type { StoryPage } from "../types";
 
+export const DEFAULT_PAGE_GAP = 2;
+export const DEFAULT_PAGE_PADDING: Spacing = { top: 4, bottom: 4, left: 4, right: 4 };
+
 export default ({
   page,
+  isEditable,
   onBlockCreate,
 }: {
   page?: StoryPage;
+  isEditable?: boolean;
   onBlockCreate?: (
     extensionId?: string | undefined,
     pluginId?: string | undefined,
@@ -38,10 +45,17 @@ export default ({
 
   const panelSettings = useMemo(
     () => ({
-      padding: property?.panel?.padding,
-      gap: property?.panel?.gap,
+      padding: {
+        ...property?.panel?.padding,
+        value: calculatePaddingValue(
+          DEFAULT_PAGE_PADDING,
+          property?.panel?.padding?.value,
+          isEditable,
+        ),
+      },
+      gap: property?.panel?.gap ?? DEFAULT_PAGE_GAP,
     }),
-    [property?.panel],
+    [property?.panel, isEditable],
   );
 
   const title = useMemo(() => property?.title, [property?.title]);

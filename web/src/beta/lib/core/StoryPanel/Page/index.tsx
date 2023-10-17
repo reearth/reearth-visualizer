@@ -68,6 +68,7 @@ const StoryPanel: React.FC<Props> = ({
     handleBlockCreate,
   } = useHooks({
     page,
+    isEditable,
     onBlockCreate,
   });
 
@@ -85,10 +86,7 @@ const StoryPanel: React.FC<Props> = ({
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper
-        id={page?.id}
-        padding={panelSettings?.padding?.value}
-        gap={panelSettings?.gap?.value}>
+      <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
         <StoryBlock
           block={{
             id: titleId,
@@ -164,23 +162,15 @@ const StoryPanel: React.FC<Props> = ({
 
 export default StoryPanel;
 
-const Wrapper = styled.div<{ padding?: Spacing; gap?: number; isEditable?: boolean }>`
+const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
   ${({ gap }) => gap && `gap: ${gap}px;`}
 
-  padding-top: ${({ padding, isEditable }) => calculatePadding(padding?.top, isEditable)};
-  padding-bottom: ${({ padding, isEditable }) => calculatePadding(padding?.bottom, isEditable)};
-  padding-left: ${({ padding, isEditable }) => calculatePadding(padding?.left, isEditable)};
-  padding-right: ${({ padding, isEditable }) => calculatePadding(padding?.right, isEditable)};
-
+  padding-top: ${({ padding }) => padding.top + "px"};
+  padding-bottom: ${({ padding }) => padding.bottom + "px"};
+  padding-left: ${({ padding }) => padding.left + "px"};
+  padding-right: ${({ padding }) => padding.right + "px"};
   box-sizing: border-box;
 `;
-
-const calculatePadding = (value?: number, editorMode?: boolean) => {
-  if (!value) {
-    return editorMode ? "4px" : "0px";
-  }
-  return editorMode && value < 4 ? "4px" : value + "px";
-};
