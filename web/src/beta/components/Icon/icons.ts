@@ -52,6 +52,9 @@ import Timeline from "./Icons/timeline.svg";
 import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
+import TimelinePlayRight from "./Icons/timeline-play-right.svg";
+import TimelinePlayLeft from "./Icons/timeline-play-left.svg";
+import Play from "./Icons/play.svg";
 
 // Dashboard
 import Dashboard from "./Icons/dashboard.svg";
@@ -134,6 +137,9 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
+  timelinePlayLeft: TimelinePlayLeft,
+  timelinePlayRight: TimelinePlayRight,
+  play: Play,
   storyPage: StoryPage,
   square: Square,
   swiper: Swiper,
