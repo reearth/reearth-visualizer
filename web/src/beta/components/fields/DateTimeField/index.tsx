@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
+
 import { styled } from "@reearth/services/theme";
 
 import Property from "..";
-import Button from "../../Button";
 import TextInput from "../common/TextInput";
 
 export type Props = {
@@ -12,15 +13,26 @@ export type Props = {
 };
 
 const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) => {
-  const datePlaceholder = "YYYY-MM-DD";
-  const timePlaceholder = "00:00:00";
+  const [time, setTime] = useState<string>();
+  const [date, setDate] = useState<string>();
+
+  useEffect(() => {
+    if (value) {
+      const [dateString, timeString] = value.split(" ");
+      setTime(timeString);
+      setDate(dateString);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (value) onChange?.(date + " " + time);
+  }, [date, onChange, time, value]);
+
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <TextInput value={value} placeholder={datePlaceholder} onChange={onChange} />
-        <Button size="small" icon="calender" />
-        <TextInput value={value} placeholder={timePlaceholder} onChange={onChange} />
-        <Button size="small" icon="clock" />
+        <TextInput type="time" value={value} onChange={setTime} />
+        <TextInput type="date" value={value} onChange={setDate} />
       </Wrapper>
     </Property>
   );

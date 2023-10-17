@@ -11,6 +11,6 @@ export default meta;
 
 type Story = StoryObj<typeof DateTimeField>;
 
-export const ColorFieldInput: Story = {
+export const DateTimeFieldInput: Story = {
   render: () => <DateTimeField name="Date Time Field" onChange={action("onchange")} />,
 };
