@@ -52,6 +52,7 @@ Layer of the data source you want to add.: ''
 layer name: ''
 Layer: レイヤー
 Layers: レイヤー
+All Layers: ''
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
@@ -182,6 +183,12 @@ Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
 Padding settings: 余白設定
+New Camera: ''
+Buttons List: ''
+Camera pos: ''
+Button Title: ''
+Button Color: ''
+Button Background Color: ''
 Add markdown text here: ''
 Drop here: ここにドロップ
 Write your story :): ''
@@ -486,8 +493,11 @@ Failed to delete page.: ''
 Page was successfully deleted.: ''
 Failed to move page.: ''
 Page was successfully moved.: ''
+Failed to update page.: ''
+Successfullly updated a page!: ''
 Failed to add widget.: ウィジェットの作成に失敗しました。
 Failed to update widget.: ウィジェットのアップデートに失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
+Sort By: Sort By

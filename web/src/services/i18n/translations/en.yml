@@ -52,6 +52,7 @@ Layer of the data source you want to add.: Layer of the data source you want to 
 layer name: Layer name
 Layer: Layer
 Layers: Layers
+All Layers: ''
 Outline: Outline
 Add Layer from Resource: ''
 Inspector: Inspector
@@ -201,6 +202,12 @@ Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
 Padding settings: Padding settings
+New Camera: ''
+Buttons List: ''
+Camera pos: ''
+Button Title: ''
+Button Color: ''
+Button Background Color: ''
 Add markdown text here: ''
 Drop here: Drop here
 Write your story :): Write your story :)
@@ -525,8 +532,11 @@ Failed to delete page.: Failed to delete page.
 Page was successfully deleted.: Page was successfully deleted.
 Failed to move page.: Failed to move page.
 Page was successfully moved.: Page was successfully moved.
+Failed to update page.: ''
+Successfullly updated a page!: ''
 Failed to add widget.: Failed to add widget.
 Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
+Sort By: Sort By

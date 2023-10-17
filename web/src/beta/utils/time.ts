@@ -1,6 +1,6 @@
-export const convertTime = (time: string | undefined): Date | undefined => {
+export const convertTime = (time: string | Date | undefined): Date | undefined => {
   if (!time) return;
-
+  if (time instanceof Date) return time;
   try {
     return new Date(time);
   } catch {

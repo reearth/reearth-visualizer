@@ -9,6 +9,7 @@ export default ({ value, onChange }: Params) => {
   const [rgba, setRgba] = useState<RGBA>(tinycolor(value).toRgb());
   const [tempColor, setTempColor] = useState(colorState);
   const [open, setOpen] = useState(false);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -78,7 +79,9 @@ export default ({ value, onChange }: Params) => {
 
   //events
 
-  const handleClick = useCallback(() => setOpen(!open), [open]);
+  const handleClick = useCallback(() => {
+    setOpen(!open);
+  }, [open]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -125,7 +128,7 @@ export default ({ value, onChange }: Params) => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, [handleClose]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     wrapperRef,

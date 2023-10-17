@@ -139,11 +139,6 @@ func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 						"disableTypeConversion": true,
 					},
 				},
-				"properties": "sampleProperties",
-				"defines": map[string]string{
-					"defineKey": "defineValue",
-				},
-				"events": "sampleEvents",
 			},
 		},
 	}
@@ -238,6 +233,16 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("config").Object().
 		Value("data").Object().
 		Value("value").Equal("secondSampleValue")
+
+	// Additional check to ensure 'properties' and 'events' are present
+	res3.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("config").Object().
+		ContainsKey("properties").
+		ContainsKey("events").
+		ContainsKey("defines")
 
 	// Save current config before update
 	savedConfig := res3.Object().
