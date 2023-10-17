@@ -18,7 +18,6 @@ const getPage = (id?: string, pages?: Page[]) => {
 
 export default function ({ sceneId, onFlyTo }: Props) {
   const t = useT();
-  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const {
     useStoriesQuery,
@@ -58,18 +57,24 @@ export default function ({ sceneId, onFlyTo }: Props) {
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
-      const camera = newPage.property.items?.find(i => i.schemaGroup === "cameraAnimation");
-      if (camera && "fields" in camera) {
-        const destination = camera.fields.find(f => f.id === "cameraPosition")?.value as Camera;
+      const cameraFieldGroup = newPage.property.items?.find(
+        i => i.schemaGroup === "cameraAnimation",
+      );
+      const schemaFields = cameraFieldGroup?.schemaFields;
+
+      let destination = schemaFields?.find(sf => sf.id === "cameraPosition")
+        ?.defaultValue as Camera;
+      let duration = schemaFields?.find(sf => sf.id === "cameraDuration")?.defaultValue as number;
+
+      if (cameraFieldGroup && "fields" in cameraFieldGroup) {
+        destination = (cameraFieldGroup.fields.find(f => f.id === "cameraPosition")?.value ??
+          destination) as Camera;
         if (!destination) return;
 
-        const duration = camera.fields.find(f => f.id === "cameraDuration")?.value as number;
-        const delay = (camera.fields.find(f => f.id === "cameraDelay")?.value ?? 0) as number;
+        duration = (cameraFieldGroup.fields.find(f => f.id === "cameraDuration")?.value ??
+          duration) as number;
 
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = setTimeout(() => {
-          onFlyTo({ ...destination }, { duration });
-        }, delay * 1000);
+        onFlyTo({ ...destination }, { duration });
       }
     },
     [selectedStory?.pages, onFlyTo],

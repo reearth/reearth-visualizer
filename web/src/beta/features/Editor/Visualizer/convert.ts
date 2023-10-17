@@ -319,7 +319,9 @@ const processPropertyGroups = (
           key,
           {
             ...fieldMeta,
-            value: schema.defaultValue ?? valueFromGQL(schema.defaultValue, schema.type)?.value,
+            value: schema.defaultValue
+              ? valueFromGQL(schema.defaultValue, schema.type)?.value
+              : undefined,
           },
         ];
       }
