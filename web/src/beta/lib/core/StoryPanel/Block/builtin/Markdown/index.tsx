@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 
-import usePropertyValueUpdate from "../../../hooks/usePropertyValueUpdate";
 import { CommonProps as BlockProps } from "../../types";
+import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import BlockWrapper from "../common/Wrapper";
 
 import MdEditor from "./Editor";

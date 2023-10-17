@@ -1,6 +1,8 @@
 import { Theme } from "@reearth/beta/lib/core/Crust/types";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { Camera } from "@reearth/beta/utils/value";
 
 import { StoryBlock } from "../types";
 
@@ -16,6 +18,7 @@ export type CommonProps = {
   isSelected?: boolean;
   block?: StoryBlock;
   theme?: Theme;
+  currentCamera?: Camera;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: (pageId?: string, id?: string) => void;
@@ -27,4 +30,5 @@ export type CommonProps = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
+  onFlyTo?: FlyTo;
 };
