@@ -7,6 +7,7 @@ import Text from "@reearth/beta/components/Text";
 import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
 import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
 import type { ValueTypes } from "@reearth/beta/utils/value";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
@@ -15,7 +16,7 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
     [block?.property?.items],
   );
   console.log(src);
-
+  const t = useT();
   const [open, setOpen] = useState(false);
   const playSpeedOptions = ["1 min/sec", "0.1 hr/sec", "0.5 hr/sec", "1 hr/sec"];
   const [selected, setSelected] = useState("1 min/sec");
@@ -50,21 +51,21 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
           <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
             <Popover.Trigger asChild>
               <InputWrapper onClick={handlePopOver}>
-                <Select>{selected && selected}</Select>
+                <Select>{selected && t(`${selected}`)}</Select>
                 <ArrowIcon icon="arrowDown" open={open} size={16} />
               </InputWrapper>
             </Popover.Trigger>
             <PickerWrapper attachToRoot>
               {playSpeedOptions?.map((playSpeed, key) => (
-                <Option
+                <SpeedOption
                   size="footnote"
                   key={key}
                   onClick={() => {
                     setSelected(playSpeed);
                     handleClick(playSpeed);
                   }}>
-                  {playSpeed}
-                </Option>
+                  {t(`${playSpeed}`)}
+                </SpeedOption>
               ))}
             </PickerWrapper>
           </Popover.Provider>
@@ -138,7 +139,7 @@ const PickerWrapper = styled(Popover.Content)`
   z-index: 1;
 `;
 
-const Option = styled(Text)`
+const SpeedOption = styled(Text)`
   padding: 4px 12px;
   &:hover {
     background: ${({ theme }) => theme.bg[2]};
