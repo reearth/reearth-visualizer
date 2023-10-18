@@ -6,6 +6,7 @@ import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
 import TextInput from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import URLField from "@reearth/beta/components/fields/URLField";
+import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -87,7 +88,11 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 setLocalPublicInfo(s => ({ ...s, publicImage }));
               }}
             />
-            <img src={localPublicInfo.publicImage} />
+            <StyledImage
+              src={
+                !localPublicInfo.publicImage ? defaultBetaProjectImage : localPublicInfo.publicImage
+              }
+            />
           </ThumbnailField>
           <ButtonWrapper>
             <Button
@@ -167,17 +172,15 @@ const PublicSettingsDetail: React.FC<Props> = ({
 };
 
 const ThumbnailField = styled.div`
-  display: flex;
-  gap: 20px;
+  grid-template-rows: 100%;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 20px;
+  display: inline-grid;
+`;
 
-  & > img,
-  div {
-    width: 100%;
-  }
-
-  & > img {
-    border-radius: 4px;
-  }
+const StyledImage = styled.img`
+  width: 100%;
+  border-radius: 4px;
 `;
 
 export default PublicSettingsDetail;

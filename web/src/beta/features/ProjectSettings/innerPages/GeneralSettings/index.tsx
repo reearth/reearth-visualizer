@@ -7,6 +7,7 @@ import TextInput from "@reearth/beta/components/fields/TextField";
 import URLField from "@reearth/beta/components/fields/URLField";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
+import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -104,7 +105,7 @@ const GeneralSettings: React.FC<Props> = ({
                   value={localImageUrl}
                   onChange={setLocalImageUrl}
                 />
-                <img src={localImageUrl} />
+                <StyledImage src={!localImageUrl ? defaultBetaProjectImage : localImageUrl} />
               </ThumbnailField>
               <ButtonWrapper>
                 <Button
@@ -311,15 +312,13 @@ const Divider = styled.div`
 `;
 
 const ThumbnailField = styled.div`
-  display: flex;
-  gap: 20px;
+  grid-template-rows: 100%;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 20px;
+  display: inline-grid;
+`;
 
-  & > img,
-  div {
-    width: 100%;
-  }
-
-  & > img {
-    border-radius: 4px;
-  }
+const StyledImage = styled.img`
+  width: 100%;
+  border-radius: 4px;
 `;
