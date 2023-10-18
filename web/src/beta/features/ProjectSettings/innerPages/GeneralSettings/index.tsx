@@ -53,8 +53,9 @@ const GeneralSettings: React.FC<Props> = ({
     onUpdateProject({
       name: localName,
       description: localDescription,
+      imageUrl: localImageUrl,
     });
-  }, [localName, localDescription, onUpdateProject]);
+  }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
   const [archiveModelVisible, setArchiveModelVisible] = useState(false);
   const [archiveInputName, setArchiveInputName] = useState("");
