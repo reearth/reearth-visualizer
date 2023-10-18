@@ -3,28 +3,38 @@ import { MouseEvent, useCallback, useState } from "react";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type {
+  LayerNameUpdateProps,
+  LayerVisibilityUpdateProps,
+} from "@reearth/beta/features/Editor/useLayers";
+import { styled } from "@reearth/services/theme";
 
 type LayerItemProps = {
   id: string;
   layerTitle: string;
   isSelected: boolean;
+  visible: boolean;
   onDelete: () => void;
   onSelect: () => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
 };
 
 const LayerItem = ({
   id,
   layerTitle,
   isSelected,
+  visible,
   onDelete,
   onSelect,
   onLayerNameUpdate,
+  onLayerVisibilityUpate,
 }: LayerItemProps) => {
   const [isActionOpen, setActionOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newValue, setNewValue] = useState(layerTitle);
+  const [isVisible, setIsVisible] = useState(visible);
+  const [value, setValue] = useState(isVisible ? "V" : "");
 
   const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
 
@@ -59,6 +69,13 @@ const LayerItem = ({
     [layerTitle, newValue, handleTitleSubmit],
   );
 
+  const handleUpdateVisibility = useCallback(() => {
+    const newVisibility = !isVisible;
+    onLayerVisibilityUpate({ layerId: id, visible: newVisibility });
+    setIsVisible(newVisibility);
+    setValue(isVisible ? "" : "V");
+  }, [id, isVisible, onLayerVisibilityUpate]);
+
   return (
     <ListItem
       isSelected={isSelected}
@@ -91,8 +108,27 @@ const LayerItem = ({
       ) : (
         layerTitle
       )}
+      <HideLayer onClick={handleUpdateVisibility}>{value}</HideLayer>
     </ListItem>
   );
 };
 
 export default LayerItem;
+
+const HideLayer = styled.div`
+  min-width: 10px;
+  min-height: 20px;
+  padding: 3px 6px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1.5px solid ${({ theme }) => theme.bg[1]};
+  color: ${({ theme }) => theme.content.strong};
+  background: ${({ theme }) => theme.bg[2]};
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  :hover {
+    background: ${({ theme }) => theme.bg[2]};
+  }
+`;

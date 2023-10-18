@@ -3,7 +3,10 @@ import { useCallback, useState } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type {
+  LayerNameUpdateProps,
+  LayerVisibilityUpdateProps,
+} from "@reearth/beta/features/Editor/useLayers";
 import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -18,6 +21,7 @@ type LayersProps = {
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onFlyTo?: FlyTo;
 };
 
@@ -28,6 +32,7 @@ const Layers: React.FC<LayersProps> = ({
   onLayerNameUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
   onFlyTo,
 }) => {
   const t = useT();
@@ -87,10 +92,12 @@ const Layers: React.FC<LayersProps> = ({
           key={layer.id}
           id={layer.id}
           layerTitle={layer.title}
+          visible={layer.visible}
           isSelected={layer.id === selectedLayerId}
           onDelete={() => onLayerDelete(layer.id)}
           onSelect={() => onLayerSelect(layer.id)}
           onLayerNameUpdate={onLayerNameUpdate}
+          onLayerVisibilityUpate={onLayerVisibilityUpate}
         />
       ))}
     </LayerContainer>
