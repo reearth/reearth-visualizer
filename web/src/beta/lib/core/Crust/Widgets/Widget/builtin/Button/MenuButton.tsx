@@ -4,6 +4,7 @@ import { usePopper } from "react-popper";
 import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
+import type { Field } from "@reearth/beta/lib/core/StoryPanel/types";
 import { styled, metricsSizes, mask } from "@reearth/services/theme";
 
 import type { Camera, FlyToDestination, Theme } from "../../types";
@@ -11,24 +12,24 @@ import { Visible } from "../../useVisible";
 
 export type Button = {
   id: string;
-  buttonType?: "menu" | "link" | "camera";
-  buttonTitle?: string;
-  buttonStyle?: "text" | "icon" | "texticon";
-  buttonIcon?: string;
-  buttonLink?: string;
-  buttonColor?: string;
-  buttonBgcolor?: string;
-  buttonCamera?: Camera;
-  visible: Visible;
+  buttonType?: Field<"menu" | "link" | "camera">;
+  buttonTitle?: Field<string>;
+  buttonStyle?: Field<"text" | "icon" | "texticon">;
+  buttonIcon?: Field<string>;
+  buttonLink?: Field<string>;
+  buttonColor?: Field<string>;
+  buttonBgcolor?: Field<string>;
+  buttonCamera?: Field<Camera>;
+  visible: Field<Visible>;
 };
 
 export type MenuItem = {
   id: string;
-  menuTitle?: string;
-  menuIcon?: string;
-  menuType?: "link" | "camera" | "border";
-  menuLink?: string;
-  menuCamera?: Camera;
+  menuTitle?: Field<string>;
+  menuIcon?: Field<string>;
+  menuType?: Field<"link" | "camera" | "border">;
+  menuLink?: Field<string>;
+  menuCamera?: Field<Camera>;
 };
 
 export type Props = {
@@ -92,18 +93,24 @@ export default function MenuButton({
 
   const handleClick = useCallback(
     (b: Button | MenuItem) => () => {
-      const t = "buttonType" in b ? b.buttonType : "menuType" in b ? b.menuType : undefined;
+      const t =
+        "buttonType" in b ? b.buttonType?.value : "menuType" in b ? b.menuType?.value : undefined;
       if (t === "menu") {
         setVisibleMenuButton(!visibleMenuButton);
         return;
       } else if (t === "camera") {
         const camera =
-          "buttonCamera" in b ? b.buttonCamera : "menuCamera" in b ? b.menuCamera : undefined;
+          "buttonCamera" in b
+            ? b.buttonCamera?.value
+            : "menuCamera" in b
+            ? b.menuCamera?.value
+            : undefined;
         if (camera) {
           onFlyTo?.(camera, { duration: 2 });
         }
       } else {
-        let link = "buttonLink" in b ? b.buttonLink : "menuLink" in b ? b.menuLink : undefined;
+        let link =
+          "buttonLink" in b ? b.buttonLink?.value : "menuLink" in b ? b.menuLink?.value : undefined;
         if (link) {
           const splitLink = link?.split("/");
           if (splitLink?.[0] !== "http:" && splitLink?.[0] !== "https:") {
@@ -124,17 +131,16 @@ export default function MenuButton({
         button={b}
         onClick={b && handleClick(b)}
         ref={referenceElement}>
-        {(b?.buttonStyle === "icon" || b?.buttonStyle === "texticon") && b?.buttonIcon && (
-          <Icon icon={b?.buttonIcon} size={20} />
-        )}
-        {b?.buttonStyle !== "icon" && (
+        {(b?.buttonStyle?.value === "icon" || b?.buttonStyle?.value === "texticon") &&
+          b?.buttonIcon && <Icon icon={b?.buttonIcon?.value} size={20} />}
+        {b?.buttonStyle?.value !== "icon" && (
           <Text
             size="footnote"
             customColor
             otherProperties={{
-              marginLeft: b?.buttonIcon && b?.buttonStyle === "texticon" ? "5px" : undefined,
+              marginLeft: b?.buttonIcon && b?.buttonStyle?.value === "texticon" ? "5px" : undefined,
             }}>
-            {b?.buttonTitle}
+            {b?.buttonTitle?.value}
           </Text>
         )}
       </Button>
@@ -150,14 +156,14 @@ export default function MenuButton({
                 button={b}
                 onClick={handleClick(i)}>
                 <Flex align="center">
-                  {i.menuIcon && <Icon icon={i.menuIcon} size={20} />}
+                  {i.menuIcon && <Icon icon={i.menuIcon?.value} size={20} />}
                   <Text
                     size="footnote"
                     customColor
                     otherProperties={{
-                      marginLeft: i.menuIcon ? "5px" : undefined,
+                      marginLeft: i.menuIcon?.value ? "5px" : undefined,
                     }}>
-                    {i.menuTitle}
+                    {i.menuTitle?.value}
                   </Text>
                 </Flex>
               </MenuItem>
@@ -173,7 +179,8 @@ const Wrapper = styled.div<{ button?: Button; publishedTheme?: Theme }>`
   border-radius: ${metricsSizes["xs"]}px;
   &,
   > div {
-    background-color: ${({ button, publishedTheme }) => button?.buttonBgcolor || publishedTheme};
+    background-color: ${({ button, publishedTheme }) =>
+      button?.buttonBgcolor?.value || publishedTheme};
   }
 `;
 
@@ -185,14 +192,14 @@ const Button = styled.div<{ button?: Button; publishedTheme?: Theme }>`
   padding: 0 10px;
   line-height: 35px;
   box-sizing: border-box;
-  color: ${({ button, publishedTheme }) => button?.buttonColor || publishedTheme?.mainText};
+  color: ${({ button, publishedTheme }) => button?.buttonColor?.value || publishedTheme?.mainText};
   cursor: pointer;
   align-items: center;
   user-select: none;
 
   &:hover {
     background: ${({ publishedTheme, button }) =>
-      mask(button?.buttonBgcolor) || publishedTheme?.mask};
+      mask(button?.buttonBgcolor?.value) || publishedTheme?.mask};
   }
 `;
 
@@ -207,7 +214,7 @@ const MenuWrapper = styled.div`
 const MenuInnerWrapper = styled.div<{ button?: Button; publishedTheme?: Theme }>`
   min-width: 35px;
   width: 100%;
-  color: ${({ button, publishedTheme }) => button?.buttonColor || publishedTheme?.mainText};
+  color: ${({ button, publishedTheme }) => button?.buttonColor?.value || publishedTheme?.mainText};
   white-space: nowrap;
 `;
 
@@ -216,20 +223,24 @@ const MenuItem = styled(Flex)<{
   button?: Button;
   publishedTheme?: Theme;
 }>`
-  min-height: ${({ item }) => (item?.menuType === "border" ? null : "25px")};
-  border-radius: ${({ item }) => (item?.menuType === "border" ? null : "3px")};
-  padding: ${({ item }) => (item?.menuType === "border" ? "0 10px" : "2px 10px")};
-  cursor: ${({ item }) => (item?.menuType === "border" ? null : "pointer")};
+  min-height: ${({ item }) => (item?.menuType?.value === "border" ? null : "25px")};
+  border-radius: ${({ item }) => (item?.menuType?.value === "border" ? null : "3px")};
+  padding: ${({ item }) => (item?.menuType?.value === "border" ? "0 10px" : "2px 10px")};
+  cursor: ${({ item }) => (item?.menuType?.value === "border" ? null : "pointer")};
   background: ${({ publishedTheme, item, button }) =>
-    item?.menuType === "border" ? mask(button?.buttonBgcolor) || publishedTheme?.mask : null};
+    item?.menuType?.value === "border"
+      ? mask(button?.buttonBgcolor?.value) || publishedTheme?.mask
+      : null};
   border-bottom: ${({ item, publishedTheme, button }) =>
-    item?.menuType === "border"
-      ? `1px solid ${button?.buttonColor || publishedTheme?.weakText}`
+    item?.menuType?.value === "border"
+      ? `1px solid ${button?.buttonColor?.value || publishedTheme?.weakText}`
       : null};
   user-select: none;
 
   &:hover {
     background: ${({ publishedTheme, item, button }) =>
-      item?.menuType === "border" ? null : mask(button?.buttonBgcolor) || publishedTheme?.mask};
+      item?.menuType?.value === "border"
+        ? null
+        : mask(button?.buttonBgcolor?.value) || publishedTheme?.mask};
   }
 `;

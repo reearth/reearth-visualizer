@@ -1,15 +1,15 @@
 import { Dispatch, Fragment, MouseEvent, SetStateAction, useCallback, useMemo } from "react";
 
 import { useItemContext } from "@reearth/beta/components/DragAndDropList/Item";
-import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import Icon, { Icons } from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
-import type { Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import { FieldComponent } from "../hooks/useFieldComponent";
 
 export type ActionItem = {
   icon: string;
@@ -25,7 +25,7 @@ type Props = {
   showSettings?: boolean;
   showPadding?: boolean;
   propertyId?: string;
-  panelSettings?: Item;
+  panelSettings?: any;
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
@@ -56,10 +56,12 @@ const ActionPanel: React.FC<Props> = ({
     onSettingsToggle?.();
   }, [onRemove, onSettingsToggle]);
 
+  const settingsTitle = useMemo(() => t("Spacing settings"), [t]);
+
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
       {
-        name: t("Padding settings"),
+        name: settingsTitle,
         icon: "padding",
         onClick: () => setShowPadding(true),
       },
@@ -72,7 +74,7 @@ const ActionPanel: React.FC<Props> = ({
       });
     }
     return menuItems;
-  }, [t, setShowPadding, onRemove, handleRemove]);
+  }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
@@ -111,13 +113,25 @@ const ActionPanel: React.FC<Props> = ({
             <SettingsDropdown>
               <SettingsHeading>
                 <Text size="footnote" customColor>
-                  {panelSettings?.title}
+                  {settingsTitle}
                 </Text>
                 <CancelIcon icon="cancel" size={14} onClick={() => setShowPadding(false)} />
               </SettingsHeading>
               {propertyId && panelSettings && (
                 <SettingsContent>
-                  <FieldComponents propertyId={propertyId} item={panelSettings} />
+                  {Object.keys(panelSettings).map(fieldId => {
+                    const field = panelSettings[fieldId];
+                    const groupId = "panel";
+                    return (
+                      <FieldComponent
+                        key={groupId + propertyId}
+                        propertyId={propertyId}
+                        groupId={groupId}
+                        fieldId={fieldId}
+                        field={field}
+                      />
+                    );
+                  })}
                 </SettingsContent>
               )}
             </SettingsDropdown>

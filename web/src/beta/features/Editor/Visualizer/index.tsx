@@ -52,6 +52,7 @@ const Visualizer: React.FC<Props> = ({
     clusters,
     layers,
     widgets,
+    story,
     tags,
     selectedLayerId,
     blocks,
@@ -132,7 +133,7 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
-            selectedStory={selectedStory}
+            selectedStory={story}
             currentPageId={currentPage?.id}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}

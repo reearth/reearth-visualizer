@@ -92,6 +92,13 @@ New Page: New Page
 Page: Page
 Page Settings: Page Settings
 Align System: Align System
+Padding top: Padding top
+Padding right: Padding right
+Padding bottom: Padding bottom
+Padding left: Padding left
+Gap spacing: Gap spacing
+Align centered: Align centered
+Background color: Background color
 Widget Manager: Widget Manager
 Container Settings: Container Settings
 Angle: Angle
@@ -100,6 +107,7 @@ Wide: Wide
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
 Select Image: Select Image
 Select: Select
+Sort By: Sort By
 No assets match your search.: No assets match your search.
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
   You haven't uploaded any assets yet. Click the upload button above and select
@@ -201,8 +209,11 @@ Playback timeline: Playback timeline
 Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
-Padding settings: Padding settings
-Add markdown text here: ''
+Spacing settings: Spacing settings
+New Camera: New Camera
+Buttons List: Buttons List
+Add markdown text here: Add markdown text here
+Unsupported field type: Unsupported field type
 Drop here: Drop here
 Write your story :): Write your story :)
 Normal: Normal
@@ -372,7 +383,7 @@ You are deleting the infobox and all its contents. Are you sure you want to do t
   that?
 List: List
 Padding: ''
-Gap Spacing: ''
+Gap Spacing: Gap Spacing
 Align Center: ''
 Enable Editor Mode: Enable Editor Mode
 Close: Close
@@ -533,4 +544,3 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
-Sort By: Sort By

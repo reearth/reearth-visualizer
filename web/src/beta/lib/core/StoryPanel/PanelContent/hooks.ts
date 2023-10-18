@@ -1,8 +1,8 @@
 import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import type { Page } from "../hooks";
+import type { StoryPage } from "../hooks";
 
-export type { Page } from "../hooks";
+export type { StoryPage } from "../hooks";
 
 export const PAGES_ELEMENT_ID = "story-page-content";
 
@@ -14,7 +14,7 @@ export default ({
   onBlockDelete,
   onCurrentPageChange,
 }: {
-  pages?: Page[];
+  pages?: StoryPage[];
   selectedPageId?: string;
   isAutoScrolling?: MutableRefObject<boolean>;
   onBlockCreate?: (
