@@ -1,7 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
 
-import type { Item } from "@reearth/services/api/propertyApi/utils";
-
 import ActionPanel, { type ActionPosition } from "../../../../ActionPanel";
 
 import useHooks from "./hooks";
@@ -16,7 +14,7 @@ type Props = {
   showPadding?: boolean;
   editMode?: boolean;
   propertyId?: string;
-  panelSettings?: Item;
+  panelSettings?: any;
   dndEnabled?: boolean;
   position?: ActionPosition;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
