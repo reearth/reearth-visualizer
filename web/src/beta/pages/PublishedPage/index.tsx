@@ -1,6 +1,6 @@
-import Published from "@reearth/classic/components/organisms/Published";
-import CorePublished from "@reearth/classic/components/organisms/Published/core";
-import { useCore } from "@reearth/classic/util/use-core";
+import { useCore } from "@reearth/beta/utils/use-core";
+import ClassicPublished from "@reearth/classic/components/organisms/Published";
+import ClassicCorePublished from "@reearth/classic/components/organisms/Published/core";
 import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
 
 const PublishedPage: React.FC<{
@@ -8,11 +8,17 @@ const PublishedPage: React.FC<{
   default?: boolean;
   alias?: string;
 }> = ({ alias }) => {
-  const core = useCore("published", alias);
+  const { isCore, isGisProject } = useCore("published", alias);
 
   return (
     <DndProvider>
-      {core ? <CorePublished alias={alias} /> : <Published alias={alias} />}
+      {isGisProject ? (
+        <div>Published beta</div>
+      ) : isCore ? (
+        <ClassicCorePublished alias={alias} />
+      ) : (
+        <ClassicPublished alias={alias} />
+      )}
     </DndProvider>
   );
 };
