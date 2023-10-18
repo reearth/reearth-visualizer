@@ -243,6 +243,9 @@ export const processProperty = (
       .map(([key, value]) => {
         const { schema, orig, parent } = value;
         if (!orig && !parent) {
+          if (schema.isList) {
+            return [key, undefined];
+          }
           return [
             key,
             processPropertyGroups(schema, undefined, undefined, linkedDatasetId, datasets),

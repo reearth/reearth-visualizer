@@ -1,6 +1,6 @@
 import { useReactiveVar } from "@apollo/client";
 import { debounce } from "lodash-es";
-import { useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import CameraField from "@reearth/beta/components/fields/CameraField";
@@ -13,14 +13,15 @@ import { useT } from "@reearth/services/i18n";
 import { currentCameraVar } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
+import type { Field } from "../../../types";
 import { BlockContext } from "../common/Wrapper";
 
-type CameraBlock = {
+export type CameraBlock = {
   id: string;
-  title?: string;
-  color?: string;
-  bgColor?: string;
-  cameraPosition?: Camera;
+  title?: Field<string>;
+  color?: Field<string>;
+  bgColor?: Field<string>;
+  cameraPosition?: Field<Camera>;
 };
 
 export type Props = {
@@ -51,24 +52,28 @@ const CameraBlockEditor: React.FC<Props> = ({
 
   const visualizer = useVisualizer();
   const currentCamera = useReactiveVar(currentCameraVar);
+
   const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
 
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
-  const handleClick = (itemId: string) => {
-    if (inEditor) {
-      setSelected(itemId);
-      return;
-    }
-    const item = items.find(i => i.id === itemId);
-    if (!item?.cameraPosition) return;
-    handleFlyTo?.(item.cameraPosition);
-  };
+  const handleClick = useCallback(
+    (itemId: string) => {
+      if (inEditor) {
+        setSelected(itemId);
+        return;
+      }
+      const item = items.find(i => i.id === itemId);
+      if (!item?.cameraPosition?.value) return;
+      handleFlyTo?.(item.cameraPosition?.value);
+    },
+    [items, inEditor, handleFlyTo],
+  );
 
   const debounceOnUpdate = useMemo(() => debounce(onUpdate, 500), [onUpdate]);
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, value: title ?? "New Camera" })),
+    () => items.map(({ id, title }) => ({ id, value: title?.value ?? "New Camera" })),
     [items],
   );
 
@@ -79,11 +84,11 @@ const CameraBlockEditor: React.FC<Props> = ({
           return (
             <StyledButton
               key={id}
-              color={color}
-              bgColor={bgColor}
+              color={color?.value}
+              bgColor={bgColor?.value}
               icon="cameraButtonStoryBlock"
               buttonType="primary"
-              text={title ?? t("New Camera")}
+              text={title?.value ?? t("New Camera")}
               size="small"
               onClick={() => handleClick(id)}
             />
@@ -104,25 +109,29 @@ const CameraBlockEditor: React.FC<Props> = ({
           />
           <FieldGroup disabled={!editorProperties}>
             <CameraField
-              name={t("Camera pos")}
-              value={editorProperties?.cameraPosition}
+              name={editorProperties?.cameraPosition?.title}
+              description={editorProperties?.cameraPosition?.description}
+              value={editorProperties?.cameraPosition?.value}
               onSave={value => onUpdate(selected, "cameraPosition", "camera", value as Camera)}
               currentCamera={currentCamera}
               onFlyTo={handleFlyTo}
             />
             <TextField
-              name={t("Button Title")}
-              value={editorProperties?.title}
+              name={editorProperties?.title?.title}
+              description={editorProperties?.title?.description}
+              value={editorProperties?.title?.value}
               onChange={value => debounceOnUpdate(selected, "title", "string", value)}
             />
             <ColorField
-              name={t("Button Color")}
-              value={editorProperties?.color}
+              name={editorProperties?.color?.title}
+              description={editorProperties?.color?.description}
+              value={editorProperties?.color?.value}
               onChange={value => debounceOnUpdate(selected, "color", "string", value)}
             />
             <ColorField
-              name={t("Button Background Color")}
-              value={editorProperties?.bgColor}
+              name={editorProperties?.bgColor?.title}
+              description={editorProperties?.bgColor?.description}
+              value={editorProperties?.bgColor?.value}
               onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
             />
           </FieldGroup>

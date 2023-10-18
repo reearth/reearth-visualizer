@@ -10,7 +10,7 @@ import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import URLField from "@reearth/beta/components/fields/URLField";
 import { useT } from "@reearth/services/i18n";
 
-import usePropertyUpdateHook from "../hooks/usePropertyValueUpdate";
+import usePropertyUpdateHook from "../Block/builtin/common/useActionPropertyApi";
 
 export const FieldComponent = ({
   propertyId,
