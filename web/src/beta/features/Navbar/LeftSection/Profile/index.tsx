@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Icon, { Icons } from "@reearth/beta/components/Icon";
@@ -52,23 +52,25 @@ const Menu: React.FC<MenuProps> = ({ label, items, nested }) => {
         </InputWrapper>
       </Popover.Trigger>
       <PickerWrapper attachToRoot>
-        {items?.map(({ text: value, linkTo, breakpoint, icon, onClick, items }, index) =>
-          breakpoint ? (
-            <Spacer key={index} />
-          ) : items ? (
-            <Menu label={value} items={items} nested />
-          ) : linkTo ? (
-            <StyledLinkButton to={linkTo}>
-              {icon && <StyledIcon icon={icon} size={20} />}
-              {value}
-            </StyledLinkButton>
-          ) : (
-            <Option size="body" key={index} onClick={onClick}>
-              {icon && <StyledIcon icon={icon} size={20} />}
-              {value}
-            </Option>
-          ),
-        )}
+        {items?.map(({ text: value, linkTo, breakpoint, icon, onClick, items }, index) => (
+          <Fragment key={index}>
+            {breakpoint ? (
+              <Spacer />
+            ) : items ? (
+              <Menu label={value} items={items} nested />
+            ) : linkTo ? (
+              <StyledLinkButton to={linkTo}>
+                {icon && <StyledIcon icon={icon} size={20} />}
+                {value}
+              </StyledLinkButton>
+            ) : (
+              <Option size="body" onClick={onClick}>
+                {icon && <StyledIcon icon={icon} size={20} />}
+                {value}
+              </Option>
+            )}
+          </Fragment>
+        ))}
       </PickerWrapper>
     </Popover.Provider>
   );

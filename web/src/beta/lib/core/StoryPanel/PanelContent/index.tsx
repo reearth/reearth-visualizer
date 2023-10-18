@@ -6,10 +6,10 @@ import { styled } from "@reearth/services/theme";
 
 import StoryPage from "../Page";
 
-import useHooks, { PAGES_ELEMENT_ID, type Page } from "./hooks";
+import useHooks, { PAGES_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
 
 export type Props = {
-  pages?: Page[];
+  pages?: StoryPageType[];
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
