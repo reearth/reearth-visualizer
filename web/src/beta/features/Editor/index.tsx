@@ -85,6 +85,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerNameUpdate: handleLayerNameUpdate,
     onSceneSettingSelect: handleSceneSettingSelect,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
+    onFlyTo: handleFlyTo,
   });
 
   const { rightPanel } = useRightPanel({
