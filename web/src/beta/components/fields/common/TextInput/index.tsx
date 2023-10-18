@@ -1,14 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { HTMLInputTypeAttribute, useCallback, useEffect, useRef, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
-//import "./index.module.css";
 
 export type Props = {
   value?: string;
   placeholder?: string;
   timeout?: number;
   autoFocus?: boolean;
-  type?: string;
+  type?: HTMLInputTypeAttribute;
   onChange?: (text: string) => void;
   onBlur?: () => void;
   onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
