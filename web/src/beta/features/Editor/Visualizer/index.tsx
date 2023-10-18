@@ -46,12 +46,12 @@ const Visualizer: React.FC<Props> = ({
   const {
     rootLayerId,
     selectedBlockId,
-    zoomedLayerId,
     sceneProperty,
     pluginProperty,
     clusters,
     layers,
     widgets,
+    story,
     tags,
     selectedLayerId,
     blocks,
@@ -61,6 +61,7 @@ const Visualizer: React.FC<Props> = ({
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
+    zoomedLayerId,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -74,8 +75,8 @@ const Visualizer: React.FC<Props> = ({
     onWidgetAlignSystemUpdate,
     selectWidgetArea,
     handleDropLayer,
-    zoomToLayer,
     handleMount,
+    zoomToLayer,
   } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, currentPage, showStoryPanel });
 
   const renderInfoboxInsertionPopUp = useCallback<
@@ -132,7 +133,7 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
-            selectedStory={selectedStory}
+            selectedStory={story}
             currentPageId={currentPage?.id}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { HTMLInputTypeAttribute, useCallback, useEffect, useRef, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -7,6 +7,7 @@ export type Props = {
   placeholder?: string;
   timeout?: number;
   autoFocus?: boolean;
+  type?: HTMLInputTypeAttribute;
   onChange?: (text: string) => void;
   onBlur?: () => void;
   onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -22,6 +23,7 @@ const TextInput: React.FC<Props> = ({
   onBlur,
   onExit,
   disabled,
+  type,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const timeoutRef = useRef<NodeJS.Timeout>();
@@ -65,6 +67,7 @@ const TextInput: React.FC<Props> = ({
 
   return (
     <StyledInput
+      type={type}
       value={currentValue ?? ""}
       placeholder={placeholder}
       autoFocus={autoFocus}
@@ -92,4 +95,5 @@ const StyledInput = styled.input`
   :focus {
     border-color: ${({ theme }) => theme.outline.main};
   }
+  color-scheme: dark;
 `;

@@ -1839,6 +1839,7 @@ extensions:
               title: Duration
               suffix: s
               min: 0
+              defaultValue: 2
             - id: cameraDelay
               type: number
               title: Delay
@@ -2033,10 +2034,12 @@ extensions:
               ui: padding
               min: 0
               max: 100
+              defaultValue: { top: 20, bottom: 20, left: 20, right: 20 }
             - id: gap
               title: Gap
               type: number
               suffix: px
+              defaultValue: 20
         - id: title
           title: Title Setting
           fields:
@@ -2058,6 +2061,7 @@ extensions:
               title: Duration
               suffix: s
               min: 0
+              defaultValue: 2
             - id: cameraDelay
               type: number
               title: Delay

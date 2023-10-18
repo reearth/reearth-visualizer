@@ -1,5 +1,7 @@
 import { ValueTypes, ValueType } from "@reearth/beta/utils/value";
-import { type Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
+
+import type { Spacing } from "../mantle";
 
 export const getFieldValue = (items: Item[], fieldId: string, fieldGroup?: string) => {
   const d = items.find(i => i.schemaGroup === (fieldGroup ?? "default")) ?? items[0];
@@ -14,4 +16,30 @@ export const getFieldValue = (items: Item[], fieldId: string, fieldGroup?: strin
           return obj;
         }, {}),
       }));
+};
+
+export const calculatePaddingValue = (
+  defaultValue: Spacing,
+  value?: Spacing,
+  editorMode?: boolean,
+) => {
+  const calculateValue = (position: keyof Spacing, v?: number): { [key: string]: number } => {
+    if (!v) {
+      return {
+        [position]: editorMode ? defaultValue[position] : 0,
+      };
+    }
+    return {
+      [position]: editorMode && v < defaultValue[position] ? defaultValue[position] : v,
+    };
+  };
+
+  return value
+    ? Object.assign(
+        {},
+        ...Object.keys(value).map(p =>
+          calculateValue(p as keyof Spacing, value[p as keyof Spacing]),
+        ),
+      )
+    : defaultValue;
 };
