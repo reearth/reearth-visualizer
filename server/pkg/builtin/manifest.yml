@@ -2300,17 +2300,6 @@ extensions:
             - id: cameraPosition
               type: camera
               title: Camera position
-            - id: cameraDuration
-              type: number
-              title: Duration
-              suffix: s
-              min: 0
-              defaultValue: 2
-            - id: cameraDelay
-              type: number
-              title: Delay
-              suffix: s
-              min: 0
         - id: timePoint
           title: Time Point Setting
           fields:
