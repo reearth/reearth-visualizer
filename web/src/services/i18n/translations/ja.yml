@@ -96,6 +96,7 @@ Wide: 広い
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
 Select Image: イメージ選択
 Select: 選択
+Sort By: Sort By
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
 Create New Workspace: 新規ワークスペース作成
@@ -182,16 +183,13 @@ Playback timeline: タイムラインを逆再生する
 Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
-Padding settings: 余白設定
-New Camera: ''
-Buttons List: ''
-Camera pos: ''
-Button Title: ''
-Button Color: ''
-Button Background Color: ''
+Spacing settings: Spacing設定
+New Camera: 新しいカメラ
+Buttons List: ボタン一覧
 Add markdown text here: ''
+Unsupported field type: ''
 Drop here: ここにドロップ
-Write your story :): ''
+Write your story :): 話を書きましょう!
 Normal: ''
 Heading 1: ''
 Heading 2: ''
@@ -209,9 +207,9 @@ Right Align: ''
 Outdent: ''
 Indent: ''
 Bulleted List: ''
-Insert Code Block: ''
-Insert Link: ''
-Text Color: ''
+Insert Code Block: コードブロック組み込み
+Insert Link: リンク組み込み
+Text Color: テキスト色
 Background Color: 背景色
 Strikethrough: ''
 Subscript: ''
@@ -500,4 +498,3 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
-Sort By: Sort By

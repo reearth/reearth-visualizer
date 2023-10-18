@@ -100,6 +100,7 @@ Wide: Wide
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
 Select Image: Select Image
 Select: Select
+Sort By: Sort By
 No assets match your search.: No assets match your search.
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
   You haven't uploaded any assets yet. Click the upload button above and select
@@ -201,14 +202,11 @@ Playback timeline: Playback timeline
 Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
-Padding settings: Padding settings
-New Camera: ''
-Buttons List: ''
-Camera pos: ''
-Button Title: ''
-Button Color: ''
-Button Background Color: ''
-Add markdown text here: ''
+Spacing settings: Spacing settings
+New Camera: New Camera
+Buttons List: Buttons List
+Add markdown text here: Add markdown text here
+Unsupported field type: Unsupported field type
 Drop here: Drop here
 Write your story :): Write your story :)
 Normal: Normal
@@ -539,4 +537,3 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
-Sort By: Sort By
