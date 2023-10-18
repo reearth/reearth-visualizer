@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 
-import type { Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Story } from "@reearth/beta/lib/core/StoryPanel/types";
 
-export type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
+export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 export default ({
   selectedStory,
@@ -48,9 +48,10 @@ export default ({
 
   const handleCurrentPageChange = useCallback(
     (pageId: string) => {
+      if (currentPageId === pageId) return;
       onCurrentPageChange(pageId, true); // true disables scrollIntoView
     },
-    [onCurrentPageChange],
+    [currentPageId, onCurrentPageChange],
   );
 
   const pageInfo = useMemo(() => {

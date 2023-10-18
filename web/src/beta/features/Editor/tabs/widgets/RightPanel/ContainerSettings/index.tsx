@@ -1,5 +1,8 @@
+import ColorField from "@reearth/beta/components/fields/ColorField";
 import TextInput from "@reearth/beta/components/fields/TextField";
+import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
+import { useT } from "@reearth/services/i18n";
 import { WidgetAreaPadding, WidgetAreaState } from "@reearth/services/state";
 
 type Props = {
@@ -8,11 +11,12 @@ type Props = {
 };
 
 const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChange }) => {
-  // TODO: This is dummy UI
+  const t = useT();
+
   return (
     <SidePanelSectionField>
       <TextInput
-        name="Padding Top"
+        name={t("Padding top")}
         value={widgetArea?.padding?.top.toString()}
         onChange={newVal => {
           onWidgetAreaStateChange({
@@ -25,7 +29,7 @@ const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChang
         }}
       />
       <TextInput
-        name="Padding Right"
+        name={t("Padding right")}
         value={widgetArea?.padding?.right.toString()}
         onChange={newVal => {
           onWidgetAreaStateChange({
@@ -38,7 +42,7 @@ const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChang
         }}
       />
       <TextInput
-        name="Padding Bottom"
+        name={t("Padding bottom")}
         value={widgetArea?.padding?.bottom.toString()}
         onChange={newVal => {
           onWidgetAreaStateChange({
@@ -51,7 +55,7 @@ const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChang
         }}
       />
       <TextInput
-        name="Padding Left"
+        name={t("Padding left")}
         value={widgetArea?.padding?.left.toString()}
         onChange={newVal => {
           onWidgetAreaStateChange({
@@ -65,7 +69,7 @@ const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChang
       />
 
       <TextInput
-        name="Gap Spacing"
+        name={t("Gap spacing")}
         value={(widgetArea?.gap ?? 0).toString()}
         onChange={newVal => {
           onWidgetAreaStateChange({
@@ -74,9 +78,26 @@ const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChang
           });
         }}
       />
-
-      <div>[Switch field] Align Center {!!widgetArea?.centered}</div>
-      <div>[Color field] Background Color {widgetArea?.background}</div>
+      <ToggleField
+        name={t("Align centered")}
+        checked={!!widgetArea?.centered}
+        onChange={newVal => {
+          onWidgetAreaStateChange({
+            ...widgetArea,
+            centered: newVal,
+          });
+        }}
+      />
+      <ColorField
+        name={t("Background color")}
+        value={widgetArea?.background}
+        onChange={newVal => {
+          onWidgetAreaStateChange({
+            ...widgetArea,
+            background: newVal,
+          });
+        }}
+      />
     </SidePanelSectionField>
   );
 };

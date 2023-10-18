@@ -59,7 +59,7 @@ export type InstalledStoryBlock = {
   id: string;
   pluginId: string;
   extensionId: string;
-  title: string;
+  name: string;
   description: string | undefined;
   icon?: string;
   property?: {
@@ -223,7 +223,7 @@ export const getInstalledStoryBlocks = (
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      title: block?.name ?? "Undefined",
+      name: block?.name ?? "Undefined",
       description: block?.description,
       icon: block?.icon,
       property: {

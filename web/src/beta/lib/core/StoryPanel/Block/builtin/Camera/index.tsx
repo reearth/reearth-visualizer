@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import { ValueTypes } from "@reearth/beta/utils/value";
+import { type ValueTypes } from "@reearth/beta/utils/value";
 
-import { getFieldValue } from "../../../utils";
-import { CommonProps as BlockProps } from "../../types";
+import type { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import BlockWrapper from "../common/Wrapper";
 
-import CameraEditor, { Props as EditorProps } from "./Editor";
+import CameraEditor, { type CameraBlock as CameraBlockType } from "./Editor";
 
 export type Props = BlockProps;
 
@@ -19,9 +18,9 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     handleMovePropertyItem,
   } = usePropertyValueUpdate();
 
-  const items = useMemo(
-    () => getFieldValue(block?.property?.items ?? [], "") as EditorProps["items"],
-    [block?.property?.items],
+  const cameraButtons = useMemo(
+    () => Object.values(block?.property?.default) as CameraBlockType[],
+    [block?.property?.default],
   );
 
   const handleUpdate = useCallback(
@@ -31,71 +30,62 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       fieldType: keyof ValueTypes,
       updatedValue: ValueTypes[keyof ValueTypes],
     ) => {
-      const schemaGroup = block?.property?.items?.find(
-        i => i.schemaGroup === "default",
-      )?.schemaGroup;
-      if (!block?.property?.id || !itemId || !schemaGroup) return;
+      if (!block?.propertyId || !itemId) return;
 
       handlePropertyValueUpdate(
-        schemaGroup,
-        block?.property?.id,
+        "default",
+        block?.propertyId,
         fieldId,
         fieldType,
         itemId,
       )(updatedValue);
     },
-    [block?.property?.id, block?.property?.items, handlePropertyValueUpdate],
+    [block?.propertyId, handlePropertyValueUpdate],
   );
 
   const handleItemAdd = useCallback(() => {
-    const schemaGroup = block?.property?.items?.find(i => i.schemaGroup === "default")?.schemaGroup;
-    if (!block?.property?.id || !schemaGroup) return;
-    handleAddPropertyItem(block.property.id, schemaGroup);
-  }, [block?.property?.id, block?.property?.items, handleAddPropertyItem]);
+    if (!block?.propertyId) return;
+    handleAddPropertyItem(block.propertyId, "default");
+  }, [block?.propertyId, handleAddPropertyItem]);
 
   const handleItemRemove = useCallback(
     (itemId: string) => {
-      const schemaGroup = block?.property?.items?.find(
-        i => i.schemaGroup === "default",
-      )?.schemaGroup;
-      if (!block?.property?.id || !itemId || !schemaGroup) return;
+      if (!block?.propertyId || !itemId) return;
 
-      handleRemovePropertyItem(block.property.id, schemaGroup, itemId);
+      handleRemovePropertyItem(block.propertyId, "default", itemId);
     },
-    [block?.property?.id, block?.property?.items, handleRemovePropertyItem],
+    [block?.propertyId, handleRemovePropertyItem],
   );
 
   const handleItemMove = useCallback(
     ({ id }: { id: string }, index: number) => {
-      const schemaGroup = block?.property?.items?.find(
-        i => i.schemaGroup === "default",
-      )?.schemaGroup;
-      if (!block?.property?.id || !id || !schemaGroup) return;
+      if (!block?.propertyId || !id) return;
 
-      handleMovePropertyItem(block.property.id, schemaGroup, { id }, index);
+      handleMovePropertyItem(block.propertyId, "default", { id }, index);
     },
-    [block?.property?.id, block?.property?.items, handleMovePropertyItem],
+    [block?.propertyId, handleMovePropertyItem],
   );
 
   // if there's no item add 1 button.
   // TODO: Should be added to block creationAPI for generic blocks that require at least 1 item
   useEffect(() => {
-    if (items.length === 0) {
+    if (!cameraButtons || cameraButtons.length === 0) {
       handleItemAdd();
       return;
     }
-  }, [items.length, handleItemAdd]);
+  }, [cameraButtons, handleItemAdd, handleUpdate]);
 
   return (
     <BlockWrapper
+      name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
-      propertyId={block?.property?.id}
-      propertyItems={block?.property?.items}
+      propertyId={block?.propertyId}
+      property={block?.property}
       settingsEnabled={false}
       {...props}>
       <CameraEditor
-        items={items}
+        items={cameraButtons}
         onUpdate={handleUpdate}
         onItemRemove={handleItemRemove}
         onItemAdd={handleItemAdd}
