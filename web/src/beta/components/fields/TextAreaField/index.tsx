@@ -78,12 +78,11 @@ const StyledTextArea = styled.textarea<{ minHeight: number; disabled: boolean }>
   overflow: hidden;
   min-height: ${({ minHeight }) => minHeight};
   border-radius: 4px;
-  border-width: 1px;
-  border: ${({ theme }) => theme.outline.weak};
+  border: ${({ theme }) => `1px solid ${theme.outline.weak}`};
   font-size: 14px;
   outline: none;
   color: ${({ theme }) => theme.content.main};
-  background: ${({ theme }) => theme.bg[2]};
+  background: inherit;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   pointer-events: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
   box-sizing: border-box;
