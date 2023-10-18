@@ -104,7 +104,13 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	schema := builtin.GetPropertySchemaByVisualizer(visualizer.VisualizerCesium)
+	var viz = visualizer.VisualizerCesium
+
+	if prj.CoreSupport() {
+		viz = visualizer.VisualizerCesiumBeta
+	}
+
+	schema := builtin.GetPropertySchemaByVisualizer(viz)
 	sceneID := id.NewSceneID()
 
 	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()

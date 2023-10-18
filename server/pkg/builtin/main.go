@@ -23,6 +23,7 @@ var pluginManifest = manifest.MustParseSystemFromBytes(pluginManifestJSON, nil, 
 // MUST NOT CHANGE
 var (
 	PropertySchemaIDVisualizerCesium = property.MustSchemaID("reearth/cesium")
+	PropertySchemaIDVisualizerBetaCesium = property.MustSchemaID("reearth/cesium-beta")
 	PropertySchemaIDInfobox          = property.MustSchemaID("reearth/infobox")
 	PropertySchemaIDStory            = property.MustSchemaID("reearth/story")
 	PropertySchemaIDStoryPage        = property.MustSchemaID("reearth/storyPage")
