@@ -88,6 +88,13 @@ New Page: 新しいページ
 Page: ページ
 Page Settings: ページ設定
 Align System: アラインシステム
+Padding top: 上の余白
+Padding right: 右の余白
+Padding bottom: 下の余白
+Padding left: 左の余白
+Gap spacing: 間隔
+Align centered: 中央に配置
+Background color: 背景色
 Widget Manager: ウィジェット管理
 Container Settings: Container Settings
 Angle: 角度
@@ -200,7 +207,7 @@ Quote: ''
 Formatting options for font family: ''
 Formatting options for font size: ''
 Formatting options for line height: ''
-Center Align: ''
+Center Align: 中央に配置
 Justify Align: ''
 Left Align: ''
 Right Align: ''
