@@ -1,3 +1,4 @@
+import PublishedGis from "@reearth/beta/features/PublishedVisualizer";
 import { useCore } from "@reearth/beta/utils/use-core";
 import ClassicPublished from "@reearth/classic/components/organisms/Published";
 import ClassicCorePublished from "@reearth/classic/components/organisms/Published/core";
@@ -13,7 +14,7 @@ const PublishedPage: React.FC<{
   return (
     <DndProvider>
       {isGisProject ? (
-        <div>Published beta</div>
+        <PublishedGis alias={alias} />
       ) : isCore ? (
         <ClassicCorePublished alias={alias} />
       ) : (
