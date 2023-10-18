@@ -20,9 +20,9 @@ import {
   useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
-  useZoomedLayerId,
   selectedWidgetAreaVar,
   isVisualizerReadyVar,
+  useZoomedLayerId,
 } from "@reearth/services/state";
 
 import { convertStory, convertWidgets, processLayers } from "./convert";
@@ -261,7 +261,6 @@ export default ({
     sceneId,
     rootLayerId,
     selectedLayerId,
-    zoomedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
@@ -280,6 +279,7 @@ export default ({
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
+    zoomedLayerId,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -293,7 +293,7 @@ export default ({
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     handleDropLayer,
-    zoomToLayer,
     handleMount,
+    zoomToLayer,
   };
 };

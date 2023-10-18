@@ -3,6 +3,7 @@ import { ReactNode, useMemo } from "react";
 import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
+import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
@@ -32,6 +33,7 @@ type Props = {
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
+  onFlyTo?: FlyTo;
 };
 
 export default ({
@@ -52,6 +54,7 @@ export default ({
   onSceneSettingSelect,
   onDataSourceManagerOpen,
   onLayerVisibilityUpate,
+  onFlyTo,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -67,6 +70,7 @@ export default ({
             onLayerSelect={onLayerSelect}
             onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
+            onFlyTo={onFlyTo}
           />
         );
       case "story":
@@ -97,6 +101,7 @@ export default ({
     onLayerSelect,
     onSceneSettingSelect,
     onDataSourceManagerOpen,
+    onFlyTo,
     selectedStory,
     currentPageId,
     onCurrentPageChange,

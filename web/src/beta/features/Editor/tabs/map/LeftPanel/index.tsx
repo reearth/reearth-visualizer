@@ -1,5 +1,6 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/LeftPanel/GroupField";
+import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
@@ -15,6 +16,7 @@ type Props = {
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
+  onFlyTo?: FlyTo;
 };
 
 const MapSidePanel: React.FC<Props> = ({
@@ -27,6 +29,7 @@ const MapSidePanel: React.FC<Props> = ({
   onSceneSettingSelect,
   onDataSourceManagerOpen,
   onLayerVisibilityUpate,
+  onFlyTo,
 }) => {
   const t = useT();
 
@@ -48,6 +51,7 @@ const MapSidePanel: React.FC<Props> = ({
               onSceneSettingSelect={onSceneSettingSelect}
               onDataSourceManagerOpen={onDataSourceManagerOpen}
               onLayerVisibilityUpate={onLayerVisibilityUpate}
+              onFlyTo={onFlyTo}
             />
           ),
         },
