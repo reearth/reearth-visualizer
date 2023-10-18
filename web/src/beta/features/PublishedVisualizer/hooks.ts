@@ -260,7 +260,6 @@ function processLayer(l: RawLayer): LegacyLayer {
           })),
         }
       : undefined,
-    tags: l.tags, // Currently no need to convert tags
     children: l.children?.map(processLayer),
   };
 }
