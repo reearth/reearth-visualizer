@@ -56,7 +56,8 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
     | "layer"
     | "cameraPose"
     | "padding"
-    | "margin";
+    | "margin"
+    | "datetime";
   choices?: {
     key: string;
     label: string;

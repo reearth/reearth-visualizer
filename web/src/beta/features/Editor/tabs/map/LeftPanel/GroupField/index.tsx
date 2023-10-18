@@ -1,6 +1,10 @@
 // import ListItem from "@reearth/beta/components/ListItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
-import type { LayerNameUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type {
+  LayerNameUpdateProps,
+  LayerVisibilityUpdateProps,
+} from "@reearth/beta/features/Editor/useLayers";
+import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -16,6 +20,8 @@ type GroupSectionFieldProps = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
+  onFlyTo?: FlyTo;
 };
 
 const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
@@ -27,6 +33,8 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   onLayerSelect,
   // onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
+  onFlyTo,
 }) => {
   const t = useT();
 
@@ -50,6 +58,8 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
           onLayerNameUpdate={onLayerNameUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
+          onLayerVisibilityUpate={onLayerVisibilityUpate}
+          onFlyTo={onFlyTo}
         />
       </StyledSidePanelSectionField>
     </>
