@@ -39,8 +39,6 @@ export default function ({
     options?: LayerSelectionReason,
     info?: SelectedFeatureInfo,
   ) => void;
-  zoomedLayerId?: string;
-  onZoomToLayer?: (layerId: string | undefined) => void;
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
