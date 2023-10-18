@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import AssetCard from "@reearth/beta/components/CatalogCard";
+import CatalogCard from "@reearth/beta/components/CatalogCard";
 import Icon from "@reearth/beta/components/Icon";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import type {
@@ -45,30 +45,34 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
         <Icon icon="addLayerStyle" />
       </AddLayerStyleIcon>
 
-      {layerStyles.map(layerStyle => (
-        <AssetCard
-          id={layerStyle.id}
-          key={layerStyle.id}
-          name={layerStyle.name}
-          icon="layerStyle"
-          onLayerStyleNameUpdate={onLayerStyleNameUpdate}
-          isNameEditable={true}
-          selected={layerStyle.id === selectedLayerStyleId}
-          actionContent={
-            <PopoverMenuContent
-              size="sm"
-              items={[
-                {
-                  name: "Delete",
-                  icon: "bin",
-                  onClick: () => onLayerStyleDelete(layerStyle.id),
-                },
-              ]}
-            />
-          }
-          onSelect={() => handleSelectLayerStyle(layerStyle)}
-        />
-      ))}
+      {/* <AdjustableButton onClick={han}></AdjustableButton> */}
+
+      <CatalogListWrapper>
+        {layerStyles.map(layerStyle => (
+          <CatalogCard
+            id={layerStyle.id}
+            key={layerStyle.id}
+            name={layerStyle.name}
+            icon="layerStyle"
+            onLayerStyleNameUpdate={onLayerStyleNameUpdate}
+            isNameEditable={true}
+            selected={layerStyle.id === selectedLayerStyleId}
+            actionContent={
+              <PopoverMenuContent
+                size="sm"
+                items={[
+                  {
+                    name: "Delete",
+                    icon: "bin",
+                    onClick: () => onLayerStyleDelete(layerStyle.id),
+                  },
+                ]}
+              />
+            }
+            onSelect={() => handleSelectLayerStyle(layerStyle)}
+          />
+        ))}
+      </CatalogListWrapper>
     </LayerStyleContainer>
   );
 };
@@ -81,6 +85,14 @@ const LayerStyleContainer = styled.div`
 const AddLayerStyleIcon = styled.div`
   align-self: flex-end;
   cursor: pointer;
+`;
+
+const CatalogListWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 240px);
 `;
 
 export default LayerStyles;

@@ -6,7 +6,7 @@ import {
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-import LayerStyles from "./layerStyle";
+import LayerStyles from "./LayerStyle";
 
 type Props = {
   layerStyles: LayerStyle[];
@@ -17,7 +17,7 @@ type Props = {
   onLayerStyleSelect: (id: string) => void;
 };
 
-const MapSidePanel: React.FC<Props> = ({
+const MapBottomPanel: React.FC<Props> = ({
   layerStyles,
   selectedLayerStyleId,
   onLayerStyleAdd,
@@ -50,4 +50,4 @@ const MapSidePanel: React.FC<Props> = ({
   );
 };
 
-export default MapSidePanel;
+export default MapBottomPanel;

@@ -11,6 +11,7 @@ type Props = {
   gutter: Gutter;
   initialSize: number;
   minSize: number;
+  maxSize?: number;
   onResizeEnd?: (newSize: number) => void;
 };
 
@@ -18,6 +19,7 @@ const Resizable: React.FC<Props> = ({
   direction,
   gutter,
   minSize,
+  maxSize,
   initialSize,
   children,
   onResizeEnd,
@@ -27,6 +29,7 @@ const Resizable: React.FC<Props> = ({
     gutter,
     initialSize,
     minSize,
+    maxSize,
     onResizeEnd,
   );
 
@@ -63,6 +66,7 @@ const StyledResizable = styled.div<{
   direction: "vertical" | "horizontal";
   size: number;
   minSize?: number;
+  maxSize?: number;
 }>`
   display: flex;
   align-items: stretch;
@@ -74,6 +78,10 @@ const StyledResizable = styled.div<{
     direction === "vertical" && minSize ? `${minSize}px` : null};
   min-height: ${({ direction, minSize }) =>
     direction === "horizontal" && minSize ? `${minSize}px` : null};
+  max-width: ${({ direction, maxSize }) =>
+    direction === "vertical" && maxSize ? `${maxSize}px` : null};
+  max-height: ${({ direction, maxSize }) =>
+    direction === "horizontal" && maxSize ? `${maxSize}px` : null};
 `;
 
 const Wrapper = styled.div`

@@ -177,13 +177,14 @@ const PreviewImage = styled.div<{ url?: string }>`
   background-position: center;
 `;
 
-const FileName = styled(Text)`
+const FileName = styled(Text)<{ selected?: boolean }>`
   overflow: hidden;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-top: ${({ theme }) => theme.spacing.small}px;
   color: inherit;
+  fill: ${({ selected, theme }) => (selected ? `${theme.select.main}` : undefined)};
 `;
 
 const StyledTextInput = styled(TextInput)`

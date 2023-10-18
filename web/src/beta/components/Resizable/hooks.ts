@@ -27,9 +27,11 @@ const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
 const getDelta = (direction: Direction, deltaX: number, deltaY: number) =>
   direction === "vertical" ? deltaX : deltaY;
 
-const getSize = (size: number, delta: number, minSize?: number) => {
-  if (minSize !== undefined && size + delta < minSize) return minSize;
-  return size + delta;
+const getSize = (size: number, delta: number, minSize?: number, maxSize?: number) => {
+  let newSize = size + delta;
+  if (minSize !== undefined && newSize < minSize) newSize = minSize;
+  if (maxSize !== undefined && newSize > maxSize) newSize = maxSize; // New check for maxSize
+  return newSize;
 };
 
 export default (
@@ -37,6 +39,7 @@ export default (
   gutter: Gutter,
   initialSize: number,
   minSize: number,
+  maxSize?: number,
   onResizeEndCallback?: (newSize: number) => void,
 ) => {
   const [startingSize, setStartingSize] = useState(initialSize);
@@ -73,7 +76,7 @@ export default (
 
       setDifference(newDiff);
 
-      setSize(getSize(size, delta, minSize));
+      setSize(getSize(size, delta, minSize, maxSize));
 
       if (!minimized && startingSize + newDiff <= minSize / 2) {
         setMinimized(true);
@@ -86,11 +89,12 @@ export default (
       position.x,
       position.y,
       direction,
-      size,
-      startingSize,
-      minSize,
-      minimized,
       difference,
+      size,
+      minSize,
+      maxSize,
+      minimized,
+      startingSize,
     ],
   );
 

@@ -212,7 +212,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               direction="horizontal"
               gutter="start"
               initialSize={metrics.layerStylePanelMinWidth}
-              minSize={metrics.layerStylePanelMinWidth}>
+              minSize={metrics.layerStylePanelMinWidth}
+              maxSize={metrics.layerStylePanelMaxWidth}>
               {bottomPanel}
             </Resizable>
           )}
