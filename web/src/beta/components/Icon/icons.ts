@@ -40,8 +40,6 @@ import UploadSimple from "./Icons/uploadSimple.svg";
 import Search from "./Icons/search.svg";
 import AddLayerIcon from "./Icons/addLayer.svg";
 import ZoomToLayer from "./Icons/zoomToLayer.svg";
-import Calender from "./Icons/calender.svg";
-import Clock from "./Icons/clock.svg";
 
 // MSIC
 import CheckCircle from "./Icons/checkCircle.svg";
@@ -192,6 +190,4 @@ export default {
   uploadSimple: UploadSimple,
   search: Search,
   checkCircle: CheckCircle,
-  calender: Calender,
-  clock: Clock,
 };
