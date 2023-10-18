@@ -80,7 +80,7 @@ export default TextInput;
 
 const StyledInput = styled.input`
   outline: none;
-  background: ${({ theme }) => theme.bg[1]};
+  background: inherit;
   color: ${({ theme }) => theme.content.main};
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;

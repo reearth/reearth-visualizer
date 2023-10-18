@@ -210,7 +210,6 @@ const AssetWrapper = styled.div`
   max-height: 531px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 `;
 
 const ControlWarpper = styled.div`
@@ -242,15 +241,32 @@ const AssetListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  transition: -webkit-scrollbar 1s;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  :hover::-webkit-scrollbar {
+    display: block;
+    width: 8px;
+    height: 33px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+    background-color: red;
+    display: none;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: ${({ theme }) => theme.bg[2]};
+  }
 `;
 
 const AssetList = styled.div`
   margin-right: 8px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 114px);
-  grid-template-rows: repeat(auto-fill, 119px);
+  grid-template-columns: repeat(auto-fill, 112px);
+  grid-template-rows: repeat(auto-fill, 103px);
   gap: ${({ theme }) => theme.spacing.small}px;
-  justify-content: space-between;
   min-height: 373px;
 `;
 

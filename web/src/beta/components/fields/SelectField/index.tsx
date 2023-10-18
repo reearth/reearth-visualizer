@@ -96,7 +96,6 @@ const Select = styled.div<{ open: boolean; selected: boolean }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   color: ${({ theme, selected }) => (selected ? theme.content.main : theme.content.weaker)};
-  background: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
   border: ${({ theme, open }) =>
     open ? `1px solid ${theme.select.strong}` : `1px solid ${theme.outline.weak}`};

@@ -46,8 +46,9 @@ const Wrapper = styled.div<{ selected?: boolean }>`
   border: 2px solid ${({ selected, theme }) => (selected ? `${theme.select.main}` : "transparent")};
   padding: ${({ theme }) => theme.spacing.small}px;
   width: 100%;
-  max-width: 148px;
+  max-width: 120px;
   height: 100%;
+  max-height: 103px;
   position: relative;
   cursor: pointer;
   color: ${({ theme }) => theme.content.main};
