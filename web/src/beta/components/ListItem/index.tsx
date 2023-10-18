@@ -77,7 +77,7 @@ const Wrapper = styled.div<{
     clamp === "left" ? "0 4px 4px 0" : clamp === "right" ? "4px 0 0 4px" : "4px"};
   background: ${({ theme, isSelected, isOpenAction }) =>
     isSelected ? theme.select.main : isOpenAction ? theme.bg[3] : "inherit"};
-  transition: all 0.3s;
+  transition: all 0.2s;
   cursor: pointer;
 
   :hover {

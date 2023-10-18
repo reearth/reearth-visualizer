@@ -81,7 +81,7 @@ const LayerItem = ({
     <ListItem
       isSelected={isSelected}
       isOpenAction={isActionOpen}
-      actionPlacement="bottom-start"
+      actionPlacement="bottom-end"
       onItemClick={handleClick}
       onActionClick={handleActionMenuToggle}
       onOpenChange={isOpen => setActionOpen(!!isOpen)}
