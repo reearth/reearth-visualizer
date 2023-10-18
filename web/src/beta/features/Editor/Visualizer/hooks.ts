@@ -12,6 +12,7 @@ import {
   useStorytellingFetcher,
   usePropertyFetcher,
 } from "@reearth/services/api";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -19,22 +20,26 @@ import {
   useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
-  useZoomedLayerId,
   selectedWidgetAreaVar,
   isVisualizerReadyVar,
+  useZoomedLayerId,
 } from "@reearth/services/state";
 
-import { convertWidgets, processLayers } from "./convert";
+import { convertStory, convertWidgets, processLayers } from "./convert";
 import type { BlockType } from "./type";
 
 export default ({
   sceneId,
-  isBuilt,
   storyId,
+  isBuilt,
+  currentPage,
+  showStoryPanel,
 }: {
   sceneId?: string;
-  isBuilt?: boolean;
   storyId?: string;
+  isBuilt?: boolean;
+  currentPage?: Page;
+  showStoryPanel?: boolean;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
@@ -87,7 +92,14 @@ export default ({
     [selected],
   );
 
-  const layers = useMemo(() => processLayers(nlsLayers), [nlsLayers]);
+  const layers = useMemo(() => {
+    const processedLayers = processLayers(nlsLayers);
+    if (!showStoryPanel) return processedLayers;
+    return processedLayers?.map(layer => ({
+      ...layer,
+      visible: currentPage?.layersIds?.includes(layer.id),
+    }));
+  }, [nlsLayers, showStoryPanel, currentPage?.layersIds]);
 
   // TODO: Use GQL value
   const rootLayerId = "";
@@ -192,6 +204,11 @@ export default ({
     [sceneId, useUpdateWidgetAlignSystem],
   );
 
+  const story = useMemo(
+    () => convertStory(scene?.stories.find(s => s.id === storyId)),
+    [storyId, scene?.stories],
+  );
+
   const handleStoryBlockCreate = useCallback(
     async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
@@ -244,7 +261,6 @@ export default ({
     sceneId,
     rootLayerId,
     selectedLayerId,
-    zoomedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
@@ -252,6 +268,7 @@ export default ({
     tags,
     widgets,
     layers,
+    story,
     blocks,
     isCapturing,
     sceneMode,
@@ -262,6 +279,7 @@ export default ({
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
+    zoomedLayerId,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -275,7 +293,7 @@ export default ({
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     handleDropLayer,
-    zoomToLayer,
     handleMount,
+    zoomToLayer,
   };
 };

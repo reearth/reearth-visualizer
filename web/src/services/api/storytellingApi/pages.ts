@@ -13,11 +13,15 @@ import {
   MutationCreateStoryPageArgs,
   MutationMoveStoryPageArgs,
   MutationRemoveStoryPageArgs,
+  MutationUpdateStoryPageArgs,
+  UpdateStoryPageInput,
+  UpdateStoryPageMutation,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   CREATE_STORY_PAGE,
   DELETE_STORY_PAGE,
   MOVE_STORY_PAGE,
+  UPDATE_STORY_PAGE,
 } from "@reearth/services/gql/queries/storytelling";
 import { useT } from "@reearth/services/i18n";
 
@@ -100,9 +104,34 @@ export default () => {
     },
     [moveStoryPageMutation, setNotification, t],
   );
+
+  const [updateStoryPageMutation] = useMutation<
+    UpdateStoryPageMutation,
+    MutationUpdateStoryPageArgs
+  >(UPDATE_STORY_PAGE, { refetchQueries: ["GetScene"] });
+
+  const useUpdateStoryPage = useCallback(
+    async (input: UpdateStoryPageInput): Promise<MutationReturn<UpdateStoryPageMutation>> => {
+      const { data, errors } = await updateStoryPageMutation({
+        variables: {
+          input,
+        },
+      });
+      if (errors || !data?.updateStoryPage?.story?.id) {
+        setNotification({ type: "error", text: t("Failed to update page.") });
+
+        return { status: "error", errors };
+      }
+      setNotification({ type: "success", text: t("Successfullly updated a page!") });
+
+      return { data, status: "success" };
+    },
+    [updateStoryPageMutation, setNotification, t],
+  );
   return {
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
+    useUpdateStoryPage,
   };
 };

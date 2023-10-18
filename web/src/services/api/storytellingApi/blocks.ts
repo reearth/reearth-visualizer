@@ -34,6 +34,7 @@ export const TEXT_BUILTIN_STORY_BLOCK_ID = "reearth/textStoryBlock";
 export const VIDEO_BUILTIN_STORY_BLOCK_ID = "reearth/videoStoryBlock";
 export const MD_BUILTIN_STORY_BLOCK_ID = "reearth/mdTextStoryBlock";
 export const TIMELINE_BUILTIN_STORY_BLOCK_ID = "reearth/timelineStoryBlock";
+export const CAMERA_BUILTIN_STORY_BLOCK_ID = "reearth/cameraButtonStoryBlock";
 
 export const AVAILABLE_STORY_BLOCK_IDS = [
   IMAGE_BUILTIN_STORY_BLOCK_ID,
@@ -41,6 +42,7 @@ export const AVAILABLE_STORY_BLOCK_IDS = [
   VIDEO_BUILTIN_STORY_BLOCK_ID,
   MD_BUILTIN_STORY_BLOCK_ID,
   TIMELINE_BUILTIN_STORY_BLOCK_ID,
+  CAMERA_BUILTIN_STORY_BLOCK_ID,
 ];
 
 export type StoryBlockQueryProps = SceneQueryProps;
@@ -59,7 +61,7 @@ export type InstalledStoryBlock = {
   id: string;
   pluginId: string;
   extensionId: string;
-  title: string;
+  name: string;
   description: string | undefined;
   icon?: string;
   property?: {
@@ -222,7 +224,7 @@ export const getInstalledStoryBlocks = (
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      title: block?.name ?? "Undefined",
+      name: block?.name ?? "Undefined",
       description: block?.description,
       icon: block?.icon,
       property: {

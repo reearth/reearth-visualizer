@@ -1,6 +1,7 @@
 import { merge } from "lodash-es";
 
 import {
+  CAMERA_BUILTIN_STORY_BLOCK_ID,
   IMAGE_BUILTIN_STORY_BLOCK_ID,
   MD_BUILTIN_STORY_BLOCK_ID,
   TEXT_BUILTIN_STORY_BLOCK_ID,
@@ -11,6 +12,7 @@ import {
 
 import { Component } from "..";
 
+import CameraBlock from "./Camera";
 import ImageBlock from "./Image";
 import MdBlock from "./Markdown";
 import TextBlock from "./Text";
@@ -24,7 +26,8 @@ export type ReEarthBuiltinStoryBlocks<T = unknown> = Record<
   | typeof TEXT_BUILTIN_STORY_BLOCK_ID
   | typeof VIDEO_BUILTIN_STORY_BLOCK_ID
   | typeof MD_BUILTIN_STORY_BLOCK_ID
-  | typeof TIMELINE_BUILTIN_STORY_BLOCK_ID,
+  | typeof TIMELINE_BUILTIN_STORY_BLOCK_ID
+  | typeof CAMERA_BUILTIN_STORY_BLOCK_ID,
   T
 >;
 
@@ -38,6 +41,7 @@ const reearthBuiltin: BuiltinStoryBlocks<Component> = {
   [VIDEO_BUILTIN_STORY_BLOCK_ID]: VideoBlock,
   [MD_BUILTIN_STORY_BLOCK_ID]: MdBlock,
   [TIMELINE_BUILTIN_STORY_BLOCK_ID]: TimelineBlock,
+  [CAMERA_BUILTIN_STORY_BLOCK_ID]: CameraBlock,
 };
 
 const builtin = merge({}, reearthBuiltin);

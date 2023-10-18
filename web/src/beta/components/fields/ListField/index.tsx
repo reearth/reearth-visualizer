@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import DragAndDropList, {
@@ -22,6 +22,7 @@ export type Props = {
   addItem: () => void;
   onSelect: (id: string) => void;
   selected?: string;
+  atLeastOneItem?: boolean;
 } & Pick<DragAndDropProps, "onItemDrop">;
 
 const ListField: React.FC<Props> = ({
@@ -33,6 +34,7 @@ const ListField: React.FC<Props> = ({
   onItemDrop,
   onSelect,
   selected,
+  atLeastOneItem,
 }: Props) => {
   const t = useT();
 
@@ -46,10 +48,20 @@ const ListField: React.FC<Props> = ({
   }, []);
 
   const disableRemoveButton = useMemo(() => {
-    if (!selected) return true;
+    if (!selected || (atLeastOneItem && items.length === 1)) return true;
 
     return !items.find(({ id }) => id == selected);
-  }, [items, selected]);
+  }, [items, selected, atLeastOneItem]);
+
+  // if atleastOneItem is true, make sure one item is always selected
+  useEffect(() => {
+    if (!atLeastOneItem) return;
+
+    const updateSelected = !selected || !items.find(({ id }) => id === selected);
+    if (updateSelected) {
+      onSelect(items[0]?.id);
+    }
+  }, [selected, items, atLeastOneItem, onSelect]);
 
   return (
     <Property name={name} description={description}>
@@ -61,7 +73,7 @@ const ListField: React.FC<Props> = ({
           getId={getId}
           renderItem={({ id, value }) => (
             <Item onClick={() => onSelect(id)} selected={selected === id}>
-              <Text size="xFootnote">{value}</Text>
+              <StyledText size="xFootnote">{value}</StyledText>
             </Item>
           )}
           gap={0}
@@ -106,6 +118,14 @@ const Item = styled.div<{ selected: boolean }>`
   &:hover {
     background: ${({ theme, selected }) => (selected ? theme.select.main : theme.bg[2])};
   }
+`;
+
+const StyledText = styled(Text)`
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const ButtonGroup = styled.div`
