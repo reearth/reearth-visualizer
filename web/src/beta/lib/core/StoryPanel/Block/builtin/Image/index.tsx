@@ -2,22 +2,22 @@ import { useMemo } from "react";
 
 import type { CommonProps as BlockProps } from "@reearth//beta/lib/core/StoryPanel/Block/types";
 import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
-import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
 import type { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 const ImageBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
-    () => getFieldValue(block?.property?.items ?? [], "src") as ValueTypes["string"],
-    [block?.property?.items],
+    () => block?.property?.default?.src?.value as ValueTypes["string"],
+    [block?.property?.default?.src],
   );
 
   return (
     <BlockWrapper
+      name={block?.name}
       icon={block?.extensionId}
       isSelected={isSelected}
-      propertyId={block?.property?.id}
-      propertyItems={block?.property?.items}
+      propertyId={block?.propertyId}
+      property={block?.property}
       {...props}>
       {src && <Image src={src} />}
     </BlockWrapper>

@@ -2,8 +2,9 @@ import { useState, useCallback, useEffect, useRef } from "react";
 
 import type { TimeEventHandler } from "@reearth/beta/lib/core/Crust/Widgets/Widget/builtin/Timeline/UI";
 import { TickEvent, TickEventCallback } from "@reearth/beta/lib/core/Map";
+import { TimelineManagerRef } from "@reearth/beta/lib/core/Map/useTimelineManager";
 
-import type { Clock, Widget } from "../../types";
+import type { Widget } from "../../types";
 import { useVisible } from "../../useVisible";
 
 const MAX_RANGE = 86400000; // a day
@@ -21,8 +22,7 @@ const DEFAULT_SPEED = 1;
 
 export const useTimeline = ({
   widget,
-  clock,
-  overriddenClock,
+  timelineManagerRef,
   isMobile,
   onPlay,
   onPause,
@@ -34,8 +34,7 @@ export const useTimeline = ({
   onVisibilityChange,
 }: {
   widget: Widget;
-  clock?: Clock;
-  overriddenClock?: Partial<Clock>;
+  timelineManagerRef?: TimelineManagerRef;
   isMobile?: boolean;
   onPlay?: () => void;
   onPause?: () => void;
@@ -48,20 +47,25 @@ export const useTimeline = ({
 }) => {
   const visible = useVisible({
     widgetId: widget.id,
-    visible: widget.property?.default?.visible,
+    visible: widget.property?.default?.visible?.value,
     isMobile,
     onVisibilityChange,
   });
   const widgetId = widget.id;
   const [range, setRange] = useState(() =>
-    makeRange(clock?.start?.getTime(), clock?.stop?.getTime()),
+    makeRange(
+      timelineManagerRef?.current?.timeline?.start?.getTime(),
+      timelineManagerRef?.current?.timeline?.stop?.getTime(),
+    ),
   );
   const [isOpened, setIsOpened] = useState(true);
-  const [currentTime, setCurrentTime] = useState(() => getOrNewDate(clock?.current).getTime());
+  const [currentTime, setCurrentTime] = useState(() =>
+    getOrNewDate(timelineManagerRef?.current?.timeline?.current).getTime(),
+  );
   const isClockInitialized = useRef(false);
-  const clockStartTime = clock?.start?.getTime();
-  const clockStopTime = clock?.stop?.getTime();
-  const clockSpeed = clock?.speed || DEFAULT_SPEED;
+  const clockStartTime = timelineManagerRef?.current?.timeline?.start?.getTime();
+  const clockStopTime = timelineManagerRef?.current?.timeline?.stop?.getTime();
+  const clockSpeed = timelineManagerRef?.current?.options?.multiplier || DEFAULT_SPEED;
 
   const [speed, setSpeed] = useState(clockSpeed);
 
@@ -75,6 +79,7 @@ export const useTimeline = ({
     setIsOpened(false);
   }, [widgetId, onExtend]);
 
+  const lastTime = useRef<number>();
   const switchCurrentTimeToStart = useCallback(
     (t: number, isRangeChanged: boolean) => {
       const cur = isRangeChanged
@@ -84,7 +89,11 @@ export const useTimeline = ({
         : t < range.start
         ? range.end
         : t;
-      onTimeChange?.(new Date(cur));
+
+      if (lastTime.current !== cur) {
+        lastTime.current = cur;
+        onTimeChange?.(new Date(cur));
+      }
       return cur;
     },
     [range, onTimeChange],
@@ -92,22 +101,15 @@ export const useTimeline = ({
 
   const handleTimeEvent: TimeEventHandler = useCallback(
     currentTime => {
-      if (!clock) {
-        return;
-      }
       const t = new Date(currentTime);
       onTimeChange?.(t);
       setCurrentTime(currentTime);
     },
-    [clock, onTimeChange],
+    [onTimeChange],
   );
 
   const handleOnPlay = useCallback(
     (playing: boolean) => {
-      if (!clock) {
-        return;
-      }
-
       // Stop cesium animation
       if (playing) {
         onPlay?.();
@@ -116,15 +118,11 @@ export const useTimeline = ({
       }
       onSpeedChange?.(Math.abs(speed));
     },
-    [clock, onPause, onPlay, onSpeedChange, speed],
+    [onPause, onPlay, onSpeedChange, speed],
   );
 
   const handleOnPlayReversed = useCallback(
     (playing: boolean) => {
-      if (!clock) {
-        return;
-      }
-
       // Stop cesium animation
       if (playing) {
         onPlay?.();
@@ -133,30 +131,31 @@ export const useTimeline = ({
       }
       onSpeedChange?.(Math.abs(speed) * -1);
     },
-    [clock, onPause, onPlay, onSpeedChange, speed],
+    [onPause, onPlay, onSpeedChange, speed],
   );
 
   const handleOnSpeedChange = useCallback(
     (speed: number) => {
       setSpeed(speed);
-      if (clock) {
-        const absSpeed = Math.abs(speed);
-        // Maybe we need to throttle changing speed.
-        onSpeedChange?.((clock.speed ?? 1) > 0 ? absSpeed : absSpeed * -1);
-      }
+
+      const absSpeed = Math.abs(speed);
+      // Maybe we need to throttle changing speed.
+      onSpeedChange?.(
+        (timelineManagerRef?.current?.options?.multiplier ?? 1) > 0 ? absSpeed : absSpeed * -1,
+      );
     },
-    [clock, onSpeedChange],
+    [onSpeedChange, timelineManagerRef],
   );
 
   // Initialize clock value
   useEffect(() => {
-    if (clock && !isClockInitialized.current) {
+    if (!isClockInitialized.current) {
       isClockInitialized.current = true;
       queueMicrotask(() => {
         onSpeedChange?.(1);
       });
     }
-  }, [clock, onSpeedChange, onTick]);
+  }, [onSpeedChange, onTick]);
 
   const handleRange = useCallback((start: number | undefined, stop: number | undefined) => {
     setRange(prev => {
@@ -168,8 +167,8 @@ export const useTimeline = ({
     });
   }, []);
 
-  const overriddenStart = overriddenClock?.start?.getTime();
-  const overriddenStop = overriddenClock?.stop?.getTime();
+  const overriddenStart = timelineManagerRef?.current?.computedTimeline?.start?.getTime();
+  const overriddenStop = timelineManagerRef?.current?.computedTimeline?.stop?.getTime();
 
   // Sync cesium clock.
   useEffect(() => {
@@ -191,7 +190,6 @@ export const useTimeline = ({
     };
   }, [
     onTick,
-    clock?.playing,
     removeTickEventListener,
     switchCurrentTimeToStart,
     handleRange,
@@ -205,12 +203,12 @@ export const useTimeline = ({
     onTimeChangeRef.current = onTimeChange;
   }, [onTimeChange]);
 
-  const overriddenCurrentTime = overriddenClock?.current?.getTime();
+  const overriddenCurrentTime = timelineManagerRef?.current?.computedTimeline?.current?.getTime();
   useEffect(() => {
     if (overriddenCurrentTime) {
       const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);
       setCurrentTime(t);
-      onTimeChangeRef.current?.(new Date(t));
+      // onTimeChangeRef.current?.(new Date(t));
     }
   }, [overriddenCurrentTime, range]);
 

@@ -18,6 +18,7 @@ type Props = {
   showSceneSettings?: boolean;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
+  onPageUpdate?: (id: string, layers: string[]) => void;
 };
 
 export default ({
@@ -27,6 +28,7 @@ export default ({
   currentPage,
   showSceneSettings,
   currentCamera,
+  onPageUpdate,
   onFlyTo,
 }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
@@ -48,6 +50,7 @@ export default ({
             layers={nlsLayers}
             tab={tab}
             onFlyTo={onFlyTo}
+            onPageUpdate={onPageUpdate}
           />
         );
       case "widgets":
@@ -57,7 +60,16 @@ export default ({
       default:
         return undefined;
     }
-  }, [tab, sceneId, showSceneSettings, currentCamera, onFlyTo, currentPage, nlsLayers]);
+  }, [
+    tab,
+    sceneId,
+    showSceneSettings,
+    currentCamera,
+    currentPage,
+    nlsLayers,
+    onFlyTo,
+    onPageUpdate,
+  ]);
 
   return {
     rightPanel,
