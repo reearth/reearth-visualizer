@@ -7,7 +7,7 @@ import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
-import type { LayerNameUpdateProps } from "./useLayers";
+import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "./useLayers";
 
 type Props = {
   tab: Tab;
@@ -30,6 +30,7 @@ type Props = {
   selectedLayerId?: string;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
   onFlyTo?: FlyTo;
@@ -52,6 +53,7 @@ export default ({
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
   onFlyTo,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
@@ -64,6 +66,7 @@ export default ({
             selectedSceneSetting={selectedSceneSetting}
             onLayerDelete={onLayerDelete}
             onLayerNameUpdate={onLayerNameUpdate}
+            onLayerVisibilityUpate={onLayerVisibilityUpate}
             onLayerSelect={onLayerSelect}
             onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
@@ -94,6 +97,7 @@ export default ({
     selectedSceneSetting,
     onLayerDelete,
     onLayerNameUpdate,
+    onLayerVisibilityUpate,
     onLayerSelect,
     onSceneSettingSelect,
     onDataSourceManagerOpen,

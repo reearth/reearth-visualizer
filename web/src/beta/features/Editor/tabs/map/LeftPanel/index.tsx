@@ -4,7 +4,7 @@ import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-import type { LayerNameUpdateProps } from "../../../useLayers";
+import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "../../../useLayers";
 
 type Props = {
   layers: NLSLayer[];
@@ -15,6 +15,7 @@ type Props = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onFlyTo?: FlyTo;
 };
 
@@ -27,6 +28,7 @@ const MapSidePanel: React.FC<Props> = ({
   onLayerNameUpdate,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
   onFlyTo,
 }) => {
   const t = useT();
@@ -48,6 +50,7 @@ const MapSidePanel: React.FC<Props> = ({
               onLayerSelect={onLayerSelect}
               onSceneSettingSelect={onSceneSettingSelect}
               onDataSourceManagerOpen={onDataSourceManagerOpen}
+              onLayerVisibilityUpate={onLayerVisibilityUpate}
               onFlyTo={onFlyTo}
             />
           ),
