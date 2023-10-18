@@ -135,7 +135,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               hasNav={!!secondaryNavbar}
               visualizerWidth={visualizerWidth}>
               <Visualizer
-                inEditor
+                inEditor={tab !== "publish"}
                 visualizerRef={visualizerRef}
                 sceneId={sceneId}
                 showStoryPanel={selectedProjectType === "story"}
