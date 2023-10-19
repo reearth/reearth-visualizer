@@ -52,11 +52,12 @@ Layer of the data source you want to add.: ''
 layer name: ''
 Layer: レイヤー
 Layers: レイヤー
-LayerStyle: ''
+Layer Style: ''
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
 Layer Property Inspector: ''
+LayerStyle: ''
 Published: 一般公開
 Unpublished: 非公開
 Scene: シーン
@@ -99,7 +100,9 @@ Select Image: ''
 Select: 選択
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
-Select Asset: 選択
+Please select an layer style before clicking Select.: ''
+Select Layer Style: ''
+No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: 新規ワークスペース作成
 Create: 作成
@@ -250,6 +253,7 @@ Assets Library: アセット
 Use URL: URL
 Add video URL: 映像URLを追加
 Save: 保存
+Select Asset: 選択
 Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
 OK: 確認

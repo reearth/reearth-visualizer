@@ -52,11 +52,12 @@ Layer of the data source you want to add.: Layer of the data source you want to 
 layer name: Layer name
 Layer: Layer
 Layers: Layers
-LayerStyle: ''
+Layer Style: ''
 Outline: Outline
 Add Layer from Resource: ''
 Inspector: Inspector
 Layer Property Inspector: ''
+LayerStyle: ''
 Published: Published
 Unpublished: Unpublished
 Scene: Scene
@@ -105,7 +106,9 @@ No assets match your search.: No assets match your search.
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
   You haven't uploaded any assets yet. Click the upload button above and select
   a compatible file from your computer.
-Select Asset: Select Asset
+Please select an layer style before clicking Select.: ''
+Select Layer Style: ''
+No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
 Create: Create
@@ -271,6 +274,7 @@ Assets Library: Assets Library
 Use URL: Use URL
 Add video URL: Add video URL
 Save: Save
+Select Asset: Select Asset
 Your browser is too small: Your browser is too small
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: >-
   Re:Earth needs at least 900px width to be used effectively. Please resize your
