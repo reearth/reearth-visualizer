@@ -204,7 +204,7 @@ const PublishModal: React.FC<Props> = ({
           <Subtitle size="body">
             {t("This means that anybody with the URL will become unable to view this project.")}
           </Subtitle>
-          <Text size="body" color={theme.classic.main.warning}>
+          <Text size="body" color={theme.warning.main}>
             {t("**Warning**: This includes websites where this project is embedded.")}
           </Text>
         </Section>
@@ -242,7 +242,7 @@ const OptionsToggle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: ${({ theme }) => theme.classic.main.text};
+  color: ${({ theme }) => theme.content.main};
   cursor: pointer;
   user-select: none;
 `;
