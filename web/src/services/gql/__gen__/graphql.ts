@@ -135,8 +135,7 @@ export type AddStyleInput = {
 
 export type AddStylePayload = {
   __typename?: 'AddStylePayload';
-  Style: Style;
-  scene: Scene;
+  style: Style;
 };
 
 export type AddWidgetInput = {
@@ -2003,14 +2002,12 @@ export type RemoveStoryBlockPayload = {
 };
 
 export type RemoveStyleInput = {
-  StyleId: Scalars['ID']['input'];
-  sceneId: Scalars['ID']['input'];
+  styleId: Scalars['ID']['input'];
 };
 
 export type RemoveStylePayload = {
   __typename?: 'RemoveStylePayload';
-  StyleId: Scalars['ID']['output'];
-  scene: Scene;
+  styleId: Scalars['ID']['output'];
 };
 
 export type RemoveTagInput = {
@@ -2035,6 +2032,7 @@ export type RemoveWidgetPayload = {
 };
 
 export enum Role {
+  Maintainer = 'MAINTAINER',
   Owner = 'OWNER',
   Reader = 'READER',
   Writer = 'WRITER'
@@ -2184,6 +2182,8 @@ export type Style = {
   __typename?: 'Style';
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
   value: Scalars['JSON']['output'];
 };
 
@@ -2455,16 +2455,14 @@ export type UpdateStoryPageInput = {
 };
 
 export type UpdateStyleInput = {
-  StyleId: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
-  sceneId: Scalars['ID']['input'];
+  styleId: Scalars['ID']['input'];
   value?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateStylePayload = {
   __typename?: 'UpdateStylePayload';
-  Style: Style;
-  scene: Scene;
+  style: Style;
 };
 
 export type UpdateTagInput = {

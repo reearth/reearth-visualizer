@@ -32,6 +32,8 @@ enum Role {
   READER
   # a role who can read and write project
   WRITER
+  # a eole who can maintain a project
+  MAINTAINER
   # a eole who can have full controll of project
   OWNER
 }

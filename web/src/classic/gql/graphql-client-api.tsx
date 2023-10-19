@@ -1684,6 +1684,7 @@ export type RemoveWidgetPayload = {
 
 export enum Role {
   Owner = 'OWNER',
+  Maintainer = 'Maintainer',
   Reader = 'READER',
   Writer = 'WRITER'
 }
