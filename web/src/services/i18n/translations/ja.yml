@@ -179,7 +179,7 @@ Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
 Story Panel: ストーリーパネル
 Double click here to write.: ダブルクリックで入力
-Move mouse here and click '+' to add content: マウスをここへ、“+”をクリックしコンテンツを追加
+Move mouse here and click "*" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 aria-label-compass: コンパス
 aria-label-adjust-angle: 角度を調節する
 aria-label-zoom-in: ズームイン
@@ -273,17 +273,16 @@ Choose Project Type: Choose Project Type
 classic: classic
 Create project with classic UI: Create project with classic UI
 Beta: Beta
-? Create project with the latest features and UI system (projects might break without prior notice)
-: >-
+Create project with the latest features and UI system (projects might break without prior notice): >-
   Create project with the latest features and UI system (projects might break
   without prior notice)
 timeSince: '{{timeSince}}に変更'
 You have no projects in your workspace. Click the button above in the Quick Start to create a project now!: ワークスペースにプロジェクトがありません。クイックスタート内の「新規プロジェクト作成」ボタンをクリックして、プロジェクトを作成してください。
 Quick Start: クイックスタート
 User guide: ユーザーガイド
-New project: 新規プロジェクト作成
+New project: 新規プロジェクト作成s workspace
 New workspace: 新規ワークスペース作成
-"'s workspace": ' のワークスペース'
+'''s workspace': ' のワークスペース'
 Layer style: レイヤータイプ
 import: インポート
 Data: データ
