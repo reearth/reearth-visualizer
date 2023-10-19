@@ -1,17 +1,24 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-import type { ValueTypes } from "@reearth/beta/utils/value";
-import type { Item } from "@reearth/services/api/propertyApi/utils";
+import { Spacing } from "@reearth/beta/lib/core/mantle";
 
-import { getFieldValue } from "../../../utils";
+import { calculatePaddingValue } from "../../../utils";
 
-type Props = {
+export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };
+
+export default ({
+  name,
+  isSelected,
+  property,
+  isEditable,
+  onClick,
+}: {
+  name?: string | null;
   isSelected?: boolean;
-  propertyItems?: Item[];
+  property?: any;
+  isEditable?: boolean;
   onClick: (() => void) | undefined;
-};
-
-export default ({ isSelected, propertyItems, onClick }: Props) => {
+}) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -21,7 +28,7 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     }
   }, [isSelected, editMode]);
 
-  const title = useMemo(() => propertyItems?.[1]?.title, [propertyItems]);
+  const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -32,26 +39,38 @@ export default ({ isSelected, propertyItems, onClick }: Props) => {
     [onClick, showSettings, isSelected, editMode],
   );
 
-  const defaultSettings: Item | undefined = useMemo(
-    () => propertyItems?.find(i => i.schemaGroup === "default" || i.schemaGroup === "title"),
-    [propertyItems],
+  const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
+
+  const groupId = useMemo(
+    () => (property?.default ? "default" : property?.title ? "title" : undefined),
+    [property],
   );
 
-  const padding = useMemo(
-    () => getFieldValue(propertyItems ?? [], "padding", "panel") as ValueTypes["spacing"],
-    [propertyItems],
+  const panelSettings = useMemo(
+    () => ({
+      padding: {
+        ...property?.panel?.padding,
+        value: calculatePaddingValue(
+          DEFAULT_BLOCK_PADDING,
+          property?.panel?.padding.value,
+          isEditable,
+        ),
+      },
+    }),
+    [property?.panel, isEditable],
   );
 
-  const handleEditModeToggle = () => setEditMode?.(em => !em);
+  const handleEditModeToggle = useCallback(() => setEditMode?.(em => !em), []);
 
-  const handleSettingsToggle = () => setShowSettings?.(s => !s);
+  const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
 
   return {
     title,
+    groupId,
     editMode,
     showSettings,
     defaultSettings,
-    padding,
+    panelSettings,
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,

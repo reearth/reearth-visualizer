@@ -1,21 +1,13 @@
 import { Theme } from "@reearth/beta/lib/core/Crust/types";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import { type Item } from "@reearth/services/api/propertyApi/utils";
+import type { Camera } from "@reearth/beta/utils/value";
 
-export type Block<P = unknown> = {
-  id: string;
-  title?: string;
-  pluginId?: string;
-  extensionId?: string;
-  property?: {
-    id: string;
-    items?: P;
-  };
-};
+import { StoryBlock } from "../types";
 
-export type BlockProps<P = unknown> = {
-  block?: Block<P>;
+export type BlockProps = {
+  block?: StoryBlock;
   layer?: Layer;
   onClick?: () => void;
 };
@@ -24,8 +16,9 @@ export type CommonProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
-  block?: Block<Item[]>;
+  block?: StoryBlock;
   theme?: Theme;
+  currentCamera?: Camera;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: (pageId?: string, id?: string) => void;
@@ -37,19 +30,5 @@ export type CommonProps = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-};
-
-export type SharedProperties = {
-  id: string;
-  title: string;
-  fields: {
-    padding?: Spacing;
-  };
-}[];
-
-type Spacing = {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
+  onFlyTo?: FlyTo;
 };

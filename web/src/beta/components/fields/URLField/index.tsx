@@ -3,12 +3,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
-import useAssetHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
-import useLayerStyleHooks from "@reearth/beta/features/LayerStyle/hooks";
-import ChooseAssetModal from "@reearth/beta/features/Modals/ChooseAssetModal";
-import ChooseLayerStyleModal from "@reearth/beta/features/Modals/ChooseLayerStyleModal";
-import { onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
+import AssetModal from "@reearth/beta/features/Modals/AssetModal";
+import LayerStyleModal from "@reearth/beta/features/Modals/LayerStyleModal";
+import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
@@ -61,73 +59,18 @@ const URLField: React.FC<Props> = ({
     [fileType, onChange, setNotification, t],
   );
 
-  const {
-    assets,
-    assetsWrapperRef,
-    isAssetsLoading,
-    hasMoreAssets,
-    searchTerm,
-    selectedAssets,
-    selectAsset,
-    handleGetMoreAssets,
-    handleFileSelect,
-    handleSearchTerm,
-    handleSelectAsset,
-  } = useAssetHooks({
+  const { handleFileUpload } = useFileUploaderHook({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
+    assetType: entityType,
   });
-
-  const {
-    layerStyles,
-    layerStylesWrapperRef,
-    selectedLayerStyles,
-    isLayerStylesLoading,
-    selectLayerStyle,
-    handleSelectLayerStyle,
-  } = useLayerStyleHooks({ sceneId });
-
-  const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm ?? "");
-  const handleSearchInputChange = useCallback(
-    (value: string) => {
-      setLocalSearchTerm(value);
-    },
-    [setLocalSearchTerm],
-  );
-
-  const handleSearch = useCallback(() => {
-    if (!localSearchTerm || localSearchTerm.length < 1) {
-      handleSearchTerm?.(undefined);
-    } else {
-      handleSearchTerm?.(localSearchTerm);
-    }
-  }, [handleSearchTerm, localSearchTerm]);
-
-  const handleReset = useCallback(() => {
-    const selectedAsset = assets?.find(a => a.url === currentValue);
-    const selectedLayerStyle = layerStyles?.find(a => a.name === currentValue);
-    if (selectedAsset) {
-      selectAsset([selectedAsset]);
-    }
-    if (selectedLayerStyle) {
-      selectLayerStyle([selectedLayerStyle]);
-    }
-  }, [assets, layerStyles, currentValue, selectAsset, selectLayerStyle]);
 
   useEffect(() => {
     setCurrentValue(value ?? "");
   }, [value]);
 
-  useEffect(() => {
-    handleReset();
-  }, [handleReset]);
-
-  const handleClose = useCallback(() => {
-    setOpen(false);
-    handleReset();
-  }, [handleReset]);
-
   const handleClick = useCallback(() => setOpen(!open), [open]);
+  const handleModalClose = useCallback(() => setOpen(false), []);
 
   return (
     <Property name={name} description={description}>
@@ -144,45 +87,26 @@ const URLField: React.FC<Props> = ({
             icon="uploadSimple"
             text={t("Upload")}
             iconPosition="left"
-            onClick={handleFileSelect}
+            onClick={handleFileUpload}
           />
         </ButtonWrapper>
       )}
       {fileType === "layerStyle" && <SelectionButton icon="layerStyle" onClick={handleClick} />}
       {open && entityType !== "layerStyle" && (
-        <ChooseAssetModal
+        <AssetModal
           open={open}
+          onModalClose={handleModalClose}
           assetType={entityType}
-          localSearchTerm={localSearchTerm}
-          selectedAssets={selectedAssets}
-          wrapperRef={assetsWrapperRef}
-          assets={assets}
-          isLoading={isAssetsLoading}
-          hasMoreAssets={hasMoreAssets}
-          searchTerm={searchTerm}
-          onClose={handleClose}
-          handleSearch={handleSearch}
-          handleSearchInputChange={handleSearchInputChange}
-          onGetMore={handleGetMoreAssets}
-          onScrollToBottom={onScrollToBottom}
-          onSelectAsset={handleSelectAsset}
+          currentWorkspace={currentWorkspace}
+          currentValue={currentValue}
           onSelect={handleChange}
         />
       )}
       {open && entityType === "layerStyle" && (
-        <ChooseLayerStyleModal
+        <LayerStyleModal
           open={open}
-          layerStyles={layerStyles}
-          localSearchTerm={localSearchTerm}
-          selectedLayerStyles={selectedLayerStyles}
-          wrapperRef={layerStylesWrapperRef}
-          isLoading={isLayerStylesLoading}
-          searchTerm={searchTerm}
-          onClose={handleClose}
-          handleSearch={handleSearch}
-          handleSearchInputChange={handleSearchInputChange}
-          onScrollToBottom={onScrollToBottom}
-          onSelectLayerStyle={handleSelectLayerStyle}
+          sceneId={sceneId}
+          onClose={handleModalClose}
           onSelect={handleChange}
         />
       )}

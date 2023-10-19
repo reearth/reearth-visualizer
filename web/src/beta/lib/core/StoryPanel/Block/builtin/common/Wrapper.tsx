@@ -1,10 +1,9 @@
 import { ReactNode, createContext } from "react";
 
-import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
-import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
+import { FieldComponent } from "../../../hooks/useFieldComponent";
 import SelectableArea from "../../../SelectableArea";
 import Template from "../../Template";
 
@@ -20,12 +19,13 @@ type Spacing = {
 };
 
 type Props = {
+  name?: string | null;
   icon?: string;
   isSelected?: boolean;
   isEditable?: boolean;
   children?: ReactNode;
   propertyId?: string;
-  propertyItems?: Item[];
+  property?: any;
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   onClick?: () => void;
@@ -34,12 +34,13 @@ type Props = {
 };
 
 const BlockWrapper: React.FC<Props> = ({
+  name,
   icon,
   isSelected,
   isEditable,
   children,
   propertyId,
-  propertyItems,
+  property,
   dndEnabled = true,
   settingsEnabled = true,
   onClick,
@@ -48,19 +49,23 @@ const BlockWrapper: React.FC<Props> = ({
 }) => {
   const {
     title,
+    groupId,
     editMode,
     showSettings,
     defaultSettings,
-    padding,
+    panelSettings,
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
   } = useHooks({
+    name,
     isSelected,
-    propertyItems,
+    property,
+    isEditable,
     onClick,
   });
+
   return (
     <BlockContext.Provider value={{ editMode }}>
       <SelectableArea
@@ -70,7 +75,7 @@ const BlockWrapper: React.FC<Props> = ({
         propertyId={propertyId}
         dndEnabled={dndEnabled}
         showSettings={showSettings}
-        propertyItems={propertyItems}
+        panelSettings={panelSettings}
         editMode={editMode}
         isEditable={isEditable}
         setEditMode={setEditMode}
@@ -78,12 +83,26 @@ const BlockWrapper: React.FC<Props> = ({
         onSettingsToggle={handleSettingsToggle}
         onRemove={onRemove}
         onClickAway={onClickAway}>
-        <Block padding={padding} isEditable={isEditable} onClick={handleBlockClick}>
+        <Block
+          padding={panelSettings?.padding?.value}
+          isEditable={isEditable}
+          onClick={handleBlockClick}>
           {children ?? <Template icon={icon} />}
         </Block>
-        {editMode && propertyId && defaultSettings && settingsEnabled && (
+        {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
-            <FieldComponents propertyId={propertyId} item={defaultSettings} />
+            {Object.keys(defaultSettings).map(fieldId => {
+              const field = defaultSettings[fieldId];
+              return (
+                <FieldComponent
+                  key={groupId + propertyId}
+                  propertyId={propertyId}
+                  groupId={groupId}
+                  fieldId={fieldId}
+                  field={field}
+                />
+              );
+            })}
           </EditorPanel>
         )}
       </SelectableArea>

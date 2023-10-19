@@ -139,6 +139,7 @@ export function findEntity(
   viewer: CesiumViewer,
   layerId?: string,
   featureId?: string,
+  withoutTileFeature?: boolean,
 ): Entity | Cesium3DTileset | InternalCesium3DTileFeature | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";
@@ -160,19 +161,6 @@ export function findEntity(
     }
   }
 
-  // Find Cesium3DTileFeature
-  for (let i = 0; i < viewer.scene.primitives.length; i++) {
-    const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset) || !prim.ready) {
-      continue;
-    }
-
-    const target = findFeatureFrom3DTile(prim.root, featureId);
-    if (target) {
-      return target;
-    }
-  }
-
   // Find Cesium3DTileset
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
@@ -180,12 +168,24 @@ export function findEntity(
       continue;
     }
 
-    const tag = getTag(prim);
-    if (tag?.layerId && layerId && tag?.layerId === layerId) {
-      return prim;
+    if (layerId && !featureId) {
+      const tag = getTag(prim);
+      if (tag?.layerId && layerId && tag?.layerId === layerId) {
+        return prim;
+      }
+      continue;
+    }
+
+    if (!prim.ready) continue;
+
+    // Skip to search 3dtiles features if `withoutTileFeature` is `true`.
+    if (!withoutTileFeature) {
+      const target = findFeatureFrom3DTile(prim.root, featureId);
+      if (target) {
+        return target;
+      }
     }
   }
-
   return;
 }
 
@@ -368,14 +368,15 @@ export const convertObjToComputedFeature = (
     ];
   }
 
-  if (obj instanceof Entity) {
-    const tag = getTag(obj);
+  if (obj instanceof Entity || ("id" in obj && obj.id instanceof Entity)) {
+    const entity = (obj instanceof Entity ? obj : obj.id) as Entity;
+    const tag = getTag(entity);
     return [
       tag?.layerId,
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: convertEntityProperties(viewer, obj),
+        properties: convertEntityProperties(viewer, entity),
       },
     ];
   }

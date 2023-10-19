@@ -15,9 +15,11 @@ import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAl
 import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
+import { Story, StoryBlock, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { toUi } from "@reearth/services/api/propertyApi/utils";
 import {
   type Maybe,
   type WidgetZone as WidgetZoneType,
@@ -33,6 +35,9 @@ import {
   PropertyFieldFragmentFragment,
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
+  Story as GqlStory,
+  StoryPage as GqlStoryPage,
+  StoryBlock as GqlStoryBlock,
 } from "@reearth/services/gql";
 
 type P = { [key in string]: any };
@@ -179,6 +184,35 @@ export const convertWidgets = (
   };
 };
 
+export const convertStory = (story?: GqlStory): Story | undefined => {
+  if (!story) return undefined;
+
+  const storyPages = (pages: GqlStoryPage[]): StoryPage[] =>
+    pages.map(p => ({
+      id: p.id,
+      title: p.title,
+      propertyId: p.propertyId,
+      property: processProperty(undefined, p.property),
+      blocks: storyBlocks(p.blocks),
+    }));
+
+  const storyBlocks = (blocks: GqlStoryBlock[]): StoryBlock[] =>
+    blocks.map(b => ({
+      id: b.id,
+      pluginId: b.pluginId,
+      extensionId: b.extensionId,
+      name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.title,
+      propertyId: b.property?.id,
+      property: processProperty(undefined, b.property),
+    }));
+
+  return {
+    id: story.id,
+    title: story.title,
+    pages: storyPages(story.pages),
+  };
+};
+
 export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
   orig?: PropertyFragmentFragment | null | undefined,
@@ -206,11 +240,20 @@ export const processProperty = (
     }),
     {},
   );
-
   const mergedProperty: P = Object.fromEntries(
     Object.entries(allItems)
       .map(([key, value]) => {
         const { schema, orig, parent } = value;
+        if (!orig && !parent) {
+          if (schema.isList) {
+            return [key, undefined];
+          }
+          return [
+            key,
+            processPropertyGroups(schema, undefined, undefined, linkedDatasetId, datasets),
+          ];
+        }
+
         if (
           (!orig || orig.__typename === "PropertyGroupList") &&
           (!parent || parent.__typename === "PropertyGroupList")
@@ -266,20 +309,48 @@ const processPropertyGroups = (
   );
 
   return Object.fromEntries(
-    Object.entries(allFields)
-      .map(([key, { parent, orig }]) => {
-        const used = orig || parent;
-        if (!used) return [key, null];
+    Object.entries(allFields).map(([key, { schema, parent, orig }]) => {
+      const used = orig || parent;
 
-        const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
-        const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
-        if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
-          return [key, datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId)];
-        }
+      const fieldMeta = {
+        type: valueTypeFromGQL(schema.type) || undefined,
+        ui: toUi(schema.ui) || undefined,
+        title: schema.translatedTitle || undefined,
+        description: schema.translatedDescription || undefined,
+      };
 
-        return [key, valueFromGQL(used.value, used.type)?.value];
-      })
-      .filter(([, value]) => typeof value !== "undefined" && value !== null),
+      if (!used) {
+        return [
+          key,
+          {
+            ...fieldMeta,
+            value: schema.defaultValue
+              ? valueFromGQL(schema.defaultValue, schema.type)?.value
+              : undefined,
+          },
+        ];
+      }
+
+      const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
+      const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
+      if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
+        return [
+          key,
+          {
+            ...fieldMeta,
+            value: datasetValue(datasets, datasetSchemaId, linkedDatasetId, datasetFieldId),
+          },
+        ];
+      }
+
+      return [
+        key,
+        {
+          ...fieldMeta,
+          value: valueFromGQL(used.value, used.type)?.value,
+        },
+      ];
+    }),
   );
 };
 

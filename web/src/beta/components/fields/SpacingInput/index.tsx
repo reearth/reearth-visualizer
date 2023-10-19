@@ -47,9 +47,9 @@ const SpacingInput: React.FC<Props> = ({ name, description, value, min, max, onC
       <StyledRectangle>
         {SPACING_POSITIONS.map((position, index) => (
           <SpacingField
+            key={position}
             value={memoizedSpacingValues[index]}
             suffix="px"
-            key={position}
             position={position}
             min={min}
             max={max}

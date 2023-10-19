@@ -6,48 +6,35 @@ import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
+import useLayerStyleHooks from "@reearth/beta/features/LayerStyle/hooks";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
-  layerStyles?: LayerStyle[];
-  selectedLayerStyles?: LayerStyle[];
-  searchTerm?: string;
+  sceneId?: string;
   open?: boolean;
-  isLoading?: boolean;
-  localSearchTerm?: string;
-  wrapperRef?: React.RefObject<HTMLDivElement>;
-  onSelectLayerStyle?: (layerStyle?: LayerStyle) => void;
   onSelect?: (value: string) => void;
   onClose: () => void;
-  onScrollToBottom?: (
-    event: React.UIEvent<HTMLDivElement, UIEvent>,
-    onLoadMore?: (() => void) | undefined,
-    threshold?: number,
-  ) => void;
-  handleSearchInputChange?: (value: string) => void;
-  handleSearch?: () => void;
 };
 
-const ChooseLayerStyleModal: React.FC<Props> = ({
-  open,
-  layerStyles = [],
-  selectedLayerStyles = [],
-  isLoading,
-  searchTerm,
-  localSearchTerm,
-  wrapperRef,
-  onClose,
-  onSelect,
-  onSelectLayerStyle,
-  onScrollToBottom,
-  handleSearchInputChange,
-  handleSearch,
-}) => {
+const ChooseLayerStyleModal: React.FC<Props> = ({ open, sceneId, onClose, onSelect }) => {
   const t = useT();
   const [, setNotification] = useNotification();
+
+  const {
+    layerStyles,
+    localSearchTerm,
+    searchTerm,
+    layerStylesWrapperRef,
+    selectedLayerStyles,
+    isLayerStylesLoading,
+    handleSelectLayerStyle,
+    handleSearch,
+    handleSearchInputChange,
+    onScrollToBottom,
+  } = useLayerStyleHooks({ sceneId });
 
   const handleSelectButtonClick = useCallback(() => {
     if (selectedLayerStyles && selectedLayerStyles.length > 0) {
@@ -89,7 +76,7 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
         </SearchWarpper>
       </ControlWarpper>
       <LayerStyleWrapper>
-        {!isLoading && (!layerStyles || layerStyles.length < 1) ? (
+        {!isLayerStylesLoading && (!layerStyles || layerStyles.length < 1) ? (
           <Template>
             <TemplateText size="body">
               {searchTerm
@@ -101,20 +88,20 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
           </Template>
         ) : (
           <LayerStyleListWrapper
-            ref={wrapperRef}
-            onScroll={e => !isLoading && onScrollToBottom?.(e)}>
+            ref={layerStylesWrapperRef}
+            onScroll={e => !isLayerStylesLoading && onScrollToBottom?.(e)}>
             <LayerStyleList>
-              {layerStyles.map(a => (
+              {layerStyles?.map(a => (
                 <CatalogCard
                   key={a.id}
                   name={a.name}
                   icon={"layerStyle"}
-                  onSelect={() => onSelectLayerStyle?.(a as LayerStyle)}
+                  onSelect={() => handleSelectLayerStyle?.(a as LayerStyle)}
                   selected={selectedLayerStyles.some(ua => ua.id === a.id)}
                 />
               ))}
             </LayerStyleList>
-            {isLoading && <Loading />}
+            {isLayerStylesLoading && <Loading />}
           </LayerStyleListWrapper>
         )}
       </LayerStyleWrapper>

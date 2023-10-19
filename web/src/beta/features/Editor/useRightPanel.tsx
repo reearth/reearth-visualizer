@@ -26,6 +26,7 @@ type Props = {
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
+  onPageUpdate?: (id: string, layers: string[]) => void;
 };
 
 export default ({
@@ -38,6 +39,7 @@ export default ({
   selectedLayerStyleId,
   selectedLayerId,
   currentCamera,
+  onPageUpdate,
   onFlyTo,
   onLayerStyleValueUpdate,
   onLayerConfigUpdate,
@@ -67,6 +69,7 @@ export default ({
             layers={nlsLayers}
             tab={tab}
             onFlyTo={onFlyTo}
+            onPageUpdate={onPageUpdate}
           />
         );
       case "widgets":
@@ -89,6 +92,7 @@ export default ({
     onFlyTo,
     onLayerStyleValueUpdate,
     onLayerConfigUpdate,
+    onPageUpdate,
   ]);
 
   return {

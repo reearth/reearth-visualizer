@@ -55,6 +55,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handlePageAdd,
     handlePageMove,
     handleStoryBlockMove: onStoryBlockMove,
+    handlePageUpdate,
   } = useStorytelling({
     sceneId,
     onFlyTo: handleFlyTo,
@@ -69,6 +70,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerSelect,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
+    handleLayerVisibilityUpdate,
   } = useLayers({
     sceneId,
   });
@@ -115,8 +117,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerDelete: handleLayerDelete,
     onLayerSelect: handleLayerSelected,
     onLayerNameUpdate: handleLayerNameUpdate,
+    onLayerVisibilityUpate: handleLayerVisibilityUpdate,
     onSceneSettingSelect: handleSceneSettingSelect,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
+    onFlyTo: handleFlyTo,
   });
 
   const { rightPanel } = useRightPanel({
@@ -130,6 +134,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedLayerId: selectedLayer?.id,
     onFlyTo: handleFlyTo,
+    onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
   });
@@ -191,7 +196,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 sceneId={sceneId}
                 showStoryPanel={selectedProjectType === "story"}
                 selectedStory={selectedStory}
-                currentPageId={currentPage?.id}
+                currentPage={currentPage}
                 isAutoScrolling={isAutoScrolling}
                 installableBlocks={installableStoryBlocks}
                 currentCamera={currentCamera}

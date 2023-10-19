@@ -27,6 +27,11 @@ export type LayerConfigUpdateProps = {
   config: Omit<LayerSimple, "type" | "id">;
 };
 
+export type LayerVisibilityUpdateProps = {
+  layerId: string;
+  visible: boolean;
+};
+
 export default function ({ sceneId }: useLayerProps) {
   const t = useT();
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
@@ -94,6 +99,15 @@ export default function ({ sceneId }: useLayerProps) {
     },
     [useUpdateNLSLayer],
   );
+  const handleLayerVisibilityUpdate = useCallback(
+    async (inp: LayerVisibilityUpdateProps) => {
+      await useUpdateNLSLayer({
+        layerId: inp.layerId,
+        visible: inp.visible,
+      });
+    },
+    [useUpdateNLSLayer],
+  );
 
   return {
     nlsLayers,
@@ -104,5 +118,6 @@ export default function ({ sceneId }: useLayerProps) {
     handleLayerSelect,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
+    handleLayerVisibilityUpdate,
   };
 }

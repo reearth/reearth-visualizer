@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 
-import { autoFillPage } from "@reearth/beta/utils/infinite-scroll";
+import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
@@ -19,6 +19,26 @@ export default ({ sceneId }: { sceneId?: string }) => {
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { layerStyles, loading, isRefetching, fetchMore } = useGetLayerStylesQuery({ sceneId });
   const [selectedLayerStyles, selectLayerStyle] = useState<LayerStyle[]>([]);
+
+  const [searchTerm, setSearchTerm] = useState<string>();
+  const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm ?? "");
+
+  const handleSearchInputChange = useCallback(
+    (value: string) => {
+      setLocalSearchTerm(value);
+    },
+    [setLocalSearchTerm],
+  );
+  const handleSearchTerm = useCallback((term?: string) => {
+    setSearchTerm(term);
+  }, []);
+  const handleSearch = useCallback(() => {
+    if (!localSearchTerm || localSearchTerm.length < 1) {
+      handleSearchTerm?.(undefined);
+    } else {
+      handleSearchTerm?.(localSearchTerm);
+    }
+  }, [localSearchTerm, handleSearchTerm]);
 
   const isGettingMore = useRef(false);
 
@@ -53,10 +73,15 @@ export default ({ sceneId }: { sceneId?: string }) => {
 
   return {
     layerStyles,
+    searchTerm,
+    localSearchTerm,
     layerStylesWrapperRef,
     isLayerStylesLoading: loading ?? isRefetching,
     selectedLayerStyles,
+    onScrollToBottom,
     selectLayerStyle,
     handleSelectLayerStyle,
+    handleSearchInputChange,
+    handleSearch,
   };
 };
