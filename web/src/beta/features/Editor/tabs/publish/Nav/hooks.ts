@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useSettingsNavigation } from "@reearth/beta/hooks";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useProjectFetcher } from "@reearth/services/api";
 
@@ -7,16 +8,17 @@ import { publishingType } from "./PublishModal";
 import { type PublishStatus } from "./PublishModal/hooks";
 
 export default ({ projectId }: { projectId?: string }) => {
+  const handleNavigationToSettings = useSettingsNavigation({ projectId });
   const {
     useProjectQuery,
     useProjectAliasCheckLazyQuery,
     usePublishProject,
     publishProjectLoading,
   } = useProjectFetcher();
+
   const { project } = useProjectQuery(projectId);
 
   const [publishing, setPublishing] = useState<publishingType>("unpublishing");
-
   const [dropdownOpen, setDropdown] = useState(false);
   const [modalOpen, setModal] = useState(false);
 
@@ -67,8 +69,9 @@ export default ({ projectId }: { projectId?: string }) => {
   );
 
   const handleOpenProjectSettings = useCallback(() => {
+    handleNavigationToSettings?.("public");
     setDropdown(false);
-  }, []);
+  }, [handleNavigationToSettings]);
 
   const handleModalOpen = useCallback((p: publishingType) => {
     setPublishing(p);
@@ -76,9 +79,7 @@ export default ({ projectId }: { projectId?: string }) => {
     setModal(true);
   }, []);
 
-  const handleModalClose = useCallback(() => {
-    setModal(false);
-  }, []);
+  const handleModalClose = useCallback(() => setModal(false), []);
 
   return {
     publishing,
