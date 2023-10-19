@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import Resizable from "@reearth/beta/components/Resizable";
 import useBottomPanel from "@reearth/beta/features/Editor/useBottomPanel";
@@ -73,11 +73,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     sceneId,
   });
 
-  const handleLayerSelected = (layerId: string) => {
-    setSelectedLayerStyleId(undefined);
-    handleLayerSelect(layerId);
-  };
-
   const {
     layerStyles,
     selectedLayerStyle,
@@ -89,10 +84,21 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerStyleSelect,
   } = useLayerStyles({ sceneId });
 
-  const handleLayerStyleSelected = (layerStyleId: string) => {
-    setSelectedLayerId(undefined);
-    handleLayerStyleSelect(layerStyleId);
-  };
+  const handleLayerStyleSelected = useCallback(
+    (layerStyleId: string) => {
+      setSelectedLayerId(undefined);
+      handleLayerStyleSelect(layerStyleId);
+    },
+    [handleLayerStyleSelect, setSelectedLayerId],
+  );
+
+  const handleLayerSelected = useCallback(
+    (layerId: string) => {
+      setSelectedLayerStyleId(undefined);
+      handleLayerSelect(layerId);
+    },
+    [handleLayerSelect, setSelectedLayerStyleId],
+  );
 
   const { leftPanel } = useLeftPanel({
     tab,

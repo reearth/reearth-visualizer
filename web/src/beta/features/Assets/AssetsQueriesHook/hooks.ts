@@ -1,7 +1,8 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import useFileInput from "use-file-input";
 
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
+import { autoFillPage } from "@reearth/beta/utils/infinite-scroll";
 import { useAssetsFetcher } from "@reearth/services/api";
 import { Maybe, AssetSortType as GQLSortType } from "@reearth/services/gql";
 
@@ -109,9 +110,27 @@ export default ({
     multiple: true,
   });
 
+  const handleSelectAsset = useCallback(
+    (asset?: Asset) => {
+      if (!asset) return;
+      selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
+    },
+    [selectedAssets, selectAsset],
+  );
+
+  const isAssetsLoading = loading ?? isRefetching;
+
+  const assetsWrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (assetsWrapperRef.current && !isAssetsLoading && hasMoreAssets)
+      autoFillPage(assetsWrapperRef, handleGetMoreAssets);
+  }, [handleGetMoreAssets, hasMoreAssets, isAssetsLoading]);
+
   return {
     assets,
-    isLoading: loading ?? isRefetching,
+    assetsWrapperRef,
+    isAssetsLoading,
     hasMoreAssets,
     sort,
     searchTerm,
@@ -122,5 +141,6 @@ export default ({
     removeAssets,
     handleSortChange,
     handleSearchTerm,
+    handleSelectAsset,
   };
 };

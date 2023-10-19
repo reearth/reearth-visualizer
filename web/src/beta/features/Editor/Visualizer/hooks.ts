@@ -172,8 +172,6 @@ export default ({
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
-
-      console.log("Layer has been dropped!");
     },
     [],
   );

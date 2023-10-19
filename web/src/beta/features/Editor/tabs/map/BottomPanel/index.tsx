@@ -33,7 +33,7 @@ const MapBottomPanel: React.FC<Props> = ({
       contents={[
         {
           id: "layerStyle",
-          title: t("LayerStyle"),
+          title: t("Layer Style"),
           children: (
             <LayerStyles
               layerStyles={layerStyles}

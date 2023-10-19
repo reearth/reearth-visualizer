@@ -15,7 +15,7 @@ import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAl
 import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
-import { DEFAULT_APPEARANCE, valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import {
@@ -351,7 +351,7 @@ export function processLayers(
       }
     }
 
-    return DEFAULT_APPEARANCE;
+    return DEFAULT_LAYER_STYLE;
   };
 
   return newLayers?.map(nlsLayer => {

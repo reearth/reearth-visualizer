@@ -229,7 +229,7 @@ export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   string: "",
 };
 
-export const DEFAULT_APPEARANCE: Partial<LayerAppearanceTypes> = {
+export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
   resource: {
     clampToGround: true,
   },

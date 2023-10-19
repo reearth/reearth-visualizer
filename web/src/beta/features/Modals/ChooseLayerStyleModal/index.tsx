@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import AssetCard from "@reearth/beta/components/CatalogCard";
+import CatalogCard from "@reearth/beta/components/CatalogCard";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
@@ -56,14 +56,14 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
     } else {
       setNotification({
         type: "warning",
-        text: t("Please select an asset before clicking Select."),
+        text: t("Please select an layer style before clicking Select."),
       });
     }
   }, [selectedLayerStyles, onSelect, onClose, setNotification, t]);
 
   return (
     <StyledModal
-      title={t("Select Asset")}
+      title={t("Select Layer Style")}
       isVisible={open}
       onClose={onClose}
       button1={
@@ -88,22 +88,24 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
           <SearchButton icon="search" margin="0" onClick={handleSearch} />
         </SearchWarpper>
       </ControlWarpper>
-      <AssetWrapper>
+      <LayerStyleWrapper>
         {!isLoading && (!layerStyles || layerStyles.length < 1) ? (
           <Template>
             <TemplateText size="body">
               {searchTerm
-                ? t("No assets match your search.")
+                ? t("No layerStyle match your search.")
                 : t(
                     "You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.",
                   )}
             </TemplateText>
           </Template>
         ) : (
-          <AssetListWrapper ref={wrapperRef} onScroll={e => !isLoading && onScrollToBottom?.(e)}>
-            <AssetList>
+          <LayerStyleListWrapper
+            ref={wrapperRef}
+            onScroll={e => !isLoading && onScrollToBottom?.(e)}>
+            <LayerStyleList>
               {layerStyles.map(a => (
-                <AssetCard
+                <CatalogCard
                   key={a.id}
                   name={a.name}
                   icon={"layerStyle"}
@@ -111,11 +113,11 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
                   selected={selectedLayerStyles.some(ua => ua.id === a.id)}
                 />
               ))}
-            </AssetList>
+            </LayerStyleList>
             {isLoading && <Loading />}
-          </AssetListWrapper>
+          </LayerStyleListWrapper>
         )}
-      </AssetWrapper>
+      </LayerStyleWrapper>
     </StyledModal>
   );
 };
@@ -123,7 +125,7 @@ const ChooseLayerStyleModal: React.FC<Props> = ({
 const StyledModal = styled(Modal)`
   width: 730px;
 `;
-const AssetWrapper = styled.div`
+const LayerStyleWrapper = styled.div`
   max-height: calc(100vh - 240px);
   display: flex;
   flex-direction: column;
@@ -147,13 +149,13 @@ const SearchButton = styled(Button)`
   height: 28px;
 `;
 
-const AssetListWrapper = styled.div`
+const LayerStyleListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
 `;
 
-const AssetList = styled.div`
+const LayerStyleList = styled.div`
   margin-right: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fill, 114px);

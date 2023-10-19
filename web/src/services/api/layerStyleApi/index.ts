@@ -31,14 +31,15 @@ export default () => {
   const [, setNotification] = useNotification();
 
   const useGetLayerStylesQuery = useCallback(({ sceneId, lang }: LayerStylesQueryProps) => {
-    const { data, ...rest } = useQuery(GET_SCENE, {
+    const { data, loading, networkStatus, fetchMore, ...rest } = useQuery(GET_SCENE, {
       variables: { sceneId: sceneId ?? "", lang },
       skip: !sceneId,
     });
 
+    const isRefetching = useMemo(() => networkStatus === 3, [networkStatus]);
     const layerStyles = useMemo(() => getLayerStyles(data), [data]);
 
-    return { layerStyles, ...rest };
+    return { layerStyles, loading, isRefetching, fetchMore, ...rest };
   }, []);
 
   const [addLayerStyleMutation] = useMutation<AddStyleMutation, MutationAddStyleArgs>(
