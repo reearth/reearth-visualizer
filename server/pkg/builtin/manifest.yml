@@ -163,7 +163,16 @@ extensions:
                 field: terrainBool
                 type: bool
                 value: true
+        - id: globeLighting
+          collection: globe
+          title: Globe Lighting
+          fields:
+            - id: globeLightingBool
+              type: bool
+              title: Enable
+              description: This property will support the globe receive Entitys Lighting.
         - id: globeShadow
+          collection: globe
           title: Globe Shadow
           fields:
             - id: globeShadowBool
@@ -171,6 +180,7 @@ extensions:
               title: Enable
               description: This property will support the globe receive Entitys shadows.
         - id: globeAtmosphere
+          collection: globe
           title: Globe Atmosphere
           fields:
             - id: globeAtmosphereBool
@@ -189,7 +199,8 @@ extensions:
                 field: globeAtmosphereBool
                 type: bool
                 value: true
-        - id: sky
+        - id: skyBox
+          collection: sky
           title: Sky Box
           fields:
             - id: skyBoxBool
@@ -197,6 +208,7 @@ extensions:
               title: Enable
               description: Description needed.
         - id: sun
+          collection: sky
           title: Sun
           fields:
             - id: sunBool
@@ -204,6 +216,7 @@ extensions:
               title: Enable
               description: Description needed.
         - id: moon
+          collection: sky
           title: Moon
           fields:
             - id: moonBool
@@ -211,6 +224,7 @@ extensions:
               title: Enable
               description: Description needed.
         - id: skyAtmosphere
+          collection: sky
           title: Sky Atmosphere
           fields:
             - id: skyAtmosphereBool
