@@ -8,16 +8,35 @@ import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelin
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-const Timeline: React.FC = () => {
+type TimelineProps = {
+  blockId?: string;
+};
+const Timeline = ({ blockId }: TimelineProps) => {
   const t = useT();
   const [open, setOpen] = useState(false);
   const playSpeedOptions = ["1 min/sec", "0.1 hr/sec", "0.5 hr/sec", "1 hr/sec"];
   const [selected, setSelected] = useState("1 min/sec");
-  const { currentTime, range } = useTimelineBlock();
-  const { formattedCurrentTime, timeRange } = useHooks({ currentTime, range });
+  const { currentTime, range, speed, onClick, onDrag, onPlay, onPlayReversed, onSpeedChange } =
+    useTimelineBlock();
+  const {
+    formattedCurrentTime,
+    timeRange,
+    toggleIsPlaying,
+    toggleIsPlayingReversed,
+    handleOnSpeedChange,
+  } = useHooks({
+    currentTime,
+    range,
+    onClick,
+    onDrag,
+    onPlay,
+    onPlayReversed,
+    onSpeedChange,
+  });
 
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
+  console.log(speed, blockId);
   const handleClick = useCallback(
     (value: string) => {
       setOpen(false);
@@ -33,9 +52,9 @@ const Timeline: React.FC = () => {
           <Icon icon="timelineStoryBlock" size={16} />
         </StyledIcon>
         <PlayControl>
-          <Icon icon="timelinePlayLeft" />
+          <Icon onClick={toggleIsPlayingReversed} icon="timelinePlayLeft" />
           <Icon icon="play" />
-          <Icon icon="timelinePlayRight" />
+          <Icon onClick={toggleIsPlaying} icon="timelinePlayRight" />
         </PlayControl>
         <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
           <Popover.Trigger asChild>
@@ -50,6 +69,7 @@ const Timeline: React.FC = () => {
                 size="footnote"
                 key={key}
                 onClick={() => {
+                  handleOnSpeedChange;
                   setSelected(playSpeed);
                   handleClick(playSpeed);
                 }}>
@@ -104,7 +124,7 @@ const TimelineControl = styled.div`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: 24px;
+  gap: 28px;
 `;
 
 const StyledIcon = styled.div`
@@ -164,7 +184,7 @@ const SpeedOption = styled(Text)`
 const CurrentTime = styled.div`
   color: ${({ theme }) => theme.content.weaker};
   position: relative;
-  font-size: 14px;
+  font-size: 13px;
 `;
 
 const TimelineSlider = styled.div`

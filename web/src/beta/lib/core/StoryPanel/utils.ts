@@ -86,3 +86,8 @@ export const formatDateForSliderTimeline = (time: number, options: { detail?: bo
   const minutes = `${d.getMinutes()}`.padStart(2, "0");
   return ` ${month} ${date} ${hour}:${minutes}`;
 };
+
+export const formatDateToSting = (d: number) => {
+  const date = new Date(d);
+  return date.toISOString();
+};
