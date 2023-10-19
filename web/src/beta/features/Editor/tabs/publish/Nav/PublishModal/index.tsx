@@ -27,6 +27,7 @@ type Props = {
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
+  onNavigateToSettings?: (page?: "story" | "public" | "asset" | "plugin" | undefined) => void;
 };
 
 const PublishModal: React.FC<Props> = ({
@@ -42,6 +43,7 @@ const PublishModal: React.FC<Props> = ({
   onPublish,
   onCopyToClipBoard,
   onAliasValidate,
+  onNavigateToSettings,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -164,18 +166,24 @@ const PublishModal: React.FC<Props> = ({
           <Section>
             <Text size="body">{updateDescriptionText}</Text>
             {url && alias && (
-              <PublishLink href={purl} target="blank">
-                <UrlText size="body" color={theme.classic.main.accent}>
+              <UrlWrapper onClick={() => window.open(purl, "_blank")}>
+                <Text size="body" weight="bold" color={theme.primary.main}>
                   {purl}
-                </UrlText>
-              </PublishLink>
+                </Text>
+              </UrlWrapper>
             )}
           </Section>
           <OptionsToggle onClick={() => setOptions(!showOptions)}>
-            <Text size="footnote">{t("more options")}</Text>
+            <Text size="footnote">{t("More options")}</Text>
             <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
+            <div>
+              <Text size="footnote">{t("Need to change domain related settings?")}</Text>
+              <Button size="small" onClick={() => onNavigateToSettings?.("public")}>
+                {t("Go to settings")}
+              </Button>
+            </div>
             <ToggleField
               name={t("Search engine indexing")}
               description={t("Page will be available as result on search engines")}
@@ -219,15 +227,20 @@ const StyledIcon = styled(Icon)`
   margin-bottom: ${`${metricsSizes["xl"]}px`};
 `;
 
-const PublishLink = styled.a`
-  text-decoration: none;
+const UrlWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid ${({ theme }) => theme.outline.weak};
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
 `;
 
 const OptionsToggle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: ${`0 0 ${metricsSizes["m"]}px 0`};
   color: ${({ theme }) => theme.classic.main.text};
   cursor: pointer;
   user-select: none;
@@ -237,14 +250,6 @@ const ArrowIcon = styled(Icon)<{ open?: boolean }>`
   transition: transform 0.15s ease;
   transform: ${({ open }) =>
     open ? "translateY(10%) rotate(90deg)" : "translateY(0) rotate(180deg)"};
-`;
-
-const UrlText = styled(Text)`
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: ${`${metricsSizes["2xl"]}px 0`};
 `;
 
 const HideableSection = styled(Section)<{ showOptions?: boolean }>`

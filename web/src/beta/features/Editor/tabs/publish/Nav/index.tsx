@@ -42,6 +42,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     handleProjectPublish,
     handleProjectAliasCheck,
     handleOpenProjectSettings,
+    handleNavigationToSettings,
   } = useHooks({ projectId });
 
   const text = useMemo(
@@ -113,6 +114,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
         projectAlias={alias}
         validAlias={validAlias}
         validatingAlias={validatingAlias}
+        onNavigateToSettings={handleNavigationToSettings}
         onClose={handleModalClose}
         onPublish={handleProjectPublish}
         onAliasValidate={handleProjectAliasCheck}

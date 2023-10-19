@@ -96,5 +96,6 @@ export default ({ projectId }: { projectId?: string }) => {
     handleProjectPublish,
     handleProjectAliasCheck,
     handleOpenProjectSettings,
+    handleNavigationToSettings,
   };
 };

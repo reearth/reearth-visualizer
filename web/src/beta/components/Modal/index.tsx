@@ -115,7 +115,6 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const Content = styled.div`
