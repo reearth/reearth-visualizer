@@ -1,6 +1,7 @@
+import NotFound from "@reearth/beta/components/NotFound";
 import Visualizer from "@reearth/beta/lib/core/Visualizer";
-import Error from "@reearth/classic/components/molecules/Published/Error";
 import { config } from "@reearth/services/config";
+import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";
 
@@ -9,6 +10,7 @@ export type Props = {
 };
 
 export default function Published({ alias }: Props) {
+  const t = useT();
   const {
     sceneProperty,
     pluginProperty,
@@ -23,7 +25,10 @@ export default function Published({ alias }: Props) {
   } = useHooks(alias);
 
   return error ? (
-    <Error />
+    <NotFound
+      customHeader={t("Something went wrong.")}
+      customMessage={t("Couldn't find the Re:Earth project you were after.")}
+    />
   ) : (
     <Visualizer
       engine="cesium"

@@ -1,4 +1,6 @@
 import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
+import { Story } from "@reearth/beta/lib/core/StoryPanel";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 export type PublishedData = {
   schemaVersion: number;
@@ -6,9 +8,10 @@ export type PublishedData = {
   publishedAt: string;
   property?: SceneProperty;
   plugins?: Record<string, Plugin>;
-  layers?: Layer[];
+  newLayers?: NLSLayer[];
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
+  story?: Story;
 };
 
 export type Plugin = {
