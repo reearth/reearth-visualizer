@@ -194,7 +194,12 @@ const PublishModal: React.FC<Props> = ({
         </>
       ) : (
         <Section>
-          <StyledIcon icon="alert" color={theme.classic.main.warning} />
+          <Header>
+            <Icon icon="alert" />
+            <Text size="h5" weight="bold">
+              {t("Unpublishing")}
+            </Text>
+          </Header>
           <Subtitle size="body">{t("Your project will be unpublished.")}</Subtitle>
           <Subtitle size="body">
             {t("This means that anybody with the URL will become unable to view this project.")}
@@ -221,10 +226,6 @@ const Section = styled.div<{ disabled?: boolean }>`
 
 const Subtitle = styled(Text)`
   text-align: left;
-`;
-
-const StyledIcon = styled(Icon)`
-  margin-bottom: ${`${metricsSizes["xl"]}px`};
 `;
 
 const UrlWrapper = styled.div`
@@ -254,4 +255,11 @@ const ArrowIcon = styled(Icon)<{ open?: boolean }>`
 
 const HideableSection = styled(Section)<{ showOptions?: boolean }>`
   display: ${props => (props.showOptions ? null : "none")};
+`;
+
+const Header = styled.div`
+  display: flex;
+  gap: 12px;
+  color: ${({ theme }) => theme.warning.main};
+  margin-bottom: 12px;
 `;
