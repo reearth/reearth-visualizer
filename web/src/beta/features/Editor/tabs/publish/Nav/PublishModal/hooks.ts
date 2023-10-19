@@ -36,16 +36,15 @@ export default (
   }, [searchIndex]);
 
   const handleCopyToClipBoard = useCallback(
-    (key: keyof CopiedItemKey, value: string | undefined) =>
-      (_: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-        if (!value) return;
-        setCopiedKey(prevState => ({
-          ...prevState,
-          [key]: true,
-        }));
-        navigator.clipboard.writeText(value);
-        onCopyToClipBoard?.();
-      },
+    (key: keyof CopiedItemKey, value: string | undefined) => () => {
+      if (!value) return;
+      setCopiedKey(prevState => ({
+        ...prevState,
+        [key]: true,
+      }));
+      navigator.clipboard.writeText(value);
+      onCopyToClipBoard?.();
+    },
     [onCopyToClipBoard],
   );
 

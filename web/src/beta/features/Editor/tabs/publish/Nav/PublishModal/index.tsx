@@ -106,7 +106,7 @@ const PublishModal: React.FC<Props> = ({
       : t("Continue");
   }, [t, statusChanged, publishing]);
 
-  const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "Close"), [statusChanged]);
+  const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "OK"), [statusChanged]);
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
@@ -123,7 +123,13 @@ const PublishModal: React.FC<Props> = ({
       isVisible={isVisible}
       size="sm"
       title={modalTitleText}
-      button1={<Button text={secondaryButtonText} buttonType="secondary" onClick={handleClose} />}
+      button1={
+        <Button
+          text={secondaryButtonText}
+          buttonType={statusChanged ? "primary" : "secondary"}
+          onClick={handleClose}
+        />
+      }
       button2={
         !statusChanged && (
           <Button
@@ -138,24 +144,36 @@ const PublishModal: React.FC<Props> = ({
       {statusChanged ? (
         <Section>
           <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
-          <Subtitle size="body">{t("Public URL")}</Subtitle>
+          <Subtitle size="footnote">{t("Public URL")}</Subtitle>
           <div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Text size="body" color={theme.select.strong}>
+            <UrlWrapper justify="space-between">
+              <Text
+                size="body"
+                weight="bold"
+                color={theme.primary.main}
+                onClick={() => window.open(purl, "_blank")}>
                 {purl}
               </Text>
-              <Button onClick={handleCopyToClipBoard("url", purl)}>{t("Copy")}</Button>
-            </div>
+              <Text
+                size="body"
+                color={theme.primary.main}
+                onClick={handleCopyToClipBoard("url", purl)}>
+                {t("Copy")}
+              </Text>
+            </UrlWrapper>
             <Text size="footnote">{t("* Anyone can see your project with this URL")}</Text>
           </div>
-          <Subtitle size="body">{t("Embed Code")}</Subtitle>
+          <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
           <div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Text size="footnote" color={theme.select.strong}>
-                {embedCode}
+            <UrlWrapper justify="space-between">
+              <Text size="footnote">{embedCode}</Text>
+              <Text
+                size="body"
+                color={theme.primary.main}
+                onClick={handleCopyToClipBoard("embedCode", embedCode)}>
+                {t("Copy")}
               </Text>
-              <Button onClick={handleCopyToClipBoard("embedCode", embedCode)}>{t("Copy")}</Button>
-            </div>
+            </UrlWrapper>
             <Text size="xFootnote">
               {t("* Please use this code if you want to embed your project into a webpage")}
             </Text>
@@ -165,6 +183,9 @@ const PublishModal: React.FC<Props> = ({
         <>
           <Section>
             <Text size="body">{updateDescriptionText}</Text>
+          </Section>
+          <Section>
+            <Text size="footnote">{t("Publish domain")}</Text>
             {url && alias && (
               <UrlWrapper onClick={() => window.open(purl, "_blank")}>
                 <Text size="body" weight="bold" color={theme.primary.main}>
@@ -179,7 +200,9 @@ const PublishModal: React.FC<Props> = ({
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
             <div>
-              <Text size="footnote">{t("Need to change domain related settings?")}</Text>
+              <DomainText size="footnote">
+                {t("Need to change domain related settings?")}
+              </DomainText>
               <Button size="small" onClick={() => onNavigateToSettings?.("public")}>
                 {t("Go to settings")}
               </Button>
@@ -228,9 +251,9 @@ const Subtitle = styled(Text)`
   text-align: left;
 `;
 
-const UrlWrapper = styled.div`
+const UrlWrapper = styled.div<{ justify?: string }>`
   display: flex;
-  justify-content: center;
+  justify-content: ${({ justify }) => justify ?? "center"};
   align-items: center;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
@@ -255,6 +278,10 @@ const ArrowIcon = styled(Icon)<{ open?: boolean }>`
 
 const HideableSection = styled(Section)<{ showOptions?: boolean }>`
   display: ${props => (props.showOptions ? null : "none")};
+`;
+
+const DomainText = styled(Text)`
+  margin-bottom: 8px;
 `;
 
 const Header = styled.div`
