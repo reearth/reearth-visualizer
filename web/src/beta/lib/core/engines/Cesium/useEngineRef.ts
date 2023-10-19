@@ -137,7 +137,8 @@ export default function useEngineRef(
           if (!viewer || viewer.isDestroyed()) return;
 
           const layerOrFeatureId = target;
-          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
+          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId, true);
+          // `viewer.flyTo` doesn't support Cesium3DTileFeature.
           if (
             entityFromFeatureId &&
             !(
