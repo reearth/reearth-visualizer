@@ -14,8 +14,8 @@ type Props = {
 const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
   const {
     assets,
-    wrapperRef,
-    isLoading,
+    assetsWrapperRef,
+    isAssetsLoading,
     hasMoreAssets,
     searchTerm,
     localSearchTerm,
@@ -49,9 +49,9 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
       <AssetContainer
         workspaceId={workspaceId}
         assets={assets}
-        wrapperRef={wrapperRef}
+        wrapperRef={assetsWrapperRef}
         selectedAssets={selectedAssets}
-        isLoading={isLoading}
+        isLoading={isAssetsLoading}
         openDeleteModal={openDeleteModal}
         deleteModalVisible={deleteModalVisible}
         hasMoreAssets={hasMoreAssets}

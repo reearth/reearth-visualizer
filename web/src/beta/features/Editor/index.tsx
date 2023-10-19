@@ -86,6 +86,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerStyleSelect,
   } = useLayerStyles({ sceneId });
 
+  // State handling for editor UI
   const handleLayerStyleSelected = useCallback(
     (layerStyleId: string) => {
       setSelectedLayerId(undefined);

@@ -4,7 +4,7 @@ import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 
-type useLayerProps = {
+type LayerProps = {
   sceneId: string;
 };
 
@@ -32,7 +32,7 @@ export type LayerVisibilityUpdateProps = {
   visible: boolean;
 };
 
-export default function ({ sceneId }: useLayerProps) {
+export default function ({ sceneId }: LayerProps) {
   const t = useT();
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();

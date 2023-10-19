@@ -4,7 +4,7 @@ import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 
-type useLayerStyleProps = {
+type LayerStyleProps = {
   sceneId: string;
 };
 
@@ -23,7 +23,7 @@ export type LayerStyleValueUpdateProps = {
   value: Partial<LayerAppearanceTypes>;
 };
 
-export default function ({ sceneId }: useLayerStyleProps) {
+export default function ({ sceneId }: LayerStyleProps) {
   const t = useT();
   const { useAddLayerStyle, useGetLayerStylesQuery, useRemoveLayerStyle, useUpdateLayerStyle } =
     useLayerStylesFetcher();

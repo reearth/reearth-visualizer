@@ -14,7 +14,7 @@ export const AssetImageType: Story = {
     name: "Asset",
     description: "Defaul Asset Uploader",
     fileType: "asset",
-    assetType: "image",
+    entityType: "image",
   },
 };
 
@@ -23,7 +23,7 @@ export const AssetFileType: Story = {
     name: "Asset",
     description: "Defaul Asset Uploader",
     fileType: "asset",
-    assetType: "file",
+    entityType: "file",
   },
 };
 
@@ -40,6 +40,6 @@ export const AppearanceType: Story = {
     name: "URL",
     description: "Defaul URL Input wrapper",
     fileType: "layerStyle",
-    assetType: "layerStyle",
+    entityType: "layerStyle",
   },
 };

@@ -137,7 +137,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             />
             <URLField
               fileType="asset"
-              assetType={"file"}
+              entityType={"file"}
               name={t("Asset")}
               value={value}
               onChange={handleOnChange}

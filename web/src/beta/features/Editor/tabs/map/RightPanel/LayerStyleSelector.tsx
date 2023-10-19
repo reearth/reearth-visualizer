@@ -51,9 +51,9 @@ const LayerStyleSelector: FC<LayerStyleSelectorProps> = ({
   return (
     <URLField
       fileType="layerStyle"
-      assetType="layerStyle"
+      entityType="layerStyle"
       value={urlFieldValue}
-      name={t("LayerStyle")}
+      name={t("Layer Style")}
       sceneId={sceneId}
       onChange={handleUrlFieldChange}
     />
