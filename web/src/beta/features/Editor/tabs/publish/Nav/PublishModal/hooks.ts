@@ -77,9 +77,11 @@ export default (
 
   const handleClose = useCallback(() => {
     onClose?.();
-    onAliasChange(defaultAlias);
-    setStatusChange(false);
-    setOptions(defaultAlias ? false : true);
+    setTimeout(() => {
+      onAliasChange(defaultAlias);
+      setStatusChange(false);
+      setOptions(defaultAlias ? false : true);
+    }, 500);
   }, [onClose, defaultAlias]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const generateAlias = useCallback(() => {
