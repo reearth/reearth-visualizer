@@ -41,11 +41,9 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
 
   return (
     <LayerStyleContainer>
-      <AddLayerStyleIcon onClick={handleLayerStyleAddition}>
-        <Icon icon="addLayerStyle" />
-      </AddLayerStyleIcon>
-
-      {/* <AdjustableButton onClick={han}></AdjustableButton> */}
+      <AdjustableButtonStyled onClick={handleLayerStyleAddition}>
+        <Icon icon="plus" />
+      </AdjustableButtonStyled>
 
       <CatalogListWrapper>
         {layerStyles.map(layerStyle => (
@@ -80,19 +78,32 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
 const LayerStyleContainer = styled.div`
   display: flex;
   flex-direction: row;
-`;
-
-const AddLayerStyleIcon = styled.div`
-  align-self: flex-end;
-  cursor: pointer;
+  align-items: flex-start;
 `;
 
 const CatalogListWrapper = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
   gap: 20px;
   overflow-y: auto;
   max-height: calc(100vh - 240px);
+  justify-content: flex-end;
+`;
+
+const AdjustableButtonStyled = styled.button`
+  display: flex;
+  padding: var(--spacing-small, 8px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-small, 8px);
+  align-self: stretch;
+  min-height: 108px;
+  max-height: 204px;
+  flex-shrink: 0;
+
+  border-radius: var(--radius-normal, 6px);
+  border: 1px solid ${({ theme }) => theme.secondary.main};
+  background: ${({ theme }) => theme.bg[1]};
 `;
 
 export default LayerStyles;
