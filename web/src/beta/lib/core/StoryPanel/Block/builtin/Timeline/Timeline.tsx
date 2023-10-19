@@ -3,6 +3,8 @@ import { useCallback, useState } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
+import useHooks from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Timeline/hook";
+import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelineBlock";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -11,6 +13,8 @@ const Timeline: React.FC = () => {
   const [open, setOpen] = useState(false);
   const playSpeedOptions = ["1 min/sec", "0.1 hr/sec", "0.5 hr/sec", "1 hr/sec"];
   const [selected, setSelected] = useState("1 min/sec");
+  const { currentTime, range } = useTimelineBlock();
+  const { formattedCurrentTime, timeRange } = useHooks({ currentTime, range });
 
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
@@ -54,12 +58,29 @@ const Timeline: React.FC = () => {
             ))}
           </PickerWrapper>
         </Popover.Provider>
-        <CurrentTime>2023/10/18 00:00:00</CurrentTime>
+        <CurrentTime>{currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineControl>
       <TimelineSlider>
         <ScaleList>
-          {[...Array(11)].map((_, index) => (
-            <Scale key={index} />
+          {[...Array(11)].map((_, idx) => (
+            <Scale key={idx}>
+              {idx === 0 ? (
+                <>
+                  <ScaleLabel>{timeRange?.startTime.date}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.startTime.time}</ScaleLabel>
+                </>
+              ) : idx === 5 ? (
+                <>
+                  <ScaleLabel>{timeRange?.midTime.date}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.midTime.time}</ScaleLabel>
+                </>
+              ) : idx === 10 ? (
+                <>
+                  <ScaleLabel>{timeRange?.endTime.date}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.endTime.time}</ScaleLabel>
+                </>
+              ) : null}
+            </Scale>
           ))}
         </ScaleList>
         <IconWrapper>
@@ -83,7 +104,7 @@ const TimelineControl = styled.div`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: 23px;
+  gap: 24px;
 `;
 
 const StyledIcon = styled.div`
@@ -130,7 +151,7 @@ const PickerWrapper = styled(Popover.Content)`
   gap: 4px;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 1;
+  z-idx: 1;
 `;
 
 const SpeedOption = styled(Text)`
@@ -143,6 +164,7 @@ const SpeedOption = styled(Text)`
 const CurrentTime = styled.div`
   color: ${({ theme }) => theme.content.weaker};
   position: relative;
+  font-size: 14px;
 `;
 
 const TimelineSlider = styled.div`
@@ -154,11 +176,11 @@ const TimelineSlider = styled.div`
 `;
 
 const ScaleList = styled.div`
-  width: 100%;
+  width: 99%;
   display: flex;
   height: 38px;
   align-items: flex-end;
-  justify-content: space-between;
+  padding-left: 17px;
 `;
 
 const IconWrapper = styled.div`
@@ -168,7 +190,16 @@ const IconWrapper = styled.div`
 `;
 
 const Scale = styled.div`
-  height: 6px;
+  height: 5px;
   border-left: 1px solid ${({ theme }) => theme.content.weak};
   margin: 0 auto;
+  flex: 1;
+  text-align: center;
+`;
+
+const ScaleLabel = styled.div`
+  font-size: 10px;
+  position: relative;
+  bottom: 28px;
+  right: 15px;
 `;

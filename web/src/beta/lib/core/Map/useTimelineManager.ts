@@ -25,7 +25,7 @@ export type Timeline = {
   stop: Date;
 };
 
-type EngineClock = {
+export type EngineClock = {
   current: Date | undefined;
   start: Date | undefined;
   stop: Date | undefined;
