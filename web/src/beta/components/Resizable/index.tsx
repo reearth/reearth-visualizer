@@ -39,7 +39,17 @@ const Resizable: React.FC<Props> = ({
     <>
       {minimized ? (
         <MinimizedWrapper direction={direction} onClick={handleResetSize}>
-          <Icon icon={gutter == "end" ? "arrowRight" : "arrowLeft"} />
+          <Icon
+            icon={
+              direction === "horizontal"
+                ? gutter === "end"
+                  ? "arrowDown"
+                  : "arrowUp"
+                : gutter === "end"
+                ? "arrowRight"
+                : "arrowLeft"
+            }
+          />
         </MinimizedWrapper>
       ) : (
         <StyledResizable direction={direction} size={size} minSize={minSize}>
@@ -94,6 +104,7 @@ const Gutter = styled.div<{ direction: Direction; gutter: Gutter }>`
 
 const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
   display: flex;
+  flex-direction: ${({ direction }) => (direction === "horizontal" ? "column" : "row")};
   align-items: center;
   width: ${({ direction }) => (direction === "horizontal" ? null : `24px`)};
   height: ${({ direction }) => (direction === "vertical" ? null : `24px`)};

@@ -94,7 +94,7 @@ const CatalogListWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  gap: 20px;
+  gap: 12px;
   overflow-y: auto;
   padding: 12px 8px;
 `;
