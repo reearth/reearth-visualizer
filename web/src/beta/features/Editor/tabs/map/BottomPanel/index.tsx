@@ -1,4 +1,4 @@
-import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
+import BottomPanel from "@reearth/beta/features/Editor/BottomPanel";
 import {
   LayerStyleAddProps,
   LayerStyleNameUpdateProps,
@@ -28,24 +28,21 @@ const MapBottomPanel: React.FC<Props> = ({
   const t = useT();
 
   return (
-    <SidePanelCommon
-      location="bottom"
-      contents={[
-        {
-          id: "layerStyle",
-          title: t("Layer Style"),
-          children: (
-            <LayerStyles
-              layerStyles={layerStyles}
-              selectedLayerStyleId={selectedLayerStyleId}
-              onLayerStyleAdd={onLayerStyleAdd}
-              onLayerStyleDelete={onLayerStyleDelete}
-              onLayerStyleNameUpdate={onLayerStyleNameUpdate}
-              onLayerStyleSelect={onLayerStyleSelect}
-            />
-          ),
-        },
-      ]}
+    <BottomPanel
+      content={{
+        id: "layerStyle",
+        title: t("Layer Style"),
+        children: (
+          <LayerStyles
+            layerStyles={layerStyles}
+            selectedLayerStyleId={selectedLayerStyleId}
+            onLayerStyleAdd={onLayerStyleAdd}
+            onLayerStyleDelete={onLayerStyleDelete}
+            onLayerStyleNameUpdate={onLayerStyleNameUpdate}
+            onLayerStyleSelect={onLayerStyleSelect}
+          />
+        ),
+      }}
     />
   );
 };

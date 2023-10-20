@@ -146,5 +146,5 @@ export default (
     setSize(initialSize);
   }, [initialSize]);
 
-  return { size: size, gutterProps, minimized, handleResetSize };
+  return { size, gutterProps, minimized, handleResetSize };
 };

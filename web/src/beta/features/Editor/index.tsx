@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import Resizable from "@reearth/beta/components/Resizable";
 import useBottomPanel from "@reearth/beta/features/Editor/useBottomPanel";
@@ -13,7 +13,6 @@ import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
-import { navbarHeight } from "./SecondaryNav";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 
@@ -162,9 +161,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleWidgetEditorToggle,
   });
 
-  const [leftPanelSize, setLeftPanelSize] = useState(metrics.propertyMenuWidth);
-  const [rightPanelSize, setRightPanelSize] = useState(metrics.propertyMenuWidth);
-
   return (
     <DndProvider>
       <Wrapper>
@@ -180,56 +176,55 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               direction="vertical"
               gutter="end"
               initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}
-              onResizeEnd={newSize => setLeftPanelSize(newSize)}>
+              minSize={metrics.propertyMenuMinWidth}>
               {leftPanel}
             </Resizable>
           )}
           <Center>
-            {secondaryNavbar}
-            <VisualizerWrapper
-              tab={tab}
-              hasNav={!!secondaryNavbar}
-              visualizerWidth={visualizerWidth}>
-              <Visualizer
-                inEditor
-                visualizerRef={visualizerRef}
-                sceneId={sceneId}
-                showStoryPanel={selectedProjectType === "story"}
-                selectedStory={selectedStory}
-                currentPage={currentPage}
-                isAutoScrolling={isAutoScrolling}
-                installableBlocks={installableStoryBlocks}
-                currentCamera={currentCamera}
-                onCurrentPageChange={handleCurrentPageChange}
-                onStoryBlockMove={onStoryBlockMove}
-                onCameraChange={handleCameraUpdate}
-              />
-            </VisualizerWrapper>
+            <CenterContent>
+              {secondaryNavbar}
+              <VisualizerWrapper
+                tab={tab}
+                hasNav={!!secondaryNavbar}
+                visualizerWidth={visualizerWidth}>
+                <Visualizer
+                  inEditor
+                  visualizerRef={visualizerRef}
+                  sceneId={sceneId}
+                  showStoryPanel={selectedProjectType === "story"}
+                  selectedStory={selectedStory}
+                  currentPage={currentPage}
+                  isAutoScrolling={isAutoScrolling}
+                  installableBlocks={installableStoryBlocks}
+                  currentCamera={currentCamera}
+                  onCurrentPageChange={handleCurrentPageChange}
+                  onStoryBlockMove={onStoryBlockMove}
+                  onCameraChange={handleCameraUpdate}
+                />
+              </VisualizerWrapper>
+              {bottomPanel && (
+                <Resizable
+                  direction="horizontal"
+                  gutter="start"
+                  initialSize={metrics.bottomPanelMinWidth}
+                  minSize={metrics.bottomPanelMinWidth}
+                  maxSize={metrics.bottomPanelMaxWidth}>
+                  {bottomPanel}
+                </Resizable>
+              )}
+            </CenterContent>
           </Center>
           {rightPanel && (
             <Resizable
               direction="vertical"
               gutter="start"
               initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}
-              onResizeEnd={newSize => setRightPanelSize(newSize)}>
+              minSize={metrics.propertyMenuMinWidth}>
               {rightPanel}
             </Resizable>
           )}
         </MainSection>
-        <BottomPanelWrapper leftSize={leftPanelSize} rightSize={rightPanelSize}>
-          {bottomPanel && (
-            <Resizable
-              direction="horizontal"
-              gutter="start"
-              initialSize={metrics.layerStylePanelMinWidth}
-              minSize={metrics.layerStylePanelMinWidth}
-              maxSize={metrics.layerStylePanelMaxWidth}>
-              {bottomPanel}
-            </Resizable>
-          )}
-        </BottomPanelWrapper>
+
         {showDataSourceManager && (
           <DataSourceManager
             sceneId={sceneId}
@@ -259,27 +254,15 @@ const MainSection = styled.div`
   background: ${({ theme }) => theme.bg[0]};
 `;
 
-const BottomPanelWrapper = styled.div<{
-  leftSize: number;
-  rightSize: number;
-}>`
-  position: relative;
-  z-index: 1; // To ensure it's above other content, adjust as needed
-
-  & > div {
-    // Targeting the Resizable component
-    position: absolute;
-    bottom: 0;
-    left: ${({ leftSize }) => `${leftSize}px`};
-    right: ${({ rightSize }) => `${rightSize}px`};
-  }
-`;
-
 const Center = styled.div`
   height: 100%;
   flex-grow: 1;
+`;
+
+const CenterContent = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const VisualizerWrapper = styled.div<{
@@ -287,8 +270,9 @@ const VisualizerWrapper = styled.div<{
   hasNav?: boolean;
   visualizerWidth?: string | number;
 }>`
+  flex: 1;
+  min-height: 0;
   border-radius: 4px;
-  height: ${({ hasNav }) => (hasNav ? `calc(100% - ${navbarHeight})` : "100%")};
   width: ${({ visualizerWidth }) =>
     typeof visualizerWidth === "number" ? `${visualizerWidth}px` : visualizerWidth};
 `;

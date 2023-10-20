@@ -35,11 +35,6 @@ const Resizable: React.FC<Props> = ({
   const showBottomGutter = direction === "horizontal" && gutter === "end";
   const showLeftGutter = direction === "vertical" && gutter === "start";
 
-  const TopGutter = showTopGutter ? <HorizontalGutter {...gutterProps} /> : null;
-  const RightGutter = showRightGutter ? <VerticalGutter {...gutterProps} /> : null;
-  const BottomGutter = showBottomGutter ? <HorizontalGutter {...gutterProps} /> : null;
-  const LeftGutter = showLeftGutter ? <VerticalGutter {...gutterProps} /> : null;
-
   return (
     <>
       {minimized ? (
@@ -48,11 +43,11 @@ const Resizable: React.FC<Props> = ({
         </MinimizedWrapper>
       ) : (
         <StyledResizable direction={direction} size={size} minSize={minSize}>
-          {TopGutter}
-          {LeftGutter}
-          <Wrapper>{children}</Wrapper>
-          {RightGutter}
-          {BottomGutter}
+          {showTopGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
+          {showLeftGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
+          {children}
+          {showRightGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
+          {showBottomGutter && <Gutter direction={direction} gutter={gutter} {...gutterProps} />}
         </StyledResizable>
       )}
     </>
@@ -67,6 +62,7 @@ const StyledResizable = styled.div<{
 }>`
   display: flex;
   align-items: stretch;
+  position: relative;
   flex-direction: ${({ direction }) => (direction === "vertical" ? "row" : "column")};
   width: ${({ direction, size }) => (direction === "horizontal" ? null : `${size}px`)};
   height: ${({ direction, size }) => (direction === "vertical" ? null : `${size}px`)};
@@ -81,25 +77,19 @@ const StyledResizable = styled.div<{
     direction === "horizontal" && maxSize ? `${maxSize}px` : null};
 `;
 
-const Wrapper = styled.div`
-  width: calc(100% - 4px);
-  height: 100%;
-  background: ${({ theme }) => theme.bg[0]};
-`;
-
-const Gutter = styled.div`
+const Gutter = styled.div<{ direction: Direction; gutter: Gutter }>`
   user-select: none;
-  background: ${({ theme }) => theme.bg[0]};
-`;
-
-const HorizontalGutter = styled(Gutter)`
-  height: 4px;
-  cursor: row-resize;
-`;
-
-const VerticalGutter = styled(Gutter)`
-  width: 4px;
-  cursor: col-resize;
+  position: absolute;
+  ${({ direction }) => direction === "horizontal" && "height: 4px;"}
+  ${({ direction }) => direction === "horizontal" && "width: 100%;"}
+  ${({ direction }) => direction === "horizontal" && "cursor: row-resize;"}
+  ${({ direction }) => direction === "vertical" && "height: 100%;"}
+  ${({ direction }) => direction === "vertical" && "width: 4px;"}
+  ${({ direction }) => direction === "vertical" && "cursor: col-resize;"}
+  left: ${({ direction, gutter }) => (direction === "vertical" && gutter === "start" ? 0 : null)};
+  right: ${({ direction, gutter }) => (direction === "vertical" && gutter === "end" ? 0 : null)};
+  top: ${({ direction, gutter }) => (direction === "horizontal" && gutter === "start" ? 0 : null)};
+  bottom: ${({ direction, gutter }) => (direction === "horizontal" && gutter === "end" ? 0 : null)};
 `;
 
 const MinimizedWrapper = styled.div<Pick<Props, "direction">>`

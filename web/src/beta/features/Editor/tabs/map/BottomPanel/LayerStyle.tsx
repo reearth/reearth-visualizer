@@ -78,13 +78,12 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
 
 const LayerStyleContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  height: calc(100% - 4px);
+  padding: 2px;
 `;
 
 const Sidebar = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
 `;
 
@@ -93,30 +92,31 @@ const CatalogListWrapper = styled.div`
   flex-wrap: wrap;
   gap: 20px;
   overflow-y: auto;
-  max-height: calc(100vh - 240px);
   justify-content: flex-start;
   flex: 1;
 `;
 
 const AdjustableButtonStyled = styled.button`
   display: flex;
-  padding: var(--spacing-small, 8px);
   justify-content: center;
   align-items: center;
-  gap: var(--spacing-small, 8px);
+  gap: 8px;
+  padding: 8px;
+  margin-right: 2px;
   color: ${({ theme }) => theme.content.main};
   width: 32px;
-  min-height: 100px;
-  max-height: 200px;
+  height: calc(100% - 4px);
 
-  border-radius: var(--radius-normal, 6px);
+  border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.secondary.main};
   background: ${({ theme }) => theme.bg[1]};
 
-  position: sticky;
-  top: 0;
-
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s;
+
+  :hover {
+    background: ${({ theme }) => theme.bg[2]};
+  }
 `;
 
 export default LayerStyles;
