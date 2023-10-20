@@ -141,7 +141,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 
   const { bottomPanel } = useBottomPanel({
     tab,
-    sceneId,
     layerStyles,
     selectedLayerStyleId: selectedLayerStyle?.id,
     onLayerStyleAdd: handleLayerStyleAdd,
@@ -206,9 +205,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 <Resizable
                   direction="horizontal"
                   gutter="start"
-                  initialSize={metrics.bottomPanelMinWidth}
-                  minSize={metrics.bottomPanelMinWidth}
-                  maxSize={metrics.bottomPanelMaxWidth}>
+                  initialSize={metrics.bottomPanelMinHeight}
+                  minSize={metrics.bottomPanelMinHeight}
+                  maxSize={metrics.bottomPanelMaxHeight}>
                   {bottomPanel}
                 </Resizable>
               )}

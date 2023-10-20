@@ -81,22 +81,22 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
 
 const LayerStyleContainer = styled.div`
   display: flex;
-  height: calc(100% - 4px);
-  padding: 2px;
+  height: 100%;
 `;
 
 const Sidebar = styled.div`
   display: flex;
   align-items: center;
+  padding: 2px;
 `;
 
 const CatalogListWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 20px;
   overflow-y: auto;
-  justify-content: flex-start;
-  flex: 1;
+  padding: 12px 8px;
 `;
 
 const AdjustableButtonStyled = styled.button`
@@ -105,10 +105,9 @@ const AdjustableButtonStyled = styled.button`
   align-items: center;
   gap: 8px;
   padding: 8px;
-  margin-right: 2px;
   color: ${({ theme }) => theme.content.main};
   width: 32px;
-  height: calc(100% - 4px);
+  height: 100%;
 
   border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.secondary.main};

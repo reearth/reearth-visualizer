@@ -1,8 +1,8 @@
 const metrics = {
   propertyMenuWidth: 308,
   propertyMenuMinWidth: 200,
-  bottomPanelMinWidth: 136,
-  bottomPanelMaxWidth: 232,
+  bottomPanelMinHeight: 136,
+  bottomPanelMaxHeight: 232,
 };
 
 export const metricsSizes = {

@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from "react";
 
-import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/BottomPanel";
+import MapBottomPanel from "@reearth/beta/features/Editor/tabs/map/BottomPanel";
 import type { Tab } from "@reearth/beta/features/Navbar";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
@@ -8,10 +8,7 @@ import { LayerStyleAddProps, LayerStyleNameUpdateProps } from "./useLayerStyles"
 
 type Props = {
   tab: Tab;
-  sceneId?: string;
   layerStyles: LayerStyle[];
-
-  // layerStyles
   selectedLayerStyleId?: string;
   onLayerStyleAdd: (inp: LayerStyleAddProps) => void;
   onLayerStyleDelete: (id: string) => void;
@@ -32,7 +29,7 @@ export default ({
     switch (tab) {
       case "map":
         return (
-          <MapSidePanel
+          <MapBottomPanel
             layerStyles={layerStyles}
             onLayerStyleAdd={onLayerStyleAdd}
             onLayerStyleDelete={onLayerStyleDelete}

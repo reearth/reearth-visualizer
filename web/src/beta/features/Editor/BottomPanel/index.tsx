@@ -33,7 +33,10 @@ const Wrapper = styled.div`
 `;
 
 const TitleWrapper = styled.div`
-  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 8px;
   border-radius: 4px 4px 0 0;
   background: ${({ theme }) => theme.bg[2]};
 `;
