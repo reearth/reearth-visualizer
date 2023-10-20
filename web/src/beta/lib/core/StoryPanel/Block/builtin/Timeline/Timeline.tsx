@@ -10,33 +10,40 @@ import { styled } from "@reearth/services/theme";
 
 type TimelineProps = {
   blockId?: string;
+  isSelected?: boolean;
 };
-const Timeline = ({ blockId }: TimelineProps) => {
+const Timeline = ({ blockId, isSelected }: TimelineProps) => {
   const t = useT();
   const [open, setOpen] = useState(false);
   const playSpeedOptions = ["1 min/sec", "0.1 hr/sec", "0.5 hr/sec", "1 hr/sec"];
   const [selected, setSelected] = useState("1 min/sec");
-  const { currentTime, range, speed, onClick, onDrag, onPlay, onPlayReversed, onSpeedChange } =
+  const { currentTime, range, onClick, onDrag, onPlay, onPlayReversed, onSpeedChange, onPause } =
     useTimelineBlock();
   const {
     formattedCurrentTime,
     timeRange,
+    isPlaying,
+    isPlayingReversed,
+    isPause,
     toggleIsPlaying,
     toggleIsPlayingReversed,
+    toggleIsPause,
     handleOnSpeedChange,
   } = useHooks({
     currentTime,
     range,
+    isSelected,
+    blockId,
     onClick,
     onDrag,
     onPlay,
     onPlayReversed,
     onSpeedChange,
+    onPause,
   });
 
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
-  console.log(speed, blockId);
   const handleClick = useCallback(
     (value: string) => {
       setOpen(false);
@@ -52,9 +59,25 @@ const Timeline = ({ blockId }: TimelineProps) => {
           <Icon icon="timelineStoryBlock" size={16} />
         </StyledIcon>
         <PlayControl>
-          <Icon onClick={toggleIsPlayingReversed} icon="timelinePlayLeft" />
-          <Icon icon="play" />
-          <Icon onClick={toggleIsPlaying} icon="timelinePlayRight" />
+          <PlayButton
+            isClicked={true}
+            isPlaying={isPlayingReversed}
+            onClick={toggleIsPlayingReversed}>
+            <Icon icon="timelinePlayLeft" />
+          </PlayButton>
+          <PlayButton
+            isPlaying={isPause}
+            isClicked={isPlaying || isPlayingReversed || isPause}
+            onClick={() => {
+              if (isPlaying || isPlayingReversed || isPause) {
+                toggleIsPause();
+              }
+            }}>
+            <Icon icon="play" />
+          </PlayButton>
+          <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
+            <Icon icon="timelinePlayRight" />
+          </PlayButton>
         </PlayControl>
         <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
           <Popover.Trigger asChild>
@@ -137,6 +160,12 @@ const StyledIcon = styled.div`
 const PlayControl = styled.div`
   display: flex;
   gap: 10px;
+`;
+
+const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
+  color: ${({ isPlaying, theme }) => (isPlaying ? theme.select.main : "")};
+  cursor: ${({ isClicked }) => (isClicked ? "pointer" : "not-allowed")};
+  pointer-events: ${({ isClicked }) => (isClicked ? "auto" : "")};
 `;
 
 const InputWrapper = styled.div`

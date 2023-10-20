@@ -1,5 +1,6 @@
 import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { TimelineCommitter } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import {
   formatDateForSliderTimeline,
@@ -9,49 +10,79 @@ import {
 type TimelineProps = {
   currentTime: number;
   range?: Range;
+  isSelected?: boolean;
+  blockId?: string;
   onClick?: (t: number) => void;
   onDrag?: (t: number) => void;
-  onPlay?: (isPlaying: boolean) => void;
-  onPlayReversed?: (isPlaying: boolean) => void;
-  onSpeedChange?: (speed: number) => void;
+  onPlay?: (isPlaying: boolean, committer: TimelineCommitter) => void;
+  onPlayReversed?: (isPlaying: boolean, committer: TimelineCommitter) => void;
+  onSpeedChange?: (speed: number, committer: TimelineCommitter) => void;
+  onPause: (isPause: boolean, committer: TimelineCommitter) => void;
 };
 
 export default ({
   currentTime,
   range,
-  onClick,
-  onDrag,
+  isSelected,
+  blockId,
   onPlay,
   onPlayReversed,
   onSpeedChange,
+  onPause,
 }: TimelineProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
+  const [isPause, setIsPause] = useState(false);
+
   const syncCurrentTimeRef = useRef(currentTime);
-  console.log(onClick, onDrag);
+  const [committer, setCommiter] = useState<TimelineCommitter>({ source: "storyTimelineBlock" });
+
+  useEffect(() => {
+    if (isSelected)
+      setCommiter(prev => {
+        return { source: prev.source, id: blockId };
+      });
+  }, [blockId, isSelected]);
+
   const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     e => {
-      onSpeedChange?.(parseInt(e.currentTarget.value, 10));
+      onSpeedChange?.(parseInt(e.currentTarget.value, 10), committer);
     },
-    [onSpeedChange],
+    [committer, onSpeedChange],
   );
+
   const toggleIsPlaying = useCallback(() => {
-    if (isPlayingReversed) {
+    if (isPlayingReversed || isPause) {
       setIsPlayingReversed(false);
-      onPlayReversed?.(false);
+      setIsPause(false);
+      onPlayReversed?.(false, committer);
+      onPause?.(false, committer);
     }
     setIsPlaying(p => !p);
-    onPlay?.(!isPlaying);
-  }, [isPlayingReversed, onPlay, isPlaying, onPlayReversed]);
+    onPlay?.(!isPlaying, committer);
+  }, [isPlayingReversed, isPause, onPlay, isPlaying, committer, onPlayReversed, onPause]);
 
   const toggleIsPlayingReversed = useCallback(() => {
-    if (isPlaying) {
+    if (isPlaying || isPause) {
       setIsPlaying(false);
-      onPlay?.(false);
+      setIsPause(false);
+      onPlay?.(false, committer);
+      onPause?.(false, committer);
     }
     setIsPlayingReversed(p => !p);
-    onPlayReversed?.(!isPlayingReversed);
-  }, [isPlaying, isPlayingReversed, onPlay, onPlayReversed]);
+    onPlayReversed?.(!isPlayingReversed, committer);
+  }, [committer, isPause, isPlaying, isPlayingReversed, onPause, onPlay, onPlayReversed]);
+
+  const toggleIsPause = useCallback(() => {
+    if (isPlayingReversed || isPlaying) {
+      setIsPlayingReversed(false);
+      setIsPlaying(false);
+      onPlayReversed?.(false, committer);
+      onPlay?.(false, committer);
+    }
+    setIsPause(p => !p);
+    onPause?.(!isPause, committer);
+  }, [isPlayingReversed, isPlaying, onPause, isPause, committer, onPlayReversed, onPlay]);
 
   useEffect(() => {
     syncCurrentTimeRef.current = currentTime;
@@ -87,8 +118,12 @@ export default ({
   return {
     formattedCurrentTime,
     timeRange,
+    isPlaying,
+    isPlayingReversed,
+    isPause,
     toggleIsPlaying,
     toggleIsPlayingReversed,
+    toggleIsPause,
     handleOnSpeedChange,
   };
 };

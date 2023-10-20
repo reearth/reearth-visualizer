@@ -65,13 +65,13 @@ export default () => {
         cmd: "SET_TIME",
         payload: {
           start: formatDateToSting(range?.start),
-          current: formatDateToSting(currentTime),
+          current: time,
           stop: formatDateToSting(range.end),
         },
         committer: { source: "storyTimelineBlock", id: committer?.id },
       });
     },
-    [currentTime, range.end, range?.start, visualizerContext],
+    [range.end, range?.start, visualizerContext],
   );
 
   const onSpeedChange = useCallback(
@@ -102,31 +102,49 @@ export default () => {
   const stopTime = visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime();
   const [speed, setSpeed] = useState(timeSpeed);
 
-  const handleOnPlay = useCallback(
-    (playing: boolean) => {
-      // Stop cesium animation
-      if (playing) {
-        onPlay?.();
-        console.log("called");
-      } else {
-        onPause?.();
+  const lastTime = useRef<number>();
+  const switchCurrentTimeToStart = useCallback(
+    (t: number, isRangeChanged: boolean) => {
+      const cur = isRangeChanged
+        ? t
+        : t > range?.end
+        ? range?.start
+        : t < range?.start
+        ? range?.end
+        : t;
+
+      if (lastTime.current !== cur) {
+        lastTime.current = cur;
+        onTimeChange?.(new Date(cur));
       }
+      return cur;
+    },
+    [range, onTimeChange],
+  );
+
+  const handleOnPlay = useCallback(
+    (playing: boolean, committer: TimelineCommitter) => {
+      // Stop cesium animation
+      playing ? onPlay?.(committer) : onPause?.(committer);
       onSpeedChange?.(Math.abs(speed));
     },
     [onPause, onPlay, onSpeedChange, speed],
   );
 
   const handleOnPlayReversed = useCallback(
-    (playing: boolean) => {
+    (playing: boolean, committer: TimelineCommitter) => {
       // Stop cesium animation
-      if (playing) {
-        onPlay?.();
-      } else {
-        onPause?.();
-      }
+      playing ? onPlay?.(committer) : onPause?.(committer);
       onSpeedChange?.(Math.abs(speed) * -1);
     },
     [onPause, onPlay, onSpeedChange, speed],
+  );
+
+  const handleOnPause = useCallback(
+    (pause: boolean, committer: TimelineCommitter) => {
+      pause && onPause?.(committer);
+    },
+    [onPause],
   );
 
   const handleTimeEvent: TimeHandler = useCallback(
@@ -184,26 +202,6 @@ export default () => {
     setSpeed(Math.abs(timeSpeed));
   }, [overriddenStart, overriddenStop, handleRange, startTime, stopTime, timeSpeed]);
 
-  const lastTime = useRef<number>();
-  const switchCurrentTimeToStart = useCallback(
-    (t: number, isRangeChanged: boolean) => {
-      const cur = isRangeChanged
-        ? t
-        : t > range.end
-        ? range.start
-        : t < range.start
-        ? range.end
-        : t;
-
-      if (lastTime.current !== cur) {
-        lastTime.current = cur;
-        onTimeChange?.(new Date(cur));
-      }
-      return cur;
-    },
-    [range, onTimeChange],
-  );
-
   useEffect(() => {
     const h: TickEventCallback = (d, c) => {
       const isDifferentRange = range.start !== c.start.getTime() || range.end !== c.stop.getTime();
@@ -237,7 +235,6 @@ export default () => {
     if (overriddenCurrentTime) {
       const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);
       setCurrentTime(t);
-      // onTimeChangeRef.current?.(new Date(t));
     }
   }, [overriddenCurrentTime, range]);
 
@@ -250,5 +247,6 @@ export default () => {
     onPlay: handleOnPlay,
     onPlayReversed: handleOnPlayReversed,
     onSpeedChange: handleOnSpeedChange,
+    onPause: handleOnPause,
   };
 };

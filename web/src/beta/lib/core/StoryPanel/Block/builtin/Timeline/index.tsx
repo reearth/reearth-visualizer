@@ -8,12 +8,12 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
     <BlockWrapper
       name={block?.name}
       icon={block?.extensionId}
-      isSelected={isSelected}
+      // isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
       settingsEnabled={false}
       {...props}>
-      <Timeline blockId={block?.id} />
+      <Timeline isSelected={isSelected} blockId={block?.id} />
     </BlockWrapper>
   );
 };
