@@ -14,7 +14,7 @@ import useHooks from "./hooks";
 import PublishModal from "./PublishModal";
 import { PublishStatus } from "./PublishModal/hooks";
 
-export { navbarHeight } from "@reearth/beta/features/Editor/SecondaryNav";
+export { SECONDARY_NAVBAR_HEIGHT } from "@reearth/beta/features/Editor/SecondaryNav";
 
 export type ProjectType = "default" | "story";
 

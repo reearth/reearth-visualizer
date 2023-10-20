@@ -40,7 +40,6 @@ export default (
   initialSize: number,
   minSize: number,
   maxSize?: number,
-  onResizeEndCallback?: (newSize: number) => void,
 ) => {
   const [startingSize, setStartingSize] = useState(initialSize);
 
@@ -105,9 +104,7 @@ export default (
     setPosition({ x: 0, y: 0 });
     setStartingSize(size);
     setDifference(0);
-
-    if (onResizeEndCallback) onResizeEndCallback(size);
-  }, [isResizing, size, onResizeEndCallback]);
+  }, [isResizing, size]);
 
   const bindEventListeners = useCallback(() => {
     if (typeof window === "undefined") return;
