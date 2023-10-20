@@ -41,10 +41,11 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
 
   return (
     <LayerStyleContainer>
-      <AdjustableButtonStyled onClick={handleLayerStyleAddition}>
-        <Icon icon="plus" />
-      </AdjustableButtonStyled>
-
+      <Sidebar>
+        <AdjustableButtonStyled onClick={handleLayerStyleAddition}>
+          <Icon icon="plus" />
+        </AdjustableButtonStyled>
+      </Sidebar>
       <CatalogListWrapper>
         {layerStyles.map(layerStyle => (
           <CatalogCard
@@ -81,13 +82,20 @@ const LayerStyleContainer = styled.div`
   align-items: flex-start;
 `;
 
+const Sidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const CatalogListWrapper = styled.div`
   display: flex;
-  flex-wrap: wrap-reverse;
+  flex-wrap: wrap;
   gap: 20px;
   overflow-y: auto;
   max-height: calc(100vh - 240px);
-  justify-content: flex-end;
+  justify-content: flex-start;
+  flex: 1;
 `;
 
 const AdjustableButtonStyled = styled.button`
@@ -96,14 +104,19 @@ const AdjustableButtonStyled = styled.button`
   justify-content: center;
   align-items: center;
   gap: var(--spacing-small, 8px);
-  align-self: stretch;
-  min-height: 108px;
-  max-height: 204px;
-  flex-shrink: 0;
+  color: ${({ theme }) => theme.content.main};
+  width: 32px;
+  min-height: 100px;
+  max-height: 200px;
 
   border-radius: var(--radius-normal, 6px);
   border: 1px solid ${({ theme }) => theme.secondary.main};
   background: ${({ theme }) => theme.bg[1]};
+
+  position: sticky;
+  top: 0;
+
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
 `;
 
 export default LayerStyles;
