@@ -58,7 +58,6 @@ Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
 Layer Property Inspector: ''
-LayerStyle: ''
 Published: 一般公開
 Unpublished: 非公開
 Scene: シーン
@@ -104,7 +103,7 @@ Angle: 角度
 Narrow: 狭い
 Wide: 広い
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
-Select Image: ''
+Select Image: イメージ選択
 Select: 選択
 Sort By: Sort By
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
