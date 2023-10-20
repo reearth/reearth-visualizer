@@ -1,6 +1,5 @@
-import { useCallback } from "react";
+import { ReactNode, useCallback } from "react";
 
-import CatalogCard from "@reearth/beta/components/CatalogCard";
 import Icon from "@reearth/beta/components/Icon";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import type {
@@ -10,9 +9,12 @@ import type {
 import type { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { styled } from "@reearth/services/theme";
 
+import LayerStyleCard from "./LayerStyleCard";
+
 type LayerStylesProps = {
   layerStyles: LayerStyle[];
   selectedLayerStyleId?: string;
+  actionContent?: ReactNode;
   onLayerStyleAdd: (inp: LayerStyleAddProps) => void;
   onLayerStyleDelete: (id: string) => void;
   onLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
@@ -48,13 +50,11 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
       </Sidebar>
       <CatalogListWrapper>
         {layerStyles.map(layerStyle => (
-          <CatalogCard
+          <LayerStyleCard
             id={layerStyle.id}
             key={layerStyle.id}
             name={layerStyle.name}
-            icon="layerStyle"
             onLayerStyleNameUpdate={onLayerStyleNameUpdate}
-            isNameEditable={true}
             selected={layerStyle.id === selectedLayerStyleId}
             actionContent={
               <PopoverMenuContent
@@ -63,7 +63,10 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
                   {
                     name: "Delete",
                     icon: "bin",
-                    onClick: () => onLayerStyleDelete(layerStyle.id),
+                    onClick: (e?: React.MouseEvent) => {
+                      e?.stopPropagation();
+                      onLayerStyleDelete(layerStyle.id);
+                    },
                   },
                 ]}
               />

@@ -43,11 +43,11 @@ export default function ({ sceneId }: LayerStyleProps) {
 
   const handleLayerStyleDelete = useCallback(
     async (styleId: string) => {
-      if (!selectedLayerStyle) return;
       const deletedPageIndex = layerStyles.findIndex(l => l.id === styleId);
+      if (!deletedPageIndex) return;
 
       await useRemoveLayerStyle({
-        styleId: selectedLayerStyle.id,
+        styleId: styleId,
       });
       if (styleId === selectedLayerStyleId) {
         setSelectedLayerStyleId(
@@ -55,7 +55,7 @@ export default function ({ sceneId }: LayerStyleProps) {
         );
       }
     },
-    [layerStyles, selectedLayerStyle, selectedLayerStyleId, useRemoveLayerStyle],
+    [layerStyles, selectedLayerStyleId, useRemoveLayerStyle],
   );
 
   const handleLayerStyleAdd = useCallback(
