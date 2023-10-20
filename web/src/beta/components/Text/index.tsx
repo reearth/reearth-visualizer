@@ -22,6 +22,7 @@ export type Props = {
   trait?: UniqueTraits;
   otherProperties?: Partial<ChangeableProperties>;
   onClick?: () => void;
+  onDoubleClick?: () => void;
 };
 
 const Text: React.FC<Props> = ({
@@ -34,6 +35,7 @@ const Text: React.FC<Props> = ({
   trait,
   otherProperties,
   onClick,
+  onDoubleClick,
 }) => {
   const theme = useTheme();
   const defaultColor = theme.content.main;
@@ -57,7 +59,8 @@ const Text: React.FC<Props> = ({
         ...otherProperties,
         color: customColor ? undefined : color || defaultColor,
       }}
-      onClick={onClick}>
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}>
       {children}
     </Typography>
   ) : null;
