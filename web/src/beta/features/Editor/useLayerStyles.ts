@@ -44,10 +44,10 @@ export default function ({ sceneId }: LayerStyleProps) {
   const handleLayerStyleDelete = useCallback(
     async (styleId: string) => {
       const deletedPageIndex = layerStyles.findIndex(l => l.id === styleId);
-      if (!deletedPageIndex) return;
+      if (deletedPageIndex === undefined) return;
 
       await useRemoveLayerStyle({
-        styleId: styleId,
+        styleId,
       });
       if (styleId === selectedLayerStyleId) {
         setSelectedLayerStyleId(

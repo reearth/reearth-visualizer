@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 
 import { autoFillPage, onScrollToBottom } from "@reearth/beta/utils/infinite-scroll";
 import { useLayerStylesFetcher } from "@reearth/services/api";
@@ -16,6 +16,9 @@ function pagination(endCursor?: string | null) {
 }
 
 export default ({ sceneId }: { sceneId?: string }) => {
+  const layerStylesWrapperRef = useRef<HTMLDivElement>(null);
+  const isGettingMore = useRef(false);
+
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { layerStyles, loading, isRefetching, fetchMore } = useGetLayerStylesQuery({ sceneId });
   const [selectedLayerStyles, selectLayerStyle] = useState<LayerStyle[]>([]);
@@ -29,9 +32,9 @@ export default ({ sceneId }: { sceneId?: string }) => {
     },
     [setLocalSearchTerm],
   );
-  const handleSearchTerm = useCallback((term?: string) => {
-    setSearchTerm(term);
-  }, []);
+
+  const handleSearchTerm = useCallback((term?: string) => setSearchTerm(term), []);
+
   const handleSearch = useCallback(() => {
     if (!localSearchTerm || localSearchTerm.length < 1) {
       handleSearchTerm?.(undefined);
@@ -39,8 +42,6 @@ export default ({ sceneId }: { sceneId?: string }) => {
       handleSearchTerm?.(localSearchTerm);
     }
   }, [localSearchTerm, handleSearchTerm]);
-
-  const isGettingMore = useRef(false);
 
   const handleSelectLayerStyle = useCallback(
     (layerStyle?: LayerStyle) => {
@@ -62,13 +63,12 @@ export default ({ sceneId }: { sceneId?: string }) => {
     }
   }, [fetchMore, isGettingMore]);
 
-  const isLayerStylesLoading = loading ?? isRefetching;
-
-  const layerStylesWrapperRef = useRef<HTMLDivElement>(null);
+  const isLayerStylesLoading = useMemo(() => loading ?? isRefetching, [loading, isRefetching]);
 
   useEffect(() => {
-    if (layerStylesWrapperRef.current && !isLayerStylesLoading)
+    if (layerStylesWrapperRef.current && !isLayerStylesLoading) {
       autoFillPage(layerStylesWrapperRef, handleGetMoreLayerStyles);
+    }
   }, [handleGetMoreLayerStyles, isLayerStylesLoading]);
 
   return {

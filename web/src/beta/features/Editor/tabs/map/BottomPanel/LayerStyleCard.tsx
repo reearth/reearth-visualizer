@@ -39,10 +39,7 @@ const LayerStyleCard: React.FC<Props> = ({
     setIsHovered(true);
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
-    setIsOpenAction(false);
-  }, []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   const handleNameChange = useCallback((newName: string) => setNewName(newName), []);
 
@@ -87,7 +84,7 @@ const LayerStyleCard: React.FC<Props> = ({
         <Icon icon="layerStyle" />
         {actionContent && (
           <Popover.Provider open={isOpenAction} onOpenChange={handleOpenChange}>
-            {isHovered && (
+            {(isHovered || isOpenAction) && (
               <Popover.Trigger asChild>
                 <ActionIcon onClick={handleActionClick}>
                   <Icon icon="actionbutton" size={12} />
@@ -98,7 +95,7 @@ const LayerStyleCard: React.FC<Props> = ({
           </Popover.Provider>
         )}
       </MainWrapper>
-      <BottomWrapper isHovered={isHovered} isSelected={selected}>
+      <BottomWrapper isHovered={isHovered || isOpenAction} isSelected={selected}>
         {isEditing ? (
           <StyledTextInput
             value={newName}
