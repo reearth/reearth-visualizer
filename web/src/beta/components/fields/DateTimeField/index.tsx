@@ -20,7 +20,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
     (newValue: string | undefined) => {
       if (newValue === undefined) return;
 
-      setTime(newValue);
+      setTime(newValue + ":00 000");
       onChange?.(date + " " + newValue);
     },
     [date, onChange],
@@ -47,8 +47,8 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <TextInput type="date" value={value} onChange={handleDateChange} />
-        <TextInput type="time" value={value} onChange={handleTimeChange} />
+        <TextInput type="date" value={date} onChange={handleDateChange} />
+        <TextInput type="time" value={time} onChange={handleTimeChange} />
       </Wrapper>
     </Property>
   );
