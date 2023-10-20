@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -13,14 +13,14 @@ export type Props = {
 };
 
 const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) => {
-  const [time, setTime] = useState<string>();
-  const [date, setDate] = useState<string>();
+  const [time, setTime] = useState<string>(value?.split(" ")[1] ?? "HH:MM:SS");
+  const [date, setDate] = useState<string>(value?.split(" ")[0] ?? "YYYY-MM-DD");
 
   const handleTimeChange = useCallback(
     (newValue: string | undefined) => {
       if (newValue === undefined) return;
 
-      setTime(newValue + ":00 000");
+      setTime(newValue);
       onChange?.(date + " " + newValue);
     },
     [date, onChange],
@@ -35,14 +35,6 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
     },
     [time, onChange],
   );
-
-  useEffect(() => {
-    if (value) {
-      const [dateString, timeString] = value.split(" ");
-      setTime(timeString);
-      setDate(dateString);
-    }
-  }, [value]);
 
   return (
     <Property name={name} description={description}>
