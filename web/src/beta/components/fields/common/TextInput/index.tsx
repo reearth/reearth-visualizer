@@ -89,7 +89,7 @@ const StyledInput = styled.input`
   border-radius: 4px;
   padding: 4px 8px;
   transition: all 0.3s;
-
+  flex: 1;
   :focus {
     border-color: ${({ theme }) => theme.outline.main};
   }

@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
-import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManager";
-import { formatDateToSting, formatDateToUnix } from "../utils";
+import { TickEventCallback, Timeline, TimelineCommitter } from "../../Map/useTimelineManager";
+import { formatDateToSting } from "../utils";
 
 type TimeHandler = (t: number) => void;
+
 const getNewDate = (d?: Date) => d ?? new Date();
+
 const calculateEndTime = (date: Date) => {
   date.setHours(23, 59, 59, 999);
   return date.getTime();
@@ -26,17 +28,27 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
-export default (timeValues: any) => {
+export default (timeValues?: Timeline) => {
   const visualizerContext = useVisualizer();
-  const [currentTime, setCurrentTime] = useState(() =>
-    getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current)?.getTime(),
-  );
-  const [range, setRange] = useState(() =>
-    timeRange(
-      visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
-      visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime(),
-    ),
-  );
+
+  const initialCurrentTime = timeValues?.current
+    ? getNewDate(new Date(timeValues?.current)).getTime()
+    : getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime();
+
+  const initialRange = timeValues?.start
+    ? timeRange(
+        getNewDate(new Date(timeValues?.start)).getTime(),
+        getNewDate(new Date(timeValues?.stop)).getTime(),
+      )
+    : timeRange(
+        visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
+        visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime(),
+      );
+
+  const [currentTime, setCurrentTime] = useState(initialCurrentTime);
+  const [range, setRange] = useState(initialRange);
+  const clockSpeed = visualizerContext?.current?.timeline?.current?.options.multiplier || 1;
+  const [speed, setSpeed] = useState(clockSpeed);
 
   const onPause = useCallback(
     (committer?: TimelineCommitter) => {
@@ -96,12 +108,6 @@ export default (timeValues: any) => {
     [visualizerContext],
   );
 
-  const clockSpeed = visualizerContext?.current?.timeline?.current?.options.multiplier || 1;
-  const startTime = visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime();
-  const stopTime = visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime();
-  const [speed, setSpeed] = useState(clockSpeed);
-
-  const lastTime = useRef<number>();
   const switchCurrentTimeToStart = useCallback(
     (t: number, isRangeChanged: boolean) => {
       const cur = isRangeChanged
@@ -112,17 +118,9 @@ export default (timeValues: any) => {
         ? range?.end
         : t;
 
-      if (lastTime.current !== cur) {
-        lastTime.current = cur;
-        onTimeChange?.(new Date(cur));
-      }
-      if (timeValues.current)
-        setRange(() =>
-          timeRange(formatDateToUnix(timeValues?.start), formatDateToUnix(timeValues.stop)),
-        );
       return cur;
     },
-    [range?.end, range?.start, timeValues, onTimeChange],
+    [range?.end, range?.start],
   );
 
   const handleOnPlay = useCallback(
@@ -173,17 +171,6 @@ export default (timeValues: any) => {
     [onSpeedChange, visualizerContext],
   );
 
-  const isClockInitialized = useRef(false);
-
-  useEffect(() => {
-    if (!isClockInitialized.current) {
-      isClockInitialized.current = true;
-      queueMicrotask(() => {
-        onSpeedChange?.(1);
-      });
-    }
-  }, [onSpeedChange]);
-
   const handleRange = useCallback((start: number | undefined, stop: number | undefined) => {
     setRange(prev => {
       const next = timeRange(start, stop);
@@ -194,23 +181,26 @@ export default (timeValues: any) => {
     });
   }, []);
 
-  const overriddenStart =
-    visualizerContext?.current?.timeline?.current?.computedTimeline?.start?.getTime();
-  const overriddenStop =
-    visualizerContext?.current?.timeline?.current?.computedTimeline?.stop.getTime();
-
-  // Sync cesium clock.
+  // update clock.
   useEffect(() => {
-    handleRange(overriddenStart ?? startTime, overriddenStop ?? stopTime);
+    if (timeValues?.current || timeValues?.start || timeValues?.stop) {
+      const startTime = getNewDate(new Date(timeValues?.start)).getTime();
+      const endTime = getNewDate(new Date(timeValues?.stop)).getTime();
+      setCurrentTime(prev => {
+        const next = getNewDate(new Date(timeValues?.current)).getTime();
+        if (prev !== next) {
+          onTimeChange?.(new Date(next));
+        }
+        return prev;
+      });
+      return handleRange(startTime, endTime);
+    }
     setSpeed(Math.abs(clockSpeed));
-  }, [overriddenStart, overriddenStop, handleRange, startTime, stopTime, clockSpeed]);
+  }, [handleRange, clockSpeed, timeValues?.start, timeValues?.stop, timeValues, onTimeChange]);
 
   useEffect(() => {
     const h: TickEventCallback = (d, c) => {
       const isDifferentRange = range.start !== c.start.getTime() || range.end !== c.stop.getTime();
-      if (isDifferentRange) {
-        handleRange(c.start.getTime(), c.stop.getTime());
-      }
       setCurrentTime(switchCurrentTimeToStart(d.getTime(), isDifferentRange));
     };
     onTick?.(h);
@@ -225,23 +215,8 @@ export default (timeValues: any) => {
     onTick,
     removeTickEventListener,
     timeValues?.start,
-    timeValues.stop,
+    timeValues?.stop,
   ]);
-
-  const onTimeChangeRef = useRef<typeof onTimeChange>();
-
-  useEffect(() => {
-    onTimeChangeRef.current = onTimeChange;
-  }, [onTimeChange]);
-
-  const overriddenCurrentTime =
-    visualizerContext?.current?.timeline?.current?.computedTimeline?.current?.getTime();
-  useEffect(() => {
-    if (overriddenCurrentTime) {
-      const t = Math.max(Math.min(range.end, overriddenCurrentTime), range.start);
-      setCurrentTime(t);
-    }
-  }, [overriddenCurrentTime, range]);
 
   return {
     currentTime,

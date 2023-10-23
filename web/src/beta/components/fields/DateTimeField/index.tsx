@@ -52,4 +52,5 @@ const Wrapper = styled.div`
   display: flex;
   align-items: stretch;
   gap: 4px;
+  padding-bottom: 10px;
 `;

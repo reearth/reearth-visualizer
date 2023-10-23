@@ -91,15 +91,3 @@ export const formatDateToSting = (d: number) => {
   const date = new Date(d);
   return date.toISOString();
 };
-
-export const formatDateToUnix = (t: string) => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-  const day = today.getDate();
-
-  const [hours, minutes, seconds] = t.split(":").map(Number);
-  const date = new Date(year, month - 1, day, hours, minutes, seconds);
-  const timestamp = date.getTime();
-  return timestamp;
-};

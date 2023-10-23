@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
-// import { Timeline } from "@reearth/beta/lib/core/Map/useTimelineManager";
+import { Timeline } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import useHooks from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelineBlock";
 import { useT } from "@reearth/services/i18n";
@@ -11,7 +11,7 @@ import { styled } from "@reearth/services/theme";
 type TimelineProps = {
   blockId?: string;
   isSelected?: boolean;
-  timeValues?: any;
+  timeValues?: Timeline;
 };
 
 const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
@@ -19,8 +19,10 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
   const [open, setOpen] = useState(false);
   const playSpeedOptions = [1, 0.1, 0.5, 1];
   const [selected, setSelected] = useState(1);
+
   const { currentTime, range, onClick, onDrag, onPlay, onPlayReversed, onSpeedChange, onPause } =
     useTimelineBlock(timeValues);
+
   const {
     formattedCurrentTime,
     timeRange,
@@ -55,7 +57,6 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
 
   return (
     <Wrapper>
-      {/* {inEditor && <Overlay />} */}
       <TimelineControl>
         <StyledIcon>
           <Icon icon="timelineStoryBlock" size={16} />
@@ -257,9 +258,3 @@ const ScaleLabel = styled.div`
   bottom: 28px;
   right: 15px;
 `;
-
-// const Overlay = styled.div`
-//   position: absolute;
-//   width: 100%;
-//   height: 100%;
-// `;

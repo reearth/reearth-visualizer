@@ -1,5 +1,6 @@
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
+import DateTimeField from "@reearth/beta/components/fields/DateTimeField";
 import LocationField from "@reearth/beta/components/fields/LocationField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -91,7 +92,14 @@ export const FieldComponent = ({
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "string" ? (
-    field?.ui === "color" ? (
+    field?.ui === "datetime" ? (
+      <DateTimeField
+        name={field?.title}
+        value={field?.value}
+        description={field?.description}
+        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      />
+    ) : field?.ui === "color" ? (
       <ColorField
         name={field?.title}
         description={field?.description}
