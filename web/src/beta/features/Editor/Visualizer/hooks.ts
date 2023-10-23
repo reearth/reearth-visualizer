@@ -11,7 +11,9 @@ import {
   useWidgetsFetcher,
   useStorytellingFetcher,
   usePropertyFetcher,
+  useLayerStylesFetcher,
 } from "@reearth/services/api";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -19,30 +21,36 @@ import {
   useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
-  useZoomedLayerId,
   selectedWidgetAreaVar,
   isVisualizerReadyVar,
+  useZoomedLayerId,
 } from "@reearth/services/state";
 
-import { convertWidgets, processLayers } from "./convert";
+import { convertStory, convertWidgets, processLayers } from "./convert";
 import type { BlockType } from "./type";
 
 export default ({
   sceneId,
-  isBuilt,
   storyId,
+  isBuilt,
+  currentPage,
+  showStoryPanel,
 }: {
   sceneId?: string;
-  isBuilt?: boolean;
   storyId?: string;
+  isBuilt?: boolean;
+  currentPage?: Page;
+  showStoryPanel?: boolean;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
+  const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
   const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
+  const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
@@ -87,7 +95,14 @@ export default ({
     [selected],
   );
 
-  const layers = useMemo(() => processLayers(nlsLayers), [nlsLayers]);
+  const layers = useMemo(() => {
+    const processedLayers = processLayers(nlsLayers, layerStyles);
+    if (!showStoryPanel) return processedLayers;
+    return processedLayers?.map(layer => ({
+      ...layer,
+      visible: currentPage?.layersIds?.includes(layer.id),
+    }));
+  }, [nlsLayers, layerStyles, showStoryPanel, currentPage?.layersIds]);
 
   // TODO: Use GQL value
   const rootLayerId = "";
@@ -169,8 +184,6 @@ export default ({
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
-
-      console.log("Layer has been draped!");
     },
     [],
   );
@@ -190,6 +203,11 @@ export default ({
       );
     },
     [sceneId, useUpdateWidgetAlignSystem],
+  );
+
+  const story = useMemo(
+    () => convertStory(scene?.stories.find(s => s.id === storyId)),
+    [storyId, scene?.stories],
   );
 
   const handleStoryBlockCreate = useCallback(
@@ -244,7 +262,6 @@ export default ({
     sceneId,
     rootLayerId,
     selectedLayerId,
-    zoomedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
@@ -252,6 +269,7 @@ export default ({
     tags,
     widgets,
     layers,
+    story,
     blocks,
     isCapturing,
     sceneMode,
@@ -262,6 +280,7 @@ export default ({
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
+    zoomedLayerId,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -275,7 +294,7 @@ export default ({
     onWidgetAlignSystemUpdate,
     onIsCapturingChange,
     handleDropLayer,
-    zoomToLayer,
     handleMount,
+    zoomToLayer,
   };
 };

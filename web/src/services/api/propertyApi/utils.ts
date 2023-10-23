@@ -56,7 +56,8 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
     | "layer"
     | "cameraPose"
     | "padding"
-    | "margin";
+    | "margin"
+    | "datetime";
   choices?: {
     key: string;
     label: string;
@@ -252,7 +253,7 @@ const toField = (
   };
 };
 
-const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] => {
+export const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] => {
   switch (ui) {
     case PropertySchemaFieldUi.Color:
       return "color";
@@ -278,6 +279,8 @@ const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField["ui"] =
       return "margin";
     case PropertySchemaFieldUi.Padding:
       return "padding";
+    case PropertySchemaFieldUi.Datetime:
+      return "datetime";
   }
   return undefined;
 };

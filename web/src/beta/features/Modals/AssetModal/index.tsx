@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import AssetCard from "@reearth/beta/components/CatalogCard";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
+import SelectField from "@reearth/beta/components/fields/SelectField";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
-import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import useHooks from "@reearth/beta/features/Assets/hooks";
 import { Asset } from "@reearth/beta/features/Assets/types";
@@ -13,6 +14,15 @@ import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+
+const getValue: { [key: string]: string } = {
+  "date-reverse": "date",
+  "name-reverse": "name",
+  "size-reverse": "size",
+  date: "date",
+  size: "size",
+  name: "name",
+};
 
 export type Props = {
   className?: string;
@@ -36,19 +46,22 @@ const ChooseAssetModal: React.FC<Props> = ({
   const t = useT();
 
   const [, setNotification] = useNotification();
+  const [selectedSortOption, setSelectedSortOption] = useState("date");
   const {
     assets,
-    isLoading,
+    isAssetsLoading,
     hasMoreAssets,
     searchTerm,
     selectedAssets,
-    selectAsset,
     localSearchTerm,
-    wrapperRef,
+    assetsWrapperRef,
+    sortOptions,
     onScrollToBottom,
+    selectAsset,
     handleSearchInputChange,
     handleSearch,
     handleGetMoreAssets,
+    handleSortChange,
   } = useHooks({ workspaceId: currentWorkspace?.id });
 
   const filteredAssets = useMemo(() => {
@@ -93,6 +106,16 @@ const ChooseAssetModal: React.FC<Props> = ({
     },
     [selectedAssets, selectAsset],
   );
+  const onSortChange = useCallback(
+    (selectedLabel: string) => {
+      console.log(selectedLabel);
+      setSelectedSortOption(selectedLabel);
+      const value = getValue[selectedLabel];
+      const reverse = selectedLabel.toLowerCase().includes("reverse");
+      handleSortChange?.(value, reverse);
+    },
+    [handleSortChange],
+  );
 
   useEffect(() => {
     handleReset();
@@ -124,13 +147,24 @@ const ChooseAssetModal: React.FC<Props> = ({
         />
       }>
       <ControlWarpper>
+        <SortWrapper>
+          <Text size="xFootnote">{t("Sort By")}</Text>
+          <SelectField
+            value={selectedSortOption}
+            options={sortOptions.map(option => ({
+              key: option.key,
+              label: option.label,
+            }))}
+            onChange={onSortChange}
+          />
+        </SortWrapper>
         <SearchWarpper>
           <TextInput value={localSearchTerm} onChange={handleSearchInputChange} />
           <SearchButton icon="search" margin="0" onClick={handleSearch} />
         </SearchWarpper>
       </ControlWarpper>
       <AssetWrapper>
-        {!isLoading && (!assets || assets.length < 1) ? (
+        {!isAssetsLoading && (!assets || assets.length < 1) ? (
           <Template>
             <TemplateText size="body">
               {searchTerm
@@ -142,9 +176,9 @@ const ChooseAssetModal: React.FC<Props> = ({
           </Template>
         ) : (
           <AssetListWrapper
-            ref={wrapperRef}
+            ref={assetsWrapperRef}
             onScroll={e =>
-              !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
+              !isAssetsLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
             }>
             <AssetList>
               {filteredAssets?.map(a => (
@@ -164,7 +198,7 @@ const ChooseAssetModal: React.FC<Props> = ({
                 />
               ))}
             </AssetList>
-            {isLoading && <Loading />}
+            {isAssetsLoading && <Loading />}
           </AssetListWrapper>
         )}
       </AssetWrapper>
@@ -181,14 +215,22 @@ const AssetWrapper = styled.div`
 
 const ControlWarpper = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: flex-start;
+`;
+
+const SortWrapper = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  left: 0px;
 `;
 
 const SearchWarpper = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+  right: 0;
 `;
 
 const SearchButton = styled(Button)`

@@ -13,7 +13,7 @@ export type Props<Item extends { id: string } = { id: string }> = {
   getId: (item: Item) => string;
   onItemDrop(item: Item, targetIndex: number): void;
   renderItem: (item: Item, index: number) => ReactNode;
-  gap: number;
+  gap?: number;
 };
 
 function DragAndDropList<Item extends { id: string } = { id: string }>({
@@ -97,5 +97,5 @@ export default DragAndDropList;
 const SWrapper = styled.div<Pick<Props, "gap">>`
   display: flex;
   flex-direction: column;
-  ${({ gap }) => `gap: ${gap}px`}
+  ${({ gap }) => gap && `gap: ${gap}px;`}
 `;
