@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import useHooks from "@reearth/beta/features/Assets/AssetsQueriesHook/hooks";
+import useHooks from "@reearth/beta/features/Assets/hooks";
 import { Asset } from "@reearth/beta/features/Assets/types";
 
 import { InnerPage } from "../common";
@@ -14,17 +14,22 @@ type Props = {
 const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
   const {
     assets,
-    isLoading,
+    assetsWrapperRef,
+    isAssetsLoading,
     hasMoreAssets,
-    sort,
     searchTerm,
+    localSearchTerm,
+    deleteModalVisible,
     selectedAssets,
     selectAsset,
     handleGetMoreAssets,
-    handleFileSelect,
     handleSortChange,
-    handleSearchTerm,
-    removeAssets,
+    onScrollToBottom,
+    handleSearchInputChange,
+    handleSearch,
+    openDeleteModal,
+    closeDeleteModal,
+    handleRemove,
   } = useHooks({ workspaceId });
 
   const handleSelect = useCallback(
@@ -42,18 +47,24 @@ const AssetSettings: React.FC<Props> = ({ workspaceId }) => {
   return (
     <InnerPage wide transparent>
       <AssetContainer
+        workspaceId={workspaceId}
         assets={assets}
+        wrapperRef={assetsWrapperRef}
         selectedAssets={selectedAssets}
-        isLoading={isLoading}
+        isLoading={isAssetsLoading}
+        openDeleteModal={openDeleteModal}
+        deleteModalVisible={deleteModalVisible}
         hasMoreAssets={hasMoreAssets}
-        sort={sort}
         searchTerm={searchTerm}
-        onFileUpload={handleFileSelect}
-        onRemove={removeAssets}
+        localSearchTerm={localSearchTerm}
         onGetMore={handleGetMoreAssets}
         onSelect={handleSelect}
         onSortChange={handleSortChange}
-        onSearch={handleSearchTerm}
+        onScrollToBottom={onScrollToBottom}
+        closeDeleteModal={closeDeleteModal}
+        handleRemove={handleRemove}
+        handleSearch={handleSearch}
+        handleSearchInputChange={handleSearchInputChange}
       />
     </InnerPage>
   );

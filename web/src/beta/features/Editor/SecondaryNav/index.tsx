@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { ReactNode } from "react";
 
-export const navbarHeight = "52px";
+export const SECONDARY_NAVBAR_HEIGHT = 52;
 
 type Props = {
   className?: string;
@@ -17,5 +17,5 @@ export default VisualizerNav;
 const Wrapper = styled.div`
   border-radius: 4px 4px 0 0;
   background: ${({ theme }) => theme.bg[0]};
-  height: ${navbarHeight};
+  height: ${SECONDARY_NAVBAR_HEIGHT}px;
 `;

@@ -1,8 +1,8 @@
+import { clone } from "lodash-es";
 import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
 // TODO: Move these utils
-import { convertTime, truncMinutes } from "@reearth/beta/utils/time";
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
 import type { Block, BuiltinWidgets, InteractionModeType } from "../Crust";
@@ -19,6 +19,7 @@ import type {
   DefaultInfobox,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
+import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
 
@@ -118,10 +119,27 @@ export default function useHooks(
     ) => {
       const computedLayer = await layer?.();
 
-      selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId));
-      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId) ?? info?.feature);
+      selectFeature(f =>
+        f?.id === featureId
+          ? f
+          : layerId && featureId
+          ? mapRef.current?.engine.findFeatureById?.(layerId, featureId)
+          : undefined,
+      );
+      selectComputedFeature(f => {
+        const res =
+          f?.id === featureId
+            ? f
+            : layerId && featureId
+            ? mapRef.current?.engine.findComputedFeatureById?.(layerId, featureId) ??
+              (f && f.id === info?.feature?.id ? f : info?.feature)
+            : undefined;
+        return res;
+      });
 
-      selectLayer({ layerId, featureId, layer: computedLayer, reason });
+      selectLayer(l =>
+        l.layerId === layerId ? l : { layerId, featureId, layer: computedLayer, reason },
+      );
     },
     [],
   );
@@ -156,47 +174,71 @@ export default function useHooks(
     }
   }, [infobox]);
 
+  const timelineManagerRef: TimelineManagerRef = useRef();
+
   // scene
-  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
+  const [overriddenSceneProperty, originalOverrideSceneProperty] =
+    useOverriddenProperty(sceneProperty);
 
-  // clock
-  const overriddenClock = useMemo(() => {
-    const { start, stop, current } = overriddenSceneProperty.timeline || {};
-    const startTime = convertTime(start)?.getTime();
-    const stopTime = convertTime(stop)?.getTime();
-    const currentTime = convertTime(current)?.getTime();
-
-    const DEFAULT_NEXT_RANGE = 86400000; // a day
-
-    // To avoid out of range error in Cesium, we need to turn back a hour.
-    const now = Date.now() - 3600000;
-
-    const convertedStartTime = startTime
-      ? Math.min(now, startTime)
-      : stopTime
-      ? Math.min(now, stopTime - DEFAULT_NEXT_RANGE)
-      : now - DEFAULT_NEXT_RANGE;
-
-    const convertedStopTime = stopTime
-      ? Math.min(stopTime, now)
-      : startTime
-      ? Math.min(now, startTime + DEFAULT_NEXT_RANGE)
-      : now;
-
-    return {
-      start: start || stop ? truncMinutes(new Date(convertedStartTime)) : undefined,
-      stop: start || stop ? new Date(convertedStopTime) : undefined,
-      current:
-        start || stop || current
-          ? new Date(
-              Math.max(
-                Math.min(convertedStopTime, currentTime || convertedStartTime),
-                convertedStartTime,
-              ),
-            )
-          : undefined,
-    };
-  }, [overriddenSceneProperty]);
+  const overrideSceneProperty = useCallback(
+    (pluginId: string, property: SceneProperty) => {
+      if (property.timeline) {
+        const filteredTimeline = clone(property.timeline);
+        delete filteredTimeline.visible;
+        if (Object.keys(filteredTimeline).length > 0) {
+          if (
+            filteredTimeline.current !== undefined ||
+            filteredTimeline.start !== undefined ||
+            filteredTimeline.stop !== undefined
+          ) {
+            timelineManagerRef?.current?.commit({
+              cmd: "SET_TIME",
+              payload: {
+                start:
+                  filteredTimeline.start ?? timelineManagerRef?.current?.computedTimeline.start,
+                stop: filteredTimeline.stop ?? timelineManagerRef?.current?.computedTimeline.stop,
+                current:
+                  filteredTimeline.current ?? timelineManagerRef?.current?.computedTimeline.current,
+              },
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+          if (
+            filteredTimeline.multiplier !== undefined ||
+            filteredTimeline.stepType !== undefined ||
+            filteredTimeline.rangeType !== undefined
+          ) {
+            timelineManagerRef?.current?.commit({
+              cmd: "SET_OPTIONS",
+              payload: {
+                stepType: filteredTimeline.stepType,
+                multiplier: filteredTimeline.multiplier,
+                rangeType: filteredTimeline.rangeType,
+              },
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+          if (filteredTimeline.animation !== undefined) {
+            timelineManagerRef?.current?.commit({
+              cmd: filteredTimeline.animation ? "PLAY" : "PAUSE",
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+        }
+      }
+      originalOverrideSceneProperty(pluginId, property);
+    },
+    [timelineManagerRef, originalOverrideSceneProperty],
+  );
 
   // block
   const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
@@ -277,11 +319,11 @@ export default function useHooks(
     featureFlags,
     isMobile,
     overriddenSceneProperty,
-    overriddenClock,
     isDroppable,
     infobox,
     isLayerDragging,
     shouldRender,
+    timelineManagerRef,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

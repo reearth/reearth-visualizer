@@ -28,7 +28,7 @@ import {
   $getNearestNodeOfType,
   mergeRegister,
 } from "@lexical/utils";
-import type { ElementFormatType, LexicalEditor } from "lexical";
+import type { ElementFormatType, LexicalEditor, RangeSelection } from "lexical";
 import {
   $createParagraphNode,
   $getSelection,
@@ -78,17 +78,79 @@ const FONT_FAMILY_OPTIONS: [string, string][] = [
 
 const FONT_SIZE_OPTIONS: [string, string][] = [
   ["10px", "10px"],
-  ["11px", "11px"],
   ["12px", "12px"],
-  ["13px", "13px"],
   ["14px", "14px"],
-  ["15px", "15px"],
   ["16px", "16px"],
-  ["17px", "17px"],
   ["18px", "18px"],
-  ["19px", "19px"],
   ["20px", "20px"],
+  ["22px", "22px"],
+  ["24px", "24px"],
+  ["26px", "26px"],
+  ["28px", "28px"],
+  ["32px", "32px"],
+  ["36px", "36px"],
+  ["40px", "40px"],
+  ["64px", "64px"],
 ];
+
+const LINE_HEIGHT_OPTIONS: [string, string][] = [
+  ["1.0", "1.0"],
+  ["1.1", "1.1"],
+  ["1.2", "1.2"],
+  ["1.3", "1.3"],
+  ["1.4", "1.4"],
+  ["1.5", "1.5"],
+  ["1.6", "1.6"],
+  ["1.7", "1.7"],
+  ["1.8", "1.8"],
+  ["1.9", "1.9"],
+  ["2.0", "2.0"],
+];
+
+// Fix for $patchStyleText not updating the style correctly
+// https://github.com/facebook/lexical/issues/4491#issuecomment-1701890592
+function $customPatchStyleText(selection: RangeSelection, cssProperty: string, cssValue: string) {
+  $patchStyleText(selection, { [cssProperty]: cssValue });
+
+  const newStyle = replaceCssStyle(selection.style, cssProperty, cssValue);
+  selection.setStyle(newStyle);
+}
+
+function replaceCssStyle(
+  existingCssStyle: string,
+  cssProperty: string,
+  newCssValue: string,
+): string {
+  const cssArr = existingCssStyle
+    .split(";")
+    .filter(prop => !!prop)
+    .map(prop => prop.trim());
+
+  let found = false;
+
+  const newCssArr = cssArr.map(prop => {
+    const propertySplit = prop.split(":");
+    if (propertySplit.length !== 2) {
+      return "";
+    }
+
+    const [property, value] = propertySplit.map(p => p.trim());
+
+    if (property === cssProperty) {
+      found = true;
+      return `${property}: ${newCssValue}`;
+    } else {
+      return `${property}: ${value}`;
+    }
+  });
+
+  // If the property was not found in the existing styles, add it
+  if (!found) {
+    newCssArr.push(`${cssProperty}: ${newCssValue}`);
+  }
+
+  return newCssArr.filter(value => value !== "").join("; ");
+}
 
 function dropDownActiveClass(active: boolean) {
   if (active) return "active dropdown-item-active";
@@ -239,9 +301,7 @@ function FontDropDown({
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          $patchStyleText(selection, {
-            [style]: option,
-          });
+          $customPatchStyleText(selection, style, option);
         }
       });
     },
@@ -269,6 +329,54 @@ function FontDropDown({
           className={`item ${dropDownActiveClass(value === option)} ${
             style === "font-size" ? "fontsize-item" : ""
           }`}
+          onClick={() => handleClick(option)}
+          key={option}>
+          <span className="text">{text}</span>
+        </DropDownItem>
+      ))}
+    </DropDown>
+  );
+}
+
+function LineHeightDropDown({
+  containerRef,
+  scrollableContainerId,
+  editor,
+  value,
+  style,
+  disabled = false,
+}: {
+  containerRef: RefObject<HTMLDivElement>;
+  scrollableContainerId?: string;
+  editor: LexicalEditor;
+  value: string;
+  style: string;
+  disabled?: boolean;
+}): JSX.Element {
+  const t = useT();
+  const handleClick = useCallback(
+    (option: string) => {
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          $customPatchStyleText(selection, style, option);
+        }
+      });
+    },
+    [editor, style],
+  );
+
+  return (
+    <DropDown
+      containerRef={containerRef}
+      scrollableContainerId={scrollableContainerId}
+      disabled={disabled}
+      buttonClassName={"toolbar-item " + style}
+      buttonIconClassName={"icon block-type lineheight"}
+      buttonAriaLabel={t("Formatting options for line height")}>
+      {LINE_HEIGHT_OPTIONS.map(([option, text]) => (
+        <DropDownItem
+          className={`item ${dropDownActiveClass(value === option)} ${"lineheight-item"}`}
           onClick={() => handleClick(option)}
           key={option}>
           <span className="text">{text}</span>
@@ -324,8 +432,8 @@ function ElementFormatDropdown({
       containerRef={containerRef}
       scrollableContainerId={scrollableContainerId}
       disabled={disabled}
-      buttonLabel={formatOptions[value].name}
-      buttonIconClassName={`icon ${formatOptions[value].icon}`}
+      buttonLabel={formatOptions[value]?.name}
+      buttonIconClassName={`icon ${formatOptions[value]?.icon}`}
       buttonClassName="toolbar-item spaced alignment"
       buttonAriaLabel="Formatting options for text alignment">
       <DropDownItem
@@ -392,8 +500,9 @@ export default function ToolbarPlugin({
   const [activeEditor, setActiveEditor] = useState(editor);
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>("paragraph");
   const [rootType, setRootType] = useState<keyof typeof rootTypeToRootName>("root");
-  const [fontSize, setFontSize] = useState<string>("15px");
+  const [fontSize, setFontSize] = useState<string>("16px");
   const [fontColor, setFontColor] = useState<string>("#000");
+  const [lineHeight, setLineHeight] = useState<string>("1.2");
   const [bgColor, setBgColor] = useState<string>("#fff");
   const [fontFamily, setFontFamily] = useState<string>("Arial");
   const [elementFormat, setElementFormat] = useState<ElementFormatType>("left");
@@ -484,10 +593,11 @@ export default function ToolbarPlugin({
         }
       }
       // Handle buttons
-      setFontSize($getSelectionStyleValueForProperty(selection, "font-size", "15px"));
+      setFontSize($getSelectionStyleValueForProperty(selection, "font-size", "16px"));
       setFontColor($getSelectionStyleValueForProperty(selection, "color", "#000"));
       setBgColor($getSelectionStyleValueForProperty(selection, "background-color", "#fff"));
       setFontFamily($getSelectionStyleValueForProperty(selection, "font-family", "Arial"));
+      setLineHeight($getSelectionStyleValueForProperty(selection, "line-height", "1.2"));
       setElementFormat(
         ($isElementNode(node) ? node.getFormatType() : parent?.getFormatType()) || "left",
       );
@@ -691,6 +801,14 @@ export default function ToolbarPlugin({
           disabled={!isEditable}
           style={"font-size"}
           value={fontSize}
+          editor={editor}
+        />
+        <LineHeightDropDown
+          containerRef={containerRef}
+          scrollableContainerId={scrollableContainerId}
+          disabled={!isEditable}
+          style={"line-height"}
+          value={lineHeight}
           editor={editor}
         />
         <Divider />

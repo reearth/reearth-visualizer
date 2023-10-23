@@ -1,11 +1,13 @@
 import type { RefObject } from "react";
 
 import type { EngineRef, LayersRef } from "./types";
+import { TimelineManagerRef } from "./useTimelineManager";
 import { FunctionKeys, WrappedRef, wrapRef } from "./utils";
 
 export type MapRef = {
   engine: WrappedRef<EngineRef>;
   layers: WrappedRef<LayersRef>;
+  timeline?: TimelineManagerRef;
 };
 
 const engineRefKeys: FunctionKeys<EngineRef> = {
@@ -62,6 +64,11 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   removeTickEventListener: 1,
   findFeaturesByIds: 1,
   findFeatureById: 1,
+  findComputedFeatureById: 1,
+  findComputedFeaturesByIds: 1,
+  selectFeatures: 1,
+  unselectFeatures: 1,
+  pickManyFromViewport: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -80,6 +87,7 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   override: 1,
   replace: 1,
   select: 1,
+  selectFeatures: 1,
   selectedLayer: 1,
   show: 1,
   walk: 1,
@@ -89,12 +97,15 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
 export function mapRef({
   engineRef,
   layersRef,
+  timelineManagerRef,
 }: {
   engineRef: RefObject<EngineRef>;
   layersRef: RefObject<LayersRef>;
+  timelineManagerRef?: TimelineManagerRef;
 }): MapRef {
   return {
     engine: wrapRef(engineRef, engineRefKeys),
     layers: wrapRef(layersRef, layersRefKeys),
+    timeline: timelineManagerRef,
   };
 }

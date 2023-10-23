@@ -1,6 +1,5 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
-import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
@@ -14,7 +13,7 @@ type Props = {
   isSelected?: boolean;
   children: ReactNode;
   propertyId?: string;
-  propertyItems?: Item[];
+  panelSettings?: any;
   dndEnabled?: boolean;
   showSettings?: boolean;
   editMode?: boolean;
@@ -35,7 +34,7 @@ const SelectableArea: React.FC<Props> = ({
   isSelected,
   children,
   propertyId,
-  propertyItems,
+  panelSettings,
   dndEnabled,
   showSettings,
   editMode,
@@ -49,18 +48,24 @@ const SelectableArea: React.FC<Props> = ({
   onClickAway,
   onRemove,
 }) => {
-  const { isHovered, showPadding, panelSettings, setShowPadding, handleMouseOver, handleMouseOut } =
-    useHooks({
-      editMode,
-      isSelected,
-      propertyItems,
-      setEditMode,
-    });
+  const {
+    isHovered,
+    showPadding,
+    setShowPadding,
+    handleMouseOver,
+    handleMouseOut,
+    handleClickAway,
+  } = useHooks({
+    editMode,
+    isSelected,
+    setEditMode,
+    onClickAway,
+  });
 
   return !isEditable ? (
     <>{children}</>
   ) : (
-    <ClickAwayListener enabled={isSelected} onClickAway={onClickAway}>
+    <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
       <Wrapper
         isSelected={isSelected}
         noBorder={noBorder}

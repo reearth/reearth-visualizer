@@ -1,19 +1,19 @@
-import { Fragment, useMemo } from "react";
+import { Fragment } from "react";
 
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import type { Page } from "../hooks";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
-import useHooks from "./hooks";
+import useHooks, { type StoryPage } from "./hooks";
 
 type Props = {
-  page?: Page;
+  page?: StoryPage;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -22,9 +22,11 @@ type Props = {
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
-    index?: number,
-  ) => (pageId?: string, extensionId?: string, pluginId?: string) => Promise<void>;
-  onBlockDelete?: (pageId?: string, blockId?: string) => Promise<void>;
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void> | undefined;
+  onBlockDelete?: (blockId?: string | undefined) => Promise<void> | undefined;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -34,9 +36,10 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
+  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
 };
 
-const StoryPage: React.FC<Props> = ({
+const StoryPanel: React.FC<Props> = ({
   page,
   selectedPageId,
   installableStoryBlocks,
@@ -49,15 +52,24 @@ const StoryPage: React.FC<Props> = ({
   onBlockDelete,
   onBlockSelect,
   onPropertyUpdate,
+  onStoryBlockMove,
 }) => {
   const t = useT();
-  const propertyItems = useMemo(() => page?.property.items, [page?.property]);
 
-  const storyBlocks = useMemo(() => page?.blocks, [page?.blocks]);
-
-  const { openBlocksIndex, titleId, titleProperty, handleBlockOpen } = useHooks({
-    pageId: page?.id,
-    propertyItems,
+  const {
+    openBlocksIndex,
+    titleId,
+    title,
+    propertyId,
+    panelSettings,
+    storyBlocks,
+    setStoryBlocks,
+    handleBlockOpen,
+    handleBlockCreate,
+  } = useHooks({
+    page,
+    isEditable,
+    onBlockCreate,
   });
 
   return (
@@ -67,83 +79,98 @@ const StoryPage: React.FC<Props> = ({
       icon="storyPage"
       noBorder
       isSelected={selectedPageId === page?.id}
-      propertyId={page?.property?.id}
-      propertyItems={propertyItems}
+      propertyId={propertyId}
+      panelSettings={panelSettings}
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id}>
-        {titleProperty && (
-          <StoryBlock
-            block={{
-              id: titleId,
-              pluginId: "reearth",
-              extensionId: "titleStoryBlock",
-              title: titleProperty.title,
-              property: {
-                id: page?.property?.id ?? "",
-                items: [titleProperty],
-              },
-            }}
-            pageId={page?.id}
-            isEditable={isEditable}
-            isSelected={selectedStoryBlockId === titleId}
-            onClick={() => onBlockSelect?.(titleId)}
-            onClickAway={onBlockSelect}
-            onChange={onPropertyUpdate}
-          />
-        )}
+      <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
+        <StoryBlock
+          block={{
+            id: titleId,
+            pluginId: "reearth",
+            extensionId: "titleStoryBlock",
+            name: t("Title"),
+            propertyId: page?.propertyId ?? "",
+            property: { title },
+          }}
+          isEditable={isEditable}
+          isSelected={selectedStoryBlockId === titleId}
+          onClick={() => onBlockSelect?.(titleId)}
+          onClickAway={onBlockSelect}
+          onChange={onPropertyUpdate}
+        />
+
         {isEditable && (
           <BlockAddBar
-            pageId={page?.id}
+            alwaysShow={storyBlocks && storyBlocks.length < 1}
             openBlocks={openBlocksIndex === -1}
             installableStoryBlocks={installableStoryBlocks}
             onBlockOpen={() => handleBlockOpen(-1)}
-            onBlockAdd={onBlockCreate?.(0)}
+            onBlockAdd={handleBlockCreate(0)}
           />
         )}
-        {storyBlocks?.map((b, idx) => (
-          <Fragment key={idx}>
-            <StoryBlock
-              block={b}
-              pageId={page?.id}
-              isSelected={selectedStoryBlockId === b.id}
-              isEditable={isEditable}
-              onClick={() => onBlockSelect?.(b.id)}
-              onClickAway={onBlockSelect}
-              onChange={onPropertyUpdate}
-              onRemove={onBlockDelete}
-            />
-            {isEditable && (
-              <BlockAddBar
-                pageId={page?.id}
-                openBlocks={openBlocksIndex === idx}
-                installableStoryBlocks={installableStoryBlocks}
-                onBlockOpen={() => handleBlockOpen(idx)}
-                onBlockAdd={onBlockCreate?.(idx + 1)}
-              />
-            )}
-          </Fragment>
-        ))}
+        {storyBlocks && storyBlocks.length > 0 && (
+          <DragAndDropList
+            uniqueKey="storyPanel"
+            gap={panelSettings?.gap?.value}
+            items={storyBlocks}
+            getId={item => item.id}
+            onItemDrop={async (item, index) => {
+              setStoryBlocks(old => {
+                const items = [...old];
+                items.splice(
+                  old.findIndex(o => o.id === item.id),
+                  1,
+                );
+                items.splice(index, 0, item);
+                return items;
+              });
+              await onStoryBlockMove(page?.id || "", index, item.id);
+            }}
+            renderItem={(b, idx) => {
+              return (
+                <Fragment key={idx}>
+                  <StoryBlock
+                    block={b}
+                    isSelected={selectedStoryBlockId === b.id}
+                    isEditable={isEditable}
+                    onClick={() => onBlockSelect?.(b.id)}
+                    onClickAway={onBlockSelect}
+                    onChange={onPropertyUpdate}
+                    onRemove={onBlockDelete}
+                  />
+                  {isEditable && (
+                    <BlockAddBar
+                      openBlocks={openBlocksIndex === idx}
+                      installableStoryBlocks={installableStoryBlocks}
+                      onBlockOpen={() => handleBlockOpen(idx)}
+                      onBlockAdd={handleBlockCreate(idx + 1)}
+                    />
+                  )}
+                </Fragment>
+              );
+            }}
+          />
+        )}
       </Wrapper>
     </SelectableArea>
   );
 };
 
-export default StoryPage;
+export default StoryPanel;
 
-const Wrapper = styled.div<{ padding?: Spacing }>`
+const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
+  ${({ gap }) => gap && `gap: ${gap}px;`}
 
-  padding: 20px;
-  padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
-  padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
-  padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
-  padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-
+  padding-top: ${({ padding }) => padding.top + "px"};
+  padding-bottom: ${({ padding }) => padding.bottom + "px"};
+  padding-left: ${({ padding }) => padding.left + "px"};
+  padding-right: ${({ padding }) => padding.right + "px"};
   box-sizing: border-box;
 `;

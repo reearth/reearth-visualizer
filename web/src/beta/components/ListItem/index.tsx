@@ -36,8 +36,13 @@ const ListItem: FC<Props> = ({
   return (
     <Wrapper>
       <Inner border={border} isSelected={isSelected} clamp={clamp} onClick={onItemClick}>
-        <StyledText size="footnote">{children}</StyledText>
+        {typeof children === "string" ? (
+          <StyledText size="footnote">{children}</StyledText>
+        ) : (
+          children
+        )}
       </Inner>
+
       {actionContent && (
         <Popover.Provider
           open={isOpenAction}
@@ -62,11 +67,16 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const Inner = styled.button<{ border?: boolean; isSelected?: boolean; clamp?: Clamp }>`
+const Inner = styled.button<{
+  border?: boolean;
+  isSelected?: boolean;
+  clamp?: Clamp;
+}>`
   display: flex;
   width: 100%;
   min-height: 38px;
   align-items: center;
+  color: ${({ theme }) => theme.content.main};
   border: 1px solid ${({ border, theme }) => (border ? theme.outline.weakest : "transparent")};
   border-radius: ${({ clamp }) =>
     clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};

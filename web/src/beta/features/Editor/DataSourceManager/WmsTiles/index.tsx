@@ -18,6 +18,8 @@ import {
 } from "../utils";
 
 const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+  const t = useT();
+
   const {
     urlValue,
     layerValue,
@@ -30,8 +32,6 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     handleLayerInput,
   } = useHooks();
 
-  const t = useT();
-
   const handleSubmit = () => {
     onSubmit({
       layerType: "simple",
@@ -40,21 +40,9 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: urlValue !== "" ? urlValue : null,
+          url: urlValue !== "" ? urlValue : undefined,
           type: "wms",
-          layers: layers.length <= 1 ? layers[0] : layers,
-        },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
+          layers: layers.length === 1 ? layers[0] : layers,
         },
       },
     });

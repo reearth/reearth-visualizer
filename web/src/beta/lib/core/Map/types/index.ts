@@ -8,6 +8,7 @@ import type {
   MutableRefObject,
 } from "react";
 
+import { PickedFeature } from "../../engines/Cesium/pickMany";
 import type {
   LatLngHeight,
   Camera,
@@ -16,6 +17,7 @@ import type {
   DataType,
   SelectedFeatureInfo,
   Feature,
+  ComputedFeature,
 } from "../../mantle";
 import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 import type {
@@ -24,6 +26,7 @@ import type {
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
+import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
   FeatureComponentProps,
@@ -105,6 +108,20 @@ export type EngineRef = {
   removeTickEventListener: TickEvent;
   findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
   findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
+  findComputedFeatureById: (layerId: string, featureId: string) => ComputedFeature | undefined;
+  findComputedFeaturesByIds: (
+    layerId: string,
+    featureId: string[],
+  ) => ComputedFeature[] | undefined;
+  selectFeatures: (layerId: string, featureId: string[]) => void;
+  unselectFeatures: (layerId: string, featureId: string[]) => void;
+  pickManyFromViewport: (
+    windowPosition: [x: number, y: number],
+    windowWidth: number,
+    windowHeight: number,
+    // TODO: Get condition as expression for plugin
+    condition?: (f: PickedFeature) => boolean,
+  ) => PickedFeature[] | undefined;
 };
 
 export type EngineProps = {
@@ -113,7 +130,6 @@ export type EngineProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SceneProperty;
-  overriddenClock?: Clock;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;
@@ -130,6 +146,7 @@ export type EngineProps = {
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,

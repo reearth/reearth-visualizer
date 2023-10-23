@@ -26,6 +26,7 @@ export type LayerSimple = {
   properties?: any;
   defines?: Record<string, string>;
   events?: Events;
+  layerStyleId?: string;
 } & Partial<LayerAppearanceTypes> &
   LayerCommon;
 
@@ -43,6 +44,7 @@ export type LayerCommon = {
   tags?: Tag[];
   creator?: string;
   compat?: LayerCompat;
+  _updateStyle?: number;
 };
 
 export type LayerCompat = { extensionId?: string; property?: any; propertyId?: string };
@@ -71,6 +73,7 @@ export type Data = {
   jsonProperties?: string[];
   updateInterval?: number; // milliseconds
   parameters?: Record<string, any>;
+  idProperty?: string;
   time?: {
     property?: string;
     interval?: number; // milliseconds

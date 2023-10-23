@@ -1,6 +1,12 @@
 import { GetSceneQuery, PluginExtensionType } from "../../gql";
 import { Item, convert } from "../propertyApi/utils";
 
+export const BUTTON_BUILTIN_WIDGET_ID = "reearth/button";
+export const NAVIGATOR_BUILTIN_WIDGET_ID = "reearth/navigator";
+// export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
+
+export const AVAILABLE_WIDGET_IDS = [BUTTON_BUILTIN_WIDGET_ID, NAVIGATOR_BUILTIN_WIDGET_ID];
+
 export type InstallableWidget = {
   pluginId: string;
   extensionId: string;
@@ -32,7 +38,11 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
     ?.map(p => {
       const plugin = p.plugin;
       return plugin?.extensions
-        .filter(e => e.type === PluginExtensionType.Widget)
+        .filter(
+          e =>
+            e.type === PluginExtensionType.Widget &&
+            (AVAILABLE_WIDGET_IDS.includes(`reearth/${e.extensionId}`) || plugin.id !== "reearth"),
+        )
         .map((e): InstallableWidget => {
           return {
             pluginId: plugin.id,

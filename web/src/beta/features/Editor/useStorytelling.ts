@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -18,11 +18,14 @@ const getPage = (id?: string, pages?: Page[]) => {
 
 export default function ({ sceneId, onFlyTo }: Props) {
   const t = useT();
+
   const {
     useStoriesQuery,
     useCreateStoryPage,
     useDeleteStoryPage,
     useMoveStoryPage,
+    useMoveStoryBlock,
+    useUpdateStoryPage,
     useInstallableStoryBlocksQuery,
   } = useStorytellingAPI();
 
@@ -30,16 +33,11 @@ export default function ({ sceneId, onFlyTo }: Props) {
 
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
   const [currentPage, setCurrentPage] = useState<Page | undefined>(undefined);
-  const [isAutoScrolling, setAutoScrolling] = useState(false);
+  const isAutoScrolling = useRef(false);
 
   const selectedStory = useMemo(() => {
     return stories?.length ? stories[0] : undefined;
   }, [stories]);
-
-  const handleAutoScrollingChange = useCallback(
-    (isScrolling: boolean) => setAutoScrolling(isScrolling),
-    [],
-  );
 
   useEffect(() => {
     if (!currentPage) {
@@ -56,15 +54,26 @@ export default function ({ sceneId, onFlyTo }: Props) {
 
       if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
-        setAutoScrolling(true);
+        isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
-      const camera = newPage.property.items?.find(i => i.schemaGroup === "cameraAnimation");
-      if (camera && "fields" in camera) {
-        const destination = camera.fields.find(f => f.id === "cameraPosition")?.value as Camera;
+      const cameraFieldGroup = newPage.property.items?.find(
+        i => i.schemaGroup === "cameraAnimation",
+      );
+      const schemaFields = cameraFieldGroup?.schemaFields;
+
+      let destination = schemaFields?.find(sf => sf.id === "cameraPosition")
+        ?.defaultValue as Camera;
+      let duration = schemaFields?.find(sf => sf.id === "cameraDuration")?.defaultValue as number;
+
+      if (cameraFieldGroup && "fields" in cameraFieldGroup) {
+        destination = (cameraFieldGroup.fields.find(f => f.id === "cameraPosition")?.value ??
+          destination) as Camera;
         if (!destination) return;
 
-        const duration = camera.fields.find(f => f.id === "cameraDuration")?.value as number;
+        duration = (cameraFieldGroup.fields.find(f => f.id === "cameraDuration")?.value ??
+          duration) as number;
+
         onFlyTo({ ...destination }, { duration });
       }
     },
@@ -122,16 +131,43 @@ export default function ({ sceneId, onFlyTo }: Props) {
     [useMoveStoryPage, selectedStory],
   );
 
+  const handleStoryBlockMove = useCallback(
+    async (id: string, targetIndex: number, blockId: string) => {
+      if (!selectedStory) return;
+      await useMoveStoryBlock({
+        storyId: selectedStory.id,
+        pageId: id,
+        index: targetIndex,
+        blockId,
+      });
+    },
+    [useMoveStoryBlock, selectedStory],
+  );
+
+  const handlePageUpdate = useCallback(
+    async (pageId: string, layers: string[]) => {
+      if (!selectedStory) return;
+      await useUpdateStoryPage({
+        sceneId,
+        storyId: selectedStory.id,
+        pageId,
+        layers,
+      });
+    },
+    [sceneId, selectedStory, useUpdateStoryPage],
+  );
+
   return {
     selectedStory,
     currentPage,
     isAutoScrolling,
     installableStoryBlocks,
-    handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
+    handleStoryBlockMove,
+    handlePageUpdate,
   };
 }

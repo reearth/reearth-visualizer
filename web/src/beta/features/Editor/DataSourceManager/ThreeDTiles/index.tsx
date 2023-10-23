@@ -23,20 +23,8 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: value !== "" ? value : null,
+          url: value !== "" ? value : undefined,
           type: "3dtiles",
-        },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
         },
       },
     });

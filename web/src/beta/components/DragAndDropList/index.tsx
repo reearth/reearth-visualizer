@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useDragDropManager } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
 
 import Item from "./Item";
+import { useScroll } from "./scrollItem";
 
 export type Props<Item extends { id: string } = { id: string }> = {
   uniqueKey: string;
@@ -11,7 +13,7 @@ export type Props<Item extends { id: string } = { id: string }> = {
   getId: (item: Item) => string;
   onItemDrop(item: Item, targetIndex: number): void;
   renderItem: (item: Item, index: number) => ReactNode;
-  gap: number;
+  gap?: number;
 };
 
 function DragAndDropList<Item extends { id: string } = { id: string }>({
@@ -23,7 +25,25 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   gap,
 }: Props<Item>) {
   const [movingItems, setMovingItems] = useState<Item[]>(items);
+  const listRef = useRef<null | HTMLDivElement>(null);
 
+  const { updatePosition } = useScroll(listRef);
+
+  const dragDropManager = useDragDropManager();
+  const monitor = dragDropManager.getMonitor();
+
+  useEffect(() => {
+    const unsubscribe = monitor.subscribeToOffsetChange(() => {
+      const offset = monitor.getSourceClientOffset()?.y as number;
+      updatePosition({ position: offset, isScrollAllowed: true });
+    });
+    return unsubscribe;
+  }, [monitor, updatePosition]);
+
+  const customDragHandler = (item: Item): boolean => {
+    // eslint-disable-next-line no-prototype-builtins
+    return item.hasOwnProperty("extensionId");
+  };
   useEffect(() => {
     setMovingItems(items);
   }, [items]);
@@ -51,9 +71,10 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   }, [items]);
 
   return (
-    <SWrapper gap={gap}>
+    <SWrapper gap={gap} ref={listRef}>
       {movingItems.map((item, i) => {
         const id = getId(item);
+        const shouldUseCustomHandler = customDragHandler(item); // Determine whether to use custom handler
         return (
           <Item
             itemGroupKey={uniqueKey}
@@ -62,7 +83,8 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
             index={i}
             onItemMove={onItemMove}
             onItemDropOnItem={onItemDropOnItem}
-            onItemDropOutside={onItemDropOutside}>
+            onItemDropOutside={onItemDropOutside}
+            shouldUseCustomHandler={shouldUseCustomHandler}>
             {renderItem(item, i)}
           </Item>
         );
@@ -76,5 +98,5 @@ export default DragAndDropList;
 const SWrapper = styled.div<Pick<Props, "gap">>`
   display: flex;
   flex-direction: column;
-  ${({ gap }) => `gap: ${gap}px`}
+  ${({ gap }) => gap && `gap: ${gap}px;`}
 `;

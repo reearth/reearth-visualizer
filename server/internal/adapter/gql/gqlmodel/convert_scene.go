@@ -68,6 +68,9 @@ func ToStyle(v *scene.Style) *Style {
 }
 
 func ToStyleValue(p JSON) *scene.StyleValue {
+	if p == nil {
+		return nil
+	}
 	sv := make(scene.StyleValue)
 
 	for key, value := range p {
@@ -75,4 +78,10 @@ func ToStyleValue(p JSON) *scene.StyleValue {
 	}
 
 	return &sv
+}
+
+func ToStyles(styles scene.StyleList) []*Style {
+	return util.Map(styles, func(s *scene.Style) *Style {
+		return ToStyle(s)
+	})
 }

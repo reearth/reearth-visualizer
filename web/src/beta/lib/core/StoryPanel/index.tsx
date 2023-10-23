@@ -1,3 +1,5 @@
+import { MutableRefObject } from "react";
+
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
@@ -7,7 +9,7 @@ import StoryContent from "./PanelContent";
 
 export const storyPanelWidth = 442;
 
-export { type Story, type Page } from "./hooks";
+export { type Story, type StoryPage } from "./hooks";
 
 export type InstallableStoryBlock = {
   name: string;
@@ -23,15 +25,13 @@ export type StoryPanelProps = {
   selectedStory?: Story;
   currentPageId?: string;
   isEditable?: boolean;
-  isAutoScrolling?: boolean;
+  isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
-  onAutoScrollingChange: (isScrolling: boolean) => void;
   onBlockCreate?: (
-    index?: number,
-  ) => (
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
+    index?: number | undefined,
   ) => Promise<void>;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onPropertyUpdate?: (
@@ -43,6 +43,7 @@ export type StoryPanelProps = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
+  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
 };
 
 export const StoryPanel: React.FC<StoryPanelProps> = ({
@@ -51,11 +52,11 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   isEditable,
   isAutoScrolling,
   installableBlocks,
-  onAutoScrollingChange,
   onBlockCreate,
   onBlockDelete,
   onPropertyUpdate,
   onCurrentPageChange,
+  onStoryBlockMove,
 }) => {
   const {
     pageInfo,
@@ -91,7 +92,6 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
         showingIndicator={!!pageInfo}
         isAutoScrolling={isAutoScrolling}
         isEditable={isEditable}
-        onAutoScrollingChange={onAutoScrollingChange}
         onPageSettingsToggle={handlePageSettingsToggle}
         onPageSelect={handlePageSelect}
         onBlockCreate={onBlockCreate}
@@ -99,6 +99,7 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
         onBlockSelect={handleBlockSelect}
         onPropertyUpdate={onPropertyUpdate}
         onCurrentPageChange={handleCurrentPageChange}
+        onStoryBlockMove={onStoryBlockMove}
       />
     </PanelWrapper>
   );

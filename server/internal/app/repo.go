@@ -52,12 +52,12 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
 
-	accountRepos, err := accountmongo.New(ctx, client, databaseName, txAvailable, accountRepoCompat)
+	accountRepos, err := accountmongo.New(ctx, client, accountDatabase, txAvailable, accountRepoCompat)
 	if err != nil {
 		log.Fatalf("Failed to init mongo: %+v\n", err)
 	}
 
-	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(accountDatabase), accountRepos, txAvailable, conf.Ext_Plugin)
+	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(databaseName), accountRepos, txAvailable, conf.Ext_Plugin)
 	if err != nil {
 		log.Fatalf("Failed to init mongo: %+v\n", err)
 	}

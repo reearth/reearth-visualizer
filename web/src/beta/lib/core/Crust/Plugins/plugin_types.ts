@@ -20,6 +20,7 @@ import type {
   Feature,
 } from "@reearth/beta/lib/core/Map";
 
+import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
 import { Block } from "../Infobox";
 import { InteractionModeType } from "../types";
@@ -83,6 +84,7 @@ export type Reearth = {
       ) => void;
       findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
       findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+      selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
       selectionReason?: LayerSelectionReason;
       // For compat
       overriddenInfobox?: LayerSelectionReason["defaultInfobox"];
@@ -126,6 +128,13 @@ export type Scene = {
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
   readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  readonly pickManyFromViewport: (
+    windowPosition: [x: number, y: number],
+    windowWidth: number,
+    windowHeight: number,
+    // TODO: Get condition as expression for plugin
+    condition?: (f: ComputedFeature) => boolean,
+  ) => ComputedFeature[] | undefined;
 };
 
 export type Camera = {
@@ -173,9 +182,19 @@ export type Clock = {
   paused?: boolean;
   /** Speed of time. Specifies a multiplier for the speed of time in reality. Default is 1. */
   speed?: number;
+  stepType?: "rate" | "fixed";
+  rangeType?: "unbounded" | "clamped" | "bounced";
   readonly tick?: () => Date | void;
   readonly play?: () => void;
   readonly pause?: () => void;
+  readonly setTime?: (time: {
+    start: Date | string;
+    stop: Date | string;
+    current: Date | string;
+  }) => void;
+  readonly setSpeed?: (speed: number) => void;
+  readonly setRangeType?: (rangeType: "unbounded" | "clamped" | "bounced") => void;
+  readonly setStepType?: (stepType: "rate" | "fixed") => void;
 };
 
 export type InteractionMode = {
@@ -210,6 +229,7 @@ export type ReearthEventType = {
   mouseleave: [props: MouseEvent];
   wheel: [props: MouseEvent];
   tick: [props: Date];
+  timelinecommit: [props: TimelineCommitter];
   resize: [props: ViewportSize];
   modalclose: [];
   popupclose: [];

@@ -83,6 +83,7 @@ export default function Feature({
   ...props
 }: FeatureComponentProps): JSX.Element | null {
   const data = extractSimpleLayerData(layer);
+
   const ext = !data?.type || (data.type as string) === "auto" ? guessType(data?.url) : undefined;
   let displayType = data?.type && displayConfig[ext ?? data.type];
   if (layer.features?.length > FEATURE_DELEGATE_THRESHOLD) {
@@ -99,12 +100,14 @@ export default function Feature({
       !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
     const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
 
+    const isVisible = layer.layer.visible !== false && !isHidden;
+
     const componentId =
       urlMD5 +
       generateIDWithMD5(
         `${layer.id}_${
           f?.id ?? ""
-        }_${k}_${isHidden}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
+        }_${k}_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
           JSON.stringify(f?.[k]) ?? ""
         }`,
       );
@@ -143,7 +146,7 @@ export default function Feature({
           geometry={f?.geometry}
           feature={f}
           layer={layer}
-          isVisible={layer.layer.visible !== false && !isHidden}
+          isVisible={isVisible}
         />
       );
 
@@ -170,7 +173,6 @@ export default function Feature({
         {displayType.map(k => {
           const [C] = components[k] ?? [];
           const isVisible = layer.layer.visible !== false && !isHidden;
-
           // NOTE: IBL for 3dtiles is not updated unless Tileset feature component is re-created.
           const useSceneSphericalHarmonicCoefficients =
             !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;

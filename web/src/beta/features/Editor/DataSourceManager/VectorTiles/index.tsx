@@ -40,21 +40,9 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: urlValue !== "" ? urlValue : null,
+          url: urlValue !== "" ? urlValue : undefined,
           type: "mvt",
-          layers: layers.length <= 1 ? layers[0] : layers,
-        },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
+          layers: layers.length === 1 ? layers[0] : layers,
         },
       },
     });

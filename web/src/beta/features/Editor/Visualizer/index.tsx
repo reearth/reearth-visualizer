@@ -5,7 +5,7 @@ import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import StoryPanel, { type InstallableStoryBlock } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
-import type { Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
@@ -20,11 +20,11 @@ export type Props = {
   // storytelling
   showStoryPanel?: boolean;
   selectedStory?: Story;
-  currentPageId?: string;
-  isAutoScrolling?: boolean;
+  currentPage?: Page;
+  isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
-  onAutoScrollingChange: (isScrolling: boolean) => void;
   onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
+  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
 };
 
@@ -36,22 +36,22 @@ const Visualizer: React.FC<Props> = ({
   currentCamera,
   showStoryPanel,
   selectedStory,
-  currentPageId,
+  currentPage,
   isAutoScrolling,
   installableBlocks,
-  onAutoScrollingChange,
   onCurrentPageChange,
+  onStoryBlockMove,
   onCameraChange,
 }) => {
   const {
     rootLayerId,
     selectedBlockId,
-    zoomedLayerId,
     sceneProperty,
     pluginProperty,
     clusters,
     layers,
     widgets,
+    story,
     tags,
     selectedLayerId,
     blocks,
@@ -61,6 +61,7 @@ const Visualizer: React.FC<Props> = ({
     layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
+    zoomedLayerId,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -74,9 +75,9 @@ const Visualizer: React.FC<Props> = ({
     onWidgetAlignSystemUpdate,
     selectWidgetArea,
     handleDropLayer,
-    zoomToLayer,
     handleMount,
-  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id });
+    zoomToLayer,
+  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, currentPage, showStoryPanel });
 
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
@@ -132,16 +133,16 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
-            selectedStory={selectedStory}
-            currentPageId={currentPageId}
+            selectedStory={story}
+            currentPageId={currentPage?.id}
             isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
             isEditable={!!inEditor}
             onBlockCreate={handleStoryBlockCreate}
             onBlockDelete={handleStoryBlockDelete}
             onPropertyUpdate={handlePropertyValueUpdate}
-            onAutoScrollingChange={onAutoScrollingChange}
             onCurrentPageChange={onCurrentPageChange}
+            onStoryBlockMove={onStoryBlockMove}
           />
         )}
       </CoreVisualizer>

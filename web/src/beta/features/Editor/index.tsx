@@ -1,4 +1,7 @@
+import { useCallback } from "react";
+
 import Resizable from "@reearth/beta/components/Resizable";
+import useBottomPanel from "@reearth/beta/features/Editor/useBottomPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar";
@@ -10,8 +13,8 @@ import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
-import { navbarHeight } from "./SecondaryNav";
 import useLayers from "./useLayers";
+import useLayerStyles from "./useLayerStyles";
 
 type Props = {
   sceneId: string;
@@ -45,12 +48,13 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentPage,
     isAutoScrolling,
     installableStoryBlocks,
-    handleAutoScrollingChange,
     handleCurrentPageChange,
     handlePageDuplicate,
     handlePageDelete,
     handlePageAdd,
     handlePageMove,
+    handleStoryBlockMove: onStoryBlockMove,
+    handlePageUpdate,
   } = useStorytelling({
     sceneId,
     onFlyTo: handleFlyTo,
@@ -59,13 +63,44 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     nlsLayers,
     selectedLayer,
+    setSelectedLayerId,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
     handleLayerNameUpdate,
+    handleLayerConfigUpdate,
+    handleLayerVisibilityUpdate,
   } = useLayers({
     sceneId,
   });
+
+  const {
+    layerStyles,
+    selectedLayerStyle,
+    setSelectedLayerStyleId,
+    handleLayerStyleAdd,
+    handleLayerStyleDelete,
+    handleLayerStyleNameUpdate,
+    handleLayerStyleValueUpdate,
+    handleLayerStyleSelect,
+  } = useLayerStyles({ sceneId });
+
+  // State handling for editor UI
+  const handleLayerStyleSelected = useCallback(
+    (layerStyleId: string) => {
+      setSelectedLayerId(undefined);
+      handleLayerStyleSelect(layerStyleId);
+    },
+    [handleLayerStyleSelect, setSelectedLayerId],
+  );
+
+  const handleLayerSelected = useCallback(
+    (layerId: string) => {
+      setSelectedLayerStyleId(undefined);
+      handleLayerSelect(layerId);
+    },
+    [handleLayerSelect, setSelectedLayerStyleId],
+  );
 
   const { leftPanel } = useLeftPanel({
     tab,
@@ -80,19 +115,38 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPageAdd: handlePageAdd,
     onPageMove: handlePageMove,
     onLayerDelete: handleLayerDelete,
-    onLayerSelect: handleLayerSelect,
+    onLayerSelect: handleLayerSelected,
     onLayerNameUpdate: handleLayerNameUpdate,
+    onLayerVisibilityUpate: handleLayerVisibilityUpdate,
     onSceneSettingSelect: handleSceneSettingSelect,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
+    onFlyTo: handleFlyTo,
   });
 
   const { rightPanel } = useRightPanel({
+    layerStyles,
     tab,
     sceneId,
+    nlsLayers,
     currentPage,
     currentCamera,
     showSceneSettings: selectedSceneSetting,
+    selectedLayerStyleId: selectedLayerStyle?.id,
+    selectedLayerId: selectedLayer?.id,
     onFlyTo: handleFlyTo,
+    onPageUpdate: handlePageUpdate,
+    onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
+    onLayerConfigUpdate: handleLayerConfigUpdate,
+  });
+
+  const { bottomPanel } = useBottomPanel({
+    tab,
+    layerStyles,
+    selectedLayerStyleId: selectedLayerStyle?.id,
+    onLayerStyleAdd: handleLayerStyleAdd,
+    onLayerStyleDelete: handleLayerStyleDelete,
+    onLayerStyleNameUpdate: handleLayerStyleNameUpdate,
+    onLayerStyleSelect: handleLayerStyleSelected,
   });
 
   const { secondaryNavbar } = useSecondaryNavbar({
@@ -126,26 +180,38 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             </Resizable>
           )}
           <Center>
-            {secondaryNavbar}
-            <VisualizerWrapper
-              tab={tab}
-              hasNav={!!secondaryNavbar}
-              visualizerWidth={visualizerWidth}>
-              <Visualizer
-                inEditor
-                visualizerRef={visualizerRef}
-                sceneId={sceneId}
-                showStoryPanel={selectedProjectType === "story"}
-                selectedStory={selectedStory}
-                currentPageId={currentPage?.id}
-                isAutoScrolling={isAutoScrolling}
-                installableBlocks={installableStoryBlocks}
-                currentCamera={currentCamera}
-                onAutoScrollingChange={handleAutoScrollingChange}
-                onCurrentPageChange={handleCurrentPageChange}
-                onCameraChange={handleCameraUpdate}
-              />
-            </VisualizerWrapper>
+            <CenterContent>
+              {secondaryNavbar}
+              <VisualizerWrapper
+                tab={tab}
+                hasNav={!!secondaryNavbar}
+                visualizerWidth={visualizerWidth}>
+                <Visualizer
+                  inEditor
+                  visualizerRef={visualizerRef}
+                  sceneId={sceneId}
+                  showStoryPanel={selectedProjectType === "story"}
+                  selectedStory={selectedStory}
+                  currentPage={currentPage}
+                  isAutoScrolling={isAutoScrolling}
+                  installableBlocks={installableStoryBlocks}
+                  currentCamera={currentCamera}
+                  onCurrentPageChange={handleCurrentPageChange}
+                  onStoryBlockMove={onStoryBlockMove}
+                  onCameraChange={handleCameraUpdate}
+                />
+              </VisualizerWrapper>
+              {bottomPanel && (
+                <Resizable
+                  direction="horizontal"
+                  gutter="start"
+                  initialSize={metrics.bottomPanelMinHeight}
+                  minSize={metrics.bottomPanelMinHeight}
+                  maxSize={metrics.bottomPanelMaxHeight}>
+                  {bottomPanel}
+                </Resizable>
+              )}
+            </CenterContent>
           </Center>
           {rightPanel && (
             <Resizable
@@ -157,6 +223,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             </Resizable>
           )}
         </MainSection>
+
         {showDataSourceManager && (
           <DataSourceManager
             sceneId={sceneId}
@@ -189,8 +256,12 @@ const MainSection = styled.div`
 const Center = styled.div`
   height: 100%;
   flex-grow: 1;
+`;
+
+const CenterContent = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const VisualizerWrapper = styled.div<{
@@ -198,8 +269,9 @@ const VisualizerWrapper = styled.div<{
   hasNav?: boolean;
   visualizerWidth?: string | number;
 }>`
+  flex: 1;
+  min-height: 0;
   border-radius: 4px;
-  height: ${({ hasNav }) => (hasNav ? `calc(100% - ${navbarHeight})` : "100%")};
   width: ${({ visualizerWidth }) =>
     typeof visualizerWidth === "number" ? `${visualizerWidth}px` : visualizerWidth};
 `;

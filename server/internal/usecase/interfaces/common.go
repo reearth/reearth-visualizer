@@ -26,12 +26,14 @@ type Container struct {
 	Layer        Layer
 	NLSLayer     NLSLayer
 	Plugin       Plugin
+	Policy       Policy
 	Project      Project
 	Property     Property
 	Published    Published
 	Scene        Scene
 	Tag          Tag
 	StoryTelling Storytelling
+	Style        Style
 	User         accountinterfaces.User
 	Workspace    accountinterfaces.Workspace
 }

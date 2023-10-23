@@ -8,16 +8,15 @@ import {
   useState,
 } from "react";
 
-import type { Item } from "@reearth/services/api/propertyApi/utils";
-
 type Props = {
   editMode?: boolean;
   isSelected?: boolean;
-  propertyItems?: Item[];
+  property?: any;
   setEditMode?: Dispatch<SetStateAction<boolean>>;
+  onClickAway?: () => void;
 };
 
-export default ({ editMode, isSelected, propertyItems, setEditMode }: Props) => {
+export default ({ editMode, isSelected, property, setEditMode, onClickAway }: Props) => {
   const [isHovered, setHover] = useState(false);
   const [showPadding, setShowPadding] = useState(false);
 
@@ -34,10 +33,14 @@ export default ({ editMode, isSelected, propertyItems, setEditMode }: Props) => 
 
   const handleMouseOut = useCallback(() => setHover(false), []);
 
-  const panelSettings: Item | undefined = useMemo(
-    () => propertyItems?.find(i => i.schemaGroup === "panel"),
-    [propertyItems],
-  );
+  const handleClickAway = useCallback(() => {
+    setShowPadding(false);
+    onClickAway?.();
+  }, [onClickAway]);
+
+  const panelSettings = useMemo(() => {
+    return property?.panel;
+  }, [property?.panel]);
 
   return {
     isHovered,
@@ -46,5 +49,6 @@ export default ({ editMode, isSelected, propertyItems, setEditMode }: Props) => 
     setShowPadding,
     handleMouseOver,
     handleMouseOut,
+    handleClickAway,
   };
 };

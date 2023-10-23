@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 
-import { DataProps } from "..";
+import { DataProps, SourceType, DataSourceOptType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -19,10 +20,18 @@ import {
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
-  const [sourceType, setSourceType] = React.useState("url"); // ["url", "local", "value"]
+  const [sourceType, setSourceType] = React.useState<SourceType>("local");
   const [value, setValue] = React.useState("");
   const [lat, setLat] = React.useState("");
   const [long, setLong] = React.useState("");
+
+  const DataSourceOptions: DataSourceOptType = useMemo(
+    () => [
+      { label: t("From Assets"), keyValue: "local" },
+      { label: t("From Web"), keyValue: "url" },
+    ],
+    [t],
+  );
 
   const handleSubmit = () => {
     onSubmit({
@@ -32,29 +41,19 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: sourceType === "url" && value !== "" ? value : null,
+          url: (sourceType === "url" || sourceType === "local") && value !== "" ? value : undefined,
           type: "csv",
           csv: {
             latColumn: lat,
             lngColumn: long,
           },
         },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
-        },
       },
     });
     onClose();
   };
+
+  const handleOnChange = useCallback((value?: string) => setValue(value || ""), []);
 
   return (
     <ColJustifyBetween>
@@ -64,20 +63,28 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           description="Select the type of data source you want to add.">
           <SourceTypeWrapper>
             <RadioGroup
-              options={[{ label: t("From URL"), keyValue: "url" }]}
+              options={DataSourceOptions}
               selectedValue={sourceType}
-              onChange={setSourceType}
+              onChange={(newValue: string) => setSourceType(newValue as SourceType)}
             />
           </SourceTypeWrapper>
         </InputGroup>
-        <InputGroup label="Resource URL" description="URL of the data source you want to add.">
-          <Input
-            type="text"
-            placeholder="Input Text"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-          />
-        </InputGroup>
+
+        {sourceType == "url" && (
+          <InputGroup
+            label={t("Resource URL")}
+            description={t("URL of the data source you want to add.")}>
+            <Input
+              type="text"
+              placeholder="Input Text"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </InputGroup>
+        )}
+        {sourceType == "local" && (
+          <URLField fileType="asset" value={value} name={t("Asset")} onChange={handleOnChange} />
+        )}
         <Text size="body">Point coordinates</Text>
         <InputGroup label="Latitude Field" description="Description around">
           <Input

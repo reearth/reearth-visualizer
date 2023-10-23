@@ -140,8 +140,7 @@ type AddStyleInput struct {
 }
 
 type AddStylePayload struct {
-	Scene *Scene `json:"scene"`
-	Style *Style `json:"Style"`
+	Style *Style `json:"style"`
 }
 
 type AddWidgetInput struct {
@@ -1168,13 +1167,11 @@ type RemoveStoryBlockPayload struct {
 }
 
 type RemoveStyleInput struct {
-	StyleID ID `json:"StyleId"`
-	SceneID ID `json:"sceneId"`
+	StyleID ID `json:"styleId"`
 }
 
 type RemoveStylePayload struct {
-	Scene   *Scene `json:"scene"`
-	StyleID ID     `json:"StyleId"`
+	StyleID ID `json:"styleId"`
 }
 
 type RemoveTagInput struct {
@@ -1327,9 +1324,11 @@ type StoryPayload struct {
 }
 
 type Style struct {
-	ID    ID     `json:"id"`
-	Name  string `json:"name"`
-	Value JSON   `json:"value"`
+	ID      ID     `json:"id"`
+	Name    string `json:"name"`
+	Value   JSON   `json:"value"`
+	SceneID ID     `json:"sceneId"`
+	Scene   *Scene `json:"scene"`
 }
 
 type SyncDatasetInput struct {
@@ -1555,15 +1554,13 @@ type UpdateStoryPageInput struct {
 }
 
 type UpdateStyleInput struct {
-	StyleID ID      `json:"StyleId"`
-	SceneID ID      `json:"sceneId"`
+	StyleID ID      `json:"styleId"`
 	Name    *string `json:"name"`
 	Value   JSON    `json:"value"`
 }
 
 type UpdateStylePayload struct {
-	Scene *Scene `json:"scene"`
-	Style *Style `json:"Style"`
+	Style *Style `json:"style"`
 }
 
 type UpdateTagInput struct {

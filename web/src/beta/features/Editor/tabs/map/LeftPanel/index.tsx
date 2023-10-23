@@ -1,11 +1,10 @@
-// import Loading from "@reearth/beta/components/Loading";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/LeftPanel/GroupField";
+import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
-// import { useTheme } from "@reearth/services/theme";
 
-import type { LayerNameUpdateProps } from "../../../useLayers";
+import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "../../../useLayers";
 
 type Props = {
   layers: NLSLayer[];
@@ -16,6 +15,8 @@ type Props = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: () => void;
   onDataSourceManagerOpen: () => void;
+  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
+  onFlyTo?: FlyTo;
 };
 
 const MapSidePanel: React.FC<Props> = ({
@@ -27,19 +28,11 @@ const MapSidePanel: React.FC<Props> = ({
   onLayerNameUpdate,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onLayerVisibilityUpate,
+  onFlyTo,
 }) => {
   const t = useT();
-  // const theme = useTheme();
 
-  // const { useSceneQuery } = useSceneFetcher();
-
-  // const { scene } = useSceneQuery({ sceneId });
-
-  // const groups = scene?.property?.schema?.groups;
-
-  // return !groups ? (
-  //   <Loading animationSize={80} animationColor={theme.select.main} />
-  // ) : (
   return (
     <SidePanelCommon
       location="left"
@@ -57,6 +50,8 @@ const MapSidePanel: React.FC<Props> = ({
               onLayerSelect={onLayerSelect}
               onSceneSettingSelect={onSceneSettingSelect}
               onDataSourceManagerOpen={onDataSourceManagerOpen}
+              onLayerVisibilityUpate={onLayerVisibilityUpate}
+              onFlyTo={onFlyTo}
             />
           ),
         },
