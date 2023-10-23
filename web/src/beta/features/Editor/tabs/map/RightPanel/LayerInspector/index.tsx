@@ -1,0 +1,83 @@
+import React, { useCallback, useMemo, useState } from "react";
+
+import TabMenu, { TabObject } from "@reearth/beta/components/TabMenu";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { useT } from "@reearth/services/i18n"; // If needed
+
+import { LayerConfigUpdateProps } from "../../../../useLayers";
+
+import FeatureData from "./FeatureData";
+import LayerData from "./LayerData";
+import LayerTab from "./LayerStyle";
+
+type Props = {
+  layerStyles?: LayerStyle[];
+  layers?: NLSLayer[];
+  selectedLayerId: string;
+  sceneId?: string;
+  onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
+};
+
+const InspectorTabs: React.FC<Props> = ({
+  layers,
+  layerStyles,
+  selectedLayerId,
+  sceneId,
+  onLayerConfigUpdate,
+}) => {
+  const t = useT();
+  const [selectedTab, setSelectedTab] = useState("layerData");
+
+  const handleTabChange = useCallback((newTab: string) => {
+    setSelectedTab(newTab);
+  }, []);
+
+  const selectedLayer = useMemo(
+    () => layers?.find(l => l.id === selectedLayerId),
+    [layers, selectedLayerId],
+  );
+
+  const tabs: TabObject[] = useMemo(
+    () => [
+      {
+        id: "layerData",
+        name: t("Data"),
+        component: selectedLayer && <LayerData selectedLayer={selectedLayer} />,
+        icon: "layerInspector",
+      },
+      {
+        id: "featureData",
+        name: t("Feature"),
+        component: <FeatureData selectedFeature={{ id: "alsdkfj", type: "feature" }} />,
+        icon: "location",
+      },
+      {
+        id: "layerStyleSelector",
+        name: t("Styling"),
+        component: (
+          <LayerTab
+            layerStyles={layerStyles}
+            layers={layers}
+            sceneId={sceneId}
+            selectedLayerId={selectedLayerId}
+            onLayerConfigUpdate={onLayerConfigUpdate}
+          />
+        ),
+        icon: "layerStyle",
+      },
+      // TODO: new beta infobox implementation
+      // {
+      //   id: "infobox",
+      //   name: t("Infobox"),
+      //   component: <div>TODO</div>,
+      //   icon: "infobox",
+      // },
+    ],
+    [sceneId, selectedLayerId, selectedLayer, layerStyles, layers, t, onLayerConfigUpdate],
+  );
+
+  return <TabMenu tabs={tabs} selectedTab={selectedTab} onSelectedTabChange={handleTabChange} />;
+};
+
+export default InspectorTabs;
