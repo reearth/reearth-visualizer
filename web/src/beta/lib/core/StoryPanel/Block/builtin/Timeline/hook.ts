@@ -113,6 +113,7 @@ export default ({
         endTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.end)),
       };
     }
+    return {};
   }, [range]);
 
   return {

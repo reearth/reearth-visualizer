@@ -76,7 +76,7 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
                 toggleIsPause();
               }
             }}>
-            <Icon icon="play" />
+            <Icon icon="pause" />
           </PlayButton>
           <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
             <Icon icon="timelinePlayRight" />
@@ -111,18 +111,18 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
             <Scale key={idx}>
               {idx === 0 ? (
                 <>
-                  <ScaleLabel>{timeRange?.startTime.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.startTime.time}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.startTime?.date}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.startTime?.time}</ScaleLabel>
                 </>
               ) : idx === 5 ? (
                 <>
-                  <ScaleLabel>{timeRange?.midTime.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.midTime.time}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.midTime?.date}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.midTime?.time}</ScaleLabel>
                 </>
               ) : idx === 10 ? (
                 <>
-                  <ScaleLabel>{timeRange?.endTime.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.endTime.time}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.endTime?.date}</ScaleLabel>
+                  <ScaleLabel>{timeRange?.endTime?.time}</ScaleLabel>
                 </>
               ) : null}
             </Scale>
