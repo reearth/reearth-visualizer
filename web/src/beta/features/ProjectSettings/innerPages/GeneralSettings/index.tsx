@@ -102,7 +102,7 @@ const GeneralSettings: React.FC<Props> = ({
                 <URLField
                   name={t("Thumbnail")}
                   fileType="asset"
-                  assetType="image"
+                  entityType="image"
                   value={localImageUrl}
                   onChange={setLocalImageUrl}
                 />

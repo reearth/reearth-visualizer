@@ -82,7 +82,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             <URLField
               name={t("Thumbnail")}
               fileType="asset"
-              assetType="image"
+              entityType="image"
               value={localPublicInfo.publicImage}
               onChange={publicImage => {
                 setLocalPublicInfo(s => ({ ...s, publicImage }));
