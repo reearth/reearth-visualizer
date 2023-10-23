@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
-import Text from "@reearth/beta/components/Text";
+// import { Timeline } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import useHooks from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelineBlock";
 import { useT } from "@reearth/services/i18n";
@@ -11,14 +11,16 @@ import { styled } from "@reearth/services/theme";
 type TimelineProps = {
   blockId?: string;
   isSelected?: boolean;
+  timeValues?: any;
 };
-const Timeline = ({ blockId, isSelected }: TimelineProps) => {
+
+const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const playSpeedOptions = ["1 min/sec", "0.1 hr/sec", "0.5 hr/sec", "1 hr/sec"];
-  const [selected, setSelected] = useState("1 min/sec");
+  const playSpeedOptions = [1, 0.1, 0.5, 1];
+  const [selected, setSelected] = useState(1);
   const { currentTime, range, onClick, onDrag, onPlay, onPlayReversed, onSpeedChange, onPause } =
-    useTimelineBlock();
+    useTimelineBlock(timeValues);
   const {
     formattedCurrentTime,
     timeRange,
@@ -28,7 +30,6 @@ const Timeline = ({ blockId, isSelected }: TimelineProps) => {
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
-    handleOnSpeedChange,
   } = useHooks({
     currentTime,
     range,
@@ -45,7 +46,7 @@ const Timeline = ({ blockId, isSelected }: TimelineProps) => {
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
   const handleClick = useCallback(
-    (value: string) => {
+    (value: number) => {
       setOpen(false);
       if (value !== selected) setSelected(value);
     },
@@ -54,6 +55,7 @@ const Timeline = ({ blockId, isSelected }: TimelineProps) => {
 
   return (
     <Wrapper>
+      {/* {inEditor && <Overlay />} */}
       <TimelineControl>
         <StyledIcon>
           <Icon icon="timelineStoryBlock" size={16} />
@@ -82,22 +84,21 @@ const Timeline = ({ blockId, isSelected }: TimelineProps) => {
         <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
           <Popover.Trigger asChild>
             <InputWrapper onClick={handlePopOver}>
-              <Select>{selected && t(`${selected}`)}</Select>
+              <Select>{selected && t(`${selected} min/sec`)}</Select>
               <ArrowIcon icon="arrowDown" open={open} size={16} />
             </InputWrapper>
           </Popover.Trigger>
           <PickerWrapper attachToRoot>
             {playSpeedOptions?.map((playSpeed, key) => (
-              <SpeedOption
-                size="footnote"
+              <InputOptions
                 key={key}
+                value={playSpeed}
                 onClick={() => {
-                  handleOnSpeedChange;
                   setSelected(playSpeed);
                   handleClick(playSpeed);
                 }}>
-                {t(`${playSpeed}`)}
-              </SpeedOption>
+                {key === 0 ? `${playSpeed} min/sec` : `${playSpeed} hr/sec`}
+              </InputOptions>
             ))}
           </PickerWrapper>
         </Popover.Provider>
@@ -134,7 +135,7 @@ const Timeline = ({ blockId, isSelected }: TimelineProps) => {
   );
 };
 
-export default Timeline;
+export default TimelineEditor;
 
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.content.weaker};
@@ -147,7 +148,7 @@ const TimelineControl = styled.div`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: 28px;
+  gap: 20px;
 `;
 
 const StyledIcon = styled.div`
@@ -182,9 +183,9 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>`
 `;
 
 const Select = styled.div`
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1;
-  padding-right: 28px;
+  padding-right: 24px;
   width: 100%;
   color: ${({ theme }) => theme.content.weaker};
 `;
@@ -197,17 +198,21 @@ const PickerWrapper = styled(Popover.Content)`
   background: ${({ theme }) => theme.bg[3]};
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
   display: flex;
-  gap: 4px;
   flex-direction: column;
   justify-content: space-between;
-  z-idx: 1;
+  z-index: 2;
 `;
 
-const SpeedOption = styled(Text)`
-  padding: 4px 12px;
+const InputOptions = styled.option`
+  background: ${({ theme }) => theme.bg[1]};
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  font-size: 12px;
   &:hover {
     background: ${({ theme }) => theme.bg[2]};
   }
+  color: ${({ theme }) => theme.content.main};
 `;
 
 const CurrentTime = styled.div`
@@ -252,3 +257,9 @@ const ScaleLabel = styled.div`
   bottom: 28px;
   right: 15px;
 `;
+
+// const Overlay = styled.div`
+//   position: absolute;
+//   width: 100%;
+//   height: 100%;
+// `;

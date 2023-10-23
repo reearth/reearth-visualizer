@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
 import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManager";
-import { formatDateToSting } from "../utils";
+import { formatDateToSting, formatDateToUnix } from "../utils";
 
 type TimeHandler = (t: number) => void;
 const getNewDate = (d?: Date) => d ?? new Date();
@@ -26,12 +26,11 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
-export default () => {
+export default (timeValues: any) => {
   const visualizerContext = useVisualizer();
   const [currentTime, setCurrentTime] = useState(() =>
     getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current)?.getTime(),
   );
-
   const [range, setRange] = useState(() =>
     timeRange(
       visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
@@ -97,10 +96,10 @@ export default () => {
     [visualizerContext],
   );
 
-  const timeSpeed = visualizerContext?.current?.timeline?.current?.options.multiplier || 1;
+  const clockSpeed = visualizerContext?.current?.timeline?.current?.options.multiplier || 1;
   const startTime = visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime();
   const stopTime = visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime();
-  const [speed, setSpeed] = useState(timeSpeed);
+  const [speed, setSpeed] = useState(clockSpeed);
 
   const lastTime = useRef<number>();
   const switchCurrentTimeToStart = useCallback(
@@ -117,9 +116,13 @@ export default () => {
         lastTime.current = cur;
         onTimeChange?.(new Date(cur));
       }
+      if (timeValues.current)
+        setRange(() =>
+          timeRange(formatDateToUnix(timeValues?.start), formatDateToUnix(timeValues.stop)),
+        );
       return cur;
     },
-    [range, onTimeChange],
+    [range?.end, range?.start, timeValues, onTimeChange],
   );
 
   const handleOnPlay = useCallback(
@@ -199,8 +202,8 @@ export default () => {
   // Sync cesium clock.
   useEffect(() => {
     handleRange(overriddenStart ?? startTime, overriddenStop ?? stopTime);
-    setSpeed(Math.abs(timeSpeed));
-  }, [overriddenStart, overriddenStop, handleRange, startTime, stopTime, timeSpeed]);
+    setSpeed(Math.abs(clockSpeed));
+  }, [overriddenStart, overriddenStop, handleRange, startTime, stopTime, clockSpeed]);
 
   useEffect(() => {
     const h: TickEventCallback = (d, c) => {
@@ -221,6 +224,8 @@ export default () => {
     range.end,
     onTick,
     removeTickEventListener,
+    timeValues?.start,
+    timeValues.stop,
   ]);
 
   const onTimeChangeRef = useRef<typeof onTimeChange>();

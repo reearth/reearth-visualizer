@@ -111,9 +111,9 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             </InputRangeLabelText>
             <InputRange
               publishedTheme={theme}
-              type="range"
-              max={10000}
-              min={1}
+              // type="range"
+              // max={10000}
+              // min={1}
               value={speed}
               onChange={onSpeedChange}
             />
