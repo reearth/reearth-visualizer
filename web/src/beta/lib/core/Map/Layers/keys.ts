@@ -17,6 +17,7 @@ export const layerKeys = objKeys<
   creator: 1,
   computed: 1,
   defines: 1,
+  layerStyleId: 1,
   // appearance
   ...appearanceKeyObj,
   // legacy layer

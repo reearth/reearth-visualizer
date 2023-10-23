@@ -4,7 +4,7 @@ import Modal from "@reearth/beta/components/Modal";
 
 import { LayerAddProps } from "../useLayers";
 
-import Asset from "./Asset";
+import Asset from "./Common";
 import DelimitedText from "./DelimitedText";
 import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";

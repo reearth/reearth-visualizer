@@ -1,12 +1,12 @@
-import { FC, ReactNode, useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Icons from "@reearth/beta/components/Icon/icons";
 import { styled, useTheme } from "@reearth/services/theme";
 
-interface TabObject {
+export interface TabObject {
   icon: keyof typeof Icons;
-  component: ReactNode;
+  component: JSX.Element;
   id: string;
 }
 

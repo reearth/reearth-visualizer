@@ -11,7 +11,7 @@ import Devices, { type Device } from "./Devices";
 
 export { type Device } from "./Devices";
 
-export { navbarHeight } from "@reearth/beta/features/Editor/SecondaryNav";
+export { SECONDARY_NAVBAR_HEIGHT } from "@reearth/beta/features/Editor/SecondaryNav";
 
 type Props = {
   showWidgetEditor?: boolean;

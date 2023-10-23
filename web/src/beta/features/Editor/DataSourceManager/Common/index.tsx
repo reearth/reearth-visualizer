@@ -5,6 +5,7 @@ import SelectField from "@reearth/beta/components/fields/SelectField";
 import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
+import { DataType } from "@reearth/beta/lib/core/Map";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
@@ -69,21 +70,9 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: (sourceType === "url" || sourceType === "local") && value !== "" ? value : null,
-          type: fileFormat.toLowerCase(),
+          url: (sourceType === "url" || sourceType === "local") && value !== "" ? value : undefined,
+          type: fileFormat.toLowerCase() as DataType,
           value: parsedValue,
-        },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
         },
       },
     });
@@ -148,7 +137,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             />
             <URLField
               fileType="asset"
-              assetType={"file"}
+              entityType={"file"}
               name={t("Asset")}
               value={value}
               onChange={handleOnChange}

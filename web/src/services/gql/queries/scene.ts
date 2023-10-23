@@ -60,6 +60,9 @@ export const GET_SCENE = gql(`
         newLayers {
           ...NLSLayerCommon
         }
+        styles {
+          ...NLSLayerStyle
+        }
       }
     }
   }
