@@ -1,14 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 
+import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 
-type useLayerProps = {
+type LayerProps = {
   sceneId: string;
 };
 
 export type LayerAddProps = {
-  config?: any;
+  config?: Omit<LayerSimple, "type" | "id">;
   index?: any;
   layerType: string;
   sceneId: string;
@@ -21,12 +22,17 @@ export type LayerNameUpdateProps = {
   name: string;
 };
 
+export type LayerConfigUpdateProps = {
+  layerId: string;
+  config: Omit<LayerSimple, "type" | "id">;
+};
+
 export type LayerVisibilityUpdateProps = {
   layerId: string;
   visible: boolean;
 };
 
-export default function ({ sceneId }: useLayerProps) {
+export default function ({ sceneId }: LayerProps) {
   const t = useT();
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();
@@ -84,6 +90,15 @@ export default function ({ sceneId }: useLayerProps) {
     [useUpdateNLSLayer],
   );
 
+  const handleLayerConfigUpdate = useCallback(
+    async (inp: LayerConfigUpdateProps) => {
+      await useUpdateNLSLayer({
+        layerId: inp.layerId,
+        config: inp.config,
+      });
+    },
+    [useUpdateNLSLayer],
+  );
   const handleLayerVisibilityUpdate = useCallback(
     async (inp: LayerVisibilityUpdateProps) => {
       await useUpdateNLSLayer({
@@ -97,10 +112,12 @@ export default function ({ sceneId }: useLayerProps) {
   return {
     nlsLayers,
     selectedLayer,
+    setSelectedLayerId,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
     handleLayerNameUpdate,
+    handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
   };
 }

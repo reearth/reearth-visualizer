@@ -84,7 +84,7 @@ export const FieldComponent = ({
   ) : field?.type === "url" ? (
     <URLField
       name={field?.title}
-      assetType={field?.ui === "image" ? "image" : field?.ui === "file" ? "file" : undefined}
+      entityType={field?.ui === "image" ? "image" : field?.ui === "file" ? "file" : undefined}
       fileType={field?.ui === "video" || field?.ui === undefined ? "URL" : "asset"}
       value={field?.value}
       description={field?.description}

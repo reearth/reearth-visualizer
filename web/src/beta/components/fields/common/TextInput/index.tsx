@@ -3,6 +3,7 @@ import { HTMLInputTypeAttribute, useCallback, useEffect, useRef, useState } from
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
+  className?: string;
   value?: string;
   placeholder?: string;
   timeout?: number;
@@ -14,6 +15,7 @@ export type Props = {
 };
 
 const TextInput: React.FC<Props> = ({
+  className,
   value,
   placeholder,
   timeout = 1000,
@@ -65,6 +67,7 @@ const TextInput: React.FC<Props> = ({
 
   return (
     <StyledInput
+      className={className}
       type={type}
       value={currentValue ?? ""}
       placeholder={placeholder}
