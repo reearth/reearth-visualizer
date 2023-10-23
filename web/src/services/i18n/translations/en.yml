@@ -53,9 +53,11 @@ layer name: Layer name
 Layer: Layer
 Layers: Layers
 All Layers: ''
+Layer Style: ''
 Outline: Outline
 Add Layer from Resource: ''
 Inspector: Inspector
+Layer Property Inspector: ''
 Published: Published
 Unpublished: Unpublished
 Scene: Scene
@@ -92,6 +94,13 @@ New Page: New Page
 Page: Page
 Page Settings: Page Settings
 Align System: Align System
+Padding top: Padding top
+Padding right: Padding right
+Padding bottom: Padding bottom
+Padding left: Padding left
+Gap spacing: Gap spacing
+Align centered: Align centered
+Background color: Background color
 Widget Manager: Widget Manager
 Container Settings: Container Settings
 Angle: Angle
@@ -100,10 +109,15 @@ Wide: Wide
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
 Select Image: Select Image
 Select: Select
+Sort By: Sort By
 No assets match your search.: No assets match your search.
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: >-
   You haven't uploaded any assets yet. Click the upload button above and select
   a compatible file from your computer.
+Please select an layer style before clicking Select.: ''
+Select Layer Style: ''
+No layerStyle match your search.: ''
+You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
 Create: Create
 Workspace Name: Workspace Name
@@ -201,14 +215,11 @@ Playback timeline: Playback timeline
 Play timeline: Play timeline
 ellipse: ellipse
 Open timeline: Open timeline
-Padding settings: Padding settings
-New Camera: ''
-Buttons List: ''
-Camera pos: ''
-Button Title: ''
-Button Color: ''
-Button Background Color: ''
-Add markdown text here: ''
+Spacing settings: Spacing settings
+New Camera: New Camera
+Buttons List: Buttons List
+Add markdown text here: Add markdown text here
+Unsupported field type: Unsupported field type
 Drop here: Drop here
 Write your story :): Write your story :)
 Normal: Normal
@@ -378,7 +389,7 @@ You are deleting the infobox and all its contents. Are you sure you want to do t
   that?
 List: List
 Padding: ''
-Gap Spacing: ''
+Gap Spacing: Gap Spacing
 Align Center: ''
 Enable Editor Mode: Enable Editor Mode
 Close: Close
@@ -503,6 +514,12 @@ Failed to update the layer.: ''
 Successfully updated a the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
+Failed to add layerStyle.: ''
+Successfully added a new layerStyle!: ''
+Failed to update the layerStyle.: ''
+Successfully updated a the layerStyle!: ''
+Failed to remove the layerStyle.: ''
+Successfully removed a the layerStyle!: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
@@ -539,4 +556,3 @@ Failed to update widget.: Failed to update widget.
 Failed to remove widget.: Failed to remove widget.
 Failed to update widget alignment.: Failed to update widget alignment.
 Failed to update the widget align system.: Failed to update the widget align system.
-Sort By: Sort By

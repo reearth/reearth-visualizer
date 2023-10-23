@@ -10,10 +10,10 @@ import StoryBlock from "../Block";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
-import useHooks, { type Page } from "./hooks";
+import useHooks, { type StoryPage } from "./hooks";
 
 type Props = {
-  page?: Page;
+  page?: StoryPage;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -39,7 +39,7 @@ type Props = {
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
 };
 
-const StoryPage: React.FC<Props> = ({
+const StoryPanel: React.FC<Props> = ({
   page,
   selectedPageId,
   installableStoryBlocks,
@@ -59,17 +59,16 @@ const StoryPage: React.FC<Props> = ({
   const {
     openBlocksIndex,
     titleId,
-    titleProperty,
-    propertyItems,
-    padding,
-    gap,
+    title,
+    propertyId,
+    panelSettings,
     storyBlocks,
-    items,
-    setItems,
+    setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
   } = useHooks({
     page,
+    isEditable,
     onBlockCreate,
   });
 
@@ -80,33 +79,30 @@ const StoryPage: React.FC<Props> = ({
       icon="storyPage"
       noBorder
       isSelected={selectedPageId === page?.id}
-      propertyId={page?.property?.id}
-      propertyItems={propertyItems}
+      propertyId={propertyId}
+      panelSettings={panelSettings}
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id} padding={padding} gap={gap} isEditable={isEditable}>
-        {titleProperty && (
-          <StoryBlock
-            block={{
-              id: titleId,
-              pluginId: "reearth",
-              extensionId: "titleStoryBlock",
-              title: titleProperty.title,
-              property: {
-                id: page?.property?.id ?? "",
-                items: [titleProperty],
-              },
-            }}
-            isEditable={isEditable}
-            isSelected={selectedStoryBlockId === titleId}
-            onClick={() => onBlockSelect?.(titleId)}
-            onClickAway={onBlockSelect}
-            onChange={onPropertyUpdate}
-          />
-        )}
+      <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
+        <StoryBlock
+          block={{
+            id: titleId,
+            pluginId: "reearth",
+            extensionId: "titleStoryBlock",
+            name: t("Title"),
+            propertyId: page?.propertyId ?? "",
+            property: { title },
+          }}
+          isEditable={isEditable}
+          isSelected={selectedStoryBlockId === titleId}
+          onClick={() => onBlockSelect?.(titleId)}
+          onClickAway={onBlockSelect}
+          onChange={onPropertyUpdate}
+        />
+
         {isEditable && (
           <BlockAddBar
             alwaysShow={storyBlocks && storyBlocks.length < 1}
@@ -119,11 +115,11 @@ const StoryPage: React.FC<Props> = ({
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
-            gap={gap}
-            items={items}
+            gap={panelSettings?.gap?.value}
+            items={storyBlocks}
             getId={item => item.id}
             onItemDrop={async (item, index) => {
-              setItems(old => {
+              setStoryBlocks(old => {
                 const items = [...old];
                 items.splice(
                   old.findIndex(o => o.id === item.id),
@@ -164,25 +160,17 @@ const StoryPage: React.FC<Props> = ({
   );
 };
 
-export default StoryPage;
+export default StoryPanel;
 
-const Wrapper = styled.div<{ padding?: Spacing; gap?: number; isEditable?: boolean }>`
+const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
   ${({ gap }) => gap && `gap: ${gap}px;`}
 
-  padding-top: ${({ padding, isEditable }) => calculatePadding(padding?.top, isEditable)};
-  padding-bottom: ${({ padding, isEditable }) => calculatePadding(padding?.bottom, isEditable)};
-  padding-left: ${({ padding, isEditable }) => calculatePadding(padding?.left, isEditable)};
-  padding-right: ${({ padding, isEditable }) => calculatePadding(padding?.right, isEditable)};
-
+  padding-top: ${({ padding }) => padding.top + "px"};
+  padding-bottom: ${({ padding }) => padding.bottom + "px"};
+  padding-left: ${({ padding }) => padding.left + "px"};
+  padding-right: ${({ padding }) => padding.right + "px"};
   box-sizing: border-box;
 `;
-
-const calculatePadding = (value?: number, editorMode?: boolean) => {
-  if (!value) {
-    return editorMode ? "4px" : "0px";
-  }
-  return editorMode && value < 4 ? "4px" : value + "px";
-};

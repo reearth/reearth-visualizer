@@ -3,6 +3,8 @@ import { Color } from "cesium";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
 
+import { LayerAppearanceTypes } from "../lib/core/mantle";
+
 export type LatLng = {
   lat: number;
   lng: number;
@@ -225,4 +227,28 @@ export const typographyStyles = (t?: Typography) => {
 export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
   string: "",
+};
+
+export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
+  "3dtiles": {
+    show: true,
+  },
+  resource: {
+    clampToGround: true,
+  },
+  marker: {
+    heightReference: "clamp",
+  },
+  polygon: {
+    heightReference: "clamp",
+  },
+  polyline: {
+    clampToGround: true,
+  },
+  model: {
+    heightReference: "clamp",
+  },
+  ellipsoid: {
+    heightReference: "clamp",
+  },
 };

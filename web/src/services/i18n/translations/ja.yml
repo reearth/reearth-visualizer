@@ -53,9 +53,11 @@ layer name: ''
 Layer: レイヤー
 Layers: レイヤー
 All Layers: ''
+Layer Style: ''
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
+Layer Property Inspector: ''
 Published: 一般公開
 Unpublished: 非公開
 Scene: シーン
@@ -88,6 +90,13 @@ New Page: 新しいページ
 Page: ページ
 Page Settings: ページ設定
 Align System: アラインシステム
+Padding top: 上の余白
+Padding right: 右の余白
+Padding bottom: 下の余白
+Padding left: 左の余白
+Gap spacing: 間隔
+Align centered: 中央に配置
+Background color: 背景色
 Widget Manager: ウィジェット管理
 Container Settings: Container Settings
 Angle: 角度
@@ -96,8 +105,13 @@ Wide: 広い
 Please select an asset before clicking Select.: Please select an asset before clicking Select.
 Select Image: イメージ選択
 Select: 選択
+Sort By: Sort By
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
+Please select an layer style before clicking Select.: ''
+Select Layer Style: ''
+No layerStyle match your search.: ''
+You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: 新規ワークスペース作成
 Create: 作成
 Workspace Name: ワークスペース名
@@ -182,16 +196,13 @@ Playback timeline: タイムラインを逆再生する
 Play timeline: タイムラインを再生する
 ellipse: 円錐
 Open timeline: タイムラインを開く
-Padding settings: 余白設定
-New Camera: ''
-Buttons List: ''
-Camera pos: ''
-Button Title: ''
-Button Color: ''
-Button Background Color: ''
+Spacing settings: Spacing設定
+New Camera: 新しいカメラ
+Buttons List: ボタン一覧
 Add markdown text here: ''
+Unsupported field type: ''
 Drop here: ここにドロップ
-Write your story :): ''
+Write your story :): 話を書きましょう!
 Normal: ''
 Heading 1: ''
 Heading 2: ''
@@ -202,16 +213,16 @@ Quote: ''
 Formatting options for font family: ''
 Formatting options for font size: ''
 Formatting options for line height: ''
-Center Align: ''
+Center Align: 中央に配置
 Justify Align: ''
 Left Align: ''
 Right Align: ''
 Outdent: ''
 Indent: ''
 Bulleted List: ''
-Insert Code Block: ''
-Insert Link: ''
-Text Color: ''
+Insert Code Block: コードブロック組み込み
+Insert Link: リンク組み込み
+Text Color: テキスト色
 Background Color: 背景色
 Strikethrough: ''
 Subscript: ''
@@ -464,6 +475,12 @@ Failed to update the layer.: ''
 Successfully updated a the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
+Failed to add layerStyle.: ''
+Successfully added a new layerStyle!: ''
+Failed to update the layerStyle.: ''
+Successfully updated a the layerStyle!: ''
+Failed to remove the layerStyle.: ''
+Successfully removed a the layerStyle!: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
@@ -500,4 +517,3 @@ Failed to update widget.: ウィジェットのアップデートに失敗しま
 Failed to remove widget.: ウィジェットの削除に失敗しました。
 Failed to update widget alignment.: ウィジェットのアラインメントのアップデートに失敗しました。
 Failed to update the widget align system.: ウィジェットのアラインシステムのアップデートに失敗しました。
-Sort By: Sort By

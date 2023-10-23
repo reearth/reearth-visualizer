@@ -11,12 +11,13 @@ export type SidePanelContent = {
   hide?: boolean;
   maxHeight?: CSSProperties["maxHeight"];
 };
+
 type Props = {
   location: "left" | "right";
   contents: SidePanelContent[];
 };
 
-const SidePanel: React.FC<Props> = ({ location, contents }) => {
+const Panel: React.FC<Props> = ({ location, contents }) => {
   return (
     <Wrapper location={location}>
       {contents.map(
@@ -35,7 +36,7 @@ const SidePanel: React.FC<Props> = ({ location, contents }) => {
   );
 };
 
-export default SidePanel;
+export default Panel;
 
 const Wrapper = styled.div<{ location: "left" | "right" }>`
   display: flex;

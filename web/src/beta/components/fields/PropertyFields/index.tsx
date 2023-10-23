@@ -15,6 +15,8 @@ import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera, LatLng } from "@reearth/beta/utils/value";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
 
+import DateTimeField from "../DateTimeField";
+
 import useHooks from "./hooks";
 
 type Props = {
@@ -96,7 +98,15 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
           const handleChange = handlePropertyValueUpdate(sf.id, sf.type, selected);
 
           return sf.type === "string" ? (
-            sf.ui === "color" ? (
+            sf.ui === "datetime" ? (
+              <DateTimeField
+                key={sf.id}
+                name={sf.name}
+                value={(value as string) ?? ""}
+                description={sf.description}
+                onChange={handleChange}
+              />
+            ) : sf.ui === "color" ? (
               <ColorField
                 key={sf.id}
                 name={sf.name}
@@ -128,7 +138,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
             <URLField
               key={sf.id}
               name={sf.name}
-              assetType={sf.ui === "image" ? "image" : sf.ui === "file" ? "file" : undefined}
+              entityType={sf.ui === "image" ? "image" : sf.ui === "file" ? "file" : undefined}
               fileType={sf.ui === "video" || sf.ui === undefined ? "URL" : "asset"}
               value={(value as string) ?? ""}
               description={sf.description}
