@@ -13,8 +13,8 @@ export type Props = {
 };
 
 const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) => {
-  const [time, setTime] = useState<string>(value?.split(" ")[1] ?? "HH:MM:SS");
-  const [date, setDate] = useState<string>(value?.split(" ")[0] ?? "YYYY-MM-DD");
+  const [time, setTime] = useState<string>(" ");
+  const [date, setDate] = useState<string>(" ");
 
   const handleTimeChange = useCallback(
     (newValue: string | undefined) => {
@@ -39,8 +39,8 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <TextInput type="date" value={date} onChange={handleDateChange} />
-        <TextInput type="time" value={time} onChange={handleTimeChange} />
+        <TextInput type="date" value={value?.split(" ")[0]} onChange={handleDateChange} />
+        <TextInput type="time" value={value?.split(" ")[1]} onChange={handleTimeChange} />
       </Wrapper>
     </Property>
   );
