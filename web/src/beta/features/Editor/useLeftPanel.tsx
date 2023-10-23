@@ -6,6 +6,7 @@ import { Tab } from "@reearth/beta/features/Navbar";
 import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
+import { Scene } from "@reearth/services/gql";
 
 import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "./useLayers";
 
@@ -23,8 +24,9 @@ type Props = {
   onPageMove: (id: string, targetIndex: number) => void;
 
   // scene
-  selectedSceneSetting?: boolean;
-  onSceneSettingSelect: () => void;
+  selectedSceneSetting?: string;
+  onSceneSettingSelect: (groupId: string) => void;
+  scene?: Scene;
 
   // layers
   selectedLayerId?: string;
@@ -39,6 +41,7 @@ type Props = {
 export default ({
   tab,
   nlsLayers,
+  scene,
   selectedStory,
   selectedLayerId,
   selectedSceneSetting,
@@ -61,6 +64,7 @@ export default ({
       case "map":
         return (
           <MapSidePanel
+            scene={scene}
             layers={nlsLayers}
             selectedLayerId={selectedLayerId}
             selectedSceneSetting={selectedSceneSetting}
@@ -92,6 +96,7 @@ export default ({
     }
   }, [
     tab,
+    scene,
     nlsLayers,
     selectedLayerId,
     selectedSceneSetting,

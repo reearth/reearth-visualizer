@@ -23,6 +23,7 @@ type Props = {
   selectedLayerId?: string;
   selectedLayerStyleId?: string;
   showSceneSettings?: boolean;
+  selectedSceneSetting?: string;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
@@ -35,6 +36,7 @@ const MapRightPanel: React.FC<Props> = ({
   sceneId,
   showSceneSettings,
   selectedLayerStyleId,
+  selectedSceneSetting,
   selectedLayerId,
   currentCamera,
   onFlyTo,
@@ -48,7 +50,7 @@ const MapRightPanel: React.FC<Props> = ({
 
   const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
   const sceneSettings = useMemo(() => convert(scene?.property), [scene?.property]);
-
+  console.log(selectedSceneSetting);
   return (
     <SidePanelCommon
       location="right"

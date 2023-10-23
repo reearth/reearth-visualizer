@@ -22,7 +22,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
   const currentCamera = useReactiveVar(currentCameraVar);
 
-  const [selectedSceneSetting, setSceneSetting] = useState(false);
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
     tab === "story" ? "story" : "default",
@@ -75,8 +74,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     [setWidgetEditor],
   );
 
-  const handleSceneSettingSelect = useCallback(() => setSceneSetting(selected => !selected), []);
-
   const handleFlyTo: FlyTo = useCallback(
     (target, options) => {
       if (!isVisualizerReady) return;
@@ -89,7 +86,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   return {
     visualizerRef,
-    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -98,7 +94,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     currentCamera,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
-    handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,

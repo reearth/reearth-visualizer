@@ -15,6 +15,7 @@ import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
+import useScene from "./useScene";
 
 type Props = {
   sceneId: string;
@@ -26,7 +27,7 @@ type Props = {
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
-    selectedSceneSetting,
+
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -35,7 +36,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentCamera,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
-    handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
@@ -73,6 +73,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   } = useLayers({
     sceneId,
   });
+  const { scene, selectedSceneSetting, handleSceneSettingSelect } = useScene({ sceneId });
 
   const {
     layerStyles,
@@ -104,6 +105,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 
   const { leftPanel } = useLeftPanel({
     tab,
+    scene,
     nlsLayers,
     selectedStory,
     selectedLayerId: selectedLayer?.id,
@@ -130,7 +132,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     nlsLayers,
     currentPage,
     currentCamera,
-    showSceneSettings: selectedSceneSetting,
+    showSceneSettings: !!selectedSceneSetting,
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedLayerId: selectedLayer?.id,
     onFlyTo: handleFlyTo,
