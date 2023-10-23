@@ -15,8 +15,9 @@ export type SelectValue = {
 
 export type Props = {
   options?: SelectValue[];
-  onChange: (key: string) => void;
-  value?: string;
+  onChange: (key: undefined | string | Set<string>) => void;
+  value?: string | Set<string>;
+  multiSelect?: boolean;
   disabled?: boolean;
   placeholder?: string;
   // Property field
@@ -28,6 +29,7 @@ const SelectField: React.FC<Props> = ({
   options,
   onChange,
   value,
+  multiSelect = false,
   disabled = false,
   name,
   description,
@@ -40,42 +42,101 @@ const SelectField: React.FC<Props> = ({
 
   const handleClick = useCallback(
     (key: string) => {
-      setOpen(false);
-      if (key != value) onChange(key);
+      if (!multiSelect) {
+        setOpen(false);
+        key != value ? onChange(key) : onChange(undefined);
+        return;
+      }
+      // handle multiselect
+      if (value && value instanceof Set) {
+        const tempSet = new Set(value);
+        tempSet.has(key) ? tempSet.delete(key) : tempSet.add(key);
+        onChange(tempSet);
+      } else {
+        onChange(new Set([key]));
+      }
     },
-    [setOpen, onChange, value],
+    [setOpen, onChange, value, multiSelect],
   );
 
   const selected = useMemo(() => {
-    return options?.find(({ key }) => key === value);
+    return value
+      ? value instanceof Set
+        ? Array.from(value).map(key => ({
+            key,
+            label: options?.find(x => x.key === key)?.label,
+          }))
+        : options?.find(x => x.key === value)
+      : undefined;
   }, [options, value]);
+
+  const checkSelected = useCallback(
+    (key: string) => {
+      return value ? (value instanceof Set ? value.has(key) : value === key) : false;
+    },
+    [value],
+  );
 
   return (
     <Property name={name} description={description}>
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
-        <Popover.Trigger asChild>
-          <InputWrapper disabled={disabled} onClick={handlePopOver}>
-            <Select selected={selected ? true : false} open={open}>
-              {selected ? selected.label : t("Please choose an option")}
-            </Select>
-            <ArrowIcon icon="arrowDown" open={open} size={12} />
-          </InputWrapper>
-        </Popover.Trigger>
-        <PickerWrapper attachToRoot>
-          {options?.map(({ label: value, key }) => (
-            <Option
-              size="footnote"
-              selected={selected?.key == key}
-              key={key}
-              onClick={() => handleClick(key)}>
-              {value}
-            </Option>
-          ))}
-        </PickerWrapper>
+        <ProviderWrapper multiSelect={multiSelect}>
+          <Popover.Trigger asChild>
+            <InputWrapper disabled={disabled} onClick={handlePopOver}>
+              <Select selected={!!selected} open={open}>
+                {selected
+                  ? Array.isArray(selected)
+                    ? t("Options")
+                    : selected.label
+                  : t("Please choose an option")}
+              </Select>
+              <ArrowIcon icon="arrowDown" open={open} size={12} />
+            </InputWrapper>
+          </Popover.Trigger>
+          <PickerWrapper attachToRoot>
+            {options?.map(({ label: value, key }) => (
+              <OptionWrapper
+                key={key}
+                onClick={() => handleClick(key)}
+                selected={checkSelected(key)}>
+                {multiSelect && (
+                  <CheckIcon icon={checkSelected(key) ? "checkmark" : "plus"} size={12} />
+                )}
+                <Text size="footnote">{value}</Text>
+              </OptionWrapper>
+            ))}
+          </PickerWrapper>
+          {Array.isArray(selected) && (
+            <SelectedWrapper>
+              {selected.map(({ label, key }) => (
+                <Selected key={key} disabled={disabled}>
+                  <Text size="footnote" key={key}>
+                    {label}
+                  </Text>
+                  <CancelIcon
+                    icon="cancel"
+                    size={12}
+                    onClick={() => !disabled && handleClick(key)}
+                    disabled={disabled}
+                  />
+                </Selected>
+              ))}
+            </SelectedWrapper>
+          )}
+        </ProviderWrapper>
       </Popover.Provider>
     </Property>
   );
 };
+
+const ProviderWrapper = styled.div<{ multiSelect: boolean }>`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 4px;
+  padding: 4px;
+  border: ${({ theme, multiSelect }) => (multiSelect ? `1px solid ${theme.outline.weak}` : "none")};
+`;
 
 const InputWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -120,8 +181,8 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>`
 
 const PickerWrapper = styled(Popover.Content)`
   min-width: 100px;
-  gap: 10px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
+  gap: 4px;
   outline: none;
   border-radius: 4px;
   background: ${({ theme }) => theme.bg[1]};
@@ -133,12 +194,41 @@ const PickerWrapper = styled(Popover.Content)`
   z-index: 1;
 `;
 
-const Option = styled(Text)<{ selected: boolean }>`
-  padding: 4px 12px;
-  cursor: ${({ selected }) => (selected ? "not-allowed" : "pointer")};
+const OptionWrapper = styled.div<{ selected: boolean }>`
+  display: flex;
+  padding: 7px 12px;
+  align-items: center;
+  cursor: "pointer";
+  background: ${({ theme, selected }) => (selected ? theme.bg[2] : "inherit")};
   &:hover {
     background: ${({ theme, selected }) => (selected ? theme.bg[2] : theme.select.main)};
   }
+`;
+
+const CheckIcon = styled(Icon)`
+  margin-right: 12px;
+`;
+
+const SelectedWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 110px;
+  overflow: auto;
+`;
+
+const Selected = styled.div<{ disabled: boolean }>`
+  display: flex;
+  padding: 7px 12px;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 2px;
+  background: ${({ theme }) => theme.bg[2]};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+`;
+
+const CancelIcon = styled(Icon)<{ disabled: boolean }>`
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
 export default SelectField;
