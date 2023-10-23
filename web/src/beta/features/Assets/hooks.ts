@@ -42,6 +42,7 @@ export default ({
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
+
   const isGettingMore = useRef(false);
 
   const { useAssetsQuery, useRemoveAssets } = useAssetsFetcher();
@@ -58,7 +59,7 @@ export default ({
   const [localSearchTerm, setLocalSearchTerm] = useState<string>(searchTerm ?? "");
   const openDeleteModal = useCallback(() => setDeleteModalVisible(true), []);
   const closeDeleteModal = useCallback(() => setDeleteModalVisible(false), []);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const assetsWrapperRef = useRef<HTMLDivElement>(null);
   const sortOptions: { key: string; label: string }[] = useMemo(
     () => [
       { key: "date", label: t("Last Uploaded") },
@@ -126,31 +127,41 @@ export default ({
     }
   }, [localSearchTerm, handleSearchTerm]);
 
-  const isLoading = useMemo(() => {
+  const isAssetsLoading = useMemo(() => {
     return loading ?? isRefetching;
   }, [isRefetching, loading]);
 
   useEffect(() => {
-    if (wrapperRef.current && !isLoading && hasMoreAssets)
-      autoFillPage(wrapperRef, handleGetMoreAssets);
-  }, [handleGetMoreAssets, hasMoreAssets, isLoading]);
+    if (assetsWrapperRef.current && !isAssetsLoading && hasMoreAssets)
+      autoFillPage(assetsWrapperRef, handleGetMoreAssets);
+  }, [handleGetMoreAssets, hasMoreAssets, isAssetsLoading]);
+
+  const handleSelectAsset = useCallback(
+    (asset?: Asset) => {
+      if (!asset) return;
+      selectAsset(!selectedAssets.includes(asset) ? [asset] : []);
+    },
+    [selectedAssets, selectAsset],
+  );
 
   return {
-    wrapperRef,
     assets,
+    assetsWrapperRef,
+    isAssetsLoading,
+    hasMoreAssets,
     sortOptions,
     sort,
     searchTerm,
     localSearchTerm,
-    isLoading,
-    hasMoreAssets,
     selectedAssets,
     deleteModalVisible,
+    onScrollToBottom,
     closeDeleteModal,
     selectAsset,
     handleGetMoreAssets,
     handleSortChange,
-    onScrollToBottom,
+    handleSearchTerm,
+    handleSelectAsset,
     openDeleteModal,
     handleRemove,
     handleReverse,

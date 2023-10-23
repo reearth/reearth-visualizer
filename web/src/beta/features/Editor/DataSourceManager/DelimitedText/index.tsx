@@ -41,24 +41,12 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: (sourceType === "url" || sourceType === "local") && value !== "" ? value : null,
+          url: (sourceType === "url" || sourceType === "local") && value !== "" ? value : undefined,
           type: "csv",
           csv: {
             latColumn: lat,
             lngColumn: long,
           },
-        },
-        resource: {
-          clampToGround: true,
-        },
-        marker: {
-          heightReference: "clamp",
-        },
-        polygon: {
-          heightReference: "clamp",
-        },
-        polyline: {
-          clampToGround: true,
         },
       },
     });

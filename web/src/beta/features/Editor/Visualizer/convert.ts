@@ -12,11 +12,13 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
+import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { Story, StoryBlock, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
-import { valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { toUi } from "@reearth/services/api/propertyApi/utils";
 import {
   type Maybe,
@@ -405,24 +407,40 @@ export type RawNLSLayer = NlsLayerCommonFragment & {
 
 export function processLayers(
   newLayers?: NLSLayer[],
+  layerStyles?: LayerStyle[],
   parent?: RawNLSLayer | null | undefined,
 ): Layer[] | undefined {
-  return newLayers?.map(nlsLayer => ({
-    type: "simple",
-    id: nlsLayer.id,
-    title: nlsLayer.title,
-    visible: nlsLayer.visible,
-    infobox: processInfobox(nlsLayer.infobox, parent?.infobox),
-    tags: processLayerTags(nlsLayer.tags),
-    properties: nlsLayer.config?.properties,
-    defines: nlsLayer.config?.defines,
-    events: nlsLayer.config?.events,
-    data: nlsLayer.config?.data,
-    resource: nlsLayer.config?.resource,
-    marker: nlsLayer.config?.marker,
-    polygon: nlsLayer.config?.polygon,
-    polyline: nlsLayer.config?.polyline,
-  }));
+  const getLayerStyleValue = (id?: string) => {
+    const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
+      a => a.id === id,
+    )?.value;
+    if (typeof layerStyleValue === "object") {
+      try {
+        return layerStyleValue;
+      } catch (e) {
+        console.error("Error parsing layerStyle JSON:", e);
+      }
+    }
+
+    return DEFAULT_LAYER_STYLE;
+  };
+
+  return newLayers?.map(nlsLayer => {
+    const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+    return {
+      type: "simple",
+      id: nlsLayer.id,
+      title: nlsLayer.title,
+      visible: nlsLayer.visible,
+      infobox: processInfobox(nlsLayer.infobox, parent?.infobox),
+      tags: processLayerTags(nlsLayer.tags),
+      properties: nlsLayer.config?.properties,
+      defines: nlsLayer.config?.defines,
+      events: nlsLayer.config?.events,
+      data: nlsLayer.config?.data,
+      ...layerStyle,
+    };
+  });
 }
 
 const processInfobox = (

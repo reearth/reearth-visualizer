@@ -274,18 +274,25 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
-	if prj.PublishmentStatus() == project.PublishmentStatusPrivate {
-		// enforce policy
+	// enforce policy
+	if params.Status != project.PublishmentStatusPrivate {
 		if policyID := operator.Policy(ws.Policy()); policyID != nil {
 			p, err := i.policyRepo.FindByID(ctx, *policyID)
 			if err != nil {
 				return nil, err
 			}
-			s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+
+			projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
 			if err != nil {
 				return nil, err
 			}
-			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
+
+			// newrly published
+			if prj.PublishmentStatus() == project.PublishmentStatusPrivate {
+				projectCount += 1
+			}
+
+			if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
 				return nil, err
 			}
 		}

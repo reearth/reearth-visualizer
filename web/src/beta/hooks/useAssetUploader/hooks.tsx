@@ -27,7 +27,10 @@ export default ({
   const handleAssetsCreate = useCallback(
     async (files?: FileList) => {
       if (!files) return;
-      const result = await useCreateAssets({ teamId: workspaceId ?? "", file: files });
+      const result = await useCreateAssets({
+        teamId: workspaceId ?? "",
+        file: files,
+      });
       const assetUrl = result?.data[0].data?.createAsset?.asset.url;
 
       onAssetSelect?.(assetUrl);
