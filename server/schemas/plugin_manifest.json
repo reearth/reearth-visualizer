@@ -395,9 +395,6 @@
       "$id": "#root",
       "type": "object",
       "properties": {
-        "$schema": {
-          "type": "string"
-        },
         "id": {
           "$ref": "#/definitions/id"
         },

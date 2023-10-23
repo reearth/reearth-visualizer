@@ -870,6 +870,7 @@ type ComplexityRoot struct {
 
 	PropertySchemaGroup struct {
 		AllTranslatedTitle    func(childComplexity int) int
+		Collection            func(childComplexity int) int
 		Fields                func(childComplexity int) int
 		IsAvailableIf         func(childComplexity int) int
 		IsList                func(childComplexity int) int
@@ -5736,6 +5737,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertySchemaGroup.AllTranslatedTitle(childComplexity), true
 
+	case "PropertySchemaGroup.collection":
+		if e.complexity.PropertySchemaGroup.Collection == nil {
+			break
+		}
+
+		return e.complexity.PropertySchemaGroup.Collection(childComplexity), true
+
 	case "PropertySchemaGroup.fields":
 		if e.complexity.PropertySchemaGroup.Fields == nil {
 			break
@@ -8582,6 +8590,7 @@ type PropertySchemaGroup {
   schemaGroupId: ID!
   schemaId: ID!
   fields: [PropertySchemaField!]!
+  collection: String
   isList: Boolean!
   isAvailableIf: PropertyCondition
   title: String
@@ -37461,6 +37470,8 @@ func (ec *executionContext) fieldContext_PropertyGroup_schemaGroup(ctx context.C
 				return ec.fieldContext_PropertySchemaGroup_schemaId(ctx, field)
 			case "fields":
 				return ec.fieldContext_PropertySchemaGroup_fields(ctx, field)
+			case "collection":
+				return ec.fieldContext_PropertySchemaGroup_collection(ctx, field)
 			case "isList":
 				return ec.fieldContext_PropertySchemaGroup_isList(ctx, field)
 			case "isAvailableIf":
@@ -37765,6 +37776,8 @@ func (ec *executionContext) fieldContext_PropertyGroupList_schemaGroup(ctx conte
 				return ec.fieldContext_PropertySchemaGroup_schemaId(ctx, field)
 			case "fields":
 				return ec.fieldContext_PropertySchemaGroup_fields(ctx, field)
+			case "collection":
+				return ec.fieldContext_PropertySchemaGroup_collection(ctx, field)
 			case "isList":
 				return ec.fieldContext_PropertySchemaGroup_isList(ctx, field)
 			case "isAvailableIf":
@@ -38301,6 +38314,8 @@ func (ec *executionContext) fieldContext_PropertySchema_groups(ctx context.Conte
 				return ec.fieldContext_PropertySchemaGroup_schemaId(ctx, field)
 			case "fields":
 				return ec.fieldContext_PropertySchemaGroup_fields(ctx, field)
+			case "collection":
+				return ec.fieldContext_PropertySchemaGroup_collection(ctx, field)
 			case "isList":
 				return ec.fieldContext_PropertySchemaGroup_isList(ctx, field)
 			case "isAvailableIf":
@@ -39484,6 +39499,47 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_fields(ctx context.
 				return ec.fieldContext_PropertySchemaField_translatedDescription(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PropertySchemaField", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PropertySchemaGroup_collection(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PropertySchemaGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PropertySchemaGroup_collection(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Collection, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PropertySchemaGroup_collection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PropertySchemaGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -64054,6 +64110,10 @@ func (ec *executionContext) _PropertySchemaGroup(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "collection":
+
+			out.Values[i] = ec._PropertySchemaGroup_collection(ctx, field, obj)
+
 		case "isList":
 
 			out.Values[i] = ec._PropertySchemaGroup_isList(ctx, field, obj)

@@ -406,6 +406,7 @@ func ToPropertySchemaGroup(g *property.SchemaGroup, s property.SchemaID) *Proper
 		IsList:                g.IsList(),
 		Title:                 g.Title().StringRef(),
 		Fields:                fields,
+		Collection:            g.Collection().StringRef(),
 		RepresentativeFieldID: IDFromStringRef(representativeFieldID),
 		RepresentativeField:   representativeField,
 		AllTranslatedTitle:    g.Title(),

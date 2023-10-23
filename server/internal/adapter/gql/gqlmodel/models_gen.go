@@ -1037,6 +1037,7 @@ type PropertySchemaGroup struct {
 	SchemaGroupID         ID                     `json:"schemaGroupId"`
 	SchemaID              ID                     `json:"schemaId"`
 	Fields                []*PropertySchemaField `json:"fields"`
+	Collection            *string                `json:"collection"`
 	IsList                bool                   `json:"isList"`
 	IsAvailableIf         *PropertyCondition     `json:"isAvailableIf"`
 	Title                 *string                `json:"title"`
