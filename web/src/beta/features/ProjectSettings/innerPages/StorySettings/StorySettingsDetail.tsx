@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
@@ -21,20 +21,23 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
   const [localPanelPosition, setLocalPanelPosition] = useState<Position | undefined>(
     settingsItem.panelPosition,
   );
+
   const handleSubmit = useCallback(() => {
     onUpdateStory({
       panelPosition: localPanelPosition,
     });
   }, [localPanelPosition, onUpdateStory]);
 
-  const options = useMemo(
-    () =>
-      Object.keys(Position).map(label => ({
-        label,
-        key: Position[label as keyof typeof Position],
-      })),
-    [],
-  );
+  const options = [
+    {
+      label: t("Left"),
+      key: Position.Left,
+    },
+    {
+      label: t("Right"),
+      key: Position.Right,
+    },
+  ];
 
   return (
     <Collapse title={t("Story Panel")} alwaysOpen>
