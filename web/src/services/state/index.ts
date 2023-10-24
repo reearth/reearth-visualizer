@@ -3,6 +3,7 @@ import { makeVar } from "@apollo/client";
 import type { WidgetAreaType } from "@reearth/beta/lib/core/Crust";
 import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 export type SelectedWidget = {
   id: string;
@@ -21,6 +22,7 @@ export type SelectedLayer = {
 // Visualizer
 export const isVisualizerReadyVar = makeVar<boolean>(false);
 export const currentCameraVar = makeVar<Camera | undefined>(undefined);
+export const layersVar = makeVar<NLSLayer[]>([]);
 
 // Selected
 export const selectedWidgetVar = makeVar<SelectedWidget | undefined>(undefined);

@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
+import { layersVar } from "@reearth/services/state";
 
 type LayerProps = {
   sceneId: string;
@@ -38,6 +39,8 @@ export default function ({ sceneId }: LayerProps) {
     useLayersFetcher();
   const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>(undefined);
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
+  // TODO: Fix this implmentation, maybe use useEffect.
+  layersVar(nlsLayers);
 
   const selectedLayer = useMemo(
     () => nlsLayers.find(l => l.id === selectedLayerId) || undefined,
