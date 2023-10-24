@@ -13,18 +13,30 @@ export type SelectValue = {
   key: string;
 };
 
-export type Props = {
-  options?: SelectValue[];
-  onChange: (key: undefined | string | Set<string>) => void;
-  value?: string | Set<string>;
-  multiSelect?: boolean;
+type CommonProps = {
   disabled?: boolean;
-  placeholder?: string;
   // Property field
   name?: string;
   description?: string;
 };
 
+interface SingleSelect extends CommonProps {
+  options?: SelectValue[];
+  onChange: (key: string) => void;
+  value?: string;
+  multiSelect?: false;
+}
+
+interface MultiSelect extends CommonProps {
+  options?: SelectValue[];
+  onChange: (key: Set<string>) => void;
+  value?: Set<string>;
+  multiSelect: true;
+}
+
+export type Props = SingleSelect | MultiSelect;
+
+// TODO: Fix the onChange method TS error
 const SelectField: React.FC<Props> = ({
   options,
   onChange,
@@ -44,7 +56,7 @@ const SelectField: React.FC<Props> = ({
     (key: string) => {
       if (!multiSelect) {
         setOpen(false);
-        key != value ? onChange(key) : onChange(undefined);
+        key != value && onChange(key);
         return;
       }
       // handle multiselect

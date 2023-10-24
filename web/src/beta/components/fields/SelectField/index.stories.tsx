@@ -34,7 +34,6 @@ export const Default: Story = (args: Props) => {
           {...args}
           name="Disabled"
           description="Props are controlled by the field above"
-          placeholder="This is a disabled field"
           disabled={true}
           onChange={handleChange}
         />
@@ -76,7 +75,6 @@ export const MultiSelect: Story = (args: Props) => {
           {...args}
           name="Disabled"
           description="Props are controlled by the field above"
-          placeholder="This is a disabled field"
           disabled={true}
           onChange={handleChange}
         />
