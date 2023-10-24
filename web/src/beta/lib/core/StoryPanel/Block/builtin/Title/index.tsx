@@ -24,6 +24,7 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     () => property?.title?.color?.value as ValueTypes["string"],
     [property?.title?.color?.value],
   );
+  const hasEmptySpace = /^ *$/.test(title);
 
   return (
     <BlockWrapper
@@ -34,8 +35,8 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       property={property}
       dndEnabled={false}
       {...props}>
-      <Title size="h2" hasText={!!title} color={color} customColor>
-        {title ?? t("Untitled")}
+      <Title size="h2" hasText={!!title && !hasEmptySpace} color={color} customColor>
+        {hasEmptySpace || !title ? t("Untitled") : title}
       </Title>
     </BlockWrapper>
   );

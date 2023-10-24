@@ -60,6 +60,7 @@ const ContentPage: React.FC<Props> = ({
           renderItem={(storyPage, i) => {
             const title = (getFieldValue(storyPage.property.items ?? [], "title", "title") ??
               t("Untitled")) as string;
+            const hasEmptySpace = /^ *$/.test(title);
             return (
               <PageItemWrapper
                 key={storyPage.id}
@@ -99,7 +100,7 @@ const ContentPage: React.FC<Props> = ({
                       ]}
                     />
                   }>
-                  {title}
+                  {hasEmptySpace || !title ? t("Untitled") : title}
                 </ListItem>
               </PageItemWrapper>
             );

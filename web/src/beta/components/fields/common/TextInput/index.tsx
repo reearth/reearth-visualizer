@@ -36,12 +36,12 @@ const TextInput: React.FC<Props> = ({
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       const newValue = e.currentTarget.value;
-
-      setCurrentValue(newValue);
+      const trimmedValue = newValue.trim();
+      setCurrentValue(trimmedValue);
 
       timeoutRef.current = setTimeout(() => {
-        if (newValue === undefined) return;
-        onChange?.(newValue);
+        if (trimmedValue === undefined) return;
+        onChange?.(trimmedValue);
       }, timeout);
     },
     [onChange, timeout],
@@ -58,7 +58,9 @@ const TextInput: React.FC<Props> = ({
       if (e.key === "Escape") {
         onExit?.(e);
       } else if (e.key === "Enter" || e.key === "Return") {
-        onChange?.(currentValue);
+        const trimmedValue = currentValue.trim();
+        onChange?.(trimmedValue);
+
         onExit?.(e);
       }
     },
