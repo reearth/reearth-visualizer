@@ -245,10 +245,4 @@ export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
   polyline: {
     clampToGround: true,
   },
-  model: {
-    heightReference: "clamp",
-  },
-  ellipsoid: {
-    heightReference: "clamp",
-  },
 };
