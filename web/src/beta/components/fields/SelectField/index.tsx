@@ -14,25 +14,24 @@ export type SelectValue = {
 };
 
 type CommonProps = {
+  options?: SelectValue[];
   disabled?: boolean;
   // Property field
   name?: string;
   description?: string;
 };
 
-interface SingleSelect extends CommonProps {
-  options?: SelectValue[];
+type SingleSelect = {
   onChange: (key: string) => void;
   value?: string;
   multiSelect?: false;
-}
+} & CommonProps;
 
-interface MultiSelect extends CommonProps {
-  options?: SelectValue[];
-  onChange: (key: Set<string>) => void;
+type MultiSelect = {
+  onChange: (key: Set<string> | undefined) => void;
   value?: Set<string>;
   multiSelect: true;
-}
+} & CommonProps;
 
 export type Props = SingleSelect | MultiSelect;
 
@@ -63,7 +62,7 @@ const SelectField: React.FC<Props> = ({
       if (value && value instanceof Set) {
         const tempSet = new Set(value);
         tempSet.has(key) ? tempSet.delete(key) : tempSet.add(key);
-        onChange(tempSet);
+        onChange(tempSet.size > 0 ? tempSet : undefined);
       } else {
         onChange(new Set([key]));
       }
@@ -92,7 +91,7 @@ const SelectField: React.FC<Props> = ({
   return (
     <Property name={name} description={description}>
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
-        <ProviderWrapper multiSelect={multiSelect}>
+        <ProviderWrapper multiSelect={value instanceof Set && value.size > 0}>
           <Popover.Trigger asChild>
             <InputWrapper disabled={disabled} onClick={handlePopOver}>
               <Select selected={!!selected} open={open}>
@@ -225,7 +224,7 @@ const SelectedWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-height: 110px;
+  max-height: 125px;
   overflow: auto;
 `;
 
