@@ -109,6 +109,7 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
+  map: Set<string>;
 };
 
 const valueTypeMapper: Record<GQLValueType, ValueType> = {
@@ -125,6 +126,7 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Rect]: "rect",
   [GQLValueType.Ref]: "ref",
   [GQLValueType.Spacing]: "spacing",
+  [GQLValueType.Map]: "map",
 };
 
 export type ValueType = keyof ValueTypes;

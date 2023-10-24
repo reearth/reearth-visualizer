@@ -1,13 +1,14 @@
+import { useReactiveVar } from "@apollo/client";
 import { debounce } from "lodash-es";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState, useCallback } from "react";
 
 import Button from "@reearth/beta/components/Button";
-// import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
+import SelectField from "@reearth/beta/components/fields/SelectField";
 import TextField from "@reearth/beta/components/fields/TextField";
-import { Camera } from "@reearth/beta/lib/core/engines";
 import { useT } from "@reearth/services/i18n";
+import { layersVar } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import type { Field } from "../../../types";
@@ -18,7 +19,7 @@ export type LayerBlock = {
   title?: Field<string>;
   color?: Field<string>;
   bgColor?: Field<string>;
-  // cameraPosition?: Field<Camera>;
+  showLayers?: Field<Set<string>>;
 };
 
 export type Props = {
@@ -26,8 +27,8 @@ export type Props = {
   onUpdate: (
     id: string,
     fieldId: keyof LayerBlock,
-    fieldType: "string" | "camera",
-    value: string | Camera,
+    fieldType: "string" | "map",
+    value: string | Set<string>,
   ) => void;
   onItemRemove: (id: string) => void;
   onItemAdd: () => void;
@@ -41,38 +42,40 @@ const LayerBlockEditor: React.FC<Props> = ({
   onItemRemove,
   onItemAdd,
   onItemMove,
-  // inEditor,
+  inEditor,
 }) => {
   const t = useT();
   const context = useContext(BlockContext);
   const [selected, setSelected] = useState(items[0]?.id);
 
-  // const visualizer = useVisualizer();
-  // const currentCamera = useReactiveVar(currentCameraVar);
-
-  // const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
+  const defaultTitle = useMemo(() => t("LOD"), [t]);
 
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
-  // const handleClick = useCallback(
-  //   (itemId: string) => {
-  //     if (inEditor) {
-  //       setSelected(itemId);
-  //       return;
-  //     }
-  //     const item = items.find(i => i.id === itemId);
-  //     if (!item?.cameraPosition?.value) return;
-  //     handleFlyTo?.(item.cameraPosition?.value);
-  //   },
-  //   [items, inEditor, handleFlyTo],
-  // );
+  const handleClick = useCallback(
+    (itemId: string) => {
+      if (inEditor) {
+        setSelected(itemId);
+        return;
+      }
+      // TODO: Implement show/hide layer logic
+    },
+    [inEditor],
+  );
 
   const debounceOnUpdate = useMemo(() => debounce(onUpdate, 500), [onUpdate]);
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, value: title?.value ?? "New Camera" })),
-    [items],
+    () => items.map(({ id, title }) => ({ id, value: title?.value ?? defaultTitle })),
+    [items, defaultTitle],
   );
+
+  const layers = useReactiveVar(layersVar).map(({ id, title }) => ({
+    key: id,
+    label: title,
+  }));
+
+  console.log(layers);
 
   return (
     <Wrapper>
@@ -85,9 +88,9 @@ const LayerBlockEditor: React.FC<Props> = ({
               bgColor={bgColor?.value}
               icon="cameraButtonStoryBlock"
               buttonType="primary"
-              text={title?.value ?? t("New Camera")}
+              text={title?.value ?? defaultTitle}
               size="small"
-              // onClick={() => handleClick(id)}
+              onClick={() => handleClick(id)}
             />
           );
         })}
@@ -105,14 +108,6 @@ const LayerBlockEditor: React.FC<Props> = ({
             atLeastOneItem
           />
           <FieldGroup disabled={!editorProperties}>
-            {/* <CameraField
-              name={editorProperties?.cameraPosition?.title}
-              description={editorProperties?.cameraPosition?.description}
-              value={editorProperties?.cameraPosition?.value}
-              onSave={value => onUpdate(selected, "cameraPosition", "camera", value as Camera)}
-              currentCamera={currentCamera}
-              onFlyTo={handleFlyTo}
-            /> */}
             <TextField
               name={editorProperties?.title?.title}
               description={editorProperties?.title?.description}
@@ -130,6 +125,15 @@ const LayerBlockEditor: React.FC<Props> = ({
               description={editorProperties?.bgColor?.description}
               value={editorProperties?.bgColor?.value}
               onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
+            />
+            <SelectField
+              name={editorProperties?.showLayers?.title}
+              description={editorProperties?.showLayers?.description}
+              options={layers}
+              value={editorProperties?.showLayers?.value}
+              // TODO: Fix TS error
+              onChange={value => debounceOnUpdate(selected, "showLayers", "map", value)}
+              multiSelect
             />
           </FieldGroup>
         </EditorWrapper>

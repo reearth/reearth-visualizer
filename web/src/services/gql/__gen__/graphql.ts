@@ -2568,7 +2568,8 @@ export enum ValueType {
   Spacing = 'SPACING',
   String = 'STRING',
   Typography = 'TYPOGRAPHY',
-  Url = 'URL'
+  Url = 'URL',
+  Map = 'MAP'
 }
 
 export enum Visualizer {

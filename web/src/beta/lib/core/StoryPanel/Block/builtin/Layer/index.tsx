@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 
 import { type ValueTypes } from "@reearth/beta/utils/value";
 
@@ -6,8 +6,7 @@ import type { CommonProps as BlockProps } from "../../types";
 import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import BlockWrapper from "../common/Wrapper";
 
-// import LayerBlockEditor, { type LayerBlock as LayerBlockType } from "./Editor";
-import LayerBlockEditor from "./Editor";
+import LayerBlockEditor, { type LayerBlock as LayerBlockType } from "./Editor";
 
 export type Props = BlockProps;
 
@@ -19,11 +18,10 @@ const LayerBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     handleMovePropertyItem,
   } = usePropertyValueUpdate();
 
-  // const cameraButtons = useMemo(
-  //   () => Object.values(block?.property?.default) as LayerBlockType[],
-  //   [block?.property?.default],
-  // );
-  console.log(block?.property);
+  const showLayerButtons = useMemo(
+    () => Object.values(block?.property?.default ?? []) as LayerBlockType[],
+    [block?.property?.default],
+  );
 
   const handleUpdate = useCallback(
     (
@@ -70,12 +68,12 @@ const LayerBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
 
   // if there's no item add 1 button.
   // TODO: Should be added to block creationAPI for generic blocks that require at least 1 item
-  // useEffect(() => {
-  //   if (!cameraButtons || cameraButtons.length === 0) {
-  //     handleItemAdd();
-  //     return;
-  //   }
-  // }, [cameraButtons, handleItemAdd, handleUpdate]);
+  useEffect(() => {
+    if (!showLayerButtons || showLayerButtons.length === 0) {
+      handleItemAdd();
+      return;
+    }
+  }, [showLayerButtons, handleItemAdd, handleUpdate]);
 
   return (
     <BlockWrapper
@@ -87,8 +85,7 @@ const LayerBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       settingsEnabled={false}
       {...props}>
       <LayerBlockEditor
-        // items={cameraButtons}
-        items={[]}
+        items={showLayerButtons}
         onUpdate={handleUpdate}
         onItemRemove={handleItemRemove}
         onItemAdd={handleItemAdd}
