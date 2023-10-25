@@ -18,7 +18,7 @@ export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback(
-    (value: undefined | string | Set<string>) => {
+    (value: string) => {
       updateArgs({ value: value });
     },
     [updateArgs],
@@ -54,7 +54,7 @@ export const MultiSelect: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback(
-    (value: undefined | string | Set<string>) => {
+    (value: undefined | string[]) => {
       updateArgs({ value: value });
     },
     [updateArgs],

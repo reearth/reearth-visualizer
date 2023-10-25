@@ -19,7 +19,7 @@ export type LayerBlock = {
   title?: Field<string>;
   color?: Field<string>;
   bgColor?: Field<string>;
-  showLayers?: Field<Set<string>>;
+  showLayers?: Field<string[]>;
 };
 
 export type Props = {
@@ -28,7 +28,7 @@ export type Props = {
     id: string,
     fieldId: keyof LayerBlock,
     fieldType: "string" | "map",
-    value: string | Set<string>,
+    value: string | string[] | undefined,
   ) => void;
   onItemRemove: (id: string) => void;
   onItemAdd: () => void;

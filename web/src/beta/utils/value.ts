@@ -109,7 +109,7 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
-  map: Set<string>;
+  map: string[];
 };
 
 const valueTypeMapper: Record<GQLValueType, ValueType> = {

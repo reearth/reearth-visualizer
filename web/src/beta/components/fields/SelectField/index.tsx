@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -28,8 +28,8 @@ type SingleSelect = {
 } & CommonProps;
 
 type MultiSelect = {
-  onChange: (key: Set<string> | undefined) => void;
-  value?: Set<string>;
+  onChange: (key: string[] | undefined) => void;
+  value?: string[];
   multiSelect: true;
 } & CommonProps;
 
@@ -59,12 +59,12 @@ const SelectField: React.FC<Props> = ({
         return;
       }
       // handle multiselect
-      if (value && value instanceof Set) {
-        const tempSet = new Set(value);
-        tempSet.has(key) ? tempSet.delete(key) : tempSet.add(key);
-        onChange(tempSet.size > 0 ? tempSet : undefined);
+      if (value && Array.isArray(value)) {
+        const tempArray = [...value];
+        tempArray.includes(key) ? tempArray.splice(tempArray.indexOf(key), 1) : tempArray.push(key);
+        onChange(tempArray.length > 0 ? [...tempArray] : undefined);
       } else {
-        onChange(new Set([key]));
+        onChange([key]);
       }
     },
     [setOpen, onChange, value, multiSelect],
@@ -72,8 +72,8 @@ const SelectField: React.FC<Props> = ({
 
   const selected = useMemo(() => {
     return value
-      ? value instanceof Set
-        ? Array.from(value).map(key => ({
+      ? Array.isArray(value)
+        ? value.map(key => ({
             key,
             label: options?.find(x => x.key === key)?.label,
           }))
@@ -83,7 +83,7 @@ const SelectField: React.FC<Props> = ({
 
   const checkSelected = useCallback(
     (key: string) => {
-      return value ? (value instanceof Set ? value.has(key) : value === key) : false;
+      return value ? (Array.isArray(value) ? value.includes(key) : value === key) : false;
     },
     [value],
   );
@@ -91,7 +91,7 @@ const SelectField: React.FC<Props> = ({
   return (
     <Property name={name} description={description}>
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
-        <ProviderWrapper multiSelect={value instanceof Set && value.size > 0}>
+        <ProviderWrapper multiSelect={Array.isArray(value) && value.length > 0}>
           <Popover.Trigger asChild>
             <InputWrapper disabled={disabled} onClick={handlePopOver}>
               <Select selected={!!selected} open={open}>
