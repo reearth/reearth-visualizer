@@ -22,6 +22,10 @@ Remove: Remove
 Add Item: ''
 Please choose an option: ''
 Add text here: ''
+Timeline Settings: ''
+not set: not set
+'2023-10-24T00:00:00+09:00': ''
+set: ''
 Wrong file format: Wrong file format
 Choose: Choose
 Upload: Upload
@@ -254,7 +258,6 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
-not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
