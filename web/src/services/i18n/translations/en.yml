@@ -21,6 +21,7 @@ You have passed the minimum value.: You have passed the minimum value.
 Remove: Remove
 Add Item: ''
 Please choose an option: ''
+Add text here: ''
 Wrong file format: Wrong file format
 Choose: Choose
 Upload: Upload
@@ -150,6 +151,8 @@ Most project settings are hidden when the project is archived. Please unarchive 
   unarchive the project to view and edit these settings.
 Project Info: Project Info
 Name: Name
+Description: Description
+Thumbnail: Thumbnail
 Submit: ''
 Danger Zone: Danger Zone
 Archive this project: Archive this project
@@ -195,6 +198,7 @@ Import GitHub repository: Import GitHub repository
 Public Info: Public Info
 Title: Title
 Basic Authorization: Basic Authorization
+Enable Basic Authorization: ''
 Username: Username
 Password: Password
 Site Setting: ''
@@ -202,7 +206,10 @@ Site name: Site name
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
   You are about to change the site name for your project. Only alphanumeric
   characters and hyphens are allows.
+Left: ''
+Right: ''
 Story Panel: ''
+Panel Position: ''
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 aria-label-compass: compass
@@ -294,7 +301,6 @@ OK: OK
 Click here for more details.: ''
 Create New Project: Create New Project
 Project Name: Project Name
-Description: Description
 Select thumbnail image: Select thumbnail image
 Datasets: Datasets
 Plugins: Plugins
@@ -417,7 +423,6 @@ Enable basic authorization: Enable basic authorization
 Change site name: Change site name
 Delete this dataset: Delete this dataset
 Are you sure you want to delete it?: Are you sure you want to delete it?
-Thumbnail: Thumbnail
 (These fields will be used for OGP as well as metadata for the public project): (These fields will be used for OGP as well as metadata for the public project)
 Site settings: Site settings
 Access your project, copy or edit the URL below.: Access your project, copy or edit the URL below.
