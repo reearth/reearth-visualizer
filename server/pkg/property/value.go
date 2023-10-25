@@ -26,6 +26,7 @@ var (
 	ValueTypeCoordinates  = ValueType(value.TypeCoordinates)
 	ValueTypePolygon      = ValueType(value.TypePolygon)
 	ValueTypeRect         = ValueType(value.TypeRect)
+	ValueTypeMap          = ValueType(value.TypeMap)
 )
 
 var types = value.TypePropertyMap{
