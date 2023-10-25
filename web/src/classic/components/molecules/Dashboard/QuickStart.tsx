@@ -55,8 +55,7 @@ const QuickStart: React.FC<Props> = ({
   const handleCreateProjectClick = useCallback(() => {
     if (
       email &&
-      window.REEARTH_CONFIG?.developerMode &&
-      window.REEARTH_CONFIG?.superAdmins?.includes(email)
+      (window.REEARTH_CONFIG?.developerMode || window.REEARTH_CONFIG?.superAdmins?.includes(email))
     )
       setPrjTypeSelectOpen(true);
     else setPrjCreateOpen(true);
