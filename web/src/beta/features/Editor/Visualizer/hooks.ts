@@ -18,12 +18,12 @@ import { config } from "@reearth/services/config";
 import {
   useSceneMode,
   useIsCapturing,
-  useSelected,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   selectedWidgetAreaVar,
   isVisualizerReadyVar,
   useZoomedLayerId,
+  selectedLayerVar,
 } from "@reearth/services/state";
 
 import { convertStory, convertWidgets, processLayers } from "./convert";
@@ -56,10 +56,13 @@ export default ({
 
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
-  const [selected, select] = useSelected();
   const [selectedBlock, selectBlock] = useSelectedBlock();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
+
+  const selectedLayer = useReactiveVar(selectedLayerVar);
+
+  console.log("seleectedLayer IN STATETEEEE", selectedLayer);
 
   const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
   const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
@@ -68,31 +71,32 @@ export default ({
 
   const onBlockMove = useCallback(
     async (_id: string, _fromIndex: number, _toIndex: number) => {
-      if (selected?.type !== "layer") return;
+      if (!selectedLayer) return;
       console.log("Block has been moved!");
     },
-    [selected],
+    [selectedLayer],
   );
 
   const onBlockRemove = useCallback(
     async (_id: string) => {
-      if (selected?.type !== "layer") return;
+      if (!selectedLayer) return;
       console.log("Block has been removed!");
     },
-    [selected],
+    [selectedLayer],
   );
 
   // convert data
   const selectedLayerId = useMemo(
     () =>
-      selected?.type === "layer"
-        ? { layerId: selected.layerId, featureId: selected.featureId }
+      selectedLayer
+        ? { layerId: selectedLayer.layerId, featureId: selectedLayer.feature?.id }
         : undefined,
-    [selected],
+    [selectedLayer],
   );
+
   const layerSelectionReason = useMemo(
-    () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
-    [selected],
+    () => (selectedLayer ? selectedLayer.layerSelectionReason : undefined),
+    [selectedLayer],
   );
 
   const layers = useMemo(() => {
@@ -126,15 +130,17 @@ export default ({
 
   const pluginProperty = useMemo(() => undefined, []);
 
-  // TODO: Don't forget handle featureId
   const selectLayer = useCallback(
-    (
+    async (
       id?: string,
       featureId?: string,
-      _layer?: () => Promise<ComputedLayer | undefined>,
+      layer?: () => Promise<ComputedLayer | undefined>,
       layerSelectionReason?: LayerSelectionReason,
-    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
-    [select],
+    ) => {
+      const feature = (await layer?.())?.features?.find(f => f.id === featureId);
+      selectedLayerVar(id ? { layerId: id, feature, layerSelectionReason } : undefined);
+    },
+    [],
   );
 
   const onBlockChange = useCallback(
@@ -168,7 +174,7 @@ export default ({
   const blocks: BlockType[] = useMemo(() => [], []);
   const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
     const b = blocks?.[bi];
-    if (b?.pluginId && b?.extensionId && selected?.type === "layer") {
+    if (b?.pluginId && b?.extensionId && selectedLayer) {
       console.log("Block has been inserted!");
     }
   };

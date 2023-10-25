@@ -4,6 +4,7 @@ import TabMenu, { TabObject } from "@reearth/beta/components/TabMenu";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n"; // If needed
+import { SelectedLayer } from "@reearth/services/state";
 
 import { LayerConfigUpdateProps } from "../../../../useLayers";
 
@@ -14,7 +15,7 @@ import LayerTab from "./LayerStyle";
 type Props = {
   layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
-  selectedLayerId: string;
+  selectedLayerId: SelectedLayer;
   sceneId?: string;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
 };
@@ -34,9 +35,19 @@ const InspectorTabs: React.FC<Props> = ({
   }, []);
 
   const selectedLayer = useMemo(
-    () => layers?.find(l => l.id === selectedLayerId),
+    () => layers?.find(l => l.id === selectedLayerId.layerId),
     [layers, selectedLayerId],
   );
+
+  const selectedFeature = useMemo(() => {
+    if (!selectedLayerId?.feature) return;
+    const { id, geometry, properties } = selectedLayerId.feature;
+    return {
+      id,
+      geometry,
+      properties,
+    };
+  }, [selectedLayerId?.feature]);
 
   const tabs: TabObject[] = useMemo(
     () => [
@@ -49,18 +60,18 @@ const InspectorTabs: React.FC<Props> = ({
       {
         id: "featureData",
         name: t("Feature"),
-        component: <FeatureData selectedFeature={{ id: "alsdkfj", type: "feature" }} />,
+        component: selectedFeature && <FeatureData selectedFeature={selectedFeature} />,
         icon: "location",
       },
       {
         id: "layerStyleSelector",
         name: t("Styling"),
-        component: (
+        component: selectedLayer && (
           <LayerTab
             layerStyles={layerStyles}
             layers={layers}
             sceneId={sceneId}
-            selectedLayerId={selectedLayerId}
+            selectedLayerId={selectedLayer.id}
             onLayerConfigUpdate={onLayerConfigUpdate}
           />
         ),
@@ -74,7 +85,7 @@ const InspectorTabs: React.FC<Props> = ({
       //   icon: "infobox",
       // },
     ],
-    [sceneId, selectedLayerId, selectedLayer, layerStyles, layers, t, onLayerConfigUpdate],
+    [sceneId, selectedLayer, selectedFeature, layerStyles, layers, t, onLayerConfigUpdate],
   );
 
   return <TabMenu tabs={tabs} selectedTab={selectedTab} onSelectedTabChange={handleTabChange} />;

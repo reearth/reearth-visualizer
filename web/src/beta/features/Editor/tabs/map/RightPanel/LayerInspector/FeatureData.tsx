@@ -1,10 +1,18 @@
+import JsonView from "react18-json-view";
+import "react18-json-view/src/style.css";
+import "react18-json-view/src/dark.css";
+
 import Text from "@reearth/beta/components/Text";
-import { Feature } from "@reearth/beta/lib/core/engines";
+import { Geometry } from "@reearth/beta/lib/core/engines";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  selectedFeature: Feature;
+  selectedFeature?: {
+    id: string;
+    geometry: Geometry | undefined;
+    properties: any;
+  };
 };
 
 const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
@@ -14,9 +22,13 @@ const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
   return (
     <Wrapper>
       <Text size="body">{t("Geometry")}</Text>
-      <ValueWrapper>{/* <Text size="body">{selectedFeature.geometry}</Text> */}</ValueWrapper>
+      <ValueWrapper>
+        <JsonView src={selectedFeature?.geometry} theme="a11y" dark />
+      </ValueWrapper>
       <Text size="body">{t("Properties")}</Text>
-      <ValueWrapper>{/* <Text size="body">{selectedFeature.properties}</Text> */}</ValueWrapper>
+      <ValueWrapper>
+        <JsonView src={selectedFeature?.properties} theme="a11y" dark />
+      </ValueWrapper>
     </Wrapper>
   );
 };

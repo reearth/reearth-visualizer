@@ -221,8 +221,8 @@ const Visualizer = memo(
       );
 
       const selectedLayerIdForCrust = useMemo(
-        () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
-        [selectedLayer.featureId, selectedLayer.layerId],
+        () => ({ layerId: selectedLayer.id, featureId: selectedFeature?.id }),
+        [selectedFeature, selectedLayer],
       );
 
       return (
