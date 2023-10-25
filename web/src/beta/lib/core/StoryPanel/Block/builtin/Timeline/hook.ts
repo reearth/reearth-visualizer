@@ -116,12 +116,25 @@ export default ({
     return {};
   }, [range]);
 
+  const currentPosition = useMemo(() => {
+    if (range) {
+      const startTime = range.start;
+      const endTime = range.end;
+      const rangeDuration = endTime - startTime;
+      const currentDuration = currentTime - startTime;
+      const position = currentDuration / rangeDuration + 16; // Change to pixel value if needed
+      return position;
+    }
+    return 16; // Return a default value if range is not available
+  }, [range, currentTime]);
+
   return {
     formattedCurrentTime,
     timeRange,
     isPlaying,
     isPlayingReversed,
     isPause,
+    currentPosition,
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,

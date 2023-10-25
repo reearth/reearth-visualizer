@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
 import { TickEventCallback, Timeline, TimelineCommitter } from "../../Map/useTimelineManager";
-import { formatDateToSting } from "../utils";
+import { convertOptionToSeconds, formatDateToSting } from "../utils";
 
 type TimeHandler = (t: number) => void;
 
@@ -47,8 +47,12 @@ export default (timeValues?: Timeline) => {
 
   const [currentTime, setCurrentTime] = useState(initialCurrentTime);
   const [range, setRange] = useState(initialRange);
-  const clockSpeed = visualizerContext?.current?.timeline?.current?.options.multiplier || 1;
-  const [speed, setSpeed] = useState(clockSpeed);
+  const playSpeedOptions = useMemo(() => {
+    const speedOpt = ["1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
+    return convertOptionToSeconds(speedOpt);
+  }, []);
+
+  const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
 
   const onPause = useCallback(
     (committer?: TimelineCommitter) => {
@@ -72,6 +76,7 @@ export default (timeValues?: Timeline) => {
 
   const onTimeChange = useCallback(
     (time: Date, committer?: TimelineCommitter) => {
+      console.log(time);
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_TIME",
         payload: {
@@ -123,9 +128,17 @@ export default (timeValues?: Timeline) => {
     [range?.end, range?.start],
   );
 
+  const handleOnSpeedChange = useCallback(
+    (speed: number) => {
+      const absSpeed = Math.abs(speed);
+      onSpeedChange?.(absSpeed);
+      setSpeed(speed);
+    },
+    [onSpeedChange],
+  );
+
   const handleOnPlay = useCallback(
     (playing: boolean, committer: TimelineCommitter) => {
-      // Stop cesium animation
       playing ? onPlay?.(committer) : onPause?.(committer);
       onSpeedChange?.(Math.abs(speed));
     },
@@ -134,7 +147,6 @@ export default (timeValues?: Timeline) => {
 
   const handleOnPlayReversed = useCallback(
     (playing: boolean, committer: TimelineCommitter) => {
-      // Stop cesium animation
       playing ? onPlay?.(committer) : onPause?.(committer);
       onSpeedChange?.(Math.abs(speed) * -1);
     },
@@ -157,20 +169,6 @@ export default (timeValues?: Timeline) => {
     [onTimeChange],
   );
 
-  const handleOnSpeedChange = useCallback(
-    (speed: number) => {
-      setSpeed(speed);
-
-      const absSpeed = Math.abs(speed);
-      onSpeedChange?.(
-        (visualizerContext?.current?.timeline?.current?.options.multiplier ?? 1) > 0
-          ? absSpeed
-          : absSpeed * -1,
-      );
-    },
-    [onSpeedChange, visualizerContext],
-  );
-
   const handleRange = useCallback((start: number | undefined, stop: number | undefined) => {
     setRange(prev => {
       const next = timeRange(start, stop);
@@ -181,7 +179,7 @@ export default (timeValues?: Timeline) => {
     });
   }, []);
 
-  // update clock.
+  // update block time setting.
   useEffect(() => {
     if (timeValues?.current || timeValues?.start || timeValues?.stop) {
       const startTime = getNewDate(new Date(timeValues?.start)).getTime();
@@ -195,8 +193,7 @@ export default (timeValues?: Timeline) => {
       });
       return handleRange(startTime, endTime);
     }
-    setSpeed(Math.abs(clockSpeed));
-  }, [handleRange, clockSpeed, timeValues?.start, timeValues?.stop, timeValues, onTimeChange]);
+  }, [handleRange, timeValues?.start, timeValues?.stop, timeValues, onTimeChange]);
 
   useEffect(() => {
     const h: TickEventCallback = (d, c) => {
@@ -221,7 +218,7 @@ export default (timeValues?: Timeline) => {
   return {
     currentTime,
     range,
-    speed,
+    playSpeedOptions,
     onClick: handleTimeEvent,
     onDrag: handleTimeEvent,
     onPlay: handleOnPlay,

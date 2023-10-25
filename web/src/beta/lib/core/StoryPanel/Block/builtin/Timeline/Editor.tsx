@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -8,20 +8,32 @@ import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelin
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { BlockContext } from "../common/Wrapper";
+
 type TimelineProps = {
   blockId?: string;
   isSelected?: boolean;
   timeValues?: Timeline;
+  inEditor?: boolean;
 };
 
-const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
+const TimelineEditor = ({ blockId, isSelected, timeValues, inEditor }: TimelineProps) => {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const playSpeedOptions = [1, 0.1, 0.5, 1];
-  const [selected, setSelected] = useState(1);
 
-  const { currentTime, range, onClick, onDrag, onPlay, onPlayReversed, onSpeedChange, onPause } =
-    useTimelineBlock(timeValues);
+  const [selected, setSelected] = useState("1min/sec");
+
+  const {
+    currentTime,
+    range,
+    playSpeedOptions,
+    onClick,
+    onDrag,
+    onPlay,
+    onPlayReversed,
+    onSpeedChange,
+    onPause,
+  } = useTimelineBlock(timeValues);
 
   const {
     formattedCurrentTime,
@@ -29,6 +41,7 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
     isPlaying,
     isPlayingReversed,
     isPause,
+    currentPosition,
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
@@ -45,18 +58,23 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
     onPause,
   });
 
+  const context = useContext(BlockContext);
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
+  console.log(currentPosition);
+
   const handleClick = useCallback(
-    (value: number) => {
+    (value: string, second: number) => {
       setOpen(false);
       if (value !== selected) setSelected(value);
+      onSpeedChange(second);
     },
-    [selected],
+    [onSpeedChange, selected],
   );
 
   return (
     <Wrapper>
+      {!context?.editMode && inEditor && <Overlay />}
       <TimelineControl>
         <StyledIcon>
           <Icon icon="timelineStoryBlock" size={16} />
@@ -85,7 +103,7 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
         <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
           <Popover.Trigger asChild>
             <InputWrapper onClick={handlePopOver}>
-              <Select>{selected && t(`${selected} min/sec`)}</Select>
+              <Select>{selected && t(`${selected}`)}</Select>
               <ArrowIcon icon="arrowDown" open={open} size={16} />
             </InputWrapper>
           </Popover.Trigger>
@@ -93,12 +111,11 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
             {playSpeedOptions?.map((playSpeed, key) => (
               <InputOptions
                 key={key}
-                value={playSpeed}
+                value={playSpeed.seconds}
                 onClick={() => {
-                  setSelected(playSpeed);
-                  handleClick(playSpeed);
+                  handleClick(playSpeed.timeString, playSpeed.seconds);
                 }}>
-                {key === 0 ? `${playSpeed} min/sec` : `${playSpeed} hr/sec`}
+                {playSpeed.timeString}
               </InputOptions>
             ))}
           </PickerWrapper>
@@ -128,7 +145,10 @@ const TimelineEditor = ({ blockId, isSelected, timeValues }: TimelineProps) => {
             </Scale>
           ))}
         </ScaleList>
-        <IconWrapper>
+        <IconWrapper
+          style={{
+            left: `${currentPosition.toFixed(3)}px`,
+          }}>
           <Icon icon="slider" />
         </IconWrapper>
       </TimelineSlider>
@@ -149,7 +169,7 @@ const TimelineControl = styled.div`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: 20px;
+  gap: 22px;
 `;
 
 const StyledIcon = styled.div`
@@ -173,6 +193,7 @@ const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
 const InputWrapper = styled.div`
   position: relative;
   cursor: pointer;
+  width: 90px;
 `;
 
 const ArrowIcon = styled(Icon)<{ open: boolean }>`
@@ -186,8 +207,7 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>`
 const Select = styled.div`
   font-size: 14px;
   line-height: 1;
-  padding-right: 24px;
-  width: 100%;
+  padding-right: 12px;
   color: ${({ theme }) => theme.content.weaker};
 `;
 
@@ -241,7 +261,6 @@ const ScaleList = styled.div`
 const IconWrapper = styled.div`
   position: absolute;
   top: 4px;
-  left: 16px;
 `;
 
 const Scale = styled.div`
@@ -257,4 +276,10 @@ const ScaleLabel = styled.div`
   position: relative;
   bottom: 28px;
   right: 15px;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
 `;

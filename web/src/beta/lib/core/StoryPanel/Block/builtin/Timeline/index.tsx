@@ -23,7 +23,12 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
       propertyId={block?.propertyId}
       property={block?.property}
       {...props}>
-      <TimelineEditor timeValues={timeValues} isSelected={isSelected} blockId={block?.id} />
+      <TimelineEditor
+        inEditor={!!props.isEditable}
+        timeValues={timeValues}
+        isSelected={isSelected}
+        blockId={block?.id}
+      />
     </BlockWrapper>
   );
 };
