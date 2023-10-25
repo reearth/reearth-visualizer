@@ -39,6 +39,7 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
   const roles = [
     { key: "READER", label: t("Reader") },
     { key: "WRITER", label: t("Writer") },
+    { key: "MAINTAINER", label: t("Maintainer") },
     { key: "OWNER", label: t("Owner") },
   ];
 
