@@ -1,6 +1,3 @@
-import moment from "moment-timezone";
-import { useCallback, useState } from "react";
-
 import Button from "@reearth/beta/components/Button";
 import PanelCommon from "@reearth/beta/components/fields/CameraField/PanelCommon";
 import { useT } from "@reearth/services/i18n";
@@ -9,6 +6,8 @@ import { styled } from "@reearth/services/theme";
 import TextInput from "../../common/TextInput";
 import SelectField from "../../SelectField";
 
+import useHooks from "./hooks";
+
 type Props = {
   onChange?: (value?: string | undefined) => void;
   onClose: () => void;
@@ -16,78 +15,59 @@ type Props = {
 
 const EditPanel: React.FC<Props> = ({ onChange, onClose }) => {
   const t = useT();
-  const [time, setTime] = useState<string>("");
-  const [date, setDate] = useState<string>("");
-  const [timezones] = useState(moment.tz.names());
-  const [selectedTimezone, setSelectedTimezone] = useState("0: 00");
 
-  const handleTimeChange = useCallback(
-    (newValue: string | undefined) => {
-      if (newValue === undefined) return;
+  const {
+    date,
+    time,
+    timezones,
+    selectedTimezone,
+    onDateChange,
+    onTimeChange,
+    getUniqueTimezones,
+    onTimezoneSelect,
+    onDateTimeApply,
+  } = useHooks({ onChange });
 
-      setTime(newValue);
-      onChange?.(date + " " + newValue);
-    },
-    [date, onChange],
-  );
-
-  const handleDateChange = useCallback(
-    (newValue: string | undefined) => {
-      if (newValue === undefined) return;
-
-      setDate(newValue);
-      onChange?.(newValue + " " + time);
-    },
-    [time, onChange],
-  );
-
-  const offsetFromUTC = useCallback((timezone: string) => {
-    const offset = moment.tz(timezone).utcOffset() / 60;
-    const offsetString = offset >= 0 ? `+${offset}` : `${offset}`;
-    const tzName = moment.tz(timezone).zoneAbbr();
-
-    return `${offsetString}:00 - ${tzName}`;
-  }, []);
+  const isButtonDisabled = date.trim() === "" || time.trim() === "";
+  const uniqueTimezones = getUniqueTimezones(timezones);
 
   return (
     <PanelCommon title={t("Set Time")} onClose={onClose}>
       <FieldGroup>
         <TextWrapper>
           <Label>{t("Date")}</Label>
-          <TextInput
-            className="customTextInput"
-            type="date"
-            value={date}
-            onChange={handleDateChange}
-          />
+          <TextInput className="customTextInput" type="date" value={date} onChange={onDateChange} />
         </TextWrapper>
         <TextWrapper>
           <Label>{t("Time")}</Label>
 
-          <TextInput
-            className="customTextInput"
-            type="time"
-            value={time}
-            onChange={handleTimeChange}
-          />
+          <TextInput className="customTextInput" type="time" value={time} onChange={onTimeChange} />
         </TextWrapper>
         <SelectWrapper>
           <Label>{t("Time Zone")}</Label>
           <SelectField
             value={selectedTimezone}
             className="timezone"
-            options={timezones.map(timezone => ({
-              key: timezone,
-              label: `${offsetFromUTC(timezone)}`,
+            options={uniqueTimezones.map(timezone => ({
+              key: timezone.timezone,
+              label: timezone?.offset,
             }))}
-            onChange={setSelectedTimezone}
+            onChange={onTimezoneSelect}
           />
         </SelectWrapper>
       </FieldGroup>
       <Divider />
       <ButtonWrapper>
         <StyledButton text={t("Cancel")} size="small" onClick={onClose} />
-        <StyledButton text={t("Apply")} size="small" buttonType="primary" onClick={() => {}} />
+        <StyledButton
+          text={t("Apply")}
+          size="small"
+          buttonType="primary"
+          onClick={() => {
+            onDateTimeApply(), onClose();
+          }}
+          disabled={isButtonDisabled}
+        />
       </ButtonWrapper>
     </PanelCommon>
   );
@@ -106,7 +86,7 @@ const FieldGroup = styled.div`
 `;
 
 const Label = styled.div`
-  font-size: 14px;
+  font-size: 12px;
   padding: 10px 0;
 `;
 

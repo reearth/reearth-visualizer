@@ -23,6 +23,10 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
   const t = useT();
 
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
+  const handleRemoveSetting = useCallback(() => {
+    if (!value) return;
+    onChange?.();
+  }, [value, onChange]);
 
   return (
     <Property name={name} description={description}>
@@ -34,7 +38,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
                 <Text size="footnote" customColor>
                   {value}
                 </Text>
-                <DeleteIcon icon="bin" size={10} disabled={!value} />
+                <DeleteIcon icon="bin" size={10} disabled={!value} onClick={handleRemoveSetting} />
               </Input>
               <TriggerButton
                 buttonType="secondary"
