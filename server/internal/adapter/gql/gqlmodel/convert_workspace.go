@@ -48,6 +48,8 @@ func FromRole(r Role) workspace.Role {
 		return workspace.RoleReader
 	case RoleWriter:
 		return workspace.RoleWriter
+	case RoleMaintainer:
+		return workspace.RoleMaintainer
 	case RoleOwner:
 		return workspace.RoleOwner
 	}
