@@ -191,7 +191,7 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>`
 `;
 
 const PickerWrapper = styled(Popover.Content)`
-  min-width: 100px;
+  min-width: 150px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   gap: 4px;
   outline: none;

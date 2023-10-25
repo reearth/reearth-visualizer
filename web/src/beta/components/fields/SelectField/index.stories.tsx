@@ -116,7 +116,7 @@ MultiSelect.args = {
   value: undefined,
   options: [
     {
-      label: "item 1 akas bakas moti kiran kapoor takhat buland biba kaur",
+      label: "item 1",
       key: "item_1",
     },
     { label: "item 2", key: "item_2" },
