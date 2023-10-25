@@ -18,6 +18,11 @@ Edit: 編集
 Color Picker: カラーピッカー
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Set Time: ''
+Date: 作成日時順
+Time: ''
+Time Zone: ''
+set: ''
 Remove: 削除
 Add Item: ''
 Please choose an option: ''
@@ -264,7 +269,6 @@ Reset password: パスワードをリセット
 Create your Account: アカウントを登録する
 Already have an account?: 既にアカウントをお持ちの場合
 Log in: ログイン
-Date: 作成日時順
 File size: サイズ順
 Alphabetical: 名前順
 Assets Library: アセット
