@@ -6,12 +6,12 @@ import { styled } from "@reearth/services/theme";
 
 import Text from "../Text";
 
-export interface TabObject {
+export type TabObject = {
   id: string;
-  name: string;
+  name?: string;
   icon: keyof typeof Icons;
   component?: JSX.Element;
-}
+};
 
 export type Props = {
   tabs: TabObject[];
