@@ -2548,3 +2548,39 @@ extensions:
               title: Show Layers
               ui: layer
               choices:
+  - id: hideLayersStoryBlock
+    name: Hide Layers
+    type: storyBlock
+    description: Storytelling Hide Layers 
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Switch Layer
+          list: true
+          representativeField: title
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: bgColor
+              type: string
+              title: Background Color
+              ui: color
+            - id: hideLayers
+              type: map
+              title: Hide Layers
+              ui: layer
+              choices:
