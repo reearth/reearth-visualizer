@@ -29,20 +29,17 @@ import {
   EarthLayerCommonFragment,
   EarthLayerItemFragment,
   PropertySchemaGroupFragmentFragment,
-  PropertyGroupFragmentFragment,
-  PropertySchemaFieldFragmentFragment,
-  PropertyFieldFragmentFragment,
 } from "@reearth/classic/gql";
 import { valueFromGQL } from "@reearth/classic/util/value";
 
-export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
+type PropertyGroupFragmentFragment = Extract<
+  PropertyItemFragmentFragment,
+  { __typename?: "PropertyGroup" }
+>;
+type PropertySchemaFieldFragmentFragment = PropertySchemaGroupFragmentFragment["fields"][number];
+type PropertyFieldFragmentFragment = PropertyGroupFragmentFragment["fields"][number];
 
-// export type RawLayer =
-//   | (EarthLayerItemFragment & EarthLayerCommonFragment)
-//   | ({
-//     __typename: "LayerGroup";
-//     layers?: RawLayer[] | null | undefined;
-//   } & EarthLayerCommonFragment);
+export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
 
 export type RawLayer = EarthLayerCommonFragment &
   (
