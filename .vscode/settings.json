@@ -28,5 +28,8 @@
       ],
       "url": "./server/schemas/plugin_manifest_translation.json"
     }
-  ]
+  ],
+  "[yaml]": {
+    "editor.formatOnSave": false
+  }
 }
