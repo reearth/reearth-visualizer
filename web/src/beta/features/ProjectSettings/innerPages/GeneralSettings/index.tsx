@@ -2,9 +2,12 @@ import { useCallback, useState, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
+import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
 import TextInput from "@reearth/beta/components/fields/TextField";
+import URLField from "@reearth/beta/components/fields/URLField";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
+import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -43,12 +46,16 @@ const GeneralSettings: React.FC<Props> = ({
   const t = useT();
 
   const [localName, setLocalName] = useState(project?.name ?? "");
+  const [localDescription, setLocalDescription] = useState(project?.description ?? "");
+  const [localImageUrl, setLocalImageUrl] = useState<string | undefined>(project?.imageUrl ?? "");
 
   const handleSubmit = useCallback(() => {
     onUpdateProject({
       name: localName,
+      description: localDescription,
+      imageUrl: localImageUrl,
     });
-  }, [localName, onUpdateProject]);
+  }, [localName, localDescription, localImageUrl, onUpdateProject]);
 
   const [archiveModelVisible, setArchiveModelVisible] = useState(false);
   const [archiveInputName, setArchiveInputName] = useState("");
@@ -85,8 +92,22 @@ const GeneralSettings: React.FC<Props> = ({
                 onChange={name => setLocalName(name)}
                 timeout={0}
               />
-              <div>Description - TextArea Field</div>
-              <div>Thumbnail - Image Upload Field</div>
+              <TextAreaField
+                name={t("Description")}
+                value={localDescription}
+                onChange={setLocalDescription}
+                minHeight={108}
+              />
+              <ThumbnailField>
+                <URLField
+                  name={t("Thumbnail")}
+                  fileType="asset"
+                  entityType="image"
+                  value={localImageUrl}
+                  onChange={setLocalImageUrl}
+                />
+                <StyledImage src={!localImageUrl ? defaultBetaProjectImage : localImageUrl} />
+              </ThumbnailField>
               <ButtonWrapper>
                 <Button
                   text={t("Submit")}
@@ -289,4 +310,16 @@ const DangerItem = styled.div`
 const Divider = styled.div`
   height: 1px;
   background-color: ${({ theme }) => theme.outline.weaker};
+`;
+
+const ThumbnailField = styled.div`
+  grid-template-rows: 100%;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 20px;
+  display: inline-grid;
+`;
+
+const StyledImage = styled.img`
+  width: 100%;
+  border-radius: 4px;
 `;

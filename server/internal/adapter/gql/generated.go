@@ -9387,6 +9387,8 @@ enum Role {
   READER
   # a role who can read and write project
   WRITER
+  # a eole who can maintain a project
+  MAINTAINER
   # a eole who can have full controll of project
   OWNER
 }
@@ -9458,7 +9460,8 @@ extend type Mutation {
   addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
   removeMemberFromTeam(input: RemoveMemberFromTeamInput!): RemoveMemberFromTeamPayload
   updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/user.graphql", Input: `type User implements Node {
   id: ID!
   name: String!

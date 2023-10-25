@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
+import SelectField from "@reearth/beta/components/fields/SelectField";
+import { Position } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 
 import { SettingsFields, ButtonWrapper } from "../common";
@@ -16,18 +18,36 @@ type Props = {
 const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) => {
   const t = useT();
 
-  // TODO: select filed
-  const [localPanelPosition] = useState(settingsItem.panelPosition);
+  const [localPanelPosition, setLocalPanelPosition] = useState<Position | undefined>(
+    settingsItem.panelPosition,
+  );
+
   const handleSubmit = useCallback(() => {
     onUpdateStory({
       panelPosition: localPanelPosition,
     });
   }, [localPanelPosition, onUpdateStory]);
 
+  const options = [
+    {
+      label: t("Left"),
+      key: Position.Left,
+    },
+    {
+      label: t("Right"),
+      key: Position.Right,
+    },
+  ];
+
   return (
     <Collapse title={t("Story Panel")} alwaysOpen>
       <SettingsFields>
-        <div>Panel Position - Select Field {settingsItem.panelPosition}</div>
+        <SelectField
+          name={t("Panel Position")}
+          value={localPanelPosition}
+          options={options}
+          onChange={value => setLocalPanelPosition(value as Position)}
+        />
         <ButtonWrapper>
           <Button
             text={t("Submit")}
