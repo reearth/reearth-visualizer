@@ -115,21 +115,24 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 
 	readableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleReader).IDs()
 	writableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleWriter).IDs()
+	maintainingWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleMaintainer).IDs()
 	owningWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleOwner).IDs()
 	defaultPolicy := util.CloneRef(cfg.Config.Policy.Default)
 
 	return &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
-			User:               &uid,
-			ReadableWorkspaces: readableWorkspaces,
-			WritableWorkspaces: writableWorkspaces,
-			OwningWorkspaces:   owningWorkspaces,
-			DefaultPolicy:      defaultPolicy,
+			User:                   &uid,
+			ReadableWorkspaces:     readableWorkspaces,
+			WritableWorkspaces:     writableWorkspaces,
+			MaintainableWorkspaces: maintainingWorkspaces,
+			OwningWorkspaces:       owningWorkspaces,
+			DefaultPolicy:          defaultPolicy,
 		},
-		ReadableScenes: scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
-		WritableScenes: scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
-		OwningScenes:   scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
-		DefaultPolicy:  defaultPolicy,
+		ReadableScenes:    scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
+		WritableScenes:    scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
+		MaintainingScenes: scenes.FilterByWorkspace(maintainingWorkspaces...).IDs(),
+		OwningScenes:      scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
+		DefaultPolicy:     defaultPolicy,
 	}, nil
 }
 

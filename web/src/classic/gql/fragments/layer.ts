@@ -92,7 +92,7 @@ export const EarthLayerFragments = gql`
     propertyId
     property {
       id
-      ...PropertyFragmentWithoutSchema
+      ...PropertyFragment
     }
     tags {
       tagId
@@ -114,7 +114,7 @@ export const EarthLayerFragments = gql`
       propertyId
       property {
         id
-        ...PropertyFragmentWithoutSchema
+        ...PropertyFragment
       }
       fields {
         id
@@ -129,7 +129,7 @@ export const EarthLayerFragments = gql`
         }
         property {
           id
-          ...PropertyFragmentWithoutSchema
+          ...PropertyFragment
         }
       }
     }
