@@ -58,7 +58,7 @@ export default ({ onChange }: Props) => {
   const handleApplyChange = useCallback(() => {
     const selectedTimezoneInfo = offsetFromUTC.find(info => info.timezone === selectedTimezone);
     if (selectedTimezoneInfo) {
-      const formattedDateTime = `${date}T${time}:00${selectedTimezoneInfo.offset.split(" ")[0]}`;
+      const formattedDateTime = `${date}T${time}:00${selectedTimezoneInfo.offset}`;
       onChange?.(formattedDateTime);
     }
   }, [date, time, selectedTimezone, onChange, offsetFromUTC]);
