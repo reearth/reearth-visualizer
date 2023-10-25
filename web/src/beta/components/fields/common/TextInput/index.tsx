@@ -32,39 +32,46 @@ const TextInput: React.FC<Props> = ({
     setCurrentValue(value ?? "");
   }, [value]);
 
+  const handlepdateValue = useCallback(
+    (newValue: string) => {
+      if (!newValue || /^ *$/.test(newValue)) setCurrentValue("");
+      onChange?.(newValue);
+    },
+    [onChange],
+  );
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       const newValue = e.currentTarget.value;
-      const trimmedValue = newValue.trim();
-      setCurrentValue(trimmedValue);
+
+      setCurrentValue(newValue);
 
       timeoutRef.current = setTimeout(() => {
-        if (trimmedValue === undefined) return;
-        onChange?.(trimmedValue);
+        if (newValue === undefined) return;
+        handlepdateValue(newValue);
       }, timeout);
     },
-    [onChange, timeout],
+    [handlepdateValue, timeout],
   );
 
   const handleBlur = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    onChange?.(currentValue);
+    handlepdateValue(currentValue);
     onBlur?.();
-  }, [currentValue, onChange, onBlur]);
+  }, [handlepdateValue, currentValue, onBlur]);
 
   const handleExit = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Escape") {
         onExit?.(e);
       } else if (e.key === "Enter" || e.key === "Return") {
-        const trimmedValue = currentValue.trim();
-        onChange?.(trimmedValue);
+        handlepdateValue(currentValue);
 
         onExit?.(e);
       }
     },
-    [currentValue, onChange, onExit],
+    [currentValue, handlepdateValue, onExit],
   );
 
   return (
