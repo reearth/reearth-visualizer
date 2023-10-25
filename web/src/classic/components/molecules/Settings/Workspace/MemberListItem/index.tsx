@@ -9,7 +9,7 @@ import { styled } from "@reearth/services/theme";
 
 import EditableItem from "../../Project/EditableItem";
 
-export type Role = "READER" | "WRITER" | "OWNER";
+export type Role = "READER" | "WRITER" | "MAINTAINER" | "OWNER";
 
 type user = {
   id?: string;
@@ -20,13 +20,13 @@ export type Props = {
   user: user;
   role: Role;
   owner?: boolean;
-  isMyself?: boolean;
+  isMe?: boolean;
   personal?: boolean;
   onChangeRole: (role: Role) => void;
   onRemove: () => void;
 };
 
-const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRemove }) => {
+const MemberListItem: React.FC<Props> = ({ user, role, owner, isMe, onChangeRole, onRemove }) => {
   const t = useT();
   const saveEdit = useCallback(
     (role?: string) => {
@@ -39,6 +39,7 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
   const roles = [
     { key: "READER", label: t("Reader") },
     { key: "WRITER", label: t("Writer") },
+    { key: "MAINTAINER", label: t("Maintainer") },
     { key: "OWNER", label: t("Owner") },
   ];
 
@@ -54,9 +55,9 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
         currentItem={role}
         body={roles.find(r => r.key === role)?.label}
         onSubmit={saveEdit}
-        disabled={!(owner === true && role !== "OWNER")}
+        disabled={!owner}
       />
-      {owner === true && role !== "OWNER" && <StyledIcon icon="bin" size={20} onClick={onRemove} />}
+      {owner && !isMe && <StyledIcon icon="bin" size={20} onClick={onRemove} />}
     </Wrapper>
   );
 };

@@ -12,6 +12,7 @@ export type Props = {
   onChange?: (text: string) => void;
   onBlur?: () => void;
   onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 };
 
 const TextInput: React.FC<Props> = ({
@@ -23,6 +24,7 @@ const TextInput: React.FC<Props> = ({
   onChange,
   onBlur,
   onExit,
+  disabled,
   type,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
@@ -75,6 +77,7 @@ const TextInput: React.FC<Props> = ({
       onChange={handleChange}
       onBlur={handleBlur}
       onKeyUp={handleExit}
+      disabled={!!disabled}
     />
   );
 };
@@ -90,6 +93,9 @@ const StyledInput = styled.input`
   padding: 4px 8px;
   transition: all 0.3s;
   flex: 1;
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
+
   :focus {
     border-color: ${({ theme }) => theme.outline.main};
   }
