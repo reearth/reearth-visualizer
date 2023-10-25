@@ -5,6 +5,7 @@ import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import AssetModal from "@reearth/beta/features/Modals/AssetModal";
+import LayerStyleModal from "@reearth/beta/features/Modals/LayerStyleModal";
 import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
 import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
@@ -13,14 +14,23 @@ import { styled } from "@reearth/services/theme";
 
 export type Props = {
   value?: string;
-  onChange?: (value: string | undefined) => void;
   name?: string;
   description?: string;
-  fileType?: "asset" | "URL";
-  assetType?: "image" | "file";
+  fileType?: "asset" | "URL" | "layerStyle";
+  entityType?: "image" | "file" | "layerStyle";
+  sceneId?: string;
+  onChange?: (value: string | undefined) => void;
 };
 
-const URLField: React.FC<Props> = ({ name, description, value, fileType, assetType, onChange }) => {
+const URLField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  fileType,
+  entityType,
+  sceneId,
+  onChange,
+}) => {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [currentWorkspace] = useWorkspace();
@@ -48,16 +58,15 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
     },
     [fileType, onChange, setNotification, t],
   );
+
   const { handleFileUpload } = useFileUploaderHook({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
-    assetType: assetType,
+    assetType: entityType,
   });
 
   useEffect(() => {
-    if (value) {
-      setCurrentValue(value);
-    }
+    setCurrentValue(value ?? "");
   }, [value]);
 
   const handleClick = useCallback(() => setOpen(!open), [open]);
@@ -68,13 +77,13 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
       <TextInput value={currentValue} onChange={handleChange} placeholder={t("Not set")} />
       {fileType === "asset" && (
         <ButtonWrapper>
-          <AssetButton
-            icon={assetType === "image" ? "imageStoryBlock" : "file"}
+          <SelectionButton
+            icon={entityType === "image" ? "imageStoryBlock" : "file"}
             text={t("Choose")}
             iconPosition="left"
             onClick={handleClick}
           />
-          <AssetButton
+          <SelectionButton
             icon="uploadSimple"
             text={t("Upload")}
             iconPosition="left"
@@ -82,13 +91,22 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
           />
         </ButtonWrapper>
       )}
-      {open && (
+      {fileType === "layerStyle" && <SelectionButton icon="layerStyle" onClick={handleClick} />}
+      {open && entityType !== "layerStyle" && (
         <AssetModal
           open={open}
           onModalClose={handleModalClose}
-          assetType={assetType}
+          assetType={entityType}
           currentWorkspace={currentWorkspace}
           currentValue={currentValue}
+          onSelect={handleChange}
+        />
+      )}
+      {open && entityType === "layerStyle" && (
+        <LayerStyleModal
+          open={open}
+          sceneId={sceneId}
+          onClose={handleModalClose}
           onSelect={handleChange}
         />
       )}
@@ -96,7 +114,7 @@ const URLField: React.FC<Props> = ({ name, description, value, fileType, assetTy
   );
 };
 
-const AssetButton = styled(Button)<{ active?: boolean }>`
+const SelectionButton = styled(Button)<{ active?: boolean }>`
   cursor: pointer;
   padding: 4px;
   flex: 1;

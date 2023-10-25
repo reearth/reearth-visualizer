@@ -16,6 +16,8 @@ type Props = {
 export const Tabs = ["map", "story", "widgets", "publish"] as const;
 export type Tab = (typeof Tabs)[number];
 
+export const NAVBAR_HEIGHT = 52;
+
 export function isTab(tab: string): tab is Tab {
   return Tabs.includes(tab as never);
 }
@@ -79,7 +81,8 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 24px;
+  padding: 0 24px;
+  height: ${NAVBAR_HEIGHT}px;
   gap: 24px;
   background: ${({ theme }) => theme.bg[0]};
   border-bottom: 0.5px solid ${({ theme }) => theme.outline.weak};

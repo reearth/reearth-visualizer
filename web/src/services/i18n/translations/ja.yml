@@ -53,9 +53,11 @@ layer name: ''
 Layer: レイヤー
 Layers: レイヤー
 All Layers: ''
+Layer Style: ''
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
+Layer Property Inspector: ''
 Published: 一般公開
 Unpublished: 非公開
 Scene: シーン
@@ -106,6 +108,10 @@ Select: 選択
 Sort By: Sort By
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
+Please select an layer style before clicking Select.: ''
+Select Layer Style: ''
+No layerStyle match your search.: ''
+You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: 新規ワークスペース作成
 Create: 作成
 Workspace Name: ワークスペース名
@@ -470,6 +476,12 @@ Failed to update the layer.: ''
 Successfully updated a the layer!: ''
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
+Failed to add layerStyle.: ''
+Successfully added a new layerStyle!: ''
+Failed to update the layerStyle.: ''
+Successfully updated a the layerStyle!: ''
+Failed to remove the layerStyle.: ''
+Successfully removed a the layerStyle!: ''
 Failed to upgrade plugin.: ''
 Successfully upgraded plugin!: ''
 Successfully uninstalled plugin.: ''
