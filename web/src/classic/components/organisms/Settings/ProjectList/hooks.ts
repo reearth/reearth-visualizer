@@ -12,6 +12,7 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/classic/gql";
+import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
@@ -39,10 +40,19 @@ export default (workspaceId: string) => {
   const gqlCache = useApolloClient().cache;
 
   const [modalShown, setModalShown] = useState(false);
+  const { useMeQuery } = useMeFetcher();
+  const {
+    me: { email },
+  } = useMeQuery();
   const openModal = useCallback(() => {
-    if (window.REEARTH_CONFIG?.developerMode) setPrjTypeSelectOpen(true);
+    if (
+      email &&
+      window.REEARTH_CONFIG?.developerMode &&
+      window.REEARTH_CONFIG?.superAdmins?.includes(email)
+    )
+      setPrjTypeSelectOpen(true);
     else setModalShown(true);
-  }, []);
+  }, [email]);
 
   const { data, loading, refetch } = useGetMeQuery();
   const [createNewProject] = useCreateProjectMutation({

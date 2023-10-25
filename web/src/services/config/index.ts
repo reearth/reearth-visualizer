@@ -22,6 +22,7 @@ export type Config = {
   sentryEnv?: string;
   cesiumIonAccessToken?: string;
   developerMode?: boolean;
+  superAdmins?: string;
   brand?: {
     logoUrl?: string;
     background?: string;
