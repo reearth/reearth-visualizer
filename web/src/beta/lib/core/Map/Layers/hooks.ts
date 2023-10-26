@@ -745,12 +745,11 @@ function useSelection({
       selectedFeatureInfo,
     );
   }, [
-    onLayerSelect,
-    selectedLayerId?.layerId,
     selectedLayerId?.featureId,
     selectedReason,
-    selectedLayerForRef,
     selectedFeatureInfo,
+    onLayerSelect,
+    selectedLayerForRef,
   ]);
 
   useEffect(() => {

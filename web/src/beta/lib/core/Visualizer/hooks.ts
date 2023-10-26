@@ -105,10 +105,12 @@ export default function useHooks(
   }>({});
   const [selectedFeature, selectFeature] = useState<Feature>();
   const [selectedComputedFeature, selectComputedFeature] = useState<ComputedFeature>();
+
   useEffect(() => {
     const { layerId, featureId, layer, reason } = selectedLayer;
     onLayerSelect?.(layerId, featureId, async () => layer, reason);
   }, [onLayerSelect, selectedLayer]);
+
   const handleLayerSelect = useCallback(
     async (
       layerId: string | undefined,
@@ -138,7 +140,9 @@ export default function useHooks(
       });
 
       selectLayer(l =>
-        l.layerId === layerId ? l : { layerId, featureId, layer: computedLayer, reason },
+        l.layerId === layerId && l.featureId === featureId
+          ? l
+          : { layerId, featureId, layer: computedLayer, reason },
       );
     },
     [],
@@ -309,7 +313,7 @@ export default function useHooks(
   return {
     mapRef,
     wrapperRef,
-    selectedLayer: selectedLayer,
+    selectedLayer,
     selectedFeature,
     selectedComputedFeature,
     selectedBlock,
