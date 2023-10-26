@@ -62,8 +62,6 @@ export default ({
 
   const selectedLayer = useReactiveVar(selectedLayerVar);
 
-  console.log("seleectedLayer IN STATETEEEE", selectedLayer);
-
   const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
   const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
 
