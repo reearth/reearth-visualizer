@@ -43,6 +43,8 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, isMe, onChangeRole
     { key: "OWNER", label: t("Owner") },
   ];
 
+  const editable = owner && !isMe;
+
   return (
     <Wrapper align="flex-start" justify="space-between">
       <StyleAvatar innerText={user.name} />
@@ -55,9 +57,9 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, isMe, onChangeRole
         currentItem={role}
         body={roles.find(r => r.key === role)?.label}
         onSubmit={saveEdit}
-        disabled={!owner}
+        disabled={!editable}
       />
-      {owner && !isMe && <StyledIcon icon="bin" size={20} onClick={onRemove} />}
+      {editable && <StyledIcon icon="bin" size={20} onClick={onRemove} />}
     </Wrapper>
   );
 };
@@ -65,6 +67,7 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, isMe, onChangeRole
 const Wrapper = styled(Flex)`
   width: 100%;
   height: 100px;
+  padding-right: ${metricsSizes["l"]}px;
   color: ${({ theme }) => theme.classic.properties.contentsText};
 `;
 
@@ -73,10 +76,10 @@ const StyledEditableItem = styled(EditableItem)`
 `;
 
 const StyledIcon = styled(Icon)`
-  padding: 0;
-  margin: 0 ${metricsSizes["l"]}px;
   cursor: pointer;
+  margin-left: ${metricsSizes["l"]}px;
 `;
+
 const StyleAvatar = styled(Avatar)`
   margin-right: ${metricsSizes["m"]}px;
 `;

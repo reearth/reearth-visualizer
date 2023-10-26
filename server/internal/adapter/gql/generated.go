@@ -7600,6 +7600,7 @@ scalar FileSize
 scalar TranslatedString
 scalar Cursor
 scalar JSON
+scalar Map
 
 # Meta Type
 

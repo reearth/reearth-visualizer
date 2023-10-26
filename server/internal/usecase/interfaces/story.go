@@ -57,8 +57,8 @@ type CreatePageParam struct {
 	StoryID         id.StoryID
 	Title           *string
 	Swipeable       *bool
-	Layers          *[]id.LayerID
-	SwipeableLayers *[]id.LayerID
+	Layers          *[]id.NLSLayerID
+	SwipeableLayers *[]id.NLSLayerID
 	Index           *int
 }
 
@@ -68,8 +68,8 @@ type UpdatePageParam struct {
 	PageID          id.PageID
 	Title           *string
 	Swipeable       *bool
-	Layers          *[]id.LayerID
-	SwipeableLayers *[]id.LayerID
+	Layers          *[]id.NLSLayerID
+	SwipeableLayers *[]id.NLSLayerID
 	Index           *int
 }
 
@@ -96,7 +96,7 @@ type PageLayerParam struct {
 	StoryID   id.StoryID
 	PageID    id.PageID
 	Swipeable bool
-	LayerID   id.LayerID
+	LayerID   id.NLSLayerID
 }
 
 type CreateBlockParam struct {

@@ -21,6 +21,7 @@ export type Scalars = {
   FileSize: { input: number; output: number; }
   JSON: { input: any; output: any; }
   Lang: { input: string; output: string; }
+  Map: { input: any; output: any; }
   TranslatedString: { input: { [lang in string]?: string } | null; output: { [lang in string]?: string } | null; }
   URL: { input: string; output: string; }
   Upload: { input: any; output: any; }
@@ -1743,6 +1744,7 @@ export enum PropertySchemaFieldUi {
 export type PropertySchemaGroup = {
   __typename?: 'PropertySchemaGroup';
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']['output']>;
+  collection?: Maybe<Scalars['String']['output']>;
   fields: Array<PropertySchemaField>;
   isAvailableIf?: Maybe<PropertyCondition>;
   isList: Scalars['Boolean']['output'];
