@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/log"
 	"github.com/samber/lo"
 )
 
@@ -92,6 +93,8 @@ func (r *mutationResolver) PublishStory(ctx context.Context, input gqlmodel.Publ
 		return nil, err
 	}
 
+	log.Debugfc(ctx, "input: %s", input)
+
 	res, err := usecases(ctx).StoryTelling.Publish(ctx, interfaces.PublishStoryInput{
 		ID:     sID,
 		Alias:  input.Alias,
@@ -138,12 +141,12 @@ func (r *mutationResolver) CreateStoryPage(ctx context.Context, input gqlmodel.C
 		return nil, err
 	}
 
-	layersId, err := gqlmodel.ToIDs[id.Layer](input.Layers)
+	layersId, err := gqlmodel.ToIDs[id.NLSLayer](input.Layers)
 	if err != nil {
 		return nil, err
 	}
 
-	swipeableLayersIds, err := gqlmodel.ToIDs[id.Layer](input.SwipeableLayers)
+	swipeableLayersIds, err := gqlmodel.ToIDs[id.NLSLayer](input.SwipeableLayers)
 	if err != nil {
 		return nil, err
 	}
@@ -175,12 +178,12 @@ func (r *mutationResolver) UpdateStoryPage(ctx context.Context, input gqlmodel.U
 		return nil, err
 	}
 
-	layersId, err := gqlmodel.ToIDs[id.Layer](input.Layers)
+	layersId, err := gqlmodel.ToIDs[id.NLSLayer](input.Layers)
 	if err != nil {
 		return nil, err
 	}
 
-	swipeableLayersIds, err := gqlmodel.ToIDs[id.Layer](input.SwipeableLayers)
+	swipeableLayersIds, err := gqlmodel.ToIDs[id.NLSLayer](input.SwipeableLayers)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +281,7 @@ func (r *mutationResolver) DuplicateStoryPage(ctx context.Context, input gqlmode
 }
 
 func (r *mutationResolver) AddPageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error) {
-	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.Layer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
+	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.NLSLayer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +306,7 @@ func (r *mutationResolver) AddPageLayer(ctx context.Context, input gqlmodel.Page
 }
 
 func (r *mutationResolver) RemovePageLayer(ctx context.Context, input gqlmodel.PageLayerInput) (*gqlmodel.StoryPagePayload, error) {
-	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.Layer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
+	sceneId, storyId, pageId, layerId, err := gqlmodel.ToID4[id.Scene, id.Story, id.Page, id.NLSLayer](input.SceneID, input.StoryID, input.PageID, input.LayerID)
 	if err != nil {
 		return nil, err
 	}

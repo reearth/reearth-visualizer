@@ -18,6 +18,11 @@ Edit: Edit
 Color Picker: Color Picker
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Set Time: Set Time
+Date: Date
+Time: Time
+Time Zone: Time Zone
+set: set
 Remove: Remove
 Add Item: ''
 Please choose an option: ''
@@ -288,7 +293,6 @@ Reset password: Reset password
 Create your Account: Create your Account
 Already have an account?: Already have an account?
 Log in: Log in
-Date: Date
 File size: File size
 Alphabetical: Alphabetical
 Assets Library: Assets Library
