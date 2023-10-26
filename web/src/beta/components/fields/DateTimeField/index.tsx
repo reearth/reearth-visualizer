@@ -62,7 +62,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
               />
             </InputWrapper>
           </Popover.Trigger>
-          <Popover.Content autoFocus={false}>
+          <PopoverContent autoFocus={false}>
             {open && (
               <EditPanel
                 setDateTime={setDateTime}
@@ -71,7 +71,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
                 onClose={handlePopOver}
               />
             )}
-          </Popover.Content>
+          </PopoverContent>
         </Popover.Provider>
       </Wrapper>
     </Property>
@@ -120,4 +120,8 @@ const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
       : `:hover {
     cursor: pointer;
       }`}
+`;
+
+const PopoverContent = styled(Popover.Content)`
+  z-index: 701;
 `;

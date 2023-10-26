@@ -69,9 +69,6 @@ export default ({ value, onChange, setDateTime }: Props) => {
             (timeWithOffset.includes("-") ? `-${timezoneOffset}` : `+${timezoneOffset}`),
         ) || selectedTimezone,
       );
-    } else {
-      setDate("");
-      setTime("");
     }
   }, [value, offsetFromUTC, selectedTimezone]);
 

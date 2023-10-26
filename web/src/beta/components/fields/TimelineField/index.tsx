@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
@@ -27,26 +27,32 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
 
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
+    setTimeline("");
     onChange?.();
   }, [value, onChange]);
 
+  const [timeline, setTimeline] = useState(value);
+
+  useEffect(() => {
+    setTimeline(value);
+  }, [value]);
   return (
     <Property name={name} description={description}>
       <Wrapper>
         <InputWrapper disabled={true}>
-          <Input dataTimeSet={!!value}>
+          <Input dataTimeSet={!!timeline}>
             <Timeline>
               <TextWrapper size="footnote" customColor>
-                {value ? value : t("not set")}
+                {timeline ? timeline : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {value ? value : t("2023-10-24T00:00:00+09:00")}
+                {timeline ? timeline : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {value ? value : t("2023-10-24T00:00:00+09:00")}
+                {timeline ? timeline : t("not set")}
               </TextWrapper>
             </Timeline>
-            <DeleteIcon icon="bin" size={10} disabled={!value} onClick={handleRemoveSetting} />
+            <DeleteIcon icon="bin" size={10} disabled={!timeline} onClick={handleRemoveSetting} />
           </Input>
           <TriggerButton
             buttonType="secondary"
@@ -58,7 +64,14 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
           />
         </InputWrapper>
       </Wrapper>
-      {openModal && <EditPanel onClose={handleTimelineModalCloser} isVisible={openModal} />}
+      {openModal && (
+        <EditPanel
+          value={value}
+          onChange={onChange}
+          onClose={handleTimelineModalCloser}
+          isVisible={openModal}
+        />
+      )}
     </Property>
   );
 };
@@ -66,7 +79,7 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 `;
 
 const InputWrapper = styled.div<{ disabled?: boolean }>`
@@ -77,7 +90,7 @@ const InputWrapper = styled.div<{ disabled?: boolean }>`
 
 const Input = styled.div<{ dataTimeSet?: boolean }>`
   gap: 14px;
-  flex: 1;
+  width: 100%;
   display: flex;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
@@ -94,6 +107,7 @@ const Input = styled.div<{ dataTimeSet?: boolean }>`
 const Timeline = styled.div`
   padding-left: 26px;
   position: relative;
+  width: 90%;
   &:before {
     position: absolute;
     content: "";
@@ -141,6 +155,7 @@ const TriggerButton = styled(Button)`
 `;
 
 const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
+  width: 10%;
   ${({ disabled, theme }) =>
     disabled
       ? `color: ${theme.content.weaker};`
