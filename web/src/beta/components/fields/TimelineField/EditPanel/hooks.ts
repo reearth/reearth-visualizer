@@ -51,18 +51,16 @@ export default ({ onChange, onClose }: Props) => {
       }
 
       setData(updatedData);
+      !warning && onChange?.(newValue);
     },
-    [data],
+    [data, onChange, warning],
   );
 
   const handleApplyChange = useCallback(() => {
     if (data.currentTime !== "" && data.startTime !== "" && data.stopTime !== "") {
-      onChange?.(data.startTime);
-      onChange?.(data.stopTime);
-      onChange?.(data.currentTime);
       onClose?.();
     }
-  }, [data.currentTime, data.startTime, data.stopTime, onChange, onClose]);
+  }, [data.currentTime, data.startTime, data.stopTime, onClose]);
 
   const isDisabled = useMemo(() => {
     return Object.values(data).every(value => value !== "");
