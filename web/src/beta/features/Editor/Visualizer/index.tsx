@@ -57,7 +57,6 @@ const Visualizer: React.FC<Props> = ({
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
-    layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
     zoomedLayerId,
@@ -112,7 +111,6 @@ const Visualizer: React.FC<Props> = ({
         pluginBaseUrl={config()?.plugins}
         widgetAlignSystemEditing={widgetAlignEditorActivated}
         meta={engineMeta}
-        layerSelectionReason={layerSelectionReason}
         useExperimentalSandbox={useExperimentalSandbox}
         camera={currentCamera}
         onCameraChange={onCameraChange}

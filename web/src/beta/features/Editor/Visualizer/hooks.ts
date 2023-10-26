@@ -84,11 +84,6 @@ export default ({
   );
 
   // convert data
-  const layerSelectionReason = useMemo(
-    () => (selectedLayer ? selectedLayer.layerSelectionReason : undefined),
-    [selectedLayer],
-  );
-
   const layers = useMemo(() => {
     const processedLayers = processLayers(nlsLayers, layerStyles);
     if (!showStoryPanel) return processedLayers;
@@ -271,7 +266,6 @@ export default ({
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
-    layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
