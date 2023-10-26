@@ -27,7 +27,10 @@ export type { MapRef as Ref } from "./hooks";
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
-} & Omit<LayersProps, "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes"> &
+} & Omit<
+  LayersProps,
+  "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes" | "selectedLayerId"
+> &
   Omit<EngineProps, "selectionReason" | "onLayerSelect">;
 
 function Map(
@@ -40,7 +43,6 @@ function Map(
     hiddenLayers,
     layers,
     overrides,
-    selectedLayerId,
     layerSelectionReason,
     timelineManagerRef,
     sceneProperty,
@@ -60,7 +62,6 @@ function Map(
     handleEngineLayerSelect,
   } = useHooks({
     ref,
-    selectedLayerId,
     sceneProperty,
     timelineManagerRef,
     onLayerSelect,
@@ -91,7 +92,7 @@ function Map(
         isEditable={isEditable}
         layers={layers}
         overrides={overrides}
-        selectedLayerId={selectedLayerId}
+        selectedLayerId={selectedLayer}
         selectionReason={layerSelectionReason}
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}

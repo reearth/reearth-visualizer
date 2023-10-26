@@ -682,7 +682,6 @@ type SelectedLayer = [
   LayerSelectionReason | undefined,
   SelectedFeatureInfo | undefined,
 ];
-
 function useSelection({
   flattenedLayers,
   selectedLayerId: initialSelectedLayerId,
@@ -729,6 +728,32 @@ function useSelection({
   }, [getLazyLayer, selectedLayerId?.layerId]);
 
   useEffect(() => {
+    const actualSelectedLayer = selectedLayerForRef();
+    onLayerSelect?.(
+      actualSelectedLayer?.id,
+      selectedLayerId?.featureId,
+      actualSelectedLayer
+        ? () =>
+            new Promise(resolve => {
+              // Wait until computed feature is ready
+              queueMicrotask(() => {
+                resolve(actualSelectedLayer?.computed);
+              });
+            })
+        : undefined,
+      selectedReason,
+      selectedFeatureInfo,
+    );
+  }, [
+    onLayerSelect,
+    selectedLayerId?.layerId,
+    selectedLayerId?.featureId,
+    selectedReason,
+    selectedLayerForRef,
+    selectedFeatureInfo,
+  ]);
+
+  useEffect(() => {
     setSelectedLayer(s =>
       s[0]?.layerId && flattenedLayers?.find(l => l.id === s[0]?.layerId)
         ? [{ ...s[0] }, s[1], s[2]] // Force update when flattenedLayers are updated
@@ -740,53 +765,18 @@ function useSelection({
 
   const select = useCallback(
     (layerId?: unknown, options?: LayerSelectionReason, info?: SelectedFeatureInfo) => {
-      const actualSelectedLayer = selectedLayerForRef();
-      if (typeof layerId === "string") {
+      if (typeof layerId === "string")
         setSelectedLayer([
           {
-            layerId,
+            layerId: layerId || undefined,
           },
           options,
           info,
         ]);
-        onLayerSelect?.(
-          layerId,
-          undefined,
-          actualSelectedLayer
-            ? () =>
-                new Promise(resolve => {
-                  // Wait until computed feature is ready
-                  queueMicrotask(() => {
-                    resolve(actualSelectedLayer?.computed);
-                  });
-                })
-            : undefined,
-          options,
-          info,
-        );
-      } else if (options) {
-        setSelectedLayer(s => [s[0], options, info]);
-        onLayerSelect?.(
-          selectedLayerId?.layerId,
-          selectedLayerId?.featureId,
-          actualSelectedLayer
-            ? () =>
-                new Promise(resolve => {
-                  // Wait until computed feature is ready
-                  queueMicrotask(() => {
-                    resolve(actualSelectedLayer?.computed);
-                  });
-                })
-            : undefined,
-          options ?? selectedReason,
-          info ?? selectedFeatureInfo,
-        );
-      } else {
-        setSelectedLayer([undefined, undefined, undefined]);
-        onLayerSelect?.(undefined, undefined, undefined, undefined, undefined);
-      }
+      else if (options) setSelectedLayer(s => [s[0], options, info]);
+      else setSelectedLayer(s => (!s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined]));
     },
-    [selectedLayerId, selectedReason, selectedFeatureInfo, selectedLayerForRef, onLayerSelect],
+    [],
   );
 
   const selectedFeatureIds = useRef<{ layerId: string; featureIds: string[] }[]>([]);
@@ -805,9 +795,8 @@ function useSelection({
 
       if (layers.length === 1) {
         const [{ layerId, featureId }] = layers;
-        const selectedLayer = getLazyLayer(layerId ?? "");
         // TODO: Support multi select feature for ReEarth
-        if (typeof layerId === "string" && (!featureId || featureId.length === 1)) {
+        if (typeof layerId === "string" && (!featureId || featureId.length === 1))
           setSelectedLayer(s =>
             s[0]?.layerId !== layerId || s[0]?.featureId !== featureId?.[0]
               ? [
@@ -820,48 +809,13 @@ function useSelection({
                 ]
               : s,
           );
-          onLayerSelect?.(
-            layerId,
-            featureId?.[0],
-            selectedLayer
-              ? () =>
-                  new Promise(resolve => {
-                    // Wait until computed feature is ready
-                    queueMicrotask(() => {
-                      resolve(selectedLayer?.computed);
-                    });
-                  })
-              : undefined,
-            options,
-            info,
-          );
-        } else if (options) {
-          setSelectedLayer(s => [s[0], options, info]);
-          onLayerSelect?.(
-            selectedLayerId?.layerId,
-            featureId?.[0],
-            selectedLayer
-              ? () =>
-                  new Promise(resolve => {
-                    // Wait until computed feature is ready
-                    queueMicrotask(() => {
-                      resolve(selectedLayer?.computed);
-                    });
-                  })
-              : undefined,
-            options,
-            info,
-          );
-        } else {
-          setSelectedLayer(resetSelect);
-          onLayerSelect?.(undefined, undefined, undefined, undefined, undefined);
-        }
+        else if (options) setSelectedLayer(s => [s[0], options, info]);
+        else setSelectedLayer(resetSelect);
       } else {
         setSelectedLayer(resetSelect);
-        onLayerSelect?.(undefined, undefined, undefined, undefined, undefined);
       }
     },
-    [selectedLayerId?.layerId, getLazyLayer, onLayerSelect],
+    [],
   );
 
   const updateEngineFeatures = useCallback(

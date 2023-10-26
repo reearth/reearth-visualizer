@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, type Ref, useState, useCallback } from "react";
+import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect } from "react";
 
 import { SelectedFeatureInfo } from "../mantle";
 
@@ -22,15 +22,10 @@ export const REQUEST_RENDER_ONCE = 1;
 export default function ({
   ref,
   sceneProperty,
-  selectedLayerId,
   timelineManagerRef,
   onLayerSelect,
 }: {
   ref: Ref<MapRef>;
-  selectedLayerId?: {
-    layerId?: string;
-    featureId?: string;
-  };
   sceneProperty?: SceneProperty;
   timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
@@ -56,7 +51,7 @@ export default function ({
     [timelineManagerRef],
   );
 
-  // Order in which selectedLayerId prop propagates from the outside:  Map -> Layers -> Engine
+  // Order in which selectedLayerId prop propagates from the outside: Map -> Layers -> Engine
   // 1. selectedLayerId prop on Map component
   // 2. selectedLayerId prop on Layer component
   // 3. onLayerSelect event on Layer component
@@ -71,7 +66,7 @@ export default function ({
     layer?: ComputedLayer;
     reason?: LayerSelectionReason;
     info?: SelectedFeatureInfo;
-  }>(selectedLayerId ?? {});
+  }>({});
 
   const handleLayerSelect = useCallback(
     async (
@@ -82,9 +77,8 @@ export default function ({
       info?: SelectedFeatureInfo,
     ) => {
       selectLayer({ layerId, featureId, layer: await layer?.(), reason, info });
-      onLayerSelect?.(layerId, featureId, layer, reason, info);
     },
-    [onLayerSelect],
+    [],
   );
 
   const handleEngineLayerSelect = useCallback(
@@ -102,6 +96,16 @@ export default function ({
     },
     [],
   );
+
+  useEffect(() => {
+    onLayerSelect?.(
+      selectedLayer.layerId,
+      selectedLayer.featureId,
+      async () => selectedLayer.layer,
+      selectedLayer.reason,
+      selectedLayer.info,
+    );
+  }, [onLayerSelect, selectedLayer]);
 
   useTimelineManager({
     init: sceneProperty?.timeline,

@@ -53,7 +53,6 @@ const Visualizer: React.FC<Props> = ({
     widgets,
     story,
     tags,
-    selectedLayerId,
     blocks,
     selectedWidgetArea,
     widgetAlignEditorActivated,
@@ -101,7 +100,6 @@ const Visualizer: React.FC<Props> = ({
         floatingWidgets={widgets?.floating}
         widgetLayoutConstraint={widgets?.layoutConstraint}
         ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
-        selectedLayerId={selectedLayerId}
         selectedBlockId={selectedBlockId}
         selectedWidgetArea={selectedWidgetArea}
         zoomedLayerId={zoomedLayerId}

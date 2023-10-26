@@ -86,14 +86,6 @@ export default ({
   );
 
   // convert data
-  const selectedLayerId = useMemo(
-    () =>
-      selectedLayer
-        ? { layerId: selectedLayer.layerId, featureId: selectedLayer.feature?.id }
-        : undefined,
-    [selectedLayer],
-  );
-
   const layerSelectionReason = useMemo(
     () => (selectedLayer ? selectedLayer.layerSelectionReason : undefined),
     [selectedLayer],
@@ -267,7 +259,6 @@ export default ({
   return {
     sceneId,
     rootLayerId,
-    selectedLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
