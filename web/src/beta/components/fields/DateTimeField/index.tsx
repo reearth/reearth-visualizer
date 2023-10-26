@@ -113,6 +113,9 @@ const TriggerButton = styled(Button)`
   margin: 0;
 `;
 
+const PopoverContent = styled(Popover.Content)`
+  z-index: 701;
+`;
 const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
   ${({ disabled, theme }) =>
     disabled
@@ -120,8 +123,4 @@ const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
       : `:hover {
     cursor: pointer;
       }`}
-`;
-
-const PopoverContent = styled(Popover.Content)`
-  z-index: 701;
 `;
