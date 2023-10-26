@@ -13,21 +13,23 @@ import useHooks from "./hooks";
 type Props = {
   onChange?: (value?: string | undefined) => void;
   onClose: () => void;
+  value?: string;
+  setDateTime?: (value?: string | undefined) => void;
 };
 
-const EditPanel: React.FC<Props> = ({ onChange, onClose }) => {
+const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
   const t = useT();
 
   const {
     date,
     time,
     selectedTimezone,
+    offsetFromUTC,
     onDateChange,
     onTimeChange,
-    offsetFromUTC,
     onTimezoneSelect,
     onDateTimeApply,
-  } = useHooks({ onChange });
+  } = useHooks({ value, onChange, setDateTime });
 
   const isButtonDisabled = useMemo(() => {
     return date.trim() === "" || time.trim() === "";
@@ -47,8 +49,8 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose }) => {
         </TextWrapper>
         <SelectWrapper>
           <Label>{t("Time Zone")}</Label>
-          <Select
-            value={selectedTimezone}
+          <CustomSelect
+            value={selectedTimezone.timezone}
             options={offsetFromUTC.map(timezone => ({
               key: timezone.timezone,
               label: timezone?.offset,
@@ -110,7 +112,7 @@ const SelectWrapper = styled.div`
   margin-left: 8px;
   width: 95%;
 `;
-const Select = styled(SelectField)`
+const CustomSelect = styled(SelectField)`
   height: 120px;
   overflow-y: auto;
   width: 100%;

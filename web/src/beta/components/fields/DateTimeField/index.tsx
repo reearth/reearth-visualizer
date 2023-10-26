@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
@@ -25,8 +25,15 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
+    setDateTime("");
     onChange?.();
   }, [value, onChange]);
+
+  const [dateTime, setDateTime] = useState(value);
+
+  useEffect(() => {
+    setDateTime(value);
+  }, [value]);
 
   return (
     <Property name={name} description={description}>
@@ -34,11 +41,16 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
         <Popover.Provider open={!!open} placement="bottom-start">
           <Popover.Trigger asChild>
             <InputWrapper disabled={true}>
-              <Input dataTimeSet={!!value}>
+              <Input dataTimeSet={!!dateTime}>
                 <Text size="footnote" customColor>
-                  {value ? value : "YYYY-MM-DDThh:mm:ss±hh:mm"}
+                  {dateTime ? dateTime : "YYYY-MM-DDThh:mm:ss±hh:mm"}
                 </Text>
-                <DeleteIcon icon="bin" size={10} disabled={!value} onClick={handleRemoveSetting} />
+                <DeleteIcon
+                  icon="bin"
+                  size={10}
+                  disabled={!dateTime}
+                  onClick={handleRemoveSetting}
+                />
               </Input>
               <TriggerButton
                 buttonType="secondary"
@@ -51,7 +63,14 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
             </InputWrapper>
           </Popover.Trigger>
           <Popover.Content autoFocus={false}>
-            {open && <EditPanel onChange={onChange} onClose={handlePopOver} />}
+            {open && (
+              <EditPanel
+                setDateTime={setDateTime}
+                value={dateTime}
+                onChange={onChange}
+                onClose={handlePopOver}
+              />
+            )}
           </Popover.Content>
         </Popover.Provider>
       </Wrapper>

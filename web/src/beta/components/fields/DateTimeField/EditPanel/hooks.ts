@@ -1,10 +1,12 @@
 import moment from "moment-timezone";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getUniqueTimezones } from "@reearth/beta/utils/moment-timezone";
 
 type Props = {
+  value?: string;
   onChange?: (value?: string | undefined) => void;
+  setDateTime?: (value?: string | undefined) => void;
 };
 
 type TimezoneInfo = {
@@ -12,10 +14,13 @@ type TimezoneInfo = {
   offset: string;
 };
 
-export default ({ onChange }: Props) => {
-  const [time, setTime] = useState<string>("");
-  const [date, setDate] = useState<string>("");
-  const [selectedTimezone, setSelectedTimezone] = useState("+0:00");
+export default ({ value, onChange, setDateTime }: Props) => {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [selectedTimezone, setSelectedTimezone] = useState<TimezoneInfo>({
+    offset: "+0:00",
+    timezone: "Africa/Abidjan",
+  });
 
   const handleTimeChange = useCallback((newValue: string | undefined) => {
     if (newValue === undefined) return;
@@ -32,12 +37,43 @@ export default ({ onChange }: Props) => {
   }, []);
 
   const handleApplyChange = useCallback(() => {
-    const selectedTimezoneInfo = offsetFromUTC.find(info => info.timezone === selectedTimezone);
+    const selectedTimezoneInfo = offsetFromUTC.find(
+      info => info.timezone === selectedTimezone.timezone,
+    );
     if (selectedTimezoneInfo) {
       const formattedDateTime = `${date}T${time}:00${selectedTimezoneInfo.offset}`;
+      setDateTime?.(formattedDateTime);
       onChange?.(formattedDateTime);
     }
-  }, [date, time, selectedTimezone, onChange, offsetFromUTC]);
+  }, [offsetFromUTC, selectedTimezone, date, time, setDateTime, onChange]);
+
+  const handleTimezoneSelect = useCallback(
+    (newValue: string) => {
+      const updatedTimezone = offsetFromUTC.find(info => info.timezone === newValue);
+      setSelectedTimezone(updatedTimezone || selectedTimezone);
+    },
+    [offsetFromUTC, selectedTimezone],
+  );
+
+  useEffect(() => {
+    if (value) {
+      const [parsedDate, timeWithOffset] = value.split("T");
+      const [parsedTime, timezoneOffset] = timeWithOffset.split(/[-+]/);
+
+      setDate(parsedDate);
+      setTime(parsedTime);
+      setSelectedTimezone(
+        offsetFromUTC.find(
+          info =>
+            info.offset ===
+            (timeWithOffset.includes("-") ? `-${timezoneOffset}` : `+${timezoneOffset}`),
+        ) || selectedTimezone,
+      );
+    } else {
+      setDate("");
+      setTime("");
+    }
+  }, [value, offsetFromUTC, selectedTimezone]);
 
   return {
     date,
@@ -45,7 +81,7 @@ export default ({ onChange }: Props) => {
     selectedTimezone,
     offsetFromUTC,
     onTimeChange: handleTimeChange,
-    onTimezoneSelect: setSelectedTimezone,
+    onTimezoneSelect: handleTimezoneSelect,
     onDateChange: handleDateChange,
     onDateTimeApply: handleApplyChange,
   };
