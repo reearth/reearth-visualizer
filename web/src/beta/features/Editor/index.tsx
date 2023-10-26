@@ -26,6 +26,7 @@ type Props = {
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
+    isVisualizerReady,
     selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
@@ -71,6 +72,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerVisibilityUpdate,
   } = useLayers({
     sceneId,
+    isVisualizerReady,
+    visualizerRef,
   });
 
   const {

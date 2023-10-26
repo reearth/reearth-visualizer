@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect } from "react";
+import { useImperativeHandle, useRef, type Ref, useState, useCallback } from "react";
 
 import { SelectedFeatureInfo } from "../mantle";
 
@@ -51,21 +51,19 @@ export default function ({
     [timelineManagerRef],
   );
 
-  // Order in which selectedLayerId prop propagates from the outside: Map -> Layers -> Engine
-  // 1. selectedLayerId prop on Map component
-  // 2. selectedLayerId prop on Layer component
-  // 3. onLayerSelect event on Layer component
-  // 4. handleLayerSelect fucntion
-  // 5. selectedLayer state
-  // 6. selectedLayerId prop on Engine component, onLayerSelect event on Layer component
-  // 7. onLayerSelect event on Map component
+  // selectLayer logic
+  // 1. Map/hooks(here) is the source
+  //    1.2 State updates propagate up, through onLayerSelect, to update
+  //        the pluginAPI(in Crust) and to update external state through
+  //        the Visualizer's onLayerselect prop.
+  // 2. Passes down from Map to Layers
+  // 3. Passes down from Map to Engine
+  // 4. Source state can be updated only from the Engine (through the layersRef)
 
   const [selectedLayer, selectLayer] = useState<{
     layerId?: string;
     featureId?: string;
-    layer?: ComputedLayer;
     reason?: LayerSelectionReason;
-    info?: SelectedFeatureInfo;
   }>({});
 
   const handleLayerSelect = useCallback(
@@ -76,9 +74,10 @@ export default function ({
       reason?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
-      selectLayer({ layerId, featureId, layer: await layer?.(), reason, info });
+      selectLayer({ layerId, featureId, reason });
+      onLayerSelect?.(layerId, featureId, layer, reason, info);
     },
-    [],
+    [onLayerSelect],
   );
 
   const handleEngineLayerSelect = useCallback(
@@ -96,16 +95,6 @@ export default function ({
     },
     [],
   );
-
-  useEffect(() => {
-    onLayerSelect?.(
-      selectedLayer.layerId,
-      selectedLayer.featureId,
-      async () => selectedLayer.layer,
-      selectedLayer.reason,
-      selectedLayer.info,
-    );
-  }, [onLayerSelect, selectedLayer]);
 
   useTimelineManager({
     init: sceneProperty?.timeline,

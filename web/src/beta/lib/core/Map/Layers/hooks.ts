@@ -1,5 +1,5 @@
 import { atom, useAtomValue } from "jotai";
-import { omit, isEqual } from "lodash-es";
+import { isEqual, omit } from "lodash-es";
 import {
   ForwardedRef,
   useCallback,
@@ -11,7 +11,6 @@ import {
   useState,
   type MutableRefObject,
   RefObject,
-  SetStateAction,
 } from "react";
 import { useSet } from "react-use";
 import { v4 as uuidv4 } from "uuid";
@@ -109,8 +108,7 @@ export default function useHooks({
   layers,
   ref,
   hiddenLayers,
-  selectedLayerId,
-  selectionReason,
+  selectedLayer: initialSelectedLayer,
   requestingRenderMode,
   onLayerSelect,
   engineRef,
@@ -118,13 +116,13 @@ export default function useHooks({
   layers?: Layer[];
   ref?: ForwardedRef<Ref>;
   hiddenLayers?: string[];
-  selectedLayerId?: {
+  selectedLayer?: {
     layerId?: string;
     featureId?: string;
+    selectionReason?: LayerSelectionReason;
   };
-  selectionReason?: LayerSelectionReason;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
-  onLayerSelect?: (
+  onLayerSelect: (
     layerId: string | undefined,
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
@@ -392,9 +390,7 @@ export default function useHooks({
   );
 
   const { select, selectFeatures, selectedLayer } = useSelection({
-    flattenedLayers,
-    selectedLayerId,
-    selectedReason: selectionReason,
+    initialSelectedLayer,
     getLazyLayer: findById,
     onLayerSelect,
     updateStyle,
@@ -403,7 +399,7 @@ export default function useHooks({
 
   const deleteLayer = useCallback(
     (...ids: string[]) => {
-      const selectedId = ids.find(id => id === selectedLayerId?.layerId);
+      const selectedId = ids.find(id => id === initialSelectedLayer?.layerId);
       if (selectedId) {
         // Reset selected layer
         select();
@@ -431,7 +427,7 @@ export default function useHooks({
         return newLayers;
       });
     },
-    [layerMap, atomMap, lazyLayerMap, showLayer, select, selectedLayerId],
+    [layerMap, atomMap, lazyLayerMap, initialSelectedLayer, showLayer, select],
   );
 
   const isLayer = useCallback(
@@ -678,27 +674,23 @@ function compat(layer: unknown): Layer | undefined {
 }
 
 type SelectedLayer = [
-  { layerId?: string; featureId?: string } | undefined,
-  LayerSelectionReason | undefined,
+  { layerId?: string; featureId?: string; reason?: LayerSelectionReason } | undefined,
   SelectedFeatureInfo | undefined,
 ];
 function useSelection({
-  flattenedLayers,
-  selectedLayerId: initialSelectedLayerId,
-  selectedReason: initialSelectedReason,
+  initialSelectedLayer,
   getLazyLayer,
   onLayerSelect,
   engineRef,
   updateStyle,
 }: {
-  flattenedLayers?: Layer[];
-  selectedLayerId?: {
+  initialSelectedLayer?: {
     layerId?: string;
     featureId?: string;
+    reason?: LayerSelectionReason;
   };
-  selectedReason?: LayerSelectionReason;
   getLazyLayer: (layerId: string) => LazyLayer | undefined;
-  onLayerSelect?: (
+  onLayerSelect: (
     layerId: string | undefined,
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
@@ -708,74 +700,85 @@ function useSelection({
   engineRef?: RefObject<EngineRef>;
   updateStyle: (layerId: string) => void;
 }) {
-  const [[selectedLayerId, selectedReason, selectedFeatureInfo], setSelectedLayer] =
-    useState<SelectedLayer>([initialSelectedLayerId, initialSelectedReason, undefined]);
-
-  useEffect(() => {
-    setSelectedLayer(s => {
-      return initialSelectedLayerId
-        ? s[0]?.layerId !== initialSelectedLayerId.layerId || !isEqual(s[1], initialSelectedReason)
-          ? [initialSelectedLayerId, initialSelectedReason, undefined]
-          : s
-        : !s[0]?.layerId && !s[1]
-        ? s
-        : s;
-    });
-  }, [initialSelectedLayerId, initialSelectedReason]);
-
-  const selectedLayerForRef = useCallback(() => {
-    return selectedLayerId?.layerId ? getLazyLayer(selectedLayerId.layerId) : undefined;
-  }, [getLazyLayer, selectedLayerId?.layerId]);
-
-  useEffect(() => {
-    const actualSelectedLayer = selectedLayerForRef();
-    onLayerSelect?.(
-      actualSelectedLayer?.id,
-      selectedLayerId?.featureId,
-      actualSelectedLayer
-        ? () =>
-            new Promise(resolve => {
-              // Wait until computed feature is ready
-              queueMicrotask(() => {
-                resolve(actualSelectedLayer?.computed);
-              });
-            })
-        : undefined,
-      selectedReason,
-      selectedFeatureInfo,
-    );
-  }, [
-    selectedLayerId?.featureId,
-    selectedReason,
-    selectedFeatureInfo,
-    onLayerSelect,
-    selectedLayerForRef,
+  const [[selectedLayer, selectedFeatureInfo], setSelectedLayer] = useState<SelectedLayer>([
+    initialSelectedLayer,
+    undefined,
   ]);
 
+  const selectedLayerForRef = useCallback(() => {
+    return selectedLayer?.layerId ? getLazyLayer(selectedLayer.layerId) : undefined;
+  }, [getLazyLayer, selectedLayer?.layerId]);
+
+  // This useEffect is the only place where Layer's selecedlayerId state
+  // should be updated.
+  // Layers' selectedLayer should be updated by its parent only
   useEffect(() => {
-    setSelectedLayer(s =>
-      s[0]?.layerId && flattenedLayers?.find(l => l.id === s[0]?.layerId)
-        ? [{ ...s[0] }, s[1], s[2]] // Force update when flattenedLayers are updated
-        : !s[0]?.layerId && !s[1]
-        ? s
-        : [undefined, undefined, undefined],
-    );
-  }, [flattenedLayers]);
+    if (initialSelectedLayer && selectedLayer && isEqual(initialSelectedLayer, selectedLayer))
+      return;
+
+    setSelectedLayer?.([
+      initialSelectedLayer
+        ? {
+            layerId: initialSelectedLayer?.layerId,
+            featureId: initialSelectedLayer?.featureId,
+            reason: initialSelectedLayer?.reason,
+          }
+        : undefined,
+      selectedFeatureInfo,
+    ]);
+  }, [initialSelectedLayer, selectedLayer, selectedFeatureInfo]);
+
+  // !!! ASK @keiya WHY THIS IS NEEDED. SEEMS TO BE MERELY DOING EXCESSIVE RERENDERS !!!
+
+  // useEffect(() => {
+  //   setSelectedLayer(s =>
+  //     s[0]?.layerId && flattenedLayers?.find(l => l.id === s[0]?.layerId)
+  //       ? [{ ...s[0] }, s[1], s[2]] // Force update when flattenedLayers are updated
+  //       : !s[0]?.layerId && !s[1]
+  //       ? s
+  //       : [undefined, undefined, undefined],
+  //   );
+  // }, [flattenedLayers]);
+
+  // !!! ASK @keiya WHY THIS IS NEEDED. SEEMS TO BE MERELY DOING EXCESSIVE RERENDERS !!!
 
   const select = useCallback(
     (layerId?: unknown, options?: LayerSelectionReason, info?: SelectedFeatureInfo) => {
-      if (typeof layerId === "string")
-        setSelectedLayer([
-          {
-            layerId: layerId || undefined,
-          },
+      if (typeof layerId === "string") {
+        onLayerSelect(
+          layerId,
+          undefined,
+          layerId
+            ? () =>
+                new Promise(resolve => {
+                  // Wait until computed feature is ready
+                  queueMicrotask(() => {
+                    resolve(getLazyLayer(layerId)?.computed);
+                  });
+                })
+            : undefined,
           options,
           info,
-        ]);
-      else if (options) setSelectedLayer(s => [s[0], options, info]);
-      else setSelectedLayer(s => (!s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined]));
+        );
+      } else if (options && selectedLayer?.layerId) {
+        onLayerSelect(
+          selectedLayer.layerId,
+          selectedLayer?.featureId,
+          () =>
+            new Promise(resolve => {
+              // Wait until computed feature is ready
+              queueMicrotask(() => {
+                resolve(getLazyLayer(selectedLayer.layerId ?? "")?.computed);
+              });
+            }),
+          options,
+          info,
+        );
+      } else {
+        onLayerSelect(undefined, undefined, undefined, undefined, undefined);
+      }
     },
-    [],
+    [selectedLayer, getLazyLayer, onLayerSelect],
   );
 
   const selectedFeatureIds = useRef<{ layerId: string; featureIds: string[] }[]>([]);
@@ -789,32 +792,49 @@ function useSelection({
       options?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
-      const resetSelect: SetStateAction<SelectedLayer> = s =>
-        !s[0] && !s[1] && !s[2] ? s : [undefined, undefined, undefined];
-
       if (layers.length === 1) {
         const [{ layerId, featureId }] = layers;
         // TODO: Support multi select feature for ReEarth
-        if (typeof layerId === "string" && (!featureId || featureId.length === 1))
-          setSelectedLayer(s =>
-            s[0]?.layerId !== layerId || s[0]?.featureId !== featureId?.[0]
-              ? [
-                  {
-                    layerId: layerId || undefined,
-                    featureId: featureId?.[0] || undefined,
-                  },
-                  options,
-                  info,
-                ]
-              : s,
+        if (typeof layerId === "string" && (!featureId || featureId.length === 1)) {
+          onLayerSelect(
+            layerId,
+            featureId?.[0],
+            layerId
+              ? () =>
+                  new Promise(resolve => {
+                    // Wait until computed feature is ready
+                    queueMicrotask(() => {
+                      resolve(getLazyLayer(layerId)?.computed);
+                    });
+                  })
+              : undefined,
+            options,
+            info,
           );
-        else if (options) setSelectedLayer(s => [s[0], options, info]);
-        else setSelectedLayer(resetSelect);
+        } else if (options) {
+          onLayerSelect(
+            selectedLayer?.layerId,
+            selectedLayer?.featureId,
+            layerId
+              ? () =>
+                  new Promise(resolve => {
+                    // Wait until computed feature is ready
+                    queueMicrotask(() => {
+                      resolve(getLazyLayer(layerId)?.computed);
+                    });
+                  })
+              : undefined,
+            options,
+            info,
+          );
+        } else {
+          onLayerSelect(undefined, undefined, undefined, undefined, undefined);
+        }
       } else {
-        setSelectedLayer(resetSelect);
+        onLayerSelect(undefined, undefined, undefined, undefined, undefined);
       }
     },
-    [],
+    [selectedLayer, onLayerSelect, getLazyLayer],
   );
 
   const updateEngineFeatures = useCallback(

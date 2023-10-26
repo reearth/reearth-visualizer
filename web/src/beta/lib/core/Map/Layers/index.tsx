@@ -30,53 +30,43 @@ export type {
   Cluster,
 } from "../ClusteredLayers";
 
-export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
-  hiddenLayers?: string[];
-  selectedLayerId?: {
+export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden" | "selectedLayerId"> & {
+  selectedLayer?: {
     layerId?: string;
     featureId?: string;
+    reason?: LayerSelectionReason;
   };
-  selectionReason?: LayerSelectionReason;
+  hiddenLayers?: string[];
   sceneProperty?: any;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
-  onLayerSelect?: (
+  engineRef?: RefObject<EngineRef>;
+  onLayerSelect: (
     layerId: string | undefined,
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     reason: LayerSelectionReason | undefined,
     info: SelectedFeatureInfo | undefined,
   ) => void;
-  engineRef?: RefObject<EngineRef>;
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (
-  {
-    layers,
-    hiddenLayers,
-    selectedLayerId,
-    selectionReason,
-    requestingRenderMode,
-    onLayerSelect,
-    engineRef,
-    ...props
-  },
+  { layers, selectedLayer, hiddenLayers, requestingRenderMode, engineRef, onLayerSelect, ...props },
   ref,
 ) => {
   const { atomMap, flattenedLayers, isHidden } = useHooks({
     layers,
     ref,
     hiddenLayers,
-    selectedLayerId,
-    selectionReason,
+    selectedLayer,
     requestingRenderMode,
-    onLayerSelect,
     engineRef,
+    onLayerSelect,
   });
 
   return (
     <ClusteredLayers
       {...props}
-      selectedLayerId={selectedLayerId}
+      selectedLayer={selectedLayer}
       layers={flattenedLayers}
       atomMap={atomMap}
       isHidden={isHidden}
