@@ -40,7 +40,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden" | "selected
   sceneProperty?: any;
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
   engineRef?: RefObject<EngineRef>;
-  onLayerSelect: (
+  onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
