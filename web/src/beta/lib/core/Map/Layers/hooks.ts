@@ -122,7 +122,7 @@ export default function useHooks({
     selectionReason?: LayerSelectionReason;
   };
   requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
-  onLayerSelect: (
+  onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
@@ -690,7 +690,7 @@ function useSelection({
     reason?: LayerSelectionReason;
   };
   getLazyLayer: (layerId: string) => LazyLayer | undefined;
-  onLayerSelect: (
+  onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
@@ -745,7 +745,7 @@ function useSelection({
   const select = useCallback(
     (layerId?: unknown, options?: LayerSelectionReason, info?: SelectedFeatureInfo) => {
       if (typeof layerId === "string") {
-        onLayerSelect(
+        onLayerSelect?.(
           layerId,
           undefined,
           layerId
@@ -761,7 +761,7 @@ function useSelection({
           info,
         );
       } else if (options && selectedLayer?.layerId) {
-        onLayerSelect(
+        onLayerSelect?.(
           selectedLayer.layerId,
           selectedLayer?.featureId,
           () =>
@@ -775,7 +775,7 @@ function useSelection({
           info,
         );
       } else {
-        onLayerSelect(undefined, undefined, undefined, undefined, undefined);
+        onLayerSelect?.(undefined, undefined, undefined, undefined, undefined);
       }
     },
     [selectedLayer, getLazyLayer, onLayerSelect],
@@ -796,7 +796,7 @@ function useSelection({
         const [{ layerId, featureId }] = layers;
         // TODO: Support multi select feature for ReEarth
         if (typeof layerId === "string" && (!featureId || featureId.length === 1)) {
-          onLayerSelect(
+          onLayerSelect?.(
             layerId,
             featureId?.[0],
             layerId
@@ -812,7 +812,7 @@ function useSelection({
             info,
           );
         } else if (options) {
-          onLayerSelect(
+          onLayerSelect?.(
             selectedLayer?.layerId,
             selectedLayer?.featureId,
             layerId
@@ -828,10 +828,10 @@ function useSelection({
             info,
           );
         } else {
-          onLayerSelect(undefined, undefined, undefined, undefined, undefined);
+          onLayerSelect?.(undefined, undefined, undefined, undefined, undefined);
         }
       } else {
-        onLayerSelect(undefined, undefined, undefined, undefined, undefined);
+        onLayerSelect?.(undefined, undefined, undefined, undefined, undefined);
       }
     },
     [selectedLayer, onLayerSelect, getLazyLayer],
