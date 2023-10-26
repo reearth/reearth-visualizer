@@ -1,5 +1,7 @@
+import { useMemo } from "react";
+
 import Button from "@reearth/beta/components/Button";
-import PanelCommon from "@reearth/beta/components/fields/CameraField/PanelCommon";
+import PanelCommon from "@reearth/beta/components/fields/common/PanelCommon";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -19,36 +21,35 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose }) => {
   const {
     date,
     time,
-    timezones,
     selectedTimezone,
     onDateChange,
     onTimeChange,
-    getUniqueTimezones,
+    offsetFromUTC,
     onTimezoneSelect,
     onDateTimeApply,
   } = useHooks({ onChange });
 
-  const isButtonDisabled = date.trim() === "" || time.trim() === "";
-  const uniqueTimezones = getUniqueTimezones(timezones);
+  const isButtonDisabled = useMemo(() => {
+    return date.trim() === "" || time.trim() === "";
+  }, [date, time]);
 
   return (
     <PanelCommon title={t("Set Time")} onClose={onClose}>
       <FieldGroup>
         <TextWrapper>
           <Label>{t("Date")}</Label>
-          <TextInput className="customTextInput" type="date" value={date} onChange={onDateChange} />
+          <Input type="date" value={date} onChange={onDateChange} />
         </TextWrapper>
         <TextWrapper>
           <Label>{t("Time")}</Label>
 
-          <TextInput className="customTextInput" type="time" value={time} onChange={onTimeChange} />
+          <Input type="time" value={time} onChange={onTimeChange} />
         </TextWrapper>
         <SelectWrapper>
           <Label>{t("Time Zone")}</Label>
-          <SelectField
+          <Select
             value={selectedTimezone}
-            className="timezone"
-            options={uniqueTimezones.map(timezone => ({
+            options={offsetFromUTC.map(timezone => ({
               key: timezone.timezone,
               label: timezone?.offset,
             }))}
@@ -76,9 +77,10 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose }) => {
 const TextWrapper = styled.div`
   margin-left: 8px;
   width: 88%;
-  .customTextInput {
-    width: 100%;
-  }
+`;
+
+const Input = styled(TextInput)`
+  width: 100%;
 `;
 
 const FieldGroup = styled.div`
@@ -107,10 +109,10 @@ const StyledButton = styled(Button)`
 const SelectWrapper = styled.div`
   margin-left: 8px;
   width: 95%;
-  .timezone {
-    height: 120px;
-    overflow-y: auto;
-    width: 100%;
-  }
+`;
+const Select = styled(SelectField)`
+  height: 120px;
+  overflow-y: auto;
+  width: 100%;
 `;
 export default EditPanel;

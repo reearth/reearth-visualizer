@@ -36,7 +36,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
             <InputWrapper disabled={true}>
               <Input dataTimeSet={!!value}>
                 <Text size="footnote" customColor>
-                  {value}
+                  {value ? value : "YYYY-MM-DDThh:mm:ss±hh:mm"}
                 </Text>
                 <DeleteIcon icon="bin" size={10} disabled={!value} onClick={handleRemoveSetting} />
               </Input>
