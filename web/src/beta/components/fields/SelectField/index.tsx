@@ -22,7 +22,6 @@ export type Props = {
   // Property field
   name?: string;
   description?: string;
-  className?: string;
 };
 
 const SelectField: React.FC<Props> = ({
@@ -32,7 +31,6 @@ const SelectField: React.FC<Props> = ({
   disabled = false,
   name,
   description,
-  className,
 }) => {
   const t = useT();
 
@@ -63,7 +61,7 @@ const SelectField: React.FC<Props> = ({
             <ArrowIcon icon="arrowDown" open={open} size={12} />
           </InputWrapper>
         </Popover.Trigger>
-        <PickerWrapper className={className} attachToRoot>
+        <PickerWrapper attachToRoot>
           {options?.map(({ label: value, key }) => (
             <Option
               size="footnote"
