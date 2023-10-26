@@ -58,7 +58,13 @@ Layer Style: ''
 Outline: Outline
 Add Layer from Resource: ''
 Inspector: Inspector
-Layer Property Inspector: ''
+ID: ID
+Geometry: Geometry
+Properties: Properties
+Data: Data
+Feature: Feature
+Styling: Styling
+Format: Format
 Published: Published
 Unpublished: Unpublished
 Scene: Scene
@@ -322,7 +328,6 @@ New workspace: New workspace
 '''s workspace': '''s workspace'
 Layer style: Layer style
 import: import
-Data: Data
 Import to scene: Import to scene
 You are deleting a dataset. Layers that are linked to this dataset might show errors.: >-
   You are deleting a dataset. Layers that are linked to this dataset might show
