@@ -18,6 +18,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -38,6 +39,7 @@ type Storytelling struct {
 	tagRepo          repo.Tag
 	file             gateway.File
 	transaction      usecasex.Transaction
+	nlsLayerRepo     repo.NLSLayer
 }
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
@@ -55,6 +57,7 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		tagRepo:          r.Tag,
 		file:             gr.File,
 		transaction:      r.Transaction,
+		nlsLayerRepo:     r.NLSLayer,
 	}
 }
 
@@ -274,6 +277,15 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		}
 	}
 
+	log.Debugfc(ctx, "REACHED HERE!!!: %v", story.Scene())
+
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugfc(ctx, "nlsLayers: %s", nlsLayers)
+
 	prevAlias := story.Alias()
 	if inp.Alias == nil && prevAlias == "" && inp.Status != storytelling.PublishmentStatusPrivate {
 		return nil, interfaces.ErrProjectAliasIsNotSet
@@ -329,7 +341,8 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 				repo.DatasetGraphLoaderFrom(i.datasetRepo),
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
-			).ForScene(scene).WithStory(story).Build(ctx, w, time.Now())
+				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+			).ForScene(scene).WithNLSLayers(&nlsLayers).WithStory(story).Build(ctx, w, time.Now(), true)
 		}()
 
 		// Save
