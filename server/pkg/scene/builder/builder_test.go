@@ -7,6 +7,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/layer"
+	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/tag"
@@ -451,6 +452,8 @@ func TestSceneBuilder(t *testing.T) {
 	tloader := tag.LoaderFrom(tags)
 	tsloader := tag.SceneLoaderFrom(tags)
 
+	nlsloader := nlslayer.LoaderFrom([]nlslayer.NLSLayer{})
+
 	expectedLayer1 := &layerJSON{
 		ID:          layer1.ID().String(),
 		PluginID:    layer1.Plugin().StringRef(),
@@ -766,8 +769,8 @@ func TestSceneBuilder(t *testing.T) {
 	}
 
 	// exec
-	sb := New(lloader, ploader, dloader, tloader, tsloader).ForScene(scene)
-	result, err := sb.buildScene(context.Background(), publishedAt)
+	sb := New(lloader, ploader, dloader, tloader, tsloader, nlsloader).ForScene(scene)
+	result, err := sb.buildScene(context.Background(), publishedAt, false)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result)

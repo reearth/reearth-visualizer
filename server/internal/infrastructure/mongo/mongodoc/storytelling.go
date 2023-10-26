@@ -204,11 +204,11 @@ func (d *PageDocument) Model() (*storytelling.Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	lIds, err := id.LayerIDListFrom(d.Layers)
+	lIds, err := id.NLSLayerIDListFrom(d.Layers)
 	if err != nil {
 		return nil, err
 	}
-	slIds, err := id.LayerIDListFrom(d.SwipeLayers)
+	slIds, err := id.NLSLayerIDListFrom(d.SwipeLayers)
 	if err != nil {
 		return nil, err
 	}
