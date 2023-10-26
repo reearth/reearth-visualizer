@@ -62,18 +62,19 @@ export default ({ value, onChange, setDateTime }: Props) => {
 
       setDate(parsedDate);
       setTime(parsedTime);
-      setSelectedTimezone(
-        offsetFromUTC.find(
-          info =>
-            info.offset ===
-            (timeWithOffset.includes("-") ? `-${timezoneOffset}` : `+${timezoneOffset}`),
-        ) || selectedTimezone,
+
+      const updatedTimezone = offsetFromUTC.find(
+        info =>
+          info.offset ===
+          (timeWithOffset.includes("-") ? `-${timezoneOffset}` : `+${timezoneOffset}`),
       );
+      updatedTimezone && setSelectedTimezone(updatedTimezone);
     } else {
       setDate("");
       setTime("");
+      setSelectedTimezone({ offset: "+0:00", timezone: "Africa/Abidjan" });
     }
-  }, [value, offsetFromUTC, selectedTimezone]);
+  }, [value, offsetFromUTC]);
 
   return {
     date,
