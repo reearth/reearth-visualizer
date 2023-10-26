@@ -1,4 +1,5 @@
 import Button from "@reearth/beta/components/Button";
+import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -16,9 +17,12 @@ type EditPanelProps = {
 
 const EditPanel = ({ isVisible, value, onClose, onChange }: EditPanelProps) => {
   const t = useT();
-  const { data, handleOnChange, onAppyChange } = useHooks({ value, onChange });
+  const { data, warning, isDisabled, handleOnChange, onAppyChange } = useHooks({
+    value,
+    onChange,
+    onClose,
+  });
 
-  console.log(value);
   return (
     <Wrapper>
       <Modal
@@ -30,7 +34,7 @@ const EditPanel = ({ isVisible, value, onClose, onChange }: EditPanelProps) => {
           <Button
             text={t("Apply")}
             buttonType="primary"
-            // disabled={true}
+            disabled={!isDisabled || warning}
             onClick={onAppyChange}
           />
         }>
@@ -53,6 +57,12 @@ const EditPanel = ({ isVisible, value, onClose, onChange }: EditPanelProps) => {
             onChange={newValue => handleOnChange(newValue || "", "currentTime")}
             value={data?.currentTime}
           />
+          {warning && (
+            <DangerItem>
+              <Icon icon="alert" size={30} />
+              {t("Please make sure the Current time must between the Start time and End Time.")}
+            </DangerItem>
+          )}
         </FieldsWrapper>
       </Modal>
     </Wrapper>
@@ -69,6 +79,15 @@ const FieldsWrapper = styled.div`
 const CustomDateTimeField = styled(DateTimeField)`
   position: absolute;
   background: blue;
+`;
+
+const DangerItem = styled.div`
+  padding-top: 8px;
+  color: ${({ theme }) => theme.dangerous.main};
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;
 
 export default EditPanel;
