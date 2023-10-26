@@ -42,12 +42,12 @@ export default (workspaceId: string) => {
   const [modalShown, setModalShown] = useState(false);
   const { useMeQuery } = useMeFetcher();
   const {
-    me: { email },
+    me: { email = "" },
   } = useMeQuery();
   const openModal = useCallback(() => {
     if (
-      email &&
-      (window.REEARTH_CONFIG?.developerMode || window.REEARTH_CONFIG?.superAdmins?.includes(email))
+      window.REEARTH_CONFIG?.developerMode ||
+      window.REEARTH_CONFIG?.earlyAccessAdmins?.includes(email)
     )
       setPrjTypeSelectOpen(true);
     else setModalShown(true);

@@ -49,13 +49,13 @@ const QuickStart: React.FC<Props> = ({
   const isSmallWindow = useMedia("(max-width: 1024px)");
   const { useMeQuery } = useMeFetcher();
   const {
-    me: { email },
+    me: { email = "" },
   } = useMeQuery();
 
   const handleCreateProjectClick = useCallback(() => {
     if (
-      email &&
-      (window.REEARTH_CONFIG?.developerMode || window.REEARTH_CONFIG?.superAdmins?.includes(email))
+      window.REEARTH_CONFIG?.developerMode ||
+      window.REEARTH_CONFIG?.earlyAccessAdmins?.includes(email)
     )
       setPrjTypeSelectOpen(true);
     else setPrjCreateOpen(true);
