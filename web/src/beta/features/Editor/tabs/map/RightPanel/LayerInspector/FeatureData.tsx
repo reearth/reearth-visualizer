@@ -17,10 +17,13 @@ type Props = {
 
 const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
   const t = useT();
-  console.log("SELECTED FEATURE: ", selectedFeature);
 
   return (
     <Wrapper>
+      <Text size="body">{t("ID")}</Text>
+      <ValueWrapper>
+        <Text size="body">{selectedFeature?.id}</Text>
+      </ValueWrapper>
       <Text size="body">{t("Geometry")}</Text>
       <ValueWrapper>
         <JsonView src={selectedFeature?.geometry} theme="a11y" dark />
