@@ -2544,7 +2544,7 @@ extensions:
               title: Background Color
               ui: color
             - id: showLayers
-              type: string
+              type: map
               title: Show Layers
               ui: layer
               choices:

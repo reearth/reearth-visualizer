@@ -1,20 +1,18 @@
+// CLASSIC CONFIG
+
 import { CodegenConfig } from "@graphql-codegen/cli";
-
-const rootGQLDirectory = "src/services/gql/";
-
-const rootGenerateDirectory = `${rootGQLDirectory}__gen__/`;
 
 const config: CodegenConfig = {
   overwrite: true,
   schema: "../server/gql/*.graphql",
-  documents: [`${rootGQLDirectory}fragments/*.ts`, `${rootGQLDirectory}queries/*.ts`],
+  documents: [
+    "src/classic/gql/fragments/*.ts",
+    "src/classic/gql/queries/*.ts",
+    "src/classic/**/*.graphql",
+  ],
   generates: {
-    [rootGenerateDirectory]: {
-      preset: "client",
-      presetConfig: {
-        gqlTagName: "gql",
-        fragmentMasking: false,
-      },
+    "./src/classic/gql/graphql-client-api.tsx": {
+      plugins: ["typescript", "typescript-operations", "typescript-react-apollo"],
       config: {
         useTypeImports: true,
         scalars: {
@@ -25,15 +23,16 @@ const config: CodegenConfig = {
           URL: "string",
           Lang: "string",
           TranslatedString: "{ [lang in string]?: string } | null",
-          JSON: "any",
         },
       },
     },
-    [`${rootGenerateDirectory}/fragmentMatcher.json`]: {
+    "./src/classic/gql/graphql.schema.json": {
+      plugins: ["introspection"],
+    },
+    "./src/classic/gql/fragmentMatcher.json": {
       plugins: ["fragment-matcher"],
     },
   },
-  ignoreNoDocuments: true,
 };
 
 export default config;
