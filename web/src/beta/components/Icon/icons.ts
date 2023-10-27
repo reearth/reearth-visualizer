@@ -43,6 +43,7 @@ import ZoomToLayer from "./Icons/zoomToLayer.svg";
 import LayerStyleIcon from "./Icons/layerStyle.svg";
 import AddLayerStyleButtonIcon from "./Icons/addLayerStyleButton.svg";
 import LayerInspector from "./Icons/layerInspector.svg";
+import Clock from "./Icons/Clock.svg";
 
 // MSIC
 import CheckCircle from "./Icons/checkCircle.svg";
@@ -128,6 +129,7 @@ export default {
   text: InfoText,
   html: InfoHTML,
   video: InfoVideo,
+  clock: Clock,
   location: InfoLocation,
   photooverlay: PrimPhotoOverlay,
   arrowUpDown: ArrowUpDown,

@@ -95,7 +95,6 @@ const StyledInput = styled.input`
   flex: 1;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
-
   :focus {
     border-color: ${({ theme }) => theme.outline.main};
   }
