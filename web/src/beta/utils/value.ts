@@ -230,6 +230,9 @@ export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
 };
 
 export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
+  "3dtiles": {
+    show: true,
+  },
   resource: {
     clampToGround: true,
   },

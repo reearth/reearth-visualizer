@@ -89,6 +89,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   return {
     visualizerRef,
+    isVisualizerReady,
     selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
