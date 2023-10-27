@@ -32,14 +32,6 @@ const TextInput: React.FC<Props> = ({
     setCurrentValue(value ?? "");
   }, [value]);
 
-  const handlepdateValue = useCallback(
-    (newValue: string) => {
-      if (!newValue || /^ *$/.test(newValue)) setCurrentValue("");
-      onChange?.(newValue);
-    },
-    [onChange],
-  );
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -49,29 +41,28 @@ const TextInput: React.FC<Props> = ({
 
       timeoutRef.current = setTimeout(() => {
         if (newValue === undefined) return;
-        handlepdateValue(newValue);
+        onChange?.(newValue);
       }, timeout);
     },
-    [handlepdateValue, timeout],
+    [onChange, timeout],
   );
 
   const handleBlur = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    handlepdateValue(currentValue);
+    onChange?.(currentValue);
     onBlur?.();
-  }, [handlepdateValue, currentValue, onBlur]);
+  }, [currentValue, onChange, onBlur]);
 
   const handleExit = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Escape") {
         onExit?.(e);
       } else if (e.key === "Enter" || e.key === "Return") {
-        handlepdateValue(currentValue);
-
+        onChange?.(currentValue);
         onExit?.(e);
       }
     },
-    [currentValue, handlepdateValue, onExit],
+    [currentValue, onChange, onExit],
   );
 
   return (
@@ -98,6 +89,8 @@ const StyledInput = styled.input`
   border-radius: 4px;
   padding: 4px 8px;
   transition: all 0.3s;
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
 
   :focus {
     border-color: ${({ theme }) => theme.outline.main};
