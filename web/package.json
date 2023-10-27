@@ -152,6 +152,7 @@
         "lodash-es": "4.17.21",
         "lru-cache": "8.0.4",
         "mini-svg-data-uri": "1.4.4",
+        "moment-timezone": "0.5.43",
         "parse-domain": "7.0.1",
         "quickjs-emscripten": "0.23.0",
         "quickjs-emscripten-sync": "1.5.2",
