@@ -11,6 +11,7 @@ import {
   useWidgetsFetcher,
   useStorytellingFetcher,
   usePropertyFetcher,
+  useLayerStylesFetcher,
 } from "@reearth/services/api";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
@@ -43,11 +44,13 @@ export default ({
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
+  const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
   const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
+  const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
@@ -93,13 +96,13 @@ export default ({
   );
 
   const layers = useMemo(() => {
-    const processedLayers = processLayers(nlsLayers);
+    const processedLayers = processLayers(nlsLayers, layerStyles);
     if (!showStoryPanel) return processedLayers;
     return processedLayers?.map(layer => ({
       ...layer,
       visible: currentPage?.layersIds?.includes(layer.id),
     }));
-  }, [nlsLayers, showStoryPanel, currentPage?.layersIds]);
+  }, [nlsLayers, layerStyles, showStoryPanel, currentPage?.layersIds]);
 
   // TODO: Use GQL value
   const rootLayerId = "";
@@ -181,8 +184,6 @@ export default ({
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
-
-      console.log("Layer has been draped!");
     },
     [],
   );

@@ -172,7 +172,7 @@ export default function Feature({
       <>
         {displayType.map(k => {
           const [C] = components[k] ?? [];
-          const isVisible = layer.layer.visible == false && !isHidden;
+          const isVisible = layer.layer.visible !== false && !isHidden;
           // NOTE: IBL for 3dtiles is not updated unless Tileset feature component is re-created.
           const useSceneSphericalHarmonicCoefficients =
             !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;

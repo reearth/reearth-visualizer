@@ -3,6 +3,7 @@ import { HTMLInputTypeAttribute, useCallback, useEffect, useRef, useState } from
 import { styled } from "@reearth/services/theme";
 
 export type Props = {
+  className?: string;
   value?: string;
   placeholder?: string;
   timeout?: number;
@@ -11,9 +12,11 @@ export type Props = {
   onChange?: (text: string) => void;
   onBlur?: () => void;
   onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 };
 
 const TextInput: React.FC<Props> = ({
+  className,
   value,
   placeholder,
   timeout = 1000,
@@ -21,6 +24,7 @@ const TextInput: React.FC<Props> = ({
   onChange,
   onBlur,
   onExit,
+  disabled,
   type,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
@@ -65,6 +69,7 @@ const TextInput: React.FC<Props> = ({
 
   return (
     <StyledInput
+      className={className}
       type={type}
       value={currentValue ?? ""}
       placeholder={placeholder}
@@ -72,6 +77,7 @@ const TextInput: React.FC<Props> = ({
       onChange={handleChange}
       onBlur={handleBlur}
       onKeyUp={handleExit}
+      disabled={!!disabled}
     />
   );
 };
@@ -86,7 +92,8 @@ const StyledInput = styled.input`
   border-radius: 4px;
   padding: 4px 8px;
   transition: all 0.3s;
-
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
   :focus {
     border-color: ${({ theme }) => theme.outline.main};
   }

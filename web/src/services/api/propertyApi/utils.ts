@@ -279,6 +279,8 @@ export const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField[
       return "margin";
     case PropertySchemaFieldUi.Padding:
       return "padding";
+    case PropertySchemaFieldUi.Datetime:
+      return "datetime";
   }
   return undefined;
 };

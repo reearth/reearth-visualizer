@@ -5,7 +5,7 @@ import type { Camera } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import PanelCommon from "../PanelCommon";
+import PanelCommon from "../../common/PanelCommon";
 
 import useHooks from "./hooks";
 

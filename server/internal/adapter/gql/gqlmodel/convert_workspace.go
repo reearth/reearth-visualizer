@@ -34,6 +34,8 @@ func ToRole(r workspace.Role) Role {
 		return RoleReader
 	case workspace.RoleWriter:
 		return RoleWriter
+	case workspace.RoleMaintainer:
+		return RoleMaintainer
 	case workspace.RoleOwner:
 		return RoleOwner
 	}
@@ -46,6 +48,8 @@ func FromRole(r Role) workspace.Role {
 		return workspace.RoleReader
 	case RoleWriter:
 		return workspace.RoleWriter
+	case RoleMaintainer:
+		return workspace.RoleMaintainer
 	case RoleOwner:
 		return workspace.RoleOwner
 	}

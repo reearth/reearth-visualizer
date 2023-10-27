@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import AssetCard from "@reearth/beta/components/CatalogCard";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
-import AssetCard from "@reearth/beta/features/Assets/AssetCard";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import useHooks from "@reearth/beta/features/Assets/hooks";
 import { Asset } from "@reearth/beta/features/Assets/types";
@@ -49,15 +49,15 @@ const ChooseAssetModal: React.FC<Props> = ({
   const [selectedSortOption, setSelectedSortOption] = useState("date");
   const {
     assets,
-    isLoading,
+    isAssetsLoading,
     hasMoreAssets,
     searchTerm,
     selectedAssets,
-    selectAsset,
     localSearchTerm,
-    wrapperRef,
+    assetsWrapperRef,
     sortOptions,
     onScrollToBottom,
+    selectAsset,
     handleSearchInputChange,
     handleSearch,
     handleGetMoreAssets,
@@ -164,7 +164,7 @@ const ChooseAssetModal: React.FC<Props> = ({
         </SearchWarpper>
       </ControlWarpper>
       <AssetWrapper>
-        {!isLoading && (!assets || assets.length < 1) ? (
+        {!isAssetsLoading && (!assets || assets.length < 1) ? (
           <Template>
             <TemplateText size="body">
               {searchTerm
@@ -176,9 +176,9 @@ const ChooseAssetModal: React.FC<Props> = ({
           </Template>
         ) : (
           <AssetListWrapper
-            ref={wrapperRef}
+            ref={assetsWrapperRef}
             onScroll={e =>
-              !isLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
+              !isAssetsLoading && hasMoreAssets && onScrollToBottom?.(e, handleGetMoreAssets)
             }>
             <AssetList>
               {filteredAssets?.map(a => (
@@ -198,7 +198,7 @@ const ChooseAssetModal: React.FC<Props> = ({
                 />
               ))}
             </AssetList>
-            {isLoading && <Loading />}
+            {isAssetsLoading && <Loading />}
           </AssetListWrapper>
         )}
       </AssetWrapper>
