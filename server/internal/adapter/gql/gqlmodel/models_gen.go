@@ -1391,6 +1391,12 @@ type TeamMember struct {
 	User   *User `json:"user"`
 }
 
+type Timeline struct {
+	CurrentTime *string `json:"currentTime"`
+	StartTime   *string `json:"startTime"`
+	EndTime     *string `json:"endTime"`
+}
+
 type Typography struct {
 	FontFamily *string    `json:"fontFamily"`
 	FontWeight *string    `json:"fontWeight"`
@@ -2260,6 +2266,8 @@ const (
 	ValueTypePolygon      ValueType = "POLYGON"
 	ValueTypeRect         ValueType = "RECT"
 	ValueTypeSpacing      ValueType = "SPACING"
+	ValueTypeArray        ValueType = "ARRAY"
+	ValueTypeTimeline     ValueType = "TIMELINE"
 )
 
 var AllValueType = []ValueType{
@@ -2276,11 +2284,13 @@ var AllValueType = []ValueType{
 	ValueTypePolygon,
 	ValueTypeRect,
 	ValueTypeSpacing,
+	ValueTypeArray,
+	ValueTypeTimeline,
 }
 
 func (e ValueType) IsValid() bool {
 	switch e {
-	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing:
+	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing, ValueTypeArray, ValueTypeTimeline:
 		return true
 	}
 	return false

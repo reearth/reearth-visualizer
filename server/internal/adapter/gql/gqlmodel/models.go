@@ -322,3 +322,23 @@ func UnmarshalJSON(v interface{}) (JSON, error) {
 	}
 	return tmp, nil
 }
+
+type Array []any
+
+func MarshalArray(a Array) graphql.Marshaler {
+	return graphql.WriterFunc(func(w io.Writer) {
+		bytes, err := json.Marshal(a)
+		if err != nil {
+			w.Write([]byte("null"))
+		} else {
+			w.Write(bytes)
+		}
+	})
+}
+
+func UnmarshalArray(v interface{}) (Array, error) {
+	if arr, ok := v.([]interface{}); ok {
+		return Array(arr), nil
+	}
+	return nil, fmt.Errorf("array must be a list")
+}
