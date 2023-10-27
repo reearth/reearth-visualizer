@@ -277,14 +277,10 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		}
 	}
 
-	log.Debugfc(ctx, "REACHED HERE!!!: %v", story.Scene())
-
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
 	if err != nil {
 		return nil, err
 	}
-
-	log.Debugfc(ctx, "nlsLayers: %s", nlsLayers)
 
 	prevAlias := story.Alias()
 	if inp.Alias == nil && prevAlias == "" && inp.Status != storytelling.PublishmentStatusPrivate {

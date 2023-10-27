@@ -131,11 +131,9 @@ func (r *NLSLayer) FindParentsByIDs(ctx context.Context, ids id.NLSLayerIDList) 
 }
 
 func (r *NLSLayer) FindByScene(ctx context.Context, id id.SceneID) (nlslayer.NLSLayerList, error) {
-	log.Debugfc(ctx, "REACHED HERE THOUGH?")
 	if !r.f.CanRead(id) {
 		return nil, nil
 	}
-	log.Debugfc(ctx, "REACHED HERE TOO: %v", id)
 	return r.find(ctx, nil, bson.M{
 		"scene": id.String(),
 	})
@@ -218,7 +216,6 @@ func (r *NLSLayer) find(ctx context.Context, dst nlslayer.NLSLayerList, filter i
 	if err := r.client.Find(ctx, filter, c); err != nil {
 		return nil, err
 	}
-	log.Debugfc(ctx, "ALL WORKING FINE HERE")
 	return lo.ToSlicePtr(c.Result), nil
 }
 

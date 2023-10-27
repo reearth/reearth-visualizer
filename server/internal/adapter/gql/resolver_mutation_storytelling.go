@@ -93,8 +93,6 @@ func (r *mutationResolver) PublishStory(ctx context.Context, input gqlmodel.Publ
 		return nil, err
 	}
 
-	log.Debugfc(ctx, "input: %s", input)
-
 	res, err := usecases(ctx).StoryTelling.Publish(ctx, interfaces.PublishStoryInput{
 		ID:     sID,
 		Alias:  input.Alias,
