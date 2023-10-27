@@ -114,25 +114,20 @@ export default function useHooks(
       reason: LayerSelectionReason | undefined,
       info: SelectedFeatureInfo | undefined,
     ) => {
+      if (selectedLayer.layerId === layerId && selectedLayer.featureId === featureId) return;
+
       const computedLayer = await layer?.();
 
-      selectFeature(f =>
-        f?.id === featureId
-          ? f
-          : layerId && featureId
+      selectFeature(
+        layerId && featureId
           ? mapRef.current?.engine.findFeatureById?.(layerId, featureId)
           : undefined,
       );
-      selectComputedFeature(f => {
-        const res =
-          f?.id === featureId
-            ? f
-            : layerId && featureId
-            ? mapRef.current?.engine.findComputedFeatureById?.(layerId, featureId) ??
-              (f && f.id === info?.feature?.id ? f : info?.feature)
-            : undefined;
-        return res;
-      });
+      selectComputedFeature(
+        layerId && featureId
+          ? mapRef.current?.engine.findComputedFeatureById?.(layerId, featureId) ?? info?.feature
+          : undefined,
+      );
 
       selectLayer(l =>
         l.layerId === layerId && l.featureId === featureId
@@ -140,9 +135,9 @@ export default function useHooks(
           : { layerId, featureId, layer: computedLayer, reason },
       );
 
-      onLayerSelect?.(layerId, featureId, async () => layer?.(), reason);
+      onLayerSelect?.(layerId, featureId, layer, reason);
     },
-    [onLayerSelect],
+    [selectedLayer, onLayerSelect],
   );
 
   // blocks

@@ -122,10 +122,13 @@ export default ({
       layer?: () => Promise<ComputedLayer | undefined>,
       layerSelectionReason?: LayerSelectionReason,
     ) => {
-      const feature = (await layer?.())?.features?.find(f => f.id === featureId);
-      selectedLayerVar(id ? { layerId: id, feature, layerSelectionReason } : undefined);
+      if (id === selectedLayer?.layerId && featureId === selectedLayer?.featureId) return;
+
+      selectedLayerVar(
+        id ? { layerId: id, featureId, layer: await layer?.(), layerSelectionReason } : undefined,
+      );
     },
-    [],
+    [selectedLayer],
   );
 
   const onBlockChange = useCallback(

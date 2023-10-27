@@ -40,14 +40,21 @@ const InspectorTabs: React.FC<Props> = ({
   );
 
   const selectedFeature = useMemo(() => {
-    if (!selectedLayerId?.feature) return;
-    const { id, geometry, properties } = selectedLayerId.feature;
+    if (!selectedLayerId?.featureId) return;
+    const { id, geometry, properties } =
+      selectedLayerId.layer?.features?.find(f => f.id === selectedLayerId.featureId) ?? {};
+    console.log("LAYER", selectedLayerId.layer);
+    console.log(
+      "feature",
+      selectedLayerId.layer?.features?.find(f => f.id === selectedLayerId.featureId),
+    );
+    if (!id) return;
     return {
       id,
       geometry,
       properties,
     };
-  }, [selectedLayerId?.feature]);
+  }, [selectedLayerId]);
 
   const tabs: TabObject[] = useMemo(
     () => [
