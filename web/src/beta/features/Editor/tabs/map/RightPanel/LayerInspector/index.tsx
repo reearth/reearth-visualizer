@@ -43,11 +43,6 @@ const InspectorTabs: React.FC<Props> = ({
     if (!selectedLayerId?.featureId) return;
     const { id, geometry, properties } =
       selectedLayerId.layer?.features?.find(f => f.id === selectedLayerId.featureId) ?? {};
-    console.log("LAYER", selectedLayerId.layer);
-    console.log(
-      "feature",
-      selectedLayerId.layer?.features?.find(f => f.id === selectedLayerId.featureId),
-    );
     if (!id) return;
     return {
       id,
