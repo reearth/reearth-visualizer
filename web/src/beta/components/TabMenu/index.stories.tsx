@@ -84,7 +84,7 @@ export const Default: Story = (args: Props) => {
 
 Default.args = {
   tabs: [
-    { id: "tab1", icon: "infobox", component: <SampleComponent /> },
+    { id: "tab1", name: "My infobox", icon: "infobox", component: <SampleComponent /> },
     {
       id: "tab2",
       icon: "dl",
