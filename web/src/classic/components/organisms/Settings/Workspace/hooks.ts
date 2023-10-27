@@ -183,6 +183,7 @@ export default (params: Params) => {
             role: {
               READER: Role.Reader,
               WRITER: Role.Writer,
+              MAINTAINER: Role.Maintainer,
               OWNER: Role.Owner,
             }[role],
           },
