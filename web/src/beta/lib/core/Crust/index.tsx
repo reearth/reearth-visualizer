@@ -1,4 +1,4 @@
-import type { ReactNode, RefObject } from "react";
+import { type ReactNode, type RefObject } from "react";
 
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
@@ -133,7 +133,6 @@ export default function Crust({
   viewport,
   camera,
   interactionMode,
-  overrideInteractionMode,
   tags,
   selectedLayerId,
   selectedReason,
@@ -153,6 +152,7 @@ export default function Crust({
   externalPlugin,
   useExperimentalSandbox,
   timelineManagerRef,
+  overrideInteractionMode,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,

@@ -1,5 +1,5 @@
 import { atom, useAtomValue } from "jotai";
-import { isEqual, omit } from "lodash-es";
+import { omit } from "lodash-es";
 import {
   ForwardedRef,
   useCallback,
@@ -679,9 +679,10 @@ type SelectedLayer = [
 ];
 function useSelection({
   initialSelectedLayer,
+  engineRef,
+  // flattenedLayers,
   getLazyLayer,
   onLayerSelect,
-  engineRef,
   updateStyle,
 }: {
   initialSelectedLayer?: {
@@ -689,6 +690,7 @@ function useSelection({
     featureId?: string;
     reason?: LayerSelectionReason;
   };
+  // flattenedLayers?: Layer[];
   getLazyLayer: (layerId: string) => LazyLayer | undefined;
   onLayerSelect?: (
     layerId: string | undefined,
@@ -700,23 +702,8 @@ function useSelection({
   engineRef?: RefObject<EngineRef>;
   updateStyle: (layerId: string) => void;
 }) {
-  const [[selectedLayer, selectedFeatureInfo], setSelectedLayer] = useState<SelectedLayer>([
-    initialSelectedLayer,
-    undefined,
-  ]);
-
-  const selectedLayerForRef = useCallback(() => {
-    return selectedLayer?.layerId ? getLazyLayer(selectedLayer.layerId) : undefined;
-  }, [getLazyLayer, selectedLayer?.layerId]);
-
-  // This useEffect is the only place where Layer's selecedlayerId state
-  // should be updated.
-  // Layers' selectedLayer should be updated by its parent only
-  useEffect(() => {
-    if (initialSelectedLayer && selectedLayer && isEqual(initialSelectedLayer, selectedLayer))
-      return;
-
-    setSelectedLayer?.([
+  const [selectedLayer, _selectedFeatureInfo]: SelectedLayer = useMemo(
+    () => [
       initialSelectedLayer
         ? {
             layerId: initialSelectedLayer?.layerId,
@@ -724,23 +711,14 @@ function useSelection({
             reason: initialSelectedLayer?.reason,
           }
         : undefined,
-      selectedFeatureInfo,
-    ]);
-  }, [initialSelectedLayer, selectedLayer, selectedFeatureInfo]);
+      undefined, // If needed, need to pass from source
+    ],
+    [initialSelectedLayer],
+  );
 
-  // !!! ASK @keiya WHY THIS IS NEEDED. SEEMS TO BE MERELY DOING EXCESSIVE RERENDERS !!!
-
-  // useEffect(() => {
-  //   setSelectedLayer(s =>
-  //     s[0]?.layerId && flattenedLayers?.find(l => l.id === s[0]?.layerId)
-  //       ? [{ ...s[0] }, s[1], s[2]] // Force update when flattenedLayers are updated
-  //       : !s[0]?.layerId && !s[1]
-  //       ? s
-  //       : [undefined, undefined, undefined],
-  //   );
-  // }, [flattenedLayers]);
-
-  // !!! ASK @keiya WHY THIS IS NEEDED. SEEMS TO BE MERELY DOING EXCESSIVE RERENDERS !!!
+  const selectedLayerForRef = useCallback(() => {
+    return selectedLayer?.layerId ? getLazyLayer(selectedLayer.layerId) : undefined;
+  }, [getLazyLayer, selectedLayer?.layerId]);
 
   const select = useCallback(
     (layerId?: unknown, options?: LayerSelectionReason, info?: SelectedFeatureInfo) => {
