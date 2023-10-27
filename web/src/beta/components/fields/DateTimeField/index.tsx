@@ -1,9 +1,15 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import Button from "@reearth/beta/components/Button";
+import Icon from "@reearth/beta/components/Icon";
+import * as Popover from "@reearth/beta/components/Popover";
+import Text from "@reearth/beta/components/Text";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import Property from "..";
-import TextInput from "../common/TextInput";
+
+import EditPanel from "./EditPanel";
 
 export type Props = {
   name?: string;
@@ -13,34 +19,60 @@ export type Props = {
 };
 
 const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) => {
-  const [time, setTime] = useState<string>(value?.split(" ")[1] ?? "HH:MM:SS");
-  const [date, setDate] = useState<string>(value?.split(" ")[0] ?? "YYYY-MM-DD");
+  const [open, setOpen] = useState(false);
+  const t = useT();
 
-  const handleTimeChange = useCallback(
-    (newValue: string | undefined) => {
-      if (newValue === undefined) return;
+  const handlePopOver = useCallback(() => setOpen(!open), [open]);
+  const handleRemoveSetting = useCallback(() => {
+    if (!value) return;
+    setDateTime("");
+    onChange?.();
+  }, [value, onChange]);
 
-      setTime(newValue);
-      onChange?.(date + " " + newValue);
-    },
-    [date, onChange],
-  );
+  const [dateTime, setDateTime] = useState(value);
 
-  const handleDateChange = useCallback(
-    (newValue: string | undefined) => {
-      if (newValue === undefined) return;
-
-      setDate(newValue);
-      onChange?.(newValue + " " + time);
-    },
-    [time, onChange],
-  );
+  useEffect(() => {
+    setDateTime(value);
+  }, [value]);
 
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <TextInput type="date" value={date} onChange={handleDateChange} />
-        <TextInput type="time" value={time} onChange={handleTimeChange} />
+        <Popover.Provider open={!!open} placement="bottom-start">
+          <Popover.Trigger asChild>
+            <InputWrapper disabled={true}>
+              <Input dataTimeSet={!!dateTime}>
+                <Text size="footnote" customColor>
+                  {dateTime ? dateTime : "YYYY-MM-DDThh:mm:ss±hh:mm"}
+                </Text>
+                <DeleteIcon
+                  icon="bin"
+                  size={10}
+                  disabled={!dateTime}
+                  onClick={handleRemoveSetting}
+                />
+              </Input>
+              <TriggerButton
+                buttonType="secondary"
+                text={t("set")}
+                icon="clock"
+                size="small"
+                iconPosition="left"
+                onClick={() => handlePopOver()}
+              />
+            </InputWrapper>
+          </Popover.Trigger>
+          <PopoverContent autoFocus={false}>
+            {open && (
+              <EditPanel
+                setDateTime={setDateTime}
+                value={dateTime}
+                onChange={onChange}
+                onClose={handlePopOver}
+              />
+            )}
+          </PopoverContent>
+        </Popover.Provider>
       </Wrapper>
     </Property>
   );
@@ -52,4 +84,43 @@ const Wrapper = styled.div`
   display: flex;
   align-items: stretch;
   gap: 4px;
+`;
+
+const InputWrapper = styled.div<{ disabled?: boolean }>`
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  height: 28px;
+`;
+
+const Input = styled.div<{ dataTimeSet?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  flex: 1;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.outline.weak};
+  color: ${({ theme }) => theme.content.strong};
+  background: ${({ theme }) => theme.bg[1]};
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+
+  color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
+`;
+
+const TriggerButton = styled(Button)`
+  margin: 0;
+`;
+
+const PopoverContent = styled(Popover.Content)`
+  z-index: 701;
+`;
+const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
+  ${({ disabled, theme }) =>
+    disabled
+      ? `color: ${theme.content.weaker};`
+      : `:hover {
+    cursor: pointer;
+      }`}
 `;
