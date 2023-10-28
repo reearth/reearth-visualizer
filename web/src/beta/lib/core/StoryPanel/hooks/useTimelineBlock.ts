@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
-import { TickEventCallback, Timeline, TimelineCommitter } from "../../Map/useTimelineManager";
+import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManager";
+import { TimelineValues } from "../Block/builtin/Timeline";
 import { convertOptionToSeconds, formatDateToSting } from "../utils";
 
 type TimeHandler = (t: number) => void;
@@ -28,17 +29,17 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
-export default (timeValues?: Timeline) => {
+export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
-  const initialCurrentTime = timeValues?.current
-    ? getNewDate(new Date(timeValues?.current)).getTime()
+  const initialCurrentTime = timelineValues?.currentTime
+    ? getNewDate(new Date(timelineValues?.currentTime)).getTime()
     : getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime();
 
-  const initialRange = timeValues?.start
+  const initialRange = timelineValues?.startTime
     ? timeRange(
-        getNewDate(new Date(timeValues?.start)).getTime(),
-        getNewDate(new Date(timeValues?.stop)).getTime(),
+        getNewDate(new Date(timelineValues?.startTime)).getTime(),
+        getNewDate(new Date(timelineValues?.endTime)).getTime(),
       )
     : timeRange(
         visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
@@ -164,21 +165,29 @@ export default (timeValues?: Timeline) => {
     });
   }, []);
 
+  console.log("start", timelineValues);
+
   // update block time setting.
-  // useEffect(() => {
-  //   if (timeValues?.current || timeValues?.start || timeValues?.stop) {
-  //     const startTime = getNewDate(new Date(timeValues?.start)).getTime();
-  //     const endTime = getNewDate(new Date(timeValues?.stop)).getTime();
-  //     setCurrentTime(prev => {
-  //       const next = getNewDate(new Date(timeValues?.current)).getTime();
-  //       if (prev !== next) {
-  //         onTimeChange?.(new Date(next));
-  //       }
-  //       return prev;
-  //     });
-  //     return handleRange(startTime, endTime);
-  //   }
-  // }, [handleRange, timeValues?.start, timeValues?.stop, timeValues, onTimeChange]);
+  useEffect(() => {
+    if (timelineValues?.currentTime || timelineValues?.startTime || timelineValues?.endTime) {
+      const startTime = getNewDate(new Date(timelineValues?.startTime.substring(0, 19))).getTime();
+      const endTime = getNewDate(new Date(timelineValues?.endTime.substring(0, 19))).getTime();
+      setCurrentTime(prev => {
+        const next = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
+        if (prev !== next) {
+          onTimeChange?.(new Date(next));
+        }
+        return prev;
+      });
+      return handleRange(startTime, endTime);
+    }
+  }, [
+    handleRange,
+    timelineValues?.startTime,
+    timelineValues?.endTime,
+    timelineValues,
+    onTimeChange,
+  ]);
 
   useEffect(() => {
     const switchCurrentTimeToStart = (t: number, isRangeChanged: boolean) => {

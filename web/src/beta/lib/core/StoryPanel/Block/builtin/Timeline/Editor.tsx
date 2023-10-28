@@ -2,7 +2,6 @@ import { useCallback, useContext, useState } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
-import { Timeline } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import useHooks from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelineBlock";
 import { useT } from "@reearth/services/i18n";
@@ -10,14 +9,16 @@ import { styled } from "@reearth/services/theme";
 
 import { BlockContext } from "../common/Wrapper";
 
+import { TimelineValues } from ".";
+
 type TimelineProps = {
   blockId?: string;
   isSelected?: boolean;
-  timeValues?: Timeline;
+  timelineValues?: TimelineValues;
   inEditor?: boolean;
 };
 
-const TimelineEditor = ({ blockId, isSelected, timeValues, inEditor }: TimelineProps) => {
+const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: TimelineProps) => {
   const t = useT();
   const [open, setOpen] = useState(false);
 
@@ -33,7 +34,7 @@ const TimelineEditor = ({ blockId, isSelected, timeValues, inEditor }: TimelineP
     onPlayReversed,
     onSpeedChange,
     onPause,
-  } = useTimelineBlock(timeValues);
+  } = useTimelineBlock(timelineValues);
 
   const {
     formattedCurrentTime,

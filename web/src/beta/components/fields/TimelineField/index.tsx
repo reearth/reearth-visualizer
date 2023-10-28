@@ -42,7 +42,6 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
     setTimelineValues(value);
   }, [value]);
 
-  console.log("timelineValues.endTime", value);
   return (
     <Property name={name} description={description}>
       <Wrapper>
