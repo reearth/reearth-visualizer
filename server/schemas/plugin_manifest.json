@@ -33,7 +33,8 @@
         "rect",
         "ref",
         "spacing",
-        "map"
+        "array",
+        "timeline"
       ]
     },
     "propertyPointer": {
@@ -396,9 +397,6 @@
       "$id": "#root",
       "type": "object",
       "properties": {
-        "$schema": {
-          "type": "string"
-        },
         "id": {
           "$ref": "#/definitions/id"
         },

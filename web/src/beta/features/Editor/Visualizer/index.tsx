@@ -53,12 +53,10 @@ const Visualizer: React.FC<Props> = ({
     widgets,
     story,
     tags,
-    selectedLayerId,
     blocks,
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
-    layerSelectionReason,
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
     zoomedLayerId,
@@ -101,7 +99,6 @@ const Visualizer: React.FC<Props> = ({
         floatingWidgets={widgets?.floating}
         widgetLayoutConstraint={widgets?.layoutConstraint}
         ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
-        selectedLayerId={selectedLayerId}
         selectedBlockId={selectedBlockId}
         selectedWidgetArea={selectedWidgetArea}
         zoomedLayerId={zoomedLayerId}
@@ -114,7 +111,6 @@ const Visualizer: React.FC<Props> = ({
         pluginBaseUrl={config()?.plugins}
         widgetAlignSystemEditing={widgetAlignEditorActivated}
         meta={engineMeta}
-        layerSelectionReason={layerSelectionReason}
         useExperimentalSandbox={useExperimentalSandbox}
         camera={currentCamera}
         onCameraChange={onCameraChange}

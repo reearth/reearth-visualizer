@@ -5,7 +5,7 @@ import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 
-import { LayerConfigUpdateProps } from "../../../useLayers";
+import { LayerConfigUpdateProps } from "../../../../useLayers";
 
 type LayerStyleSelectorProps = {
   layerStyles?: LayerStyle[];
@@ -15,7 +15,7 @@ type LayerStyleSelectorProps = {
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
 };
 
-const LayerStyleSelector: FC<LayerStyleSelectorProps> = ({
+const LayerStyleTab: FC<LayerStyleSelectorProps> = ({
   layers,
   layerStyles,
   selectedLayerId,
@@ -60,4 +60,4 @@ const LayerStyleSelector: FC<LayerStyleSelectorProps> = ({
   );
 };
 
-export default LayerStyleSelector;
+export default LayerStyleTab;

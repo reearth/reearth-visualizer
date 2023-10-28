@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDragDropManager } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
@@ -25,25 +25,24 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   gap,
 }: Props<Item>) {
   const [movingItems, setMovingItems] = useState<Item[]>(items);
-  const listRef = useRef<null | HTMLDivElement>(null);
-
-  const { updatePosition } = useScroll(listRef);
-
+  const { scrollContainerRef } = useScroll();
   const dragDropManager = useDragDropManager();
   const monitor = dragDropManager.getMonitor();
+  const [, setIsMonitor] = useState(0);
 
   useEffect(() => {
     const unsubscribe = monitor.subscribeToOffsetChange(() => {
       const offset = monitor.getSourceClientOffset()?.y as number;
-      updatePosition({ position: offset, isScrollAllowed: true });
+      setIsMonitor(offset);
     });
     return unsubscribe;
-  }, [monitor, updatePosition]);
+  }, [monitor]);
 
   const customDragHandler = (item: Item): boolean => {
     // eslint-disable-next-line no-prototype-builtins
     return item.hasOwnProperty("extensionId");
   };
+
   useEffect(() => {
     setMovingItems(items);
   }, [items]);
@@ -71,10 +70,10 @@ function DragAndDropList<Item extends { id: string } = { id: string }>({
   }, [items]);
 
   return (
-    <SWrapper gap={gap} ref={listRef}>
+    <SWrapper gap={gap} ref={scrollContainerRef}>
       {movingItems.map((item, i) => {
         const id = getId(item);
-        const shouldUseCustomHandler = customDragHandler(item); // Determine whether to use custom handler
+        const shouldUseCustomHandler = customDragHandler(item);
         return (
           <Item
             itemGroupKey={uniqueKey}

@@ -7,7 +7,7 @@ scalar FileSize
 scalar TranslatedString
 scalar Cursor
 scalar JSON
-scalar Map
+scalar Array
 
 # Meta Type
 
@@ -92,6 +92,12 @@ type Typography {
   bold: Boolean
   italic: Boolean
   underline: Boolean
+}
+
+type Timeline {
+  currentTime: String
+  startTime: String
+  endTime: String
 }
 
 enum TextAlign {

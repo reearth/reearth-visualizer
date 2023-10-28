@@ -7,10 +7,10 @@ import (
 var ValueTypeSpacing = ValueType("spacing")
 
 type Spacing struct {
-	Top    float64 `json:"top" mapstructure:"top"`
+	Top    float64 `json:"top"    mapstructure:"top"`
 	Bottom float64 `json:"bottom" mapstructure:"bottom"`
-	Left   float64 `json:"left" mapstructure:"left"`
-	Right  float64 `json:"right" mapstructure:"right"`
+	Left   float64 `json:"left"   mapstructure:"left"`
+	Right  float64 `json:"right"  mapstructure:"right"`
 }
 
 func (c *Spacing) Clone() *Spacing {

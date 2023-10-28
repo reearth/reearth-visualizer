@@ -8,6 +8,7 @@ import Text from "@reearth/classic/components/atoms/Text";
 import ProjectCreationModal from "@reearth/classic/components/molecules/Common/ProjectCreationModal";
 import WorkspaceCreationModal from "@reearth/classic/components/molecules/Common/WorkspaceCreationModal";
 import { metrics, metricsSizes } from "@reearth/classic/theme";
+import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme, css } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -46,11 +47,19 @@ const QuickStart: React.FC<Props> = ({
   const [prjectType, setPrjectType] = useState<ProjectType>("classic");
   const theme = useTheme();
   const isSmallWindow = useMedia("(max-width: 1024px)");
+  const { useMeQuery } = useMeFetcher();
+  const {
+    me: { email = "" },
+  } = useMeQuery();
 
   const handleCreateProjectClick = useCallback(() => {
-    if (window.REEARTH_CONFIG?.developerMode) setPrjTypeSelectOpen(true);
+    if (
+      window.REEARTH_CONFIG?.developerMode ||
+      window.REEARTH_CONFIG?.earlyAccessAdmins?.includes(email)
+    )
+      setPrjTypeSelectOpen(true);
     else setPrjCreateOpen(true);
-  }, []);
+  }, [email]);
 
   const handleProjModalClose = useCallback(() => {
     setPrjCreateOpen(false);
