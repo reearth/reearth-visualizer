@@ -41,7 +41,7 @@ const TimelineEditor = ({ blockId, isSelected, timeValues, inEditor }: TimelineP
     isPlaying,
     isPlayingReversed,
     isPause,
-    currentPosition,
+    sliderPosition,
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
@@ -61,8 +61,6 @@ const TimelineEditor = ({ blockId, isSelected, timeValues, inEditor }: TimelineP
   const context = useContext(BlockContext);
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
-  console.log(currentPosition);
-
   const handleClick = useCallback(
     (value: string, second: number) => {
       setOpen(false);
@@ -71,7 +69,6 @@ const TimelineEditor = ({ blockId, isSelected, timeValues, inEditor }: TimelineP
     },
     [onSpeedChange, selected],
   );
-
   return (
     <Wrapper>
       {!context?.editMode && inEditor && <Overlay />}
@@ -147,7 +144,7 @@ const TimelineEditor = ({ blockId, isSelected, timeValues, inEditor }: TimelineP
         </ScaleList>
         <IconWrapper
           style={{
-            left: `${currentPosition.toFixed(3)}px`,
+            left: `${sliderPosition.toFixed(1)}px`,
           }}>
           <Icon icon="slider" />
         </IconWrapper>

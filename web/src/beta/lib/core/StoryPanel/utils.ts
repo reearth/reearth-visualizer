@@ -81,7 +81,7 @@ export const formatDateForSliderTimeline = (time: number, options: { detail?: bo
   const date = `${d.getDate()}`.padStart(2, "0");
   const hour = `${d.getHours()}`.padStart(2, "0");
   if (!options.detail) {
-    return `${month} ${date} ${hour}:59`;
+    return `${month} ${date} ${hour}`;
   }
   const minutes = `${d.getMinutes()}`.padStart(2, "0");
   return ` ${month} ${date} ${hour}:${minutes}`;
@@ -124,4 +124,14 @@ export const convertOptionToSeconds = (data: string[]) => {
   }
 
   return objectsArray;
+};
+
+export const formatRangeDateAndTime = (data: string) => {
+  const lastIdx = data.lastIndexOf(" ");
+  const date = data.slice(0, lastIdx);
+  const time = data.slice(lastIdx + 1);
+  return {
+    date,
+    time,
+  };
 };

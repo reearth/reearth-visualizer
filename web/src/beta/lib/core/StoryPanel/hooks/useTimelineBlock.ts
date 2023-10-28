@@ -113,21 +113,6 @@ export default (timeValues?: Timeline) => {
     [visualizerContext],
   );
 
-  const switchCurrentTimeToStart = useCallback(
-    (t: number, isRangeChanged: boolean) => {
-      const cur = isRangeChanged
-        ? t
-        : t > range?.end
-        ? range?.start
-        : t < range?.start
-        ? range?.end
-        : t;
-
-      return cur;
-    },
-    [range?.end, range?.start],
-  );
-
   const handleOnSpeedChange = useCallback(
     (speed: number) => {
       const absSpeed = Math.abs(speed);
@@ -180,40 +165,42 @@ export default (timeValues?: Timeline) => {
   }, []);
 
   // update block time setting.
-  useEffect(() => {
-    if (timeValues?.current || timeValues?.start || timeValues?.stop) {
-      const startTime = getNewDate(new Date(timeValues?.start)).getTime();
-      const endTime = getNewDate(new Date(timeValues?.stop)).getTime();
-      setCurrentTime(prev => {
-        const next = getNewDate(new Date(timeValues?.current)).getTime();
-        if (prev !== next) {
-          onTimeChange?.(new Date(next));
-        }
-        return prev;
-      });
-      return handleRange(startTime, endTime);
-    }
-  }, [handleRange, timeValues?.start, timeValues?.stop, timeValues, onTimeChange]);
+  // useEffect(() => {
+  //   if (timeValues?.current || timeValues?.start || timeValues?.stop) {
+  //     const startTime = getNewDate(new Date(timeValues?.start)).getTime();
+  //     const endTime = getNewDate(new Date(timeValues?.stop)).getTime();
+  //     setCurrentTime(prev => {
+  //       const next = getNewDate(new Date(timeValues?.current)).getTime();
+  //       if (prev !== next) {
+  //         onTimeChange?.(new Date(next));
+  //       }
+  //       return prev;
+  //     });
+  //     return handleRange(startTime, endTime);
+  //   }
+  // }, [handleRange, timeValues?.start, timeValues?.stop, timeValues, onTimeChange]);
 
   useEffect(() => {
+    const switchCurrentTimeToStart = (t: number, isRangeChanged: boolean) => {
+      if (isRangeChanged) {
+        return t;
+      } else {
+        return Math.min(Math.max(t, range.start), range.end);
+      }
+    };
+
     const h: TickEventCallback = (d, c) => {
       const isDifferentRange = range.start !== c.start.getTime() || range.end !== c.stop.getTime();
       setCurrentTime(switchCurrentTimeToStart(d.getTime(), isDifferentRange));
     };
-    onTick?.(h);
+    if (range.start !== currentTime || range.end !== currentTime) {
+      onTick?.(h);
+    }
+
     return () => {
       removeTickEventListener?.(h);
     };
-  }, [
-    switchCurrentTimeToStart,
-    handleRange,
-    range.start,
-    range.end,
-    onTick,
-    removeTickEventListener,
-    timeValues?.start,
-    timeValues?.stop,
-  ]);
+  }, [handleRange, range.start, range.end, onTick, removeTickEventListener, currentTime]);
 
   return {
     currentTime,

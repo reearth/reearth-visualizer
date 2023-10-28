@@ -8,11 +8,7 @@ import TimelineEditor from "./Editor";
 
 const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
   const timeValues: Timeline = useMemo(() => {
-    return {
-      current: block?.property?.default?.currentTime.value,
-      start: block?.property?.default?.startTime?.value,
-      stop: block?.property?.default?.endTime?.value,
-    };
+    return block?.property?.default?.timelineSetting?.value;
   }, [block?.property?.default]);
 
   return (

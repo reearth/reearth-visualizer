@@ -5,6 +5,7 @@ import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import {
   formatDateForSliderTimeline,
   formatDateForTimeline,
+  formatRangeDateAndTime,
 } from "@reearth/beta/lib/core/StoryPanel/utils";
 
 type TimelineProps = {
@@ -33,6 +34,7 @@ export default ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const [isPause, setIsPause] = useState(false);
+  const [sliderPosition, setSliderPosition] = useState(16);
 
   const syncCurrentTimeRef = useRef(currentTime);
   const [committer, setCommiter] = useState<TimelineCommitter>({ source: "storyTimelineBlock" });
@@ -71,7 +73,24 @@ export default ({
     }
     setIsPlayingReversed(p => !p);
     onPlayReversed?.(!isPlayingReversed, committer);
-  }, [committer, isPause, isPlaying, isPlayingReversed, onPause, onPlay, onPlayReversed]);
+
+    if (isPlayingReversed) {
+      const totalRange = range ? range.end - range.start : 0;
+      const positionPercentage = (sliderPosition / totalRange) * 374 + 16;
+      const newPosition = 390 - positionPercentage;
+      setSliderPosition(Math.round(newPosition));
+    }
+  }, [
+    committer,
+    isPause,
+    isPlaying,
+    isPlayingReversed,
+    onPause,
+    onPlay,
+    onPlayReversed,
+    range,
+    sliderPosition,
+  ]);
 
   const toggleIsPause = useCallback(() => {
     if (isPlayingReversed || isPlaying) {
@@ -93,40 +112,43 @@ export default ({
     return textDate;
   }, [currentTime]);
 
-  const formatRangeDateAndTime = (data: string) => {
-    const lastIdx = data.lastIndexOf(" ");
-    const date = data.slice(0, lastIdx);
-    const time = data.slice(lastIdx + 1);
-    return {
-      date,
-      time,
-    };
-  };
-
   const timeRange = useMemo(() => {
     if (range) {
       return {
         startTime: formatRangeDateAndTime(
           formatDateForSliderTimeline(range.start, { detail: true }),
         ),
-        midTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.mid)),
-        endTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.end)),
+        midTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.mid, { detail: true })),
+        endTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.end, { detail: true })),
       };
     }
     return {};
   }, [range]);
 
-  const currentPosition = useMemo(() => {
-    if (range) {
-      const startTime = range.start;
-      const endTime = range.end;
-      const rangeDuration = endTime - startTime;
-      const currentDuration = currentTime - startTime;
-      const position = currentDuration / rangeDuration + 16; // Change to pixel value if needed
-      return position;
+  const updateSliderPosition = useCallback(() => {
+    if (range && currentTime >= range.start && currentTime <= range.end) {
+      const totalRange = range.end - range.start;
+      const currentPosition = currentTime - range.start;
+
+      if (currentPosition !== 0) {
+        const positionPercentage = (currentPosition / totalRange) * 374 + 16; // 390 - 16 = 374
+        setSliderPosition(Math.round(positionPercentage));
+      }
     }
-    return 16; // Return a default value if range is not available
-  }, [range, currentTime]);
+  }, [currentTime, range]);
+
+  useEffect(() => {
+    updateSliderPosition();
+  }, [currentTime, range, updateSliderPosition]);
+
+  useEffect(() => {
+    if (currentTime === range?.end) {
+      onPlay?.(false, committer);
+    }
+    if (currentTime === range?.start) {
+      onPlayReversed?.(false, committer);
+    }
+  }, [currentTime, range?.start, range?.end, onPlay, onPlayReversed, committer]);
 
   return {
     formattedCurrentTime,
@@ -134,7 +156,7 @@ export default ({
     isPlaying,
     isPlayingReversed,
     isPause,
-    currentPosition,
+    sliderPosition,
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
