@@ -4,23 +4,32 @@ import Modal from "@reearth/beta/components/Modal";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { TimelineFieldProp } from "..";
 import DateTimeField from "../../DateTimeField";
 
 import useHooks from "./hooks";
 
 type EditPanelProps = {
   isVisible?: boolean;
-  value?: string;
+  timelineValues?: TimelineFieldProp;
   onClose?: () => void;
-  onChange?: (value?: string | undefined) => void;
+  onChange?: (value?: TimelineFieldProp) => void;
+  setTimelineValues?: (value?: TimelineFieldProp) => void;
 };
 
-const EditPanel = ({ isVisible, value, onClose, onChange }: EditPanelProps) => {
+const EditPanel = ({
+  isVisible,
+  timelineValues,
+  setTimelineValues,
+  onClose,
+  onChange,
+}: EditPanelProps) => {
   const t = useT();
-  const { data, warning, isDisabled, handleOnChange, onAppyChange } = useHooks({
-    value,
+  const { warning, handleOnChange, onAppyChange } = useHooks({
+    timelineValues,
     onChange,
     onClose,
+    setTimelineValues,
   });
 
   return (
@@ -34,7 +43,7 @@ const EditPanel = ({ isVisible, value, onClose, onChange }: EditPanelProps) => {
           <Button
             text={t("Apply")}
             buttonType="primary"
-            disabled={!isDisabled || warning}
+            disabled={warning}
             onClick={onAppyChange}
           />
         }>
@@ -43,19 +52,19 @@ const EditPanel = ({ isVisible, value, onClose, onChange }: EditPanelProps) => {
             name={t("* Start Time")}
             description={t("Start time for the timeline")}
             onChange={newValue => handleOnChange(newValue || "", "startTime")}
-            value={data?.startTime}
+            value={timelineValues?.startTime}
           />
           <CustomDateTimeField
             name={t("* End Time ")}
-            onChange={newValue => handleOnChange(newValue || "", "stopTime")}
+            onChange={newValue => handleOnChange(newValue || "", "endTime")}
             description={t("End time for the timeline")}
-            value={data?.stopTime}
+            value={timelineValues?.endTime}
           />
           <CustomDateTimeField
             name={t("* Current Time ")}
             description={t("Current time should be between start and end time")}
             onChange={newValue => handleOnChange(newValue || "", "currentTime")}
-            value={data?.currentTime}
+            value={timelineValues?.currentTime}
           />
           {warning && (
             <DangerItem>

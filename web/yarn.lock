@@ -16088,6 +16088,11 @@ react-use@17.4.0:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
+react18-json-view@0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/react18-json-view/-/react18-json-view-0.2.6.tgz#c47874aa4a461716be29d6bf1321d0048bae0537"
+  integrity sha512-RHAY880UwC7SClyQBoij50q2InpSrj5zmP2DCL73vEaaVTyj/QbMPBk4FRKMQ7LF8FSxhh+VI6mK3AhlBaCBxw==
+
 react@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"

@@ -1,7 +1,10 @@
+import { useReactiveVar } from "@apollo/client";
 import { useMemo } from "react";
 
-import Settings from "@reearth/beta/features/Editor/Settings";
+import SceneSettings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
+import { LayerConfigUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import { LayerStyleValueUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
 import { FlyTo } from "@reearth/beta/lib/core/types";
 import { Camera } from "@reearth/beta/utils/value";
 import { useSceneFetcher } from "@reearth/services/api";
@@ -9,18 +12,15 @@ import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { selectedLayerVar } from "@reearth/services/state";
 
-import { LayerConfigUpdateProps } from "../../../useLayers";
-import { LayerStyleValueUpdateProps } from "../../../useLayerStyles";
-
-import InspectorTabs from "./InspectorTabs";
+import LayerInspector from "./LayerInspector";
 import LayerStyleEditor from "./LayerStyleValueEditor";
 
 type Props = {
   layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
   sceneId?: string;
-  selectedLayerId?: string;
   selectedLayerStyleId?: string;
   showSceneSettings?: boolean;
   currentCamera?: Camera;
@@ -35,7 +35,6 @@ const MapRightPanel: React.FC<Props> = ({
   sceneId,
   showSceneSettings,
   selectedLayerStyleId,
-  selectedLayerId,
   currentCamera,
   onFlyTo,
   onLayerStyleValueUpdate,
@@ -49,6 +48,8 @@ const MapRightPanel: React.FC<Props> = ({
   const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
   const sceneSettings = useMemo(() => convert(scene?.property), [scene?.property]);
 
+  const selectedLayerId = useReactiveVar(selectedLayerVar);
+
   return (
     <SidePanelCommon
       location="right"
@@ -56,11 +57,10 @@ const MapRightPanel: React.FC<Props> = ({
         {
           id: "map",
           title: t("Inspector"),
-          //   maxHeight: !selectedWidget ? "100%" : "40%",
           children: (
             <>
               {showSceneSettings && scenePropertyId && (
-                <Settings
+                <SceneSettings
                   propertyId={scenePropertyId}
                   propertyItems={sceneSettings}
                   currentCamera={currentCamera}
@@ -68,7 +68,7 @@ const MapRightPanel: React.FC<Props> = ({
                 />
               )}
               {selectedLayerId && (
-                <InspectorTabs
+                <LayerInspector
                   layerStyles={layerStyles}
                   layers={layers}
                   sceneId={sceneId}

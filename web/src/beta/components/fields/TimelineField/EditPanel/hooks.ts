@@ -1,45 +1,44 @@
 import { useCallback, useMemo, useState } from "react";
 
+import { TimelineFieldProp } from "..";
+
 type Props = {
-  value?: string;
-  onChange?: (value?: string | undefined) => void;
+  timelineValues?: TimelineFieldProp;
+  onChange?: (value?: TimelineFieldProp) => void;
   onClose?: () => void;
+  setTimelineValues?: (value?: TimelineFieldProp) => void;
 };
 
-type TimelineFieldProp = {
-  currentTime: string;
-  startTime: string;
-  stopTime: string;
-};
-
-export default ({ onChange, onClose }: Props) => {
-  const [data, setData] = useState<TimelineFieldProp>({
-    currentTime: "",
-    startTime: "",
-    stopTime: "",
-  });
+export default ({ timelineValues, onChange, onClose, setTimelineValues }: Props) => {
   const [warning, setWarning] = useState(false);
 
   const handleOnChange = useCallback(
     (newValue: string, fieldId: string) => {
-      const updatedData: TimelineFieldProp = { ...data };
+      const updatedData: TimelineFieldProp = {
+        ...timelineValues,
+        currentTime: timelineValues?.currentTime || "",
+        startTime: timelineValues?.startTime || "",
+        endTime: timelineValues?.endTime || "",
+      };
+
+      const endTime = new Date(updatedData?.endTime?.substring(0, 19) || new Date());
+
       switch (fieldId) {
         case "startTime":
           updatedData.startTime = newValue;
           break;
-        case "stopTime":
-          updatedData.stopTime = newValue;
+        case "endTime":
+          updatedData.endTime = newValue;
           break;
         case "currentTime":
           updatedData.currentTime = newValue;
 
           if (
             (updatedData.startTime &&
-              updatedData.stopTime &&
+              updatedData.endTime &&
               new Date(updatedData.currentTime.substring(0, 19)) <
                 new Date(updatedData.startTime.substring(0, 19))) ||
-            new Date(updatedData.currentTime.substring(0, 19)) >
-              new Date(updatedData.stopTime.substring(0, 19))
+            new Date(updatedData.currentTime.substring(0, 19)) > endTime
           ) {
             setWarning(true);
           } else {
@@ -50,25 +49,31 @@ export default ({ onChange, onClose }: Props) => {
           break;
       }
 
-      setData(updatedData);
-      !warning && onChange?.(newValue);
+      setTimelineValues?.(updatedData);
     },
-    [data, onChange, warning],
+    [timelineValues, setTimelineValues],
   );
 
   const handleApplyChange = useCallback(() => {
-    if (data.currentTime !== "" && data.startTime !== "" && data.stopTime !== "") {
+    if (
+      timelineValues?.currentTime !== "" &&
+      timelineValues?.startTime !== "" &&
+      timelineValues?.endTime !== ""
+    ) {
+      onChange?.(timelineValues);
       onClose?.();
     }
-  }, [data, onClose]);
+  }, [timelineValues, onChange, onClose]);
 
   const isDisabled = useMemo(() => {
-    return Object.values(data).every(value => value !== "");
-  }, [data]);
+    if (timelineValues) {
+      return Object.values(timelineValues).every(value => value !== "");
+    }
+    return false;
+  }, [timelineValues]);
 
   return {
     warning,
-    data,
     isDisabled,
     handleOnChange,
     onAppyChange: handleApplyChange,
