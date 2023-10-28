@@ -27,6 +27,15 @@ Remove: Remove
 Add Item: ''
 Please choose an option: ''
 Add text here: ''
+Timeline Settings: 'Timeline Settings'
+'* Start Time': ''
+Start time for the timeline: ''
+'* End Time ': ''
+End time for the timeline: ''
+'* Current Time ': ''
+Current time should be between start and end time: ''
+Please make sure the Current time must between the Start time and End Time.: ''
+not set: not set
 Wrong file format: Wrong file format
 Choose: Choose
 Upload: Upload
@@ -259,7 +268,6 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
-not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
