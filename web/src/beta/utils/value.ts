@@ -4,6 +4,7 @@ import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
 
 import { LayerAppearanceTypes } from "../lib/core/mantle";
+import { Timeline } from "../lib/core/Map/useTimelineManager";
 
 export type LatLng = {
   lat: number;
@@ -109,6 +110,7 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
+  timeline: Timeline;
 };
 
 const valueTypeMapper: Record<GQLValueType, ValueType> = {
@@ -125,6 +127,7 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Rect]: "rect",
   [GQLValueType.Ref]: "ref",
   [GQLValueType.Spacing]: "spacing",
+  [GQLValueType.timeline]: "timeline",
 };
 
 export type ValueType = keyof ValueTypes;

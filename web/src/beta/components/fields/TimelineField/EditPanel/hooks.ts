@@ -60,7 +60,7 @@ export default ({ onChange, onClose }: Props) => {
     if (data.currentTime !== "" && data.startTime !== "" && data.stopTime !== "") {
       onClose?.();
     }
-  }, [data.currentTime, data.startTime, data.stopTime, onClose]);
+  }, [data, onClose]);
 
   const isDisabled = useMemo(() => {
     return Object.values(data).every(value => value !== "");

@@ -84,46 +84,6 @@ const Wrapper = styled.div`
   display: flex;
   align-items: stretch;
   gap: 4px;
-  padding-bottom: 10px;
-`;
-
-const InputWrapper = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  width: 100%;
-  gap: 10px;
-  height: 28px;
-`;
-
-const Input = styled.div<{ dataTimeSet?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  flex: 1;
-  padding: 0 8px;
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  color: ${({ theme }) => theme.content.strong};
-  background: ${({ theme }) => theme.bg[1]};
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
-
-  color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
-`;
-
-const TriggerButton = styled(Button)`
-  margin: 0;
-`;
-
-const PopoverContent = styled(Popover.Content)`
-  z-index: 701;
-`;
-const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
-  ${({ disabled, theme }) =>
-    disabled
-      ? `color: ${theme.content.weaker};`
-      : `:hover {
-    cursor: pointer;
-      }`}
 `;
 
 const InputWrapper = styled.div<{ disabled?: boolean }>`

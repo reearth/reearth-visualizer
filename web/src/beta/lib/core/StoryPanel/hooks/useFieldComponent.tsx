@@ -1,12 +1,12 @@
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
-import DateTimeField from "@reearth/beta/components/fields/DateTimeField";
 import LocationField from "@reearth/beta/components/fields/LocationField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import SliderField from "@reearth/beta/components/fields/SliderField";
 import SpacingInput from "@reearth/beta/components/fields/SpacingInput";
 import TextField from "@reearth/beta/components/fields/TextField";
+import TimelineField from "@reearth/beta/components/fields/TimelineField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import URLField from "@reearth/beta/components/fields/URLField";
 import { useT } from "@reearth/services/i18n";
@@ -25,7 +25,6 @@ export const FieldComponent = ({
   field: any;
 }) => {
   const t = useT();
-
   const { handlePropertyValueUpdate } = usePropertyUpdateHook();
 
   return field?.type === "spacing" ? (
@@ -92,14 +91,7 @@ export const FieldComponent = ({
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "string" ? (
-    field?.ui === "datetime" ? (
-      <DateTimeField
-        name={field?.title}
-        value={field?.value}
-        description={field?.description}
-        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
-      />
-    ) : field?.ui === "color" ? (
+    field?.ui === "color" ? (
       <ColorField
         name={field?.title}
         description={field?.description}
@@ -123,6 +115,13 @@ export const FieldComponent = ({
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
     )
+  ) : field?.type === "timeline" ? (
+    <TimelineField
+      name={field?.title}
+      value={field?.value}
+      description={field?.description}
+      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+    />
   ) : (
     <div>{t("Unsupported field type")}</div>
   );
