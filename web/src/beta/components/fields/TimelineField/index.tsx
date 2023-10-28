@@ -10,11 +10,17 @@ import Property from "..";
 
 import EditPanel from "./EditPanel";
 
+export type TimelineFieldProp = {
+  currentTime: string;
+  startTime: string;
+  endTime: string;
+};
+
 export type Props = {
   name?: string;
   description?: string;
-  value?: string;
-  onChange?: (value?: string | undefined) => void;
+  value?: TimelineFieldProp;
+  onChange?: (value?: TimelineFieldProp) => void;
 };
 
 const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) => {
@@ -27,32 +33,38 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
 
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
-    setTimeline("");
     onChange?.();
   }, [value, onChange]);
 
-  const [timeline, setTimeline] = useState(value);
+  const [timelineValues, setTimelineValues] = useState(value);
 
   useEffect(() => {
-    setTimeline(value);
+    setTimelineValues(value);
   }, [value]);
+
+  console.log("timelineValues.endTime", value);
   return (
     <Property name={name} description={description}>
       <Wrapper>
         <InputWrapper disabled={true}>
-          <Input dataTimeSet={!!timeline}>
+          <Input dataTimeSet={!!timelineValues}>
             <Timeline>
               <TextWrapper size="footnote" customColor>
-                {timeline ? timeline : t("not set")}
+                {timelineValues ? timelineValues.startTime : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timeline ? timeline : t("not set")}
+                {timelineValues?.endTime ? timelineValues.endTime : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timeline ? timeline : t("not set")}
+                {timelineValues ? timelineValues.currentTime : t("not set")}
               </TextWrapper>
             </Timeline>
-            <DeleteIcon icon="bin" size={10} disabled={!timeline} onClick={handleRemoveSetting} />
+            <DeleteIcon
+              icon="bin"
+              size={10}
+              disabled={!timelineValues}
+              onClick={handleRemoveSetting}
+            />
           </Input>
           <TriggerButton
             buttonType="secondary"
@@ -66,10 +78,11 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
       </Wrapper>
       {openModal && (
         <EditPanel
-          value={value}
+          timelineValues={timelineValues}
           onChange={onChange}
           onClose={handleTimelineModalCloser}
           isVisible={openModal}
+          setTimelineValues={setTimelineValues}
         />
       )}
     </Property>
