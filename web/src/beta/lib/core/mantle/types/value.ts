@@ -1,3 +1,5 @@
+import { Timeline } from "../../Map/useTimelineManager";
+
 export type LatLng = {
   lat: number;
   lng: number;
@@ -108,6 +110,7 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
+  timeline: Timeline;
 };
 
 export type ValueType = keyof ValueTypes;

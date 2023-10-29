@@ -20,7 +20,7 @@ export type Props = {
   name?: string;
   description?: string;
   value?: TimelineFieldProp;
-  onChange?: (value?: TimelineFieldProp) => void;
+  onChange?: () => void;
 };
 
 const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) => {
