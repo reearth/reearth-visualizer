@@ -27,8 +27,11 @@ export type { MapRef as Ref } from "./hooks";
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
-} & Omit<LayersProps, "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes"> &
-  Omit<EngineProps, "selectionReason" | "onLayerSelect">;
+} & Omit<
+  LayersProps,
+  "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes" | "selectedLayerId"
+> &
+  Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId">;
 
 function Map(
   {
@@ -40,8 +43,6 @@ function Map(
     hiddenLayers,
     layers,
     overrides,
-    selectedLayerId,
-    layerSelectionReason,
     timelineManagerRef,
     sceneProperty,
     onLayerSelect,
@@ -60,39 +61,43 @@ function Map(
     handleEngineLayerSelect,
   } = useHooks({
     ref,
-    selectedLayerId,
     sceneProperty,
     timelineManagerRef,
     onLayerSelect,
   });
 
-  const selectedLayerIdForEngine = useMemo(
-    () => ({ layerId: selectedLayer.layerId, featureId: selectedLayer.featureId }),
-    [selectedLayer.featureId, selectedLayer.layerId],
+  const selectedLayerIds = useMemo(
+    () => ({
+      layerId: selectedLayer.layerId,
+      featureId: selectedLayer.featureId,
+    }),
+    [selectedLayer.layerId, selectedLayer.featureId],
   );
+
+  const selectedReason = useMemo(() => selectedLayer.reason, [selectedLayer.reason]);
 
   return Engine ? (
     <Engine
       ref={engineRef}
       isBuilt={isBuilt}
       isEditable={isEditable}
-      selectedLayerId={selectedLayerIdForEngine}
-      layerSelectionReason={selectedLayer.reason}
-      onLayerSelect={handleEngineLayerSelect}
+      selectedLayerId={selectedLayerIds}
+      layerSelectionReason={selectedReason}
       layersRef={layersRef}
       requestingRenderMode={requestingRenderMode}
       timelineManagerRef={timelineManagerRef}
+      onLayerSelect={handleEngineLayerSelect}
       {...props}>
       <Layers
         ref={layersRef}
+        engineRef={engineRef}
         clusters={clusters}
         hiddenLayers={hiddenLayers}
         isBuilt={isBuilt}
         isEditable={isEditable}
         layers={layers}
         overrides={overrides}
-        selectedLayerId={selectedLayerId}
-        selectionReason={layerSelectionReason}
+        selectedLayer={selectedLayer}
         Feature={currentEngine?.featureComponent}
         clusterComponent={currentEngine?.clusterComponent}
         delegatedDataTypes={currentEngine.delegatedDataTypes}
@@ -100,7 +105,6 @@ function Map(
         sceneProperty={props.property}
         requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
-        engineRef={engineRef}
       />
     </Engine>
   ) : null;

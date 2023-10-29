@@ -18,6 +18,11 @@ Edit: Edit
 Color Picker: Color Picker
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Set Time: Set Time
+Date: Date
+Time: Time
+Time Zone: Time Zone
+set: set
 Remove: Remove
 Add Item: ''
 Please choose an option: ''
@@ -58,7 +63,13 @@ Layer Style: ''
 Outline: Outline
 Add Layer from Resource: ''
 Inspector: Inspector
-Layer Property Inspector: ''
+ID: ID
+Geometry: Geometry
+Properties: Properties
+Data: Data
+Feature: Feature
+Styling: Styling
+Format: Format
 Published: Published
 Unpublished: Unpublished
 Scene: Scene
@@ -285,7 +296,6 @@ Reset password: Reset password
 Create your Account: Create your Account
 Already have an account?: Already have an account?
 Log in: Log in
-Date: Date
 File size: File size
 Alphabetical: Alphabetical
 Assets Library: Assets Library
@@ -322,7 +332,6 @@ New workspace: New workspace
 '''s workspace': '''s workspace'
 Layer style: Layer style
 import: import
-Data: Data
 Import to scene: Import to scene
 You are deleting a dataset. Layers that are linked to this dataset might show errors.: >-
   You are deleting a dataset. Layers that are linked to this dataset might show
