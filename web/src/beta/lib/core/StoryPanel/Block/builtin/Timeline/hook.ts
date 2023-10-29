@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEventHandler, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { TimelineCommitter } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
@@ -8,11 +8,14 @@ import {
   formatRangeDateAndTime,
 } from "@reearth/beta/lib/core/StoryPanel/utils";
 
+import { BlockContext } from "../common/Wrapper";
+
 type TimelineProps = {
   currentTime: number;
   range?: Range;
   isSelected?: boolean;
   blockId?: string;
+  inEditor?: boolean;
   onClick?: (t: number) => void;
   onDrag?: (t: number) => void;
   onPlay?: (isPlaying: boolean, committer: TimelineCommitter) => void;
@@ -26,6 +29,7 @@ export default ({
   range,
   isSelected,
   blockId,
+  inEditor,
   onPlay,
   onPlayReversed,
   onSpeedChange,
@@ -34,9 +38,8 @@ export default ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const [isPause, setIsPause] = useState(false);
-  const [sliderPosition, setSliderPosition] = useState(16);
+  const context = useContext(BlockContext);
 
-  const syncCurrentTimeRef = useRef(currentTime);
   const [committer, setCommiter] = useState<TimelineCommitter>({ source: "storyTimelineBlock" });
 
   useEffect(() => {
@@ -60,9 +63,21 @@ export default ({
       onPlayReversed?.(false, committer);
       onPause?.(false, committer);
     }
-    setIsPlaying(p => !p);
-    onPlay?.(!isPlaying, committer);
-  }, [isPlayingReversed, isPause, onPlay, isPlaying, committer, onPlayReversed, onPause]);
+    if (context?.editMode && !inEditor) {
+      setIsPlaying(p => !p);
+      onPlay?.(!isPlaying, committer);
+    }
+  }, [
+    isPlayingReversed,
+    isPause,
+    context?.editMode,
+    inEditor,
+    onPlayReversed,
+    committer,
+    onPause,
+    onPlay,
+    isPlaying,
+  ]);
 
   const toggleIsPlayingReversed = useCallback(() => {
     if (isPlaying || isPause) {
@@ -71,25 +86,20 @@ export default ({
       onPlay?.(false, committer);
       onPause?.(false, committer);
     }
-    setIsPlayingReversed(p => !p);
-    onPlayReversed?.(!isPlayingReversed, committer);
-
-    if (isPlayingReversed) {
-      const totalRange = range ? range.end - range.start : 0;
-      const positionPercentage = (sliderPosition / totalRange) * 374 + 16;
-      const newPosition = 390 - positionPercentage;
-      setSliderPosition(Math.round(newPosition));
+    if (context?.editMode && !inEditor) {
+      setIsPlayingReversed(p => !p);
+      onPlayReversed?.(!isPlayingReversed, committer);
     }
   }, [
     committer,
+    context?.editMode,
+    inEditor,
     isPause,
     isPlaying,
     isPlayingReversed,
     onPause,
     onPlay,
     onPlayReversed,
-    range,
-    sliderPosition,
   ]);
 
   const toggleIsPause = useCallback(() => {
@@ -102,10 +112,6 @@ export default ({
     setIsPause(p => !p);
     onPause?.(!isPause, committer);
   }, [isPlayingReversed, isPlaying, onPause, isPause, committer, onPlayReversed, onPlay]);
-
-  useEffect(() => {
-    syncCurrentTimeRef.current = currentTime;
-  }, [currentTime]);
 
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(currentTime, { detail: true });
@@ -125,21 +131,17 @@ export default ({
     return {};
   }, [range]);
 
-  const updateSliderPosition = useCallback(() => {
-    if (range && currentTime >= range.start && currentTime <= range.end) {
-      const totalRange = range.end - range.start;
-      const currentPosition = currentTime - range.start;
-
-      if (currentPosition !== 0) {
-        const positionPercentage = (currentPosition / totalRange) * 374 + 16; // 390 - 16 = 374
-        setSliderPosition(Math.round(positionPercentage));
+  const sliderPosition = useMemo(() => {
+    if (range && currentTime >= range.start && currentTime <= range?.end) {
+      if (!inEditor) {
+        const totalRange = range?.end - range.start;
+        const currentPosition = currentTime - range.start;
+        const positionPercentage = (currentPosition / totalRange) * 374 + 16;
+        return Math.round(positionPercentage);
       }
     }
-  }, [currentTime, range]);
-
-  useEffect(() => {
-    updateSliderPosition();
-  }, [currentTime, range, updateSliderPosition]);
+    return 16;
+  }, [inEditor, range, currentTime]);
 
   useEffect(() => {
     if (currentTime === range?.end) {

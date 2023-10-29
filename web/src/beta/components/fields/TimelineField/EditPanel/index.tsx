@@ -25,7 +25,7 @@ const EditPanel = ({
   onChange,
 }: EditPanelProps) => {
   const t = useT();
-  const { warning, handleOnChange, onAppyChange } = useHooks({
+  const { isDisabled, warning, handleOnChange, onAppyChange } = useHooks({
     timelineValues,
     onChange,
     onClose,
@@ -43,7 +43,7 @@ const EditPanel = ({
           <Button
             text={t("Apply")}
             buttonType="primary"
-            disabled={warning}
+            disabled={!isDisabled || warning}
             onClick={onAppyChange}
           />
         }>

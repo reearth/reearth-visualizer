@@ -24,7 +24,7 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   const now = Date.now() - 3600000;
   return {
     start: startTime || now,
-    end: stopTime || calculateEndTime(new Date()),
+    end: stopTime || stopTime || calculateEndTime(new Date()),
     mid: calculateMidTime(startTime || now, stopTime || calculateEndTime(new Date())),
   };
 };
@@ -32,22 +32,15 @@ const timeRange = (startTime?: number, stopTime?: number) => {
 export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
-  const initialCurrentTime = timelineValues?.currentTime
-    ? getNewDate(new Date(timelineValues?.currentTime)).getTime()
-    : getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime();
-
-  const initialRange = timelineValues?.startTime
-    ? timeRange(
-        getNewDate(new Date(timelineValues?.startTime)).getTime(),
-        getNewDate(new Date(timelineValues?.endTime)).getTime(),
-      )
-    : timeRange(
-        visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
-        visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime(),
-      );
-
-  const [currentTime, setCurrentTime] = useState(initialCurrentTime);
-  const [range, setRange] = useState(initialRange);
+  const [currentTime, setCurrentTime] = useState(
+    getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
+  );
+  const [range, setRange] = useState(
+    timeRange(
+      visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
+      visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime(),
+    ),
+  );
   const playSpeedOptions = useMemo(() => {
     const speedOpt = ["1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
     return convertOptionToSeconds(speedOpt);
@@ -77,13 +70,12 @@ export default (timelineValues?: TimelineValues) => {
 
   const onTimeChange = useCallback(
     (time: Date, committer?: TimelineCommitter) => {
-      console.log(time);
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_TIME",
         payload: {
           start: formatDateToSting(range?.start),
           current: time,
-          stop: formatDateToSting(range.end),
+          stop: formatDateToSting(range?.end),
         },
         committer: { source: "storyTimelineBlock", id: committer?.id },
       });
@@ -164,8 +156,6 @@ export default (timelineValues?: TimelineValues) => {
       return prev;
     });
   }, []);
-
-  console.log("start", timelineValues);
 
   // update block time setting.
   useEffect(() => {

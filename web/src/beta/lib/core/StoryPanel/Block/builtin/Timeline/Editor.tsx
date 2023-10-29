@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -6,8 +6,6 @@ import useHooks from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Timeline/h
 import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelineBlock";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-
-import { BlockContext } from "../common/Wrapper";
 
 import { TimelineValues } from ".";
 
@@ -51,6 +49,7 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
     range,
     isSelected,
     blockId,
+    inEditor,
     onClick,
     onDrag,
     onPlay,
@@ -59,20 +58,22 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
     onPause,
   });
 
-  const context = useContext(BlockContext);
-  const handlePopOver = useCallback(() => setOpen(!open), [open]);
+  const handlePopOver = useCallback(() => {
+    !inEditor && setOpen(!open);
+  }, [inEditor, open]);
 
   const handleClick = useCallback(
     (value: string, second: number) => {
-      setOpen(false);
-      if (value !== selected) setSelected(value);
-      onSpeedChange(second);
+      if (!inEditor) {
+        setOpen(false);
+        value !== selected && setSelected(value);
+        onSpeedChange(second);
+      }
     },
-    [onSpeedChange, selected],
+    [inEditor, onSpeedChange, selected],
   );
   return (
     <Wrapper>
-      {!context?.editMode && inEditor && <Overlay />}
       <TimelineControl>
         <StyledIcon>
           <Icon icon="timelineStoryBlock" size={16} />
@@ -145,7 +146,7 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
         </ScaleList>
         <IconWrapper
           style={{
-            left: `${sliderPosition.toFixed(1)}px`,
+            left: `${sliderPosition?.toFixed(1)}px`,
           }}>
           <Icon icon="slider" />
         </IconWrapper>
@@ -274,10 +275,4 @@ const ScaleLabel = styled.div`
   position: relative;
   bottom: 28px;
   right: 15px;
-`;
-
-const Overlay = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
 `;
