@@ -43,6 +43,12 @@ func ToPropertyValue(v *property.Value) *interface{} {
 			Left:   v2.Left,
 			Right:  v2.Right,
 		}
+	case property.Timeline:
+		res = Timeline{
+			CurrentTime: v2.CurrentTime,
+			StartTime:   v2.StartTime,
+			EndTime:     v2.EndTime,
+		}
 	default:
 		res = valueInterfaceToGqlValue(v2)
 	}
@@ -100,6 +106,12 @@ func FromPropertyValueAndType(v interface{}, t ValueType) *property.Value {
 			Bottom: v2.Bottom,
 			Left:   v2.Left,
 			Right:  v2.Right,
+		}
+	case *Timeline:
+		v = property.Timeline{
+			CurrentTime: v2.CurrentTime,
+			StartTime:   v2.StartTime,
+			EndTime:     v2.EndTime,
 		}
 	default:
 		v = gqlValueToValueInterface(v2)
@@ -406,6 +418,7 @@ func ToPropertySchemaGroup(g *property.SchemaGroup, s property.SchemaID) *Proper
 		IsList:                g.IsList(),
 		Title:                 g.Title().StringRef(),
 		Fields:                fields,
+		Collection:            g.Collection().StringRef(),
 		RepresentativeFieldID: IDFromStringRef(representativeFieldID),
 		RepresentativeField:   representativeField,
 		AllTranslatedTitle:    g.Title(),

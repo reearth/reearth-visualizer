@@ -18,7 +18,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -277,14 +276,10 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		}
 	}
 
-	log.Debugfc(ctx, "REACHED HERE!!!: %v", story.Scene())
-
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
 	if err != nil {
 		return nil, err
 	}
-
-	log.Debugfc(ctx, "nlsLayers: %s", nlsLayers)
 
 	prevAlias := story.Alias()
 	if inp.Alias == nil && prevAlias == "" && inp.Status != storytelling.PublishmentStatusPrivate {
