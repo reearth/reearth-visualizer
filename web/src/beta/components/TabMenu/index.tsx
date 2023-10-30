@@ -2,13 +2,16 @@ import { FC, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Icons from "@reearth/beta/components/Icon/icons";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
-export interface TabObject {
-  icon: keyof typeof Icons;
-  component: JSX.Element;
+import Text from "../Text";
+
+export type TabObject = {
   id: string;
-}
+  name?: string;
+  icon: keyof typeof Icons;
+  component?: JSX.Element;
+};
 
 export type Props = {
   tabs: TabObject[];
@@ -17,8 +20,6 @@ export type Props = {
 };
 
 const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange }) => {
-  const theme = useTheme();
-
   const selectedTabItem = useMemo(() => {
     return tabs.find(({ id }) => id === selectedTab);
   }, [selectedTab, tabs]);
@@ -31,11 +32,18 @@ const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange }) => {
             key={id}
             onClick={() => onSelectedTabChange(id)}
             selected={id === selectedTab}>
-            <Icon icon={icon} alt={"Tab " + id} size={20} color={theme.content.main} />
+            <Icon icon={icon} alt={"Tab " + id} size={20} />
           </TabIconWrapper>
         ))}
       </Tabs>
-      <MainArea>{selectedTabItem ? selectedTabItem.component : null}</MainArea>
+      <MainArea>
+        {selectedTabItem?.name && (
+          <Header>
+            <Text size="body">{selectedTabItem.name}</Text>
+          </Header>
+        )}
+        {selectedTabItem ? selectedTabItem.component : null}
+      </MainArea>
     </Wrapper>
   );
 };
@@ -44,24 +52,31 @@ export default TabMenu;
 
 const Wrapper = styled.div`
   display: grid;
-  border-radius: 10px;
   height: 100%;
   grid-template-columns: 28px 1fr;
   background: ${({ theme }) => theme.bg[1]};
 `;
 
 const Tabs = styled.div`
+  padding-top: 4px;
   grid-column: 1/2;
   background: ${({ theme }) => theme.bg[0]};
 `;
 
 const TabIconWrapper = styled.div<{ selected: boolean }>`
-  padding: 8px 0;
-  width: 100%;
+  padding: 4px;
   display: flex;
   justify-content: center;
+  align-items: center;
   cursor: pointer;
+  color: ${({ selected, theme }) => (selected ? theme.content.main : theme.content.weak)};
   background: ${props => (props.selected ? props.theme.bg[1] : "inherit")};
+`;
+
+const Header = styled.div`
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
 `;
 
 const MainArea = styled.div`

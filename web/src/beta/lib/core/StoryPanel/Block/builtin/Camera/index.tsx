@@ -19,7 +19,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   } = usePropertyValueUpdate();
 
   const cameraButtons = useMemo(
-    () => Object.values(block?.property?.default) as CameraBlockType[],
+    () => Object.values(block?.property?.default ?? []) as CameraBlockType[],
     [block?.property?.default],
   );
 

@@ -92,6 +92,14 @@ export type EXPERIMENTAL_clipping = {
   direction?: "inside" | "outside";
 };
 
+export type Array = any[];
+
+export type Timeline = {
+  startTime?: string;
+  endTime?: string;
+  currentTime?: string;
+};
+
 // Don't forget adding a new field to valueTypeMapper also!
 export type ValueTypes = {
   string: string;
@@ -108,6 +116,8 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
+  array: Array;
+  timeline: Timeline;
 };
 
 export type ValueType = keyof ValueTypes;

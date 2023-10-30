@@ -27,7 +27,8 @@ type Props = {
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
-
+    isVisualizerReady,
+    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -63,7 +64,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     nlsLayers,
     selectedLayer,
-    setSelectedLayerId,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
@@ -72,6 +72,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerVisibilityUpdate,
   } = useLayers({
     sceneId,
+    isVisualizerReady,
+    visualizerRef,
   });
   const { scene, selectedSceneSetting, handleSceneSettingSelect } = useScene({ sceneId });
 
@@ -89,10 +91,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   // State handling for editor UI
   const handleLayerStyleSelected = useCallback(
     (layerStyleId: string) => {
-      setSelectedLayerId(undefined);
+      handleLayerSelect(undefined);
       handleLayerStyleSelect(layerStyleId);
     },
-    [handleLayerStyleSelect, setSelectedLayerId],
+    [handleLayerStyleSelect, handleLayerSelect],
   );
 
   const handleLayerSelected = useCallback(
@@ -134,7 +136,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentCamera,
     showSceneSettings: !!selectedSceneSetting,
     selectedLayerStyleId: selectedLayerStyle?.id,
-    selectedLayerId: selectedLayer?.id,
     onFlyTo: handleFlyTo,
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,

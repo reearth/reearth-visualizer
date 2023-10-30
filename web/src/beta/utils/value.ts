@@ -93,6 +93,14 @@ export type EXPERIMENTAL_clipping = {
   roll?: number;
 };
 
+export type Array = any[];
+
+export type Timeline = {
+  startTime?: string;
+  endTime?: string;
+  currentTime?: string;
+};
+
 // Don't forget adding a new field to valueTypeMapper also!
 export type ValueTypes = {
   string: string;
@@ -109,6 +117,8 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
+  array: Array;
+  timeline: Timeline;
 };
 
 const valueTypeMapper: Record<GQLValueType, ValueType> = {
@@ -125,6 +135,8 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Rect]: "rect",
   [GQLValueType.Ref]: "ref",
   [GQLValueType.Spacing]: "spacing",
+  [GQLValueType.Array]: "array",
+  [GQLValueType.Timeline]: "timeline",
 };
 
 export type ValueType = keyof ValueTypes;
@@ -244,11 +256,5 @@ export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
   },
   polyline: {
     clampToGround: true,
-  },
-  model: {
-    heightReference: "clamp",
-  },
-  ellipsoid: {
-    heightReference: "clamp",
   },
 };

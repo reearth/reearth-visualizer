@@ -34,23 +34,29 @@ export default function ({ sceneId, onFlyTo }: Props) {
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
   const [currentPage, setCurrentPage] = useState<Page | undefined>(undefined);
   const isAutoScrolling = useRef(false);
+  const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
 
   const selectedStory = useMemo(() => {
     return stories?.length ? stories[0] : undefined;
   }, [stories]);
 
   useEffect(() => {
-    if (!currentPage) {
+    if (selectedPageId) {
+      const newPage = getPage(selectedPageId, selectedStory?.pages);
+      if (newPage) {
+        setCurrentPage(newPage);
+      }
+    } else {
       setCurrentPage(selectedStory?.pages?.[0]);
     }
-  }, [currentPage, selectedStory?.pages]);
+  }, [currentPage, selectedPageId, selectedStory?.pages]);
 
   const handleCurrentPageChange = useCallback(
     (pageId: string, disableScrollIntoView?: boolean) => {
       const newPage = getPage(pageId, selectedStory?.pages);
       if (!newPage) return;
 
-      setCurrentPage(newPage);
+      setSelectedPageId(pageId);
 
       if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
@@ -97,10 +103,10 @@ export default function ({ sceneId, onFlyTo }: Props) {
         pageId,
       });
       if (pageId === currentPage?.id) {
-        setCurrentPage(pages[deletedPageIndex + 1] ?? pages[deletedPageIndex - 1]);
+        setSelectedPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
       }
     },
-    [sceneId, currentPage?.id, selectedStory, useDeleteStoryPage],
+    [selectedStory, useDeleteStoryPage, sceneId, currentPage],
   );
 
   const handlePageAdd = useCallback(
