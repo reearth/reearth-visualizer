@@ -35,6 +35,7 @@ import Map, {
   type ComputedLayer,
 } from "../Map";
 import { Ref as MapRef } from "../Map";
+import { Position } from "../StoryPanel/types";
 
 import { VisualizerProvider } from "./context";
 import DropHolder from "./DropHolder";
@@ -70,6 +71,7 @@ export type Props = {
   layers?: Layer[];
   clusters?: Cluster[];
   camera?: Camera;
+  storyPanelPosition?: Position;
   interactionMode?: InteractionModeType;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
@@ -147,7 +149,8 @@ const Visualizer = memo(
         pluginProperty,
         zoomedLayerId,
         useExperimentalSandbox,
-        children,
+        storyPanelPosition,
+        children: storyPanel,
         onLayerDrop,
         onLayerSelect,
         onCameraChange,
@@ -222,7 +225,7 @@ const Visualizer = memo(
         <ErrorBoundary FallbackComponent={Err}>
           <Wrapper>
             <VisualizerProvider mapRef={mapRef}>
-              {children}
+              {storyPanelPosition === "left" && storyPanel}
               <Filled ref={wrapperRef}>
                 {isDroppable && <DropHolder />}
                 <Crust
@@ -299,6 +302,7 @@ const Visualizer = memo(
                   onMount={onMount}
                 />
               </Filled>
+              {storyPanelPosition === "right" && storyPanel}
             </VisualizerProvider>
           </Wrapper>
         </ErrorBoundary>

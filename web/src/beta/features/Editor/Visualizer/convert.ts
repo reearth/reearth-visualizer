@@ -209,6 +209,7 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
   return {
     id: story.id,
     title: story.title,
+    position: story.panelPosition === "RIGHT" ? "right" : "left",
     pages: storyPages(story.pages),
   };
 };
