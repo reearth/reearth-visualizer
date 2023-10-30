@@ -15,3 +15,16 @@ export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
 
   return sceneId ? handleNavigate : undefined;
 };
+
+export const useSettingsNavigation = ({ projectId }: { projectId?: string }) => {
+  const navigate = useNavigate();
+
+  const handleNavigate = useCallback(
+    (page?: "public" | "story" | "asset" | "plugin") => {
+      navigate(`/settings/project/${projectId}/${page}`);
+    },
+    [projectId, navigate],
+  );
+
+  return projectId ? handleNavigate : undefined;
+};

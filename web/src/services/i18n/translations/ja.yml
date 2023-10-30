@@ -20,8 +20,8 @@ You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
 Set Time: 時間設定
 Date: 時間帯
-Time: '時間'
-Time Zone: '時間帯'
+Time: 時間
+Time Zone: 時間帯
 set: ''
 Remove: 削除
 Add Item: ''
@@ -91,9 +91,13 @@ Copy: コピー
 '* Anyone can see your project with this URL': '*　このリンクを知っているインターネット上の全員が閲覧できます'
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your project into a webpage': その他のWebサイトでこのプロジェクトを埋め込む場合は、こちらのコードを使用してください
-more options: その他の設定
+Publish domain: 公開ドメイン
+More options: その他の設定
+Need to change domain related settings?: ドメインについての設定を変更したいですか？
+Go to settings: 設定へ
 Search engine indexing: 検索可能にする
 Page will be available as result on search engines: ''
+Unpublishing: 不公開
 Your project will be unpublished.: プロジェクトを非公開にする
 This means that anybody with the URL will become unable to view this project.: URLを知っている人もこのプロジェクトを見ることができなくなります。
 '**Warning**: This includes websites where this project is embedded.': '**Warning**このプロジェクトを埋め込んだWebサイトへ影響を及ぼす可能性があります。'
@@ -202,6 +206,8 @@ Left: ''
 Right: ''
 Story Panel: ストーリーパネル
 Panel Position: ''
+Something went wrong.: 失敗しました。
+Couldn't find the Re:Earth project you were after.: そのプロジェクトは存在されていなさそうです。
 Double click here to write.: ダブルクリックで入力
 Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 aria-label-compass: コンパス
@@ -377,6 +383,7 @@ Gap Spacing: 間隔
 Align Center: 中央に配置
 Enable Editor Mode: ウィジェットの配置を編集
 Close: 閉じる
+more options: その他の設定
 Add a tag group: タググループを追加
 Add a tag: タグを追加
 Auto: 自動

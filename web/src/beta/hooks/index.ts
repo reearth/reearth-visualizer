@@ -1,1 +1,1 @@
-export { useEditorNavigation } from "./navigationHooks";
+export { useEditorNavigation, useSettingsNavigation } from "./navigationHooks";
