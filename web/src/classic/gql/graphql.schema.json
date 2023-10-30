@@ -1088,6 +1088,16 @@
         "possibleTypes": null
       },
       {
+        "kind": "SCALAR",
+        "name": "Array",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "Asset",
         "description": null,
@@ -6150,16 +6160,6 @@
             "deprecationReason": null
           }
         ],
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Map",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
         "possibleTypes": null
       },
       {
@@ -18802,6 +18802,53 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "Timeline",
+        "description": null,
+        "fields": [
+          {
+            "name": "currentTime",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "endTime",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "startTime",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "SCALAR",
         "name": "TranslatedString",
         "description": null,
@@ -21248,6 +21295,12 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "ARRAY",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "BOOL",
             "description": null,
             "isDeprecated": false,
@@ -21309,6 +21362,12 @@
           },
           {
             "name": "STRING",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "TIMELINE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

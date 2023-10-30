@@ -16,12 +16,12 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   Any: { input: any; output: any; }
+  Array: { input: any; output: any; }
   Cursor: { input: string; output: string; }
   DateTime: { input: Date; output: Date; }
   FileSize: { input: number; output: number; }
   JSON: { input: any; output: any; }
   Lang: { input: string; output: string; }
-  Map: { input: any; output: any; }
   TranslatedString: { input: { [lang in string]?: string } | null; output: { [lang in string]?: string } | null; }
   URL: { input: string; output: string; }
   Upload: { input: any; output: any; }
@@ -2287,6 +2287,13 @@ export enum Theme {
   Light = 'LIGHT'
 }
 
+export type Timeline = {
+  __typename?: 'Timeline';
+  currentTime?: Maybe<Scalars['String']['output']>;
+  endTime?: Maybe<Scalars['String']['output']>;
+  startTime?: Maybe<Scalars['String']['output']>;
+};
+
 export type Typography = {
   __typename?: 'Typography';
   bold?: Maybe<Scalars['Boolean']['output']>;
@@ -2560,6 +2567,7 @@ export type User = Node & {
 };
 
 export enum ValueType {
+  Array = 'ARRAY',
   Bool = 'BOOL',
   Camera = 'CAMERA',
   Coordinates = 'COORDINATES',
@@ -2571,6 +2579,7 @@ export enum ValueType {
   Ref = 'REF',
   Spacing = 'SPACING',
   String = 'STRING',
+  Timeline = 'TIMELINE',
   Typography = 'TYPOGRAPHY',
   Url = 'URL'
 }
