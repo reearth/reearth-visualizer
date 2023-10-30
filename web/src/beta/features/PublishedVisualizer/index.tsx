@@ -11,18 +11,8 @@ export type Props = {
 
 export default function Published({ alias }: Props) {
   const t = useT();
-  const {
-    sceneProperty,
-    pluginProperty,
-    layers,
-    widgets,
-    ready,
-    error,
-    engineMeta,
-    selectedLayerId,
-    layerSelectionReason,
-    selectLayer,
-  } = useHooks(alias);
+  const { sceneProperty, pluginProperty, layers, widgets, ready, error, engineMeta } =
+    useHooks(alias);
 
   return error ? (
     <NotFound
@@ -32,6 +22,7 @@ export default function Published({ alias }: Props) {
   ) : (
     <Visualizer
       engine="cesium"
+      isBuilt
       layers={layers}
       floatingWidgets={widgets?.floatingWidgets}
       widgetAlignSystem={widgets?.alignSystem}
@@ -39,12 +30,8 @@ export default function Published({ alias }: Props) {
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
       ready={ready}
-      isBuilt
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}
-      selectedLayerId={selectedLayerId}
-      layerSelectionReason={layerSelectionReason}
-      onLayerSelect={selectLayer}
     />
   );
 }

@@ -1,5 +1,5 @@
 import { mapValues } from "lodash-es";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import {
   InternalWidget,
@@ -8,19 +8,16 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust";
-import type { Block } from "@reearth/beta/lib/core/Crust/Infobox";
-import { convertLegacyLayer, type Layer, type LegacyLayer } from "@reearth/beta/lib/core/mantle";
-import type { ComputedLayer } from "@reearth/beta/lib/core/mantle/types";
-import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map/Layers/hooks";
+import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { config } from "@reearth/services/config";
-import { useSelected } from "@reearth/services/state";
+
+import { processLayers } from "../Editor/Visualizer/convert";
 
 import type {
   PublishedData,
   WidgetZone,
   WidgetSection,
   WidgetArea,
-  Layer as RawLayer,
   WidgetAreaPadding,
 } from "./types";
 import { useGA } from "./useGA";
@@ -29,7 +26,7 @@ export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const [selected, select] = useSelected();
+  const visualizerRef = useRef<MapRef | null>(null);
 
   const sceneProperty = processProperty(data?.property);
   const pluginProperty = useMemo(
@@ -42,13 +39,16 @@ export default (alias?: string) => {
   );
 
   const layers = useMemo(() => {
-    return [
-      convertLegacyLayer({
-        id: "rootlayer",
-        children: data?.layers?.map(l => processLayer(l)).filter((l): l is Layer => !!l),
-      }),
-    ].filter((l): l is Layer => !!l);
-  }, [data]);
+    const l =
+      data?.nlsLayers?.map(l => ({
+        id: l.id,
+        title: l.title,
+        config: l.config,
+        layerType: l.layerType,
+        visible: !!l.isVisible,
+      })) ?? [];
+    return processLayers(l);
+  }, [data?.nlsLayers]);
 
   const widgets = useMemo<
     | {
@@ -199,33 +199,11 @@ export default (alias?: string) => {
     [],
   );
 
-  const selectedLayerId = useMemo(
-    () =>
-      selected?.type === "layer"
-        ? { layerId: selected.layerId, featureId: selected.featureId }
-        : undefined,
-    [selected],
-  );
-
-  const layerSelectionReason = useMemo(
-    () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
-    [selected],
-  );
-
-  const selectLayer = useCallback(
-    (
-      id?: string,
-      featureId?: string,
-      _layer?: () => Promise<ComputedLayer | undefined>,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
-    [select],
-  );
-
   // GA
   useGA(sceneProperty);
 
   return {
+    visualizerRef,
     alias: actualAlias,
     sceneProperty,
     pluginProperty,
@@ -234,35 +212,8 @@ export default (alias?: string) => {
     ready,
     error,
     engineMeta,
-    selectedLayerId,
-    layerSelectionReason,
-    selectLayer,
   };
 };
-
-function processLayer(l: RawLayer): LegacyLayer {
-  return {
-    id: l.id,
-    title: l.name || "",
-    pluginId: l.pluginId,
-    extensionId: l.extensionId,
-    isVisible: l.isVisible ?? true,
-    propertyId: l.propertyId,
-    property: processProperty(l.property),
-    infobox: l.infobox
-      ? {
-          property: processProperty(l.infobox.property),
-          blocks: l.infobox.fields.map<Block>(f => ({
-            id: f.id,
-            pluginId: f.pluginId,
-            extensionId: f.extensionId,
-            property: processProperty(f.property),
-          })),
-        }
-      : undefined,
-    children: l.children?.map(processLayer),
-  };
-}
 
 function processProperty(p: any): any {
   if (typeof p !== "object") return p;

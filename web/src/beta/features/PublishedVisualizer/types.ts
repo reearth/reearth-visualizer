@@ -1,6 +1,5 @@
-import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
+import type { DataType, SceneProperty } from "@reearth/beta/lib/core/Map/types";
 import { Story } from "@reearth/beta/lib/core/StoryPanel";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 export type PublishedData = {
   schemaVersion: number;
@@ -8,7 +7,7 @@ export type PublishedData = {
   publishedAt: string;
   property?: SceneProperty;
   plugins?: Record<string, Plugin>;
-  newLayers?: NLSLayer[];
+  nlsLayers?: NLSLayer[];
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
   story?: Story;
@@ -19,20 +18,19 @@ export type Plugin = {
   property: any;
 };
 
-export type Layer = {
+export type NLSLayer = {
   id: string;
-  name?: string;
-  pluginId: string;
-  extensionId: string;
-  propertyId?: string;
-  /** If undefined, it should be treated as true. */
+  title: string;
+  layerType: "simple";
   isVisible?: boolean;
-  property: any;
-  infobox?: {
-    fields: Block[];
-    property: any;
-  } | null;
-  children?: Layer[];
+  config: {
+    layerStyleId?: string;
+    data: {
+      type: DataType;
+      url?: string;
+      value?: any;
+    };
+  };
 };
 
 export type Block = {
