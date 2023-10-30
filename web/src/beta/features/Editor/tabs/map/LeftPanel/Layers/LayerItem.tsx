@@ -70,12 +70,16 @@ const LayerItem = ({
     [layerTitle, newValue, handleTitleSubmit],
   );
 
-  const handleUpdateVisibility = useCallback(() => {
-    const newVisibility = !isVisible;
-    onLayerVisibilityUpate({ layerId: id, visible: newVisibility });
-    setIsVisible(newVisibility);
-    setValue(isVisible ? "" : "V");
-  }, [id, isVisible, onLayerVisibilityUpate]);
+  const handleUpdateVisibility = useCallback(
+    (e?: MouseEvent<Element>) => {
+      e?.stopPropagation();
+      const newVisibility = !isVisible;
+      onLayerVisibilityUpate({ layerId: id, visible: newVisibility });
+      setIsVisible(newVisibility);
+      setValue(isVisible ? "" : "V");
+    },
+    [id, isVisible, onLayerVisibilityUpate],
+  );
 
   return (
     <ListItem
