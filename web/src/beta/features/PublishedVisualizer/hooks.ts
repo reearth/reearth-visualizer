@@ -38,17 +38,20 @@ export default (alias?: string) => {
     [data?.plugins],
   );
 
-  const layers = useMemo(() => {
-    const l =
-      data?.nlsLayers?.map(l => ({
-        id: l.id,
-        title: l.title,
-        config: l.config,
-        layerType: l.layerType,
-        visible: !!l.isVisible,
-      })) ?? [];
-    return processLayers(l);
-  }, [data?.nlsLayers]);
+  const layers = useMemo(
+    () =>
+      processLayers(
+        data?.nlsLayers?.map(l => ({
+          id: l.id,
+          title: l.title,
+          config: l.config,
+          layerType: l.layerType,
+          visible: !!l.isVisible,
+        })) ?? [],
+        data?.layerStyles,
+      ),
+    [data?.nlsLayers, data?.layerStyles],
+  );
 
   const widgets = useMemo<
     | {

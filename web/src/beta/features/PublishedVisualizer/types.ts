@@ -1,5 +1,6 @@
 import type { DataType, SceneProperty } from "@reearth/beta/lib/core/Map/types";
 import { Story } from "@reearth/beta/lib/core/StoryPanel";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 export type PublishedData = {
   schemaVersion: number;
@@ -8,6 +9,7 @@ export type PublishedData = {
   property?: SceneProperty;
   plugins?: Record<string, Plugin>;
   nlsLayers?: NLSLayer[];
+  layerStyles?: LayerStyle[];
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
   story?: Story;
