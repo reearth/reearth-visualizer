@@ -28,7 +28,6 @@ const StoryRightPanel: React.FC<Props> = ({
   onFlyTo,
 }) => {
   const t = useT();
-
   const propertyItems = useMemo(
     () =>
       selectedPage?.property.items?.filter(
