@@ -29,9 +29,10 @@ type Builder struct {
 	exporter  *encoding.Exporter
 	encoder   *encoder
 
-	scene    *scene.Scene
-	nlsLayer *nlslayer.NLSLayerList
-	story    *storytelling.Story
+	scene       *scene.Scene
+	nlsLayer    *nlslayer.NLSLayerList
+	layerStyles *scene.StyleList
+	story       *storytelling.Story
 }
 
 func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader) *Builder {
@@ -71,6 +72,14 @@ func (b *Builder) WithNLSLayers(nlsLayer *nlslayer.NLSLayerList) *Builder {
 	return b
 }
 
+func (b *Builder) WithLayerStyle(layerStyles *scene.StyleList) *Builder {
+	if b == nil {
+		return nil
+	}
+	b.layerStyles = layerStyles
+	return b
+}
+
 func (b *Builder) WithStory(s *storytelling.Story) *Builder {
 	if b == nil {
 		return nil
@@ -103,6 +112,14 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time,
 			return err
 		}
 		res.NLSLayers = nlsLayers
+	}
+
+	if b.layerStyles != nil {
+		layerStyles, err := b.buildLayerStyles(ctx)
+		if err != nil {
+			return err
+		}
+		res.LayerStyles = layerStyles
 	}
 
 	return json.NewEncoder(w).Encode(res)
@@ -148,4 +165,12 @@ func (b *Builder) buildNLSLayers(ctx context.Context) ([]*nlsLayerJSON, error) {
 	}
 
 	return b.nlsLayersJSON(ctx)
+}
+
+func (b *Builder) buildLayerStyles(ctx context.Context) ([]*layerStylesJSON, error) {
+	if b == nil {
+		return nil, nil
+	}
+
+	return b.layerStylesJSON(ctx)
 }
