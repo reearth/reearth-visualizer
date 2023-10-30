@@ -6,6 +6,7 @@ import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
 import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
+import { isEmptyString } from "@reearth/beta/utils/util";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -60,7 +61,7 @@ const ContentPage: React.FC<Props> = ({
           renderItem={(storyPage, i) => {
             const title = (getFieldValue(storyPage.property.items ?? [], "title", "title") ??
               t("Untitled")) as string;
-            const hasEmptySpace = /^ *$/.test(title);
+            const hasEmptySpace = isEmptyString(title);
             return (
               <PageItemWrapper
                 key={storyPage.id}
