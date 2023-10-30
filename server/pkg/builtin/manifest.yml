@@ -2492,7 +2492,7 @@ extensions:
               min: 0
               max: 100
         - id: default
-          title: Timeline
+          title: Timeline Setting
           fields:
             - id: timelineSetting
               type: timeline
