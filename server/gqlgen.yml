@@ -28,6 +28,8 @@ models:
     model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID
   JSON:
     model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.JSON
+  Array:
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Array
   Asset:
     fields:
       team:

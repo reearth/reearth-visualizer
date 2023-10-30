@@ -2498,26 +2498,12 @@ extensions:
               min: 0
               max: 100
         - id: default
-          title: Timeline
+          title: Timeline Setting
           fields:
-            - id: currentTime
-              type: string
+            - id: timelineSetting
+              type: timeline
               ui: datetime
-              title: Current Time
-            - id: startTime
-              type: string
-              ui: datetime
-              title: Start Time
-            - id: endTime
-              type: string
-              ui: datetime
-              title: End Time
-            - id: autoPlay
-              type: bool
-              title: Auto Play
-            - id: loop
-              type: bool
-              title: Loop
+              title: Timeline Setting
   - id: showLayersStoryBlock
     name: Show Layers
     type: storyBlock
@@ -2550,7 +2536,7 @@ extensions:
               title: Background Color
               ui: color
             - id: showLayers
-              type: map
+              type: array
               title: Show Layers
               ui: layer
               choices:
