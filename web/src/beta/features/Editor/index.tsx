@@ -28,7 +28,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
     isVisualizerReady,
-    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
