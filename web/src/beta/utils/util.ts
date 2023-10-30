@@ -65,3 +65,7 @@ export function checkIfFileType(url: string, fileTypes: string) {
 
   return regex.test(url);
 }
+
+export const isEmptyString = function (text: string): boolean {
+  return text === null || /^ *$/.test(text);
+};
