@@ -53,6 +53,7 @@ type TranslatedPropertySchemaGroup struct {
 	Description i18n.String
 	Fields      map[string]*TranslatedPropertySchemaField
 	Title       i18n.String
+	Collection  i18n.String
 }
 
 type TranslatedRoot struct {

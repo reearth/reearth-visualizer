@@ -17,6 +17,7 @@ type PropertySchemaGroup {
   schemaGroupId: ID!
   schemaId: ID!
   fields: [PropertySchemaField!]!
+  collection: String
   isList: Boolean!
   isAvailableIf: PropertyCondition
   title: String
