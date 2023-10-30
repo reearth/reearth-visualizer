@@ -75,7 +75,7 @@ const LayerBlockEditor: React.FC<Props> = ({
     label: title,
   }));
 
-  console.log(layers);
+  console.log(editorProperties);
 
   return (
     <Wrapper>

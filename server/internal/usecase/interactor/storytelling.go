@@ -38,6 +38,7 @@ type Storytelling struct {
 	tagRepo          repo.Tag
 	file             gateway.File
 	transaction      usecasex.Transaction
+	nlsLayerRepo     repo.NLSLayer
 }
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
@@ -55,6 +56,7 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		tagRepo:          r.Tag,
 		file:             gr.File,
 		transaction:      r.Transaction,
+		nlsLayerRepo:     r.NLSLayer,
 	}
 }
 
@@ -274,6 +276,11 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		}
 	}
 
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+
 	prevAlias := story.Alias()
 	if inp.Alias == nil && prevAlias == "" && inp.Status != storytelling.PublishmentStatusPrivate {
 		return nil, interfaces.ErrProjectAliasIsNotSet
@@ -329,7 +336,8 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 				repo.DatasetGraphLoaderFrom(i.datasetRepo),
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
-			).ForScene(scene).WithStory(story).Build(ctx, w, time.Now())
+				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+			).ForScene(scene).WithNLSLayers(&nlsLayers).WithStory(story).Build(ctx, w, time.Now(), true)
 		}()
 
 		// Save

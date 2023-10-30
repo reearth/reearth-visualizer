@@ -28,9 +28,11 @@ const LayerBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       itemId: string,
       fieldId: string,
       fieldType: keyof ValueTypes,
-      updatedValue: ValueTypes[keyof ValueTypes],
+      updatedValue: ValueTypes[keyof ValueTypes] | undefined,
     ) => {
       if (!block?.propertyId || !itemId) return;
+
+      console.log(itemId, fieldId, fieldType, updatedValue);
 
       handlePropertyValueUpdate(
         "default",

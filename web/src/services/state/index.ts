@@ -1,7 +1,7 @@
 import { makeVar } from "@apollo/client";
 
 import type { WidgetAreaType } from "@reearth/beta/lib/core/Crust";
-import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { ComputedLayer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
@@ -13,9 +13,9 @@ export type SelectedWidget = {
 };
 
 export type SelectedLayer = {
-  id: string;
   layerId: string;
   featureId?: string;
+  layer?: ComputedLayer;
   layerSelectionReason?: LayerSelectionReason;
 };
 

@@ -24,6 +24,7 @@ func TestSchemaGroup(t *testing.T) {
 			GID           SchemaGroupID
 			Fields        []*SchemaField
 			Title         i18n.String
+			Collection    i18n.String
 			IsAvailableIf *Condition
 			IsList        bool
 		}
@@ -39,13 +40,15 @@ func TestSchemaGroup(t *testing.T) {
 				GID           SchemaGroupID
 				Fields        []*SchemaField
 				Title         i18n.String
+				Collection    i18n.String
 				IsAvailableIf *Condition
 				IsList        bool
 			}{
-				GIDRef: scid.Ref(),
-				GID:    scid,
-				Fields: []*SchemaField{sf},
-				Title:  nil,
+				GIDRef:     scid.Ref(),
+				GID:        scid,
+				Fields:     []*SchemaField{sf},
+				Title:      nil,
+				Collection: nil,
 			},
 		},
 	}
@@ -61,6 +64,7 @@ func TestSchemaGroup(t *testing.T) {
 			assert.Equal(t, tc.Expected.IsList, tc.G.IsList())
 			assert.Equal(t, tc.Expected.IsAvailableIf, tc.G.IsAvailableIf())
 			assert.Equal(t, tc.Expected.Title, tc.G.Title())
+			assert.Equal(t, tc.Expected.Collection, tc.G.Collection())
 		})
 	}
 }

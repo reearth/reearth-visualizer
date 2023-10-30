@@ -21,7 +21,6 @@ type Props = {
   currentPage?: Page;
   showSceneSettings?: boolean;
   currentCamera?: Camera;
-  selectedLayerId?: string;
   selectedLayerStyleId?: string;
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
@@ -37,7 +36,6 @@ export default ({
   currentPage,
   showSceneSettings,
   selectedLayerStyleId,
-  selectedLayerId,
   currentCamera,
   onPageUpdate,
   onFlyTo,
@@ -55,7 +53,6 @@ export default ({
             showSceneSettings={showSceneSettings}
             currentCamera={currentCamera}
             selectedLayerStyleId={selectedLayerStyleId}
-            selectedLayerId={selectedLayerId}
             onFlyTo={onFlyTo}
             onLayerStyleValueUpdate={onLayerStyleValueUpdate}
             onLayerConfigUpdate={onLayerConfigUpdate}
@@ -86,7 +83,6 @@ export default ({
     showSceneSettings,
     currentCamera,
     selectedLayerStyleId,
-    selectedLayerId,
     currentPage,
     nlsLayers,
     onFlyTo,
