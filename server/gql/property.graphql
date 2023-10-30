@@ -194,6 +194,8 @@ enum ValueType {
   POLYGON
   RECT
   SPACING
+  ARRAY
+  TIMELINE
 }
 
 # InputType

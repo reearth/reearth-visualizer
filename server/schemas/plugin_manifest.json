@@ -33,7 +33,8 @@
         "rect",
         "ref",
         "spacing",
-        "map"
+        "array",
+        "timeline"
       ]
     },
     "propertyPointer": {

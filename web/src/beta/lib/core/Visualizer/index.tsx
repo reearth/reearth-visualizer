@@ -1,11 +1,11 @@
 import {
-  useMemo,
   memo,
   forwardRef,
   CSSProperties,
   type ReactNode,
   type Ref,
   type PropsWithChildren,
+  useMemo,
 } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -77,11 +77,6 @@ export type Props = {
   ready?: boolean;
   tags?: Tag[];
   selectedBlockId?: string;
-  selectedLayerId?: {
-    layerId?: string;
-    featureId?: string;
-  };
-  layerSelectionReason?: LayerSelectionReason;
   useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
@@ -142,7 +137,6 @@ const Visualizer = memo(
         ready,
         tags,
         selectedBlockId,
-        selectedLayerId,
         selectedWidgetArea,
         hiddenLayers,
         camera: initialCamera,
@@ -152,7 +146,6 @@ const Visualizer = memo(
         pluginBaseUrl,
         pluginProperty,
         zoomedLayerId,
-        layerSelectionReason,
         useExperimentalSandbox,
         children,
         onLayerDrop,
@@ -295,8 +288,6 @@ const Visualizer = memo(
                   shouldRender={shouldRender}
                   // overrides={overrides} // not used for now
                   property={overriddenSceneProperty}
-                  selectedLayerId={selectedLayerId}
-                  layerSelectionReason={layerSelectionReason}
                   small={small}
                   ready={ready}
                   timelineManagerRef={timelineManagerRef}

@@ -18,6 +18,11 @@ Edit: 編集
 Color Picker: カラーピッカー
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Set Time: 時間設定
+Date: 時間帯
+Time: '時間'
+Time Zone: '時間帯'
+set: ''
 Remove: 削除
 Add Item: ''
 Please choose an option: ''
@@ -58,7 +63,13 @@ Layer Style: ''
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
-Layer Property Inspector: ''
+ID: ID
+Geometry: 幾何
+Properties: プロパティ
+Data: データ
+Feature: フィーチャー
+Styling: スタイルイング
+Format: フォーマット
 Published: 一般公開
 Unpublished: 非公開
 Scene: シーン
@@ -264,7 +275,6 @@ Reset password: パスワードをリセット
 Create your Account: アカウントを登録する
 Already have an account?: 既にアカウントをお持ちの場合
 Log in: ログイン
-Date: 作成日時順
 File size: サイズ順
 Alphabetical: 名前順
 Assets Library: アセット
@@ -297,7 +307,6 @@ New workspace: 新規ワークスペース作成
 '''s workspace': ' のワークスペース'
 Layer style: レイヤータイプ
 import: インポート
-Data: データ
 Import to scene: シーンへ追加
 You are deleting a dataset. Layers that are linked to this dataset might show errors.: データセットを削除します。このデータセットとリンクされているレイヤーはエラーが発生する可能性があります。
 Please make sure your project doesn't rely on this dataset before proceeding.: プロジェクトがデータセットに依存していないことを確認してください。

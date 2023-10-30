@@ -94,7 +94,6 @@ const StyledInput = styled.input`
   transition: all 0.3s;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
-
   :focus {
     border-color: ${({ theme }) => theme.outline.main};
   }
