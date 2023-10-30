@@ -1,6 +1,9 @@
+export type Position = "left" | "right";
+
 export type Story = {
   id: string;
   title?: string;
+  position: Position;
   pages: StoryPage[];
 };
 

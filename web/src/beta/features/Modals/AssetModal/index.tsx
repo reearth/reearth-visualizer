@@ -131,19 +131,19 @@ const ChooseAssetModal: React.FC<Props> = ({
       button1={
         <Button
           size="medium"
-          buttonType="primary"
-          text={t("Select")}
-          onClick={() => {
-            handleSelectButtonClick();
-          }}
+          buttonType="secondary"
+          text={t("Cancel")}
+          onClick={() => onClose?.()}
         />
       }
       button2={
         <Button
           size="medium"
-          buttonType="secondary"
-          text={t("Cancel")}
-          onClick={() => onClose?.()}
+          buttonType="primary"
+          text={t("Select")}
+          onClick={() => {
+            handleSelectButtonClick();
+          }}
         />
       }>
       <ControlWarpper>
