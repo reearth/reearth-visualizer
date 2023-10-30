@@ -2580,8 +2580,7 @@ export enum ValueType {
   String = 'STRING',
   Timeline = 'TIMELINE',
   Typography = 'TYPOGRAPHY',
-  Url = 'URL',
-  Map = 'MAP'
+  Url = 'URL'
 }
 
 export enum Visualizer {

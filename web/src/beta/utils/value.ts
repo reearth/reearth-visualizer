@@ -117,7 +117,6 @@ export type ValueTypes = {
   ref: string;
   tiletype: string;
   spacing: Spacing;
-  map: string[];
   array: Array;
   timeline: Timeline;
 };
@@ -136,7 +135,6 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Rect]: "rect",
   [GQLValueType.Ref]: "ref",
   [GQLValueType.Spacing]: "spacing",
-  [GQLValueType.Map]: "map",
   [GQLValueType.Array]: "array",
   [GQLValueType.Timeline]: "timeline",
 };

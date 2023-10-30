@@ -27,7 +27,7 @@ export type Props = {
   onUpdate: (
     id: string,
     fieldId: keyof LayerBlock,
-    fieldType: "string" | "map",
+    fieldType: "string" | "array",
     value: string | string[] | undefined,
   ) => void;
   onItemRemove: (id: string) => void;
@@ -132,7 +132,7 @@ const LayerBlockEditor: React.FC<Props> = ({
               options={layers}
               value={editorProperties?.showLayers?.value}
               // TODO: Fix TS error
-              onChange={value => debounceOnUpdate(selected, "showLayers", "map", value)}
+              onChange={value => debounceOnUpdate(selected, "showLayers", "array", value)}
               multiSelect
             />
           </FieldGroup>
