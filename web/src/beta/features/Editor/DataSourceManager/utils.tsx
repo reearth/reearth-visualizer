@@ -114,7 +114,7 @@ export const AddLayerWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const generateTitle = (url?: string, sourceType?: string): string => {
+export const generateTitle = (url?: string): string => {
   if (url && url.trim() !== "") {
     try {
       const urlObject = new URL(url);
@@ -126,10 +126,5 @@ export const generateTitle = (url?: string, sourceType?: string): string => {
       console.error("Invalid URL", error);
     }
   }
-
-  if (sourceType === "url") {
-    console.warn("SourceType is 'url' but either URL is invalid or not provided.");
-  }
-
   return generateRandomString(5);
 };

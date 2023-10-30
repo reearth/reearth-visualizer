@@ -37,7 +37,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateTitle(value, sourceType),
+      title: generateTitle(value),
       visible: true,
       config: {
         data: {
