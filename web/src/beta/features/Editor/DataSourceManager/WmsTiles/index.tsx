@@ -25,6 +25,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     layerValue,
     layerInput,
     layers,
+    setLayers,
     setUrlValue,
     setLayerValue,
     handleAddLayer,
@@ -33,6 +34,16 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   } = useHooks();
 
   const handleSubmit = () => {
+    let updatedLayers = layers;
+    if (layerValue.trim() !== "") {
+      const exist = layers.some(layer => layer === layerValue);
+      if (!exist) {
+        updatedLayers = [...layers, layerValue];
+        setLayers(updatedLayers);
+      }
+      setLayerValue("");
+    }
+
     onSubmit({
       layerType: "simple",
       sceneId,
@@ -42,7 +53,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         data: {
           url: urlValue !== "" ? urlValue : undefined,
           type: "wms",
-          layers: layers.length === 1 ? layers[0] : layers,
+          layers: updatedLayers.length === 1 ? updatedLayers[0] : updatedLayers,
         },
       },
     });

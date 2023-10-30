@@ -23,6 +23,7 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     layerValue,
     layerInput,
     layers,
+    setLayers,
     setUrlValue,
     setLayerValue,
     handleAddLayer,
@@ -33,6 +34,16 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
   const handleSubmit = () => {
+    let updatedLayers = layers;
+    if (layerValue.trim() !== "") {
+      const exist = layers.some(layer => layer === layerValue);
+      if (!exist) {
+        updatedLayers = [...layers, layerValue];
+        setLayers(updatedLayers);
+      }
+      setLayerValue("");
+    }
+
     onSubmit({
       layerType: "simple",
       sceneId,
