@@ -284,6 +284,14 @@ func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*pr
 	}
 	title = title.WithDefault(i.Title)
 
+	var collection i18n.String
+	if tg != nil && tg.Collection != nil {
+		collection = tg.Collection.Clone()
+	}
+	if i.Collection != nil {
+		collection = collection.WithDefault(*i.Collection)
+	}
+
 	var representativeField *property.FieldID
 	if i.RepresentativeField != nil {
 		representativeField = property.FieldID(*i.RepresentativeField).Ref()
@@ -312,6 +320,7 @@ func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*pr
 		IsList(i.List).
 		Fields(fields).
 		Title(title).
+		Collection(collection).
 		RepresentativeField(representativeField).
 		IsAvailableIf(i.AvailableIf.condition()).
 		Build()
