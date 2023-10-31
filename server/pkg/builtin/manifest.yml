@@ -2508,6 +2508,16 @@ extensions:
               type: timeline
               ui: datetime
               title: Timeline Setting
+            - id: playMode
+              type: string
+              title: Play Mode
+              description: Specify play mode.
+              defaultValue: once
+              choices:
+                - key: once
+                  label: Once
+                - key: loop
+                  label: Loop
   - id: showLayersStoryBlock
     name: Show Layers
     type: storyBlock
