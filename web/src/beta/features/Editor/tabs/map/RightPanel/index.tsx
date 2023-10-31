@@ -48,10 +48,13 @@ const MapRightPanel: React.FC<Props> = ({
   const { scene } = useSceneQuery({ sceneId });
 
   const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
-  const sceneSettings = useMemo(() => convert(scene?.property), [scene?.property]);
+  const sceneSettings = useMemo(
+    () => convert(scene?.property)?.filter(item => item.collection === selectedSceneSetting),
+    [scene?.property, selectedSceneSetting],
+  );
 
   const selectedLayerId = useReactiveVar(selectedLayerVar);
-  console.log(selectedSceneSetting);
+
   return (
     <SidePanelCommon
       location="right"

@@ -40,18 +40,20 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   onFlyTo,
 }) => {
   const t = useT();
-  console.log(scene);
   return (
     <>
       <StyledSidePanelSectionField title={t("Scene")}>
-        {scene?.property?.schema?.groups.map(({ schemaGroupId, title }) => (
-          <ListItem
-            key={schemaGroupId}
-            isSelected={selectedSceneSetting === schemaGroupId}
-            onItemClick={() => onSceneSettingSelect(schemaGroupId)}>
-            {title}
-          </ListItem>
-        ))}
+        {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
+          (collection, index) =>
+            collection && (
+              <ListItem
+                key={index}
+                isSelected={selectedSceneSetting === collection}
+                onItemClick={() => onSceneSettingSelect(collection)}>
+                {collection}
+              </ListItem>
+            ),
+        )}
       </StyledSidePanelSectionField>
       <StyledSidePanelSectionField title={t("Layers")}>
         <Layers
