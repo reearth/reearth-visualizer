@@ -11,7 +11,7 @@ export default ({
   assetType,
 }: {
   workspaceId?: string;
-  onAssetSelect?: (inputValue?: string) => void;
+  onAssetSelect?: (inputValue?: string, name?: string) => void;
   assetType?: string;
 }) => {
   const { useCreateAssets } = useAssetsFetcher();
@@ -32,8 +32,9 @@ export default ({
         file: files,
       });
       const assetUrl = result?.data[0].data?.createAsset?.asset.url;
+      const assetName = result?.data[0].data?.createAsset?.asset.name;
 
-      onAssetSelect?.(assetUrl);
+      onAssetSelect?.(assetUrl, assetName);
     },
     [workspaceId, useCreateAssets, onAssetSelect],
   );
