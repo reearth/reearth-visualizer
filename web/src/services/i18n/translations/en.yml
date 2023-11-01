@@ -27,14 +27,14 @@ Remove: Remove
 Add Item: ''
 Please choose an option: ''
 Add text here: ''
-Timeline Settings: 'Timeline Settings'
-'* Start Time': ''
-Start time for the timeline: ''
-'* End Time ': ''
-End time for the timeline: ''
-'* Current Time ': ''
-Current time should be between start and end time: ''
-Please make sure the Current time must between the Start time and End Time.: ''
+Timeline Settings: Timeline Settings
+'* Start Time': '* Start Time'
+Start time for the timeline: Start time for the timeline
+'* End Time': '* End Time'
+End time for the timeline: End time for the timeline
+'* Current Time': '* Current Time'
+Current time should be between start and end time: Current time should be between start and end time
+Please make sure the Current time must between the Start time and End Time.: Please make sure the Current time must between the Start time and End Time.
 not set: not set
 Wrong file format: Wrong file format
 Choose: Choose

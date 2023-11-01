@@ -27,12 +27,12 @@ Remove: 削除
 Add Item: ''
 Please choose an option: ''
 Add text here: ''
-Timeline Settings: ''
+Timeline Settings: タイムライン設定
 '* Start Time': ''
 Start time for the timeline: ''
-'* End Time ': ''
+'* End Time': ''
 End time for the timeline: ''
-'* Current Time ': ''
+'* Current Time': ''
 Current time should be between start and end time: ''
 Please make sure the Current time must between the Start time and End Time.: ''
 not set: 未設定
