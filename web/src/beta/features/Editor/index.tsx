@@ -152,7 +152,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
-    projectId,
+    sceneId,
+    id: selectedProjectType === "story" ? selectedStory?.id : projectId,
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
