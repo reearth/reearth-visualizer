@@ -2,9 +2,11 @@ import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
+import ColorField from "@reearth/beta/components/fields/ColorField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import { Position } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
 
 import { SettingsFields, ButtonWrapper } from "../common";
 
@@ -21,7 +23,7 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
   const [localPanelPosition, setLocalPanelPosition] = useState<Position | undefined>(
     settingsItem.panelPosition,
   );
-
+  const [backgroundColor, setBackgroundColor] = useState<string>();
   const handleSubmit = useCallback(() => {
     onUpdateStory({
       panelPosition: localPanelPosition,
@@ -42,12 +44,19 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
   return (
     <Collapse title={t("Story Panel")} alwaysOpen>
       <SettingsFields>
-        <SelectField
-          name={t("Panel Position")}
-          value={localPanelPosition}
-          options={options}
-          onChange={value => setLocalPanelPosition(value as Position)}
-        />
+        <FieldsWrapper>
+          <SelectFieldWrapper
+            name={t("Panel Position")}
+            value={localPanelPosition}
+            options={options}
+            onChange={value => setLocalPanelPosition(value as Position)}
+          />
+          <ColorField
+            name={t("Background")}
+            value={backgroundColor}
+            onChange={value => setBackgroundColor(value)}
+          />
+        </FieldsWrapper>
         <ButtonWrapper>
           <Button
             text={t("Submit")}
@@ -63,3 +72,13 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
 };
 
 export default StorySettingsDetail;
+
+const FieldsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 8px;
+`;
+const SelectFieldWrapper = styled(SelectField)`
+  width: 100%;
+`;
