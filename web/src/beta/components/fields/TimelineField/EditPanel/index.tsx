@@ -55,13 +55,13 @@ const EditPanel = ({
             value={timelineValues?.startTime}
           />
           <CustomDateTimeField
-            name={t("* End Time ")}
+            name={t("* End Time")}
             onChange={newValue => handleOnChange(newValue || "", "endTime")}
             description={t("End time for the timeline")}
             value={timelineValues?.endTime}
           />
           <CustomDateTimeField
-            name={t("* Current Time ")}
+            name={t("* Current Time")}
             description={t("Current time should be between start and end time")}
             onChange={newValue => handleOnChange(newValue || "", "currentTime")}
             value={timelineValues?.currentTime}

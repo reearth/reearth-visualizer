@@ -20,16 +20,16 @@ export type Props = {
   name?: string;
   description?: string;
   value?: TimelineFieldProp;
-  onChange?: () => void;
+  onChange?: (value?: TimelineFieldProp) => void;
 };
 
 const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) => {
   const [openModal, setOpenModal] = useState(false);
   const t = useT();
 
-  const handleTimelineModalCloser = useCallback(() => setOpenModal(false), []);
+  const handleTimelineModalClose = useCallback(() => setOpenModal(false), []);
 
-  const handleTimelineModalOpener = useCallback(() => setOpenModal(true), []);
+  const handleTimelineModalOpen = useCallback(() => setOpenModal(true), []);
 
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
@@ -49,13 +49,13 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
           <Input dataTimeSet={!!timelineValues}>
             <Timeline>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.startTime ? timelineValues.startTime : t("not set")}
+                {timelineValues?.startTime ?? t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.endTime ? timelineValues.endTime : t("not set")}
+                {timelineValues?.endTime ?? t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.currentTime ? timelineValues.currentTime : t("not set")}
+                {timelineValues?.currentTime ?? t("not set")}
               </TextWrapper>
             </Timeline>
             <DeleteIcon
@@ -71,7 +71,7 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
             icon="clock"
             size="small"
             iconPosition="left"
-            onClick={() => handleTimelineModalOpener()}
+            onClick={() => handleTimelineModalOpen()}
           />
         </InputWrapper>
       </Wrapper>
@@ -79,7 +79,7 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
         <EditPanel
           timelineValues={timelineValues}
           onChange={onChange}
-          onClose={handleTimelineModalCloser}
+          onClose={handleTimelineModalClose}
           isVisible={openModal}
           setTimelineValues={setTimelineValues}
         />

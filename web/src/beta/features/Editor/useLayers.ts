@@ -69,7 +69,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   const handleLayerDelete = useCallback(
     async (layerId: string) => {
       const deletedPageIndex = nlsLayers.findIndex(l => l.id === layerId);
-      if (!deletedPageIndex) return;
+      if (deletedPageIndex === undefined) return;
 
       await useRemoveNLSLayer({
         layerId,

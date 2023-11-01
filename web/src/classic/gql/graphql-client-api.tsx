@@ -16,6 +16,7 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   Any: { input: any; output: any; }
+  Array: { input: any; output: any; }
   Cursor: { input: string; output: string; }
   DateTime: { input: Date; output: Date; }
   FileSize: { input: number; output: number; }
@@ -1744,6 +1745,7 @@ export enum PropertySchemaFieldUi {
 export type PropertySchemaGroup = {
   __typename?: 'PropertySchemaGroup';
   allTranslatedTitle?: Maybe<Scalars['TranslatedString']['output']>;
+  collection?: Maybe<Scalars['String']['output']>;
   fields: Array<PropertySchemaField>;
   isAvailableIf?: Maybe<PropertyCondition>;
   isList: Scalars['Boolean']['output'];
@@ -2286,6 +2288,13 @@ export enum Theme {
   Light = 'LIGHT'
 }
 
+export type Timeline = {
+  __typename?: 'Timeline';
+  currentTime?: Maybe<Scalars['String']['output']>;
+  endTime?: Maybe<Scalars['String']['output']>;
+  startTime?: Maybe<Scalars['String']['output']>;
+};
+
 export type Typography = {
   __typename?: 'Typography';
   bold?: Maybe<Scalars['Boolean']['output']>;
@@ -2559,6 +2568,7 @@ export type User = Node & {
 };
 
 export enum ValueType {
+  Array = 'ARRAY',
   Bool = 'BOOL',
   Camera = 'CAMERA',
   Coordinates = 'COORDINATES',
@@ -2570,6 +2580,7 @@ export enum ValueType {
   Ref = 'REF',
   Spacing = 'SPACING',
   String = 'STRING',
+  Timeline = 'TIMELINE',
   Typography = 'TYPOGRAPHY',
   Url = 'URL'
 }

@@ -41,10 +41,10 @@ const Modal: React.FC<Props> = ({ className, size, isVisible, title, onClose, ch
         <Wrapper className={className} ref={ref} width={modalWidth}>
           {!!title && (
             <HeaderWrapper>
-              <ModalTitle size="body" weight="regular" color="#E0E0E0">
+              <ModalTitle size="body" weight="regular" customColor>
                 {title}
               </ModalTitle>
-              {onClose && <CloseIcon icon="cancel" onClick={onClose} />}
+              {onClose && <CloseIcon icon="cancel" size={16} onClick={onClose} />}
             </HeaderWrapper>
           )}
           <InnerWrapper>{children}</InnerWrapper>
@@ -107,6 +107,7 @@ const HeaderWrapper = styled.div`
   align-self: stretch;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
-  background: #393939;
+  color: ${({ theme }) => theme.content.main};
+  background: ${({ theme }) => theme.bg[2]};
 `;
 export default Modal;

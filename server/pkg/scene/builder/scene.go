@@ -22,6 +22,7 @@ type sceneJSON struct {
 	Clusters          []*clusterJSON          `json:"clusters"`
 	Story             *storyJSON              `json:"story,omitempty"`
 	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
+	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
 	CoreSupport       bool                    `json:"coreSupport"`
 }
 

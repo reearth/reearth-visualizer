@@ -13,7 +13,8 @@ extensions:
     schema:
       groups:
         - id: default
-          title: Scene
+          collection: Main
+          title: Main
           fields:
             - id: sceneMode
               type: string
@@ -36,6 +37,7 @@ extensions:
               title: VR
               description: Enable VR mode to split the screen into left and right.
         - id: tiles
+          collection: Tiles
           title: Tiles
           description: You may change the look of the Earth by obtaining map tile data and setting it here.
           list: true
@@ -89,6 +91,7 @@ extensions:
               min: 0
               max: 1
         - id: terrain
+          collection: Terrain
           title: Terrain
           fields:
             - id: terrainBool
@@ -164,7 +167,7 @@ extensions:
                 type: bool
                 value: true
         - id: globeLighting
-          collection: globe
+          collection: Globe
           title: Globe Lighting
           fields:
             - id: globeLightingBool
@@ -172,7 +175,7 @@ extensions:
               title: Enable
               description: This property will support the globe receive Entitys Lighting.
         - id: globeShadow
-          collection: globe
+          collection: Globe
           title: Globe Shadow
           fields:
             - id: globeShadowBool
@@ -180,7 +183,7 @@ extensions:
               title: Enable
               description: This property will support the globe receive Entitys shadows.
         - id: globeAtmosphere
-          collection: globe
+          collection: Globe
           title: Globe Atmosphere
           fields:
             - id: globeAtmosphereBool
@@ -200,7 +203,7 @@ extensions:
                 type: bool
                 value: true
         - id: skyBox
-          collection: sky
+          collection: Sky
           title: Sky Box
           fields:
             - id: skyBoxBool
@@ -208,7 +211,7 @@ extensions:
               title: Enable
               description: Description needed.
         - id: sun
-          collection: sky
+          collection: Sky
           title: Sun
           fields:
             - id: sunBool
@@ -216,7 +219,7 @@ extensions:
               title: Enable
               description: Description needed.
         - id: moon
-          collection: sky
+          collection: Sky
           title: Moon
           fields:
             - id: moonBool
@@ -224,7 +227,7 @@ extensions:
               title: Enable
               description: Description needed.
         - id: skyAtmosphere
-          collection: sky
+          collection: Sky
           title: Sky Atmosphere
           fields:
             - id: skyAtmosphereBool
@@ -244,6 +247,7 @@ extensions:
                 type: bool
                 value: true
         - id: camera
+          collection: Camera
           title: Camera
           fields:
             - id: camera
@@ -2314,6 +2318,12 @@ extensions:
             - id: cameraPosition
               type: camera
               title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+              defaultValue: 2
         - id: timePoint
           title: Time Point Setting
           fields:
@@ -2498,6 +2508,16 @@ extensions:
               type: timeline
               ui: datetime
               title: Timeline Setting
+            - id: playMode
+              type: string
+              title: Play Mode
+              description: Specify play mode.
+              defaultValue: once
+              choices:
+                - key: once
+                  label: Once
+                - key: loop
+                  label: Loop
   - id: showLayersStoryBlock
     name: Show Layers
     type: storyBlock
