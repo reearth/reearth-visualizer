@@ -6,6 +6,7 @@ import type { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
+import { Scene } from "@reearth/services/gql";
 
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
@@ -15,6 +16,7 @@ import { LayerStyleValueUpdateProps } from "./useLayerStyles";
 
 type Props = {
   layerStyles: LayerStyle[];
+  scene?: Scene;
   tab: Tab;
   sceneId?: string;
   nlsLayers: NLSLayer[];
@@ -30,6 +32,7 @@ type Props = {
 };
 
 export default ({
+  scene,
   layerStyles,
   tab,
   sceneId,
@@ -49,6 +52,7 @@ export default ({
       case "map":
         return (
           <MapSidePanel
+            scene={scene}
             layerStyles={layerStyles}
             layers={nlsLayers}
             sceneId={sceneId}
@@ -80,6 +84,7 @@ export default ({
         return undefined;
     }
   }, [
+    scene,
     tab,
     layerStyles,
     sceneId,

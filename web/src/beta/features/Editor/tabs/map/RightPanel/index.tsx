@@ -7,10 +7,10 @@ import { LayerConfigUpdateProps } from "@reearth/beta/features/Editor/useLayers"
 import { LayerStyleValueUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
 import { FlyTo } from "@reearth/beta/lib/core/types";
 import { Camera } from "@reearth/beta/utils/value";
-import { useSceneFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { convert } from "@reearth/services/api/propertyApi/utils";
+import { Scene } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { selectedLayerVar } from "@reearth/services/state";
 
@@ -18,6 +18,7 @@ import LayerInspector from "./LayerInspector";
 import LayerStyleEditor from "./LayerStyleValueEditor";
 
 type Props = {
+  scene?: Scene;
   layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
   sceneId?: string;
@@ -31,10 +32,10 @@ type Props = {
 };
 
 const MapRightPanel: React.FC<Props> = ({
+  scene,
   layers,
   layerStyles,
   sceneId,
-  showSceneSettings,
   selectedLayerStyleId,
   selectedSceneSetting,
   currentCamera,
@@ -43,9 +44,6 @@ const MapRightPanel: React.FC<Props> = ({
   onLayerConfigUpdate,
 }) => {
   const t = useT();
-  const { useSceneQuery } = useSceneFetcher();
-
-  const { scene } = useSceneQuery({ sceneId });
 
   const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
   const sceneSettings = useMemo(
@@ -64,7 +62,7 @@ const MapRightPanel: React.FC<Props> = ({
           title: t("Inspector"),
           children: (
             <>
-              {showSceneSettings && scenePropertyId && (
+              {!!selectedSceneSetting && scenePropertyId && (
                 <SceneSettings
                   propertyId={scenePropertyId}
                   propertyItems={sceneSettings}

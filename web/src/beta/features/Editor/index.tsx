@@ -127,6 +127,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   });
 
   const { rightPanel } = useRightPanel({
+    scene,
     layerStyles,
     tab,
     sceneId,
