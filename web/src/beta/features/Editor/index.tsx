@@ -43,7 +43,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleFlyTo,
     handleCameraUpdate,
   } = useHooks({ sceneId, tab });
-
   const {
     selectedStory,
     currentPage,
@@ -56,9 +55,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handlePageMove,
     handleStoryBlockMove: onStoryBlockMove,
     handlePageUpdate,
+    onTimeChange,
   } = useStorytelling({
     sceneId,
     onFlyTo: handleFlyTo,
+    visualizerRef,
   });
 
   const {
@@ -138,6 +139,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
+    onTimeChange,
   });
 
   const { bottomPanel } = useBottomPanel({

@@ -26,6 +26,7 @@ type Props = {
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   onPageUpdate?: (id: string, layers: string[]) => void;
+  onTimeChange?: (t: Date) => void;
 };
 
 export default ({
@@ -41,6 +42,7 @@ export default ({
   onFlyTo,
   onLayerStyleValueUpdate,
   onLayerConfigUpdate,
+  onTimeChange,
 }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -67,6 +69,7 @@ export default ({
             tab={tab}
             onFlyTo={onFlyTo}
             onPageUpdate={onPageUpdate}
+            onTimeChange={onTimeChange}
           />
         );
       case "widgets":
@@ -79,16 +82,17 @@ export default ({
   }, [
     tab,
     layerStyles,
+    nlsLayers,
     sceneId,
     showSceneSettings,
     currentCamera,
     selectedLayerStyleId,
-    currentPage,
-    nlsLayers,
     onFlyTo,
     onLayerStyleValueUpdate,
     onLayerConfigUpdate,
+    currentPage,
     onPageUpdate,
+    onTimeChange,
   ]);
 
   return {

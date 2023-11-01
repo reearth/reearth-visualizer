@@ -15,9 +15,10 @@ type Props = {
   onClose: () => void;
   value?: string;
   setDateTime?: (value?: string | undefined) => void;
+  onTimeChange?: (t: Date) => void;
 };
 
-const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) => {
+const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime, onTimeChange }) => {
   const t = useT();
 
   const {
@@ -26,10 +27,10 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) =
     selectedTimezone,
     offsetFromUTC,
     onDateChange,
-    onTimeChange,
     onTimezoneSelect,
     onDateTimeApply,
-  } = useHooks({ value, onChange, setDateTime });
+    handleTimeChange,
+  } = useHooks({ value, onChange, setDateTime, onTimeChange });
 
   const isButtonDisabled = useMemo(() => {
     return date.trim() === "" || time.trim() === "";
@@ -45,7 +46,7 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) =
         <TextWrapper>
           <Label>{t("Time")}</Label>
 
-          <Input type="time" value={time} onChange={onTimeChange} />
+          <Input type="time" value={time} onChange={handleTimeChange} />
         </TextWrapper>
         <SelectWrapper>
           <Label>{t("Time Zone")}</Label>

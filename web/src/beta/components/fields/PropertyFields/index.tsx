@@ -24,9 +24,16 @@ type Props = {
   item: Item;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
+  onTimeChange?: (t: Date) => void;
 };
 
-const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFlyTo }) => {
+const PropertyFields: React.FC<Props> = ({
+  propertyId,
+  item,
+  currentCamera,
+  onFlyTo,
+  onTimeChange,
+}) => {
   const {
     handlePropertyValueUpdate,
     handleAddPropertyItem,
@@ -105,6 +112,7 @@ const PropertyFields: React.FC<Props> = ({ propertyId, item, currentCamera, onFl
                 value={(value as string) ?? ""}
                 description={sf.description}
                 onChange={handleChange}
+                onTimeChange={onTimeChange}
               />
             ) : sf.ui === "color" ? (
               <ColorField

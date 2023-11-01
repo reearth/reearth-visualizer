@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
@@ -9,6 +10,7 @@ import { useT } from "@reearth/services/i18n";
 type Props = {
   sceneId: string;
   onFlyTo: FlyTo;
+  visualizerRef?: MutableRefObject<MapRef | null>;
 };
 
 const getPage = (id?: string, pages?: Page[]) => {
@@ -16,7 +18,7 @@ const getPage = (id?: string, pages?: Page[]) => {
   return pages.find(p => p.id === id);
 };
 
-export default function ({ sceneId, onFlyTo }: Props) {
+export default function ({ sceneId, onFlyTo, visualizerRef }: Props) {
   const t = useT();
 
   const {
@@ -30,7 +32,6 @@ export default function ({ sceneId, onFlyTo }: Props) {
   } = useStorytellingAPI();
 
   const { stories } = useStoriesQuery({ sceneId });
-
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
   const [currentPage, setCurrentPage] = useState<Page | undefined>(undefined);
   const isAutoScrolling = useRef(false);
@@ -51,6 +52,39 @@ export default function ({ sceneId, onFlyTo }: Props) {
     }
   }, [currentPage, selectedPageId, selectedStory?.pages]);
 
+  const onTimeChange = useCallback(
+    (time: Date) => {
+      return visualizerRef?.current?.timeline?.current?.commit({
+        cmd: "SET_TIME",
+        payload: {
+          start: visualizerRef?.current?.timeline?.current?.computedTimeline?.start,
+          current: time,
+          stop: visualizerRef?.current?.timeline?.current?.computedTimeline?.stop,
+        },
+        committer: { source: "overrideSceneProperty", id: currentPage?.id },
+      });
+    },
+    [currentPage?.id, visualizerRef],
+  );
+  const handlePageTime = useCallback(
+    (page: Page) => {
+      const timePointFieldGroup = page.property.items?.find(i => i.schemaGroup === "timePoint");
+
+      let currentTime = timePointFieldGroup?.schemaFields?.find(sf => sf.id === "timePoint")
+        ?.defaultValue as string;
+      if (timePointFieldGroup && "fields" in timePointFieldGroup) {
+        currentTime = (timePointFieldGroup?.fields.find(sf => sf.id === "timePoint")?.value ??
+          currentTime) as string;
+        if (!currentTime) onTimeChange?.(new Date());
+        else {
+          const getNewDate = new Date(currentTime.substring(0, 19)).getTime();
+          return onTimeChange?.(new Date(getNewDate));
+        }
+      }
+    },
+    [onTimeChange],
+  );
+
   const handleCurrentPageChange = useCallback(
     (pageId: string, disableScrollIntoView?: boolean) => {
       const newPage = getPage(pageId, selectedStory?.pages);
@@ -63,6 +97,9 @@ export default function ({ sceneId, onFlyTo }: Props) {
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
+
+      handlePageTime(newPage);
+
       const cameraFieldGroup = newPage.property.items?.find(
         i => i.schemaGroup === "cameraAnimation",
       );
@@ -83,7 +120,7 @@ export default function ({ sceneId, onFlyTo }: Props) {
         onFlyTo({ ...destination }, { duration });
       }
     },
-    [selectedStory?.pages, onFlyTo],
+    [selectedStory?.pages, handlePageTime, onFlyTo],
   );
 
   const handlePageDuplicate = useCallback(async (pageId: string) => {
@@ -175,5 +212,6 @@ export default function ({ sceneId, onFlyTo }: Props) {
     handlePageMove,
     handleStoryBlockMove,
     handlePageUpdate,
+    onTimeChange,
   };
 }

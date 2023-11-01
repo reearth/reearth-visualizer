@@ -16,9 +16,10 @@ export type Props = {
   description?: string;
   value?: string;
   onChange?: (value?: string | undefined) => void;
+  onTimeChange?: (t: Date) => void;
 };
 
-const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) => {
+const DateTimeField: React.FC<Props> = ({ name, description, value, onChange, onTimeChange }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
 
@@ -27,7 +28,8 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
     if (!value) return;
     setDateTime("");
     onChange?.();
-  }, [value, onChange]);
+    onTimeChange?.(new Date());
+  }, [value, onChange, onTimeChange]);
 
   const [dateTime, setDateTime] = useState(value);
 
@@ -68,6 +70,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
                 setDateTime={setDateTime}
                 value={dateTime}
                 onChange={onChange}
+                onTimeChange={onTimeChange}
                 onClose={handlePopOver}
               />
             )}
