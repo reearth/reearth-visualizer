@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -39,10 +39,10 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
 
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
-  const [sourceType, setSourceType] = React.useState<SourceType>("local");
-  const [fileFormat, setFileFormat] = React.useState<FileFormatType>("GeoJSON");
-  const [value, setValue] = React.useState("");
-  const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
+  const [sourceType, setSourceType] = useState<SourceType>("local");
+  const [fileFormat, setFileFormat] = useState<FileFormatType>("GeoJSON");
+  const [value, setValue] = useState("");
+  const [prioritizePerformance, setPrioritizePerformance] = useState(false);
   const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
       { label: t("From Assets"), keyValue: "local" },

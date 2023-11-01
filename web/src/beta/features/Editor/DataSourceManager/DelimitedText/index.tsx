@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import URLField from "@reearth/beta/components/fields/URLField";
@@ -20,10 +20,10 @@ import {
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
-  const [sourceType, setSourceType] = React.useState<SourceType>("local");
-  const [value, setValue] = React.useState("");
-  const [lat, setLat] = React.useState("");
-  const [long, setLong] = React.useState("");
+  const [sourceType, setSourceType] = useState<SourceType>("local");
+  const [value, setValue] = useState("");
+  const [lat, setLat] = useState("");
+  const [long, setLong] = useState("");
 
   const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
