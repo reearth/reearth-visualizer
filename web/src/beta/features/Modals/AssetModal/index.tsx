@@ -28,7 +28,7 @@ export type Props = {
   className?: string;
   assetType?: "file" | "image";
   open?: boolean;
-  onSelect?: (value: string) => void;
+  onSelect?: (value: string, name: string) => void;
   currentWorkspace?: Workspace;
   currentValue?: string;
   onModalClose: () => void;
@@ -89,7 +89,7 @@ const ChooseAssetModal: React.FC<Props> = ({
 
   const handleSelectButtonClick = useCallback(() => {
     if (selectedAssets && selectedAssets.length > 0) {
-      onSelect?.(selectedAssets[0].url);
+      onSelect?.(selectedAssets[0].url, selectedAssets[0].name);
       onClose?.();
     } else {
       setNotification({
