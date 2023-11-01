@@ -134,7 +134,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     nlsLayers,
     currentPage,
     currentCamera,
-    showSceneSettings: !!selectedSceneSetting,
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedSceneSetting: selectedSceneSetting,
     onFlyTo: handleFlyTo,

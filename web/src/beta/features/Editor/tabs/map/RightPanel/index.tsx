@@ -23,7 +23,6 @@ type Props = {
   layers?: NLSLayer[];
   sceneId?: string;
   selectedLayerStyleId?: string;
-  showSceneSettings?: boolean;
   selectedSceneSetting?: string;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;

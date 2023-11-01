@@ -21,7 +21,6 @@ type Props = {
   sceneId?: string;
   nlsLayers: NLSLayer[];
   currentPage?: Page;
-  showSceneSettings?: boolean;
   currentCamera?: Camera;
   selectedLayerStyleId?: string;
   selectedSceneSetting?: string;
@@ -38,7 +37,6 @@ export default ({
   sceneId,
   nlsLayers,
   currentPage,
-  showSceneSettings,
   selectedLayerStyleId,
   selectedSceneSetting,
   currentCamera,
@@ -56,7 +54,6 @@ export default ({
             layerStyles={layerStyles}
             layers={nlsLayers}
             sceneId={sceneId}
-            showSceneSettings={showSceneSettings}
             currentCamera={currentCamera}
             selectedLayerStyleId={selectedLayerStyleId}
             selectedSceneSetting={selectedSceneSetting}
@@ -88,7 +85,6 @@ export default ({
     tab,
     layerStyles,
     sceneId,
-    showSceneSettings,
     currentCamera,
     selectedLayerStyleId,
     selectedSceneSetting,
