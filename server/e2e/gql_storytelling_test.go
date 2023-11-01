@@ -1037,7 +1037,7 @@ func TestStoryPublishing(t *testing.T) {
 	_, err = buf.ReadFrom(rc)
 	assert.NoError(t, err)
 
-	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}]}]},"nlsLayers":null,"coreSupport":true}`, sID, storyID, pageID, blockID, extensionId, pluginId))
+	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}]}]},"nlsLayers":null,"layerStyles":null,"coreSupport":true}`, sID, storyID, pageID, blockID, extensionId, pluginId))
 	assert.Regexp(t, pub, buf.String())
 
 	resString := e.GET("/p/test-alias/data.json").

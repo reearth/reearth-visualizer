@@ -779,12 +779,14 @@ func TestSchemaGroup(t *testing.T) {
 					Type:         "latlng",
 					UI:           nil,
 				}},
-				ID:    "default",
-				List:  false,
-				Title: "marker",
+				ID:         "default",
+				List:       false,
+				Title:      "marker",
+				Collection: &str,
 			},
 			tl: &TranslatedPropertySchemaGroup{
 				Title:       i18n.String{"ja": "マーカー"},
+				Collection:  i18n.String{"ja": "マーカー"},
 				Description: i18n.String{"ja": "説明"},
 				Fields: map[string]*TranslatedPropertySchemaField{
 					"location": {Title: i18n.String{"en": "x"}},
@@ -793,6 +795,7 @@ func TestSchemaGroup(t *testing.T) {
 			expected: property.NewSchemaGroup().
 				ID("default").
 				Title(i18n.String{"en": str, "ja": "マーカー"}).
+				Collection(i18n.String{"en": str, "ja": "マーカー"}).
 				Fields([]*property.SchemaField{
 					property.NewSchemaField().
 						ID("location").
@@ -820,9 +823,10 @@ func TestSchemaGroup(t *testing.T) {
 					Type:         "xx",
 					UI:           nil,
 				}},
-				ID:    "default",
-				List:  false,
-				Title: "marker",
+				ID:         "default",
+				List:       false,
+				Title:      "marker",
+				Collection: &str,
 			},
 			expected: nil,
 			err:      "field (location): invalid value type: xx",

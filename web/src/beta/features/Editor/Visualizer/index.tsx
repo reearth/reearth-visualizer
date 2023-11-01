@@ -85,7 +85,6 @@ const Visualizer: React.FC<Props> = ({
     ),
     [blocks],
   );
-
   return (
     <Wrapper>
       <CoreVisualizer
@@ -113,6 +112,7 @@ const Visualizer: React.FC<Props> = ({
         meta={engineMeta}
         useExperimentalSandbox={useExperimentalSandbox}
         camera={currentCamera}
+        storyPanelPosition={story?.position}
         onCameraChange={onCameraChange}
         onLayerSelect={selectLayer}
         onWidgetLayoutUpdate={onWidgetUpdate}

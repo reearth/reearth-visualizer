@@ -6,7 +6,6 @@ import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
 import { DataType } from "@reearth/beta/lib/core/Map";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps, DataSourceOptType, FileFormatType, SourceType } from "..";
@@ -18,6 +17,7 @@ import {
   SourceTypeWrapper,
   SubmitWrapper,
   TextArea,
+  generateTitle,
 } from "../utils";
 
 const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) => void }> = ({
@@ -66,7 +66,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateRandomString(5),
+      title: generateTitle(value),
       visible: true,
       config: {
         data: {

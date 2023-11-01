@@ -34,15 +34,14 @@ const ListItem: FC<Props> = ({
   onOpenChange,
 }) => {
   return (
-    <Wrapper>
-      <Inner border={border} isSelected={isSelected} clamp={clamp} onClick={onItemClick}>
+    <Wrapper border={border} isSelected={isSelected} isOpenAction={isOpenAction} clamp={clamp}>
+      <Inner onClick={onItemClick}>
         {typeof children === "string" ? (
           <StyledText size="footnote">{children}</StyledText>
         ) : (
           children
         )}
       </Inner>
-
       {actionContent && (
         <Popover.Provider
           open={isOpenAction}
@@ -50,7 +49,7 @@ const ListItem: FC<Props> = ({
           onOpenChange={onOpenChange}>
           <Popover.Trigger asChild>
             <Button clamp={clamp} onClick={onActionClick}>
-              <Icon icon="actionbutton" size={12} />
+              <Icon icon="actionbutton" size={16} />
             </Button>
           </Popover.Trigger>
           <Popover.Content>{actionContent}</Popover.Content>
@@ -62,54 +61,50 @@ const ListItem: FC<Props> = ({
 
 export default ListItem;
 
-const Wrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const Inner = styled.button<{
+const Wrapper = styled.div<{
   border?: boolean;
   isSelected?: boolean;
+  isOpenAction?: boolean;
   clamp?: Clamp;
 }>`
   display: flex;
   width: 100%;
-  min-height: 38px;
+  min-height: 36px;
   align-items: center;
   color: ${({ theme }) => theme.content.main};
   border: 1px solid ${({ border, theme }) => (border ? theme.outline.weakest : "transparent")};
   border-radius: ${({ clamp }) =>
-    clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
-  box-sizing: border-box;
-  padding: 8px 20px 8px 4px;
-  background: ${({ theme, isSelected }) => (isSelected ? theme.select.main : "inherit")};
-  transition: all 0.3s;
+    clamp === "left" ? "0 4px 4px 0" : clamp === "right" ? "4px 0 0 4px" : "4px"};
+  background: ${({ theme, isSelected, isOpenAction }) =>
+    isSelected ? theme.select.main : isOpenAction ? theme.bg[3] : "inherit"};
+  transition: all 0.2s;
+  cursor: pointer;
 
   :hover {
     ${({ isSelected, theme }) => !isSelected && `background-color:` + theme.bg[3]}
   }
 `;
 
+const Inner = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 8px 4px 8px 4px;
+  border-radius: 4px;
+`;
+
 const StyledText = styled(Text)`
   flex-grow: 1;
-  width: 0;
   word-break: break-all;
   text-align: left;
 `;
 
-const Button = styled.button<{ clamp?: Clamp }>`
-  height: 100%;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 4px;
-  margin-left: -1px;
+const Button = styled.div<{ clamp?: Clamp }>`
+  display: flex;
+  align-items: center;
+  height: 36px;
   color: ${({ theme }) => theme.content.weak};
   border-radius: ${({ clamp }) =>
-    clamp === "left" ? "0 6px 6px 0" : clamp === "right" ? "6px 0 0 6px" : "6px"};
-
-  :hover {
-    background: ${({ theme }) => theme.bg[2]};
-  }
+    clamp === "left" ? "0 4px 4px 0" : clamp === "right" ? "4px 0 0 4px" : "4px"};
 `;

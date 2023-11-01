@@ -204,7 +204,10 @@
           "$ref": "#/definitions/id"
         },
         "collection": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "title": {
           "type": "string"

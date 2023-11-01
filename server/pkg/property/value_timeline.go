@@ -9,7 +9,7 @@ var ValueTypeTimeline = ValueType("timeline")
 type Timeline struct {
 	CurrentTime *string `json:"currentTime" mapstructure:"currentTime"`
 	StartTime   *string `json:"startTime" mapstructure:"startTime"`
-	EndTime     *string `json:"stopTime" mapstructure:"stopTime"`
+	EndTime     *string `json:"endTime" mapstructure:"endTime"`
 }
 
 func (c *Timeline) Clone() *Timeline {
@@ -73,7 +73,7 @@ func (p *typePropertyTimeline) JSONSchema() map[string]any {
 			"startTime": map[string]any{
 				"type": "number",
 			},
-			"stopTime": map[string]any{
+			"endTime": map[string]any{
 				"type": "number",
 			},
 		},

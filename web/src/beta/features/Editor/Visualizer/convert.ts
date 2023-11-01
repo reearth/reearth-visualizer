@@ -209,6 +209,7 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
   return {
     id: story.id,
     title: story.title,
+    position: story.panelPosition === "RIGHT" ? "right" : "left",
     pages: storyPages(story.pages),
   };
 };
@@ -432,8 +433,8 @@ export function processLayers(
       id: nlsLayer.id,
       title: nlsLayer.title,
       visible: nlsLayer.visible,
-      infobox: processInfobox(nlsLayer.infobox, parent?.infobox),
-      tags: processLayerTags(nlsLayer.tags),
+      infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
+      tags: processLayerTags(nlsLayer.tags ?? []),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
