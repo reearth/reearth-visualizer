@@ -26,19 +26,19 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
     currentTime,
     range,
     playSpeedOptions,
-    onClick,
-    onDrag,
+    isPlaying,
+    isPlayingReversed,
     onPlay,
     onPlayReversed,
     onSpeedChange,
     onPause,
-  } = useTimelineBlock(timelineValues);
+    setIsPlaying,
+    setIsPlayingReversed,
+  } = useTimelineBlock(timelineValues, blockId);
 
   const {
     formattedCurrentTime,
     timeRange,
-    isPlaying,
-    isPlayingReversed,
     isPause,
     sliderPosition,
     toggleIsPlaying,
@@ -50,12 +50,14 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
     isSelected,
     blockId,
     inEditor,
-    onClick,
-    onDrag,
+    isPlaying,
+    isPlayingReversed,
     onPlay,
     onPlayReversed,
     onSpeedChange,
     onPause,
+    setIsPlaying,
+    setIsPlayingReversed,
   });
 
   const handlePopOver = useCallback(() => {

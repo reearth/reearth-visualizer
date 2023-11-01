@@ -92,6 +92,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding-bottom: 12px;
 `;
 
 const InputWrapper = styled.div<{ disabled?: boolean }>`

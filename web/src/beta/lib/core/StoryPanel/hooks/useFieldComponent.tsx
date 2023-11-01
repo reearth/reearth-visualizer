@@ -102,7 +102,10 @@ export const FieldComponent = ({
         name={field?.title}
         value={field?.value}
         description={field?.description}
-        options={field?.choices}
+        options={field?.choices.map(({ key, title }: { key: string; title: string }) => ({
+          key,
+          label: title,
+        }))}
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
     ) : field?.ui === "buttons" ? (

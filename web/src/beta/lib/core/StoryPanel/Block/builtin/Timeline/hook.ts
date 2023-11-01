@@ -16,6 +16,10 @@ type TimelineProps = {
   isSelected?: boolean;
   blockId?: string;
   inEditor?: boolean;
+  isPlaying?: boolean;
+  isPlayingReversed?: boolean;
+  setIsPlaying?: (p: boolean) => void;
+  setIsPlayingReversed?: (p: boolean) => void;
   onClick?: (t: number) => void;
   onDrag?: (t: number) => void;
   onPlay?: (isPlaying: boolean, committer: TimelineCommitter) => void;
@@ -30,13 +34,15 @@ export default ({
   isSelected,
   blockId,
   inEditor,
+  isPlaying,
+  isPlayingReversed,
+  setIsPlayingReversed,
+  setIsPlaying,
   onPlay,
   onPlayReversed,
   onSpeedChange,
   onPause,
 }: TimelineProps) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const [isPause, setIsPause] = useState(false);
   const context = useContext(BlockContext);
 
@@ -58,13 +64,13 @@ export default ({
 
   const toggleIsPlaying = useCallback(() => {
     if (isPlayingReversed || isPause) {
-      setIsPlayingReversed(false);
+      setIsPlayingReversed?.(false);
       setIsPause(false);
       onPlayReversed?.(false, committer);
       onPause?.(false, committer);
     }
     if (context?.editMode && !inEditor) {
-      setIsPlaying(p => !p);
+      setIsPlaying?.(!isPlaying);
       onPlay?.(!isPlaying, committer);
     }
   }, [
@@ -72,22 +78,24 @@ export default ({
     isPause,
     context?.editMode,
     inEditor,
+    setIsPlayingReversed,
     onPlayReversed,
     committer,
     onPause,
+    setIsPlaying,
     onPlay,
     isPlaying,
   ]);
 
   const toggleIsPlayingReversed = useCallback(() => {
     if (isPlaying || isPause) {
-      setIsPlaying(false);
+      setIsPlaying?.(false);
       setIsPause(false);
       onPlay?.(false, committer);
       onPause?.(false, committer);
     }
     if (context?.editMode && !inEditor) {
-      setIsPlayingReversed(p => !p);
+      setIsPlayingReversed?.(!isPlayingReversed);
       onPlayReversed?.(!isPlayingReversed, committer);
     }
   }, [
@@ -100,18 +108,30 @@ export default ({
     onPause,
     onPlay,
     onPlayReversed,
+    setIsPlaying,
+    setIsPlayingReversed,
   ]);
 
   const toggleIsPause = useCallback(() => {
     if (isPlayingReversed || isPlaying) {
-      setIsPlayingReversed(false);
-      setIsPlaying(false);
+      setIsPlayingReversed?.(false);
+      setIsPlaying?.(false);
       onPlayReversed?.(false, committer);
       onPlay?.(false, committer);
     }
     setIsPause(p => !p);
     onPause?.(!isPause, committer);
-  }, [isPlayingReversed, isPlaying, onPause, isPause, committer, onPlayReversed, onPlay]);
+  }, [
+    isPlayingReversed,
+    isPlaying,
+    onPause,
+    isPause,
+    committer,
+    setIsPlayingReversed,
+    setIsPlaying,
+    onPlayReversed,
+    onPlay,
+  ]);
 
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(currentTime, { detail: true });
@@ -141,7 +161,7 @@ export default ({
       }
     }
     return 16;
-  }, [inEditor, range, currentTime]);
+  }, [range, currentTime, inEditor]);
 
   useEffect(() => {
     if (currentTime === range?.end) {

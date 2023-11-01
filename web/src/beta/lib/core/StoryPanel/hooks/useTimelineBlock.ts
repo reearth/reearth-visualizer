@@ -6,8 +6,6 @@ import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManag
 import { TimelineValues } from "../Block/builtin/Timeline";
 import { convertOptionToSeconds, formatDateToSting } from "../utils";
 
-type TimeHandler = (t: number) => void;
-
 const getNewDate = (d?: Date) => d ?? new Date();
 
 const calculateEndTime = (date: Date) => {
@@ -29,24 +27,28 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
-export default (timelineValues?: TimelineValues) => {
+export default (timelineValues?: TimelineValues, blockId?: string) => {
   const visualizerContext = useVisualizer();
 
-  const [currentTime, setCurrentTime] = useState(
-    getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
-  );
-  const [range, setRange] = useState(
-    timeRange(
-      visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
-      visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime(),
-    ),
-  );
   const playSpeedOptions = useMemo(() => {
     const speedOpt = ["1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
     return convertOptionToSeconds(speedOpt);
   }, []);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
+
+  const range = useMemo(() => {
+    if (timelineValues) {
+      const startTime = getNewDate(new Date(timelineValues?.startTime.substring(0, 19))).getTime();
+      const endTime = getNewDate(new Date(timelineValues?.endTime.substring(0, 19))).getTime();
+      return timeRange(startTime, endTime);
+    } else {
+      return timeRange(
+        visualizerContext?.current?.timeline?.current?.timeline?.start?.getTime(),
+        visualizerContext?.current?.timeline?.current?.timeline?.stop?.getTime(),
+      );
+    }
+  }, [timelineValues, visualizerContext]);
 
   const onPause = useCallback(
     (committer?: TimelineCommitter) => {
@@ -69,18 +71,19 @@ export default (timelineValues?: TimelineValues) => {
   );
 
   const onTimeChange = useCallback(
-    (time: Date, committer?: TimelineCommitter) => {
+    (time: Date, committerId?: string) => {
+      if (!range) return;
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_TIME",
         payload: {
-          start: formatDateToSting(range?.start),
+          start: formatDateToSting(range.start),
           current: time,
-          stop: formatDateToSting(range?.end),
+          stop: formatDateToSting(range.end),
         },
-        committer: { source: "storyTimelineBlock", id: committer?.id },
+        committer: { source: "storyTimelineBlock", id: committerId },
       });
     },
-    [range.end, range?.start, visualizerContext],
+    [range, visualizerContext],
   );
 
   const onSpeedChange = useCallback(
@@ -138,78 +141,52 @@ export default (timelineValues?: TimelineValues) => {
     [onPause],
   );
 
-  const handleTimeEvent: TimeHandler = useCallback(
-    currentTime => {
+  const handleTimeEvent = useCallback(
+    (currentTime: Date, blockId: string) => {
       const t = new Date(currentTime);
-      onTimeChange?.(t);
-      setCurrentTime(currentTime);
+      onTimeChange?.(t, blockId);
     },
     [onTimeChange],
   );
 
-  const handleRange = useCallback((start: number | undefined, stop: number | undefined) => {
-    setRange(prev => {
-      const next = timeRange(start, stop);
-      if (prev.start !== next.start || prev.end !== next.end) {
-        return next;
-      }
-      return prev;
-    });
-  }, []);
-
-  // update block time setting.
-  useEffect(() => {
-    if (timelineValues?.currentTime || timelineValues?.startTime || timelineValues?.endTime) {
-      const startTime = getNewDate(new Date(timelineValues?.startTime.substring(0, 19))).getTime();
-      const endTime = getNewDate(new Date(timelineValues?.endTime.substring(0, 19))).getTime();
-      setCurrentTime(prev => {
-        const next = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
-        if (prev !== next) {
-          onTimeChange?.(new Date(next));
-        }
-        return prev;
-      });
-      return handleRange(startTime, endTime);
+  const currentTime = useMemo(() => {
+    if (timelineValues) {
+      const t = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
+      blockId && handleTimeEvent?.(new Date(t), blockId);
+      return t;
+    } else {
+      return getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime();
     }
-  }, [
-    handleRange,
-    timelineValues?.startTime,
-    timelineValues?.endTime,
-    timelineValues,
-    onTimeChange,
-  ]);
+  }, [blockId, handleTimeEvent, timelineValues, visualizerContext]);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayingReversed, setIsPlayingReversed] = useState(false);
+
+  const handleTick = useCallback(
+    (current: Date) => {
+      if (!isPlaying || !isPlayingReversed) current;
+    },
+    [isPlaying, isPlayingReversed],
+  );
 
   useEffect(() => {
-    const switchCurrentTimeToStart = (t: number, isRangeChanged: boolean) => {
-      if (isRangeChanged) {
-        return t;
-      } else {
-        return Math.min(Math.max(t, range.start), range.end);
-      }
-    };
-
-    const h: TickEventCallback = (d, c) => {
-      const isDifferentRange = range.start !== c.start.getTime() || range.end !== c.stop.getTime();
-      setCurrentTime(switchCurrentTimeToStart(d.getTime(), isDifferentRange));
-    };
-    if (range.start !== currentTime || range.end !== currentTime) {
-      onTick?.(h);
-    }
-
+    onTick?.(handleTick);
     return () => {
-      removeTickEventListener?.(h);
+      removeTickEventListener?.(handleTick);
     };
-  }, [handleRange, range.start, range.end, onTick, removeTickEventListener, currentTime]);
+  }, [handleTick, onTick, removeTickEventListener]);
 
   return {
     currentTime,
     range,
     playSpeedOptions,
-    onClick: handleTimeEvent,
-    onDrag: handleTimeEvent,
+    isPlaying,
+    isPlayingReversed,
     onPlay: handleOnPlay,
     onPlayReversed: handleOnPlayReversed,
     onSpeedChange: handleOnSpeedChange,
     onPause: handleOnPause,
+    setIsPlaying,
+    setIsPlayingReversed,
   };
 };
