@@ -56,10 +56,14 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     let parsedValue = null;
 
     if (sourceType === "value" && value !== "") {
-      try {
-        parsedValue = JSON.parse(value);
-      } catch (error) {
-        parsedValue = value;
+      if (fileFormat === "GeoJSON") {
+        try {
+          parsedValue = JSON.parse(value);
+        } catch (error) {
+          parsedValue = value;
+        }
+      } else {
+        parsedValue = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
       }
     }
 
@@ -70,7 +74,12 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       visible: true,
       config: {
         data: {
-          url: (sourceType === "url" || sourceType === "local") && value !== "" ? value : undefined,
+          url:
+            (sourceType === "url" || sourceType === "local") && value !== ""
+              ? value
+              : fileFormat === "CZML" || fileFormat === "KML"
+              ? parsedValue
+              : undefined,
           type: fileFormat.toLowerCase() as DataType,
           value: parsedValue,
         },
