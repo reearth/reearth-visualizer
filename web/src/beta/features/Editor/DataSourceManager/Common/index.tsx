@@ -42,6 +42,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const [sourceType, setSourceType] = React.useState<SourceType>("local");
   const [fileFormat, setFileFormat] = React.useState<FileFormatType>("GeoJSON");
   const [value, setValue] = React.useState("");
+  const [layerName, setLayerName] = React.useState("");
   const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
   const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
@@ -66,7 +67,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateTitle(value),
+      title: generateTitle(value, layerName),
       visible: true,
       config: {
         data: {
@@ -79,7 +80,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
-  const handleOnChange = useCallback((value?: string) => setValue(value || ""), []);
+  const handleOnChange = useCallback((value?: string, name?: string) => {
+    setValue(value || "");
+    setLayerName(name || "");
+  }, []);
 
   return (
     <ColJustifyBetween>

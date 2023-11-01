@@ -22,6 +22,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const [sourceType, setSourceType] = React.useState<SourceType>("local");
   const [value, setValue] = React.useState("");
+  const [layerName, setLayerName] = React.useState("");
   const [lat, setLat] = React.useState("");
   const [long, setLong] = React.useState("");
 
@@ -37,7 +38,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateTitle(value),
+      title: generateTitle(value, layerName),
       visible: true,
       config: {
         data: {
@@ -53,7 +54,10 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
-  const handleOnChange = useCallback((value?: string) => setValue(value || ""), []);
+  const handleOnChange = useCallback((value?: string, name?: string) => {
+    setValue(value || "");
+    setLayerName(name || "");
+  }, []);
 
   return (
     <ColJustifyBetween>
