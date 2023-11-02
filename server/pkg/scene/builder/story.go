@@ -18,8 +18,8 @@ type pageJSON struct {
 	ID              string       `json:"id"`
 	Property        propertyJSON `json:"property"`
 	Blocks          []blockJSON  `json:"blocks"`
-	Swipeable       bool         `json:swipeable`
-	SwipeableLayers []string     `json:swipeableLayers`
+	Swipeable       bool         `json:"swipeable"`
+	SwipeableLayers []string     `json:"swipeableLayers"`
 	Layers          []string     `json:"layers"`
 }
 
