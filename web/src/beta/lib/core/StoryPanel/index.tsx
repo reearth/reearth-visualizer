@@ -3,11 +3,10 @@ import { forwardRef, memo, Ref } from "react";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
+import { STORY_PANEL_WIDTH } from "./constants";
 import useHooks, { type StoryPanelRef, type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
-
-export const storyPanelWidth = 442;
 
 export type { Story, StoryPage, StoryPanelRef } from "./hooks";
 
@@ -116,7 +115,7 @@ export const StoryPanel = memo(
 export default StoryPanel;
 
 const PanelWrapper = styled.div`
-  flex: 0 0 ${storyPanelWidth}px;
+  flex: 0 0 ${STORY_PANEL_WIDTH}px;
   background: #f1f1f1;
   color: ${({ theme }) => theme.content.weak};
 `;

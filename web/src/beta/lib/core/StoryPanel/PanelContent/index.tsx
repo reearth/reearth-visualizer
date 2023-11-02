@@ -6,7 +6,7 @@ import { styled } from "@reearth/services/theme";
 
 import StoryPage from "../Page";
 
-import useHooks, { PAGES_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
+import useHooks, { STORY_PANEL_CONTENT_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
 
 export type Props = {
   pages?: StoryPageType[];
@@ -69,7 +69,10 @@ const StoryContent: React.FC<Props> = ({
   });
 
   return (
-    <PagesWrapper id={PAGES_ELEMENT_ID} showingIndicator={showingIndicator} isEditable={isEditable}>
+    <PagesWrapper
+      id={STORY_PANEL_CONTENT_ELEMENT_ID}
+      showingIndicator={showingIndicator}
+      isEditable={isEditable}>
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage

@@ -1,5 +1,5 @@
 import { mapValues } from "lodash-es";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import {
   InternalWidget,
@@ -8,7 +8,6 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust";
-import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { config } from "@reearth/services/config";
 
 import { processLayers } from "../Editor/Visualizer/convert";
@@ -26,7 +25,6 @@ export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const visualizerRef = useRef<MapRef | null>(null);
 
   const sceneProperty = processProperty(data?.property);
   const pluginProperty = useMemo(
@@ -36,21 +34,6 @@ export default (alias?: string) => {
         {},
       ),
     [data?.plugins],
-  );
-
-  const layers = useMemo(
-    () =>
-      processLayers(
-        data?.nlsLayers?.map(l => ({
-          id: l.id,
-          title: l.title,
-          config: l.config,
-          layerType: l.layerType,
-          visible: !!l.isVisible,
-        })) ?? [],
-        data?.layerStyles,
-      ),
-    [data?.nlsLayers, data?.layerStyles],
   );
 
   const widgets = useMemo<
@@ -159,6 +142,42 @@ export default (alias?: string) => {
     [alias],
   );
 
+  const story = useMemo(() => {
+    const s = data?.story;
+    return !s
+      ? undefined
+      : {
+          ...s,
+          pages: s.pages.map(p => {
+            return {
+              ...p,
+              property: processProperty(p.property),
+              blocks: p.blocks.map(b => {
+                return {
+                  ...b,
+                  property: processProperty(b.property),
+                };
+              }),
+            };
+          }),
+        };
+  }, [data?.story]);
+
+  const layers = useMemo(
+    () =>
+      processLayers(
+        data?.nlsLayers?.map(l => ({
+          id: l.id,
+          title: l.title,
+          config: l.config,
+          layerType: l.layerType,
+          visible: !!l.isVisible,
+        })) ?? [],
+        data?.layerStyles,
+      ),
+    [data?.nlsLayers, data?.layerStyles],
+  );
+
   useEffect(() => {
     const url = dataUrl(actualAlias);
     (async () => {
@@ -206,12 +225,11 @@ export default (alias?: string) => {
   useGA(sceneProperty);
 
   return {
-    visualizerRef,
-    alias: actualAlias,
     sceneProperty,
     pluginProperty,
     layers,
     widgets,
+    story,
     ready,
     error,
     engineMeta,

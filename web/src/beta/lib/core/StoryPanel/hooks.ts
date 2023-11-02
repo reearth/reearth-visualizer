@@ -4,6 +4,8 @@ import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 import { useVisualizer } from "../Visualizer";
 
+import { DEFAULT_STORY_PAGE_DURATION } from "./constants";
+
 export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 export type StoryPanelRef = {
@@ -79,7 +81,7 @@ export default (
       const destination = cameraAnimation.cameraPosition?.value;
       if (!destination) return;
 
-      const duration = cameraAnimation.cameraDuration?.value;
+      const duration = cameraAnimation.cameraDuration?.value ?? DEFAULT_STORY_PAGE_DURATION;
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },

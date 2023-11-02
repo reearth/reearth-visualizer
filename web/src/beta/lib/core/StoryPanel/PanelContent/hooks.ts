@@ -1,10 +1,10 @@
 import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 import type { StoryPage } from "../hooks";
 
 export type { StoryPage } from "../hooks";
-
-export const PAGES_ELEMENT_ID = "story-page-content";
+export { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 
 export default ({
   pages,
@@ -48,13 +48,13 @@ export default ({
   );
 
   useLayoutEffect(() => {
-    const pageWrapperElement = document.getElementById(PAGES_ELEMENT_ID);
+    const pageWrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
     if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
   }, [setPageGap]);
 
   useEffect(() => {
     const resizeCallback = () => {
-      const pageWrapperElement = document.getElementById(PAGES_ELEMENT_ID);
+      const pageWrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
       if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
     };
     window.addEventListener("resize", resizeCallback);
@@ -63,13 +63,13 @@ export default ({
 
   useEffect(() => {
     const ids = pages?.map(p => p.id) as string[];
-    const panelContentElement = document.getElementById(PAGES_ELEMENT_ID);
+    const panelContentElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
 
     const observer = new IntersectionObserver(
       entries => {
         // to avoid conflicts with page selection in editor
         if (isAutoScrolling?.current) {
-          const wrapperElement = document.getElementById(PAGES_ELEMENT_ID);
+          const wrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
 
           wrapperElement?.addEventListener("scroll", () => {
             clearTimeout(scrollTimeoutRef.current);
