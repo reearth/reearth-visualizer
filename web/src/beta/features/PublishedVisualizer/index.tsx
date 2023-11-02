@@ -18,10 +18,10 @@ export default function Published({ alias }: Props) {
     layers,
     widgets,
     story,
-
     ready,
     error,
     engineMeta,
+    handleCurrentPageChange,
   } = useHooks(alias);
 
   return error ? (
@@ -42,7 +42,7 @@ export default function Published({ alias }: Props) {
       ready={ready}
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}>
-      {story && <StoryPanel selectedStory={story} />}
+      {story && <StoryPanel selectedStory={story} onCurrentPageChange={handleCurrentPageChange} />}
     </Visualizer>
   );
 }

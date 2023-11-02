@@ -1,5 +1,4 @@
 import type { DataType, SceneProperty } from "@reearth/beta/lib/core/Map/types";
-import { Story } from "@reearth/beta/lib/core/StoryPanel";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 export type PublishedData = {
@@ -13,6 +12,31 @@ export type PublishedData = {
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
   story?: Story;
+};
+
+export type Story = {
+  id: string;
+  title?: string;
+  position: "left" | "right";
+  pages: StoryPage[];
+};
+
+export type StoryPage = {
+  id: string;
+  swipeable?: boolean;
+  swipeableLayers?: string[];
+  layer?: string[];
+  property?: any;
+  blocks: StoryBlock[];
+};
+
+export type StoryBlock = {
+  id: string;
+  name?: string | null;
+  pluginId: string;
+  extensionId: string;
+  propertyId?: string;
+  property?: any;
 };
 
 export type Plugin = {

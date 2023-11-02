@@ -1,5 +1,6 @@
+import { useReactiveVar } from "@apollo/client";
 import { mapValues } from "lodash-es";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import {
   InternalWidget,
@@ -8,7 +9,9 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust";
+import { Story } from "@reearth/beta/lib/core/StoryPanel";
 import { config } from "@reearth/services/config";
+import { selectedStoryPageIdVar } from "@reearth/services/state";
 
 import { processLayers } from "../Editor/Visualizer/convert";
 
@@ -144,39 +147,64 @@ export default (alias?: string) => {
 
   const story = useMemo(() => {
     const s = data?.story;
-    return !s
+    const processedStory: Story | undefined = !s
       ? undefined
       : {
-          ...s,
+          id: s.id,
+          title: s.title,
+          position: s.position,
           pages: s.pages.map(p => {
             return {
-              ...p,
+              id: p.id,
+              swipeable: p.swipeable,
+              layerIds: p.layer,
               property: processProperty(p.property),
               blocks: p.blocks.map(b => {
                 return {
-                  ...b,
+                  id: b.id,
+                  pluginId: b.pluginId,
+                  extensionId: b.extensionId,
                   property: processProperty(b.property),
                 };
               }),
             };
           }),
         };
+    return processedStory;
   }, [data?.story]);
 
-  const layers = useMemo(
-    () =>
-      processLayers(
-        data?.nlsLayers?.map(l => ({
-          id: l.id,
-          title: l.title,
-          config: l.config,
-          layerType: l.layerType,
-          visible: !!l.isVisible,
-        })) ?? [],
-        data?.layerStyles,
-      ),
-    [data?.nlsLayers, data?.layerStyles],
+  const currentPageId = useReactiveVar(selectedStoryPageIdVar);
+
+  const currentPage = useMemo(
+    () => story?.pages.find(p => p.id === currentPageId),
+    [currentPageId, story?.pages],
   );
+
+  const handleCurrentPageChange = useCallback(
+    (pageId?: string) => selectedStoryPageIdVar(pageId),
+    [],
+  );
+
+  const layers = useMemo(() => {
+    const processedLayers = processLayers(
+      data?.nlsLayers?.map(l => ({
+        id: l.id,
+        title: l.title,
+        config: l.config,
+        layerType: l.layerType,
+        visible: !!l.isVisible,
+      })) ?? [],
+      data?.layerStyles,
+    );
+    if (!story) return processedLayers;
+
+    return processedLayers?.map(layer => ({
+      ...layer,
+      visible: currentPage?.layerIds?.includes(layer.id),
+    }));
+  }, [data?.nlsLayers, data?.layerStyles, currentPage?.layerIds, story]);
+
+  console.log(story);
 
   useEffect(() => {
     const url = dataUrl(actualAlias);
@@ -233,6 +261,7 @@ export default (alias?: string) => {
     ready,
     error,
     engineMeta,
+    handleCurrentPageChange,
   };
 };
 
