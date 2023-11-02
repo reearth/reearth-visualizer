@@ -11,6 +11,7 @@ export const storyFragment = gql`
     alias
     publicTitle
     publicDescription
+    publishmentStatus
     publicImage
     publicNoIndex
     pages {

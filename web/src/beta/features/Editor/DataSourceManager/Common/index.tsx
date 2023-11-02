@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -6,7 +6,6 @@ import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
 import { DataType } from "@reearth/beta/lib/core/Map";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps, DataSourceOptType, FileFormatType, SourceType } from "..";
@@ -18,6 +17,7 @@ import {
   SourceTypeWrapper,
   SubmitWrapper,
   TextArea,
+  generateTitle,
 } from "../utils";
 
 const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) => void }> = ({
@@ -39,10 +39,11 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
 
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
-  const [sourceType, setSourceType] = React.useState<SourceType>("local");
-  const [fileFormat, setFileFormat] = React.useState<FileFormatType>("GeoJSON");
-  const [value, setValue] = React.useState("");
-  const [prioritizePerformance, setPrioritizePerformance] = React.useState(false);
+  const [sourceType, setSourceType] = useState<SourceType>("local");
+  const [fileFormat, setFileFormat] = useState<FileFormatType>("GeoJSON");
+  const [value, setValue] = useState("");
+  const [layerName, setLayerName] = useState("");
+  const [prioritizePerformance, setPrioritizePerformance] = useState(false);
   const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
       { label: t("From Assets"), keyValue: "local" },
@@ -56,21 +57,30 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     let parsedValue = null;
 
     if (sourceType === "value" && value !== "") {
-      try {
-        parsedValue = JSON.parse(value);
-      } catch (error) {
-        parsedValue = value;
+      if (fileFormat === "GeoJSON") {
+        try {
+          parsedValue = JSON.parse(value);
+        } catch (error) {
+          parsedValue = value;
+        }
+      } else {
+        parsedValue = "data:text/plain;charset=UTF-8," + encodeURIComponent(value);
       }
     }
 
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateRandomString(5),
+      title: generateTitle(value, layerName),
       visible: true,
       config: {
         data: {
-          url: (sourceType === "url" || sourceType === "local") && value !== "" ? value : undefined,
+          url:
+            (sourceType === "url" || sourceType === "local") && value !== ""
+              ? value
+              : fileFormat === "CZML" || fileFormat === "KML"
+              ? parsedValue
+              : undefined,
           type: fileFormat.toLowerCase() as DataType,
           value: parsedValue,
         },
@@ -79,7 +89,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
-  const handleOnChange = useCallback((value?: string) => setValue(value || ""), []);
+  const handleOnChange = useCallback((value?: string, name?: string) => {
+    setValue(value || "");
+    setLayerName(name || "");
+  }, []);
 
   return (
     <ColJustifyBetween>

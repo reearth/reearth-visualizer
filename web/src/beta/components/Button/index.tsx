@@ -108,7 +108,7 @@ const StyledButton = styled.button<ButtonProps>`
       ? theme.dangerous.main
       : buttonType === "primary"
       ? theme.primary.main
-      : theme.secondary.main};
+      : theme.secondary.strong};
   &:active,
   &:hover {
     background: ${({ buttonType, disabled, theme }) =>

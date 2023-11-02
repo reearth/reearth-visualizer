@@ -1,11 +1,11 @@
 import {
-  useMemo,
   memo,
   forwardRef,
   CSSProperties,
   type ReactNode,
   type Ref,
   type PropsWithChildren,
+  useMemo,
 } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -35,6 +35,7 @@ import Map, {
   type ComputedLayer,
 } from "../Map";
 import { Ref as MapRef } from "../Map";
+import { Position } from "../StoryPanel/types";
 
 import { VisualizerProvider } from "./context";
 import DropHolder from "./DropHolder";
@@ -70,6 +71,7 @@ export type Props = {
   layers?: Layer[];
   clusters?: Cluster[];
   camera?: Camera;
+  storyPanelPosition?: Position;
   interactionMode?: InteractionModeType;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
@@ -77,11 +79,6 @@ export type Props = {
   ready?: boolean;
   tags?: Tag[];
   selectedBlockId?: string;
-  selectedLayerId?: {
-    layerId?: string;
-    featureId?: string;
-  };
-  layerSelectionReason?: LayerSelectionReason;
   useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
@@ -142,7 +139,6 @@ const Visualizer = memo(
         ready,
         tags,
         selectedBlockId,
-        selectedLayerId,
         selectedWidgetArea,
         hiddenLayers,
         camera: initialCamera,
@@ -152,9 +148,9 @@ const Visualizer = memo(
         pluginBaseUrl,
         pluginProperty,
         zoomedLayerId,
-        layerSelectionReason,
         useExperimentalSandbox,
-        children,
+        storyPanelPosition,
+        children: storyPanel,
         onLayerDrop,
         onLayerSelect,
         onCameraChange,
@@ -229,7 +225,7 @@ const Visualizer = memo(
         <ErrorBoundary FallbackComponent={Err}>
           <Wrapper>
             <VisualizerProvider mapRef={mapRef}>
-              {children}
+              {storyPanelPosition === "left" && storyPanel}
               <Filled ref={wrapperRef}>
                 {isDroppable && <DropHolder />}
                 <Crust
@@ -295,8 +291,6 @@ const Visualizer = memo(
                   shouldRender={shouldRender}
                   // overrides={overrides} // not used for now
                   property={overriddenSceneProperty}
-                  selectedLayerId={selectedLayerId}
-                  layerSelectionReason={layerSelectionReason}
                   small={small}
                   ready={ready}
                   timelineManagerRef={timelineManagerRef}
@@ -308,6 +302,7 @@ const Visualizer = memo(
                   onMount={onMount}
                 />
               </Filled>
+              {storyPanelPosition === "right" && storyPanel}
             </VisualizerProvider>
           </Wrapper>
         </ErrorBoundary>

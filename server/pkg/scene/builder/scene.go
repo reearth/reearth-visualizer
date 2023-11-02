@@ -21,9 +21,12 @@ type sceneJSON struct {
 	Tags              []*tagJSON              `json:"tags"`
 	Clusters          []*clusterJSON          `json:"clusters"`
 	Story             *storyJSON              `json:"story,omitempty"`
+	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
+	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
+	CoreSupport       bool                    `json:"coreSupport"`
 }
 
-func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property) (*sceneJSON, error) {
+func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property, coreSupport bool) (*sceneJSON, error) {
 	tags, err := b.tags(ctx)
 	if err != nil {
 		return nil, err
@@ -40,6 +43,7 @@ func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*lay
 		Layers:            l,
 		Tags:              tags,
 		WidgetAlignSystem: buildWidgetAlignSystem(b.scene.Widgets().Alignment()),
+		CoreSupport:       coreSupport,
 	}, nil
 }
 

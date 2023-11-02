@@ -36,6 +36,8 @@ type Project struct {
 	transaction       usecasex.Transaction
 	policyRepo        repo.Policy
 	file              gateway.File
+	nlsLayerRepo      repo.NLSLayer
+	layerStyles       repo.Style
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
@@ -54,6 +56,8 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		transaction:       r.Transaction,
 		policyRepo:        r.Policy,
 		file:              gr.File,
+		nlsLayerRepo:      r.NLSLayer,
+		layerStyles:       r.Style,
 	}
 }
 
@@ -265,6 +269,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if err != nil {
 		return nil, err
 	}
+	coreSupport := prj.CoreSupport()
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
@@ -335,6 +340,16 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newPublishedAlias := newAlias
 
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	// Lock
 	if err := i.UpdateSceneLock(ctx, sceneID, scene.LockModeFree, scene.LockModePublishing); err != nil {
 		return nil, err
@@ -366,7 +381,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.DatasetGraphLoaderFrom(i.datasetRepo),
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
-			).ForScene(s).Build(ctx, w, time.Now())
+				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport)
 		}()
 
 		// Save

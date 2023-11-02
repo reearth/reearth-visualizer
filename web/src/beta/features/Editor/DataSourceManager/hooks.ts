@@ -37,6 +37,7 @@ export default () => {
     layerInput,
     layerValue,
     layers,
+    setLayers,
     setLayerValue,
     setUrlValue,
     handleAddLayer,

@@ -1,11 +1,16 @@
-import { useCallback, useMemo, useState } from "react";
+import { useReactiveVar } from "@apollo/client";
+import { MutableRefObject, useCallback, useMemo } from "react";
 
+import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
+import { selectedLayerVar } from "@reearth/services/state";
 
 type LayerProps = {
   sceneId: string;
+  isVisualizerReady?: boolean;
+  visualizerRef?: MutableRefObject<MapRef | null>;
 };
 
 export type LayerAddProps = {
@@ -32,38 +37,50 @@ export type LayerVisibilityUpdateProps = {
   visible: boolean;
 };
 
-export default function ({ sceneId }: LayerProps) {
+export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerProps) {
   const t = useT();
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();
-  const [selectedLayerId, setSelectedLayerId] = useState<string | undefined>(undefined);
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
 
+  const selectedLayerId = useReactiveVar(selectedLayerVar);
+
   const selectedLayer = useMemo(
-    () => nlsLayers.find(l => l.id === selectedLayerId) || undefined,
+    () => nlsLayers.find(l => l.id === selectedLayerId?.layerId) || undefined,
     [nlsLayers, selectedLayerId],
   );
 
   const handleLayerSelect = useCallback(
-    (layerId: string) => setSelectedLayerId(prevId => (prevId === layerId ? undefined : layerId)),
-    [],
+    (layerId?: string) => {
+      if (!isVisualizerReady) return;
+
+      if (layerId && layerId !== selectedLayerId?.layerId) {
+        selectedLayerVar({ layerId });
+      } else {
+        selectedLayerVar(undefined);
+      }
+      // lib/core doesn't support selecting a layer without auto-selecting a feature, so
+      // Either way, we want to deselect from core as we are either deselecting, or changing to a new layer
+      visualizerRef?.current?.layers.select(undefined);
+    },
+    [selectedLayerId?.layerId, isVisualizerReady, visualizerRef],
   );
 
   const handleLayerDelete = useCallback(
     async (layerId: string) => {
-      if (!selectedLayer) return;
       const deletedPageIndex = nlsLayers.findIndex(l => l.id === layerId);
+      if (deletedPageIndex === undefined) return;
 
       await useRemoveNLSLayer({
-        layerId: selectedLayer.id,
+        layerId,
       });
-      if (layerId === selectedLayerId) {
-        setSelectedLayerId(
+      if (layerId === selectedLayerId?.layerId) {
+        handleLayerSelect(
           nlsLayers[deletedPageIndex + 1]?.id ?? nlsLayers[deletedPageIndex - 1]?.id,
         );
       }
     },
-    [nlsLayers, selectedLayer, selectedLayerId, useRemoveNLSLayer],
+    [nlsLayers, selectedLayerId, handleLayerSelect, useRemoveNLSLayer],
   );
 
   const handleLayerAdd = useCallback(
@@ -112,10 +129,9 @@ export default function ({ sceneId }: LayerProps) {
   return {
     nlsLayers,
     selectedLayer,
-    setSelectedLayerId,
+    handleLayerSelect,
     handleLayerAdd,
     handleLayerDelete,
-    handleLayerSelect,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,

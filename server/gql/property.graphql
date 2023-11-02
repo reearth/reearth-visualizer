@@ -17,6 +17,7 @@ type PropertySchemaGroup {
   schemaGroupId: ID!
   schemaId: ID!
   fields: [PropertySchemaField!]!
+  collection: String
   isList: Boolean!
   isAvailableIf: PropertyCondition
   title: String
@@ -193,6 +194,8 @@ enum ValueType {
   POLYGON
   RECT
   SPACING
+  ARRAY
+  TIMELINE
 }
 
 # InputType

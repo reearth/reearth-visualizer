@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Text from "@reearth/beta/components/Text";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps, SourceType, DataSourceOptType } from "..";
@@ -15,15 +14,17 @@ import {
   Input,
   SourceTypeWrapper,
   SubmitWrapper,
+  generateTitle,
 } from "../utils";
 
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
-  const [sourceType, setSourceType] = React.useState<SourceType>("local");
-  const [value, setValue] = React.useState("");
-  const [lat, setLat] = React.useState("");
-  const [long, setLong] = React.useState("");
+  const [sourceType, setSourceType] = useState<SourceType>("local");
+  const [value, setValue] = useState("");
+  const [layerName, setLayerName] = useState("");
+  const [lat, setLat] = useState("");
+  const [long, setLong] = useState("");
 
   const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
@@ -37,7 +38,7 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateRandomString(5),
+      title: generateTitle(value, layerName),
       visible: true,
       config: {
         data: {
@@ -53,7 +54,10 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     onClose();
   };
 
-  const handleOnChange = useCallback((value?: string) => setValue(value || ""), []);
+  const handleOnChange = useCallback((value?: string, name?: string) => {
+    setValue(value || "");
+    setLayerName(name || "");
+  }, []);
 
   return (
     <ColJustifyBetween>

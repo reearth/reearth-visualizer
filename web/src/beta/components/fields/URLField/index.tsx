@@ -19,7 +19,7 @@ export type Props = {
   fileType?: "asset" | "URL" | "layerStyle";
   entityType?: "image" | "file" | "layerStyle";
   sceneId?: string;
-  onChange?: (value: string | undefined) => void;
+  onChange?: (value: string | undefined, name: string | undefined) => void;
 };
 
 const URLField: React.FC<Props> = ({
@@ -38,7 +38,7 @@ const URLField: React.FC<Props> = ({
   const [currentValue, setCurrentValue] = useState(value);
 
   const handleChange = useCallback(
-    (inputValue?: string) => {
+    (inputValue?: string, name?: string) => {
       if (!inputValue) return;
 
       if (
@@ -54,7 +54,7 @@ const URLField: React.FC<Props> = ({
       }
 
       setCurrentValue(inputValue);
-      onChange?.(inputValue);
+      onChange?.(inputValue, name);
     },
     [fileType, onChange, setNotification, t],
   );
