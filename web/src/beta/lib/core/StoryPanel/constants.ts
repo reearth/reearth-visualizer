@@ -10,7 +10,7 @@ export const DEFAULT_STORY_PAGE_GAP = 2;
 export const DEFAULT_STORY_PAGE_PADDING: Spacing = { top: 4, bottom: 4, left: 4, right: 4 };
 
 // Story Block
-export const TITLE_BUILTIN_STORY_BLOCK_ID = "reearth/titleStoryBlock"; // pseudo storyblock
+export const TITLE_BUILTIN_STORY_BLOCK_ID = "reearth/titleStoryBlock"; // pseudo storyblock. Uninstallable. Top of each page.
 
 export const IMAGE_BUILTIN_STORY_BLOCK_ID = "reearth/imageStoryBlock";
 export const TEXT_BUILTIN_STORY_BLOCK_ID = "reearth/textStoryBlock";
