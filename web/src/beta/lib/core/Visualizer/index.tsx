@@ -149,7 +149,7 @@ const Visualizer = memo(
         pluginProperty,
         zoomedLayerId,
         useExperimentalSandbox,
-        storyPanelPosition,
+        storyPanelPosition = "left",
         children: storyPanel,
         onLayerDrop,
         onLayerSelect,

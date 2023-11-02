@@ -1,21 +1,34 @@
-import { useCallback, useMemo, useState } from "react";
+import { Ref, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
 
-import type { Story } from "@reearth/beta/lib/core/StoryPanel/types";
+import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
+
+import { useVisualizer } from "../Visualizer";
 
 export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
-export default ({
-  selectedStory,
-  currentPageId,
-  isEditable,
-  onCurrentPageChange,
-}: {
-  selectedStory?: Story;
+export type StoryPanelRef = {
   currentPageId?: string;
-  isEditable?: boolean;
-  onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
-}) => {
+  handleCurrentPageChange: (pageId: string, disableScrollIntoView?: boolean) => void;
+};
+
+export default (
+  {
+    selectedStory,
+    isEditable,
+    onCurrentPageChange,
+  }: {
+    selectedStory?: Story;
+    isEditable?: boolean;
+    onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
+  },
+  ref: Ref<StoryPanelRef>,
+) => {
+  const isAutoScrolling = useRef(false);
+
+  const visualizer = useVisualizer();
+
   const [showPageSettings, setShowPageSettings] = useState(false);
+  const [currentPageId, setCurrentPageId] = useState<string>();
   const [selectedPageId, setSelectedPageId] = useState<string>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
 
@@ -47,11 +60,30 @@ export default ({
   );
 
   const handleCurrentPageChange = useCallback(
-    (pageId: string) => {
-      if (currentPageId === pageId) return;
-      onCurrentPageChange(pageId, true); // true disables scrollIntoView
+    (pageId: string, disableScrollIntoView?: boolean) => {
+      if (pageId === currentPageId) return;
+
+      const newPage = getPage(pageId, selectedStory?.pages);
+      if (!newPage) return;
+
+      onCurrentPageChange?.(pageId);
+      setCurrentPageId(pageId);
+
+      if (!disableScrollIntoView) {
+        const element = document.getElementById(newPage.id);
+        isAutoScrolling.current = true;
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
+      const cameraAnimation = newPage.property.cameraAnimation;
+
+      const destination = cameraAnimation.cameraPosition?.value;
+      if (!destination) return;
+
+      const duration = cameraAnimation.cameraDuration?.value;
+
+      visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },
-    [currentPageId, onCurrentPageChange],
+    [selectedStory?.pages, currentPageId, visualizer, onCurrentPageChange],
   );
 
   const pageInfo = useMemo(() => {
@@ -62,18 +94,34 @@ export default ({
     return {
       currentPage: currentIndex + 1,
       maxPage: pages.length,
-      onPageChange: (pageIndex: number) => onCurrentPageChange(pages[pageIndex - 1]?.id),
+      onPageChange: (pageIndex: number) => handleCurrentPageChange(pages[pageIndex - 1]?.id),
     };
-  }, [selectedStory, currentPageId, onCurrentPageChange]);
+  }, [selectedStory, currentPageId, handleCurrentPageChange]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      currentPageId,
+      handleCurrentPageChange,
+    }),
+    [currentPageId, handleCurrentPageChange],
+  );
 
   return {
     pageInfo,
+    currentPageId,
     selectedPageId,
     selectedBlockId,
     showPageSettings,
+    isAutoScrolling,
     handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
     handleCurrentPageChange,
   };
+};
+
+const getPage = (id?: string, pages?: StoryPage[]) => {
+  if (!id || !pages || !pages.length) return;
+  return pages.find(p => p.id === id);
 };

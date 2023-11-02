@@ -24,6 +24,7 @@ import {
   isVisualizerReadyVar,
   useZoomedLayerId,
   selectedLayerVar,
+  selectedStoryPageIdVar,
 } from "@reearth/services/state";
 
 import { convertStory, convertWidgets, processLayers } from "./convert";
@@ -204,6 +205,11 @@ export default ({
     [storyId, scene?.stories],
   );
 
+  const handleCurrentPageChange = useCallback(
+    (pageId?: string) => selectedStoryPageIdVar(pageId),
+    [],
+  );
+
   const handleStoryBlockCreate = useCallback(
     async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
@@ -273,6 +279,7 @@ export default ({
     isVisualizerReady,
     selectWidgetArea: selectedWidgetAreaVar,
     zoomedLayerId,
+    handleCurrentPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,

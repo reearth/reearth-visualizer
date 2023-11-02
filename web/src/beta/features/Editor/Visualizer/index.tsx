@@ -13,6 +13,7 @@ import useHooks from "./hooks";
 
 export type Props = {
   visualizerRef?: MutableRefObject<MapRef | null>;
+  storyPanelRef?: MutableRefObject<any>;
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
@@ -21,15 +22,14 @@ export type Props = {
   showStoryPanel?: boolean;
   selectedStory?: Story;
   currentPage?: Page;
-  isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
-  onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
 };
 
 const Visualizer: React.FC<Props> = ({
   visualizerRef,
+  storyPanelRef,
   sceneId,
   isBuilt,
   inEditor,
@@ -37,9 +37,7 @@ const Visualizer: React.FC<Props> = ({
   showStoryPanel,
   selectedStory,
   currentPage,
-  isAutoScrolling,
   installableBlocks,
-  onCurrentPageChange,
   onStoryBlockMove,
   onCameraChange,
 }) => {
@@ -60,6 +58,7 @@ const Visualizer: React.FC<Props> = ({
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
     zoomedLayerId,
+    handleCurrentPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -129,15 +128,14 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
+            ref={storyPanelRef}
             selectedStory={story}
-            currentPageId={currentPage?.id}
-            isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
             isEditable={!!inEditor}
+            onCurrentPageChange={handleCurrentPageChange}
             onBlockCreate={handleStoryBlockCreate}
             onBlockDelete={handleStoryBlockDelete}
             onPropertyUpdate={handlePropertyValueUpdate}
-            onCurrentPageChange={onCurrentPageChange}
             onStoryBlockMove={onStoryBlockMove}
           />
         )}

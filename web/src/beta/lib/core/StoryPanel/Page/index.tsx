@@ -36,7 +36,7 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
+  onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryPanel: React.FC<Props> = ({
@@ -128,7 +128,7 @@ const StoryPanel: React.FC<Props> = ({
                 items.splice(index, 0, item);
                 return items;
               });
-              await onStoryBlockMove(page?.id || "", index, item.id);
+              await onStoryBlockMove?.(page?.id || "", index, item.id);
             }}
             renderItem={(b, idx) => {
               return (

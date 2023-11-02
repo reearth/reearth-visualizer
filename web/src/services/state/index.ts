@@ -18,6 +18,8 @@ export type SelectedLayer = {
   layerSelectionReason?: LayerSelectionReason;
 };
 
+export type SelectedStoryPageId = string;
+
 // Visualizer
 export const isVisualizerReadyVar = makeVar<boolean>(false);
 export const currentCameraVar = makeVar<Camera | undefined>(undefined);
@@ -26,5 +28,6 @@ export const currentCameraVar = makeVar<Camera | undefined>(undefined);
 export const selectedWidgetVar = makeVar<SelectedWidget | undefined>(undefined);
 export const selectedWidgetAreaVar = makeVar<WidgetAreaType | undefined>(undefined);
 export const selectedLayerVar = makeVar<SelectedLayer | undefined>(undefined);
+export const selectedStoryPageIdVar = makeVar<SelectedStoryPageId | undefined>(undefined);
 
 export * from "./jotai";

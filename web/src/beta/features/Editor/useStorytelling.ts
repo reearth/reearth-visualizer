@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useReactiveVar } from "@apollo/client";
+import { useCallback, useMemo, useRef } from "react";
 
-import type { FlyTo } from "@reearth/beta/lib/core/types";
-import type { Camera } from "@reearth/beta/utils/value";
+import { StoryPanelRef } from "@reearth/beta/lib/core/StoryPanel";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
+import { selectedStoryPageIdVar } from "@reearth/services/state";
 
 type Props = {
   sceneId: string;
-  onFlyTo: FlyTo;
 };
 
 const getPage = (id?: string, pages?: Page[]) => {
@@ -16,8 +16,11 @@ const getPage = (id?: string, pages?: Page[]) => {
   return pages.find(p => p.id === id);
 };
 
-export default function ({ sceneId, onFlyTo }: Props) {
+export default function ({ sceneId }: Props) {
   const t = useT();
+
+  const storyPanelRef = useRef<StoryPanelRef | null>(null);
+  const selectedStoryPageId = useReactiveVar(selectedStoryPageIdVar);
 
   const {
     useStoriesQuery,
@@ -32,58 +35,23 @@ export default function ({ sceneId, onFlyTo }: Props) {
   const { stories } = useStoriesQuery({ sceneId });
 
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
-  const [currentPage, setCurrentPage] = useState<Page | undefined>(undefined);
-  const isAutoScrolling = useRef(false);
-  const [selectedPageId, setSelectedPageId] = useState<string | undefined>(undefined);
 
-  const selectedStory = useMemo(() => {
-    return stories?.length ? stories[0] : undefined;
-  }, [stories]);
+  const selectedStory = useMemo(() => (stories?.length ? stories[0] : undefined), [stories]);
 
-  useEffect(() => {
-    if (selectedPageId) {
-      const newPage = getPage(selectedPageId, selectedStory?.pages);
-      if (newPage) {
-        setCurrentPage(newPage);
-      }
-    } else {
-      setCurrentPage(selectedStory?.pages?.[0]);
-    }
-  }, [currentPage, selectedPageId, selectedStory?.pages]);
+  const currentPage = useMemo(
+    () => selectedStory?.pages?.find(p => p.id === selectedStoryPageId),
+    [selectedStory?.pages, selectedStoryPageId],
+  );
 
   const handleCurrentPageChange = useCallback(
-    (pageId: string, disableScrollIntoView?: boolean) => {
+    (pageId: string) => {
+      if (selectedStoryPageId && selectedStoryPageId === pageId) return;
       const newPage = getPage(pageId, selectedStory?.pages);
-      if (!newPage) return;
-
-      setSelectedPageId(pageId);
-
-      if (!disableScrollIntoView) {
-        const element = document.getElementById(newPage.id);
-        isAutoScrolling.current = true;
-        element?.scrollIntoView({ behavior: "smooth" });
-      }
-      const cameraFieldGroup = newPage.property.items?.find(
-        i => i.schemaGroup === "cameraAnimation",
-      );
-      const schemaFields = cameraFieldGroup?.schemaFields;
-
-      let destination = schemaFields?.find(sf => sf.id === "cameraPosition")
-        ?.defaultValue as Camera;
-      let duration = schemaFields?.find(sf => sf.id === "cameraDuration")?.defaultValue as number;
-
-      if (cameraFieldGroup && "fields" in cameraFieldGroup) {
-        destination = (cameraFieldGroup.fields.find(f => f.id === "cameraPosition")?.value ??
-          destination) as Camera;
-        if (!destination) return;
-
-        duration = (cameraFieldGroup.fields.find(f => f.id === "cameraDuration")?.value ??
-          duration) as number;
-
-        onFlyTo({ ...destination }, { duration });
+      if (newPage) {
+        storyPanelRef?.current?.handleCurrentPageChange(pageId);
       }
     },
-    [selectedStory?.pages, onFlyTo],
+    [selectedStoryPageId, selectedStory?.pages, storyPanelRef],
   );
 
   const handlePageDuplicate = useCallback(async (pageId: string) => {
@@ -102,11 +70,11 @@ export default function ({ sceneId, onFlyTo }: Props) {
         storyId: selectedStory.id,
         pageId,
       });
-      if (pageId === currentPage?.id) {
-        setSelectedPageId(pages[deletedPageIndex + 1]?.id ?? pages[deletedPageIndex - 1]?.id);
+      if (pageId === selectedStoryPageId) {
+        handleCurrentPageChange(pages[deletedPageIndex + 1].id ?? pages[deletedPageIndex - 1].id);
       }
     },
-    [selectedStory, useDeleteStoryPage, sceneId, currentPage],
+    [selectedStory, sceneId, selectedStoryPageId, handleCurrentPageChange, useDeleteStoryPage],
   );
 
   const handlePageAdd = useCallback(
@@ -164,9 +132,9 @@ export default function ({ sceneId, onFlyTo }: Props) {
   );
 
   return {
+    storyPanelRef,
     selectedStory,
     currentPage,
-    isAutoScrolling,
     installableStoryBlocks,
     handleCurrentPageChange,
     handlePageDuplicate,

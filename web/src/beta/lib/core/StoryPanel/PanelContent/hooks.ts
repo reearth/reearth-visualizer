@@ -8,14 +8,14 @@ export const PAGES_ELEMENT_ID = "story-page-content";
 
 export default ({
   pages,
-  selectedPageId,
+  currentPageId,
   isAutoScrolling,
   onBlockCreate,
   onBlockDelete,
   onCurrentPageChange,
 }: {
   pages?: StoryPage[];
-  selectedPageId?: string;
+  currentPageId?: string;
   isAutoScrolling?: MutableRefObject<boolean>;
   onBlockCreate?: (
     pageId?: string | undefined,
@@ -24,7 +24,7 @@ export default ({
     index?: number | undefined,
   ) => Promise<void>;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
-  onCurrentPageChange?: (pageId: string) => void;
+  onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
@@ -83,13 +83,13 @@ export default ({
 
         entries.forEach(entry => {
           const id = entry.target.getAttribute("id") ?? "";
-          if (selectedPageId === id) return;
+          if (currentPageId === id) return;
 
           const diff = (scrollRef.current as number) - (panelContentElement?.scrollTop as number);
           const isScrollingUp = diff > 0;
 
           if (entry.isIntersecting) {
-            onCurrentPageChange?.(id);
+            onCurrentPageChange?.(id, true);
             scrollRef.current = panelContentElement?.scrollTop;
             return;
           }
@@ -97,7 +97,7 @@ export default ({
           const prevEntry = ids[currentIndex - 1];
           if (isScrollingUp) {
             const id = prevEntry;
-            onCurrentPageChange?.(id);
+            onCurrentPageChange?.(id, true);
           }
         });
       },
@@ -120,7 +120,7 @@ export default ({
         }
       });
     };
-  }, [pages, selectedPageId, isAutoScrolling, onCurrentPageChange]);
+  }, [pages, currentPageId, isAutoScrolling, onCurrentPageChange]);
 
   return {
     pageGap,
