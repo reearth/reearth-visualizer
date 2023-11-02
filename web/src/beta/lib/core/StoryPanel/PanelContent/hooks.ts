@@ -67,7 +67,7 @@ export default ({
 
     const observer = new IntersectionObserver(
       entries => {
-        // to avoid conflicts with page selection in editor
+        // to avoid conflicts with page selection in core's parent
         if (isAutoScrolling?.current) {
           const wrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
 
@@ -83,7 +83,7 @@ export default ({
 
         entries.forEach(entry => {
           const id = entry.target.getAttribute("id") ?? "";
-          if (currentPageId === id) return;
+          if (!id ?? currentPageId === id) return;
 
           const diff = (scrollRef.current as number) - (panelContentElement?.scrollTop as number);
           const isScrollingUp = diff > 0;

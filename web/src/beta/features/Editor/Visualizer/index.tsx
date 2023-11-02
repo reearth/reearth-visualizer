@@ -2,7 +2,10 @@ import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import StoryPanel, { type InstallableStoryBlock } from "@reearth/beta/lib/core/StoryPanel";
+import StoryPanel, {
+  StoryPanelRef,
+  type InstallableStoryBlock,
+} from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
@@ -13,12 +16,12 @@ import useHooks from "./hooks";
 
 export type Props = {
   visualizerRef?: MutableRefObject<MapRef | null>;
-  storyPanelRef?: MutableRefObject<any>;
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
   currentCamera?: Camera;
   // storytelling
+  storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
   selectedStory?: Story;
   currentPage?: Page;
@@ -29,11 +32,11 @@ export type Props = {
 
 const Visualizer: React.FC<Props> = ({
   visualizerRef,
-  storyPanelRef,
   sceneId,
   isBuilt,
   inEditor,
   currentCamera,
+  storyPanelRef,
   showStoryPanel,
   selectedStory,
   currentPage,
@@ -140,12 +143,6 @@ const Visualizer: React.FC<Props> = ({
           />
         )}
       </CoreVisualizer>
-      {/* <FovSlider
-        visible={isCapturing && sceneMode && sceneMode !== "2d"}
-        onIsCapturingChange={onIsCapturingChange}
-        camera={camera}
-        onFovChange={onFovChange}
-      /> */}
     </Wrapper>
   );
 };
