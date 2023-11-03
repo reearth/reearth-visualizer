@@ -223,7 +223,7 @@ export const getInstalledStoryBlocks = (
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      name: block?.name ?? "Undefined",
+      name: block?.name ?? "Story Block",
       description: block?.description,
       icon: block?.icon,
       property: {
