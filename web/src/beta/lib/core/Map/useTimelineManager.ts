@@ -56,7 +56,7 @@ type SetOptionsCommand = {
   cmd: "SET_OPTIONS";
   payload: Partial<Pick<TimelineOptions, "multiplier" | "rangeType" | "stepType">>;
 };
-type TimelineCommit = (PlayCommand | PauseCommand | SetTimeCommand | SetOptionsCommand) & {
+export type TimelineCommit = (PlayCommand | PauseCommand | SetTimeCommand | SetOptionsCommand) & {
   committer: TimelineCommitter;
 };
 

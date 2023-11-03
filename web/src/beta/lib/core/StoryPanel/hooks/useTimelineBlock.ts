@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
@@ -27,7 +27,7 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
-export default (timelineValues?: TimelineValues, blockId?: string) => {
+export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
   const playSpeedOptions = useMemo(() => {
@@ -36,6 +36,16 @@ export default (timelineValues?: TimelineValues, blockId?: string) => {
   }, []);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
+  const ct = useMemo(() => {
+    if (timelineValues) {
+      const t = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
+      return t;
+    } else {
+      return getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime();
+    }
+  }, [timelineValues, visualizerContext]);
+
+  const [currentTime, setCurrentTime] = useState(ct);
 
   const range = useMemo(() => {
     if (timelineValues) {
@@ -51,10 +61,10 @@ export default (timelineValues?: TimelineValues, blockId?: string) => {
   }, [timelineValues, visualizerContext]);
 
   const onPause = useCallback(
-    (committer?: TimelineCommitter) => {
+    (committerId?: string) => {
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "PAUSE",
-        committer: { source: "storyTimelineBlock", id: committer?.id },
+        committer: { source: "storyTimelineBlock", id: committerId },
       });
     },
     [visualizerContext],
@@ -72,6 +82,7 @@ export default (timelineValues?: TimelineValues, blockId?: string) => {
 
   const onTimeChange = useCallback(
     (time: Date, committerId?: string) => {
+      console.log("time", time);
       if (!range) return;
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_TIME",
@@ -87,14 +98,14 @@ export default (timelineValues?: TimelineValues, blockId?: string) => {
   );
 
   const onSpeedChange = useCallback(
-    (speed: number, committer?: TimelineCommitter) => {
+    (speed: number, committerId?: string) => {
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_OPTIONS",
         payload: {
           multiplier: speed,
           stepType: "rate",
         },
-        committer: { source: "storyTimelineBlock", id: committer?.id },
+        committer: { source: "storyTimelineBlock", id: committerId },
       });
     },
     [visualizerContext],
@@ -109,84 +120,45 @@ export default (timelineValues?: TimelineValues, blockId?: string) => {
     [visualizerContext],
   );
 
+  const removeOnCommitEventListener = useCallback(
+    (cb: (committer: TimelineCommitter) => void) =>
+      visualizerContext?.current?.timeline?.current?.offCommit(cb),
+    [visualizerContext],
+  );
+
+  const onCommit = useCallback(
+    (cb: (committer: TimelineCommitter) => void) =>
+      visualizerContext?.current?.timeline?.current?.onCommit(cb),
+    [visualizerContext],
+  );
   const handleOnSpeedChange = useCallback(
-    (speed: number) => {
-      const absSpeed = Math.abs(speed);
-      onSpeedChange?.(absSpeed);
+    (speed: number, committerId?: string) => {
+      onSpeedChange?.(speed, committerId);
       setSpeed(speed);
     },
     [onSpeedChange],
   );
 
-  const handleOnPlay = useCallback(
-    (playing: boolean, committer: TimelineCommitter) => {
-      playing ? onPlay?.(committer) : onPause?.(committer);
-      onSpeedChange?.(Math.abs(speed));
-    },
-    [onPause, onPlay, onSpeedChange, speed],
-  );
-
-  const handleOnPlayReversed = useCallback(
-    (playing: boolean, committer: TimelineCommitter) => {
-      playing ? onPlay?.(committer) : onPause?.(committer);
-      onSpeedChange?.(Math.abs(speed) * -1);
-    },
-    [onPause, onPlay, onSpeedChange, speed],
-  );
-
-  const handleOnPause = useCallback(
-    (pause: boolean, committer: TimelineCommitter) => {
-      pause && onPause?.(committer);
-    },
-    [onPause],
-  );
-
-  const handleTimeEvent = useCallback(
-    (currentTime: Date, blockId: string) => {
-      const t = new Date(currentTime);
-      onTimeChange?.(t, blockId);
-    },
-    [onTimeChange],
-  );
-
-  const currentTime = useMemo(() => {
-    if (timelineValues) {
-      const t = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
-      blockId && handleTimeEvent?.(new Date(t), blockId);
-      return t;
-    } else {
-      return getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime();
-    }
-  }, [blockId, handleTimeEvent, timelineValues, visualizerContext]);
-
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isPlayingReversed, setIsPlayingReversed] = useState(false);
-
-  const handleTick = useCallback(
-    (current: Date) => {
-      if (!isPlaying || !isPlayingReversed) current;
-    },
-    [isPlaying, isPlayingReversed],
-  );
-
-  useEffect(() => {
-    onTick?.(handleTick);
-    return () => {
-      removeTickEventListener?.(handleTick);
-    };
-  }, [handleTick, onTick, removeTickEventListener]);
+  // const handleOnReset = useCallback(
+  //   (committer: TimelineCommitter) => {
+  //     onTimeChange?.(new Date(currentTime), committer.id);
+  //   },
+  //   [currentTime, onTimeChange],
+  // );
 
   return {
     currentTime,
     range,
     playSpeedOptions,
-    isPlaying,
-    isPlayingReversed,
-    onPlay: handleOnPlay,
-    onPlayReversed: handleOnPlayReversed,
+    speed,
+    onPlay,
     onSpeedChange: handleOnSpeedChange,
-    onPause: handleOnPause,
-    setIsPlaying,
-    setIsPlayingReversed,
+    onPause,
+    onTimeChange,
+    onTick,
+    removeTickEventListener,
+    onCommit,
+    removeOnCommitEventListener,
+    setCurrentTime,
   };
 };

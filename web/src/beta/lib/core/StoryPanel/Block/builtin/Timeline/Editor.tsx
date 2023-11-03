@@ -1,5 +1,3 @@
-import { useCallback, useState } from "react";
-
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import useHooks from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Timeline/hook";
@@ -18,29 +16,34 @@ type TimelineProps = {
 
 const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: TimelineProps) => {
   const t = useT();
-  const [open, setOpen] = useState(false);
-
-  const [selected, setSelected] = useState("1min/sec");
 
   const {
     currentTime,
     range,
     playSpeedOptions,
-    isPlaying,
-    isPlayingReversed,
+    speed,
     onPlay,
-    onPlayReversed,
     onSpeedChange,
     onPause,
-    setIsPlaying,
-    setIsPlayingReversed,
-  } = useTimelineBlock(timelineValues, blockId);
+    onCommit,
+    onTick,
+    removeOnCommitEventListener,
+    removeTickEventListener,
+    setCurrentTime,
+    onTimeChange,
+  } = useTimelineBlock(timelineValues);
 
   const {
     formattedCurrentTime,
     timeRange,
     isPause,
     sliderPosition,
+    isPlaying,
+    isPlayingReversed,
+    isOpen,
+    selected,
+    handleOnSelect,
+    handlePopOver,
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
@@ -50,30 +53,18 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
     isSelected,
     blockId,
     inEditor,
-    isPlaying,
-    isPlayingReversed,
+    speed,
     onPlay,
-    onPlayReversed,
     onSpeedChange,
     onPause,
-    setIsPlaying,
-    setIsPlayingReversed,
+    onCommit,
+    onTimeChange,
+    onTick,
+    removeOnCommitEventListener,
+    removeTickEventListener,
+    setCurrentTime,
   });
 
-  const handlePopOver = useCallback(() => {
-    !inEditor && setOpen(!open);
-  }, [inEditor, open]);
-
-  const handleClick = useCallback(
-    (value: string, second: number) => {
-      if (!inEditor) {
-        setOpen(false);
-        value !== selected && setSelected(value);
-        onSpeedChange(second);
-      }
-    },
-    [inEditor, onSpeedChange, selected],
-  );
   return (
     <Wrapper>
       <TimelineControl>
@@ -101,11 +92,11 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
             <Icon icon="timelinePlayRight" />
           </PlayButton>
         </PlayControl>
-        <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
+        <Popover.Provider open={isOpen} placement="bottom-start" onOpenChange={handlePopOver}>
           <Popover.Trigger asChild>
             <InputWrapper onClick={handlePopOver}>
               <Select>{selected && t(`${selected}`)}</Select>
-              <ArrowIcon icon="arrowDown" open={open} size={16} />
+              <ArrowIcon icon="arrowDown" open={isOpen} size={16} />
             </InputWrapper>
           </Popover.Trigger>
           <PickerWrapper attachToRoot>
@@ -114,7 +105,7 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
                 key={key}
                 value={playSpeed.seconds}
                 onClick={() => {
-                  handleClick(playSpeed.timeString, playSpeed.seconds);
+                  handleOnSelect(playSpeed.timeString, playSpeed.seconds);
                 }}>
                 {playSpeed.timeString}
               </InputOptions>
@@ -148,7 +139,7 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
         </ScaleList>
         <IconWrapper
           style={{
-            left: `${sliderPosition?.toFixed(1)}px`,
+            left: `${sliderPosition?.toFixed(1)} + 12 -25/2`,
           }}>
           <Icon icon="slider" />
         </IconWrapper>

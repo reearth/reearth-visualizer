@@ -1,6 +1,9 @@
-import { ChangeEventHandler, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { ChangeEventHandler, useCallback, useEffect, useMemo, useState } from "react";
 
-import { TimelineCommitter } from "@reearth/beta/lib/core/Map/useTimelineManager";
+import {
+  TickEventCallback,
+  TimelineCommitter,
+} from "@reearth/beta/lib/core/Map/useTimelineManager";
 import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import {
   formatDateForSliderTimeline,
@@ -8,24 +11,24 @@ import {
   formatRangeDateAndTime,
 } from "@reearth/beta/lib/core/StoryPanel/utils";
 
-import { BlockContext } from "../common/Wrapper";
-
 type TimelineProps = {
   currentTime: number;
   range?: Range;
   isSelected?: boolean;
   blockId?: string;
   inEditor?: boolean;
-  isPlaying?: boolean;
-  isPlayingReversed?: boolean;
-  setIsPlaying?: (p: boolean) => void;
-  setIsPlayingReversed?: (p: boolean) => void;
+  speed: number;
   onClick?: (t: number) => void;
   onDrag?: (t: number) => void;
-  onPlay?: (isPlaying: boolean, committer: TimelineCommitter) => void;
-  onPlayReversed?: (isPlaying: boolean, committer: TimelineCommitter) => void;
-  onSpeedChange?: (speed: number, committer: TimelineCommitter) => void;
-  onPause: (isPause: boolean, committer: TimelineCommitter) => void;
+  onPlay?: (committer: TimelineCommitter) => void;
+  onSpeedChange?: (speed: number, committerId?: string) => void;
+  onPause: (committerId: string) => void;
+  onTimeChange?: (time: Date, committerId?: string) => void;
+  onCommit?: (cb: (committer: TimelineCommitter) => void) => void | undefined;
+  removeOnCommitEventListener?: (cb: (committer: TimelineCommitter) => void) => void | undefined;
+  onTick?: (cb: TickEventCallback) => void | undefined;
+  removeTickEventListener?: (cb: TickEventCallback) => void | undefined;
+  setCurrentTime?: (t: number) => void;
 };
 
 export default ({
@@ -34,19 +37,46 @@ export default ({
   isSelected,
   blockId,
   inEditor,
-  isPlaying,
-  isPlayingReversed,
-  setIsPlayingReversed,
-  setIsPlaying,
+  speed,
   onPlay,
-  onPlayReversed,
   onSpeedChange,
   onPause,
+  onTimeChange,
+  onCommit,
+  onTick,
+  removeOnCommitEventListener,
+  removeTickEventListener,
+  setCurrentTime,
 }: TimelineProps) => {
   const [isPause, setIsPause] = useState(false);
-  const context = useContext(BlockContext);
+  const [isActive, setIsActive] = useState(false);
+  const [activeBlock, setActiveBlock] = useState("");
+  const [isPlayingReversed, setIsPlayingReversed] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [committer, setCommiter] = useState<TimelineCommitter>({
+    source: "storyTimelineBlock",
+    id: blockId,
+  });
 
-  const [committer, setCommiter] = useState<TimelineCommitter>({ source: "storyTimelineBlock" });
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [selected, setSelected] = useState("1min/sec");
+  const handlePopOver = useCallback(() => {
+    !inEditor && setIsOpen(!isOpen);
+  }, [inEditor, isOpen]);
+
+  const handleOnSelect = useCallback(
+    (value: string, second: number) => {
+      if (!inEditor) {
+        setIsOpen(false);
+        value !== selected && setSelected(value);
+        isPlayingReversed
+          ? onSpeedChange?.(second * -1, committer.id)
+          : onSpeedChange?.(second, committer.id);
+      }
+    },
+    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected],
+  );
 
   useEffect(() => {
     if (isSelected)
@@ -57,81 +87,54 @@ export default ({
 
   const handleOnSpeedChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     e => {
-      onSpeedChange?.(parseInt(e.currentTarget.value, 10), committer);
+      onSpeedChange?.(parseInt(e.currentTarget.value, 10), committer.id);
     },
     [committer, onSpeedChange],
   );
 
-  const toggleIsPlaying = useCallback(() => {
+  const handleOnPlay = useCallback(() => {
     if (isPlayingReversed || isPause) {
       setIsPlayingReversed?.(false);
       setIsPause(false);
-      onPlayReversed?.(false, committer);
-      onPause?.(false, committer);
     }
-    if (context?.editMode && !inEditor) {
-      setIsPlaying?.(!isPlaying);
-      onPlay?.(!isPlaying, committer);
-    }
+    onPlay?.(committer);
+    setIsActive(true);
+    committer?.id && setActiveBlock(committer.id);
+    onTimeChange?.(new Date(currentTime), committer.id);
+    onSpeedChange?.(Math.abs(speed), committer.id);
+    setIsPlaying(true);
   }, [
     isPlayingReversed,
     isPause,
-    context?.editMode,
-    inEditor,
-    setIsPlayingReversed,
-    onPlayReversed,
-    committer,
-    onPause,
-    setIsPlaying,
     onPlay,
-    isPlaying,
+    committer,
+    onTimeChange,
+    currentTime,
+    onSpeedChange,
+    speed,
   ]);
 
-  const toggleIsPlayingReversed = useCallback(() => {
+  const handleOnPlayReversed = useCallback(() => {
     if (isPlaying || isPause) {
-      setIsPlaying?.(false);
       setIsPause(false);
-      onPlay?.(false, committer);
-      onPause?.(false, committer);
+      setIsPlaying(false);
     }
-    if (context?.editMode && !inEditor) {
-      setIsPlayingReversed?.(!isPlayingReversed);
-      onPlayReversed?.(!isPlayingReversed, committer);
-    }
-  }, [
-    committer,
-    context?.editMode,
-    inEditor,
-    isPause,
-    isPlaying,
-    isPlayingReversed,
-    onPause,
-    onPlay,
-    onPlayReversed,
-    setIsPlaying,
-    setIsPlayingReversed,
-  ]);
+    onPlay?.(committer);
+    setIsActive(true);
+    setIsPlayingReversed(true);
+    committer?.id && setActiveBlock(committer.id);
+    onTimeChange?.(new Date(currentTime), committer.id);
+    onSpeedChange?.(Math.abs(speed) * -1, committer.id);
+  }, [committer, currentTime, isPause, isPlaying, onPlay, onSpeedChange, onTimeChange, speed]);
 
-  const toggleIsPause = useCallback(() => {
+  const handleOnPause = useCallback(() => {
     if (isPlayingReversed || isPlaying) {
       setIsPlayingReversed?.(false);
       setIsPlaying?.(false);
-      onPlayReversed?.(false, committer);
-      onPlay?.(false, committer);
     }
-    setIsPause(p => !p);
-    onPause?.(!isPause, committer);
-  }, [
-    isPlayingReversed,
-    isPlaying,
-    onPause,
-    isPause,
-    committer,
-    setIsPlayingReversed,
-    setIsPlaying,
-    onPlayReversed,
-    onPlay,
-  ]);
+    committer?.id && onPause?.(committer.id);
+    setIsPause(!isPause);
+  }, [committer.id, isPause, isPlaying, isPlayingReversed, onPause]);
 
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(currentTime, { detail: true });
@@ -153,35 +156,67 @@ export default ({
 
   const sliderPosition = useMemo(() => {
     if (range && currentTime >= range.start && currentTime <= range?.end) {
-      if (!inEditor) {
-        const totalRange = range?.end - range.start;
-        const currentPosition = currentTime - range.start;
-        const positionPercentage = (currentPosition / totalRange) * 374 + 16;
-        return Math.round(positionPercentage);
-      }
+      // if (!inEditor) {
+      // const totalRange = range?.end - range.start;
+      const currentPosition = currentTime - range.start;
+      const positionPercentage = (currentPosition / 86400000) * 10;
+      return Math.round(positionPercentage);
+      // }
     }
-    return 16;
-  }, [range, currentTime, inEditor]);
+    return 3;
+  }, [range, currentTime]);
+
+  const handleTick = useCallback(
+    (current: Date) => {
+      return setCurrentTime?.(current.getTime());
+    },
+    [setCurrentTime],
+  );
+
+  const handleTimelineCommitterChange = useCallback(
+    (committer: TimelineCommitter) => {
+      if (isActive && (committer.source !== "storyTimelineBlock" || committer.id !== activeBlock)) {
+        setActiveBlock(" ");
+        setIsActive(false);
+        setIsPause(false);
+        setIsPlaying(false);
+        setIsPlayingReversed(false);
+      }
+    },
+    [activeBlock, isActive],
+  );
 
   useEffect(() => {
-    if (currentTime === range?.end) {
-      onPlay?.(false, committer);
-    }
-    if (currentTime === range?.start) {
-      onPlayReversed?.(false, committer);
-    }
-  }, [currentTime, range?.start, range?.end, onPlay, onPlayReversed, committer]);
-
+    if (isActive) onTick?.(handleTick), onCommit?.(handleTimelineCommitterChange);
+    return () => {
+      removeTickEventListener?.(handleTick);
+      removeOnCommitEventListener?.(handleTimelineCommitterChange);
+    };
+  }, [
+    handleTick,
+    handleTimelineCommitterChange,
+    isActive,
+    isPlaying,
+    isPlayingReversed,
+    onCommit,
+    onTick,
+    removeOnCommitEventListener,
+    removeTickEventListener,
+  ]);
   return {
     formattedCurrentTime,
     timeRange,
-    isPlaying,
+    isPlaying: isPlaying,
     isPlayingReversed,
     isPause,
     sliderPosition,
-    toggleIsPlaying,
-    toggleIsPlayingReversed,
-    toggleIsPause,
+    isOpen,
+    selected,
+    handleOnSelect,
+    handlePopOver,
+    toggleIsPlaying: handleOnPlay,
+    toggleIsPlayingReversed: handleOnPlayReversed,
+    toggleIsPause: handleOnPause,
     handleOnSpeedChange,
   };
 };

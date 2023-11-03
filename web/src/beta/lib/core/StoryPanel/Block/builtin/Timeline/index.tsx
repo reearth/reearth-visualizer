@@ -12,9 +12,14 @@ export type TimelineValues = {
 };
 
 const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
-  const timelineValues: TimelineValues = useMemo(() => {
-    return block?.property?.default?.timelineSetting?.value;
-  }, [block?.property?.default]);
+  const timeline = useMemo(() => {
+    return {
+      timelineValues: block?.property?.default?.timelineSetting?.value,
+      blockId: block?.id,
+    };
+  }, [block?.id, block?.property?.default?.timelineSetting?.value]);
+
+  const { blockId, timelineValues } = timeline;
 
   return (
     <BlockWrapper
@@ -27,8 +32,7 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
       <TimelineEditor
         inEditor={!!props.isEditable}
         timelineValues={timelineValues}
-        isSelected={isSelected}
-        blockId={block?.id}
+        blockId={blockId}
       />
     </BlockWrapper>
   );
