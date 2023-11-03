@@ -9,6 +9,7 @@ import StorySettingsDetail from "./StorySettingsDetail";
 
 export type StorySettingsType = {
   panelPosition?: Position;
+  background?: string;
 };
 
 type Props = {

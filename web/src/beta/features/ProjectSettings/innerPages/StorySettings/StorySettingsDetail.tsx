@@ -27,8 +27,9 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
   const handleSubmit = useCallback(() => {
     onUpdateStory({
       panelPosition: localPanelPosition,
+      background: backgroundColor,
     });
-  }, [localPanelPosition, onUpdateStory]);
+  }, [backgroundColor, localPanelPosition, onUpdateStory]);
 
   const options = [
     {
@@ -51,7 +52,7 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
             options={options}
             onChange={value => setLocalPanelPosition(value as Position)}
           />
-          <ColorField
+          <ColorFieldWrapper
             name={t("Background")}
             value={backgroundColor}
             onChange={value => setBackgroundColor(value)}
@@ -80,5 +81,8 @@ const FieldsWrapper = styled.div`
   gap: 8px;
 `;
 const SelectFieldWrapper = styled(SelectField)`
+  width: 100%;
+`;
+const ColorFieldWrapper = styled(ColorField)`
   width: 100%;
 `;

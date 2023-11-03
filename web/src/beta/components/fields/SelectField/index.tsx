@@ -14,6 +14,7 @@ export type SelectValue = {
 };
 
 export type Props = {
+  className?: string;
   options?: SelectValue[];
   onChange: (key: string) => void;
   value?: string;
@@ -25,6 +26,7 @@ export type Props = {
 };
 
 const SelectField: React.FC<Props> = ({
+  className,
   options,
   onChange,
   value,
@@ -51,7 +53,7 @@ const SelectField: React.FC<Props> = ({
   }, [options, value]);
 
   return (
-    <Property name={name} description={description}>
+    <Property name={name} description={description} className={className}>
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
         <Popover.Trigger asChild>
           <InputWrapper disabled={disabled} onClick={handlePopOver}>
