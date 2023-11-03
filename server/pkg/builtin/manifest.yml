@@ -1996,6 +1996,7 @@ extensions:
         - id: menu
           title: Menu
           list: true
+          representativeField: menuTitle
           availableIf:
             field: buttonType
             type: string
