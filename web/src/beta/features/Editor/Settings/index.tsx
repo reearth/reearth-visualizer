@@ -1,5 +1,8 @@
+import { useMemo } from "react";
+
 import CheckBoxField from "@reearth/beta/components/CheckboxField";
-import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
+import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
+import { filterVisibleItems } from "@reearth/beta/components/fields/utils";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -41,6 +44,8 @@ const Settings: React.FC<Props> = ({
     onPageUpdate,
   });
 
+  const visibleItems = useMemo(() => filterVisibleItems(propertyItems), [propertyItems]);
+
   return (
     <Wrapper>
       {tab == "story" && (
@@ -68,9 +73,10 @@ const Settings: React.FC<Props> = ({
         </SidePanelSectionField>
       )}
 
-      {propertyItems?.map((i, idx) => (
+      {visibleItems?.map((i, idx) => (
         <SidePanelSectionField title={i.title ?? "Undefined"} key={idx}>
-          <FieldComponents
+          <PropertyItem
+            key={i.id}
             propertyId={propertyId}
             item={i}
             currentCamera={currentCamera}

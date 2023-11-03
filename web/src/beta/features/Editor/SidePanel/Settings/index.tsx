@@ -1,4 +1,7 @@
-import FieldComponents from "@reearth/beta/components/fields/PropertyFields";
+import { useMemo } from "react";
+
+import PropertyItem from "@reearth/beta/components/fields/Property/PropertyItem";
+import { filterVisibleItems } from "@reearth/beta/components/fields/utils";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import { type Item } from "@reearth/services/api/propertyApi/utils";
 import { styled } from "@reearth/services/theme";
@@ -9,11 +12,12 @@ type Props = {
 };
 
 const Settings: React.FC<Props> = ({ id, propertyItems }) => {
+  const visibleItems = useMemo(() => filterVisibleItems(propertyItems), [propertyItems]);
   return (
     <Wrapper>
-      {propertyItems?.map((i, idx) => (
+      {visibleItems?.map((i, idx) => (
         <SidePanelSectionField title={i.title ?? "Undefined"} key={idx}>
-          <FieldComponents propertyId={id} item={i} />
+          <PropertyItem key={i.id} propertyId={id} item={i} />
         </SidePanelSectionField>
       ))}
     </Wrapper>
