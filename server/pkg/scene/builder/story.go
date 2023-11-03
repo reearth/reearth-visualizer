@@ -15,9 +15,12 @@ type storyJSON struct {
 }
 
 type pageJSON struct {
-	ID       string       `json:"id"`
-	Property propertyJSON `json:"property"`
-	Blocks   []blockJSON  `json:"blocks"`
+	ID              string       `json:"id"`
+	Property        propertyJSON `json:"property"`
+	Blocks          []blockJSON  `json:"blocks"`
+	Swipeable       bool         `json:"swipeable"`
+	SwipeableLayers []string     `json:"swipeableLayers"`
+	Layers          []string     `json:"layers"`
 }
 
 type blockJSON struct {
@@ -55,6 +58,9 @@ func (b *Builder) pageJSON(ctx context.Context, page storytelling.Page, p []*pro
 			}
 			return b.blockJSON(ctx, *block, p), true
 		}),
+		Swipeable:       page.Swipeable(),
+		SwipeableLayers: page.SwipeableLayers().Strings(),
+		Layers:          page.Layers().Strings(),
 	}
 }
 
