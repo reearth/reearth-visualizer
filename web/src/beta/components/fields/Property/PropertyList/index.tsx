@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import DragAndDropList, {
-  Props as DragAndDropProps,
-} from "@reearth/beta/components/DragAndDropList";
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import Property from "@reearth/beta/components/fields";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-type ListItem = {
+import useHooks from "../hooks";
+
+export type ListItem = {
   id: string;
-  value: string;
+  title: string;
 };
 
 export type Props = {
@@ -19,31 +19,35 @@ export type Props = {
   name?: string;
   description?: string;
   items: ListItem[];
-  removeItem: (id: string) => void;
-  addItem: () => void;
-  onSelect: (id: string) => void;
+  propertyId: string;
+  schemaGroup: string;
   selected?: string;
   atLeastOneItem?: boolean;
-} & Pick<DragAndDropProps, "onItemDrop">;
+  onSelect: (id: string) => void;
+};
 
-const ListField: React.FC<Props> = ({
+const PropertyList: React.FC<Props> = ({
   className,
   name,
   description,
   items,
-  removeItem,
-  addItem,
-  onItemDrop,
-  onSelect,
+  propertyId,
+  schemaGroup,
   selected,
   atLeastOneItem,
+  onSelect,
 }: Props) => {
   const t = useT();
 
+  const { handleAddPropertyItem, handleRemovePropertyItem, handleMovePropertyItem } = useHooks(
+    propertyId,
+    schemaGroup,
+  );
+
   const deleteItem = useCallback(() => {
     if (!selected) return;
-    removeItem(selected);
-  }, [selected, removeItem]);
+    handleRemovePropertyItem(selected);
+  }, [selected, handleRemovePropertyItem]);
 
   const getId = useCallback(({ id }: ListItem) => {
     return id;
@@ -71,11 +75,11 @@ const ListField: React.FC<Props> = ({
         <DragAndDropList<ListItem>
           uniqueKey="ListField"
           items={items}
-          onItemDrop={onItemDrop}
+          onItemDrop={handleMovePropertyItem}
           getId={getId}
-          renderItem={({ id, value }) => (
+          renderItem={({ id, title }) => (
             <Item onClick={() => onSelect(id)} selected={selected === id}>
-              <StyledText size="xFootnote">{value}</StyledText>
+              <StyledText size="xFootnote">{title}</StyledText>
             </Item>
           )}
           gap={0}
@@ -91,7 +95,7 @@ const ListField: React.FC<Props> = ({
           disabled={disableRemoveButton}
         />
         <ButtonWrapper
-          onClick={addItem}
+          onClick={handleAddPropertyItem}
           icon="plus"
           buttonType="secondary"
           text={t("Add Item")}
@@ -143,4 +147,4 @@ const ButtonWrapper = styled(Button)`
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
-export default ListField;
+export default PropertyList;

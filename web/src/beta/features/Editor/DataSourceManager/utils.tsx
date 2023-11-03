@@ -114,8 +114,9 @@ export const AddLayerWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const generateTitle = (url?: string): string => {
-  if (url && url.trim() !== "") {
+export const generateTitle = (url: string, layerName?: string): string => {
+  if (layerName && layerName.trim() !== "") return layerName;
+  if (url.trim() !== "") {
     try {
       const urlObject = new URL(url);
       const pathParts = urlObject.pathname.split("/");
