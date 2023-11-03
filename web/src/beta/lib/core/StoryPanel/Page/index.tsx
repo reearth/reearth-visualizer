@@ -87,21 +87,23 @@ const StoryPanel: React.FC<Props> = ({
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
       <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
-        <StoryBlock
-          block={{
-            id: titleId,
-            pluginId: "reearth",
-            extensionId: "titleStoryBlock",
-            name: t("Title"),
-            propertyId: page?.propertyId ?? "",
-            property: { title },
-          }}
-          isEditable={isEditable}
-          isSelected={selectedStoryBlockId === titleId}
-          onClick={() => onBlockSelect?.(titleId)}
-          onClickAway={onBlockSelect}
-          onChange={onPropertyUpdate}
-        />
+        {(isEditable || title?.title?.value) && (
+          <StoryBlock
+            block={{
+              id: titleId,
+              pluginId: "reearth",
+              extensionId: "titleStoryBlock",
+              name: t("Title"),
+              propertyId: page?.propertyId ?? "",
+              property: { title },
+            }}
+            isEditable={isEditable}
+            isSelected={selectedStoryBlockId === titleId}
+            onClick={() => onBlockSelect?.(titleId)}
+            onClickAway={onBlockSelect}
+            onChange={onPropertyUpdate}
+          />
+        )}
 
         {isEditable && (
           <BlockAddBar
