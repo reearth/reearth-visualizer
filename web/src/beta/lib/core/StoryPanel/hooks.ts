@@ -76,12 +76,13 @@ export default (
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
-      const cameraAnimation = newPage.property.cameraAnimation;
 
-      const destination = cameraAnimation.cameraPosition?.value;
+      const cameraAnimation = newPage.property?.cameraAnimation;
+
+      const destination = cameraAnimation?.cameraPosition?.value;
       if (!destination) return;
 
-      const duration = cameraAnimation.cameraDuration?.value ?? DEFAULT_STORY_PAGE_DURATION;
+      const duration = cameraAnimation?.cameraDuration?.value ?? DEFAULT_STORY_PAGE_DURATION;
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },

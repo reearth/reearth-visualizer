@@ -1,4 +1,3 @@
-import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
 import {
@@ -14,6 +13,9 @@ import { useSelectedStoryPageId } from "@reearth/services/state";
 
 import { processLayers } from "../Editor/Visualizer/convert";
 
+import { processProperty } from "./convert";
+import { processStoryProperty } from "./convert-story";
+import { useGA } from "./googleAnalytics/useGA";
 import type {
   PublishedData,
   WidgetZone,
@@ -21,7 +23,6 @@ import type {
   WidgetArea,
   WidgetAreaPadding,
 } from "./types";
-import { useGA } from "./useGA";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
@@ -157,13 +158,13 @@ export default (alias?: string) => {
               id: p.id,
               swipeable: p.swipeable,
               layerIds: p.layer,
-              property: processProperty(p.property),
+              property: processStoryProperty(p.property),
               blocks: p.blocks.map(b => {
                 return {
                   id: b.id,
                   pluginId: b.pluginId,
                   extensionId: b.extensionId,
-                  property: processProperty(b.property),
+                  property: processStoryProperty(b.property),
                 };
               }),
             };
@@ -202,8 +203,6 @@ export default (alias?: string) => {
       visible: currentPage?.layerIds?.includes(layer.id),
     }));
   }, [data?.nlsLayers, data?.layerStyles, currentPage?.layerIds, story]);
-
-  console.log(story);
 
   useEffect(() => {
     const url = dataUrl(actualAlias);
@@ -264,39 +263,9 @@ export default (alias?: string) => {
   };
 };
 
-function processProperty(p: any): any {
-  if (typeof p !== "object") return p;
-  return mapValues(p, g =>
-    Array.isArray(g) ? g.map(h => processPropertyGroup(h)) : processPropertyGroup(g),
-  );
-}
-
-function processPropertyGroup(g: any): any {
-  if (typeof g !== "object") return g;
-  return mapValues(g, v => {
-    // For compability
-    if (Array.isArray(v)) {
-      return v.map(vv =>
-        typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v
-          ? { value: { ...vv, height: vv.altitude } }
-          : { value: vv },
-      );
-    }
-    if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
-      return {
-        value: {
-          ...v,
-          height: v.altitude,
-        },
-      };
-    }
-    return { value: v };
-  });
-}
-
-function dataUrl(alias?: string): string {
+const dataUrl = (alias?: string): string => {
   if (alias && window.REEARTH_CONFIG?.api) {
     return `${window.REEARTH_CONFIG.api}/published_data/${alias}`;
   }
   return "data.json";
-}
+};
