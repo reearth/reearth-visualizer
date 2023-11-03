@@ -109,6 +109,6 @@ export default StoryPanel;
 
 const PanelWrapper = styled.div`
   flex: 0 0 ${storyPanelWidth}px;
-  background: #f1f1f1;
+  background: #f1f1f1; //TODO: Add the color coming from the selected story prop
   color: ${({ theme }) => theme.content.weak};
 `;
