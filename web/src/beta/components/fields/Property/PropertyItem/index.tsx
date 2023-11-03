@@ -56,7 +56,7 @@ const PropertyItem: React.FC<Props> = ({ propertyId, item, currentCamera, onFlyT
 
           return {
             id: i.id,
-            title: (!layerMode ? title : undefined) ?? t("Undefined"),
+            title: (!layerMode ? title : undefined) ?? t("Settings"),
             layerId: layerMode ? title : undefined,
           };
         })
