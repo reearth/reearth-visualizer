@@ -25,7 +25,7 @@ export type StoryPage = {
   id: string;
   swipeable?: boolean;
   swipeableLayers?: string[];
-  layer?: string[];
+  layers?: string[];
   property?: any;
   blocks: StoryBlock[];
 };
