@@ -26,7 +26,8 @@ import {
   selectedLayerVar,
 } from "@reearth/services/state";
 
-import { convertStory, convertWidgets, processLayers } from "./convert";
+import { convertWidgets, processLayers } from "./convert";
+import { convertStory } from "./convert-story";
 import type { BlockType } from "./type";
 
 export default ({
