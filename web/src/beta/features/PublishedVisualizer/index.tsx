@@ -40,6 +40,7 @@ export default function Published({ alias }: Props) {
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
       ready={ready}
+      storyPanelPosition={story?.position}
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}>
       {story && <StoryPanel selectedStory={story} onCurrentPageChange={handleCurrentPageChange} />}
