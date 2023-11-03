@@ -1,4 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
 import { mapValues } from "lodash-es";
 import { useState, useMemo, useEffect, useCallback } from "react";
 
@@ -11,7 +10,7 @@ import {
 } from "@reearth/beta/lib/core/Crust";
 import { Story } from "@reearth/beta/lib/core/StoryPanel";
 import { config } from "@reearth/services/config";
-import { selectedStoryPageIdVar } from "@reearth/services/state";
+import { useSelectedStoryPageId } from "@reearth/services/state";
 
 import { processLayers } from "../Editor/Visualizer/convert";
 
@@ -173,7 +172,7 @@ export default (alias?: string) => {
     return processedStory;
   }, [data?.story]);
 
-  const currentPageId = useReactiveVar(selectedStoryPageIdVar);
+  const [currentPageId, setCurrentPageId] = useSelectedStoryPageId();
 
   const currentPage = useMemo(
     () => story?.pages.find(p => p.id === currentPageId),
@@ -181,8 +180,8 @@ export default (alias?: string) => {
   );
 
   const handleCurrentPageChange = useCallback(
-    (pageId?: string) => selectedStoryPageIdVar(pageId),
-    [],
+    (pageId?: string) => setCurrentPageId(pageId),
+    [setCurrentPageId],
   );
 
   const layers = useMemo(() => {

@@ -1,11 +1,10 @@
-import { useReactiveVar } from "@apollo/client";
 import { useCallback, useMemo, useRef } from "react";
 
 import { StoryPanelRef } from "@reearth/beta/lib/core/StoryPanel";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
-import { selectedStoryPageIdVar } from "@reearth/services/state";
+import { useSelectedStoryPageId } from "@reearth/services/state";
 
 type Props = {
   sceneId: string;
@@ -20,7 +19,7 @@ export default function ({ sceneId }: Props) {
   const t = useT();
 
   const storyPanelRef = useRef<StoryPanelRef | null>(null);
-  const selectedStoryPageId = useReactiveVar(selectedStoryPageIdVar);
+  const [selectedStoryPageId] = useSelectedStoryPageId();
 
   const {
     useStoriesQuery,

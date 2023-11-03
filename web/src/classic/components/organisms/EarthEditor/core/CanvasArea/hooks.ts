@@ -25,14 +25,6 @@ import {
   ValueType,
 } from "@reearth/classic/gql";
 import {
-  valueTypeToGQL,
-  type ValueTypes,
-  valueToGQL,
-  type LatLng,
-} from "@reearth/classic/util/value";
-import { config } from "@reearth/services/config";
-import { useLang } from "@reearth/services/i18n";
-import {
   useSceneId,
   useSceneMode,
   useIsCapturing,
@@ -42,7 +34,15 @@ import {
   useWidgetAlignEditorActivated,
   useZoomedLayerId,
   useSelectedWidgetArea,
-} from "@reearth/services/state";
+} from "@reearth/classic/state";
+import {
+  valueTypeToGQL,
+  type ValueTypes,
+  valueToGQL,
+  type LatLng,
+} from "@reearth/classic/util/value";
+import { config } from "@reearth/services/config";
+import { useLang } from "@reearth/services/i18n";
 
 import {
   convertWidgets,
