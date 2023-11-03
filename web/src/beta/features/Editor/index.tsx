@@ -74,7 +74,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     isVisualizerReady,
     visualizerRef,
   });
-  const { scene, selectedSceneSetting, handleSceneSettingSelect } = useScene({ sceneId });
+  const { scene, selectedSceneSetting, sceneSettings, handleSceneSettingSelect } = useScene({
+    sceneId,
+  });
 
   const {
     layerStyles,
@@ -136,6 +138,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentCamera,
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedSceneSetting: selectedSceneSetting,
+    sceneSettings: sceneSettings,
     onFlyTo: handleFlyTo,
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,

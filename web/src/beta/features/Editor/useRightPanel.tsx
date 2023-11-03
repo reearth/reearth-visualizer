@@ -5,6 +5,7 @@ import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { Item } from "@reearth/services/api/propertyApi/utils";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { Scene } from "@reearth/services/gql";
 
@@ -17,6 +18,7 @@ import { LayerStyleValueUpdateProps } from "./useLayerStyles";
 type Props = {
   layerStyles: LayerStyle[];
   scene?: Scene;
+  sceneSettings?: Item[];
   tab: Tab;
   sceneId?: string;
   nlsLayers: NLSLayer[];
@@ -39,6 +41,7 @@ export default ({
   currentPage,
   selectedLayerStyleId,
   selectedSceneSetting,
+  sceneSettings,
   currentCamera,
   onPageUpdate,
   onFlyTo,
@@ -54,6 +57,7 @@ export default ({
             layerStyles={layerStyles}
             layers={nlsLayers}
             sceneId={sceneId}
+            sceneSettings={sceneSettings}
             currentCamera={currentCamera}
             selectedLayerStyleId={selectedLayerStyleId}
             selectedSceneSetting={selectedSceneSetting}
@@ -88,6 +92,7 @@ export default ({
     currentCamera,
     selectedLayerStyleId,
     selectedSceneSetting,
+    sceneSettings,
     currentPage,
     nlsLayers,
     onFlyTo,

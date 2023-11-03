@@ -9,7 +9,7 @@ import { FlyTo } from "@reearth/beta/lib/core/types";
 import { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
-import { convert } from "@reearth/services/api/propertyApi/utils";
+import { Item } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { selectedLayerVar } from "@reearth/services/state";
@@ -19,6 +19,7 @@ import LayerStyleEditor from "./LayerStyleValueEditor";
 
 type Props = {
   scene?: Scene;
+  sceneSettings?: Item[];
   layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
   sceneId?: string;
@@ -37,6 +38,7 @@ const MapRightPanel: React.FC<Props> = ({
   sceneId,
   selectedLayerStyleId,
   selectedSceneSetting,
+  sceneSettings,
   currentCamera,
   onFlyTo,
   onLayerStyleValueUpdate,
@@ -45,10 +47,6 @@ const MapRightPanel: React.FC<Props> = ({
   const t = useT();
 
   const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
-  const sceneSettings = useMemo(
-    () => convert(scene?.property)?.filter(item => item.collection === selectedSceneSetting),
-    [scene?.property, selectedSceneSetting],
-  );
 
   const selectedLayerId = useReactiveVar(selectedLayerVar);
 
