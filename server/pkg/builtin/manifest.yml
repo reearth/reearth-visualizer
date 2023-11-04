@@ -173,6 +173,7 @@ extensions:
             - id: globeLightingBool
               type: bool
               title: Enable
+              defaultValue: false
               description: This property will support the globe receive Entitys Lighting.
         - id: globeShadow
           collection: Globe
@@ -181,6 +182,7 @@ extensions:
             - id: globeShadowBool
               type: bool
               title: Enable
+              defaultValue: false
               description: This property will support the globe receive Entitys shadows.
         - id: globeAtmosphere
           collection: Globe
@@ -209,6 +211,7 @@ extensions:
             - id: skyBoxBool
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: sun
           collection: Sky
@@ -217,6 +220,7 @@ extensions:
             - id: sunBool
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: moon
           collection: Sky
@@ -225,6 +229,7 @@ extensions:
             - id: moonBool
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: skyAtmosphere
           collection: Sky
@@ -233,6 +238,7 @@ extensions:
             - id: skyAtmosphereBool
               type: bool
               title: Enable
+              defaultValue: true
               description: Description neeeded.
             - id: skyAtmosphereIntensity
               type: number
@@ -262,7 +268,7 @@ extensions:
             - id: fov
               type: number
               title: FOV
-              description: Description needed
+              # description: Description needed
               defaultValue: 3
               ui: slider
               min: 0
