@@ -4,7 +4,7 @@ import Text from "@reearth/beta/components/Text";
 import Toggle from "@reearth/beta/components/Toggle";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { useT } from "@reearth/services/i18n";
-import { selectedWidgetAreaVar } from "@reearth/services/state";
+import { useSelectedWidgetArea } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import Devices, { type Device } from "./Devices";
@@ -27,12 +27,13 @@ const Nav: React.FC<Props> = ({
   onDeviceChange,
 }) => {
   const t = useT();
+  const [, setSelectedWidgetArea] = useSelectedWidgetArea();
 
   useEffect(() => {
     if (!showWidgetEditor) {
-      selectedWidgetAreaVar(undefined);
+      setSelectedWidgetArea(undefined);
     }
-  }, [showWidgetEditor]);
+  }, [showWidgetEditor, setSelectedWidgetArea]);
 
   return (
     <StyledSecondaryNav>

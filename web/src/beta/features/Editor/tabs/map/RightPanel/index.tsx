@@ -1,4 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
 import { useMemo } from "react";
 
 import SceneSettings from "@reearth/beta/features/Editor/Settings";
@@ -12,7 +11,7 @@ import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { convert } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
-import { selectedLayerVar } from "@reearth/services/state";
+import { useSelectedLayer } from "@reearth/services/state";
 
 import LayerInspector from "./LayerInspector";
 import LayerStyleEditor from "./LayerStyleValueEditor";
@@ -48,7 +47,7 @@ const MapRightPanel: React.FC<Props> = ({
   const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
   const sceneSettings = useMemo(() => convert(scene?.property), [scene?.property]);
 
-  const selectedLayerId = useReactiveVar(selectedLayerVar);
+  const [selectedLayerId] = useSelectedLayer();
 
   return (
     <SidePanelCommon

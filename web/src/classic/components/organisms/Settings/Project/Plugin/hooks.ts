@@ -9,9 +9,9 @@ import {
   useUploadPluginMutation,
   useUpgradePluginMutation,
 } from "@reearth/classic/gql/graphql-client-api";
+import { useProject, useNotification, useCurrentTheme } from "@reearth/classic/state";
 import { useAuth } from "@reearth/services/auth";
 import { useLang, useT } from "@reearth/services/i18n";
-import { useProject, useNotification, useCurrentTheme } from "@reearth/services/state";
 
 export type Plugin = {
   fullId: string;

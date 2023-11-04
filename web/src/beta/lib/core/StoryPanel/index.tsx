@@ -1,15 +1,14 @@
-import { MutableRefObject } from "react";
+import { forwardRef, memo, Ref } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import useHooks, { type Story } from "./hooks";
+import { STORY_PANEL_WIDTH } from "./constants";
+import useHooks, { type StoryPanelRef, type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
 
-export const storyPanelWidth = 442;
-
-export { type Story, type StoryPage } from "./hooks";
+export type { Story, StoryPage, StoryPanelRef } from "./hooks";
 
 export type InstallableStoryBlock = {
   name: string;
@@ -23,9 +22,7 @@ export type InstallableStoryBlock = {
 
 export type StoryPanelProps = {
   selectedStory?: Story;
-  currentPageId?: string;
   isEditable?: boolean;
-  isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
   onBlockCreate?: (
     pageId?: string | undefined,
@@ -42,73 +39,83 @@ export type StoryPanelProps = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
-  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
+  onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
+  onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
 };
 
-export const StoryPanel: React.FC<StoryPanelProps> = ({
-  selectedStory,
-  currentPageId,
-  isEditable,
-  isAutoScrolling,
-  installableBlocks,
-  onBlockCreate,
-  onBlockDelete,
-  onPropertyUpdate,
-  onCurrentPageChange,
-  onStoryBlockMove,
-}) => {
-  const {
-    pageInfo,
-    selectedPageId,
-    selectedBlockId,
-    showPageSettings,
-    handlePageSettingsToggle,
-    handlePageSelect,
-    handleBlockSelect,
-    handleCurrentPageChange,
-  } = useHooks({
-    selectedStory,
-    currentPageId,
-    isEditable,
-    onCurrentPageChange,
-  });
+export const StoryPanel = memo(
+  forwardRef<any, StoryPanelProps>(
+    (
+      {
+        selectedStory,
+        isEditable,
+        installableBlocks,
+        onBlockCreate,
+        onBlockDelete,
+        onPropertyUpdate,
+        onCurrentPageChange,
+        onStoryBlockMove,
+      },
+      ref: Ref<StoryPanelRef>,
+    ) => {
+      const {
+        pageInfo,
+        currentPageId,
+        selectedPageId,
+        selectedBlockId,
+        showPageSettings,
+        isAutoScrolling,
+        handlePageSettingsToggle,
+        handlePageSelect,
+        handleBlockSelect,
+        handleCurrentPageChange,
+      } = useHooks(
+        {
+          selectedStory,
+          isEditable,
+          onCurrentPageChange,
+        },
+        ref,
+      );
 
-  return (
-    <PanelWrapper>
-      {!!pageInfo && (
-        <PageIndicator
-          currentPage={pageInfo.currentPage}
-          maxPage={pageInfo.maxPage}
-          onPageChange={pageInfo.onPageChange}
-        />
-      )}
-      <StoryContent
-        pages={selectedStory?.pages}
-        selectedPageId={selectedPageId}
-        installableStoryBlocks={installableBlocks}
-        selectedStoryBlockId={selectedBlockId}
-        showPageSettings={showPageSettings}
-        showingIndicator={!!pageInfo}
-        isAutoScrolling={isAutoScrolling}
-        isEditable={isEditable}
-        onPageSettingsToggle={handlePageSettingsToggle}
-        onPageSelect={handlePageSelect}
-        onBlockCreate={onBlockCreate}
-        onBlockDelete={onBlockDelete}
-        onBlockSelect={handleBlockSelect}
-        onPropertyUpdate={onPropertyUpdate}
-        onCurrentPageChange={handleCurrentPageChange}
-        onStoryBlockMove={onStoryBlockMove}
-      />
-    </PanelWrapper>
-  );
-};
+      return (
+        <PanelWrapper>
+          {!!pageInfo && (
+            <PageIndicator
+              currentPage={pageInfo.currentPage}
+              maxPage={pageInfo.maxPage}
+              onPageChange={pageInfo.onPageChange}
+            />
+          )}
+          <StoryContent
+            pages={selectedStory?.pages}
+            currentPageId={currentPageId}
+            selectedPageId={selectedPageId}
+            installableStoryBlocks={installableBlocks}
+            selectedStoryBlockId={selectedBlockId}
+            showPageSettings={showPageSettings}
+            showingIndicator={!!pageInfo}
+            isAutoScrolling={isAutoScrolling}
+            isEditable={isEditable}
+            onPageSettingsToggle={handlePageSettingsToggle}
+            onPageSelect={handlePageSelect}
+            onBlockCreate={onBlockCreate}
+            onBlockDelete={onBlockDelete}
+            onBlockSelect={handleBlockSelect}
+            onPropertyUpdate={onPropertyUpdate}
+            onCurrentPageChange={handleCurrentPageChange}
+            onStoryBlockMove={onStoryBlockMove}
+          />
+        </PanelWrapper>
+      );
+    },
+  ),
+);
 
 export default StoryPanel;
 
 const PanelWrapper = styled.div`
-  flex: 0 0 ${storyPanelWidth}px;
+  flex: 0 0 ${STORY_PANEL_WIDTH}px;
   background: #f1f1f1;
   color: ${({ theme }) => theme.content.weak};
 `;

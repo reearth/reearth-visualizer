@@ -1,11 +1,10 @@
-import { useReactiveVar } from "@apollo/client";
 import { MutableRefObject, useCallback, useMemo } from "react";
 
 import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { selectedLayerVar } from "@reearth/services/state";
+import { useSelectedLayer } from "@reearth/services/state";
 
 type LayerProps = {
   sceneId: string;
@@ -43,7 +42,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     useLayersFetcher();
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
 
-  const selectedLayerId = useReactiveVar(selectedLayerVar);
+  const [selectedLayerId, setSelectedLayerId] = useSelectedLayer();
 
   const selectedLayer = useMemo(
     () => nlsLayers.find(l => l.id === selectedLayerId?.layerId) || undefined,
@@ -55,15 +54,15 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
       if (!isVisualizerReady) return;
 
       if (layerId && layerId !== selectedLayerId?.layerId) {
-        selectedLayerVar({ layerId });
+        setSelectedLayerId({ layerId });
       } else {
-        selectedLayerVar(undefined);
+        setSelectedLayerId(undefined);
       }
       // lib/core doesn't support selecting a layer without auto-selecting a feature, so
       // Either way, we want to deselect from core as we are either deselecting, or changing to a new layer
       visualizerRef?.current?.layers.select(undefined);
     },
-    [selectedLayerId?.layerId, isVisualizerReady, visualizerRef],
+    [selectedLayerId?.layerId, isVisualizerReady, visualizerRef, setSelectedLayerId],
   );
 
   const handleLayerDelete = useCallback(
