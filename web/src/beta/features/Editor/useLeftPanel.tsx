@@ -5,8 +5,8 @@ import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
 import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { Scene } from "@reearth/services/api/sceneApi";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
-import { Scene } from "@reearth/services/gql";
 
 import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "./useLayers";
 

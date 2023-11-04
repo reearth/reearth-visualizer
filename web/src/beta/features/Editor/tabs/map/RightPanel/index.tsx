@@ -2,14 +2,14 @@ import { useMemo } from "react";
 
 import SceneSettings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
-import { LayerConfigUpdateProps } from "@reearth/beta/features/Editor/useLayers";
-import { LayerStyleValueUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
-import { FlyTo } from "@reearth/beta/lib/core/types";
-import { Camera } from "@reearth/beta/utils/value";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
-import { Item } from "@reearth/services/api/propertyApi/utils";
-import { Scene } from "@reearth/services/gql";
+import type { LayerConfigUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type { LayerStyleValueUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera } from "@reearth/beta/utils/value";
+import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Scene } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";
 import { useSelectedLayer } from "@reearth/services/state";
 

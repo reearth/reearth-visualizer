@@ -6,8 +6,8 @@ import type { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Scene } from "@reearth/services/api/sceneApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
-import { Scene } from "@reearth/services/gql";
 
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
