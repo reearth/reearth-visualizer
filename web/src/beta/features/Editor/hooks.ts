@@ -1,4 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
@@ -7,8 +6,8 @@ import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import {
   useWidgetAlignEditorActivated,
-  isVisualizerReadyVar,
-  currentCameraVar,
+  useIsVisualizerReady,
+  useCurrentCamera,
 } from "@reearth/services/state";
 
 import type { Tab } from "../Navbar";
@@ -19,8 +18,8 @@ import type { Device } from "./tabs/widgets/Nav";
 export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const visualizerRef = useRef<MapRef | null>(null);
 
-  const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
-  const currentCamera = useReactiveVar(currentCameraVar);
+  const [isVisualizerReady] = useIsVisualizerReady();
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
 
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
@@ -82,7 +81,10 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     [isVisualizerReady],
   );
 
-  const handleCameraUpdate = useCallback((camera: Camera) => currentCameraVar(camera), []);
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => setCurrentCamera(camera),
+    [setCurrentCamera],
+  );
 
   return {
     visualizerRef,

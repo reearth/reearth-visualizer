@@ -6,10 +6,11 @@ import { styled } from "@reearth/services/theme";
 
 import StoryPage from "../Page";
 
-import useHooks, { PAGES_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
+import useHooks, { STORY_PANEL_CONTENT_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
 
 export type Props = {
   pages?: StoryPageType[];
+  currentPageId?: string;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -35,12 +36,13 @@ export type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onCurrentPageChange?: (pageId: string) => void;
-  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
+  onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
+  onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryContent: React.FC<Props> = ({
   pages,
+  currentPageId,
   selectedPageId,
   installableStoryBlocks,
   selectedStoryBlockId,
@@ -59,7 +61,7 @@ const StoryContent: React.FC<Props> = ({
 }) => {
   const { pageGap, handleBlockCreate, handleBlockDelete } = useHooks({
     pages,
-    selectedPageId,
+    currentPageId,
     isAutoScrolling,
     onBlockCreate,
     onBlockDelete,
@@ -67,7 +69,10 @@ const StoryContent: React.FC<Props> = ({
   });
 
   return (
-    <PagesWrapper id={PAGES_ELEMENT_ID} showingIndicator={showingIndicator} isEditable={isEditable}>
+    <PagesWrapper
+      id={STORY_PANEL_CONTENT_ELEMENT_ID}
+      showingIndicator={showingIndicator}
+      isEditable={isEditable}>
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage
