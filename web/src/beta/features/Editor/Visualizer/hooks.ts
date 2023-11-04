@@ -26,7 +26,7 @@ import {
   useSelectedStoryPageId,
 } from "@reearth/services/state";
 
-import { convertWidgets, processLayers } from "./convert";
+import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
 import type { BlockType } from "./type";
 
@@ -69,23 +69,17 @@ export default ({
 
   const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
 
-  const onBlockMove = useCallback(
-    async (_id: string, _fromIndex: number, _toIndex: number) => {
-      if (!selectedLayer) return;
-      console.log("Block has been moved!");
-    },
-    [selectedLayer],
-  );
+  // Scene property
+  // TODO: Fix to use exact type through GQL typing
+  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
 
-  const onBlockRemove = useCallback(
-    async (_id: string) => {
-      if (!selectedLayer) return;
-      console.log("Block has been removed!");
-    },
-    [selectedLayer],
-  );
+  useEffect(() => {
+    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
+  }, [sceneProperty, setSceneMode]);
 
-  // convert data
+  // Layers
+  const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
+
   const layers = useMemo(() => {
     const processedLayers = processLayers(nlsLayers, layerStyles);
     if (!showStoryPanel) return processedLayers;
@@ -94,28 +88,6 @@ export default ({
       visible: currentPage?.layersIds?.includes(layer.id),
     }));
   }, [nlsLayers, layerStyles, showStoryPanel, currentPage?.layersIds]);
-
-  // TODO: Use GQL value
-  const rootLayerId = "";
-
-  const widgets = convertWidgets(scene);
-  // TODO: Fix to use exact type through GQL typing
-  const sceneProperty: any = useMemo(
-    () => ({
-      tiles: [
-        {
-          id: "default",
-          tile_type: "default",
-        },
-      ],
-    }),
-    [],
-  );
-  const tags: Tag | undefined = useMemo(() => undefined, []);
-
-  const clusters: Cluster[] = [];
-
-  const pluginProperty = useMemo(() => undefined, []);
 
   const selectLayer = useCallback(
     async (
@@ -133,49 +105,6 @@ export default ({
     [selectedLayer, setSelectedLayer],
   );
 
-  const onBlockChange = useCallback(
-    async <T extends keyof ValueTypes>(
-      blockId: string,
-      _schemaGroupId: string,
-      _fid: string,
-      _v: ValueTypes[T],
-      vt: T,
-      selectedLayer?: Layer,
-    ) => {
-      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
-        ?.propertyId as string | undefined;
-      if (!propertyId) return;
-
-      console.log("Block has been changed!");
-    },
-    [],
-  );
-
-  // const onFovChange = useCallback(
-  //   (fov: number) => camera && onCameraChange({ ...camera, fov }),
-  //   [camera, onCameraChange],
-  // );
-
-  useEffect(() => {
-    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
-  }, [sceneProperty, setSceneMode]);
-
-  // block selector
-  const blocks: BlockType[] = useMemo(() => [], []);
-  const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
-    const b = blocks?.[bi];
-    if (b?.pluginId && b?.extensionId && selectedLayer) {
-      console.log("Block has been inserted!");
-    }
-  };
-
-  // TODO: Use GQL value
-  const title = "TITLE";
-  useEffect(() => {
-    if (!isBuilt || !title) return;
-    document.title = title;
-  }, [isBuilt, title]);
-
   const handleDropLayer = useCallback(
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
       // propertyKey will be "default.location" for example
@@ -183,6 +112,9 @@ export default ({
     },
     [],
   );
+
+  // Widgets
+  const widgets = convertWidgets(scene);
 
   const onWidgetUpdate = useCallback(
     async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
@@ -201,6 +133,61 @@ export default ({
     [sceneId, useUpdateWidgetAlignSystem],
   );
 
+  // Plugin
+  const pluginProperty = useMemo(
+    () =>
+      scene?.plugins.reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
+        {},
+      ),
+    [scene?.plugins],
+  );
+
+  // Infobox - NOTE: this is from classic. TBD but will change significantly
+  const onBlockChange = useCallback(
+    async <T extends keyof ValueTypes>(
+      blockId: string,
+      _schemaGroupId: string,
+      _fid: string,
+      _v: ValueTypes[T],
+      vt: T,
+      selectedLayer?: Layer,
+    ) => {
+      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
+        ?.propertyId as string | undefined;
+      if (!propertyId) return;
+
+      console.log("Block has been changed!");
+    },
+    [],
+  );
+
+  const onBlockMove = useCallback(
+    async (_id: string, _fromIndex: number, _toIndex: number) => {
+      if (!selectedLayer) return;
+      console.log("Block has been moved!");
+    },
+    [selectedLayer],
+  );
+
+  const onBlockRemove = useCallback(
+    async (_id: string) => {
+      if (!selectedLayer) return;
+      console.log("Block has been removed!");
+    },
+    [selectedLayer],
+  );
+
+  // block selector
+  const blocks: BlockType[] = useMemo(() => [], []);
+  const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
+    const b = blocks?.[bi];
+    if (b?.pluginId && b?.extensionId && selectedLayer) {
+      console.log("Block has been inserted!");
+    }
+  };
+
+  // Story
   const story = useMemo(
     () => convertStory(scene?.stories.find(s => s.id === storyId)),
     [storyId, scene?.stories],
@@ -254,6 +241,18 @@ export default ({
     }),
     [],
   );
+
+  // TODO: Use GQL value
+  const title = "TITLE";
+  useEffect(() => {
+    if (!isBuilt || !title) return;
+    document.title = title;
+  }, [isBuilt, title]);
+
+  // Probably Unneeded
+  const tags: Tag | undefined = useMemo(() => undefined, []);
+
+  const clusters: Cluster[] = [];
 
   const useExperimentalSandbox = useMemo(() => {
     return !!sceneProperty?.experimental?.experimental_sandbox;
