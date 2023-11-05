@@ -1,4 +1,4 @@
-import { useIsCapturing } from "@reearth/services/state";
+import { useIsCapturing } from "@reearth/classic/state";
 
 export default () => {
   const [isCapturing] = useIsCapturing();
