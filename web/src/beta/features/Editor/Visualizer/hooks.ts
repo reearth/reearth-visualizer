@@ -1,4 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
@@ -20,13 +19,15 @@ import {
   useIsCapturing,
   useSelectedBlock,
   useWidgetAlignEditorActivated,
-  selectedWidgetAreaVar,
-  isVisualizerReadyVar,
+  useSelectedWidgetArea,
+  useIsVisualizerReady,
   useZoomedLayerId,
-  selectedLayerVar,
+  useSelectedLayer,
+  useSelectedStoryPageId,
 } from "@reearth/services/state";
 
-import { convertStory, convertWidgets, processLayers } from "./convert";
+import { convertWidgets, processLayers } from "./convert";
+import { convertStory } from "./convert-story";
 import type { BlockType } from "./type";
 
 export default ({
@@ -57,15 +58,16 @@ export default ({
   const [sceneMode, setSceneMode] = useSceneMode();
   const [isCapturing, onIsCapturingChange] = useIsCapturing();
   const [selectedBlock, selectBlock] = useSelectedBlock();
+  const [_, selectSelectedStoryPageId] = useSelectedStoryPageId();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
-  const selectedLayer = useReactiveVar(selectedLayerVar);
+  const [selectedLayer, setSelectedLayer] = useSelectedLayer();
 
-  const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
-  const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
+  const [selectedWidgetArea, setSelectedWidgetArea] = useSelectedWidgetArea();
+  const [isVisualizerReady, setIsVisualizerReady] = useIsVisualizerReady();
 
-  const handleMount = useCallback(() => isVisualizerReadyVar(true), []);
+  const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
 
   const onBlockMove = useCallback(
     async (_id: string, _fromIndex: number, _toIndex: number) => {
@@ -124,11 +126,11 @@ export default ({
     ) => {
       if (id === selectedLayer?.layerId && featureId === selectedLayer?.featureId) return;
 
-      selectedLayerVar(
+      setSelectedLayer(
         id ? { layerId: id, featureId, layer: await layer?.(), layerSelectionReason } : undefined,
       );
     },
-    [selectedLayer],
+    [selectedLayer, setSelectedLayer],
   );
 
   const onBlockChange = useCallback(
@@ -204,6 +206,11 @@ export default ({
     [storyId, scene?.stories],
   );
 
+  const handleCurrentPageChange = useCallback(
+    (pageId?: string) => selectSelectedStoryPageId(pageId),
+    [selectSelectedStoryPageId],
+  );
+
   const handleStoryBlockCreate = useCallback(
     async (pageId?: string, extensionId?: string, pluginId?: string, index?: number) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
@@ -271,8 +278,9 @@ export default ({
     engineMeta,
     useExperimentalSandbox,
     isVisualizerReady,
-    selectWidgetArea: selectedWidgetAreaVar,
+    selectWidgetArea: setSelectedWidgetArea,
     zoomedLayerId,
+    handleCurrentPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,

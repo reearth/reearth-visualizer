@@ -1,5 +1,6 @@
 import { merge } from "lodash-es";
 
+import { Component } from "..";
 import {
   CAMERA_BUILTIN_STORY_BLOCK_ID,
   IMAGE_BUILTIN_STORY_BLOCK_ID,
@@ -7,9 +8,7 @@ import {
   TEXT_BUILTIN_STORY_BLOCK_ID,
   TITLE_BUILTIN_STORY_BLOCK_ID,
   VIDEO_BUILTIN_STORY_BLOCK_ID,
-} from "@reearth/services/api/storytellingApi/blocks";
-
-import { Component } from "..";
+} from "../../constants";
 
 import CameraBlock from "./Camera";
 import ImageBlock from "./Image";
