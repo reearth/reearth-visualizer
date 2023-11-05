@@ -12,7 +12,6 @@ import {
   useRemoveDatasetMutation,
   useGetDatasetSchemasWithCountQuery,
 } from "@reearth/classic/gql";
-import { useT, useLang } from "@reearth/services/i18n";
 import {
   useSceneId,
   useNotification,
@@ -20,7 +19,8 @@ import {
   useProject,
   NotificationType,
   useCurrentTheme,
-} from "@reearth/services/state";
+} from "@reearth/classic/state";
+import { useT, useLang } from "@reearth/services/i18n";
 
 export default () => {
   const t = useT();

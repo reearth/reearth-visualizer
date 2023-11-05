@@ -33,6 +33,7 @@ export type Story = {
   isBasicAuthActive?: boolean;
   basicAuthUsername?: string;
   basicAuthPassword?: string;
+  publishmentStatus?: string;
   panelPosition?: "left" | "right";
   alias?: string;
   pages?: Page[];
@@ -44,6 +45,7 @@ export const getStories = (rawScene?: GetSceneQuery) => {
   return scene?.stories.map(s => {
     return {
       ...s,
+      publishmentStatus: s.publishmentStatus,
       panelPosition: s.panelPosition === "RIGHT" ? "right" : "left",
       pages: s.pages.map(p => {
         return {
