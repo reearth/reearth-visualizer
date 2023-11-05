@@ -59,6 +59,15 @@ const MONTH_LABEL_LIST = [
   "Dec",
 ];
 
+const formatTimezone = (time: number) => {
+  const d = new Date(time);
+  const timezoneOffset = d.getTimezoneOffset();
+  const timezoneSign = timezoneOffset >= 0 ? "-" : "+";
+  const timezoneHours = Math.floor(Math.abs(timezoneOffset) / 60);
+  const timezoneMinutes = Math.abs(timezoneOffset) % 60;
+  const timezone = `${timezoneSign}${timezoneHours}:${timezoneMinutes.toString().padStart(2, "0")}`;
+  return timezone;
+};
 export const formatDateForTimeline = (time: number, options: { detail?: boolean } = {}) => {
   const d = new Date(time);
 
@@ -67,11 +76,14 @@ export const formatDateForTimeline = (time: number, options: { detail?: boolean 
   const date = `${d.getDate()}`.padStart(2, "0");
   const hour = `${d.getHours()}`.padStart(2, "0");
   if (!options.detail) {
-    return `${year} ${month} ${date} ${hour}:00:00.00`;
+    const timezone = formatTimezone(time);
+    return `${year} ${month} ${date} ${hour}:00:00.00 ${timezone}`;
   }
   const minutes = `${d.getMinutes()}`.padStart(2, "0");
   const seconds = `${d.getSeconds()}`.padStart(2, "0");
-  return `${year} ${month} ${date} ${hour}:${minutes}:${seconds}.00`;
+  const timezone = formatTimezone(time);
+
+  return `${year} ${month} ${date} ${hour}:${minutes}:${seconds}${timezone}`;
 };
 
 export const formatDateForSliderTimeline = (time: number, options: { detail?: boolean } = {}) => {

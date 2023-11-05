@@ -12,9 +12,16 @@ type TimelineProps = {
   isSelected?: boolean;
   timelineValues?: TimelineValues;
   inEditor?: boolean;
+  playMode?: string;
 };
 
-const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: TimelineProps) => {
+const TimelineEditor = ({
+  blockId,
+  isSelected,
+  timelineValues,
+  inEditor,
+  playMode,
+}: TimelineProps) => {
   const t = useT();
 
   const {
@@ -37,11 +44,12 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
     formattedCurrentTime,
     timeRange,
     isPause,
-    sliderPosition,
     isPlaying,
     isPlayingReversed,
     isOpen,
     selected,
+    sliderPosition,
+    isActive,
     handleOnSelect,
     handlePopOver,
     toggleIsPlaying,
@@ -54,6 +62,7 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
     blockId,
     inEditor,
     speed,
+    playMode,
     onPlay,
     onSpeedChange,
     onPause,
@@ -68,7 +77,7 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
   return (
     <Wrapper>
       <TimelineControl>
-        <StyledIcon>
+        <StyledIcon activeBlock={isActive}>
           <Icon icon="timelineStoryBlock" size={16} />
         </StyledIcon>
         <PlayControl>
@@ -138,8 +147,9 @@ const TimelineEditor = ({ blockId, isSelected, timelineValues, inEditor }: Timel
           ))}
         </ScaleList>
         <IconWrapper
+          isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
-            left: `${sliderPosition?.toFixed(1)} + 12 -25/2`,
+            left: `${sliderPosition}px`,
           }}>
           <Icon icon="slider" />
         </IconWrapper>
@@ -161,13 +171,13 @@ const TimelineControl = styled.div`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: 22px;
+  gap: 16px;
 `;
 
-const StyledIcon = styled.div`
+const StyledIcon = styled.div<{ activeBlock: boolean }>`
   color: ${({ theme }) => theme.content.strong};
   cursor: pointer;
-  background: ${({ theme }) => theme.bg[4]};
+  background: ${({ activeBlock, theme }) => (activeBlock ? theme.select.main : theme.bg[4])};
   padding: 4px 6px 2px;
   border-radius: 6px 0 8px 0;
 `;
@@ -250,9 +260,10 @@ const ScaleList = styled.div`
   padding-left: 17px;
 `;
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.div<{ isPlaying: boolean }>`
   position: absolute;
   top: 4px;
+  color: ${({ isPlaying, theme }) => (isPlaying ? theme.select.main : "")};
 `;
 
 const Scale = styled.div`

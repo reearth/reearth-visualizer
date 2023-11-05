@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
@@ -6,7 +6,7 @@ import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManag
 import { TimelineValues } from "../Block/builtin/Timeline";
 import { convertOptionToSeconds, formatDateToSting } from "../utils";
 
-const getNewDate = (d?: Date) => d ?? new Date();
+export const getNewDate = (d?: Date) => d ?? new Date();
 
 const calculateEndTime = (date: Date) => {
   date.setHours(23, 59, 59, 999);
@@ -36,16 +36,10 @@ export default (timelineValues?: TimelineValues) => {
   }, []);
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
-  const ct = useMemo(() => {
-    if (timelineValues) {
-      const t = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
-      return t;
-    } else {
-      return getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime();
-    }
-  }, [timelineValues, visualizerContext]);
 
-  const [currentTime, setCurrentTime] = useState(ct);
+  const [currentTime, setCurrentTime] = useState(
+    getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
+  );
 
   const range = useMemo(() => {
     if (timelineValues) {
@@ -82,7 +76,6 @@ export default (timelineValues?: TimelineValues) => {
 
   const onTimeChange = useCallback(
     (time: Date, committerId?: string) => {
-      console.log("time", time);
       if (!range) return;
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_TIME",
@@ -139,12 +132,16 @@ export default (timelineValues?: TimelineValues) => {
     [onSpeedChange],
   );
 
-  // const handleOnReset = useCallback(
-  //   (committer: TimelineCommitter) => {
-  //     onTimeChange?.(new Date(currentTime), committer.id);
-  //   },
-  //   [currentTime, onTimeChange],
-  // );
+  useEffect(() => {
+    if (timelineValues) {
+      const t = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
+      return setCurrentTime(t);
+    } else {
+      return setCurrentTime(
+        getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
+      );
+    }
+  }, [timelineValues, visualizerContext]);
 
   return {
     currentTime,

@@ -16,10 +16,15 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
     return {
       timelineValues: block?.property?.default?.timelineSetting?.value,
       blockId: block?.id,
+      playMode: block?.property?.default.playMode.value,
     };
-  }, [block?.id, block?.property?.default?.timelineSetting?.value]);
+  }, [
+    block?.id,
+    block?.property?.default.playMode.value,
+    block?.property?.default?.timelineSetting?.value,
+  ]);
 
-  const { blockId, timelineValues } = timeline;
+  const { blockId, timelineValues, playMode } = timeline;
 
   return (
     <BlockWrapper
@@ -33,6 +38,7 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
         inEditor={!!props.isEditable}
         timelineValues={timelineValues}
         blockId={blockId}
+        playMode={playMode}
       />
     </BlockWrapper>
   );

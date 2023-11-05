@@ -68,7 +68,7 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
           <TriggerButton
             buttonType="secondary"
             text={t("set")}
-            icon="clock"
+            icon="set"
             size="small"
             iconPosition="left"
             onClick={() => handleTimelineModalOpen()}

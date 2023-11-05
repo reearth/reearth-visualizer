@@ -60,6 +60,7 @@ import TimelinePlayRight from "./Icons/timeline-play-right.svg";
 import TimelinePlayLeft from "./Icons/timeline-play-left.svg";
 import Pause from "./Icons/pause.svg";
 import Slider from "./Icons/slider.svg";
+import Set from "./Icons/set.svg";
 
 // Dashboard
 import Dashboard from "./Icons/dashboard.svg";
@@ -150,6 +151,7 @@ export default {
   timelinePlayRight: TimelinePlayRight,
   pause: Pause,
   slider: Slider,
+  set: Set,
   storyPage: StoryPage,
   square: Square,
   swiper: Swiper,
