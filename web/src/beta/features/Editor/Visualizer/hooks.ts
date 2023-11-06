@@ -1,8 +1,8 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
-import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
-import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
+import type { LatLng, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
+import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import type { ValueType } from "@reearth/beta/utils/value";
 import {
   useLayersFetcher,
@@ -249,23 +249,12 @@ export default ({
     document.title = title;
   }, [isBuilt, title]);
 
-  // Probably Unneeded
-  const tags: Tag | undefined = useMemo(() => undefined, []);
-
-  const clusters: Cluster[] = [];
-
-  const useExperimentalSandbox = useMemo(() => {
-    return !!sceneProperty?.experimental?.experimental_sandbox;
-  }, [sceneProperty]);
-
   return {
     sceneId,
     rootLayerId,
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
-    clusters,
-    tags,
     widgets,
     layers,
     story,
@@ -275,7 +264,7 @@ export default ({
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox,
+    useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
     isVisualizerReady,
     selectWidgetArea: setSelectedWidgetArea,
     zoomedLayerId,
