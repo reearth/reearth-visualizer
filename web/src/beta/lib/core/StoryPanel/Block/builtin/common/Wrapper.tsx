@@ -84,10 +84,7 @@ const BlockWrapper: React.FC<Props> = ({
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
           onClick={e => {
-            handleBlockClick(e, false);
-          }}
-          onDoubleClick={e => {
-            handleBlockClick(e, true);
+            handleBlockClick(e);
           }}>
           {children ?? (isEditable && <Template icon={icon} />)}
         </Block>

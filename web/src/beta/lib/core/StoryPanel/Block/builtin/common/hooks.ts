@@ -22,19 +22,25 @@ export default ({
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
+  const [clickCount, setClickCount] = useState(0);
 
   const handleBlockClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>, isDoubleClick: boolean) => {
+    (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
       if ((showSettings && isSelected) || editMode) return;
-      if (isDoubleClick) {
-        setEditMode(true);
+      if (clickCount === 0) {
+        setClickCount(1);
         onClick?.();
-      } else {
+        setTimeout(() => {
+          setClickCount(0);
+        }, 300);
+      } else if (clickCount === 1) {
+        setClickCount(0);
+        setEditMode(true);
         onClick?.();
       }
     },
-    [showSettings, isSelected, editMode, onClick],
+    [showSettings, isSelected, editMode, clickCount, onClick],
   );
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
