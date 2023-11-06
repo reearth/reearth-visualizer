@@ -9,15 +9,21 @@ import (
 )
 
 type storyJSON struct {
-	ID       string       `json:"id"`
-	Property propertyJSON `json:"property"`
-	Pages    []pageJSON   `json:"pages"`
+	ID            string       `json:"id"`
+	Property      propertyJSON `json:"property"`
+	Pages         []pageJSON   `json:"pages"`
+	PanelPosition string       `json:"position"`
+	BgColor       string       `json:"bgColor"`
 }
 
 type pageJSON struct {
-	ID       string       `json:"id"`
-	Property propertyJSON `json:"property"`
-	Blocks   []blockJSON  `json:"blocks"`
+	ID              string       `json:"id"`
+	Property        propertyJSON `json:"property"`
+	Title           string       `json:"title"`
+	Blocks          []blockJSON  `json:"blocks"`
+	Swipeable       bool         `json:"swipeable"`
+	SwipeableLayers []string     `json:"swipeableLayers"`
+	Layers          []string     `json:"layers"`
 }
 
 type blockJSON struct {
@@ -42,6 +48,8 @@ func (b *Builder) storyJSON(ctx context.Context, p []*property.Property) (*story
 			}
 			return b.pageJSON(ctx, *page, p), true
 		}),
+		PanelPosition: string(b.story.PanelPosition()),
+		BgColor:       b.story.BgColor(),
 	}, nil
 }
 
@@ -49,12 +57,16 @@ func (b *Builder) pageJSON(ctx context.Context, page storytelling.Page, p []*pro
 	return pageJSON{
 		ID:       page.Id().String(),
 		Property: b.property(ctx, findProperty(p, page.Property())),
+		Title:    page.Title(),
 		Blocks: lo.FilterMap(page.Blocks(), func(block *storytelling.Block, _ int) (blockJSON, bool) {
 			if block == nil {
 				return blockJSON{}, false
 			}
 			return b.blockJSON(ctx, *block, p), true
 		}),
+		Swipeable:       page.Swipeable(),
+		SwipeableLayers: page.SwipeableLayers().Strings(),
+		Layers:          page.Layers().Strings(),
 	}
 }
 

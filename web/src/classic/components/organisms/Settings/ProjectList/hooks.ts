@@ -12,9 +12,9 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/classic/gql";
+import { useWorkspace, useProject, useNotification } from "@reearth/classic/state";
 import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 
 const toPublishmentStatus = (s: PublishmentStatus) =>

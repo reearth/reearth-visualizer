@@ -9,8 +9,8 @@ import {
   Maybe,
   AssetSortType as GQLSortType,
 } from "@reearth/classic/gql";
+import { useNotification } from "@reearth/classic/state";
 import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
 
 export type AssetNodes = NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
 

@@ -6,8 +6,8 @@ import {
   useArchiveProjectMutation,
   useDeleteProjectMutation,
 } from "@reearth/classic/gql";
+import { useWorkspace, useNotification } from "@reearth/classic/state";
 import { useT } from "@reearth/services/i18n";
-import { useWorkspace, useNotification } from "@reearth/services/state";
 
 type Params = {
   projectId: string;

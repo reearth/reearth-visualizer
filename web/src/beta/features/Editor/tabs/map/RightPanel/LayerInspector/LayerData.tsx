@@ -17,7 +17,7 @@ const LayerData: React.FC<Props> = ({ selectedLayer }) => {
       </ValueWrapper>
       <Text size="body">{t("Resource URL")}</Text>
       <ValueWrapper>
-        <Text size="body">{selectedLayer.config?.data?.url}</Text>
+        <LongText size="body">{selectedLayer.config?.data?.url}</LongText>
       </ValueWrapper>
     </Wrapper>
   );
@@ -35,4 +35,8 @@ const ValueWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   padding: 4px 8px;
+`;
+
+const LongText = styled(Text)`
+  word-break: break-all;
 `;

@@ -2,6 +2,259 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.19.0 - 2023-11-06
+
+### Web
+
+#### 🚀 Features
+
+- Upgrade dependencies which don&[#39](https://github.com/reearth/reearth/pull/39);t include breaking changes ([#783](https://github.com/reearth/reearth/pull/783)) [`930fce`](https://github.com/reearth/reearth/commit/930fce)
+- Story drag and drop ([#689](https://github.com/reearth/reearth/pull/689)) [`f0338c`](https://github.com/reearth/reearth/commit/f0338c)
+- Add layers using wms and mvt ([#694](https://github.com/reearth/reearth/pull/694)) [`5fe512`](https://github.com/reearth/reearth/commit/5fe512)
+- Add spacing input field and number input  ([#636](https://github.com/reearth/reearth/pull/636)) [`f92113`](https://github.com/reearth/reearth/commit/f92113)
+- Toggle Field ([#651](https://github.com/reearth/reearth/pull/651)) [`b13b18`](https://github.com/reearth/reearth/commit/b13b18)
+- Left Panel shows scene.propery.groups titles ([#634](https://github.com/reearth/reearth/pull/634)) [`39b74f`](https://github.com/reearth/reearth/commit/39b74f)
+- Add color field component ([#627](https://github.com/reearth/reearth/pull/627)) [`9e895b`](https://github.com/reearth/reearth/commit/9e895b)
+
+#### 🔧 Bug Fixes
+
+- Disable changing my own role and deleting myself [`e40fe3`](https://github.com/reearth/reearth/commit/e40fe3)
+- Member role cannot be changed [`c11aae`](https://github.com/reearth/reearth/commit/c11aae)
+- Trim leading zeros from number fields ([#724](https://github.com/reearth/reearth/pull/724)) [`410c75`](https://github.com/reearth/reearth/commit/410c75)
+- Remove video URL format verification ([#707](https://github.com/reearth/reearth/pull/707)) [`a74292`](https://github.com/reearth/reearth/commit/a74292)
+- Use ga4 on classic ([#704](https://github.com/reearth/reearth/pull/704)) [`90a46f`](https://github.com/reearth/reearth/commit/90a46f)
+- Allow mouse event for react-dnd ([#638](https://github.com/reearth/reearth/pull/638)) [`2ed816`](https://github.com/reearth/reearth/commit/2ed816)
+- Include single selection to the selection mode ([#643](https://github.com/reearth/reearth/pull/643)) [`864d09`](https://github.com/reearth/reearth/commit/864d09)
+- Suppress error in loading built-in plugin ([#635](https://github.com/reearth/reearth/pull/635)) [`ae83bc`](https://github.com/reearth/reearth/commit/ae83bc)
+- Import builtin plugin from external url ([#625](https://github.com/reearth/reearth/pull/625)) [`17b256`](https://github.com/reearth/reearth/commit/17b256)
+
+#### ✨ Refactor
+
+- Remove dropdown component ([#725](https://github.com/reearth/reearth/pull/725)) [`af62fb`](https://github.com/reearth/reearth/commit/af62fb)
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;web ver [`5ca327`](https://github.com/reearth/reearth/commit/5ca327)
+- Add height to marker appearance ([#790](https://github.com/reearth/reearth/pull/790)) [`8c84c8`](https://github.com/reearth/reearth/commit/8c84c8)
+- Beta story project publishing ([#784](https://github.com/reearth/reearth/pull/784)) [`4e3883`](https://github.com/reearth/reearth/commit/4e3883)
+- Refactor property and revert core ([#788](https://github.com/reearth/reearth/pull/788)) [`e844dd`](https://github.com/reearth/reearth/commit/e844dd)
+- Refactor beta properties ([#786](https://github.com/reearth/reearth/pull/786)) [`a85ca4`](https://github.com/reearth/reearth/commit/a85ca4)
+- Fix layerName random on upload directly ([#781](https://github.com/reearth/reearth/pull/781)) [`2d6962`](https://github.com/reearth/reearth/commit/2d6962)
+- Fix local name is random when added through asset ([#779](https://github.com/reearth/reearth/pull/779)) [`16cbcd`](https://github.com/reearth/reearth/commit/16cbcd)
+- Czml and kml local not working ([#777](https://github.com/reearth/reearth/pull/777)) [`12eddc`](https://github.com/reearth/reearth/commit/12eddc)
+- Fix mvt layer behaviour ([#780](https://github.com/reearth/reearth/pull/780)) [`958178`](https://github.com/reearth/reearth/commit/958178)
+- Add consistency to react imports ([#778](https://github.com/reearth/reearth/pull/778)) [`664139`](https://github.com/reearth/reearth/commit/664139)
+- Timeline field  ([#768](https://github.com/reearth/reearth/pull/768)) [`05bbee`](https://github.com/reearth/reearth/commit/05bbee)
+- Beta publishing ([#744](https://github.com/reearth/reearth/pull/744)) [`7fff78`](https://github.com/reearth/reearth/commit/7fff78)
+- Update layer title default value in beta and update add layerName behaviour for mvt &amp; wms ([#706](https://github.com/reearth/reearth/pull/706)) [`3df69f`](https://github.com/reearth/reearth/commit/3df69f)
+- Refactor story dnd ([#723](https://github.com/reearth/reearth/pull/723)) [`da57ac`](https://github.com/reearth/reearth/commit/da57ac)
+- Layer inspector ([#763](https://github.com/reearth/reearth/pull/763)) [`648152`](https://github.com/reearth/reearth/commit/648152)
+- Date time field input ([#767](https://github.com/reearth/reearth/pull/767)) [`466362`](https://github.com/reearth/reearth/commit/466362)
+- Updated fields in Settings ([#741](https://github.com/reearth/reearth/pull/741)) [`7fa4d5`](https://github.com/reearth/reearth/commit/7fa4d5)
+- StoryBlock isList default fix ([#761](https://github.com/reearth/reearth/pull/761)) [`a8fb53`](https://github.com/reearth/reearth/commit/a8fb53)
+- Fix flyTo giving error in beta ([#760](https://github.com/reearth/reearth/pull/760)) [`b1fd2c`](https://github.com/reearth/reearth/commit/b1fd2c)
+- Fix the date time component ([#752](https://github.com/reearth/reearth/pull/752)) [`615682`](https://github.com/reearth/reearth/commit/615682)
+- Update default layer style ([#754](https://github.com/reearth/reearth/pull/754)) [`c1c3de`](https://github.com/reearth/reearth/commit/c1c3de)
+- Fixes and refactoring to layer style system ([#753](https://github.com/reearth/reearth/pull/753)) [`464674`](https://github.com/reearth/reearth/commit/464674)
+- Add appearance support in beta ([#734](https://github.com/reearth/reearth/pull/734)) [`cd5423`](https://github.com/reearth/reearth/commit/cd5423)
+- Fix visible state ([#747](https://github.com/reearth/reearth/pull/747)) [`ba4382`](https://github.com/reearth/reearth/commit/ba4382)
+- Improve performance of flyTo ([#746](https://github.com/reearth/reearth/pull/746)) [`25359f`](https://github.com/reearth/reearth/commit/25359f)
+- Hide and show layer ([#735](https://github.com/reearth/reearth/pull/735)) [`90e2b9`](https://github.com/reearth/reearth/commit/90e2b9)
+- Fly to layers ([#739](https://github.com/reearth/reearth/pull/739)) [`ce69e7`](https://github.com/reearth/reearth/commit/ce69e7)
+- Add date time field component ([#740](https://github.com/reearth/reearth/pull/740)) [`6c8a42`](https://github.com/reearth/reearth/commit/6c8a42)
+- Story panel refactor ([#715](https://github.com/reearth/reearth/pull/715)) [`86dbb5`](https://github.com/reearth/reearth/commit/86dbb5)
+- Camera block ([#729](https://github.com/reearth/reearth/pull/729)) [`bac4ba`](https://github.com/reearth/reearth/commit/bac4ba)
+- Customize file extension in upload file&[#39](https://github.com/reearth/reearth/pull/39);s window ([#738](https://github.com/reearth/reearth/pull/738)) [`c579c6`](https://github.com/reearth/reearth/commit/c579c6)
+- Add sorting functionality to assets ([#728](https://github.com/reearth/reearth/pull/728)) [`e1edd9`](https://github.com/reearth/reearth/commit/e1edd9)
+- Story page update ([#714](https://github.com/reearth/reearth/pull/714)) [`86d4b9`](https://github.com/reearth/reearth/commit/86d4b9)
+- Fix color field select ([#737](https://github.com/reearth/reearth/pull/737)) [`ead2f5`](https://github.com/reearth/reearth/commit/ead2f5)
+- Refactor assets hooks ([#719](https://github.com/reearth/reearth/pull/719)) [`53aa05`](https://github.com/reearth/reearth/commit/53aa05)
+- Fix some bugs around feature selection functionality ([#736](https://github.com/reearth/reearth/pull/736)) [`2476c3`](https://github.com/reearth/reearth/commit/2476c3)
+- Add timeline manager ([#718](https://github.com/reearth/reearth/pull/718)) [`d4127b`](https://github.com/reearth/reearth/commit/d4127b)
+- Camera issues in storytelling ([#730](https://github.com/reearth/reearth/pull/730)) [`22a0e6`](https://github.com/reearth/reearth/commit/22a0e6)
+- Show installed widgets &amp; fix computed feature property ([#727](https://github.com/reearth/reearth/pull/727)) [`5e9edd`](https://github.com/reearth/reearth/commit/5e9edd)
+- Add multi feature selection APIs ([#716](https://github.com/reearth/reearth/pull/716)) [`124d3c`](https://github.com/reearth/reearth/commit/124d3c)
+- Fix upload file bug ([#717](https://github.com/reearth/reearth/pull/717)) [`984e37`](https://github.com/reearth/reearth/commit/984e37)
+- Update story text block fontsize options ([#720](https://github.com/reearth/reearth/pull/720)) [`55ac86`](https://github.com/reearth/reearth/commit/55ac86)
+- Add layers from local ([#702](https://github.com/reearth/reearth/pull/702)) [`a4a580`](https://github.com/reearth/reearth/commit/a4a580)
+- Image and video blocks ([#708](https://github.com/reearth/reearth/pull/708)) [`97f64a`](https://github.com/reearth/reearth/commit/97f64a)
+- MD Block ([#712](https://github.com/reearth/reearth/pull/712)) [`8fd9d3`](https://github.com/reearth/reearth/commit/8fd9d3)
+- Story page layer UI ([#709](https://github.com/reearth/reearth/pull/709)) [`4a62ab`](https://github.com/reearth/reearth/commit/4a62ab)
+- Various bug fixes and refactoring ([#713](https://github.com/reearth/reearth/pull/713)) [`253641`](https://github.com/reearth/reearth/commit/253641)
+- Fix block creation [`c4cc87`](https://github.com/reearth/reearth/commit/c4cc87)
+- Fix layer update process [`a366ab`](https://github.com/reearth/reearth/commit/a366ab)
+- Fix a layer update process ([#711](https://github.com/reearth/reearth/pull/711)) [`391ef0`](https://github.com/reearth/reearth/commit/391ef0)
+- Disable fxaa ([#710](https://github.com/reearth/reearth/pull/710)) [`c7d071`](https://github.com/reearth/reearth/commit/c7d071)
+- Add line-height option to story text block ([#703](https://github.com/reearth/reearth/pull/703)) [`fcf04f`](https://github.com/reearth/reearth/commit/fcf04f)
+- List field ([#687](https://github.com/reearth/reearth/pull/687)) [`07bc84`](https://github.com/reearth/reearth/commit/07bc84)
+- Add URL field ([#674](https://github.com/reearth/reearth/pull/674)) [`8c4b5b`](https://github.com/reearth/reearth/commit/8c4b5b)
+- Fix story page&#x2F;block ui&#x2F;ux ([#701](https://github.com/reearth/reearth/pull/701)) [`af7d3b`](https://github.com/reearth/reearth/commit/af7d3b)
+- Fix create &amp; remove story block ([#700](https://github.com/reearth/reearth/pull/700)) [`57bbc3`](https://github.com/reearth/reearth/commit/57bbc3)
+- Story page camera transition ([#699](https://github.com/reearth/reearth/pull/699)) [`4afa47`](https://github.com/reearth/reearth/commit/4afa47)
+- Fix value input asset datatype ([#698](https://github.com/reearth/reearth/pull/698)) [`bb362b`](https://github.com/reearth/reearth/commit/bb362b)
+- Refactor storypanel to remove any gql use ([#697](https://github.com/reearth/reearth/pull/697)) [`70d1dd`](https://github.com/reearth/reearth/commit/70d1dd)
+- Select field - Minor fixes ([#696](https://github.com/reearth/reearth/pull/696)) [`6b5db3`](https://github.com/reearth/reearth/commit/6b5db3)
+- Refactor&#x2F;update Camera field ([#692](https://github.com/reearth/reearth/pull/692)) [`b15e42`](https://github.com/reearth/reearth/commit/b15e42)
+- Fix delimited layer input field type ([#695](https://github.com/reearth/reearth/pull/695)) [`fa3627`](https://github.com/reearth/reearth/commit/fa3627)
+- Refactor plugin API camera.getFovInfo ([#691](https://github.com/reearth/reearth/pull/691)) [`b77db4`](https://github.com/reearth/reearth/commit/b77db4)
+- Show scene settings ([#688](https://github.com/reearth/reearth/pull/688)) [`884b76`](https://github.com/reearth/reearth/commit/884b76)
+- Fix default infobox behavior ([#681](https://github.com/reearth/reearth/pull/681)) [`a36415`](https://github.com/reearth/reearth/commit/a36415)
+- Basic layer features API ([#683](https://github.com/reearth/reearth/pull/683)) [`ba4409`](https://github.com/reearth/reearth/commit/ba4409)
+- Refactor storypanel ([#685](https://github.com/reearth/reearth/pull/685)) [`3a35cb`](https://github.com/reearth/reearth/commit/3a35cb)
+- Update select field usage ([#678](https://github.com/reearth/reearth/pull/678)) [`14b446`](https://github.com/reearth/reearth/commit/14b446)
+- Camera field responsiveness ([#686](https://github.com/reearth/reearth/pull/686)) [`39d7c0`](https://github.com/reearth/reearth/commit/39d7c0)
+- Add support for layer name editing in beta ([#665](https://github.com/reearth/reearth/pull/665)) [`02cb8d`](https://github.com/reearth/reearth/commit/02cb8d)
+- Camera field  ([#647](https://github.com/reearth/reearth/pull/647)) [`dfa05b`](https://github.com/reearth/reearth/commit/dfa05b)
+- Fix HBAO error when Cesium is destroyed ([#675](https://github.com/reearth/reearth/pull/675)) [`5e41ba`](https://github.com/reearth/reearth/commit/5e41ba)
+- Add location field ([#660](https://github.com/reearth/reearth/pull/660)) [`65beea`](https://github.com/reearth/reearth/commit/65beea)
+- Add number field ([#669](https://github.com/reearth/reearth/pull/669)) [`d21625`](https://github.com/reearth/reearth/commit/d21625)
+- Radio and radio group field components ([#650](https://github.com/reearth/reearth/pull/650)) [`afaa24`](https://github.com/reearth/reearth/commit/afaa24)
+- Add pluginAPI camera.getFovCenter ([#673](https://github.com/reearth/reearth/pull/673)) [`c2c2b0`](https://github.com/reearth/reearth/commit/c2c2b0)
+- Fix story page gap [`363a03`](https://github.com/reearth/reearth/commit/363a03)
+- Fix inifinite loop while selecting layer ([#672](https://github.com/reearth/reearth/pull/672)) [`3b2295`](https://github.com/reearth/reearth/commit/3b2295)
+- Fix story page gap issue [`cb09be`](https://github.com/reearth/reearth/commit/cb09be)
+- Story page change on user scroll ([#671](https://github.com/reearth/reearth/pull/671)) [`e03a0a`](https://github.com/reearth/reearth/commit/e03a0a)
+- Override default light ([#667](https://github.com/reearth/reearth/pull/667)) [`b3c7e8`](https://github.com/reearth/reearth/commit/b3c7e8)
+- Correct style of story text block ([#668](https://github.com/reearth/reearth/pull/668)) [`422dec`](https://github.com/reearth/reearth/commit/422dec)
+- Fix the layer delete behavior ([#666](https://github.com/reearth/reearth/pull/666)) [`e91a24`](https://github.com/reearth/reearth/commit/e91a24)
+- Publish modal ([#658](https://github.com/reearth/reearth/pull/658)) [`df854f`](https://github.com/reearth/reearth/commit/df854f)
+- Select Field ([#662](https://github.com/reearth/reearth/pull/662)) [`4ee196`](https://github.com/reearth/reearth/commit/4ee196)
+- Publish tab type ([#659](https://github.com/reearth/reearth/pull/659)) [`feca38`](https://github.com/reearth/reearth/commit/feca38)
+- Add some atmosphere properties ([#663](https://github.com/reearth/reearth/pull/663)) [`caee55`](https://github.com/reearth/reearth/commit/caee55)
+- Add dataSource, layerSidePanel component in beta ([#633](https://github.com/reearth/reearth/pull/633)) [`9972e6`](https://github.com/reearth/reearth/commit/9972e6)
+- Limit lexical css ([#664](https://github.com/reearth/reearth/pull/664)) [`f01500`](https://github.com/reearth/reearth/commit/f01500)
+- Slider Field ([#652](https://github.com/reearth/reearth/pull/652)) [`f7fe7f`](https://github.com/reearth/reearth/commit/f7fe7f)
+- Add story text block ([#653](https://github.com/reearth/reearth/pull/653)) [`6abb7b`](https://github.com/reearth/reearth/commit/6abb7b)
+- Story page settings ([#639](https://github.com/reearth/reearth/pull/639)) [`0eaeed`](https://github.com/reearth/reearth/commit/0eaeed)
+- Beta project settings pages ([#645](https://github.com/reearth/reearth/pull/645)) [`d42294`](https://github.com/reearth/reearth/commit/d42294)
+- Revert cesium and resium ([#641](https://github.com/reearth/reearth/pull/641)) [`6f7bab`](https://github.com/reearth/reearth/commit/6f7bab)
+- Add property update support to story blocks ([#629](https://github.com/reearth/reearth/pull/629)) [`fdd4ee`](https://github.com/reearth/reearth/commit/fdd4ee)
+- TabsMenu for switching between tabs  ([#631](https://github.com/reearth/reearth/pull/631)) [`42ad68`](https://github.com/reearth/reearth/commit/42ad68)
+- Upgrade dependencies ([#626](https://github.com/reearth/reearth/pull/626)) [`19e4fd`](https://github.com/reearth/reearth/commit/19e4fd)
+- Story block system ([#619](https://github.com/reearth/reearth/pull/619)) [`8a6ad6`](https://github.com/reearth/reearth/commit/8a6ad6)
+- Add container settings panel for widget area ([#620](https://github.com/reearth/reearth/pull/620)) [`bea668`](https://github.com/reearth/reearth/commit/bea668)
+
+### Server
+
+#### 🚀 Features
+
+- Add env var to specify account database ([#640](https://github.com/reearth/reearth/pull/640)) [`3b88ad`](https://github.com/reearth/reearth/commit/3b88ad)
+
+#### 🔧 Bug Fixes
+
+- Typo in timeline value type [`9d33b4`](https://github.com/reearth/reearth/commit/9d33b4)
+- Increase default GraphQL complexity limit [`ade5cd`](https://github.com/reearth/reearth/commit/ade5cd)
+- Maintainer role cannot be handled correctly [`c8a175`](https://github.com/reearth/reearth/commit/c8a175)
+- Check project count to ensure policy on project republication ([#742](https://github.com/reearth/reearth/pull/742)) [`576023`](https://github.com/reearth/reearth/commit/576023)
+- Apply default policy to workspaces [`8b1ef4`](https://github.com/reearth/reearth/commit/8b1ef4)
+- Workspace member count is not limited by policies ([#722](https://github.com/reearth/reearth/pull/722)) [`4c7a8f`](https://github.com/reearth/reearth/commit/4c7a8f)
+- Workspace policy was not loaded from db correctly ([#721](https://github.com/reearth/reearth/pull/721)) [`d8022a`](https://github.com/reearth/reearth/commit/d8022a)
+- Wrong account db name [`db2564`](https://github.com/reearth/reearth/commit/db2564)
+- Disable compat when account db is specified [`ba4555`](https://github.com/reearth/reearth/commit/ba4555)
+- Fix signup panic error [`ace22d`](https://github.com/reearth/reearth/commit/ace22d)
+- Story&#x2F;story page properties were not saved ([#637](https://github.com/reearth/reearth/pull/637)) [`faf5f3`](https://github.com/reearth/reearth/commit/faf5f3)
+- Disable transaction for accountmongo in local [`0ef6a8`](https://github.com/reearth/reearth/commit/0ef6a8)
+
+#### ✨ Refactor
+
+- Replace user&#x2F;workspace with account in reearthx ([#568](https://github.com/reearth/reearth/pull/568)) [`958a1c`](https://github.com/reearth/reearth/commit/958a1c)
+
+#### Miscellaneous Tasks
+
+- Add story background setting ([#774](https://github.com/reearth/reearth/pull/774)) [`38f26c`](https://github.com/reearth/reearth/commit/38f26c)
+- Add layers in pageJSON of published story ([#785](https://github.com/reearth/reearth/pull/785)) [`0ba17b`](https://github.com/reearth/reearth/commit/0ba17b)
+- Add play mode to timeline setting in manifest ([#773](https://github.com/reearth/reearth/pull/773)) [`751e28`](https://github.com/reearth/reearth/commit/751e28)
+- Add layerStyles to publishing ([#772](https://github.com/reearth/reearth/pull/772)) [`469f45`](https://github.com/reearth/reearth/commit/469f45)
+- Add array and timeline valuetype to property ([#770](https://github.com/reearth/reearth/pull/770)) [`dcbe9d`](https://github.com/reearth/reearth/commit/dcbe9d)
+- Add nlslayer in project &amp; story publishing ([#769](https://github.com/reearth/reearth/pull/769)) [`4a3d08`](https://github.com/reearth/reearth/commit/4a3d08)
+- Update manifest and plugin_schema to support collection in schemaGroup ([#748](https://github.com/reearth/reearth/pull/748)) [`f70234`](https://github.com/reearth/reearth/commit/f70234)
+- Add cesium-beta viz support in server ([#743](https://github.com/reearth/reearth/pull/743)) [`dcf9f3`](https://github.com/reearth/reearth/commit/dcf9f3)
+- Modify update method for config change in NLSLayer ([#732](https://github.com/reearth/reearth/pull/732)) [`0853ba`](https://github.com/reearth/reearth/commit/0853ba)
+- Refactor and fix issue w style ([#733](https://github.com/reearth/reearth/pull/733)) [`8573df`](https://github.com/reearth/reearth/commit/8573df)
+- Fix NLS simple update ([#705](https://github.com/reearth/reearth/pull/705)) [`3e3549`](https://github.com/reearth/reearth/commit/3e3549)
+- Add extensionId and pluginId in block json of published story ([#693](https://github.com/reearth/reearth/pull/693)) [`b2992d`](https://github.com/reearth/reearth/commit/b2992d)
+- Update layer for appearance support in beta ([#690](https://github.com/reearth/reearth/pull/690)) [`eb82a8`](https://github.com/reearth/reearth/commit/eb82a8)
+- Handle visibility for nls layer  ([#661](https://github.com/reearth/reearth/pull/661)) [`708833`](https://github.com/reearth/reearth/commit/708833)
+- Add e2e test for NLS CRUD ([#649](https://github.com/reearth/reearth/pull/649)) [`69a88d`](https://github.com/reearth/reearth/commit/69a88d)
+- Storytelling publishing ([#648](https://github.com/reearth/reearth/pull/648)) [`edb596`](https://github.com/reearth/reearth/commit/edb596)
+- Update parser.go [`fdc056`](https://github.com/reearth/reearth/commit/fdc056)
+- Revert changes made for debuggin in manifest parser [`178693`](https://github.com/reearth/reearth/commit/178693)
+- Add debug log to parsefromurl [`8834e0`](https://github.com/reearth/reearth/commit/8834e0)
+- Add min&#x2F;max to spacing fields ([#646](https://github.com/reearth/reearth/pull/646)) [`8619e7`](https://github.com/reearth/reearth/commit/8619e7)
+- Add NLS layer support ([#632](https://github.com/reearth/reearth/pull/632)) [`c83248`](https://github.com/reearth/reearth/commit/c83248)
+- Fix lint error from [#644](https://github.com/reearth/reearth/pull/644) [`383ef9`](https://github.com/reearth/reearth/commit/383ef9)
+- Support appearance in server ([#644](https://github.com/reearth/reearth/pull/644)) [`0876ae`](https://github.com/reearth/reearth/commit/0876ae)
+- Upgrade reearthx [`873104`](https://github.com/reearth/reearth/commit/873104)
+- Add test for story block properties ([#630](https://github.com/reearth/reearth/pull/630)) [`562c51`](https://github.com/reearth/reearth/commit/562c51)
+- Add missing fields for story settings ([#628](https://github.com/reearth/reearth/pull/628)) [`75d522`](https://github.com/reearth/reearth/commit/75d522)
+
+### Misc
+
+#### 📖 Documentation
+
+- Update README.md [`d3335c`](https://github.com/reearth/reearth/commit/d3335c)
+
+#### ✨ Refactor
+
+- Use radio group in Data source manage ([#680](https://github.com/reearth/reearth/pull/680)) [`72a00b`](https://github.com/reearth/reearth/commit/72a00b)
+- Add assets feature ([#679](https://github.com/reearth/reearth/pull/679)) [`41326d`](https://github.com/reearth/reearth/commit/41326d)
+- Refactor text input component ([#677](https://github.com/reearth/reearth/pull/677)) [`ee4fad`](https://github.com/reearth/reearth/commit/ee4fad)
+
+#### Miscellaneous Tasks
+
+- Fix page title empty string ([#762](https://github.com/reearth/reearth/pull/762)) [`44e573`](https://github.com/reearth/reearth/commit/44e573)
+- Fix delete last page doesn&[#39](https://github.com/reearth/reearth/pull/39);t refresh the right panel ([#771](https://github.com/reearth/reearth/pull/771)) [`66c6f9`](https://github.com/reearth/reearth/commit/66c6f9)
+- Add super admin configuration ([#766](https://github.com/reearth/reearth/pull/766)) [`8bc811`](https://github.com/reearth/reearth/commit/8bc811)
+- Add idProperty to data ([#731](https://github.com/reearth/reearth/pull/731)) [`ef5885`](https://github.com/reearth/reearth/commit/ef5885)
+- Add asset type to data source manager ([#726](https://github.com/reearth/reearth/pull/726)) [`28cfb6`](https://github.com/reearth/reearth/commit/28cfb6)
+- Update CODEOWNERS [`3ed464`](https://github.com/reearth/reearth/commit/3ed464)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Update reviewer-lottery.yml [`8fea37`](https://github.com/reearth/reearth/commit/8fea37)
+
+### server, web
+
+#### Miscellaneous Tasks
+
+- Add collection to property schemaGroup ([#764](https://github.com/reearth/reearth/pull/764)) [`9cab76`](https://github.com/reearth/reearth/commit/9cab76)
+- Add map valueType to property ([#759](https://github.com/reearth/reearth/pull/759)) [`db515b`](https://github.com/reearth/reearth/commit/db515b)
+
+### sever
+
+#### Miscellaneous Tasks
+
+- Refactor around NLS layers ([#656](https://github.com/reearth/reearth/pull/656)) [`1405dd`](https://github.com/reearth/reearth/commit/1405dd)
+
+### web,server
+
+#### 🚀 Features
+
+- Support maintainer role ([#749](https://github.com/reearth/reearth/pull/749)) [`20b086`](https://github.com/reearth/reearth/commit/20b086)
+
+### 
+
+#### 📖 Documentation
+
+- Update README.md [`d3335c`](https://github.com/reearth/reearth/commit/d3335c)
+
+#### ✨ Refactor
+
+- Use radio group in Data source manage ([#680](https://github.com/reearth/reearth/pull/680)) [`72a00b`](https://github.com/reearth/reearth/commit/72a00b)
+- Add assets feature ([#679](https://github.com/reearth/reearth/pull/679)) [`41326d`](https://github.com/reearth/reearth/commit/41326d)
+- Refactor text input component ([#677](https://github.com/reearth/reearth/pull/677)) [`ee4fad`](https://github.com/reearth/reearth/commit/ee4fad)
+
+#### Miscellaneous Tasks
+
+- Fix page title empty string ([#762](https://github.com/reearth/reearth/pull/762)) [`44e573`](https://github.com/reearth/reearth/commit/44e573)
+- Fix delete last page doesn&[#39](https://github.com/reearth/reearth/pull/39);t refresh the right panel ([#771](https://github.com/reearth/reearth/pull/771)) [`66c6f9`](https://github.com/reearth/reearth/commit/66c6f9)
+- Add super admin configuration ([#766](https://github.com/reearth/reearth/pull/766)) [`8bc811`](https://github.com/reearth/reearth/commit/8bc811)
+- Add idProperty to data ([#731](https://github.com/reearth/reearth/pull/731)) [`ef5885`](https://github.com/reearth/reearth/commit/ef5885)
+- Add asset type to data source manager ([#726](https://github.com/reearth/reearth/pull/726)) [`28cfb6`](https://github.com/reearth/reearth/commit/28cfb6)
+- Update CODEOWNERS [`3ed464`](https://github.com/reearth/reearth/commit/3ed464)
+
 ## 0.18.0 - 2023-08-07
 
 ### Web

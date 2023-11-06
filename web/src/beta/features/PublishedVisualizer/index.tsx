@@ -1,4 +1,5 @@
 import NotFound from "@reearth/beta/components/NotFound";
+import StoryPanel from "@reearth/beta/lib/core/StoryPanel";
 import Visualizer from "@reearth/beta/lib/core/Visualizer";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
@@ -11,8 +12,17 @@ export type Props = {
 
 export default function Published({ alias }: Props) {
   const t = useT();
-  const { sceneProperty, pluginProperty, layers, widgets, ready, error, engineMeta } =
-    useHooks(alias);
+  const {
+    sceneProperty,
+    pluginProperty,
+    layers,
+    widgets,
+    story,
+    ready,
+    error,
+    engineMeta,
+    handleCurrentPageChange,
+  } = useHooks(alias);
 
   return error ? (
     <NotFound
@@ -30,8 +40,10 @@ export default function Published({ alias }: Props) {
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
       ready={ready}
+      storyPanelPosition={story?.position}
       pluginBaseUrl={config()?.plugins}
-      meta={engineMeta}
-    />
+      meta={engineMeta}>
+      {story && <StoryPanel selectedStory={story} onCurrentPageChange={handleCurrentPageChange} />}
+    </Visualizer>
   );
 }

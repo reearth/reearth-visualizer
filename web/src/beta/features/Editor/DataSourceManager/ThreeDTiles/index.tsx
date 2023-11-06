@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 
@@ -13,7 +13,7 @@ import {
 } from "../utils";
 
 const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = useState("");
 
   const handleSubmit = () => {
     onSubmit({

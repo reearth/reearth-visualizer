@@ -1,21 +1,21 @@
 import { MutableRefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 import type { StoryPage } from "../hooks";
 
 export type { StoryPage } from "../hooks";
-
-export const PAGES_ELEMENT_ID = "story-page-content";
+export { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 
 export default ({
   pages,
-  selectedPageId,
+  currentPageId,
   isAutoScrolling,
   onBlockCreate,
   onBlockDelete,
   onCurrentPageChange,
 }: {
   pages?: StoryPage[];
-  selectedPageId?: string;
+  currentPageId?: string;
   isAutoScrolling?: MutableRefObject<boolean>;
   onBlockCreate?: (
     pageId?: string | undefined,
@@ -24,7 +24,7 @@ export default ({
     index?: number | undefined,
   ) => Promise<void>;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
-  onCurrentPageChange?: (pageId: string) => void;
+  onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
 }) => {
   const scrollRef = useRef<number | undefined>(undefined);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
@@ -48,13 +48,13 @@ export default ({
   );
 
   useLayoutEffect(() => {
-    const pageWrapperElement = document.getElementById(PAGES_ELEMENT_ID);
+    const pageWrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
     if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
   }, [setPageGap]);
 
   useEffect(() => {
     const resizeCallback = () => {
-      const pageWrapperElement = document.getElementById(PAGES_ELEMENT_ID);
+      const pageWrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
       if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
     };
     window.addEventListener("resize", resizeCallback);
@@ -63,13 +63,13 @@ export default ({
 
   useEffect(() => {
     const ids = pages?.map(p => p.id) as string[];
-    const panelContentElement = document.getElementById(PAGES_ELEMENT_ID);
+    const panelContentElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
 
     const observer = new IntersectionObserver(
       entries => {
-        // to avoid conflicts with page selection in editor
+        // to avoid conflicts with page selection in core's parent
         if (isAutoScrolling?.current) {
-          const wrapperElement = document.getElementById(PAGES_ELEMENT_ID);
+          const wrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
 
           wrapperElement?.addEventListener("scroll", () => {
             clearTimeout(scrollTimeoutRef.current);
@@ -83,13 +83,13 @@ export default ({
 
         entries.forEach(entry => {
           const id = entry.target.getAttribute("id") ?? "";
-          if (selectedPageId === id) return;
+          if (!id ?? currentPageId === id) return;
 
           const diff = (scrollRef.current as number) - (panelContentElement?.scrollTop as number);
           const isScrollingUp = diff > 0;
 
           if (entry.isIntersecting) {
-            onCurrentPageChange?.(id);
+            onCurrentPageChange?.(id, true);
             scrollRef.current = panelContentElement?.scrollTop;
             return;
           }
@@ -97,7 +97,7 @@ export default ({
           const prevEntry = ids[currentIndex - 1];
           if (isScrollingUp) {
             const id = prevEntry;
-            onCurrentPageChange?.(id);
+            onCurrentPageChange?.(id, true);
           }
         });
       },
@@ -120,7 +120,7 @@ export default ({
         }
       });
     };
-  }, [pages, selectedPageId, isAutoScrolling, onCurrentPageChange]);
+  }, [pages, currentPageId, isAutoScrolling, onCurrentPageChange]);
 
   return {
     pageGap,

@@ -116,6 +116,7 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 					}
 		  		  }
 				}
+				bgColor
 		 	  }
 			  __typename
 			}
@@ -180,11 +181,12 @@ func createStory(e *httpexpect.Expect, sID, name string, index int) (GraphQLRequ
 func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateStory",
-		Query: `mutation UpdateStory($sceneId: ID!, $storyId: ID!, $title: String!, $index: Int) {
-			updateStory( input: {sceneId: $sceneId, storyId: $storyId, title: $title, index: $index} ) { 
+		Query: `mutation UpdateStory($sceneId: ID!, $storyId: ID!, $title: String!, $index: Int, $bgColor: String) {
+			updateStory( input: {sceneId: $sceneId, storyId: $storyId, title: $title, index: $index, bgColor: $bgColor} ) { 
 				story { 
 					id
 					title
+					bgColor
 					__typename 
 				} 
 				__typename 
@@ -195,6 +197,7 @@ func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 			"sceneId": sID,
 			"title":   "test2",
 			"index":   0,
+			"bgColor": "newBG",
 		},
 	}
 
@@ -780,6 +783,14 @@ func TestStoryCRUD(t *testing.T) {
 	// update story
 	_, _ = updateStory(e, storyID, sID)
 
+	// fetch scene and check story
+	_, res = fetchSceneForStories(e, sID)
+	storiesRes = res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("stories").Array()
+	storiesRes.First().Object().ValueEqual("bgColor", "newBG")
+
 	_, _ = deleteStory(e, storyID, sID)
 }
 
@@ -1037,7 +1048,7 @@ func TestStoryPublishing(t *testing.T) {
 	_, err = buf.ReadFrom(rc)
 	assert.NoError(t, err)
 
-	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}]}]},"nlsLayers":null,"layerStyles":null,"coreSupport":true}`, sID, storyID, pageID, blockID, extensionId, pluginId))
+	pub := regexp.MustCompile(fmt.Sprintf(`{"schemaVersion":1,"id":"%s","publishedAt":".*","property":{"tiles":\[{"id":".*"}]},"plugins":{},"layers":null,"widgets":\[],"widgetAlignSystem":null,"tags":\[],"clusters":\[],"story":{"id":"%s","property":{},"pages":\[{"id":"%s","property":{},"title":"test","blocks":\[{"id":"%s","property":{"default":{"text":"test value"},"panel":{"padding":{"top":2,"bottom":3,"left":0,"right":1}}},"plugins":null,"extensionId":"%s","pluginId":"%s"}],"swipeable":true,"swipeableLayers":\[],"layers":\[]}],"position":"left","bgColor":""},"nlsLayers":null,"layerStyles":null,"coreSupport":true}`, sID, storyID, pageID, blockID, extensionId, pluginId))
 	assert.Regexp(t, pub, buf.String())
 
 	resString := e.GET("/p/test-alias/data.json").

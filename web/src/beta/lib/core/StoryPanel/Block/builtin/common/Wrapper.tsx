@@ -89,7 +89,7 @@ const BlockWrapper: React.FC<Props> = ({
           onDoubleClick={e => {
             handleBlockClick(e, true);
           }}>
-          {children ?? <Template icon={icon} />}
+          {children ?? (isEditable && <Template icon={icon} />)}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>

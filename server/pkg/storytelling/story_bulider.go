@@ -68,6 +68,11 @@ func (b *StoryBuilder) PanelPosition(position Position) *StoryBuilder {
 	return b
 }
 
+func (b *StoryBuilder) BgColor(bgColor string) *StoryBuilder {
+	b.s.bgColor = bgColor
+	return b
+}
+
 func (b *StoryBuilder) Alias(alias string) *StoryBuilder {
 	b.s.alias = alias
 	return b

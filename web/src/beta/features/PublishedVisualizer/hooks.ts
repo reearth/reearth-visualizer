@@ -1,5 +1,4 @@
-import { mapValues } from "lodash-es";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import {
   InternalWidget,
@@ -8,11 +7,15 @@ import {
   BuiltinWidgets,
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust";
-import { MapRef } from "@reearth/beta/lib/core/Crust/types";
+import { Story } from "@reearth/beta/lib/core/StoryPanel";
 import { config } from "@reearth/services/config";
+import { useSelectedStoryPageId } from "@reearth/services/state";
 
 import { processLayers } from "../Editor/Visualizer/convert";
 
+import { processProperty } from "./convert";
+import { processStoryProperty } from "./convert-story";
+import { useGA } from "./googleAnalytics/useGA";
 import type {
   PublishedData,
   WidgetZone,
@@ -20,13 +23,11 @@ import type {
   WidgetArea,
   WidgetAreaPadding,
 } from "./types";
-import { useGA } from "./useGA";
 
 export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const visualizerRef = useRef<MapRef | null>(null);
 
   const sceneProperty = processProperty(data?.property);
   const pluginProperty = useMemo(
@@ -36,21 +37,6 @@ export default (alias?: string) => {
         {},
       ),
     [data?.plugins],
-  );
-
-  const layers = useMemo(
-    () =>
-      processLayers(
-        data?.nlsLayers?.map(l => ({
-          id: l.id,
-          title: l.title,
-          config: l.config,
-          layerType: l.layerType,
-          visible: !!l.isVisible,
-        })) ?? [],
-        data?.layerStyles,
-      ),
-    [data?.nlsLayers, data?.layerStyles],
   );
 
   const widgets = useMemo<
@@ -159,6 +145,65 @@ export default (alias?: string) => {
     [alias],
   );
 
+  const story = useMemo(() => {
+    const s = data?.story;
+    const processedStory: Story | undefined = !s
+      ? undefined
+      : {
+          id: s.id,
+          title: s.title,
+          position: s.position,
+          pages: s.pages.map(p => {
+            return {
+              id: p.id,
+              swipeable: p.swipeable,
+              layerIds: p.layers,
+              property: processStoryProperty(p.property),
+              blocks: p.blocks.map(b => {
+                return {
+                  id: b.id,
+                  pluginId: b.pluginId,
+                  extensionId: b.extensionId,
+                  property: processStoryProperty(b.property),
+                };
+              }),
+            };
+          }),
+        };
+    return processedStory;
+  }, [data?.story]);
+
+  const [currentPageId, setCurrentPageId] = useSelectedStoryPageId();
+
+  const currentPage = useMemo(
+    () => story?.pages.find(p => p.id === currentPageId),
+    [currentPageId, story?.pages],
+  );
+
+  const handleCurrentPageChange = useCallback(
+    (pageId?: string) => setCurrentPageId(pageId),
+    [setCurrentPageId],
+  );
+
+  const layers = useMemo(() => {
+    const processedLayers = processLayers(
+      data?.nlsLayers?.map(l => ({
+        id: l.id,
+        title: l.title,
+        config: l.config,
+        layerType: l.layerType,
+        visible: !!l.isVisible,
+      })) ?? [],
+      data?.layerStyles,
+    );
+    if (!story) return processedLayers;
+
+    return processedLayers?.map(layer => ({
+      ...layer,
+      visible: currentPage?.layerIds?.includes(layer.id),
+    }));
+  }, [data?.nlsLayers, data?.layerStyles, currentPage?.layerIds, story]);
+
   useEffect(() => {
     const url = dataUrl(actualAlias);
     (async () => {
@@ -206,51 +251,21 @@ export default (alias?: string) => {
   useGA(sceneProperty);
 
   return {
-    visualizerRef,
-    alias: actualAlias,
     sceneProperty,
     pluginProperty,
     layers,
     widgets,
+    story,
     ready,
     error,
     engineMeta,
+    handleCurrentPageChange,
   };
 };
 
-function processProperty(p: any): any {
-  if (typeof p !== "object") return p;
-  return mapValues(p, g =>
-    Array.isArray(g) ? g.map(h => processPropertyGroup(h)) : processPropertyGroup(g),
-  );
-}
-
-function processPropertyGroup(g: any): any {
-  if (typeof g !== "object") return g;
-  return mapValues(g, v => {
-    // For compability
-    if (Array.isArray(v)) {
-      return v.map(vv =>
-        typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v
-          ? { value: { ...vv, height: vv.altitude } }
-          : { value: vv },
-      );
-    }
-    if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
-      return {
-        value: {
-          ...v,
-          height: v.altitude,
-        },
-      };
-    }
-    return { value: v };
-  });
-}
-
-function dataUrl(alias?: string): string {
+const dataUrl = (alias?: string): string => {
   if (alias && window.REEARTH_CONFIG?.api) {
     return `${window.REEARTH_CONFIG.api}/published_data/${alias}`;
   }
   return "data.json";
-}
+};

@@ -24,6 +24,7 @@ type Story struct {
 	title         string
 	pages         *PageList
 	panelPosition Position
+	bgColor       string
 	updatedAt     time.Time
 
 	alias             string
@@ -116,6 +117,10 @@ func (s *Story) SetPanelPosition(panelPosition Position) {
 	s.panelPosition = panelPosition
 }
 
+func (s *Story) SetBgColor(bgColor string) {
+	s.bgColor = bgColor
+}
+
 func (s *Story) Rename(name string) {
 	s.title = name
 	s.updatedAt = util.Now()
@@ -158,6 +163,10 @@ func (s *Story) PublicNoIndex() bool {
 
 func (s *Story) PanelPosition() Position {
 	return s.panelPosition
+}
+
+func (s *Story) BgColor() string {
+	return s.bgColor
 }
 
 func (s *Story) ValidateProperties(pm property.Map) error {

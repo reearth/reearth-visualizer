@@ -49,7 +49,7 @@ export function widgetContextFromMapRef({
       return engine()?.getClock();
     },
     timelineManagerRef,
-    initialCamera: sceneProperty?.default?.camera,
+    initialCamera: sceneProperty?.default?.camera ?? sceneProperty?.camera?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {

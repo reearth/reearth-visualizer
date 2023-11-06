@@ -1,10 +1,9 @@
-import { useReactiveVar } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
 import { useWidgetsFetcher } from "@reearth/services/api";
 import {
-  selectedWidgetVar,
-  selectedWidgetAreaVar,
+  useSelectedWidget,
+  useSelectedWidgetArea,
   type WidgetAreaState,
 } from "@reearth/services/state";
 
@@ -19,8 +18,8 @@ export default ({ sceneId }: { sceneId?: string }) => {
   const { installableWidgets } = useInstallableWidgetsQuery({ sceneId });
   const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
 
-  const selectedWidget = useReactiveVar(selectedWidgetVar);
-  const selectedWidgetArea = useReactiveVar(selectedWidgetAreaVar);
+  const [selectedWidget, setSelectedWidget] = useSelectedWidget();
+  const [selectedWidgetArea, setSelectedWidgetArea] = useSelectedWidgetArea();
 
   const propertyItems = useMemo(
     () => installedWidgets?.find(w => w.id === selectedWidget?.id)?.property.items,
@@ -32,9 +31,9 @@ export default ({ sceneId }: { sceneId?: string }) => {
     if (!w) return;
 
     if (w.id === selectedWidget?.id) {
-      selectedWidgetVar(undefined);
+      setSelectedWidget(undefined);
     } else {
-      selectedWidgetVar({
+      setSelectedWidget({
         id: w.id,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
@@ -62,10 +61,10 @@ export default ({ sceneId }: { sceneId?: string }) => {
       if (!sceneId || !widgetAreaState) return;
       const results = await useUpdateWidgetAlignSystem(widgetAreaState, sceneId);
       if (results.status === "success") {
-        selectedWidgetAreaVar(widgetAreaState);
+        setSelectedWidgetArea(widgetAreaState);
       }
     },
-    [sceneId, useUpdateWidgetAlignSystem],
+    [sceneId, useUpdateWidgetAlignSystem, setSelectedWidgetArea],
   );
 
   return {

@@ -12,9 +12,9 @@ import {
   useCheckProjectAliasLazyQuery,
   useCreateTeamMutation,
 } from "@reearth/classic/gql";
+import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/classic/state";
 import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
-import { useSceneId, useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
 export default () => {
   const url = window.REEARTH_CONFIG?.published?.split("{}");

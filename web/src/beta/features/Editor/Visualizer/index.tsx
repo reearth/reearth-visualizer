@@ -2,7 +2,11 @@ import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import StoryPanel, { type InstallableStoryBlock } from "@reearth/beta/lib/core/StoryPanel";
+import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
+import StoryPanel, {
+  StoryPanelRef,
+  type InstallableStoryBlock,
+} from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
@@ -18,12 +22,11 @@ export type Props = {
   inEditor?: boolean;
   currentCamera?: Camera;
   // storytelling
+  storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
   selectedStory?: Story;
   currentPage?: Page;
-  isAutoScrolling?: MutableRefObject<boolean>;
   installableBlocks?: InstallableStoryBlock[];
-  onCurrentPageChange: (id: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
 };
@@ -34,12 +37,11 @@ const Visualizer: React.FC<Props> = ({
   isBuilt,
   inEditor,
   currentCamera,
+  storyPanelRef,
   showStoryPanel,
   selectedStory,
   currentPage,
-  isAutoScrolling,
   installableBlocks,
-  onCurrentPageChange,
   onStoryBlockMove,
   onCameraChange,
 }) => {
@@ -48,11 +50,9 @@ const Visualizer: React.FC<Props> = ({
     selectedBlockId,
     sceneProperty,
     pluginProperty,
-    clusters,
     layers,
     widgets,
     story,
-    tags,
     blocks,
     selectedWidgetArea,
     widgetAlignEditorActivated,
@@ -60,6 +60,7 @@ const Visualizer: React.FC<Props> = ({
     useExperimentalSandbox,
     isVisualizerReady: _isVisualizerReady,
     zoomedLayerId,
+    handleCurrentPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
@@ -85,6 +86,7 @@ const Visualizer: React.FC<Props> = ({
     ),
     [blocks],
   );
+
   return (
     <Wrapper>
       <CoreVisualizer
@@ -102,10 +104,8 @@ const Visualizer: React.FC<Props> = ({
         selectedWidgetArea={selectedWidgetArea}
         zoomedLayerId={zoomedLayerId}
         rootLayerId={rootLayerId}
-        sceneProperty={sceneProperty}
-        tags={tags}
+        sceneProperty={sceneProperty as SceneProperty}
         pluginProperty={pluginProperty}
-        clusters={clusters}
         ready={isBuilt || (!!layers && !!widgets)}
         pluginBaseUrl={config()?.plugins}
         widgetAlignSystemEditing={widgetAlignEditorActivated}
@@ -129,25 +129,18 @@ const Visualizer: React.FC<Props> = ({
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel
+            ref={storyPanelRef}
             selectedStory={story}
-            currentPageId={currentPage?.id}
-            isAutoScrolling={isAutoScrolling}
             installableBlocks={installableBlocks}
             isEditable={!!inEditor}
+            onCurrentPageChange={handleCurrentPageChange}
             onBlockCreate={handleStoryBlockCreate}
             onBlockDelete={handleStoryBlockDelete}
             onPropertyUpdate={handlePropertyValueUpdate}
-            onCurrentPageChange={onCurrentPageChange}
             onStoryBlockMove={onStoryBlockMove}
           />
         )}
       </CoreVisualizer>
-      {/* <FovSlider
-        visible={isCapturing && sceneMode && sceneMode !== "2d"}
-        onIsCapturingChange={onIsCapturingChange}
-        camera={camera}
-        onFovChange={onFovChange}
-      /> */}
     </Wrapper>
   );
 };
