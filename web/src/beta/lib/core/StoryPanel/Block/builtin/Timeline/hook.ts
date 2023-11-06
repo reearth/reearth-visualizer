@@ -1,4 +1,11 @@
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import {
   TickEventCallback,
@@ -30,6 +37,8 @@ type TimelineProps = {
   setCurrentTime?: (t: number) => void;
 };
 
+type TimeEventHandler = (time: Date, committerId: string) => void;
+
 export default ({
   currentTime,
   range,
@@ -60,6 +69,7 @@ export default ({
 
   const [resetTime] = useState(currentTime);
   const [isOpen, setIsOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const [selected, setSelected] = useState("1min/sec");
   const handlePopOver = useCallback(() => {
@@ -172,6 +182,40 @@ export default ({
     return {};
   }, [range]);
 
+  const handleOnDrag: TimeEventHandler = useCallback(
+    (time: Date, committerId: string) => {
+      onTimeChange?.(time, committerId);
+      setCurrentTime?.(currentTime);
+    },
+    [currentTime, onTimeChange, setCurrentTime],
+  );
+
+  const handleOnMouseDown = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const handleOnMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleOnMouseMove: MouseEventHandler = useCallback(
+    e => {
+      if (!isDragging || !handleOnDrag || !e.target) {
+        return;
+      }
+      if (isDragging && range) {
+        const targetElement = e.currentTarget as HTMLElement;
+        const newPosition = e.clientX - targetElement.getBoundingClientRect().left;
+        const newPositionPercentage = (newPosition / targetElement.offsetWidth) * 100;
+        // Calculate the new time based on the newPositionPercentage
+        const newTime = (newPositionPercentage / 100) * (range?.end - range?.start) + range?.start;
+
+        committer.id && handleOnDrag(new Date(newTime), committer.id);
+      }
+    },
+    [committer.id, isDragging, handleOnDrag, range],
+  );
+
   const sliderPosition = useMemo(() => {
     if (range) {
       if (!inEditor) {
@@ -196,11 +240,24 @@ export default ({
 
   const handleOnReset = useCallback(() => {
     onTimeChange?.(new Date(resetTime), committer.id);
+    setCurrentTime?.(resetTime);
     isPlaying && setIsPlaying(false);
     isPlayingReversed && setIsPlayingReversed(false);
     committer.id && onPause(committer.id);
-    setIsActive(false);
-  }, [onTimeChange, resetTime, committer.id, isPlaying, isPlayingReversed, onPause]);
+  }, [
+    onTimeChange,
+    resetTime,
+    committer.id,
+    setCurrentTime,
+    isPlaying,
+    isPlayingReversed,
+    onPause,
+  ]);
+
+  const handleOnResetAndPlay = useCallback(() => {
+    onTimeChange?.(new Date(resetTime), committer.id);
+    setCurrentTime?.(resetTime);
+  }, [onTimeChange, resetTime, committer.id, setCurrentTime]);
 
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
@@ -223,10 +280,10 @@ export default ({
       (isPlaying && JSON.stringify(current) >= JSON.stringify(timeRange.endTime)) ||
       (isPlayingReversed && JSON.stringify(current) <= JSON.stringify(timeRange.startTime))
     ) {
-      if (playMode === "once") {
-        return handleOnReset();
+      if (playMode === "loop") {
+        return handleOnResetAndPlay();
       } else {
-        return handleOnReset(), handleOnPlay();
+        return handleOnReset();
       }
     }
   }, [
@@ -234,6 +291,7 @@ export default ({
     handleOnPause,
     handleOnPlay,
     handleOnReset,
+    handleOnResetAndPlay,
     isPlaying,
     isPlayingReversed,
     playMode,
@@ -274,5 +332,8 @@ export default ({
     toggleIsPlayingReversed: handleOnPlayReversed,
     toggleIsPause: handleOnPause,
     handleOnSpeedChange,
+    handleOnMouseDown,
+    handleOnMouseMove,
+    handleOnMouseUp,
   };
 };

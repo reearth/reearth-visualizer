@@ -55,6 +55,7 @@ const TimelineEditor = ({
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
+    handleOnMouseMove,
   } = useHooks({
     currentTime,
     range,
@@ -147,6 +148,7 @@ const TimelineEditor = ({
           ))}
         </ScaleList>
         <IconWrapper
+          onMouseMove={handleOnMouseMove}
           isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
             left: `${sliderPosition}px`,

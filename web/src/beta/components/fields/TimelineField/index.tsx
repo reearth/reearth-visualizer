@@ -31,12 +31,12 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
 
   const handleTimelineModalOpen = useCallback(() => setOpenModal(true), []);
 
+  const [timelineValues, setTimelineValues] = useState(value);
+
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
     onChange?.();
   }, [value, onChange]);
-
-  const [timelineValues, setTimelineValues] = useState(value);
 
   useEffect(() => {
     setTimelineValues(value);
@@ -52,10 +52,10 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
                 {timelineValues?.startTime ?? t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.endTime ?? t("not set")}
+                {timelineValues?.currentTime ?? t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.currentTime ?? t("not set")}
+                {timelineValues?.endTime ?? t("not set")}
               </TextWrapper>
             </Timeline>
             <DeleteIcon
