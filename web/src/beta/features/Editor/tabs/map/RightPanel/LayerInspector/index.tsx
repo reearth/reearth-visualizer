@@ -40,9 +40,8 @@ const InspectorTabs: React.FC<Props> = ({
   );
 
   const selectedFeature = useMemo(() => {
-    if (!selectedLayerId?.featureId) return;
-    const { id, geometry, properties } =
-      selectedLayerId.layer?.features?.find(f => f.id === selectedLayerId.featureId) ?? {};
+    if (!selectedLayerId?.feature?.id) return;
+    const { id, geometry, properties } = selectedLayerId.feature;
     if (!id) return;
     return {
       id,

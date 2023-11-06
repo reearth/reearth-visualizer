@@ -1,7 +1,12 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
-import type { LatLng, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
+import type {
+  LatLng,
+  ValueTypes,
+  ComputedLayer,
+  ComputedFeature,
+} from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import type { ValueType } from "@reearth/beta/utils/value";
 import {
@@ -92,14 +97,14 @@ export default ({
   const selectLayer = useCallback(
     async (
       id?: string,
-      featureId?: string,
       layer?: () => Promise<ComputedLayer | undefined>,
+      feature?: ComputedFeature,
       layerSelectionReason?: LayerSelectionReason,
     ) => {
-      if (id === selectedLayer?.layerId && featureId === selectedLayer?.featureId) return;
+      if (id === selectedLayer?.layerId && feature?.id === selectedLayer?.feature?.id) return;
 
       setSelectedLayer(
-        id ? { layerId: id, featureId, layer: await layer?.(), layerSelectionReason } : undefined,
+        id ? { layerId: id, layer: await layer?.(), feature, layerSelectionReason } : undefined,
       );
     },
     [selectedLayer, setSelectedLayer],

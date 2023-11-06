@@ -22,7 +22,7 @@ import Crust, {
   BuiltinWidgets,
   InteractionModeType,
 } from "../Crust";
-import { Tag } from "../mantle";
+import { ComputedFeature, Tag } from "../mantle";
 import Map, {
   type ValueTypes,
   type ValueType,
@@ -87,8 +87,8 @@ export type Props = {
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
     layerId: string | undefined,
-    featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+    feature: ComputedFeature | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
   onWidgetLayoutUpdate?: (
