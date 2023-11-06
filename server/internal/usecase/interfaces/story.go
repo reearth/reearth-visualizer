@@ -23,6 +23,7 @@ type UpdateStoryInput struct {
 	Title         *string
 	Index         *int
 	PanelPosition *storytelling.Position
+	BgColor		  *string
 
 	IsBasicAuthActive *bool
 	BasicAuthUsername *string
