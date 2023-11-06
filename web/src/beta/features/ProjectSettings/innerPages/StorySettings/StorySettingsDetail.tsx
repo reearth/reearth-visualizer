@@ -53,7 +53,7 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
             onChange={value => setLocalPanelPosition(value as Position)}
           />
           <ColorFieldWrapper
-            name={t("Background")}
+            name={t("Background Color")}
             value={backgroundColor}
             onChange={value => setBackgroundColor(value)}
           />
