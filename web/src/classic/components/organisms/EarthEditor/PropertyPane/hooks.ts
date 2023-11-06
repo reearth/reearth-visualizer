@@ -23,8 +23,6 @@ import {
   WidgetSectionType,
   WidgetZoneType,
 } from "@reearth/classic/gql";
-import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/classic/util/value";
-import { useLang } from "@reearth/services/i18n";
 import {
   useSelected,
   useRootLayerId,
@@ -36,7 +34,9 @@ import {
   useSelectedBlock,
   useWidgetAlignEditorActivated,
   useSelectedWidgetArea,
-} from "@reearth/services/state";
+} from "@reearth/classic/state";
+import { valueTypeToGQL, Camera, toGQLSimpleValue, valueToGQL } from "@reearth/classic/util/value";
+import { useLang } from "@reearth/services/i18n";
 
 import useQueries, { Mode as RawMode } from "./hooks-queries";
 

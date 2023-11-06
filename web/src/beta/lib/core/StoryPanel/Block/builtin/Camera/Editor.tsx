@@ -1,4 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
 import { debounce } from "lodash-es";
 import { useCallback, useContext, useMemo, useState } from "react";
 
@@ -10,7 +9,7 @@ import TextField from "@reearth/beta/components/fields/TextField";
 import { Camera } from "@reearth/beta/lib/core/engines";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer/context";
 import { useT } from "@reearth/services/i18n";
-import { currentCameraVar } from "@reearth/services/state";
+import { useCurrentCamera } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import type { Field } from "../../../types";
@@ -51,7 +50,7 @@ const CameraBlockEditor: React.FC<Props> = ({
   const [selected, setSelected] = useState(items[0]?.id);
 
   const visualizer = useVisualizer();
-  const currentCamera = useReactiveVar(currentCameraVar);
+  const [currentCamera] = useCurrentCamera();
 
   const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
 

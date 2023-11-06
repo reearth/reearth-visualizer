@@ -14,14 +14,14 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/classic/gql";
-import useStorytellingAPI from "@reearth/services/api/storytellingApi";
-import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
   useProject,
   useUnselectProject,
   useNotification,
-} from "@reearth/services/state";
+} from "@reearth/classic/state";
+import useStorytellingAPI from "@reearth/services/api/storytellingApi";
+import { useT } from "@reearth/services/i18n";
 import { ProjectType } from "@reearth/types";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];

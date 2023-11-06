@@ -24,9 +24,19 @@ Time: 時間
 Time Zone: 時間帯
 set: ''
 Remove: 削除
-Add Item: ''
+Add Item: アイテムを追加
+Settings: 設定
 Please choose an option: ''
-Add text here: ''
+Add text here: テキストを書きましょう
+Timeline Settings: タイムライン設定
+'* Start Time': ''
+Start time for the timeline: ''
+'* End Time': ''
+End time for the timeline: ''
+'* Current Time': ''
+Current time should be between start and end time: ''
+Please make sure the Current time must between the Start time and End Time.: ''
+not set: 未設定
 Wrong file format: Wrong file format
 Choose: 選択
 Upload: アップロード
@@ -252,7 +262,6 @@ Strikethrough: ''
 Subscript: ''
 Superscript: ''
 Clear Formatting: ''
-not set: 未設定
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
 Username or email: ユーザー名またはメールアドレス

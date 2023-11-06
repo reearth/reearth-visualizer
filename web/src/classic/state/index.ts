@@ -6,7 +6,7 @@ import { LayerSelectionReason } from "@reearth/classic/core/Map";
 import { Camera } from "@reearth/classic/util/value";
 import { ProjectType } from "@reearth/types";
 
-export { default as useSetError, useError } from "./gqlErrorHandling";
+export { default as useSetError, useError } from "../../services/state/gqlErrorHandling";
 
 const sceneId = atom<string | undefined>(undefined);
 export const useSceneId = () => useAtom(sceneId);

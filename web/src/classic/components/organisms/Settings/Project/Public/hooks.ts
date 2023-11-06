@@ -9,14 +9,14 @@ import {
   usePublishProjectMutation,
   useUpdateProjectMutation,
 } from "@reearth/classic/gql";
-import { useLang as useCurrentLang } from "@reearth/services/i18n";
 import {
   useWorkspace,
   useProject,
   useNotification,
   NotificationType,
   useCurrentTheme as useCurrentTheme,
-} from "@reearth/services/state";
+} from "@reearth/classic/state";
+import { useLang as useCurrentLang } from "@reearth/services/i18n";
 
 type Params = {
   projectId: string;

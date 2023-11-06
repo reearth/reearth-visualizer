@@ -12,6 +12,7 @@ type Story implements Node {
   sceneId: ID!
   scene: Scene
   panelPosition: Position!
+  bgColor: String
 
   isBasicAuthActive: Boolean!
   basicAuthUsername: String!
@@ -68,6 +69,7 @@ input UpdateStoryInput {
   title: String
   index: Int
   panelPosition: Position
+  bgColor: String
 
 #  publishment
   isBasicAuthActive: Boolean

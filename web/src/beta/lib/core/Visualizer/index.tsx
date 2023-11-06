@@ -69,7 +69,7 @@ export type Props = {
   floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
-  clusters?: Cluster[];
+  clusters?: Cluster[]; // TODO: remove completely from beta core
   camera?: Camera;
   storyPanelPosition?: Position;
   interactionMode?: InteractionModeType;
@@ -77,7 +77,7 @@ export type Props = {
   style?: CSSProperties;
   small?: boolean;
   ready?: boolean;
-  tags?: Tag[];
+  tags?: Tag[]; // TODO: remove completely from beta core
   selectedBlockId?: string;
   useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
@@ -149,7 +149,7 @@ const Visualizer = memo(
         pluginProperty,
         zoomedLayerId,
         useExperimentalSandbox,
-        storyPanelPosition,
+        storyPanelPosition = "left",
         children: storyPanel,
         onLayerDrop,
         onLayerSelect,

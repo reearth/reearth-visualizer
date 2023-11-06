@@ -112,7 +112,7 @@ const LayerItem = ({
             onBlur={handleEditExit}
           />
         ) : (
-          layerTitle
+          <LayerTitle>{layerTitle}</LayerTitle>
         )}
         <HideLayer onClick={handleUpdateVisibility}>
           <Text size="footnote">{value}</Text>
@@ -123,6 +123,17 @@ const LayerItem = ({
 };
 
 export default LayerItem;
+
+const LayerTitle = styled.div`
+  overflow: hidden;
+  color: ${({ theme }) => theme.content.main};
+  text-overflow: ellipsis;
+  font-family: Noto Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+`;
 
 const ContentWrapper = styled.div`
   display: flex;
