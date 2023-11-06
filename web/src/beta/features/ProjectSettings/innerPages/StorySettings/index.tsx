@@ -9,7 +9,7 @@ import StorySettingsDetail from "./StorySettingsDetail";
 
 export type StorySettingsType = {
   panelPosition?: Position;
-  background?: string;
+  bgColor?: string;
 };
 
 type Props = {
@@ -36,7 +36,6 @@ const StorySettings: React.FC<Props> = ({
       })),
     [stories, projectId],
   );
-
   return (
     <InnerPage wide>
       <InnerMenu>
@@ -55,7 +54,10 @@ const StorySettings: React.FC<Props> = ({
         ) : (
           <StorySettingsDetail
             key={currentStory.id}
-            settingsItem={currentStory}
+            settingsItem={{
+              ...currentStory,
+              bgColor: currentStory.bgColor as string,
+            }}
             onUpdateStory={onUpdateStory}
           />
         )}

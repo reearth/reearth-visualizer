@@ -23,11 +23,11 @@ const StorySettingsDetail: React.FC<Props> = ({ settingsItem, onUpdateStory }) =
   const [localPanelPosition, setLocalPanelPosition] = useState<Position | undefined>(
     settingsItem.panelPosition,
   );
-  const [backgroundColor, setBackgroundColor] = useState<string>();
+  const [backgroundColor, setBackgroundColor] = useState<string | undefined>(settingsItem?.bgColor);
   const handleSubmit = useCallback(() => {
     onUpdateStory({
       panelPosition: localPanelPosition,
-      background: backgroundColor,
+      bgColor: backgroundColor,
     });
   }, [backgroundColor, localPanelPosition, onUpdateStory]);
 
