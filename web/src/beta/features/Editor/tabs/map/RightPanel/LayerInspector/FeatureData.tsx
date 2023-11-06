@@ -42,6 +42,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  word-break: break-all;
 `;
 
 const ValueWrapper = styled.div`
