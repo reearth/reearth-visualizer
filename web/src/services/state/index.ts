@@ -1,6 +1,10 @@
 import { atom, useAtom } from "jotai";
 
-import type { ComputedLayer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type {
+  ComputedFeature,
+  ComputedLayer,
+  LayerSelectionReason,
+} from "@reearth/beta/lib/core/Map";
 import type { Camera } from "@reearth/beta/utils/value";
 
 export { default as useSetError, useError } from "./gqlErrorHandling";
@@ -29,8 +33,8 @@ export type SelectedWidget = {
 
 export type SelectedLayer = {
   layerId: string;
-  featureId?: string;
   layer?: ComputedLayer;
+  feature?: ComputedFeature;
   layerSelectionReason?: LayerSelectionReason;
 };
 
