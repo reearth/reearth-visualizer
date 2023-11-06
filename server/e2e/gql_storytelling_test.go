@@ -116,6 +116,7 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 					}
 		  		  }
 				}
+				bgColor
 		 	  }
 			  __typename
 			}
@@ -180,11 +181,12 @@ func createStory(e *httpexpect.Expect, sID, name string, index int) (GraphQLRequ
 func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateStory",
-		Query: `mutation UpdateStory($sceneId: ID!, $storyId: ID!, $title: String!, $index: Int) {
-			updateStory( input: {sceneId: $sceneId, storyId: $storyId, title: $title, index: $index} ) { 
+		Query: `mutation UpdateStory($sceneId: ID!, $storyId: ID!, $title: String!, $index: Int, $bgColor: String) {
+			updateStory( input: {sceneId: $sceneId, storyId: $storyId, title: $title, index: $index, bgColor: $bgColor} ) { 
 				story { 
 					id
 					title
+					bgColor
 					__typename 
 				} 
 				__typename 
@@ -195,6 +197,7 @@ func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 			"sceneId": sID,
 			"title":   "test2",
 			"index":   0,
+			"bgColor": "newBG",
 		},
 	}
 
@@ -779,6 +782,14 @@ func TestStoryCRUD(t *testing.T) {
 
 	// update story
 	_, _ = updateStory(e, storyID, sID)
+
+	// fetch scene and check story
+	_, res = fetchSceneForStories(e, sID)
+	storiesRes = res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("stories").Array()
+	storiesRes.First().Object().ValueEqual("bgColor", "newBG")
 
 	_, _ = deleteStory(e, storyID, sID)
 }
