@@ -13,6 +13,7 @@ type storyJSON struct {
 	Property      propertyJSON `json:"property"`
 	Pages         []pageJSON   `json:"pages"`
 	PanelPosition string       `json:"position"`
+	BgColor       string       `json:"bgColor"`
 }
 
 type pageJSON struct {
@@ -48,6 +49,7 @@ func (b *Builder) storyJSON(ctx context.Context, p []*property.Property) (*story
 			return b.pageJSON(ctx, *page, p), true
 		}),
 		PanelPosition: string(b.story.PanelPosition()),
+		BgColor:       b.story.BgColor(),
 	}, nil
 }
 

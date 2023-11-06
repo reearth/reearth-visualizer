@@ -165,6 +165,10 @@ func (s *Story) PanelPosition() Position {
 	return s.panelPosition
 }
 
+func (s *Story) BgColor() string {
+	return s.bgColor
+}
+
 func (s *Story) ValidateProperties(pm property.Map) error {
 	if pm == nil {
 		return nil
