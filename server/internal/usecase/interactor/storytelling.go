@@ -18,7 +18,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -171,13 +170,9 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetPanelPosition(*inp.PanelPosition)
 	}
 
-	log.Debugfc(ctx, "inp2: %v", *inp.BgColor)
-
 	if inp.BgColor != nil {
 		story.SetBgColor(*inp.BgColor)
 	}
-
-	log.Debugfc(ctx, "story.bgColor: %v", story.BgColor())
 
 	oldAlias := story.Alias()
 	if inp.Alias != nil && *inp.Alias != oldAlias {

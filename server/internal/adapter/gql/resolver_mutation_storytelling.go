@@ -7,7 +7,6 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/log"
 	"github.com/samber/lo"
 )
 
@@ -38,8 +37,6 @@ func (r *mutationResolver) UpdateStory(ctx context.Context, input gqlmodel.Updat
 	if err != nil {
 		return nil, err
 	}
-
-	log.Debugfc(ctx, "inp: %v", *input.BgColor)
 
 	inp := interfaces.UpdateStoryInput{
 		SceneID:       sceneId,
