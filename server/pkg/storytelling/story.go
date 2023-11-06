@@ -24,6 +24,7 @@ type Story struct {
 	title         string
 	pages         *PageList
 	panelPosition Position
+	bgColor       string
 	updatedAt     time.Time
 
 	alias             string
@@ -114,6 +115,10 @@ func (s *Story) SetPublicNoIndex(publicNoIndex bool) {
 
 func (s *Story) SetPanelPosition(panelPosition Position) {
 	s.panelPosition = panelPosition
+}
+
+func (s *Story) SetBgColor(bgColor string) {
+	s.bgColor = bgColor
 }
 
 func (s *Story) Rename(name string) {

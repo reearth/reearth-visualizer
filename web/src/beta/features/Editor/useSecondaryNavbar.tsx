@@ -6,7 +6,8 @@ import { Tab } from "@reearth/beta/features/Navbar";
 
 type Props = {
   tab: Tab;
-  projectId?: string;
+  sceneId?: string;
+  id?: string;
   showWidgetEditor?: boolean;
   selectedDevice: Device;
   selectedProjectType?: ProjectType;
@@ -17,7 +18,8 @@ type Props = {
 
 export default ({
   tab,
-  projectId,
+  sceneId,
+  id,
   showWidgetEditor,
   selectedDevice,
   selectedProjectType,
@@ -39,7 +41,8 @@ export default ({
       case "publish":
         return (
           <PublishNav
-            projectId={projectId}
+            id={id}
+            sceneId={sceneId}
             selectedProjectType={selectedProjectType}
             onProjectTypeChange={handleProjectTypeChange}
           />
@@ -51,7 +54,8 @@ export default ({
     }
   }, [
     tab,
-    projectId,
+    sceneId,
+    id,
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
