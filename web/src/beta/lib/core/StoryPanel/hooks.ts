@@ -18,10 +18,12 @@ export default (
     selectedStory,
     isEditable,
     onCurrentPageChange,
+    onTimeChange,
   }: {
     selectedStory?: Story;
     isEditable?: boolean;
     onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
+    onTimeChange?: (t: Date) => void;
   },
   ref: Ref<StoryPanelRef>,
 ) => {
@@ -61,6 +63,19 @@ export default (
     [selectedPageId, isEditable],
   );
 
+  const handlePageTime = useCallback(
+    (page: StoryPage) => {
+      const timePointField = page.property?.timePoint;
+      const currentTime = timePointField?.timePoint?.value;
+      if (!currentTime) onTimeChange?.(new Date());
+      else {
+        const getNewDate = new Date(currentTime.substring(0, 19)).getTime();
+        return onTimeChange?.(new Date(getNewDate));
+      }
+    },
+    [onTimeChange],
+  );
+
   const handleCurrentPageChange = useCallback(
     (pageId: string, disableScrollIntoView?: boolean) => {
       if (pageId === currentPageId) return;
@@ -76,7 +91,7 @@ export default (
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
-
+      handlePageTime(newPage);
       const cameraAnimation = newPage.property?.cameraAnimation;
 
       const destination = cameraAnimation?.cameraPosition?.value;
@@ -86,7 +101,7 @@ export default (
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },
-    [selectedStory?.pages, currentPageId, visualizer, onCurrentPageChange],
+    [currentPageId, selectedStory?.pages, onCurrentPageChange, handlePageTime, visualizer],
   );
 
   const pageInfo = useMemo(() => {

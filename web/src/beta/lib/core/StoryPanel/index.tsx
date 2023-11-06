@@ -41,6 +41,7 @@ export type StoryPanelProps = {
   ) => Promise<void>;
   onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onTimeChange?: (t: Date) => void;
 };
 
 export const StoryPanel = memo(
@@ -55,6 +56,7 @@ export const StoryPanel = memo(
         onPropertyUpdate,
         onCurrentPageChange,
         onStoryBlockMove,
+        onTimeChange,
       },
       ref: Ref<StoryPanelRef>,
     ) => {
@@ -74,6 +76,7 @@ export const StoryPanel = memo(
           selectedStory,
           isEditable,
           onCurrentPageChange,
+          onTimeChange,
         },
         ref,
       );

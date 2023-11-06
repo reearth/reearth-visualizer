@@ -66,7 +66,8 @@ export type TimelineCommitter = {
     | "widgetContext"
     | "pluginAPI"
     | "featureResource"
-    | "storyTimelineBlock";
+    | "storyTimelineBlock"
+    | "storyPage";
   id?: string;
 };
 

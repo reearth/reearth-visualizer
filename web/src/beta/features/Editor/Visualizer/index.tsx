@@ -28,6 +28,7 @@ export type Props = {
   installableBlocks?: InstallableStoryBlock[];
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
+  onTimeChange?: (t: Date) => void;
 };
 
 const Visualizer: React.FC<Props> = ({
@@ -43,6 +44,7 @@ const Visualizer: React.FC<Props> = ({
   installableBlocks,
   onStoryBlockMove,
   onCameraChange,
+  onTimeChange,
 }) => {
   const {
     rootLayerId,
@@ -140,6 +142,7 @@ const Visualizer: React.FC<Props> = ({
             onBlockDelete={handleStoryBlockDelete}
             onPropertyUpdate={handlePropertyValueUpdate}
             onStoryBlockMove={onStoryBlockMove}
+            onTimeChange={onTimeChange}
           />
         )}
       </CoreVisualizer>

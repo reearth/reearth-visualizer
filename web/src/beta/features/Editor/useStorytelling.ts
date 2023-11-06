@@ -52,28 +52,10 @@ export default function ({ sceneId, visualizerRef }: Props) {
           current: time,
           stop: visualizerRef?.current?.timeline?.current?.computedTimeline?.stop,
         },
-        committer: { source: "overrideSceneProperty", id: currentPage?.id },
+        committer: { source: "storyPage", id: currentPage?.id },
       });
     },
     [currentPage?.id, visualizerRef],
-  );
-  const handlePageTime = useCallback(
-    (page: Page) => {
-      const timePointFieldGroup = page.property.items?.find(i => i.schemaGroup === "timePoint");
-
-      let currentTime = timePointFieldGroup?.schemaFields?.find(sf => sf.id === "timePoint")
-        ?.defaultValue as string;
-      if (timePointFieldGroup && "fields" in timePointFieldGroup) {
-        currentTime = (timePointFieldGroup?.fields.find(sf => sf.id === "timePoint")?.value ??
-          currentTime) as string;
-        if (!currentTime) onTimeChange?.(new Date());
-        else {
-          const getNewDate = new Date(currentTime.substring(0, 19)).getTime();
-          return onTimeChange?.(new Date(getNewDate));
-        }
-      }
-    },
-    [onTimeChange],
   );
 
   const handleCurrentPageChange = useCallback(
@@ -81,11 +63,10 @@ export default function ({ sceneId, visualizerRef }: Props) {
       if (selectedStoryPageId && selectedStoryPageId === pageId) return;
       const newPage = getPage(pageId, selectedStory?.pages);
       if (newPage) {
-        handlePageTime(newPage);
         storyPanelRef?.current?.handleCurrentPageChange(pageId);
       }
     },
-    [selectedStoryPageId, selectedStory?.pages, handlePageTime],
+    [selectedStoryPageId, selectedStory?.pages],
   );
 
   const handlePageDuplicate = useCallback(async (pageId: string) => {

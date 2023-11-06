@@ -58,6 +58,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onTimeChange,
   } = useStorytelling({
     sceneId,
+    visualizerRef,
   });
 
   const {
@@ -200,6 +201,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   currentCamera={currentCamera}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
+                  onTimeChange={onTimeChange}
                 />
               </VisualizerWrapper>
               {bottomPanel && (

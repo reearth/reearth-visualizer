@@ -45,8 +45,8 @@ export default ({ value, onChange, setDateTime, onTimeChange }: Props) => {
       const formattedDateTime = `${date}T${time}:00${selectedTimezoneInfo.offset}`;
       setDateTime?.(formattedDateTime);
       onChange?.(formattedDateTime);
-      const m = new Date(formattedDateTime.substring(0, 19)).getTime();
-      onTimeChange?.(new Date(m));
+      const t = new Date(formattedDateTime.substring(0, 19)).getTime();
+      onTimeChange?.(new Date(t));
     }
   }, [offsetFromUTC, selectedTimezone.timezone, date, time, setDateTime, onChange, onTimeChange]);
 
