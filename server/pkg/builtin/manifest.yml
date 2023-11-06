@@ -94,7 +94,7 @@ extensions:
           collection: Terrain
           title: Terrain
           fields:
-            - id: terrainBool
+            - id: terrain
               type: bool
               title: Enable
               description: Show elevation when close to the surface.
@@ -104,7 +104,7 @@ extensions:
               description: Specify terrain type.
               defaultValue: cesium
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
               choices:
@@ -145,7 +145,7 @@ extensions:
               defaultValue: 1
               suffix: x
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
             - id: terrainExaggerationRelativeHeight
@@ -155,7 +155,7 @@ extensions:
               defaultValue: 0
               suffix: m
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
             - id: depthTestAgainstTerrain
@@ -163,87 +163,94 @@ extensions:
               title: Hide objects under terrain
               description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
         - id: globeLighting
           collection: Globe
           title: Globe Lighting
           fields:
-            - id: globeLightingBool
+            - id: globeLighting
               type: bool
               title: Enable
+              defaultValue: false
               description: This property will support the globe receive Entitys Lighting.
         - id: globeShadow
           collection: Globe
           title: Globe Shadow
           fields:
-            - id: globeShadowBool
+            - id: globeShadow
               type: bool
               title: Enable
+              defaultValue: false
               description: This property will support the globe receive Entitys shadows.
         - id: globeAtmosphere
           collection: Globe
           title: Globe Atmosphere
           fields:
-            - id: globeAtmosphereBool
+            - id: globeAtmosphere
               type: bool
               title: Enable
+              defaultValue: true
               description: This setting handles the so-called atmosphere effect of Earth.
             - id: globeAtmosphereIntensity
               type: number
               title: Light Intensity
-              description: "Change the light intensity of the selected tile map. Min: 0 Max: 1"
-              defaultValue: 0.5
+              description: "Change the light intensity of the selected tile map. Min: 0 Max: 30"
+              defaultValue: 10
               ui: slider
               min: 0
-              max: 1
+              max: 30
               availableIf:
-                field: globeAtmosphereBool
+                field: globeAtmosphere
                 type: bool
                 value: true
         - id: skyBox
           collection: Sky
           title: Sky Box
           fields:
-            - id: skyBoxBool
+            - id: skyBox
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: sun
           collection: Sky
           title: Sun
           fields:
-            - id: sunBool
+            - id: sun
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: moon
           collection: Sky
           title: Moon
           fields:
-            - id: moonBool
+            - id: moon
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: skyAtmosphere
           collection: Sky
           title: Sky Atmosphere
           fields:
-            - id: skyAtmosphereBool
+            - id: skyAtmosphere
               type: bool
               title: Enable
+              defaultValue: true
               description: Description neeeded.
             - id: skyAtmosphereIntensity
               type: number
               title: Light Intensity
-              description: "Change the light intensity of the selected tile map. Min: 0 Max: 1"
-              defaultValue: 0.5
+              description: "Change the light intensity of the selected tile map. Min: 0 Max: 200"
+              defaultValue: 50
               ui: slider
               min: 0
-              max: 1
+              max: 200
               availableIf:
-                field: skyAtmosphereBool
+                field: skyAtmosphere
                 type: bool
                 value: true
         - id: camera
@@ -262,7 +269,7 @@ extensions:
             - id: fov
               type: number
               title: FOV
-              description: Description needed
+              # description: Description needed
               defaultValue: 3
               ui: slider
               min: 0
