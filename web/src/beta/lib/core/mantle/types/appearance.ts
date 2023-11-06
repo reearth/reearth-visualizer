@@ -32,6 +32,7 @@ export type AppearanceTypes = {
 
 export type MarkerAppearance = {
   show?: boolean;
+  height?: number;
   heightReference?: "none" | "clamp" | "relative";
   style?: "none" | "point" | "image";
   pointSize?: number;
