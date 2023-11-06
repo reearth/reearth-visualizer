@@ -241,10 +241,60 @@ export type TerrainProperty = {
   terrainNormal?: boolean;
 };
 
-export type SceneProperty = OldSceneProperty;
-// export type SceneProperty = OldSceneProperty | NewSceneProperty;
+export type SceneProperty = {
+  main?: {
+    sceneMode?: SceneMode; // default: scene3d
+    ion?: string;
+    vr?: boolean;
+  };
+  tiles?: {
+    id: string;
+    tile_type?: string;
+    tile_url?: string;
+    tile_zoomLevel?: number;
+    tile_opacity?: number;
+  }[];
+  terrain?: {
+    terrain?: boolean;
+    terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
+    terrainCesiumIonAsset?: string;
+    terrainCesiumIonAccessToken?: string;
+    terrainCesiumIonUrl?: string;
+    terrainExaggeration?: number; // default: 1
+    terrainExaggerationRelativeHeight?: number; // default: 0
+    depthTestAgainstTerrain?: boolean;
+  };
+  globeLighting?: {
+    globeLighting?: boolean;
+  };
+  globeShadow?: {
+    globeShadow?: boolean;
+  };
+  globeAtmosphere?: {
+    globeAtmosphere?: boolean;
+    globeAtmosphereIntensity?: number; // default: 10
+  };
+  skyBox?: {
+    skyBox?: boolean;
+  };
+  sun?: {
+    sun?: boolean;
+  };
+  moon?: {
+    moon?: boolean;
+  };
+  skyAtmosphere?: {
+    skyAtmosphere?: boolean;
+    skyAtmosphereIntensity?: number; // default: 50
+  };
+  camera?: {
+    camera?: Camera;
+    allowEnterGround?: boolean;
+    fov?: number;
+  };
+} & LegacySceneProperty;
 
-export type OldSceneProperty = {
+type LegacySceneProperty = {
   default?: {
     camera?: Camera;
     allowEnterGround?: boolean;
@@ -338,59 +388,6 @@ export type OldSceneProperty = {
   render?: {
     antialias?: "low" | "medium" | "high" | "extreme";
     debugFramePerSecond?: boolean;
-  };
-};
-
-export type NewSceneProperty = {
-  main: {
-    sceneMode?: SceneMode; // default: scene3d
-    ion?: string;
-    vr?: boolean;
-  };
-  tiles: {
-    id: string;
-    tile_type?: string;
-    tile_url?: string;
-    tile_zoomLevel?: number;
-    tile_opacity?: number;
-  }[];
-  terrain: {
-    terrain?: boolean;
-    terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
-    terrainCesiumIonAsset?: string;
-    terrainCesiumIonAccessToken?: string;
-    terrainCesiumIonUrl?: string;
-    terrainExaggeration?: number; // default: 1
-    terrainExaggerationRelativeHeight?: number; // default: 0
-    depthTestAgainstTerrain?: boolean;
-  };
-  globeLighting: {
-    globeLightingBool?: boolean;
-  };
-  globeShadow: {
-    globeShadowBool?: boolean;
-  };
-  globeAtmosphere: {
-    globeAtmosphereBool?: boolean;
-    globeAtmosphereIntensity?: number;
-  };
-  skyBox: {
-    skyBoxBool?: boolean;
-  };
-  sun: {
-    sunBool?: boolean;
-  };
-  moon: {
-    moonBool?: boolean;
-  };
-  skyAtmosphere: {
-    skyAtmosphereBool?: boolean;
-    skyAtmosphereIntensity?: number;
-  };
-  camera: {
-    camera?: Camera;
-    allowEnterGround?: boolean;
-    fov?: number;
   };
 };
 

@@ -2,6 +2,7 @@ import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
+import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
 import StoryPanel, {
   StoryPanelRef,
   type InstallableStoryBlock,
@@ -51,11 +52,9 @@ const Visualizer: React.FC<Props> = ({
     selectedBlockId,
     sceneProperty,
     pluginProperty,
-    clusters,
     layers,
     widgets,
     story,
-    tags,
     blocks,
     selectedWidgetArea,
     widgetAlignEditorActivated,
@@ -89,6 +88,7 @@ const Visualizer: React.FC<Props> = ({
     ),
     [blocks],
   );
+
   return (
     <Wrapper>
       <CoreVisualizer
@@ -106,10 +106,8 @@ const Visualizer: React.FC<Props> = ({
         selectedWidgetArea={selectedWidgetArea}
         zoomedLayerId={zoomedLayerId}
         rootLayerId={rootLayerId}
-        sceneProperty={sceneProperty}
-        tags={tags}
+        sceneProperty={sceneProperty as SceneProperty}
         pluginProperty={pluginProperty}
-        clusters={clusters}
         ready={isBuilt || (!!layers && !!widgets)}
         pluginBaseUrl={config()?.plugins}
         widgetAlignSystemEditing={widgetAlignEditorActivated}
