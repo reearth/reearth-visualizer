@@ -66,6 +66,9 @@ func TestStory_SettersGetters(t *testing.T) {
 	s.SetPanelPosition(PositionLeft)
 	assert.Equal(t, PositionLeft, s.PanelPosition())
 
+	s.SetBgColor("test")
+	assert.Equal(t, "test", s.BgColor())
+
 	err := s.SetBasicAuth(true, nil, nil)
 	assert.Equal(t, ErrBasicAuthUserNamePasswordEmpty, err)
 
