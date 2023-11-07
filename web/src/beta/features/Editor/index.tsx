@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 import Resizable from "@reearth/beta/components/Resizable";
 import useBottomPanel from "@reearth/beta/features/Editor/useBottomPanel";
@@ -93,26 +93,29 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const handleLayerStyleSelected = useCallback(
     (layerStyleId: string) => {
       handleLayerSelect(undefined);
+      handleSceneSettingSelect(undefined);
       handleLayerStyleSelect(layerStyleId);
     },
-    [handleLayerStyleSelect, handleLayerSelect],
+    [handleLayerStyleSelect, handleSceneSettingSelect, handleLayerSelect],
   );
 
   const handleLayerSelected = useCallback(
     (layerId: string) => {
       setSelectedLayerStyleId(undefined);
+      handleSceneSettingSelect(undefined);
       handleLayerSelect(layerId);
     },
-    [handleLayerSelect, setSelectedLayerStyleId],
+    [handleLayerSelect, handleSceneSettingSelect, setSelectedLayerStyleId],
   );
 
-  useEffect(() => {
-    if (selectedLayer) {
+  const handleSceneSettingSelected = useCallback(
+    (collection?: string) => {
       setSelectedLayerStyleId(undefined);
-    } else if (selectedLayerStyle) {
       handleLayerSelect(undefined);
-    }
-  }, [selectedLayer, selectedLayerStyle, setSelectedLayerStyleId, handleLayerSelect]);
+      handleSceneSettingSelect(collection);
+    },
+    [handleLayerSelect, handleSceneSettingSelect, setSelectedLayerStyleId],
+  );
 
   const { leftPanel } = useLeftPanel({
     tab,
@@ -131,7 +134,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerSelect: handleLayerSelected,
     onLayerNameUpdate: handleLayerNameUpdate,
     onLayerVisibilityUpate: handleLayerVisibilityUpdate,
-    onSceneSettingSelect: handleSceneSettingSelect,
+    onSceneSettingSelect: handleSceneSettingSelected,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
     onFlyTo: handleFlyTo,
   });
