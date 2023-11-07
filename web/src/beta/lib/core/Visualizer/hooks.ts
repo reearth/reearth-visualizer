@@ -52,8 +52,8 @@ export default function useHooks(
     ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
     onLayerSelect?: (
       layerId: string | undefined,
-      featureId: string | undefined,
       layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+      feature: ComputedFeature | undefined,
       reason: LayerSelectionReason | undefined,
     ) => void;
     onBlockSelect?: (blockId?: string) => void;
@@ -117,17 +117,17 @@ export default function useHooks(
       if (selectedLayer.layerId === layerId && selectedLayer.featureId === featureId) return;
 
       const computedLayer = await layer?.();
+      const computedFeature =
+        layerId && featureId
+          ? mapRef.current?.engine.findComputedFeatureById?.(layerId, featureId) ?? info?.feature
+          : undefined;
 
       selectFeature(
         layerId && featureId
           ? mapRef.current?.engine.findFeatureById?.(layerId, featureId)
           : undefined,
       );
-      selectComputedFeature(
-        layerId && featureId
-          ? mapRef.current?.engine.findComputedFeatureById?.(layerId, featureId) ?? info?.feature
-          : undefined,
-      );
+      selectComputedFeature(computedFeature);
 
       selectLayer(l =>
         l.layerId === layerId && l.featureId === featureId
@@ -135,7 +135,7 @@ export default function useHooks(
           : { layerId, featureId, layer: computedLayer, reason },
       );
 
-      onLayerSelect?.(layerId, featureId, layer, reason);
+      onLayerSelect?.(layerId, layer, computedFeature, reason);
     },
     [selectedLayer, onLayerSelect],
   );
