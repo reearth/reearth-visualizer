@@ -115,6 +115,6 @@ export default StoryPanel;
 
 const PanelWrapper = styled.div<{ bgColor?: string }>`
   flex: 0 0 ${STORY_PANEL_WIDTH}px;
-  background: ${({ bgColor }) => (bgColor ? bgColor : "#f1f1f1")};
+  background: ${({ bgColor }) => bgColor};
   color: ${({ theme }) => theme.content.weak};
 `;
