@@ -94,7 +94,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerEdit,
     onMount,
   });
-  console.log(property);
 
   return (
     <Viewer

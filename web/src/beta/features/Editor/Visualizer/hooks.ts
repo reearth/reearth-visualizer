@@ -1,7 +1,12 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
-import type { LatLng, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
+import type {
+  LatLng,
+  ValueTypes,
+  ComputedLayer,
+  ComputedFeature,
+} from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import type { ValueType } from "@reearth/beta/utils/value";
 import {
@@ -24,6 +29,8 @@ import {
   useZoomedLayerId,
   useSelectedLayer,
   useSelectedStoryPageId,
+  useSelectedLayerStyle,
+  useSelectedSceneSetting,
 } from "@reearth/services/state";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
@@ -63,6 +70,8 @@ export default ({
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
   const [selectedLayer, setSelectedLayer] = useSelectedLayer();
+  const [, setSelectedLayerStyle] = useSelectedLayerStyle();
+  const [, setSelectedSceneSetting] = useSelectedSceneSetting();
 
   const [selectedWidgetArea, setSelectedWidgetArea] = useSelectedWidgetArea();
   const [isVisualizerReady, setIsVisualizerReady] = useIsVisualizerReady();
@@ -92,17 +101,20 @@ export default ({
   const selectLayer = useCallback(
     async (
       id?: string,
-      featureId?: string,
       layer?: () => Promise<ComputedLayer | undefined>,
+      feature?: ComputedFeature,
       layerSelectionReason?: LayerSelectionReason,
     ) => {
-      if (id === selectedLayer?.layerId && featureId === selectedLayer?.featureId) return;
-
+      if (id === selectedLayer?.layerId || !feature) return;
+      if (id) {
+        setSelectedLayerStyle(undefined);
+        setSelectedSceneSetting(undefined);
+      }
       setSelectedLayer(
-        id ? { layerId: id, featureId, layer: await layer?.(), layerSelectionReason } : undefined,
+        id ? { layerId: id, layer: await layer?.(), feature, layerSelectionReason } : undefined,
       );
     },
-    [selectedLayer, setSelectedLayer],
+    [selectedLayer, setSelectedLayer, setSelectedLayerStyle, setSelectedSceneSetting],
   );
 
   const handleDropLayer = useCallback(
