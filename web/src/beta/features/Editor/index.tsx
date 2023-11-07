@@ -54,10 +54,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handlePageMove,
     handleStoryBlockMove: onStoryBlockMove,
     handlePageUpdate,
-    onTimeChange,
   } = useStorytelling({
     sceneId,
-    visualizerRef,
   });
 
   const {
@@ -154,7 +152,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
-    onTimeChange,
   });
 
   const { bottomPanel } = useBottomPanel({

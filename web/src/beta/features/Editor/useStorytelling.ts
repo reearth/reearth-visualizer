@@ -1,6 +1,5 @@
-import { MutableRefObject, useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
-import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { StoryPanelRef } from "@reearth/beta/lib/core/StoryPanel";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
@@ -9,7 +8,6 @@ import { useSelectedStoryPageId } from "@reearth/services/state";
 
 type Props = {
   sceneId: string;
-  visualizerRef?: MutableRefObject<MapRef | null>;
 };
 
 const getPage = (id?: string, pages?: Page[]) => {
@@ -17,7 +15,7 @@ const getPage = (id?: string, pages?: Page[]) => {
   return pages.find(p => p.id === id);
 };
 
-export default function ({ sceneId, visualizerRef }: Props) {
+export default function ({ sceneId }: Props) {
   const t = useT();
 
   const storyPanelRef = useRef<StoryPanelRef | null>(null);
@@ -41,21 +39,6 @@ export default function ({ sceneId, visualizerRef }: Props) {
   const currentPage = useMemo(
     () => selectedStory?.pages?.find(p => p.id === selectedStoryPageId),
     [selectedStory?.pages, selectedStoryPageId],
-  );
-
-  const onTimeChange = useCallback(
-    (time: Date) => {
-      return visualizerRef?.current?.timeline?.current?.commit({
-        cmd: "SET_TIME",
-        payload: {
-          start: visualizerRef?.current?.timeline?.current?.computedTimeline?.start,
-          current: time,
-          stop: visualizerRef?.current?.timeline?.current?.computedTimeline?.stop,
-        },
-        committer: { source: "storyPage", id: currentPage?.id },
-      });
-    },
-    [currentPage?.id, visualizerRef],
   );
 
   const handleCurrentPageChange = useCallback(
@@ -158,6 +141,5 @@ export default function ({ sceneId, visualizerRef }: Props) {
     handlePageMove,
     handleStoryBlockMove,
     handlePageUpdate,
-    onTimeChange,
   };
 }

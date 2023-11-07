@@ -13,16 +13,9 @@ type Props = {
   item?: Item;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
-  onTimeChange?: (t: Date) => void;
 };
 
-const PropertyItem: React.FC<Props> = ({
-  propertyId,
-  item,
-  currentCamera,
-  onFlyTo,
-  onTimeChange,
-}) => {
+const PropertyItem: React.FC<Props> = ({ propertyId, item, currentCamera, onFlyTo }) => {
   const t = useT();
   const [selected, select] = useState<string>();
 
@@ -119,7 +112,6 @@ const PropertyItem: React.FC<Props> = ({
               schema={f.schemaField}
               currentCamera={currentCamera}
               onFlyTo={onFlyTo}
-              onTimeChange={onTimeChange}
             />
           );
         })}

@@ -7,7 +7,6 @@ type Props = {
   value?: string;
   onChange?: (value?: string | undefined) => void;
   setDateTime?: (value?: string | undefined) => void;
-  onTimeChange?: (t: Date) => void;
 };
 
 type TimezoneInfo = {
@@ -15,7 +14,7 @@ type TimezoneInfo = {
   offset: string;
 };
 
-export default ({ value, onChange, setDateTime, onTimeChange }: Props) => {
+export default ({ value, onChange, setDateTime }: Props) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [selectedTimezone, setSelectedTimezone] = useState<TimezoneInfo>({
@@ -45,10 +44,8 @@ export default ({ value, onChange, setDateTime, onTimeChange }: Props) => {
       const formattedDateTime = `${date}T${time}:00${selectedTimezoneInfo.offset}`;
       setDateTime?.(formattedDateTime);
       onChange?.(formattedDateTime);
-      const t = new Date(formattedDateTime.substring(0, 19)).getTime();
-      onTimeChange?.(new Date(t));
     }
-  }, [offsetFromUTC, selectedTimezone.timezone, date, time, setDateTime, onChange, onTimeChange]);
+  }, [offsetFromUTC, selectedTimezone.timezone, date, time, setDateTime, onChange]);
 
   const handleTimezoneSelect = useCallback(
     (newValue: string) => {

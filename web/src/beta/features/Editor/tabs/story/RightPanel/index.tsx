@@ -17,7 +17,6 @@ type Props = {
   tab?: Tab;
   onFlyTo?: FlyTo;
   onPageUpdate?: (id: string, layers: string[]) => void;
-  onTimeChange?: (t: Date) => void;
 };
 
 const StoryRightPanel: React.FC<Props> = ({
@@ -27,7 +26,6 @@ const StoryRightPanel: React.FC<Props> = ({
   onPageUpdate,
   tab,
   onFlyTo,
-  onTimeChange,
 }) => {
   const t = useT();
   const propertyItems = useMemo(
@@ -55,7 +53,6 @@ const StoryRightPanel: React.FC<Props> = ({
               tab={tab}
               onPageUpdate={onPageUpdate}
               onFlyTo={onFlyTo}
-              onTimeChange={onTimeChange}
             />
           ),
         },

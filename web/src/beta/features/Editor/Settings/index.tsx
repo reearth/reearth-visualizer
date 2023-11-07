@@ -25,7 +25,6 @@ type Props = {
   tab?: Tab;
   onFlyTo?: FlyTo;
   onPageUpdate?: (id: string, layers: string[]) => void;
-  onTimeChange?: (t: Date) => void;
 };
 
 const Settings: React.FC<Props> = ({
@@ -37,7 +36,6 @@ const Settings: React.FC<Props> = ({
   selectedPage,
   onFlyTo,
   onPageUpdate,
-  onTimeChange,
 }) => {
   const t = useT();
   const { allCheckedLayers, checkedLayers, handleAllLayersCheck, handleLayerCheck } = useHooks({
@@ -83,7 +81,6 @@ const Settings: React.FC<Props> = ({
             item={i}
             currentCamera={currentCamera}
             onFlyTo={onFlyTo}
-            onTimeChange={onTimeChange}
           />
         </SidePanelSectionField>
       ))}

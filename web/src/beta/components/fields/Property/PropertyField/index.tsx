@@ -27,7 +27,6 @@ type Props = {
   field?: Field;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
-  onTimeChange?: (t: Date) => void;
 };
 
 const PropertyField: React.FC<Props> = ({
@@ -38,7 +37,6 @@ const PropertyField: React.FC<Props> = ({
   schema,
   currentCamera,
   onFlyTo,
-  onTimeChange,
 }) => {
   const { handlePropertyValueUpdate } = useHooks(propertyId, schemaGroup);
 
@@ -58,7 +56,6 @@ const PropertyField: React.FC<Props> = ({
             value={(value as string) ?? ""}
             description={schema.description}
             onChange={handleChange}
-            onTimeChange={onTimeChange}
           />
         ) : schema.ui === "color" ? (
           <ColorField
