@@ -2,18 +2,20 @@ import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/LeftPanel/GroupField";
 import { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { Scene } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";
 
 import type { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "../../../useLayers";
 
 type Props = {
   layers: NLSLayer[];
+  scene?: Scene;
   selectedLayerId?: string;
-  selectedSceneSetting?: boolean;
+  selectedSceneSetting?: string;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
-  onSceneSettingSelect: () => void;
+  onSceneSettingSelect: (groupId: string) => void;
   onDataSourceManagerOpen: () => void;
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onFlyTo?: FlyTo;
@@ -21,6 +23,7 @@ type Props = {
 
 const MapSidePanel: React.FC<Props> = ({
   layers,
+  scene,
   selectedLayerId,
   selectedSceneSetting,
   onLayerDelete,
@@ -42,6 +45,7 @@ const MapSidePanel: React.FC<Props> = ({
           title: t("Outline"),
           children: (
             <GroupSectionField
+              scene={scene}
               layers={layers}
               selectedLayerId={selectedLayerId}
               selectedSceneSetting={selectedSceneSetting}

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import Resizable from "@reearth/beta/components/Resizable";
 import useBottomPanel from "@reearth/beta/features/Editor/useBottomPanel";
@@ -15,6 +15,7 @@ import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
+import useScene from "./useScene";
 
 type Props = {
   sceneId: string;
@@ -27,7 +28,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
     isVisualizerReady,
-    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -36,7 +36,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentCamera,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
-    handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
@@ -74,6 +73,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     isVisualizerReady,
     visualizerRef,
   });
+  const { scene, selectedSceneSetting, sceneSettings, handleSceneSettingSelect } = useScene({
+    sceneId,
+  });
 
   const {
     layerStyles,
@@ -103,8 +105,17 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     [handleLayerSelect, setSelectedLayerStyleId],
   );
 
+  useEffect(() => {
+    if (selectedLayer) {
+      setSelectedLayerStyleId(undefined);
+    } else if (selectedLayerStyle) {
+      handleLayerSelect(undefined);
+    }
+  }, [selectedLayer, selectedLayerStyle, setSelectedLayerStyleId, handleLayerSelect]);
+
   const { leftPanel } = useLeftPanel({
     tab,
+    scene,
     nlsLayers,
     selectedStory,
     selectedLayerId: selectedLayer?.id,
@@ -125,14 +136,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   });
 
   const { rightPanel } = useRightPanel({
+    scene,
     layerStyles,
     tab,
     sceneId,
     nlsLayers,
     currentPage,
     currentCamera,
-    showSceneSettings: selectedSceneSetting,
     selectedLayerStyleId: selectedLayerStyle?.id,
+    selectedSceneSetting: selectedSceneSetting,
+    sceneSettings: sceneSettings,
     onFlyTo: handleFlyTo,
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,

@@ -14,7 +14,6 @@ export type Props = BlockProps;
 // from the common editor panel, but manage it by itself directly.
 
 const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
-  console.log("BB", isSelected, props);
   const text = useMemo(
     () => block?.property?.default?.text?.value as ValueTypes["string"],
     [block?.property?.default?.text?.value],
