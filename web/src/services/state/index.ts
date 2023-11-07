@@ -81,15 +81,23 @@ export const useCurrentCamera = () => useAtom(currentCamera);
 const widgetAlignEditor = atom<boolean | undefined>(undefined);
 export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
 
-// Selected
+// Selected - map tab
+const selectedLayer = atom<SelectedLayer | undefined>(undefined);
+export const useSelectedLayer = () => useAtom(selectedLayer);
+const selectedLayerStyle = atom<string | undefined>(undefined);
+export const useSelectedLayerStyle = () => useAtom(selectedLayerStyle);
+const selectedSceneSetting = atom<string | undefined>(undefined);
+export const useSelectedSceneSetting = () => useAtom(selectedSceneSetting);
+
+// Selected - story tab
+const selectedStoryPageId = atom<SelectedStoryPageId | undefined>(undefined);
+export const useSelectedStoryPageId = () => useAtom(selectedStoryPageId);
+
+// Selected - widget tab
 const selectedWidget = atom<SelectedWidget | undefined>(undefined);
 export const useSelectedWidget = () => useAtom(selectedWidget);
 const selectedWidgetArea = atom<WidgetAreaState | undefined>(undefined);
 export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
-const selectedLayer = atom<SelectedLayer | undefined>(undefined);
-export const useSelectedLayer = () => useAtom(selectedLayer);
-const selectedStoryPageId = atom<SelectedStoryPageId | undefined>(undefined);
-export const useSelectedStoryPageId = () => useAtom(selectedStoryPageId);
 
 // Misc
 const notification = atom<Notification | undefined>(undefined);
