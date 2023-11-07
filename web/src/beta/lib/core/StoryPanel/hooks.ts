@@ -18,12 +18,10 @@ export default (
     selectedStory,
     isEditable,
     onCurrentPageChange,
-    onTimeChange,
   }: {
     selectedStory?: Story;
     isEditable?: boolean;
     onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
-    onTimeChange?: (t: Date) => void;
   },
   ref: Ref<StoryPanelRef>,
 ) => {
@@ -61,6 +59,21 @@ export default (
       setSelectedBlockId(id => (!blockId || id === blockId ? undefined : blockId));
     },
     [selectedPageId, isEditable],
+  );
+
+  const onTimeChange = useCallback(
+    (time: Date) => {
+      return visualizer?.current?.timeline?.current?.commit({
+        cmd: "SET_TIME",
+        payload: {
+          start: visualizer?.current?.timeline?.current?.computedTimeline?.start,
+          current: time,
+          stop: visualizer?.current?.timeline?.current?.computedTimeline?.stop,
+        },
+        committer: { source: "storyPage", id: currentPageId },
+      });
+    },
+    [currentPageId, visualizer],
   );
 
   const handlePageTime = useCallback(
