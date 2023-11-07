@@ -30,6 +30,8 @@ import { useNotification } from "../state";
 import { toGqlStatus } from "./toGqlStatus";
 import { MutationReturn } from "./types";
 
+import { useStorytellingFetcher } from ".";
+
 export type Project = ProjectPayload["project"];
 
 export default () => {
@@ -56,6 +58,7 @@ export default () => {
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
   const [createScene] = useMutation(CREATE_SCENE, { refetchQueries: ["GetProjects"] });
+  const { useCreateStoryPage } = useStorytellingFetcher();
 
   const useCreateProject = useCallback(
     async (
@@ -82,7 +85,7 @@ export default () => {
 
         return { status: "error" };
       } else {
-        const { errors: sceneErrors } = await createScene({
+        const { data: sceneResults, errors: sceneErrors } = await createScene({
           variables: { projectId: projectResults?.createProject.project.id },
         });
         if (sceneErrors) {
@@ -90,13 +93,27 @@ export default () => {
           setNotification({ type: "error", text: t("Failed to create project.") });
 
           return { status: "error" };
+        } else if (sceneResults?.createScene?.scene.id) {
+          const { data, errors: storyPageErrors } = await useCreateStoryPage({
+            sceneId: sceneResults.createScene.scene.id,
+            storyId: sceneResults.createScene.scene.stories[0].id,
+          });
+          console.log("DDD", data);
+          if (storyPageErrors) {
+            setNotification({
+              type: "error",
+              text: t("Failed to create story page on project creation."),
+            });
+
+            return { status: "error" };
+          }
         }
       }
 
       setNotification({ type: "success", text: t("Successfully created project!") });
       return { data: projectResults.createProject.project, status: "success" };
     },
-    [createNewProject, createScene, setNotification, t],
+    [createNewProject, createScene, useCreateStoryPage, setNotification, t],
   );
 
   const [publishProjectMutation, { loading: publishProjectLoading }] = useMutation(
