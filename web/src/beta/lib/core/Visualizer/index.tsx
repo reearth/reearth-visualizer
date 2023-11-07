@@ -22,7 +22,7 @@ import Crust, {
   BuiltinWidgets,
   InteractionModeType,
 } from "../Crust";
-import { Tag } from "../mantle";
+import { ComputedFeature, Tag } from "../mantle";
 import Map, {
   type ValueTypes,
   type ValueType,
@@ -69,7 +69,7 @@ export type Props = {
   floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
-  clusters?: Cluster[];
+  clusters?: Cluster[]; // TODO: remove completely from beta core
   camera?: Camera;
   storyPanelPosition?: Position;
   interactionMode?: InteractionModeType;
@@ -77,7 +77,7 @@ export type Props = {
   style?: CSSProperties;
   small?: boolean;
   ready?: boolean;
-  tags?: Tag[];
+  tags?: Tag[]; // TODO: remove completely from beta core
   selectedBlockId?: string;
   useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
@@ -87,8 +87,8 @@ export type Props = {
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
     layerId: string | undefined,
-    featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+    feature: ComputedFeature | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
   onWidgetLayoutUpdate?: (
