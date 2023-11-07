@@ -147,3 +147,16 @@ export const formatRangeDateAndTime = (data: string) => {
     time,
   };
 };
+
+export const convertPositionToTime = (e: MouseEvent, start: number, end: number) => {
+  const curTar = e.currentTarget as HTMLElement;
+  const width = curTar.scrollWidth - 32;
+  const rect = curTar.getBoundingClientRect();
+  const scrollX = curTar.scrollLeft;
+  const clientX = e.clientX - rect.x;
+  const posX = clientX + scrollX;
+  const percent = posX / width;
+  const rangeDiff = end - start;
+  const sec = rangeDiff * percent;
+  return Math.min(Math.max(start, start + sec), end);
+};

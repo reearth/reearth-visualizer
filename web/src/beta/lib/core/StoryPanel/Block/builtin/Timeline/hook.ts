@@ -13,10 +13,15 @@ import {
 } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import {
+  convertPositionToTime,
   formatDateForSliderTimeline,
   formatDateForTimeline,
   formatRangeDateAndTime,
 } from "@reearth/beta/lib/core/StoryPanel/utils";
+
+import { getNewDate } from "../../../hooks/useTimelineBlock";
+
+import { TimelineValues } from ".";
 
 type TimelineProps = {
   currentTime: number;
@@ -26,6 +31,7 @@ type TimelineProps = {
   inEditor?: boolean;
   speed: number;
   playMode?: string;
+  timelineValues?: TimelineValues;
   onPlay?: (committer: TimelineCommitter) => void;
   onSpeedChange?: (speed: number, committerId?: string) => void;
   onPause: (committerId: string) => void;
@@ -47,6 +53,7 @@ export default ({
   inEditor,
   speed,
   playMode,
+  timelineValues,
   onPlay,
   onSpeedChange,
   onPause,
@@ -67,11 +74,32 @@ export default ({
     id: blockId,
   });
 
-  const [resetTime] = useState(currentTime);
   const [isOpen, setIsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   const [selected, setSelected] = useState("1min/sec");
+  const formattedCurrentTime = useMemo(() => {
+    const textDate = formatDateForTimeline(currentTime, { detail: true });
+    return textDate;
+  }, [currentTime]);
+
+  const current = formatRangeDateAndTime(
+    formatDateForSliderTimeline(currentTime, { detail: true }),
+  );
+
+  const timeRange = useMemo(() => {
+    if (range) {
+      return {
+        startTime: formatRangeDateAndTime(
+          formatDateForSliderTimeline(range.start, { detail: true }),
+        ),
+        midTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.mid, { detail: true })),
+        endTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.end, { detail: true })),
+      };
+    }
+    return {};
+  }, [range]);
+
   const handlePopOver = useCallback(() => {
     !inEditor && setIsOpen(!isOpen);
   }, [inEditor, isOpen]);
@@ -164,72 +192,6 @@ export default ({
     }
   }, [committer.id, inEditor, isPause, isPlaying, isPlayingReversed, onPause]);
 
-  const formattedCurrentTime = useMemo(() => {
-    const textDate = formatDateForTimeline(currentTime, { detail: true });
-    return textDate;
-  }, [currentTime]);
-
-  const timeRange = useMemo(() => {
-    if (range) {
-      return {
-        startTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.start, { detail: true }),
-        ),
-        midTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.mid, { detail: true })),
-        endTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.end, { detail: true })),
-      };
-    }
-    return {};
-  }, [range]);
-
-  const handleOnDrag: TimeEventHandler = useCallback(
-    (time: Date, committerId: string) => {
-      onTimeChange?.(time, committerId);
-      setCurrentTime?.(currentTime);
-    },
-    [currentTime, onTimeChange, setCurrentTime],
-  );
-
-  const handleOnMouseDown = useCallback(() => {
-    setIsDragging(true);
-  }, []);
-
-  const handleOnMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  const handleOnMouseMove: MouseEventHandler = useCallback(
-    e => {
-      if (!isDragging || !handleOnDrag || !e.target) {
-        return;
-      }
-      if (isDragging && range) {
-        const targetElement = e.currentTarget as HTMLElement;
-        const newPosition = e.clientX - targetElement.getBoundingClientRect().left;
-        const newPositionPercentage = (newPosition / targetElement.offsetWidth) * 100;
-        const newTime = (newPositionPercentage / 100) * (range?.end - range?.start) + range?.start;
-
-        committer.id && handleOnDrag(new Date(newTime), committer.id);
-      }
-    },
-    [committer.id, isDragging, handleOnDrag, range],
-  );
-
-  const sliderPosition = useMemo(() => {
-    if (range) {
-      if (!inEditor) {
-        const totalRange = range?.end - range.start;
-        const currentPosition = currentTime - range.start;
-        let positionPercentage = (currentPosition / totalRange) * 370;
-
-        positionPercentage = Math.max(positionPercentage, 16);
-        positionPercentage = Math.round(positionPercentage);
-        return positionPercentage;
-      }
-    }
-    return 16;
-  }, [range, inEditor, currentTime]);
-
   const handleTick = useCallback(
     (current: Date) => {
       return setCurrentTime?.(current.getTime());
@@ -238,40 +200,40 @@ export default ({
   );
 
   const handleOnReset = useCallback(() => {
-    onTimeChange?.(new Date(resetTime), committer.id);
-    setCurrentTime?.(resetTime);
+    if (!range) return;
+    onTimeChange?.(new Date(range?.start), committer.id);
+    setCurrentTime?.(range?.start);
     isPlaying && setIsPlaying(false);
     isPlayingReversed && setIsPlayingReversed(false);
     committer.id && onPause(committer.id);
-  }, [
-    onTimeChange,
-    resetTime,
-    committer.id,
-    setCurrentTime,
-    isPlaying,
-    isPlayingReversed,
-    onPause,
-  ]);
+  }, [range, onTimeChange, committer.id, setCurrentTime, isPlaying, isPlayingReversed, onPause]);
 
   const handleOnResetAndPlay = useCallback(() => {
     if (!range) return;
     onTimeChange?.(new Date(range?.start), committer.id);
-  }, [range, onTimeChange, committer.id]);
+    if (isPlayingReversed) onTimeChange?.(new Date(range?.end), committer.id);
+  }, [range, onTimeChange, committer.id, isPlayingReversed]);
 
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
-      if (isActive && (committer.source !== "storyTimelineBlock" || committer.id !== activeBlock)) {
+      if (
+        isActive &&
+        (committer.source !== "storyTimelineBlock" || committer.id !== activeBlock) &&
+        range
+      ) {
         setActiveBlock(" ");
         setIsActive(false);
         setIsPause(false);
         setIsPlaying(false);
         setIsPlayingReversed(false);
+
+        const currentTimeValue = timelineValues?.currentTime ?? "";
+        timelineValues
+          ? setCurrentTime?.(getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime())
+          : setCurrentTime?.(range?.start);
       }
     },
-    [activeBlock, isActive],
-  );
-  const current = formatRangeDateAndTime(
-    formatDateForSliderTimeline(currentTime, { detail: true }),
+    [activeBlock, isActive, range, setCurrentTime, timelineValues],
   );
 
   useEffect(() => {
@@ -315,6 +277,68 @@ export default ({
     removeOnCommitEventListener,
     removeTickEventListener,
   ]);
+
+  const handleOnDrag: TimeEventHandler = useCallback(
+    (time: Date, committerId: string) => {
+      onTimeChange?.(time, committerId);
+      setCurrentTime?.(currentTime);
+    },
+    [currentTime, onTimeChange, setCurrentTime],
+  );
+
+  const handleOnMouseDown = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const handleOnMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleOnMouseMove: MouseEventHandler = useCallback(
+    e => {
+      if (isDragging || !handleOnDrag || !e.target || !range) {
+        return;
+      }
+      if (isPlaying || isPlayingReversed) {
+        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
+        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+      }
+    },
+    [isDragging, handleOnDrag, range, isPlaying, isPlayingReversed, committer?.id],
+  );
+
+  useEffect(() => {
+    window.addEventListener("mouseup", handleOnMouseUp, { passive: true });
+    return () => {
+      window.removeEventListener("mouseup", handleOnMouseUp);
+    };
+  }, [handleOnMouseUp]);
+
+  const handleOnClick: MouseEventHandler = useCallback(
+    e => {
+      if ((isPlaying || isPlayingReversed) && range) {
+        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
+        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+      }
+    },
+    [handleOnDrag, isPlaying, isPlayingReversed, range, committer?.id],
+  );
+
+  const sliderPosition = useMemo(() => {
+    if (range) {
+      if (!inEditor) {
+        const totalRange = range?.end - range.start;
+        const currentPosition = currentTime - range.start;
+        let positionPercentage = (currentPosition / totalRange) * 370;
+
+        positionPercentage = Math.max(positionPercentage, 16);
+        positionPercentage = Math.round(positionPercentage);
+        return positionPercentage;
+      }
+    }
+    return 16;
+  }, [range, inEditor, currentTime]);
+
   return {
     formattedCurrentTime,
     timeRange,
@@ -333,6 +357,6 @@ export default ({
     handleOnSpeedChange,
     handleOnMouseDown,
     handleOnMouseMove,
-    handleOnMouseUp,
+    handleOnClick,
   };
 };
