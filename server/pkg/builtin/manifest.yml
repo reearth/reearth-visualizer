@@ -2310,6 +2310,9 @@ extensions:
               type: number
               suffix: px
               defaultValue: 20
+        - id: background
+          title: background Setting
+          type: string
         - id: title
           title: Title Setting
           fields:
@@ -2461,6 +2464,12 @@ extensions:
             - id: cameraPosition
               type: camera
               title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+              defaultValue: 2
   - id: linkButtonStoryBlock
     name: Link Button
     type: storyBlock
