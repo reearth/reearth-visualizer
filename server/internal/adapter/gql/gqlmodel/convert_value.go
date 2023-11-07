@@ -73,6 +73,10 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 			North: v2.North,
 			South: v2.South,
 		}
+	case []string:
+		return v2
+	case []float64:
+		return v2
 	}
 	return nil
 }
