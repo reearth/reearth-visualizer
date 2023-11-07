@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, useEffect } from "react";
 
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -8,10 +8,15 @@ import Text from "../Text";
 const SidePanelSectionField: React.FC<{
   className?: string;
   title?: string;
+  startCollapsed?: boolean;
   children?: ReactNode;
-}> = ({ className, title, children }) => {
+}> = ({ className, title, startCollapsed, children }) => {
   const theme = useTheme();
-  const [opened, setOpened] = useState(true);
+  const [opened, setOpened] = useState<boolean>();
+
+  useEffect(() => {
+    setOpened(!startCollapsed ?? true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Field className={className}>
@@ -42,7 +47,7 @@ const Header = styled.div`
   height: 38px;
 `;
 
-const ArrowIcon = styled(Icon)<{ opened: boolean }>`
+const ArrowIcon = styled(Icon)<{ opened?: boolean }>`
   transform: rotate(${props => (props.opened ? 90 : 180)}deg);
   transition: all 0.2s;
 `;
