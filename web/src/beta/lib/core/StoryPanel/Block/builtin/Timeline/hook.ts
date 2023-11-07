@@ -207,7 +207,6 @@ export default ({
         const targetElement = e.currentTarget as HTMLElement;
         const newPosition = e.clientX - targetElement.getBoundingClientRect().left;
         const newPositionPercentage = (newPosition / targetElement.offsetWidth) * 100;
-        // Calculate the new time based on the newPositionPercentage
         const newTime = (newPositionPercentage / 100) * (range?.end - range?.start) + range?.start;
 
         committer.id && handleOnDrag(new Date(newTime), committer.id);
@@ -255,9 +254,9 @@ export default ({
   ]);
 
   const handleOnResetAndPlay = useCallback(() => {
-    onTimeChange?.(new Date(resetTime), committer.id);
-    setCurrentTime?.(resetTime);
-  }, [onTimeChange, resetTime, committer.id, setCurrentTime]);
+    if (!range) return;
+    onTimeChange?.(new Date(range?.start), committer.id);
+  }, [range, onTimeChange, committer.id]);
 
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
