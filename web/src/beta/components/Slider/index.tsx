@@ -1,5 +1,5 @@
 import RCSlider from "rc-slider";
-import React, { ComponentProps } from "react";
+import React, { ComponentProps, useCallback, useEffect, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -7,16 +7,32 @@ import "rc-slider/assets/index.css";
 
 const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
 
-export type Props = {
-  min?: number;
-  max?: number;
-} & ComponentProps<typeof SliderWithTooltip>;
+export type Props = ComponentProps<typeof SliderWithTooltip>;
 
-const Slider: React.FC<Props> = ({ ...props }) => {
+const Slider: React.FC<Props> = ({ value, onChange, ...props }) => {
   const calculatedStep = props.step ? props.step : props.max ? props.max / 10 : 0.1;
+  const [internalState, setInternalState] = useState(value);
+
+  const handleChange = useCallback(
+    (value: number) => {
+      setInternalState(value);
+    },
+    [setInternalState],
+  );
+
+  useEffect(() => {
+    setInternalState(value);
+  }, [value]);
+
   return (
     <SliderStyled disabled={props.disabled as boolean}>
-      <SliderWithTooltip step={calculatedStep} {...props} />
+      <SliderWithTooltip
+        step={calculatedStep}
+        value={internalState}
+        onChange={handleChange}
+        onAfterChange={onChange}
+        {...props}
+      />
     </SliderStyled>
   );
 };
