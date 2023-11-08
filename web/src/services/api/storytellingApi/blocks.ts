@@ -163,7 +163,6 @@ export default () => {
 
 const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
   const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
-
   return scene?.plugins
     .map(p => {
       const plugin = p.plugin;

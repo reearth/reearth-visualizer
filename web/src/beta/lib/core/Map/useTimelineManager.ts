@@ -25,7 +25,7 @@ export type Timeline = {
   stop: Date;
 };
 
-type EngineClock = {
+export type EngineClock = {
   current: Date | undefined;
   start: Date | undefined;
   stop: Date | undefined;
@@ -56,7 +56,7 @@ type SetOptionsCommand = {
   cmd: "SET_OPTIONS";
   payload: Partial<Pick<TimelineOptions, "multiplier" | "rangeType" | "stepType">>;
 };
-type TimelineCommit = (PlayCommand | PauseCommand | SetTimeCommand | SetOptionsCommand) & {
+export type TimelineCommit = (PlayCommand | PauseCommand | SetTimeCommand | SetOptionsCommand) & {
   committer: TimelineCommitter;
 };
 
