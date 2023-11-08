@@ -2123,6 +2123,7 @@ export type Story = Node & {
   alias: Scalars['String']['output'];
   basicAuthPassword: Scalars['String']['output'];
   basicAuthUsername: Scalars['String']['output'];
+  bgColor?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   isBasicAuthActive: Scalars['Boolean']['output'];
@@ -2441,6 +2442,7 @@ export type UpdateStoryInput = {
   alias?: InputMaybe<Scalars['String']['input']>;
   basicAuthPassword?: InputMaybe<Scalars['String']['input']>;
   basicAuthUsername?: InputMaybe<Scalars['String']['input']>;
+  bgColor?: InputMaybe<Scalars['String']['input']>;
   deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
   index?: InputMaybe<Scalars['Int']['input']>;
   isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;

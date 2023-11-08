@@ -58,18 +58,19 @@ Resource URL: リソースURL
 URL of the data source you want to add.: ''
 Input Text: ''
 Value: ''
-Description around.: ''
-Write down your text: ''
-Asset: ''
+Write syntactically correct data based on the file format you have selected above.: ''
+Input data here: データ入力
+Asset: アセット
 Prioritize Performance: ''
 Add to Layer: レイヤー追加
-Choose layer to add: ''
+Choose layer to add: レイヤーの選択
 Layer of the data source you want to add.: ''
-layer name: ''
+layer name: レイヤー名
 Layer: レイヤー
 Layers: レイヤー
-All Layers: ''
-Layer Style: ''
+All Layers: 全てのレイヤー
+Layer Style: レイヤースタイル
+Scene: シーン
 Outline: アウトライン
 Add Layer from Resource: ''
 Inspector: インスペクター
@@ -82,7 +83,6 @@ Styling: スタイルイング
 Format: フォーマット
 Published: 一般公開
 Unpublished: 非公開
-Scene: シーン
 Story: ストーリー
 Unpublish: 非公開にする
 Update: 更新する
@@ -135,9 +135,9 @@ Sort By: Sort By
 No assets match your search.: 検索条件に該当するアセットは見つかりませんでした。
 You haven't uploaded any assets yet. Click the upload button above and select a compatible file from your computer.: アセットライブラリ
 Please select an layer style before clicking Select.: ''
-Select Layer Style: ''
-No layerStyle match your search.: ''
-You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
+Select Layer Style: レイヤースタイル選択
+No layerStyle match your search.: 検索からレイヤースタイルを見つけられません。
+You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: レイヤースタイルまだ作成してないです。下のパネルにあるプラスボタンを押してください。
 Create New Workspace: 新規ワークスペース作成
 Create: 作成
 Workspace Name: ワークスペース名
@@ -212,10 +212,10 @@ Password: パスワード
 Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
-Left: ''
-Right: ''
+Left: 左
+Right: 右
 Story Panel: ストーリーパネル
-Panel Position: ''
+Panel Position: パネルポジション
 Something went wrong.: 失敗しました。
 Couldn't find the Re:Earth project you were after.: そのプロジェクトは存在されていなさそうです。
 Double click here to write.: ダブルクリックで入力
@@ -452,6 +452,7 @@ One or more assets were successfully deleted.: アセットが削除されまし
 Successfully created workspace!: 新しいワークスペースの作成に成功しました！
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
+Failed to create story page on project creation.: ''
 Successfully created project!: 新しいプロジェクトの作成に成功しました！
 Successfully created layer group: レイヤーが作成されました。
 Failed to create layer group: レイヤーの作成に失敗しました。

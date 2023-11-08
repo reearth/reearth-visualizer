@@ -73,6 +73,9 @@ export const CREATE_SCENE = gql(`
     createScene(input: { projectId: $projectId }) {
       scene {
         id
+        stories{
+          id
+        }
       }
     }
   }

@@ -30,12 +30,7 @@ type Props = {
   onChange?: (text: EditorStateJSONString) => void;
 };
 
-const RichTextEditor: React.FC<Props> = ({
-  editMode = true,
-  text,
-  scrollableContainerId,
-  onChange,
-}) => {
+const RichTextEditor: React.FC<Props> = ({ editMode, text, scrollableContainerId, onChange }) => {
   const t = useT();
   const editorStateJSONStringRef = useRef<EditorStateJSONString>();
 
@@ -98,7 +93,7 @@ const RichTextEditor: React.FC<Props> = ({
           <AutoLinkPlugin />
           <ListMaxIndentLevelPlugin maxDepth={7} />
           <OnChangePlugin onChange={onStateChange} />
-          <SwitchEditModePlugin editable={editMode} />
+          <SwitchEditModePlugin editable={!!editMode} />
           {editorRef.current && (
             <FloatingLinkEditorPlugin
               scrollableContainerId={scrollableContainerId}
