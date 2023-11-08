@@ -12,7 +12,8 @@ export type Notification = {
 };
 
 const NotificationBanner: React.FC = () => {
-  const { visible, notification, setModal, resetNotification } = useHooks();
+  const { isHovered, visible, notification, setModal, setIsHovered, resetNotification } =
+    useHooks();
   const theme = useTheme();
 
   return (
@@ -20,28 +21,32 @@ const NotificationBanner: React.FC = () => {
       aria-hidden={!visible}
       role="banner"
       visible={visible}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       type={notification?.type}>
       <HeadingArea>
-        <Text
-          size="body"
-          color={theme.classic.notification.text}
-          weight="bold"
-          otherProperties={{ padding: "0 0 8px 0" }}>
+        <Text size="body" color={theme.content.strong} weight="bold">
           {notification?.heading}
         </Text>
         <CloseBtn
           role="button"
           icon="cancel"
           size={20}
+          show={isHovered}
           onClick={() => {
             setModal?.(false);
             resetNotification?.();
           }}
         />
       </HeadingArea>
-      <Text size="footnote" color={theme.classic.notification.text}>
-        {notification?.text}
-      </Text>
+      {notification?.text && (
+        <Text
+          size="footnote"
+          color={theme.content.strong}
+          otherProperties={{ padding: "8px 0 0 0" }}>
+          {notification?.text}
+        </Text>
+      )}
     </StyledNotificationBanner>
   );
 };
@@ -55,10 +60,15 @@ const StyledNotificationBanner = styled.div<{
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 49px;
+  top: 30px;
+  left: 0;
   right: 0;
+  margin-left: auto;
+  margin-right: auto;
   width: 312px;
   padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   background-color: ${({ type, theme }) =>
     type === "error"
       ? theme.classic.notification.errorBg
@@ -80,6 +90,8 @@ const HeadingArea = styled.div`
   width: 100%;
 `;
 
-const CloseBtn = styled(Icon)`
+const CloseBtn = styled(Icon)<{ show: boolean }>`
   cursor: pointer;
+  transition: all 1s;
+  opacity: ${({ show }) => (show ? "100%" : "0")};
 `;
