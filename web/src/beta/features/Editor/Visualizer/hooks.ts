@@ -105,7 +105,8 @@ export default ({
       feature?: ComputedFeature,
       layerSelectionReason?: LayerSelectionReason,
     ) => {
-      if (id === selectedLayer?.layerId || !feature) return;
+      if ((!id && !feature && !selectedLayer) ?? (id === selectedLayer?.layerId || !feature))
+        return;
       if (id) {
         setSelectedLayerStyle(undefined);
         setSelectedSceneSetting(undefined);

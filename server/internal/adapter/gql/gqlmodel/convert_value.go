@@ -73,6 +73,12 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 			North: v2.North,
 			South: v2.South,
 		}
+	case []any:
+		gqlArray := make([]any, len(v2))
+		for i, item := range v2 {
+			gqlArray[i] = valueInterfaceToGqlValue(item)
+		}
+		return gqlArray
 	}
 	return nil
 }

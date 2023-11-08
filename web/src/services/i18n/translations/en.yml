@@ -58,20 +58,21 @@ Resource URL: Resource URL
 URL of the data source you want to add.: ''
 Input Text: ''
 Value: ''
-Description around.: ''
-Write down your text: ''
-Asset: ''
-Prioritize Performance: ''
-Add to Layer: ''
+Write syntactically correct data based on the file format you have selected above.: Write syntactically correct data based on the file format you have selected above.
+Input data here: Input data here
+Asset: Asset
+Prioritize Performance: Prioritize Performance
+Add to Layer: Add to Layer
 Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
 Layer: Layer
 Layers: Layers
-All Layers: ''
-Layer Style: ''
+All Layers: All Layers
+Layer Style: Layer Style
+Scene: Scene
 Outline: Outline
-Add Layer from Resource: ''
+Add Layer from Resource: Add Layer from Resource
 Inspector: Inspector
 ID: ID
 Geometry: Geometry
@@ -82,7 +83,6 @@ Styling: Styling
 Format: Format
 Published: Published
 Unpublished: Unpublished
-Scene: Scene
 Story: Story
 Unpublish: Unpublish
 Update: Update
@@ -491,6 +491,7 @@ One or more assets were successfully deleted.: One or more assets were successfu
 Successfully created workspace!: Successfully created workspace!
 Failed to create project.: Failed to create project.
 Default: Default
+Failed to create story page on project creation.: Failed to create story page on project creation.
 Successfully created project!: Successfully created project!
 Successfully created layer group: Successfully created layer group
 Failed to create layer group: Failed to create layer group

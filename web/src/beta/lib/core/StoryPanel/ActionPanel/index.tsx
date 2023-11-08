@@ -75,6 +75,7 @@ const ActionPanel: React.FC<Props> = ({
     }
     return menuItems;
   }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
+  // console.log("PS", panelSettings);
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
