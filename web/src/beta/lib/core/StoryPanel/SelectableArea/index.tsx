@@ -90,7 +90,7 @@ const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean }>`
   transition: all 0.3s;
   padding: 1px;
   position: relative;
-  overflow: hidden;
+  overflow: ${({ isSelected }) => (isSelected ? "visible" : "hidden")};
 
   :hover {
     border-color: ${({ isSelected, theme }) => !isSelected && theme.select.weaker};
