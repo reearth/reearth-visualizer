@@ -41,7 +41,7 @@ const LayerStyleCard: React.FC<Props> = ({
     }
     const timeoutId = window.setTimeout(() => {
       onSelect?.(!selected);
-    }, 300);
+    }, 200);
     setClickTimeoutId(timeoutId);
   }, [clickTimeoutId, onSelect, selected]);
 
