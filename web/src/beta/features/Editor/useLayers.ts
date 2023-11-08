@@ -5,7 +5,7 @@ import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { layersVar, selectedLayerVar } from "@reearth/services/state";
+import { selectedLayerVar } from "@reearth/services/state";
 
 type LayerProps = {
   sceneId: string;
@@ -42,8 +42,6 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
-  // TODO: Fix this implmentation, maybe use useEffect.
-  layersVar(nlsLayers);
 
   const selectedLayerId = useReactiveVar(selectedLayerVar);
 
