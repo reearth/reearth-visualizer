@@ -41,6 +41,7 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
     id: story.id,
     title: story.title,
     position: story.panelPosition === "RIGHT" ? "right" : "left",
+    bgColor: story.bgColor ?? "#f1f1f1",
     pages: storyPages(story.pages),
   };
 };

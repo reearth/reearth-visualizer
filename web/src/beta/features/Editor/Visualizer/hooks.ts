@@ -205,7 +205,6 @@ export default ({
     () => convertStory(scene?.stories.find(s => s.id === storyId)),
     [storyId, scene?.stories],
   );
-
   const handleCurrentPageChange = useCallback(
     (pageId?: string) => selectSelectedStoryPageId(pageId),
     [selectSelectedStoryPageId],

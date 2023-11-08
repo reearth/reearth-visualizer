@@ -1,5 +1,6 @@
 // Component Props
 export type Props = {
+  className?: string;
   name?: string;
   description?: string;
   value?: string;
