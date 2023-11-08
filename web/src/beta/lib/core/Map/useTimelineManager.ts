@@ -67,8 +67,7 @@ export type TimelineCommitter = {
     | "pluginAPI"
     | "featureResource"
     | "storyTimelineBlock"
-    | "storyPage"
-    | "dateTimeField";
+    | "storyPage";
   id?: string;
 };
 
