@@ -87,9 +87,9 @@ export const TextArea = styled.textarea`
   border: 1px solid #777;
   border-radius: 4px;
   outline: none;
+  resize: none;
   padding: 5px 10px;
   color: ${props => props.theme.content.main};
-  overflow: hidden;
 `;
 
 export const LayerWrapper = styled.div`
