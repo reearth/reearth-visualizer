@@ -132,9 +132,13 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               fileFormat={fileFormat}
               setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
             />
-            <InputGroup label={t("Value")} description={t("Description around.")}>
+            <InputGroup
+              label={t("Value")}
+              description={t(
+                "Write syntactically correct data based on the file format you have selected above.",
+              )}>
               <TextArea
-                placeholder={t("Write down your text")}
+                placeholder={t("Input data here")}
                 rows={8}
                 value={value}
                 onChange={e => setValue(e.target.value)}
