@@ -32,8 +32,26 @@ const LayerStyleCard: React.FC<Props> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(name);
+  const [clickTimeoutId, setClickTimeoutId] = useState<any>(null);
 
-  const handleNameClick = useCallback(() => setIsEditing(true), []);
+  const handleClick = useCallback(() => {
+    if (clickTimeoutId !== null) {
+      clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
+    }
+    const timeoutId = window.setTimeout(() => {
+      onSelect?.(!selected);
+    }, 300);
+    setClickTimeoutId(timeoutId);
+  }, [clickTimeoutId, onSelect, selected]);
+
+  const handleNameClick = useCallback(() => {
+    if (clickTimeoutId !== null) {
+      clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
+    }
+    setIsEditing(true);
+  }, [clickTimeoutId]);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -77,7 +95,7 @@ const LayerStyleCard: React.FC<Props> = ({
     <Wrapper
       className={className}
       selected={selected}
-      onClick={() => onSelect?.(!selected)}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
       <MainWrapper>
@@ -181,4 +199,9 @@ const StyleName = styled(Text)`
 
 const StyledTextInput = styled(TextInput)`
   width: 100%;
+  font-size: 12px;
+  color: ${({ theme }) => theme.content.main};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 `;
