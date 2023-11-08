@@ -1,5 +1,5 @@
 import { debounce } from "lodash-es";
-import { useContext, useMemo, useState, useCallback } from "react";
+import { useContext, useMemo, useState, useCallback, useEffect } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import ColorField from "@reearth/beta/components/fields/ColorField";
@@ -69,16 +69,20 @@ const LayerBlockEditor: React.FC<Props> = ({
         return;
       }
       const item = items.find(i => i.id === itemId);
+
       if (!item?.showLayers?.value) return;
 
       // Hide all layers
       const layers = visualizer.current?.layers;
-      const allLayers = layers?.layers() ?? [];
-      console.log(allLayers);
-      layers?.hide(...allLayers.map(({ id }) => id));
 
       // Show only selected layers
       layers?.show(...item.showLayers.value);
+      const allLayers = layers?.layers() ?? [];
+
+      // Hide the rest
+      layers?.hide(
+        ...allLayers.map(({ id }) => id).filter(id => !item.showLayers?.value?.includes(id)),
+      );
     },
     [inEditor, visualizer, items],
   );
@@ -88,6 +92,17 @@ const LayerBlockEditor: React.FC<Props> = ({
   const listItems = useMemo(
     () => items.map(({ id, title }) => ({ id, value: title?.value ?? defaultTitle })),
     [items, defaultTitle],
+  );
+
+  useEffect(
+    () => () => {
+      const allLayers = visualizer.current?.layers?.layers();
+
+      if (!Array.isArray(allLayers)) return;
+      // Show all the layers after the component is unmounted
+      visualizer.current?.layers.show(...allLayers.map(({ id }) => id));
+    },
+    [visualizer],
   );
 
   return (
