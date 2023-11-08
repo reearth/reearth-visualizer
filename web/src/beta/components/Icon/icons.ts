@@ -56,6 +56,11 @@ import Timeline from "./Icons/timeline.svg";
 import PlayRight from "./Icons/play-right.svg";
 import PlayLeft from "./Icons/play-left.svg";
 import Ellipse from "./Icons/ellipse.svg";
+import TimelinePlayRight from "./Icons/timeline-play-right.svg";
+import TimelinePlayLeft from "./Icons/timeline-play-left.svg";
+import Pause from "./Icons/pause.svg";
+import Slider from "./Icons/slider.svg";
+import Set from "./Icons/set.svg";
 
 // Dashboard
 import Dashboard from "./Icons/dashboard.svg";
@@ -85,6 +90,7 @@ import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
 import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
 import MdTextStoryBlock from "./Icons/mdTextStoryBlock.svg";
 import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg";
+import TimelineStoryBlock from "./Icons/timelineStoryBlock.svg";
 
 // Widget tab
 import Desktop from "./Icons/desktop.svg";
@@ -141,6 +147,11 @@ export default {
   ellipse: Ellipse,
   playRight: PlayRight,
   playLeft: PlayLeft,
+  timelinePlayLeft: TimelinePlayLeft,
+  timelinePlayRight: TimelinePlayRight,
+  pause: Pause,
+  slider: Slider,
+  set: Set,
   storyPage: StoryPage,
   square: Square,
   swiper: Swiper,
@@ -176,6 +187,7 @@ export default {
   imageStoryBlock: ImageStoryBlock,
   mdTextStoryBlock: MdTextStoryBlock,
   cameraButtonStoryBlock: CameraButtonStoryBlock,
+  timelineStoryBlock: TimelineStoryBlock,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,

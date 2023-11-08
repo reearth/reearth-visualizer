@@ -150,6 +150,7 @@ const processPropertyGroups = (
         ui: toUi(schema.ui) || undefined,
         title: schema.translatedTitle || undefined,
         description: schema.translatedDescription || undefined,
+        choices: schema.choices || undefined,
       };
 
       if (!used) {

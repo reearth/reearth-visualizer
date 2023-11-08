@@ -33,4 +33,5 @@ export type Field<V = any> = {
   title?: string;
   description?: string;
   value?: V;
+  choices?: string[];
 };
