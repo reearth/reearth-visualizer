@@ -24,11 +24,11 @@ type CommonProps = {
 type SingleSelect = {
   onChange: (key: string) => void;
   value?: string;
-  multiSelect?: false;
+  multiSelect: false;
 } & CommonProps;
 
 type MultiSelect = {
-  onChange: (key: string[] | undefined) => void;
+  onChange: (keys: string[] | undefined) => void;
   value?: string[];
   multiSelect: true;
 } & CommonProps;
