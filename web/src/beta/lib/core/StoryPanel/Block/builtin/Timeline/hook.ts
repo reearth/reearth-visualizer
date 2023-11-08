@@ -316,12 +316,12 @@ export default ({
 
   const handleOnClick: MouseEventHandler = useCallback(
     e => {
-      if ((isPlaying || isPlayingReversed) && range) {
+      if ((isPlaying || isPlayingReversed || isPause) && range) {
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [handleOnDrag, isPlaying, isPlayingReversed, range, committer?.id],
+    [isPlaying, isPlayingReversed, isPause, range, committer?.id, handleOnDrag],
   );
 
   const sliderPosition = useMemo(() => {
