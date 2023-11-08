@@ -36,7 +36,7 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
+  onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
 };
 
 const StoryPanel: React.FC<Props> = ({
@@ -87,21 +87,23 @@ const StoryPanel: React.FC<Props> = ({
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
       <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
-        <StoryBlock
-          block={{
-            id: titleId,
-            pluginId: "reearth",
-            extensionId: "titleStoryBlock",
-            name: t("Title"),
-            propertyId: page?.propertyId ?? "",
-            property: { title },
-          }}
-          isEditable={isEditable}
-          isSelected={selectedStoryBlockId === titleId}
-          onClick={() => onBlockSelect?.(titleId)}
-          onClickAway={onBlockSelect}
-          onChange={onPropertyUpdate}
-        />
+        {(isEditable || title?.title?.value) && (
+          <StoryBlock
+            block={{
+              id: titleId,
+              pluginId: "reearth",
+              extensionId: "titleStoryBlock",
+              name: t("Title"),
+              propertyId: page?.propertyId ?? "",
+              property: { title },
+            }}
+            isEditable={isEditable}
+            isSelected={selectedStoryBlockId === titleId}
+            onClick={() => onBlockSelect?.(titleId)}
+            onClickAway={onBlockSelect}
+            onChange={onPropertyUpdate}
+          />
+        )}
 
         {isEditable && (
           <BlockAddBar
@@ -128,7 +130,7 @@ const StoryPanel: React.FC<Props> = ({
                 items.splice(index, 0, item);
                 return items;
               });
-              await onStoryBlockMove(page?.id || "", index, item.id);
+              await onStoryBlockMove?.(page?.id || "", index, item.id);
             }}
             renderItem={(b, idx) => {
               return (
@@ -168,9 +170,9 @@ const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
   color: ${({ theme }) => theme.content.weaker};
   ${({ gap }) => gap && `gap: ${gap}px;`}
 
-  padding-top: ${({ padding }) => padding.top + "px"};
-  padding-bottom: ${({ padding }) => padding.bottom + "px"};
-  padding-left: ${({ padding }) => padding.left + "px"};
-  padding-right: ${({ padding }) => padding.right + "px"};
+  ${({ padding }) => `padding-top: ${padding.top}px;`}
+  ${({ padding }) => `padding-bottom: ${padding.bottom}px;`}
+  ${({ padding }) => `padding-left: ${padding.left}px;`}
+  ${({ padding }) => `padding-right: ${padding.right}px;`}
   box-sizing: border-box;
 `;

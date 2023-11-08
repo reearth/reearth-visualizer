@@ -34,8 +34,8 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
   );
 
   const currentWorkspaceId = useMemo(
-    () => workspaceId ?? scene?.teamId,
-    [workspaceId, scene?.teamId],
+    () => workspaceId ?? scene?.workspaceId,
+    [workspaceId, scene?.workspaceId],
   );
 
   const { loading: loadingProject } = useProjectQuery(currentProjectId);

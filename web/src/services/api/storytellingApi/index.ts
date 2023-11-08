@@ -77,7 +77,7 @@ export default () => {
     [updateStoryMutation, t, setNotification],
   );
 
-  const [publishStoryMutation] = useMutation(PUBLISH_STORY);
+  const [publishStoryMutation, { loading: publishStoryLoading }] = useMutation(PUBLISH_STORY);
 
   const usePublishStory = useCallback(
     async (s: PublishStatus, storyId?: string, alias?: string) => {
@@ -121,6 +121,7 @@ export default () => {
   } = useBlocks();
 
   return {
+    publishStoryLoading,
     useStoriesQuery,
     useCreateStory,
     useUpdateStory,

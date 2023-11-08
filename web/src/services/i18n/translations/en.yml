@@ -24,9 +24,19 @@ Time: Time
 Time Zone: Time Zone
 set: set
 Remove: Remove
-Add Item: ''
-Please choose an option: ''
-Add text here: ''
+Add Item: Add Item
+Settings: Settings
+Please choose an option: Please choose an option
+Add text here: Add text here
+Timeline Settings: Timeline Settings
+'* Start Time': '* Start Time'
+Start time for the timeline: Start time for the timeline
+'* End Time': '* End Time'
+End time for the timeline: End time for the timeline
+'* Current Time': '* Current Time'
+Current time should be between start and end time: Current time should be between start and end time
+Please make sure the Current time must between the Start time and End Time.: Please make sure the Current time must between the Start time and End Time.
+not set: not set
 Wrong file format: Wrong file format
 Choose: Choose
 Upload: Upload
@@ -48,20 +58,21 @@ Resource URL: Resource URL
 URL of the data source you want to add.: ''
 Input Text: ''
 Value: ''
-Description around.: ''
-Write down your text: ''
-Asset: ''
-Prioritize Performance: ''
-Add to Layer: ''
+Write syntactically correct data based on the file format you have selected above.: Write syntactically correct data based on the file format you have selected above.
+Input data here: Input data here
+Asset: Asset
+Prioritize Performance: Prioritize Performance
+Add to Layer: Add to Layer
 Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
 Layer: Layer
 Layers: Layers
-All Layers: ''
-Layer Style: ''
+All Layers: All Layers
+Layer Style: Layer Style
+Scene: Scene
 Outline: Outline
-Add Layer from Resource: ''
+Add Layer from Resource: Add Layer from Resource
 Inspector: Inspector
 ID: ID
 Geometry: Geometry
@@ -72,7 +83,6 @@ Styling: Styling
 Format: Format
 Published: Published
 Unpublished: Unpublished
-Scene: Scene
 Story: Story
 Unpublish: Unpublish
 Update: Update
@@ -95,9 +105,13 @@ Copy: Copy
 '* Anyone can see your project with this URL': '* Anyone can see your project with this URL'
 Embed Code: Embed Code
 '* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
-more options: more options
+Publish domain: Publish domain
+More options: More options
+Need to change domain related settings?: Need to change domain related settings?
+Go to settings: Go to settings
 Search engine indexing: Search engine indexing
 Page will be available as result on search engines: ''
+Unpublishing: Unpublishing
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
@@ -221,6 +235,8 @@ Left: ''
 Right: ''
 Story Panel: ''
 Panel Position: ''
+Something went wrong.: Something went wrong.
+Couldn't find the Re:Earth project you were after.: Couldn't find the Re:Earth project you were after.
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 aria-label-compass: compass
@@ -265,7 +281,6 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
-not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
@@ -408,6 +423,7 @@ Gap Spacing: Gap Spacing
 Align Center: ''
 Enable Editor Mode: Enable Editor Mode
 Close: Close
+more options: more options
 Add a tag group: Add a tag group
 Add a tag: Add a tag
 Auto: Auto
@@ -475,6 +491,7 @@ One or more assets were successfully deleted.: One or more assets were successfu
 Successfully created workspace!: Successfully created workspace!
 Failed to create project.: Failed to create project.
 Default: Default
+Failed to create story page on project creation.: Failed to create story page on project creation.
 Successfully created project!: Successfully created project!
 Successfully created layer group: Successfully created layer group
 Failed to create layer group: Failed to create layer group

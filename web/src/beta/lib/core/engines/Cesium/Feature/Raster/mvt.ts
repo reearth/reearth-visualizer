@@ -69,11 +69,13 @@ export const useMVT = ({
                 return "polyline";
               case "Point":
                 return "marker";
+              default:
+                return;
             }
           })();
           const computedFeature = ((): ComputedFeature | void => {
             const layer = cachedCalculatedLayerRef.current?.layer;
-            if (layer?.type !== "simple") {
+            if (layer?.type !== "simple" || !appearanceType) {
               return;
             }
             const feature = makeFeature("", mvtFeature, tile, appearanceType);
@@ -144,8 +146,12 @@ export const useMVT = ({
                 return "polyline";
               case "Point":
                 return "marker";
+              default:
+                return;
             }
           })();
+          if (!appearanceType) return;
+
           const id = mvtFeature.id
             ? String(mvtFeature.id)
             : idFromGeometry(mvtFeature.loadGeometry(), tile);

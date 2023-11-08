@@ -39,6 +39,7 @@ type Storytelling struct {
 	file             gateway.File
 	transaction      usecasex.Transaction
 	nlsLayerRepo     repo.NLSLayer
+	layerStyles      repo.Style
 }
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
@@ -57,6 +58,7 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		file:             gr.File,
 		transaction:      r.Transaction,
 		nlsLayerRepo:     r.NLSLayer,
+		layerStyles:      r.Style,
 	}
 }
 
@@ -166,6 +168,10 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 
 	if inp.PanelPosition != nil {
 		story.SetPanelPosition(*inp.PanelPosition)
+	}
+
+	if inp.BgColor != nil {
+		story.SetBgColor(*inp.BgColor)
 	}
 
 	oldAlias := story.Alias()
@@ -281,6 +287,11 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		return nil, err
 	}
 
+	layerStyles, err := i.layerStyles.FindByScene(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+
 	prevAlias := story.Alias()
 	if inp.Alias == nil && prevAlias == "" && inp.Status != storytelling.PublishmentStatusPrivate {
 		return nil, interfaces.ErrProjectAliasIsNotSet
@@ -337,7 +348,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
-			).ForScene(scene).WithNLSLayers(&nlsLayers).WithStory(story).Build(ctx, w, time.Now(), true)
+			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true)
 		}()
 
 		// Save

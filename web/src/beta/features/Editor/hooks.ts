@@ -1,4 +1,3 @@
-import { useReactiveVar } from "@apollo/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
@@ -7,8 +6,8 @@ import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import {
   useWidgetAlignEditorActivated,
-  isVisualizerReadyVar,
-  currentCameraVar,
+  useIsVisualizerReady,
+  useCurrentCamera,
 } from "@reearth/services/state";
 
 import type { Tab } from "../Navbar";
@@ -19,10 +18,9 @@ import type { Device } from "./tabs/widgets/Nav";
 export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const visualizerRef = useRef<MapRef | null>(null);
 
-  const isVisualizerReady = useReactiveVar(isVisualizerReadyVar);
-  const currentCamera = useReactiveVar(currentCameraVar);
+  const [isVisualizerReady] = useIsVisualizerReady();
+  const [currentCamera, setCurrentCamera] = useCurrentCamera();
 
-  const [selectedSceneSetting, setSceneSetting] = useState(false);
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
     tab === "story" ? "story" : "default",
@@ -75,8 +73,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     [setWidgetEditor],
   );
 
-  const handleSceneSettingSelect = useCallback(() => setSceneSetting(selected => !selected), []);
-
   const handleFlyTo: FlyTo = useCallback(
     (target, options) => {
       if (!isVisualizerReady) return;
@@ -85,12 +81,14 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     [isVisualizerReady],
   );
 
-  const handleCameraUpdate = useCallback((camera: Camera) => currentCameraVar(camera), []);
+  const handleCameraUpdate = useCallback(
+    (camera: Camera) => setCurrentCamera(camera),
+    [setCurrentCamera],
+  );
 
   return {
     visualizerRef,
     isVisualizerReady,
-    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -99,7 +97,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     currentCamera,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
-    handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,

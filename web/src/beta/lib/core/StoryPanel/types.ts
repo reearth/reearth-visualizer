@@ -1,6 +1,9 @@
+export type Position = "left" | "right";
+
 export type Story = {
   id: string;
   title?: string;
+  position: Position;
   pages: StoryPage[];
 };
 
@@ -8,6 +11,7 @@ export type StoryPage = {
   id: string;
   title?: string;
   swipeable?: boolean;
+  layerIds?: string[];
   propertyId?: string;
   property?: any;
   blocks: StoryBlock[];

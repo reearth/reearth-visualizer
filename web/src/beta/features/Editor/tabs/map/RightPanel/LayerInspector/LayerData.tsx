@@ -13,11 +13,15 @@ const LayerData: React.FC<Props> = ({ selectedLayer }) => {
     <Wrapper>
       <Text size="body">{t("Format")}</Text>
       <ValueWrapper>
-        <Text size="body">{selectedLayer.config?.data?.type}</Text>
+        <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
+          {selectedLayer.config?.data?.type}
+        </StyledText>
       </ValueWrapper>
       <Text size="body">{t("Resource URL")}</Text>
       <ValueWrapper>
-        <Text size="body">{selectedLayer.config?.data?.url}</Text>
+        <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
+          {selectedLayer.config?.data?.url}
+        </StyledText>
       </ValueWrapper>
     </Wrapper>
   );
@@ -35,4 +39,8 @@ const ValueWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   padding: 4px 8px;
+`;
+
+const StyledText = styled(Text)`
+  word-break: break-all;
 `;

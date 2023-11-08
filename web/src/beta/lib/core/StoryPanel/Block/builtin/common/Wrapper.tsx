@@ -29,7 +29,6 @@ type Props = {
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   onClick?: () => void;
-  onClickAway?: () => void;
   onRemove?: () => void;
 };
 
@@ -44,7 +43,6 @@ const BlockWrapper: React.FC<Props> = ({
   dndEnabled = true,
   settingsEnabled = true,
   onClick,
-  onClickAway,
   onRemove,
 }) => {
   const {
@@ -81,13 +79,14 @@ const BlockWrapper: React.FC<Props> = ({
         setEditMode={setEditMode}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
-        onRemove={onRemove}
-        onClickAway={onClickAway}>
+        onRemove={onRemove}>
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
-          onClick={handleBlockClick}>
-          {children ?? <Template icon={icon} />}
+          onClick={e => {
+            handleBlockClick(e);
+          }}>
+          {children ?? (isEditable && <Template icon={icon} />)}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>

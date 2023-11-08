@@ -1,11 +1,11 @@
 import { mapValues } from "lodash-es";
 
-export function processPublishedProperty(p: any): any {
+export const processStoryProperty = (p: any): any => {
   if (typeof p !== "object") return p;
   return mapValues(p, g =>
     Array.isArray(g) ? g.map(h => processPropertyGroup(h)) : processPropertyGroup(g),
   );
-}
+};
 
 function processPropertyGroup(g: any): any {
   if (typeof g !== "object") return g;
@@ -14,16 +14,18 @@ function processPropertyGroup(g: any): any {
     if (Array.isArray(v)) {
       return v.map(vv =>
         typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v
-          ? { ...vv, height: vv.altitude }
-          : vv,
+          ? { value: { ...vv, height: vv.altitude } }
+          : { value: vv },
       );
     }
     if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
       return {
-        ...v,
-        height: v.altitude,
+        value: {
+          ...v,
+          height: v.altitude,
+        },
       };
     }
-    return v;
+    return { value: v };
   });
 }

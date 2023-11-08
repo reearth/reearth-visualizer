@@ -1,19 +1,25 @@
-import React from "react";
+import { useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
 import { DataProps } from "..";
-import { ColJustifyBetween, AssetWrapper, InputGroup, Input, SubmitWrapper } from "../utils";
+import {
+  ColJustifyBetween,
+  AssetWrapper,
+  InputGroup,
+  Input,
+  SubmitWrapper,
+  generateTitle,
+} from "../utils";
 
 const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = useState("");
 
   const handleSubmit = () => {
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateRandomString(5),
+      title: generateTitle(value),
       visible: true,
       config: {
         data: {

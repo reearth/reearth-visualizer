@@ -22,7 +22,7 @@ import Crust, {
   BuiltinWidgets,
   InteractionModeType,
 } from "../Crust";
-import { Tag } from "../mantle";
+import { ComputedFeature, Tag } from "../mantle";
 import Map, {
   type ValueTypes,
   type ValueType,
@@ -35,6 +35,7 @@ import Map, {
   type ComputedLayer,
 } from "../Map";
 import { Ref as MapRef } from "../Map";
+import { Position } from "../StoryPanel/types";
 
 import { VisualizerProvider } from "./context";
 import DropHolder from "./DropHolder";
@@ -68,14 +69,15 @@ export type Props = {
   floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
-  clusters?: Cluster[];
+  clusters?: Cluster[]; // TODO: remove completely from beta core
   camera?: Camera;
+  storyPanelPosition?: Position;
   interactionMode?: InteractionModeType;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
   small?: boolean;
   ready?: boolean;
-  tags?: Tag[];
+  tags?: Tag[]; // TODO: remove completely from beta core
   selectedBlockId?: string;
   useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
@@ -85,8 +87,8 @@ export type Props = {
   onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   onLayerSelect?: (
     layerId: string | undefined,
-    featureId: string | undefined,
     layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+    feature: ComputedFeature | undefined,
     reason: LayerSelectionReason | undefined,
   ) => void;
   onWidgetLayoutUpdate?: (
@@ -147,7 +149,8 @@ const Visualizer = memo(
         pluginProperty,
         zoomedLayerId,
         useExperimentalSandbox,
-        children,
+        storyPanelPosition = "left",
+        children: storyPanel,
         onLayerDrop,
         onLayerSelect,
         onCameraChange,
@@ -222,7 +225,7 @@ const Visualizer = memo(
         <ErrorBoundary FallbackComponent={Err}>
           <Wrapper>
             <VisualizerProvider mapRef={mapRef}>
-              {children}
+              {storyPanelPosition === "left" && storyPanel}
               <Filled ref={wrapperRef}>
                 {isDroppable && <DropHolder />}
                 <Crust
@@ -299,6 +302,7 @@ const Visualizer = memo(
                   onMount={onMount}
                 />
               </Filled>
+              {storyPanelPosition === "right" && storyPanel}
             </VisualizerProvider>
           </Wrapper>
         </ErrorBoundary>

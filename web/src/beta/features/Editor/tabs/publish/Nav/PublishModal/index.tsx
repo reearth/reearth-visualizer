@@ -27,6 +27,7 @@ type Props = {
   onClose?: () => void;
   onCopyToClipBoard?: () => void;
   onAliasValidate?: (alias: string) => void;
+  onNavigateToSettings?: (page?: "story" | "public" | "asset" | "plugin" | undefined) => void;
 };
 
 const PublishModal: React.FC<Props> = ({
@@ -42,6 +43,7 @@ const PublishModal: React.FC<Props> = ({
   onPublish,
   onCopyToClipBoard,
   onAliasValidate,
+  onNavigateToSettings,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -104,7 +106,7 @@ const PublishModal: React.FC<Props> = ({
       : t("Continue");
   }, [t, statusChanged, publishing]);
 
-  const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "Close"), [statusChanged]);
+  const secondaryButtonText = useMemo(() => (!statusChanged ? "Cancel" : "OK"), [statusChanged]);
 
   const updateDescriptionText = useMemo(() => {
     return publishing === "updating"
@@ -121,7 +123,13 @@ const PublishModal: React.FC<Props> = ({
       isVisible={isVisible}
       size="sm"
       title={modalTitleText}
-      button1={<Button text={secondaryButtonText} buttonType="secondary" onClick={handleClose} />}
+      button1={
+        <Button
+          text={secondaryButtonText}
+          buttonType={statusChanged ? "primary" : "secondary"}
+          onClick={handleClose}
+        />
+      }
       button2={
         !statusChanged && (
           <Button
@@ -136,24 +144,36 @@ const PublishModal: React.FC<Props> = ({
       {statusChanged ? (
         <Section>
           <Subtitle size="body">{t("Your project has been published!")}</Subtitle>
-          <Subtitle size="body">{t("Public URL")}</Subtitle>
+          <Subtitle size="footnote">{t("Public URL")}</Subtitle>
           <div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Text size="body" color={theme.select.strong}>
+            <UrlWrapper justify="space-between">
+              <Text
+                size="body"
+                weight="bold"
+                color={theme.primary.main}
+                onClick={() => window.open(purl, "_blank")}>
                 {purl}
               </Text>
-              <Button onClick={handleCopyToClipBoard("url", purl)}>{t("Copy")}</Button>
-            </div>
+              <Text
+                size="body"
+                color={theme.primary.main}
+                onClick={handleCopyToClipBoard("url", purl)}>
+                {t("Copy")}
+              </Text>
+            </UrlWrapper>
             <Text size="footnote">{t("* Anyone can see your project with this URL")}</Text>
           </div>
-          <Subtitle size="body">{t("Embed Code")}</Subtitle>
+          <Subtitle size="footnote">{t("Embed Code")}</Subtitle>
           <div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Text size="footnote" color={theme.select.strong}>
-                {embedCode}
+            <UrlWrapper justify="space-between">
+              <Text size="footnote">{embedCode}</Text>
+              <Text
+                size="body"
+                color={theme.primary.main}
+                onClick={handleCopyToClipBoard("embedCode", embedCode)}>
+                {t("Copy")}
               </Text>
-              <Button onClick={handleCopyToClipBoard("embedCode", embedCode)}>{t("Copy")}</Button>
-            </div>
+            </UrlWrapper>
             <Text size="xFootnote">
               {t("* Please use this code if you want to embed your project into a webpage")}
             </Text>
@@ -163,19 +183,30 @@ const PublishModal: React.FC<Props> = ({
         <>
           <Section>
             <Text size="body">{updateDescriptionText}</Text>
+          </Section>
+          <Section>
+            <Text size="footnote">{t("Publish domain")}</Text>
             {url && alias && (
-              <PublishLink href={purl} target="blank">
-                <UrlText size="body" color={theme.classic.main.accent}>
+              <UrlWrapper onClick={() => window.open(purl, "_blank")}>
+                <Text size="body" weight="bold" color={theme.primary.main}>
                   {purl}
-                </UrlText>
-              </PublishLink>
+                </Text>
+              </UrlWrapper>
             )}
           </Section>
           <OptionsToggle onClick={() => setOptions(!showOptions)}>
-            <Text size="footnote">{t("more options")}</Text>
+            <Text size="footnote">{t("More options")}</Text>
             <ArrowIcon icon="arrowToggle" size={16} open={showOptions} />
           </OptionsToggle>
           <HideableSection showOptions={showOptions}>
+            <div>
+              <DomainText size="footnote">
+                {t("Need to change domain related settings?")}
+              </DomainText>
+              <Button size="small" onClick={() => onNavigateToSettings?.("public")}>
+                {t("Go to settings")}
+              </Button>
+            </div>
             <ToggleField
               name={t("Search engine indexing")}
               description={t("Page will be available as result on search engines")}
@@ -186,12 +217,17 @@ const PublishModal: React.FC<Props> = ({
         </>
       ) : (
         <Section>
-          <StyledIcon icon="alert" color={theme.classic.main.warning} />
+          <Header>
+            <Icon icon="alert" />
+            <Text size="h5" weight="bold">
+              {t("Unpublishing")}
+            </Text>
+          </Header>
           <Subtitle size="body">{t("Your project will be unpublished.")}</Subtitle>
           <Subtitle size="body">
             {t("This means that anybody with the URL will become unable to view this project.")}
           </Subtitle>
-          <Text size="body" color={theme.classic.main.warning}>
+          <Text size="body" color={theme.warning.main}>
             {t("**Warning**: This includes websites where this project is embedded.")}
           </Text>
         </Section>
@@ -215,20 +251,21 @@ const Subtitle = styled(Text)`
   text-align: left;
 `;
 
-const StyledIcon = styled(Icon)`
-  margin-bottom: ${`${metricsSizes["xl"]}px`};
-`;
-
-const PublishLink = styled.a`
-  text-decoration: none;
+const UrlWrapper = styled.div<{ justify?: string }>`
+  display: flex;
+  justify-content: ${({ justify }) => justify ?? "center"};
+  align-items: center;
+  border: 1px solid ${({ theme }) => theme.outline.weak};
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
 `;
 
 const OptionsToggle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: ${`0 0 ${metricsSizes["m"]}px 0`};
-  color: ${({ theme }) => theme.classic.main.text};
+  color: ${({ theme }) => theme.content.main};
   cursor: pointer;
   user-select: none;
 `;
@@ -239,14 +276,17 @@ const ArrowIcon = styled(Icon)<{ open?: boolean }>`
     open ? "translateY(10%) rotate(90deg)" : "translateY(0) rotate(180deg)"};
 `;
 
-const UrlText = styled(Text)`
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: ${`${metricsSizes["2xl"]}px 0`};
-`;
-
 const HideableSection = styled(Section)<{ showOptions?: boolean }>`
   display: ${props => (props.showOptions ? null : "none")};
+`;
+
+const DomainText = styled(Text)`
+  margin-bottom: 8px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  gap: 12px;
+  color: ${({ theme }) => theme.warning.main};
+  margin-bottom: 12px;
 `;

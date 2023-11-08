@@ -22,6 +22,7 @@ type StorytellingDocument struct {
 	UpdatedAt     time.Time
 	Index         int
 	PanelPosition string
+	BgColor       string
 
 	IsBasicAuthActive bool
 	BasicAuthUsername string
@@ -72,6 +73,7 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 		UpdatedAt:     s.UpdatedAt(),
 		Index:         1,
 		PanelPosition: string(s.PanelPosition()),
+		BgColor:       s.BgColor(),
 
 		IsBasicAuthActive: s.IsBasicAuthActive(),
 		BasicAuthUsername: s.BasicAuthUsername(),
@@ -179,6 +181,7 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		Alias(d.Alias).
 		Status(storytelling.PublishmentStatus(d.Status)).
 		PanelPosition(storytelling.Position(d.PanelPosition)).
+		BgColor(d.BgColor).
 		PublishedAt(d.PublishedAt).
 		UpdatedAt(d.UpdatedAt).
 		Pages(storytelling.NewPageList(pages)).

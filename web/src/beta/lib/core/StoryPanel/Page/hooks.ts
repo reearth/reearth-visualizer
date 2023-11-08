@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Spacing } from "../../mantle";
+import {
+  DEFAULT_STORY_PAGE_GAP,
+  DEFAULT_STORY_PAGE_PADDING,
+  MIN_STORY_PAGE_GAP_IN_EDITOR,
+} from "../constants";
 import { StoryPage } from "../types";
 import { calculatePaddingValue } from "../utils";
 
 export type { StoryPage } from "../types";
-
-export const DEFAULT_PAGE_GAP = 2;
-export const DEFAULT_PAGE_PADDING: Spacing = { top: 4, bottom: 4, left: 4, right: 4 };
 
 export default ({
   page,
@@ -48,12 +49,17 @@ export default ({
       padding: {
         ...property?.panel?.padding,
         value: calculatePaddingValue(
-          DEFAULT_PAGE_PADDING,
+          DEFAULT_STORY_PAGE_PADDING,
           property?.panel?.padding?.value,
           isEditable,
         ),
       },
-      gap: property?.panel?.gap ?? DEFAULT_PAGE_GAP,
+      gap: {
+        value:
+          property?.panel?.gap?.value ?? isEditable
+            ? MIN_STORY_PAGE_GAP_IN_EDITOR
+            : DEFAULT_STORY_PAGE_GAP,
+      },
     }),
     [property?.panel, isEditable],
   );

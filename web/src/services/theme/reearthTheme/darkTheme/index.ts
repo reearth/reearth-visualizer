@@ -37,7 +37,7 @@ const darkTheme: Theme = {
   secondary: {
     weak: coolGray[80],
     main: coolGray[60],
-    strong: coolGray[60],
+    strong: coolGray[20],
   },
   dangerous: {
     main: red[60],

@@ -21,9 +21,6 @@ import {
   WidgetAreaAlign,
   ValueType,
 } from "@reearth/classic/gql";
-import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
-import { config } from "@reearth/services/config";
-import { useLang } from "@reearth/services/i18n";
 import {
   useSceneId,
   useSceneMode,
@@ -35,7 +32,10 @@ import {
   useZoomedLayerId,
   useClock,
   useSelectedWidgetArea,
-} from "@reearth/services/state";
+} from "@reearth/classic/state";
+import { valueTypeToGQL, ValueTypes, valueToGQL, LatLng } from "@reearth/classic/util/value";
+import { config } from "@reearth/services/config";
+import { useLang } from "@reearth/services/i18n";
 
 import {
   convertWidgets,

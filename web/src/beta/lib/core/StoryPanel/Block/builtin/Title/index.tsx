@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import Text from "@reearth/beta/components/Text";
+import { isEmptyString } from "@reearth/beta/utils/util";
 import { ValueTypes } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -24,6 +25,7 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     () => property?.title?.color?.value as ValueTypes["string"],
     [property?.title?.color?.value],
   );
+  const hasEmptySpace = isEmptyString(title);
 
   return (
     <BlockWrapper
@@ -34,8 +36,8 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       property={property}
       dndEnabled={false}
       {...props}>
-      <Title size="h2" hasText={!!title} color={color} customColor>
-        {title ?? t("Untitled")}
+      <Title size="h2" hasText={!!title && !hasEmptySpace} color={color} customColor>
+        {hasEmptySpace || !title ? t("Untitled") : title}
       </Title>
     </BlockWrapper>
   );
