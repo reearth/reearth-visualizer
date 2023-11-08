@@ -36,7 +36,7 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
-      settingsEnabled={false}
+      // settingsEnabled={false}
       {...props}>
       <TextBlockEditor text={text} onUpdate={handleTextUpdate} />
     </BlockWrapper>
