@@ -27,6 +27,8 @@ export default () => {
   const [notification, setNotification] = useNotification();
   const [visible, changeVisibility] = useState(false);
 
+  const [isHovered, setIsHovered] = useState(false);
+
   const policyLimitNotifications = window.REEARTH_CONFIG?.policy?.limitNotifications;
 
   const errorHeading = t("Error");
@@ -89,10 +91,9 @@ export default () => {
   ]);
 
   useEffect(() => {
-    if (!notification) return;
-    if (notification.duration === "persistent") return;
+    if (!notification || notification?.duration === "persistent" || isHovered) return;
+    let notificationTimeout = 3000;
 
-    let notificationTimeout = 5000;
     if (notification.duration) {
       notificationTimeout = notification.duration;
     }
@@ -100,19 +101,21 @@ export default () => {
       changeVisibility(false);
     }, notificationTimeout);
     return () => clearTimeout(timerID);
-  }, [notification]);
+  }, [notification, isHovered]);
 
   useEffect(() => {
     changeVisibility(!!notification);
   }, [notification]);
 
   return {
+    isHovered,
     visible,
     notification: {
       type: notification?.type,
       heading: notificationHeading,
       text: notification?.text,
     } as Notification,
+    setIsHovered,
     setModal,
     resetNotification,
   };
