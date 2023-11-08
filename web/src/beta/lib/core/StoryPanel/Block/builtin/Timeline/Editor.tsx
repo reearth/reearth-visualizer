@@ -55,8 +55,10 @@ const TimelineEditor = ({
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
-    handleOnMouseDown,
     handleOnClick,
+    handleOnMouseMove,
+    handleOnEndMove,
+    handleOnStartMove,
   } = useHooks({
     currentTime,
     range,
@@ -127,7 +129,10 @@ const TimelineEditor = ({
         <CurrentTime>{currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineControl>
       <TimelineSlider>
-        <ScaleList onClick={handleOnClick} onMouseDown={handleOnMouseDown}>
+        <ScaleList
+          onClick={handleOnClick}
+          onMouseMove={handleOnMouseMove}
+          onMouseUp={handleOnEndMove}>
           {[...Array(11)].map((_, idx) => (
             <Scale key={idx}>
               {idx === 0 ? (
@@ -150,6 +155,7 @@ const TimelineEditor = ({
           ))}
         </ScaleList>
         <IconWrapper
+          onMouseDown={handleOnStartMove}
           isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
             left: `${sliderPosition}px`,
@@ -157,6 +163,7 @@ const TimelineEditor = ({
           <Icon icon="slider" />
         </IconWrapper>
       </TimelineSlider>
+      <div />
     </Wrapper>
   );
 };

@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -75,7 +76,6 @@ export default ({
   });
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
 
   const [selected, setSelected] = useState("1min/sec");
   const formattedCurrentTime = useMemo(() => {
@@ -286,33 +286,47 @@ export default ({
     [currentTime, onTimeChange, setCurrentTime],
   );
 
-  const handleOnMouseDown = useCallback(() => {
-    setIsDragging(true);
-  }, []);
+  const [target, setTarget] = useState<HTMLElement | null>(null);
+  const distX = useRef<number>(0);
+  const distY = useRef<number>(0);
 
-  const handleOnMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+  const handleOnStartMove = (e: React.MouseEvent) => {
+    const targetElement = e.currentTarget as HTMLElement;
+    setTarget(targetElement);
+    const evt = e;
+    distX.current = Math.abs(targetElement.offsetLeft - evt.clientX);
+    distY.current = Math.abs(targetElement.offsetTop - evt.clientY);
+    targetElement.style.pointerEvents = "none";
+  };
 
-  const handleOnMouseMove: MouseEventHandler = useCallback(
-    e => {
-      if (isDragging || !handleOnDrag || !e.target || !range) {
+  const handleOnEndMove = useCallback(() => {
+    if (target) {
+      target.style.pointerEvents = "initial";
+      setTarget(null);
+    }
+  }, [target]);
+
+  const handleOnMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!handleOnDrag || !e.target || !range) {
         return;
       }
-      if (isPlaying || isPlayingReversed) {
+      if (
+        (isPlaying || isPlayingReversed || isPause) &&
+        target &&
+        target.style.pointerEvents === "none"
+      ) {
+        const evt = e;
+        let newPosition = evt.clientX - distX.current;
+        newPosition = Math.max(newPosition, 12);
+        newPosition = Math.min(newPosition, 380);
+        target.style.left = `${newPosition}px`;
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [isDragging, handleOnDrag, range, isPlaying, isPlayingReversed, committer?.id],
+    [committer?.id, handleOnDrag, isPause, isPlaying, isPlayingReversed, range, target],
   );
-
-  useEffect(() => {
-    window.addEventListener("mouseup", handleOnMouseUp, { passive: true });
-    return () => {
-      window.removeEventListener("mouseup", handleOnMouseUp);
-    };
-  }, [handleOnMouseUp]);
 
   const handleOnClick: MouseEventHandler = useCallback(
     e => {
@@ -355,8 +369,9 @@ export default ({
     toggleIsPlayingReversed: handleOnPlayReversed,
     toggleIsPause: handleOnPause,
     handleOnSpeedChange,
-    handleOnMouseDown,
     handleOnMouseMove,
     handleOnClick,
+    handleOnEndMove,
+    handleOnStartMove,
   };
 };
