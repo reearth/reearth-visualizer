@@ -43,7 +43,6 @@ export default ({
   const property = useMemo(() => page?.property, [page?.property]);
 
   const propertyId = useMemo(() => page?.propertyId, [page?.propertyId]);
-
   const panelSettings = useMemo(
     () => ({
       padding: {
@@ -55,10 +54,10 @@ export default ({
         ),
       },
       gap: {
+        ...property?.panel?.gap,
         value:
-          property?.panel?.gap?.value ?? isEditable
-            ? MIN_STORY_PAGE_GAP_IN_EDITOR
-            : DEFAULT_STORY_PAGE_GAP,
+          property?.panel?.gap?.value ??
+          (isEditable ? MIN_STORY_PAGE_GAP_IN_EDITOR : DEFAULT_STORY_PAGE_GAP),
       },
     }),
     [property?.panel, isEditable],
