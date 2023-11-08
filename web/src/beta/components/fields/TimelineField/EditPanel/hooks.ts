@@ -21,24 +21,28 @@ export default ({ timelineValues, onChange, onClose, setTimelineValues }: Props)
         endTime: timelineValues?.endTime || "",
       };
 
-      const endTime = new Date(updatedData?.endTime?.substring(0, 19) || new Date());
-
       switch (fieldId) {
         case "startTime":
-          updatedData.startTime = newValue;
-          break;
-        case "endTime":
-          updatedData.endTime = newValue;
+          updatedData.startTime = newValue || "";
           break;
         case "currentTime":
           updatedData.currentTime = newValue;
-
           if (
-            (updatedData.startTime &&
-              updatedData.endTime &&
-              new Date(updatedData.currentTime.substring(0, 19)) <
-                new Date(updatedData.startTime.substring(0, 19))) ||
-            new Date(updatedData.currentTime.substring(0, 19)) > endTime
+            updatedData.startTime &&
+            new Date(updatedData.currentTime.substring(0, 19)) <
+              new Date(updatedData.startTime.substring(0, 19))
+          ) {
+            setWarning(true);
+          } else {
+            setWarning(false);
+          }
+          break;
+        case "endTime":
+          updatedData.endTime = newValue;
+          if (
+            updatedData.endTime &&
+            new Date(updatedData.currentTime.substring(0, 19)) >
+              new Date(updatedData?.endTime?.substring(0, 19))
           ) {
             setWarning(true);
           } else {

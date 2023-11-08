@@ -92,6 +92,7 @@ const StyledInput = styled.input`
   border-radius: 4px;
   padding: 4px 8px;
   transition: all 0.3s;
+  flex: 1;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
   :focus {

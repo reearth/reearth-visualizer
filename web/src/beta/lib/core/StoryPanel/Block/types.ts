@@ -32,3 +32,9 @@ export type CommonProps = {
   ) => Promise<void>;
   onFlyTo?: FlyTo;
 };
+
+export type Range = {
+  start: number;
+  mid: number;
+  end: number;
+};

@@ -6,6 +6,7 @@ import {
   IMAGE_BUILTIN_STORY_BLOCK_ID,
   MD_BUILTIN_STORY_BLOCK_ID,
   TEXT_BUILTIN_STORY_BLOCK_ID,
+  TIMELINE_BUILTIN_STORY_BLOCK_ID,
   TITLE_BUILTIN_STORY_BLOCK_ID,
   VIDEO_BUILTIN_STORY_BLOCK_ID,
 } from "../../constants";
@@ -14,6 +15,7 @@ import CameraBlock from "./Camera";
 import ImageBlock from "./Image";
 import MdBlock from "./Markdown";
 import TextBlock from "./Text";
+import TimelineBlock from "./Timeline";
 import TitleBlock from "./Title";
 import VideoBlock from "./Video";
 
@@ -23,6 +25,7 @@ export type ReEarthBuiltinStoryBlocks<T = unknown> = Record<
   | typeof TEXT_BUILTIN_STORY_BLOCK_ID
   | typeof VIDEO_BUILTIN_STORY_BLOCK_ID
   | typeof MD_BUILTIN_STORY_BLOCK_ID
+  | typeof TIMELINE_BUILTIN_STORY_BLOCK_ID
   | typeof CAMERA_BUILTIN_STORY_BLOCK_ID,
   T
 >;
@@ -36,6 +39,7 @@ const reearthBuiltin: BuiltinStoryBlocks<Component> = {
   [TEXT_BUILTIN_STORY_BLOCK_ID]: TextBlock,
   [VIDEO_BUILTIN_STORY_BLOCK_ID]: VideoBlock,
   [MD_BUILTIN_STORY_BLOCK_ID]: MdBlock,
+  [TIMELINE_BUILTIN_STORY_BLOCK_ID]: TimelineBlock,
   [CAMERA_BUILTIN_STORY_BLOCK_ID]: CameraBlock,
 };
 
