@@ -10,7 +10,7 @@ const SidePanelSectionField: React.FC<{
   title?: string;
   startCollapsed?: boolean;
   children?: ReactNode;
-}> = ({ className, title, startCollapsed = true, children }) => {
+}> = ({ className, title, startCollapsed, children }) => {
   const theme = useTheme();
   const [opened, setOpened] = useState<boolean>();
 
