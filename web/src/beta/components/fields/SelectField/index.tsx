@@ -21,26 +21,26 @@ type CommonProps = {
   description?: string;
 };
 
-type SingleSelect = {
+export type SingleSelectProps = {
   onChange: (key: string) => void;
   value?: string;
-  multiSelect: false;
+  multiSelect?: false;
 } & CommonProps;
 
-type MultiSelect = {
+export type MultiSelectProps = {
   onChange: (keys: string[] | undefined) => void;
   value?: string[];
   multiSelect: true;
 } & CommonProps;
 
-export type Props = SingleSelect | MultiSelect;
+export type Props = SingleSelectProps | MultiSelectProps;
 
 // TODO: Fix the onChange method TS error
 const SelectField: React.FC<Props> = ({
   options,
   onChange,
   value,
-  multiSelect = false,
+  multiSelect,
   disabled = false,
   name,
   description,
@@ -53,19 +53,23 @@ const SelectField: React.FC<Props> = ({
 
   const handleClick = useCallback(
     (key: string) => {
-      if (!multiSelect) {
-        setOpen(false);
-        key != value && onChange(key);
+      if (multiSelect === true) {
+        // handle multiselect
+        if (value && Array.isArray(value)) {
+          const tempArray = [...value];
+          tempArray.includes(key)
+            ? tempArray.splice(tempArray.indexOf(key), 1)
+            : tempArray.push(key);
+          onChange(tempArray.length > 0 ? [...tempArray] : undefined);
+        } else {
+          onChange([key]);
+        }
         return;
       }
-      // handle multiselect
-      if (value && Array.isArray(value)) {
-        const tempArray = [...value];
-        tempArray.includes(key) ? tempArray.splice(tempArray.indexOf(key), 1) : tempArray.push(key);
-        onChange(tempArray.length > 0 ? [...tempArray] : undefined);
-      } else {
-        onChange([key]);
-      }
+
+      setOpen(false);
+      key != value && onChange(key);
+      return;
     },
     [setOpen, onChange, value, multiSelect],
   );

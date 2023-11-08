@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import SelectField, { Props } from ".";
+import SelectField, { SingleSelectProps, MultiSelectProps } from ".";
 
 const meta: Meta<typeof SelectField> = {
   component: SelectField,
@@ -14,7 +14,7 @@ export default meta;
 
 type Story = StoryObj<typeof SelectField>;
 
-export const Default: Story = (args: Props) => {
+export const Default: Story = (args: SingleSelectProps) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback(
@@ -50,11 +50,11 @@ export const Default: Story = (args: Props) => {
   );
 };
 
-export const MultiSelect: Story = (args: Props) => {
+export const MultiSelect: Story = (args: MultiSelectProps) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback(
-    (value: undefined | string[]) => {
+    (value: string[] | undefined) => {
       updateArgs({ value: value });
     },
     [updateArgs],
@@ -68,6 +68,7 @@ export const MultiSelect: Story = (args: Props) => {
           name="Multi Select"
           description="You can select multiple options"
           onChange={handleChange}
+          multiSelect
         />
       </div>
       <div>
@@ -77,6 +78,7 @@ export const MultiSelect: Story = (args: Props) => {
           description="Props are controlled by the field above"
           disabled={true}
           onChange={handleChange}
+          multiSelect
         />
       </div>
     </Wrapper>
