@@ -22,7 +22,7 @@ type Props = {
   subId?: string;
 };
 
-export default ({ projectId, tab, subId }: Props) => {
+export default ({ projectId, tab }: Props) => {
   const navigate = useNavigate();
 
   const {
@@ -80,17 +80,9 @@ export default ({ projectId, tab, subId }: Props) => {
     },
     [projectId, useUpdateProjectAlias],
   );
-
-  const stories = useMemo(() => scene?.stories ?? [], [scene?.stories]);
-  const currentStory = useMemo(
-    () =>
-      tab === "story"
-        ? stories.find(s => s.id === subId) ?? stories[0]
-        : tab === "public"
-        ? stories.find(s => s.id === subId)
-        : undefined,
-    [tab, subId, stories],
-  );
+  const { useStoriesQuery } = useStorytellingAPI();
+  const { stories = [] } = useStoriesQuery({ sceneId: scene?.id });
+  const currentStory = useMemo(() => (stories?.length ? stories[0] : undefined), [stories]);
 
   const { useUpdateStory } = useStorytellingAPI();
   const handleUpdateStory = useCallback(

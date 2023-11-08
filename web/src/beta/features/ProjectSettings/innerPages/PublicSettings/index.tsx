@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { Story } from "@reearth/services/gql";
+import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 import { MenuItem } from "../../MenuList";

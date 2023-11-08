@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { Position, Story } from "@reearth/services/gql";
+import { Position, Story } from "@reearth/services/api/storytellingApi/utils";
 
 import { MenuItem } from "../../MenuList";
 import { InnerPage, InnerMenu, SettingsWrapper, ArchivedSettingNotice } from "../common";
@@ -55,8 +55,8 @@ const StorySettings: React.FC<Props> = ({
           <StorySettingsDetail
             key={currentStory.id}
             settingsItem={{
-              ...currentStory,
-              bgColor: currentStory.bgColor as string,
+              panelPosition: currentStory.panelPosition,
+              bgColor: currentStory.bgColor,
             }}
             onUpdateStory={onUpdateStory}
           />
