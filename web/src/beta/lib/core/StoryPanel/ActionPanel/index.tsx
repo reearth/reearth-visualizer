@@ -50,7 +50,6 @@ const ActionPanel: React.FC<Props> = ({
 }) => {
   const t = useT();
   const ref = useItemContext();
-
   const handleRemove = useCallback(() => {
     onRemove?.();
     onSettingsToggle?.();
@@ -119,12 +118,12 @@ const ActionPanel: React.FC<Props> = ({
               </SettingsHeading>
               {propertyId && panelSettings && (
                 <SettingsContent>
-                  {Object.keys(panelSettings).map(fieldId => {
+                  {Object.keys(panelSettings).map((fieldId, index) => {
                     const field = panelSettings[fieldId];
                     const groupId = "panel";
                     return (
                       <FieldComponent
-                        key={groupId + propertyId}
+                        key={index}
                         propertyId={propertyId}
                         groupId={groupId}
                         fieldId={fieldId}

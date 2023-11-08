@@ -25,7 +25,7 @@ const EditPanel = ({
   onChange,
 }: EditPanelProps) => {
   const t = useT();
-  const { warning, handleOnChange, onAppyChange } = useHooks({
+  const { isDisabled, warning, handleOnChange, onAppyChange } = useHooks({
     timelineValues,
     onChange,
     onClose,
@@ -43,7 +43,7 @@ const EditPanel = ({
           <Button
             text={t("Apply")}
             buttonType="primary"
-            disabled={warning}
+            disabled={!isDisabled || warning}
             onClick={onAppyChange}
           />
         }>
@@ -55,16 +55,16 @@ const EditPanel = ({
             value={timelineValues?.startTime}
           />
           <CustomDateTimeField
-            name={t("* End Time")}
-            onChange={newValue => handleOnChange(newValue || "", "endTime")}
-            description={t("End time for the timeline")}
-            value={timelineValues?.endTime}
-          />
-          <CustomDateTimeField
             name={t("* Current Time")}
             description={t("Current time should be between start and end time")}
             onChange={newValue => handleOnChange(newValue || "", "currentTime")}
             value={timelineValues?.currentTime}
+          />
+          <CustomDateTimeField
+            name={t("* End Time")}
+            onChange={newValue => handleOnChange(newValue || "", "endTime")}
+            description={t("End time for the timeline")}
+            value={timelineValues?.endTime}
           />
           {warning && (
             <DangerItem>

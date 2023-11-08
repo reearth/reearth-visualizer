@@ -31,12 +31,12 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
 
   const handleTimelineModalOpen = useCallback(() => setOpenModal(true), []);
 
+  const [timelineValues, setTimelineValues] = useState(value);
+
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
     onChange?.();
   }, [value, onChange]);
-
-  const [timelineValues, setTimelineValues] = useState(value);
 
   useEffect(() => {
     setTimelineValues(value);
@@ -52,10 +52,10 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
                 {timelineValues?.startTime ?? t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.endTime ?? t("not set")}
+                {timelineValues?.currentTime ?? t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.currentTime ?? t("not set")}
+                {timelineValues?.endTime ?? t("not set")}
               </TextWrapper>
             </Timeline>
             <DeleteIcon
@@ -68,7 +68,7 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
           <TriggerButton
             buttonType="secondary"
             text={t("set")}
-            icon="clock"
+            icon="set"
             size="small"
             iconPosition="left"
             onClick={() => handleTimelineModalOpen()}
@@ -92,6 +92,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding-bottom: 12px;
 `;
 
 const InputWrapper = styled.div<{ disabled?: boolean }>`
@@ -129,7 +130,7 @@ const Timeline = styled.div`
     bottom: 10px;
     left: 15px;
   }
-  &:nth-child(2) {
+  &:nth-of-type(2n) {
     &:before {
       display: none;
     }
