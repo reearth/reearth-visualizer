@@ -108,7 +108,6 @@ const ChooseAssetModal: React.FC<Props> = ({
   );
   const onSortChange = useCallback(
     (selectedLabel: string) => {
-      console.log(selectedLabel);
       setSelectedSortOption(selectedLabel);
       const value = getValue[selectedLabel];
       const reverse = selectedLabel.toLowerCase().includes("reverse");

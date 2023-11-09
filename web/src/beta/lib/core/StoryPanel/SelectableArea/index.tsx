@@ -26,6 +26,17 @@ type Props = {
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: string,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: () => Promise<void>;
+  onPropertyItemMove?: () => Promise<void>;
+  onPropertyItemDelete?: () => Promise<void>;
 };
 
 const SelectableArea: React.FC<Props> = ({
@@ -47,6 +58,10 @@ const SelectableArea: React.FC<Props> = ({
   onClick,
   onClickAway,
   onRemove,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const { showPadding, setShowPadding, handleClickAway } = useHooks({
     editMode,
@@ -75,6 +90,10 @@ const SelectableArea: React.FC<Props> = ({
           onEditModeToggle={onEditModeToggle}
           onSettingsToggle={onSettingsToggle}
           onRemove={onRemove}
+          onPropertyUpdate={onPropertyUpdate}
+          onPropertyItemAdd={onPropertyItemAdd}
+          onPropertyItemMove={onPropertyItemMove}
+          onPropertyItemDelete={onPropertyItemDelete}
         />
         {children}
       </Wrapper>

@@ -3,6 +3,7 @@ export type Position = "left" | "right";
 export type Story = {
   id: string;
   title?: string;
+  bgColor?: string;
   position: Position;
   pages: StoryPage[];
 };
@@ -32,4 +33,5 @@ export type Field<V = any> = {
   title?: string;
   description?: string;
   value?: V;
+  choices?: string[];
 };

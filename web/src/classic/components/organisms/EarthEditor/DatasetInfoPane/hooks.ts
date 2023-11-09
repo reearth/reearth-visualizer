@@ -5,8 +5,8 @@ import {
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
 } from "@reearth/classic/gql";
-import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/classic/state";
 import { useT } from "@reearth/services/i18n";
+import { useNotification, useProject, useRootLayerId, useSelected } from "@reearth/services/state";
 
 import { processDatasets, processDatasetHeaders, processPrimitives } from "./convert";
 

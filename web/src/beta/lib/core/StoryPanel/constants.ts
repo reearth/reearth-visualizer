@@ -20,6 +20,7 @@ export const VIDEO_BUILTIN_STORY_BLOCK_ID = "reearth/videoStoryBlock";
 export const MD_BUILTIN_STORY_BLOCK_ID = "reearth/mdTextStoryBlock";
 export const CAMERA_BUILTIN_STORY_BLOCK_ID = "reearth/cameraButtonStoryBlock";
 export const LAYER_BUILTIN_STORY_BLOCK_ID = "reearth/showLayersStoryBlock";
+export const TIMELINE_BUILTIN_STORY_BLOCK_ID = "reearth/timelineStoryBlock";
 
 export const AVAILABLE_STORY_BLOCK_IDS = [
   IMAGE_BUILTIN_STORY_BLOCK_ID,
@@ -28,4 +29,5 @@ export const AVAILABLE_STORY_BLOCK_IDS = [
   MD_BUILTIN_STORY_BLOCK_ID,
   CAMERA_BUILTIN_STORY_BLOCK_ID,
   LAYER_BUILTIN_STORY_BLOCK_ID,
+  TIMELINE_BUILTIN_STORY_BLOCK_ID,
 ];

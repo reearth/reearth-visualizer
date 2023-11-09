@@ -153,6 +153,7 @@ export default (alias?: string) => {
           id: s.id,
           title: s.title,
           position: s.position,
+          bgColor: s.bgColor || "#f1f1f1",
           pages: s.pages.map(p => {
             return {
               id: p.id,

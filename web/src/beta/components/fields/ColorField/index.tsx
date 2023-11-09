@@ -16,7 +16,7 @@ import { Props, RGBA } from "./types";
 const channels = ["r", "g", "b", "a"];
 const hexPlaceholder = "#RRGGBBAA";
 
-const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => {
+const ColorField: React.FC<Props> = ({ name, description, value, onChange, className }) => {
   const t = useT();
   const theme = useTheme();
   const {
@@ -37,7 +37,7 @@ const ColorField: React.FC<Props> = ({ name, description, value, onChange }) => 
   } = useHooks({ value, onChange });
 
   return (
-    <Property name={name} description={description}>
+    <Property name={name} description={description} className={className}>
       <Wrapper ref={wrapperRef}>
         <Popover.Provider open={open} placement="bottom-start">
           <Popover.Trigger asChild>

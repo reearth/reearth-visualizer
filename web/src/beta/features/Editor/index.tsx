@@ -42,7 +42,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleFlyTo,
     handleCameraUpdate,
   } = useHooks({ sceneId, tab });
-
   const {
     selectedStory,
     storyPanelRef,

@@ -92,7 +92,7 @@ export default () => {
 
   useEffect(() => {
     if (!notification || notification?.duration === "persistent" || isHovered) return;
-    let notificationTimeout = 3000;
+    let notificationTimeout = 2000;
 
     if (notification.duration) {
       notificationTimeout = notification.duration;

@@ -45,7 +45,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
       setDateTime?.(formattedDateTime);
       onChange?.(formattedDateTime);
     }
-  }, [offsetFromUTC, selectedTimezone, date, time, setDateTime, onChange]);
+  }, [offsetFromUTC, selectedTimezone.timezone, date, time, setDateTime, onChange]);
 
   const handleTimezoneSelect = useCallback(
     (newValue: string) => {
@@ -81,7 +81,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
     time,
     selectedTimezone,
     offsetFromUTC,
-    onTimeChange: handleTimeChange,
+    handleTimeChange,
     onTimezoneSelect: handleTimezoneSelect,
     onDateChange: handleDateChange,
     onDateTimeApply: handleApplyChange,

@@ -14,6 +14,7 @@ export type SelectValue = {
 };
 
 type CommonProps = {
+  className?: string;
   options?: SelectValue[];
   disabled?: boolean;
   // Property field
@@ -37,6 +38,7 @@ export type Props = SingleSelectProps | MultiSelectProps;
 
 // TODO: Fix the onChange method TS error
 const SelectField: React.FC<Props> = ({
+  className,
   options,
   onChange,
   value,
@@ -93,7 +95,7 @@ const SelectField: React.FC<Props> = ({
   );
 
   return (
-    <Property name={name} description={description}>
+    <Property name={name} description={description} className={className}>
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
         <ProviderWrapper multiSelect={Array.isArray(value) && value.length > 0}>
           <Popover.Trigger asChild>

@@ -36,7 +36,19 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const StoryPanel: React.FC<Props> = ({
@@ -51,8 +63,11 @@ const StoryPanel: React.FC<Props> = ({
   onBlockCreate,
   onBlockDelete,
   onBlockSelect,
+  onBlockMove,
   onPropertyUpdate,
-  onStoryBlockMove,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const t = useT();
 
@@ -101,7 +116,10 @@ const StoryPanel: React.FC<Props> = ({
             isSelected={selectedStoryBlockId === titleId}
             onClick={() => onBlockSelect?.(titleId)}
             onClickAway={onBlockSelect}
-            onChange={onPropertyUpdate}
+            onPropertyUpdate={onPropertyUpdate}
+            onPropertyItemAdd={onPropertyItemAdd}
+            onPropertyItemMove={onPropertyItemMove}
+            onPropertyItemDelete={onPropertyItemDelete}
           />
         )}
 
@@ -130,7 +148,7 @@ const StoryPanel: React.FC<Props> = ({
                 items.splice(index, 0, item);
                 return items;
               });
-              await onStoryBlockMove?.(page?.id || "", index, item.id);
+              await onBlockMove?.(page?.id || "", index, item.id);
             }}
             renderItem={(b, idx) => {
               return (
@@ -141,8 +159,11 @@ const StoryPanel: React.FC<Props> = ({
                     isEditable={isEditable}
                     onClick={() => onBlockSelect?.(b.id)}
                     onClickAway={onBlockSelect}
-                    onChange={onPropertyUpdate}
                     onRemove={onBlockDelete}
+                    onPropertyUpdate={onPropertyUpdate}
+                    onPropertyItemAdd={onPropertyItemAdd}
+                    onPropertyItemMove={onPropertyItemMove}
+                    onPropertyItemDelete={onPropertyItemDelete}
                   />
                   {isEditable && (
                     <BlockAddBar
