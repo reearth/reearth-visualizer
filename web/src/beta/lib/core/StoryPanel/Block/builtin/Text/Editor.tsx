@@ -3,18 +3,33 @@ import { useMemo, useContext, useCallback } from "react";
 
 import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
 
-import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import { BlockContext } from "../common/Wrapper";
 
 export type Props = {
   text?: string;
   propertyId?: string;
   isEditable?: boolean;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
 };
 
-const TextBlockEditor: React.FC<Props> = ({ text, propertyId, isEditable }) => {
+const TextBlockEditor: React.FC<Props> = ({ text, propertyId, isEditable, onPropertyUpdate }) => {
   const context = useContext(BlockContext);
-  const { handlePropertyValueUpdate } = usePropertyValueUpdate();
+
+  const handlePropertyValueUpdate = useCallback(
+    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+      return async (v?: any) => {
+        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+      };
+    },
+    [onPropertyUpdate],
+  );
 
   const handleTextUpdate = useCallback(
     (text: string) => {

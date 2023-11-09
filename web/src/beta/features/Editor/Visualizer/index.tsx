@@ -64,6 +64,9 @@ const Visualizer: React.FC<Props> = ({
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
+    handlePropertyItemAdd,
+    handlePropertyItemDelete,
+    handlePropertyItemMove,
     selectLayer,
     selectBlock,
     onBlockChange,
@@ -137,7 +140,10 @@ const Visualizer: React.FC<Props> = ({
             onBlockCreate={handleStoryBlockCreate}
             onBlockDelete={handleStoryBlockDelete}
             onPropertyUpdate={handlePropertyValueUpdate}
-            onStoryBlockMove={onStoryBlockMove}
+            onPropertyItemAdd={handlePropertyItemAdd}
+            onPropertyItemMove={handlePropertyItemMove}
+            onPropertyItemDelete={handlePropertyItemDelete}
+            onBlockMove={onStoryBlockMove}
           />
         )}
       </CoreVisualizer>

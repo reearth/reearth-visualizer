@@ -15,9 +15,38 @@ export type Props = {
   selected: string;
   propertyId?: string;
   setSelected: (id: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
-const CameraBlockEditor: React.FC<Props> = ({ items, propertyId, selected, setSelected }) => {
+const CameraBlockEditor: React.FC<Props> = ({
+  items,
+  propertyId,
+  selected,
+  setSelected,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemDelete,
+  onPropertyItemMove,
+}) => {
   const t = useT();
   const {
     currentCamera,
@@ -29,7 +58,15 @@ const CameraBlockEditor: React.FC<Props> = ({ items, propertyId, selected, setSe
     handleItemAdd,
     handleItemRemove,
     handleItemMove,
-  } = useHooks({ selected, items, propertyId });
+  } = useHooks({
+    selected,
+    items,
+    propertyId,
+    onPropertyUpdate,
+    onPropertyItemAdd,
+    onPropertyItemDelete,
+    onPropertyItemMove,
+  });
 
   return (
     <EditorWrapper>

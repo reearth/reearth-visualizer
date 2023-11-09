@@ -21,6 +21,17 @@ type Props = {
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: string,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: () => Promise<void>;
+  onPropertyItemMove?: () => Promise<void>;
+  onPropertyItemDelete?: () => Promise<void>;
 };
 
 const BlockActionPanel: React.FC<Props> = ({

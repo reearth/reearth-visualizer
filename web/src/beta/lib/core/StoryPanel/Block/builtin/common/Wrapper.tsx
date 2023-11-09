@@ -30,6 +30,26 @@ type Props = {
   settingsEnabled?: boolean;
   onClick?: () => void;
   onRemove?: () => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const BlockWrapper: React.FC<Props> = ({
@@ -44,6 +64,10 @@ const BlockWrapper: React.FC<Props> = ({
   settingsEnabled = true,
   onClick,
   onRemove,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const {
     title,
@@ -79,7 +103,11 @@ const BlockWrapper: React.FC<Props> = ({
         setEditMode={setEditMode}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
-        onRemove={onRemove}>
+        onRemove={onRemove}
+        onPropertyUpdate={onPropertyUpdate}
+        onPropertyItemAdd={onPropertyItemAdd}
+        onPropertyItemMove={onPropertyItemMove}
+        onPropertyItemDelete={onPropertyItemDelete}>
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
@@ -99,6 +127,10 @@ const BlockWrapper: React.FC<Props> = ({
                   groupId={groupId}
                   fieldId={fieldId}
                   field={field}
+                  onPropertyUpdate={onPropertyUpdate}
+                  onPropertyItemAdd={onPropertyItemAdd}
+                  onPropertyItemMove={onPropertyItemMove}
+                  onPropertyItemDelete={onPropertyItemDelete}
                 />
               );
             })}

@@ -33,6 +33,17 @@ type Props = {
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: string,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: () => Promise<void>;
+  onPropertyItemMove?: () => Promise<void>;
+  onPropertyItemDelete?: () => Promise<void>;
 };
 
 const ActionPanel: React.FC<Props> = ({
@@ -47,6 +58,10 @@ const ActionPanel: React.FC<Props> = ({
   setShowPadding,
   onSettingsToggle,
   onRemove,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const t = useT();
   const ref = useItemContext();
@@ -128,6 +143,10 @@ const ActionPanel: React.FC<Props> = ({
                         groupId={groupId}
                         fieldId={fieldId}
                         field={field}
+                        onPropertyUpdate={onPropertyUpdate}
+                        onPropertyItemAdd={onPropertyItemAdd}
+                        onPropertyItemMove={onPropertyItemMove}
+                        onPropertyItemDelete={onPropertyItemDelete}
                       />
                     );
                   })}
