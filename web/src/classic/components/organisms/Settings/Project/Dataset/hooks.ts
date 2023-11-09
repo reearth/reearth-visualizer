@@ -8,9 +8,9 @@ import {
   useRemoveDatasetMutation,
   useDatasetsListQuery,
 } from "@reearth/classic/gql";
-import { useWorkspace, useProject, useNotification } from "@reearth/classic/state";
 import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
+import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
 type Nodes = NonNullable<DatasetsListQuery["datasetSchemas"]["nodes"]>;
 
