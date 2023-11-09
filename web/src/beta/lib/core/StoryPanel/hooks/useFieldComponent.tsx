@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import LocationField from "@reearth/beta/components/fields/LocationField";
@@ -11,21 +13,47 @@ import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import URLField from "@reearth/beta/components/fields/URLField";
 import { useT } from "@reearth/services/i18n";
 
-import usePropertyUpdateHook from "../Block/builtin/common/useActionPropertyApi";
-
 export const FieldComponent = ({
   propertyId,
   groupId,
   fieldId,
   field,
+  onPropertyUpdate,
 }: {
   propertyId: string;
   groupId: string;
   fieldId: string;
   field: any;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 }) => {
   const t = useT();
-  const { handlePropertyValueUpdate } = usePropertyUpdateHook();
+  const handlePropertyValueUpdate = useCallback(
+    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+      return async (v?: any) => {
+        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+      };
+    },
+    [onPropertyUpdate],
+  );
 
   return field?.type === "spacing" ? (
     <SpacingInput

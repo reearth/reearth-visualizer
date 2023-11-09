@@ -29,7 +29,12 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       settingsEnabled={false}
       {...props}>
       {props.isEditable ? (
-        <TextBlockEditor text={text} propertyId={block?.propertyId} isEditable={props.isEditable} />
+        <TextBlockEditor
+          text={text}
+          propertyId={block?.propertyId}
+          isEditable={props.isEditable}
+          onPropertyUpdate={props.onPropertyUpdate}
+        />
       ) : (
         <RichText text={text} scrollableContainerId="story-page" />
       )}
