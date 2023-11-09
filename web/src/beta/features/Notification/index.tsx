@@ -12,8 +12,7 @@ export type Notification = {
 };
 
 const NotificationBanner: React.FC = () => {
-  const { isHovered, visible, notification, setModal, setIsHovered, resetNotification } =
-    useHooks();
+  const { isHovered, visible, notification, setModal, setIsHovered } = useHooks();
   const theme = useTheme();
 
   return (
@@ -35,7 +34,6 @@ const NotificationBanner: React.FC = () => {
           show={isHovered}
           onClick={() => {
             setModal?.(false);
-            resetNotification?.();
           }}
         />
       </HeadingArea>

@@ -45,11 +45,19 @@ export default () => {
     [notification?.type, errorHeading, warningHeading, noticeHeading],
   );
 
-  const resetNotification = useCallback(() => setNotification(undefined), [setNotification]);
+  const resetNotification = useCallback(() => {
+    setTimeout(() => {
+      setNotification(undefined);
+    }, 3000);
+  }, [setNotification]);
 
-  const setModal = useCallback((show: boolean) => {
-    changeVisibility(show);
-  }, []);
+  const setModal = useCallback(
+    (show: boolean) => {
+      changeVisibility(show);
+      if (!show) resetNotification();
+    },
+    [resetNotification],
+  );
 
   useEffect(() => {
     if (!error) return;
@@ -98,10 +106,10 @@ export default () => {
       notificationTimeout = notification.duration;
     }
     const timerID = setTimeout(() => {
-      changeVisibility(false);
+      setModal(false);
     }, notificationTimeout);
     return () => clearTimeout(timerID);
-  }, [notification, isHovered]);
+  }, [notification, isHovered, setModal]);
 
   useEffect(() => {
     changeVisibility(!!notification);
@@ -117,6 +125,5 @@ export default () => {
     } as Notification,
     setIsHovered,
     setModal,
-    resetNotification,
   };
 };
