@@ -14,8 +14,8 @@ import {
   useRemoveMemberFromTeamMutation,
 } from "@reearth/classic/gql";
 import { Team } from "@reearth/classic/gql/graphql-client-api";
-import { useWorkspace, useProject, useNotification } from "@reearth/classic/state";
 import { useT } from "@reearth/services/i18n";
+import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
 type Params = {
   workspaceId: string;

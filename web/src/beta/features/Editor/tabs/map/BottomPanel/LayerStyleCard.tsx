@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useRef, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Icon from "@reearth/beta/components/Icon";
@@ -32,8 +32,31 @@ const LayerStyleCard: React.FC<Props> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(name);
+  const clickTimeoutRef = useRef<NodeJS.Timeout>();
+  const clickedNameCount = useRef(0);
 
-  const handleNameClick = useCallback(() => setIsEditing(true), []);
+  const handleClick = useCallback(() => {
+    console.log(clickedNameCount.current);
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
+    clickTimeoutRef.current = setTimeout(() => {
+      clickedNameCount.current = 0;
+      onSelect?.(!selected);
+    }, 100);
+  }, [onSelect, selected]);
+
+  const handleNameClick = useCallback(() => {
+    const newClickCount = clickedNameCount.current + 1;
+    console.log(newClickCount);
+    clickedNameCount.current = newClickCount;
+    // if (clickTimeoutRef.current) {
+    //   clearTimeout(clickTimeoutRef.current);
+    // }
+    if (clickedNameCount.current === 2) {
+      setIsEditing(true);
+    }
+  }, []);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -77,7 +100,7 @@ const LayerStyleCard: React.FC<Props> = ({
     <Wrapper
       className={className}
       selected={selected}
-      onClick={() => onSelect?.(!selected)}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
       <MainWrapper>
@@ -181,4 +204,9 @@ const StyleName = styled(Text)`
 
 const StyledTextInput = styled(TextInput)`
   width: 100%;
+  font-size: 12px;
+  color: ${({ theme }) => theme.content.main};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 `;

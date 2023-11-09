@@ -33,6 +33,17 @@ type Props = {
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: string,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: () => Promise<void>;
+  onPropertyItemMove?: () => Promise<void>;
+  onPropertyItemDelete?: () => Promise<void>;
 };
 
 const ActionPanel: React.FC<Props> = ({
@@ -47,10 +58,13 @@ const ActionPanel: React.FC<Props> = ({
   setShowPadding,
   onSettingsToggle,
   onRemove,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const t = useT();
   const ref = useItemContext();
-
   const handleRemove = useCallback(() => {
     onRemove?.();
     onSettingsToggle?.();
@@ -75,7 +89,6 @@ const ActionPanel: React.FC<Props> = ({
     }
     return menuItems;
   }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
-  // console.log("PS", panelSettings);
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
@@ -120,16 +133,20 @@ const ActionPanel: React.FC<Props> = ({
               </SettingsHeading>
               {propertyId && panelSettings && (
                 <SettingsContent>
-                  {Object.keys(panelSettings).map(fieldId => {
+                  {Object.keys(panelSettings).map((fieldId, index) => {
                     const field = panelSettings[fieldId];
                     const groupId = "panel";
                     return (
                       <FieldComponent
-                        key={groupId + propertyId}
+                        key={index}
                         propertyId={propertyId}
                         groupId={groupId}
                         fieldId={fieldId}
                         field={field}
+                        onPropertyUpdate={onPropertyUpdate}
+                        onPropertyItemAdd={onPropertyItemAdd}
+                        onPropertyItemMove={onPropertyItemMove}
+                        onPropertyItemDelete={onPropertyItemDelete}
                       />
                     );
                   })}

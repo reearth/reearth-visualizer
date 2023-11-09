@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useSelected, useSelectedBlock, useIsCapturing } from "@reearth/classic/state";
+import { useSelected, useSelectedBlock, useIsCapturing } from "@reearth/services/state";
 
 export type Tab =
   | "layer"
