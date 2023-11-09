@@ -59,7 +59,7 @@ const Content: React.FC<Props> = ({
       }
       const item = cameraButtons.find(i => i.id === itemId);
       if (!item?.cameraPosition?.value) return;
-      handleFlyTo?.(item.cameraPosition?.value);
+      handleFlyTo?.(item.cameraPosition?.value, { duration: item.cameraDuration?.value || 2 });
     },
     [cameraButtons, isEditable, handleFlyTo],
   );

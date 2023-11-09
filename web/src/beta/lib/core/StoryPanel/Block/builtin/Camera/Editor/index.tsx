@@ -1,6 +1,7 @@
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
+import NumberField from "@reearth/beta/components/fields/NumberField";
 import TextField from "@reearth/beta/components/fields/TextField";
 import { Camera } from "@reearth/beta/lib/core/engines";
 import { useT } from "@reearth/services/i18n";
@@ -88,6 +89,12 @@ const CameraBlockEditor: React.FC<Props> = ({
           onSave={value => handleUpdate(selected, "cameraPosition", "camera", value as Camera)}
           currentCamera={currentCamera}
           onFlyTo={handleFlyTo}
+        />
+        <NumberField
+          name={editorProperties?.cameraDuration?.title}
+          description={editorProperties?.cameraDuration?.description}
+          value={editorProperties?.cameraDuration?.value}
+          onChange={value => handleUpdate(selected, "cameraDuration", "number", value || 0)}
         />
         <TextField
           name={editorProperties?.title?.title}

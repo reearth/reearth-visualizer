@@ -14,6 +14,7 @@ export type CameraBlock = {
   color?: Field<string>;
   bgColor?: Field<string>;
   cameraPosition?: Field<Camera>;
+  cameraDuration?: Field<number>;
 };
 
 export default ({
