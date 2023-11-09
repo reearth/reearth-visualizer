@@ -8,7 +8,6 @@ import type {
   ComputedFeature,
 } from "@reearth/beta/lib/core/mantle";
 import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
-import type { ValueType } from "@reearth/beta/utils/value";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -55,7 +54,8 @@ export default ({
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
-  const { useUpdatePropertyValue } = usePropertyFetcher();
+  const { useUpdatePropertyValue, useAddPropertyItem, useMovePropertyItem, useRemovePropertyItem } =
+    usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
@@ -238,13 +238,37 @@ export default ({
       schemaItemId?: string,
       fieldId?: string,
       itemId?: string,
-      vt?: ValueType,
-      v?: ValueTypes[ValueType],
+      vt?: any,
+      v?: any,
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
       await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
     },
     [useUpdatePropertyValue],
+  );
+
+  const handlePropertyItemAdd = useCallback(
+    async (propertyId?: string, schemaGroupId?: string) => {
+      if (!propertyId || !schemaGroupId) return;
+      await useAddPropertyItem(propertyId, schemaGroupId);
+    },
+    [useAddPropertyItem],
+  );
+
+  const handlePropertyItemMove = useCallback(
+    async (propertyId?: string, schemaGroupId?: string, itemId?: string, index?: number) => {
+      if (!propertyId || !schemaGroupId || !itemId || index === undefined) return;
+      await useMovePropertyItem(propertyId, schemaGroupId, itemId, index);
+    },
+    [useMovePropertyItem],
+  );
+
+  const handlePropertyItemDelete = useCallback(
+    async (propertyId?: string, schemaGroupId?: string, itemId?: string) => {
+      if (!propertyId || !schemaGroupId || !itemId) return;
+      await useRemovePropertyItem(propertyId, schemaGroupId, itemId);
+    },
+    [useRemovePropertyItem],
   );
 
   const engineMeta = useMemo(
@@ -284,6 +308,9 @@ export default ({
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
+    handlePropertyItemAdd,
+    handlePropertyItemDelete,
+    handlePropertyItemMove,
     selectLayer,
     selectBlock,
     onBlockChange,

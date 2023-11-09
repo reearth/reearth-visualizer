@@ -1,5 +1,5 @@
 import { debounce } from "lodash-es";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import type { Camera } from "@reearth/beta/lib/core/engines";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
@@ -7,7 +7,6 @@ import { ValueTypes } from "@reearth/beta/utils/value";
 import { useCurrentCamera } from "@reearth/services/state";
 
 import type { Field } from "../../../../types";
-import usePropertyValueUpdate from "../../common/useActionPropertyApi";
 
 export type CameraBlock = {
   id: string;
@@ -15,16 +14,41 @@ export type CameraBlock = {
   color?: Field<string>;
   bgColor?: Field<string>;
   cameraPosition?: Field<Camera>;
+  cameraDuration?: Field<number>;
 };
 
 export default ({
   items,
   propertyId,
   selected,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemDelete,
+  onPropertyItemMove,
 }: {
   items: CameraBlock[];
   propertyId?: string;
   selected?: string;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 }) => {
   const visualizer = useVisualizer();
   const [currentCamera] = useCurrentCamera();
@@ -33,12 +57,14 @@ export default ({
 
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
-  const {
-    handlePropertyValueUpdate,
-    handleAddPropertyItem,
-    handleRemovePropertyItem,
-    handleMovePropertyItem,
-  } = usePropertyValueUpdate();
+  const handlePropertyValueUpdate = useCallback(
+    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+      return async (v?: any) => {
+        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+      };
+    },
+    [onPropertyUpdate],
+  );
 
   const handleUpdate = useCallback(
     (
@@ -63,35 +89,26 @@ export default ({
 
   const handleItemAdd = useCallback(() => {
     if (!propertyId) return;
-    handleAddPropertyItem(propertyId, "default");
-  }, [propertyId, handleAddPropertyItem]);
+    onPropertyItemAdd?.(propertyId, "default");
+  }, [propertyId, onPropertyItemAdd]);
 
   const handleItemRemove = useCallback(
     (itemId: string) => {
       if (!propertyId || !itemId) return;
 
-      handleRemovePropertyItem(propertyId, "default", itemId);
+      onPropertyItemDelete?.(propertyId, "default", itemId);
     },
-    [propertyId, handleRemovePropertyItem],
+    [propertyId, onPropertyItemDelete],
   );
 
   const handleItemMove = useCallback(
     ({ id }: { id: string }, index: number) => {
       if (!propertyId || !id) return;
 
-      handleMovePropertyItem(propertyId, "default", { id }, index);
+      onPropertyItemMove?.(propertyId, "default", id, index);
     },
-    [propertyId, handleMovePropertyItem],
+    [propertyId, onPropertyItemMove],
   );
-
-  // if there's no item add 1 button.
-  // TODO: Should be added to block creationAPI for generic blocks that require at least 1 item
-  useEffect(() => {
-    if (!items || items.length === 0) {
-      handleItemAdd();
-      return;
-    }
-  }, [items, handleItemAdd, handleUpdate]);
 
   return {
     currentCamera,

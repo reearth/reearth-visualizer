@@ -13,9 +13,37 @@ type Props = {
   propertyId?: string;
   cameraButtons: CameraBlockType[];
   isEditable?: boolean;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
-const Content: React.FC<Props> = ({ propertyId, cameraButtons, isEditable }) => {
+const Content: React.FC<Props> = ({
+  propertyId,
+  cameraButtons,
+  isEditable,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemDelete,
+  onPropertyItemMove,
+}) => {
   const t = useT();
   const context = useContext(BlockContext);
   const visualizer = useVisualizer();
@@ -31,7 +59,7 @@ const Content: React.FC<Props> = ({ propertyId, cameraButtons, isEditable }) => 
       }
       const item = cameraButtons.find(i => i.id === itemId);
       if (!item?.cameraPosition?.value) return;
-      handleFlyTo?.(item.cameraPosition?.value);
+      handleFlyTo?.(item.cameraPosition?.value, { duration: item.cameraDuration?.value || 2 });
     },
     [cameraButtons, isEditable, handleFlyTo],
   );
@@ -60,6 +88,10 @@ const Content: React.FC<Props> = ({ propertyId, cameraButtons, isEditable }) => 
           propertyId={propertyId}
           selected={selected}
           setSelected={setSelected}
+          onPropertyUpdate={onPropertyUpdate}
+          onPropertyItemAdd={onPropertyItemAdd}
+          onPropertyItemMove={onPropertyItemMove}
+          onPropertyItemDelete={onPropertyItemDelete}
         />
       )}
     </Wrapper>

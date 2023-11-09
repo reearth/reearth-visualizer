@@ -1,6 +1,7 @@
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
+import NumberField from "@reearth/beta/components/fields/NumberField";
 import TextField from "@reearth/beta/components/fields/TextField";
 import { Camera } from "@reearth/beta/lib/core/engines";
 import { useT } from "@reearth/services/i18n";
@@ -15,9 +16,38 @@ export type Props = {
   selected: string;
   propertyId?: string;
   setSelected: (id: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
-const CameraBlockEditor: React.FC<Props> = ({ items, propertyId, selected, setSelected }) => {
+const CameraBlockEditor: React.FC<Props> = ({
+  items,
+  propertyId,
+  selected,
+  setSelected,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemDelete,
+  onPropertyItemMove,
+}) => {
   const t = useT();
   const {
     currentCamera,
@@ -29,7 +59,15 @@ const CameraBlockEditor: React.FC<Props> = ({ items, propertyId, selected, setSe
     handleItemAdd,
     handleItemRemove,
     handleItemMove,
-  } = useHooks({ selected, items, propertyId });
+  } = useHooks({
+    selected,
+    items,
+    propertyId,
+    onPropertyUpdate,
+    onPropertyItemAdd,
+    onPropertyItemDelete,
+    onPropertyItemMove,
+  });
 
   return (
     <EditorWrapper>
@@ -51,6 +89,12 @@ const CameraBlockEditor: React.FC<Props> = ({ items, propertyId, selected, setSe
           onSave={value => handleUpdate(selected, "cameraPosition", "camera", value as Camera)}
           currentCamera={currentCamera}
           onFlyTo={handleFlyTo}
+        />
+        <NumberField
+          name={editorProperties?.cameraDuration?.title}
+          description={editorProperties?.cameraDuration?.description}
+          value={editorProperties?.cameraDuration?.value}
+          onChange={value => handleUpdate(selected, "cameraDuration", "number", value || 0)}
         />
         <TextField
           name={editorProperties?.title?.title}
