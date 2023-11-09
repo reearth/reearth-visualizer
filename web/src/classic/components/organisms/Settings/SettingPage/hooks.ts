@@ -9,7 +9,7 @@ import {
   useGetProjectWithSceneIdQuery,
   useCreateTeamMutation,
 } from "@reearth/classic/gql";
-import { useWorkspace, useProject } from "@reearth/classic/state";
+import { useWorkspace, useProject } from "@reearth/services/state";
 
 type Params = {
   workspaceId?: string;

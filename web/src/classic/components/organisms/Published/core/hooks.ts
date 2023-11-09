@@ -17,8 +17,8 @@ import {
 } from "@reearth/classic/core/mantle";
 import type { ComputedLayer } from "@reearth/classic/core/mantle/types";
 import type { LayerSelectionReason } from "@reearth/classic/core/Map/Layers/hooks";
-import { useSelected } from "@reearth/classic/state";
 import { config } from "@reearth/services/config";
+import { useSelected } from "@reearth/services/state";
 
 import type {
   PublishedData,
