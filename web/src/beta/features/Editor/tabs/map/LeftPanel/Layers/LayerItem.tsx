@@ -36,26 +36,36 @@ const LayerItem = ({
   const [newValue, setNewValue] = useState(layerTitle);
   const [isVisible, setIsVisible] = useState(visible);
   const [value, setValue] = useState(isVisible ? "V" : "");
+  const [clickTimeoutId, setClickTimeoutId] = useState<any>(null);
 
   const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
 
-  const handleClick = useCallback(
-    (e?: MouseEvent<Element>) => {
-      if (e?.shiftKey) {
-        e?.stopPropagation();
-        setIsEditing(true);
-        return;
-      }
+  const handleClick = useCallback(() => {
+    if (clickTimeoutId) {
+      clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
+    }
+    const timeoutId = setTimeout(() => {
       onSelect();
-    },
-    [onSelect],
-  );
+    }, 200);
+    setClickTimeoutId(timeoutId);
+  }, [onSelect, clickTimeoutId]);
+
+  const handleLayerTitleClick = useCallback(() => {
+    if (clickTimeoutId) {
+      clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
+    }
+    setIsEditing(true);
+  }, [clickTimeoutId]);
 
   const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
 
   const handleTitleSubmit = useCallback(() => {
     setIsEditing(false);
-    onLayerNameUpdate({ layerId: id, name: newValue });
+    if (newValue.trim() !== "") {
+      onLayerNameUpdate({ layerId: id, name: newValue });
+    }
   }, [id, newValue, onLayerNameUpdate]);
 
   const handleEditExit = useCallback(
@@ -103,7 +113,7 @@ const LayerItem = ({
       }>
       <ContentWrapper>
         {isEditing ? (
-          <TextInput
+          <StyledTextInput
             value={newValue}
             timeout={0}
             autoFocus
@@ -112,7 +122,7 @@ const LayerItem = ({
             onBlur={handleEditExit}
           />
         ) : (
-          <LayerTitle>{layerTitle}</LayerTitle>
+          <LayerTitle onDoubleClick={handleLayerTitleClick}>{layerTitle}</LayerTitle>
         )}
         <HideLayer onClick={handleUpdateVisibility}>
           <Text size="footnote">{value}</Text>
@@ -156,4 +166,13 @@ const HideLayer = styled.div`
   :hover {
     background: ${({ theme }) => theme.bg[2]};
   }
+`;
+
+const StyledTextInput = styled(TextInput)`
+  width: 100%;
+  font-size: 12px;
+  color: ${({ theme }) => theme.content.main};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 `;
