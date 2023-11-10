@@ -9,7 +9,7 @@ import StoryPanel, {
 } from "@reearth/beta/lib/core/StoryPanel";
 import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
-import type { Story, Page } from "@reearth/services/api/storytellingApi/utils";
+import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
@@ -25,7 +25,6 @@ export type Props = {
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
   selectedStory?: Story;
-  currentPage?: Page;
   installableBlocks?: InstallableStoryBlock[];
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
@@ -40,7 +39,6 @@ const Visualizer: React.FC<Props> = ({
   storyPanelRef,
   showStoryPanel,
   selectedStory,
-  currentPage,
   installableBlocks,
   onStoryBlockMove,
   onCameraChange,
@@ -79,7 +77,7 @@ const Visualizer: React.FC<Props> = ({
     handleDropLayer,
     handleMount,
     zoomToLayer,
-  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, currentPage, showStoryPanel });
+  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, showStoryPanel });
 
   const renderInfoboxInsertionPopUp = useCallback<
     NonNullable<VisualizerProps["renderInfoboxInsertionPopup"]>
