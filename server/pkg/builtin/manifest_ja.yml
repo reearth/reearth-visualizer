@@ -1092,3 +1092,61 @@ extensions:
         fields:
           text:
             title: コンテンツ
+  cameraButtonStoryBlock:
+    name: カメラボタン
+    description: ストーリーテリングのカメラ移動出来るボタンブロック
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+      default:
+        title: カメラボタン
+        fields:
+          title: 
+            title: タイトル
+          color:
+            title: 色
+          bgColor:
+            title: 背景色
+          cameraPosition:
+            title: カメラ位置
+          cameraDuration:
+            title: カメラ移動時間
+  timelineStoryBlock:
+    name: タイムライン
+    description: ストーリーテリングの時間変更できるブロック
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+      default:
+        title: タイムライン設定
+        fields:
+          timelineSetting: 
+            title: タイムライン設定
+          playMode:
+            title: プレイモード
+  showLayersStoryBlock:
+    name: レイヤーボタン
+    description: ストーリーテリングのレイヤー変更出来るボタンブロック
+    propertySchema:
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+      default:
+        title: レイヤーボタン
+        fields:
+          title: 
+            title: タイトル
+          color:
+            title: 色
+          bgColor:
+            title: 背景色
+          showLayers:
+            title: 見えるレイヤー

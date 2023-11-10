@@ -22,19 +22,20 @@ Set Time: 時間設定
 Date: 時間帯
 Time: 時間
 Time Zone: 時間帯
-set: ''
+set: 済み
 Remove: 削除
 Add Item: アイテムを追加
 Settings: 設定
+Options: ''
 Please choose an option: ''
 Add text here: テキストを書きましょう
 Timeline Settings: タイムライン設定
 '* Start Time': ''
 Start time for the timeline: ''
-'* End Time': ''
-End time for the timeline: ''
 '* Current Time': ''
 Current time should be between start and end time: ''
+'* End Time': ''
+End time for the timeline: ''
 Please make sure the Current time must between the Start time and End Time.: ''
 not set: 未設定
 Wrong file format: Wrong file format
@@ -216,6 +217,7 @@ Left: 左
 Right: 右
 Story Panel: ストーリーパネル
 Panel Position: パネルポジション
+Background Color: 背景色
 Something went wrong.: 失敗しました。
 Couldn't find the Re:Earth project you were after.: そのプロジェクトは存在されていなさそうです。
 Double click here to write.: ダブルクリックで入力
@@ -232,7 +234,9 @@ ellipse: 円錐
 Open timeline: タイムラインを開く
 Spacing settings: Spacing設定
 New Camera: 新しいカメラ
+New Camera Button: 新カメラボタン
 Buttons List: ボタン一覧
+New Layer Button: 新レイヤーボタン
 Add markdown text here: ''
 Unsupported field type: ''
 Drop here: ここにドロップ
@@ -257,7 +261,6 @@ Bulleted List: ''
 Insert Code Block: コードブロック組み込み
 Insert Link: リンク組み込み
 Text Color: テキスト色
-Background Color: 背景色
 Strikethrough: ''
 Subscript: ''
 Superscript: ''

@@ -58,7 +58,7 @@ const LayerBlockEditor: React.FC<Props> = ({
     [visualizer],
   );
 
-  const defaultTitle = useMemo(() => t("LOD"), [t]);
+  const defaultTitle = useMemo(() => t("New Layer Button"), [t]);
 
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
