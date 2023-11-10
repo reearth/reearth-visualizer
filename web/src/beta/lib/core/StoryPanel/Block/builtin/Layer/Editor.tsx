@@ -104,8 +104,6 @@ const LayerBlockEditor: React.FC<Props> = ({
     };
   }, [visualizer]);
 
-  console.log(items);
-
   return (
     <Wrapper>
       <ButtonWrapper>
