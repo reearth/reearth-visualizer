@@ -64,22 +64,26 @@ const StyledNotificationBanner = styled.div<{
   margin-left: auto;
   margin-right: auto;
   width: 312px;
-  padding: 8px 12px;
+  padding: 4px 8px;
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   background-color: ${({ type, theme }) =>
     type === "error"
-      ? theme.classic.notification.errorBg
+      ? theme.dangerous.main
       : type === "warning"
-      ? theme.classic.notification.warningBg
+      ? theme.warning.main
       : type === "success"
-      ? theme.classic.notification.successBg
-      : theme.classic.notification.infoBg};
-  color: ${({ theme }) => theme.classic.notification.text};
+      ? theme.select.strong
+      : theme.secondary.main};
+  color: ${({ theme }) => theme.content.main};
   z-index: ${({ theme, visible }) => (visible ? theme.classic.zIndexes.notificationBar : 0)};
   opacity: ${({ visible }) => (visible ? "1" : "0")};
   transition: all 0.5s;
   pointer-events: ${({ visible }) => (visible ? "auto" : "none")};
+
+  :hover {
+    padding: 8px 12px;
+  }
 `;
 
 const HeadingArea = styled.div`

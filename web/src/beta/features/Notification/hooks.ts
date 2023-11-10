@@ -45,19 +45,9 @@ export default () => {
     [notification?.type, errorHeading, warningHeading, noticeHeading],
   );
 
-  const resetNotification = useCallback(() => {
-    setTimeout(() => {
-      setNotification(undefined);
-    }, 3000);
-  }, [setNotification]);
-
-  const setModal = useCallback(
-    (show: boolean) => {
-      changeVisibility(show);
-      if (!show) resetNotification();
-    },
-    [resetNotification],
-  );
+  const setModal = useCallback((show: boolean) => {
+    changeVisibility(show);
+  }, []);
 
   useEffect(() => {
     if (!error) return;
