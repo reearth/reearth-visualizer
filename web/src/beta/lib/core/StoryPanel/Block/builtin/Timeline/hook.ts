@@ -70,6 +70,7 @@ export default ({
   const [activeBlock, setActiveBlock] = useState("");
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+
   const [committer, setCommiter] = useState<TimelineCommitter>({
     source: "storyTimelineBlock",
     id: blockId,
@@ -188,9 +189,9 @@ export default ({
         setIsPlaying?.(false);
       }
       committer?.id && onPause?.(committer.id);
-      setIsPause(!isPause);
+      setIsPause(true);
     }
-  }, [committer.id, inEditor, isPause, isPlaying, isPlayingReversed, onPause]);
+  }, [committer.id, inEditor, isPlaying, isPlayingReversed, onPause]);
 
   const handleTick = useCallback(
     (current: Date) => {
@@ -214,6 +215,63 @@ export default ({
     if (isPlayingReversed) onTimeChange?.(new Date(range?.end), committer.id);
   }, [range, onTimeChange, committer.id, isPlayingReversed]);
 
+  const handleOnDrag: TimeEventHandler = useCallback(
+    (time: Date, committerId: string) => {
+      onTimeChange?.(time, committerId);
+      setCurrentTime?.(getNewDate(new Date(time)).getTime());
+      handleOnPause();
+    },
+    [handleOnPause, onTimeChange, setCurrentTime],
+  );
+
+  const [target, setTarget] = useState<HTMLElement | null>(null);
+  const distX = useRef<number>(0);
+  const distY = useRef<number>(0);
+
+  const handleOnStartMove = (e: React.MouseEvent) => {
+    const targetElement = e.currentTarget as HTMLElement;
+    setTarget(targetElement);
+    const evt = e;
+    distX.current = Math.abs(targetElement.offsetLeft - evt.clientX);
+    distY.current = Math.abs(targetElement.offsetTop - evt.clientY);
+    targetElement.style.pointerEvents = "none";
+  };
+
+  const handleOnEndMove = useCallback(() => {
+    if (target) {
+      target.style.pointerEvents = "initial";
+      setTarget(null);
+      setIsPause(false);
+    }
+  }, [target]);
+
+  const handleOnMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!handleOnDrag || !e.target || !range) {
+        return;
+      }
+      if (target && target.style.pointerEvents === "none") {
+        const evt = e;
+        let newPosition = evt.clientX - distX.current;
+        newPosition = Math.max(newPosition, 14);
+        newPosition = Math.min(newPosition, 374);
+        target.style.left = `${newPosition}px`;
+        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
+        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+      }
+    },
+    [committer?.id, handleOnDrag, range, target],
+  );
+
+  const handleOnClick: MouseEventHandler = useCallback(
+    e => {
+      if (range) {
+        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
+        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+      }
+    },
+    [range, committer?.id, handleOnDrag],
+  );
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
       if (
@@ -226,7 +284,6 @@ export default ({
         setIsPause(false);
         setIsPlaying(false);
         setIsPlayingReversed(false);
-
         const currentTimeValue = timelineValues?.currentTime ?? "";
         timelineValues
           ? setCurrentTime?.(getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime())
@@ -277,66 +334,6 @@ export default ({
     removeOnCommitEventListener,
     removeTickEventListener,
   ]);
-
-  const handleOnDrag: TimeEventHandler = useCallback(
-    (time: Date, committerId: string) => {
-      onTimeChange?.(time, committerId);
-      setCurrentTime?.(currentTime);
-    },
-    [currentTime, onTimeChange, setCurrentTime],
-  );
-
-  const [target, setTarget] = useState<HTMLElement | null>(null);
-  const distX = useRef<number>(0);
-  const distY = useRef<number>(0);
-
-  const handleOnStartMove = (e: React.MouseEvent) => {
-    const targetElement = e.currentTarget as HTMLElement;
-    setTarget(targetElement);
-    const evt = e;
-    distX.current = Math.abs(targetElement.offsetLeft - evt.clientX);
-    distY.current = Math.abs(targetElement.offsetTop - evt.clientY);
-    targetElement.style.pointerEvents = "none";
-  };
-
-  const handleOnEndMove = useCallback(() => {
-    if (target) {
-      target.style.pointerEvents = "initial";
-      setTarget(null);
-    }
-  }, [target]);
-
-  const handleOnMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!handleOnDrag || !e.target || !range) {
-        return;
-      }
-      if (
-        (isPlaying || isPlayingReversed || isPause) &&
-        target &&
-        target.style.pointerEvents === "none"
-      ) {
-        const evt = e;
-        let newPosition = evt.clientX - distX.current;
-        newPosition = Math.max(newPosition, 12);
-        newPosition = Math.min(newPosition, 380);
-        target.style.left = `${newPosition}px`;
-        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
-      }
-    },
-    [committer?.id, handleOnDrag, isPause, isPlaying, isPlayingReversed, range, target],
-  );
-
-  const handleOnClick: MouseEventHandler = useCallback(
-    e => {
-      if ((isPlaying || isPlayingReversed || isPause) && range) {
-        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
-      }
-    },
-    [isPlaying, isPlayingReversed, isPause, range, committer?.id, handleOnDrag],
-  );
 
   const sliderPosition = useMemo(() => {
     if (range) {
