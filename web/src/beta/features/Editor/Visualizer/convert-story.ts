@@ -27,13 +27,12 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
       property: processProperty(undefined, p.property),
       blocks: storyBlocks(p.blocks),
     }));
-
   const storyBlocks = (blocks: GqlStoryBlock[]): StoryBlock[] =>
     blocks.map(b => ({
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.title,
+      name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.translatedTitle,
       propertyId: b.property?.id,
       property: processProperty(undefined, b.property),
     }));
