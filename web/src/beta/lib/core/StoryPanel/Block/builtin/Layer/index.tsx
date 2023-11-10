@@ -3,7 +3,6 @@ import { useCallback, useMemo, useEffect } from "react";
 import { type ValueTypes } from "@reearth/beta/utils/value";
 
 import type { CommonProps as BlockProps } from "../../types";
-import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import BlockWrapper from "../common/Wrapper";
 
 import LayerBlockEditor, { type LayerBlock as LayerBlockType } from "./Editor";
@@ -11,16 +10,18 @@ import LayerBlockEditor, { type LayerBlock as LayerBlockType } from "./Editor";
 export type Props = BlockProps;
 
 const LayerBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
-  const {
-    handlePropertyValueUpdate,
-    handleAddPropertyItem,
-    handleRemovePropertyItem,
-    handleMovePropertyItem,
-  } = usePropertyValueUpdate();
-
   const showLayerButtons = useMemo(
-    () => Object.values(block?.property?.default ?? []) as LayerBlockType[],
+    () => (block?.property?.default ?? []) as LayerBlockType[],
     [block?.property?.default],
+  );
+
+  const handlePropertyValueUpdate = useCallback(
+    (schemaGroupId: string, propertyId: string, fieldId: string, vt: any, itemId?: string) => {
+      return async (v?: any) => {
+        await props.onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+      };
+    },
+    [props],
   );
 
   const handleUpdate = useCallback(
@@ -47,25 +48,25 @@ const LayerBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
 
   const handleItemAdd = useCallback(() => {
     if (!block?.propertyId) return;
-    handleAddPropertyItem(block.propertyId, "default");
-  }, [block?.propertyId, handleAddPropertyItem]);
+    props.onPropertyItemAdd?.(block.propertyId, "default");
+  }, [block?.propertyId, props]);
 
   const handleItemRemove = useCallback(
     (itemId: string) => {
       if (!block?.propertyId || !itemId) return;
 
-      handleRemovePropertyItem(block.propertyId, "default", itemId);
+      props.onPropertyItemDelete?.(block.propertyId, "default", itemId);
     },
-    [block?.propertyId, handleRemovePropertyItem],
+    [block?.propertyId, props],
   );
 
   const handleItemMove = useCallback(
     ({ id }: { id: string }, index: number) => {
       if (!block?.propertyId || !id) return;
 
-      handleMovePropertyItem(block.propertyId, "default", { id }, index);
+      props.onPropertyItemMove?.(block.propertyId, "default", id, index);
     },
-    [block?.propertyId, handleMovePropertyItem],
+    [block?.propertyId, props],
   );
 
   // if there's no item add 1 button.

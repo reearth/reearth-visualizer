@@ -210,7 +210,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   showStoryPanel={selectedProjectType === "story"}
                   selectedStory={selectedStory}
                   installableBlocks={installableStoryBlocks}
-                  currentPage={currentPage}
                   currentCamera={currentCamera}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}

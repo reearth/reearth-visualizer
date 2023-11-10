@@ -23,6 +23,7 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
       id: p.id,
       title: p.title,
       propertyId: p.propertyId,
+      layerIds: p.layersIds,
       property: processProperty(undefined, p.property),
       blocks: storyBlocks(p.blocks),
     }));

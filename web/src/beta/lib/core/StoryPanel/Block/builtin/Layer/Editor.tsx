@@ -23,6 +23,7 @@ export type LayerBlock = {
 
 export type Props = {
   items: LayerBlock[];
+  inEditor: boolean;
   onUpdate: (
     id: string,
     fieldId: keyof LayerBlock,
@@ -32,16 +33,15 @@ export type Props = {
   onItemRemove: (id: string) => void;
   onItemAdd: () => void;
   onItemMove: ({ id }: { id: string }, index: number) => void;
-  inEditor: boolean;
 };
 
 const LayerBlockEditor: React.FC<Props> = ({
   items,
+  inEditor,
   onUpdate,
   onItemRemove,
   onItemAdd,
   onItemMove,
-  inEditor,
 }) => {
   const t = useT();
   const context = useContext(BlockContext);
@@ -94,16 +94,17 @@ const LayerBlockEditor: React.FC<Props> = ({
     [items, defaultTitle],
   );
 
-  useEffect(
-    () => () => {
-      const allLayers = visualizer.current?.layers?.layers();
-
+  useEffect(() => {
+    const currentVisualizer = visualizer?.current;
+    return () => {
+      const allLayers = currentVisualizer?.layers?.layers();
       if (!Array.isArray(allLayers)) return;
       // Show all the layers after the component is unmounted
-      visualizer.current?.layers.show(...allLayers.map(({ id }) => id));
-    },
-    [visualizer],
-  );
+      currentVisualizer?.layers.show(...allLayers.map(({ id }) => id));
+    };
+  }, [visualizer]);
+
+  console.log(items);
 
   return (
     <Wrapper>
