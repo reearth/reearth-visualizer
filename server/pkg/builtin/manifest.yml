@@ -76,10 +76,11 @@ extensions:
                 type: string
                 value: url
             - id: tile_zoomLevel
-              type: number
+              type: array
               title: zoom level
               description: "Change the Zoom Level of the selected tile map. Min: 0 Max: 1"
-              ui: slider
+              defaultValue: [0,30]
+              ui: range
               min: 0
               max: 30
             - id: tile_opacity
