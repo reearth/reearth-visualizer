@@ -21,7 +21,7 @@ const RangeField: React.FC<Props> = ({ name, description, value, onChange, ...ar
   useEffect(() => {
     setInternalState(value);
   }, [value]);
-  console.log("internalState", internalState);
+
   return (
     <Property name={name} description={description}>
       <RangeSlider
