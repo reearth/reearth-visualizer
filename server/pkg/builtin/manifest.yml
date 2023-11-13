@@ -2485,6 +2485,7 @@ extensions:
         - id: default
           title: Link Button
           list: true
+          representativeField: title
           fields:
             - id: title
               type: string

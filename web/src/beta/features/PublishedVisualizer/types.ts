@@ -19,6 +19,7 @@ export type Story = {
   title?: string;
   position: "left" | "right";
   pages: StoryPage[];
+  bgColor?: string;
 };
 
 export type StoryPage = {

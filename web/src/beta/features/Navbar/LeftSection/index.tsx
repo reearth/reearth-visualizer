@@ -79,7 +79,7 @@ const Wrapper = styled.div`
 
 const StyledLink = styled(Link)`
   display: flex;
-  margin-right: 19px;
+  margin-right: 10px;
   color: ${props => props.theme.content.main};
   text-decoration: none;
   &:hover {

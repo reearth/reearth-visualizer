@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import {
   InternalWidget,
@@ -9,7 +9,6 @@ import {
 } from "@reearth/beta/lib/core/Crust";
 import { Story } from "@reearth/beta/lib/core/StoryPanel";
 import { config } from "@reearth/services/config";
-import { useSelectedStoryPageId } from "@reearth/services/state";
 
 import { processLayers } from "../Editor/Visualizer/convert";
 
@@ -153,6 +152,7 @@ export default (alias?: string) => {
           id: s.id,
           title: s.title,
           position: s.position,
+          bgColor: s.bgColor || "#f1f1f1",
           pages: s.pages.map(p => {
             return {
               id: p.id,
@@ -173,18 +173,6 @@ export default (alias?: string) => {
     return processedStory;
   }, [data?.story]);
 
-  const [currentPageId, setCurrentPageId] = useSelectedStoryPageId();
-
-  const currentPage = useMemo(
-    () => story?.pages.find(p => p.id === currentPageId),
-    [currentPageId, story?.pages],
-  );
-
-  const handleCurrentPageChange = useCallback(
-    (pageId?: string) => setCurrentPageId(pageId),
-    [setCurrentPageId],
-  );
-
   const layers = useMemo(() => {
     const processedLayers = processLayers(
       data?.nlsLayers?.map(l => ({
@@ -200,9 +188,9 @@ export default (alias?: string) => {
 
     return processedLayers?.map(layer => ({
       ...layer,
-      visible: currentPage?.layerIds?.includes(layer.id),
+      visible: true,
     }));
-  }, [data?.nlsLayers, data?.layerStyles, currentPage?.layerIds, story]);
+  }, [data?.nlsLayers, data?.layerStyles, story]);
 
   useEffect(() => {
     const url = dataUrl(actualAlias);
@@ -259,7 +247,6 @@ export default (alias?: string) => {
     ready,
     error,
     engineMeta,
-    handleCurrentPageChange,
   };
 };
 

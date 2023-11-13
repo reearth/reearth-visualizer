@@ -8,11 +8,12 @@ type Props = {
   name?: string;
   description?: string;
   children: ReactNode;
+  className?: string;
 };
 
-const Property: React.FC<Props> = ({ name, description, children }) => {
+const Property: React.FC<Props> = ({ name, description, children, className }) => {
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       {name && <Text size="footnote">{name}</Text>}
       {children}
       {description && (

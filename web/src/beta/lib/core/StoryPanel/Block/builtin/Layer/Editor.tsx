@@ -1,58 +1,64 @@
 import { debounce } from "lodash-es";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState, useCallback, useEffect } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
+import SelectField from "@reearth/beta/components/fields/SelectField";
 import TextField from "@reearth/beta/components/fields/TextField";
-import { Camera } from "@reearth/beta/lib/core/engines";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer/context";
 import { useT } from "@reearth/services/i18n";
-import { useCurrentCamera } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import type { Field } from "../../../types";
 import { BlockContext } from "../common/Wrapper";
 
-export type CameraBlock = {
+export type LayerBlock = {
   id: string;
   title?: Field<string>;
   color?: Field<string>;
   bgColor?: Field<string>;
-  cameraPosition?: Field<Camera>;
+  showLayers?: Field<string[]>;
 };
 
 export type Props = {
-  items: CameraBlock[];
+  items: LayerBlock[];
+  inEditor: boolean;
   onUpdate: (
     id: string,
-    fieldId: keyof CameraBlock,
-    fieldType: "string" | "camera",
-    value: string | Camera,
+    fieldId: keyof LayerBlock,
+    fieldType: "string" | "array",
+    value: string | string[] | undefined,
   ) => void;
   onItemRemove: (id: string) => void;
   onItemAdd: () => void;
   onItemMove: ({ id }: { id: string }, index: number) => void;
-  inEditor: boolean;
 };
 
-const CameraBlockEditor: React.FC<Props> = ({
+const LayerBlockEditor: React.FC<Props> = ({
   items,
+  inEditor,
   onUpdate,
   onItemRemove,
   onItemAdd,
   onItemMove,
-  inEditor,
 }) => {
   const t = useT();
   const context = useContext(BlockContext);
   const [selected, setSelected] = useState(items[0]?.id);
 
   const visualizer = useVisualizer();
-  const [currentCamera] = useCurrentCamera();
 
-  const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
+  const layers = useMemo(
+    () =>
+      visualizer.current?.layers?.layers()?.map(({ id, title }) => ({
+        key: id,
+        label: title ?? `Layer: ${id}`,
+      })),
+    [visualizer],
+  );
+
+  const defaultTitle = useMemo(() => t("New Layer Button"), [t]);
 
   const editorProperties = useMemo(() => items.find(i => i.id === selected), [items, selected]);
 
@@ -63,18 +69,40 @@ const CameraBlockEditor: React.FC<Props> = ({
         return;
       }
       const item = items.find(i => i.id === itemId);
-      if (!item?.cameraPosition?.value) return;
-      handleFlyTo?.(item.cameraPosition?.value);
+
+      if (!item?.showLayers?.value) return;
+
+      // Hide all layers
+      const layers = visualizer.current?.layers;
+
+      // Show only selected layers
+      layers?.show(...item.showLayers.value);
+      const allLayers = layers?.layers() ?? [];
+
+      // Hide the rest
+      layers?.hide(
+        ...allLayers.map(({ id }) => id).filter(id => !item.showLayers?.value?.includes(id)),
+      );
     },
-    [items, inEditor, handleFlyTo],
+    [inEditor, visualizer, items],
   );
 
   const debounceOnUpdate = useMemo(() => debounce(onUpdate, 500), [onUpdate]);
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, value: title?.value ?? "New Camera" })),
-    [items],
+    () => items.map(({ id, title }) => ({ id, value: title?.value ?? defaultTitle })),
+    [items, defaultTitle],
   );
+
+  useEffect(() => {
+    const currentVisualizer = visualizer?.current;
+    return () => {
+      const allLayers = currentVisualizer?.layers?.layers();
+      if (!Array.isArray(allLayers)) return;
+      // Show all the layers after the component is unmounted
+      currentVisualizer?.layers.show(...allLayers.map(({ id }) => id));
+    };
+  }, [visualizer]);
 
   return (
     <Wrapper>
@@ -87,7 +115,7 @@ const CameraBlockEditor: React.FC<Props> = ({
               bgColor={bgColor?.value}
               icon="cameraButtonStoryBlock"
               buttonType="primary"
-              text={title?.value ?? t("New Camera")}
+              text={title?.value ?? defaultTitle}
               size="small"
               onClick={() => handleClick(id)}
             />
@@ -107,14 +135,6 @@ const CameraBlockEditor: React.FC<Props> = ({
             atLeastOneItem
           />
           <FieldGroup disabled={!editorProperties}>
-            <CameraField
-              name={editorProperties?.cameraPosition?.title}
-              description={editorProperties?.cameraPosition?.description}
-              value={editorProperties?.cameraPosition?.value}
-              onSave={value => onUpdate(selected, "cameraPosition", "camera", value as Camera)}
-              currentCamera={currentCamera}
-              onFlyTo={handleFlyTo}
-            />
             <TextField
               name={editorProperties?.title?.title}
               description={editorProperties?.title?.description}
@@ -132,6 +152,14 @@ const CameraBlockEditor: React.FC<Props> = ({
               description={editorProperties?.bgColor?.description}
               value={editorProperties?.bgColor?.value}
               onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
+            />
+            <SelectField
+              name={editorProperties?.showLayers?.title}
+              description={editorProperties?.showLayers?.description}
+              options={layers}
+              value={editorProperties?.showLayers?.value}
+              onChange={value => debounceOnUpdate(selected, "showLayers", "array", value)}
+              multiSelect
             />
           </FieldGroup>
         </EditorWrapper>
@@ -179,4 +207,4 @@ const FieldGroup = styled.div<{ disabled: boolean }>`
   pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
 `;
 
-export default CameraBlockEditor;
+export default LayerBlockEditor;

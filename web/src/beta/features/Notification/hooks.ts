@@ -45,8 +45,6 @@ export default () => {
     [notification?.type, errorHeading, warningHeading, noticeHeading],
   );
 
-  const resetNotification = useCallback(() => setNotification(undefined), [setNotification]);
-
   const setModal = useCallback((show: boolean) => {
     changeVisibility(show);
   }, []);
@@ -92,16 +90,16 @@ export default () => {
 
   useEffect(() => {
     if (!notification || notification?.duration === "persistent" || isHovered) return;
-    let notificationTimeout = 3000;
+    let notificationTimeout = 2000;
 
     if (notification.duration) {
       notificationTimeout = notification.duration;
     }
     const timerID = setTimeout(() => {
-      changeVisibility(false);
+      setModal(false);
     }, notificationTimeout);
     return () => clearTimeout(timerID);
-  }, [notification, isHovered]);
+  }, [notification, isHovered, setModal]);
 
   useEffect(() => {
     changeVisibility(!!notification);
@@ -117,6 +115,5 @@ export default () => {
     } as Notification,
     setIsHovered,
     setModal,
-    resetNotification,
   };
 };

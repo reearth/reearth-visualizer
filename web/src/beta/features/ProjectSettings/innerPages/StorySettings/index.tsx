@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { Position, Story } from "@reearth/services/gql";
+import { Position, Story } from "@reearth/services/api/storytellingApi/utils";
 
 import { MenuItem } from "../../MenuList";
 import { InnerPage, InnerMenu, SettingsWrapper, ArchivedSettingNotice } from "../common";
@@ -9,6 +9,7 @@ import StorySettingsDetail from "./StorySettingsDetail";
 
 export type StorySettingsType = {
   panelPosition?: Position;
+  bgColor?: string;
 };
 
 type Props = {
@@ -35,7 +36,6 @@ const StorySettings: React.FC<Props> = ({
       })),
     [stories, projectId],
   );
-
   return (
     <InnerPage wide>
       <InnerMenu>
@@ -54,7 +54,10 @@ const StorySettings: React.FC<Props> = ({
         ) : (
           <StorySettingsDetail
             key={currentStory.id}
-            settingsItem={currentStory}
+            settingsItem={{
+              panelPosition: currentStory.panelPosition,
+              bgColor: currentStory.bgColor,
+            }}
             onUpdateStory={onUpdateStory}
           />
         )}

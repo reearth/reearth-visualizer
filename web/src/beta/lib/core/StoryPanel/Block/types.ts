@@ -22,7 +22,7 @@ export type CommonProps = {
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: (pageId?: string, id?: string) => void;
-  onChange?: (
+  onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
@@ -30,5 +30,23 @@ export type CommonProps = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
   onFlyTo?: FlyTo;
+};
+
+export type Range = {
+  start: number;
+  mid: number;
+  end: number;
 };
