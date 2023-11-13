@@ -16,7 +16,6 @@ import {
   usePropertyFetcher,
   useLayerStylesFetcher,
 } from "@reearth/services/api";
-import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -40,13 +39,11 @@ export default ({
   sceneId,
   storyId,
   isBuilt,
-  currentPage,
   showStoryPanel,
 }: {
   sceneId?: string;
   storyId?: string;
   isBuilt?: boolean;
-  currentPage?: Page;
   showStoryPanel?: boolean;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
@@ -94,9 +91,9 @@ export default ({
     if (!showStoryPanel) return processedLayers;
     return processedLayers?.map(layer => ({
       ...layer,
-      visible: currentPage?.layersIds?.includes(layer.id),
+      visible: true,
     }));
-  }, [nlsLayers, layerStyles, showStoryPanel, currentPage?.layersIds]);
+  }, [nlsLayers, layerStyles, showStoryPanel]);
 
   const selectLayer = useCallback(
     async (

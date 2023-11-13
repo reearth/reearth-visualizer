@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react";
 import type { Camera } from "@reearth/beta/lib/core/engines";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 import { ValueTypes } from "@reearth/beta/utils/value";
+import { useT } from "@reearth/services/i18n";
 import { useCurrentCamera } from "@reearth/services/state";
 
 import type { Field } from "../../../../types";
@@ -52,6 +53,7 @@ export default ({
 }) => {
   const visualizer = useVisualizer();
   const [currentCamera] = useCurrentCamera();
+  const t = useT();
 
   const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
 
@@ -83,8 +85,8 @@ export default ({
   const debounceOnUpdate = useMemo(() => debounce(handleUpdate, 500), [handleUpdate]);
 
   const listItems = useMemo(
-    () => items.map(({ id, title }) => ({ id, value: title?.value ?? "New Camera" })),
-    [items],
+    () => items.map(({ id, title }) => ({ id, value: title?.value ?? t("New Camera Button") })),
+    [items, t],
   );
 
   const handleItemAdd = useCallback(() => {
