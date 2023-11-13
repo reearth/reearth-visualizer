@@ -12,17 +12,8 @@ export type Props = {
 
 export default function Published({ alias }: Props) {
   const t = useT();
-  const {
-    sceneProperty,
-    pluginProperty,
-    layers,
-    widgets,
-    story,
-    ready,
-    error,
-    engineMeta,
-    handleCurrentPageChange,
-  } = useHooks(alias);
+  const { sceneProperty, pluginProperty, layers, widgets, story, ready, error, engineMeta } =
+    useHooks(alias);
 
   return error ? (
     <NotFound
@@ -43,7 +34,7 @@ export default function Published({ alias }: Props) {
       storyPanelPosition={story?.position}
       pluginBaseUrl={config()?.plugins}
       meta={engineMeta}>
-      {story && <StoryPanel selectedStory={story} onCurrentPageChange={handleCurrentPageChange} />}
+      {story && <StoryPanel selectedStory={story} />}
     </Visualizer>
   );
 }

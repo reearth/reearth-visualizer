@@ -43,6 +43,7 @@ import ZoomToLayer from "./Icons/zoomToLayer.svg";
 import LayerStyleIcon from "./Icons/layerStyle.svg";
 import AddLayerStyleButtonIcon from "./Icons/addLayerStyleButton.svg";
 import LayerInspector from "./Icons/layerInspector.svg";
+import LayerIcon from "./Icons/layer.svg";
 import Clock from "./Icons/Clock.svg";
 
 // MSIC
@@ -90,6 +91,7 @@ import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
 import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
 import MdTextStoryBlock from "./Icons/mdTextStoryBlock.svg";
 import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg";
+import ShowLayersStoryBlock from "./Icons/showLayersStoryBlock.svg";
 import TimelineStoryBlock from "./Icons/timelineStoryBlock.svg";
 
 // Widget tab
@@ -119,6 +121,7 @@ import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
 import Marketplace from "./Icons/marketplace.svg";
 
 export default {
+  layer: LayerIcon,
   addLayerStyle: AddLayerStyleButtonIcon,
   layerStyle: LayerStyleIcon,
   layerInspector: LayerInspector,
@@ -187,6 +190,7 @@ export default {
   imageStoryBlock: ImageStoryBlock,
   mdTextStoryBlock: MdTextStoryBlock,
   cameraButtonStoryBlock: CameraButtonStoryBlock,
+  showLayersStoryBlock: ShowLayersStoryBlock,
   timelineStoryBlock: TimelineStoryBlock,
   widget: Widgets,
   widgets: Widgets,

@@ -1,4 +1,4 @@
-import { Ref, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
@@ -137,6 +137,22 @@ export default (
     }),
     [currentPageId, handleCurrentPageChange],
   );
+
+  // Update what layers will be shown in the Visualizer on page change.
+  useEffect(() => {
+    const currentPage = getPage(currentPageId, selectedStory?.pages);
+    if (currentPage) {
+      const currentLayerIds = visualizer.current?.layers.layers()?.map(l => l.id);
+      if (currentLayerIds) {
+        visualizer.current?.layers.show(
+          ...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)),
+        );
+        visualizer.current?.layers.hide(
+          ...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)),
+        );
+      }
+    }
+  }, [currentPageId, selectedStory?.pages, visualizer]);
 
   return {
     pageInfo,

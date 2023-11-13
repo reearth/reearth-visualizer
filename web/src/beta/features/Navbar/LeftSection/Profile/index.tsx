@@ -41,7 +41,7 @@ const Menu: React.FC<MenuProps> = ({ label, items, nested }) => {
   return (
     <Popover.Provider
       open={open}
-      placement={nested ? "right-end" : "bottom-start"}
+      placement={nested ? "right-start" : "bottom-start"}
       onOpenChange={handlePopOver}>
       <Popover.Trigger asChild>
         <InputWrapper onClick={handlePopOver}>

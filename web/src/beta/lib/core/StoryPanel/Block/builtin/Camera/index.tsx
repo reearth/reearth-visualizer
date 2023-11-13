@@ -10,7 +10,7 @@ export type Props = BlockProps;
 
 const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
   const cameraButtons = useMemo(
-    () => Object.values(block?.property?.default ?? []) as CameraBlockType[],
+    () => (block?.property?.default ?? []) as CameraBlockType[],
     [block?.property?.default],
   );
 
