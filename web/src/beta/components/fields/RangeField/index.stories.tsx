@@ -4,21 +4,21 @@ import { useCallback } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import SliderField, { Props } from ".";
+import RangeField, { Props } from ".";
 
-const meta: Meta<typeof SliderField> = {
-  component: SliderField,
+const meta: Meta<typeof RangeField> = {
+  component: RangeField,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof SliderField>;
+type Story = StoryObj<typeof RangeField>;
 
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
   const handleChange = useCallback(
-    (value: number) => {
+    (value: number[]) => {
       updateArgs({ value: value });
     },
     [updateArgs],
@@ -27,19 +27,10 @@ export const Default: Story = (args: Props) => {
   return (
     <Wrapper>
       <div>
-        <SliderField {...args} onChange={handleChange} />
+        <RangeField {...args} onChange={handleChange} />
       </div>
       <div>
-        <SliderField
-          {...args}
-          name="Inverse of above"
-          value={(args.max || 0) - (args?.value || 0)}
-          description={undefined}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <SliderField
+        <RangeField
           {...args}
           name="Disabled"
           description="Disabled field"
@@ -62,7 +53,7 @@ const Wrapper = styled.div`
 Default.args = {
   name: "Slider Field",
   description: "Slider field Sample description",
-  value: 50,
+  value: [0, 50],
   min: 0,
   max: 100,
   step: 1,
