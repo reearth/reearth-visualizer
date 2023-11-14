@@ -81,7 +81,7 @@ const TimelineEditor = ({
     <Wrapper>
       <TimelineControl>
         <StyledIcon activeBlock={isActive}>
-          <Icon icon="timelineStoryBlock" size={16} />
+          <Icon icon="timelineStoryBlockSolid" size={16} />
         </StyledIcon>
         <PlayControl>
           <PlayButton
