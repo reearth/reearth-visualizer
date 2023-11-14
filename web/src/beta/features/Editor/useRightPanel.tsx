@@ -5,6 +5,8 @@ import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Scene } from "@reearth/services/api/sceneApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 
 import MapSidePanel from "./tabs/map/RightPanel";
@@ -15,14 +17,15 @@ import { LayerStyleValueUpdateProps } from "./useLayerStyles";
 
 type Props = {
   layerStyles: LayerStyle[];
+  scene?: Scene;
+  sceneSettings?: Item[];
   tab: Tab;
   sceneId?: string;
   nlsLayers: NLSLayer[];
   currentPage?: Page;
-  showSceneSettings?: boolean;
   currentCamera?: Camera;
-  selectedLayerId?: string;
   selectedLayerStyleId?: string;
+  selectedSceneSetting?: string;
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
@@ -30,14 +33,15 @@ type Props = {
 };
 
 export default ({
+  scene,
   layerStyles,
   tab,
   sceneId,
   nlsLayers,
   currentPage,
-  showSceneSettings,
   selectedLayerStyleId,
-  selectedLayerId,
+  selectedSceneSetting,
+  sceneSettings,
   currentCamera,
   onPageUpdate,
   onFlyTo,
@@ -49,13 +53,14 @@ export default ({
       case "map":
         return (
           <MapSidePanel
+            scene={scene}
             layerStyles={layerStyles}
             layers={nlsLayers}
             sceneId={sceneId}
-            showSceneSettings={showSceneSettings}
+            sceneSettings={sceneSettings}
             currentCamera={currentCamera}
             selectedLayerStyleId={selectedLayerStyleId}
-            selectedLayerId={selectedLayerId}
+            selectedSceneSetting={selectedSceneSetting}
             onFlyTo={onFlyTo}
             onLayerStyleValueUpdate={onLayerStyleValueUpdate}
             onLayerConfigUpdate={onLayerConfigUpdate}
@@ -80,15 +85,16 @@ export default ({
         return undefined;
     }
   }, [
+    scene,
     tab,
     layerStyles,
+    nlsLayers,
     sceneId,
-    showSceneSettings,
     currentCamera,
     selectedLayerStyleId,
-    selectedLayerId,
+    selectedSceneSetting,
+    sceneSettings,
     currentPage,
-    nlsLayers,
     onFlyTo,
     onLayerStyleValueUpdate,
     onLayerConfigUpdate,

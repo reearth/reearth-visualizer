@@ -8,6 +8,10 @@
       "LayerTagGroup",
       "LayerTagItem"
     ],
+    "NLSLayer": [
+      "NLSLayerGroup",
+      "NLSLayerSimple"
+    ],
     "Node": [
       "Asset",
       "Dataset",
@@ -16,6 +20,9 @@
       "Project",
       "Property",
       "Scene",
+      "Story",
+      "StoryBlock",
+      "StoryPage",
       "Team",
       "User"
     ],

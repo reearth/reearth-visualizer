@@ -23,28 +23,34 @@ export type Page = {
   blocks?: Block[];
   layersIds?: string[];
 };
-
+export enum Position {
+  Left = "LEFT",
+  Right = "RIGHT",
+}
 export type Story = {
   id: string;
   title?: string;
+  bgColor?: string;
   publicTitle?: string;
   publicDescription?: string;
   publicImage?: string;
   isBasicAuthActive?: boolean;
   basicAuthUsername?: string;
   basicAuthPassword?: string;
-  panelPosition?: "left" | "right";
-  alias?: string;
+  publishmentStatus?: string;
+  panelPosition?: Position;
+  alias: string;
   pages?: Page[];
 };
 
 export const getStories = (rawScene?: GetSceneQuery) => {
   const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
-
   return scene?.stories.map(s => {
     return {
       ...s,
-      panelPosition: s.panelPosition === "RIGHT" ? "right" : "left",
+      publishmentStatus: s.publishmentStatus,
+      panelPosition: s.panelPosition,
+      bgColor: s.bgColor,
       pages: s.pages.map(p => {
         return {
           ...p,

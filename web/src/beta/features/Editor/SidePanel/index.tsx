@@ -45,11 +45,7 @@ const Wrapper = styled.div<{ location: "left" | "right" }>`
   height: 100%;
   box-sizing: border-box;
   gap: 4px;
-  padding: 2px 4px;
-
-  // for Resizable gutter width
-  ${({ location }) => location === "left" && `padding-right: 0;`}
-  ${({ location }) => location === "right" && `padding-left: 0;`}
+  background: ${({ theme }) => theme.bg[1]};
 `;
 
 const Section = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
@@ -67,10 +63,8 @@ const Card = styled.div`
 `;
 
 const Title = styled(Text)`
-  background: ${({ theme }) => theme.bg[2]};
-  padding: 4px 8px;
-  border-top-right-radius: 4px;
-  border-top-left-radius: 4px;
+  background: ${({ theme }) => theme.bg[1]};
+  padding: 8px;
 `;
 
 const ActionArea = styled.div`
@@ -78,7 +72,7 @@ const ActionArea = styled.div`
 `;
 
 const Content = styled.div<{ hasActions?: boolean }>`
-  padding: ${({ hasActions }) => (hasActions ? "0" : "8px 4px")};
+  padding: ${({ hasActions }) => (hasActions ? "0" : "8px")};
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   overflow-y: auto;

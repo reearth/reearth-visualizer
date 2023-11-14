@@ -26,6 +26,17 @@ type Props = {
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: string,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: () => Promise<void>;
+  onPropertyItemMove?: () => Promise<void>;
+  onPropertyItemDelete?: () => Promise<void>;
 };
 
 const SelectableArea: React.FC<Props> = ({
@@ -34,28 +45,25 @@ const SelectableArea: React.FC<Props> = ({
   isSelected,
   children,
   propertyId,
-  panelSettings,
   dndEnabled,
   showSettings,
   editMode,
   position,
   noBorder,
   isEditable,
+  panelSettings,
   setEditMode,
   onEditModeToggle,
   onSettingsToggle,
   onClick,
   onClickAway,
   onRemove,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
-  const {
-    isHovered,
-    showPadding,
-    setShowPadding,
-    handleMouseOver,
-    handleMouseOut,
-    handleClickAway,
-  } = useHooks({
+  const { showPadding, setShowPadding, handleClickAway } = useHooks({
     editMode,
     isSelected,
     setEditMode,
@@ -66,30 +74,27 @@ const SelectableArea: React.FC<Props> = ({
     <>{children}</>
   ) : (
     <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
-      <Wrapper
-        isSelected={isSelected}
-        noBorder={noBorder}
-        onMouseOver={handleMouseOver}
-        onMouseOut={handleMouseOut}
-        onClick={onClick}>
-        {(isHovered || isSelected) && (
-          <ActionPanel
-            title={title}
-            icon={icon}
-            isSelected={isSelected}
-            showSettings={showSettings}
-            showPadding={showPadding}
-            editMode={editMode}
-            propertyId={propertyId}
-            panelSettings={panelSettings}
-            dndEnabled={dndEnabled}
-            position={position}
-            setShowPadding={setShowPadding}
-            onEditModeToggle={onEditModeToggle}
-            onSettingsToggle={onSettingsToggle}
-            onRemove={onRemove}
-          />
-        )}
+      <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
+        <ActionPanel
+          title={title}
+          icon={icon}
+          isSelected={isSelected}
+          showSettings={showSettings}
+          showPadding={showPadding}
+          editMode={editMode}
+          propertyId={propertyId}
+          panelSettings={panelSettings}
+          dndEnabled={dndEnabled}
+          position={position}
+          setShowPadding={setShowPadding}
+          onEditModeToggle={onEditModeToggle}
+          onSettingsToggle={onSettingsToggle}
+          onRemove={onRemove}
+          onPropertyUpdate={onPropertyUpdate}
+          onPropertyItemAdd={onPropertyItemAdd}
+          onPropertyItemMove={onPropertyItemMove}
+          onPropertyItemDelete={onPropertyItemDelete}
+        />
         {children}
       </Wrapper>
     </ClickAwayListener>
@@ -104,8 +109,10 @@ const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean }>`
   transition: all 0.3s;
   padding: 1px;
   position: relative;
+  overflow: ${({ isSelected }) => (isSelected ? "visible" : "hidden")};
 
   :hover {
     border-color: ${({ isSelected, theme }) => !isSelected && theme.select.weaker};
+    overflow: visible;
   }
 `;

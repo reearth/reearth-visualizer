@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/encoding"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
+	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
@@ -22,21 +23,25 @@ const (
 )
 
 type Builder struct {
-	ploader  property.Loader
-	tloader  tag.SceneLoader
-	exporter *encoding.Exporter
-	encoder  *encoder
+	ploader   property.Loader
+	tloader   tag.SceneLoader
+	nlsloader nlslayer.Loader
+	exporter  *encoding.Exporter
+	encoder   *encoder
 
-	scene *scene.Scene
-	story *storytelling.Story
+	scene       *scene.Scene
+	nlsLayer    *nlslayer.NLSLayerList
+	layerStyles *scene.StyleList
+	story       *storytelling.Story
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader) *Builder {
+func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader) *Builder {
 	e := &encoder{}
 	return &Builder{
-		ploader: pl,
-		tloader: tsl,
-		encoder: e,
+		ploader:   pl,
+		tloader:   tsl,
+		nlsloader: nlsl,
+		encoder:   e,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
 				LayerLoader:    ll,
@@ -59,6 +64,22 @@ func (b *Builder) ForScene(s *scene.Scene) *Builder {
 	return b
 }
 
+func (b *Builder) WithNLSLayers(nlsLayer *nlslayer.NLSLayerList) *Builder {
+	if b == nil {
+		return nil
+	}
+	b.nlsLayer = nlsLayer
+	return b
+}
+
+func (b *Builder) WithLayerStyle(layerStyles *scene.StyleList) *Builder {
+	if b == nil {
+		return nil
+	}
+	b.layerStyles = layerStyles
+	return b
+}
+
 func (b *Builder) WithStory(s *storytelling.Story) *Builder {
 	if b == nil {
 		return nil
@@ -67,12 +88,12 @@ func (b *Builder) WithStory(s *storytelling.Story) *Builder {
 	return b
 }
 
-func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time) error {
+func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, coreSupport bool) error {
 	if b == nil || b.scene == nil {
 		return nil
 	}
 
-	res, err := b.buildScene(ctx, publishedAt)
+	res, err := b.buildScene(ctx, publishedAt, coreSupport)
 	if err != nil {
 		return err
 	}
@@ -85,10 +106,26 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time)
 		res.Story = story
 	}
 
+	if b.nlsLayer != nil {
+		nlsLayers, err := b.buildNLSLayers(ctx)
+		if err != nil {
+			return err
+		}
+		res.NLSLayers = nlsLayers
+	}
+
+	if b.layerStyles != nil {
+		layerStyles, err := b.buildLayerStyles(ctx)
+		if err != nil {
+			return err
+		}
+		res.LayerStyles = layerStyles
+	}
+
 	return json.NewEncoder(w).Encode(res)
 }
 
-func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time) (*sceneJSON, error) {
+func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSupport bool) (*sceneJSON, error) {
 	if b == nil {
 		return nil, nil
 	}
@@ -105,7 +142,7 @@ func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time) (*scene
 	}
 	layers := b.encoder.Result()
 
-	return b.sceneJSON(ctx, publishedAt, layers, p)
+	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport)
 }
 
 func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {
@@ -120,4 +157,20 @@ func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {
 	}
 
 	return b.storyJSON(ctx, p)
+}
+
+func (b *Builder) buildNLSLayers(ctx context.Context) ([]*nlsLayerJSON, error) {
+	if b == nil {
+		return nil, nil
+	}
+
+	return b.nlsLayersJSON(ctx)
+}
+
+func (b *Builder) buildLayerStyles(ctx context.Context) ([]*layerStylesJSON, error) {
+	if b == nil {
+		return nil, nil
+	}
+
+	return b.layerStylesJSON(ctx)
 }

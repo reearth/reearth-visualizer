@@ -32,7 +32,9 @@
         "polygon",
         "rect",
         "ref",
-        "spacing"
+        "spacing",
+        "array",
+        "timeline"
       ]
     },
     "propertyPointer": {
@@ -202,7 +204,10 @@
           "$ref": "#/definitions/id"
         },
         "collection": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "title": {
           "type": "string"
@@ -395,9 +400,6 @@
       "$id": "#root",
       "type": "object",
       "properties": {
-        "$schema": {
-          "type": "string"
-        },
         "id": {
           "$ref": "#/definitions/id"
         },

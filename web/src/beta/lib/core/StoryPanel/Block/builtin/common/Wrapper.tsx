@@ -29,8 +29,27 @@ type Props = {
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   onClick?: () => void;
-  onClickAway?: () => void;
   onRemove?: () => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: any,
+    v?: any,
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const BlockWrapper: React.FC<Props> = ({
@@ -44,8 +63,11 @@ const BlockWrapper: React.FC<Props> = ({
   dndEnabled = true,
   settingsEnabled = true,
   onClick,
-  onClickAway,
   onRemove,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const {
     title,
@@ -82,12 +104,17 @@ const BlockWrapper: React.FC<Props> = ({
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
         onRemove={onRemove}
-        onClickAway={onClickAway}>
+        onPropertyUpdate={onPropertyUpdate}
+        onPropertyItemAdd={onPropertyItemAdd}
+        onPropertyItemMove={onPropertyItemMove}
+        onPropertyItemDelete={onPropertyItemDelete}>
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
-          onClick={handleBlockClick}>
-          {children ?? <Template icon={icon} />}
+          onClick={e => {
+            handleBlockClick(e);
+          }}>
+          {children ?? (isEditable && <Template icon={icon} />)}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
@@ -100,6 +127,10 @@ const BlockWrapper: React.FC<Props> = ({
                   groupId={groupId}
                   fieldId={fieldId}
                   field={field}
+                  onPropertyUpdate={onPropertyUpdate}
+                  onPropertyItemAdd={onPropertyItemAdd}
+                  onPropertyItemMove={onPropertyItemMove}
+                  onPropertyItemDelete={onPropertyItemDelete}
                 />
               );
             })}

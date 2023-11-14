@@ -3,6 +3,7 @@ import { MouseEvent, useCallback, useState } from "react";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import Text from "@reearth/beta/components/Text";
 import type {
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
@@ -35,26 +36,36 @@ const LayerItem = ({
   const [newValue, setNewValue] = useState(layerTitle);
   const [isVisible, setIsVisible] = useState(visible);
   const [value, setValue] = useState(isVisible ? "V" : "");
+  const [clickTimeoutId, setClickTimeoutId] = useState<any>(null);
 
   const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
 
-  const handleClick = useCallback(
-    (e?: MouseEvent<Element>) => {
-      if (e?.shiftKey) {
-        e?.stopPropagation();
-        setIsEditing(true);
-        return;
-      }
+  const handleClick = useCallback(() => {
+    if (clickTimeoutId) {
+      clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
+    }
+    const timeoutId = setTimeout(() => {
       onSelect();
-    },
-    [onSelect],
-  );
+    }, 200);
+    setClickTimeoutId(timeoutId);
+  }, [onSelect, clickTimeoutId]);
+
+  const handleLayerTitleClick = useCallback(() => {
+    if (clickTimeoutId) {
+      clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
+    }
+    setIsEditing(true);
+  }, [clickTimeoutId]);
 
   const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
 
   const handleTitleSubmit = useCallback(() => {
     setIsEditing(false);
-    onLayerNameUpdate({ layerId: id, name: newValue });
+    if (newValue.trim() !== "") {
+      onLayerNameUpdate({ layerId: id, name: newValue });
+    }
   }, [id, newValue, onLayerNameUpdate]);
 
   const handleEditExit = useCallback(
@@ -69,18 +80,22 @@ const LayerItem = ({
     [layerTitle, newValue, handleTitleSubmit],
   );
 
-  const handleUpdateVisibility = useCallback(() => {
-    const newVisibility = !isVisible;
-    onLayerVisibilityUpate({ layerId: id, visible: newVisibility });
-    setIsVisible(newVisibility);
-    setValue(isVisible ? "" : "V");
-  }, [id, isVisible, onLayerVisibilityUpate]);
+  const handleUpdateVisibility = useCallback(
+    (e?: MouseEvent<Element>) => {
+      e?.stopPropagation();
+      const newVisibility = !isVisible;
+      onLayerVisibilityUpate({ layerId: id, visible: newVisibility });
+      setIsVisible(newVisibility);
+      setValue(isVisible ? "" : "V");
+    },
+    [id, isVisible, onLayerVisibilityUpate],
+  );
 
   return (
     <ListItem
       isSelected={isSelected}
       isOpenAction={isActionOpen}
-      actionPlacement="bottom-start"
+      actionPlacement="bottom-end"
       onItemClick={handleClick}
       onActionClick={handleActionMenuToggle}
       onOpenChange={isOpen => setActionOpen(!!isOpen)}
@@ -96,39 +111,68 @@ const LayerItem = ({
           ]}
         />
       }>
-      {isEditing ? (
-        <TextInput
-          value={newValue}
-          timeout={0}
-          autoFocus
-          onChange={handleChange}
-          onExit={handleEditExit}
-          onBlur={handleEditExit}
-        />
-      ) : (
-        layerTitle
-      )}
-      <HideLayer onClick={handleUpdateVisibility}>{value}</HideLayer>
+      <ContentWrapper>
+        {isEditing ? (
+          <StyledTextInput
+            value={newValue}
+            timeout={0}
+            autoFocus
+            onChange={handleChange}
+            onExit={handleEditExit}
+            onBlur={handleEditExit}
+          />
+        ) : (
+          <LayerTitle onDoubleClick={handleLayerTitleClick}>{layerTitle}</LayerTitle>
+        )}
+        <HideLayer onClick={handleUpdateVisibility}>
+          <Text size="footnote">{value}</Text>
+        </HideLayer>
+      </ContentWrapper>
     </ListItem>
   );
 };
 
 export default LayerItem;
 
+const LayerTitle = styled.div`
+  overflow: hidden;
+  color: ${({ theme }) => theme.content.main};
+  text-overflow: ellipsis;
+  font-family: Noto Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
 const HideLayer = styled.div`
-  min-width: 10px;
-  min-height: 20px;
-  padding: 3px 6px 0;
+  display: flex;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
   border-radius: 4px;
   border: 1.5px solid ${({ theme }) => theme.bg[1]};
   color: ${({ theme }) => theme.content.strong};
   background: ${({ theme }) => theme.bg[2]};
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
+
   :hover {
     background: ${({ theme }) => theme.bg[2]};
   }
+`;
+
+const StyledTextInput = styled(TextInput)`
+  width: 100%;
+  font-size: 12px;
+  color: ${({ theme }) => theme.content.main};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 `;

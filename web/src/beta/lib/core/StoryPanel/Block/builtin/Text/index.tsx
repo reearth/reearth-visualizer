@@ -1,9 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
+import RichText from "@reearth/beta/lib/lexical/RichTextEditor";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
 import { CommonProps as BlockProps } from "../../types";
-import usePropertyValueUpdate from "../common/useActionPropertyApi";
 import BlockWrapper from "../common/Wrapper";
 
 import TextBlockEditor from "./Editor";
@@ -19,16 +19,6 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [block?.property?.default?.text?.value],
   );
 
-  const { handlePropertyValueUpdate } = usePropertyValueUpdate();
-
-  const handleTextUpdate = useCallback(
-    (text: string) => {
-      if (!block?.propertyId) return;
-      handlePropertyValueUpdate("default", block?.propertyId, "text", "string")(text);
-    },
-    [block, handlePropertyValueUpdate],
-  );
-
   return (
     <BlockWrapper
       name={block?.name}
@@ -38,7 +28,16 @@ const TextBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       property={block?.property}
       settingsEnabled={false}
       {...props}>
-      <TextBlockEditor text={text} onUpdate={handleTextUpdate} />
+      {props.isEditable ? (
+        <TextBlockEditor
+          text={text}
+          propertyId={block?.propertyId}
+          isEditable={props.isEditable}
+          onPropertyUpdate={props.onPropertyUpdate}
+        />
+      ) : (
+        <RichText text={text} scrollableContainerId="story-page" />
+      )}
     </BlockWrapper>
   );
 };

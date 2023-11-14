@@ -13,7 +13,8 @@ extensions:
     schema:
       groups:
         - id: default
-          title: Scene
+          collection: Main
+          title: Main
           fields:
             - id: sceneMode
               type: string
@@ -36,6 +37,7 @@ extensions:
               title: VR
               description: Enable VR mode to split the screen into left and right.
         - id: tiles
+          collection: Tiles
           title: Tiles
           description: You may change the look of the Earth by obtaining map tile data and setting it here.
           list: true
@@ -89,9 +91,10 @@ extensions:
               min: 0
               max: 1
         - id: terrain
+          collection: Terrain
           title: Terrain
           fields:
-            - id: terrainBool
+            - id: terrain
               type: bool
               title: Enable
               description: Show elevation when close to the surface.
@@ -101,7 +104,7 @@ extensions:
               description: Specify terrain type.
               defaultValue: cesium
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
               choices:
@@ -142,7 +145,7 @@ extensions:
               defaultValue: 1
               suffix: x
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
             - id: terrainExaggerationRelativeHeight
@@ -152,7 +155,7 @@ extensions:
               defaultValue: 0
               suffix: m
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
             - id: depthTestAgainstTerrain
@@ -160,90 +163,98 @@ extensions:
               title: Hide objects under terrain
               description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
               availableIf:
-                field: terrainBool
+                field: terrain
                 type: bool
                 value: true
         - id: globeLighting
-          collection: globe
+          collection: Globe
           title: Globe Lighting
           fields:
-            - id: globeLightingBool
+            - id: globeLighting
               type: bool
               title: Enable
+              defaultValue: false
               description: This property will support the globe receive Entitys Lighting.
         - id: globeShadow
-          collection: globe
+          collection: Globe
           title: Globe Shadow
           fields:
-            - id: globeShadowBool
+            - id: globeShadow
               type: bool
               title: Enable
+              defaultValue: false
               description: This property will support the globe receive Entitys shadows.
         - id: globeAtmosphere
-          collection: globe
+          collection: Globe
           title: Globe Atmosphere
           fields:
-            - id: globeAtmosphereBool
+            - id: globeAtmosphere
               type: bool
               title: Enable
+              defaultValue: true
               description: This setting handles the so-called atmosphere effect of Earth.
             - id: globeAtmosphereIntensity
               type: number
               title: Light Intensity
-              description: "Change the light intensity of the selected tile map. Min: 0 Max: 1"
-              defaultValue: 0.5
+              description: "Change the light intensity of the selected tile map. Min: 0 Max: 30"
+              defaultValue: 10
               ui: slider
               min: 0
-              max: 1
+              max: 30
               availableIf:
-                field: globeAtmosphereBool
+                field: globeAtmosphere
                 type: bool
                 value: true
         - id: skyBox
-          collection: sky
+          collection: Sky
           title: Sky Box
           fields:
-            - id: skyBoxBool
+            - id: skyBox
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: sun
-          collection: sky
+          collection: Sky
           title: Sun
           fields:
-            - id: sunBool
+            - id: sun
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: moon
-          collection: sky
+          collection: Sky
           title: Moon
           fields:
-            - id: moonBool
+            - id: moon
               type: bool
               title: Enable
+              defaultValue: true
               description: Description needed.
         - id: skyAtmosphere
-          collection: sky
+          collection: Sky
           title: Sky Atmosphere
           fields:
-            - id: skyAtmosphereBool
+            - id: skyAtmosphere
               type: bool
               title: Enable
+              defaultValue: true
               description: Description neeeded.
             - id: skyAtmosphereIntensity
               type: number
               title: Light Intensity
-              description: "Change the light intensity of the selected tile map. Min: 0 Max: 1"
-              defaultValue: 0.5
+              description: "Change the light intensity of the selected tile map. Min: 0 Max: 200"
+              defaultValue: 50
               ui: slider
               min: 0
-              max: 1
+              max: 200
               availableIf:
-                field: skyAtmosphereBool
+                field: skyAtmosphere
                 type: bool
                 value: true
         - id: camera
+          collection: Camera
           title: Camera
           fields:
             - id: camera
@@ -258,7 +269,7 @@ extensions:
             - id: fov
               type: number
               title: FOV
-              description: Description needed
+              # description: Description needed
               defaultValue: 3
               ui: slider
               min: 0
@@ -1992,6 +2003,7 @@ extensions:
         - id: menu
           title: Menu
           list: true
+          representativeField: menuTitle
           availableIf:
             field: buttonType
             type: string
@@ -2314,6 +2326,12 @@ extensions:
             - id: cameraPosition
               type: camera
               title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+              defaultValue: 2
         - id: timePoint
           title: Time Point Setting
           fields:
@@ -2322,7 +2340,7 @@ extensions:
               ui: datetime
               title: Time
   - id: textStoryBlock
-    name: Text Block
+    name: Text
     type: storyBlock
     description: Storytelling Text Block
     schema:
@@ -2344,7 +2362,7 @@ extensions:
               title: Content
               ui: multiline
   - id: mdTextStoryBlock
-    name: MD Text Block
+    name: MD Text
     type: storyBlock
     description: Storytelling MD Text Block
     schema:
@@ -2366,7 +2384,7 @@ extensions:
               title: Content
               ui: multiline
   - id: imageStoryBlock
-    name: Image Block
+    name: Image
     type: storyBlock
     description: Storytelling Image Block
     schema:
@@ -2388,7 +2406,7 @@ extensions:
               title: Image
               ui: image
   - id: videoStoryBlock
-    name: Video Block
+    name: Video
     type: storyBlock
     description: Storytelling Video Block
     schema:
@@ -2443,6 +2461,12 @@ extensions:
             - id: cameraPosition
               type: camera
               title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+              defaultValue: 2
   - id: linkButtonStoryBlock
     name: Link Button
     type: storyBlock
@@ -2461,6 +2485,7 @@ extensions:
         - id: default
           title: Link Button
           list: true
+          representativeField: title
           fields:
             - id: title
               type: string
@@ -2476,44 +2501,8 @@ extensions:
             - id: url
               type: url
               title: Link URL
-  - id: timelineStoryBlock
-    name: Timeline Block
-    type: storyBlock
-    description: Storytelling Timeline Block
-    schema:
-      groups:
-        - id: panel
-          title: Panel Setting
-          fields:
-            - id: padding
-              type: spacing
-              title: Padding
-              ui: padding
-              min: 0
-              max: 100
-        - id: default
-          title: Timeline
-          fields:
-            - id: currentTime
-              type: string
-              ui: datetime
-              title: Current Time
-            - id: startTime
-              type: string
-              ui: datetime
-              title: Start Time
-            - id: endTime
-              type: string
-              ui: datetime
-              title: End Time
-            - id: autoPlay
-              type: bool
-              title: Auto Play
-            - id: loop
-              type: bool
-              title: Loop
   - id: showLayersStoryBlock
-    name: Show Layers
+    name: Show Layers Button
     type: storyBlock
     description: Storytelling Show Layers 
     schema:
@@ -2544,7 +2533,39 @@ extensions:
               title: Background Color
               ui: color
             - id: showLayers
-              type: string
+              type: array
               title: Show Layers
               ui: layer
               choices:
+  - id: timelineStoryBlock
+    name: Timeline
+    type: storyBlock
+    description: Storytelling Timeline Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Timeline Setting
+          fields:
+            - id: timelineSetting
+              type: timeline
+              ui: datetime
+              title: Timeline Setting
+            - id: playMode
+              type: string
+              title: Play Mode
+              description: Specify play mode.
+              defaultValue: once
+              choices:
+                - key: once
+                  label: Once
+                - key: loop
+                  label: Loop

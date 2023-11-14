@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
+import { useSelectedLayerStyle } from "@reearth/services/state";
 
 type LayerStyleProps = {
   sceneId: string;
@@ -27,7 +28,7 @@ export default function ({ sceneId }: LayerStyleProps) {
   const t = useT();
   const { useAddLayerStyle, useGetLayerStylesQuery, useRemoveLayerStyle, useUpdateLayerStyle } =
     useLayerStylesFetcher();
-  const [selectedLayerStyleId, setSelectedLayerStyleId] = useState<string | undefined>(undefined);
+  const [selectedLayerStyleId, setSelectedLayerStyleId] = useSelectedLayerStyle();
   const { layerStyles = [] } = useGetLayerStylesQuery({ sceneId });
 
   const selectedLayerStyle = useMemo(
@@ -38,16 +39,16 @@ export default function ({ sceneId }: LayerStyleProps) {
   const handleLayerStyleSelect = useCallback(
     (layerId: string) =>
       setSelectedLayerStyleId(prevId => (prevId === layerId ? undefined : layerId)),
-    [],
+    [setSelectedLayerStyleId],
   );
 
   const handleLayerStyleDelete = useCallback(
     async (styleId: string) => {
       const deletedPageIndex = layerStyles.findIndex(l => l.id === styleId);
-      if (!deletedPageIndex) return;
+      if (deletedPageIndex === undefined) return;
 
       await useRemoveLayerStyle({
-        styleId: styleId,
+        styleId,
       });
       if (styleId === selectedLayerStyleId) {
         setSelectedLayerStyleId(
@@ -55,7 +56,7 @@ export default function ({ sceneId }: LayerStyleProps) {
         );
       }
     },
-    [layerStyles, selectedLayerStyleId, useRemoveLayerStyle],
+    [layerStyles, selectedLayerStyleId, setSelectedLayerStyleId, useRemoveLayerStyle],
   );
 
   const handleLayerStyleAdd = useCallback(

@@ -106,14 +106,14 @@ const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
   display: flex;
   flex-direction: ${({ direction }) => (direction === "horizontal" ? "column" : "row")};
   align-items: center;
-  width: ${({ direction }) => (direction === "horizontal" ? null : `24px`)};
-  height: ${({ direction }) => (direction === "vertical" ? null : `24px`)};
-  background: ${({ theme }) => theme.bg[2]};
+  width: ${({ direction }) => (direction === "horizontal" ? null : `20px`)};
+  height: ${({ direction }) => (direction === "vertical" ? null : `20px`)};
+  background: ${({ theme }) => theme.bg[0]};
   cursor: pointer;
   transition: background 0.3s;
 
   :hover {
-    background: ${({ theme }) => theme.bg[3]};
+    background: ${({ theme }) => theme.bg[1]};
   }
 `;
 export default Resizable;

@@ -78,6 +78,7 @@ export type ItemCommon = {
   id?: string;
   schemaGroup: string;
   title?: string;
+  collection?: string | null;
   schemaFields: SchemaField[];
   representativeField?: string;
   only?: {
@@ -141,11 +142,12 @@ const toItem = (
 ): Item | undefined => {
   const common: Pick<
     Item,
-    "id" | "schemaGroup" | "title" | "only" | "schemaFields" | "representativeField"
+    "id" | "schemaGroup" | "title" | "collection" | "only" | "schemaFields" | "representativeField"
   > = {
     id: item?.id,
     schemaGroup: schemaGroup.schemaGroupId,
     title: schemaGroup.translatedTitle,
+    collection: schemaGroup.collection,
     only: toCond(schemaGroup.isAvailableIf),
     representativeField: schemaGroup.representativeFieldId ?? undefined,
     schemaFields: schemaGroup.fields
@@ -279,6 +281,8 @@ export const toUi = (ui: PropertySchemaFieldUi | null | undefined): SchemaField[
       return "margin";
     case PropertySchemaFieldUi.Padding:
       return "padding";
+    case PropertySchemaFieldUi.Datetime:
+      return "datetime";
   }
   return undefined;
 };

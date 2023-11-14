@@ -6,10 +6,11 @@ import { styled } from "@reearth/services/theme";
 
 import StoryPage from "../Page";
 
-import useHooks, { PAGES_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
+import useHooks, { STORY_PANEL_CONTENT_ELEMENT_ID, type StoryPage as StoryPageType } from "./hooks";
 
 export type Props = {
   pages?: StoryPageType[];
+  currentPageId?: string;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -19,12 +20,14 @@ export type Props = {
   isEditable?: boolean;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
+  onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
   onBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
     pluginId?: string | undefined,
     index?: number | undefined,
   ) => Promise<void>;
+  onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
   onPropertyUpdate?: (
@@ -35,12 +38,23 @@ export type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onCurrentPageChange?: (pageId: string) => void;
-  onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const StoryContent: React.FC<Props> = ({
   pages,
+  currentPageId,
   selectedPageId,
   installableStoryBlocks,
   selectedStoryBlockId,
@@ -50,16 +64,19 @@ const StoryContent: React.FC<Props> = ({
   isEditable,
   onPageSettingsToggle,
   onPageSelect,
+  onCurrentPageChange,
   onBlockCreate,
   onBlockDelete,
   onBlockSelect,
+  onBlockMove,
   onPropertyUpdate,
-  onCurrentPageChange,
-  onStoryBlockMove,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const { pageGap, handleBlockCreate, handleBlockDelete } = useHooks({
     pages,
-    selectedPageId,
+    currentPageId,
     isAutoScrolling,
     onBlockCreate,
     onBlockDelete,
@@ -67,7 +84,10 @@ const StoryContent: React.FC<Props> = ({
   });
 
   return (
-    <PagesWrapper id={PAGES_ELEMENT_ID} showingIndicator={showingIndicator} isEditable={isEditable}>
+    <PagesWrapper
+      id={STORY_PANEL_CONTENT_ELEMENT_ID}
+      showingIndicator={showingIndicator}
+      isEditable={isEditable}>
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage
@@ -82,8 +102,11 @@ const StoryContent: React.FC<Props> = ({
             onBlockCreate={handleBlockCreate(p.id)}
             onBlockDelete={handleBlockDelete(p.id)}
             onBlockSelect={onBlockSelect}
-            onStoryBlockMove={onStoryBlockMove}
+            onBlockMove={onBlockMove}
             onPropertyUpdate={onPropertyUpdate}
+            onPropertyItemAdd={onPropertyItemAdd}
+            onPropertyItemMove={onPropertyItemMove}
+            onPropertyItemDelete={onPropertyItemDelete}
           />
           <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
         </Fragment>

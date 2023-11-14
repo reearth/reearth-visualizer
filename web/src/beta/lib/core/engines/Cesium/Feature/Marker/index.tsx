@@ -28,7 +28,9 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
-        ? geometry.coordinates
+        ? property?.height
+          ? [...geometry.coordinates.slice(0, 2), property.height]
+          : geometry.coordinates
         : property?.location
         ? [property.location.lng, property.location.lat, property.height ?? 0]
         : undefined,

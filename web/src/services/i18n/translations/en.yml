@@ -18,9 +18,26 @@ Edit: Edit
 Color Picker: Color Picker
 You have passed the maximum value.: You have passed the maximum value.
 You have passed the minimum value.: You have passed the minimum value.
+Set Time: Set Time
+Date: Date
+Time: Time
+Time Zone: Time Zone
+set: set
 Remove: Remove
-Add Item: ''
-Please choose an option: ''
+Add Item: Add Item
+Settings: Settings
+Options: Options
+Please choose an option: Please choose an option
+Add text here: Add text here
+Timeline Settings: Timeline Settings
+'* Start Time': '* Start Time'
+Start time for the timeline: Start time for the timeline
+'* Current Time': '* Current Time'
+Current time should be between start and end time: Current time should be between start and end time
+'* End Time': '* End Time'
+End time for the timeline: End time for the timeline
+Please make sure the Current time must between the Start time and End Time.: Please make sure the Current time must between the Start time and End Time.
+not set: not set
 Wrong file format: Wrong file format
 Choose: Choose
 Upload: Upload
@@ -42,25 +59,33 @@ Resource URL: Resource URL
 URL of the data source you want to add.: ''
 Input Text: ''
 Value: ''
-Description around.: ''
-Write down your text: ''
-Asset: ''
-Prioritize Performance: ''
-Add to Layer: ''
+Write syntactically correct data based on the file format you have selected above.: >-
+  Write syntactically correct data based on the file format you have selected
+  above.
+Input data here: Input data here
+Asset: Asset
+Prioritize Performance: Prioritize Performance
+Add to Layer: Add to Layer
 Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
 Layer: Layer
 Layers: Layers
-All Layers: ''
-Layer Style: ''
+All Layers: All Layers
+Layer Style: Layer Style
+Scene: Scene
 Outline: Outline
-Add Layer from Resource: ''
+Add Layer from Resource: Add Layer from Resource
 Inspector: Inspector
-Layer Property Inspector: ''
+ID: ID
+Geometry: Geometry
+Properties: Properties
+Data: Data
+Feature: Feature
+Styling: Styling
+Format: Format
 Published: Published
 Unpublished: Unpublished
-Scene: Scene
 Story: Story
 Unpublish: Unpublish
 Update: Update
@@ -83,9 +108,13 @@ Copy: Copy
 '* Anyone can see your project with this URL': '* Anyone can see your project with this URL'
 Embed Code: Embed Code
 '* Please use this code if you want to embed your project into a webpage': '* Please use this code if you want to embed your project into a webpage'
-more options: more options
+Publish domain: Publish domain
+More options: More options
+Need to change domain related settings?: Need to change domain related settings?
+Go to settings: Go to settings
 Search engine indexing: Search engine indexing
 Page will be available as result on search engines: ''
+Unpublishing: Unpublishing
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
 '**Warning**: This includes websites where this project is embedded.': '**Warning**: This includes websites where this project is embedded.'
@@ -115,7 +144,7 @@ You haven't uploaded any assets yet. Click the upload button above and select a 
   You haven't uploaded any assets yet. Click the upload button above and select
   a compatible file from your computer.
 Please select an layer style before clicking Select.: ''
-Select Layer Style: ''
+Select Layer Style: Select Layer Style
 No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
@@ -129,8 +158,8 @@ New Workspace: New Workspace
 Log out: Log out
 Project settings: Project settings
 Public: Public
-Workspace assets: ''
-Plugin: ''
+Workspace assets: Workspace assets
+Plugin: Plugin
 Manage projects: Manage projects
 Documentation: Documentation
 Map: Map
@@ -140,7 +169,7 @@ Warning: Warning
 Notice: Notice
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
-Project Settings: ''
+Project Settings: Project Settings
 Upload file: Upload file
 Delete: Delete
 You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
@@ -150,6 +179,8 @@ Most project settings are hidden when the project is archived. Please unarchive 
   unarchive the project to view and edit these settings.
 Project Info: Project Info
 Name: Name
+Description: Description
+Thumbnail: Thumbnail
 Submit: ''
 Danger Zone: Danger Zone
 Archive this project: Archive this project
@@ -195,14 +226,21 @@ Import GitHub repository: Import GitHub repository
 Public Info: Public Info
 Title: Title
 Basic Authorization: Basic Authorization
+Enable Basic Authorization: ''
 Username: Username
 Password: Password
-Site Setting: ''
+Site Setting: Site Setting
 Site name: Site name
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
   You are about to change the site name for your project. Only alphanumeric
   characters and hyphens are allows.
-Story Panel: ''
+Left: Left
+Right: Right
+Story Panel: Story Panel
+Panel Position: Panel Position
+Background Color: Background Color
+Something went wrong.: Something went wrong.
+Couldn't find the Re:Earth project you were after.: Couldn't find the Re:Earth project you were after.
 Double click here to write.: Double click here to write.
 Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 aria-label-compass: compass
@@ -217,7 +255,9 @@ ellipse: ellipse
 Open timeline: Open timeline
 Spacing settings: Spacing settings
 New Camera: New Camera
+New Camera Button: New Camera Button
 Buttons List: Buttons List
+New Layers Button: New Layers Button
 Add markdown text here: Add markdown text here
 Unsupported field type: Unsupported field type
 Drop here: Drop here
@@ -242,12 +282,10 @@ Bulleted List: Bulleted List
 Insert Code Block: Insert Code Block
 Insert Link: Insert Link
 Text Color: Text Color
-Background Color: Background Color
 Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
-not set: not set
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
@@ -278,7 +316,6 @@ Reset password: Reset password
 Create your Account: Create your Account
 Already have an account?: Already have an account?
 Log in: Log in
-Date: Date
 File size: File size
 Alphabetical: Alphabetical
 Assets Library: Assets Library
@@ -294,7 +331,6 @@ OK: OK
 Click here for more details.: ''
 Create New Project: Create New Project
 Project Name: Project Name
-Description: Description
 Select thumbnail image: Select thumbnail image
 Datasets: Datasets
 Plugins: Plugins
@@ -316,7 +352,6 @@ New workspace: New workspace
 '''s workspace': '''s workspace'
 Layer style: Layer style
 import: import
-Data: Data
 Import to scene: Import to scene
 You are deleting a dataset. Layers that are linked to this dataset might show errors.: >-
   You are deleting a dataset. Layers that are linked to this dataset might show
@@ -393,6 +428,7 @@ Gap Spacing: Gap Spacing
 Align Center: ''
 Enable Editor Mode: Enable Editor Mode
 Close: Close
+more options: more options
 Add a tag group: Add a tag group
 Add a tag: Add a tag
 Auto: Auto
@@ -417,7 +453,6 @@ Enable basic authorization: Enable basic authorization
 Change site name: Change site name
 Delete this dataset: Delete this dataset
 Are you sure you want to delete it?: Are you sure you want to delete it?
-Thumbnail: Thumbnail
 (These fields will be used for OGP as well as metadata for the public project): (These fields will be used for OGP as well as metadata for the public project)
 Site settings: Site settings
 Access your project, copy or edit the URL below.: Access your project, copy or edit the URL below.
@@ -442,6 +477,7 @@ Please type your workspace name to continue.: Please type your workspace name to
 I am sure I want to delete this workspace.: I am sure I want to delete this workspace.
 Reader: Reader
 Writer: Writer
+Maintainer: Maintainer
 Owner: Owner
 Members: Members
 New member: New member
@@ -460,6 +496,7 @@ One or more assets were successfully deleted.: One or more assets were successfu
 Successfully created workspace!: Successfully created workspace!
 Failed to create project.: Failed to create project.
 Default: Default
+Failed to create story page on project creation.: Failed to create story page on project creation.
 Successfully created project!: Successfully created project!
 Successfully created layer group: Successfully created layer group
 Failed to create layer group: Failed to create layer group

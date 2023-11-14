@@ -6,11 +6,12 @@ import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Loading from "@reearth/beta/components/Loading";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
-import useLayerStyleHooks from "@reearth/beta/features/LayerStyle/hooks";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+
+import useHooks from "./hooks";
 
 export type Props = {
   sceneId?: string;
@@ -34,7 +35,7 @@ const ChooseLayerStyleModal: React.FC<Props> = ({ open, sceneId, onClose, onSele
     handleSearch,
     handleSearchInputChange,
     onScrollToBottom,
-  } = useLayerStyleHooks({ sceneId });
+  } = useHooks({ sceneId });
 
   const handleSelectButtonClick = useCallback(() => {
     if (selectedLayerStyles && selectedLayerStyles.length > 0) {

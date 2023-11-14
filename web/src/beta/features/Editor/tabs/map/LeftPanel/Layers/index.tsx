@@ -44,7 +44,7 @@ const Layers: React.FC<LayersProps> = ({
 
   const handleZoomToLayer = () => {
     if (selectedLayerId) {
-      onFlyTo?.(selectedLayerId);
+      onFlyTo?.(selectedLayerId, { duration: 0 });
     }
   };
 
@@ -66,7 +66,7 @@ const Layers: React.FC<LayersProps> = ({
 
           <Popover.Content>
             <PopoverMenuContent
-              size="md"
+              size="sm"
               items={[
                 {
                   name: t("Add Layer from Resource"),
@@ -112,6 +112,7 @@ const LayerContainer = styled.div`
 const ActionWrapper = styled.div`
   flex: 1;
   display: flex;
+  gap: 10px;
   justify-content: right;
 `;
 

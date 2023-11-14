@@ -1,0 +1,108 @@
+type Team implements Node {
+  id: ID!
+  name: String!
+  members: [TeamMember!]!
+  personal: Boolean!
+  policyId: ID
+  policy: Policy
+  assets(first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
+  projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+}
+
+type TeamMember {
+  userId: ID!
+  role: Role!
+  user: User
+}
+
+type Policy {
+  id: ID!
+  name: String!
+  projectCount: Int
+  memberCount: Int
+  publishedProjectCount: Int
+  layerCount: Int
+  assetStorageSize: FileSize
+  datasetSchemaCount: Int
+  datasetCount: Int
+}
+
+enum Role {
+  # a role who can read project
+  READER
+  # a role who can read and write project
+  WRITER
+  # a role who can maintain a project
+  MAINTAINER
+  # a eole who can have full controll of project
+  OWNER
+}
+
+# InputType
+
+input CreateTeamInput {
+  name: String!
+}
+
+input UpdateTeamInput {
+  teamId: ID!
+  name: String!
+}
+
+input AddMemberToTeamInput {
+  teamId: ID!
+  userId: ID!
+  role: Role!
+}
+
+input RemoveMemberFromTeamInput {
+  teamId: ID!
+  userId: ID!
+}
+
+input UpdateMemberOfTeamInput {
+  teamId: ID!
+  userId: ID!
+  role: Role!
+}
+
+input DeleteTeamInput {
+  teamId: ID!
+}
+
+# Payload
+
+type CreateTeamPayload {
+  team: Team!
+}
+
+type UpdateTeamPayload {
+  team: Team!
+}
+
+type AddMemberToTeamPayload {
+  team: Team!
+}
+
+type RemoveMemberFromTeamPayload {
+  team: Team!
+}
+
+type UpdateMemberOfTeamPayload {
+  team: Team!
+}
+
+type DeleteTeamPayload {
+  teamId: ID!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  createTeam(input: CreateTeamInput!): CreateTeamPayload
+  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
+  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
+  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
+  removeMemberFromTeam(input: RemoveMemberFromTeamInput!): RemoveMemberFromTeamPayload
+  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
+}

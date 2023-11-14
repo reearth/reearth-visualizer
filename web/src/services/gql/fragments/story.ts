@@ -5,12 +5,14 @@ export const storyFragment = gql`
     id
     title
     panelPosition
+    bgColor
     isBasicAuthActive
     basicAuthUsername
     basicAuthPassword
     alias
     publicTitle
     publicDescription
+    publishmentStatus
     publicImage
     publicNoIndex
     pages {

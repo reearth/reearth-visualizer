@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useRef, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Icon from "@reearth/beta/components/Icon";
@@ -32,17 +32,37 @@ const LayerStyleCard: React.FC<Props> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(name);
+  const clickTimeoutRef = useRef<NodeJS.Timeout>();
+  const clickedNameCount = useRef(0);
 
-  const handleNameClick = useCallback(() => setIsEditing(true), []);
+  const handleClick = useCallback(() => {
+    console.log(clickedNameCount.current);
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
+    clickTimeoutRef.current = setTimeout(() => {
+      clickedNameCount.current = 0;
+      onSelect?.(!selected);
+    }, 100);
+  }, [onSelect, selected]);
+
+  const handleNameClick = useCallback(() => {
+    const newClickCount = clickedNameCount.current + 1;
+    console.log(newClickCount);
+    clickedNameCount.current = newClickCount;
+    // if (clickTimeoutRef.current) {
+    //   clearTimeout(clickTimeoutRef.current);
+    // }
+    if (clickedNameCount.current === 2) {
+      setIsEditing(true);
+    }
+  }, []);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
-    setIsOpenAction(false);
-  }, []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   const handleNameChange = useCallback((newName: string) => setNewName(newName), []);
 
@@ -80,14 +100,14 @@ const LayerStyleCard: React.FC<Props> = ({
     <Wrapper
       className={className}
       selected={selected}
-      onClick={() => onSelect?.(!selected)}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
       <MainWrapper>
         <Icon icon="layerStyle" />
         {actionContent && (
           <Popover.Provider open={isOpenAction} onOpenChange={handleOpenChange}>
-            {isHovered && (
+            {(isHovered || isOpenAction) && (
               <Popover.Trigger asChild>
                 <ActionIcon onClick={handleActionClick}>
                   <Icon icon="actionbutton" size={12} />
@@ -98,7 +118,7 @@ const LayerStyleCard: React.FC<Props> = ({
           </Popover.Provider>
         )}
       </MainWrapper>
-      <BottomWrapper isHovered={isHovered} isSelected={selected}>
+      <BottomWrapper isHovered={isHovered || isOpenAction} isSelected={selected}>
         {isEditing ? (
           <StyledTextInput
             value={newName}
@@ -184,4 +204,9 @@ const StyleName = styled(Text)`
 
 const StyledTextInput = styled(TextInput)`
   width: 100%;
+  font-size: 12px;
+  color: ${({ theme }) => theme.content.main};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 `;

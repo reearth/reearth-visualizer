@@ -36,16 +36,15 @@ export default (
   }, [searchIndex]);
 
   const handleCopyToClipBoard = useCallback(
-    (key: keyof CopiedItemKey, value: string | undefined) =>
-      (_: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-        if (!value) return;
-        setCopiedKey(prevState => ({
-          ...prevState,
-          [key]: true,
-        }));
-        navigator.clipboard.writeText(value);
-        onCopyToClipBoard?.();
-      },
+    (key: keyof CopiedItemKey, value: string | undefined) => () => {
+      if (!value) return;
+      setCopiedKey(prevState => ({
+        ...prevState,
+        [key]: true,
+      }));
+      navigator.clipboard.writeText(value);
+      onCopyToClipBoard?.();
+    },
     [onCopyToClipBoard],
   );
 
@@ -78,9 +77,11 @@ export default (
 
   const handleClose = useCallback(() => {
     onClose?.();
-    onAliasChange(defaultAlias);
-    setStatusChange(false);
-    setOptions(defaultAlias ? false : true);
+    setTimeout(() => {
+      onAliasChange(defaultAlias);
+      setStatusChange(false);
+      setOptions(defaultAlias ? false : true);
+    }, 500);
   }, [onClose, defaultAlias]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const generateAlias = useCallback(() => {

@@ -58,8 +58,15 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
   return (
     <CesiumGlobe
       baseColor={baseColor}
-      enableLighting={!!property?.atmosphere?.enable_lighting}
-      showGroundAtmosphere={property?.atmosphere?.ground_atmosphere ?? true}
+      enableLighting={
+        !!(property?.atmosphere?.enable_lighting ?? property?.globeLighting?.globeLighting)
+      }
+      showGroundAtmosphere={
+        property?.atmosphere?.ground_atmosphere ??
+        property?.globeAtmosphere?.globeAtmosphere ??
+        true
+      }
+      atmosphereLightIntensity={property?.globeAtmosphere?.globeAtmosphereIntensity}
       atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
       atmosphereHueShift={property?.atmosphere?.hue_shift}
       atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}

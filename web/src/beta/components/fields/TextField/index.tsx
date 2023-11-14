@@ -9,6 +9,7 @@ export type Props = {
   placeholder?: string;
   timeout?: number;
   onChange?: (text: string) => void;
+  disabled?: boolean;
 };
 
 const TextField: React.FC<Props> = ({
@@ -18,10 +19,17 @@ const TextField: React.FC<Props> = ({
   placeholder,
   timeout,
   onChange,
+  disabled,
 }) => {
   return (
     <Property name={name} description={description}>
-      <TextInput value={value} placeholder={placeholder} onChange={onChange} timeout={timeout} />
+      <TextInput
+        value={value}
+        placeholder={placeholder}
+        onChange={onChange}
+        timeout={timeout}
+        disabled={disabled}
+      />
     </Property>
   );
 };

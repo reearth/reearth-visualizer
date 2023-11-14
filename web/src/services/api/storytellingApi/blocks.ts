@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
+import { AVAILABLE_STORY_BLOCK_IDS } from "@reearth/beta/lib/core/StoryPanel/constants";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryBlockInput,
@@ -26,22 +27,6 @@ import { useNotification } from "@reearth/services/state";
 
 import { Item, convert } from "../propertyApi/utils";
 import { SceneQueryProps } from "../sceneApi";
-
-export const TITLE_BUILTIN_STORY_BLOCK_ID = "reearth/titleStoryBlock"; // pseudo storyblock
-
-export const IMAGE_BUILTIN_STORY_BLOCK_ID = "reearth/imageStoryBlock";
-export const TEXT_BUILTIN_STORY_BLOCK_ID = "reearth/textStoryBlock";
-export const VIDEO_BUILTIN_STORY_BLOCK_ID = "reearth/videoStoryBlock";
-export const MD_BUILTIN_STORY_BLOCK_ID = "reearth/mdTextStoryBlock";
-export const CAMERA_BUILTIN_STORY_BLOCK_ID = "reearth/cameraButtonStoryBlock";
-
-export const AVAILABLE_STORY_BLOCK_IDS = [
-  IMAGE_BUILTIN_STORY_BLOCK_ID,
-  TEXT_BUILTIN_STORY_BLOCK_ID,
-  VIDEO_BUILTIN_STORY_BLOCK_ID,
-  MD_BUILTIN_STORY_BLOCK_ID,
-  CAMERA_BUILTIN_STORY_BLOCK_ID,
-];
 
 export type StoryBlockQueryProps = SceneQueryProps;
 
@@ -178,7 +163,6 @@ export default () => {
 
 const getInstallableStoryBlocks = (rawScene?: GetSceneQuery) => {
   const scene = rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
-
   return scene?.plugins
     .map(p => {
       const plugin = p.plugin;
@@ -223,7 +207,7 @@ export const getInstalledStoryBlocks = (
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      name: block?.name ?? "Undefined",
+      name: block?.name ?? "Story Block",
       description: block?.description,
       icon: block?.icon,
       property: {

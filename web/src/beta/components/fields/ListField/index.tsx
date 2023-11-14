@@ -15,6 +15,7 @@ type ListItem = {
 };
 
 export type Props = {
+  className?: string;
   name?: string;
   description?: string;
   items: ListItem[];
@@ -26,6 +27,7 @@ export type Props = {
 } & Pick<DragAndDropProps, "onItemDrop">;
 
 const ListField: React.FC<Props> = ({
+  className,
   name,
   description,
   items,
@@ -65,7 +67,7 @@ const ListField: React.FC<Props> = ({
 
   return (
     <Property name={name} description={description}>
-      <FieldWrapper>
+      <FieldWrapper className={className}>
         <DragAndDropList<ListItem>
           uniqueKey="ListField"
           items={items}

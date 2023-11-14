@@ -10,21 +10,22 @@ import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import useHooks from "./hooks";
+import useHooks, { type ProjectType } from "./hooks";
 import PublishModal from "./PublishModal";
 import { PublishStatus } from "./PublishModal/hooks";
 
+export type { ProjectType } from "./hooks";
+
 export { SECONDARY_NAVBAR_HEIGHT } from "@reearth/beta/features/Editor/SecondaryNav";
 
-export type ProjectType = "default" | "story";
-
 type Props = {
-  projectId?: string;
+  id?: string;
+  sceneId?: string;
   selectedProjectType?: ProjectType;
   onProjectTypeChange: (type: ProjectType) => void;
 };
 
-const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeChange }) => {
+const Nav: React.FC<Props> = ({ id, sceneId, selectedProjectType, onProjectTypeChange }) => {
   const t = useT();
 
   const {
@@ -42,7 +43,8 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
     handleProjectPublish,
     handleProjectAliasCheck,
     handleOpenProjectSettings,
-  } = useHooks({ projectId });
+    handleNavigationToSettings,
+  } = useHooks({ id, sceneId, selectedProjectType });
 
   const text = useMemo(
     () =>
@@ -113,6 +115,7 @@ const Nav: React.FC<Props> = ({ projectId, selectedProjectType, onProjectTypeCha
         projectAlias={alias}
         validAlias={validAlias}
         validatingAlias={validatingAlias}
+        onNavigateToSettings={handleNavigationToSettings}
         onClose={handleModalClose}
         onPublish={handleProjectPublish}
         onAliasValidate={handleProjectAliasCheck}

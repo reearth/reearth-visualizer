@@ -1,28 +1,29 @@
 import { useMemo } from "react";
 
-import Settings from "@reearth/beta/features/Editor/Settings";
+import SceneSettings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
-import { FlyTo } from "@reearth/beta/lib/core/types";
-import { Camera } from "@reearth/beta/utils/value";
-import { useSceneFetcher } from "@reearth/services/api";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
-import { convert } from "@reearth/services/api/propertyApi/utils";
+import type { LayerConfigUpdateProps } from "@reearth/beta/features/Editor/useLayers";
+import type { LayerStyleValueUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera } from "@reearth/beta/utils/value";
+import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Scene } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";
+import { useSelectedLayer } from "@reearth/services/state";
 
-import { LayerConfigUpdateProps } from "../../../useLayers";
-import { LayerStyleValueUpdateProps } from "../../../useLayerStyles";
-
-import InspectorTabs from "./InspectorTabs";
+import LayerInspector from "./LayerInspector";
 import LayerStyleEditor from "./LayerStyleValueEditor";
 
 type Props = {
+  scene?: Scene;
+  sceneSettings?: Item[];
   layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
   sceneId?: string;
-  selectedLayerId?: string;
   selectedLayerStyleId?: string;
-  showSceneSettings?: boolean;
+  selectedSceneSetting?: string;
   currentCamera?: Camera;
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
@@ -30,24 +31,23 @@ type Props = {
 };
 
 const MapRightPanel: React.FC<Props> = ({
+  scene,
   layers,
   layerStyles,
   sceneId,
-  showSceneSettings,
   selectedLayerStyleId,
-  selectedLayerId,
+  selectedSceneSetting,
+  sceneSettings,
   currentCamera,
   onFlyTo,
   onLayerStyleValueUpdate,
   onLayerConfigUpdate,
 }) => {
   const t = useT();
-  const { useSceneQuery } = useSceneFetcher();
-
-  const { scene } = useSceneQuery({ sceneId });
 
   const scenePropertyId = useMemo(() => scene?.property?.id, [scene?.property?.id]);
-  const sceneSettings = useMemo(() => convert(scene?.property), [scene?.property]);
+
+  const [selectedLayerId] = useSelectedLayer();
 
   return (
     <SidePanelCommon
@@ -56,11 +56,10 @@ const MapRightPanel: React.FC<Props> = ({
         {
           id: "map",
           title: t("Inspector"),
-          //   maxHeight: !selectedWidget ? "100%" : "40%",
           children: (
             <>
-              {showSceneSettings && scenePropertyId && (
-                <Settings
+              {!!selectedSceneSetting && scenePropertyId && (
+                <SceneSettings
                   propertyId={scenePropertyId}
                   propertyItems={sceneSettings}
                   currentCamera={currentCamera}
@@ -68,7 +67,7 @@ const MapRightPanel: React.FC<Props> = ({
                 />
               )}
               {selectedLayerId && (
-                <InspectorTabs
+                <LayerInspector
                   layerStyles={layerStyles}
                   layers={layers}
                   sceneId={sceneId}

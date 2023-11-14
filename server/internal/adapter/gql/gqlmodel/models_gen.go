@@ -1037,6 +1037,7 @@ type PropertySchemaGroup struct {
 	SchemaGroupID         ID                     `json:"schemaGroupId"`
 	SchemaID              ID                     `json:"schemaId"`
 	Fields                []*PropertySchemaField `json:"fields"`
+	Collection            *string                `json:"collection"`
 	IsList                bool                   `json:"isList"`
 	IsAvailableIf         *PropertyCondition     `json:"isAvailableIf"`
 	Title                 *string                `json:"title"`
@@ -1272,6 +1273,7 @@ type Story struct {
 	SceneID           ID                `json:"sceneId"`
 	Scene             *Scene            `json:"scene"`
 	PanelPosition     Position          `json:"panelPosition"`
+	BgColor           *string           `json:"bgColor"`
 	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
 	BasicAuthUsername string            `json:"basicAuthUsername"`
 	BasicAuthPassword string            `json:"basicAuthPassword"`
@@ -1389,6 +1391,12 @@ type TeamMember struct {
 	UserID ID    `json:"userId"`
 	Role   Role  `json:"role"`
 	User   *User `json:"user"`
+}
+
+type Timeline struct {
+	CurrentTime *string `json:"currentTime"`
+	StartTime   *string `json:"startTime"`
+	EndTime     *string `json:"endTime"`
 }
 
 type Typography struct {
@@ -1531,6 +1539,7 @@ type UpdateStoryInput struct {
 	Title             *string   `json:"title"`
 	Index             *int      `json:"index"`
 	PanelPosition     *Position `json:"panelPosition"`
+	BgColor           *string   `json:"bgColor"`
 	IsBasicAuthActive *bool     `json:"isBasicAuthActive"`
 	BasicAuthUsername *string   `json:"basicAuthUsername"`
 	BasicAuthPassword *string   `json:"basicAuthPassword"`
@@ -2112,20 +2121,22 @@ func (e PublishmentStatus) MarshalGQL(w io.Writer) {
 type Role string
 
 const (
-	RoleReader Role = "READER"
-	RoleWriter Role = "WRITER"
-	RoleOwner  Role = "OWNER"
+	RoleReader     Role = "READER"
+	RoleWriter     Role = "WRITER"
+	RoleMaintainer Role = "MAINTAINER"
+	RoleOwner      Role = "OWNER"
 )
 
 var AllRole = []Role{
 	RoleReader,
 	RoleWriter,
+	RoleMaintainer,
 	RoleOwner,
 }
 
 func (e Role) IsValid() bool {
 	switch e {
-	case RoleReader, RoleWriter, RoleOwner:
+	case RoleReader, RoleWriter, RoleMaintainer, RoleOwner:
 		return true
 	}
 	return false
@@ -2258,6 +2269,8 @@ const (
 	ValueTypePolygon      ValueType = "POLYGON"
 	ValueTypeRect         ValueType = "RECT"
 	ValueTypeSpacing      ValueType = "SPACING"
+	ValueTypeArray        ValueType = "ARRAY"
+	ValueTypeTimeline     ValueType = "TIMELINE"
 )
 
 var AllValueType = []ValueType{
@@ -2274,11 +2287,13 @@ var AllValueType = []ValueType{
 	ValueTypePolygon,
 	ValueTypeRect,
 	ValueTypeSpacing,
+	ValueTypeArray,
+	ValueTypeTimeline,
 }
 
 func (e ValueType) IsValid() bool {
 	switch e {
-	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing:
+	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing, ValueTypeArray, ValueTypeTimeline:
 		return true
 	}
 	return false

@@ -1,7 +1,6 @@
 import { FC } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
@@ -15,6 +14,7 @@ import {
   InputGroup,
   LayerWrapper,
   SubmitWrapper,
+  generateTitle,
 } from "../utils";
 
 const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
@@ -23,6 +23,7 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     layerValue,
     layerInput,
     layers,
+    setLayers,
     setUrlValue,
     setLayerValue,
     handleAddLayer,
@@ -33,16 +34,26 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
 
   const handleSubmit = () => {
+    let updatedLayers = layers;
+    if (layerValue.trim() !== "") {
+      const exist = layers.some(layer => layer === layerValue);
+      if (!exist) {
+        updatedLayers = [...layers, layerValue];
+        setLayers(updatedLayers);
+      }
+      setLayerValue("");
+    }
+
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateRandomString(5),
+      title: generateTitle(urlValue),
       visible: true,
       config: {
         data: {
           url: urlValue !== "" ? urlValue : undefined,
           type: "mvt",
-          layers: layers.length === 1 ? layers[0] : layers,
+          layers: updatedLayers.length === 1 ? updatedLayers[0] : updatedLayers,
         },
       },
     });
