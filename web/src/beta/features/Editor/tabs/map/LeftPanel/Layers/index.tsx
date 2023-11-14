@@ -44,7 +44,7 @@ const Layers: React.FC<LayersProps> = ({
 
   const handleZoomToLayer = () => {
     if (selectedLayerId) {
-      onFlyTo?.(selectedLayerId);
+      onFlyTo?.(selectedLayerId, { duration: 0 });
     }
   };
 
