@@ -99,7 +99,6 @@ const StoryPanel: React.FC<Props> = ({
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
-      onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}>
       <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
         {(isEditable || title?.title?.value) && (
@@ -115,7 +114,6 @@ const StoryPanel: React.FC<Props> = ({
             isEditable={isEditable}
             isSelected={selectedStoryBlockId === titleId}
             onClick={() => onBlockSelect?.(titleId)}
-            onClickAway={onBlockSelect}
             onPropertyUpdate={onPropertyUpdate}
             onPropertyItemAdd={onPropertyItemAdd}
             onPropertyItemMove={onPropertyItemMove}
@@ -158,7 +156,6 @@ const StoryPanel: React.FC<Props> = ({
                     isSelected={selectedStoryBlockId === b.id}
                     isEditable={isEditable}
                     onClick={() => onBlockSelect?.(b.id)}
-                    onClickAway={onBlockSelect}
                     onRemove={onBlockDelete}
                     onPropertyUpdate={onPropertyUpdate}
                     onPropertyItemAdd={onPropertyItemAdd}
