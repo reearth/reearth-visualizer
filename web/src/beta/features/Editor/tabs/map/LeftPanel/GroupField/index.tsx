@@ -55,7 +55,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
             ),
         )}
       </StyledSidePanelSectionField>
-      <StyledSidePanelSectionField title={t("Layers")} startCollapsed>
+      <StyledSidePanelSectionField title={t("Layers")}>
         <Layers
           layers={layers}
           selectedLayerId={selectedLayerId}
