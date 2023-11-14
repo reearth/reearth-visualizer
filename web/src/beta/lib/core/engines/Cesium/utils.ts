@@ -322,15 +322,16 @@ export function getPixelRatio(scene: Scene): number {
 }
 
 export const convertEntityProperties = (viewer: Viewer, entity: Entity) => {
-  return (
-    entity.properties &&
-    Object.fromEntries(
-      entity.properties.propertyNames.map(key => [
-        key,
-        entity.properties?.getValue(viewer.clock.currentTime)?.[key],
-      ]),
-    )
-  );
+  const properties = entity.properties?.getValue(viewer.clock.currentTime);
+  return entity.properties && properties
+    ? Object.fromEntries(entity.properties.propertyNames.map(key => [key, properties[key]]))
+    : {};
+};
+
+export const convertEntityDescription = (viewer: Viewer, entity: Entity): string | undefined => {
+  const description = entity.description?.getValue(viewer.clock.currentTime);
+  if (typeof description !== "string") return;
+  return description;
 };
 
 export const convertCesium3DTileFeatureProperties = (

@@ -35,6 +35,7 @@ import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
 import {
   convertCesium3DTileFeatureProperties,
+  convertEntityDescription,
   convertEntityProperties,
   convertObjToComputedFeature,
   findEntity,
@@ -497,6 +498,7 @@ export default function useEngineRef(
             type: "feature",
             id: tag.featureId,
             properties: convertEntityProperties(viewer, entity),
+            description: convertEntityDescription(viewer, entity),
           };
         }
         if (
@@ -542,6 +544,7 @@ export default function useEngineRef(
               type: "computedFeature",
               id: tag.featureId,
               properties: convertEntityProperties(viewer, entity),
+              description: convertEntityDescription(viewer, entity),
             }
           );
         }

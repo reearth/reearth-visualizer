@@ -1,10 +1,10 @@
 import {
-  JulianDate,
   Entity,
   Cartesian3,
   PolygonHierarchy,
   PointGraphics,
   BillboardGraphics,
+  Viewer,
 } from "cesium";
 
 import {
@@ -16,6 +16,7 @@ import {
 import { EvalFeature } from "@reearth/beta/lib/core/Map";
 
 import { heightReference, shadowMode, toColor } from "../../common";
+import { convertEntityDescription, convertEntityProperties } from "../../utils";
 import { attachTag, extractSimpleLayer, getTag, Tag } from "../utils";
 
 export function overrideOriginalProperties(
@@ -120,7 +121,7 @@ export const attachStyle = (
   entity: Entity,
   layer: ComputedLayer | undefined,
   evalFeature: EvalFeature,
-  currentTime: JulianDate,
+  viewer: Viewer,
 ): [Feature, ComputedFeature] | void => {
   if (!layer) {
     return;
@@ -131,7 +132,7 @@ export const attachStyle = (
   const billboard = hasAppearance(layer, entity, ["marker", "billboard"]);
   const label = hasAppearance(layer, entity, ["marker", "label"]);
   if (point || billboard || label) {
-    const position = entity.position?.getValue(currentTime);
+    const position = entity.position?.getValue(viewer.clock.currentTime);
     const coordinates = [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0];
     const feature: Feature = {
       type: "feature",
@@ -140,7 +141,8 @@ export const attachStyle = (
         type: "Point",
         coordinates,
       },
-      properties: entity.properties?.getValue(currentTime) || {},
+      properties: convertEntityProperties(viewer, entity),
+      description: convertEntityDescription(viewer, entity),
       range: {
         x: coordinates[0],
         y: coordinates[1],
@@ -257,8 +259,10 @@ export const attachStyle = (
   }
 
   if (hasAppearance(layer, entity, ["polyline", "polyline"])) {
-    const entityPosition = entity.position?.getValue(currentTime);
-    const positions = entity.polyline?.positions?.getValue(currentTime) as Cartesian3[];
+    const entityPosition = entity.position?.getValue(viewer.clock.currentTime);
+    const positions = entity.polyline?.positions?.getValue(
+      viewer.clock.currentTime,
+    ) as Cartesian3[];
     const coordinates = positions?.map(position => [
       position?.x ?? 0,
       position?.y ?? 0,
@@ -271,7 +275,8 @@ export const attachStyle = (
         type: "LineString",
         coordinates,
       },
-      properties: entity.properties?.getValue(currentTime) || {},
+      properties: convertEntityProperties(viewer, entity),
+      description: convertEntityDescription(viewer, entity),
       range: {
         x: entityPosition?.x ?? 0,
         y: entityPosition?.y ?? 0,
@@ -306,8 +311,10 @@ export const attachStyle = (
   }
 
   if (hasAppearance(layer, entity, ["polygon", "polygon"])) {
-    const entityPosition = entity.position?.getValue(currentTime);
-    const hierarchy = entity.polygon?.hierarchy?.getValue(currentTime) as PolygonHierarchy;
+    const entityPosition = entity.position?.getValue(viewer.clock.currentTime);
+    const hierarchy = entity.polygon?.hierarchy?.getValue(
+      viewer.clock.currentTime,
+    ) as PolygonHierarchy;
     const coordinates = hierarchy?.holes?.map(hole =>
       hole.positions.map(position => [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0]),
     );
@@ -318,7 +325,8 @@ export const attachStyle = (
         type: "Polygon",
         coordinates,
       },
-      properties: entity.properties?.getValue(currentTime) || {},
+      properties: convertEntityProperties(viewer, entity),
+      description: convertEntityDescription(viewer, entity),
       range: {
         x: entityPosition?.x ?? 0,
         y: entityPosition?.y ?? 0,
