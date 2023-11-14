@@ -56,7 +56,7 @@ const Content = styled.div`
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
 `;
 
 export default SidePanelSectionField;

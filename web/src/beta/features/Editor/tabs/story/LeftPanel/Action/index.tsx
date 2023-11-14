@@ -39,10 +39,11 @@ const Wrapper = styled.button`
   min-height: 28px;
   transition: all 0.15s;
 
-  border: 1px solid ${({ theme }) => theme.outline.weakest};
+  background: ${props => props.theme.bg[1]};
+  border: 1px solid ${({ theme }) => theme.outline.weaker};
 
   :hover {
-    background: ${props => props.theme.bg[3]};
+    background: ${props => props.theme.bg[2]};
   }
   user-select: none;
   cursor: pointer;
