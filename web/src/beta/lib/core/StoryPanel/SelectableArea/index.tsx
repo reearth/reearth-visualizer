@@ -54,6 +54,7 @@ const SelectableArea: React.FC<Props> = ({
   onEditModeToggle,
   onSettingsToggle,
   onRemove,
+  onClick,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
@@ -68,7 +69,7 @@ const SelectableArea: React.FC<Props> = ({
   return !isEditable ? (
     <>{children}</>
   ) : (
-    <Wrapper isSelected={isSelected} noBorder={noBorder}>
+    <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
       <ActionPanel
         title={title}
         icon={icon}
