@@ -1,10 +1,11 @@
-import { ReactNode, useCallback, useRef, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import type { LayerStyleNameUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
@@ -32,31 +33,11 @@ const LayerStyleCard: React.FC<Props> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(name);
-  const clickTimeoutRef = useRef<NodeJS.Timeout>();
-  const clickedNameCount = useRef(0);
 
-  const handleClick = useCallback(() => {
-    console.log(clickedNameCount.current);
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-    }
-    clickTimeoutRef.current = setTimeout(() => {
-      clickedNameCount.current = 0;
-      onSelect?.(!selected);
-    }, 100);
-  }, [onSelect, selected]);
-
-  const handleNameClick = useCallback(() => {
-    const newClickCount = clickedNameCount.current + 1;
-    console.log(newClickCount);
-    clickedNameCount.current = newClickCount;
-    // if (clickTimeoutRef.current) {
-    //   clearTimeout(clickTimeoutRef.current);
-    // }
-    if (clickedNameCount.current === 2) {
-      setIsEditing(true);
-    }
-  }, []);
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => onSelect?.(!selected),
+    () => setIsEditing(true),
+  );
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -100,7 +81,7 @@ const LayerStyleCard: React.FC<Props> = ({
     <Wrapper
       className={className}
       selected={selected}
-      onClick={handleClick}
+      onClick={handleSingleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
       <MainWrapper>
@@ -129,7 +110,7 @@ const LayerStyleCard: React.FC<Props> = ({
             onExit={handleEditExit}
           />
         ) : (
-          <StyleName size="footnote" onDoubleClick={handleNameClick}>
+          <StyleName size="footnote" onDoubleClick={handleDoubleClick}>
             {name}
           </StyleName>
         )}
