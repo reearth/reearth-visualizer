@@ -3,6 +3,7 @@ import { MouseEvent, useCallback, useState } from "react";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import Text from "@reearth/beta/components/Text";
 import useDoubleClick from "@reearth/classic/util/use-double-click";
 import { ValueType, ValueTypes } from "@reearth/classic/util/value";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
@@ -118,7 +119,7 @@ const PageItem = ({
           onBlur={handleEditExit}
         />
       ) : (
-        <PageTitle onDoubleClick={handleDoubleClick}>
+        <PageTitle size="footnote" onDoubleClick={handleDoubleClick}>
           {hasEmptySpace || !title ? t("Untitled") : title}
         </PageTitle>
       )}
@@ -128,22 +129,12 @@ const PageItem = ({
 
 const StyledTextInput = styled(TextInput)`
   width: 100%;
-  font-size: 12px;
-  color: ${({ theme }) => theme.content.main};
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
 `;
 
-const PageTitle = styled.div`
+const PageTitle = styled(Text)`
   overflow: hidden;
-  color: ${({ theme }) => theme.content.main};
+  width: 100%;
   text-overflow: ellipsis;
-  font-family: Noto Sans;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
 `;
 
 export default PageItem;
