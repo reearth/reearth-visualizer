@@ -381,19 +381,10 @@ export default function useHooks({
     [layerMap],
   );
 
-  const updateStyle = useCallback(
-    (layerId: string) => {
-      const overriddenLayer = overriddenLayersRef.current.find(l => l.id === layerId);
-      override(layerId, { _updateStyle: (overriddenLayer?._updateStyle ?? -1) + 1 });
-    },
-    [override],
-  );
-
   const { select, selectFeatures, selectedLayer } = useSelection({
     initialSelectedLayer,
     getLazyLayer: findById,
     onLayerSelect,
-    updateStyle,
     engineRef,
   });
 
@@ -680,10 +671,8 @@ type SelectedLayer = [
 function useSelection({
   initialSelectedLayer,
   engineRef,
-  // flattenedLayers,
   getLazyLayer,
   onLayerSelect,
-  updateStyle,
 }: {
   initialSelectedLayer?: {
     layerId?: string;
@@ -700,7 +689,6 @@ function useSelection({
     info: SelectedFeatureInfo | undefined,
   ) => void;
   engineRef?: RefObject<EngineRef>;
-  updateStyle: (layerId: string) => void;
 }) {
   const [selectedLayer, _selectedFeatureInfo]: SelectedLayer = useMemo(
     () => [
@@ -838,13 +826,12 @@ function useSelection({
 
         if (featureId.length) {
           engineRef?.current?.selectFeatures(layerId, featureId);
-          updateStyle(layerId);
           selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds =
             selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds.concat(featureId);
         }
       }
     },
-    [engineRef, updateStyle],
+    [engineRef],
   );
 
   const selectFeatures = useCallback(
@@ -858,7 +845,6 @@ function useSelection({
     ) => {
       selectedFeatureIds.current.forEach(id => {
         engineRef?.current?.unselectFeatures(id.layerId, id.featureIds);
-        updateStyle(id.layerId);
       });
 
       selectedFeatureIds.current = [];
@@ -867,7 +853,7 @@ function useSelection({
 
       updateEngineFeatures(layers);
     },
-    [engineRef, updateStyle, updateEngineFeatures, updateSelectedLayerForFeature],
+    [engineRef, updateEngineFeatures, updateSelectedLayerForFeature],
   );
 
   return {
