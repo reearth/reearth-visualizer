@@ -81,7 +81,7 @@ export default function Resource({
       const features: Feature[] = [];
       const computedFeatures: ComputedFeature[] = [];
       e.entities.values.forEach(e => {
-        const res = attachStyle(e, layer, evalFeature, viewer);
+        const res = attachStyle(e, layer, evalFeature, viewer.clock.currentTime);
         const [feature, computedFeature] = res || [];
 
         attachTag(e, { layerId: layer?.id, featureId: feature?.id });
@@ -167,7 +167,7 @@ export default function Resource({
   useEffect(() => {
     if (!viewer) return;
     cachedFeatures.current.forEach(f => {
-      attachStyle(f.raw, layer, evalFeature, viewer);
+      attachStyle(f.raw, layer, evalFeature, viewer.clock.currentTime);
     });
   }, [layer, viewer]);
 

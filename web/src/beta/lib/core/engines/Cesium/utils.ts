@@ -321,28 +321,30 @@ export function getPixelRatio(scene: Scene): number {
   ).pixelRatio;
 }
 
-export const convertEntityProperties = (viewer: Viewer, entity: Entity) => {
-  const properties = entity.properties?.getValue(viewer.clock.currentTime);
+export const convertEntityProperties = (currentTime: JulianDate, entity: Entity) => {
+  const properties = entity.properties?.getValue(currentTime);
   return entity.properties && properties
     ? Object.fromEntries(entity.properties.propertyNames.map(key => [key, properties[key]]))
     : {};
 };
 
-export const convertEntityDescription = (viewer: Viewer, entity: Entity): string | undefined => {
-  const description = entity.description?.getValue(viewer.clock.currentTime);
+export const convertEntityDescription = (
+  currentTime: JulianDate,
+  entity: Entity,
+): string | undefined => {
+  const description = entity.description?.getValue(currentTime);
   if (typeof description !== "string") return;
   return description;
 };
 
 export const convertCesium3DTileFeatureProperties = (
-  viewer: Viewer,
   feature: Cesium3DTileFeature | Cesium3DTilePointFeature,
 ) => {
   return Object.fromEntries(feature.getPropertyIds().map(id => [id, feature.getProperty(id)]));
 };
 
 export const convertObjToComputedFeature = (
-  viewer: Viewer,
+  currentTime: JulianDate,
   obj: object,
 ): [layerId: string | undefined, feature: ComputedFeature] | undefined => {
   if (obj instanceof Cesium3DTileFeature || obj instanceof Cesium3DTilePointFeature) {
@@ -352,7 +354,7 @@ export const convertObjToComputedFeature = (
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: convertCesium3DTileFeatureProperties(viewer, obj),
+        properties: convertCesium3DTileFeatureProperties(obj),
       },
     ];
   }
@@ -377,7 +379,8 @@ export const convertObjToComputedFeature = (
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: convertEntityProperties(viewer, entity),
+        properties: convertEntityProperties(currentTime, entity),
+        description: convertEntityDescription(currentTime, entity),
       },
     ];
   }
