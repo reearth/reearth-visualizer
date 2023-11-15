@@ -57,12 +57,7 @@ const PublicRepo: React.FC<Props> = ({
           />
         }>
         {loading && <Loading overlay />}
-        <TextInput
-          name={t("Repository url:")}
-          value={repoUrl}
-          onChange={handleRepoUrlChange}
-          timeout={0}
-        />
+        <TextInput name={t("Repository url:")} value={repoUrl} onChange={handleRepoUrlChange} />
         {validationErr && (
           <Text size="body" color={theme.dangerous.main}>
             {validationErr}
