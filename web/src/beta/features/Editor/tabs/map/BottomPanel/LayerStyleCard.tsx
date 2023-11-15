@@ -114,7 +114,7 @@ const LayerStyleCard: React.FC<Props> = ({
                 </ActionIcon>
               </Popover.Trigger>
             )}
-            <StyledPopoverContent>{actionContent}</StyledPopoverContent>
+            <Popover.Content>{actionContent}</Popover.Content>
           </Popover.Provider>
         )}
       </MainWrapper>
@@ -187,11 +187,6 @@ const ActionIcon = styled.button`
   :hover {
     background: ${({ theme }) => theme.bg[2]};
   }
-`;
-
-const StyledPopoverContent = styled(Popover.Content)`
-  z-index: 1000;
-  position: relative;
 `;
 
 const StyleName = styled(Text)`

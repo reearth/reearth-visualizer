@@ -1,22 +1,4 @@
-const zIndex = {
-  base: 1,
-  hidden: -1,
-  form: 100,
-  menuForDevice: 200,
-  settingHeader: 300,
-  infoBox: 300,
-  propertyFieldPopup: 500,
-  descriptionBalloon: 550,
-  pluginPopup: 560,
-  pluginModal: 570,
-  dropDown: 600,
-  fullScreenModal: 700,
-  splashScreen: 700,
-  loading: 800,
-  notificationBar: 1000,
-};
-
-export const newZIndex = {
+export const zIndex = {
   visualizer: {
     widget: 200,
     storyPanel: 200,
@@ -30,6 +12,7 @@ export const newZIndex = {
     pluginPopup: 300,
     pluginModal: 305,
     infobox: 400,
+    overlay: 600,
   },
   editor: {
     navbar: 500,
@@ -39,7 +22,10 @@ export const newZIndex = {
       bg: 700,
       self: 705,
     },
+    loading: 900,
+    notificationBar: 1000,
   },
+  hidden: -1,
 };
 
 export default zIndex;

@@ -197,7 +197,7 @@ const Button = styled.div<{ button?: Button; publishedTheme?: Theme }>`
 `;
 
 const MenuWrapper = styled.div`
-  z-index: ${({ theme }) => theme.zIndexes.dropDown};
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.widget};
   border-radius: 3px;
   max-height: 30vh;
   overflow: auto;
