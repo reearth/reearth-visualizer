@@ -2341,7 +2341,7 @@ extensions:
               ui: datetime
               title: Time
   - id: textStoryBlock
-    name: Text Block
+    name: Text
     type: storyBlock
     description: Storytelling Text Block
     schema:
@@ -2363,7 +2363,7 @@ extensions:
               title: Content
               ui: multiline
   - id: mdTextStoryBlock
-    name: MD Text Block
+    name: MD Text
     type: storyBlock
     description: Storytelling MD Text Block
     schema:
@@ -2385,7 +2385,7 @@ extensions:
               title: Content
               ui: multiline
   - id: imageStoryBlock
-    name: Image Block
+    name: Image
     type: storyBlock
     description: Storytelling Image Block
     schema:
@@ -2407,7 +2407,7 @@ extensions:
               title: Image
               ui: image
   - id: videoStoryBlock
-    name: Video Block
+    name: Video
     type: storyBlock
     description: Storytelling Video Block
     schema:
@@ -2502,40 +2502,8 @@ extensions:
             - id: url
               type: url
               title: Link URL
-  - id: timelineStoryBlock
-    name: Timeline Block
-    type: storyBlock
-    description: Storytelling Timeline Block
-    schema:
-      groups:
-        - id: panel
-          title: Panel Setting
-          fields:
-            - id: padding
-              type: spacing
-              title: Padding
-              ui: padding
-              min: 0
-              max: 100
-        - id: default
-          title: Timeline Setting
-          fields:
-            - id: timelineSetting
-              type: timeline
-              ui: datetime
-              title: Timeline Setting
-            - id: playMode
-              type: string
-              title: Play Mode
-              description: Specify play mode.
-              defaultValue: once
-              choices:
-                - key: once
-                  label: Once
-                - key: loop
-                  label: Loop
   - id: showLayersStoryBlock
-    name: Show Layers
+    name: Show Layers Button
     type: storyBlock
     description: Storytelling Show Layers 
     schema:
@@ -2570,3 +2538,35 @@ extensions:
               title: Show Layers
               ui: layer
               choices:
+  - id: timelineStoryBlock
+    name: Timeline
+    type: storyBlock
+    description: Storytelling Timeline Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Timeline Setting
+          fields:
+            - id: timelineSetting
+              type: timeline
+              ui: datetime
+              title: Timeline Setting
+            - id: playMode
+              type: string
+              title: Play Mode
+              description: Specify play mode.
+              defaultValue: once
+              choices:
+                - key: once
+                  label: Once
+                - key: loop
+                  label: Loop

@@ -339,24 +339,7 @@ export default function useHooks({
         res.data.value = dataValue;
       }
 
-      const property = layer?.property;
-      const rawLayer = compat({
-        ...originalLayer,
-        ...(originalLayer.compat && property
-          ? {
-              type: originalLayer.type === "group" ? "group" : "item",
-              extensionId: originalLayer.compat.extensionId,
-              property: {
-                default: {
-                  ...(originalLayer.compat.property?.default || {}),
-                  ...(property.default || {}),
-                },
-              },
-            }
-          : {}),
-        ...(!originalLayer.compat && property ? { property } : {}),
-        ...res,
-      });
+      const rawLayer = compat(res);
       if (!rawLayer) return;
 
       if (
@@ -821,7 +804,8 @@ function useSelection({
         layerId?: string;
         featureId?: string[];
       }[],
-    ) => {
+    ): boolean => {
+      let shouldUpdate = false;
       for (const { layerId, featureId } of layers) {
         if (!layerId || !featureId) continue;
 
@@ -838,13 +822,14 @@ function useSelection({
 
         if (featureId.length) {
           engineRef?.current?.selectFeatures(layerId, featureId);
-          updateStyle(layerId);
           selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds =
             selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds.concat(featureId);
+          shouldUpdate = true;
         }
       }
+      return shouldUpdate;
     },
-    [engineRef, updateStyle],
+    [engineRef],
   );
 
   const selectFeatures = useCallback(
@@ -856,16 +841,26 @@ function useSelection({
       options?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
+      let shouldUpdate = false;
       selectedFeatureIds.current.forEach(id => {
         engineRef?.current?.unselectFeatures(id.layerId, id.featureIds);
-        updateStyle(id.layerId);
+        shouldUpdate = true;
       });
 
+      const prevSelectedFeatureIds = selectedFeatureIds.current;
       selectedFeatureIds.current = [];
 
       updateSelectedLayerForFeature(layers, options, info);
 
-      updateEngineFeatures(layers);
+      shouldUpdate = updateEngineFeatures(layers) || shouldUpdate;
+
+      if (!shouldUpdate) return;
+
+      for (const { layerId } of [...layers, ...prevSelectedFeatureIds]) {
+        if (!layerId) continue;
+        // Wait 1 frame for cesium to synchronize the updated value.
+        requestAnimationFrame(() => updateStyle(layerId));
+      }
     },
     [engineRef, updateStyle, updateEngineFeatures, updateSelectedLayerForFeature],
   );

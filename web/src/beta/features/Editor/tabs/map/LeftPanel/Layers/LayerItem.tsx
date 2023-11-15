@@ -8,6 +8,7 @@ import type {
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
 } from "@reearth/beta/features/Editor/useLayers";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { styled } from "@reearth/services/theme";
 
 type LayerItemProps = {
@@ -36,28 +37,13 @@ const LayerItem = ({
   const [newValue, setNewValue] = useState(layerTitle);
   const [isVisible, setIsVisible] = useState(visible);
   const [value, setValue] = useState(isVisible ? "V" : "");
-  const [clickTimeoutId, setClickTimeoutId] = useState<any>(null);
 
   const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
 
-  const handleClick = useCallback(() => {
-    if (clickTimeoutId) {
-      clearTimeout(clickTimeoutId);
-      setClickTimeoutId(null);
-    }
-    const timeoutId = setTimeout(() => {
-      onSelect();
-    }, 200);
-    setClickTimeoutId(timeoutId);
-  }, [onSelect, clickTimeoutId]);
-
-  const handleLayerTitleClick = useCallback(() => {
-    if (clickTimeoutId) {
-      clearTimeout(clickTimeoutId);
-      setClickTimeoutId(null);
-    }
-    setIsEditing(true);
-  }, [clickTimeoutId]);
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => onSelect?.(),
+    () => setIsEditing(true),
+  );
 
   const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
 
@@ -96,7 +82,7 @@ const LayerItem = ({
       isSelected={isSelected}
       isOpenAction={isActionOpen}
       actionPlacement="bottom-end"
-      onItemClick={handleClick}
+      onItemClick={handleSingleClick}
       onActionClick={handleActionMenuToggle}
       onOpenChange={isOpen => setActionOpen(!!isOpen)}
       actionContent={
@@ -115,14 +101,13 @@ const LayerItem = ({
         {isEditing ? (
           <StyledTextInput
             value={newValue}
-            timeout={0}
             autoFocus
             onChange={handleChange}
             onExit={handleEditExit}
             onBlur={handleEditExit}
           />
         ) : (
-          <LayerTitle onDoubleClick={handleLayerTitleClick}>{layerTitle}</LayerTitle>
+          <LayerTitle onDoubleClick={handleDoubleClick}>{layerTitle}</LayerTitle>
         )}
         <HideLayer onClick={handleUpdateVisibility}>
           <Text size="footnote">{value}</Text>

@@ -109,7 +109,6 @@ const CatalogCard: React.FC<Props> = ({
       {isEditing ? (
         <StyledTextInput
           value={newName}
-          timeout={0}
           autoFocus
           onChange={handleNameChange}
           onBlur={handleEditExit}
