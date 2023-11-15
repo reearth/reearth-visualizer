@@ -84,10 +84,10 @@ const CameraBlockEditor: React.FC<Props> = ({
         />
         <FieldGroup disabled={!editorProperties}>
           <TextField
-            name="Button title"
+            name={t("Button Title")}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
-            onChange={value => debounceOnUpdate(selected, "Button title", "string", value)}
+            onChange={value => debounceOnUpdate(selected, "title", "string", value)}
           />
           <ColorField
             name={editorProperties?.color?.title}
@@ -102,25 +102,24 @@ const CameraBlockEditor: React.FC<Props> = ({
             onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
           />
         </FieldGroup>
-        <FieldGroup disabled={!editorProperties}>
-          <CameraField
-            name={editorProperties?.cameraPosition?.title}
-            description={editorProperties?.cameraPosition?.description}
-            value={editorProperties?.cameraPosition?.value}
-            onSave={value => handleUpdate(selected, "cameraPosition", "camera", value as Camera)}
-            currentCamera={currentCamera}
-            onFlyTo={handleFlyTo}
-          />
-        </FieldGroup>
-        <FieldGroup disabled={!editorProperties}>
-          <NumberField
-            name={editorProperties?.cameraDuration?.title}
-            description={editorProperties?.cameraDuration?.description}
-            value={editorProperties?.cameraDuration?.value}
-            onChange={value => handleUpdate(selected, "cameraDuration", "number", value || 0)}
-          />
-        </FieldGroup>
       </GroupWrapper>
+
+      <FieldGroup disabled={!editorProperties}>
+        <CameraField
+          name={editorProperties?.cameraPosition?.title}
+          description={editorProperties?.cameraPosition?.description}
+          value={editorProperties?.cameraPosition?.value}
+          onSave={value => handleUpdate(selected, "cameraPosition", "camera", value as Camera)}
+          currentCamera={currentCamera}
+          onFlyTo={handleFlyTo}
+        />
+        <NumberField
+          name={editorProperties?.cameraDuration?.title}
+          description={editorProperties?.cameraDuration?.description}
+          value={editorProperties?.cameraDuration?.value}
+          onChange={value => handleUpdate(selected, "cameraDuration", "number", value || 0)}
+        />
+      </FieldGroup>
     </EditorWrapper>
   );
 };
@@ -135,14 +134,12 @@ const GroupWrapper = styled.div`
   display: grid;
   grid-template-columns: 55% 42%;
   grid-gap: 10px;
-  padding-bottom: 10%;
 `;
 
 const FieldGroup = styled.div<{ disabled: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 10px;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
   pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};
