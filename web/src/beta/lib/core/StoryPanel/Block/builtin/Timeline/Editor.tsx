@@ -260,19 +260,22 @@ const TimelineSlider = styled.div`
   width: 100%;
   border-radius: 0px 0 8px 8px;
   position: relative;
+  overflow: hidden;
 `;
 
 const ScaleList = styled.div`
-  width: 99%;
   display: flex;
   height: 38px;
   align-items: flex-end;
-  padding-left: 17px;
+  position: absolute;
+  left: 18px;
+  right: -12px;
 `;
 
 const IconWrapper = styled.div<{ isPlaying: boolean }>`
   position: absolute;
   top: 4px;
+  user-select: none;
   color: ${({ isPlaying, theme }) => (isPlaying ? theme.select.main : "")};
 `;
 
@@ -282,6 +285,7 @@ const Scale = styled.div`
   margin: 0 auto;
   flex: 1;
   text-align: center;
+  width: calc(100% / 11);
 `;
 
 const ScaleLabel = styled.div`

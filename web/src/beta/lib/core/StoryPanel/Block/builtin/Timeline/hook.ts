@@ -253,8 +253,8 @@ export default ({
       if (target && target.style.pointerEvents === "none") {
         const evt = e;
         let newPosition = evt.clientX - distX.current;
-        newPosition = Math.max(newPosition, 14);
-        newPosition = Math.min(newPosition, 374);
+        newPosition = Math.max(newPosition, 16);
+        newPosition = Math.min(newPosition, 372);
         target.style.left = `${newPosition}px`;
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
@@ -340,10 +340,12 @@ export default ({
       if (!inEditor) {
         const totalRange = range?.end - range.start;
         const currentPosition = currentTime - range.start;
-        let positionPercentage = (currentPosition / totalRange) * 370;
+        let positionPercentage = (currentPosition / totalRange) * 356 + 16;
 
-        positionPercentage = Math.max(positionPercentage, 16);
         positionPercentage = Math.round(positionPercentage);
+        positionPercentage = Math.max(positionPercentage, 16);
+        positionPercentage = Math.min(positionPercentage, 372);
+
         return positionPercentage;
       }
     }
