@@ -1,6 +1,6 @@
 import { Cartesian3 } from "cesium";
 import { isEqual } from "lodash-es";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
@@ -8,6 +8,7 @@ import { Coordinates, toColor } from "@reearth/beta/utils/value";
 
 import type { PolylineAppearance } from "../../..";
 import { classificationType, shadowMode } from "../../common";
+import { useContext } from "../context";
 import {
   EntityExt,
   toDistanceDisplayCondition,
@@ -34,6 +35,8 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     [geometry?.coordinates, geometry?.type, property?.coordinates],
   );
 
+  const { requestRender } = useContext();
+
   const {
     clampToGround,
     strokeColor,
@@ -53,6 +56,10 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     () => toDistanceDisplayCondition(property?.near, property?.far),
     [property?.near, property?.far],
   );
+
+  useEffect(() => {
+    requestRender?.();
+  });
 
   return !isVisible || !coordinates || !show ? null : (
     <EntityExt
