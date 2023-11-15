@@ -101,7 +101,6 @@ const LayerItem = ({
         {isEditing ? (
           <StyledTextInput
             value={newValue}
-            timeout={0}
             autoFocus
             onChange={handleChange}
             onExit={handleEditExit}
