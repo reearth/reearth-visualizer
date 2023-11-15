@@ -339,24 +339,7 @@ export default function useHooks({
         res.data.value = dataValue;
       }
 
-      const property = layer?.property;
-      const rawLayer = compat({
-        ...originalLayer,
-        ...(originalLayer.compat && property
-          ? {
-              type: originalLayer.type === "group" ? "group" : "item",
-              extensionId: originalLayer.compat.extensionId,
-              property: {
-                default: {
-                  ...(originalLayer.compat.property?.default || {}),
-                  ...(property.default || {}),
-                },
-              },
-            }
-          : {}),
-        ...(!originalLayer.compat && property ? { property } : {}),
-        ...res,
-      });
+      const rawLayer = compat(res);
       if (!rawLayer) return;
 
       if (
