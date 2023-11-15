@@ -26,15 +26,16 @@ set: set
 Remove: Remove
 Add Item: Add Item
 Settings: Settings
+Options: Options
 Please choose an option: Please choose an option
 Add text here: Add text here
 Timeline Settings: Timeline Settings
 '* Start Time': '* Start Time'
 Start time for the timeline: Start time for the timeline
-'* End Time': '* End Time'
-End time for the timeline: End time for the timeline
 '* Current Time': '* Current Time'
 Current time should be between start and end time: Current time should be between start and end time
+'* End Time': '* End Time'
+End time for the timeline: End time for the timeline
 Please make sure the Current time must between the Start time and End Time.: Please make sure the Current time must between the Start time and End Time.
 not set: not set
 Wrong file format: Wrong file format
@@ -58,20 +59,23 @@ Resource URL: Resource URL
 URL of the data source you want to add.: ''
 Input Text: ''
 Value: ''
-Description around.: ''
-Write down your text: ''
-Asset: ''
-Prioritize Performance: ''
-Add to Layer: ''
+Write syntactically correct data based on the file format you have selected above.: >-
+  Write syntactically correct data based on the file format you have selected
+  above.
+Input data here: Input data here
+Asset: Asset
+Prioritize Performance: Prioritize Performance
+Add to Layer: Add to Layer
 Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
 Layer: Layer
 Layers: Layers
-All Layers: ''
-Layer Style: ''
+All Layers: All Layers
+Layer Style: Layer Style
+Scene: Scene
 Outline: Outline
-Add Layer from Resource: ''
+Add Layer from Resource: Add Layer from Resource
 Inspector: Inspector
 ID: ID
 Geometry: Geometry
@@ -82,7 +86,6 @@ Styling: Styling
 Format: Format
 Published: Published
 Unpublished: Unpublished
-Scene: Scene
 Story: Story
 Unpublish: Unpublish
 Update: Update
@@ -141,7 +144,7 @@ You haven't uploaded any assets yet. Click the upload button above and select a 
   You haven't uploaded any assets yet. Click the upload button above and select
   a compatible file from your computer.
 Please select an layer style before clicking Select.: ''
-Select Layer Style: ''
+Select Layer Style: Select Layer Style
 No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
@@ -155,8 +158,8 @@ New Workspace: New Workspace
 Log out: Log out
 Project settings: Project settings
 Public: Public
-Workspace assets: ''
-Plugin: ''
+Workspace assets: Workspace assets
+Plugin: Plugin
 Manage projects: Manage projects
 Documentation: Documentation
 Map: Map
@@ -166,7 +169,7 @@ Warning: Warning
 Notice: Notice
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
-Project Settings: ''
+Project Settings: Project Settings
 Upload file: Upload file
 Delete: Delete
 You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
@@ -226,15 +229,16 @@ Basic Authorization: Basic Authorization
 Enable Basic Authorization: ''
 Username: Username
 Password: Password
-Site Setting: ''
+Site Setting: Site Setting
 Site name: Site name
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
   You are about to change the site name for your project. Only alphanumeric
   characters and hyphens are allows.
-Left: ''
-Right: ''
-Story Panel: ''
-Panel Position: ''
+Left: Left
+Right: Right
+Story Panel: Story Panel
+Panel Position: Panel Position
+Background Color: Background Color
 Something went wrong.: Something went wrong.
 Couldn't find the Re:Earth project you were after.: Couldn't find the Re:Earth project you were after.
 Double click here to write.: Double click here to write.
@@ -251,7 +255,9 @@ ellipse: ellipse
 Open timeline: Open timeline
 Spacing settings: Spacing settings
 New Camera: New Camera
+New Camera Button: New Camera Button
 Buttons List: Buttons List
+New Layers Button: New Layers Button
 Add markdown text here: Add markdown text here
 Unsupported field type: Unsupported field type
 Drop here: Drop here
@@ -276,7 +282,6 @@ Bulleted List: Bulleted List
 Insert Code Block: Insert Code Block
 Insert Link: Insert Link
 Text Color: Text Color
-Background Color: Background Color
 Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
@@ -491,6 +496,7 @@ One or more assets were successfully deleted.: One or more assets were successfu
 Successfully created workspace!: Successfully created workspace!
 Failed to create project.: Failed to create project.
 Default: Default
+Failed to create story page on project creation.: Failed to create story page on project creation.
 Successfully created project!: Successfully created project!
 Successfully created layer group: Successfully created layer group
 Failed to create layer group: Failed to create layer group

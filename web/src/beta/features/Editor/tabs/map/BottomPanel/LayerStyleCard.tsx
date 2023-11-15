@@ -5,6 +5,7 @@ import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 import type { LayerStyleNameUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
@@ -33,7 +34,10 @@ const LayerStyleCard: React.FC<Props> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(name);
 
-  const handleNameClick = useCallback(() => setIsEditing(true), []);
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => onSelect?.(!selected),
+    () => setIsEditing(true),
+  );
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -77,7 +81,7 @@ const LayerStyleCard: React.FC<Props> = ({
     <Wrapper
       className={className}
       selected={selected}
-      onClick={() => onSelect?.(!selected)}
+      onClick={handleSingleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
       <MainWrapper>
@@ -106,7 +110,7 @@ const LayerStyleCard: React.FC<Props> = ({
             onExit={handleEditExit}
           />
         ) : (
-          <StyleName size="footnote" onDoubleClick={handleNameClick}>
+          <StyleName size="footnote" onDoubleClick={handleDoubleClick}>
             {name}
           </StyleName>
         )}
@@ -181,4 +185,9 @@ const StyleName = styled(Text)`
 
 const StyledTextInput = styled(TextInput)`
   width: 100%;
+  font-size: 12px;
+  color: ${({ theme }) => theme.content.main};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 `;

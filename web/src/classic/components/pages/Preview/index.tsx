@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 
 import CanvasArea from "@reearth/classic/components/organisms/EarthEditor/CanvasArea";
 import CoreCanvasArea from "@reearth/classic/components/organisms/EarthEditor/core/CanvasArea";
-import { useSceneId } from "@reearth/classic/state";
 import { useCore } from "@reearth/classic/util/use-core";
 import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
 import { AuthenticatedPage } from "@reearth/services/auth";
+import { useSceneId } from "@reearth/services/state";
 import { PublishedAppProvider as ThemeProvider } from "@reearth/services/theme";
 
 export type Props = {

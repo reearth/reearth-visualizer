@@ -8,6 +8,7 @@ import type {
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
 } from "@reearth/beta/features/Editor/useLayers";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { styled } from "@reearth/services/theme";
 
 type LayerItemProps = {
@@ -39,23 +40,18 @@ const LayerItem = ({
 
   const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
 
-  const handleClick = useCallback(
-    (e?: MouseEvent<Element>) => {
-      if (e?.shiftKey) {
-        e?.stopPropagation();
-        setIsEditing(true);
-        return;
-      }
-      onSelect();
-    },
-    [onSelect],
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => onSelect?.(),
+    () => setIsEditing(true),
   );
 
   const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
 
   const handleTitleSubmit = useCallback(() => {
     setIsEditing(false);
-    onLayerNameUpdate({ layerId: id, name: newValue });
+    if (newValue.trim() !== "") {
+      onLayerNameUpdate({ layerId: id, name: newValue });
+    }
   }, [id, newValue, onLayerNameUpdate]);
 
   const handleEditExit = useCallback(
@@ -86,7 +82,7 @@ const LayerItem = ({
       isSelected={isSelected}
       isOpenAction={isActionOpen}
       actionPlacement="bottom-end"
-      onItemClick={handleClick}
+      onItemClick={handleSingleClick}
       onActionClick={handleActionMenuToggle}
       onOpenChange={isOpen => setActionOpen(!!isOpen)}
       actionContent={
@@ -103,7 +99,7 @@ const LayerItem = ({
       }>
       <ContentWrapper>
         {isEditing ? (
-          <TextInput
+          <StyledTextInput
             value={newValue}
             timeout={0}
             autoFocus
@@ -112,7 +108,7 @@ const LayerItem = ({
             onBlur={handleEditExit}
           />
         ) : (
-          <LayerTitle>{layerTitle}</LayerTitle>
+          <LayerTitle onDoubleClick={handleDoubleClick}>{layerTitle}</LayerTitle>
         )}
         <HideLayer onClick={handleUpdateVisibility}>
           <Text size="footnote">{value}</Text>
@@ -156,4 +152,13 @@ const HideLayer = styled.div`
   :hover {
     background: ${({ theme }) => theme.bg[2]};
   }
+`;
+
+const StyledTextInput = styled(TextInput)`
+  width: 100%;
+  font-size: 12px;
+  color: ${({ theme }) => theme.content.main};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 `;

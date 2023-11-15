@@ -23,16 +23,16 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
       id: p.id,
       title: p.title,
       propertyId: p.propertyId,
+      layerIds: p.layersIds,
       property: processProperty(undefined, p.property),
       blocks: storyBlocks(p.blocks),
     }));
-
   const storyBlocks = (blocks: GqlStoryBlock[]): StoryBlock[] =>
     blocks.map(b => ({
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.title,
+      name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.translatedTitle,
       propertyId: b.property?.id,
       property: processProperty(undefined, b.property),
     }));
@@ -41,6 +41,7 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
     id: story.id,
     title: story.title,
     position: story.panelPosition === "RIGHT" ? "right" : "left",
+    bgColor: story.bgColor || "#f1f1f1",
     pages: storyPages(story.pages),
   };
 };
@@ -149,6 +150,7 @@ const processPropertyGroups = (
         ui: toUi(schema.ui) || undefined,
         title: schema.translatedTitle || undefined,
         description: schema.translatedDescription || undefined,
+        choices: schema.choices || undefined,
       };
 
       if (!used) {

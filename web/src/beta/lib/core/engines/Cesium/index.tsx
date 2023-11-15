@@ -122,7 +122,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         cursor: isLayerDragging ? "grab" : undefined,
         ...style,
       }}
-      shadows={!!property?.atmosphere?.shadows}
+      shadows={!!(property?.atmosphere?.shadows ?? property?.globeShadow?.globeShadow)}
       onClick={handleClick}
       onDoubleClick={mouseEventHandles.doubleclick}
       onMouseDown={mouseEventHandles.mousedown}
@@ -153,7 +153,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
             ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
             : Number.POSITIVE_INFINITY
         }
-        enableCollisionDetection={!property?.default?.allowEnterGround}
+        enableCollisionDetection={
+          !(property?.default?.allowEnterGround ?? property?.camera?.allowEnterGround)
+        }
       />
       <Camera
         onChange={handleCameraChange}
@@ -188,16 +190,19 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         useDepthPicking={false}
         debugShowFramesPerSecond={!!property?.render?.debugFramePerSecond}
       />
-      <SkyBox show={property?.default?.skybox ?? true} />
+      <SkyBox show={property?.default?.skybox ?? property?.skyBox?.skyBox ?? true} />
       <Fog
         enabled={property?.atmosphere?.fog ?? true}
         density={property?.atmosphere?.fog_density}
       />
-      <Sun show={property?.atmosphere?.enable_sun ?? true} />
-      <Moon show={property?.atmosphere?.enableMoon} />
+      <Sun show={property?.atmosphere?.enable_sun ?? property?.sun?.sun ?? true} />
+      <Moon show={property?.atmosphere?.enableMoon ?? property?.moon?.moon ?? true} />
       <SkyAtmosphere
-        show={property?.atmosphere?.sky_atmosphere ?? true}
+        show={
+          property?.atmosphere?.sky_atmosphere ?? property?.skyAtmosphere?.skyAtmosphere ?? true
+        }
         saturationShift={property?.atmosphere?.skyboxSurturationShift}
+        atmosphereLightIntensity={property?.skyAtmosphere?.skyAtmosphereIntensity}
         brightnessShift={property?.atmosphere?.skyboxBrightnessShift}
       />
       <Globe property={property} cesiumIonAccessToken={cesiumIonAccessToken} />

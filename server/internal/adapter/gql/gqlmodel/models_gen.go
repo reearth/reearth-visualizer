@@ -1273,6 +1273,7 @@ type Story struct {
 	SceneID           ID                `json:"sceneId"`
 	Scene             *Scene            `json:"scene"`
 	PanelPosition     Position          `json:"panelPosition"`
+	BgColor           *string           `json:"bgColor"`
 	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
 	BasicAuthUsername string            `json:"basicAuthUsername"`
 	BasicAuthPassword string            `json:"basicAuthPassword"`
@@ -1538,6 +1539,7 @@ type UpdateStoryInput struct {
 	Title             *string   `json:"title"`
 	Index             *int      `json:"index"`
 	PanelPosition     *Position `json:"panelPosition"`
+	BgColor           *string   `json:"bgColor"`
 	IsBasicAuthActive *bool     `json:"isBasicAuthActive"`
 	BasicAuthUsername *string   `json:"basicAuthUsername"`
 	BasicAuthPassword *string   `json:"basicAuthPassword"`

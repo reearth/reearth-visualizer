@@ -110,7 +110,7 @@ const AdjustableButtonStyled = styled.button`
   height: 100%;
 
   border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.secondary.main};
+  border: 1px solid ${({ theme }) => theme.outline.weak};
   background: ${({ theme }) => theme.bg[1]};
 
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);

@@ -12,9 +12,9 @@ import {
   useRemoveTagMutation,
   useUpdateTagMutation,
 } from "@reearth/classic/gql";
-import { useNotification, useSceneId, useSelected } from "@reearth/classic/state";
 import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
+import { useNotification, useSceneId, useSelected } from "@reearth/services/state";
 
 export default () => {
   const { isAuthenticated } = useAuth();

@@ -254,8 +254,9 @@ export default ({
         property?.cameraLimiter?.cameraLimitterTargetArea
       ) {
         engineAPI.flyTo(property?.cameraLimiter?.cameraLimitterTargetArea, { duration: 0 });
-      } else if (property?.default?.camera) {
-        engineAPI.flyTo(property.default.camera, { duration: 0 });
+      } else if (property?.default?.camera ?? property?.camera?.camera) {
+        const camera = property?.default?.camera ?? property?.camera?.camera;
+        engineAPI.flyTo(camera as Camera, { duration: 0 });
       }
       const camera = getCamera(cesium?.current?.cesiumElement);
       if (camera) {
@@ -265,17 +266,19 @@ export default ({
     },
     [
       engineAPI,
-      onCameraChange,
       property?.default?.camera,
+      property?.camera?.camera,
       property?.cameraLimiter?.cameraLimitterEnabled,
+      onCameraChange,
       onMount,
     ],
     (prevDeps, nextDeps) =>
       prevDeps[0] === nextDeps[0] &&
-      prevDeps[1] === nextDeps[1] &&
+      isEqual(prevDeps[1], nextDeps[1]) &&
       isEqual(prevDeps[2], nextDeps[2]) &&
       prevDeps[3] === nextDeps[3] &&
-      prevDeps[4] === nextDeps[4],
+      prevDeps[4] === nextDeps[4] &&
+      prevDeps[5] === nextDeps[5],
   );
 
   const handleUnmount = useCallback(() => {
@@ -460,7 +463,7 @@ export default ({
     sphericalHarmonicCoefficients,
     globeShadowDarkness: property?.atmosphere?.globeShadowDarkness,
     globeImageBasedLighting: property?.atmosphere?.globeImageBasedLighting,
-    enableLighting: property?.atmosphere?.enable_lighting,
+    enableLighting: property?.atmosphere?.enable_lighting ?? property?.globeLighting?.globeLighting,
     hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
   });
 

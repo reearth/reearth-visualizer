@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useMemo, useState } from "react";
 
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 
@@ -21,22 +21,26 @@ export default ({
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-
-  useEffect(() => {
-    if (!isSelected && editMode) {
-      setEditMode(false);
-    }
-  }, [isSelected, editMode]);
-
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
+  const [clickCount, setClickCount] = useState(0);
 
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
       if ((showSettings && isSelected) || editMode) return;
-      onClick?.();
+      if (clickCount === 0) {
+        setClickCount(1);
+        onClick?.();
+        setTimeout(() => {
+          setClickCount(0);
+        }, 300);
+      } else if (clickCount === 1) {
+        setClickCount(0);
+        setEditMode(true);
+        onClick?.();
+      }
     },
-    [onClick, showSettings, isSelected, editMode],
+    [showSettings, isSelected, editMode, clickCount, onClick],
   );
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);

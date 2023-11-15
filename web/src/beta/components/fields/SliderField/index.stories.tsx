@@ -17,7 +17,12 @@ type Story = StoryObj<typeof SliderField>;
 export const Default: Story = (args: Props) => {
   const [_, updateArgs] = useArgs();
 
-  const handleChange = useCallback((value: number) => updateArgs({ value: value }), [updateArgs]);
+  const handleChange = useCallback(
+    (value: number) => {
+      updateArgs({ value: value });
+    },
+    [updateArgs],
+  );
 
   return (
     <Wrapper>
@@ -50,8 +55,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10%;
-  margin-left: 2rem;
-  margin-top: 2rem;
+  margin: 2rem;
   height: 300px;
 `;
 

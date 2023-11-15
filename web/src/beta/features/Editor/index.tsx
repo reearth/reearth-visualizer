@@ -15,6 +15,7 @@ import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
+import useScene from "./useScene";
 
 type Props = {
   sceneId: string;
@@ -27,7 +28,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
     isVisualizerReady,
-    selectedSceneSetting,
     selectedDevice,
     selectedProjectType,
     visualizerWidth,
@@ -36,14 +36,12 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     currentCamera,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
-    handleSceneSettingSelect,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
     handleFlyTo,
     handleCameraUpdate,
   } = useHooks({ sceneId, tab });
-
   const {
     selectedStory,
     storyPanelRef,
@@ -74,6 +72,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     isVisualizerReady,
     visualizerRef,
   });
+  const { scene, selectedSceneSetting, sceneSettings, handleSceneSettingSelect } = useScene({
+    sceneId,
+  });
 
   const {
     layerStyles,
@@ -90,21 +91,33 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const handleLayerStyleSelected = useCallback(
     (layerStyleId: string) => {
       handleLayerSelect(undefined);
+      handleSceneSettingSelect(undefined);
       handleLayerStyleSelect(layerStyleId);
     },
-    [handleLayerStyleSelect, handleLayerSelect],
+    [handleLayerStyleSelect, handleSceneSettingSelect, handleLayerSelect],
   );
 
   const handleLayerSelected = useCallback(
     (layerId: string) => {
       setSelectedLayerStyleId(undefined);
+      handleSceneSettingSelect(undefined);
       handleLayerSelect(layerId);
     },
-    [handleLayerSelect, setSelectedLayerStyleId],
+    [handleLayerSelect, handleSceneSettingSelect, setSelectedLayerStyleId],
+  );
+
+  const handleSceneSettingSelected = useCallback(
+    (collection?: string) => {
+      setSelectedLayerStyleId(undefined);
+      handleLayerSelect(undefined);
+      handleSceneSettingSelect(collection);
+    },
+    [handleLayerSelect, handleSceneSettingSelect, setSelectedLayerStyleId],
   );
 
   const { leftPanel } = useLeftPanel({
     tab,
+    scene,
     nlsLayers,
     selectedStory,
     selectedLayerId: selectedLayer?.id,
@@ -119,20 +132,22 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerSelect: handleLayerSelected,
     onLayerNameUpdate: handleLayerNameUpdate,
     onLayerVisibilityUpate: handleLayerVisibilityUpdate,
-    onSceneSettingSelect: handleSceneSettingSelect,
+    onSceneSettingSelect: handleSceneSettingSelected,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
     onFlyTo: handleFlyTo,
   });
 
   const { rightPanel } = useRightPanel({
+    scene,
     layerStyles,
     tab,
     sceneId,
     nlsLayers,
     currentPage,
     currentCamera,
-    showSceneSettings: selectedSceneSetting,
     selectedLayerStyleId: selectedLayerStyle?.id,
+    selectedSceneSetting: selectedSceneSetting,
+    sceneSettings: sceneSettings,
     onFlyTo: handleFlyTo,
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
@@ -195,7 +210,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   showStoryPanel={selectedProjectType === "story"}
                   selectedStory={selectedStory}
                   installableBlocks={installableStoryBlocks}
-                  currentPage={currentPage}
                   currentCamera={currentCamera}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}

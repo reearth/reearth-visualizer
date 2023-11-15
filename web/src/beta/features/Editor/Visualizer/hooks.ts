@@ -1,9 +1,13 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
-import type { LatLng, Tag, ValueTypes, ComputedLayer } from "@reearth/beta/lib/core/mantle";
-import type { Layer, LayerSelectionReason, Cluster } from "@reearth/beta/lib/core/Map";
-import type { ValueType } from "@reearth/beta/utils/value";
+import type {
+  LatLng,
+  ValueTypes,
+  ComputedLayer,
+  ComputedFeature,
+} from "@reearth/beta/lib/core/mantle";
+import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -12,7 +16,6 @@ import {
   usePropertyFetcher,
   useLayerStylesFetcher,
 } from "@reearth/services/api";
-import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import {
   useSceneMode,
@@ -24,9 +27,11 @@ import {
   useZoomedLayerId,
   useSelectedLayer,
   useSelectedStoryPageId,
+  useSelectedLayerStyle,
+  useSelectedSceneSetting,
 } from "@reearth/services/state";
 
-import { convertWidgets, processLayers } from "./convert";
+import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
 import type { BlockType } from "./type";
 
@@ -34,13 +39,11 @@ export default ({
   sceneId,
   storyId,
   isBuilt,
-  currentPage,
   showStoryPanel,
 }: {
   sceneId?: string;
   storyId?: string;
   isBuilt?: boolean;
-  currentPage?: Page;
   showStoryPanel?: boolean;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
@@ -48,7 +51,8 @@ export default ({
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
-  const { useUpdatePropertyValue } = usePropertyFetcher();
+  const { useUpdatePropertyValue, useAddPropertyItem, useMovePropertyItem, useRemovePropertyItem } =
+    usePropertyFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
@@ -63,118 +67,53 @@ export default ({
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
 
   const [selectedLayer, setSelectedLayer] = useSelectedLayer();
+  const [, setSelectedLayerStyle] = useSelectedLayerStyle();
+  const [, setSelectedSceneSetting] = useSelectedSceneSetting();
 
   const [selectedWidgetArea, setSelectedWidgetArea] = useSelectedWidgetArea();
   const [isVisualizerReady, setIsVisualizerReady] = useIsVisualizerReady();
 
   const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
 
-  const onBlockMove = useCallback(
-    async (_id: string, _fromIndex: number, _toIndex: number) => {
-      if (!selectedLayer) return;
-      console.log("Block has been moved!");
-    },
-    [selectedLayer],
-  );
-
-  const onBlockRemove = useCallback(
-    async (_id: string) => {
-      if (!selectedLayer) return;
-      console.log("Block has been removed!");
-    },
-    [selectedLayer],
-  );
-
-  // convert data
-  const layers = useMemo(() => {
-    const processedLayers = processLayers(nlsLayers, layerStyles);
-    if (!showStoryPanel) return processedLayers;
-    return processedLayers?.map(layer => ({
-      ...layer,
-      visible: currentPage?.layersIds?.includes(layer.id),
-    }));
-  }, [nlsLayers, layerStyles, showStoryPanel, currentPage?.layersIds]);
-
-  // TODO: Use GQL value
-  const rootLayerId = "";
-
-  const widgets = convertWidgets(scene);
+  // Scene property
   // TODO: Fix to use exact type through GQL typing
-  const sceneProperty: any = useMemo(
-    () => ({
-      tiles: [
-        {
-          id: "default",
-          tile_type: "default",
-        },
-      ],
-    }),
-    [],
-  );
-  const tags: Tag | undefined = useMemo(() => undefined, []);
-
-  const clusters: Cluster[] = [];
-
-  const pluginProperty = useMemo(() => undefined, []);
-
-  const selectLayer = useCallback(
-    async (
-      id?: string,
-      featureId?: string,
-      layer?: () => Promise<ComputedLayer | undefined>,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => {
-      if (id === selectedLayer?.layerId && featureId === selectedLayer?.featureId) return;
-
-      setSelectedLayer(
-        id ? { layerId: id, featureId, layer: await layer?.(), layerSelectionReason } : undefined,
-      );
-    },
-    [selectedLayer, setSelectedLayer],
-  );
-
-  const onBlockChange = useCallback(
-    async <T extends keyof ValueTypes>(
-      blockId: string,
-      _schemaGroupId: string,
-      _fid: string,
-      _v: ValueTypes[T],
-      vt: T,
-      selectedLayer?: Layer,
-    ) => {
-      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
-        ?.propertyId as string | undefined;
-      if (!propertyId) return;
-
-      console.log("Block has been changed!");
-    },
-    [],
-  );
-
-  // const onFovChange = useCallback(
-  //   (fov: number) => camera && onCameraChange({ ...camera, fov }),
-  //   [camera, onCameraChange],
-  // );
+  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
 
   useEffect(() => {
     sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
   }, [sceneProperty, setSceneMode]);
 
-  // block selector
-  const blocks: BlockType[] = useMemo(() => [], []);
-  const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
-    const b = blocks?.[bi];
-    if (b?.pluginId && b?.extensionId && selectedLayer) {
-      console.log("Block has been inserted!");
-    }
-  };
+  // Layers
+  const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
 
-  // TODO: Use GQL value
-  const title = "TITLE";
-  useEffect(() => {
-    if (!isBuilt || !title) return;
-    document.title = title;
-  }, [isBuilt, title]);
+  const layers = useMemo(() => {
+    const processedLayers = processLayers(nlsLayers, layerStyles);
+    if (!showStoryPanel) return processedLayers;
+    return processedLayers?.map(layer => ({
+      ...layer,
+      visible: true,
+    }));
+  }, [nlsLayers, layerStyles, showStoryPanel]);
+
+  const selectLayer = useCallback(
+    async (
+      id?: string,
+      layer?: () => Promise<ComputedLayer | undefined>,
+      feature?: ComputedFeature,
+      layerSelectionReason?: LayerSelectionReason,
+    ) => {
+      if ((!id && !feature && !selectedLayer) ?? (id === selectedLayer?.layerId || !feature))
+        return;
+      if (id) {
+        setSelectedLayerStyle(undefined);
+        setSelectedSceneSetting(undefined);
+      }
+      setSelectedLayer(
+        id ? { layerId: id, layer: await layer?.(), feature, layerSelectionReason } : undefined,
+      );
+    },
+    [selectedLayer, setSelectedLayer, setSelectedLayerStyle, setSelectedSceneSetting],
+  );
 
   const handleDropLayer = useCallback(
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
@@ -183,6 +122,9 @@ export default ({
     },
     [],
   );
+
+  // Widgets
+  const widgets = convertWidgets(scene);
 
   const onWidgetUpdate = useCallback(
     async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
@@ -201,11 +143,65 @@ export default ({
     [sceneId, useUpdateWidgetAlignSystem],
   );
 
+  // Plugin
+  const pluginProperty = useMemo(
+    () =>
+      scene?.plugins.reduce<{ [key: string]: any }>(
+        (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
+        {},
+      ),
+    [scene?.plugins],
+  );
+
+  // Infobox - NOTE: this is from classic. TBD but will change significantly
+  const onBlockChange = useCallback(
+    async <T extends keyof ValueTypes>(
+      blockId: string,
+      _schemaGroupId: string,
+      _fid: string,
+      _v: ValueTypes[T],
+      vt: T,
+      selectedLayer?: Layer,
+    ) => {
+      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
+        ?.propertyId as string | undefined;
+      if (!propertyId) return;
+
+      console.log("Block has been changed!");
+    },
+    [],
+  );
+
+  const onBlockMove = useCallback(
+    async (_id: string, _fromIndex: number, _toIndex: number) => {
+      if (!selectedLayer) return;
+      console.log("Block has been moved!");
+    },
+    [selectedLayer],
+  );
+
+  const onBlockRemove = useCallback(
+    async (_id: string) => {
+      if (!selectedLayer) return;
+      console.log("Block has been removed!");
+    },
+    [selectedLayer],
+  );
+
+  // block selector
+  const blocks: BlockType[] = useMemo(() => [], []);
+  const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
+    const b = blocks?.[bi];
+    if (b?.pluginId && b?.extensionId && selectedLayer) {
+      console.log("Block has been inserted!");
+    }
+  };
+
+  // Story
   const story = useMemo(
     () => convertStory(scene?.stories.find(s => s.id === storyId)),
     [storyId, scene?.stories],
   );
-
   const handleCurrentPageChange = useCallback(
     (pageId?: string) => selectSelectedStoryPageId(pageId),
     [selectSelectedStoryPageId],
@@ -239,13 +235,37 @@ export default ({
       schemaItemId?: string,
       fieldId?: string,
       itemId?: string,
-      vt?: ValueType,
-      v?: ValueTypes[ValueType],
+      vt?: any,
+      v?: any,
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
       await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
     },
     [useUpdatePropertyValue],
+  );
+
+  const handlePropertyItemAdd = useCallback(
+    async (propertyId?: string, schemaGroupId?: string) => {
+      if (!propertyId || !schemaGroupId) return;
+      await useAddPropertyItem(propertyId, schemaGroupId);
+    },
+    [useAddPropertyItem],
+  );
+
+  const handlePropertyItemMove = useCallback(
+    async (propertyId?: string, schemaGroupId?: string, itemId?: string, index?: number) => {
+      if (!propertyId || !schemaGroupId || !itemId || index === undefined) return;
+      await useMovePropertyItem(propertyId, schemaGroupId, itemId, index);
+    },
+    [useMovePropertyItem],
+  );
+
+  const handlePropertyItemDelete = useCallback(
+    async (propertyId?: string, schemaGroupId?: string, itemId?: string) => {
+      if (!propertyId || !schemaGroupId || !itemId) return;
+      await useRemovePropertyItem(propertyId, schemaGroupId, itemId);
+    },
+    [useRemovePropertyItem],
   );
 
   const engineMeta = useMemo(
@@ -255,9 +275,12 @@ export default ({
     [],
   );
 
-  const useExperimentalSandbox = useMemo(() => {
-    return !!sceneProperty?.experimental?.experimental_sandbox;
-  }, [sceneProperty]);
+  // TODO: Use GQL value
+  const title = "TITLE";
+  useEffect(() => {
+    if (!isBuilt || !title) return;
+    document.title = title;
+  }, [isBuilt, title]);
 
   return {
     sceneId,
@@ -265,8 +288,6 @@ export default ({
     selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
-    clusters,
-    tags,
     widgets,
     layers,
     story,
@@ -276,7 +297,7 @@ export default ({
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox,
+    useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
     isVisualizerReady,
     selectWidgetArea: setSelectedWidgetArea,
     zoomedLayerId,
@@ -284,6 +305,9 @@ export default ({
     handleStoryBlockCreate,
     handleStoryBlockDelete,
     handlePropertyValueUpdate,
+    handlePropertyItemAdd,
+    handlePropertyItemDelete,
+    handlePropertyItemMove,
     selectLayer,
     selectBlock,
     onBlockChange,

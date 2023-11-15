@@ -14,14 +14,14 @@ import {
   Visualizer,
   GetProjectsQuery,
 } from "@reearth/classic/gql";
+import { useStorytellingFetcher } from "@reearth/services/api";
+import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
   useProject,
   useUnselectProject,
   useNotification,
-} from "@reearth/classic/state";
-import useStorytellingAPI from "@reearth/services/api/storytellingApi";
-import { useT } from "@reearth/services/i18n";
+} from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 
 export type ProjectNodes = NonNullable<GetProjectsQuery["projects"]["nodes"][number]>[];
@@ -168,7 +168,9 @@ export default (workspaceId?: string) => {
 
   const [createNewProject] = useCreateProjectMutation();
   const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
-  const { useCreateStory } = useStorytellingAPI();
+  const { useCreateStory } = useStorytellingFetcher();
+  const { useCreateStoryPage } = useStorytellingFetcher();
+
   const handleProjectCreate = useCallback(
     async (data: {
       name: string;
@@ -221,6 +223,17 @@ export default (workspaceId?: string) => {
           });
           setModalShown(false);
           return;
+        } else {
+          const { errors: storyPageErrors } = await useCreateStoryPage({
+            sceneId: scene.data?.createScene?.scene.id,
+            storyId: story.data.createStory.story.id,
+          });
+          if (storyPageErrors) {
+            setNotification({
+              type: "error",
+              text: t("Failed to create story page on project creation."),
+            });
+          }
         }
       }
 
@@ -230,7 +243,15 @@ export default (workspaceId?: string) => {
       });
       setModalShown(false);
     },
-    [workspaceId, createNewProject, createScene, setNotification, t, useCreateStory],
+    [
+      workspaceId,
+      createNewProject,
+      createScene,
+      setNotification,
+      t,
+      useCreateStory,
+      useCreateStoryPage,
+    ],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);

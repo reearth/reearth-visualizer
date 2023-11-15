@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 
-import { Scene } from "../gql";
+import { Scene as GqlScene } from "../gql";
 
 import { PluginExtensionType } from "./pluginsApi";
 
@@ -26,6 +26,25 @@ export type SceneQueryProps = {
   pollInterval?: number;
 };
 
+export type Scene = Omit<
+  GqlScene,
+  | "clusters"
+  | "tags"
+  | "createdAt"
+  | "datasetSchemas"
+  | "tags"
+  | "tagIds"
+  | "updatedAt"
+  | "teamId"
+  | "propertyId"
+  | "project"
+  | "team"
+  | "rootLayer"
+  | "__typename"
+> & {
+  workspaceId: string;
+};
+
 export default () => {
   const useSceneQuery = useCallback(({ sceneId, lang }: SceneQueryProps) => {
     const { data, ...rest } = useQuery(GET_SCENE, {
@@ -37,7 +56,6 @@ export default () => {
       return data?.node?.__typename === "Scene"
         ? ({
             id: data.node.id,
-            clusters: data.node.clusters,
             plugins: data.node.plugins,
             projectId: data.node.projectId,
             property: data.node.property,
@@ -45,8 +63,7 @@ export default () => {
             newLayers: data.node.newLayers,
             stories: data.node.stories,
             styles: data.node.styles,
-            tags: data.node.tags,
-            teamId: data.node.teamId,
+            workspaceId: data.node.teamId,
             widgetAlignSystem: data.node.widgetAlignSystem,
             widgets: data.node.widgets,
           } as Scene)

@@ -32,7 +32,6 @@ export default function ({ sceneId }: Props) {
   } = useStorytellingAPI();
 
   const { stories } = useStoriesQuery({ sceneId });
-
   const { installableStoryBlocks } = useInstallableStoryBlocksQuery({ sceneId });
 
   const selectedStory = useMemo(() => (stories?.length ? stories[0] : undefined), [stories]);
@@ -50,7 +49,7 @@ export default function ({ sceneId }: Props) {
         storyPanelRef?.current?.handleCurrentPageChange(pageId);
       }
     },
-    [selectedStoryPageId, selectedStory?.pages, storyPanelRef],
+    [selectedStoryPageId, selectedStory?.pages],
   );
 
   const handlePageDuplicate = useCallback(async (pageId: string) => {

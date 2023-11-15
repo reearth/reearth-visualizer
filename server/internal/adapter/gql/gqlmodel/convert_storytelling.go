@@ -21,6 +21,7 @@ func ToStory(s *storytelling.Story) *Story {
 		UpdatedAt:         s.UpdatedAt(),
 		PublishedAt:       s.PublishedAt(),
 		PanelPosition:     ToStoryPosition(s.PanelPosition()),
+		BgColor:           ToStoryBgColor(s.BgColor()),
 
 		IsBasicAuthActive: s.IsBasicAuthActive(),
 		BasicAuthUsername: s.BasicAuthUsername(),
@@ -111,6 +112,10 @@ func ToStoryPosition(v storytelling.Position) Position {
 		return PositionRight
 	}
 	return ""
+}
+
+func ToStoryBgColor(bg string) *string {
+	return &bg
 }
 
 func FromStoryPositionRef(v *Position) *storytelling.Position {

@@ -22,7 +22,9 @@ const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
     <Wrapper>
       <Text size="body">{t("ID")}</Text>
       <ValueWrapper>
-        <Text size="body">{selectedFeature?.id}</Text>
+        <Text size="body" otherProperties={{ userSelect: "auto" }}>
+          {selectedFeature?.id}
+        </Text>
       </ValueWrapper>
       <Text size="body">{t("Geometry")}</Text>
       <ValueWrapper>
@@ -42,6 +44,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  word-break: break-all;
 `;
 
 const ValueWrapper = styled.div`

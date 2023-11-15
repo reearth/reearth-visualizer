@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
@@ -13,21 +13,36 @@ export type SelectValue = {
   key: string;
 };
 
-export type Props = {
+type CommonProps = {
+  className?: string;
   options?: SelectValue[];
-  onChange: (key: string) => void;
-  value?: string;
   disabled?: boolean;
-  placeholder?: string;
   // Property field
   name?: string;
   description?: string;
 };
 
+export type SingleSelectProps = {
+  onChange: (key: string) => void;
+  value?: string;
+  multiSelect?: false;
+} & CommonProps;
+
+export type MultiSelectProps = {
+  onChange: (keys: string[] | undefined) => void;
+  value?: string[];
+  multiSelect: true;
+} & CommonProps;
+
+export type Props = SingleSelectProps | MultiSelectProps;
+
+// TODO: Fix the onChange method TS error
 const SelectField: React.FC<Props> = ({
+  className,
   options,
   onChange,
   value,
+  multiSelect,
   disabled = false,
   name,
   description,
@@ -40,42 +55,105 @@ const SelectField: React.FC<Props> = ({
 
   const handleClick = useCallback(
     (key: string) => {
+      if (multiSelect === true) {
+        // handle multiselect
+        if (value && Array.isArray(value)) {
+          const tempArray = [...value];
+          tempArray.includes(key)
+            ? tempArray.splice(tempArray.indexOf(key), 1)
+            : tempArray.push(key);
+          onChange(tempArray.length > 0 ? [...tempArray] : undefined);
+        } else {
+          onChange([key]);
+        }
+        return;
+      }
+
       setOpen(false);
-      if (key != value) onChange(key);
+      key != value && onChange(key);
+      return;
     },
-    [setOpen, onChange, value],
+    [setOpen, onChange, value, multiSelect],
   );
 
   const selected = useMemo(() => {
-    return options?.find(({ key }) => key === value);
+    return value
+      ? Array.isArray(value)
+        ? value.map(key => ({
+            key,
+            label: options?.find(x => x.key === key)?.label,
+          }))
+        : options?.find(x => x.key === value)
+      : undefined;
   }, [options, value]);
 
+  const checkSelected = useCallback(
+    (key: string) => {
+      return value ? (Array.isArray(value) ? value.includes(key) : value === key) : false;
+    },
+    [value],
+  );
+
   return (
-    <Property name={name} description={description}>
+    <Property name={name} description={description} className={className}>
       <Popover.Provider open={open} placement="bottom-start" onOpenChange={handlePopOver}>
-        <Popover.Trigger asChild>
-          <InputWrapper disabled={disabled} onClick={handlePopOver}>
-            <Select selected={selected ? true : false} open={open}>
-              {selected ? selected.label : t("Please choose an option")}
-            </Select>
-            <ArrowIcon icon="arrowDown" open={open} size={12} />
-          </InputWrapper>
-        </Popover.Trigger>
-        <PickerWrapper attachToRoot>
-          {options?.map(({ label: value, key }) => (
-            <Option
-              size="footnote"
-              selected={selected?.key == key}
-              key={key}
-              onClick={() => handleClick(key)}>
-              {value}
-            </Option>
-          ))}
-        </PickerWrapper>
+        <ProviderWrapper multiSelect={Array.isArray(value) && value.length > 0}>
+          <Popover.Trigger asChild>
+            <InputWrapper disabled={disabled} onClick={handlePopOver}>
+              <Select selected={!!selected} open={open}>
+                {selected
+                  ? Array.isArray(selected)
+                    ? t("Options")
+                    : selected.label
+                  : t("Please choose an option")}
+              </Select>
+              <ArrowIcon icon="arrowDown" open={open} size={12} />
+            </InputWrapper>
+          </Popover.Trigger>
+          <PickerWrapper attachToRoot>
+            {options?.map(({ label: value, key }) => (
+              <OptionWrapper
+                key={key}
+                onClick={() => handleClick(key)}
+                selected={checkSelected(key)}>
+                {multiSelect && (
+                  <CheckIcon icon={checkSelected(key) ? "checkmark" : "plus"} size={12} />
+                )}
+                <Text size="footnote">{value}</Text>
+              </OptionWrapper>
+            ))}
+          </PickerWrapper>
+          {Array.isArray(selected) && (
+            <SelectedWrapper>
+              {selected.map(({ label, key }) => (
+                <Selected key={key} disabled={disabled}>
+                  <Text size="footnote" key={key}>
+                    {label}
+                  </Text>
+                  <CancelIcon
+                    icon="cancel"
+                    size={12}
+                    onClick={() => !disabled && handleClick(key)}
+                    disabled={disabled}
+                  />
+                </Selected>
+              ))}
+            </SelectedWrapper>
+          )}
+        </ProviderWrapper>
       </Popover.Provider>
     </Property>
   );
 };
+
+const ProviderWrapper = styled.div<{ multiSelect: boolean }>`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 4px;
+  padding: 4px;
+  border: ${({ theme, multiSelect }) => (multiSelect ? `1px solid ${theme.outline.weak}` : "none")};
+`;
 
 const InputWrapper = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -119,9 +197,9 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>`
 `;
 
 const PickerWrapper = styled(Popover.Content)`
-  min-width: 100px;
-  gap: 10px;
+  min-width: 150px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
+  gap: 4px;
   outline: none;
   border-radius: 4px;
   background: ${({ theme }) => theme.bg[1]};
@@ -133,12 +211,41 @@ const PickerWrapper = styled(Popover.Content)`
   z-index: 1;
 `;
 
-const Option = styled(Text)<{ selected: boolean }>`
-  padding: 4px 12px;
-  cursor: ${({ selected }) => (selected ? "not-allowed" : "pointer")};
+const OptionWrapper = styled.div<{ selected: boolean }>`
+  display: flex;
+  padding: 7px 12px;
+  align-items: center;
+  cursor: "pointer";
+  background: ${({ theme, selected }) => (selected ? theme.bg[2] : "inherit")};
   &:hover {
     background: ${({ theme, selected }) => (selected ? theme.bg[2] : theme.select.main)};
   }
+`;
+
+const CheckIcon = styled(Icon)`
+  margin-right: 12px;
+`;
+
+const SelectedWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 125px;
+  overflow: auto;
+`;
+
+const Selected = styled.div<{ disabled: boolean }>`
+  display: flex;
+  padding: 7px 12px;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 2px;
+  background: ${({ theme }) => theme.bg[2]};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+`;
+
+const CancelIcon = styled(Icon)<{ disabled: boolean }>`
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
 export default SelectField;

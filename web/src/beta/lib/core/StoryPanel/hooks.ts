@@ -1,4 +1,4 @@
-import { Ref, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
@@ -61,6 +61,34 @@ export default (
     [selectedPageId, isEditable],
   );
 
+  const onTimeChange = useCallback(
+    (time: Date) => {
+      return visualizer?.current?.timeline?.current?.commit({
+        cmd: "SET_TIME",
+        payload: {
+          start: visualizer?.current?.timeline?.current?.computedTimeline?.start,
+          current: time,
+          stop: visualizer?.current?.timeline?.current?.computedTimeline?.stop,
+        },
+        committer: { source: "storyPage", id: currentPageId },
+      });
+    },
+    [currentPageId, visualizer],
+  );
+
+  const handlePageTime = useCallback(
+    (page: StoryPage) => {
+      const timePointField = page.property?.timePoint;
+      const currentTime = timePointField?.timePoint?.value;
+      if (!currentTime) onTimeChange?.(new Date());
+      else {
+        const getNewDate = new Date(currentTime.substring(0, 19)).getTime();
+        return onTimeChange?.(new Date(getNewDate));
+      }
+    },
+    [onTimeChange],
+  );
+
   const handleCurrentPageChange = useCallback(
     (pageId: string, disableScrollIntoView?: boolean) => {
       if (pageId === currentPageId) return;
@@ -76,7 +104,7 @@ export default (
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
-
+      handlePageTime(newPage);
       const cameraAnimation = newPage.property?.cameraAnimation;
 
       const destination = cameraAnimation?.cameraPosition?.value;
@@ -86,7 +114,7 @@ export default (
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },
-    [selectedStory?.pages, currentPageId, visualizer, onCurrentPageChange],
+    [currentPageId, selectedStory?.pages, onCurrentPageChange, handlePageTime, visualizer],
   );
 
   const pageInfo = useMemo(() => {
@@ -109,6 +137,22 @@ export default (
     }),
     [currentPageId, handleCurrentPageChange],
   );
+
+  // Update what layers will be shown in the Visualizer on page change.
+  useEffect(() => {
+    const currentPage = getPage(currentPageId, selectedStory?.pages);
+    if (currentPage) {
+      const currentLayerIds = visualizer.current?.layers.layers()?.map(l => l.id);
+      if (currentLayerIds) {
+        visualizer.current?.layers.show(
+          ...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)),
+        );
+        visualizer.current?.layers.hide(
+          ...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)),
+        );
+      }
+    }
+  }, [currentPageId, selectedStory?.pages, visualizer]);
 
   return {
     pageInfo,

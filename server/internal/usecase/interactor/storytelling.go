@@ -170,6 +170,10 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetPanelPosition(*inp.PanelPosition)
 	}
 
+	if inp.BgColor != nil {
+		story.SetBgColor(*inp.BgColor)
+	}
+
 	oldAlias := story.Alias()
 	if inp.Alias != nil && *inp.Alias != oldAlias {
 		if err := story.UpdateAlias(*inp.Alias); err != nil {
