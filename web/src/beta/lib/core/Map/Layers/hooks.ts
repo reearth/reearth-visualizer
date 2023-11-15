@@ -316,9 +316,6 @@ export default function useHooks({
   const overriddenLayersRef = useRef(overriddenLayers);
   overriddenLayersRef.current = overriddenLayers;
 
-  // props layers: { visible: false }
-  // overriddenLayers: { _updateStyles: 5 }
-
   const override = useCallback(
     (id: string, layer?: (Partial<Layer> & { property?: any }) | null) => {
       const originalLayer = layerMap.get(id);
