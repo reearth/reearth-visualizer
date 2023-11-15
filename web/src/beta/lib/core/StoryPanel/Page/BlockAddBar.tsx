@@ -96,7 +96,6 @@ const StyledIcon = styled(Icon)`
   padding: 2px;
   cursor: pointer;
   transition: opacity 0.4s;
-  z-index: 100;
 `;
 
 const Line = styled.div`
