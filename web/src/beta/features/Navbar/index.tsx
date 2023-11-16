@@ -85,5 +85,5 @@ const Wrapper = styled.div`
   height: ${NAVBAR_HEIGHT}px;
   gap: 24px;
   background: ${({ theme }) => theme.bg[0]};
-  z-index: 1;
+  z-index: ${({ theme }) => theme.zIndexes.editor.navbar};
 `;

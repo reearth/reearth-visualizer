@@ -76,7 +76,7 @@ const StyledNotificationBanner = styled.div<{
       ? theme.select.strong
       : theme.secondary.main};
   color: ${({ theme }) => theme.content.main};
-  z-index: ${({ theme, visible }) => (visible ? theme.classic.zIndexes.notificationBar : 0)};
+  z-index: ${({ theme, visible }) => (visible ? theme.zIndexes.editor.notificationBar : 0)};
   opacity: ${({ visible }) => (visible ? "1" : "0")};
   transition: all 0.5s;
   pointer-events: ${({ visible }) => (visible ? "auto" : "none")};
