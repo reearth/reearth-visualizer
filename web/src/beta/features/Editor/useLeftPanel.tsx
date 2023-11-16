@@ -4,6 +4,7 @@ import MapSidePanel from "@reearth/beta/features/Editor/tabs/map/LeftPanel";
 import StorySidePanel from "@reearth/beta/features/Editor/tabs/story/LeftPanel";
 import { Tab } from "@reearth/beta/features/Navbar";
 import { FlyTo } from "@reearth/beta/lib/core/types";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Scene } from "@reearth/services/api/sceneApi";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
@@ -36,6 +37,14 @@ type Props = {
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
   onFlyTo?: FlyTo;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 export default ({
@@ -58,6 +67,7 @@ export default ({
   onDataSourceManagerOpen,
   onLayerVisibilityUpate,
   onFlyTo,
+  onPropertyUpdate,
 }: Props) => {
   const leftPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -87,6 +97,7 @@ export default ({
             onPageDelete={onPageDelete}
             onPageAdd={onPageAdd}
             onPageMove={onPageMove}
+            onPropertyUpdate={onPropertyUpdate}
           />
         );
       case "widgets":
@@ -114,6 +125,7 @@ export default ({
     onPageDelete,
     onPageAdd,
     onPageMove,
+    onPropertyUpdate,
   ]);
 
   return {
