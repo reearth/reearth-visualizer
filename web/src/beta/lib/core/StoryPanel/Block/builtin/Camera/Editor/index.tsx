@@ -84,7 +84,7 @@ const CameraBlockEditor: React.FC<Props> = ({
         />
         <FieldGroup disabled={!editorProperties}>
           <TextField
-            name={t("Button Title")}
+            name={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
             onChange={value => debounceOnUpdate(selected, "title", "string", value)}
