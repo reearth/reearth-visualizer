@@ -38,7 +38,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
   return (
     <Property name={name} description={description}>
       <Wrapper>
-        <Popover.Provider open={!!open} placement="bottom-start">
+        <Popover.Provider open={!!open} placement="bottom">
           <Popover.Trigger asChild>
             <InputWrapper disabled={true}>
               <Input dataTimeSet={!!dateTime}>
@@ -62,7 +62,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
               />
             </InputWrapper>
           </Popover.Trigger>
-          <PopoverContent autoFocus={false}>
+          <Popover.Content autoFocus={false}>
             {open && (
               <EditPanel
                 setDateTime={setDateTime}
@@ -71,7 +71,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
                 onClose={handlePopOver}
               />
             )}
-          </PopoverContent>
+          </Popover.Content>
         </Popover.Provider>
       </Wrapper>
     </Property>
@@ -113,9 +113,6 @@ const TriggerButton = styled(Button)`
   margin: 0;
 `;
 
-const PopoverContent = styled(Popover.Content)`
-  z-index: 701;
-`;
 const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
   ${({ disabled, theme }) =>
     disabled

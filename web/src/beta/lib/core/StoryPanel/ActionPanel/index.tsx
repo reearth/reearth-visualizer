@@ -122,7 +122,7 @@ const ActionPanel: React.FC<Props> = ({
               ),
           )}
         </BlockOptions>
-        <Popover.Content>
+        <StyledPopoverContent>
           {showPadding ? (
             <SettingsDropdown>
               <SettingsHeading>
@@ -156,7 +156,7 @@ const ActionPanel: React.FC<Props> = ({
           ) : (
             <PopoverMenuContent size="sm" items={popoverContent} />
           )}
-        </Popover.Content>
+        </StyledPopoverContent>
       </Popover.Provider>
     </Wrapper>
   );
@@ -166,7 +166,6 @@ export default ActionPanel;
 
 const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   ${({ isSelected }) => !isSelected && "background: #f1f1f1;"}
-  z-index: 1;
   color: ${({ theme }) => theme.select.main};
   display: flex;
   align-items: center;
@@ -193,7 +192,6 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   right: -1px;
   top: -25px;
   `}
-  z-index: 1;
 `;
 
 const BlockOptions = styled.div<{ isSelected?: boolean }>`
@@ -202,6 +200,10 @@ const BlockOptions = styled.div<{ isSelected?: boolean }>`
   display: flex;
   align-items: center;
   height: 24px;
+`;
+
+const StyledPopoverContent = styled(Popover.Content)`
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlock};
 `;
 
 const OptionWrapper = styled.div<{ showPointer?: boolean }>`
@@ -221,7 +223,6 @@ const OptionIcon = styled(Icon)<{ border?: boolean }>`
 `;
 
 const SettingsDropdown = styled.div`
-  z-index: 999;
   background: ${({ theme }) => theme.bg[1]};
   border-radius: 2px;
   border: 1px solid ${({ theme }) => theme.bg[3]};

@@ -217,7 +217,6 @@ const ActionIcon = styled.button`
 `;
 
 const StyledPopoverContent = styled(Popover.Content)`
-  z-index: 1000;
   position: relative;
 `;
 

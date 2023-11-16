@@ -183,7 +183,7 @@ const Mask = styled.div<{ activate?: boolean }>`
   height: 100%;
   width: 100%;
   position: absolute;
-  z-index: 1;
+  // z-index: 1;
   top: 0;
   left: 0;
   background-color: rgb(0, 0, 0);
@@ -224,7 +224,7 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  z-index: ${({ theme }) => theme.zIndexes.propertyFieldPopup};
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.infobox};
   transition: all 0.6s;
 
   @media (max-width: 624px) {
