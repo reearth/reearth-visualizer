@@ -60,7 +60,7 @@ const Wrapper = styled.div<{ visible: boolean }>`
   position: absolute;
   visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
   z-index: ${({ visible, theme }) =>
-    visible ? theme.zIndexes.pluginPopup : theme.zIndexes.hidden};
+    visible ? theme.zIndexes.visualizer.pluginPopup : theme.zIndexes.hidden};
   transition: opacity 0.25s;
   opacity: ${({ visible }) => (visible ? "1" : "0")};
 `;

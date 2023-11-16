@@ -35,6 +35,7 @@ import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
 import {
   convertCesium3DTileFeatureProperties,
+  convertEntityDescription,
   convertEntityProperties,
   convertObjToComputedFeature,
   findEntity,
@@ -496,7 +497,10 @@ export default function useEngineRef(
           return {
             type: "feature",
             id: tag.featureId,
-            properties: convertEntityProperties(viewer, entity),
+            properties: convertEntityProperties(viewer.clock.currentTime, entity),
+            metaData: {
+              description: convertEntityDescription(viewer.clock.currentTime, entity),
+            },
           };
         }
         if (
@@ -506,7 +510,7 @@ export default function useEngineRef(
           return {
             type: "feature",
             id: tag.featureId,
-            properties: convertCesium3DTileFeatureProperties(viewer, entity),
+            properties: convertCesium3DTileFeatureProperties(entity),
           };
         }
         return;
@@ -515,7 +519,7 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         return findFeaturesFromLayer(viewer, layerId, featureIds, e => {
-          const f = convertObjToComputedFeature(viewer, e)?.[1];
+          const f = convertObjToComputedFeature(viewer.clock.currentTime, e)?.[1];
           return f
             ? ({
                 ...f,
@@ -541,7 +545,10 @@ export default function useEngineRef(
             tag.computedFeature ?? {
               type: "computedFeature",
               id: tag.featureId,
-              properties: convertEntityProperties(viewer, entity),
+              properties: convertEntityProperties(viewer.clock.currentTime, entity),
+              metaData: {
+                description: convertEntityDescription(viewer.clock.currentTime, entity),
+              },
             }
           );
         }
@@ -553,7 +560,7 @@ export default function useEngineRef(
             tag.computedFeature ?? {
               type: "computedFeature",
               id: tag.featureId,
-              properties: convertCesium3DTileFeatureProperties(viewer, entity),
+              properties: convertCesium3DTileFeatureProperties(entity),
             }
           );
         }
@@ -569,7 +576,7 @@ export default function useEngineRef(
           viewer,
           layerId,
           featureIds,
-          e => convertObjToComputedFeature(viewer, e)?.[1],
+          e => convertObjToComputedFeature(viewer.clock.currentTime, e)?.[1],
         );
       },
       selectFeatures: (layerId: string, featureId: string[]) => {

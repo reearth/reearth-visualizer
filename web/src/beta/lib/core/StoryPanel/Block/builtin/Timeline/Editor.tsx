@@ -233,7 +233,7 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 2;
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlock};
 `;
 
 const InputOptions = styled.option`
