@@ -25,17 +25,6 @@ type Props = {
   onSettingsToggle?: () => void;
   onClick?: () => void;
   onRemove?: () => void;
-  // onPropertyUpdate?: (
-  //   propertyId?: string,
-  //   schemaItemId?: string,
-  //   fieldId?: string,
-  //   itemId?: string,
-  //   vt?: string,
-  //   v?: any,
-  // ) => Promise<void>;
-  // onPropertyItemAdd?: () => Promise<void>;
-  // onPropertyItemMove?: () => Promise<void>;
-  // onPropertyItemDelete?: () => Promise<void>;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
