@@ -4,13 +4,13 @@ import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 import { useVisualizer } from "../Visualizer";
 
-import { DEFAULT_STORY_PAGE_DURATION } from "./constants";
+import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";
 
 export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 export type StoryPanelRef = {
   currentPageId?: string;
-  handleCurrentPageChange: (pageId: string, disableScrollIntoView?: boolean) => void;
+  handleCurrentPageChange: (pageId?: string, disableScrollIntoView?: boolean) => void;
 };
 
 export default (
@@ -21,7 +21,7 @@ export default (
   }: {
     selectedStory?: Story;
     isEditable?: boolean;
-    onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
+    onCurrentPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   },
   ref: Ref<StoryPanelRef>,
 ) => {
@@ -90,16 +90,19 @@ export default (
   );
 
   const handleCurrentPageChange = useCallback(
-    (pageId: string, disableScrollIntoView?: boolean) => {
+    (pageId?: string, disableScrollIntoView?: boolean) => {
       if (pageId === currentPageId) return;
 
       const newPage = getPage(pageId, selectedStory?.pages);
       if (!newPage) return;
 
-      onCurrentPageChange?.(pageId);
-      setCurrentPageId(pageId);
+      onCurrentPageChange?.(newPage.id);
+      setCurrentPageId(newPage.id);
 
-      if (!disableScrollIntoView) {
+      if (!pageId) {
+        const element = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+        if (element) element.scrollTo(0, 0);
+      } else if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
@@ -169,6 +172,7 @@ export default (
 };
 
 const getPage = (id?: string, pages?: StoryPage[]) => {
-  if (!id || !pages || !pages.length) return;
+  if (!pages?.length) return;
+  if (!id) return pages[0]; // If no ID, set first page
   return pages.find(p => p.id === id);
 };

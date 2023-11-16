@@ -24,7 +24,7 @@ export type StoryPanelProps = {
   selectedStory?: Story;
   isEditable?: boolean;
   installableBlocks?: InstallableStoryBlock[];
-  onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
+  onCurrentPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   onBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
