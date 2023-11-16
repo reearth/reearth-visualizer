@@ -35,7 +35,7 @@ const StyledButton = styled.div`
   padding: ${({ theme }) => theme.metrics.m}px;
   cursor: pointer;
   transition: color 0.3s;
-  z-index: ${({ theme }) => theme.zIndexes.base};
+  z-index: 1;
 
   &:before {
     content: "";
@@ -46,7 +46,7 @@ const StyledButton = styled.div`
     height: 100%;
     background: linear-gradient(10.66deg, ${({ theme }) => theme.bg[1]} 30%, #1e2086 70%);
     transition: transform 0.3s;
-    z-index: ${({ theme }) => theme.zIndexes.hidden};
+    z-index: -1;
   }
 
   &:hover {
