@@ -498,7 +498,9 @@ export default function useEngineRef(
             type: "feature",
             id: tag.featureId,
             properties: convertEntityProperties(viewer.clock.currentTime, entity),
-            description: convertEntityDescription(viewer.clock.currentTime, entity),
+            metaData: {
+              description: convertEntityDescription(viewer.clock.currentTime, entity),
+            },
           };
         }
         if (
@@ -544,7 +546,9 @@ export default function useEngineRef(
               type: "computedFeature",
               id: tag.featureId,
               properties: convertEntityProperties(viewer.clock.currentTime, entity),
-              description: convertEntityDescription(viewer.clock.currentTime, entity),
+              metaData: {
+                description: convertEntityDescription(viewer.clock.currentTime, entity),
+              },
             }
           );
         }

@@ -380,7 +380,9 @@ export const convertObjToComputedFeature = (
         type: "computedFeature",
         id: tag?.featureId ?? "",
         properties: convertEntityProperties(currentTime, entity),
-        description: convertEntityDescription(currentTime, entity),
+        metaData: {
+          description: convertEntityDescription(currentTime, entity),
+        },
       },
     ];
   }

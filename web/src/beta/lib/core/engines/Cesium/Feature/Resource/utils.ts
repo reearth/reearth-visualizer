@@ -142,7 +142,9 @@ export const attachStyle = (
         coordinates,
       },
       properties: convertEntityProperties(currentTime, entity),
-      description: convertEntityDescription(currentTime, entity),
+      metaData: {
+        description: convertEntityDescription(currentTime, entity),
+      },
       range: {
         x: coordinates[0],
         y: coordinates[1],
@@ -274,7 +276,9 @@ export const attachStyle = (
         coordinates,
       },
       properties: convertEntityProperties(currentTime, entity),
-      description: convertEntityDescription(currentTime, entity),
+      metaData: {
+        description: convertEntityDescription(currentTime, entity),
+      },
       range: {
         x: entityPosition?.x ?? 0,
         y: entityPosition?.y ?? 0,
@@ -322,7 +326,9 @@ export const attachStyle = (
         coordinates,
       },
       properties: convertEntityProperties(currentTime, entity),
-      description: convertEntityDescription(currentTime, entity),
+      metaData: {
+        description: convertEntityDescription(currentTime, entity),
+      },
       range: {
         x: entityPosition?.x ?? 0,
         y: entityPosition?.y ?? 0,
