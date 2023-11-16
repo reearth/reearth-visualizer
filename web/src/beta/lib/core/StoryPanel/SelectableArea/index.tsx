@@ -1,5 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
@@ -24,17 +25,37 @@ type Props = {
   onSettingsToggle?: () => void;
   onClick?: () => void;
   onRemove?: () => void;
+  // onPropertyUpdate?: (
+  //   propertyId?: string,
+  //   schemaItemId?: string,
+  //   fieldId?: string,
+  //   itemId?: string,
+  //   vt?: string,
+  //   v?: any,
+  // ) => Promise<void>;
+  // onPropertyItemAdd?: () => Promise<void>;
+  // onPropertyItemMove?: () => Promise<void>;
+  // onPropertyItemDelete?: () => Promise<void>;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
-    v?: any,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const SelectableArea: React.FC<Props> = ({

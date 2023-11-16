@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+
 import ActionPanel, { type ActionPosition } from "../../../../ActionPanel";
 
 import useHooks from "./hooks";
@@ -26,12 +28,22 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
-    v?: any,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const BlockActionPanel: React.FC<Props> = ({
