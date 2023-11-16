@@ -213,7 +213,7 @@ extensions:
               type: bool
               title: Enable
               defaultValue: true
-              description: Description needed.
+              description: Enabled the background will show a representation of the stars.
         - id: sun
           collection: Sky
           title: Sun
@@ -222,7 +222,7 @@ extensions:
               type: bool
               title: Enable
               defaultValue: true
-              description: Description needed.
+              description: Enabled a representation of the sun will be shown in the sky.
         - id: moon
           collection: Sky
           title: Moon
@@ -240,7 +240,7 @@ extensions:
               type: bool
               title: Enable
               defaultValue: true
-              description: Description neeeded.
+              description: Enabled a realistic representation of the outer atmosphere will be shown.
             - id: skyAtmosphereIntensity
               type: number
               title: Light Intensity

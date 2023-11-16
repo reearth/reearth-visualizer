@@ -140,18 +140,25 @@ export default (
 
   // Update what layers will be shown in the Visualizer on page change.
   useEffect(() => {
+    const visualizerRef = visualizer.current;
     const currentPage = getPage(currentPageId, selectedStory?.pages);
     if (currentPage) {
-      const currentLayerIds = visualizer.current?.layers.layers()?.map(l => l.id);
+      const currentLayerIds = visualizerRef?.layers.layers()?.map(l => l.id);
       if (currentLayerIds) {
-        visualizer.current?.layers.show(
+        visualizerRef?.layers.show(
           ...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)),
         );
-        visualizer.current?.layers.hide(
+        visualizerRef?.layers.hide(
           ...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)),
         );
       }
     }
+    return () => {
+      const currentLayerIds = visualizerRef?.layers.layers()?.map(l => l.id);
+      // Resetting the layers so that the parent can modify layers' visibility
+      // again through the layer object being passed to core/Visualizer
+      visualizerRef?.layers.show(...(currentLayerIds ?? []));
+    };
   }, [currentPageId, selectedStory?.pages, visualizer]);
 
   return {

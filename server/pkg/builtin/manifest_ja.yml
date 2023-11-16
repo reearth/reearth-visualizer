@@ -1,6 +1,137 @@
 name: Re:Earth公式プラグイン
 description: 公式プラグイン
 extensions:
+  cesium-beta:
+    name: Cesium Beta
+    description: Description
+    propertySchema:
+      default:
+        title: Main
+        fields:
+          sceneMode:
+            title: シーンモード
+            description: 地球儀の表示を2D、2.5D、3Dから選択します。
+          ion:
+            title: Cesium Ion アクセストークン
+            description: ご自身の Cesium Ion アカウントからアクセストークンを発行し、ここに設定します。Cesium Ion のアセット（タイルデータ・3Dデータなど）の使用が可能になります。
+          vr:
+            title: VR
+            description: 画面を左右に分割するVRモードを有効にします。
+      tiles:
+        title: タイル
+        description: 手持ちのタイルデータを使用し、地球上に表示することができます。
+        fields:
+          tile_type:
+            title: 種類
+            choices:
+              default: デフォルト
+              default_label: ラベル付き地図
+              default_road: 道路地図
+              stamen_watercolor: Stamen Watercolor
+              stamen_toner: Stamen Toner
+              open_street_map: OpenStreetMap
+              esri_world_topo: ESRI Topography
+              black_marble: Black Marble
+              japan_gsi_standard: 地理院地図 標準地図
+              url: URL
+          tile_url:
+            title: URL
+          tile_zoomLevel:
+            title: Zoom Level
+            description: "Change the Zoom Level of the selected tile map. Min: 0 Max: 1"
+          tile_opacity:
+            title: 不透明性
+            description: "Change the opacity of the selected tile map. Min: 0 Max: 1"
+      terrain:
+        title: 地形
+        fields:
+          terrain:
+            title: 地形
+            description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
+          terrainType:
+            title: 種類
+            description: 地形の種類を指定します。
+            choices:
+              cesium: Cesium World Terrain
+              arcgis: ArcGIS Terrain
+              cesiumion: Cesium Ion
+          terrainCesiumIonAsset:
+            title: Cesium Ion アセットID
+            description: Cesium Ion に登録されたテラインのアセットのIDを指定します。
+          terrainCesiumIonAccessToken:
+            title: Cesium Ion アクセストークン
+            description: シーン全体設定の Cesium Ion のアクセストークンをこのタイルのために上書きしたい場合は指定します。
+          terrainCesiumIonUrl:
+            title: Cesium Ion テラインURL
+            description: Cesium のテラインデータを Cesium Ion ではなくオンプレミスのサーバーで配信している場合はそのURLを指定します。アセットIDの指定よりも優先されます。
+          terrainExaggeration:
+            title: 地形の強調
+            description: 地形の強調を設定します。デフォルトは1.0（誇張しない）です。2.0は、地形を2倍に拡大します。0.0の値は地形を完全に平らにします。
+          terrainExaggerationRelativeHeight:
+            title: 地形の強調の基準
+            description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
+          depthTestAgainstTerrain:
+            title: 地形の下を非表示
+            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
+      globeLighting:
+        title: Globe Lighting
+        fields:
+          globeLighting:
+            title: Enable
+            description: This property will support the globe receive Entitys lighting.
+      globeShadow:
+        title: Globe Shadow
+        fields:
+          globeShadow:
+            title: Enable
+            description: This property will support the globe receive Entitys shadows.
+      globeAtmosphere:
+        title: Globe Atmosphere
+        fields:
+          globeAtmosphere:
+            title: Enable
+            description: This setting handles the so-called atmosphere effect of Earth.
+          globeAtmosphereIntensity:
+            title: Light Intensity
+            description: "Change the light intensity of the selected tile map. Min: 0 Max: 30"
+      skyBox:
+        title: Sky Box
+        fields:
+          skyBox:
+            title: Enable
+            description: Enabled the background will show a representation of the stars.
+      sun:
+        title: Sun
+        fields:
+          sun:
+            title: Enable
+            description: Enabled a representation of the sun will be shown in the sky.
+      moon:
+        title: Moon
+        fields:
+          moon:
+            title: Enable
+            description: Enabled a representation of the moon will be shown in the sky.
+      skyAtmosphere:
+        title: Sky Atmosphere
+        fields:
+          skyAtmosphere:
+            title: Enable
+            description: Enabled a realistic representation of the outer atmosphere will be shown.
+          skyAtmosphereIntensity:
+            title: Light Intensity
+            description: "Change the light intensity of the selected tile map. Min: 0 Max: 200"
+      camera:
+        title: Camera
+        fields:
+          camera:
+            title: Initial camera position
+            description: The starting position of your project.
+          allowEnterGround:
+            title: Enter the ground
+            description: Set to true to allow the camera to enter the surface of the earth.
+          fov:
+            title: FOV
   cesium:
     name: Cesium
     description: 右パネルでシーン全体の設定を変更することができます。タイル、大気、ライティングなどの設定が含まれています。
