@@ -49,7 +49,7 @@ const Settings: React.FC<Props> = ({
   return (
     <Wrapper>
       {tab == "story" && (
-        <SidePanelSectionField title={t("Layers")}>
+        <SidePanelSectionField title={t("Layers")} storageKey="storyLayer">
           {layers && layers?.length > 0 && (
             <LayerWrapper>
               <AllLayers>
@@ -74,7 +74,7 @@ const Settings: React.FC<Props> = ({
       )}
 
       {visibleItems?.map((i, idx) => (
-        <SidePanelSectionField title={i.title ?? t("Settings")} key={idx}>
+        <SidePanelSectionField title={i.title ?? t("Settings")} storageKey="settings" key={idx}>
           <PropertyItem
             key={i.id}
             propertyId={propertyId}
