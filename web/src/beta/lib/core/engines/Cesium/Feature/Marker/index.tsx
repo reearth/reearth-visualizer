@@ -1,11 +1,12 @@
 import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from "cesium";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
 import { toCSSFont } from "@reearth/beta/utils/value";
 
 import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";
+import { useContext } from "../context";
 import {
   EntityExt,
   toDistanceDisplayCondition,
@@ -36,6 +37,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         : undefined,
     [geometry?.coordinates, geometry?.type, property?.height, property?.location],
   );
+
+  const { requestRender } = useContext();
 
   const {
     show = true,
@@ -133,6 +136,10 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     () => toDistanceDisplayCondition(property?.near, property?.far),
     [property?.near, property?.far],
   );
+
+  useEffect(() => {
+    requestRender?.();
+  });
 
   return !pos || !isVisible || !show ? null : (
     <>
