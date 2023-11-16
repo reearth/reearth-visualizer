@@ -175,6 +175,7 @@ const Wrapper = styled.div`
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.bg[3]};
   width: 100%;
+  user-select: none;
 `;
 
 const TimelineControl = styled.div`
@@ -270,12 +271,13 @@ const ScaleList = styled.div`
   position: absolute;
   left: 18px;
   right: -12px;
+  cursor: pointer;
 `;
 
 const IconWrapper = styled.div<{ isPlaying: boolean }>`
   position: absolute;
   top: 4px;
-  user-select: none;
+  cursor: pointer;
   color: ${({ isPlaying, theme }) => (isPlaying ? theme.select.main : "")};
 `;
 
