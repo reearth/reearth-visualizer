@@ -33,6 +33,7 @@ const getSize = (size: number, delta: number, minSize?: number, maxSize?: number
   if (maxSize !== undefined && newSize > maxSize) newSize = maxSize; // New check for maxSize
   return newSize;
 };
+// ... (your imports)
 
 export default (
   direction: Direction,
@@ -40,15 +41,17 @@ export default (
   initialSize: number,
   minSize: number,
   maxSize?: number,
+  localStorageKey?: string,
 ) => {
-  const [startingSize, setStartingSize] = useState(initialSize);
+  const savedState = localStorageKey && localStorage.getItem(localStorageKey);
+  const parsedState = savedState ? JSON.parse(savedState) : null;
 
+  const [startingSize, setStartingSize] = useState(parsedState?.startingSize || initialSize);
   const [isResizing, setIsResizing] = useState(false);
-  const [size, setSize] = useState(initialSize);
+  const [size, setSize] = useState(parsedState?.size || initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [minimized, setMinimized] = useState(false);
-
-  const [difference, setDifference] = useState(0);
+  const [minimized, setMinimized] = useState(parsedState?.minimized || false);
+  const [difference, setDifference] = useState(parsedState?.difference || 0);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -132,6 +135,14 @@ export default (
     bindEventListeners();
     return () => unbindEventListeners();
   }, [bindEventListeners, isResizing, unbindEventListeners]);
+
+  useEffect(() => {
+    if (!localStorageKey) return;
+    localStorage.setItem(
+      localStorageKey,
+      JSON.stringify({ size, minimized, difference, startingSize }),
+    );
+  }, [size, minimized, difference, startingSize, localStorageKey]);
 
   const gutterProps = useMemo(
     () => ({
