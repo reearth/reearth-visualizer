@@ -32,6 +32,7 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
       options={["GeoJSON", "KML", "CZML"].map(v => ({ key: v, label: v }))}
       name={t("File Format")}
       description={t("File format of the data source you want to add.")}
+      attachToRoot
       onChange={setFileFormat}
     />
   );

@@ -7,6 +7,7 @@ import {
 import * as React from "react";
 
 import { PopoverContext, usePopoverContext } from "@reearth/beta/components/Popover/context";
+import { useTheme } from "@reearth/services/theme";
 
 import usePopover from "./hooks";
 import { PopoverOptions } from "./types";
@@ -72,6 +73,7 @@ export const Content = React.forwardRef<
   React.HTMLProps<HTMLDivElement> & ContentProps
 >(function Content({ style, className, attachToRoot = false, ...props }, propRef) {
   const { context: floatingContext, ...context } = usePopoverContext();
+  const theme = useTheme();
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
   const { isMounted, styles: transitionStyles } = useTransitionStyles(floatingContext, {
     duration: 50,
@@ -87,7 +89,12 @@ export const Content = React.forwardRef<
         <div
           ref={ref}
           className={className}
-          style={{ ...context.floatingStyles, ...transitionStyles, ...style }}
+          style={{
+            ...context.floatingStyles,
+            ...transitionStyles,
+            ...style,
+            zIndex: theme.zIndexes.editor.popover,
+          }}
           {...context.getFloatingProps(props)}>
           {props.children}
         </div>
