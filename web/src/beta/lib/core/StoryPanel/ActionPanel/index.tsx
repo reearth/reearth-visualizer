@@ -122,7 +122,7 @@ const ActionPanel: React.FC<Props> = ({
               ),
           )}
         </BlockOptions>
-        <StyledPopoverContent>
+        <StyledPopoverContent attachToRoot>
           {showPadding ? (
             <SettingsDropdown>
               <SettingsHeading>
