@@ -132,7 +132,11 @@ const StoryPanel: React.FC<Props> = ({
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
-      onSettingsToggle={onPageSettingsToggle}>
+      onSettingsToggle={onPageSettingsToggle}
+      onPropertyUpdate={onPropertyUpdate}
+      onPropertyItemAdd={onPropertyItemAdd}
+      onPropertyItemDelete={onPropertyItemDelete}
+      onPropertyItemMove={onPropertyItemMove}>
       <Wrapper
         id={page?.id}
         ref={containerRef}
