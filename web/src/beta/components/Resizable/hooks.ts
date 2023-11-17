@@ -30,10 +30,9 @@ const getDelta = (direction: Direction, deltaX: number, deltaY: number) =>
 const getSize = (size: number, delta: number, minSize?: number, maxSize?: number) => {
   let newSize = size + delta;
   if (minSize !== undefined && newSize < minSize) newSize = minSize;
-  if (maxSize !== undefined && newSize > maxSize) newSize = maxSize; // New check for maxSize
+  if (maxSize !== undefined && newSize > maxSize) newSize = maxSize;
   return newSize;
 };
-// ... (your imports)
 
 export default (
   direction: Direction,
@@ -44,14 +43,13 @@ export default (
   localStorageKey?: string,
 ) => {
   const savedState = localStorageKey && localStorage.getItem(localStorageKey);
-  const parsedState = savedState ? JSON.parse(savedState) : null;
-
-  const [startingSize, setStartingSize] = useState(parsedState?.startingSize || initialSize);
+  const parsedState = savedState && JSON.parse(savedState);
+  const [startingSize, setStartingSize] = useState(initialSize);
   const [isResizing, setIsResizing] = useState(false);
-  const [size, setSize] = useState(parsedState?.size || initialSize);
+  const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [minimized, setMinimized] = useState(parsedState?.minimized || false);
-  const [difference, setDifference] = useState(parsedState?.difference || 0);
+  const [minimized, setMinimized] = useState(parsedState ? parsedState.minimized : false);
+  const [difference, setDifference] = useState(0);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -93,10 +91,10 @@ export default (
       direction,
       difference,
       size,
-      minSize,
-      maxSize,
       minimized,
       startingSize,
+      minSize,
+      maxSize,
     ],
   );
 
@@ -132,17 +130,24 @@ export default (
       unbindEventListeners();
       return;
     }
-    bindEventListeners();
-    return () => unbindEventListeners();
-  }, [bindEventListeners, isResizing, unbindEventListeners]);
-
-  useEffect(() => {
     if (!localStorageKey) return;
     localStorage.setItem(
       localStorageKey,
       JSON.stringify({ size, minimized, difference, startingSize }),
     );
-  }, [size, minimized, difference, startingSize, localStorageKey]);
+
+    bindEventListeners();
+    return () => unbindEventListeners();
+  }, [
+    bindEventListeners,
+    difference,
+    isResizing,
+    localStorageKey,
+    minimized,
+    size,
+    startingSize,
+    unbindEventListeners,
+  ]);
 
   const gutterProps = useMemo(
     () => ({
@@ -153,9 +158,25 @@ export default (
   );
 
   const handleResetSize = useCallback(() => {
+    if (!parsedState || !localStorageKey) return;
+    localStorage.setItem(
+      localStorageKey,
+      JSON.stringify({
+        size: initialSize,
+        minimized: false,
+        difference: 0,
+        startingSize: initialSize,
+      }),
+    );
+
     setMinimized(false);
     setSize(initialSize);
-  }, [initialSize]);
+  }, [initialSize, localStorageKey, parsedState]);
 
-  return { size, gutterProps, minimized, handleResetSize };
+  return {
+    size: parsedState ? parsedState.size : initialSize,
+    gutterProps,
+    minimized: parsedState ? parsedState.minimized : false,
+    handleResetSize,
+  };
 };

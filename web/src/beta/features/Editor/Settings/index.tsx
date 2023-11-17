@@ -74,7 +74,7 @@ const Settings: React.FC<Props> = ({
       )}
 
       {visibleItems?.map((i, idx) => (
-        <SidePanelSectionField title={i.title ?? t("Settings")} storageKey="settings" key={idx}>
+        <SidePanelSectionField title={i.title ?? t("Settings")} key={idx}>
           <PropertyItem
             key={i.id}
             propertyId={propertyId}

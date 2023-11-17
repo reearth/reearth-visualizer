@@ -18,10 +18,7 @@ const Settings: React.FC<Props> = ({ id, propertyItems }) => {
   return (
     <Wrapper>
       {visibleItems?.map((i, idx) => (
-        <SidePanelSectionField
-          title={i.title ?? t("Settings")}
-          storageKey="sidePanelSetting"
-          key={idx}>
+        <SidePanelSectionField title={i.title ?? t("Settings")} key={idx}>
           <PropertyItem key={i.id} propertyId={id} item={i} />
         </SidePanelSectionField>
       ))}

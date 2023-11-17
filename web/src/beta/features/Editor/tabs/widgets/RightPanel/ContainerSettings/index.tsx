@@ -14,7 +14,7 @@ const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChang
   const t = useT();
 
   return (
-    <SidePanelSectionField storageKey="widget">
+    <SidePanelSectionField>
       <TextInput
         name={t("Padding top")}
         value={widgetArea?.padding?.top.toString()}

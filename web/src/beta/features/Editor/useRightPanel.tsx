@@ -1,5 +1,6 @@
 import { ReactNode, useMemo } from "react";
 
+import Resizable from "@reearth/beta/components/Resizable";
 import type { Tab } from "@reearth/beta/features/Navbar";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
@@ -8,6 +9,7 @@ import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import type { Scene } from "@reearth/services/api/sceneApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
+import { metrics } from "@reearth/services/theme";
 
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
@@ -52,33 +54,56 @@ export default ({
     switch (tab) {
       case "map":
         return (
-          <MapSidePanel
-            scene={scene}
-            layerStyles={layerStyles}
-            layers={nlsLayers}
-            sceneId={sceneId}
-            sceneSettings={sceneSettings}
-            currentCamera={currentCamera}
-            selectedLayerStyleId={selectedLayerStyleId}
-            selectedSceneSetting={selectedSceneSetting}
-            onFlyTo={onFlyTo}
-            onLayerStyleValueUpdate={onLayerStyleValueUpdate}
-            onLayerConfigUpdate={onLayerConfigUpdate}
-          />
+          <Resizable
+            direction="vertical"
+            gutter="start"
+            initialSize={metrics.propertyMenuWidth}
+            minSize={metrics.propertyMenuMinWidth}
+            localStorageKey="mapRightPanel">
+            <MapSidePanel
+              scene={scene}
+              layerStyles={layerStyles}
+              layers={nlsLayers}
+              sceneId={sceneId}
+              sceneSettings={sceneSettings}
+              currentCamera={currentCamera}
+              selectedLayerStyleId={selectedLayerStyleId}
+              selectedSceneSetting={selectedSceneSetting}
+              onFlyTo={onFlyTo}
+              onLayerStyleValueUpdate={onLayerStyleValueUpdate}
+              onLayerConfigUpdate={onLayerConfigUpdate}
+            />
+          </Resizable>
         );
       case "story":
         return (
-          <StorySidePanel
-            selectedPage={currentPage}
-            currentCamera={currentCamera}
-            layers={nlsLayers}
-            tab={tab}
-            onFlyTo={onFlyTo}
-            onPageUpdate={onPageUpdate}
-          />
+          <Resizable
+            direction="vertical"
+            gutter="start"
+            initialSize={metrics.propertyMenuWidth}
+            minSize={metrics.propertyMenuMinWidth}
+            localStorageKey="storyRightPanel">
+            <StorySidePanel
+              selectedPage={currentPage}
+              currentCamera={currentCamera}
+              layers={nlsLayers}
+              tab={tab}
+              onFlyTo={onFlyTo}
+              onPageUpdate={onPageUpdate}
+            />
+          </Resizable>
         );
       case "widgets":
-        return <WidgetSidePanel sceneId={sceneId} />;
+        return (
+          <Resizable
+            direction="vertical"
+            gutter="start"
+            initialSize={metrics.propertyMenuWidth}
+            minSize={metrics.propertyMenuMinWidth}
+            localStorageKey="widgetRightPanel">
+            <WidgetSidePanel sceneId={sceneId} />
+          </Resizable>
+        );
 
       case "publish":
       default:
