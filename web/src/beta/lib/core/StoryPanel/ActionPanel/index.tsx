@@ -6,7 +6,6 @@ import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
-import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -39,8 +38,8 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    vt?: any,
+    v?: any,
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
@@ -100,7 +99,6 @@ const ActionPanel: React.FC<Props> = ({
     }
     return menuItems;
   }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
-  console.log(onPropertyUpdate);
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
       {dndEnabled && (

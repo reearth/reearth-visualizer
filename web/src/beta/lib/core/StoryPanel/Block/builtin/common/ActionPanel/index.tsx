@@ -1,7 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
 
-import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-
 import ActionPanel, { type ActionPosition } from "../../../../ActionPanel";
 
 import useHooks from "./hooks";
@@ -28,8 +26,8 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: ValueType,
-    v?: ValueTypes[ValueType],
+    vt?: any,
+    v?: any,
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
