@@ -75,7 +75,6 @@ export const StoryPanel = memo(
     ) => {
       const {
         pageInfo,
-        currentPageId,
         selectedPageId,
         selectedBlockId,
         showPageSettings,
@@ -103,7 +102,6 @@ export const StoryPanel = memo(
           )}
           <StoryContent
             pages={selectedStory?.pages}
-            currentPageId={currentPageId}
             selectedPageId={selectedPageId}
             installableStoryBlocks={installableBlocks}
             selectedStoryBlockId={selectedBlockId}

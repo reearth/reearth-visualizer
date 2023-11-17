@@ -4,7 +4,7 @@ import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 import { useVisualizer } from "../Visualizer";
 
-import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";
+import { DEFAULT_STORY_PAGE_DURATION } from "./constants";
 
 export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
@@ -99,10 +99,7 @@ export default (
       onCurrentPageChange?.(newPage.id);
       setCurrentPageId(newPage.id);
 
-      if (!pageId) {
-        const element = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
-        if (element) element.scrollTo(0, 0);
-      } else if (!disableScrollIntoView) {
+      if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
@@ -159,7 +156,6 @@ export default (
 
   return {
     pageInfo,
-    currentPageId,
     selectedPageId,
     selectedBlockId,
     showPageSettings,
