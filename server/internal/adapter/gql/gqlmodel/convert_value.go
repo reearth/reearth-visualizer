@@ -14,6 +14,8 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 	switch v2 := v.(type) {
 	case bool:
 		return v2
+	case int64:
+		return v2
 	case float64:
 		return v2
 	case string:
