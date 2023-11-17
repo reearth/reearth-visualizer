@@ -41,6 +41,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleWidgetEditorToggle,
     handleFlyTo,
     handleCameraUpdate,
+    handlePropertyValueUpdate,
   } = useHooks({ sceneId, tab });
   const {
     selectedStory,
@@ -135,6 +136,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onSceneSettingSelect: handleSceneSettingSelected,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
     onFlyTo: handleFlyTo,
+    onPropertyUpdate: handlePropertyValueUpdate,
   });
 
   const { rightPanel } = useRightPanel({

@@ -19,7 +19,7 @@ const DropHolder: React.FC<Props> = ({ className }) => {
 
 const DraggableView = styled.div`
   position: absolute;
-  z-index: ${props => props.theme.zIndexes.dropDown};
+  z-index: ${props => props.theme.zIndexes.visualizer.overlay};
   top: 0;
   left: 0;
   width: 100%;

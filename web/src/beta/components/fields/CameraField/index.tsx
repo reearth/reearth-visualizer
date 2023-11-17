@@ -129,6 +129,7 @@ const InputWrapper = styled.div<{ disabled?: boolean }>`
   display: flex;
   gap: 10px;
   height: 28px;
+  flex-wrap: wrap;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
