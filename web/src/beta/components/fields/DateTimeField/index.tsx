@@ -62,7 +62,7 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
               />
             </InputWrapper>
           </Popover.Trigger>
-          <Popover.Content autoFocus={false}>
+          <Popover.Content autoFocus={false} attachToRoot>
             {open && (
               <EditPanel
                 setDateTime={setDateTime}
