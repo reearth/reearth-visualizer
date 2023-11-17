@@ -33,54 +33,49 @@ const EditPanel = ({
   });
 
   return (
-    <Wrapper>
-      <Modal
-        isVisible={isVisible}
-        size="sm"
-        title={t("Timeline Settings")}
-        button1={<Button text={t("Cancel")} buttonType="secondary" onClick={onClose} />}
-        button2={
-          <Button
-            text={t("Apply")}
-            buttonType="primary"
-            disabled={!isDisabled || warning}
-            onClick={onAppyChange}
-          />
-        }>
-        <FieldsWrapper>
-          <CustomDateTimeField
-            name={t("* Start Time")}
-            description={t("Start time for the timeline")}
-            onChange={newValue => handleOnChange(newValue || "", "startTime")}
-            value={timelineValues?.startTime}
-          />
-          <CustomDateTimeField
-            name={t("* Current Time")}
-            description={t("Current time should be between start and end time")}
-            onChange={newValue => handleOnChange(newValue || "", "currentTime")}
-            value={timelineValues?.currentTime}
-          />
-          <CustomDateTimeField
-            name={t("* End Time")}
-            onChange={newValue => handleOnChange(newValue || "", "endTime")}
-            description={t("End time for the timeline")}
-            value={timelineValues?.endTime}
-          />
-          {warning && (
-            <DangerItem>
-              <Icon icon="alert" size={30} />
-              {t("Please make sure the Current time must between the Start time and End Time.")}
-            </DangerItem>
-          )}
-        </FieldsWrapper>
-      </Modal>
-    </Wrapper>
+    <Modal
+      isVisible={isVisible}
+      size="sm"
+      title={t("Timeline Settings")}
+      button1={<Button text={t("Cancel")} buttonType="secondary" onClick={onClose} />}
+      button2={
+        <Button
+          text={t("Apply")}
+          buttonType="primary"
+          disabled={!isDisabled || warning}
+          onClick={onAppyChange}
+        />
+      }>
+      <FieldsWrapper>
+        <CustomDateTimeField
+          name={t("* Start Time")}
+          description={t("Start time for the timeline")}
+          onChange={newValue => handleOnChange(newValue || "", "startTime")}
+          value={timelineValues?.startTime}
+        />
+        <CustomDateTimeField
+          name={t("* Current Time")}
+          description={t("Current time should be between start and end time")}
+          onChange={newValue => handleOnChange(newValue || "", "currentTime")}
+          value={timelineValues?.currentTime}
+        />
+        <CustomDateTimeField
+          name={t("* End Time")}
+          onChange={newValue => handleOnChange(newValue || "", "endTime")}
+          description={t("End time for the timeline")}
+          value={timelineValues?.endTime}
+        />
+        {warning && (
+          <DangerItem>
+            <Icon icon="alert" size={30} />
+            {t("Please make sure the Current time must between the Start time and End Time.")}
+          </DangerItem>
+        )}
+      </FieldsWrapper>
+    </Modal>
   );
 };
 
-const Wrapper = styled.div`
-  position: relative;
-`;
 const FieldsWrapper = styled.div`
   position: relative;
 `;
