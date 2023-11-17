@@ -207,6 +207,8 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 const OptionWrapper = styled.div<{ selected: boolean }>`
