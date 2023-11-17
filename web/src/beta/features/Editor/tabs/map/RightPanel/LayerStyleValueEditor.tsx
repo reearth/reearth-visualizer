@@ -72,7 +72,6 @@ const EditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  z-index: 1;
 `;
 
 const CenteredButton = styled(Button)`

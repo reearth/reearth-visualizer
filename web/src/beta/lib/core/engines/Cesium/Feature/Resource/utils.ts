@@ -1,10 +1,10 @@
 import {
-  JulianDate,
   Entity,
   Cartesian3,
   PolygonHierarchy,
   PointGraphics,
   BillboardGraphics,
+  JulianDate,
 } from "cesium";
 
 import {
@@ -16,6 +16,7 @@ import {
 import { EvalFeature } from "@reearth/beta/lib/core/Map";
 
 import { heightReference, shadowMode, toColor } from "../../common";
+import { convertEntityDescription, convertEntityProperties } from "../../utils";
 import { attachTag, extractSimpleLayer, getTag, Tag } from "../utils";
 
 export function overrideOriginalProperties(
@@ -140,7 +141,10 @@ export const attachStyle = (
         type: "Point",
         coordinates,
       },
-      properties: entity.properties?.getValue(currentTime) || {},
+      properties: convertEntityProperties(currentTime, entity),
+      metaData: {
+        description: convertEntityDescription(currentTime, entity),
+      },
       range: {
         x: coordinates[0],
         y: coordinates[1],
@@ -271,7 +275,10 @@ export const attachStyle = (
         type: "LineString",
         coordinates,
       },
-      properties: entity.properties?.getValue(currentTime) || {},
+      properties: convertEntityProperties(currentTime, entity),
+      metaData: {
+        description: convertEntityDescription(currentTime, entity),
+      },
       range: {
         x: entityPosition?.x ?? 0,
         y: entityPosition?.y ?? 0,
@@ -318,7 +325,10 @@ export const attachStyle = (
         type: "Polygon",
         coordinates,
       },
-      properties: entity.properties?.getValue(currentTime) || {},
+      properties: convertEntityProperties(currentTime, entity),
+      metaData: {
+        description: convertEntityDescription(currentTime, entity),
+      },
       range: {
         x: entityPosition?.x ?? 0,
         y: entityPosition?.y ?? 0,

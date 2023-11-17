@@ -20,6 +20,7 @@ type CommonProps = {
   // Property field
   name?: string;
   description?: string;
+  attachToRoot?: boolean;
 };
 
 export type SingleSelectProps = {
@@ -46,6 +47,7 @@ const SelectField: React.FC<Props> = ({
   disabled = false,
   name,
   description,
+  attachToRoot,
 }) => {
   const t = useT();
 
@@ -110,7 +112,7 @@ const SelectField: React.FC<Props> = ({
               <ArrowIcon icon="arrowDown" open={open} size={12} />
             </InputWrapper>
           </Popover.Trigger>
-          <PickerWrapper attachToRoot>
+          <PickerWrapper attachToRoot={attachToRoot}>
             {options?.map(({ label: value, key }) => (
               <OptionWrapper
                 key={key}
@@ -207,8 +209,8 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* TODO: Need standardized z-index */
-  z-index: 1;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 const OptionWrapper = styled.div<{ selected: boolean }>`

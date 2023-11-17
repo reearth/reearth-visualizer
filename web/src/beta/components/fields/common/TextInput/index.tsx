@@ -36,9 +36,8 @@ const TextInput: React.FC<Props> = ({
       const newValue = e.currentTarget.value;
       if (newValue === undefined) return;
       setCurrentValue(newValue);
-      onChange?.(newValue);
     },
-    [onChange],
+    [],
   );
 
   const handleBlur = useCallback(() => {
