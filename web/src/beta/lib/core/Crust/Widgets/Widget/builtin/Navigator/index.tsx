@@ -14,7 +14,6 @@ export type Property = {
 
 const Navigator = ({
   theme,
-  editing,
   widget,
   isMobile,
   onVisibilityChange,
@@ -41,9 +40,7 @@ const Navigator = ({
     onVisibilityChange,
   });
 
-  return visible ? (
-    <NavigatorUI theme={theme} degree={degree} editing={!!editing} {...events} />
-  ) : null;
+  return visible ? <NavigatorUI theme={theme} degree={degree} {...events} /> : null;
 };
 
 export default Navigator;

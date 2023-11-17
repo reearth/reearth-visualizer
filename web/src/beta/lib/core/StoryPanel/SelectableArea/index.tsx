@@ -1,9 +1,9 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
-import ClickAwayListener from "../ClickAwayListener";
 
 import useHooks from "./hooks";
 
@@ -24,19 +24,27 @@ type Props = {
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
   onClick?: () => void;
-  onClickAway?: () => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
-    v?: any,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const SelectableArea: React.FC<Props> = ({
@@ -55,49 +63,45 @@ const SelectableArea: React.FC<Props> = ({
   setEditMode,
   onEditModeToggle,
   onSettingsToggle,
-  onClick,
-  onClickAway,
   onRemove,
+  onClick,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { showPadding, setShowPadding, handleClickAway } = useHooks({
+  const { showPadding, setShowPadding } = useHooks({
     editMode,
     isSelected,
     setEditMode,
-    onClickAway,
   });
 
   return !isEditable ? (
     <>{children}</>
   ) : (
-    <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
-      <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
-        <ActionPanel
-          title={title}
-          icon={icon}
-          isSelected={isSelected}
-          showSettings={showSettings}
-          showPadding={showPadding}
-          editMode={editMode}
-          propertyId={propertyId}
-          panelSettings={panelSettings}
-          dndEnabled={dndEnabled}
-          position={position}
-          setShowPadding={setShowPadding}
-          onEditModeToggle={onEditModeToggle}
-          onSettingsToggle={onSettingsToggle}
-          onRemove={onRemove}
-          onPropertyUpdate={onPropertyUpdate}
-          onPropertyItemAdd={onPropertyItemAdd}
-          onPropertyItemMove={onPropertyItemMove}
-          onPropertyItemDelete={onPropertyItemDelete}
-        />
-        {children}
-      </Wrapper>
-    </ClickAwayListener>
+    <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
+      <ActionPanel
+        title={title}
+        icon={icon}
+        isSelected={isSelected}
+        showSettings={showSettings}
+        showPadding={showPadding}
+        editMode={editMode}
+        propertyId={propertyId}
+        panelSettings={panelSettings}
+        dndEnabled={dndEnabled}
+        position={position}
+        setShowPadding={setShowPadding}
+        onEditModeToggle={onEditModeToggle}
+        onSettingsToggle={onSettingsToggle}
+        onRemove={onRemove}
+        onPropertyUpdate={onPropertyUpdate}
+        onPropertyItemAdd={onPropertyItemAdd}
+        onPropertyItemMove={onPropertyItemMove}
+        onPropertyItemDelete={onPropertyItemDelete}
+      />
+      {children}
+    </Wrapper>
   );
 };
 

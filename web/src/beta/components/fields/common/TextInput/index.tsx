@@ -1,4 +1,4 @@
-import { HTMLInputTypeAttribute, useCallback, useEffect, useRef, useState } from "react";
+import { HTMLInputTypeAttribute, useCallback, useEffect, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -6,7 +6,6 @@ export type Props = {
   className?: string;
   value?: string;
   placeholder?: string;
-  timeout?: number;
   autoFocus?: boolean;
   type?: HTMLInputTypeAttribute;
   onChange?: (text: string) => void;
@@ -19,7 +18,6 @@ const TextInput: React.FC<Props> = ({
   className,
   value,
   placeholder,
-  timeout = 1000,
   autoFocus,
   onChange,
   onBlur,
@@ -28,7 +26,6 @@ const TextInput: React.FC<Props> = ({
   type,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
-  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     setCurrentValue(value ?? "");
@@ -36,21 +33,14 @@ const TextInput: React.FC<Props> = ({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       const newValue = e.currentTarget.value;
-
+      if (newValue === undefined) return;
       setCurrentValue(newValue);
-
-      timeoutRef.current = setTimeout(() => {
-        if (newValue === undefined) return;
-        onChange?.(newValue);
-      }, timeout);
     },
-    [onChange, timeout],
+    [],
   );
 
   const handleBlur = useCallback(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     onChange?.(currentValue);
     onBlur?.();
   }, [currentValue, onChange, onBlur]);
