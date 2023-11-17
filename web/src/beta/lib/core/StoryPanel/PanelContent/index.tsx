@@ -10,7 +10,6 @@ import useHooks, { STORY_PANEL_CONTENT_ELEMENT_ID, type StoryPage as StoryPageTy
 
 export type Props = {
   pages?: StoryPageType[];
-  currentPageId?: string;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -54,7 +53,6 @@ export type Props = {
 
 const StoryContent: React.FC<Props> = ({
   pages,
-  currentPageId,
   selectedPageId,
   installableStoryBlocks,
   selectedStoryBlockId,
@@ -74,13 +72,9 @@ const StoryContent: React.FC<Props> = ({
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { pageGap, handleBlockCreate, handleBlockDelete } = useHooks({
-    pages,
-    currentPageId,
-    isAutoScrolling,
+  const { pageGap, scrollTimeoutRef, handleBlockCreate, handleBlockDelete } = useHooks({
     onBlockCreate,
     onBlockDelete,
-    onCurrentPageChange,
   });
 
   return (
@@ -97,6 +91,9 @@ const StoryContent: React.FC<Props> = ({
             selectedStoryBlockId={selectedStoryBlockId}
             showPageSettings={showPageSettings}
             isEditable={isEditable}
+            scrollTimeoutRef={scrollTimeoutRef}
+            isAutoScrolling={isAutoScrolling}
+            onCurrentPageChange={onCurrentPageChange}
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
             onBlockCreate={handleBlockCreate(p.id)}
