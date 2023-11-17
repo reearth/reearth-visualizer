@@ -4,13 +4,13 @@ import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 import { useVisualizer } from "../Visualizer";
 
-import { DEFAULT_STORY_PAGE_DURATION } from "./constants";
+import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";
 
 export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
 export type StoryPanelRef = {
   currentPageId?: string;
-  handleCurrentPageChange: (pageId: string, disableScrollIntoView?: boolean) => void;
+  handleCurrentPageChange: (pageId?: string, disableScrollIntoView?: boolean) => void;
 };
 
 export default (
@@ -21,7 +21,7 @@ export default (
   }: {
     selectedStory?: Story;
     isEditable?: boolean;
-    onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
+    onCurrentPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   },
   ref: Ref<StoryPanelRef>,
 ) => {
@@ -90,23 +90,27 @@ export default (
   );
 
   const handleCurrentPageChange = useCallback(
-    (pageId: string, disableScrollIntoView?: boolean) => {
+    (pageId?: string, disableScrollIntoView?: boolean) => {
       if (pageId === currentPageId) return;
 
       const newPage = getPage(pageId, selectedStory?.pages);
       if (!newPage) return;
 
-      onCurrentPageChange?.(pageId);
-      setCurrentPageId(pageId);
+      onCurrentPageChange?.(newPage.id);
+      setCurrentPageId(newPage.id);
 
-      if (!disableScrollIntoView) {
+      if (!pageId) {
+        const element = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+        if (element) element.scrollTo(0, 0); // If no pageId, newPage will be the first page and we scroll all the way to the top here
+      } else if (!disableScrollIntoView) {
         const element = document.getElementById(newPage.id);
         isAutoScrolling.current = true;
         element?.scrollIntoView({ behavior: "smooth" });
       }
-      handlePageTime(newPage);
-      const cameraAnimation = newPage.property?.cameraAnimation;
 
+      handlePageTime(newPage);
+
+      const cameraAnimation = newPage.property?.cameraAnimation;
       const destination = cameraAnimation?.cameraPosition?.value;
       if (!destination) return;
 
@@ -140,23 +144,23 @@ export default (
 
   // Update what layers will be shown in the Visualizer on page change.
   useEffect(() => {
+    const vizRef = visualizer?.current;
+    const currentLayerIds = vizRef?.layers.layers()?.map(l => l.id);
+
     const currentPage = getPage(currentPageId, selectedStory?.pages);
     if (currentPage) {
-      const currentLayerIds = visualizer.current?.layers.layers()?.map(l => l.id);
       if (currentLayerIds) {
-        visualizer.current?.layers.show(
-          ...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)),
-        );
-        visualizer.current?.layers.hide(
-          ...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)),
-        );
+        vizRef?.layers.show(...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)));
+        vizRef?.layers.hide(...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)));
       }
     }
+    return () => {
+      if (currentLayerIds) vizRef?.layers.show(...currentLayerIds);
+    };
   }, [currentPageId, selectedStory?.pages, visualizer]);
 
   return {
     pageInfo,
-    currentPageId,
     selectedPageId,
     selectedBlockId,
     showPageSettings,
@@ -169,6 +173,7 @@ export default (
 };
 
 const getPage = (id?: string, pages?: StoryPage[]) => {
-  if (!id || !pages || !pages.length) return;
+  if (!pages?.length) return;
+  if (!id) return pages[0]; // If no ID, set first page
   return pages.find(p => p.id === id);
 };

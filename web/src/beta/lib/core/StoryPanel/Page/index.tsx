@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, MutableRefObject, useEffect } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
@@ -7,6 +7,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
+import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
+import { useElementOnScreen } from "../hooks/useElementOnScreen";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
@@ -19,6 +21,9 @@ type Props = {
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   isEditable?: boolean;
+  isAutoScrolling?: MutableRefObject<boolean>;
+  scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
@@ -58,6 +63,9 @@ const StoryPanel: React.FC<Props> = ({
   selectedStoryBlockId,
   showPageSettings,
   isEditable,
+  scrollTimeoutRef,
+  isAutoScrolling,
+  onCurrentPageChange,
   onPageSettingsToggle,
   onPageSelect,
   onBlockCreate,
@@ -87,6 +95,31 @@ const StoryPanel: React.FC<Props> = ({
     onBlockCreate,
   });
 
+  const { containerRef, isIntersecting } = useElementOnScreen({
+    root: document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID),
+    threshold: 0.2,
+  });
+
+  useEffect(() => {
+    if (isIntersecting) {
+      const id = containerRef.current?.id;
+      if (id) {
+        if (isAutoScrolling?.current) {
+          const wrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+
+          wrapperElement?.addEventListener("scroll", () => {
+            clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = setTimeout(function () {
+              isAutoScrolling.current = false;
+            }, 100);
+          });
+        } else {
+          onCurrentPageChange?.(id, true);
+        }
+      }
+    }
+  }, [isIntersecting, containerRef, isAutoScrolling, scrollTimeoutRef, onCurrentPageChange]);
+
   return (
     <SelectableArea
       title={page?.title ?? t("Page")}
@@ -99,8 +132,16 @@ const StoryPanel: React.FC<Props> = ({
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
-      onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
+      onSettingsToggle={onPageSettingsToggle}
+      onPropertyUpdate={onPropertyUpdate}
+      onPropertyItemAdd={onPropertyItemAdd}
+      onPropertyItemDelete={onPropertyItemDelete}
+      onPropertyItemMove={onPropertyItemMove}>
+      <Wrapper
+        id={page?.id}
+        ref={containerRef}
+        padding={panelSettings.padding.value}
+        gap={panelSettings.gap.value}>
         {(isEditable || title?.title?.value) && (
           <StoryBlock
             block={{

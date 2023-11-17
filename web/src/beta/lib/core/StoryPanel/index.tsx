@@ -24,7 +24,7 @@ export type StoryPanelProps = {
   selectedStory?: Story;
   isEditable?: boolean;
   installableBlocks?: InstallableStoryBlock[];
-  onCurrentPageChange?: (id: string, disableScrollIntoView?: boolean) => void;
+  onCurrentPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   onBlockCreate?: (
     pageId?: string | undefined,
     extensionId?: string | undefined,
@@ -75,7 +75,6 @@ export const StoryPanel = memo(
     ) => {
       const {
         pageInfo,
-        currentPageId,
         selectedPageId,
         selectedBlockId,
         showPageSettings,
@@ -103,7 +102,6 @@ export const StoryPanel = memo(
           )}
           <StoryContent
             pages={selectedStory?.pages}
-            currentPageId={currentPageId}
             selectedPageId={selectedPageId}
             installableStoryBlocks={installableBlocks}
             selectedStoryBlockId={selectedBlockId}
