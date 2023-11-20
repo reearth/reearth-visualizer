@@ -50,6 +50,7 @@ export default (
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [minimized, setMinimized] = useState(parsedState ? parsedState.minimized : false);
   const [difference, setDifference] = useState(0);
+  const [minimizedStates, setMinimizedStates] = useState<Record<string, boolean>>({});
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -81,6 +82,7 @@ export default (
       if (!minimized && startingSize + newDiff <= minSize / 2) {
         setMinimized(true);
       }
+
       setPosition({ x, y });
     },
     [
@@ -131,11 +133,20 @@ export default (
       return;
     }
     if (!localStorageKey) return;
-    localStorage.setItem(
-      localStorageKey,
-      JSON.stringify({ size, minimized, difference, startingSize }),
-    );
 
+    const storedData = {
+      key: localStorageKey,
+      size,
+      minimized,
+      difference,
+      startingSize,
+    };
+
+    localStorage.setItem(localStorageKey, JSON.stringify(storedData));
+    setMinimizedStates(prevMinimizedStates => ({
+      ...prevMinimizedStates,
+      [localStorageKey]: minimized,
+    }));
     bindEventListeners();
     return () => unbindEventListeners();
   }, [
@@ -162,21 +173,36 @@ export default (
     localStorage.setItem(
       localStorageKey,
       JSON.stringify({
-        size: initialSize,
-        minimized: false,
-        difference: 0,
-        startingSize: initialSize,
+        [localStorageKey]: {
+          size: initialSize,
+          minimized: false,
+          difference: 0,
+          startingSize: initialSize,
+        },
       }),
     );
+
+    setMinimizedStates(prevMinimizedStates => ({
+      ...prevMinimizedStates,
+      [localStorageKey]: false,
+    }));
 
     setMinimized(false);
     setSize(initialSize);
   }, [initialSize, localStorageKey, parsedState]);
 
+  const storedValues = useMemo(() => {
+    if (!parsedState) return;
+    return {
+      size: parsedState.size,
+      minimized: minimizedStates[localStorageKey] ?? parsedState.minimized,
+    };
+  }, [localStorageKey, minimizedStates, parsedState]);
+
   return {
-    size: parsedState ? parsedState.size : initialSize,
+    size: storedValues?.size || initialSize,
     gutterProps,
-    minimized: parsedState ? parsedState.minimized : false,
+    minimized: storedValues?.minimized,
     handleResetSize,
   };
 };
