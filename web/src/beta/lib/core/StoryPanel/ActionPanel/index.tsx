@@ -38,12 +38,22 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
+    vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const ActionPanel: React.FC<Props> = ({
@@ -89,7 +99,6 @@ const ActionPanel: React.FC<Props> = ({
     }
     return menuItems;
   }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
-
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
       {dndEnabled && (
@@ -122,7 +131,7 @@ const ActionPanel: React.FC<Props> = ({
               ),
           )}
         </BlockOptions>
-        <StyledPopoverContent>
+        <StyledPopoverContent attachToRoot>
           {showPadding ? (
             <SettingsDropdown>
               <SettingsHeading>
