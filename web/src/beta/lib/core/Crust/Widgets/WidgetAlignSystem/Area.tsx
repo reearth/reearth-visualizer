@@ -82,7 +82,7 @@ export default function Area({
           zone,
           background: backgroundColor,
           centered,
-          gap,
+          gap: gap ?? 6,
           padding: {
             top: padding?.top ?? 6,
             bottom: padding?.bottom ?? 6,
