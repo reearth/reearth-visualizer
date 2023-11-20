@@ -251,7 +251,7 @@ export type SceneProperty = {
     id: string;
     tile_type?: string;
     tile_url?: string;
-    tile_zoomLevel?: number;
+    tile_zoomLevel?: number[];
     tile_opacity?: number;
   }[];
   terrain?: {
