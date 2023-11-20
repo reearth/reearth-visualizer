@@ -743,11 +743,13 @@ export default ({
     if (!cesium.current?.cesiumElement) return;
     const allowCameraMove = !!(featureFlags & FEATURE_FLAGS.CAMERA_MOVE);
     const allowCameraZoom = !!(featureFlags & FEATURE_FLAGS.CAMERA_ZOOM);
+    const allowCameraTilt = !!(featureFlags & FEATURE_FLAGS.CAMERA_TILT);
+    const allowCameraLook = !!(featureFlags & FEATURE_FLAGS.CAMERA_LOOK);
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTranslate =
       allowCameraMove;
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = allowCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = allowCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = allowCameraLook;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraTilt;
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
   }, [featureFlags]);
 
