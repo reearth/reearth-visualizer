@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
@@ -7,14 +7,12 @@ import Text from "@reearth/beta/components/Text";
 import useDoubleClick from "@reearth/classic/util/use-double-click";
 import { ValueType, ValueTypes } from "@reearth/classic/util/value";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
-import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type PageItemProps = {
   isSelected?: boolean;
   title?: string;
   isOpenAction?: boolean;
-  hasEmptySpace?: boolean;
   propertyId: string;
   storyPage: Page;
   onItemClick: (e?: MouseEvent<Element>) => void;
@@ -36,7 +34,6 @@ const PageItem = ({
   isSelected,
   isOpenAction,
   title,
-  hasEmptySpace,
   propertyId,
   storyPage,
   onItemClick,
@@ -46,7 +43,6 @@ const PageItem = ({
   onPageDelete,
   onPropertyUpdate,
 }: PageItemProps) => {
-  const t = useT();
   const [isEditing, setIsEditing] = useState(false);
   const [newValue, setNewValue] = useState(title);
 
@@ -54,6 +50,10 @@ const PageItem = ({
     () => onItemClick?.(),
     () => setIsEditing(true),
   );
+
+  useEffect(() => {
+    setNewValue(title);
+  }, [title]);
 
   const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
 
@@ -119,7 +119,7 @@ const PageItem = ({
         />
       ) : (
         <PageTitle size="footnote" onDoubleClick={handleDoubleClick}>
-          {hasEmptySpace || !title ? t("Untitled") : title}
+          {title}
         </PageTitle>
       )}
     </ListItem>
