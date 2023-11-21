@@ -55,20 +55,22 @@ const PageItem = ({
     setNewValue(title);
   }, [title]);
 
-  const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
-
-  const handleTitleSubmit = useCallback(() => {
-    setIsEditing(false);
-    if (newValue?.trim() !== "") {
-      const schemaGroupId = storyPage.property.items?.[1]?.schemaGroup;
-      onPropertyUpdate?.(propertyId, schemaGroupId, "title", undefined, "string", newValue);
-    }
-  }, [newValue, onPropertyUpdate, propertyId, storyPage.property.items]);
+  const handleTitleSubmit = useCallback(
+    (newTitle: string) => {
+      setIsEditing(false);
+      setNewValue(newTitle);
+      if (newValue?.trim() !== "") {
+        const schemaGroupId = storyPage.property.items?.[1]?.schemaGroup;
+        onPropertyUpdate?.(propertyId, schemaGroupId, "title", undefined, "string", newTitle);
+      }
+    },
+    [newValue, onPropertyUpdate, propertyId, storyPage.property.items],
+  );
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
       if (title !== newValue && e?.key !== "Escape") {
-        handleTitleSubmit();
+        newValue && handleTitleSubmit(newValue);
       } else {
         setNewValue(title);
       }
@@ -113,7 +115,7 @@ const PageItem = ({
         <StyledTextInput
           value={newValue}
           autoFocus
-          onChange={handleChange}
+          onChange={handleTitleSubmit}
           onExit={handleEditExit}
           onBlur={handleEditExit}
         />
