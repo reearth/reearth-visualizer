@@ -122,7 +122,7 @@ const StoryPanel: React.FC<Props> = ({
 
   return (
     <SelectableArea
-      title={page?.title ?? t("Page")}
+      title={page?.title !== "Untitled" ? page?.title : t("Page")}
       position="left-bottom"
       icon="storyPage"
       noBorder

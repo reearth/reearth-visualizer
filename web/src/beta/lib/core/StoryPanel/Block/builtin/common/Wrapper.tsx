@@ -76,6 +76,7 @@ const BlockWrapper: React.FC<Props> = ({
     showSettings,
     defaultSettings,
     panelSettings,
+    selected,
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
@@ -93,7 +94,7 @@ const BlockWrapper: React.FC<Props> = ({
       <SelectableArea
         title={title}
         icon={icon}
-        isSelected={isSelected}
+        isSelected={selected}
         propertyId={propertyId}
         dndEnabled={dndEnabled}
         showSettings={showSettings}
