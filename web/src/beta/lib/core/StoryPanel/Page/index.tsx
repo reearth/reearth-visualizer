@@ -140,8 +140,8 @@ const StoryPanel: React.FC<Props> = ({
       <Wrapper
         id={page?.id}
         ref={containerRef}
-        padding={panelSettings.padding.value}
-        gap={panelSettings.gap.value}>
+        padding={panelSettings?.padding?.value}
+        gap={panelSettings?.gap?.value}>
         {(isEditable || title?.title?.value) && (
           <StoryBlock
             block={{
