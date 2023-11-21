@@ -9,7 +9,7 @@ export type Props = {
 } & RangeProps;
 
 const RangeField: React.FC<Props> = ({ name, description, value, onChange, ...args }: Props) => {
-  const [internalState, setInternalState] = useState(value);
+  const [internalState, setInternalState] = useState<number[] | undefined>(value ?? [0, 30]);
 
   const handleChange = useCallback(
     (value: number[]) => {
