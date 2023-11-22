@@ -26,6 +26,12 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     [property?.title?.color?.value],
   );
   const hasEmptySpace = isEmptyString(title);
+  const titleProperty = useMemo(() => {
+    return {
+      ...property,
+      panel: { padding: property?.title?.padding },
+    };
+  }, [property]);
 
   return (
     <BlockWrapper
@@ -33,7 +39,7 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
       icon={block?.extensionId}
       isSelected={isSelected}
       propertyId={block?.propertyId}
-      property={property}
+      property={titleProperty}
       dndEnabled={false}
       {...props}>
       <Title size="h2" hasText={!!title && !hasEmptySpace} color={color} customColor>
