@@ -78,7 +78,7 @@ extensions:
             - id: tile_zoomLevel
               type: array
               title: zoom level
-              description: "Change the Zoom Level of the selected tile map. Min: 0 Max: 1"
+              description: "Change the zoom level of the selected tile map. Min:0, Max:30"
               defaultValue: [0,30]
               ui: range
               min: 0
