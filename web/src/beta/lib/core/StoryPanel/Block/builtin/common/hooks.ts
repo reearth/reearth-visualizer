@@ -1,6 +1,7 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Spacing } from "@reearth/beta/lib/core/mantle";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 
 import { calculatePaddingValue } from "../../../utils";
 
@@ -12,41 +13,31 @@ export default ({
   property,
   isEditable,
   onClick,
+  onBlockDoubleClick,
 }: {
   name?: string | null;
   isSelected?: boolean;
   property?: any;
   isEditable?: boolean;
   onClick: (() => void) | undefined;
+  onBlockDoubleClick: (() => void) | undefined;
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
-  const [clickCount, setClickCount] = useState(0);
-  const [selected, setSelected] = useState(isSelected);
 
-  useEffect(() => {
-    if (editMode) setSelected(true);
-    else setSelected(isSelected);
-  }, [editMode, isSelected]);
+  const handleBlockClick = useCallback(() => {
+    if ((showSettings && isSelected) || editMode) return;
+    onClick?.();
+  }, [showSettings, isSelected, editMode, onClick]);
 
-  const handleBlockClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-      if ((showSettings && isSelected) || editMode) return;
-      if (clickCount === 0) {
-        setClickCount(1);
-        onClick?.();
-        setTimeout(() => {
-          setClickCount(0);
-        }, 300);
-      } else if (clickCount === 1) {
-        setClickCount(0);
-        setEditMode(true);
-        onClick?.();
-      }
-    },
-    [showSettings, isSelected, editMode, clickCount, onClick],
+  const handleBlockDoubleClick = useCallback(() => {
+    onBlockDoubleClick?.(), setEditMode(true);
+  }, [onBlockDoubleClick]);
+
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => handleBlockClick?.(),
+    () => handleBlockDoubleClick?.(),
   );
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
@@ -81,10 +72,10 @@ export default ({
     showSettings,
     defaultSettings,
     panelSettings,
-    selected,
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
-    handleBlockClick,
+    handleSingleClick,
+    handleDoubleClick,
   };
 };

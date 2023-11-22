@@ -30,6 +30,7 @@ type Props = {
   settingsEnabled?: boolean;
   onClick?: () => void;
   onRemove?: () => void;
+  onBlockDoubleClick?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -63,6 +64,7 @@ const BlockWrapper: React.FC<Props> = ({
   dndEnabled = true,
   settingsEnabled = true,
   onClick,
+  onBlockDoubleClick,
   onRemove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -76,17 +78,18 @@ const BlockWrapper: React.FC<Props> = ({
     showSettings,
     defaultSettings,
     panelSettings,
-    selected,
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
-    handleBlockClick,
+    handleSingleClick,
+    handleDoubleClick,
   } = useHooks({
     name,
     isSelected,
     property,
     isEditable,
     onClick,
+    onBlockDoubleClick,
   });
 
   return (
@@ -94,7 +97,7 @@ const BlockWrapper: React.FC<Props> = ({
       <SelectableArea
         title={title}
         icon={icon}
-        isSelected={selected}
+        isSelected={isSelected}
         propertyId={propertyId}
         dndEnabled={dndEnabled}
         showSettings={showSettings}
@@ -112,9 +115,8 @@ const BlockWrapper: React.FC<Props> = ({
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
-          onClick={e => {
-            handleBlockClick(e);
-          }}>
+          onClick={handleSingleClick}
+          onDoubleClick={handleDoubleClick}>
           {children ?? (isEditable && <Template icon={icon} />)}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
