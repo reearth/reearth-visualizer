@@ -21,7 +21,7 @@ export type WidgetArea = {
   align?: Alignment;
   padding?: WidgetAreaPadding;
   widgets?: Widget[];
-  gap?: number | null;
+  gap?: number;
   centered?: boolean;
   background?: string;
 };

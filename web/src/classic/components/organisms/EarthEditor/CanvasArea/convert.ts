@@ -377,10 +377,10 @@ export const convertWidgets = (
         left: padding?.left ?? 6,
         right: padding?.right ?? 6,
       },
+      gap: area?.gap ?? 6,
       widgets: areaWidgets,
       background: area?.background as string | undefined,
       centered: area?.centered,
-      gap: area?.gap,
     };
   };
 
