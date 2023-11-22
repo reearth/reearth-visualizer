@@ -35,7 +35,7 @@ type Props = {
   align?: Alignment;
   padding?: WidgetAreaPadding;
   backgroundColor?: string;
-  gap?: number;
+  gap?: number | null;
   centered?: boolean;
   built?: boolean;
   widgets?: InternalWidget[];
