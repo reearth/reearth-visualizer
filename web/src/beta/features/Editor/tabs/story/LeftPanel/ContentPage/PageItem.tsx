@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
@@ -7,14 +7,12 @@ import Text from "@reearth/beta/components/Text";
 import useDoubleClick from "@reearth/classic/util/use-double-click";
 import { ValueType, ValueTypes } from "@reearth/classic/util/value";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
-import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type PageItemProps = {
   isSelected?: boolean;
   title?: string;
   isOpenAction?: boolean;
-  hasEmptySpace?: boolean;
   propertyId: string;
   storyPage: Page;
   onItemClick: (e?: MouseEvent<Element>) => void;
@@ -36,7 +34,6 @@ const PageItem = ({
   isSelected,
   isOpenAction,
   title,
-  hasEmptySpace,
   propertyId,
   storyPage,
   onItemClick,
@@ -46,7 +43,6 @@ const PageItem = ({
   onPageDelete,
   onPropertyUpdate,
 }: PageItemProps) => {
-  const t = useT();
   const [isEditing, setIsEditing] = useState(false);
   const [newValue, setNewValue] = useState(title);
 
@@ -55,20 +51,26 @@ const PageItem = ({
     () => setIsEditing(true),
   );
 
-  const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
+  useEffect(() => {
+    setNewValue(title);
+  }, [title]);
 
-  const handleTitleSubmit = useCallback(() => {
-    setIsEditing(false);
-    if (newValue?.trim() !== "") {
-      const schemaGroupId = storyPage.property.items?.[1]?.schemaGroup;
-      onPropertyUpdate?.(propertyId, schemaGroupId, "title", undefined, "string", newValue);
-    }
-  }, [newValue, onPropertyUpdate, propertyId, storyPage.property.items]);
+  const handleTitleSubmit = useCallback(
+    (newTitle: string) => {
+      setIsEditing(false);
+      setNewValue(newTitle);
+      if (newValue?.trim() !== "") {
+        const schemaGroupId = storyPage.property.items?.[1]?.schemaGroup;
+        onPropertyUpdate?.(propertyId, schemaGroupId, "title", undefined, "string", newTitle);
+      }
+    },
+    [newValue, onPropertyUpdate, propertyId, storyPage.property.items],
+  );
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
       if (title !== newValue && e?.key !== "Escape") {
-        handleTitleSubmit();
+        newValue && handleTitleSubmit(newValue);
       } else {
         setNewValue(title);
       }
@@ -113,13 +115,13 @@ const PageItem = ({
         <StyledTextInput
           value={newValue}
           autoFocus
-          onChange={handleChange}
+          onChange={handleTitleSubmit}
           onExit={handleEditExit}
           onBlur={handleEditExit}
         />
       ) : (
         <PageTitle size="footnote" onDoubleClick={handleDoubleClick}>
-          {hasEmptySpace || !title ? t("Untitled") : title}
+          {title}
         </PageTitle>
       )}
     </ListItem>
