@@ -144,35 +144,37 @@ const StoryPanel: React.FC<Props> = ({
         ref={containerRef}
         padding={panelSettings?.padding?.value}
         gap={panelSettings?.gap?.value}>
-        {(isEditable || title?.title?.value) && (
-          <StoryBlock
-            block={{
-              id: titleId,
-              pluginId: "reearth",
-              extensionId: "titleStoryBlock",
-              name: t("Title"),
-              propertyId: page?.propertyId ?? "",
-              property: { title },
-            }}
-            isEditable={isEditable}
-            isSelected={selectedStoryBlockId === titleId}
-            onClick={() => onBlockSelect?.(titleId)}
-            onPropertyUpdate={onPropertyUpdate}
-            onPropertyItemAdd={onPropertyItemAdd}
-            onPropertyItemMove={onPropertyItemMove}
-            onPropertyItemDelete={onPropertyItemDelete}
-          />
-        )}
+        <PageTitleWrapper>
+          {(isEditable || title?.title?.value) && (
+            <StoryBlock
+              block={{
+                id: titleId,
+                pluginId: "reearth",
+                extensionId: "titleStoryBlock",
+                name: t("Title"),
+                propertyId: page?.propertyId ?? "",
+                property: { title },
+              }}
+              isEditable={isEditable}
+              isSelected={selectedStoryBlockId === titleId}
+              onClick={() => onBlockSelect?.(titleId)}
+              onPropertyUpdate={onPropertyUpdate}
+              onPropertyItemAdd={onPropertyItemAdd}
+              onPropertyItemMove={onPropertyItemMove}
+              onPropertyItemDelete={onPropertyItemDelete}
+            />
+          )}
+          {isEditable && (
+            <BlockAddBar
+              alwaysShow={storyBlocks && storyBlocks.length < 1}
+              openBlocks={openBlocksIndex === -1}
+              installableStoryBlocks={installableStoryBlocks}
+              onBlockOpen={() => handleBlockOpen(-1)}
+              onBlockAdd={() => handleBlockCreate(0)}
+            />
+          )}
+        </PageTitleWrapper>
 
-        {isEditable && (
-          <BlockAddBar
-            alwaysShow={storyBlocks && storyBlocks.length < 1}
-            openBlocks={openBlocksIndex === -1}
-            installableStoryBlocks={installableStoryBlocks}
-            onBlockOpen={() => handleBlockOpen(-1)}
-            onBlockAdd={handleBlockCreate(0)}
-          />
-        )}
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
@@ -237,4 +239,8 @@ const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
   ${({ padding }) => `padding-left: ${padding.left}px;`}
   ${({ padding }) => `padding-right: ${padding.right}px;`}
   box-sizing: border-box;
+`;
+
+const PageTitleWrapper = styled.div`
+  position: relative;
 `;

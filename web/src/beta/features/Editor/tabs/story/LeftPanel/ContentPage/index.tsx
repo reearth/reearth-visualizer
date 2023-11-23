@@ -87,7 +87,6 @@ const ContentPage: React.FC<Props> = ({
                     setOpenedPageId(isOpen ? storyPage.id : undefined);
                   }}
                   onPageDelete={() => onPageDelete(storyPage.id)}
-                  hasEmptySpace={hasEmptySpace}
                   title={hasEmptySpace || !title ? t("Untitled") : title}
                   setOpenedPageId={setOpenedPageId}
                   propertyId={storyPage.property.id}
