@@ -12,8 +12,24 @@ export type Props = {
   max?: number;
 } & ComponentProps<typeof RangeSliderWithTooltip>;
 
+const calculateStep = (min?: number, max?: number, step?: number | null): number => {
+  if (step) {
+    return step;
+  } else if (!!min && !!max) {
+    const range = max - min;
+    let calculatedStep = range / 10;
+    if (range % calculatedStep !== 0) {
+      const steps = Math.ceil(range / calculatedStep);
+      calculatedStep = range / steps;
+    }
+    return calculatedStep;
+  } else {
+    return 1;
+  }
+};
+
 const RangeSlider: React.FC<Props> = ({ ...props }) => {
-  const calculatedStep = props.step ? props.step : props.max ? props.max / 10 : 0.1;
+  const calculatedStep = calculateStep(props?.min, props.max, props.step);
 
   return (
     <SliderStyled disabled={props.disabled as boolean}>
