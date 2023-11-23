@@ -81,7 +81,7 @@ const BlockWrapper: React.FC<Props> = ({
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
-    handleSingleClick,
+    handleBlockClick,
     handleDoubleClick,
   } = useHooks({
     name,
@@ -115,7 +115,9 @@ const BlockWrapper: React.FC<Props> = ({
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
-          onClick={handleSingleClick}
+          onClick={e => {
+            handleBlockClick(e);
+          }}
           onDoubleClick={handleDoubleClick}>
           {children ?? (isEditable && <Template icon={icon} />)}
         </Block>

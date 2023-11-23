@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, MouseEvent } from "react";
 
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
@@ -26,18 +26,22 @@ export default ({
   const [showSettings, setShowSettings] = useState(false);
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
-  const handleBlockClick = useCallback(() => {
-    if ((showSettings && isSelected) || editMode) return;
-    onClick?.();
-  }, [showSettings, isSelected, editMode, onClick]);
-
   const handleBlockDoubleClick = useCallback(() => {
     onBlockDoubleClick?.(), setEditMode(true);
   }, [onBlockDoubleClick]);
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
-    () => handleBlockClick?.(),
+    () => onClick?.(),
     () => handleBlockDoubleClick?.(),
+  );
+
+  const handleBlockClick = useCallback(
+    (e: MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      if ((showSettings && isSelected) || editMode) return;
+      handleSingleClick();
+    },
+    [showSettings, isSelected, editMode, handleSingleClick],
   );
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
@@ -75,7 +79,7 @@ export default ({
     setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
-    handleSingleClick,
+    handleBlockClick,
     handleDoubleClick,
   };
 };
