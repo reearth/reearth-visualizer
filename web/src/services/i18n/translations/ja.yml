@@ -50,8 +50,8 @@ Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
 File Format: ファイルフォーマット
 File format of the data source you want to add.: ''
-From Assets: ''
-From Web: ''
+From URL: ''
+From Local: ''
 From Value: ''
 Source Type: ''
 Select the type of data source you want to add.: ''
@@ -64,6 +64,8 @@ Input data here: データ入力
 Asset: アセット
 Prioritize Performance: ''
 Add to Layer: レイヤー追加
+From Assets: ''
+From Web: ''
 Choose layer to add: レイヤーの選択
 Layer of the data source you want to add.: ''
 layer name: レイヤー名
