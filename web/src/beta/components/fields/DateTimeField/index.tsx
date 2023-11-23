@@ -92,7 +92,7 @@ const Input = styled.div<{ dataTimeSet?: boolean }>`
   color: ${({ theme }) => theme.content.strong};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
-  width: 70%;
+  width: 65%;
   color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
 `;
 
@@ -115,5 +115,4 @@ const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
       : `:hover {
     cursor: pointer;
       }`}
-  width: 25%;
 `;
