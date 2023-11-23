@@ -158,6 +158,7 @@ const StoryPanel: React.FC<Props> = ({
               isEditable={isEditable}
               isSelected={selectedStoryBlockId === titleId}
               onClick={() => onBlockSelect?.(titleId)}
+              onBlockDoubleClick={() => onBlockDoubleClick?.(titleId)}
               onPropertyUpdate={onPropertyUpdate}
               onPropertyItemAdd={onPropertyItemAdd}
               onPropertyItemMove={onPropertyItemMove}
