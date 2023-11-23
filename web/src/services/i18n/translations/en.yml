@@ -82,6 +82,13 @@ Layer: Layer
 Layers: Layers
 All Layers: All Layers
 Layer Style: Layer Style
+Main: Main
+Tiles: Tiles
+Terrain: Terrain
+Globe: Globe
+Sky: Sky
+Camera: Camera
+Unknown scene setting: Unknown scene setting
 Scene: Scene
 Outline: Outline
 Add Layer from Resource: Add Layer from Resource
