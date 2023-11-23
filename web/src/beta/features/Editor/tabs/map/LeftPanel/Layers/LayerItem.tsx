@@ -45,19 +45,21 @@ const LayerItem = ({
     () => setIsEditing(true),
   );
 
-  const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
-
-  const handleTitleSubmit = useCallback(() => {
-    setIsEditing(false);
-    if (newValue.trim() !== "") {
-      onLayerNameUpdate({ layerId: id, name: newValue });
-    }
-  }, [id, newValue, onLayerNameUpdate]);
+  const handleTitleSubmit = useCallback(
+    (newTitle: string) => {
+      setNewValue(newTitle);
+      setIsEditing(false);
+      if (newValue.trim() !== "") {
+        onLayerNameUpdate({ layerId: id, name: newTitle });
+      }
+    },
+    [id, newValue, onLayerNameUpdate],
+  );
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
       if (layerTitle !== newValue && e?.key !== "Escape") {
-        handleTitleSubmit();
+        handleTitleSubmit(newValue);
       } else {
         setNewValue(layerTitle);
       }
@@ -102,7 +104,7 @@ const LayerItem = ({
           <StyledTextInput
             value={newValue}
             autoFocus
-            onChange={handleChange}
+            onChange={handleTitleSubmit}
             onExit={handleEditExit}
             onBlur={handleEditExit}
           />
