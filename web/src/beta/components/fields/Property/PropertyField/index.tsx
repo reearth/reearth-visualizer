@@ -160,6 +160,7 @@ const PropertyField: React.FC<Props> = ({
           key={schema.id}
           name={schema.name}
           value={value as number[]}
+          defaultValue={schema.defaultValue as number[]}
           min={schema.min}
           max={schema.max}
           description={schema.description}

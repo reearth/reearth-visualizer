@@ -49,8 +49,8 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
             <ImageryLayer
               key={`${id}_${i}_${counter.current}`}
               imageryProvider={provider}
-              minimumTerrainLevel={tile_zoomLevel?.[0] ?? 0}
-              maximumTerrainLevel={tile_zoomLevel?.[1] ?? 30}
+              minimumTerrainLevel={tile_zoomLevel?.[0]}
+              maximumTerrainLevel={tile_zoomLevel?.[1]}
               alpha={opacity}
               index={i}
             />
