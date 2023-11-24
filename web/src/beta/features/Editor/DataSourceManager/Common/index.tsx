@@ -40,15 +40,15 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
 
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
-  const [sourceType, setSourceType] = useState<SourceType>("local");
+  const [sourceType, setSourceType] = useState<SourceType>("url");
   const [fileFormat, setFileFormat] = useState<FileFormatType>("GeoJSON");
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
   const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
-      { label: t("From Assets"), keyValue: "local" },
-      { label: t("From Web"), keyValue: "url" },
+      { label: t("From URL"), keyValue: "url" },
+      { label: t("From Local"), keyValue: "local" },
       { label: t("From Value"), keyValue: "value" },
     ],
     [t],
@@ -98,6 +98,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   return (
     <ColJustifyBetween>
       <AssetWrapper>
+        <SelectDataType
+          fileFormat={fileFormat}
+          setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
+        />
         <InputGroup
           label={t("Source Type")}
           description={t("Select the type of data source you want to add.")}>
@@ -110,57 +114,39 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           </SourceTypeWrapper>
         </InputGroup>
         {sourceType == "url" && (
-          <>
-            <SelectDataType
-              fileFormat={fileFormat}
-              setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
+          <InputGroup
+            label={t("Resource URL")}
+            description={t("URL of the data source you want to add.")}>
+            <Input
+              type="text"
+              placeholder={t("Input Text")}
+              value={value}
+              onChange={e => setValue(e.target.value)}
             />
-            <InputGroup
-              label={t("Resource URL")}
-              description={t("URL of the data source you want to add.")}>
-              <Input
-                type="text"
-                placeholder={t("Input Text")}
-                value={value}
-                onChange={e => setValue(e.target.value)}
-              />
-            </InputGroup>
-          </>
+          </InputGroup>
         )}
         {sourceType == "value" && (
-          <>
-            <SelectDataType
-              fileFormat={fileFormat}
-              setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
+          <InputGroup
+            label={t("Value")}
+            description={t(
+              "Write syntactically correct data based on the file format you have selected above.",
+            )}>
+            <TextArea
+              placeholder={t("Input data here")}
+              rows={8}
+              value={value}
+              onChange={e => setValue(e.target.value)}
             />
-            <InputGroup
-              label={t("Value")}
-              description={t(
-                "Write syntactically correct data based on the file format you have selected above.",
-              )}>
-              <TextArea
-                placeholder={t("Input data here")}
-                rows={8}
-                value={value}
-                onChange={e => setValue(e.target.value)}
-              />
-            </InputGroup>
-          </>
+          </InputGroup>
         )}
         {sourceType == "local" && (
-          <>
-            <SelectDataType
-              fileFormat={fileFormat}
-              setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
-            />
-            <URLField
-              fileType="asset"
-              entityType={"file"}
-              name={t("Asset")}
-              value={value}
-              onChange={handleOnChange}
-            />
-          </>
+          <URLField
+            fileType="asset"
+            entityType={"file"}
+            name={t("Asset")}
+            value={value}
+            onChange={handleOnChange}
+          />
         )}
       </AssetWrapper>
 
