@@ -7,6 +7,7 @@ import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../.
 
 import Box, { config as boxConfig } from "./Box";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
+import HeatMap, { config as heatMapConfig } from "./HeatMap";
 import Marker, { config as markerConfig } from "./Marker";
 import Model, { config as modelConfig } from "./Model";
 import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
@@ -37,6 +38,7 @@ const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureCompon
   photooverlay: [PhotoOverlay, photoOverlayConfig],
   resource: [Resource, resourceConfig],
   raster: [Raster, rasterConfig],
+  heatMap: [HeatMap, heatMapConfig],
 };
 
 // This indicates what component should render for file extension.
