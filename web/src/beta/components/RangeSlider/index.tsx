@@ -13,9 +13,9 @@ export type Props = {
 } & ComponentProps<typeof RangeSliderWithTooltip>;
 
 const calculateStep = (min?: number, max?: number, step?: number | null): number => {
-  if (step) {
+  if (step != undefined) {
     return step;
-  } else if (!!min && !!max) {
+  } else if (min != undefined && max != undefined) {
     const range = max - min;
     let calculatedStep = range / 10;
     if (range % calculatedStep !== 0) {
