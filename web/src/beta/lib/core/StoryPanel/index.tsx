@@ -82,6 +82,7 @@ export const StoryPanel = memo(
         handlePageSettingsToggle,
         handlePageSelect,
         handleBlockSelect,
+        handleBlockDouleClick,
         handleCurrentPageChange,
       } = useHooks(
         {
@@ -91,6 +92,7 @@ export const StoryPanel = memo(
         },
         ref,
       );
+
       return (
         <PanelWrapper bgColor={selectedStory?.bgColor}>
           {!!pageInfo && (
@@ -116,6 +118,7 @@ export const StoryPanel = memo(
             onBlockMove={onBlockMove}
             onBlockDelete={onBlockDelete}
             onBlockSelect={handleBlockSelect}
+            onBlockDoubleClick={handleBlockDouleClick}
             onPropertyUpdate={onPropertyUpdate}
             onPropertyItemAdd={onPropertyItemAdd}
             onPropertyItemMove={onPropertyItemMove}

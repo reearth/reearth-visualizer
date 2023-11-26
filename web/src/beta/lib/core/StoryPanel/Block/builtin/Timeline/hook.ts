@@ -250,7 +250,7 @@ export default ({
       if (!handleOnDrag || !e.target || !range) {
         return;
       }
-      if (target && target.style.pointerEvents === "none") {
+      if (target && target.style.pointerEvents === "none" && !inEditor) {
         const evt = e;
         let newPosition = evt.clientX - distX.current;
         newPosition = Math.max(newPosition, 16);
@@ -260,17 +260,17 @@ export default ({
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [committer?.id, handleOnDrag, range, target],
+    [committer?.id, handleOnDrag, inEditor, range, target],
   );
 
   const handleOnClick: MouseEventHandler = useCallback(
     e => {
-      if (range) {
+      if (!inEditor && range) {
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [range, committer?.id, handleOnDrag],
+    [inEditor, range, committer?.id, handleOnDrag],
   );
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
