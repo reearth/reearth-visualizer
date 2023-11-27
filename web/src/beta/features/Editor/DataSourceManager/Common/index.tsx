@@ -40,15 +40,15 @@ const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) 
 
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
-  const [sourceType, setSourceType] = useState<SourceType>("url");
+  const [sourceType, setSourceType] = useState<SourceType>("local");
   const [fileFormat, setFileFormat] = useState<FileFormatType>("GeoJSON");
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
   const DataSourceOptions: DataSourceOptType = useMemo(
     () => [
-      { label: t("From URL"), keyValue: "url" },
-      { label: t("From Local"), keyValue: "local" },
+      { label: t("From Assets"), keyValue: "local" },
+      { label: t("From Web"), keyValue: "url" },
       { label: t("From Value"), keyValue: "value" },
     ],
     [t],
@@ -167,7 +167,9 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}
-          disabled={(sourceType === "url" || sourceType === "value") && !value}
+          disabled={
+            (sourceType === "url" || sourceType === "value" || sourceType === "local") && !value
+          }
         />
       </SubmitWrapper>
     </ColJustifyBetween>

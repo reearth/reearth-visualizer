@@ -113,7 +113,9 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}
-          disabled={(sourceType === "url" || sourceType === "value") && !value}
+          disabled={
+            (sourceType === "url" || sourceType === "value" || sourceType === "local") && !value
+          }
         />
       </SubmitWrapper>
     </ColJustifyBetween>
