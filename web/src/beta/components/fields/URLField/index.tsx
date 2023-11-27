@@ -19,6 +19,7 @@ export type Props = {
   fileType?: "asset" | "URL" | "layerStyle";
   entityType?: "image" | "file" | "layerStyle";
   sceneId?: string;
+  fileFormat?: "CSV" | "GeoJSON" | "KML" | "CZML";
   onChange?: (value: string | undefined, name: string | undefined) => void;
 };
 
@@ -29,6 +30,7 @@ const URLField: React.FC<Props> = ({
   fileType,
   entityType,
   sceneId,
+  fileFormat,
   onChange,
 }) => {
   const t = useT();
@@ -99,6 +101,7 @@ const URLField: React.FC<Props> = ({
           assetType={entityType}
           currentWorkspace={currentWorkspace}
           currentValue={currentValue}
+          fileFormat={fileFormat}
           onSelect={handleChange}
         />
       )}

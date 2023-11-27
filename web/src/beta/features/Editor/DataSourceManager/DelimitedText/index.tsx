@@ -87,7 +87,14 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           </InputGroup>
         )}
         {sourceType == "local" && (
-          <URLField fileType="asset" value={value} name={t("Asset")} onChange={handleOnChange} />
+          <URLField
+            fileType="asset"
+            entityType="file"
+            value={value}
+            fileFormat="CSV"
+            name={t("Asset")}
+            onChange={handleOnChange}
+          />
         )}
         <Text size="body">Point coordinates</Text>
         <InputGroup label="Latitude Field" description="Description around">

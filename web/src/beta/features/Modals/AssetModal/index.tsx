@@ -32,6 +32,7 @@ export type Props = {
   currentWorkspace?: Workspace;
   currentValue?: string;
   onModalClose: () => void;
+  fileFormat?: "CSV" | "GeoJSON" | "KML" | "CZML";
 };
 
 const ChooseAssetModal: React.FC<Props> = ({
@@ -40,6 +41,7 @@ const ChooseAssetModal: React.FC<Props> = ({
   currentValue,
   assetType,
   open,
+  fileFormat,
   onSelect,
   onModalClose,
 }) => {
@@ -68,12 +70,19 @@ const ChooseAssetModal: React.FC<Props> = ({
     if (!assetType) {
       return assets;
     }
+
     return assets?.filter(asset => {
       const isFile = checkIfFileType(asset.url, FILE_FORMATS);
       const isImage = checkIfFileType(asset.url, IMAGE_FORMATS);
-      return (assetType === "file" && isFile) || (assetType === "image" && isImage);
+
+      if (assetType === "file" && isFile) {
+        const assetFileFormat = asset.url.split(".").pop()?.toLowerCase();
+        return assetFileFormat === fileFormat?.toLocaleLowerCase();
+      } else {
+        return assetType === "image" && isImage;
+      }
     });
-  }, [assetType, assets]);
+  }, [assetType, assets, fileFormat]);
 
   const handleReset = useCallback(() => {
     const selectedAsset = assets?.find(a => a.url === currentValue);

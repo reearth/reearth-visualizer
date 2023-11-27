@@ -20,10 +20,10 @@ import {
   generateTitle,
 } from "../utils";
 
-const SelectDataType: React.FC<{ fileFormat: string; setFileFormat: (k: string) => void }> = ({
-  fileFormat,
-  setFileFormat,
-}) => {
+const SelectDataType: React.FC<{
+  fileFormat: FileFormatType;
+  setFileFormat: (k: string) => void;
+}> = ({ fileFormat, setFileFormat }) => {
   const t = useT();
 
   return (
@@ -142,9 +142,10 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         {sourceType == "local" && (
           <URLField
             fileType="asset"
-            entityType={"file"}
+            entityType="file"
             name={t("Asset")}
             value={value}
+            fileFormat={fileFormat}
             onChange={handleOnChange}
           />
         )}
