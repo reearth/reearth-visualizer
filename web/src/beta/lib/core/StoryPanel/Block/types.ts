@@ -10,6 +10,7 @@ export type BlockProps = {
   block?: StoryBlock;
   layer?: Layer;
   onClick?: () => void;
+  onBlockDoubleClick?: () => void;
 };
 
 export type CommonProps = {
@@ -20,6 +21,7 @@ export type CommonProps = {
   theme?: Theme;
   currentCamera?: Camera;
   onClick?: () => void;
+  onBlockDoubleClick?: () => void;
   onClickAway?: () => void;
   onRemove?: (pageId?: string, id?: string) => void;
   onPropertyUpdate?: (
