@@ -43,7 +43,7 @@ export default (
     (pageId?: string) => {
       if (!isEditable) return;
       if (selectedBlockId) {
-        setSelectedBlockId(undefined);
+        setSelectedBlockId(selectedBlockId);
       }
       setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
     },
@@ -60,6 +60,10 @@ export default (
     },
     [selectedPageId, isEditable],
   );
+
+  const handleBlockDouleClick = useCallback((blockId?: string) => {
+    setSelectedBlockId(id => (!blockId || id === blockId ? blockId : blockId));
+  }, []);
 
   const onTimeChange = useCallback(
     (time: Date) => {
@@ -168,6 +172,7 @@ export default (
     handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
+    handleBlockDouleClick,
     handleCurrentPageChange,
   };
 };

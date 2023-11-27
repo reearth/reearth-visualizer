@@ -30,6 +30,7 @@ type Props = {
   settingsEnabled?: boolean;
   onClick?: () => void;
   onRemove?: () => void;
+  onBlockDoubleClick?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -63,6 +64,7 @@ const BlockWrapper: React.FC<Props> = ({
   dndEnabled = true,
   settingsEnabled = true,
   onClick,
+  onBlockDoubleClick,
   onRemove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -80,12 +82,14 @@ const BlockWrapper: React.FC<Props> = ({
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
+    handleDoubleClick,
   } = useHooks({
     name,
     isSelected,
     property,
     isEditable,
     onClick,
+    onBlockDoubleClick,
   });
 
   return (
@@ -113,7 +117,8 @@ const BlockWrapper: React.FC<Props> = ({
           isEditable={isEditable}
           onClick={e => {
             handleBlockClick(e);
-          }}>
+          }}
+          onDoubleClick={handleDoubleClick}>
           {children ?? (isEditable && <Template icon={icon} />)}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (

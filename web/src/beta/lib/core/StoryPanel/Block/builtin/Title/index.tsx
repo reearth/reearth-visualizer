@@ -14,7 +14,12 @@ export type Props = BlockProps;
 const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const t = useT();
 
-  const property = useMemo(() => block?.property, [block?.property]);
+  const property = useMemo(() => {
+    return {
+      ...block?.property,
+      panel: { padding: block?.property?.title?.padding },
+    };
+  }, [block?.property]);
 
   const title = useMemo(
     () => property?.title?.title?.value as ValueTypes["string"],

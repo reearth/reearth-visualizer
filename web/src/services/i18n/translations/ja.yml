@@ -50,8 +50,8 @@ Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
 File Format: ファイル形式
 File format of the data source you want to add.: 追加したいデータソースのファイル形式を選択
-From Assets: アセットから追加
-From Web: Webから追加
+From URL: ''
+From Local: ''
 From Value: 値を入力
 Source Type: ソースの種類
 Select the type of data source you want to add.: 追加したいデータソースの種類を選択
@@ -64,6 +64,8 @@ Input data here: データ入力
 Asset: アセット
 Prioritize Performance: パフォーマンスを優先
 Add to Layer: レイヤー追加
+From Assets: アセットから追加
+From Web: Webから追加
 Point coordinates: ''
 Latitude Field: ''
 Longitude Field: ''
@@ -81,6 +83,7 @@ Layers: レイヤー
 All Layers: 全てのレイヤー
 Layer Style: レイヤースタイル
 Style_: スタイル_
+Delete: 削除
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -99,6 +102,7 @@ Data: データ
 Feature: フィーチャー
 Styling: スタイリング
 Format: フォーマット
+Save: 保存
 Published: 一般公開
 Unpublished: 非公開
 Story: ストーリー
@@ -180,7 +184,6 @@ You have reached a policy limit. Please contact an administrator of your Re:Eart
 Something went wrong. Please try again later.: 何らかの問題が発生しました。しばらく経ってからお試しください。
 Project Settings: プロジェクト設定
 Upload file: ファイルアップロード
-Delete: 削除
 You are about to delete one or more assets from the current workspace.: 1つまたは複数のアセットを削除しようとしています。
 Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
@@ -315,7 +318,6 @@ Alphabetical: 名前順
 Assets Library: アセット
 Use URL: URL
 Add video URL: 映像URLを追加
-Save: 保存
 Select Asset: 選択
 Your browser is too small: ブラウザ幅が小さすぎます
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: 横幅が900px以上になるようブラウザ幅を調節してください。
