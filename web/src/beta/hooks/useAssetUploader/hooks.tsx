@@ -9,20 +9,23 @@ export default ({
   workspaceId,
   onAssetSelect,
   assetType,
+  fileFormat,
 }: {
   workspaceId?: string;
   onAssetSelect?: (inputValue?: string, name?: string) => void;
   assetType?: string;
+  fileFormat?: "CSV" | "GeoJSON" | "KML" | "CZML";
 }) => {
   const { useCreateAssets } = useAssetsFetcher();
 
+  const fileFormatAccepted = fileFormat ? `.${fileFormat?.toLocaleLowerCase()}` : FILE_FORMATS;
   const acceptedExtension = useMemo(() => {
     return assetType === "image"
       ? IMAGE_FORMATS
       : assetType === "file"
-      ? FILE_FORMATS
+      ? fileFormatAccepted
       : IMAGE_FORMATS + "," + FILE_FORMATS;
-  }, [assetType]);
+  }, [assetType, fileFormatAccepted]);
 
   const handleAssetsCreate = useCallback(
     async (files?: FileList) => {

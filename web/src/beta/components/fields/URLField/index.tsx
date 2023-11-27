@@ -65,6 +65,7 @@ const URLField: React.FC<Props> = ({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
     assetType: entityType,
+    fileFormat,
   });
 
   useEffect(() => {
