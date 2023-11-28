@@ -7,7 +7,6 @@ export const useVisible = ({
   isMobile,
   onVisibilityChange,
 }: {
-  widgetId: string | undefined;
   visible: Visible | undefined;
   isMobile: boolean | undefined;
   onVisibilityChange: (() => void) | undefined;

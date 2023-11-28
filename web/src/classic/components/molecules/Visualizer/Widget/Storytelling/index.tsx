@@ -33,7 +33,6 @@ const Storytelling = ({
   onVisibilityChange,
 }: Props): JSX.Element | null => {
   const visible = useVisible({
-    widgetId: widget.id,
     visible: widget.property?.default?.visible,
     isMobile: viewport?.isMobile,
     onVisibilityChange,

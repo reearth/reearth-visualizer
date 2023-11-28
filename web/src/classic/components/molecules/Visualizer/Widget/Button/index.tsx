@@ -22,7 +22,6 @@ const Menu = ({
   const { default: button, menu: menuItems } = (widget.property as Property) ?? {};
 
   const visible = useVisible({
-    widgetId: widget.id,
     visible: widget.property?.default?.visible,
     isMobile: viewport?.isMobile,
     onVisibilityChange,

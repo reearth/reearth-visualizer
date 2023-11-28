@@ -19,7 +19,6 @@ const Navigator = ({
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
 
   const visible = useVisible({
-    widgetId: widget.id,
     visible: widget.property?.default?.visible,
     isMobile: viewport?.isMobile,
     onVisibilityChange,
