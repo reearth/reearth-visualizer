@@ -2,7 +2,9 @@ import MonacoEditor from "@monaco-editor/react";
 import { FC, useCallback, useState, useEffect } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import Loading from "@reearth/beta/components/Loading";
 import { useLayerStylesFetcher } from "@reearth/services/api";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import { LayerStyleValueUpdateProps } from "../../../useLayerStyles";
@@ -13,11 +15,23 @@ type LayerStyleEditorProps = {
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
 };
 
+const options = {
+  bracketPairColorization: {
+    enabled: true,
+  },
+  automaticLayout: true,
+  minimap: {
+    enabled: false,
+  },
+  selectOnLineNumbers: true,
+};
+
 const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   selectedLayerStyleId,
   sceneId,
   onLayerStyleValueUpdate,
 }) => {
+  const t = useT();
   const [styleCode, setStyleCode] = useState<string | undefined>("{}");
 
   const { useGetLayerStylesQuery } = useLayerStylesFetcher();
@@ -43,27 +57,19 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
   return (
     <EditorContainer>
       <MonacoEditor
-        height="80%"
+        height="90%"
         language="json"
         theme="vs-dark"
         value={styleCode}
-        onChange={setStyleCode}
+        loading={<Loading />}
         options={options}
+        onChange={setStyleCode}
       />
-      <CenteredButton onClick={handleSubmit}>Submit</CenteredButton>
+      <CenteredButton size="small" onClick={handleSubmit}>
+        {t("Save")}
+      </CenteredButton>
     </EditorContainer>
   );
-};
-
-const options = {
-  bracketPairColorization: {
-    enabled: true,
-  },
-  automaticLayout: true,
-  minimap: {
-    enabled: false,
-  },
-  selectOnLineNumbers: true,
 };
 
 const EditorContainer = styled.div`
