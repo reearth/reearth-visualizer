@@ -27,8 +27,8 @@ export default ({
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
   const handleBlockDoubleClick = useCallback(() => {
-    onBlockDoubleClick?.(), setEditMode(true);
-  }, [onBlockDoubleClick]);
+    if (isEditable) onBlockDoubleClick?.(), setEditMode(true);
+  }, [isEditable, onBlockDoubleClick]);
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
     () => onClick?.(),
