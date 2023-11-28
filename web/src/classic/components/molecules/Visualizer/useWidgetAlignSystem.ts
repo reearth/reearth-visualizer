@@ -10,6 +10,7 @@ import type {
   WidgetArea,
 } from "./WidgetAlignSystem";
 
+const zones: (keyof WidgetAlignSystem)[] = ["outer", "inner"];
 const sections: (keyof WidgetZone)[] = ["left", "center", "right"];
 const areas: (keyof WidgetSection)[] = ["top", "middle", "bottom"];
 
@@ -127,27 +128,30 @@ export default ({
 
   const onVisibilityChange = useCallback(() => {
     const widgetIds: string[] = [];
-    sections.forEach(section => {
-      areas.forEach(area => {
-        alignSystem?.inner?.[section]?.[area]?.widgets?.forEach(w => {
-          if (isBuiltinWidget(`${w.pluginId}/${w.extensionId}`)) {
-            const defaultVisible = w.property?.default?.visible;
-            if (
-              !(
-                !defaultVisible ||
-                defaultVisible === "always" ||
-                (defaultVisible === "desktop" && !isMobile) ||
-                (defaultVisible === "mobile" && !!isMobile)
-              )
-            ) {
-              widgetIds.push(w.id);
+    zones.forEach(zone => {
+      sections.forEach(section => {
+        areas.forEach(area => {
+          overriddenAlignSystem?.[zone]?.[section]?.[area]?.widgets?.forEach(w => {
+            if (isBuiltinWidget(`${w.pluginId}/${w.extensionId}`)) {
+              const defaultVisible = w.property?.default?.visible;
+              if (
+                !(
+                  !defaultVisible ||
+                  defaultVisible === "always" ||
+                  (defaultVisible === "desktop" && !isMobile) ||
+                  (defaultVisible === "mobile" && !!isMobile)
+                )
+              ) {
+                widgetIds.push(w.id);
+              }
             }
-          }
+          });
         });
       });
     });
+
     setInvisibleWidgetIDs(widgetIds);
-  }, [isMobile, alignSystem]);
+  }, [isMobile, overriddenAlignSystem]);
 
   useEffect(() => {
     onVisibilityChange();

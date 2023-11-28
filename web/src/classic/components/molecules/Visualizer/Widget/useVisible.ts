@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export type Visible = "always" | "desktop" | "mobile";
 
@@ -20,9 +20,12 @@ export const useVisible = ({
     [defaultVisible, isMobile],
   );
 
+  const onVisibilityChangeRef = useRef(onVisibilityChange);
+  onVisibilityChangeRef.current = onVisibilityChange;
+
   useEffect(() => {
-    onVisibilityChange?.();
-  }, [visible, onVisibilityChange]);
+    onVisibilityChangeRef.current?.();
+  }, [defaultVisible]);
 
   return visible;
 };
