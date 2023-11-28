@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Icon from "@reearth/beta/components/Icon";
@@ -39,18 +39,24 @@ const LayerStyleCard: React.FC<Props> = ({
     () => setIsEditing(true),
   );
 
+  useEffect(() => {
+    setNewName(name);
+  }, [name]);
+
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
   }, []);
 
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
-  const handleNameChange = useCallback((newName: string) => setNewName(newName), []);
-
-  const handleNameSubmit = useCallback(() => {
-    setIsEditing(false);
-    onLayerStyleNameUpdate?.({ styleId: id || "", name: newName });
-  }, [id, newName, onLayerStyleNameUpdate]);
+  const handleNameSubmit = useCallback(
+    (newName: string) => {
+      setNewName(newName);
+      setIsEditing(false);
+      onLayerStyleNameUpdate?.({ styleId: id || "", name: newName });
+    },
+    [id, onLayerStyleNameUpdate],
+  );
 
   const handleActionClick = useCallback(
     (e: React.MouseEvent) => {
@@ -62,8 +68,11 @@ const LayerStyleCard: React.FC<Props> = ({
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
-      if (newName !== name && e?.key !== "Escape") handleNameSubmit();
-      else setNewName(name);
+      if (newName !== name && e?.key !== "Escape") {
+        handleNameSubmit(newName);
+      } else {
+        setNewName(name);
+      }
       setIsEditing(false);
     },
     [handleNameSubmit, name, newName],
@@ -104,7 +113,7 @@ const LayerStyleCard: React.FC<Props> = ({
           <StyledTextInput
             value={newName}
             autoFocus
-            onChange={handleNameChange}
+            onChange={handleNameSubmit}
             onBlur={handleEditExit}
             onExit={handleEditExit}
           />

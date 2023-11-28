@@ -1,9 +1,10 @@
-import { forwardRef, memo, Ref } from "react";
+import { forwardRef, memo, Ref, useMemo } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { STORY_PANEL_WIDTH } from "./constants";
+import { PanelProvider } from "./context";
 import useHooks, { type StoryPanelRef, type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
@@ -79,9 +80,12 @@ export const StoryPanel = memo(
         selectedBlockId,
         showPageSettings,
         isAutoScrolling,
+        layerOverride,
+        handleLayerOverride,
         handlePageSettingsToggle,
         handlePageSelect,
         handleBlockSelect,
+        handleBlockDouleClick,
         handleCurrentPageChange,
       } = useHooks(
         {
@@ -91,37 +95,46 @@ export const StoryPanel = memo(
         },
         ref,
       );
+
+      const panelContext = useMemo(
+        () => ({ layerOverride, onLayerOverride: handleLayerOverride }),
+        [layerOverride, handleLayerOverride],
+      );
+
       return (
-        <PanelWrapper bgColor={selectedStory?.bgColor}>
-          {!!pageInfo && (
-            <PageIndicator
-              currentPage={pageInfo.currentPage}
-              maxPage={pageInfo.maxPage}
-              onPageChange={pageInfo.onPageChange}
+        <PanelProvider value={panelContext}>
+          <PanelWrapper bgColor={selectedStory?.bgColor}>
+            {!!pageInfo && (
+              <PageIndicator
+                currentPage={pageInfo.currentPage}
+                maxPage={pageInfo.maxPage}
+                onPageChange={pageInfo.onPageChange}
+              />
+            )}
+            <StoryContent
+              pages={selectedStory?.pages}
+              selectedPageId={selectedPageId}
+              installableStoryBlocks={installableBlocks}
+              selectedStoryBlockId={selectedBlockId}
+              showPageSettings={showPageSettings}
+              showingIndicator={!!pageInfo}
+              isAutoScrolling={isAutoScrolling}
+              isEditable={isEditable}
+              onPageSettingsToggle={handlePageSettingsToggle}
+              onPageSelect={handlePageSelect}
+              onCurrentPageChange={handleCurrentPageChange}
+              onBlockCreate={onBlockCreate}
+              onBlockMove={onBlockMove}
+              onBlockDelete={onBlockDelete}
+              onBlockSelect={handleBlockSelect}
+              onBlockDoubleClick={handleBlockDouleClick}
+              onPropertyUpdate={onPropertyUpdate}
+              onPropertyItemAdd={onPropertyItemAdd}
+              onPropertyItemMove={onPropertyItemMove}
+              onPropertyItemDelete={onPropertyItemDelete}
             />
-          )}
-          <StoryContent
-            pages={selectedStory?.pages}
-            selectedPageId={selectedPageId}
-            installableStoryBlocks={installableBlocks}
-            selectedStoryBlockId={selectedBlockId}
-            showPageSettings={showPageSettings}
-            showingIndicator={!!pageInfo}
-            isAutoScrolling={isAutoScrolling}
-            isEditable={isEditable}
-            onPageSettingsToggle={handlePageSettingsToggle}
-            onPageSelect={handlePageSelect}
-            onCurrentPageChange={handleCurrentPageChange}
-            onBlockCreate={onBlockCreate}
-            onBlockMove={onBlockMove}
-            onBlockDelete={onBlockDelete}
-            onBlockSelect={handleBlockSelect}
-            onPropertyUpdate={onPropertyUpdate}
-            onPropertyItemAdd={onPropertyItemAdd}
-            onPropertyItemMove={onPropertyItemMove}
-            onPropertyItemDelete={onPropertyItemDelete}
-          />
-        </PanelWrapper>
+          </PanelWrapper>
+        </PanelProvider>
       );
     },
   ),

@@ -4,14 +4,14 @@ import { styled } from "@reearth/services/theme";
 
 export const InputGroup: React.FC<{
   label: string;
-  description: string;
+  description?: string;
   children: React.ReactNode;
 }> = ({ label, description, children }) => {
   return (
     <InputGroupWrapper>
       <Label>{label}</Label>
       {children}
-      <Description>{description}</Description>
+      {description && <Description>{description}</Description>}
     </InputGroupWrapper>
   );
 };
