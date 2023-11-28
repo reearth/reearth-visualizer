@@ -87,7 +87,14 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           </InputGroup>
         )}
         {sourceType == "local" && (
-          <URLField fileType="asset" value={value} name={t("Asset")} onChange={handleOnChange} />
+          <URLField
+            fileType="asset"
+            entityType="file"
+            value={value}
+            fileFormat="CSV"
+            name={t("Asset")}
+            onChange={handleOnChange}
+          />
         )}
         <Text size="body">{t("Point coordinates")}</Text>
         <InputGroup label={t("Latitude Field")}>
@@ -113,7 +120,9 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}
-          disabled={(sourceType === "url" || sourceType === "value") && !value}
+          disabled={
+            (sourceType === "url" || sourceType === "value" || sourceType === "local") && !value
+          }
         />
       </SubmitWrapper>
     </ColJustifyBetween>

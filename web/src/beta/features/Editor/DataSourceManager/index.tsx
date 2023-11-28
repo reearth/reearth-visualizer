@@ -19,7 +19,6 @@ export type DataProps = {
 
 export type SourceType = "url" | "local" | "value";
 
-export type FileFormatType = "CSV" | "GeoJSON" | "KML" | "CZML";
 export type DataSourceOptType = {
   label: string;
   keyValue: SourceType;

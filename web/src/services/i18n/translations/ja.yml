@@ -50,8 +50,8 @@ Size Small to Large: 昇順（サイズ）
 Size Large to Small: 降順（サイズ）
 File Format: ファイル形式
 File format of the data source you want to add.: 追加したいデータソースのファイル形式を選択
-From URL: ''
-From Local: ''
+From Assets: アセットから追加
+From Web: Webから追加
 From Value: 値を入力
 Source Type: ソースの種類
 Select the type of data source you want to add.: 追加したいデータソースの種類を選択
@@ -64,8 +64,6 @@ Input data here: データ入力
 Asset: アセット
 Prioritize Performance: パフォーマンスを優先
 Add to Layer: レイヤー追加
-From Assets: アセットから追加
-From Web: Webから追加
 Point coordinates: ''
 Latitude Field: ''
 Longitude Field: ''

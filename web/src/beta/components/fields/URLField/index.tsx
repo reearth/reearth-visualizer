@@ -4,6 +4,7 @@ import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
+import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
 import AssetModal from "@reearth/beta/features/Modals/AssetModal";
 import LayerStyleModal from "@reearth/beta/features/Modals/LayerStyleModal";
 import useFileUploaderHook from "@reearth/beta/hooks/useAssetUploader/hooks";
@@ -19,6 +20,7 @@ export type Props = {
   fileType?: "asset" | "URL" | "layerStyle";
   entityType?: "image" | "file" | "layerStyle";
   sceneId?: string;
+  fileFormat?: AcceptedFileFormat;
   onChange?: (value: string | undefined, name: string | undefined) => void;
 };
 
@@ -29,6 +31,7 @@ const URLField: React.FC<Props> = ({
   fileType,
   entityType,
   sceneId,
+  fileFormat,
   onChange,
 }) => {
   const t = useT();
@@ -63,6 +66,7 @@ const URLField: React.FC<Props> = ({
     workspaceId: currentWorkspace?.id,
     onAssetSelect: handleChange,
     assetType: entityType,
+    fileFormat,
   });
 
   useEffect(() => {
@@ -99,6 +103,7 @@ const URLField: React.FC<Props> = ({
           assetType={entityType}
           currentWorkspace={currentWorkspace}
           currentValue={currentValue}
+          fileFormat={fileFormat}
           onSelect={handleChange}
         />
       )}
