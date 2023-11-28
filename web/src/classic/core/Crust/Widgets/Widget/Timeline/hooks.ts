@@ -46,9 +46,8 @@ export const useTimeline = ({
   onExtend?: (id: string, extended: boolean | undefined) => void;
   onVisibilityChange?: () => void;
 }) => {
-  const visible = useVisible({
+  useVisible({
     visible: widget.property?.default?.visible,
-    isMobile,
     onVisibilityChange,
   });
   const widgetId = widget.id;
@@ -226,7 +225,6 @@ export const useTimeline = ({
     range,
     isOpened,
     currentTime,
-    visible,
     events: {
       onOpen: handleOnOpen,
       onClose: handleOnClose,

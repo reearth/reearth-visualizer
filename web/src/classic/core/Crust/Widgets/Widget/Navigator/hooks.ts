@@ -9,7 +9,6 @@ export default function ({
   camera,
   initialCamera,
   widget,
-  isMobile,
   onZoomIn,
   onZoomOut,
   onCameraOrbit,
@@ -32,9 +31,8 @@ export default function ({
   const [isHelpOpened, setIsHelpOpened] = useState(false);
   const orbitRadianRef = useRef(0);
   const isMovingOrbit = useRef(false);
-  const visible = useVisible({
+  useVisible({
     visible: widget.property?.default?.visible,
-    isMobile,
     onVisibilityChange,
   });
 
@@ -100,7 +98,6 @@ export default function ({
   return {
     degree,
     isHelpOpened,
-    visible,
     events: {
       onRotate: handleOnRotate,
       onStartOrbit: handleOnStartOrbit,

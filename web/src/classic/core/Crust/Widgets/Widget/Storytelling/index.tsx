@@ -9,6 +9,7 @@ import { styled, css } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
 import type { Camera, Theme } from "../types";
+import { useVisible } from "../useVisible";
 
 import useHooks, { Story as StoryType } from "./hooks";
 
@@ -21,6 +22,7 @@ export type Property = {
     range?: number;
     camera?: Camera;
     autoStart?: boolean;
+    visible?: "always" | "desktop" | "mobile";
   };
   stories?: StoryType[];
 };
@@ -29,6 +31,7 @@ const Storytelling = ({
   widget,
   theme,
   context: { selectedLayerId, onFlyTo, onLayerSelect, onLookAt, findPhotooverlayLayer } = {},
+  onVisibilityChange,
 }: Props): JSX.Element | null => {
   const storiesData = widget?.property?.stories;
   const { camera, duration, autoStart, range } = widget?.property?.default ?? {};
@@ -51,6 +54,11 @@ const Storytelling = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   useClickAway(wrapperRef, () => {
     openMenu(false);
+  });
+
+  useVisible({
+    visible: widget.property?.default?.visible,
+    onVisibilityChange,
   });
 
   return (

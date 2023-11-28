@@ -28,7 +28,7 @@ const Navigator = ({
     onZoomOut,
   } = {},
 }: Props): JSX.Element | null => {
-  const { degree, visible, events } = useHooks({
+  const { degree, events } = useHooks({
     camera,
     initialCamera,
     widget,
@@ -41,9 +41,7 @@ const Navigator = ({
     onVisibilityChange,
   });
 
-  return visible ? (
-    <NavigatorPresenter theme={theme} degree={degree} editing={!!editing} {...events} />
-  ) : null;
+  return <NavigatorPresenter theme={theme} degree={degree} editing={!!editing} {...events} />;
 };
 
 export default Navigator;

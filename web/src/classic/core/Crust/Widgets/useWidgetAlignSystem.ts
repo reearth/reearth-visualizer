@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 
+import { isBuiltInVisible } from "./WidgetAlignSystem/utils";
+
 import {
   type WidgetAlignSystem,
   type InternalWidget,
@@ -7,7 +9,6 @@ import {
   type WidgetArea,
   type WidgetSection,
   type WidgetZone,
-  isBuiltinWidget,
 } from ".";
 
 const sections: (keyof WidgetZone)[] = ["left", "center", "right"];
@@ -35,19 +36,7 @@ export default ({
       sections.forEach(section => {
         areas.forEach(area => {
           overriddenAlignSystem?.[zone]?.[section]?.[area]?.widgets?.forEach(w => {
-            if (isBuiltinWidget(`${w.pluginId}/${w.extensionId}`)) {
-              const defaultVisible = w.property?.default?.visible;
-              if (
-                !(
-                  !defaultVisible ||
-                  defaultVisible === "always" ||
-                  (defaultVisible === "desktop" && !isMobile) ||
-                  (defaultVisible === "mobile" && !!isMobile)
-                )
-              ) {
-                widgetIds.push(w.id);
-              }
-            }
+            if (isBuiltInVisible(w, isMobile)) widgetIds.push(w.id);
           });
         });
       });
@@ -62,9 +51,9 @@ export default ({
 
   const moveWidget = useCallback((widgetId: string, options: WidgetLocationOptions) => {
     if (
-      !["outer", "inner"].includes(options.zone) ||
-      !["left", "center", "right"].includes(options.section) ||
-      !["top", "middle", "bottom"].includes(options.area) ||
+      !zones.includes(options.zone) ||
+      !sections.includes(options.section) ||
+      !areas.includes(options.area) ||
       (options.section === "center" && options.area === "middle")
     )
       return;

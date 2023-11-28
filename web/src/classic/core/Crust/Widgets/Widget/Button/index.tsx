@@ -16,18 +16,16 @@ export type Property = {
 const Menu = ({
   widget,
   theme,
-  isMobile,
   onVisibilityChange,
   context: { onFlyTo } = {},
 }: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = widget.property ?? {};
-  const visible = useVisible({
+  useVisible({
     visible: widget.property?.default?.visible,
-    isMobile,
     onVisibilityChange,
   });
 
-  return visible ? (
+  return (
     <Wrapper>
       <MenuButton
         theme={theme}
@@ -38,7 +36,7 @@ const Menu = ({
         onFlyTo={onFlyTo}
       />
     </Wrapper>
-  ) : null;
+  );
 };
 
 const Wrapper = styled.div`

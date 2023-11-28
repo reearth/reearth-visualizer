@@ -33,7 +33,6 @@ export type Property = {
 const SplashScreen = ({
   widget,
   inEditor,
-  isMobile,
   onVisibilityChange,
   context: { onFlyTo } = {},
 }: Props): JSX.Element | null => {
@@ -50,9 +49,8 @@ const SplashScreen = ({
     overlayTitle: title,
   } = property?.overlay ?? {};
   const camera = property?.camera?.filter(c => !!c.cameraPosition);
-  const visible = useVisible({
+  useVisible({
     visible: widget.property?.overlay.visible,
-    isMobile,
     onVisibilityChange,
   });
 
@@ -105,7 +103,7 @@ const SplashScreen = ({
     return () => clearTimeout(t);
   }, [delayedCurrentCamera, inEditor]);
 
-  return !visible || state === "unmounted" ? null : (
+  return state === "unmounted" ? null : (
     <Wrapper state={state} bgcolor={bgcolor} duration={transitionDuration}>
       <Image src={image} alt={title} width={imageW} height={imageH} />
     </Wrapper>
