@@ -7,6 +7,8 @@ import { Scene as GqlScene } from "../gql";
 
 import { PluginExtensionType } from "./pluginsApi";
 
+export type ScenePropertyCollection = "main" | "tiles" | "terrain" | "globe" | "sky" | "camera";
+
 export type ScenePlugin = {
   id?: string;
   name?: string;

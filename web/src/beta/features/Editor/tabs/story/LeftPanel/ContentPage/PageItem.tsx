@@ -69,8 +69,8 @@ const PageItem = ({
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
-      if (title !== newValue && e?.key !== "Escape") {
-        newValue && handleTitleSubmit(newValue);
+      if (!!newValue && title !== newValue && e?.key !== "Escape") {
+        handleTitleSubmit(newValue);
       } else {
         setNewValue(title);
       }

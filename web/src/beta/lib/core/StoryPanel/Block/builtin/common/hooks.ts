@@ -57,7 +57,7 @@ export default ({
         ...property?.panel?.padding,
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
-          property?.panel?.padding.value,
+          property?.panel?.padding?.value,
           isEditable,
         ),
       },
