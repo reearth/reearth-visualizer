@@ -174,7 +174,7 @@ const StoryPanel: React.FC<Props> = ({
               openBlocks={openBlocksIndex === -1}
               installableStoryBlocks={installableStoryBlocks}
               onBlockOpen={() => handleBlockOpen(-1)}
-              onBlockAdd={() => handleBlockCreate(0)}
+              onBlockAdd={handleBlockCreate(0)}
             />
           )}
         </PageTitleWrapper>

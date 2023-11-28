@@ -241,7 +241,6 @@ export default ({
     if (target) {
       target.style.pointerEvents = "initial";
       setTarget(null);
-      setIsPause(false);
     }
   }, [target]);
 
@@ -272,6 +271,7 @@ export default ({
     },
     [inEditor, range, committer?.id, handleOnDrag],
   );
+
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
       if (
@@ -281,7 +281,6 @@ export default ({
       ) {
         setActiveBlock(" ");
         setIsActive(false);
-        setIsPause(false);
         setIsPlaying(false);
         setIsPlayingReversed(false);
         const currentTimeValue = timelineValues?.currentTime ?? "";
@@ -289,6 +288,7 @@ export default ({
           ? setCurrentTime?.(getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime())
           : setCurrentTime?.(range?.start);
       }
+      setIsPause(false);
     },
     [activeBlock, isActive, range, setCurrentTime, timelineValues],
   );
@@ -318,7 +318,8 @@ export default ({
   ]);
 
   useEffect(() => {
-    if (isActive) onTick?.(handleTick), onCommit?.(handleTimelineCommitterChange);
+    if (isActive) onTick?.(handleTick);
+    onCommit?.(handleTimelineCommitterChange);
     return () => {
       removeTickEventListener?.(handleTick);
       removeOnCommitEventListener?.(handleTimelineCommitterChange);
@@ -345,7 +346,6 @@ export default ({
         positionPercentage = Math.round(positionPercentage);
         positionPercentage = Math.max(positionPercentage, 16);
         positionPercentage = Math.min(positionPercentage, 372);
-
         return positionPercentage;
       }
     }
