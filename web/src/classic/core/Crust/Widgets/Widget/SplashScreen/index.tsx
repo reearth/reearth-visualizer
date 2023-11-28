@@ -51,7 +51,6 @@ const SplashScreen = ({
   } = property?.overlay ?? {};
   const camera = property?.camera?.filter(c => !!c.cameraPosition);
   const visible = useVisible({
-    widgetId: widget.id,
     visible: widget.property?.overlay.visible,
     isMobile,
     onVisibilityChange,

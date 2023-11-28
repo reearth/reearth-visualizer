@@ -26,14 +26,13 @@ export default function ({
   onCameraOrbit?: (orbit: number) => void;
   onCameraRotateRight?: (radian: number) => void;
   onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
-  onVisibilityChange?: (id: string, visible: boolean) => void;
+  onVisibilityChange?: () => void;
 }) {
   const [degree, setDegree] = useState(0);
   const [isHelpOpened, setIsHelpOpened] = useState(false);
   const orbitRadianRef = useRef(0);
   const isMovingOrbit = useRef(false);
   const visible = useVisible({
-    widgetId: widget.id,
     visible: widget.property?.default?.visible,
     isMobile,
     onVisibilityChange,

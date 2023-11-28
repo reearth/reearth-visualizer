@@ -60,7 +60,7 @@ export type WidgetProps = {
   layout?: WidgetLayout;
   onExtend?: (id: string, extended: boolean | undefined) => void;
   onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
-  onVisibilityChange: (widgetId: string, v: boolean) => void;
+  onVisibilityChange: () => void;
 };
 
 export default function Widgets({
@@ -83,6 +83,7 @@ export default function Widgets({
   const { overriddenAlignSystem, moveWidget, onVisibilityChange, invisibleWidgetIDs } =
     useWidgetAlignSystem({
       alignSystem,
+      isMobile,
     });
 
   const renderWidgetInternal = useCallback(

@@ -1,15 +1,26 @@
 import { useEffect, useState, useCallback } from "react";
 
-import type {
-  WidgetAlignSystem,
-  InternalWidget,
-  WidgetLocationOptions,
-  WidgetArea,
-  WidgetSection,
-  WidgetZone,
+import {
+  type WidgetAlignSystem,
+  type InternalWidget,
+  type WidgetLocationOptions,
+  type WidgetArea,
+  type WidgetSection,
+  type WidgetZone,
+  isBuiltinWidget,
 } from ".";
 
-export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined }) => {
+const sections: (keyof WidgetZone)[] = ["left", "center", "right"];
+const areas: (keyof WidgetSection)[] = ["top", "middle", "bottom"];
+const zones: (keyof WidgetAlignSystem)[] = ["outer", "inner"];
+
+export default ({
+  alignSystem,
+  isMobile,
+}: {
+  alignSystem: WidgetAlignSystem | undefined;
+  isMobile?: boolean;
+}) => {
   const [overriddenAlignSystem, setOverrideAlignSystem] = useState<WidgetAlignSystem | undefined>(
     alignSystem,
   );
@@ -18,17 +29,36 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
   //       The reason why we use invisible list is prevent initializing cost.
   const [invisibleWidgetIDs, setInvisibleWidgetIDs] = useState<string[]>([]);
 
-  const onVisibilityChange = useCallback((widgetId: string, v: boolean) => {
-    setInvisibleWidgetIDs(a => {
-      if (!a.includes(widgetId) && !v) {
-        return [...a, widgetId];
-      }
-      if (a.includes(widgetId) && v) {
-        return a.filter(i => i !== widgetId);
-      }
-      return a;
+  const onVisibilityChange = useCallback(() => {
+    const widgetIds: string[] = [];
+    zones.forEach(zone => {
+      sections.forEach(section => {
+        areas.forEach(area => {
+          overriddenAlignSystem?.[zone]?.[section]?.[area]?.widgets?.forEach(w => {
+            if (isBuiltinWidget(`${w.pluginId}/${w.extensionId}`)) {
+              const defaultVisible = w.property?.default?.visible;
+              if (
+                !(
+                  !defaultVisible ||
+                  defaultVisible === "always" ||
+                  (defaultVisible === "desktop" && !isMobile) ||
+                  (defaultVisible === "mobile" && !!isMobile)
+                )
+              ) {
+                widgetIds.push(w.id);
+              }
+            }
+          });
+        });
+      });
     });
-  }, []);
+
+    setInvisibleWidgetIDs(widgetIds);
+  }, [isMobile, overriddenAlignSystem]);
+
+  useEffect(() => {
+    onVisibilityChange();
+  }, [onVisibilityChange]);
 
   const moveWidget = useCallback((widgetId: string, options: WidgetLocationOptions) => {
     if (

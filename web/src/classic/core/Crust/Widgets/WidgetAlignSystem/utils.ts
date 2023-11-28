@@ -11,6 +11,6 @@ export const filterSections = (
   return sections.filter(
     s =>
       areas.filter(a => zone?.[s]?.[a]?.widgets?.find(w => !invisibleWidgetIDs?.includes(w.id)))
-        .length || cb?.(s),
+        .length > 0 || cb?.(s),
   );
 };

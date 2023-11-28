@@ -44,10 +44,9 @@ export const useTimeline = ({
   onTick?: TickEvent;
   removeTickEventListener?: TickEvent;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-  onVisibilityChange?: (id: string, v: boolean) => void;
+  onVisibilityChange?: () => void;
 }) => {
   const visible = useVisible({
-    widgetId: widget.id,
     visible: widget.property?.default?.visible,
     isMobile,
     onVisibilityChange,
