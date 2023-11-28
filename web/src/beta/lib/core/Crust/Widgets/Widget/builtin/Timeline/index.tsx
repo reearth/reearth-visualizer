@@ -30,7 +30,7 @@ const Timeline = ({
     removeTickEventListener,
   } = {},
 }: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, speed, events, visible } = useTimeline({
+  const { isOpened, currentTime, range, speed, events } = useTimeline({
     widget,
     timelineManagerRef,
     isMobile,
@@ -44,7 +44,7 @@ const Timeline = ({
     onVisibilityChange,
   });
 
-  return visible ? (
+  return (
     <Widget extended={!!widget?.extended?.horizontally} opened={isOpened}>
       <TimelineUI
         isOpened={isOpened}
@@ -55,7 +55,7 @@ const Timeline = ({
         {...events}
       />
     </Widget>
-  ) : null;
+  );
 };
 
 const Widget = styled.div<{
