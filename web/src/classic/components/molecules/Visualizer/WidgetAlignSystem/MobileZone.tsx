@@ -25,7 +25,7 @@ export type Props = {
   viewport?: Viewport;
   invisibleWidgetIDs?: string[];
   onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
-  onVisibilityChange?: (id: string, visible: boolean) => void;
+  onVisibilityChange?: () => void;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;

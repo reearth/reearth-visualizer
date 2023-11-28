@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 
 import type { WidgetLocationOptions } from "./Plugin/types";
+import { isBuiltinWidget } from "./Widget/builtin";
 import type {
   Widget,
   WidgetAlignSystem,
@@ -9,7 +10,16 @@ import type {
   WidgetArea,
 } from "./WidgetAlignSystem";
 
-export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined }) => {
+const sections: (keyof WidgetZone)[] = ["left", "center", "right"];
+const areas: (keyof WidgetSection)[] = ["top", "middle", "bottom"];
+
+export default ({
+  alignSystem,
+  isMobile,
+}: {
+  alignSystem: WidgetAlignSystem | undefined;
+  isMobile?: boolean;
+}) => {
   const [overriddenAlignSystem, setOverrideAlignSystem] = useState<WidgetAlignSystem | undefined>(
     alignSystem,
   );
@@ -115,17 +125,33 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
   //       The reason why we use invisible list is prevent initializing cost.
   const [invisibleWidgetIDs, setInvisibleWidgetIDs] = useState<string[]>([]);
 
-  const onVisibilityChange = useCallback((widgetId: string, v: boolean) => {
-    setInvisibleWidgetIDs(a => {
-      if (!a.includes(widgetId) && !v) {
-        return [...a, widgetId];
-      }
-      if (a.includes(widgetId) && v) {
-        return a.filter(i => i !== widgetId);
-      }
-      return a;
+  const onVisibilityChange = useCallback(() => {
+    const widgetIds: string[] = [];
+    sections.forEach(section => {
+      areas.forEach(area => {
+        alignSystem?.inner?.[section]?.[area]?.widgets?.forEach(w => {
+          if (isBuiltinWidget(`${w.pluginId}/${w.extensionId}`)) {
+            const defaultVisible = w.property?.default?.visible;
+            if (
+              !(
+                !defaultVisible ||
+                defaultVisible === "always" ||
+                (defaultVisible === "desktop" && !isMobile) ||
+                (defaultVisible === "mobile" && !!isMobile)
+              )
+            ) {
+              widgetIds.push(w.id);
+            }
+          }
+        });
+      });
     });
-  }, []);
+    setInvisibleWidgetIDs(widgetIds);
+  }, [isMobile, alignSystem]);
+
+  useEffect(() => {
+    onVisibilityChange();
+  }, [onVisibilityChange]);
 
   return {
     overriddenAlignSystem,

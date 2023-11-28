@@ -40,7 +40,7 @@ export type Props = {
   viewport?: Viewport;
   sceneProperty?: any;
   invisibleWidgetIDs?: string[];
-  onVisibilityChange?: (id: string, visible: boolean) => void;
+  onVisibilityChange?: () => void;
   onWidgetUpdate?: (
     id: string,
     update: {

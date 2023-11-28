@@ -3,7 +3,6 @@ import { useEffect, useMemo } from "react";
 export type Visible = "always" | "desktop" | "mobile";
 
 export const useVisible = ({
-  widgetId,
   visible: defaultVisible,
   isMobile,
   onVisibilityChange,
@@ -11,7 +10,7 @@ export const useVisible = ({
   widgetId: string | undefined;
   visible: Visible | undefined;
   isMobile: boolean | undefined;
-  onVisibilityChange: ((id: string, v: boolean) => void) | undefined;
+  onVisibilityChange: (() => void) | undefined;
 }) => {
   const visible = useMemo(
     () =>
@@ -23,10 +22,8 @@ export const useVisible = ({
   );
 
   useEffect(() => {
-    if (widgetId) {
-      onVisibilityChange?.(widgetId, visible);
-    }
-  }, [widgetId, visible, onVisibilityChange]);
+    onVisibilityChange?.();
+  }, [visible, onVisibilityChange]);
 
   return visible;
 };

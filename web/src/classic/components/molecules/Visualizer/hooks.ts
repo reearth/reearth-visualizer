@@ -221,6 +221,7 @@ export default ({
   const { overriddenAlignSystem, moveWidget, invisibleWidgetIDs, onVisibilityChange } =
     useWidgetAlignSystem({
       alignSystem,
+      isMobile: viewport.isMobile,
     });
 
   const pluginInstances = usePluginInstances({
