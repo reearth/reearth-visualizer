@@ -146,6 +146,9 @@ const StoryPanel: React.FC<Props> = ({
         gap={panelSettings?.gap?.value}>
         <PageTitleWrapper>
           {(isEditable || title?.title?.value) && (
+            // The title block is a pseudo block.
+            // It is not saved in the story block list and not draggable because
+            // it is actually a field on the story page.
             <StoryBlock
               block={{
                 id: titleId,

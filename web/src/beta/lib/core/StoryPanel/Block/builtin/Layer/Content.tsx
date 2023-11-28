@@ -1,10 +1,10 @@
 import { useCallback, useContext, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { usePanelContext } from "../../../context";
 import { BlockContext } from "../common/Wrapper";
 
 import LayerEditor, { type LayerBlock as LayerBlockType } from "./Editor";
@@ -46,8 +46,9 @@ const Content: React.FC<Props> = ({
 }) => {
   const t = useT();
   const context = useContext(BlockContext);
-  const visualizer = useVisualizer();
   const [selected, setSelected] = useState<string>(layerButtons[0]?.id);
+
+  const storyPanelContext = usePanelContext();
 
   const handleClick = useCallback(
     (itemId: string) => {
@@ -59,19 +60,9 @@ const Content: React.FC<Props> = ({
 
       if (!item?.showLayers?.value) return;
 
-      // Hide all layers
-      const layers = visualizer.current?.layers;
-
-      // Show only selected layers
-      layers?.show(...item.showLayers.value);
-      const allLayers = layers?.layers() ?? [];
-
-      // Hide the rest
-      layers?.hide(
-        ...allLayers.map(({ id }) => id).filter(id => !item.showLayers?.value?.includes(id)),
-      );
+      storyPanelContext?.onLayerOverride?.(item.id, item.showLayers.value);
     },
-    [isEditable, visualizer, layerButtons],
+    [isEditable, layerButtons, storyPanelContext],
   );
 
   return (
