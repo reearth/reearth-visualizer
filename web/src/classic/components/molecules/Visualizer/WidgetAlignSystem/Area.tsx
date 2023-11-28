@@ -35,6 +35,7 @@ type Props = {
   sceneProperty?: any;
   viewport?: Viewport;
   onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
+  onVisibilityChange?: (id: string, visible: boolean) => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 } & PluginCommonProps;

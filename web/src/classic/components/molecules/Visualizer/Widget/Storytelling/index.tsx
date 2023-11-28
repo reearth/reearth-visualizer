@@ -9,6 +9,7 @@ import { Camera as CameraValue } from "@reearth/classic/util/value";
 import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
+import { useVisible } from "../useVisible";
 
 import useHooks, { Story as StoryType } from "./hooks";
 
@@ -25,7 +26,19 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
+const Storytelling = ({
+  widget,
+  sceneProperty,
+  viewport,
+  onVisibilityChange,
+}: Props): JSX.Element | null => {
+  const visible = useVisible({
+    widgetId: widget.id,
+    visible: widget.property?.default?.visible,
+    isMobile: viewport?.isMobile,
+    onVisibilityChange,
+  });
+
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");
@@ -48,7 +61,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
     openMenu(false);
   });
 
-  return (
+  return visible ? (
     <>
       <Menu
         publishedTheme={publishedTheme}
@@ -128,7 +141,7 @@ const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
         </ArrowButton>
       </Widget>
     </>
-  );
+  ) : null;
 };
 
 const Widget = styled.div<{

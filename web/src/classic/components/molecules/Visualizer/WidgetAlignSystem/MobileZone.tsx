@@ -23,7 +23,9 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   viewport?: Viewport;
+  invisibleWidgetIDs?: string[];
   onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
+  onVisibilityChange?: (id: string, visible: boolean) => void;
 } & PluginCommonProps;
 
 const sections = ["left", "center", "right"] as const;
@@ -40,6 +42,7 @@ export default function MobileZone({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  invisibleWidgetIDs,
   onWidgetAlignAreaSelect,
   children,
   ...props
@@ -47,9 +50,11 @@ export default function MobileZone({
   const filteredSections = useMemo(() => {
     return sections.filter(
       s =>
-        areas.filter(a => zone?.[s]?.[a]?.widgets?.length).length || (s === "center" && children),
+        areas.filter(a => zone?.[s]?.[a]?.widgets?.find(w => !invisibleWidgetIDs?.includes(w.id)))
+          .length ||
+        (s === "center" && children),
     );
-  }, [zone, children]);
+  }, [zone, children, invisibleWidgetIDs]);
 
   const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);
 

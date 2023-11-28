@@ -111,8 +111,26 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
     setOverrideAlignSystem(alignSystem);
   }, [alignSystem]);
 
+  // NOTE: This is invisible list of widget.
+  //       The reason why we use invisible list is prevent initializing cost.
+  const [invisibleWidgetIDs, setInvisibleWidgetIDs] = useState<string[]>([]);
+
+  const onVisibilityChange = useCallback((widgetId: string, v: boolean) => {
+    setInvisibleWidgetIDs(a => {
+      if (!a.includes(widgetId) && !v) {
+        return [...a, widgetId];
+      }
+      if (a.includes(widgetId) && v) {
+        return a.filter(i => i !== widgetId);
+      }
+      return a;
+    });
+  }, []);
+
   return {
     overriddenAlignSystem,
     moveWidget,
+    invisibleWidgetIDs,
+    onVisibilityChange,
   };
 };
