@@ -1,17 +1,15 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export type Visible = "always" | "desktop" | "mobile";
 
 export const useVisible = ({
-  widgetId,
   visible: defaultVisible,
   isMobile,
   onVisibilityChange,
 }: {
-  widgetId: string | undefined;
   visible: Visible | undefined;
   isMobile: boolean | undefined;
-  onVisibilityChange: ((id: string, v: boolean) => void) | undefined;
+  onVisibilityChange: (() => void) | undefined;
 }) => {
   const visible = useMemo(
     () =>
@@ -22,11 +20,12 @@ export const useVisible = ({
     [defaultVisible, isMobile],
   );
 
+  const onVisibilityChangeRef = useRef(onVisibilityChange);
+  onVisibilityChangeRef.current = onVisibilityChange;
+
   useEffect(() => {
-    if (widgetId) {
-      onVisibilityChange?.(widgetId, visible);
-    }
-  }, [widgetId, visible, onVisibilityChange]);
+    onVisibilityChangeRef.current?.();
+  }, [defaultVisible]);
 
   return visible;
 };

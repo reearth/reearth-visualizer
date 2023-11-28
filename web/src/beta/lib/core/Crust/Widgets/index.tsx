@@ -83,6 +83,7 @@ export default function Widgets({
   const { overriddenAlignSystem, moveWidget, onVisibilityChange, invisibleWidgetIDs } =
     useWidgetAlignSystem({
       alignSystem,
+      isMobile,
     });
 
   const renderWidgetInternal = useCallback(

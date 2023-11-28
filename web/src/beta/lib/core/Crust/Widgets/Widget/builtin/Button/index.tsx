@@ -22,7 +22,6 @@ const Menu = ({
 }: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = widget.property ?? {};
   const visible = useVisible({
-    widgetId: widget.id,
     visible: widget.property?.default?.visible,
     isMobile,
     onVisibilityChange,
