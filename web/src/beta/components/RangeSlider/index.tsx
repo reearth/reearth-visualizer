@@ -15,7 +15,7 @@ export type Props = {
 const calculateStep = (min?: number, max?: number, step?: number | null): number => {
   if (step != undefined) {
     return step;
-  } else if (min != undefined && max != undefined) {
+  } else if (min !== undefined && max !== undefined) {
     const range = max - min;
     let calculatedStep = range / 10;
     if (range % calculatedStep !== 0) {
