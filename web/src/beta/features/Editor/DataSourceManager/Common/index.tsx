@@ -5,10 +5,11 @@ import SelectField from "@reearth/beta/components/fields/SelectField";
 import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
+import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
 import { DataType } from "@reearth/beta/lib/core/Map";
 import { useT } from "@reearth/services/i18n";
 
-import { DataProps, DataSourceOptType, FileFormatType, SourceType } from "..";
+import { DataProps, DataSourceOptType, SourceType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -21,7 +22,7 @@ import {
 } from "../utils";
 
 const SelectDataType: React.FC<{
-  fileFormat: FileFormatType;
+  fileFormat: AcceptedFileFormat;
   setFileFormat: (k: string) => void;
 }> = ({ fileFormat, setFileFormat }) => {
   const t = useT();
@@ -41,7 +42,7 @@ const SelectDataType: React.FC<{
 const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
   const [sourceType, setSourceType] = useState<SourceType>("local");
-  const [fileFormat, setFileFormat] = useState<FileFormatType>("GeoJSON");
+  const [fileFormat, setFileFormat] = useState<AcceptedFileFormat>("GeoJSON");
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
@@ -100,7 +101,7 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       <AssetWrapper>
         <SelectDataType
           fileFormat={fileFormat}
-          setFileFormat={(f: string) => setFileFormat(f as FileFormatType)}
+          setFileFormat={(f: string) => setFileFormat(f as AcceptedFileFormat)}
         />
         <InputGroup
           label={t("Source Type")}
