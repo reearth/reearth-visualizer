@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { GridWrapper } from "react-align";
 
 import { WidgetAreaState } from "@reearth/classic/components/organisms/EarthEditor/PropertyPane/hooks";
@@ -15,6 +15,7 @@ import type {
   WidgetLayoutConstraint,
 } from "./hooks";
 import MobileZone from "./MobileZone";
+import { filterSections } from "./utils";
 import ZoneComponent from "./Zone";
 
 export type {
@@ -63,6 +64,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
   isEditable,
   isBuilt,
   layoutConstraint,
+  invisibleWidgetIDs,
   onWidgetUpdate,
   onWidgetAlignSystemUpdate,
   onWidgetAlignAreaSelect,
@@ -72,6 +74,13 @@ const WidgetAlignSystem: React.FC<Props> = ({
     onWidgetUpdate,
     onWidgetAlignSystemUpdate,
   });
+
+  const hasInner = useMemo(() => {
+    if (!alignSystem?.inner) {
+      return;
+    }
+    return !!filterSections(alignSystem?.inner, invisibleWidgetIDs).length;
+  }, [alignSystem, invisibleWidgetIDs]);
 
   return (
     <WidetAlignSystemWrapper editorMode={editing}>
@@ -94,7 +103,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
             layoutConstraint={layoutConstraint}
             onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
             {...props}>
-            {alignSystem?.inner && (
+            {hasInner && (
               <ZoneComponent
                 zoneName="inner"
                 isMobileZone={props.viewport.isMobile}
