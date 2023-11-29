@@ -41,7 +41,7 @@ const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) 
         {
           content: <DelimitedText sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "delimitedText",
-          label: t("Delimited Text"),
+          label: t("CSV"),
         },
         {
           content: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
