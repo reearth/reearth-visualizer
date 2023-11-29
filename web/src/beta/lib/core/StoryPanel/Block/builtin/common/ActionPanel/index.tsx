@@ -17,6 +17,7 @@ type Props = {
   panelSettings?: any;
   dndEnabled?: boolean;
   position?: ActionPosition;
+  overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;

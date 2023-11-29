@@ -63,7 +63,16 @@ export default ({
     [property?.panel, isEditable],
   );
 
-  const title = useMemo(() => property?.title, [property?.title]);
+  const titleProperty = useMemo(
+    () => ({
+      title: {
+        title: property?.title?.title,
+        color: property?.title?.color,
+      },
+      panel: { padding: property?.title?.padding },
+    }),
+    [property?.title],
+  );
 
   const titleId = useMemo(() => `${page?.id}/title`, [page?.id]);
 
@@ -76,7 +85,7 @@ export default ({
   return {
     openBlocksIndex,
     titleId,
-    title,
+    titleProperty,
     propertyId,
     property,
     panelSettings,

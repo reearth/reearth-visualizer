@@ -30,6 +30,7 @@ type Props = {
   dndEnabled?: boolean;
   position?: ActionPosition;
   isHovered?: boolean;
+  overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
@@ -65,6 +66,7 @@ const ActionPanel: React.FC<Props> = ({
   actionItems,
   position,
   dndEnabled,
+  overrideGroupId,
   setShowPadding,
   onSettingsToggle,
   onRemove,
@@ -144,7 +146,7 @@ const ActionPanel: React.FC<Props> = ({
                 <SettingsContent>
                   {Object.keys(panelSettings).map((fieldId, index) => {
                     const field = panelSettings[fieldId];
-                    const groupId = "panel";
+                    const groupId = overrideGroupId || "panel";
                     return (
                       <FieldComponent
                         key={index}
