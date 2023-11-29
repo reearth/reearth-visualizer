@@ -1,18 +1,16 @@
 import { isBuiltinWidget } from "../Widget/builtin";
 
+import { WAS_SECTIONS, WAS_AREAS } from "./constants";
 import { InternalWidget, WidgetZone } from "./types";
-
-const sections = ["left", "center", "right"] as const;
-const areas = ["top", "middle", "bottom"] as const;
 
 export const filterSections = (
   zone?: WidgetZone,
   invisibleWidgetIDs?: string[],
-  cb?: (s: (typeof sections)[number]) => void,
+  cb?: (s: (typeof WAS_SECTIONS)[number]) => void,
 ) => {
-  return sections.filter(
+  return WAS_SECTIONS.filter(
     s =>
-      areas.filter(a => zone?.[s]?.[a]?.widgets?.some(w => !invisibleWidgetIDs?.includes(w.id)))
+      WAS_AREAS.filter(a => zone?.[s]?.[a]?.widgets?.some(w => !invisibleWidgetIDs?.includes(w.id)))
         .length > 0 || cb?.(s),
   );
 };
