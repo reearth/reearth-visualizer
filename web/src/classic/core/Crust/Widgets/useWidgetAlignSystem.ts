@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 
-import { isBuiltInVisible } from "./WidgetAlignSystem/utils";
+import { isInvisibleBuiltin } from "./WidgetAlignSystem/utils";
 
 import {
   type WidgetAlignSystem,
@@ -36,7 +36,7 @@ export default ({
       sections.forEach(section => {
         areas.forEach(area => {
           overriddenAlignSystem?.[zone]?.[section]?.[area]?.widgets?.forEach(w => {
-            if (isBuiltInVisible(w, isMobile)) widgetIds.push(w.id);
+            if (isInvisibleBuiltin(w, isMobile)) widgetIds.push(w.id);
           });
         });
       });

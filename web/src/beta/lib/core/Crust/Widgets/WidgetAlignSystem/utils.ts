@@ -17,13 +17,15 @@ export const filterSections = (
   );
 };
 
-export const isBuiltInVisible = (widget: InternalWidget, isMobile?: boolean) => {
+export const isInvisibleBuiltin = (widget: InternalWidget, isMobile?: boolean) => {
   const defaultVisible = widget.property?.default?.visible;
   return (
     isBuiltinWidget(`${widget.pluginId}/${widget.extensionId}`) &&
-    (!defaultVisible ||
+    !(
+      !defaultVisible ||
       defaultVisible === "always" ||
       (defaultVisible === "desktop" && !isMobile) ||
-      (defaultVisible === "mobile" && !!isMobile))
+      (defaultVisible === "mobile" && !!isMobile)
+    )
   );
 };

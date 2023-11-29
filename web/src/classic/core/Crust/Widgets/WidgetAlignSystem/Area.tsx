@@ -14,7 +14,7 @@ import type {
   WidgetProps,
   InternalWidget,
 } from "./types";
-import { isBuiltInVisible } from "./utils";
+import { isInvisibleBuiltin } from "./utils";
 
 export type WidgetAreaType = {
   zone: "inner" | "outer";
@@ -140,7 +140,7 @@ export default function Area({
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
       {widgets
-        ?.filter(widget => isBuiltInVisible(widget, isMobile))
+        ?.filter(widget => !isInvisibleBuiltin(widget, isMobile))
         ?.map((widget, i) => {
           const constraint =
             widget.pluginId && widget.extensionId
