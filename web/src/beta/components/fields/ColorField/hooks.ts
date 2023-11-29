@@ -104,13 +104,6 @@ export default ({ value, onChange }: Params) => {
   }, [value]);
 
   useEffect(() => {
-    if (!value) return;
-    if (rgba && tinycolor(rgba).toHex8String() !== value) {
-      setColor(tinycolor(rgba).toHex8String());
-    }
-  }, [rgba]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
     const handleClickOutside = (e: MouseEvent | TouchEvent) => {
       if (open && wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         if (colorState != value && !open) {
