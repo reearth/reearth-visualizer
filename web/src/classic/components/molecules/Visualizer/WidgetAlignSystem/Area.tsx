@@ -1,5 +1,5 @@
 import { omit, pick } from "lodash-es";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { GridArea, GridItem } from "react-align";
 import { useDeepCompareEffect } from "react-use";
 
@@ -36,7 +36,6 @@ type Props = {
   sceneProperty?: any;
   viewport?: Viewport;
   onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
-  onVisibilityChange?: () => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
 } & PluginCommonProps;
@@ -68,10 +67,6 @@ export default function Area({
     [align, area, section, zone],
   );
   const { overriddenExtended, handleExtend } = useOverriddenExtended({ layout, widgets });
-
-  useEffect(() => {
-    console.log(widgets?.filter(widget => !isInvisibleBuiltin(widget, viewport?.isMobile)));
-  }, [widgets, viewport?.isMobile]);
 
   return !(zone === "inner" && section === "center" && area === "middle") ? (
     <GridArea

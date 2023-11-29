@@ -60,7 +60,6 @@ export type WidgetProps = {
   layout?: WidgetLayout;
   onExtend?: (id: string, extended: boolean | undefined) => void;
   onWidgetMove?: (widgetId: string, options: WidgetLocationOptions) => void;
-  onVisibilityChange: (widgetId: string, v: boolean) => void;
 };
 
 export default function Widgets({
@@ -80,11 +79,10 @@ export default function Widgets({
   onWidgetLayoutUpdate,
   onWidgetAreaSelect,
 }: Props): JSX.Element | null {
-  const { overriddenAlignSystem, moveWidget, onVisibilityChange, invisibleWidgetIDs } =
-    useWidgetAlignSystem({
-      alignSystem,
-      isMobile,
-    });
+  const { overriddenAlignSystem, moveWidget, invisibleWidgetIDs } = useWidgetAlignSystem({
+    alignSystem,
+    isMobile,
+  });
 
   const renderWidgetInternal = useCallback(
     ({ editing, extended, layout, widget, onExtend }: WasWidgetProps) => (
@@ -107,24 +105,12 @@ export default function Widgets({
             layout,
             onExtend,
             onWidgetMove: moveWidget,
-            onVisibilityChange,
           })
         }
-        onVisibilityChange={onVisibilityChange}
         onExtend={onExtend}
       />
     ),
-    [
-      theme,
-      isEditable,
-      inEditor,
-      isBuilt,
-      isMobile,
-      context,
-      onVisibilityChange,
-      renderWidget,
-      moveWidget,
-    ],
+    [theme, isEditable, inEditor, isBuilt, isMobile, context, renderWidget, moveWidget],
   );
 
   return (

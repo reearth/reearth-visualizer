@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 
+import { WAS_SECTIONS, WAS_AREAS, WAS_ZONES } from "./WidgetAlignSystem/constants";
 import { isInvisibleBuiltin } from "./WidgetAlignSystem/utils";
 
 import {
@@ -10,10 +11,6 @@ import {
   type WidgetSection,
   type WidgetZone,
 } from ".";
-
-const sections: (keyof WidgetZone)[] = ["left", "center", "right"];
-const areas: (keyof WidgetSection)[] = ["top", "middle", "bottom"];
-const zones: (keyof WidgetAlignSystem)[] = ["outer", "inner"];
 
 export default ({
   alignSystem,
@@ -30,11 +27,11 @@ export default ({
   //       The reason why we use invisible list is prevent initializing cost.
   const [invisibleWidgetIDs, setInvisibleWidgetIDs] = useState<string[]>([]);
 
-  const onVisibilityChange = useCallback(() => {
+  useEffect(() => {
     const widgetIds: string[] = [];
-    zones.forEach(zone => {
-      sections.forEach(section => {
-        areas.forEach(area => {
+    WAS_ZONES.forEach(zone => {
+      WAS_SECTIONS.forEach(section => {
+        WAS_AREAS.forEach(area => {
           overriddenAlignSystem?.[zone]?.[section]?.[area]?.widgets?.forEach(w => {
             if (isInvisibleBuiltin(w, isMobile)) widgetIds.push(w.id);
           });
@@ -45,15 +42,11 @@ export default ({
     setInvisibleWidgetIDs(widgetIds);
   }, [isMobile, overriddenAlignSystem]);
 
-  useEffect(() => {
-    onVisibilityChange();
-  }, [onVisibilityChange]);
-
   const moveWidget = useCallback((widgetId: string, options: WidgetLocationOptions) => {
     if (
-      !zones.includes(options.zone) ||
-      !sections.includes(options.section) ||
-      !areas.includes(options.area) ||
+      !WAS_ZONES.includes(options.zone) ||
+      !WAS_SECTIONS.includes(options.section) ||
+      !WAS_AREAS.includes(options.area) ||
       (options.section === "center" && options.area === "middle")
     )
       return;
@@ -151,8 +144,7 @@ export default ({
 
   return {
     overriddenAlignSystem,
-    moveWidget,
     invisibleWidgetIDs,
-    onVisibilityChange,
+    moveWidget,
   };
 };

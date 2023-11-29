@@ -8,7 +8,6 @@ import { metricsSizes } from "@reearth/classic/theme";
 import { styled, mask } from "@reearth/services/theme";
 
 import type { Camera, FlyToDestination, Theme } from "../types";
-import { Visible } from "../useVisible";
 
 export type Button = {
   id: string;
@@ -20,7 +19,7 @@ export type Button = {
   buttonColor?: string;
   buttonBgcolor?: string;
   buttonCamera?: Camera;
-  visible: Visible;
+  visible?: "always" | "desktop" | "mobile";
 };
 
 export type MenuItem = {

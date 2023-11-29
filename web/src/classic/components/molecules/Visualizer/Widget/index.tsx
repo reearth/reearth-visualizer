@@ -28,7 +28,6 @@ export type Props<PP = any, SP = any> = {
   editing?: boolean;
   viewport?: Viewport;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-  onVisibilityChange?: () => void;
 } & PluginCommonProps;
 
 export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget"> & {

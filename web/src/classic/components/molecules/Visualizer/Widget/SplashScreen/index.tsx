@@ -7,7 +7,6 @@ import { styled } from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
 import { useContext } from "../../Plugin";
-import { useVisible } from "../useVisible";
 
 export type Props = WidgetProps<Property>;
 
@@ -30,7 +29,7 @@ export type Property = {
   }[];
 };
 
-const SplashScreen = ({ widget, inEditor, onVisibilityChange }: Props): JSX.Element | null => {
+const SplashScreen = ({ widget, inEditor }: Props): JSX.Element | null => {
   const ctx = useContext();
   const { property } = widget ?? {};
   const {
@@ -45,11 +44,6 @@ const SplashScreen = ({ widget, inEditor, onVisibilityChange }: Props): JSX.Elem
     overlayTitle: title,
   } = property?.overlay ?? {};
   const camera = (property as Property | undefined)?.camera?.filter(c => !!c.cameraPosition);
-  useVisible({
-    visible: widget.property?.default?.visible,
-    onVisibilityChange,
-  });
-
   const [cameraSequence, setCameraSequence] = useState(0);
   const [delayedCameraSequence, setDelayedCameraSequence] = useState(-1);
   const currentCamera = camera?.[cameraSequence];

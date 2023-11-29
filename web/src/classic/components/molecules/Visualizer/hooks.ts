@@ -218,11 +218,10 @@ export default ({
     }
   }, [isPublished, enableGA, trackingId]);
 
-  const { overriddenAlignSystem, moveWidget, invisibleWidgetIDs, onVisibilityChange } =
-    useWidgetAlignSystem({
-      alignSystem,
-      isMobile: viewport.isMobile,
-    });
+  const { overriddenAlignSystem, moveWidget, invisibleWidgetIDs } = useWidgetAlignSystem({
+    alignSystem,
+    isMobile: viewport.isMobile,
+  });
 
   const pluginInstances = usePluginInstances({
     alignSystem,
@@ -304,7 +303,6 @@ export default ({
     viewport,
     overriddenAlignSystem,
     invisibleWidgetIDs,
-    onVisibilityChange,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,

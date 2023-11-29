@@ -30,7 +30,6 @@ export type Props = {
   isMobile?: boolean;
   context?: Context;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-  onVisibilityChange?: () => void;
   renderWidget?: (w: Widget) => ReactNode;
 };
 

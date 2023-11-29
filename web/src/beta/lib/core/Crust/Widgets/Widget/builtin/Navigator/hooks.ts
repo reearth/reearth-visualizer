@@ -1,20 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 import type { Camera, FlyToDestination, Widget } from "../../types";
-import { useVisible } from "../../useVisible";
 
 import { degreeToRadian, radianToDegree } from "./UI";
 
 export default function ({
   camera,
   initialCamera,
-  widget,
   onZoomIn,
   onZoomOut,
   onCameraOrbit,
   onCameraRotateRight,
   onFlyTo,
-  onVisibilityChange,
 }: {
   camera?: Camera;
   initialCamera?: Camera;
@@ -25,16 +22,11 @@ export default function ({
   onCameraOrbit?: (orbit: number) => void;
   onCameraRotateRight?: (radian: number) => void;
   onFlyTo?: (target: string | FlyToDestination, options?: { duration?: number }) => void;
-  onVisibilityChange?: () => void;
 }) {
   const [degree, setDegree] = useState(0);
   const [isHelpOpened, setIsHelpOpened] = useState(false);
   const orbitRadianRef = useRef(0);
   const isMovingOrbit = useRef(false);
-  useVisible({
-    visible: widget.property?.default?.visible,
-    onVisibilityChange,
-  });
 
   const handleOnRotate = useCallback(
     (deg: number) => {

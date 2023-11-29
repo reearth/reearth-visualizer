@@ -9,7 +9,6 @@ import { Camera as CameraValue } from "@reearth/classic/util/value";
 import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
-import { useVisible } from "../useVisible";
 
 import useHooks, { Story as StoryType } from "./hooks";
 
@@ -26,12 +25,7 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({ widget, sceneProperty, onVisibilityChange }: Props): JSX.Element | null => {
-  useVisible({
-    visible: widget.property?.default?.visible,
-    onVisibilityChange,
-  });
-
+const Storytelling = ({ widget, sceneProperty }: Props): JSX.Element | null => {
   const publishedTheme = usePublishTheme(sceneProperty.theme);
 
   const isExtraSmallWindow = useMedia("(max-width: 420px)");

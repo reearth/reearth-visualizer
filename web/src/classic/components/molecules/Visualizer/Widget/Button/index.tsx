@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
-import { useVisible } from "../useVisible";
 
 import MenuButton, { Button as ButtonType, MenuItem as MenuItemType } from "./MenuButton";
 
@@ -13,13 +12,8 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const Menu = ({ widget, sceneProperty, onVisibilityChange }: Props): JSX.Element | null => {
+const Menu = ({ widget, sceneProperty }: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = (widget.property as Property) ?? {};
-
-  useVisible({
-    visible: widget.property?.default?.visible,
-    onVisibilityChange,
-  });
 
   return (
     <Wrapper>
