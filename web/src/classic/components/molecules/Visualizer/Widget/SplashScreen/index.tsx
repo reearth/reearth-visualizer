@@ -30,12 +30,7 @@ export type Property = {
   }[];
 };
 
-const SplashScreen = ({
-  widget,
-  inEditor,
-  viewport,
-  onVisibilityChange,
-}: Props): JSX.Element | null => {
+const SplashScreen = ({ widget, inEditor, onVisibilityChange }: Props): JSX.Element | null => {
   const ctx = useContext();
   const { property } = widget ?? {};
   const {
@@ -50,9 +45,8 @@ const SplashScreen = ({
     overlayTitle: title,
   } = property?.overlay ?? {};
   const camera = (property as Property | undefined)?.camera?.filter(c => !!c.cameraPosition);
-  const visible = useVisible({
+  useVisible({
     visible: widget.property?.default?.visible,
-    isMobile: viewport?.isMobile,
     onVisibilityChange,
   });
 
@@ -106,7 +100,7 @@ const SplashScreen = ({
     return () => clearTimeout(t);
   }, [delayedCurrentCamera, inEditor]);
 
-  return !visible || state === "unmounted" ? null : (
+  return state === "unmounted" ? null : (
     <Wrapper state={state} bgcolor={bgcolor} duration={transitionDuration}>
       <Image src={image} alt={title} width={imageW} height={imageH} />
     </Wrapper>

@@ -13,21 +13,15 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const Menu = ({
-  widget,
-  sceneProperty,
-  viewport,
-  onVisibilityChange,
-}: Props): JSX.Element | null => {
+const Menu = ({ widget, sceneProperty, onVisibilityChange }: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = (widget.property as Property) ?? {};
 
-  const visible = useVisible({
+  useVisible({
     visible: widget.property?.default?.visible,
-    isMobile: viewport?.isMobile,
     onVisibilityChange,
   });
 
-  return visible ? (
+  return (
     <Wrapper>
       <MenuButton
         sceneProperty={sceneProperty}
@@ -37,7 +31,7 @@ const Menu = ({
         menuItems={menuItems}
       />
     </Wrapper>
-  ) : null;
+  );
 };
 
 const Wrapper = styled.div`

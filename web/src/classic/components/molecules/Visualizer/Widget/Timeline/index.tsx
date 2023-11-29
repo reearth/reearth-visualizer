@@ -11,7 +11,6 @@ export type Props = WidgetProps;
 const Timeline = ({
   widget,
   sceneProperty,
-  viewport,
   onVisibilityChange,
   onExtend,
 }: Props): JSX.Element | null => {
@@ -21,13 +20,12 @@ const Timeline = ({
   });
   const theme = usePublishTheme(sceneProperty?.theme);
 
-  const visible = useVisible({
+  useVisible({
     visible: widget.property?.default?.visible,
-    isMobile: viewport?.isMobile,
     onVisibilityChange,
   });
 
-  return visible ? (
+  return (
     <Widget extended={!!widget?.extended?.horizontally} opened={isOpened}>
       <TimelineUI
         isOpened={isOpened}
@@ -38,7 +36,7 @@ const Timeline = ({
         {...events}
       />
     </Widget>
-  ) : null;
+  );
 };
 
 const Widget = styled.div<{

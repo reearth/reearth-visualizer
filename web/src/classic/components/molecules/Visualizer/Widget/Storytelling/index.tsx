@@ -26,15 +26,9 @@ export type Property = {
   stories?: StoryType[];
 };
 
-const Storytelling = ({
-  widget,
-  sceneProperty,
-  viewport,
-  onVisibilityChange,
-}: Props): JSX.Element | null => {
-  const visible = useVisible({
+const Storytelling = ({ widget, sceneProperty, onVisibilityChange }: Props): JSX.Element | null => {
+  useVisible({
     visible: widget.property?.default?.visible,
-    isMobile: viewport?.isMobile,
     onVisibilityChange,
   });
 
@@ -60,7 +54,7 @@ const Storytelling = ({
     openMenu(false);
   });
 
-  return visible ? (
+  return (
     <>
       <Menu
         publishedTheme={publishedTheme}
@@ -140,7 +134,7 @@ const Storytelling = ({
         </ArrowButton>
       </Widget>
     </>
-  ) : null;
+  );
 };
 
 const Widget = styled.div<{
