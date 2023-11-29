@@ -32,17 +32,19 @@ const IndicatorSection: React.FC<Props> = ({
     [currentPageNumber, pageNumber],
   );
 
+  // const isLast = useMemo(() => pageNumber === totalPages, [pageNumber, totalPages]);
+
   return (
     <Wrapper onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseOut}>
-      <Popover.Provider open={isHovered} offset={0}>
+      <Popover.Provider open={isHovered} placement="bottom" offset={0} shift={{ padding: 0 }}>
         <Popover.Trigger asChild>
           <Indicator highlighted={isHighlighted} />
         </Popover.Trigger>
         <Popover.Content attachToRoot>
           <PageNameWrapper isHighlighted={isHighlighted}>
-            <Text size="footnote" customColor>
+            <StyledText size="footnote" customColor>
               {title}
-            </Text>
+            </StyledText>
           </PageNameWrapper>
         </Popover.Content>
       </Popover.Provider>
@@ -76,5 +78,11 @@ const PageNameWrapper = styled.div<{ isHighlighted: boolean }>`
   background-color: #78a9ff;
   padding: 4px 8px;
   ${({ isHighlighted }) => isHighlighted && "background-color: #4589ff;"}
+  max-width: 255px;
+`;
+
+const StyledText = styled(Text)`
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 `;
