@@ -2323,11 +2323,10 @@ extensions:
               ui: color
             - id: padding
               type: spacing
-              title: Spacing settings
+              title: Padding
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 0, bottom: 0, left: 0, right: 0 }  
         - id: cameraAnimation
           title: Camera Animation
           fields:

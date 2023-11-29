@@ -1153,6 +1153,8 @@ extensions:
             title: タイトル
           color:
             title: 色
+          padding:
+            title: 余白
       cameraAnimation:
         title: カメラアニメーション
         fields:
