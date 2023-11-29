@@ -107,6 +107,7 @@ export const StoryPanel = memo(
             {!!pageInfo && (
               <PageIndicator
                 currentPage={pageInfo.currentPage}
+                pageTitles={pageInfo.pageTitles}
                 maxPage={pageInfo.maxPage}
                 onPageChange={pageInfo.onPageChange}
               />

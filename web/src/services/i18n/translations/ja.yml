@@ -24,7 +24,7 @@ Time: 時間
 Time Zone: 時間帯
 set: 設定
 Remove: 削除
-Add Item: アイテムを追加
+Add: 追加
 Settings: 設定
 Options: オプション
 Please choose an option: オプションを選んでください
@@ -64,15 +64,15 @@ Input data here: データ入力
 Asset: アセット
 Prioritize Performance: パフォーマンスを優先
 Add to Layer: レイヤー追加
-Point coordinates: ''
-Latitude Field: ''
-Longitude Field: ''
-Data Source Manager: ''
-Common: ''
-Delimited Text: ''
-WMS: ''
-Vector Tile: ''
-3D Tiles: ''
+Point coordinates: 座標
+Latitude Field: 緯度
+Longitude Field: 経度
+Data Source Manager: データソースマネージャー
+Common: Common
+CSV: CSV
+WMS: WMS
+Vector Tile: Vector Tile
+3D Tiles: 3D Tiles
 Choose layer to add: レイヤーの選択
 Layer of the data source you want to add.: 追加したいデータソースのレイヤーを選択
 layer name: レイヤー名
@@ -85,10 +85,10 @@ Delete: 削除
 Main: メイン
 Tiles: タイル
 Terrain: 地形
-Globe: ''
-Sky: ''
+Globe: 地球
+Sky: 空
 Camera: カメラ
-Unknown scene setting: ''
+Unknown scene setting: 不明なシーン設定
 Scene: シーン
 Outline: アウトライン
 Add Layer from Resource: リソースからレイヤーを追加
@@ -360,7 +360,6 @@ Export: エクスポート
 Preview: プレビュー
 Layer selection: レイヤーを選択
 Selectable Layers: 選択可能なレイヤー
-Add: 追加
 Stories: ストーリー
 Delete Selected Layer: 選択中のレイヤーを削除
 Create New Folder: 新規フォルダ作成
