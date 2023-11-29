@@ -123,6 +123,7 @@ export const FieldComponent = ({
       <ColorField
         name={field?.title}
         description={field?.description}
+        value={field?.value}
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
     ) : field?.ui === "selection" || field?.choices ? (
