@@ -1,24 +1,34 @@
-import { FC, useMemo } from "react";
-
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import IndicatorSection from "./IndicatorSection";
 
 type Props = {
   currentPage: number;
+  pageTitles?: string[];
   maxPage: number;
   onPageChange: (page: number) => void;
 };
 
-const StoryPageIndicator: FC<Props> = ({ currentPage, maxPage, onPageChange }) => {
-  const widthPercentage = useMemo(() => {
-    const onePageWidth = 100 / maxPage;
-    const base = currentPage * onePageWidth;
-    return base;
-  }, [currentPage, maxPage]);
-
+const StoryPageIndicator: React.FC<Props> = ({
+  currentPage,
+  pageTitles,
+  maxPage,
+  onPageChange,
+}) => {
+  const t = useT();
   return (
-    <Wrapper widthPercentage={widthPercentage}>
+    <Wrapper>
       {[...Array(maxPage)].map((_, i) => {
-        return <Indicator key={i} type="button" onClick={() => onPageChange(i + 1)} />;
+        return (
+          <IndicatorSection
+            key={i}
+            pageNumber={i + 1}
+            currentPageNumber={currentPage}
+            title={pageTitles?.[i] ?? t("Untitled")}
+            onPageChange={onPageChange}
+          />
+        );
       })}
     </Wrapper>
   );
@@ -26,29 +36,9 @@ const StoryPageIndicator: FC<Props> = ({ currentPage, maxPage, onPageChange }) =
 
 export default StoryPageIndicator;
 
-const Wrapper = styled.div<{ widthPercentage: number }>`
-  position: relative;
+const Wrapper = styled.div`
   display: flex;
   background-color: #78a9ff;
-  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyPage.indicator.unselected};
-
-  :after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: #4589ff;
-    transition: width 0.2s ease-out;
-    width: ${({ widthPercentage }) => widthPercentage}%;
-  }
-`;
-
-const Indicator = styled.button`
-  position: relative;
-  flex: 1;
   height: 8px;
-  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyPage.indicator.selected};
-
-  :not(:first-of-type) {
-    border-left: 1px solid #ffffff;
   }
 `;

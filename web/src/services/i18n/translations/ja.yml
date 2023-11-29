@@ -24,7 +24,7 @@ Time: 時間
 Time Zone: 時間帯
 set: 設定
 Remove: 削除
-Add Item: アイテムを追加
+Add: 追加
 Settings: 設定
 Options: オプション
 Please choose an option: オプションを選んでください
@@ -360,7 +360,6 @@ Export: エクスポート
 Preview: プレビュー
 Layer selection: レイヤーを選択
 Selectable Layers: 選択可能なレイヤー
-Add: 追加
 Stories: ストーリー
 Delete Selected Layer: 選択中のレイヤーを削除
 Create New Folder: 新規フォルダ作成
