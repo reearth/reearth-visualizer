@@ -175,7 +175,7 @@ extensions:
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys Lighting.
+              description: This property will support the globe receive an Entity's Lighting.
         - id: globeShadow
           collection: globe
           title: Globe Shadow
@@ -184,7 +184,7 @@ extensions:
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys shadows.
+              description: This property will support the globe receive an Entity's shadows.
         - id: globeAtmosphere
           collection: globe
           title: Globe Atmosphere
