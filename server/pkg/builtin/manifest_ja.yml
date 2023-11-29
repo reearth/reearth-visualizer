@@ -78,19 +78,19 @@ extensions:
         fields:
           globeLighting:
             title: 有効化
-            description: This property will support the globe receive Entitys lighting.
+            description: このプロパティは地球上の地物にあたる明るさを調整します。
       globeShadow:
         title: 陰影
         fields:
           globeShadow:
             title: 有効化
-            description: This property will support the globe receive Entitys shadows.
+            description: このプロパティは地球上の地物の陰影を調整します。
       globeAtmosphere:
         title: 大気
         fields:
           globeAtmosphere:
             title: 有効化
-            description: This setting handles the so-called atmosphere effect of Earth.
+            description: このプロパティは地球上の大気の効果を調整します。
           globeAtmosphereIntensity:
             title: 光の強さ
             description: "選択したタイルマップの光の強さを変更します。 最小値: 0 最大値: 30"
