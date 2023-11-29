@@ -23,11 +23,11 @@ extensions:
               defaultValue: 3d
               choices:
                 - key: 3d
-                  label: Scene 3D
+                  label: 3D
                 - key: 2d
-                  label: Scene 2D
+                  label: 2D
                 - key: columbus
-                  label: Columbus View
+                  label: 2.5D (Columbus View)
             - id: ion
               type: string
               title: Cesium Ion API access token
@@ -175,7 +175,7 @@ extensions:
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys Lighting.
+              description: This property will support the globe receive an Entity's Lighting.
         - id: globeShadow
           collection: globe
           title: Globe Shadow
@@ -184,7 +184,7 @@ extensions:
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys shadows.
+              description: This property will support the globe receive an Entity's shadows.
         - id: globeAtmosphere
           collection: globe
           title: Globe Atmosphere
@@ -2323,11 +2323,10 @@ extensions:
               ui: color
             - id: padding
               type: spacing
-              title: Spacing settings
+              title: Padding
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 0, bottom: 0, left: 0, right: 0 }  
         - id: cameraAnimation
           title: Camera Animation
           fields:

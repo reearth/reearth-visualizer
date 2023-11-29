@@ -104,6 +104,7 @@ const BlockWrapper: React.FC<Props> = ({
         panelSettings={panelSettings}
         editMode={editMode}
         isEditable={isEditable}
+        overrideGroupId={groupId === "title" ? groupId : undefined}
         setEditMode={setEditMode}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
@@ -123,11 +124,11 @@ const BlockWrapper: React.FC<Props> = ({
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
-            {Object.keys(defaultSettings).map(fieldId => {
+            {Object.keys(defaultSettings).map((fieldId, idx) => {
               const field = defaultSettings[fieldId];
               return (
                 <FieldComponent
-                  key={groupId + propertyId}
+                  key={groupId + propertyId + idx}
                   propertyId={propertyId}
                   groupId={groupId}
                   fieldId={fieldId}
