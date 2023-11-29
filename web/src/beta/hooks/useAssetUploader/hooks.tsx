@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import useFileInput from "use-file-input";
 
+import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
 import { useAssetsFetcher } from "@reearth/services/api";
 
 import { FILE_FORMATS, IMAGE_FORMATS } from "../../features/Assets/constants";
@@ -9,10 +10,12 @@ export default ({
   workspaceId,
   onAssetSelect,
   assetType,
+  fileFormat,
 }: {
   workspaceId?: string;
   onAssetSelect?: (inputValue?: string, name?: string) => void;
   assetType?: string;
+  fileFormat?: AcceptedFileFormat;
 }) => {
   const { useCreateAssets } = useAssetsFetcher();
 
@@ -20,9 +23,11 @@ export default ({
     return assetType === "image"
       ? IMAGE_FORMATS
       : assetType === "file"
-      ? FILE_FORMATS
+      ? fileFormat
+        ? `.${fileFormat?.toLocaleLowerCase()}`
+        : FILE_FORMATS
       : IMAGE_FORMATS + "," + FILE_FORMATS;
-  }, [assetType]);
+  }, [assetType, fileFormat]);
 
   const handleAssetsCreate = useCallback(
     async (files?: FileList) => {
