@@ -98,7 +98,7 @@ const PropertyList: React.FC<Props> = ({
           onClick={handleAddPropertyItem}
           icon="plus"
           buttonType="secondary"
-          text={t("Add Item")}
+          text={t("Add")}
           size="medium"
         />
       </ButtonGroup>
