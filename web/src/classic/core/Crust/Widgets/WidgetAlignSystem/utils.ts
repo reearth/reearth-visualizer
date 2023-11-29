@@ -12,7 +12,7 @@ export const filterSections = (
 ) => {
   return sections.filter(
     s =>
-      areas.filter(a => zone?.[s]?.[a]?.widgets?.find(w => !invisibleWidgetIDs?.includes(w.id)))
+      areas.filter(a => zone?.[s]?.[a]?.widgets?.some(w => !invisibleWidgetIDs?.includes(w.id)))
         .length > 0 || cb?.(s),
   );
 };

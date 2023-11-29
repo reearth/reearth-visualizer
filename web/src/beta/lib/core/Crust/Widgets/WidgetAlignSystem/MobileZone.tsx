@@ -6,6 +6,7 @@ import Slide from "@reearth/beta/components/Slide";
 import { styled } from "@reearth/services/theme";
 
 import Area, { WidgetAreaType } from "./Area";
+import { WAS_AREAS } from "./constants";
 import type { WidgetZone, WidgetLayoutConstraint, Theme, WidgetProps } from "./types";
 import { filterSections } from "./utils";
 
@@ -22,8 +23,6 @@ export type Props = {
   renderWidget?: (props: WidgetProps) => ReactNode;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
 };
-
-const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
   selectedWidgetArea,
@@ -55,7 +54,7 @@ export default function MobileZone({
       <StyledSlide pos={pos} filteredSections={filteredSections.length > 1}>
         {filteredSections.map(s => (
           <GridSection key={s} stretch>
-            {areas.map(a =>
+            {WAS_AREAS.map(a =>
               s === "center" && children && a === "middle" ? (
                 <div key={a} style={{ display: "flex", flex: "1 0 auto" }}>
                   {children}

@@ -122,25 +122,39 @@ export default ({
   // NOTE: This is invisible list of widget.
   //       The reason why we use invisible list is prevent initializing cost.
   const [invisibleWidgetIDs, setInvisibleWidgetIDs] = useState<string[]>([]);
+  const [invisiblePluginWidgetIDs, setInvisiblePluginWidgetIDs] = useState<string[]>([]);
 
   useEffect(() => {
-    const widgetIds: string[] = [];
+    const invisibleBuiltinWidgetIDs: string[] = [];
     WAS_ZONES.forEach(zone => {
       WAS_SECTIONS.forEach(section => {
         WAS_AREAS.forEach(area => {
           overriddenAlignSystem?.[zone]?.[section]?.[area]?.widgets?.forEach(w => {
-            if (isInvisibleBuiltin(w, isMobile)) widgetIds.push(w.id);
+            if (isInvisibleBuiltin(w, isMobile)) invisibleBuiltinWidgetIDs.push(w.id);
           });
         });
       });
     });
 
-    setInvisibleWidgetIDs(widgetIds);
-  }, [isMobile, overriddenAlignSystem]);
+    setInvisibleWidgetIDs([...invisibleBuiltinWidgetIDs, ...invisiblePluginWidgetIDs]);
+  }, [isMobile, overriddenAlignSystem, invisiblePluginWidgetIDs]);
+
+  const onPluginWidgetVisibilityChange = useCallback((widgetId: string, v: boolean) => {
+    setInvisiblePluginWidgetIDs(a => {
+      if (!a.includes(widgetId) && !v) {
+        return [...a, widgetId];
+      }
+      if (a.includes(widgetId) && v) {
+        return a.filter(i => i !== widgetId);
+      }
+      return a;
+    });
+  }, []);
 
   return {
     overriddenAlignSystem,
-    moveWidget,
     invisibleWidgetIDs,
+    moveWidget,
+    onPluginWidgetVisibilityChange,
   };
 };

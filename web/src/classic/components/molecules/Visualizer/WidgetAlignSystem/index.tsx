@@ -51,6 +51,7 @@ export type Props = {
   onWidgetAlignSystemUpdate?: (location: Location, align: Alignment) => void;
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
+  onVisibilityChange?: (widgetId: string, visible: boolean) => void;
 } & PluginCommonProps;
 
 const WidgetAlignSystem: React.FC<Props> = ({

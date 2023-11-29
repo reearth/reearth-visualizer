@@ -138,6 +138,7 @@ export default function Visualizer({
     overriddenAlignSystem,
     viewport,
     invisibleWidgetIDs,
+    onPluginWidgetVisibilityChange,
     onPluginModalShow,
     onPluginPopupShow,
     isLayerHidden,
@@ -202,6 +203,7 @@ export default function Visualizer({
               layoutConstraint={widgets.layoutConstraint}
               onWidgetAlignAreaSelect={onWidgetAlignAreaSelect}
               invisibleWidgetIDs={invisibleWidgetIDs}
+              onVisibilityChange={onPluginWidgetVisibilityChange}
             />
           )}
           <Engine
