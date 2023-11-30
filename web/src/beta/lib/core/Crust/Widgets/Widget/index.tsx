@@ -100,7 +100,7 @@ export default function WidgetComponent({
   if (!w) return null;
 
   const builtinWidgetId = `${w.pluginId}/${w.extensionId}`;
-  const Builtin = isBuiltinWidget(builtinWidgetId) ? builtin[builtinWidgetId] : undefined;
+  const Builtin = isBuiltinWidget(builtinWidgetId) ? builtin()[builtinWidgetId] : undefined;
 
   return Builtin ? (
     <div
