@@ -1283,3 +1283,6 @@ extensions:
             title: 背景色
           showLayers:
             title: 見えるレイヤー
+  nextPageStoryBlock:
+    name: 次ページボタン
+    description: ストーリーテリングの次ページに移動するボタンブロック
