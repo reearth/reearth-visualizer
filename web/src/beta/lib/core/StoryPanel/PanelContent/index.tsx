@@ -10,7 +10,6 @@ import useHooks, { STORY_PANEL_CONTENT_ELEMENT_ID, type StoryPage as StoryPageTy
 
 export type Props = {
   pages?: StoryPageType[];
-  currentPageId?: string;
   selectedPageId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
@@ -30,6 +29,7 @@ export type Props = {
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
+  onBlockDoubleClick?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -54,7 +54,6 @@ export type Props = {
 
 const StoryContent: React.FC<Props> = ({
   pages,
-  currentPageId,
   selectedPageId,
   installableStoryBlocks,
   selectedStoryBlockId,
@@ -68,19 +67,16 @@ const StoryContent: React.FC<Props> = ({
   onBlockCreate,
   onBlockDelete,
   onBlockSelect,
+  onBlockDoubleClick,
   onBlockMove,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { pageGap, handleBlockCreate, handleBlockDelete } = useHooks({
-    pages,
-    currentPageId,
-    isAutoScrolling,
+  const { pageGap, scrollTimeoutRef, handleBlockCreate, handleBlockDelete } = useHooks({
     onBlockCreate,
     onBlockDelete,
-    onCurrentPageChange,
   });
 
   return (
@@ -97,6 +93,9 @@ const StoryContent: React.FC<Props> = ({
             selectedStoryBlockId={selectedStoryBlockId}
             showPageSettings={showPageSettings}
             isEditable={isEditable}
+            scrollTimeoutRef={scrollTimeoutRef}
+            isAutoScrolling={isAutoScrolling}
+            onCurrentPageChange={onCurrentPageChange}
             onPageSettingsToggle={onPageSettingsToggle}
             onPageSelect={onPageSelect}
             onBlockCreate={handleBlockCreate(p.id)}
@@ -107,6 +106,7 @@ const StoryContent: React.FC<Props> = ({
             onPropertyItemAdd={onPropertyItemAdd}
             onPropertyItemMove={onPropertyItemMove}
             onPropertyItemDelete={onPropertyItemDelete}
+            onBlockDoubleClick={onBlockDoubleClick}
           />
           <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
         </Fragment>

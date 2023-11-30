@@ -123,6 +123,10 @@ export type CommonFeature<T extends "feature" | "computedFeature"> = {
   geometry?: Geometry;
   interval?: TimeInterval;
   properties?: any;
+  // Map engine specific information.
+  metaData?: {
+    description?: string;
+  };
   range?: DataRange;
 };
 

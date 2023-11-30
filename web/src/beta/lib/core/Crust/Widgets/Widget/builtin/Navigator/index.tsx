@@ -1,23 +1,14 @@
 import type { ComponentProps as WidgetProps } from "../..";
-import { Visible } from "../../useVisible";
 
 import useHooks from "./hooks";
 import NavigatorUI from "./UI";
 
-export type Props = WidgetProps<Property>;
-
-export type Property = {
-  default: {
-    visible: Visible;
-  };
-};
+export type Props = WidgetProps;
 
 const Navigator = ({
   theme,
-  editing,
   widget,
   isMobile,
-  onVisibilityChange,
   context: {
     camera,
     initialCamera,
@@ -28,7 +19,7 @@ const Navigator = ({
     onZoomOut,
   } = {},
 }: Props): JSX.Element | null => {
-  const { degree, visible, events } = useHooks({
+  const { degree, events } = useHooks({
     camera,
     initialCamera,
     widget,
@@ -38,12 +29,9 @@ const Navigator = ({
     onFlyTo,
     onZoomIn,
     onZoomOut,
-    onVisibilityChange,
   });
 
-  return visible ? (
-    <NavigatorUI theme={theme} degree={degree} editing={!!editing} {...events} />
-  ) : null;
+  return <NavigatorUI theme={theme} degree={degree} {...events} />;
 };
 
 export default Navigator;

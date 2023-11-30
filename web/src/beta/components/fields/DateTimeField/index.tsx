@@ -37,60 +37,47 @@ const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) 
 
   return (
     <Property name={name} description={description}>
-      <Wrapper>
-        <Popover.Provider open={!!open} placement="bottom-start">
-          <Popover.Trigger asChild>
-            <InputWrapper disabled={true}>
-              <Input dataTimeSet={!!dateTime}>
-                <Text size="footnote" customColor>
-                  {dateTime ? dateTime : "YYYY-MM-DDThh:mm:ss±hh:mm"}
-                </Text>
-                <DeleteIcon
-                  icon="bin"
-                  size={10}
-                  disabled={!dateTime}
-                  onClick={handleRemoveSetting}
-                />
-              </Input>
-              <TriggerButton
-                buttonType="secondary"
-                text={t("set")}
-                icon="clock"
-                size="small"
-                iconPosition="left"
-                onClick={() => handlePopOver()}
-              />
-            </InputWrapper>
-          </Popover.Trigger>
-          <PopoverContent autoFocus={false}>
-            {open && (
-              <EditPanel
-                setDateTime={setDateTime}
-                value={dateTime}
-                onChange={onChange}
-                onClose={handlePopOver}
-              />
-            )}
-          </PopoverContent>
-        </Popover.Provider>
-      </Wrapper>
+      <Popover.Provider open={!!open} placement="bottom">
+        <Popover.Trigger asChild>
+          <InputWrapper disabled={true}>
+            <Input dataTimeSet={!!dateTime}>
+              <StyledText size="footnote" customColor>
+                {dateTime ? dateTime : "YYYY-MM-DDThh:mm:ss±hh:mm"}
+              </StyledText>
+              <DeleteIcon icon="bin" size={10} disabled={!dateTime} onClick={handleRemoveSetting} />
+            </Input>
+            <TriggerButton
+              buttonType="secondary"
+              text={t("set")}
+              icon="clock"
+              size="small"
+              iconPosition="left"
+              onClick={() => handlePopOver()}
+            />
+          </InputWrapper>
+        </Popover.Trigger>
+        <Popover.Content autoFocus={false} attachToRoot>
+          {open && (
+            <EditPanel
+              setDateTime={setDateTime}
+              value={dateTime}
+              onChange={onChange}
+              onClose={handlePopOver}
+            />
+          )}
+        </Popover.Content>
+      </Popover.Provider>
     </Property>
   );
 };
 
 export default DateTimeField;
 
-const Wrapper = styled.div`
-  display: flex;
-  align-items: stretch;
-  gap: 4px;
-`;
-
 const InputWrapper = styled.div<{ disabled?: boolean }>`
   display: flex;
   width: 100%;
   gap: 10px;
-  height: 28px;
+  flex-wrap: wrap;
 `;
 
 const Input = styled.div<{ dataTimeSet?: boolean }>`
@@ -105,17 +92,22 @@ const Input = styled.div<{ dataTimeSet?: boolean }>`
   color: ${({ theme }) => theme.content.strong};
   background: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
-
+  width: 65%;
   color: ${({ theme, dataTimeSet }) => (dataTimeSet ? theme.content.strong : theme.content.weak)};
+`;
+
+const StyledText = styled(Text)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  padding: 4px 0;
 `;
 
 const TriggerButton = styled(Button)`
   margin: 0;
 `;
 
-const PopoverContent = styled(Popover.Content)`
-  z-index: 701;
-`;
 const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`
   ${({ disabled, theme }) =>
     disabled

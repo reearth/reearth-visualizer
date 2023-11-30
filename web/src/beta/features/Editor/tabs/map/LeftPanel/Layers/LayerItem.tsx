@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
@@ -45,19 +45,25 @@ const LayerItem = ({
     () => setIsEditing(true),
   );
 
-  const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
+  useEffect(() => {
+    setNewValue(layerTitle);
+  }, [layerTitle]);
 
-  const handleTitleSubmit = useCallback(() => {
-    setIsEditing(false);
-    if (newValue.trim() !== "") {
-      onLayerNameUpdate({ layerId: id, name: newValue });
-    }
-  }, [id, newValue, onLayerNameUpdate]);
+  const handleTitleSubmit = useCallback(
+    (newTitle: string) => {
+      setNewValue(newTitle);
+      setIsEditing(false);
+      if (newTitle.trim() !== "") {
+        onLayerNameUpdate({ layerId: id, name: newTitle });
+      }
+    },
+    [id, onLayerNameUpdate],
+  );
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
       if (layerTitle !== newValue && e?.key !== "Escape") {
-        handleTitleSubmit();
+        handleTitleSubmit(newValue);
       } else {
         setNewValue(layerTitle);
       }
@@ -101,9 +107,8 @@ const LayerItem = ({
         {isEditing ? (
           <StyledTextInput
             value={newValue}
-            timeout={0}
             autoFocus
-            onChange={handleChange}
+            onChange={handleTitleSubmit}
             onExit={handleEditExit}
             onBlur={handleEditExit}
           />

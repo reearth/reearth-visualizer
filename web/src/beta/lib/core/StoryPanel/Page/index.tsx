@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, MutableRefObject, useEffect } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
@@ -7,6 +7,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
+import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
+import { useElementOnScreen } from "../hooks/useElementOnScreen";
 import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
@@ -19,6 +21,9 @@ type Props = {
   selectedStoryBlockId?: string;
   showPageSettings?: boolean;
   isEditable?: boolean;
+  isAutoScrolling?: MutableRefObject<boolean>;
+  scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onBlockCreate?: (
@@ -37,6 +42,7 @@ type Props = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onBlockDoubleClick?: (blockId?: string) => void;
   onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
@@ -58,11 +64,15 @@ const StoryPanel: React.FC<Props> = ({
   selectedStoryBlockId,
   showPageSettings,
   isEditable,
+  scrollTimeoutRef,
+  isAutoScrolling,
+  onCurrentPageChange,
   onPageSettingsToggle,
   onPageSelect,
   onBlockCreate,
   onBlockDelete,
   onBlockSelect,
+  onBlockDoubleClick,
   onBlockMove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -74,7 +84,7 @@ const StoryPanel: React.FC<Props> = ({
   const {
     openBlocksIndex,
     titleId,
-    title,
+    titleProperty,
     propertyId,
     panelSettings,
     storyBlocks,
@@ -87,9 +97,34 @@ const StoryPanel: React.FC<Props> = ({
     onBlockCreate,
   });
 
+  const { containerRef, isIntersecting } = useElementOnScreen({
+    root: document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID),
+    threshold: 0.2,
+  });
+
+  useEffect(() => {
+    if (isIntersecting) {
+      const id = containerRef.current?.id;
+      if (id) {
+        if (isAutoScrolling?.current) {
+          const wrapperElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+
+          wrapperElement?.addEventListener("scroll", () => {
+            clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = setTimeout(function () {
+              isAutoScrolling.current = false;
+            }, 100);
+          });
+        } else {
+          onCurrentPageChange?.(id, true);
+        }
+      }
+    }
+  }, [isIntersecting, containerRef, isAutoScrolling, scrollTimeoutRef, onCurrentPageChange]);
+
   return (
     <SelectableArea
-      title={page?.title ?? t("Page")}
+      title={page?.title !== "Untitled" ? page?.title : t("Page")}
       position="left-bottom"
       icon="storyPage"
       noBorder
@@ -99,37 +134,51 @@ const StoryPanel: React.FC<Props> = ({
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
-      onSettingsToggle={onPageSettingsToggle}>
-      <Wrapper id={page?.id} padding={panelSettings.padding.value} gap={panelSettings.gap.value}>
-        {(isEditable || title?.title?.value) && (
-          <StoryBlock
-            block={{
-              id: titleId,
-              pluginId: "reearth",
-              extensionId: "titleStoryBlock",
-              name: t("Title"),
-              propertyId: page?.propertyId ?? "",
-              property: { title },
-            }}
-            isEditable={isEditable}
-            isSelected={selectedStoryBlockId === titleId}
-            onClick={() => onBlockSelect?.(titleId)}
-            onPropertyUpdate={onPropertyUpdate}
-            onPropertyItemAdd={onPropertyItemAdd}
-            onPropertyItemMove={onPropertyItemMove}
-            onPropertyItemDelete={onPropertyItemDelete}
-          />
-        )}
+      onSettingsToggle={onPageSettingsToggle}
+      onPropertyUpdate={onPropertyUpdate}
+      onPropertyItemAdd={onPropertyItemAdd}
+      onPropertyItemDelete={onPropertyItemDelete}
+      onPropertyItemMove={onPropertyItemMove}>
+      <Wrapper
+        id={page?.id}
+        ref={containerRef}
+        padding={panelSettings?.padding?.value}
+        gap={panelSettings?.gap?.value}>
+        <PageTitleWrapper>
+          {(isEditable || titleProperty?.title?.title?.value) && (
+            // The title block is a pseudo block.
+            // It is not saved in the story block list and not draggable because
+            // it is actually a field on the story page.
+            <StoryBlock
+              block={{
+                id: titleId,
+                pluginId: "reearth",
+                extensionId: "titleStoryBlock",
+                name: t("Title"),
+                propertyId,
+                property: titleProperty,
+              }}
+              isEditable={isEditable}
+              isSelected={selectedStoryBlockId === titleId}
+              onClick={() => onBlockSelect?.(titleId)}
+              onBlockDoubleClick={() => onBlockDoubleClick?.(titleId)}
+              onPropertyUpdate={onPropertyUpdate}
+              onPropertyItemAdd={onPropertyItemAdd}
+              onPropertyItemMove={onPropertyItemMove}
+              onPropertyItemDelete={onPropertyItemDelete}
+            />
+          )}
+          {isEditable && (
+            <BlockAddBar
+              alwaysShow={storyBlocks && storyBlocks.length < 1}
+              openBlocks={openBlocksIndex === -1}
+              installableStoryBlocks={installableStoryBlocks}
+              onBlockOpen={() => handleBlockOpen(-1)}
+              onBlockAdd={handleBlockCreate(0)}
+            />
+          )}
+        </PageTitleWrapper>
 
-        {isEditable && (
-          <BlockAddBar
-            alwaysShow={storyBlocks && storyBlocks.length < 1}
-            openBlocks={openBlocksIndex === -1}
-            installableStoryBlocks={installableStoryBlocks}
-            onBlockOpen={() => handleBlockOpen(-1)}
-            onBlockAdd={handleBlockCreate(0)}
-          />
-        )}
         {storyBlocks && storyBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey="storyPanel"
@@ -156,6 +205,7 @@ const StoryPanel: React.FC<Props> = ({
                     isSelected={selectedStoryBlockId === b.id}
                     isEditable={isEditable}
                     onClick={() => onBlockSelect?.(b.id)}
+                    onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
                     onRemove={onBlockDelete}
                     onPropertyUpdate={onPropertyUpdate}
                     onPropertyItemAdd={onPropertyItemAdd}
@@ -193,4 +243,8 @@ const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
   ${({ padding }) => `padding-left: ${padding.left}px;`}
   ${({ padding }) => `padding-right: ${padding.right}px;`}
   box-sizing: border-box;
+`;
+
+const PageTitleWrapper = styled.div`
+  position: relative;
 `;

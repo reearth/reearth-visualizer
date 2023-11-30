@@ -11,6 +11,7 @@ type Props = {
   isDashboard?: boolean;
   currentTab?: Tab;
   page?: "editor" | "settings";
+  onTabChange?: () => void;
 };
 
 export const Tabs = ["map", "story", "widgets", "publish"] as const;
@@ -29,6 +30,7 @@ const Navbar: React.FC<Props> = ({
   currentTab = "map",
   isDashboard = false,
   page = "editor",
+  onTabChange,
 }) => {
   const {
     currentProject,
@@ -48,6 +50,7 @@ const Navbar: React.FC<Props> = ({
     currentTab,
     sceneId,
     page,
+    onTabChange,
   });
 
   return (
@@ -85,5 +88,5 @@ const Wrapper = styled.div`
   height: ${NAVBAR_HEIGHT}px;
   gap: 24px;
   background: ${({ theme }) => theme.bg[0]};
-  z-index: 1;
+  z-index: ${({ theme }) => theme.zIndexes.editor.navbar};
 `;

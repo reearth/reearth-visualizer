@@ -1,5 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
@@ -19,6 +20,7 @@ type Props = {
   position?: ActionPosition;
   noBorder?: boolean;
   isEditable?: boolean;
+  overrideGroupId?: string;
   setEditMode?: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
@@ -29,12 +31,21 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
-    v?: any,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const SelectableArea: React.FC<Props> = ({
@@ -50,6 +61,7 @@ const SelectableArea: React.FC<Props> = ({
   noBorder,
   isEditable,
   panelSettings,
+  overrideGroupId,
   setEditMode,
   onEditModeToggle,
   onSettingsToggle,
@@ -81,6 +93,7 @@ const SelectableArea: React.FC<Props> = ({
         panelSettings={panelSettings}
         dndEnabled={dndEnabled}
         position={position}
+        overrideGroupId={overrideGroupId}
         setShowPadding={setShowPadding}
         onEditModeToggle={onEditModeToggle}
         onSettingsToggle={onSettingsToggle}

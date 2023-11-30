@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
-import ListItem from "@reearth/beta/components/ListItem";
-import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
 import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
 import { isEmptyString } from "@reearth/beta/utils/util";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import PageItem from "./PageItem";
 
 type Props = {
   storyPages: Page[];
@@ -19,6 +20,14 @@ type Props = {
   onPageDuplicate: (id: string) => void;
   onPageDelete: (id: string) => void;
   onPageMove: (id: string, targetIndex: number) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 const ContentPage: React.FC<Props> = ({
   storyPages,
@@ -28,6 +37,7 @@ const ContentPage: React.FC<Props> = ({
   // onPageDuplicate,
   onPageDelete,
   onPageMove,
+  onPropertyUpdate,
 }) => {
   const t = useT();
   const [openedPageId, setOpenedPageId] = useState<string | undefined>(undefined);
@@ -67,10 +77,8 @@ const ContentPage: React.FC<Props> = ({
                 key={storyPage.id}
                 pageCount={i + 1}
                 isSwipeable={storyPage.swipeable}>
-                <ListItem
+                <PageItem
                   key={i}
-                  border
-                  actionPlacement="bottom-start"
                   isSelected={selectedPageId === storyPage.id}
                   isOpenAction={openedPageId === storyPage.id}
                   onItemClick={() => onPageSelect(storyPage.id)}
@@ -78,31 +86,13 @@ const ContentPage: React.FC<Props> = ({
                   onOpenChange={isOpen => {
                     setOpenedPageId(isOpen ? storyPage.id : undefined);
                   }}
-                  actionContent={
-                    <PopoverMenuContent
-                      size="sm"
-                      items={[
-                        // {
-                        //   icon: "copy",
-                        //   name: "Duplicate",
-                        //   onClick: () => {
-                        //     setOpenedPageId(undefined);
-                        //     onPageDuplicate(storyPage.id);
-                        //   },
-                        // },
-                        {
-                          icon: "trash",
-                          name: "Delete",
-                          onClick: () => {
-                            setOpenedPageId(undefined);
-                            onPageDelete(storyPage.id);
-                          },
-                        },
-                      ]}
-                    />
-                  }>
-                  {hasEmptySpace || !title ? t("Untitled") : title}
-                </ListItem>
+                  onPageDelete={() => onPageDelete(storyPage.id)}
+                  title={hasEmptySpace || !title ? t("Untitled") : title}
+                  setOpenedPageId={setOpenedPageId}
+                  propertyId={storyPage.property.id}
+                  storyPage={storyPage}
+                  onPropertyUpdate={onPropertyUpdate}
+                />
               </PageItemWrapper>
             );
           }}

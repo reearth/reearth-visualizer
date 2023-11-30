@@ -341,7 +341,6 @@ export default function useHooks({
 
       const property = layer?.property;
       const rawLayer = compat({
-        ...originalLayer,
         ...(originalLayer.compat && property
           ? {
               type: originalLayer.type === "group" ? "group" : "item",
@@ -357,14 +356,17 @@ export default function useHooks({
         ...(!originalLayer.compat && property ? { property } : {}),
         ...res,
       });
+
       if (!rawLayer) return;
 
       if (
-        rawLayer.type === "simple" &&
-        rawLayer.data?.value &&
+        originalLayer.type === "simple" &&
+        originalLayer.data?.value &&
         // If data isn't cachable, reuse layer id for performance.
-        DATA_CACHE_KEYS.some(k => !rawLayer.data?.[k]) &&
-        Object.isExtensible(rawLayer.data.value)
+        DATA_CACHE_KEYS.some(k => !originalLayer.data?.[k]) &&
+        Object.isExtensible(originalLayer.data.value) &&
+        rawLayer.type === "simple" &&
+        rawLayer?.data?.value
       ) {
         // If layer property is overridden, feature is legacy layer.
         // So we can set layer id to prevent unnecessary render.

@@ -96,6 +96,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
           invisibleWidgetIDs={invisibleWidgetIDs}
           theme={theme}
           built={built}
+          isMobile={isMobile}
           renderWidget={renderWidget}
           onWidgetAreaSelect={onWidgetAreaSelect}>
           {(!isMobile || hasInner) && (
@@ -106,6 +107,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
               zone={alignSystem?.inner}
               layoutConstraint={layoutConstraint}
               built={built}
+              isMobile={isMobile}
               renderWidget={renderWidget}
               onWidgetAreaSelect={onWidgetAreaSelect}
             />
@@ -121,7 +123,7 @@ export default WidgetAlignSystem;
 const WidetAlignSystemWrapper = styled.div<{ editorMode?: boolean }>`
   width: 100%;
   height: 100%;
-  z-index: ${({ theme }) => theme.zIndexes.base};
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.widget};
   position: absolute;
   pointer-events: ${({ editorMode }) => (editorMode ? "auto" : "none")};
 `;

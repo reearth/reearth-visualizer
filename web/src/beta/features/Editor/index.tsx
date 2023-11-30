@@ -41,7 +41,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleWidgetEditorToggle,
     handleFlyTo,
     handleCameraUpdate,
+    handlePropertyValueUpdate,
   } = useHooks({ sceneId, tab });
+
   const {
     selectedStory,
     storyPanelRef,
@@ -135,6 +137,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onSceneSettingSelect: handleSceneSettingSelected,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
     onFlyTo: handleFlyTo,
+    onPropertyUpdate: handlePropertyValueUpdate,
   });
 
   const { rightPanel } = useRightPanel({
@@ -176,6 +179,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleWidgetEditorToggle,
   });
 
+  const handleTabChange = useCallback(
+    () => storyPanelRef.current?.handleCurrentPageChange(undefined),
+    [storyPanelRef],
+  );
+
   return (
     <DndProvider>
       <Wrapper>
@@ -184,6 +192,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           projectId={projectId}
           workspaceId={workspaceId}
           currentTab={tab}
+          onTabChange={handleTabChange}
         />
         <MainSection>
           {leftPanel && (

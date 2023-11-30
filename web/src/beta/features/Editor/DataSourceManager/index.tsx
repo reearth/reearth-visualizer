@@ -1,6 +1,7 @@
 import React from "react";
 
 import Modal from "@reearth/beta/components/Modal";
+import { useT } from "@reearth/services/i18n";
 
 import { LayerAddProps } from "../useLayers";
 
@@ -18,44 +19,44 @@ export type DataProps = {
 
 export type SourceType = "url" | "local" | "value";
 
-export type FileFormatType = "CSV" | "GeoJSON" | "KML" | "CZML";
 export type DataSourceOptType = {
   label: string;
   keyValue: SourceType;
 }[];
 
 const DataSourceManager: React.FC<DataProps> = ({ sceneId, onClose, onSubmit }) => {
+  const t = useT();
   return (
     <Modal
       size="md"
       isVisible={true}
-      title="Data Source Manager"
+      title={t("Data Source Manager")}
       onClose={onClose}
       sidebarTabs={[
         {
           content: <Asset sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "asset",
-          label: "Common",
+          label: t("Common"),
         },
         {
           content: <DelimitedText sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "delimitedText",
-          label: "Delimited Text",
+          label: t("CSV"),
         },
         {
           content: <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "wms",
-          label: "WMS",
+          label: t("WMS"),
         },
         {
           content: <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "vectorTiles",
-          label: "Vector Tile",
+          label: t("Vector Tile"),
         },
         {
           content: <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />,
           id: "threeDTiles",
-          label: "3D Tiles",
+          label: t("3D Tiles"),
         },
       ]}
     />
