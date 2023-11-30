@@ -17,6 +17,7 @@ import type {
   WidgetLayoutConstraint,
   Location,
 } from "./hooks";
+import { isInvisibleBuiltin } from "./utils";
 
 type Props = {
   selectedWidgetArea?: WidgetAreaState;
@@ -53,6 +54,7 @@ export default function Area({
   widgets,
   pluginProperty,
   layoutConstraint,
+  viewport,
   onWidgetAlignAreaSelect,
   ...props
 }: Props) {
@@ -130,42 +132,45 @@ export default function Area({
         alignItems: centered && !isMobileZone ? "center" : "inherit",
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
-      {widgets?.map((widget, i) => {
-        const constraint =
-          widget.pluginId && widget.extensionId
-            ? layoutConstraint?.[`${widget.pluginId}/${widget.extensionId}`]
-            : undefined;
-        const extended = overriddenExtended?.[widget.id];
-        const extendable2 =
-          (section === "center" && constraint?.extendable?.horizontally) ||
-          (area === "middle" && constraint?.extendable?.vertically);
-        return (
-          <GridItem
-            key={widget.id}
-            id={widget.id}
-            index={i}
-            extended={extended ?? widget.extended}
-            extendable={extendable2}
-            style={{ pointerEvents: "none", margin: isMobileZone ? 6 : 0 }}
-            editorStyle={{ margin: isMobileZone ? 6 : 0 }}>
-            {({ editing }) => (
-              <W
-                widget={widget}
-                pluginProperty={
-                  widget.pluginId && widget.extensionId
-                    ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
-                    : undefined
-                }
-                layout={layout}
-                extended={extended}
-                editing={editing}
-                onExtend={handleExtend}
-                {...props}
-              />
-            )}
-          </GridItem>
-        );
-      })}
+      {widgets
+        ?.filter(widget => !isInvisibleBuiltin(widget, viewport?.isMobile))
+        ?.map((widget, i) => {
+          const constraint =
+            widget.pluginId && widget.extensionId
+              ? layoutConstraint?.[`${widget.pluginId}/${widget.extensionId}`]
+              : undefined;
+          const extended = overriddenExtended?.[widget.id];
+          const extendable2 =
+            (section === "center" && constraint?.extendable?.horizontally) ||
+            (area === "middle" && constraint?.extendable?.vertically);
+          return (
+            <GridItem
+              key={widget.id}
+              id={widget.id}
+              index={i}
+              extended={extended ?? widget.extended}
+              extendable={extendable2}
+              style={{ pointerEvents: "none", margin: isMobileZone ? 6 : 0 }}
+              editorStyle={{ margin: isMobileZone ? 6 : 0 }}>
+              {({ editing }) => (
+                <W
+                  widget={widget}
+                  pluginProperty={
+                    widget.pluginId && widget.extensionId
+                      ? pluginProperty?.[`${widget.pluginId}/${widget.extensionId}`]
+                      : undefined
+                  }
+                  layout={layout}
+                  extended={extended}
+                  editing={editing}
+                  viewport={viewport}
+                  onExtend={handleExtend}
+                  {...props}
+                />
+              )}
+            </GridItem>
+          );
+        })}
     </GridArea>
   ) : null;
 }

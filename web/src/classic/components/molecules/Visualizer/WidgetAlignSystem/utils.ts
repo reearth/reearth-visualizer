@@ -1,7 +1,7 @@
 import { isBuiltinWidget } from "../Widget/builtin";
 
 import { WAS_SECTIONS, WAS_AREAS } from "./constants";
-import { InternalWidget, WidgetZone } from "./types";
+import { Widget, WidgetZone } from "./hooks";
 
 export const filterSections = (
   zone?: WidgetZone,
@@ -11,11 +11,11 @@ export const filterSections = (
   return WAS_SECTIONS.filter(
     s =>
       WAS_AREAS.filter(a => zone?.[s]?.[a]?.widgets?.some(w => !invisibleWidgetIDs?.includes(w.id)))
-        .length > 0 || cb?.(s),
+        .length || cb?.(s),
   );
 };
 
-export const isInvisibleBuiltin = (widget: InternalWidget, isMobile?: boolean) => {
+export const isInvisibleBuiltin = (widget: Widget, isMobile?: boolean) => {
   const defaultVisible = widget.property?.default?.visible;
   return (
     isBuiltinWidget(`${widget.pluginId}/${widget.extensionId}`) &&

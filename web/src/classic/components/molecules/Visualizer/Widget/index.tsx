@@ -28,9 +28,10 @@ export type Props<PP = any, SP = any> = {
   editing?: boolean;
   viewport?: Viewport;
   onExtend?: (id: string, extended: boolean | undefined) => void;
+  onVisibilityChange?: (widgetId: string, visible: boolean) => void;
 } & PluginCommonProps;
 
-export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget" | "viewport"> & {
+export type ComponentProps<PP = any, SP = any> = Omit<Props<PP, SP>, "widget"> & {
   widget: RawWidget;
 };
 
@@ -105,7 +106,14 @@ export default function WidgetComponent<PP = any, SP = any>({
   return viewport ? (
     Builtin ? (
       <div style={BuiltinStyle}>
-        <Builtin {...props} widget={w} layout={layout} extended={extended} onExtend={onExtend} />
+        <Builtin
+          {...props}
+          widget={w}
+          layout={layout}
+          extended={extended}
+          viewport={viewport}
+          onExtend={onExtend}
+        />
       </div>
     ) : (
       <Plugin

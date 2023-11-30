@@ -10,7 +10,9 @@ import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import Area from "./Area";
+import { WAS_AREAS } from "./constants";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
+import { filterSections } from "./utils";
 
 export type Props = {
   children?: ReactNode;
@@ -23,11 +25,9 @@ export type Props = {
   isBuilt?: boolean;
   sceneProperty?: any;
   viewport?: Viewport;
+  invisibleWidgetIDs?: string[];
   onWidgetAlignAreaSelect?: (widgetArea?: WidgetAreaState) => void;
 } & PluginCommonProps;
-
-const sections = ["left", "center", "right"] as const;
-const areas = ["top", "middle", "bottom"] as const;
 
 export default function MobileZone({
   isMobileZone,
@@ -40,16 +40,14 @@ export default function MobileZone({
   pluginBaseUrl,
   isEditable,
   isBuilt,
+  invisibleWidgetIDs,
   onWidgetAlignAreaSelect,
   children,
   ...props
 }: Props) {
   const filteredSections = useMemo(() => {
-    return sections.filter(
-      s =>
-        areas.filter(a => zone?.[s]?.[a]?.widgets?.length).length || (s === "center" && children),
-    );
-  }, [zone, children]);
+    return filterSections(zone, invisibleWidgetIDs, s => s === "center" && children);
+  }, [zone, children, invisibleWidgetIDs]);
 
   const initialPos = useMemo(() => (filteredSections.length === 3 ? 1 : 0), [filteredSections]);
 
@@ -65,7 +63,7 @@ export default function MobileZone({
       <StyledSlide pos={pos} filteredSections={filteredSections.length > 1}>
         {filteredSections.map(s => (
           <GridSection key={s} stretch>
-            {areas.map(a =>
+            {WAS_AREAS.map(a =>
               s === "center" && children && a === "middle" ? (
                 <div key={a} style={{ display: "flex", flex: "1 0 auto" }}>
                   {children}

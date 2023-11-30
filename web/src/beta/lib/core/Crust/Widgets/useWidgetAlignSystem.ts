@@ -1,15 +1,24 @@
 import { useEffect, useState, useCallback } from "react";
 
-import type {
-  WidgetAlignSystem,
-  InternalWidget,
-  WidgetLocationOptions,
-  WidgetArea,
-  WidgetSection,
-  WidgetZone,
+import { WAS_SECTIONS, WAS_AREAS, WAS_ZONES } from "./WidgetAlignSystem/constants";
+import { isInvisibleBuiltin } from "./WidgetAlignSystem/utils";
+
+import {
+  type WidgetAlignSystem,
+  type InternalWidget,
+  type WidgetLocationOptions,
+  type WidgetArea,
+  type WidgetSection,
+  type WidgetZone,
 } from ".";
 
-export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined }) => {
+export default ({
+  alignSystem,
+  isMobile,
+}: {
+  alignSystem: WidgetAlignSystem | undefined;
+  isMobile?: boolean;
+}) => {
   const [overriddenAlignSystem, setOverrideAlignSystem] = useState<WidgetAlignSystem | undefined>(
     alignSystem,
   );
@@ -17,9 +26,25 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
   // NOTE: This is invisible list of widget.
   //       The reason why we use invisible list is prevent initializing cost.
   const [invisibleWidgetIDs, setInvisibleWidgetIDs] = useState<string[]>([]);
+  const [invisiblePluginWidgetIDs, setInvisiblePluginWidgetIDs] = useState<string[]>([]);
 
-  const onVisibilityChange = useCallback((widgetId: string, v: boolean) => {
-    setInvisibleWidgetIDs(a => {
+  useEffect(() => {
+    const invisibleBuiltinWidgetIDs: string[] = [];
+    WAS_ZONES.forEach(zone => {
+      WAS_SECTIONS.forEach(section => {
+        WAS_AREAS.forEach(area => {
+          overriddenAlignSystem?.[zone]?.[section]?.[area]?.widgets?.forEach(w => {
+            if (isInvisibleBuiltin(w, isMobile)) invisibleBuiltinWidgetIDs.push(w.id);
+          });
+        });
+      });
+    });
+
+    setInvisibleWidgetIDs([...invisibleBuiltinWidgetIDs, ...invisiblePluginWidgetIDs]);
+  }, [isMobile, overriddenAlignSystem, invisiblePluginWidgetIDs]);
+
+  const onPluginWidgetVisibilityChange = useCallback((widgetId: string, v: boolean) => {
+    setInvisiblePluginWidgetIDs(a => {
       if (!a.includes(widgetId) && !v) {
         return [...a, widgetId];
       }
@@ -32,9 +57,9 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
 
   const moveWidget = useCallback((widgetId: string, options: WidgetLocationOptions) => {
     if (
-      !["outer", "inner"].includes(options.zone) ||
-      !["left", "center", "right"].includes(options.section) ||
-      !["top", "middle", "bottom"].includes(options.area) ||
+      !WAS_ZONES.includes(options.zone) ||
+      !WAS_SECTIONS.includes(options.section) ||
+      !WAS_AREAS.includes(options.area) ||
       (options.section === "center" && options.area === "middle")
     )
       return;
@@ -132,8 +157,8 @@ export default ({ alignSystem }: { alignSystem: WidgetAlignSystem | undefined })
 
   return {
     overriddenAlignSystem,
-    moveWidget,
     invisibleWidgetIDs,
-    onVisibilityChange,
+    moveWidget,
+    onPluginWidgetVisibilityChange,
   };
 };
