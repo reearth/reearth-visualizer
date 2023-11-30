@@ -2,24 +2,16 @@ import TimelineUI from "@reearth/classic/components/atoms/Timeline";
 import { styled } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "..";
-import { Visible } from "../useVisible";
 
 import { useTimeline } from "./hooks";
 
-export type Props = WidgetProps<Property>;
-
-export type Property = {
-  default: {
-    visible: Visible;
-  };
-};
+export type Props = WidgetProps;
 
 const Timeline = ({
   widget,
   theme,
   isMobile,
   onExtend,
-  onVisibilityChange,
   context: {
     clock,
     overriddenClock,
@@ -31,7 +23,7 @@ const Timeline = ({
     removeTickEventListener,
   } = {},
 }: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, speed, events, visible } = useTimeline({
+  const { isOpened, currentTime, range, speed, events } = useTimeline({
     widget,
     clock,
     overriddenClock,
@@ -43,10 +35,9 @@ const Timeline = ({
     onTick,
     removeTickEventListener,
     onExtend,
-    onVisibilityChange,
   });
 
-  return visible ? (
+  return (
     <Widget extended={!!widget?.extended?.horizontally} opened={isOpened}>
       <TimelineUI
         isOpened={isOpened}
@@ -57,7 +48,7 @@ const Timeline = ({
         {...events}
       />
     </Widget>
-  ) : null;
+  );
 };
 
 const Widget = styled.div<{

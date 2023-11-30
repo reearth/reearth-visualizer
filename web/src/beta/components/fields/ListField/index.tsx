@@ -94,7 +94,7 @@ const ListField: React.FC<Props> = ({
           onClick={addItem}
           icon="plus"
           buttonType="secondary"
-          text={t("Add Item")}
+          text={t("Add")}
           size="medium"
         />
       </ButtonGroup>

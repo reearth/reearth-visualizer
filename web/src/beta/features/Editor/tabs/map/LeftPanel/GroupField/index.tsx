@@ -64,7 +64,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
 
   return (
     <>
-      <StyledSidePanelSectionField title={t("Scene")} startCollapsed>
+      <StyledSidePanelSectionField title={t("Scene")} startCollapsed gap={0}>
         {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
           (collection, index) =>
             collection && (

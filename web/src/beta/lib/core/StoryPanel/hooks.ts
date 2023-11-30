@@ -138,6 +138,7 @@ export default (
     const currentIndex = pages.findIndex(p => p.id === currentPageId);
     return {
       currentPage: currentIndex + 1,
+      pageTitles: pages.map(p => p.property?.title?.title?.value),
       maxPage: pages.length,
       onPageChange: (pageIndex: number) => handleCurrentPageChange(pages[pageIndex - 1]?.id),
     };

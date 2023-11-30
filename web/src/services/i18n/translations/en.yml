@@ -24,7 +24,7 @@ Time: Time
 Time Zone: Time Zone
 set: set
 Remove: Remove
-Add Item: Add Item
+Add: Add
 Settings: Settings
 Options: Options
 Please choose an option: Please choose an option
@@ -71,7 +71,7 @@ Latitude Field: Latitude Field
 Longitude Field: Longitude Field
 Data Source Manager: Data Source Manager
 Common: Common
-Delimited Text: Delimited Text
+CSV: CSV
 WMS: WMS
 Vector Tile: Vector Tile
 3D Tiles: 3D Tiles
@@ -391,7 +391,6 @@ Export: Export
 Preview: Preview
 Layer selection: Layer selection
 Selectable Layers: Selectable Layers
-Add: Add
 Stories: Stories
 Delete Selected Layer: Delete Selected Layer
 Create New Folder: Create New Folder

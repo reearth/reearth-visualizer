@@ -20,6 +20,7 @@ type Props = {
   position?: ActionPosition;
   noBorder?: boolean;
   isEditable?: boolean;
+  overrideGroupId?: string;
   setEditMode?: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
@@ -60,6 +61,7 @@ const SelectableArea: React.FC<Props> = ({
   noBorder,
   isEditable,
   panelSettings,
+  overrideGroupId,
   setEditMode,
   onEditModeToggle,
   onSettingsToggle,
@@ -91,6 +93,7 @@ const SelectableArea: React.FC<Props> = ({
         panelSettings={panelSettings}
         dndEnabled={dndEnabled}
         position={position}
+        overrideGroupId={overrideGroupId}
         setShowPadding={setShowPadding}
         onEditModeToggle={onEditModeToggle}
         onSettingsToggle={onSettingsToggle}
