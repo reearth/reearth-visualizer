@@ -26,8 +26,8 @@ const NextPage: React.FC<BlockProps> = ({ block, pageId, isSelected, ...props })
       property={block?.property}
       {...props}>
       <Wrapper>
-        <Button>
-          <StyledIcon icon={block?.extensionId} size={16} onClick={handlePageChange} />
+        <Button onClick={handlePageChange}>
+          <StyledIcon icon={block?.extensionId} size={16} />
         </Button>
       </Wrapper>
     </BlockWrapper>
