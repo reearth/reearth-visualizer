@@ -259,7 +259,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	if err != nil {
 		return nil, err
 	}
-	
+
 	//
 	// Commenting this out till the point we make a decision on this: @pyshx
 	//
