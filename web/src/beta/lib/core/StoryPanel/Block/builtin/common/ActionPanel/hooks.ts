@@ -7,6 +7,7 @@ type Props = {
   icon?: string;
   isSelected?: boolean;
   editMode?: boolean;
+  panelSettings?: any;
   onEditModeToggle?: (e: MouseEvent<HTMLDivElement>) => void;
   onSettingsToggle?: (e: MouseEvent<HTMLDivElement>) => void;
 };
@@ -16,6 +17,7 @@ export default ({
   icon,
   isSelected,
   editMode,
+  panelSettings,
   onEditModeToggle,
   onSettingsToggle,
 }: Props) => {
@@ -27,7 +29,7 @@ export default ({
       },
     ];
 
-    if (onEditModeToggle) {
+    if (onEditModeToggle && !!panelSettings) {
       menuItems.push({
         icon: editMode ? "exit" : "storyBlockEdit",
         hide: !isSelected,
@@ -44,7 +46,7 @@ export default ({
     }
 
     return menuItems;
-  }, [title, icon, isSelected, editMode, onEditModeToggle, onSettingsToggle]);
+  }, [title, icon, isSelected, editMode, panelSettings, onEditModeToggle, onSettingsToggle]);
   return {
     actionItems,
   };
