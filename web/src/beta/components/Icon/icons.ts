@@ -94,6 +94,7 @@ import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg";
 import ShowLayersStoryBlock from "./Icons/showLayersStoryBlock.svg";
 import TimelineStoryBlock from "./Icons/timelineStoryBlock.svg";
 import TimelineStoryBlockSolid from "./Icons/timelineStoryBlockSolid.svg";
+import NextPageStoryBlock from "./Icons/nextPageStoryBlock.svg";
 
 // Widget tab
 import Desktop from "./Icons/desktop.svg";
@@ -194,6 +195,7 @@ export default {
   showLayersStoryBlock: ShowLayersStoryBlock,
   timelineStoryBlock: TimelineStoryBlock,
   timelineStoryBlockSolid: TimelineStoryBlockSolid,
+  nextPageStoryBlock: NextPageStoryBlock,
   widget: Widgets,
   widgets: Widgets,
   menu: WidgetMenu,
