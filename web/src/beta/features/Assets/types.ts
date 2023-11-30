@@ -8,3 +8,5 @@ export type Asset = {
 };
 
 export type SortType = "date" | "name" | "size";
+
+export type AcceptedFileFormat = "CSV" | "GeoJSON" | "KML" | "CZML";

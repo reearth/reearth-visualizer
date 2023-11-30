@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import { useT } from "@reearth/services/i18n";
 
 import { DataProps } from "..";
 import {
@@ -13,6 +14,7 @@ import {
 } from "../utils";
 
 const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
+  const t = useT();
   const [value, setValue] = useState("");
 
   const handleSubmit = () => {
@@ -34,10 +36,12 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   return (
     <ColJustifyBetween>
       <AssetWrapper>
-        <InputGroup label="Resource URL" description="URL of the data source you want to add.">
+        <InputGroup
+          label={t("Resource URL")}
+          description={t("URL of the data source you want to add.")}>
           <Input
             type="text"
-            placeholder="Input Text"
+            placeholder={t("Input Text")}
             value={value}
             onChange={e => setValue(e.target.value)}
           />
@@ -45,7 +49,7 @@ const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       </AssetWrapper>
       <SubmitWrapper>
         <Button
-          text="Add to Layer"
+          text={t("Add to Layer")}
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}

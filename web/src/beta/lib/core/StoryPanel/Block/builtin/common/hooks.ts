@@ -27,8 +27,8 @@ export default ({
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
   const handleBlockDoubleClick = useCallback(() => {
-    onBlockDoubleClick?.(), setEditMode(true);
-  }, [onBlockDoubleClick]);
+    if (isEditable) onBlockDoubleClick?.(), setEditMode(true);
+  }, [isEditable, onBlockDoubleClick]);
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
     () => onClick?.(),
@@ -57,7 +57,7 @@ export default ({
         ...property?.panel?.padding,
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
-          property?.panel?.padding.value,
+          property?.panel?.padding?.value,
           isEditable,
         ),
       },

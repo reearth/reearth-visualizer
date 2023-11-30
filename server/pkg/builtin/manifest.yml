@@ -13,7 +13,7 @@ extensions:
     schema:
       groups:
         - id: default
-          collection: Main
+          collection: main
           title: Main
           fields:
             - id: sceneMode
@@ -23,11 +23,11 @@ extensions:
               defaultValue: 3d
               choices:
                 - key: 3d
-                  label: Scene 3D
+                  label: 3D
                 - key: 2d
-                  label: Scene 2D
+                  label: 2D
                 - key: columbus
-                  label: Columbus View
+                  label: 2.5D (Columbus View)
             - id: ion
               type: string
               title: Cesium Ion API access token
@@ -37,7 +37,7 @@ extensions:
               title: VR
               description: Enable VR mode to split the screen into left and right.
         - id: tiles
-          collection: Tiles
+          collection: tiles
           title: Tiles
           description: You may change the look of the Earth by obtaining map tile data and setting it here.
           list: true
@@ -92,7 +92,7 @@ extensions:
               min: 0
               max: 1
         - id: terrain
-          collection: Terrain
+          collection: terrain
           title: Terrain
           fields:
             - id: terrain
@@ -168,25 +168,25 @@ extensions:
                 type: bool
                 value: true
         - id: globeLighting
-          collection: Globe
+          collection: globe
           title: Globe Lighting
           fields:
             - id: globeLighting
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys Lighting.
+              description: This property will support the globe receive an Entity's Lighting.
         - id: globeShadow
-          collection: Globe
+          collection: globe
           title: Globe Shadow
           fields:
             - id: globeShadow
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys shadows.
+              description: This property will support the globe receive an Entity's shadows.
         - id: globeAtmosphere
-          collection: Globe
+          collection: globe
           title: Globe Atmosphere
           fields:
             - id: globeAtmosphere
@@ -207,7 +207,7 @@ extensions:
                 type: bool
                 value: true
         - id: skyBox
-          collection: Sky
+          collection: sky
           title: Sky Box
           fields:
             - id: skyBox
@@ -216,7 +216,7 @@ extensions:
               defaultValue: true
               description: Description needed.
         - id: sun
-          collection: Sky
+          collection: sky
           title: Sun
           fields:
             - id: sun
@@ -225,7 +225,7 @@ extensions:
               defaultValue: true
               description: Description needed.
         - id: moon
-          collection: Sky
+          collection: sky
           title: Moon
           fields:
             - id: moon
@@ -234,7 +234,7 @@ extensions:
               defaultValue: true
               description: Description needed.
         - id: skyAtmosphere
-          collection: Sky
+          collection: sky
           title: Sky Atmosphere
           fields:
             - id: skyAtmosphere
@@ -255,7 +255,7 @@ extensions:
                 type: bool
                 value: true
         - id: camera
-          collection: Camera
+          collection: camera
           title: Camera
           fields:
             - id: camera
@@ -2323,11 +2323,10 @@ extensions:
               ui: color
             - id: padding
               type: spacing
-              title: Spacing settings
+              title: Padding
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 0, bottom: 0, left: 0, right: 0 }  
         - id: cameraAnimation
           title: Camera Animation
           fields:
