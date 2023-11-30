@@ -81,6 +81,8 @@ export const StoryPanel = memo(
         showPageSettings,
         isAutoScrolling,
         layerOverride,
+        setCurrentPageId,
+        setLayerOverride,
         handleLayerOverride,
         handlePageSettingsToggle,
         handlePageSelect,
@@ -97,8 +99,27 @@ export const StoryPanel = memo(
       );
 
       const panelContext = useMemo(
-        () => ({ layerOverride, onLayerOverride: handleLayerOverride }),
-        [layerOverride, handleLayerOverride],
+        () => ({
+          layerOverride,
+          pageIds: selectedStory?.pages.map(p => p.id),
+          onLayerOverride: handleLayerOverride,
+          onJumpToPage: (pageIndex: number) => {
+            const pageId = selectedStory?.pages[pageIndex].id;
+            if (!pageId) return;
+            const element = document.getElementById(pageId);
+            if (!element) return;
+            setCurrentPageId(pageId);
+            setLayerOverride(undefined);
+            element.scrollIntoView({ behavior: "instant" });
+          },
+        }),
+        [
+          layerOverride,
+          selectedStory?.pages,
+          setCurrentPageId,
+          setLayerOverride,
+          handleLayerOverride,
+        ],
       );
 
       return (

@@ -1,9 +1,22 @@
+import { useCallback } from "react";
+
 import Icon from "@reearth/beta/components/Icon";
 import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
 import type { CommonProps as BlockProps } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import { styled } from "@reearth/services/theme";
 
-const NextPage: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
+import { usePanelContext } from "../../../context";
+
+const NextPage: React.FC<BlockProps> = ({ block, pageId, isSelected, ...props }) => {
+  const { pageIds, onJumpToPage } = usePanelContext();
+
+  const handlePageChange = useCallback(() => {
+    if (!pageId) return;
+    const pageIndex = pageIds?.findIndex(id => id === pageId);
+    if (pageIndex === undefined) return;
+    onJumpToPage?.(pageIndex + 1);
+  }, [pageId, pageIds, onJumpToPage]);
+
   return (
     <BlockWrapper
       name={block?.name}
@@ -14,7 +27,7 @@ const NextPage: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
       {...props}>
       <Wrapper>
         <Button>
-          <StyledIcon icon={block?.extensionId} size={16} />
+          <StyledIcon icon={block?.extensionId} size={16} onClick={handlePageChange} />
         </Button>
       </Wrapper>
     </BlockWrapper>
