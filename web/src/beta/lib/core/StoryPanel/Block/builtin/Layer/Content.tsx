@@ -1,10 +1,10 @@
 import { useCallback, useContext, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { usePanelContext } from "../../../context";
 import { BlockContext } from "../common/Wrapper";
 
 import LayerEditor, { type LayerBlock as LayerBlockType } from "./Editor";
@@ -45,9 +45,11 @@ const Content: React.FC<Props> = ({
   onPropertyItemMove,
 }) => {
   const t = useT();
-  const context = useContext(BlockContext);
-  const visualizer = useVisualizer();
   const [selected, setSelected] = useState<string>(layerButtons[0]?.id);
+
+  const context = useContext(BlockContext);
+
+  const storyPanelContext = usePanelContext();
 
   const handleClick = useCallback(
     (itemId: string) => {
@@ -59,33 +61,26 @@ const Content: React.FC<Props> = ({
 
       if (!item?.showLayers?.value) return;
 
-      // Hide all layers
-      const layers = visualizer.current?.layers;
-
-      // Show only selected layers
-      layers?.show(...item.showLayers.value);
-      const allLayers = layers?.layers() ?? [];
-
-      // Hide the rest
-      layers?.hide(
-        ...allLayers.map(({ id }) => id).filter(id => !item.showLayers?.value?.includes(id)),
-      );
+      storyPanelContext?.onLayerOverride?.(item.id, item.showLayers.value);
     },
-    [isEditable, visualizer, layerButtons],
+    [isEditable, layerButtons, storyPanelContext],
   );
 
   return (
     <Wrapper>
       <ButtonWrapper>
         {layerButtons.map(({ title, color, bgColor, id }) => {
+          const userSelected = id === storyPanelContext.layerOverride?.extensionId;
+          const buttonText = title?.value ?? t("New Layers Button");
           return (
             <StyledButton
               key={id}
               color={color?.value}
               bgColor={bgColor?.value}
+              userSelected={userSelected}
               icon="showLayersStoryBlock"
               buttonType="primary"
-              text={title?.value ?? t("New Layers Button")}
+              text={buttonText}
               size="small"
               onClick={() => handleClick(id)}
             />
@@ -122,13 +117,15 @@ const ButtonWrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-const StyledButton = styled(Button)<{ color?: string; bgColor?: string }>`
-  color: ${({ color }) => color};
-  background-color: ${({ bgColor }) => bgColor};
+const StyledButton = styled(Button)<{ color?: string; bgColor?: string; userSelected?: boolean }>`
+  color: ${({ bgColor, color, userSelected, theme }) =>
+    userSelected ? bgColor ?? theme.content.strong : color};
+  background-color: ${({ bgColor, color, userSelected, theme }) =>
+    userSelected ? color ?? theme.primary.main : bgColor};
   border-color: ${({ color }) => color};
 
-  &:hover {
+  :hover {
     color: ${({ bgColor }) => bgColor};
-    background-color: ${({ color }) => color};
+    background-color: ${({ color, theme }) => color ?? theme.primary.main};
   }
 `;
