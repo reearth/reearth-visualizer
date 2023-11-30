@@ -110,7 +110,7 @@ export const StoryPanel = memo(
             if (!element) return;
             setCurrentPageId(pageId);
             setLayerOverride(undefined);
-            element.scrollIntoView({ behavior: "instant" });
+            element.scrollIntoView({ behavior: "instant" } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
           },
         }),
         [
