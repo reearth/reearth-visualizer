@@ -38,7 +38,7 @@ export default function BlockComponent<P = any>({
   ...props
 }: Props<P>): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
-  const Builtin = isBuiltinBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
+  const Builtin = isBuiltinBlock(builtinBlockId) ? builtin()[builtinBlockId] : undefined;
 
   return Builtin ? (
     <Builtin {...props} />

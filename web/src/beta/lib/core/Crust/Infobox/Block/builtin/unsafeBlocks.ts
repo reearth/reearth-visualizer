@@ -7,7 +7,7 @@ import { Component } from "..";
 
 export type UnsafeBuiltinBlocks<T = unknown> = Record<string, T>;
 
-export const unsafeBuiltinBlocks = processUnsafeBuiltinBlocks(config()?.unsafeBuiltinPlugins);
+export const unsafeBuiltinBlocks = () => processUnsafeBuiltinBlocks(config()?.unsafeBuiltinPlugins);
 
 function processUnsafeBuiltinBlocks(plugin?: UnsafeBuiltinPlugin[]) {
   if (!plugin) return;
