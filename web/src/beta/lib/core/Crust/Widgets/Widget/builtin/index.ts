@@ -4,6 +4,7 @@ import {
   BUTTON_BUILTIN_WIDGET_ID,
   NAVIGATOR_BUILTIN_WIDGET_ID,
 } from "@reearth/services/api/widgetsApi/utils";
+import { config } from "@reearth/services/config";
 
 import Button from "./Button";
 import Navigator from "./Navigator";
@@ -32,23 +33,34 @@ const REEARTH_BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> = 
 const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> =
   REEARTH_BUILTIN_WIDGET_OPTIONS;
 
-Object.keys(unsafeBuiltinWidgets ?? {}).map(uw => {
-  BUILTIN_WIDGET_OPTIONS[uw] = {};
-});
-
 const reearthBuiltin: BuiltinWidgets<Component> = {
   [BUTTON_BUILTIN_WIDGET_ID]: Button,
   // [TIMELINE_BUILTIN_WIDGET_ID]: Timeline,
   [NAVIGATOR_BUILTIN_WIDGET_ID]: Navigator,
 };
 
-const builtin = merge({}, reearthBuiltin, unsafeBuiltinWidgets);
+let cachedBuiltin:
+  | (ReEarthBuiltinWidgets<Component> & UnsafeBuiltinWidgets<Component>)
+  | undefined = undefined;
+const builtin = () => {
+  if (cachedBuiltin) return cachedBuiltin;
+  if (config()) {
+    cachedBuiltin = merge({}, reearthBuiltin, unsafeBuiltinWidgets());
+    return cachedBuiltin;
+  } else {
+    return reearthBuiltin;
+  }
+};
 
-export const getBuiltinWidgetOptions = (id: string) =>
-  BUILTIN_WIDGET_OPTIONS[id as keyof BuiltinWidgets];
+export const getBuiltinWidgetOptions = (id: string) => {
+  Object.keys(unsafeBuiltinWidgets() ?? {}).map(uw => {
+    BUILTIN_WIDGET_OPTIONS[uw] = {};
+  });
+  return BUILTIN_WIDGET_OPTIONS[id as keyof BuiltinWidgets];
+};
 
 export const isBuiltinWidget = (id: string): id is keyof BuiltinWidgets => {
-  return !!builtin[id as keyof BuiltinWidgets];
+  return !!builtin()[id as keyof BuiltinWidgets];
 };
 
 export default builtin;
