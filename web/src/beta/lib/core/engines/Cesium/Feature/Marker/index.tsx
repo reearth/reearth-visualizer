@@ -137,6 +137,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     [property?.near, property?.far],
   );
 
+  const stringLabelText = useMemo(() => String(labelText), [labelText]);
+
   useEffect(() => {
     requestRender?.();
   });
@@ -205,7 +207,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             pixelOffset={pixelOffset}
             fillColor={labelColorCesium}
             font={toCSSFont(labelTypography, { fontSize: 30 })}
-            text={labelText}
+            text={stringLabelText}
             showBackground={labelBackground}
             backgroundColor={labelBackgroundColorCesium}
             backgroundPadding={labelBackgroundPadding}

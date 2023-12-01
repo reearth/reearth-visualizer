@@ -260,27 +260,30 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		return nil, err
 	}
 
-	ws, err := i.workspaceRepo.FindByID(ctx, scene.Workspace())
-	if err != nil {
-		return nil, err
-	}
+	//
+	// Commenting this out till the point we make a decision on this: @pyshx
+	//
+	// ws, err := i.workspaceRepo.FindByID(ctx, scene.Workspace())
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate {
-		// enforce policy
-		if policyID := op.Policy(ws.Policy()); policyID != nil {
-			p, err := i.policyRepo.FindByID(ctx, *policyID)
-			if err != nil {
-				return nil, err
-			}
-			s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-			if err != nil {
-				return nil, err
-			}
-			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
-				return nil, err
-			}
-		}
-	}
+	// if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate {
+	// 	// enforce policy
+	// 	if policyID := op.Policy(ws.Policy()); policyID != nil {
+	// 		p, err := i.policyRepo.FindByID(ctx, *policyID)
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
+	// 			return nil, err
+	// 		}
+	// 	}
+	// }
 
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
 	if err != nil {

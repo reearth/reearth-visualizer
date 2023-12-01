@@ -1,6 +1,7 @@
 import { Story, StoryBlock, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 import { valueFromGQL, valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { toUi } from "@reearth/services/api/propertyApi/utils";
+import { Scene } from "@reearth/services/api/sceneApi";
 import {
   PropertyFieldFragmentFragment,
   PropertyFragmentFragment,
@@ -8,14 +9,23 @@ import {
   PropertyItemFragmentFragment,
   PropertySchemaFieldFragmentFragment,
   PropertySchemaGroupFragmentFragment,
-  Story as GqlStory,
   StoryPage as GqlStoryPage,
   StoryBlock as GqlStoryBlock,
 } from "@reearth/services/gql";
 
 import { DatasetMap, P, datasetValue } from "./convert";
 
-export const convertStory = (story?: GqlStory): Story | undefined => {
+export const convertStory = (scene?: Scene, storyId?: string): Story | undefined => {
+  const story = scene?.stories.find(s => s.id === storyId);
+  const installedBlockNames = (scene?.plugins ?? [])
+    .flatMap(p =>
+      (p.plugin?.extensions ?? [])
+        .filter(e => e.type === "StoryBlock")
+        .map(e => ({ [e.extensionId]: e.translatedName ?? e.name }))
+        .filter((e): e is { [key: string]: string } => !!e),
+    )
+    .reduce((result, obj) => ({ ...result, ...obj }), {});
+
   if (!story) return undefined;
 
   const storyPages = (pages: GqlStoryPage[]): StoryPage[] =>
@@ -32,7 +42,7 @@ export const convertStory = (story?: GqlStory): Story | undefined => {
       id: b.id,
       pluginId: b.pluginId,
       extensionId: b.extensionId,
-      name: b.property?.schema?.groups.find(g => g.schemaGroupId === "default")?.translatedTitle,
+      name: installedBlockNames?.[b.extensionId] ?? "Story Block",
       propertyId: b.property?.id,
       property: processProperty(undefined, b.property),
     }));

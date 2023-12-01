@@ -1,8 +1,10 @@
 import { createContext, FC, PropsWithChildren, useContext } from "react";
 
 export type StoryPanelContext = {
+  pageIds?: string[];
   layerOverride?: { extensionId: string; layerIds?: string[] };
   onLayerOverride?: (id?: string, layerIds?: string[]) => void;
+  onJumpToPage?: (newPageIndex: number) => void;
 };
 
 const PanelContext = createContext<StoryPanelContext | undefined>(undefined);

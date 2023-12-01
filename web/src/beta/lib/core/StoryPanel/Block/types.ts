@@ -14,6 +14,7 @@ export type BlockProps = {
 };
 
 export type CommonProps = {
+  pageId?: string;
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;

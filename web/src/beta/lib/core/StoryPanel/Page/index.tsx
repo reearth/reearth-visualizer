@@ -202,6 +202,7 @@ const StoryPanel: React.FC<Props> = ({
                 <Fragment key={idx}>
                   <StoryBlock
                     block={b}
+                    pageId={page?.id}
                     isSelected={selectedStoryBlockId === b.id}
                     isEditable={isEditable}
                     onClick={() => onBlockSelect?.(b.id)}
