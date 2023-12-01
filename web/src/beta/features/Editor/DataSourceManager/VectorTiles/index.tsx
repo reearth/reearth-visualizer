@@ -78,7 +78,7 @@ const VectorTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           description={t("Layer of the data source you want to add.")}>
           {layers.map((layer: string, index: number) => (
             <LayerWrapper key={index}>
-              <Input type="text" placeholder={`${layer}`} disabled={true} />
+              <Input type="text" value={`${layer}`} disabled={true} />
               <DeleteLayerIcon icon="bin" size={16} onClick={() => handleDeleteLayer(index)} />
             </LayerWrapper>
           ))}
