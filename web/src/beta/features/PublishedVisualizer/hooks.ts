@@ -107,15 +107,16 @@ export default (alias?: string) => {
       const areaWidgets: InternalWidget[] | undefined = area?.widgetIds
         .map<InternalWidget | undefined>(w => widgets?.find(w2 => w === w2.id))
         .filter((w): w is InternalWidget => !!w);
+      console.log(area?.gap);
       return {
         align: align ?? "start",
         padding: {
-          top: padding?.top ?? 6,
-          bottom: padding?.bottom ?? 6,
-          left: padding?.left ?? 6,
-          right: padding?.right ?? 6,
+          top: padding?.top || 6,
+          bottom: padding?.bottom || 6,
+          left: padding?.left || 6,
+          right: padding?.right || 6,
         },
-        gap: area?.gap ?? 6,
+        gap: area?.gap || 6,
         widgets: areaWidgets || [],
         background: area?.background as string | undefined,
         centered: area?.centered,
