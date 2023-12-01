@@ -295,8 +295,8 @@ export default ({
 
   useEffect(() => {
     if (
-      (isPlaying && JSON.stringify(current) >= JSON.stringify(timeRange.endTime)) ||
-      (isPlayingReversed && JSON.stringify(current) <= JSON.stringify(timeRange.startTime))
+      (range && isPlaying && JSON.stringify(currentTime) >= JSON.stringify(range?.end)) ||
+      (range && isPlayingReversed && JSON.stringify(currentTime) <= JSON.stringify(range.start))
     ) {
       if (playMode === "loop") {
         return handleOnResetAndPlay();
@@ -306,6 +306,7 @@ export default ({
     }
   }, [
     current,
+    currentTime,
     handleOnPause,
     handleOnPlay,
     handleOnReset,
@@ -313,6 +314,7 @@ export default ({
     isPlaying,
     isPlayingReversed,
     playMode,
+    range,
     timeRange.endTime,
     timeRange.startTime,
   ]);
