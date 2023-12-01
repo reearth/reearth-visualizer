@@ -9,6 +9,7 @@ import type { CommonProps, BlockProps } from "./types";
 export type Props = {
   renderBlock?: (block: BlockProps) => ReactNode;
   layer?: Layer;
+  pageId?: string;
 } & CommonProps;
 
 export type Component = ComponentType<CommonProps>;
