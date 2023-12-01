@@ -45,6 +45,9 @@ export const Input = styled.input`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  ::placeholder {
+    color: ${({ theme }) => theme.content.weaker};
+  }
 `;
 
 export const AssetWrapper = styled.div`
