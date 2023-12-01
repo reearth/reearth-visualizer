@@ -2576,3 +2576,7 @@ extensions:
                   label: Once
                 - key: loop
                   label: Loop
+  - id: nextPageStoryBlock
+    name: Next Page Button
+    type: storyBlock
+    description: Down button that will skip to next page.

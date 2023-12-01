@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import type { CommonProps as BlockProps } from "@reearth//beta/lib/core/StoryPanel/Block/types";
 import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
 import VideoPlayer from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Video/VideoPlayer";
+import type { CommonProps as BlockProps } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import type { ValueTypes } from "@reearth/beta/utils/value";
 
 const VideoBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {

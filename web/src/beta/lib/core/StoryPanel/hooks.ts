@@ -206,6 +206,8 @@ export default (
     showPageSettings,
     isAutoScrolling,
     layerOverride,
+    setCurrentPageId,
+    setLayerOverride,
     handleLayerOverride,
     handlePageSettingsToggle,
     handlePageSelect,
