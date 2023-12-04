@@ -110,12 +110,12 @@ export default (alias?: string) => {
       return {
         align: align ?? "start",
         padding: {
-          top: padding?.top || 6,
-          bottom: padding?.bottom || 6,
-          left: padding?.left || 6,
-          right: padding?.right || 6,
+          top: padding?.top === undefined ? 6 : padding.top,
+          bottom: padding?.bottom === undefined ? 6 : padding.bottom,
+          left: padding?.left === undefined ? 6 : padding.left,
+          right: padding?.right === undefined ? 6 : padding.right,
         },
-        gap: area?.gap || 6,
+        gap: area?.gap === null ? 6 : area?.gap,
         widgets: areaWidgets || [],
         background: area?.background as string | undefined,
         centered: area?.centered,
