@@ -175,7 +175,9 @@ export default () => {
     [updateProjectMutation, t, setNotification],
   );
 
-  const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT);
+  const [archiveProjectMutation] = useMutation(ARCHIVE_PROJECT, {
+    refetchQueries: ["GetProject"],
+  });
   const useArchiveProject = useCallback(
     async (input: ArchiveProjectMutationVariables) => {
       if (!input.projectId) return { status: "error" };
@@ -204,7 +206,9 @@ export default () => {
     [archiveProjectMutation, t, setNotification],
   );
 
-  const [deleteProjectMutation] = useMutation(DELETE_PROJECT);
+  const [deleteProjectMutation] = useMutation(DELETE_PROJECT, {
+    refetchQueries: ["GetProject"],
+  });
   const useDeleteProject = useCallback(
     async (input: DeleteProjectInput) => {
       if (!input.projectId) return { status: "error" };
@@ -223,7 +227,9 @@ export default () => {
     [deleteProjectMutation, t, setNotification],
   );
 
-  const [updateProjectBasicAuthMutation] = useMutation(UPDATE_PROJECT_BASIC_AUTH);
+  const [updateProjectBasicAuthMutation] = useMutation(UPDATE_PROJECT_BASIC_AUTH, {
+    refetchQueries: ["GetProject"],
+  });
   const useUpdateProjectBasicAuth = useCallback(
     async (input: UpdateProjectBasicAuthMutationVariables) => {
       if (!input.projectId) return { status: "error" };
