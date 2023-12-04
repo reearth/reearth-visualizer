@@ -51,8 +51,9 @@ export default ({
     [property],
   );
 
-  const panelSettings = useMemo(
-    () => ({
+  const panelSettings = useMemo(() => {
+    if (!property?.panel) return undefined;
+    return {
       padding: {
         ...property?.panel?.padding,
         value: calculatePaddingValue(
@@ -61,9 +62,8 @@ export default ({
           isEditable,
         ),
       },
-    }),
-    [property?.panel, isEditable],
-  );
+    };
+  }, [property?.panel, isEditable]);
 
   const handleEditModeToggle = useCallback(() => setEditMode?.(em => !em), []);
 

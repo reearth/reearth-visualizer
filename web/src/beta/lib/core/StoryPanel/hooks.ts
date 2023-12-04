@@ -199,6 +199,11 @@ export default (
     };
   }, [currentPageId, selectedStory?.pages, visualizer, handleLayerReset]);
 
+  // Reset parent of core's current page on StoryPanel unmount
+  useEffect(() => {
+    return () => onCurrentPageChange?.();
+  }, [onCurrentPageChange]);
+
   return {
     pageInfo,
     selectedPageId,
@@ -206,6 +211,8 @@ export default (
     showPageSettings,
     isAutoScrolling,
     layerOverride,
+    setCurrentPageId,
+    setLayerOverride,
     handleLayerOverride,
     handlePageSettingsToggle,
     handlePageSelect,

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -60,6 +60,7 @@ const PublicSettings: React.FC<Props> = ({
   onUpdateProjectAlias,
 }) => {
   const t = useT();
+  const [selectedTab, selectTab] = useState(currentStory ? currentStory.id : "map");
 
   const menu = useMemo(
     () => [
@@ -67,29 +68,37 @@ const PublicSettings: React.FC<Props> = ({
         id: "map",
         title: t("Map"),
         linkTo: `/settings/project/${project.id}/public/`,
-        active: !currentStory,
+        active: selectedTab === "map",
       },
       ...stories.map(s => ({
         id: s.id,
         title: s.title,
         linkTo: `/settings/project/${project.id}/public/${s.id}`,
-        active: s.id === currentStory?.id,
+        active: selectedTab === s.id,
       })),
     ],
-    [stories, project.id, currentStory, t],
+    [stories, selectedTab, project.id, t],
   );
+
+  const handleTabChange = useCallback((tab: string) => selectTab(tab), []);
 
   return (
     <InnerPage wide>
       <InnerMenu>
         {menu.map(s => (
-          <MenuItem key={s.id} text={s.title} active={s.active} linkTo={s.linkTo} />
+          <MenuItem
+            key={s.id}
+            text={s.title}
+            active={s.active}
+            linkTo={s.linkTo}
+            onClick={() => handleTabChange(s.id)}
+          />
         ))}
       </InnerMenu>
       <SettingsWrapper>
         {project.isArchived ? (
           <ArchivedSettingNotice />
-        ) : currentStory ? (
+        ) : selectedTab === currentStory?.id ? (
           <PublicSettingsDetail
             key={currentStory.id}
             settingsItem={currentStory}

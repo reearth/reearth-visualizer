@@ -85,13 +85,14 @@ const ActionPanel: React.FC<Props> = ({
   const settingsTitle = useMemo(() => t("Spacing settings"), [t]);
 
   const popoverContent = useMemo(() => {
-    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
-      {
+    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [];
+    if (panelSettings) {
+      menuItems.push({
         name: settingsTitle,
         icon: "padding",
         onClick: () => setShowPadding(true),
-      },
-    ];
+      });
+    }
     if (onRemove) {
       menuItems.push({
         name: t("Remove"),
@@ -100,7 +101,7 @@ const ActionPanel: React.FC<Props> = ({
       });
     }
     return menuItems;
-  }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
+  }, [settingsTitle, panelSettings, t, setShowPadding, onRemove, handleRemove]);
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
       {dndEnabled && (
