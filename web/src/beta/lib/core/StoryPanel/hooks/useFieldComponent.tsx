@@ -106,6 +106,8 @@ export const FieldComponent = ({
         name={field?.title}
         value={field?.value}
         description={field?.description}
+        min={field?.min}
+        max={field?.max}
         onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
       />
     )
