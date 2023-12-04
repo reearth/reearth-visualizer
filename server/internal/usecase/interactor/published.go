@@ -72,11 +72,19 @@ func NewPublishedWithURL(project repo.Project, storytelling repo.Storytelling, f
 
 func (i *Published) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
 	prj, err := i.project.FindByPublicName(ctx, name)
-	if err != nil || prj == nil {
-		if err == nil {
-			err = rerror.ErrNotFound
-		}
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return interfaces.ProjectPublishedMetadata{}, err
+	}
+
+	if prj == nil {
+		story, err := i.Storytelling.FindByPublicName(ctx, name)
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+			return interfaces.ProjectPublishedMetadata{}, err
+		}
+		if story != nil {
+			return interfaces.PublishedMetadataFrom(story), nil
+		}
+		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
 	}
 
 	return interfaces.PublishedMetadataFrom(prj), nil
