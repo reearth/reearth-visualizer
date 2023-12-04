@@ -3,22 +3,15 @@ import { useNavigate } from "react-router-dom";
 
 import { Tab } from "@reearth/beta/features/Navbar";
 
-export const useEditorNavigation = ({
-  sceneId,
-  onTabChange,
-}: {
-  sceneId?: string;
-  onTabChange?: () => void;
-}) => {
+export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
   const navigate = useNavigate();
 
   const handleNavigate = useCallback(
     (tab: Tab) => {
       if (!sceneId) return;
-      onTabChange?.();
       navigate(`/scene/${sceneId}/${tab}`);
     },
-    [sceneId, onTabChange, navigate],
+    [sceneId, navigate],
   );
 
   return sceneId ? handleNavigate : undefined;

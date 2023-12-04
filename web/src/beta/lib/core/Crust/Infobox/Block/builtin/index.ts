@@ -1,5 +1,7 @@
 import { merge } from "lodash-es";
 
+import { config } from "@reearth/services/config";
+
 import type { Component } from "..";
 
 import DataList from "./DataList";
@@ -38,10 +40,20 @@ const reearthBuiltin: BuiltinBlocks<Component> = {
   [HTML_BUILTIN_BLOCK_ID]: HTML,
 };
 
-const builtin = merge({}, reearthBuiltin, unsafeBuiltinBlocks);
+let cachedBuiltin: (ReEarthBuiltinBlocks<Component> & UnsafeBuiltinBlocks<Component>) | undefined =
+  undefined;
+const builtin = () => {
+  if (cachedBuiltin) return cachedBuiltin;
+  if (config()) {
+    cachedBuiltin = merge({}, reearthBuiltin, unsafeBuiltinBlocks());
+    return cachedBuiltin;
+  } else {
+    return reearthBuiltin;
+  }
+};
 
 export const isBuiltinBlock = (id: string): id is keyof BuiltinBlocks => {
-  return !!builtin[id as keyof BuiltinBlocks];
+  return !!builtin()[id as keyof BuiltinBlocks];
 };
 
 export default builtin;

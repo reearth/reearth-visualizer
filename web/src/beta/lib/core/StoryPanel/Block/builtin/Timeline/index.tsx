@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import type { CommonProps as BlockProps } from "@reearth//beta/lib/core/StoryPanel/Block/types";
 import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
+import type { CommonProps as BlockProps } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 
 import TimelineEditor from "./Editor";
 

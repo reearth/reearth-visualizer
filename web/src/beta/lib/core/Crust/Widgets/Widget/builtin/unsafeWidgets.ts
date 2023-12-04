@@ -9,7 +9,8 @@ export type { Component } from "..";
 
 export type UnsafeBuiltinWidgets<T = unknown> = Record<string, T>;
 
-export const unsafeBuiltinWidgets = processUnsafeBuiltinWidgets(config()?.unsafeBuiltinPlugins);
+export const unsafeBuiltinWidgets = () =>
+  processUnsafeBuiltinWidgets(config()?.unsafeBuiltinPlugins);
 
 function processUnsafeBuiltinWidgets(plugin?: UnsafeBuiltinPlugin[]) {
   if (!plugin) return;
