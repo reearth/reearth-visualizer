@@ -11,12 +11,11 @@ type Props = {
   currentTab?: Tab;
   sceneId?: string;
   page: "editor" | "settings";
-  onTabChange?: () => void;
 };
 
-const useRightSide = ({ currentTab, page, sceneId, onTabChange }: Props) => {
+const useRightSide = ({ currentTab, page, sceneId }: Props) => {
   const t = useT();
-  const handleEditorNavigation = useEditorNavigation({ sceneId, onTabChange });
+  const handleEditorNavigation = useEditorNavigation({ sceneId });
 
   const rightSide = useMemo(() => {
     if (page === "editor") {

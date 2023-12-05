@@ -18,6 +18,7 @@ export default function usePopover({
   placement = "bottom",
   modal,
   offset: offsetProps,
+  shift: shiftProps,
   open: controlledOpen,
   onOpenChange: setControlledOpen,
 }: PopoverOptions = {}) {
@@ -38,7 +39,7 @@ export default function usePopover({
         fallbackAxisSideDirection: "end",
         padding: 4,
       }),
-      shift({ padding: 4 }),
+      shift(shiftProps ?? { padding: 4 }),
     ],
   });
 

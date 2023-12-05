@@ -2,6 +2,7 @@ import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useS
 
 import type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
+import { MapRef } from "../Crust/types";
 import { useVisualizer } from "../Visualizer";
 
 import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";
@@ -33,6 +34,10 @@ export default (
   const [currentPageId, setCurrentPageId] = useState<string>();
   const [selectedPageId, setSelectedPageId] = useState<string>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
+  const [layerOverride, setLayerOverride] = useState<{
+    extensionId: string;
+    layerIds?: string[];
+  }>();
 
   const handlePageSettingsToggle = useCallback(() => {
     if (!selectedPageId && !isEditable) return;
@@ -43,7 +48,7 @@ export default (
     (pageId?: string) => {
       if (!isEditable) return;
       if (selectedBlockId) {
-        setSelectedBlockId(undefined);
+        setSelectedBlockId(selectedBlockId);
       }
       setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
     },
@@ -60,6 +65,10 @@ export default (
     },
     [selectedPageId, isEditable],
   );
+
+  const handleBlockDouleClick = useCallback((blockId?: string) => {
+    setSelectedBlockId(id => (!blockId || id === blockId ? blockId : blockId));
+  }, []);
 
   const onTimeChange = useCallback(
     (time: Date) => {
@@ -98,6 +107,7 @@ export default (
 
       onCurrentPageChange?.(newPage.id);
       setCurrentPageId(newPage.id);
+      setLayerOverride(undefined);
 
       if (!pageId) {
         const element = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
@@ -128,10 +138,46 @@ export default (
     const currentIndex = pages.findIndex(p => p.id === currentPageId);
     return {
       currentPage: currentIndex + 1,
+      pageTitles: pages.map(p => p.property?.title?.title?.value),
       maxPage: pages.length,
       onPageChange: (pageIndex: number) => handleCurrentPageChange(pages[pageIndex - 1]?.id),
     };
   }, [selectedStory, currentPageId, handleCurrentPageChange]);
+
+  const handleLayerReset = useCallback(
+    (vizRef?: MapRef | null) => {
+      if (!vizRef) return;
+      const currentLayerIds = vizRef.layers.layers()?.map(l => l.id);
+
+      const currentPage = getPage(currentPageId, selectedStory?.pages);
+      if (currentPage) {
+        if (currentLayerIds) {
+          vizRef.layers.show(...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)));
+          vizRef.layers.hide(...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)));
+        }
+      }
+    },
+    [currentPageId, selectedStory?.pages],
+  );
+
+  const handleLayerOverride = useCallback(
+    (id?: string, layerIds?: string[]) => {
+      const vizRef = visualizer?.current;
+      if (!id || id === layerOverride?.extensionId) {
+        setLayerOverride(undefined);
+        handleLayerReset(vizRef);
+        return;
+      }
+      setLayerOverride({ extensionId: id, layerIds });
+      // Show only selected layers
+      const layers = vizRef?.layers;
+      layers?.show(...(layerIds ?? []));
+      const allLayers = layers?.layers() ?? [];
+      // Hide the rest
+      layers?.hide(...(allLayers.map(({ id }) => id).filter(id => !layerIds?.includes(id)) ?? []));
+    },
+    [visualizer, layerOverride?.extensionId, handleLayerReset],
+  );
 
   useImperativeHandle(
     ref,
@@ -142,22 +188,21 @@ export default (
     [currentPageId, handleCurrentPageChange],
   );
 
-  // Update what layers will be shown in the Visualizer on page change.
+  // On page change, update visible layers in the viz based on page's initial settings.
   useEffect(() => {
     const vizRef = visualizer?.current;
     const currentLayerIds = vizRef?.layers.layers()?.map(l => l.id);
+    handleLayerReset(vizRef);
 
-    const currentPage = getPage(currentPageId, selectedStory?.pages);
-    if (currentPage) {
-      if (currentLayerIds) {
-        vizRef?.layers.show(...currentLayerIds.filter(id => currentPage.layerIds?.includes(id)));
-        vizRef?.layers.hide(...currentLayerIds.filter(id => !currentPage.layerIds?.includes(id)));
-      }
-    }
     return () => {
       if (currentLayerIds) vizRef?.layers.show(...currentLayerIds);
     };
-  }, [currentPageId, selectedStory?.pages, visualizer]);
+  }, [currentPageId, selectedStory?.pages, visualizer, handleLayerReset]);
+
+  // Reset parent of core's current page on StoryPanel unmount
+  useEffect(() => {
+    return () => onCurrentPageChange?.();
+  }, [onCurrentPageChange]);
 
   return {
     pageInfo,
@@ -165,9 +210,14 @@ export default (
     selectedBlockId,
     showPageSettings,
     isAutoScrolling,
+    layerOverride,
+    setCurrentPageId,
+    setLayerOverride,
+    handleLayerOverride,
     handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
+    handleBlockDouleClick,
     handleCurrentPageChange,
   };
 };

@@ -7,6 +7,7 @@ import type {
   LayerStyleNameUpdateProps,
 } from "@reearth/beta/features/Editor/useLayerStyles";
 import type { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import LayerStyleCard from "./LayerStyleCard";
@@ -29,9 +30,11 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
   onLayerStyleNameUpdate,
   onLayerStyleSelect,
 }) => {
+  const t = useT();
+
   const handleLayerStyleAddition = useCallback(() => {
-    onLayerStyleAdd({ name: `Style_${layerStyles.length + 1}`, value: {} });
-  }, [layerStyles.length, onLayerStyleAdd]);
+    onLayerStyleAdd({ name: `${t("Style_")}${layerStyles.length + 1}`, value: {} });
+  }, [layerStyles.length, t, onLayerStyleAdd]);
 
   const handleSelectLayerStyle = useCallback(
     (layerStyle?: LayerStyle) => {
@@ -61,7 +64,7 @@ const LayerStyles: React.FC<LayerStylesProps> = ({
                 size="sm"
                 items={[
                   {
-                    name: "Delete",
+                    name: t("Delete"),
                     icon: "bin",
                     onClick: (e?: React.MouseEvent) => {
                       e?.stopPropagation();

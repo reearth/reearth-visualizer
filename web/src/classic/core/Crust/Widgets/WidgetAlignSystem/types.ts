@@ -58,4 +58,5 @@ export type WidgetProps = {
   extended?: boolean;
   editing: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;
+  onVisibilityChange?: (id: string, visible: boolean) => void;
 };

@@ -18,8 +18,7 @@ export type Tile = {
   tile_url?: string;
   tile_type?: string;
   tile_opacity?: number;
-  tile_minLevel?: number;
-  tile_maxLevel?: number;
+  tile_zoomLevel?: number[];
 };
 
 export type Props = {
@@ -45,13 +44,13 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
     <>
       {tiles
         ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
-        .map(({ id, tile_opacity: opacity, tile_minLevel: min, tile_maxLevel: max, provider }, i) =>
+        .map(({ id, tile_opacity: opacity, tile_zoomLevel, provider }, i) =>
           provider ? (
             <ImageryLayer
               key={`${id}_${i}_${counter.current}`}
               imageryProvider={provider}
-              minimumTerrainLevel={min}
-              maximumTerrainLevel={max}
+              minimumTerrainLevel={tile_zoomLevel?.[0]}
+              maximumTerrainLevel={tile_zoomLevel?.[1]}
               alpha={opacity}
               index={i}
             />

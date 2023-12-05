@@ -43,7 +43,6 @@ const Settings: React.FC<Props> = ({
     selectedPage,
     onPageUpdate,
   });
-
   const visibleItems = useMemo(() => filterVisibleItems(propertyItems), [propertyItems]);
 
   return (

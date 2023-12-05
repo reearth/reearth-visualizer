@@ -179,11 +179,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleWidgetEditorToggle,
   });
 
-  const handleTabChange = useCallback(
-    () => storyPanelRef.current?.handleCurrentPageChange(undefined),
-    [storyPanelRef],
-  );
-
   return (
     <DndProvider>
       <Wrapper>
@@ -192,7 +187,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           projectId={projectId}
           workspaceId={workspaceId}
           currentTab={tab}
-          onTabChange={handleTabChange}
         />
         <MainSection>
           {leftPanel && leftPanel}

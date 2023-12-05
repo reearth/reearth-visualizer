@@ -7,6 +7,7 @@ import { Viewport } from "../hooks";
 import type { CommonProps as PluginCommonProps } from "../Plugin";
 
 import Area from "./Area";
+import { WAS_SECTIONS, WAS_AREAS } from "./constants";
 import type { WidgetZone, WidgetLayoutConstraint } from "./hooks";
 
 export type Props = {
@@ -23,9 +24,6 @@ export type Props = {
   overrideSceneProperty?: (pluginId: string, property: any) => void;
   onWidgetAlignAreaSelect?: (widgetAreaState?: WidgetAreaState) => void;
 } & PluginCommonProps;
-
-const sections = ["left", "center", "right"] as const;
-const areas = ["top", "middle", "bottom"] as const;
 
 export default function Zone({
   isMobileZone,
@@ -44,9 +42,9 @@ export default function Zone({
 }: Props) {
   return (
     <>
-      {sections.map(s => (
+      {WAS_SECTIONS.map(s => (
         <GridSection key={s} stretch={s === "center"}>
-          {areas.map(a =>
+          {WAS_AREAS.map(a =>
             s === "center" && children && a === "middle" ? (
               <div key={a} style={{ display: "flex", flex: "1 0 auto" }}>
                 {children}

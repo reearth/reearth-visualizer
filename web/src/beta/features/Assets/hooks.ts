@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import { useCallback, useState, useRef, useMemo, useEffect } from "react";
 
 import { Asset, SortType } from "@reearth/beta/features/Assets/types";
@@ -39,6 +40,8 @@ export default ({
   workspaceId?: string;
   onAssetSelect?: (inputValue?: string) => void;
 }) => {
+  const client = useApolloClient();
+
   const [sort, setSort] = useState<{ type?: SortType; reverse?: boolean }>();
   const [searchTerm, setSearchTerm] = useState<string>();
   const [selectedAssets, selectAsset] = useState<Asset[]>([]);
@@ -53,6 +56,13 @@ export default ({
     sort: toGQLEnum(sort?.type),
     keyword: searchTerm,
   });
+
+  useEffect(() => {
+    return () => {
+      client.cache.evict({ fieldName: "assets" });
+      client.cache.gc();
+    };
+  }, [client.cache]);
 
   const t = useT();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
