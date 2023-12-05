@@ -7,6 +7,7 @@ import { styled } from "@reearth/services/theme";
 
 import { TimelineValues } from ".";
 
+const DEFAULT_PADDING = 40;
 export type PaddingProp = {
   bottom: number;
   top: number;
@@ -89,18 +90,19 @@ const TimelineEditor = ({
     timelineValues,
   });
 
+  const iconSize = paddingCheck > DEFAULT_PADDING ? 12 : 14;
   return (
     <Wrapper>
       <TimelineControl padding={paddingCheck}>
-        <StyledIcon activeBlock={isActive}>
-          <Icon icon="timelineStoryBlockSolid" size={16} />
+        <StyledIcon activeBlock={isActive} padding={paddingCheck}>
+          <Icon icon="timelineStoryBlockSolid" size={paddingCheck > DEFAULT_PADDING ? 8 : 16} />
         </StyledIcon>
-        <PlayControl>
+        <PlayControl padding={paddingCheck}>
           <PlayButton
             isClicked={true}
             isPlaying={isPlayingReversed}
             onClick={toggleIsPlayingReversed}>
-            <Icon icon="timelinePlayLeft" />
+            <Icon icon="timelinePlayLeft" size={iconSize} />
           </PlayButton>
           <PlayButton
             isPlaying={isPause}
@@ -110,10 +112,10 @@ const TimelineEditor = ({
                 toggleIsPause();
               }
             }}>
-            <Icon icon="pause" />
+            <Icon icon="pause" size={iconSize} />
           </PlayButton>
           <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
-            <Icon icon="timelinePlayRight" />
+            <Icon icon="timelinePlayRight" size={iconSize} />
           </PlayButton>
         </PlayControl>
         <Popover.Provider open={isOpen} placement="bottom-start" onOpenChange={handlePopOver}>
@@ -136,7 +138,7 @@ const TimelineEditor = ({
             ))}
           </PickerWrapper>
         </Popover.Provider>
-        <CurrentTime>{currentTime && formattedCurrentTime}</CurrentTime>
+        <CurrentTime padding={paddingCheck}>{currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineControl>
       <TimelineSlider>
         <ScaleList
@@ -195,20 +197,20 @@ const TimelineControl = styled.div<{ padding: number }>`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: ${({ padding }) => (padding > 20 ? "15px" : "26px")};
+  gap: ${({ padding }) => (padding > DEFAULT_PADDING ? "10px" : "25px")};
 `;
 
-const StyledIcon = styled.div<{ activeBlock: boolean }>`
+const StyledIcon = styled.div<{ activeBlock: boolean; padding: number }>`
   color: ${({ theme }) => theme.content.strong};
   cursor: pointer;
   background: ${({ activeBlock, theme }) => (activeBlock ? theme.select.main : theme.bg[4])};
-  padding: 4px 6px 2px;
+  padding: ${({ padding }) => (padding > DEFAULT_PADDING ? "0px 4px" : "4px 6px 2px")};
   border-radius: 6px 0 8px 0;
   margin-bottom: 6px;
 `;
-const PlayControl = styled.div`
+const PlayControl = styled.div<{ padding: number }>`
   display: flex;
-  gap: 10px;
+  gap: ${({ padding }) => (padding > 60 ? "2px" : "10px")};
 `;
 
 const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
@@ -262,10 +264,10 @@ const InputOptions = styled.option`
   color: ${({ theme }) => theme.content.main};
 `;
 
-const CurrentTime = styled.div`
+const CurrentTime = styled.div<{ padding: number }>`
   color: ${({ theme }) => theme.content.weaker};
   position: relative;
-  font-size: 12px;
+  font-size: ${({ padding }) => (padding >= 60 ? "10px" : "12px")};
 `;
 
 const TimelineSlider = styled.div`
@@ -304,7 +306,7 @@ const Scale = styled.div`
 `;
 
 const ScaleLabel = styled.div<{ padding: number }>`
-  font-size: ${({ padding }) => (padding > 20 ? "8.5px" : "10px")};
+  font-size: ${({ padding }) => (padding > DEFAULT_PADDING ? "8.5px" : "10px")};
   position: relative;
   bottom: 28px;
   right: 15px;
