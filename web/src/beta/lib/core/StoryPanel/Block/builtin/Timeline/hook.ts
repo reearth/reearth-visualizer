@@ -22,6 +22,8 @@ import {
 
 import { getNewDate } from "../../../hooks/useTimelineBlock";
 
+import { PaddingProp } from "./Editor";
+
 import { TimelineValues } from ".";
 
 type TimelineProps = {
@@ -33,6 +35,7 @@ type TimelineProps = {
   speed: number;
   playMode?: string;
   timelineValues?: TimelineValues;
+  padding?: PaddingProp;
   onPlay?: (committer: TimelineCommitter) => void;
   onSpeedChange?: (speed: number, committerId?: string) => void;
   onPause: (committerId: string) => void;
@@ -45,6 +48,7 @@ type TimelineProps = {
 };
 
 type TimeEventHandler = (time: Date, committerId: string) => void;
+const DEFAULT_PADDING = 40;
 
 export default ({
   currentTime,
@@ -55,6 +59,7 @@ export default ({
   speed,
   playMode,
   timelineValues,
+  padding,
   onPlay,
   onSpeedChange,
   onPause,
@@ -100,6 +105,11 @@ export default ({
     }
     return {};
   }, [range]);
+
+  const paddingCheck = useMemo(
+    () => (padding?.left || padding?.right) ?? 0,
+    [padding?.left, padding?.right],
+  );
 
   const handlePopOver = useCallback(() => {
     !inEditor && setIsOpen(!isOpen);
@@ -250,11 +260,6 @@ export default ({
         return;
       }
       if (target && target.style.pointerEvents === "none" && !inEditor) {
-        const evt = e;
-        let newPosition = evt.clientX - distX.current;
-        newPosition = Math.max(newPosition, 16);
-        newPosition = Math.min(newPosition, 372);
-        target.style.left = `${newPosition}px`;
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
@@ -339,20 +344,33 @@ export default ({
   ]);
 
   const sliderPosition = useMemo(() => {
+    const initialPosition = (() => {
+      if (paddingCheck > DEFAULT_PADDING) {
+        if (paddingCheck < 70) {
+          return 5;
+        } else if (paddingCheck <= 100) {
+          return 6;
+        }
+      }
+      return 4;
+    })();
+
+    const finalPosition = paddingCheck > DEFAULT_PADDING ? 94.5 : 93.5;
+
     if (range) {
       if (!inEditor) {
         const totalRange = range?.end - range.start;
         const currentPosition = currentTime - range.start;
-        let positionPercentage = (currentPosition / totalRange) * 356 + 16;
+        let positionPercentage = (currentPosition / totalRange) * 90 + initialPosition;
 
         positionPercentage = Math.round(positionPercentage);
-        positionPercentage = Math.max(positionPercentage, 16);
-        positionPercentage = Math.min(positionPercentage, 372);
+        positionPercentage = Math.max(positionPercentage, initialPosition);
+        positionPercentage = Math.min(positionPercentage, finalPosition);
         return positionPercentage;
       }
     }
-    return 16;
-  }, [range, inEditor, currentTime]);
+    return initialPosition;
+  }, [paddingCheck, range, inEditor, currentTime]);
 
   return {
     formattedCurrentTime,
@@ -364,6 +382,7 @@ export default ({
     isOpen,
     selected,
     isActive,
+    paddingCheck,
     handleOnSelect,
     handlePopOver,
     toggleIsPlaying: handleOnPlay,

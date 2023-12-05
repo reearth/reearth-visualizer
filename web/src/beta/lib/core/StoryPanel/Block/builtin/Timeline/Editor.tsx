@@ -7,12 +7,20 @@ import { styled } from "@reearth/services/theme";
 
 import { TimelineValues } from ".";
 
+export type PaddingProp = {
+  bottom: number;
+  top: number;
+  left?: number;
+  right?: number;
+};
+
 type TimelineProps = {
   blockId?: string;
   isSelected?: boolean;
   timelineValues?: TimelineValues;
   inEditor?: boolean;
   playMode?: string;
+  padding?: PaddingProp;
 };
 
 const TimelineEditor = ({
@@ -21,9 +29,9 @@ const TimelineEditor = ({
   timelineValues,
   inEditor,
   playMode,
+  padding,
 }: TimelineProps) => {
   const t = useT();
-
   const {
     currentTime,
     range,
@@ -50,6 +58,7 @@ const TimelineEditor = ({
     selected,
     sliderPosition,
     isActive,
+    paddingCheck,
     handleOnSelect,
     handlePopOver,
     toggleIsPlaying,
@@ -67,6 +76,7 @@ const TimelineEditor = ({
     inEditor,
     speed,
     playMode,
+    padding,
     onPlay,
     onSpeedChange,
     onPause,
@@ -81,7 +91,7 @@ const TimelineEditor = ({
 
   return (
     <Wrapper>
-      <TimelineControl>
+      <TimelineControl padding={paddingCheck}>
         <StyledIcon activeBlock={isActive}>
           <Icon icon="timelineStoryBlockSolid" size={16} />
         </StyledIcon>
@@ -136,20 +146,23 @@ const TimelineEditor = ({
           {[...Array(11)].map((_, idx) => (
             <Scale key={idx}>
               {idx === 0 ? (
-                <>
-                  <ScaleLabel>{timeRange?.startTime?.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.startTime?.time}</ScaleLabel>
-                </>
+                <ScaleLabel padding={paddingCheck}>
+                  {timeRange?.startTime?.date}
+                  <br />
+                  {timeRange?.startTime?.time}
+                </ScaleLabel>
               ) : idx === 5 ? (
-                <>
-                  <ScaleLabel>{timeRange?.midTime?.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.midTime?.time}</ScaleLabel>
-                </>
+                <ScaleLabel padding={paddingCheck}>
+                  {timeRange?.midTime?.date}
+                  <br />
+                  {timeRange?.midTime?.time}
+                </ScaleLabel>
               ) : idx === 10 ? (
-                <>
-                  <ScaleLabel>{timeRange?.endTime?.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.endTime?.time}</ScaleLabel>
-                </>
+                <ScaleLabel padding={paddingCheck}>
+                  {timeRange?.endTime?.date}
+                  <br />
+                  {timeRange?.endTime?.time}
+                </ScaleLabel>
               ) : null}
             </Scale>
           ))}
@@ -158,7 +171,7 @@ const TimelineEditor = ({
           onMouseDown={handleOnStartMove}
           isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
-            left: `${sliderPosition}px`,
+            left: `${sliderPosition}%`,
           }}>
           <Icon icon="slider" />
         </IconWrapper>
@@ -178,11 +191,11 @@ const Wrapper = styled.div`
   user-select: none;
 `;
 
-const TimelineControl = styled.div`
+const TimelineControl = styled.div<{ padding: number }>`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: 16px;
+  gap: ${({ padding }) => (padding > 20 ? "15px" : "26px")};
 `;
 
 const StyledIcon = styled.div<{ activeBlock: boolean }>`
@@ -191,6 +204,7 @@ const StyledIcon = styled.div<{ activeBlock: boolean }>`
   background: ${({ activeBlock, theme }) => (activeBlock ? theme.select.main : theme.bg[4])};
   padding: 4px 6px 2px;
   border-radius: 6px 0 8px 0;
+  margin-bottom: 6px;
 `;
 const PlayControl = styled.div`
   display: flex;
@@ -206,12 +220,11 @@ const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
 const InputWrapper = styled.div`
   position: relative;
   cursor: pointer;
-  width: 90px;
 `;
 
 const ArrowIcon = styled(Icon)<{ open: boolean }>`
   position: absolute;
-  right: 10px;
+  right: -6px;
   top: 60%;
   transform: ${({ open }) => (open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)")};
   color: ${({ theme }) => theme.content.weaker};
@@ -252,7 +265,7 @@ const InputOptions = styled.option`
 const CurrentTime = styled.div`
   color: ${({ theme }) => theme.content.weaker};
   position: relative;
-  font-size: 13px;
+  font-size: 12px;
 `;
 
 const TimelineSlider = styled.div`
@@ -290,8 +303,8 @@ const Scale = styled.div`
   width: calc(100% / 11);
 `;
 
-const ScaleLabel = styled.div`
-  font-size: 10px;
+const ScaleLabel = styled.div<{ padding: number }>`
+  font-size: ${({ padding }) => (padding > 20 ? "8.5px" : "10px")};
   position: relative;
   bottom: 28px;
   right: 15px;
