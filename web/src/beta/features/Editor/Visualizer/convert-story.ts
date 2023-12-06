@@ -161,6 +161,8 @@ const processPropertyGroups = (
         title: schema.translatedTitle || undefined,
         description: schema.translatedDescription || undefined,
         choices: schema.choices || undefined,
+        min: schema.min || undefined,
+        max: schema.max || undefined,
       };
 
       if (!used) {
