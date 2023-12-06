@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
 
 import type { ComponentProps as WidgetProps } from "../..";
-import { useVisible } from "../../useVisible";
 
 import MenuButton, { Button as ButtonType, MenuItem as MenuItemType } from "./MenuButton";
 
@@ -13,22 +12,10 @@ export type Property = {
   menu?: MenuItem[];
 };
 
-const Menu = ({
-  widget,
-  theme,
-  isMobile,
-  onVisibilityChange,
-  context: { onFlyTo } = {},
-}: Props): JSX.Element | null => {
+const Menu = ({ widget, theme, context: { onFlyTo } = {} }: Props): JSX.Element | null => {
   const { default: button, menu: menuItems } = widget.property ?? {};
-  const visible = useVisible({
-    widgetId: widget.id,
-    visible: widget.property?.default?.visible,
-    isMobile,
-    onVisibilityChange,
-  });
 
-  return visible ? (
+  return (
     <Wrapper>
       <MenuButton
         theme={theme}
@@ -39,7 +26,7 @@ const Menu = ({
         onFlyTo={onFlyTo}
       />
     </Wrapper>
-  ) : null;
+  );
 };
 
 const Wrapper = styled.div`

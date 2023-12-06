@@ -102,7 +102,11 @@ const Item: FC<Props> = ({
   drop(contentRef);
   return shouldUseCustomHandler ? (
     <ItemContext.Provider value={ref}>
-      <SItem ref={preview} data-handler-id={handlerId} isDragging={isDragging}>
+      <SItem
+        customHandler={shouldUseCustomHandler}
+        ref={preview}
+        data-handler-id={handlerId}
+        isDragging={isDragging}>
         <div ref={contentRef}>{children}</div>
       </SItem>
     </ItemContext.Provider>
@@ -115,7 +119,7 @@ const Item: FC<Props> = ({
 
 export default memo(Item);
 
-const SItem = styled.div<{ isDragging: boolean }>`
+const SItem = styled.div<{ isDragging: boolean; customHandler?: boolean }>`
   ${({ isDragging }) => `opacity: ${isDragging ? 0 : 1};`}
-  cursor: move;
+  cursor: ${({ customHandler }) => (customHandler ? "default" : "move")};
 `;

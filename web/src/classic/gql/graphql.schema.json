@@ -6163,16 +6163,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "SCALAR",
-        "name": "Map",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
         "kind": "OBJECT",
         "name": "Me",
         "description": null,

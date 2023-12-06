@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
@@ -45,15 +45,19 @@ const LayerItem = ({
     () => setIsEditing(true),
   );
 
+  useEffect(() => {
+    setNewValue(layerTitle);
+  }, [layerTitle]);
+
   const handleTitleSubmit = useCallback(
     (newTitle: string) => {
       setNewValue(newTitle);
       setIsEditing(false);
-      if (newValue.trim() !== "") {
+      if (newTitle.trim() !== "") {
         onLayerNameUpdate({ layerId: id, name: newTitle });
       }
     },
-    [id, newValue, onLayerNameUpdate],
+    [id, onLayerNameUpdate],
   );
 
   const handleEditExit = useCallback(

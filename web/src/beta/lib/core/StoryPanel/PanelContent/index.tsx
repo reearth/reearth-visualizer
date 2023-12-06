@@ -29,6 +29,7 @@ export type Props = {
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
   onBlockSelect?: (blockId?: string) => void;
+  onBlockDoubleClick?: (blockId?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -66,6 +67,7 @@ const StoryContent: React.FC<Props> = ({
   onBlockCreate,
   onBlockDelete,
   onBlockSelect,
+  onBlockDoubleClick,
   onBlockMove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -104,6 +106,7 @@ const StoryContent: React.FC<Props> = ({
             onPropertyItemAdd={onPropertyItemAdd}
             onPropertyItemMove={onPropertyItemMove}
             onPropertyItemDelete={onPropertyItemDelete}
+            onBlockDoubleClick={onBlockDoubleClick}
           />
           <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
         </Fragment>

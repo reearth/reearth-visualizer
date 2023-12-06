@@ -17,6 +17,7 @@ type Props = {
   panelSettings?: any;
   dndEnabled?: boolean;
   position?: ActionPosition;
+  overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
@@ -50,6 +51,7 @@ const BlockActionPanel: React.FC<Props> = ({
   isSelected,
   editMode,
   dndEnabled,
+  panelSettings,
   onEditModeToggle,
   onSettingsToggle,
   ...actionProps
@@ -59,6 +61,7 @@ const BlockActionPanel: React.FC<Props> = ({
     icon,
     isSelected,
     editMode,
+    panelSettings,
     onEditModeToggle,
     onSettingsToggle,
   });
@@ -68,6 +71,7 @@ const BlockActionPanel: React.FC<Props> = ({
       dndEnabled={dndEnabled}
       isSelected={isSelected}
       actionItems={actionItems}
+      panelSettings={panelSettings}
       onSettingsToggle={onSettingsToggle}
       {...actionProps}
     />

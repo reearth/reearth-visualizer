@@ -42,6 +42,7 @@ type Props = {
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onBlockDoubleClick?: (blockId?: string) => void;
   onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
   onPropertyItemMove?: (
     propertyId?: string,
@@ -71,6 +72,7 @@ const StoryPanel: React.FC<Props> = ({
   onBlockCreate,
   onBlockDelete,
   onBlockSelect,
+  onBlockDoubleClick,
   onBlockMove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -82,7 +84,7 @@ const StoryPanel: React.FC<Props> = ({
   const {
     openBlocksIndex,
     titleId,
-    title,
+    titleProperty,
     propertyId,
     panelSettings,
     storyBlocks,
@@ -122,7 +124,7 @@ const StoryPanel: React.FC<Props> = ({
 
   return (
     <SelectableArea
-      title={page?.title ?? t("Page")}
+      title={page?.title !== "Untitled" ? page?.title : t("Page")}
       position="left-bottom"
       icon="storyPage"
       noBorder
@@ -143,19 +145,23 @@ const StoryPanel: React.FC<Props> = ({
         padding={panelSettings?.padding?.value}
         gap={panelSettings?.gap?.value}>
         <PageTitleWrapper>
-          {(isEditable || title?.title?.value) && (
+          {(isEditable || titleProperty?.title?.title?.value) && (
+            // The title block is a pseudo block.
+            // It is not saved in the story block list and not draggable because
+            // it is actually a field on the story page.
             <StoryBlock
               block={{
                 id: titleId,
                 pluginId: "reearth",
                 extensionId: "titleStoryBlock",
                 name: t("Title"),
-                propertyId: page?.propertyId ?? "",
-                property: { title },
+                propertyId,
+                property: titleProperty,
               }}
               isEditable={isEditable}
               isSelected={selectedStoryBlockId === titleId}
               onClick={() => onBlockSelect?.(titleId)}
+              onBlockDoubleClick={() => onBlockDoubleClick?.(titleId)}
               onPropertyUpdate={onPropertyUpdate}
               onPropertyItemAdd={onPropertyItemAdd}
               onPropertyItemMove={onPropertyItemMove}
@@ -168,7 +174,7 @@ const StoryPanel: React.FC<Props> = ({
               openBlocks={openBlocksIndex === -1}
               installableStoryBlocks={installableStoryBlocks}
               onBlockOpen={() => handleBlockOpen(-1)}
-              onBlockAdd={() => handleBlockCreate(0)}
+              onBlockAdd={handleBlockCreate(0)}
             />
           )}
         </PageTitleWrapper>
@@ -196,9 +202,11 @@ const StoryPanel: React.FC<Props> = ({
                 <Fragment key={idx}>
                   <StoryBlock
                     block={b}
+                    pageId={page?.id}
                     isSelected={selectedStoryBlockId === b.id}
                     isEditable={isEditable}
                     onClick={() => onBlockSelect?.(b.id)}
+                    onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
                     onRemove={onBlockDelete}
                     onPropertyUpdate={onPropertyUpdate}
                     onPropertyItemAdd={onPropertyItemAdd}

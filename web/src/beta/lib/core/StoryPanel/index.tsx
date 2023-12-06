@@ -1,9 +1,10 @@
-import { forwardRef, memo, Ref } from "react";
+import { forwardRef, memo, Ref, useMemo } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { STORY_PANEL_WIDTH } from "./constants";
+import { PanelProvider } from "./context";
 import useHooks, { type StoryPanelRef, type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
@@ -79,9 +80,14 @@ export const StoryPanel = memo(
         selectedBlockId,
         showPageSettings,
         isAutoScrolling,
+        layerOverride,
+        setCurrentPageId,
+        setLayerOverride,
+        handleLayerOverride,
         handlePageSettingsToggle,
         handlePageSelect,
         handleBlockSelect,
+        handleBlockDouleClick,
         handleCurrentPageChange,
       } = useHooks(
         {
@@ -91,37 +97,66 @@ export const StoryPanel = memo(
         },
         ref,
       );
+
+      const panelContext = useMemo(
+        () => ({
+          layerOverride,
+          pageIds: selectedStory?.pages.map(p => p.id),
+          onLayerOverride: handleLayerOverride,
+          onJumpToPage: (pageIndex: number) => {
+            const pageId = selectedStory?.pages[pageIndex].id;
+            if (!pageId) return;
+            const element = document.getElementById(pageId);
+            if (!element) return;
+            setCurrentPageId(pageId);
+            setLayerOverride(undefined);
+            element.scrollIntoView({ behavior: "instant" } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
+          },
+        }),
+        [
+          layerOverride,
+          selectedStory?.pages,
+          setCurrentPageId,
+          setLayerOverride,
+          handleLayerOverride,
+        ],
+      );
+
       return (
-        <PanelWrapper bgColor={selectedStory?.bgColor}>
-          {!!pageInfo && (
-            <PageIndicator
-              currentPage={pageInfo.currentPage}
-              maxPage={pageInfo.maxPage}
-              onPageChange={pageInfo.onPageChange}
+        <PanelProvider value={panelContext}>
+          <PanelWrapper bgColor={selectedStory?.bgColor}>
+            {!!pageInfo && (
+              <PageIndicator
+                currentPage={pageInfo.currentPage}
+                pageTitles={pageInfo.pageTitles}
+                maxPage={pageInfo.maxPage}
+                onPageChange={pageInfo.onPageChange}
+              />
+            )}
+            <StoryContent
+              pages={selectedStory?.pages}
+              selectedPageId={selectedPageId}
+              installableStoryBlocks={installableBlocks}
+              selectedStoryBlockId={selectedBlockId}
+              showPageSettings={showPageSettings}
+              showingIndicator={!!pageInfo}
+              isAutoScrolling={isAutoScrolling}
+              isEditable={isEditable}
+              onPageSettingsToggle={handlePageSettingsToggle}
+              onPageSelect={handlePageSelect}
+              onCurrentPageChange={handleCurrentPageChange}
+              onBlockCreate={onBlockCreate}
+              onBlockMove={onBlockMove}
+              onBlockDelete={onBlockDelete}
+              onBlockSelect={handleBlockSelect}
+              onBlockDoubleClick={handleBlockDouleClick}
+              onPropertyUpdate={onPropertyUpdate}
+              onPropertyItemAdd={onPropertyItemAdd}
+              onPropertyItemMove={onPropertyItemMove}
+              onPropertyItemDelete={onPropertyItemDelete}
             />
-          )}
-          <StoryContent
-            pages={selectedStory?.pages}
-            selectedPageId={selectedPageId}
-            installableStoryBlocks={installableBlocks}
-            selectedStoryBlockId={selectedBlockId}
-            showPageSettings={showPageSettings}
-            showingIndicator={!!pageInfo}
-            isAutoScrolling={isAutoScrolling}
-            isEditable={isEditable}
-            onPageSettingsToggle={handlePageSettingsToggle}
-            onPageSelect={handlePageSelect}
-            onCurrentPageChange={handleCurrentPageChange}
-            onBlockCreate={onBlockCreate}
-            onBlockMove={onBlockMove}
-            onBlockDelete={onBlockDelete}
-            onBlockSelect={handleBlockSelect}
-            onPropertyUpdate={onPropertyUpdate}
-            onPropertyItemAdd={onPropertyItemAdd}
-            onPropertyItemMove={onPropertyItemMove}
-            onPropertyItemDelete={onPropertyItemDelete}
-          />
-        </PanelWrapper>
+          </PanelWrapper>
+        </PanelProvider>
       );
     },
   ),
@@ -131,6 +166,7 @@ export default StoryPanel;
 
 const PanelWrapper = styled.div<{ bgColor?: string }>`
   flex: 0 0 ${STORY_PANEL_WIDTH}px;
+  width: ${STORY_PANEL_WIDTH}px;
   background: ${({ bgColor }) => bgColor};
   color: ${({ theme }) => theme.content.weak};
 `;

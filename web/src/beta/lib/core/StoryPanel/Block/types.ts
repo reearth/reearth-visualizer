@@ -10,9 +10,11 @@ export type BlockProps = {
   block?: StoryBlock;
   layer?: Layer;
   onClick?: () => void;
+  onBlockDoubleClick?: () => void;
 };
 
 export type CommonProps = {
+  pageId?: string;
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
@@ -20,6 +22,7 @@ export type CommonProps = {
   theme?: Theme;
   currentCamera?: Camera;
   onClick?: () => void;
+  onBlockDoubleClick?: () => void;
   onClickAway?: () => void;
   onRemove?: (pageId?: string, id?: string) => void;
   onPropertyUpdate?: (
