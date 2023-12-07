@@ -1,5 +1,3 @@
-import { FetchOptions, f } from "@reearth/beta/lib/core/mantle/data/utils";
-
 export type MeshImageData = {
   image: HTMLCanvasElement;
   width: number;
@@ -9,34 +7,53 @@ export type MeshImageData = {
   outlierThreshold?: number;
 };
 
-export async function fetchImageAndCreateMeshImageData(
-  url?: string,
-  options?: FetchOptions,
-): Promise<MeshImageData> {
+export async function fetchImageAndCreateMeshImageData(url?: string): Promise<MeshImageData> {
   if (typeof url !== "string") {
     console.error("URL for valueMap is undefined");
     return Promise.reject("Invalid URL");
   }
-  const imageBlob = await (await f(url, options)).blob();
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    return Promise.reject("Failed to create canvas context");
+  }
 
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
-      ctx?.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, img.width, img.height).data;
+      const { minValue, maxValue, outlierThreshold } = reverseMeshDataAndComputeValues(
+        imageData,
+        img.width,
+        img.height,
+      );
 
       resolve({
         image: canvas,
         width: img.width,
         height: img.height,
+        minValue,
+        maxValue,
+        outlierThreshold,
       });
     };
     img.onerror = reject;
-    img.src = URL.createObjectURL(imageBlob);
+
+    if (url.startsWith("data:image")) {
+      img.src = url;
+    } else {
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          img.src = URL.createObjectURL(blob);
+        })
+        .catch(reject);
+    }
   });
 }
 

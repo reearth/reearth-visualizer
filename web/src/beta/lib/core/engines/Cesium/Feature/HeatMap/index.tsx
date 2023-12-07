@@ -78,16 +78,15 @@ export default function HeatMap({ property, isVisible }: Props) {
 
   const [meshImageData, setMeshImageData] = useState<MeshImageData>();
   useEffect(() => {
-    if (!visible) {
-      return;
-    }
-    (async () => {
-      const meshImageData = await fetchImageAndCreateMeshImageData(valueMap);
-      setMeshImageData(meshImageData);
-    })().catch(error => {
-      console.error(error);
-    });
-    return () => {};
+    if (!visible) return;
+
+    fetchImageAndCreateMeshImageData(valueMap)
+      .then(meshImageData => {
+        setMeshImageData(meshImageData);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }, [valueMap, visible]);
 
   const { contourSpacing = Math.max(10, meshImageData?.outlierThreshold || 0 / 20) } =
@@ -106,7 +105,7 @@ export default function HeatMap({ property, isVisible }: Props) {
     [bounds, meshImageData],
   );
 
-  if (isVisible || meshImageData == null || geometry == null) {
+  if (!isVisible || meshImageData == null || geometry == null) {
     return null;
   }
   return (

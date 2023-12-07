@@ -60,6 +60,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   gml: [],
   gltf: ["model"],
   tiles: ["raster"],
+  heatMap: ["heatMap"],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.
