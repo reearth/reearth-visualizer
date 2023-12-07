@@ -136,8 +136,8 @@ export const StoryPanel = memo(
             <StoryContent
               pages={selectedStory?.pages}
               selectedPageId={selectedPageId}
-              installableStoryBlocks={installableBlocks}
               selectedStoryBlockId={selectedBlockId}
+              installableStoryBlocks={installableBlocks}
               showPageSettings={showPageSettings}
               showingIndicator={!!pageInfo}
               isAutoScrolling={isAutoScrolling}

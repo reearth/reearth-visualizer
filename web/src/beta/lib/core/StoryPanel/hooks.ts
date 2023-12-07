@@ -46,24 +46,24 @@ export default (
 
   const handlePageSelect = useCallback(
     (pageId?: string) => {
-      if (!isEditable) return;
+      if (!isEditable || pageId === selectedPageId) return;
       if (selectedBlockId) {
-        setSelectedBlockId(selectedBlockId);
+        setSelectedBlockId(undefined);
       }
-      setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
+      setSelectedPageId(pageId);
     },
-    [selectedBlockId, isEditable],
+    [selectedPageId, selectedBlockId, isEditable],
   );
 
   const handleBlockSelect = useCallback(
     (blockId?: string) => {
-      if (!isEditable) return;
+      if (!isEditable || blockId === selectedBlockId) return;
       if (selectedPageId) {
         setSelectedPageId(undefined);
       }
-      setSelectedBlockId(id => (!blockId || id === blockId ? undefined : blockId));
+      setSelectedBlockId(blockId);
     },
-    [selectedPageId, isEditable],
+    [selectedPageId, selectedBlockId, isEditable],
   );
 
   const handleBlockDouleClick = useCallback((blockId?: string) => {
