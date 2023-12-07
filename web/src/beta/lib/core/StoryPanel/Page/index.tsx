@@ -17,8 +17,8 @@ import useHooks, { type StoryPage } from "./hooks";
 type Props = {
   page?: StoryPage;
   selectedPageId?: string;
-  installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
+  installableStoryBlocks?: InstallableStoryBlock[];
   showPageSettings?: boolean;
   isEditable?: boolean;
   isAutoScrolling?: MutableRefObject<boolean>;
@@ -61,8 +61,8 @@ type Props = {
 const StoryPanel: React.FC<Props> = ({
   page,
   selectedPageId,
-  installableStoryBlocks,
   selectedStoryBlockId,
+  installableStoryBlocks,
   showPageSettings,
   isEditable,
   scrollTimeoutRef,
@@ -174,9 +174,11 @@ const StoryPanel: React.FC<Props> = ({
           )}
           {isEditable && (
             <BlockAddBar
+              id={titleId + "below-bar"}
               alwaysShow={storyBlocks && storyBlocks.length < 1}
               openBlocks={openBlocksIndex === -1}
               installableStoryBlocks={installableStoryBlocks}
+              showAreaHeight={panelSettings?.gap?.value}
               onBlockOpen={() => handleBlockOpen(-1)}
               onBlockAdd={handleBlockCreate(0)}
             />
@@ -220,8 +222,10 @@ const StoryPanel: React.FC<Props> = ({
                   />
                   {isEditable && (
                     <BlockAddBar
+                      id={b.id + "below-bar"}
                       openBlocks={openBlocksIndex === idx}
                       installableStoryBlocks={installableStoryBlocks}
+                      showAreaHeight={panelSettings?.gap?.value}
                       onBlockOpen={() => handleBlockOpen(idx)}
                       onBlockAdd={handleBlockCreate(idx + 1)}
                     />
