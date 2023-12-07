@@ -29,6 +29,7 @@ type Props = {
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   onClick?: () => void;
+  onClickAway?: () => void;
   onRemove?: () => void;
   onBlockDoubleClick?: () => void;
   onPropertyUpdate?: (
@@ -65,6 +66,7 @@ const BlockWrapper: React.FC<Props> = ({
   settingsEnabled = true,
   onClick,
   onBlockDoubleClick,
+  onClickAway,
   onRemove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -105,6 +107,7 @@ const BlockWrapper: React.FC<Props> = ({
         editMode={editMode}
         isEditable={isEditable}
         overrideGroupId={groupId === "title" ? groupId : undefined}
+        onClickAway={onClickAway}
         setEditMode={setEditMode}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}

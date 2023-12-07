@@ -4,6 +4,7 @@ import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
+import ClickAwayListener from "../ClickAwayListener";
 
 import useHooks from "./hooks";
 
@@ -25,6 +26,7 @@ type Props = {
   onEditModeToggle?: () => void;
   onSettingsToggle?: () => void;
   onClick?: () => void;
+  onClickAway?: () => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -67,44 +69,48 @@ const SelectableArea: React.FC<Props> = ({
   onSettingsToggle,
   onRemove,
   onClick,
+  onClickAway,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { showPadding, setShowPadding } = useHooks({
+  const { showPadding, setShowPadding, handleClickAway } = useHooks({
     editMode,
     isSelected,
     setEditMode,
+    onClickAway,
   });
 
   return !isEditable ? (
     <>{children}</>
   ) : (
-    <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
-      <ActionPanel
-        title={title}
-        icon={icon}
-        isSelected={isSelected}
-        showSettings={showSettings}
-        showPadding={showPadding}
-        editMode={editMode}
-        propertyId={propertyId}
-        panelSettings={panelSettings}
-        dndEnabled={dndEnabled}
-        position={position}
-        overrideGroupId={overrideGroupId}
-        setShowPadding={setShowPadding}
-        onEditModeToggle={onEditModeToggle}
-        onSettingsToggle={onSettingsToggle}
-        onRemove={onRemove}
-        onPropertyUpdate={onPropertyUpdate}
-        onPropertyItemAdd={onPropertyItemAdd}
-        onPropertyItemMove={onPropertyItemMove}
-        onPropertyItemDelete={onPropertyItemDelete}
-      />
-      {children}
-    </Wrapper>
+    <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
+      <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
+        <ActionPanel
+          title={title}
+          icon={icon}
+          isSelected={isSelected}
+          showSettings={showSettings}
+          showPadding={showPadding}
+          editMode={editMode}
+          propertyId={propertyId}
+          panelSettings={panelSettings}
+          dndEnabled={dndEnabled}
+          position={position}
+          overrideGroupId={overrideGroupId}
+          setShowPadding={setShowPadding}
+          onEditModeToggle={onEditModeToggle}
+          onSettingsToggle={onSettingsToggle}
+          onRemove={onRemove}
+          onPropertyUpdate={onPropertyUpdate}
+          onPropertyItemAdd={onPropertyItemAdd}
+          onPropertyItemMove={onPropertyItemMove}
+          onPropertyItemDelete={onPropertyItemDelete}
+        />
+        {children}
+      </Wrapper>
+    </ClickAwayListener>
   );
 };
 

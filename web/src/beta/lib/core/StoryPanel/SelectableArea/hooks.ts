@@ -1,12 +1,13 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 
 type Props = {
   editMode?: boolean;
   isSelected?: boolean;
   setEditMode?: Dispatch<SetStateAction<boolean>>;
+  onClickAway?: () => void;
 };
 
-export default ({ editMode, isSelected, setEditMode }: Props) => {
+export default ({ editMode, isSelected, setEditMode, onClickAway }: Props) => {
   const [showPadding, setShowPadding] = useState(false);
 
   useEffect(() => {
@@ -15,8 +16,14 @@ export default ({ editMode, isSelected, setEditMode }: Props) => {
     }
   }, [isSelected, editMode, setEditMode]);
 
+  const handleClickAway = useCallback(() => {
+    setShowPadding(false);
+    onClickAway?.();
+  }, [onClickAway]);
+
   return {
     showPadding,
     setShowPadding,
+    handleClickAway,
   };
 };

@@ -101,14 +101,14 @@ const StoryContent: React.FC<Props> = ({
             onBlockCreate={handleBlockCreate(p.id)}
             onBlockDelete={handleBlockDelete(p.id)}
             onBlockSelect={onBlockSelect}
+            onBlockDoubleClick={onBlockDoubleClick}
             onBlockMove={onBlockMove}
             onPropertyUpdate={onPropertyUpdate}
             onPropertyItemAdd={onPropertyItemAdd}
             onPropertyItemMove={onPropertyItemMove}
-            onPropertyItemDelete={onPropertyItemDelete}
-            onBlockDoubleClick={onBlockDoubleClick}
-          />
-          <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
+            onPropertyItemDelete={onPropertyItemDelete}>
+            <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
+          </StoryPage>
         </Fragment>
       ))}
     </PagesWrapper>

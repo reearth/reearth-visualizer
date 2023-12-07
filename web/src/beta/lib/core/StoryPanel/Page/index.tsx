@@ -1,4 +1,4 @@
-import { Fragment, MutableRefObject, useEffect } from "react";
+import { Fragment, MutableRefObject, ReactNode, useEffect } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
@@ -23,6 +23,7 @@ type Props = {
   isEditable?: boolean;
   isAutoScrolling?: MutableRefObject<boolean>;
   scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  children?: ReactNode;
   onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
@@ -66,6 +67,7 @@ const StoryPanel: React.FC<Props> = ({
   isEditable,
   scrollTimeoutRef,
   isAutoScrolling,
+  children,
   onCurrentPageChange,
   onPageSettingsToggle,
   onPageSelect,
@@ -134,6 +136,7 @@ const StoryPanel: React.FC<Props> = ({
       showSettings={showPageSettings}
       isEditable={isEditable}
       onClick={() => onPageSelect?.(page?.id)}
+      onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}
       onPropertyUpdate={onPropertyUpdate}
       onPropertyItemAdd={onPropertyItemAdd}
@@ -162,6 +165,7 @@ const StoryPanel: React.FC<Props> = ({
               isSelected={selectedStoryBlockId === titleId}
               onClick={() => onBlockSelect?.(titleId)}
               onBlockDoubleClick={() => onBlockDoubleClick?.(titleId)}
+              onClickAway={onBlockSelect}
               onPropertyUpdate={onPropertyUpdate}
               onPropertyItemAdd={onPropertyItemAdd}
               onPropertyItemMove={onPropertyItemMove}
@@ -207,6 +211,7 @@ const StoryPanel: React.FC<Props> = ({
                     isEditable={isEditable}
                     onClick={() => onBlockSelect?.(b.id)}
                     onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
+                    onClickAway={onBlockSelect}
                     onRemove={onBlockDelete}
                     onPropertyUpdate={onPropertyUpdate}
                     onPropertyItemAdd={onPropertyItemAdd}
@@ -227,6 +232,7 @@ const StoryPanel: React.FC<Props> = ({
           />
         )}
       </Wrapper>
+      {children}
     </SelectableArea>
   );
 };
