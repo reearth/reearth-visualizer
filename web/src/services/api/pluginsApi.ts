@@ -94,10 +94,10 @@ export default () => {
   );
 
   const [installPluginMutation] = useMutation(INSTALL_PLUGIN, {
-    refetchQueries: ["GET_SCENE"],
+    refetchQueries: ["GetScene"],
   });
   const [upgradePluginMutation] = useMutation(UPGRADE_PLUGIN, {
-    refetchQueries: ["GET_SCENE"],
+    refetchQueries: ["GetScene"],
   });
 
   const useInstallPlugin = useCallback(
@@ -151,7 +151,7 @@ export default () => {
   );
 
   const [uploadPluginMutation] = useMutation(UPLOAD_PLUGIN, {
-    refetchQueries: ["GET_SCENE"],
+    refetchQueries: ["GetScene"],
   });
 
   const useUploadPlugin = useCallback(
@@ -188,7 +188,7 @@ export default () => {
   );
 
   const [uninstallPluginMutation] = useMutation(UNINSTALL_PLUGIN, {
-    refetchQueries: ["GET_SCENE"],
+    refetchQueries: ["GetScene"],
   });
 
   const useUninstallPlugin = useCallback(
