@@ -14,9 +14,9 @@ const CheckBoxField: React.FC<Props> = ({ onClick, checked, label }) => {
     <Field onClick={() => onClick?.(!checked)}>
       <BoxField>{checked && <CheckMark icon="checkmark" />}</BoxField>
       {label && (
-        <Text size="footnote" color={theme.content.main}>
+        <StyledText size="footnote" color={theme.content.main}>
           {label}
-        </Text>
+        </StyledText>
       )}
     </Field>
   );
@@ -27,7 +27,13 @@ const Field = styled.button`
   align-items: center;
   gap: 12px;
   width: 100%;
-  height: 20px;
+  min-height: 20px;
+`;
+
+const StyledText = styled(Text)`
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const BoxField = styled.div`
