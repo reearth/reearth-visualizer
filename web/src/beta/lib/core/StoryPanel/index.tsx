@@ -87,7 +87,7 @@ export const StoryPanel = memo(
         handlePageSettingsToggle,
         handlePageSelect,
         handleBlockSelect,
-        handleBlockDouleClick,
+        handleBlockDoubleClick,
         handleCurrentPageChange,
       } = useHooks(
         {
@@ -149,7 +149,7 @@ export const StoryPanel = memo(
               onBlockMove={onBlockMove}
               onBlockDelete={onBlockDelete}
               onBlockSelect={handleBlockSelect}
-              onBlockDoubleClick={handleBlockDouleClick}
+              onBlockDoubleClick={handleBlockDoubleClick}
               onPropertyUpdate={onPropertyUpdate}
               onPropertyItemAdd={onPropertyItemAdd}
               onPropertyItemMove={onPropertyItemMove}

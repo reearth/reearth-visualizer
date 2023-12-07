@@ -66,7 +66,7 @@ export default (
     [selectedPageId, selectedBlockId, isEditable],
   );
 
-  const handleBlockDouleClick = useCallback((blockId?: string) => {
+  const handleBlockDoubleClick = useCallback((blockId?: string) => {
     setSelectedBlockId(id => (!blockId || id === blockId ? blockId : blockId));
   }, []);
 
@@ -217,7 +217,7 @@ export default (
     handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
-    handleBlockDouleClick,
+    handleBlockDoubleClick,
     handleCurrentPageChange,
   };
 };
