@@ -30,6 +30,7 @@ type Props = {
   dndEnabled?: boolean;
   position?: ActionPosition;
   isHovered?: boolean;
+  overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
@@ -65,6 +66,7 @@ const ActionPanel: React.FC<Props> = ({
   actionItems,
   position,
   dndEnabled,
+  overrideGroupId,
   setShowPadding,
   onSettingsToggle,
   onRemove,
@@ -83,13 +85,14 @@ const ActionPanel: React.FC<Props> = ({
   const settingsTitle = useMemo(() => t("Spacing settings"), [t]);
 
   const popoverContent = useMemo(() => {
-    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
-      {
+    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [];
+    if (panelSettings) {
+      menuItems.push({
         name: settingsTitle,
         icon: "padding",
         onClick: () => setShowPadding(true),
-      },
-    ];
+      });
+    }
     if (onRemove) {
       menuItems.push({
         name: t("Remove"),
@@ -98,7 +101,7 @@ const ActionPanel: React.FC<Props> = ({
       });
     }
     return menuItems;
-  }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
+  }, [settingsTitle, panelSettings, t, setShowPadding, onRemove, handleRemove]);
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
       {dndEnabled && (
@@ -144,7 +147,7 @@ const ActionPanel: React.FC<Props> = ({
                 <SettingsContent>
                   {Object.keys(panelSettings).map((fieldId, index) => {
                     const field = panelSettings[fieldId];
-                    const groupId = "panel";
+                    const groupId = overrideGroupId || "panel";
                     return (
                       <FieldComponent
                         key={index}

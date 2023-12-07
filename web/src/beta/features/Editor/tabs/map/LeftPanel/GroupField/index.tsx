@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import ListItem from "@reearth/beta/components/ListItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import type {
@@ -6,7 +8,7 @@ import type {
 } from "@reearth/beta/features/Editor/useLayers";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import type { Scene } from "@reearth/services/api/sceneApi";
+import type { Scene, ScenePropertyCollection } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -40,9 +42,29 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   onFlyTo,
 }) => {
   const t = useT();
+
+  const handleTranslatedCollectionName = useCallback(
+    (name?: ScenePropertyCollection) => {
+      return name === "main"
+        ? t("Main")
+        : name === "tiles"
+        ? t("Tiles")
+        : name === "terrain"
+        ? t("Terrain")
+        : name === "globe"
+        ? t("Globe")
+        : name === "sky"
+        ? t("Sky")
+        : name === "camera"
+        ? t("Camera")
+        : t("Unknown scene setting");
+    },
+    [t],
+  );
+
   return (
     <>
-      <StyledSidePanelSectionField title={t("Scene")} startCollapsed>
+      <StyledSidePanelSectionField title={t("Scene")} startCollapsed gap={0}>
         {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
           (collection, index) =>
             collection && (
@@ -50,7 +72,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
                 key={index}
                 isSelected={selectedSceneSetting === collection}
                 onItemClick={() => onSceneSettingSelect(collection)}>
-                {collection}
+                {handleTranslatedCollectionName(collection as ScenePropertyCollection)}
               </ListItem>
             ),
         )}

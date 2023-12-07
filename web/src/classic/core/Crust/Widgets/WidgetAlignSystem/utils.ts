@@ -1,16 +1,29 @@
-import { WidgetZone } from "./types";
+import { isBuiltinWidget } from "../Widget/builtin";
 
-const sections = ["left", "center", "right"] as const;
-const areas = ["top", "middle", "bottom"] as const;
+import { WAS_SECTIONS, WAS_AREAS } from "./constants";
+import { InternalWidget, WidgetZone } from "./types";
 
 export const filterSections = (
   zone?: WidgetZone,
   invisibleWidgetIDs?: string[],
-  cb?: (s: (typeof sections)[number]) => void,
+  cb?: (s: (typeof WAS_SECTIONS)[number]) => void,
 ) => {
-  return sections.filter(
+  return WAS_SECTIONS.filter(
     s =>
-      areas.filter(a => zone?.[s]?.[a]?.widgets?.find(w => !invisibleWidgetIDs?.includes(w.id)))
-        .length || cb?.(s),
+      WAS_AREAS.filter(a => zone?.[s]?.[a]?.widgets?.some(w => !invisibleWidgetIDs?.includes(w.id)))
+        .length > 0 || cb?.(s),
+  );
+};
+
+export const isInvisibleBuiltin = (widget: InternalWidget, isMobile?: boolean) => {
+  const defaultVisible = widget.property?.default?.visible;
+  return (
+    isBuiltinWidget(`${widget.pluginId}/${widget.extensionId}`) &&
+    !(
+      !defaultVisible ||
+      defaultVisible === "always" ||
+      (defaultVisible === "desktop" && !isMobile) ||
+      (defaultVisible === "mobile" && !!isMobile)
+    )
   );
 };

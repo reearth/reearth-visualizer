@@ -5,7 +5,6 @@ import { TickEvent, TickEventCallback } from "@reearth/beta/lib/core/Map";
 import { TimelineManagerRef } from "@reearth/beta/lib/core/Map/useTimelineManager";
 
 import type { Widget } from "../../types";
-import { useVisible } from "../../useVisible";
 
 const MAX_RANGE = 86400000; // a day
 const getOrNewDate = (d?: Date) => d ?? new Date();
@@ -31,7 +30,6 @@ export const useTimeline = ({
   onTick,
   removeTickEventListener,
   onExtend,
-  onVisibilityChange,
 }: {
   widget: Widget;
   timelineManagerRef?: TimelineManagerRef;
@@ -43,14 +41,7 @@ export const useTimeline = ({
   onTick?: TickEvent;
   removeTickEventListener?: TickEvent;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-  onVisibilityChange?: (id: string, v: boolean) => void;
 }) => {
-  const visible = useVisible({
-    widgetId: widget.id,
-    visible: widget.property?.default?.visible,
-    isMobile,
-    onVisibilityChange,
-  });
   const widgetId = widget.id;
   const [range, setRange] = useState(() =>
     makeRange(
@@ -225,7 +216,6 @@ export const useTimeline = ({
     range,
     isOpened,
     currentTime,
-    visible,
     events: {
       onOpen: handleOnOpen,
       onClose: handleOnClose,

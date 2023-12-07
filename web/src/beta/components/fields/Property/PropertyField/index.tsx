@@ -10,6 +10,7 @@ import ColorField from "../../ColorField";
 import DateTimeField from "../../DateTimeField";
 import LocationField from "../../LocationField";
 import NumberField from "../../NumberField";
+import RangeField from "../../RangeField";
 import SelectField from "../../SelectField";
 import SliderField from "../../SliderField";
 import SpacingInput, { SpacingValues } from "../../SpacingInput";
@@ -153,6 +154,17 @@ const PropertyField: React.FC<Props> = ({
           currentCamera={currentCamera}
           onSave={handleChange}
           onFlyTo={onFlyTo}
+        />
+      ) : schema.type === "array" && schema.ui === "range" ? (
+        <RangeField
+          key={schema.id}
+          name={schema.name}
+          value={value as number[]}
+          defaultValue={schema.defaultValue as number[]}
+          min={schema.min}
+          max={schema.max}
+          description={schema.description}
+          onChange={handleChange}
         />
       ) : (
         <p key={schema.id}>{schema.name} field</p>

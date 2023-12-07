@@ -1,6 +1,137 @@
 name: Re:Earth公式プラグイン
 description: 公式プラグイン
 extensions:
+  cesium-beta:
+    name: Cesium Beta
+    description: プロジェクト概要
+    propertySchema:
+      default:
+        title: メイン
+        fields:
+          sceneMode:
+            title: シーンモード
+            description: 地球儀の表示を2D、2.5D、3Dから選択します。
+          ion:
+            title: Cesium Ion アクセストークン
+            description: ご自身の Cesium Ion アカウントからアクセストークンを発行し、ここに設定します。Cesium Ion のアセット（タイルデータ・3Dデータなど）の使用が可能になります。
+          vr:
+            title: VR
+            description: 画面を左右に分割するVRモードを有効にします。
+      tiles:
+        title: タイル
+        description: 手持ちのタイルデータを使用し、地球上に表示することができます。
+        fields:
+          tile_type:
+            title: 種類
+            choices:
+              default: デフォルト
+              default_label: ラベル付き地図
+              default_road: 道路地図
+              stamen_watercolor: Stamen Watercolor
+              stamen_toner: Stamen Toner
+              open_street_map: OpenStreetMap
+              esri_world_topo: ESRI Topography
+              black_marble: Black Marble
+              japan_gsi_standard: 地理院地図 標準地図
+              url: URL
+          tile_url:
+            title: URL
+          tile_zoomLevel:
+            title: ズームレベル
+            description: "選択したタイルマップのズームレベルを変更します。 最小値: 0 最大値: 1"
+          tile_opacity:
+            title: 不透明度
+            description: "選択したタイルマップの不透明度を変更します。 最小値: 0 最大値: 1"
+      terrain:
+        title: 地形
+        fields:
+          terrain:
+            title: 地形
+            description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
+          terrainType:
+            title: 種類
+            description: 地形の種類を指定します。
+            choices:
+              cesium: Cesium World Terrain
+              arcgis: ArcGIS Terrain
+              cesiumion: Cesium Ion
+          terrainCesiumIonAsset:
+            title: Cesium Ion アセットID
+            description: Cesium Ion に登録されたテラインのアセットのIDを指定します。
+          terrainCesiumIonAccessToken:
+            title: Cesium Ion アクセストークン
+            description: シーン全体設定の Cesium Ion のアクセストークンをこのタイルのために上書きしたい場合は指定します。
+          terrainCesiumIonUrl:
+            title: Cesium Ion テラインURL
+            description: Cesium のテラインデータを Cesium Ion ではなくオンプレミスのサーバーで配信している場合はそのURLを指定します。アセットIDの指定よりも優先されます。
+          terrainExaggeration:
+            title: 地形の強調
+            description: 地形の強調を設定します。デフォルトは1.0（誇張しない）です。2.0は、地形を2倍に拡大します。0.0の値は地形を完全に平らにします。
+          terrainExaggerationRelativeHeight:
+            title: 地形の強調の基準
+            description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
+          depthTestAgainstTerrain:
+            title: 地形の下を非表示
+            description: 地形の下にあるオブジェクトを非表示にします。標高データの読み込み状況によってオブジェクトが表示されたり隠れたりすることがあります。
+      globeLighting:
+        title: 太陽光の明るさ
+        fields:
+          globeLighting:
+            title: 有効化
+            description: 地球上の地物にあたる明るさの有効無効を切り替えます。
+      globeShadow:
+        title: 陰影
+        fields:
+          globeShadow:
+            title: 有効化
+            description: 地球上の地物の陰影の有効無効を切り替えます。
+      globeAtmosphere:
+        title: 大気
+        fields:
+          globeAtmosphere:
+            title: 有効化
+            description: 地球上の大気の効果の有効無効を切り替えます。
+          globeAtmosphereIntensity:
+            title: 光の強さ
+            description: "選択したタイルマップの光の強さを変更します。 最小値: 0 最大値: 30"
+      skyBox:
+        title: スカイボックス
+        fields:
+          skyBox:
+            title: 有効化
+            description: 有効にすると、空に星が追加されます。
+      sun:
+        title: 太陽
+        fields:
+          sun:
+            title: 有効化
+            description: 有効にすると、空に太陽が表示されます。
+      moon:
+        title: 月
+        fields:
+          moon:
+            title: 有効化
+            description: 有効にすると、空に月が表示されます。
+      skyAtmosphere:
+        title: 上空の大気
+        fields:
+          skyAtmosphere:
+            title: 有効化
+            description: 有効にすると、リアルな上空の大気が表示されます。
+          skyAtmosphereIntensity:
+            title: 光の強さ
+            description: "選択したタイルマップの光の強さを変更します。 最小値: 0 最大値: 200"
+      camera:
+        title: カメラ
+        fields:
+          camera:
+            title: カメラの初期位置
+            description: プロジェクトを開いたときに表示される最初の位置
+          allowEnterGround:
+            title: 地下に入る
+            description: 有効にすると、カメラが地表の中に入るようになります。
+          fov:
+            title: 視野（FOV）
   cesium:
     name: Cesium
     description: 右パネルでシーン全体の設定を変更することができます。タイル、大気、ライティングなどの設定が含まれています。
@@ -1022,6 +1153,8 @@ extensions:
             title: タイトル
           color:
             title: 色
+          padding:
+            title: 余白
       cameraAnimation:
         title: カメラアニメーション
         fields:
@@ -1150,3 +1283,6 @@ extensions:
             title: 背景色
           showLayers:
             title: 見えるレイヤー
+  nextPageStoryBlock:
+    name: 次ページボタン
+    description: ストーリーテリングの次ページに移動するボタンブロック

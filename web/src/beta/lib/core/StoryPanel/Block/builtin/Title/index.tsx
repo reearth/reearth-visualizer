@@ -14,12 +14,7 @@ export type Props = BlockProps;
 const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const t = useT();
 
-  const property = useMemo(() => {
-    return {
-      ...block?.property,
-      panel: { padding: block?.property?.title?.padding },
-    };
-  }, [block?.property]);
+  const property = useMemo(() => block?.property, [block?.property]);
 
   const title = useMemo(
     () => property?.title?.title?.value as ValueTypes["string"],
@@ -30,7 +25,8 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     () => property?.title?.color?.value as ValueTypes["string"],
     [property?.title?.color?.value],
   );
-  const hasEmptySpace = isEmptyString(title);
+
+  const hasEmptySpace = useMemo(() => isEmptyString(title), [title]);
 
   return (
     <BlockWrapper

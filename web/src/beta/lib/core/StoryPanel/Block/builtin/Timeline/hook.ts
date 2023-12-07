@@ -241,7 +241,6 @@ export default ({
     if (target) {
       target.style.pointerEvents = "initial";
       setTarget(null);
-      setIsPause(false);
     }
   }, [target]);
 
@@ -250,7 +249,7 @@ export default ({
       if (!handleOnDrag || !e.target || !range) {
         return;
       }
-      if (target && target.style.pointerEvents === "none") {
+      if (target && target.style.pointerEvents === "none" && !inEditor) {
         const evt = e;
         let newPosition = evt.clientX - distX.current;
         newPosition = Math.max(newPosition, 16);
@@ -260,18 +259,19 @@ export default ({
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [committer?.id, handleOnDrag, range, target],
+    [committer?.id, handleOnDrag, inEditor, range, target],
   );
 
   const handleOnClick: MouseEventHandler = useCallback(
     e => {
-      if (range) {
+      if (!inEditor && range) {
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
     },
-    [range, committer?.id, handleOnDrag],
+    [inEditor, range, committer?.id, handleOnDrag],
   );
+
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
       if (
@@ -281,7 +281,6 @@ export default ({
       ) {
         setActiveBlock(" ");
         setIsActive(false);
-        setIsPause(false);
         setIsPlaying(false);
         setIsPlayingReversed(false);
         const currentTimeValue = timelineValues?.currentTime ?? "";
@@ -289,14 +288,15 @@ export default ({
           ? setCurrentTime?.(getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime())
           : setCurrentTime?.(range?.start);
       }
+      setIsPause(false);
     },
     [activeBlock, isActive, range, setCurrentTime, timelineValues],
   );
 
   useEffect(() => {
     if (
-      (isPlaying && JSON.stringify(current) >= JSON.stringify(timeRange.endTime)) ||
-      (isPlayingReversed && JSON.stringify(current) <= JSON.stringify(timeRange.startTime))
+      (range && isPlaying && JSON.stringify(currentTime) >= JSON.stringify(range?.end)) ||
+      (range && isPlayingReversed && JSON.stringify(currentTime) <= JSON.stringify(range.start))
     ) {
       if (playMode === "loop") {
         return handleOnResetAndPlay();
@@ -306,6 +306,7 @@ export default ({
     }
   }, [
     current,
+    currentTime,
     handleOnPause,
     handleOnPlay,
     handleOnReset,
@@ -313,12 +314,14 @@ export default ({
     isPlaying,
     isPlayingReversed,
     playMode,
+    range,
     timeRange.endTime,
     timeRange.startTime,
   ]);
 
   useEffect(() => {
-    if (isActive) onTick?.(handleTick), onCommit?.(handleTimelineCommitterChange);
+    if (isActive) onTick?.(handleTick);
+    onCommit?.(handleTimelineCommitterChange);
     return () => {
       removeTickEventListener?.(handleTick);
       removeOnCommitEventListener?.(handleTimelineCommitterChange);
@@ -345,7 +348,6 @@ export default ({
         positionPercentage = Math.round(positionPercentage);
         positionPercentage = Math.max(positionPercentage, 16);
         positionPercentage = Math.min(positionPercentage, 372);
-
         return positionPercentage;
       }
     }

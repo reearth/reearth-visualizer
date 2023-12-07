@@ -1,6 +1,7 @@
-import { MouseEvent, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, MouseEvent } from "react";
 
 import { Spacing } from "@reearth/beta/lib/core/mantle";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 
 import { calculatePaddingValue } from "../../../utils";
 
@@ -12,35 +13,35 @@ export default ({
   property,
   isEditable,
   onClick,
+  onBlockDoubleClick,
 }: {
   name?: string | null;
   isSelected?: boolean;
   property?: any;
   isEditable?: boolean;
   onClick: (() => void) | undefined;
+  onBlockDoubleClick: (() => void) | undefined;
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
-  const [clickCount, setClickCount] = useState(0);
+
+  const handleBlockDoubleClick = useCallback(() => {
+    if (isEditable) onBlockDoubleClick?.(), setEditMode(true);
+  }, [isEditable, onBlockDoubleClick]);
+
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => onClick?.(),
+    () => handleBlockDoubleClick?.(),
+  );
 
   const handleBlockClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
       if ((showSettings && isSelected) || editMode) return;
-      if (clickCount === 0) {
-        setClickCount(1);
-        onClick?.();
-        setTimeout(() => {
-          setClickCount(0);
-        }, 300);
-      } else if (clickCount === 1) {
-        setClickCount(0);
-        setEditMode(true);
-        onClick?.();
-      }
+      handleSingleClick();
     },
-    [showSettings, isSelected, editMode, clickCount, onClick],
+    [showSettings, isSelected, editMode, handleSingleClick],
   );
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
@@ -50,19 +51,19 @@ export default ({
     [property],
   );
 
-  const panelSettings = useMemo(
-    () => ({
+  const panelSettings = useMemo(() => {
+    if (!property?.panel) return undefined;
+    return {
       padding: {
         ...property?.panel?.padding,
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
-          property?.panel?.padding.value,
+          property?.panel?.padding?.value,
           isEditable,
         ),
       },
-    }),
-    [property?.panel, isEditable],
-  );
+    };
+  }, [property?.panel, isEditable]);
 
   const handleEditModeToggle = useCallback(() => setEditMode?.(em => !em), []);
 
@@ -79,5 +80,6 @@ export default ({
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
+    handleDoubleClick,
   };
 };

@@ -4,7 +4,6 @@ import type { TimeEventHandler } from "@reearth/classic/components/atoms/Timelin
 import { TickEvent, TickEventCallback } from "@reearth/classic/core/Map";
 
 import type { Clock, Widget } from "../types";
-import { useVisible } from "../useVisible";
 
 const MAX_RANGE = 86400000; // a day
 const getOrNewDate = (d?: Date) => d ?? new Date();
@@ -31,7 +30,6 @@ export const useTimeline = ({
   onTick,
   removeTickEventListener,
   onExtend,
-  onVisibilityChange,
 }: {
   widget: Widget;
   clock?: Clock;
@@ -44,14 +42,7 @@ export const useTimeline = ({
   onTick?: TickEvent;
   removeTickEventListener?: TickEvent;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-  onVisibilityChange?: (id: string, v: boolean) => void;
 }) => {
-  const visible = useVisible({
-    widgetId: widget.id,
-    visible: widget.property?.default?.visible,
-    isMobile,
-    onVisibilityChange,
-  });
   const widgetId = widget.id;
   const [range, setRange] = useState(() =>
     makeRange(clock?.start?.getTime(), clock?.stop?.getTime()),
@@ -227,7 +218,6 @@ export const useTimeline = ({
     range,
     isOpened,
     currentTime,
-    visible,
     events: {
       onOpen: handleOnOpen,
       onClose: handleOnClose,

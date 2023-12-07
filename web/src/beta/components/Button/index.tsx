@@ -17,7 +17,6 @@ export interface Props {
   icon?: string;
   iconPosition?: "left" | "right";
   margin?: string;
-
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
