@@ -42,26 +42,53 @@ export default (
   maxSize?: number,
   localStorageKey?: string,
 ) => {
-  const savedState = localStorageKey && localStorage.getItem(localStorageKey);
-  const parsedState = savedState && JSON.parse(savedState);
+  const getLocalStorageParsedState = useCallback((localStorageKey?: string) => {
+    const savedState = localStorageKey && localStorage.getItem(localStorageKey);
+    return savedState ? JSON.parse(savedState) : null;
+  }, []);
+
+  const parsedState = getLocalStorageParsedState(localStorageKey);
+
   const [startingSize, setStartingSize] = useState(initialSize);
   const [isResizing, setIsResizing] = useState(false);
   const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [minimized, setMinimized] = useState(parsedState ? parsedState.minimized : false);
+  const [minimized, setMinimized] = useState(false);
   const [difference, setDifference] = useState(0);
-  const [minimizedStates, setMinimizedStates] = useState<Record<string, boolean>>({});
+
+  const storedValues = useMemo(() => {
+    if (!parsedState) return;
+    return {
+      size: parsedState.size,
+    };
+  }, [parsedState]);
+
+  const setSizeFromStorage = useCallback(
+    (localStorageKey: string) => {
+      const parsedState = getLocalStorageParsedState(localStorageKey);
+      const storedSize = parsedState?.size;
+
+      if (storedSize !== undefined) {
+        setSize(storedSize);
+        setMinimized(parsedState.minimized);
+      } else {
+        setSize(initialSize);
+        setMinimized(false);
+      }
+    },
+    [getLocalStorageParsedState, initialSize],
+  );
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
       const position = getPositionFromEvent(e);
       if (!position) return;
 
-      setStartingSize(size);
+      setStartingSize(initialSize);
       setIsResizing(true);
       setPosition(position);
     },
-    [size],
+    [initialSize],
   );
 
   const onResize = useCallback(
@@ -93,10 +120,10 @@ export default (
       direction,
       difference,
       size,
-      minimized,
-      startingSize,
       minSize,
       maxSize,
+      minimized,
+      startingSize,
     ],
   );
 
@@ -138,15 +165,9 @@ export default (
       key: localStorageKey,
       size,
       minimized,
-      difference,
-      startingSize,
     };
 
     localStorage.setItem(localStorageKey, JSON.stringify(storedData));
-    setMinimizedStates(prevMinimizedStates => ({
-      ...prevMinimizedStates,
-      [localStorageKey]: minimized,
-    }));
     bindEventListeners();
     return () => unbindEventListeners();
   }, [
@@ -182,27 +203,15 @@ export default (
       }),
     );
 
-    setMinimizedStates(prevMinimizedStates => ({
-      ...prevMinimizedStates,
-      [localStorageKey]: false,
-    }));
-
     setMinimized(false);
     setSize(initialSize);
   }, [initialSize, localStorageKey, parsedState]);
 
-  const storedValues = useMemo(() => {
-    if (!parsedState) return;
-    return {
-      size: parsedState.size,
-      minimized: minimizedStates[localStorageKey] ?? parsedState.minimized,
-    };
-  }, [localStorageKey, minimizedStates, parsedState]);
-
   return {
     size: storedValues?.size || initialSize,
     gutterProps,
-    minimized: storedValues?.minimized,
+    minimized,
     handleResetSize,
+    setSizeFromStorage,
   };
 };

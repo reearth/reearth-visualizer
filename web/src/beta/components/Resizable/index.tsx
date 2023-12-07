@@ -1,5 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
+import { Tab } from "@reearth/beta/features/Navbar";
 import Icon from "@reearth/classic/components/atoms/Icon";
 import { styled } from "@reearth/services/theme";
 
@@ -13,6 +14,7 @@ type Props = {
   minSize: number;
   maxSize?: number;
   localStorageKey?: string;
+  tab?: Tab;
 };
 
 const Resizable: React.FC<Props> = ({
@@ -23,8 +25,9 @@ const Resizable: React.FC<Props> = ({
   initialSize,
   children,
   localStorageKey,
+  tab,
 }) => {
-  const { size, gutterProps, minimized, handleResetSize } = useHooks(
+  const { size, gutterProps, minimized, handleResetSize, setSizeFromStorage } = useHooks(
     direction,
     gutter,
     initialSize,
@@ -32,6 +35,15 @@ const Resizable: React.FC<Props> = ({
     maxSize,
     localStorageKey,
   );
+
+  useEffect(() => {
+    const setSizeBasedOnTab = () => {
+      if (tab === "map" || tab === "story" || tab === "widgets") {
+        localStorageKey && setSizeFromStorage(localStorageKey);
+      }
+    };
+    setSizeBasedOnTab();
+  }, [tab, setSizeFromStorage, localStorageKey]);
 
   const showTopGutter = direction === "horizontal" && gutter === "start";
   const showRightGutter = direction === "vertical" && gutter === "end";
@@ -118,5 +130,6 @@ const MinimizedWrapper = styled.div<Pick<Props, "direction">>`
   :hover {
     background: ${({ theme }) => theme.bg[1]};
   }
-`;
+}`;
+
 export default Resizable;
