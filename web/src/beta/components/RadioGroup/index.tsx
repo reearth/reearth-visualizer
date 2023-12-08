@@ -31,9 +31,10 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 
   return (
     <RadioGroupContainer layout={layout}>
-      {options.map(option => (
+      {options.map((option, idx) => (
         <RadioBox
-          key={option.keyValue}
+          key={option.keyValue + idx}
+          keyValue={option.keyValue}
           selected={option.keyValue === selectedValue}
           label={option.label}
           onClick={() => handleRadioChange(option.keyValue)}
