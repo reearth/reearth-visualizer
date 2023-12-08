@@ -84,11 +84,11 @@ export default (
       const position = getPositionFromEvent(e);
       if (!position) return;
 
-      setStartingSize(initialSize);
+      setStartingSize(size);
       setIsResizing(true);
       setPosition(position);
     },
-    [initialSize],
+    [size],
   );
 
   const onResize = useCallback(
