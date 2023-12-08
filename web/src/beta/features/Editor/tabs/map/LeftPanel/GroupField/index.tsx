@@ -24,6 +24,7 @@ type GroupSectionFieldProps = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: (groupId: string) => void;
   onDataSourceManagerOpen: () => void;
+  onSketchLayerManagerOpen: () => void;
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onFlyTo?: FlyTo;
 };
@@ -38,6 +39,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onSketchLayerManagerOpen,
   onLayerVisibilityUpate,
   onFlyTo,
 }) => {
@@ -85,6 +87,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
           onLayerNameUpdate={onLayerNameUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
+          onSketchLayerManagerOpen={onSketchLayerManagerOpen}
           onLayerVisibilityUpate={onLayerVisibilityUpate}
           onFlyTo={onFlyTo}
         />

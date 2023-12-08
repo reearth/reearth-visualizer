@@ -21,6 +21,7 @@ type LayersProps = {
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
+  onSketchLayerManagerOpen: () => void;
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onFlyTo?: FlyTo;
 };
@@ -32,6 +33,7 @@ const Layers: React.FC<LayersProps> = ({
   onLayerNameUpdate,
   onLayerSelect,
   onDataSourceManagerOpen,
+  onSketchLayerManagerOpen,
   onLayerVisibilityUpate,
   onFlyTo,
 }) => {
@@ -76,11 +78,14 @@ const Layers: React.FC<LayersProps> = ({
                     toggleAddMenu();
                   },
                 },
-                // {
-                //   name: t("Add Sketch Layer"),
-                //   icon: "pencilSimple",
-                //   onClick: () => {},
-                // },
+                {
+                  name: t("Add Sketch Layer"),
+                  icon: "pencilSimple",
+                  onClick: () => {
+                    onSketchLayerManagerOpen();
+                    toggleAddMenu();
+                  },
+                },
               ]}
             />
           </Popover.Content>

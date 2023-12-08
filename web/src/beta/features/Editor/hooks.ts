@@ -28,10 +28,15 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
   );
 
   const [showDataSourceManager, setShowDataSourceManager] = useState(false);
+  const [showSketchLayerManager, setSketchLayerManager] = useState(false);
 
   const handleDataSourceManagerCloser = useCallback(() => setShowDataSourceManager(false), []);
 
   const handleDataSourceManagerOpener = useCallback(() => setShowDataSourceManager(true), []);
+
+  const handleSketchLayerManagerCloser = useCallback(() => setSketchLayerManager(false), []);
+
+  const handleSketchLayerManagerOpener = useCallback(() => setSketchLayerManager(true), []);
   const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
@@ -111,6 +116,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     showWidgetEditor,
     showDataSourceManager,
     currentCamera,
+    showSketchLayerManager,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
     handleDeviceChange,
@@ -119,5 +125,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     handleFlyTo,
     handleCameraUpdate,
     handlePropertyValueUpdate,
+    handleSketchLayerManagerCloser,
+    handleSketchLayerManagerOpener,
   };
 };

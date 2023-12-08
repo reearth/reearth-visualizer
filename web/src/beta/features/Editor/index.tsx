@@ -13,6 +13,7 @@ import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
+import SketchLayerManager from "./SketchLayerManager";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 import useScene from "./useScene";
@@ -34,8 +35,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     showWidgetEditor,
     showDataSourceManager,
     currentCamera,
+    showSketchLayerManager,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
+    handleSketchLayerManagerCloser,
+    handleSketchLayerManagerOpener,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
@@ -136,6 +140,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerVisibilityUpate: handleLayerVisibilityUpdate,
     onSceneSettingSelect: handleSceneSettingSelected,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
+    onSketchLayerManagerOpen: handleSketchLayerManagerOpener,
     onFlyTo: handleFlyTo,
     onPropertyUpdate: handlePropertyValueUpdate,
   });
@@ -248,6 +253,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             onSubmit={handleLayerAdd}
           />
         )}
+        {showSketchLayerManager && <SketchLayerManager onClose={handleSketchLayerManagerCloser} />}
       </Wrapper>
     </DndProvider>
   );
