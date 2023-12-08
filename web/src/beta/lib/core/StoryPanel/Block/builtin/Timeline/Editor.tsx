@@ -93,7 +93,6 @@ const TimelineEditor = ({
     timelineValues,
   });
 
-  console.log("padding", paddingCheck);
   return (
     <Wrapper>
       <TimelineWrapper padding={paddingCheck}>
