@@ -40,6 +40,7 @@ const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) =>
         timelineValues={timelineValues}
         blockId={blockId}
         playMode={playMode}
+        property={block?.property}
       />
     </BlockWrapper>
   );

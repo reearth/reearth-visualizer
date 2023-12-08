@@ -22,6 +22,7 @@ type TimelineProps = {
   inEditor?: boolean;
   playMode?: string;
   padding?: PaddingProp;
+  property?: any;
 };
 
 const TimelineEditor = ({
@@ -31,6 +32,7 @@ const TimelineEditor = ({
   inEditor,
   playMode,
   padding,
+  property,
 }: TimelineProps) => {
   const t = useT();
   const {
@@ -78,6 +80,7 @@ const TimelineEditor = ({
     speed,
     playMode,
     padding,
+    property,
     onPlay,
     onSpeedChange,
     onPause,
@@ -90,56 +93,60 @@ const TimelineEditor = ({
     timelineValues,
   });
 
-  const iconSize = paddingCheck > DEFAULT_PADDING ? 12 : 14;
+  console.log("padding", paddingCheck);
   return (
     <Wrapper>
-      <TimelineControl padding={paddingCheck}>
-        <StyledIcon activeBlock={isActive} padding={paddingCheck}>
-          <Icon icon="timelineStoryBlockSolid" size={paddingCheck > DEFAULT_PADDING ? 8 : 16} />
-        </StyledIcon>
-        <PlayControl padding={paddingCheck}>
-          <PlayButton
-            isClicked={true}
-            isPlaying={isPlayingReversed}
-            onClick={toggleIsPlayingReversed}>
-            <Icon icon="timelinePlayLeft" size={iconSize} />
-          </PlayButton>
-          <PlayButton
-            isPlaying={isPause}
-            isClicked={isPlaying || isPlayingReversed || isPause}
-            onClick={() => {
-              if (isPlaying || isPlayingReversed || isPause) {
-                toggleIsPause();
-              }
-            }}>
-            <Icon icon="pause" size={iconSize} />
-          </PlayButton>
-          <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
-            <Icon icon="timelinePlayRight" size={iconSize} />
-          </PlayButton>
-        </PlayControl>
-        <Popover.Provider open={isOpen} placement="bottom-start" onOpenChange={handlePopOver}>
-          <Popover.Trigger asChild>
-            <InputWrapper onClick={handlePopOver}>
-              <Select>{selected && t(`${selected}`)}</Select>
-              <ArrowIcon icon="arrowDown" open={isOpen} size={16} />
-            </InputWrapper>
-          </Popover.Trigger>
-          <PickerWrapper attachToRoot>
-            {playSpeedOptions?.map((playSpeed, key) => (
-              <InputOptions
-                key={key}
-                value={playSpeed.seconds}
-                onClick={() => {
-                  handleOnSelect(playSpeed.timeString, playSpeed.seconds);
-                }}>
-                {playSpeed.timeString}
-              </InputOptions>
-            ))}
-          </PickerWrapper>
-        </Popover.Provider>
+      <TimelineWrapper padding={paddingCheck}>
+        <TimelineControl padding={paddingCheck}>
+          <StyledIcon activeBlock={isActive}>
+            <Icon icon="timelineStoryBlockSolid" size={16} />
+          </StyledIcon>
+          <PlayControl padding={paddingCheck}>
+            <PlayButton
+              isClicked={true}
+              isPlaying={isPlayingReversed}
+              onClick={toggleIsPlayingReversed}>
+              <Icon icon="timelinePlayLeft" size={14} />
+            </PlayButton>
+            <PlayButton
+              isPlaying={isPause}
+              isClicked={isPlaying || isPlayingReversed || isPause}
+              onClick={() => {
+                if (isPlaying || isPlayingReversed || isPause) {
+                  toggleIsPause();
+                }
+              }}>
+              <Icon icon="pause" size={14} />
+            </PlayButton>
+            <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
+              <Icon icon="timelinePlayRight" size={14} />
+            </PlayButton>
+          </PlayControl>
+          <PopoverWrapper padding={paddingCheck}>
+            <Popover.Provider open={isOpen} placement="bottom-start" onOpenChange={handlePopOver}>
+              <Popover.Trigger asChild>
+                <InputWrapper onClick={handlePopOver}>
+                  <Select>{selected && t(`${selected}`)}</Select>
+                  <ArrowIcon icon="arrowDown" open={isOpen} size={16} />
+                </InputWrapper>
+              </Popover.Trigger>
+              <PickerWrapper attachToRoot>
+                {playSpeedOptions?.map((playSpeed, key) => (
+                  <InputOptions
+                    key={key}
+                    value={playSpeed.seconds}
+                    onClick={() => {
+                      handleOnSelect(playSpeed.timeString, playSpeed.seconds);
+                    }}>
+                    {playSpeed.timeString}
+                  </InputOptions>
+                ))}
+              </PickerWrapper>
+            </Popover.Provider>
+          </PopoverWrapper>
+        </TimelineControl>
         <CurrentTime padding={paddingCheck}>{currentTime && formattedCurrentTime}</CurrentTime>
-      </TimelineControl>
+      </TimelineWrapper>
       <TimelineSlider>
         <ScaleList
           onClick={handleOnClick}
@@ -193,24 +200,42 @@ const Wrapper = styled.div`
   user-select: none;
 `;
 
-const TimelineControl = styled.div<{ padding: number }>`
+const TimelineWrapper = styled.div<{ padding: number }>`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: ${({ padding }) => (padding > DEFAULT_PADDING ? "10px" : "25px")};
+  gap: ${({ padding }) => (padding > DEFAULT_PADDING ? "" : "25px")};
+  flex-direction: ${({ padding }) => (padding > DEFAULT_PADDING ? "column" : "row")};
 `;
 
-const StyledIcon = styled.div<{ activeBlock: boolean; padding: number }>`
+const TimelineControl = styled.div<{ padding: number }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${({ padding }) => (padding > DEFAULT_PADDING ? "0" : "18px")};
+  width: ${({ padding }) => (padding > DEFAULT_PADDING ? "100%" : "auto")};
+`;
+
+const StyledIcon = styled.div<{ activeBlock: boolean }>`
   color: ${({ theme }) => theme.content.strong};
   cursor: pointer;
   background: ${({ activeBlock, theme }) => (activeBlock ? theme.select.main : theme.bg[4])};
-  padding: ${({ padding }) => (padding > DEFAULT_PADDING ? "0px 4px" : "4px 6px 2px")};
+  padding: 4px 6px 2px;
   border-radius: 6px 0 8px 0;
   margin-bottom: 6px;
 `;
+
 const PlayControl = styled.div<{ padding: number }>`
   display: flex;
-  gap: ${({ padding }) => (padding > 60 ? "2px" : "10px")};
+  gap: 10px;
+  margin-left: ${({ padding }) => (padding > DEFAULT_PADDING ? "auto" : "0")};
+`;
+
+const CurrentTime = styled.div<{ padding: number }>`
+  color: ${({ theme }) => theme.content.weaker};
+  padding-right: ${({ padding }) => (padding > DEFAULT_PADDING ? "8px" : "0")};
+  font-size: 12px;
+  margin-left: ${({ padding }) => (padding > DEFAULT_PADDING ? "auto" : "0")};
 `;
 
 const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
@@ -238,6 +263,9 @@ const Select = styled.div`
   padding-right: 12px;
   color: ${({ theme }) => theme.content.weaker};
 `;
+const PopoverWrapper = styled.div<{ padding: number }>`
+  padding: ${({ padding }) => (padding > DEFAULT_PADDING ? "0 10px" : "0")};
+`;
 
 const PickerWrapper = styled(Popover.Content)`
   min-width: 100px;
@@ -262,12 +290,6 @@ const InputOptions = styled.option`
     background: ${({ theme }) => theme.bg[2]};
   }
   color: ${({ theme }) => theme.content.main};
-`;
-
-const CurrentTime = styled.div<{ padding: number }>`
-  color: ${({ theme }) => theme.content.weaker};
-  position: relative;
-  font-size: ${({ padding }) => (padding >= 60 ? "10px" : "12px")};
 `;
 
 const TimelineSlider = styled.div`
@@ -306,8 +328,9 @@ const Scale = styled.div`
 `;
 
 const ScaleLabel = styled.div<{ padding: number }>`
-  font-size: ${({ padding }) => (padding > DEFAULT_PADDING ? "8.5px" : "10px")};
+  font-size: ${({ padding }) => (padding > 60 ? "8px" : "10px")};
   position: relative;
   bottom: 28px;
-  right: 15px;
+  right: 16px;
+  width: 34px;
 `;

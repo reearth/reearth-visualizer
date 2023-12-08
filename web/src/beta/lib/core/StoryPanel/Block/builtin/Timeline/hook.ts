@@ -14,6 +14,7 @@ import {
 } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import {
+  calculatePaddingValue,
   convertPositionToTime,
   formatDateForSliderTimeline,
   formatDateForTimeline,
@@ -21,6 +22,7 @@ import {
 } from "@reearth/beta/lib/core/StoryPanel/utils";
 
 import { getNewDate } from "../../../hooks/useTimelineBlock";
+import { DEFAULT_BLOCK_PADDING } from "../common/hooks";
 
 import { PaddingProp } from "./Editor";
 
@@ -36,6 +38,7 @@ type TimelineProps = {
   playMode?: string;
   timelineValues?: TimelineValues;
   padding?: PaddingProp;
+  property?: any;
   onPlay?: (committer: TimelineCommitter) => void;
   onSpeedChange?: (speed: number, committerId?: string) => void;
   onPause: (committerId: string) => void;
@@ -60,6 +63,7 @@ export default ({
   playMode,
   timelineValues,
   padding,
+  property,
   onPlay,
   onSpeedChange,
   onPause,
@@ -106,10 +110,29 @@ export default ({
     return {};
   }, [range]);
 
-  const paddingCheck = useMemo(
-    () => (padding?.left || padding?.right) ?? 0,
-    [padding?.left, padding?.right],
-  );
+  const panelSettings = useMemo(() => {
+    if (!property?.panel) return undefined;
+    return {
+      padding: {
+        ...property?.panel?.padding,
+        value: calculatePaddingValue(DEFAULT_BLOCK_PADDING, property?.panel?.padding?.value),
+      },
+    };
+  }, [property?.panel]);
+
+  const paddingCheck = useMemo(() => {
+    return Math.max(
+      padding?.left || 0,
+      padding?.right || 0,
+      panelSettings?.padding.value.left || 0,
+      panelSettings?.padding.value.right || 0,
+    );
+  }, [
+    padding?.left,
+    padding?.right,
+    panelSettings?.padding.value.left,
+    panelSettings?.padding.value.right,
+  ]);
 
   const handlePopOver = useCallback(() => {
     !inEditor && setIsOpen(!isOpen);
@@ -348,7 +371,7 @@ export default ({
       if (paddingCheck > DEFAULT_PADDING) {
         if (paddingCheck < 70) {
           return 5;
-        } else if (paddingCheck <= 100) {
+        } else if (paddingCheck === 100) {
           return 6;
         }
       }
