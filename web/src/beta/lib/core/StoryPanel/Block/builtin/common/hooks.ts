@@ -27,6 +27,11 @@ export default ({
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
+  const disableSelection = useMemo(
+    () => storyPanelContext?.disableSelection,
+    [storyPanelContext?.disableSelection],
+  );
+
   const handleEditModeToggle = useCallback(
     (enable: boolean) => {
       storyPanelContext?.onSelectionDisable?.(enable);
@@ -88,6 +93,7 @@ export default ({
     showSettings,
     defaultSettings,
     panelSettings,
+    disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,

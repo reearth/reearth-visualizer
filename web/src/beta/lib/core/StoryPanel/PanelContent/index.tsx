@@ -74,16 +74,17 @@ const StoryContent: React.FC<Props> = ({
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { pageGap, scrollTimeoutRef, handleBlockCreate, handleBlockDelete } = useHooks({
-    onBlockCreate,
-    onBlockDelete,
-  });
+  const { pageGap, scrollTimeoutRef, disableSelection, handleBlockCreate, handleBlockDelete } =
+    useHooks({
+      onBlockCreate,
+      onBlockDelete,
+    });
 
   return (
     <PagesWrapper
       id={STORY_PANEL_CONTENT_ELEMENT_ID}
       showingIndicator={showingIndicator}
-      isEditable={isEditable}>
+      isEditable={isEditable || disableSelection}>
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage

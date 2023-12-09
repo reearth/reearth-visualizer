@@ -21,6 +21,7 @@ type Props = {
   position?: ActionPosition;
   noBorder?: boolean;
   isEditable?: boolean;
+  hideHoverUI?: boolean;
   overrideGroupId?: string;
   onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
@@ -61,6 +62,7 @@ const SelectableArea: React.FC<Props> = ({
   position,
   noBorder,
   isEditable,
+  hideHoverUI,
   panelSettings,
   overrideGroupId,
   onEditModeToggle,
@@ -84,7 +86,11 @@ const SelectableArea: React.FC<Props> = ({
     <>{children}</>
   ) : (
     <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
-      <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
+      <Wrapper
+        isSelected={isSelected}
+        noBorder={noBorder}
+        hideHoverUI={hideHoverUI}
+        onClick={onClick}>
         <ActionPanel
           title={title}
           icon={icon}
@@ -97,6 +103,7 @@ const SelectableArea: React.FC<Props> = ({
           dndEnabled={dndEnabled}
           position={position}
           overrideGroupId={overrideGroupId}
+          hideHoverUI={hideHoverUI}
           setShowPadding={setShowPadding}
           onEditModeToggle={onEditModeToggle}
           onSettingsToggle={onSettingsToggle}
@@ -114,7 +121,7 @@ const SelectableArea: React.FC<Props> = ({
 
 export default SelectableArea;
 
-const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean }>`
+const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean; hideHoverUI?: boolean }>`
   ${({ noBorder, isSelected, theme }) =>
     !noBorder && `border: 1px solid ${isSelected ? theme.select.main : "transparent"};`}
   transition: all 0.3s;
@@ -123,7 +130,8 @@ const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean }>`
   overflow: ${({ isSelected }) => (isSelected ? "visible" : "hidden")};
 
   :hover {
-    border-color: ${({ isSelected, theme }) => !isSelected && theme.select.weaker};
+    border-color: ${({ isSelected, hideHoverUI, theme }) =>
+      !hideHoverUI && !isSelected && theme.select.weaker};
     overflow: visible;
   }
 `;

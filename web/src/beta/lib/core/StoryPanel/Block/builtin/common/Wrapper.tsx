@@ -80,6 +80,7 @@ const BlockWrapper: React.FC<Props> = ({
     showSettings,
     defaultSettings,
     panelSettings,
+    disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
@@ -105,6 +106,7 @@ const BlockWrapper: React.FC<Props> = ({
         panelSettings={panelSettings}
         editMode={editMode}
         isEditable={isEditable}
+        hideHoverUI={disableSelection}
         overrideGroupId={groupId === "title" ? groupId : undefined}
         onClickAway={onClickAway}
         onEditModeToggle={handleEditModeToggle}
@@ -117,6 +119,7 @@ const BlockWrapper: React.FC<Props> = ({
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
+          disableSelection={disableSelection}
           onClick={e => {
             handleBlockClick(e);
           }}
@@ -150,13 +153,14 @@ const BlockWrapper: React.FC<Props> = ({
 
 export default BlockWrapper;
 
-const Block = styled.div<{ padding?: Spacing; isEditable?: boolean }>`
+const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelection?: boolean }>`
   display: flex;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-  cursor: ${({ isEditable }) => (isEditable ? "pointer" : "default")};
+  cursor: ${({ isEditable, disableSelection }) =>
+    isEditable && !disableSelection ? "pointer" : "default"};
   color: black;
 `;
 
