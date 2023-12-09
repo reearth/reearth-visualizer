@@ -1,5 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 
+import { setLocalStorageData } from "@reearth/beta/utils/localstorage";
+
 export type Direction = "vertical" | "horizontal";
 export type Gutter = "start" | "end";
 
@@ -7,9 +9,6 @@ const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
   const { nativeEvent } = e;
   if (nativeEvent instanceof MouseEvent) {
     const { clientX: x, clientY: y, which } = nativeEvent;
-
-    // When user click with right button the resize is stuck in resizing mode until users clicks again, dont continue if right click is used.
-    // https://github.com/bokuweb/re-resizable/blob/06dd269f835a201b03b4f62f37533784d855fdd2/src/index.tsx#L611
     if (which === 3) return;
 
     return { x, y };
@@ -130,12 +129,10 @@ export default (
     if (!localStorageKey) return;
 
     const storedData = {
-      key: localStorageKey,
       size,
       minimized,
     };
-
-    localStorage.setItem(localStorageKey, JSON.stringify(storedData));
+    setLocalStorageData(localStorageKey, storedData);
   }, [isResizing, localStorageKey, minimized, size]);
 
   const bindEventListeners = useCallback(() => {
