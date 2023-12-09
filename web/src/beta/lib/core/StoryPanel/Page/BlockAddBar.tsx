@@ -84,6 +84,7 @@ export default BlockAddBar;
 const Wrapper = styled.div`
   position: relative;
   background: green;
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlockAddBar};
 `;
 
 const Bar = styled.div<{ persist?: boolean; height?: number }>`
