@@ -90,6 +90,7 @@ const StoryPanel: React.FC<Props> = ({
     propertyId,
     panelSettings,
     storyBlocks,
+    disableSelection,
     setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
@@ -172,7 +173,7 @@ const StoryPanel: React.FC<Props> = ({
               onPropertyItemDelete={onPropertyItemDelete}
             />
           )}
-          {isEditable && (
+          {isEditable && !disableSelection && (
             <BlockAddBar
               id={titleId + "below-bar"}
               alwaysShow={storyBlocks && storyBlocks.length < 1}
@@ -220,7 +221,7 @@ const StoryPanel: React.FC<Props> = ({
                     onPropertyItemMove={onPropertyItemMove}
                     onPropertyItemDelete={onPropertyItemDelete}
                   />
-                  {isEditable && (
+                  {isEditable && !disableSelection && (
                     <BlockAddBar
                       id={b.id + "below-bar"}
                       openBlocks={openBlocksIndex === idx}

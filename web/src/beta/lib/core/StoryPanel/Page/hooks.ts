@@ -5,6 +5,7 @@ import {
   DEFAULT_STORY_PAGE_PADDING,
   MIN_STORY_PAGE_GAP_IN_EDITOR,
 } from "../constants";
+import { usePanelContext } from "../context";
 import { StoryPage } from "../types";
 import { calculatePaddingValue } from "../utils";
 
@@ -23,9 +24,15 @@ export default ({
     index?: number | undefined,
   ) => Promise<void> | undefined;
 }) => {
-  const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
+  const storyPanelContext = usePanelContext();
 
+  const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
   const [storyBlocks, setStoryBlocks] = useState(page?.blocks ?? []);
+
+  const disableSelection = useMemo(
+    () => storyPanelContext?.disableSelection,
+    [storyPanelContext?.disableSelection],
+  );
 
   useEffect(() => page?.blocks && setStoryBlocks(page.blocks), [page?.blocks]);
 
@@ -90,6 +97,7 @@ export default ({
     property,
     panelSettings,
     storyBlocks,
+    disableSelection,
     setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
