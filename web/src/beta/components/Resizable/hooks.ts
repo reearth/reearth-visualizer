@@ -56,13 +56,6 @@ export default (
   const [minimized, setMinimized] = useState(false);
   const [difference, setDifference] = useState(0);
 
-  const storedValues = useMemo(() => {
-    if (!parsedState) return;
-    return {
-      size: parsedState.size,
-    };
-  }, [parsedState]);
-
   const setSizeFromStorage = useCallback(
     (localStorageKey: string) => {
       const parsedState = getLocalStorageParsedState(localStorageKey);
@@ -134,7 +127,16 @@ export default (
     setPosition({ x: 0, y: 0 });
     setStartingSize(size);
     setDifference(0);
-  }, [isResizing, size]);
+    if (!localStorageKey) return;
+
+    const storedData = {
+      key: localStorageKey,
+      size,
+      minimized,
+    };
+
+    localStorage.setItem(localStorageKey, JSON.stringify(storedData));
+  }, [isResizing, localStorageKey, minimized, size]);
 
   const bindEventListeners = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -159,15 +161,6 @@ export default (
       unbindEventListeners();
       return;
     }
-    if (!localStorageKey) return;
-
-    const storedData = {
-      key: localStorageKey,
-      size,
-      minimized,
-    };
-
-    localStorage.setItem(localStorageKey, JSON.stringify(storedData));
     bindEventListeners();
     return () => unbindEventListeners();
   }, [
@@ -208,7 +201,7 @@ export default (
   }, [initialSize, localStorageKey, parsedState]);
 
   return {
-    size: storedValues?.size || initialSize,
+    size: size || initialSize,
     gutterProps,
     minimized,
     handleResetSize,
