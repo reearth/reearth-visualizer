@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState, MouseEvent } from "react";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 
+import { usePanelContext } from "../../../context";
 import { calculatePaddingValue } from "../../../utils";
 
 export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };
@@ -22,13 +23,28 @@ export default ({
   onClick: (() => void) | undefined;
   onBlockDoubleClick: (() => void) | undefined;
 }) => {
+  const storyPanelContext = usePanelContext();
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+
+  const handleEditModeToggle = useCallback(
+    (enable: boolean) => {
+      storyPanelContext?.onSelectionDisable?.(enable);
+      setEditMode?.(enable);
+    },
+    [storyPanelContext],
+  );
+
+  const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
+
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
   const handleBlockDoubleClick = useCallback(() => {
-    if (isEditable) onBlockDoubleClick?.(), setEditMode(true);
-  }, [isEditable, onBlockDoubleClick]);
+    if (isEditable && !storyPanelContext.disableSelection) {
+      onBlockDoubleClick?.();
+      handleEditModeToggle(true);
+    }
+  }, [isEditable, storyPanelContext, onBlockDoubleClick, handleEditModeToggle]);
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
     () => onClick?.(),
@@ -65,10 +81,6 @@ export default ({
     };
   }, [property?.panel, isEditable]);
 
-  const handleEditModeToggle = useCallback(() => setEditMode?.(em => !em), []);
-
-  const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
-
   return {
     title,
     groupId,
@@ -76,7 +88,6 @@ export default ({
     showSettings,
     defaultSettings,
     panelSettings,
-    setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,

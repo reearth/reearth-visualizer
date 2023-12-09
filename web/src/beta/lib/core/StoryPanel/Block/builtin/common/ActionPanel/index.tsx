@@ -19,7 +19,7 @@ type Props = {
   position?: ActionPosition;
   overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
-  onEditModeToggle?: () => void;
+  onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
   onRemove?: () => void;
   onPropertyUpdate?: (

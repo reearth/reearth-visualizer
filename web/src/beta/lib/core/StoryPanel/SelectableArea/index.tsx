@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { ReactNode } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
@@ -22,8 +22,7 @@ type Props = {
   noBorder?: boolean;
   isEditable?: boolean;
   overrideGroupId?: string;
-  setEditMode?: Dispatch<SetStateAction<boolean>>;
-  onEditModeToggle?: () => void;
+  onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
   onClick?: () => void;
   onClickAway?: () => void;
@@ -64,7 +63,6 @@ const SelectableArea: React.FC<Props> = ({
   isEditable,
   panelSettings,
   overrideGroupId,
-  setEditMode,
   onEditModeToggle,
   onSettingsToggle,
   onRemove,
@@ -78,7 +76,7 @@ const SelectableArea: React.FC<Props> = ({
   const { showPadding, setShowPadding, handleClickAway } = useHooks({
     editMode,
     isSelected,
-    setEditMode,
+    onEditModeToggle,
     onClickAway,
   });
 

@@ -15,7 +15,7 @@ export type ActionItem = {
   icon: string;
   name?: string;
   hide?: boolean;
-  onClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 };
 
 export type ActionPosition = "left-top" | "left-bottom" | "right-top" | "right-bottom";

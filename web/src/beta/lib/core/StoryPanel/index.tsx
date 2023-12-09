@@ -81,8 +81,10 @@ export const StoryPanel = memo(
         showPageSettings,
         isAutoScrolling,
         layerOverride,
+        disableSelection,
         setCurrentPageId,
         setLayerOverride,
+        handleSelectionDisable,
         handleLayerOverride,
         handlePageSettingsToggle,
         handlePageSelect,
@@ -102,6 +104,8 @@ export const StoryPanel = memo(
         () => ({
           layerOverride,
           pageIds: selectedStory?.pages.map(p => p.id),
+          disableSelection,
+          onSelectionDisable: handleSelectionDisable,
           onLayerOverride: handleLayerOverride,
           onJumpToPage: (pageIndex: number) => {
             const pageId = selectedStory?.pages[pageIndex].id;
@@ -116,6 +120,8 @@ export const StoryPanel = memo(
         [
           layerOverride,
           selectedStory?.pages,
+          disableSelection,
+          handleSelectionDisable,
           setCurrentPageId,
           setLayerOverride,
           handleLayerOverride,

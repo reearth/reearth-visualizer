@@ -80,7 +80,6 @@ const BlockWrapper: React.FC<Props> = ({
     showSettings,
     defaultSettings,
     panelSettings,
-    setEditMode,
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
@@ -108,7 +107,6 @@ const BlockWrapper: React.FC<Props> = ({
         isEditable={isEditable}
         overrideGroupId={groupId === "title" ? groupId : undefined}
         onClickAway={onClickAway}
-        setEditMode={setEditMode}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
         onRemove={onRemove}
