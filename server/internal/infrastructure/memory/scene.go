@@ -8,7 +8,8 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -79,7 +80,7 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scen
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...id.WorkspaceID) (scene.List, error) {
+func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

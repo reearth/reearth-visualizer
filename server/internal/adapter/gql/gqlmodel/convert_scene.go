@@ -58,3 +58,30 @@ func ToScene(scene *scene.Scene) *Scene {
 		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
 	}
 }
+
+func ToStyle(v *scene.Style) *Style {
+	return &Style{
+		ID:    IDFrom(v.ID()),
+		Name:  v.Name(),
+		Value: JSON(*v.Value()),
+	}
+}
+
+func ToStyleValue(p JSON) *scene.StyleValue {
+	if p == nil {
+		return nil
+	}
+	sv := make(scene.StyleValue)
+
+	for key, value := range p {
+		sv[key] = value
+	}
+
+	return &sv
+}
+
+func ToStyles(styles scene.StyleList) []*Style {
+	return util.Map(styles, func(s *scene.Style) *Style {
+		return ToStyle(s)
+	})
+}

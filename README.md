@@ -25,8 +25,6 @@
   <a href="https://discord.gg/XJhYkQQDAu">Discord</a>
 </p>
 
-💡 **We are hiring full-time OSS comitters!** (senior, front-end, back-end) https://eukarya.io/join/en
-
 https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-9e03-cb7e46eff04e.mp4
 
 ---

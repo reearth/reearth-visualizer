@@ -387,6 +387,81 @@ func TestExtension(t *testing.T) {
 				MustBuild(),
 		},
 		{
+			name: "story",
+			ext: Extension{
+				Description: &d,
+				ID:          "story",
+				Name:        "Story",
+				Schema:      nil,
+				Type:        "story",
+				Visualizer:  &cesium,
+			},
+			sys: true,
+			pid: plugin.OfficialPluginID,
+			expectedPE: plugin.NewExtension().
+				ID("story").
+				Name(i18n.StringFrom("Story")).
+				Visualizer("cesium").
+				Type(plugin.ExtensionTypeStory).
+				System(true).
+				Description(i18n.StringFrom("ddd")).
+				Schema(property.MustSchemaID("reearth/story")).
+				MustBuild(),
+			expectedPS: property.NewSchema().
+				ID(property.MustSchemaID("reearth/story")).
+				MustBuild(),
+		},
+		{
+			name: "storyPage",
+			ext: Extension{
+				Description: &d,
+				ID:          "storyPage",
+				Name:        "StoryPage",
+				Schema:      nil,
+				Type:        "storyPage",
+				Visualizer:  &cesium,
+			},
+			sys: true,
+			pid: plugin.OfficialPluginID,
+			expectedPE: plugin.NewExtension().
+				ID("storyPage").
+				Name(i18n.StringFrom("StoryPage")).
+				Visualizer("cesium").
+				Type(plugin.ExtensionTypeStoryPage).
+				System(true).
+				Description(i18n.StringFrom("ddd")).
+				Schema(property.MustSchemaID("reearth/storyPage")).
+				MustBuild(),
+			expectedPS: property.NewSchema().
+				ID(property.MustSchemaID("reearth/storyPage")).
+				MustBuild(),
+		},
+		{
+			name: "storyBlock",
+			ext: Extension{
+				Description: &d,
+				ID:          "storyBlock",
+				Name:        "StoryBlock",
+				Schema:      nil,
+				Type:        "storyBlock",
+				Visualizer:  &cesium,
+			},
+			sys: true,
+			pid: plugin.OfficialPluginID,
+			expectedPE: plugin.NewExtension().
+				ID("storyBlock").
+				Name(i18n.StringFrom("StoryBlock")).
+				Visualizer("cesium").
+				Type(plugin.ExtensionTypeStoryBlock).
+				System(true).
+				Description(i18n.StringFrom("ddd")).
+				Schema(property.MustSchemaID("reearth/storyBlock")).
+				MustBuild(),
+			expectedPS: property.NewSchema().
+				ID(property.MustSchemaID("reearth/storyBlock")).
+				MustBuild(),
+		},
+		{
 			name: "empty visualizer",
 			ext: Extension{
 				Description: &d,
@@ -704,12 +779,14 @@ func TestSchemaGroup(t *testing.T) {
 					Type:         "latlng",
 					UI:           nil,
 				}},
-				ID:    "default",
-				List:  false,
-				Title: "marker",
+				ID:         "default",
+				List:       false,
+				Title:      "marker",
+				Collection: &str,
 			},
 			tl: &TranslatedPropertySchemaGroup{
 				Title:       i18n.String{"ja": "マーカー"},
+				Collection:  i18n.String{"ja": "マーカー"},
 				Description: i18n.String{"ja": "説明"},
 				Fields: map[string]*TranslatedPropertySchemaField{
 					"location": {Title: i18n.String{"en": "x"}},
@@ -718,6 +795,7 @@ func TestSchemaGroup(t *testing.T) {
 			expected: property.NewSchemaGroup().
 				ID("default").
 				Title(i18n.String{"en": str, "ja": "マーカー"}).
+				Collection(i18n.String{"en": str, "ja": "マーカー"}).
 				Fields([]*property.SchemaField{
 					property.NewSchemaField().
 						ID("location").
@@ -745,9 +823,10 @@ func TestSchemaGroup(t *testing.T) {
 					Type:         "xx",
 					UI:           nil,
 				}},
-				ID:    "default",
-				List:  false,
-				Title: "marker",
+				ID:         "default",
+				List:       false,
+				Title:      "marker",
+				Collection: &str,
 			},
 			expected: nil,
 			err:      "field (location): invalid value type: xx",

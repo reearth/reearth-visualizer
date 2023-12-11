@@ -1,7 +1,7 @@
 package config
 
-import "github.com/reearth/reearth/server/pkg/workspace"
+import "github.com/reearth/reearth/server/pkg/policy"
 
 type PolicyConfig struct {
-	Default *workspace.PolicyID
+	Default *policy.ID
 }

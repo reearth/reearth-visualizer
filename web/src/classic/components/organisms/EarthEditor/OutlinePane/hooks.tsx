@@ -7,8 +7,6 @@ import {
   Cluster,
   WidgetType,
 } from "@reearth/classic/components/molecules/EarthEditor/OutlinePane";
-import deepFind from "@reearth/classic/util/deepFind";
-import deepGet from "@reearth/classic/util/deepGet";
 import {
   useGetLayersFromLayerIdQuery,
   useMoveLayerMutation,
@@ -28,7 +26,9 @@ import {
   useGetClustersQuery,
   PluginExtensionType,
   GetLayersFromLayerIdQuery,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import deepFind from "@reearth/classic/util/deepFind";
+import deepGet from "@reearth/classic/util/deepGet";
 import { useLang, useT } from "@reearth/services/i18n";
 import {
   useSceneId,

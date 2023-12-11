@@ -26,11 +26,14 @@ var (
 	ValueTypeCoordinates  = ValueType(value.TypeCoordinates)
 	ValueTypePolygon      = ValueType(value.TypePolygon)
 	ValueTypeRect         = ValueType(value.TypeRect)
+	ValueTypeArray        = ValueType(value.TypeArray)
 )
 
 var types = value.TypePropertyMap{
 	value.Type(ValueTypeTypography): &typePropertyTypography{},
 	value.Type(ValueTypeCamera):     &typePropertyCamera{},
+	value.Type(ValueTypeSpacing):    &typePropertySpacing{},
+	value.Type(ValueTypeTimeline):   &typePropertyTimeline{},
 }
 
 func (vt ValueType) Valid() bool {

@@ -20,7 +20,7 @@ var (
 	datasetIndexes = []string{
 		"scene",
 		"id,scene",
-		"schema",
+		"schema,id",
 		"scene,schema",
 		"schema,id,scene",
 	}

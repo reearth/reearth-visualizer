@@ -7,7 +7,9 @@ import type {
   Layer,
   DataType,
   ComputedFeature,
+  LayerSimple,
 } from "../../mantle";
+import { SceneProperty } from "../types";
 
 import useHooks, { type Atom, type EvalFeature } from "./hooks";
 
@@ -27,8 +29,9 @@ export type CommonProps = {
 
 export type FeatureComponentProps = {
   layer: ComputedLayer;
-  sceneProperty?: any;
+  sceneProperty?: SceneProperty;
   onFeatureRequest?: (range: DataRange) => void;
+  onLayerFetch?: (value: Partial<Pick<LayerSimple, "properties">>) => void;
   onFeatureFetch?: (features: Feature[]) => void;
   onComputedFeatureFetch?: (feature: Feature[], computed: ComputedFeature[]) => void;
   onFeatureDelete?: (features: string[]) => void;
@@ -58,6 +61,7 @@ export default function LayerComponent({
   const {
     computedLayer,
     handleFeatureDelete,
+    handleLayerFetch,
     handleComputedFeatureDelete,
     handleFeatureFetch,
     handleComputedFeatureFetch,
@@ -77,6 +81,7 @@ export default function LayerComponent({
       layer={computedLayer}
       onFeatureDelete={handleFeatureDelete}
       onComputedFeatureDelete={handleComputedFeatureDelete}
+      onLayerFetch={handleLayerFetch}
       onFeatureFetch={handleFeatureFetch}
       onComputedFeatureFetch={handleComputedFeatureFetch}
       onFeatureRequest={handleFeatureRequest}

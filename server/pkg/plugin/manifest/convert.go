@@ -134,6 +134,12 @@ func (i Extension) extension(pluginID plugin.ID, sys bool, te *TranslatedExtensi
 		typ = plugin.ExtensionTypeInfobox
 	case "cluster":
 		typ = plugin.ExtensionTypeCluster
+	case "story":
+		typ = plugin.ExtensionTypeStory
+	case "storyPage":
+		typ = plugin.ExtensionTypeStoryPage
+	case "storyBlock":
+		typ = plugin.ExtensionTypeStoryBlock
 	case "":
 		return nil, nil, errors.New("type missing")
 	default:
@@ -278,6 +284,14 @@ func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*pr
 	}
 	title = title.WithDefault(i.Title)
 
+	var collection i18n.String
+	if tg != nil && tg.Collection != nil {
+		collection = tg.Collection.Clone()
+	}
+	if i.Collection != nil {
+		collection = collection.WithDefault(*i.Collection)
+	}
+
 	var representativeField *property.FieldID
 	if i.RepresentativeField != nil {
 		representativeField = property.FieldID(*i.RepresentativeField).Ref()
@@ -306,6 +320,7 @@ func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*pr
 		IsList(i.List).
 		Fields(fields).
 		Title(title).
+		Collection(collection).
 		RepresentativeField(representativeField).
 		IsAvailableIf(i.AvailableIf.condition()).
 		Build()

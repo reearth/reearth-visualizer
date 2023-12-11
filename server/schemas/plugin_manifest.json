@@ -31,7 +31,10 @@
         "coordinates",
         "polygon",
         "rect",
-        "ref"
+        "ref",
+        "spacing",
+        "array",
+        "timeline"
       ]
     },
     "propertyPointer": {
@@ -144,7 +147,9 @@
             "video",
             "file",
             "camera_pose",
-            "datetime"
+            "datetime",
+            "padding",
+            "margin"
           ]
         },
         "min": {
@@ -197,6 +202,12 @@
       "properties": {
         "id": {
           "$ref": "#/definitions/id"
+        },
+        "collection": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "title": {
           "type": "string"
@@ -322,7 +333,10 @@
             "block",
             "visualizer",
             "infobox",
-            "cluster"
+            "cluster",
+            "story",
+            "storyPage",
+            "storyBlock"
           ]
         },
         "singleOnly": {

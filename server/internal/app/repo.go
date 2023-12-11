@@ -13,6 +13,9 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/s3"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
+	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox"
@@ -22,8 +25,11 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container) {
+const databaseName = "reearth"
+
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container) {
 	gateways := &gateway.Container{}
+	acGateways := &accountgateway.Container{}
 
 	// Mongo
 	client, err := mongo.Connect(
@@ -36,7 +42,22 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("mongo error: %+v\n", err)
 	}
 
-	repos, err := mongorepo.New(ctx, client.Database("reearth"), mongox.IsTransactionAvailable(conf.DB))
+	// repos
+	accountDatabase := conf.DB_Account
+	accountRepoCompat := false
+	if accountDatabase == "" {
+		accountDatabase = databaseName
+		accountRepoCompat = true
+	}
+
+	txAvailable := mongox.IsTransactionAvailable(conf.DB)
+
+	accountRepos, err := accountmongo.New(ctx, client, accountDatabase, txAvailable, accountRepoCompat)
+	if err != nil {
+		log.Fatalf("Failed to init mongo: %+v\n", err)
+	}
+
+	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(databaseName), accountRepos, txAvailable, conf.Ext_Plugin)
 	if err != nil {
 		log.Fatalf("Failed to init mongo: %+v\n", err)
 	}
@@ -45,14 +66,17 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	gateways.File = initFile(ctx, conf)
 
 	// Auth0
-	gateways.Authenticator = auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
+	auth0 := auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
+	gateways.Authenticator = auth0
+	acGateways.Authenticator = auth0
 
 	// google
 	gateways.Google = google.NewGoogle()
 
 	// mailer
-	gateways.Mailer = mailer.New(ctx, &conf.Config)
-
+	mailer := mailer.New(ctx, &conf.Config)
+	gateways.Mailer = mailer
+	acGateways.Mailer = mailer
 	// Marketplace
 	if conf.Marketplace.Endpoint != "" {
 		gateways.PluginRegistry = marketplace.New(conf.Marketplace.Endpoint, conf.Marketplace.Secret, conf.Marketplace.OAuth.Config())
@@ -63,7 +87,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	return repos, gateways
+	return repos, gateways, accountRepos, acGateways
 }
 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {

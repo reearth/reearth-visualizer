@@ -13,7 +13,8 @@ import {
   useCreateSceneMutation,
   Visualizer,
   GetProjectsQuery,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { useStorytellingFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
@@ -167,6 +168,9 @@ export default (workspaceId?: string) => {
 
   const [createNewProject] = useCreateProjectMutation();
   const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
+  const { useCreateStory } = useStorytellingFetcher();
+  const { useCreateStoryPage } = useStorytellingFetcher();
+
   const handleProjectCreate = useCallback(
     async (data: {
       name: string;
@@ -192,26 +196,62 @@ export default (workspaceId?: string) => {
         });
         setModalShown(false);
         return;
-      } else {
-        const scene = await createScene({
-          variables: { projectId: project.data.createProject.project.id },
+      }
+
+      const scene = await createScene({
+        variables: { projectId: project.data.createProject.project.id },
+      });
+      if (scene.errors || !scene.data?.createScene?.scene.id) {
+        setNotification({
+          type: "error",
+          text: t("Failed to create project."),
         });
-        if (scene.errors) {
+        setModalShown(false);
+        return;
+      }
+
+      if (data.projectType === "beta") {
+        const story = await useCreateStory({
+          sceneId: scene.data?.createScene?.scene.id,
+          title: t("Default"),
+          index: 0,
+        });
+        if (story.errors || !story?.data?.createStory?.story?.id) {
           setNotification({
             type: "error",
             text: t("Failed to create project."),
           });
           setModalShown(false);
           return;
+        } else {
+          const { errors: storyPageErrors } = await useCreateStoryPage({
+            sceneId: scene.data?.createScene?.scene.id,
+            storyId: story.data.createStory.story.id,
+          });
+          if (storyPageErrors) {
+            setNotification({
+              type: "error",
+              text: t("Failed to create story page on project creation."),
+            });
+          }
         }
-        setNotification({
-          type: "success",
-          text: t("Successfully created project!"),
-        });
-        setModalShown(false);
       }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully created project!"),
+      });
+      setModalShown(false);
     },
-    [workspaceId, createNewProject, createScene, t, setNotification],
+    [
+      workspaceId,
+      createNewProject,
+      createScene,
+      setNotification,
+      t,
+      useCreateStory,
+      useCreateStoryPage,
+    ],
   );
 
   const [assetModalOpened, setOpenAssets] = useState(false);

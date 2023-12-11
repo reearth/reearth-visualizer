@@ -1,5 +1,5 @@
 import { Auth0Provider } from "@auth0/auth0-react";
-import React, { createContext, ReactNode } from "react";
+import React, { createContext, ReactNode, Fragment } from "react";
 
 import type { AuthHook } from "./authHook";
 import { useAuth0Auth } from "./authOAuth";
@@ -47,5 +47,5 @@ export const AuthProvider: React.FC<{ children?: ReactNode }> = ({ children }) =
     return <CognitoWrapper>{children}</CognitoWrapper>;
   }
 
-  return <>{children}</>; // or some default fallback
+  return <Fragment>{children}</Fragment>; // or some default fallback
 };

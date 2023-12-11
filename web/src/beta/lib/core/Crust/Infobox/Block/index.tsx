@@ -1,13 +1,12 @@
 import type { ComponentType, ReactNode } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
-import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import { Theme } from "../../types";
+import { Theme, ValueType, ValueTypes } from "../../types";
 import type { Block, BlockProps, InfoboxProperty } from "../types";
 
-import builtin from "./builtin";
+import builtin, { isBuiltinBlock } from "./builtin";
 
 export type { InfoboxProperty, Typography, LatLng } from "../types";
 
@@ -38,10 +37,8 @@ export default function BlockComponent<P = any>({
   renderBlock,
   ...props
 }: Props<P>): JSX.Element | null {
-  const Builtin =
-    props.block?.pluginId && props.block.extensionId
-      ? builtin[`${props.block.pluginId}/${props.block.extensionId}`]
-      : undefined;
+  const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
+  const Builtin = isBuiltinBlock(builtinBlockId) ? builtin()[builtinBlockId] : undefined;
 
   return Builtin ? (
     <Builtin {...props} />
@@ -54,11 +51,10 @@ export default function BlockComponent<P = any>({
 
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid
-    ${({ selected, editable, theme }) =>
-      editable && selected ? theme.general.select : "transparent"};
+    ${({ selected, editable, theme }) => (editable && selected ? theme.select.main : "transparent")};
   border-radius: 6px;
 
   &:hover {
-    border-color: ${({ editable, theme }) => (editable ? theme.general.border : null)};
+    border-color: ${({ editable, theme }) => (editable ? theme.outline.main : null)};
   }
 `;

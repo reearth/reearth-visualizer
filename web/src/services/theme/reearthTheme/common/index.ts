@@ -1,19 +1,19 @@
-import colors, { Colors } from "./colors";
 import { MetricsSizesType, metricsSizes } from "./metrics";
+import spacingSizes, { SpacingSizesType } from "./spacing";
 import zIndexes, { ZIndex } from "./zIndex";
 
 export { default as GlobalStyles } from "./globalStyles";
 
-type Common = {
+export type Common = {
   zIndexes: ZIndex;
-  colors: Colors;
   metrics: MetricsSizesType;
+  spacing: SpacingSizesType;
 };
 
 const common: Common = {
   zIndexes,
-  colors,
   metrics: metricsSizes,
+  spacing: spacingSizes,
 };
 
 export default common;

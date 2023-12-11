@@ -1,11 +1,12 @@
 import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from "cesium";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
 import { toCSSFont } from "@reearth/beta/utils/value";
 
 import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";
+import { useContext } from "../context";
 import {
   EntityExt,
   toDistanceDisplayCondition,
@@ -28,12 +29,16 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
-        ? geometry.coordinates
+        ? property?.height
+          ? [...geometry.coordinates.slice(0, 2), property.height]
+          : geometry.coordinates
         : property?.location
         ? [property.location.lng, property.location.lat, property.height ?? 0]
         : undefined,
     [geometry?.coordinates, geometry?.type, property?.height, property?.location],
   );
+
+  const { requestRender } = useContext();
 
   const {
     show = true,
@@ -73,7 +78,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
   }, [coordinates]);
 
   const extrudePoints = useMemo(() => {
-    return extrude && coordinates && typeof coordinates[3] === "number"
+    return extrude && coordinates && typeof coordinates[2] === "number"
       ? [
           Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2]),
           Cartesian3.fromDegrees(coordinates[0], coordinates[1], 0),
@@ -131,6 +136,12 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     () => toDistanceDisplayCondition(property?.near, property?.far),
     [property?.near, property?.far],
   );
+
+  const stringLabelText = useMemo(() => String(labelText), [labelText]);
+
+  useEffect(() => {
+    requestRender?.();
+  });
 
   return !pos || !isVisible || !show ? null : (
     <>
@@ -196,7 +207,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             pixelOffset={pixelOffset}
             fillColor={labelColorCesium}
             font={toCSSFont(labelTypography, { fontSize: 30 })}
-            text={labelText}
+            text={stringLabelText}
             showBackground={labelBackground}
             backgroundColor={labelBackgroundColorCesium}
             backgroundPadding={labelBackgroundPadding}

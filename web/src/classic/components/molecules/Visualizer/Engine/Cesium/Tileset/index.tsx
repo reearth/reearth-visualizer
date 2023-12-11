@@ -1,5 +1,6 @@
 import {
   Cartesian3,
+  GoogleMaps as CesiumGoogleMaps,
   Cesium3DTileset as Cesium3DTilesetType,
   Cesium3DTileStyle,
   ClippingPlane,
@@ -10,6 +11,8 @@ import {
   Matrix4,
   Transforms,
   TranslationRotationScale,
+  defaultValue,
+  Resource,
 } from "cesium";
 import { FC, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { Cesium3DTileset, CesiumComponentRef, useCesium } from "resium";
@@ -21,16 +24,19 @@ import type { Props as PrimitiveProps } from "../../../Primitive";
 import { shadowMode, layerIdField, sampleTerrainHeightFromCartesian } from "../common";
 import { translationWithClamping } from "../utils";
 
+import { GoogleMaps } from "./types";
+
 export type Props = PrimitiveProps<Property>;
 
 export type Property = {
   default?: {
-    sourceType?: "url" | "osm";
+    sourceType?: "url" | "osm" | "google-photorealistic";
     tileset?: string;
     styleUrl?: string;
     shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
     edgeWidth?: number;
     edgeColor?: string;
+    apiKey?: string;
     experimental_clipping?: EXPERIMENTAL_clipping;
   };
 };
@@ -42,8 +48,16 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
 }) {
   const { viewer } = useCesium();
   const { isVisible, property } = layer ?? {};
-  const { sourceType, tileset, styleUrl, shadows, edgeColor, edgeWidth, experimental_clipping } =
-    (property as Property | undefined)?.default ?? {};
+  const {
+    sourceType,
+    tileset,
+    styleUrl,
+    shadows,
+    edgeColor,
+    edgeWidth,
+    experimental_clipping,
+    apiKey,
+  } = (property as Property | undefined)?.default ?? {};
   const {
     width,
     height,
@@ -192,15 +206,31 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
     })();
   }, [styleUrl]);
 
+  const googleMapResource = useMemo(() => {
+    if (sourceType !== "google-photorealistic" || !isVisible) return;
+    // Ref: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Scene/createGooglePhotorealistic3DTileset.js#L30
+    const googleMaps = CesiumGoogleMaps as GoogleMaps;
+    // Default key: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Core/GoogleMaps.js#L6C36-L6C36
+    const key = defaultValue(apiKey, googleMaps.defaultApiKey);
+    const credit = googleMaps.getDefaultApiKeyCredit(key);
+    return new Resource({
+      url: `${googleMaps.mapTilesApiEndpoint}3dtiles/root.json`,
+      queryParameters: { key },
+      credits: credit ? [credit] : undefined,
+    } as Resource.ConstructorOptions);
+  }, [sourceType, isVisible, apiKey]);
+
   const tilesetUrl = useMemo(() => {
     return sourceType === "osm" && isVisible
       ? IonResource.fromAssetId(96188, {
           accessToken: meta?.cesiumIonAccessToken as string | undefined,
         }) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
+      : googleMapResource
+      ? googleMapResource
       : isVisible && tileset
       ? tileset
       : null;
-  }, [isVisible, sourceType, tileset, meta]);
+  }, [isVisible, sourceType, tileset, meta, googleMapResource]);
 
   return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
     <Cesium3DTileset

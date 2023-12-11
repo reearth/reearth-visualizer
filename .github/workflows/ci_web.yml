@@ -5,7 +5,6 @@ jobs:
   ci:
     name: ci
     runs-on: ubuntu-latest
-    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'v')
     defaults:
       run:
         working-directory: web

@@ -6,7 +6,7 @@ import {
   Maybe,
   PropertyFragmentFragment,
   ValueType,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 
 import {
   processLayer,

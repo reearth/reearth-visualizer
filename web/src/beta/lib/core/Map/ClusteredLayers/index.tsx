@@ -7,7 +7,7 @@ export type Props = {
   layers?: Layer[];
   atomMap?: Map<string, Atom>;
   overrides?: Record<string, Record<string, any>>;
-  selectedLayerId?: {
+  selectedLayer?: {
     layerId?: string;
     featureId?: string;
   };
@@ -50,7 +50,7 @@ export default function ClusteredLayers({
   clusterComponent,
   layers,
   atomMap,
-  selectedLayerId,
+  selectedLayer,
   overrides,
   delegatedDataTypes,
   isHidden,
@@ -72,8 +72,8 @@ export default function ClusteredLayers({
           layer={layer}
           atom={a}
           overrides={overrides?.[layer.id]}
-          isSelected={selectedLayerId?.layerId == layer.id}
-          selectedFeatureId={selectedLayerId?.featureId}
+          isSelected={selectedLayer?.layerId == layer.id}
+          selectedFeatureId={selectedLayer?.featureId}
           isHidden={isHidden?.(layer.id)}
           delegatedDataTypes={delegatedDataTypes}
         />
@@ -83,8 +83,8 @@ export default function ClusteredLayers({
       atomMap,
       props,
       overrides,
-      selectedLayerId?.layerId,
-      selectedLayerId?.featureId,
+      selectedLayer?.layerId,
+      selectedLayer?.featureId,
       isHidden,
       delegatedDataTypes,
     ],

@@ -1,14 +1,19 @@
 package manifest
 
 import (
+	"context"
 	_ "embed"
+	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -104,6 +109,95 @@ func TestParse(t *testing.T) {
 		})
 	}
 
+}
+
+func TestParseFromUrl(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected *Manifest
+		err      error
+	}{
+		{
+			name:     "success create simple manifest",
+			input:    minimum,
+			expected: minimumExpected,
+			err:      nil,
+		},
+		{
+			name:     "success create manifest",
+			input:    normal,
+			expected: normalExpected,
+			err:      nil,
+		},
+		{
+			name:     "fail not valid JSON",
+			input:    "",
+			expected: nil,
+			err:      ErrFailedToParseManifest,
+		},
+		{
+			name: "fail system manifest",
+			input: `{
+				"system": true,
+				"id": "reearth",
+				"title": "bbb",
+				"version": "1.1.1"
+			}`,
+			expected: nil,
+			err:      ErrSystemManifest,
+		},
+		{
+			name: "fail system manifest",
+			input: `{
+				"system": true,
+				"id": "reearth",
+				"title": "bbb",
+				"version": "1.1.1"
+			}`,
+			expected: nil,
+			err:      ErrFailedToFetchManifest,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			// t.Parallel() // in parallel test, httpmock.RegisterResponder is not working, MockTransport should be used
+
+			httpmock.Activate()
+			defer httpmock.Deactivate()
+			if tc.err != ErrFailedToFetchManifest {
+				httpmock.RegisterResponder("GET", "https://example.com/myPlugin/reearth.yml", httpmock.NewBytesResponder(http.StatusOK, []byte(tc.input)))
+			} else {
+				httpmock.RegisterResponder("GET", "https://example.com/myPlugin/reearth.yml", httpmock.NewBytesResponder(http.StatusNotFound, nil))
+			}
+
+			m, err := ParseFromUrl(context.Background(), lo.Must(url.Parse("https://example.com/myPlugin")))
+			if tc.err == nil {
+				if !assert.NoError(t, err) {
+					return
+				}
+				assert.Equal(t, tc.expected, m)
+				return
+			}
+			assert.ErrorIs(t, tc.err, err)
+		})
+	}
+
+}
+func TestParseFromUrlList(t *testing.T) {
+
+	httpmock.Activate()
+	defer httpmock.Deactivate()
+	httpmock.RegisterResponder("GET", "https://example.com/myPlugin1/reearth.yml", httpmock.NewBytesResponder(http.StatusOK, []byte(minimum)))
+	httpmock.RegisterResponder("GET", "https://example.com/myPlugin2/reearth.yml", httpmock.NewBytesResponder(http.StatusOK, []byte(normal)))
+
+	m, err := ParseFromUrlList(context.Background(), []string{"https://example.com/myPlugin1", "https://example.com/myPlugin2"})
+	if !assert.NoError(t, err) {
+		return
+	}
+	assert.Equal(t, []*Manifest{minimumExpected, normalExpected}, m)
 }
 
 func TestParseSystemFromBytes(t *testing.T) {

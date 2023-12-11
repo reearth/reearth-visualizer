@@ -5,7 +5,8 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
 )
@@ -73,6 +74,15 @@ func Lang(ctx context.Context, lang *language.Tag) string {
 func Operator(ctx context.Context) *usecase.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
 		if v2, ok := v.(*usecase.Operator); ok {
+			return v2
+		}
+	}
+	return nil
+}
+
+func AcOperator(ctx context.Context) *accountusecase.Operator {
+	if v := ctx.Value(contextOperator); v != nil {
+		if v2, ok := v.(*accountusecase.Operator); ok {
 			return v2
 		}
 	}

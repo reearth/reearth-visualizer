@@ -14,6 +14,7 @@ import {
   ScreenSpaceCameraController,
   Entity,
   PolylineGraphics,
+  Moon,
 } from "resium";
 
 import type { Engine, EngineProps, EngineRef } from "..";
@@ -27,13 +28,14 @@ import Indicator from "./core/Indicator";
 import Event from "./Event";
 import Feature, { context as featureContext } from "./Feature";
 import useHooks from "./hooks";
+import { AmbientOcclusion, AmbientOcclusionOutputType } from "./PostProcesses/hbao";
+import { AMBIENT_OCCLUSION_QUALITY } from "./PostProcesses/hbao/config";
 
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   {
     className,
     style,
     property,
-    overriddenClock,
     camera,
     small,
     ready,
@@ -41,16 +43,19 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     isLayerDraggable,
     isLayerDragging,
-    shouldRender: _shouldRender,
+    shouldRender,
     layerSelectionReason,
     meta,
     layersRef,
     featureFlags,
+    requestingRenderMode,
+    timelineManagerRef,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onMount,
   },
   ref,
 ) => {
@@ -70,7 +75,6 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    handleTick,
   } = useHooks({
     ref,
     property,
@@ -78,14 +82,19 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     selectedLayerId,
     selectionReason: layerSelectionReason,
     isLayerDraggable,
+    isLayerDragging,
     meta,
     layersRef,
     featureFlags,
+    requestingRenderMode,
+    shouldRender,
+    timelineManagerRef,
     onLayerSelect,
     onCameraChange,
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onMount,
   });
 
   return (
@@ -93,6 +102,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       ref={cesium}
       onUpdate={handleUpdate}
       className={className}
+      requestRenderMode={true}
       animation
       timeline
       // NOTE: We need to update cesium ion token dynamically.
@@ -114,13 +124,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         cursor: isLayerDragging ? "grab" : undefined,
         ...style,
       }}
-      // NOTE: Need to disable requestRenderMode on NLS, because we need to attach style dynamically.
-      //       If we want to use requestRenderMode, we need to add requestRenderMode option to sceneProperty.
-      // requestRenderMode={!property?.timeline?.animation && !isLayerDraggable && !shouldRender}
-      // maximumRenderTimeChange={
-      //   !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : undefined
-      // }
-      shadows={!!property?.atmosphere?.shadows}
+      shadows={!!(property?.atmosphere?.shadows ?? property?.globeShadow?.globeShadow)}
       onClick={handleClick}
       onDoubleClick={mouseEventHandles.doubleclick}
       onMouseDown={mouseEventHandles.mousedown}
@@ -136,9 +140,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       onMouseLeave={mouseEventHandles.mouseleave}
       onWheel={mouseEventHandles.wheel}>
       <Event onMount={handleMount} onUnmount={handleUnmount} />
-      <Clock property={property} clock={overriddenClock} onTick={handleTick} />
+      <Clock timelineManagerRef={timelineManagerRef} />
       <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
-      <Indicator property={property} />
+      <Indicator property={property} timelineManagerRef={timelineManagerRef} />
       <ScreenSpaceEventHandler useDefault>
         {/* remove default click event */}
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
@@ -151,7 +155,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
             ? property.cameraLimiter?.cameraLimitterTargetArea?.height ?? Number.POSITIVE_INFINITY
             : Number.POSITIVE_INFINITY
         }
-        enableCollisionDetection={!property?.default?.allowEnterGround}
+        enableCollisionDetection={
+          !(property?.default?.allowEnterGround ?? property?.camera?.allowEnterGround)
+        }
       />
       <Camera
         onChange={handleCameraChange}
@@ -183,17 +189,37 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         backgroundColor={backgroundColor}
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
+        useDepthPicking={false}
+        debugShowFramesPerSecond={!!property?.render?.debugFramePerSecond}
       />
-      <SkyBox show={property?.default?.skybox ?? true} />
+      <SkyBox show={property?.default?.skybox ?? property?.skyBox?.skyBox ?? true} />
       <Fog
         enabled={property?.atmosphere?.fog ?? true}
         density={property?.atmosphere?.fog_density}
       />
-      <Sun show={property?.atmosphere?.enable_sun ?? true} />
-      <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
+      <Sun show={property?.atmosphere?.enable_sun ?? property?.sun?.sun ?? true} />
+      <Moon show={property?.atmosphere?.enableMoon ?? property?.moon?.moon ?? true} />
+      <SkyAtmosphere
+        show={
+          property?.atmosphere?.sky_atmosphere ?? property?.skyAtmosphere?.skyAtmosphere ?? true
+        }
+        saturationShift={property?.atmosphere?.skyboxSurturationShift}
+        atmosphereLightIntensity={property?.skyAtmosphere?.skyAtmosphereIntensity}
+        brightnessShift={property?.atmosphere?.skyboxBrightnessShift}
+      />
       <Globe property={property} cesiumIonAccessToken={cesiumIonAccessToken} />
       <GoogleTiles/>
       <featureContext.Provider value={context}>{ready ? children : null}</featureContext.Provider>
+      <AmbientOcclusion
+        {...AMBIENT_OCCLUSION_QUALITY[property?.ambientOcclusion?.quality || "low"]}
+        enabled={!!property?.ambientOcclusion?.enabled}
+        intensity={property?.ambientOcclusion?.intensity ?? 100}
+        outputType={
+          property?.ambientOcclusion?.ambientOcclusionOnly
+            ? AmbientOcclusionOutputType.Occlusion
+            : null
+        }
+      />
     </Viewer>
   );
 };

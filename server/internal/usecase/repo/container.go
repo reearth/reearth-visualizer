@@ -4,8 +4,10 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -21,6 +23,8 @@ type Container struct {
 	DatasetSchema  DatasetSchema
 	Dataset        Dataset
 	Layer          Layer
+	NLSLayer       NLSLayer
+	Style          Style
 	Lock           Lock
 	Plugin         Plugin
 	Project        Project
@@ -29,10 +33,21 @@ type Container struct {
 	Scene          Scene
 	SceneLock      SceneLock
 	Tag            Tag
-	Workspace      Workspace
-	User           User
+	Workspace      accountrepo.Workspace
+	User           accountrepo.User
 	Policy         Policy
+	Storytelling   Storytelling
 	Transaction    usecasex.Transaction
+	Extensions     []plugin.ID
+}
+
+func (c *Container) AccountRepos() *accountrepo.Container {
+	return &accountrepo.Container{
+		Workspace: c.Workspace,
+		User:      c.User,
+		// TODO: Policy: c.Policy,
+		Transaction: c.Transaction,
+	}
 }
 
 func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Container {
@@ -46,9 +61,12 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		DatasetSchema:  c.DatasetSchema.Filtered(scene),
 		Dataset:        c.Dataset.Filtered(scene),
 		Layer:          c.Layer.Filtered(scene),
+		NLSLayer:       c.NLSLayer.Filtered(scene),
+		Style:          c.Style.Filtered(scene),
 		Lock:           c.Lock,
 		Plugin:         c.Plugin.Filtered(scene),
 		Policy:         c.Policy,
+		Storytelling:   c.Storytelling.Filtered(scene),
 		Project:        c.Project.Filtered(workspace),
 		PropertySchema: c.PropertySchema.Filtered(scene),
 		Property:       c.Property.Filtered(scene),
@@ -58,12 +76,13 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Transaction:    c.Transaction,
 		User:           c.User,
 		Workspace:      c.Workspace,
+		Extensions:     c.Extensions,
 	}
 }
 
 type WorkspaceFilter struct {
-	Readable user.WorkspaceIDList
-	Writable user.WorkspaceIDList
+	Readable accountdomain.WorkspaceIDList
+	Writable accountdomain.WorkspaceIDList
 }
 
 func WorkspaceFilterFromOperator(o *usecase.Operator) WorkspaceFilter {
@@ -81,7 +100,7 @@ func (f WorkspaceFilter) Clone() WorkspaceFilter {
 }
 
 func (f WorkspaceFilter) Merge(g WorkspaceFilter) WorkspaceFilter {
-	var r, w user.WorkspaceIDList
+	var r, w accountdomain.WorkspaceIDList
 	if f.Readable != nil || g.Readable != nil {
 		if f.Readable == nil {
 			r = g.Readable.Clone()
@@ -104,11 +123,11 @@ func (f WorkspaceFilter) Merge(g WorkspaceFilter) WorkspaceFilter {
 	}
 }
 
-func (f WorkspaceFilter) CanRead(id user.WorkspaceID) bool {
+func (f WorkspaceFilter) CanRead(id accountdomain.WorkspaceID) bool {
 	return f.Readable == nil || f.Readable.Has(id)
 }
 
-func (f WorkspaceFilter) CanWrite(id user.WorkspaceID) bool {
+func (f WorkspaceFilter) CanWrite(id accountdomain.WorkspaceID) bool {
 	return f.Writable == nil || f.Writable.Has(id)
 }
 

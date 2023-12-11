@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/reearth/reearthx/rerror"
@@ -24,14 +24,14 @@ func TestPolicy_FindByID(t *testing.T) {
 		"membercount": 1,
 	})
 
-	got, err := r.FindByID(ctx, workspace.PolicyID("policy"))
+	got, err := r.FindByID(ctx, policy.ID("policy"))
 	assert.NoError(t, err)
-	assert.Equal(t, workspace.NewPolicy(workspace.PolicyOption{
-		ID:          workspace.PolicyID("policy"),
+	assert.Equal(t, policy.New(policy.Option{
+		ID:          policy.ID("policy"),
 		MemberCount: lo.ToPtr(1),
 	}), got)
 
-	got2, err2 := r.FindByID(ctx, workspace.PolicyID("policy2"))
+	got2, err2 := r.FindByID(ctx, policy.ID("policy2"))
 	assert.Equal(t, rerror.ErrNotFound, err2)
 	assert.Nil(t, got2)
 }
@@ -53,17 +53,17 @@ func TestPolicy_FindByIDs(t *testing.T) {
 		},
 	})
 
-	got, err := r.FindByIDs(ctx, []workspace.PolicyID{"policy1", "policy2"})
+	got, err := r.FindByIDs(ctx, []policy.ID{"policy1", "policy2"})
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
-		[]*workspace.Policy{
-			workspace.NewPolicy(workspace.PolicyOption{
-				ID:          workspace.PolicyID("policy1"),
+		[]*policy.Policy{
+			policy.New(policy.Option{
+				ID:          policy.ID("policy1"),
 				MemberCount: lo.ToPtr(1),
 			}),
-			workspace.NewPolicy(workspace.PolicyOption{
-				ID:          workspace.PolicyID("policy2"),
+			policy.New(policy.Option{
+				ID:          policy.ID("policy2"),
 				MemberCount: lo.ToPtr(2),
 			}),
 		},

@@ -3,10 +3,10 @@ package repo
 import (
 	"context"
 
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearth/server/pkg/policy"
 )
 
 type Policy interface {
-	FindByID(context.Context, workspace.PolicyID) (*workspace.Policy, error)
-	FindByIDs(context.Context, []workspace.PolicyID) ([]*workspace.Policy, error)
+	FindByID(context.Context, policy.ID) (*policy.Policy, error)
+	FindByIDs(context.Context, []policy.ID) ([]*policy.Policy, error)
 }

@@ -1,0 +1,79 @@
+# TODO: Make LayerGroup Real
+interface NLSLayer {
+  id: ID!
+  layerType: String!
+  sceneId: ID!
+  config: JSON
+  title: String!
+  visible: Boolean!
+  infobox: Infobox
+  tags: [LayerTag!]!
+}
+
+type NLSLayerSimple implements NLSLayer {
+    id: ID!
+    layerType: String!
+    sceneId: ID!
+    config: JSON
+    title: String!
+    visible: Boolean!
+    infobox: Infobox
+    tags: [LayerTag!]!
+    scene: Scene
+}
+
+type NLSLayerGroup implements NLSLayer {
+    id: ID!
+    layerType: String!
+    sceneId: ID!
+    children: [NLSLayer]!
+    childrenIds: [ID!]!
+    config: JSON
+    title: String!
+    visible: Boolean!
+    infobox: Infobox
+    tags: [LayerTag!]!
+    scene: Scene
+}
+
+# InputType
+
+input AddNLSLayerSimpleInput {
+    layerType: String!
+    title: String!
+    sceneId: ID!
+    config: JSON
+    index: Int
+    visible: Boolean
+}
+
+input RemoveNLSLayerInput {
+    layerId: ID!
+}
+
+input UpdateNLSLayerInput {
+    layerId: ID!
+    name: String
+    visible: Boolean
+    config: JSON
+}
+
+# Payload
+
+type AddNLSLayerSimplePayload {
+    layers: NLSLayerSimple!
+}
+
+type RemoveNLSLayerPayload {
+    layerId: ID!
+}
+
+type UpdateNLSLayerPayload {
+    layer: NLSLayer!
+}
+
+extend type Mutation {
+    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
+    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
+    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
+}

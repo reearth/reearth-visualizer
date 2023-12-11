@@ -1,14 +1,8 @@
 import type { Tag } from "@reearth/beta/lib/core/mantle/compat";
-import {
-  Events,
-  Layer,
-  LayerSelectionReason,
-  LayersRef,
-  NaiveLayer,
-  LazyLayer,
-} from "@reearth/beta/lib/core/Map";
+import { Events, Layer, LayersRef, NaiveLayer, LazyLayer } from "@reearth/beta/lib/core/Map";
 import { merge } from "@reearth/beta/utils/object";
 
+import { TimelineManagerRef } from "../../Map/useTimelineManager";
 import type { Block } from "../Infobox";
 import type { MapRef } from "../types";
 import type { Widget, WidgetLocationOptions } from "../Widgets";
@@ -54,6 +48,7 @@ export function exposed({
   moveWidget,
   pluginPostMessage,
   clientStorage,
+  timelineManagerRef,
 }: {
   render: (
     html: string,
@@ -93,6 +88,7 @@ export function exposed({
   moveWidget?: (widgetId: string, options: WidgetLocationOptions) => void;
   pluginPostMessage: (extentionId: string, msg: any, sender: string) => void;
   clientStorage: ClientStorage;
+  timelineManagerRef?: TimelineManagerRef;
 }): GlobalThis {
   return merge({
     console: {
@@ -172,6 +168,103 @@ export function exposed({
               startEventLoop?.();
               return result;
             };
+          },
+        }),
+        clock: merge(commonReearth.clock, {
+          get play() {
+            return () => {
+              timelineManagerRef?.current?.commit({
+                cmd: "PLAY",
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+            };
+          },
+          get pause() {
+            return () =>
+              timelineManagerRef?.current?.commit({
+                cmd: "PAUSE",
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setTime() {
+            return (time: { start: Date | string; stop: Date | string; current: Date | string }) =>
+              timelineManagerRef?.current?.commit({
+                cmd: "SET_TIME",
+                payload: { ...time },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setSpeed() {
+            return (speed: number) =>
+              timelineManagerRef?.current?.commit({
+                cmd: "SET_OPTIONS",
+                payload: { multiplier: speed },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setStepType() {
+            return (stepType: "fixed" | "rate") =>
+              timelineManagerRef?.current?.commit({
+                cmd: "SET_OPTIONS",
+                payload: { stepType },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
+          },
+          get setRangeType() {
+            return (rangeType: "unbounded" | "clamped" | "bounced") =>
+              timelineManagerRef?.current?.commit({
+                cmd: "SET_OPTIONS",
+                payload: { rangeType },
+                committer: {
+                  source: "pluginAPI",
+                  id:
+                    (plugin?.extensionType === "widget"
+                      ? widget?.()?.id
+                      : plugin?.extensionType === "block"
+                      ? block?.()?.id
+                      : "") ?? "",
+                },
+              });
           },
         }),
         plugin: {
@@ -318,6 +411,7 @@ export function commonReearth({
   selectedFeature,
   layerSelectionReason,
   selectLayer,
+  selectFeatures,
   showLayer,
   hideLayer,
   addLayer,
@@ -328,6 +422,7 @@ export function commonReearth({
   zoomIn,
   zoomOut,
   cameraViewport,
+  getCameraFovInfo,
   orbit,
   rotateRight,
   captureScreen,
@@ -344,6 +439,9 @@ export function commonReearth({
   moveRight,
   moveOverTerrain,
   flyToGround,
+  findFeatureById,
+  findFeaturesByIds,
+  pickManyFromViewport,
 }: {
   engineName?: string;
   events: Events<ReearthEventType>;
@@ -359,6 +457,7 @@ export function commonReearth({
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   selectLayer: LayersRef["select"];
+  selectFeatures: LayersRef["selectFeatures"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
@@ -372,6 +471,7 @@ export function commonReearth({
   rotateRight: GlobalThis["reearth"]["camera"]["rotateRight"];
   orbit: GlobalThis["reearth"]["camera"]["orbit"];
   cameraViewport?: () => GlobalThis["reearth"]["camera"]["viewport"];
+  getCameraFovInfo: GlobalThis["reearth"]["camera"]["getFovInfo"];
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
   sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
@@ -388,6 +488,9 @@ export function commonReearth({
   moveRight: GlobalThis["reearth"]["camera"]["moveRight"];
   moveOverTerrain: GlobalThis["reearth"]["camera"]["moveOverTerrain"];
   flyToGround: GlobalThis["reearth"]["camera"]["flyToGround"];
+  findFeatureById: GlobalThis["reearth"]["layers"]["findFeatureById"];
+  findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
+  pickManyFromViewport: GlobalThis["reearth"]["scene"]["pickManyFromViewport"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -407,6 +510,7 @@ export function commonReearth({
         get viewport() {
           return cameraViewport?.();
         },
+        getFovInfo: getCameraFovInfo,
         enableScreenSpaceController: enableScreenSpaceCameraController,
         lookHorizontal,
         lookVertical,
@@ -444,6 +548,7 @@ export function commonReearth({
       captureScreen,
       getLocationFromScreen,
       sampleTerrainHeight,
+      pickManyFromViewport,
     },
     get viewport() {
       return viewport?.();
@@ -462,6 +567,7 @@ export function commonReearth({
       get viewport() {
         return cameraViewport?.();
       },
+      getFovInfo: getCameraFovInfo,
       enableScreenSpaceController: enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
@@ -479,9 +585,10 @@ export function commonReearth({
         return layersInViewport;
       },
       get select() {
-        // For compat
-        return (id: string | undefined, reason?: LayerSelectionReason | undefined) =>
-          selectLayer?.(id, id, reason);
+        return selectLayer;
+      },
+      get selectFeatures() {
+        return selectFeatures;
       },
       get show() {
         return showLayer;
@@ -568,6 +675,8 @@ export function commonReearth({
       get add() {
         return addLayer;
       },
+      findFeatureById,
+      findFeaturesByIds,
     },
     plugins: {
       get instances() {

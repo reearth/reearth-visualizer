@@ -1,25 +1,16 @@
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
+import type {
+  ComputedFeature,
+  ComputedLayer,
+  LayerSelectionReason,
+} from "@reearth/beta/lib/core/Map";
+import type { Camera } from "@reearth/beta/utils/value";
 import { Clock } from "@reearth/classic/components/molecules/Visualizer/Plugin/types";
-import { LayerSelectionReason } from "@reearth/classic/core/Map";
-import { Camera } from "@reearth/classic/util/value";
 import { ProjectType } from "@reearth/types";
 
 export { default as useSetError, useError } from "./gqlErrorHandling";
-
-const sceneId = atom<string | undefined>(undefined);
-export const useSceneId = () => useAtom(sceneId);
-
-const rootLayerId = atom<string | undefined>(undefined);
-export const useRootLayerId = () => useAtom(rootLayerId);
-
-const widgetAlignEditor = atom<boolean | undefined>(undefined);
-export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
-
-export type WidgetAlignment = "start" | "centered" | "end";
-
-export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
 
 export type WidgetAreaState = {
   zone: "inner" | "outer";
@@ -32,43 +23,34 @@ export type WidgetAreaState = {
   background?: string;
 };
 
-const selectedWidgetArea = atom<WidgetAreaState | undefined>(undefined);
-export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
+export type WidgetAlignment = "start" | "centered" | "end";
 
-export type Selected =
-  | { type: "scene" }
-  | {
-      type: "layer";
-      layerId: string;
-      featureId?: string;
-      layerSelectionReason?: LayerSelectionReason;
-    }
-  | { type: "widgets" }
-  | { type: "cluster"; clusterId: string }
-  | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }
-  | { type: "dataset"; datasetSchemaId: string };
+export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
 
-const selected = atom<Selected | undefined>(undefined);
-export const useSelected = () => useAtom(selected);
+export type SelectedWidget = {
+  id: string;
+  pluginId: string;
+  extensionId: string;
+  propertyId: string;
+};
 
-const zoomedLayerId = atom<string | undefined>(undefined);
-export const useZoomedLayerId = () => useAtom(zoomedLayerId);
+export type SelectedLayer = {
+  layerId: string;
+  layer?: ComputedLayer;
+  feature?: ComputedFeature;
+  layerSelectionReason?: LayerSelectionReason;
+};
 
-const selectedBlock = atom<string | undefined>(undefined);
-export const useSelectedBlock = () => useAtom(selectedBlock);
+export type SelectedStoryPageId = string;
 
-const isCapturing = atom<boolean>(false);
-export const useIsCapturing = () => useAtom(isCapturing);
+export type NotificationType = "error" | "warning" | "info" | "success";
 
-const camera = atom<Camera | undefined>(undefined);
-export const useCamera = () => useAtom(camera);
-
-const clock = atom<Clock | undefined>(undefined);
-export const useClock = () => useAtom(clock);
-
-export type SceneMode = "3d" | "2d" | "columbus";
-const sceneMode = atom<SceneMode>("3d");
-export const useSceneMode = () => useAtom(sceneMode);
+export type Notification = {
+  type: NotificationType;
+  heading?: string;
+  text: string;
+  duration?: number | "persistent";
+};
 
 export type Policy = {
   id: string;
@@ -93,8 +75,90 @@ export type Workspace = {
   policy?: Policy | null;
 };
 
+// Visualizer
+const isVisualizerReady = atom<boolean>(false);
+export const useIsVisualizerReady = () => useAtom(isVisualizerReady);
+const currentCamera = atom<Camera | undefined>(undefined);
+export const useCurrentCamera = () => useAtom(currentCamera);
+
+const widgetAlignEditor = atom<boolean | undefined>(undefined);
+export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
+
+// Selected - map tab
+const selectedLayer = atom<SelectedLayer | undefined>(undefined);
+export const useSelectedLayer = () => useAtom(selectedLayer);
+const selectedLayerStyle = atom<string | undefined>(undefined);
+export const useSelectedLayerStyle = () => useAtom(selectedLayerStyle);
+const selectedSceneSetting = atom<string | undefined>(undefined);
+export const useSelectedSceneSetting = () => useAtom(selectedSceneSetting);
+
+// Selected - story tab
+const selectedStoryPageId = atom<SelectedStoryPageId | undefined>(undefined);
+export const useSelectedStoryPageId = () => useAtom(selectedStoryPageId);
+
+// Selected - widget tab
+const selectedWidget = atom<SelectedWidget | undefined>(undefined);
+export const useSelectedWidget = () => useAtom(selectedWidget);
+const selectedWidgetArea = atom<WidgetAreaState | undefined>(undefined);
+export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
+
+// Misc
+const notification = atom<Notification | undefined>(undefined);
+export const useNotification = () => useAtom(notification);
+
+// --------------------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------------------
+// Not sure we need below in Beta. Currently being used in classic.Not sure we need below in Beta. Currently being used in classic.
+// Not sure we need below in Beta. Currently being used in classic.Not sure we need below in Beta. Currently being used in classic.
+// --------------------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------------------
+
+const isCapturing = atom<boolean>(false);
+export const useIsCapturing = () => useAtom(isCapturing);
+
+export type SceneMode = "3d" | "2d" | "columbus";
+const sceneMode = atom<SceneMode>("3d");
+export const useSceneMode = () => useAtom(sceneMode);
+
+const selectedBlock = atom<string | undefined>(undefined);
+export const useSelectedBlock = () => useAtom(selectedBlock);
+
+const zoomedLayerId = atom<string | undefined>(undefined);
+export const useZoomedLayerId = () => useAtom(zoomedLayerId);
+
+const currentTheme = atom<"light" | "dark">("dark");
+export const useCurrentTheme = () => useAtom(currentTheme);
+
 const workspace = atom<Workspace | undefined>(undefined);
 export const useWorkspace = () => useAtom(workspace);
+
+const sceneId = atom<string | undefined>(undefined);
+export const useSceneId = () => useAtom(sceneId);
+
+const rootLayerId = atom<string | undefined>(undefined);
+export const useRootLayerId = () => useAtom(rootLayerId);
+
+export type Selected =
+  | { type: "scene" }
+  | {
+      type: "layer";
+      layerId: string;
+      featureId?: string;
+      layerSelectionReason?: LayerSelectionReason;
+    }
+  | { type: "widgets" }
+  | { type: "cluster"; clusterId: string }
+  | { type: "widget"; widgetId?: string; pluginId: string; extensionId: string }
+  | { type: "dataset"; datasetSchemaId: string };
+
+const selected = atom<Selected | undefined>(undefined);
+export const useSelected = () => useAtom(selected);
+
+const camera = atom<Camera | undefined>(undefined);
+export const useCamera = () => useAtom(camera);
+
+const clock = atom<Clock | undefined>(undefined);
+export const useClock = () => useAtom(clock);
 
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
@@ -110,18 +174,6 @@ export type Project = {
 const project = atom<Project | undefined>(undefined);
 export const useProject = () => useAtom(project);
 
-export type NotificationType = "error" | "warning" | "info" | "success";
-
-export type Notification = {
-  type: NotificationType;
-  heading?: string;
-  text: string;
-  duration?: number | "persistent";
-};
-
-const notification = atom<Notification | undefined>(undefined);
-export const useNotification = () => useAtom(notification);
-
 const unselectProject = atom(null, (_get, set) => {
   set(project, undefined);
   set(workspace, undefined);
@@ -133,6 +185,3 @@ const unselectProject = atom(null, (_get, set) => {
   set(sceneMode, "3d");
 });
 export const useUnselectProject = () => useAtom(unselectProject)[1];
-
-const currentTheme = atom<"light" | "dark">("dark");
-export const useCurrentTheme = () => useAtom(currentTheme);

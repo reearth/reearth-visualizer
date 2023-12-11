@@ -13,7 +13,7 @@ export const styles = css`
     width: 100%;
     height: 100%;
     margin: 0;
-    font-family: ${fontFamilies}
+    font-family: ${fontFamilies};
     background-color: #000;
     color: #fff;
   }
@@ -23,7 +23,7 @@ export const styles = css`
   input {
     margin: 0;
     padding: 0;
-    font-family: ${fontFamilies}
+    font-family: ${fontFamilies};
   }
 
   button {
@@ -36,7 +36,7 @@ export const styles = css`
   }
 
   textarea {
-    font-family: ${fontFamilies}
+    font-family: ${fontFamilies};
   }
 
   /* Split Pane Styles */

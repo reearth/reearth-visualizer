@@ -14,7 +14,7 @@ import { configDefaults } from "vitest/config";
 
 import pkg from "./package.json";
 
-export default defineConfig({
+export default defineConfig(() => ({
   envPrefix: "REEARTH_WEB_",
   plugins: [react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
   define: {
@@ -25,6 +25,7 @@ export default defineConfig({
     port: 3000,
   },
   build: {
+    target: "esnext",
     assetsDir: "static", // avoid conflicts with backend asset endpoints
     rollupOptions: {
       input: {
@@ -50,7 +51,8 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/**/*.cy.tsx",
         "src/**/*.stories.tsx",
-        "src/services/gql/graphql-client-api.tsx",
+        "src/classic/gql/graphql-client-api.tsx",
+        "src/beta/services/gql/__gen__/**/*",
         "src/test/**/*",
       ],
       reporter: ["text", "json", "lcov"],
@@ -60,7 +62,7 @@ export default defineConfig({
       { find: "csv-parse", replacement: "csv-parse" },
     ],
   },
-});
+}));
 
 function serverHeaders(): Plugin {
   return {
@@ -78,16 +80,27 @@ function config(): Plugin {
   return {
     name: "reearth-config",
     async configureServer(server) {
+      const envs = loadEnv(
+        server.config.mode,
+        server.config.envDir ?? process.cwd(),
+        server.config.envPrefix,
+      );
+      const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
+        ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
+        : {};
       const configRes = JSON.stringify(
         {
+          ...remoteReearthConfig,
           api: "http://localhost:8080/api",
           published: "/published.html?alias={}",
+          // If Cesium version becomes outdated, you can set the Ion token as an environment variables here.
+          // ex: `CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
+          // ref: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Core/Ion.js#L6-L7
+          ...(process.env.CESIUM_ION_ACCESS_TOKEN
+            ? { cesiumIonAccessToken: process.env.CESIUM_ION_ACCESS_TOKEN }
+            : {}),
           ...readEnv("REEARTH_WEB", {
-            source: loadEnv(
-              server.config.mode,
-              server.config.envDir ?? process.cwd(),
-              server.config.envPrefix,
-            ),
+            source: envs,
           }),
           ...loadJSON("./reearth-config.json"),
         },

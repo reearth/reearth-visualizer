@@ -2,7 +2,7 @@
   "go.testEnvFile": "${workspaceRoot}/.env",
   "go.lintTool": "golangci-lint",
   "editor.formatOnSave": true,
-  "yaml.format.enable": true,
+  "yaml.format.enable": false,
   "yaml.completion": true,
   "yaml.validate": true,
   "yaml.hover": true,
@@ -28,5 +28,8 @@
       ],
       "url": "./server/schemas/plugin_manifest_translation.json"
     }
-  ]
+  ],
+  "[yaml]": {
+    "editor.formatOnSave": false
+  }
 }

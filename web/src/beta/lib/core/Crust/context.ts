@@ -1,6 +1,8 @@
 import { RefObject, useMemo } from "react";
 
-import { Camera, Clock, MapRef, SceneProperty } from "./types";
+import { TimelineManagerRef, TimelineCommitter } from "../Map/useTimelineManager";
+
+import { Camera, MapRef, SceneProperty } from "./types";
 import { Context as WidgetContext } from "./Widgets";
 
 export const useWidgetContext = ({
@@ -8,7 +10,7 @@ export const useWidgetContext = ({
   camera,
   selectedLayerId,
   sceneProperty,
-  overriddenClock,
+  timelineManagerRef,
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -17,9 +19,9 @@ export const useWidgetContext = ({
         camera,
         selectedLayerId,
         sceneProperty,
-        overriddenClock,
+        timelineManagerRef,
       }),
-    [camera, mapRef, sceneProperty, selectedLayerId, overriddenClock],
+    [camera, mapRef, sceneProperty, selectedLayerId, timelineManagerRef],
   );
 
 export function widgetContextFromMapRef({
@@ -27,7 +29,7 @@ export function widgetContextFromMapRef({
   camera,
   selectedLayerId,
   sceneProperty,
-  overriddenClock,
+  timelineManagerRef,
 }: {
   mapRef?: RefObject<MapRef>;
   camera?: Camera;
@@ -36,7 +38,7 @@ export function widgetContextFromMapRef({
     featureId?: string;
   };
   sceneProperty?: SceneProperty;
-  overriddenClock: Clock;
+  timelineManagerRef?: TimelineManagerRef;
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
@@ -46,8 +48,8 @@ export function widgetContextFromMapRef({
     get clock() {
       return engine()?.getClock();
     },
-    overriddenClock,
-    initialCamera: sceneProperty?.default?.camera,
+    timelineManagerRef,
+    initialCamera: sceneProperty?.default?.camera ?? sceneProperty?.camera?.camera,
     is2d: sceneProperty?.default?.sceneMode === "2d",
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {
@@ -68,13 +70,43 @@ export function widgetContextFromMapRef({
     onCameraRotateRight: (...args) => engine()?.rotateRight(...args),
     onFlyTo: (...args) => engine()?.flyTo(...args),
     onLookAt: (...args) => engine()?.lookAt(...args),
-    onLayerSelect: (...args) => layers()?.select(...args),
-    onPause: (...args) => engine()?.pause(...args),
-    onPlay: (...args) => engine()?.play(...args),
-    onSpeedChange: (...args) => engine()?.changeSpeed(...args),
-    onTick: (...args) => engine()?.onTick(...args),
-    removeTickEventListener: (...args) => engine()?.removeTickEventListener(...args),
-    onTimeChange: (...args) => engine()?.changeTime(...args),
+    onLayerSelect: (layerId, featureId, options) => {
+      layers()?.selectFeatures(
+        [{ layerId, featureId: featureId ? [featureId] : undefined }],
+        options,
+      );
+    },
+    onPause: (committer?: TimelineCommitter) =>
+      timelineManagerRef?.current?.commit({
+        cmd: "PAUSE",
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
+      }),
+    onPlay: (committer?: TimelineCommitter) =>
+      timelineManagerRef?.current?.commit({
+        cmd: "PLAY",
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
+      }),
+    onSpeedChange: (speed, committer?: TimelineCommitter) =>
+      timelineManagerRef?.current?.commit({
+        cmd: "SET_OPTIONS",
+        payload: {
+          multiplier: speed,
+          stepType: "rate",
+        },
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
+      }),
+    onTick: cb => timelineManagerRef?.current?.onTick(cb),
+    removeTickEventListener: cb => timelineManagerRef?.current?.offTick(cb),
+    onTimeChange: (time, committer?: TimelineCommitter) =>
+      timelineManagerRef?.current?.commit({
+        cmd: "SET_TIME",
+        payload: {
+          start: timelineManagerRef.current?.computedTimeline.start,
+          current: time,
+          stop: timelineManagerRef.current?.computedTimeline.stop,
+        },
+        committer: { source: committer?.source ?? "widgetContext", id: committer?.id },
+      }),
     onZoomIn: (...args) => engine()?.zoomIn(...args),
     onZoomOut: (...args) => engine()?.zoomOut(...args),
   };

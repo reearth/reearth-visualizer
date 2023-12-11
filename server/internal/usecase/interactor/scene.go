@@ -17,6 +17,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 )
 
 type Scene struct {
@@ -31,6 +32,7 @@ type Scene struct {
 	transaction        usecasex.Transaction
 	file               gateway.File
 	pluginRegistry     gateway.PluginRegistry
+	extensions         []plugin.ID
 }
 
 func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
@@ -45,6 +47,7 @@ func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 		transaction:        r.Transaction,
 		file:               g.File,
 		pluginRegistry:     g.PluginRegistry,
+		extensions:         r.Extensions,
 	}
 }
 
@@ -58,11 +61,25 @@ func (i *Scene) pluginCommon() *pluginCommon {
 }
 
 func (i *Scene) Fetch(ctx context.Context, ids []id.SceneID, operator *usecase.Operator) ([]*scene.Scene, error) {
-	return i.sceneRepo.FindByIDs(ctx, ids)
+	s, err := i.sceneRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	lo.ForEach(s, func(s *scene.Scene, _ int) {
+		injectExtensionsToScene(s, i.extensions)
+	})
+
+	return s, nil
 }
 
 func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *usecase.Operator) (*scene.Scene, error) {
-	return i.sceneRepo.FindByProject(ctx, id)
+	s, err := i.sceneRepo.FindByProject(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	injectExtensionsToScene(s, i.extensions)
+	return s, nil
 }
 
 func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (_ *scene.Scene, err error) {
@@ -87,7 +104,13 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	schema := builtin.GetPropertySchemaByVisualizer(visualizer.VisualizerCesium)
+	var viz = visualizer.VisualizerCesium
+
+	if prj.CoreSupport() {
+		viz = visualizer.VisualizerCesiumBeta
+	}
+
+	schema := builtin.GetPropertySchemaByVisualizer(viz)
 	sceneID := id.NewSceneID()
 
 	rootLayer, err := layer.NewGroup().NewID().Scene(sceneID).Root(true).Build()
@@ -538,4 +561,10 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 
 	tx.Commit()
 	return s, nil
+}
+
+func injectExtensionsToScene(s *scene.Scene, ext []plugin.ID) {
+	lo.ForEach(ext, func(p plugin.ID, _ int) {
+		s.Plugins().Add(scene.NewPlugin(p, nil))
+	})
 }

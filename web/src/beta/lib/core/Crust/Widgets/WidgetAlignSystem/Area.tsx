@@ -14,6 +14,7 @@ import type {
   WidgetProps,
   InternalWidget,
 } from "./types";
+import { isInvisibleBuiltin } from "./utils";
 
 export type WidgetAreaType = {
   zone: "inner" | "outer";
@@ -39,6 +40,7 @@ type Props = {
   centered?: boolean;
   built?: boolean;
   widgets?: InternalWidget[];
+  isMobile?: boolean;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // note that layoutConstraint will be always undefined in published pages
   layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
@@ -58,6 +60,7 @@ export default function Area({
   built,
   widgets,
   layoutConstraint,
+  isMobile,
   renderWidget,
   onWidgetAreaSelect,
 }: Props) {
@@ -82,7 +85,7 @@ export default function Area({
           zone,
           background: backgroundColor,
           centered,
-          gap,
+          gap: gap ?? 6,
           padding: {
             top: padding?.top ?? 6,
             bottom: padding?.bottom ?? 6,
@@ -120,52 +123,55 @@ export default function Area({
       editorStyle={{
         flexWrap: "wrap",
         padding: `${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`,
-        background: backgroundColor
+        backgroundColor: backgroundColor
           ? backgroundColor
           : area === "middle"
-          ? theme.editor.widgetAlignSystem.vertical.bg
-          : theme.editor.widgetAlignSystem.horizontal.bg,
+          ? theme.placeHolder.main_2
+          : theme.placeHolder.main_1,
         border:
           `${selectedWidgetArea?.zone}/${selectedWidgetArea?.section}/${selectedWidgetArea?.area}` ===
           `${zone}/${section}/${area}`
             ? `1.2px dashed #00FFFF`
             : area === "middle"
-            ? `1px solid ${theme.editor.widgetAlignSystem.vertical.border}`
-            : `1px solid ${theme.editor.widgetAlignSystem.horizontal.border}`,
+            ? `1px solid ${theme.primary.weak}`
+            : `1px solid #E95518`,
         gap: gap,
         alignItems: centered ? "center" : "unset",
       }}
       iconColor={area === "middle" ? "#4770FF" : "#E95518"}>
-      {widgets?.map((widget, i) => {
-        const constraint =
-          widget.pluginId && widget.extensionId
-            ? layoutConstraint?.[`${widget.pluginId}/${widget.extensionId}`]
-            : undefined;
-        const extended = overriddenExtended?.[widget.id];
-        const extendable2 =
-          (section === "center" && constraint?.extendable?.horizontally) ||
-          (area === "middle" && constraint?.extendable?.vertically);
-        return (
-          <GridItem
-            key={widget.id}
-            id={widget.id}
-            index={i}
-            extended={extended ?? widget.extended}
-            extendable={extendable2}
-            style={{ pointerEvents: "none", margin: 0 }}
-            editorStyle={{ margin: 0 }}>
-            {({ editing }) =>
-              renderWidget?.({
-                widget,
-                layout,
-                extended,
-                editing,
-                onExtend: handleExtend,
-              })
-            }
-          </GridItem>
-        );
-      })}
+      {widgets
+        ?.filter(widget => !isInvisibleBuiltin(widget, isMobile))
+        .map((widget, i) => {
+          const constraint =
+            widget.pluginId && widget.extensionId
+              ? layoutConstraint?.[`${widget.pluginId}/${widget.extensionId}`]
+              : undefined;
+          const extended = overriddenExtended?.[widget.id];
+          const extendable2 =
+            (section === "center" && constraint?.extendable?.horizontally) ||
+            (area === "middle" && constraint?.extendable?.vertically);
+
+          return (
+            <GridItem
+              key={widget.id}
+              id={widget.id}
+              index={i}
+              extended={extended ?? widget.extended}
+              extendable={extendable2}
+              style={{ pointerEvents: "none", margin: 0 }}
+              editorStyle={{ margin: 0 }}>
+              {({ editing }) =>
+                renderWidget?.({
+                  widget,
+                  layout,
+                  extended,
+                  editing,
+                  onExtend: handleExtend,
+                })
+              }
+            </GridItem>
+          );
+        })}
     </GridArea>
   ) : null;
 }

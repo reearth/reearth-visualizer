@@ -1,5 +1,5 @@
 import svgToMiniDataURI from "mini-svg-data-uri";
-import React, { AriaAttributes, AriaRole, CSSProperties, memo, useMemo } from "react";
+import React, { AriaAttributes, AriaRole, CSSProperties, MouseEvent, memo, useMemo } from "react";
 import SVG from "react-inlinesvg";
 
 import { ariaProps } from "@reearth/beta/utils/aria";
@@ -11,7 +11,7 @@ export type Icons = keyof typeof Icons;
 
 export type Props = {
   className?: string;
-  icon?: string;
+  icon?: string | Icons;
   size?: string | number;
   alt?: string;
   color?: string;
@@ -20,7 +20,7 @@ export type Props = {
   role?: AriaRole;
   notransition?: boolean;
   transitionDuration?: string;
-  onClick?: () => void;
+  onClick?: (e?: MouseEvent<Element>) => void;
 } & AriaAttributes;
 
 const Icon: React.FC<Props> = ({
@@ -99,7 +99,7 @@ const StyledSvg = styled(SVG)<{
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   color: ${({ color }) => color};
-  ${({ stroke }) => `stroke: ${stroke};`}
+  ${({ stroke }) => stroke && `stroke: ${stroke};`}
   transition-property: color, background;
 `;
 

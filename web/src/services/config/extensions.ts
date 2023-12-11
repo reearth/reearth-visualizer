@@ -32,6 +32,7 @@ export type PluginExtensionProps = {
   installedPlugins?: {
     id: string;
     version: string;
+    fullId?: string;
     title?: string;
     author?: string;
     description?: string;

@@ -1,54 +1,138 @@
-import { ReactNode } from "react";
+import { ReactNode, useCallback, useState } from "react";
 
 import Wrapper from "@reearth/beta/components/Modal/ModalFrame";
-import Text from "@reearth/beta/components/Text";
-import { styled, useTheme } from "@reearth/services/theme";
+import useManageSwitchState, { SwitchField } from "@reearth/beta/hooks/useManageSwitchState/hooks";
+import { styled } from "@reearth/services/theme";
+
+type Size = "sm" | "md" | "lg";
+
+export type SidebarTab = {
+  id: string;
+  label: string;
+  content: ReactNode;
+  tabButton1?: ReactNode;
+  tabButton2?: ReactNode;
+};
 
 type Props = {
   className?: string;
   title?: string;
-  size?: "sm" | "md" | "lg";
+  size?: Size;
   button1?: ReactNode;
   button2?: ReactNode;
   children?: ReactNode;
   isVisible?: boolean;
   onClose?: () => void;
+  onTabChange?: (tabId: string) => void;
+  sidebarTabs?: SidebarTab[];
 };
 
 const Modal: React.FC<Props> = ({
   className,
   title,
-  size,
+  size = "md",
   button1,
   button2,
+  children,
   isVisible,
   onClose,
-  children,
+  onTabChange,
+  sidebarTabs,
 }) => {
-  const theme = useTheme();
+  const [tabsFields] = useState<SwitchField<SidebarTab>[]>(
+    sidebarTabs?.map((tab, index) => ({
+      active: index === 0,
+      ...tab,
+    })) || [],
+  );
+
+  const { handleActivate, fields: tabs } = useManageSwitchState({
+    fields: tabsFields,
+  });
+
+  const handleTabChange = useCallback(
+    (tabId: string) => {
+      handleActivate(tabId);
+      onTabChange?.(tabId);
+    },
+    [handleActivate, onTabChange],
+  );
+
   return (
-    <Wrapper className={className} size={size} isVisible={isVisible} onClose={onClose}>
-      <Title size="h4" weight="bold" color={theme.general.content.strong}>
-        {title}
-      </Title>
-      {children}
-      <ButtonWrapper>
-        {button2}
-        {button1}
-      </ButtonWrapper>
+    <Wrapper
+      className={className}
+      size={size}
+      isVisible={isVisible}
+      title={title}
+      onClose={onClose}>
+      <InnerWrapper>
+        {tabs.length > 0 && (
+          <NavBarWrapper>
+            {tabs.map(tab => (
+              <Tab key={tab.id} isSelected={tab.active} onClick={() => handleTabChange(tab.id)}>
+                {tab.label}
+              </Tab>
+            ))}
+          </NavBarWrapper>
+        )}
+        <ContentWrapper>
+          {tabs.length > 0 && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
+          {children && <Content> {children}</Content>}
+          {button1 || button2 ? (
+            <ButtonWrapper>
+              {tabs.find(tab => tab.active === true)?.tabButton1 ?? button1}
+              {tabs.find(tab => tab.active === true)?.tabButton2 ?? button2}
+            </ButtonWrapper>
+          ) : null}
+        </ContentWrapper>
+      </InnerWrapper>
     </Wrapper>
   );
 };
 
-const Title = styled(Text)`
-  text-align: center;
-  margin-bottom: 24px;
+const InnerWrapper = styled.div`
+  display: flex;
+`;
+
+const NavBarWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 10px;
+  background: ${({ theme }) => theme.bg[0]};
+  border-right: 1px solid ${({ theme }) => theme.bg[3]};
+`;
+
+const Tab = styled.button<{ isSelected?: boolean }>`
+  display: flex;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: ${({ isSelected, theme }) => (isSelected ? theme.bg[2] : "transparent")};
+  color: ${({ isSelected, theme }) => (isSelected ? theme.content.main : theme.content.weak)};
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
+const Content = styled.div`
+  display: flex;
+  padding: ${({ theme }) => theme.spacing.super}px;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.largest}px;
+  align-self: stretch;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
+  flex-direction: row;
+  align-self: stretch;
   justify-content: flex-end;
-  margin: 20px -10px -10px 0;
+  border-top: 1px solid ${({ theme }) => theme.bg[3]};
+  gap: ${({ theme }) => theme.spacing.normal}px;
+  padding: ${({ theme }) => theme.spacing.normal}px;
 `;
 
 export default Modal;

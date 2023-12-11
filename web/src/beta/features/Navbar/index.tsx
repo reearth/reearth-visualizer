@@ -5,24 +5,36 @@ import LeftSection from "./LeftSection";
 import useRightSide from "./useRightSection";
 
 type Props = {
-  sceneId: string;
+  sceneId?: string;
+  projectId?: string;
+  workspaceId?: string;
   isDashboard?: boolean;
-  currentTab: Tab;
+  currentTab?: Tab;
+  page?: "editor" | "settings";
 };
 
-export const Tabs = ["scene", "story", "widgets", "publish"] as const;
+export const Tabs = ["map", "story", "widgets", "publish"] as const;
 export type Tab = (typeof Tabs)[number];
+
+export const NAVBAR_HEIGHT = 52;
 
 export function isTab(tab: string): tab is Tab {
   return Tabs.includes(tab as never);
 }
 
-const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = false }) => {
+const Navbar: React.FC<Props> = ({
+  sceneId,
+  projectId,
+  workspaceId,
+  currentTab = "map",
+  isDashboard = false,
+  page = "editor",
+}) => {
   const {
     currentProject,
-    currentWorkspace,
+    workspace,
     isPersonal,
-    user,
+    username,
     workspaces,
     workspaceModalVisible,
     handleLogout,
@@ -30,12 +42,12 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
     handleWorkspaceCreate,
     handleWorkspaceModalClose,
     handleWorkspaceModalOpen,
-  } = useHook(sceneId);
+  } = useHook({ projectId, workspaceId });
 
   const { rightSide } = useRightSide({
     currentTab,
     sceneId,
-    page: "editor",
+    page,
   });
 
   return (
@@ -43,11 +55,13 @@ const Navbar: React.FC<Props> = ({ sceneId, currentTab = "scene", isDashboard = 
       <LeftSection
         currentProject={currentProject}
         dashboard={isDashboard}
-        currentWorkspace={currentWorkspace}
-        user={user}
+        currentWorkspace={workspace}
+        username={username}
         personalWorkspace={isPersonal}
         modalShown={workspaceModalVisible}
         workspaces={workspaces}
+        sceneId={sceneId}
+        page={page}
         onWorkspaceChange={handleWorkspaceChange}
         onWorkspaceCreate={handleWorkspaceCreate}
         onSignOut={handleLogout}
@@ -67,9 +81,9 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 24px 8px 19px;
+  padding: 0 24px;
+  height: ${NAVBAR_HEIGHT}px;
   gap: 24px;
-  height: 51px;
-  background: ${({ theme }) => theme.navbar.bg.main};
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  background: ${({ theme }) => theme.bg[0]};
+  z-index: ${({ theme }) => theme.zIndexes.editor.navbar};
 `;

@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 )
@@ -13,15 +14,15 @@ type Project interface {
 	Filtered(WorkspaceFilter) Project
 	FindByIDs(context.Context, id.ProjectIDList) ([]*project.Project, error)
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
-	FindByWorkspace(context.Context, id.WorkspaceID, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
+	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
-	CountByWorkspace(context.Context, id.WorkspaceID) (int, error)
-	CountPublicByWorkspace(context.Context, id.WorkspaceID) (int, error)
+	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
+	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error
 	Remove(context.Context, id.ProjectID) error
 }
 
-func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid id.WorkspaceID, batch int64, callback func([]*project.Project) error) error {
+func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid accountdomain.WorkspaceID, batch int64, callback func([]*project.Project) error) error {
 	pagination := usecasex.CursorPagination{
 		Before: nil,
 		After:  nil,

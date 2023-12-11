@@ -1,0 +1,1457 @@
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap';
+
+.lexical.editor-container {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.lexical .editor {
+  flex: auto;
+  position: relative;
+  resize: vertical;
+  z-index: -1;
+}
+
+.lexical .editor-inner{
+  position: relative;
+  cursor: auto;
+}
+
+.lexical .editor-input{
+  outline: none;
+  padding: 8px;
+}
+
+.lexical .editor-input-minheight{
+  min-height: 200px;
+}
+
+.lexical .editor-placeholder{
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 8px;
+  left: 8px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.lexical pre {
+  line-height: 1.1;
+  background: #222;
+  color: #fff;
+  margin: 0;
+  padding: 10px;
+  font-size: 12px;
+  overflow: auto;
+  max-height: 400px;
+}
+
+.lexical pre::-webkit-scrollbar {
+  background: transparent;
+  width: 10px;
+}
+
+.lexical pre::-webkit-scrollbar-thumb {
+  background: #999;
+}
+
+.lexical .editor-dev-button {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 40px;
+  font-size: 12px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.3);
+  background-color: #444;
+}
+
+.lexical .editor-dev-button::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  display: block;
+  background-size: contain;
+  filter: invert(1);
+}
+
+.lexical .editor-dev-button:hover {
+  background-color: #555;
+}
+
+.lexical .editor-dev-button.active {
+  background-color: rgb(233, 35, 35);
+}
+
+.lexical .test-recorder-toolbar {
+  display: flex;
+}
+
+.lexical .test-recorder-button {
+  position: relative;
+  display: block;
+  width: 32px;
+  height: 32px;
+  font-size: 10px;
+  padding: 6px 6px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.4);
+  background-color: #222;
+  transition: box-shadow 50ms ease-out;
+}
+
+.lexical .test-recorder-button:active {
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.lexical .test-recorder-button + .test-recorder-button {
+  margin-left: 4px;
+}
+
+.lexical .test-recorder-button::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  display: block;
+  background-size: contain;
+  filter: invert(1);
+}
+
+.lexical #options-button {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+}
+
+.lexical #test-recorder-button {
+  position: fixed;
+  left: 70px;
+  bottom: 20px;
+}
+
+.lexical #paste-log-button {
+  position: fixed;
+  left: 120px;
+  bottom: 20px;
+}
+
+.lexical #docs-button {
+  position: fixed;
+  left: 170px;
+  bottom: 20px;
+}
+
+.lexical #options-button::after {
+  background-image: url(images/icons/gear.svg);
+}
+
+.lexical #test-recorder-button::after {
+  background-image: url(images/icons/journal-code.svg);
+}
+
+.lexical #paste-log-button::after {
+  background-image: url(images/icons/clipboard.svg);
+}
+
+.lexical #docs-button::after {
+  background-image: url(images/icons/file-earmark-text.svg);
+}
+
+.lexical #test-recorder-button-snapshot {
+  margin-right: auto;
+}
+
+.lexical #test-recorder-button-snapshot::after {
+  background-image: url(images/icons/camera.svg);
+}
+
+.lexical #test-recorder-button-copy::after {
+  background-image: url(images/icons/clipboard.svg);
+}
+
+.lexical #test-recorder-button-download::after {
+  background-image: url(images/icons/download.svg);
+}
+
+.lexical .typeahead-popover {
+  background: #fff;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  margin-top: 25px;
+}
+
+.lexical .typeahead-popover ul {
+  padding: 0;
+  list-style: none;
+  margin: 0;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+.lexical .typeahead-popover ul::-webkit-scrollbar {
+  display: none;
+}
+
+.lexical .typeahead-popover ul {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.lexical .typeahead-popover ul li {
+  margin: 0;
+  min-width: 180px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.lexical .typeahead-popover ul li.selected {
+  background: #eee;
+}
+
+.lexical .typeahead-popover li {
+  margin: 0 8px 0 8px;
+  padding: 8px;
+  color: #050505;
+  cursor: pointer;
+  line-height: 16px;
+  font-size: 15px;
+  display: flex;
+  align-content: center;
+  flex-direction: row;
+  flex-shrink: 0;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 0;
+}
+
+.lexical .typeahead-popover li.active {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+}
+
+.lexical .typeahead-popover li:first-child {
+  border-radius: 8px 8px 0px 0px;
+}
+
+.lexical .typeahead-popover li:last-child {
+  border-radius: 0px 0px 8px 8px;
+}
+
+.lexical .typeahead-popover li:hover {
+  background-color: #eee;
+}
+
+.lexical .typeahead-popover li .text {
+  display: flex;
+  line-height: 20px;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.lexical .typeahead-popover li .icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  user-select: none;
+  margin-right: 8px;
+  line-height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.lexical .component-picker-menu {
+  width: 200px;
+}
+
+.lexical .mentions-menu {
+  width: 250px;
+}
+
+.lexical .auto-embed-menu {
+  width: 150px;
+}
+
+.lexical .emoji-menu {
+  width: 200px;
+}
+
+.lexical i.palette {
+  background-image: url(images/icons/palette.svg);
+}
+
+.lexical i.bucket {
+  background-image: url(images/icons/paint-bucket.svg);
+}
+
+.lexical i.bold {
+  background-image: url(images/icons/type-bold.svg);
+}
+
+.lexical i.italic {
+  background-image: url(images/icons/type-italic.svg);
+}
+
+.lexical i.clear {
+  background-image: url(images/icons/trash.svg);
+}
+
+.lexical i.code {
+  background-image: url(images/icons/code.svg);
+}
+
+.lexical i.underline {
+  background-image: url(images/icons/type-underline.svg);
+}
+
+.lexical i.strikethrough {
+  background-image: url(images/icons/type-strikethrough.svg);
+}
+
+.lexical i.subscript {
+  background-image: url(images/icons/type-subscript.svg);
+}
+
+.lexical i.superscript {
+  background-image: url(images/icons/type-superscript.svg);
+}
+
+.lexical i.link {
+  background-image: url(images/icons/link.svg);
+}
+
+.lexical i.horizontal-rule {
+  background-image: url(images/icons/horizontal-rule.svg);
+}
+
+.lexical .icon.plus {
+  background-image: url(images/icons/plus.svg);
+}
+
+.lexical .icon.caret-right {
+  background-image: url(images/icons/caret-right-fill.svg);
+}
+
+.lexical .icon.dropdown-more {
+  background-image: url(images/icons/dropdown-more.svg);
+}
+
+.lexical .icon.font-color {
+  background-image: url(images/icons/font-color.svg);
+}
+
+.lexical .icon.font-family {
+  background-image: url(images/icons/font-family.svg);
+}
+
+.lexical .icon.bg-color {
+  background-image: url(images/icons/bg-color.svg);
+}
+
+.lexical .icon.table {
+  background-color: #6c757d;
+  mask-image: url(images/icons/table.svg);
+  -webkit-mask-image: url(images/icons/table.svg);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+}
+
+.lexical i.image {
+  background-image: url(images/icons/file-image.svg);
+}
+
+.lexical i.table {
+  background-image: url(images/icons/table.svg);
+}
+
+.lexical i.close {
+  background-image: url(images/icons/close.svg);
+}
+
+.lexical i.figma {
+  background-image: url(images/icons/figma.svg);
+}
+
+.lexical i.poll {
+  background-image: url(images/icons/card-checklist.svg);
+}
+
+.lexical i.columns {
+  background-image: url(images/icons/3-columns.svg);
+}
+
+.lexical i.tweet {
+  background-image: url(images/icons/tweet.svg);
+}
+
+.lexical i.youtube {
+  background-image: url(images/icons/youtube.svg);
+}
+
+.lexical .icon.left-align,
+.lexical i.left-align {
+  background-image: url(images/icons/text-left.svg);
+}
+
+.lexical .icon.center-align,
+.lexical i.center-align {
+  background-image: url(images/icons/text-center.svg);
+}
+
+.lexical .icon.right-align,
+.lexical i.right-align {
+  background-image: url(images/icons/text-right.svg);
+}
+
+.lexical .icon.justify-align,
+.lexical i.justify-align {
+  background-image: url(images/icons/justify.svg);
+}
+
+.lexical i.indent {
+  background-image: url(images/icons/indent.svg);
+}
+
+.lexical i.markdown {
+  background-image: url(images/icons/markdown.svg);
+}
+
+.lexical i.outdent {
+  background-image: url(images/icons/outdent.svg);
+}
+
+.lexical i.undo {
+  background-image: url(images/icons/arrow-counterclockwise.svg);
+}
+
+.lexical i.redo {
+  background-image: url(images/icons/arrow-clockwise.svg);
+}
+
+.lexical i.sticky {
+  background-image: url(images/icons/sticky.svg);
+}
+
+.lexical i.mic {
+  background-image: url(images/icons/mic.svg);
+}
+
+.lexical i.import {
+  background-image: url(images/icons/upload.svg);
+}
+
+.lexical i.export {
+  background-image: url(images/icons/download.svg);
+}
+
+.lexical i.diagram-2 {
+  background-image: url(images/icons/diagram-2.svg);
+}
+
+.lexical i.user {
+  background-image: url(images/icons/user.svg);
+}
+
+.lexical i.equation {
+  background-image: url(images/icons/plus-slash-minus.svg);
+}
+
+.lexical i.gif {
+  background-image: url(images/icons/filetype-gif.svg);
+}
+
+.lexical i.copy {
+  background-image: url(images/icons/copy.svg);
+}
+
+.lexical i.success {
+  background-image: url(images/icons/success.svg);
+}
+
+.lexical i.prettier {
+  background-image: url(images/icons/prettier.svg);
+}
+
+.lexical i.prettier-error {
+  background-image: url(images/icons/prettier-error.svg);
+}
+
+.lexical i.page-break,
+.lexical .icon.page-break {
+  background-image: url(images/icons/scissors.svg);
+}
+
+.lexical .link-editor .button.active,
+.lexical .toolbar .button.active {
+  background-color: rgb(223, 232, 250);
+}
+
+.lexical .link-editor .link-input {
+  display: block;
+  width: calc(100% - 75px);
+  box-sizing: border-box;
+  margin: 12px 12px;
+  padding: 8px 12px;
+  border-radius: 15px;
+  background-color: #eee;
+  font-size: 15px;
+  color: rgb(5, 5, 5);
+  border: 0;
+  outline: 0;
+  position: relative;
+  font-family: inherit;
+}
+
+.lexical .link-editor .link-view {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 8px 12px;
+  padding: 8px 12px;
+  border-radius: 15px;
+  font-size: 15px;
+  color: rgb(5, 5, 5);
+  border: 0;
+  outline: 0;
+  position: relative;
+  font-family: inherit;
+}
+
+.lexical .link-editor .link-view a {
+  display: block;
+  word-break: break-word;
+  width: calc(100% - 33px);
+}
+
+.lexical .link-editor div.link-edit {
+  background-image: url(images/icons/pencil-fill.svg);
+  background-size: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 35px;
+  vertical-align: -0.25em;
+  position: absolute;
+  right: 30px;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+.lexical .link-editor div.link-trash {
+  background-image: url(images/icons/trash.svg);
+  background-size: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 35px;
+  vertical-align: -0.25em;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+.lexical .link-editor div.link-cancel {
+  background-image: url(images/icons/close.svg);
+  background-size: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 35px;
+  vertical-align: -0.25em;
+  margin-right: 28px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+.lexical .link-editor div.link-confirm {
+  background-image: url(images/icons/success-alt.svg);
+  background-size: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 35px;
+  vertical-align: -0.25em;
+  margin-right: 2px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+.lexical .link-editor .link-input a {
+  color: rgb(33, 111, 219);
+  text-decoration: underline;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 30px;
+  text-overflow: ellipsis;
+}
+
+.lexical .link-editor .link-input a:hover {
+  text-decoration: underline;
+}
+
+.lexical .link-editor .font-size-wrapper,
+.lexical .link-editor .font-family-wrapper {
+  display: flex;
+  margin: 0 4px;
+}
+
+.lexical .link-editor select {
+  padding: 6px;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.075);
+  border-radius: 4px;
+}
+
+.lexical .mention:focus {
+  box-shadow: rgb(180 213 255) 0px 0px 0px 2px;
+  outline: none;
+}
+
+.lexical .characters-limit {
+  color: #888;
+  font-size: 12px;
+  text-align: right;
+  display: block;
+  position: absolute;
+  left: 12px;
+  bottom: 5px;
+}
+
+.lexical .characters-limit.characters-limit-exceeded {
+  color: red;
+}
+
+.lexical .dropdown-wrapper{
+  position: relative;
+}
+
+.lexical .dropdown {
+  z-index: 100;
+  display: block;
+  position: fixed;
+  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  min-height: 40px;
+  background-color: #fff;
+}
+
+.lexical .dropdown .item {
+  margin: 0 8px 0 8px;
+  padding: 8px;
+  color: #050505;
+  cursor: pointer;
+  line-height: 16px;
+  font-size: 15px;
+  display: flex;
+  align-content: center;
+  flex-direction: row;
+  flex-shrink: 0;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 0;
+  max-width: 250px;
+  min-width: 100px;
+}
+
+.lexical .dropdown .item.fontsize-item,
+.lexical .dropdown .item.fontsize-item .text {
+  min-width: unset;
+}
+
+.lexical .dropdown .item.lineheight-item,
+.lexical .dropdown .item.lineheight-item .text {
+  min-width: unset;
+}
+
+.lexical .dropdown .item .active {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+}
+
+.lexical .dropdown .item:first-child {
+  margin-top: 8px;
+}
+
+.lexical .dropdown .item:last-child {
+  margin-bottom: 8px;
+}
+
+.lexical .dropdown .item:hover {
+  background-color: #eee;
+}
+
+.lexical .dropdown .item .text {
+  display: flex;
+  line-height: 20px;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.lexical .dropdown .item .icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  user-select: none;
+  margin-right: 12px;
+  line-height: 16px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.lexical .dropdown .divider {
+  width: auto;
+  background-color: #eee;
+  margin: 4px 8px;
+  height: 1px;
+}
+
+@media screen and (max-width: 1100px) {
+  .lexical .dropdown-button-text {
+    display: none !important;
+  }
+
+  .lexical .font-size .dropdown-button-text {
+    display: flex !important;
+  }
+
+  .lexical .code-language .dropdown-button-text {
+    display: flex !important;
+  }
+}
+
+.lexical .icon.paragraph {
+  background-image: url(images/icons/text-paragraph.svg);
+}
+
+.lexical .icon.h1 {
+  background-image: url(images/icons/type-h1.svg);
+}
+
+.lexical .icon.h2 {
+  background-image: url(images/icons/type-h2.svg);
+}
+
+.lexical .icon.h3 {
+  background-image: url(images/icons/type-h3.svg);
+}
+
+.lexical .icon.h4 {
+  background-image: url(images/icons/type-h4.svg);
+}
+
+.lexical .icon.h5 {
+  background-image: url(images/icons/type-h5.svg);
+}
+
+.lexical .icon.h6 {
+  background-image: url(images/icons/type-h6.svg);
+}
+
+.lexical .icon.bullet-list,
+.lexical .icon.bullet {
+  background-image: url(images/icons/list-ul.svg);
+}
+
+.lexical .icon.check-list,
+.lexical .icon.check {
+  background-image: url(images/icons/square-check.svg);
+}
+
+.lexical .icon.numbered-list,
+.lexical .icon.number {
+  background-image: url(images/icons/list-ol.svg);
+}
+
+.lexical .icon.quote {
+  background-image: url(images/icons/chat-square-quote.svg);
+}
+
+.lexical .icon.code {
+  background-image: url(images/icons/code.svg);
+}
+
+.lexical .icon.lineheight {
+  background-image: url(images/icons/regular.svg);
+}
+
+.lexical .switches {
+  z-index: 6;
+  position: fixed;
+  left: 10px;
+  bottom: 70px;
+  animation: slide-in 0.4s ease;
+}
+
+@keyframes slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-200px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.lexical .switch {
+  display: block;
+  color: #444;
+  margin: 5px 0;
+  background-color: rgba(238, 238, 238, 0.7);
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.lexical #rich-text-switch {
+  right: 0;
+}
+
+.lexical #character-count-switch {
+  right: 130px;
+}
+
+.lexical .switch label {
+  margin-right: 5px;
+  line-height: 24px;
+  width: 100px;
+  font-size: 14px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.lexical .switch button {
+  background-color: rgb(206, 208, 212);
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  width: 44px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.1s;
+  border: 2px solid transparent;
+}
+
+.lexical .switch button:focus-visible {
+  border-color: blue;
+}
+
+.lexical .switch button span {
+  top: 0px;
+  left: 0px;
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 12px;
+  background-color: white;
+  transition: transform 0.2s;
+}
+
+.lexical .switch button[aria-checked='true'] {
+  background-color: rgb(24, 119, 242);
+}
+
+.lexical .switch button[aria-checked='true'] span {
+  transform: translateX(20px);
+}
+
+.lexical .emoji {
+  color: transparent;
+  caret-color: rgb(5, 5, 5);
+  background-size: 16px 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin: 0 -1px;
+}
+
+.lexical .emoji-inner {
+  padding: 0 0.15em;
+}
+
+.lexical .emoji-inner::selection {
+  color: transparent;
+  background-color: rgba(150, 150, 150, 0.4);
+}
+
+.lexical .emoji-inner::moz-selection {
+  color: transparent;
+  background-color: rgba(150, 150, 150, 0.4);
+}
+
+.lexical .emoji.happysmile {
+  background-image: url(images/emoji/1F642.png);
+}
+
+.lexical .emoji.veryhappysmile {
+  background-image: url(images/emoji/1F600.png);
+}
+
+.lexical .emoji.unhappysmile {
+  background-image: url(images/emoji/1F641.png);
+}
+
+.lexical .emoji.heart {
+  background-image: url(images/emoji/2764.png);
+}
+
+.lexical .keyword {
+  color: rgb(241, 118, 94);
+  font-weight: bold;
+}
+
+.lexical .actions {
+  position: absolute;
+  text-align: right;
+  margin: 10px;
+  bottom: 0;
+  right: 0;
+}
+
+.lexical .actions.tree-view {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.lexical .actions i {
+  background-size: contain;
+  display: inline-block;
+  height: 15px;
+  width: 15px;
+  vertical-align: -0.25em;
+}
+
+.lexical .actions i.indent {
+  background-image: url(images/icons/indent.svg);
+}
+
+.lexical .actions i.outdent {
+  background-image: url(images/icons/outdent.svg);
+}
+
+.lexical .actions i.lock {
+  background-image: url(images/icons/lock-fill.svg);
+}
+
+.lexical .actions i.image {
+  background-image: url(images/icons/file-image.svg);
+}
+
+.lexical .actions i.table {
+  background-image: url(images/icons/table.svg);
+}
+
+.lexical .actions i.unlock {
+  background-image: url(images/icons/lock.svg);
+}
+
+.lexical .actions i.left-align {
+  background-image: url(images/icons/text-left.svg);
+}
+
+.lexical .actions i.center-align {
+  background-image: url(images/icons/text-center.svg);
+}
+
+.lexical .actions i.right-align {
+  background-image: url(images/icons/text-right.svg);
+}
+
+.lexical .actions i.justify-align {
+  background-image: url(images/icons/justify.svg);
+}
+
+.lexical .actions i.disconnect {
+  background-image: url(images/icons/plug.svg);
+}
+
+.lexical .actions i.connect {
+  background-image: url(images/icons/plug-fill.svg);
+}
+
+.lexical .table-cell-action-button-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.lexical .table-cell-action-button {
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  position: relative;
+  border-radius: 15px;
+  color: #222;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.lexical i.chevron-down {
+  background-color: transparent;
+  background-size: contain;
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  background-image: url(images/icons/chevron-down.svg);
+}
+
+.lexical .action-button {
+  background-color: #eee;
+  border: 0;
+  padding: 8px 12px;
+  position: relative;
+  margin-left: 5px;
+  border-radius: 15px;
+  color: #222;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.lexical .action-button:hover {
+  background-color: #ddd;
+  color: #000;
+}
+
+.lexical .action-button-mic.active {
+  animation: mic-pulsate-color 3s infinite;
+}
+
+.lexical button.action-button:disabled {
+  opacity: 0.6;
+  background: #eee;
+  cursor: not-allowed;
+}
+
+@keyframes mic-pulsate-color {
+  0% {
+    background-color: #ffdcdc;
+  }
+
+  50% {
+    background-color: #ff8585;
+  }
+
+  100% {
+    background-color: #ffdcdc;
+  }
+}
+
+.lexical .debug-timetravel-panel {
+  overflow: hidden;
+  padding: 0 0 10px 0;
+  margin: auto;
+  display: flex;
+}
+
+.lexical .debug-timetravel-panel-slider {
+  padding: 0;
+  flex: 8;
+}
+
+.lexical .debug-timetravel-panel-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  flex: 1;
+  color: #fff;
+  font-size: 12px;
+}
+
+.lexical .debug-timetravel-panel-button:hover {
+  text-decoration: underline;
+}
+
+.lexical .debug-timetravel-button {
+  border: 0;
+  padding: 0;
+  font-size: 12px;
+  top: 10px;
+  right: 15px;
+  position: absolute;
+  background: none;
+  color: #fff;
+}
+
+.lexical .debug-timetravel-button:hover {
+  text-decoration: underline;
+}
+
+.lexical .debug-treetype-button {
+  border: 0;
+  padding: 0;
+  font-size: 12px;
+  top: 10px;
+  right: 85px;
+  position: absolute;
+  background: none;
+  color: #fff;
+}
+
+.lexical .debug-treetype-button:hover {
+  text-decoration: underline;
+}
+
+.lexical .connecting {
+  font-size: 15px;
+  color: #999;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 10px;
+  left: 10px;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.lexical .ltr {
+  text-align: left;
+}
+
+.lexical .rtl {
+  text-align: right;
+}
+
+.lexical .toolbar {
+  box-sizing: border-box;
+  width: 100%;
+  background: #fff;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.lexical .toolbar-line{
+  display: flex;
+  vertical-align: middle;
+}
+
+.lexical button.toolbar-item {
+  border: 0;
+  display: flex;
+  background: none;
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+  vertical-align: middle;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lexical button.toolbar-item:disabled {
+  cursor: not-allowed;
+}
+
+.lexical button.toolbar-item.spaced {
+  margin-right: 2px;
+}
+
+.lexical button.toolbar-item i.format {
+  background-size: contain;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: -0.25em;
+  display: flex;
+  opacity: 0.6;
+}
+
+.lexical button.toolbar-item:disabled .icon,
+.lexical button.toolbar-item:disabled .text,
+.lexical button.toolbar-item:disabled i.format,
+.lexical button.toolbar-item:disabled .chevron-down {
+  opacity: 0.2;
+}
+
+.lexical button.toolbar-item.active {
+  background-color: rgba(223, 232, 250, 0.3);
+}
+
+.lexical button.toolbar-item.active i {
+  opacity: 1;
+}
+
+.lexical .toolbar-item:hover:not([disabled]) {
+  background-color: #eee;
+}
+
+.lexical .toolbar-item.font-family .text {
+  display: block;
+  max-width: 40px;
+}
+
+.lexical .toolbar .code-language {
+  width: 150px;
+}
+
+.lexical .toolbar .toolbar-item .text {
+  display: flex;
+  line-height: 20px;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #777;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 20px;
+  text-align: left;
+  padding-right: 10px;
+}
+
+.lexical .toolbar .toolbar-item .icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  user-select: none;
+  margin-right: 8px;
+  line-height: 16px;
+  background-size: contain;
+}
+
+.lexical .toolbar i.chevron-down,
+.lexical .toolbar-item i.chevron-down {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  user-select: none;
+}
+
+.lexical .toolbar i.chevron-down.inside {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  margin-left: -25px;
+  margin-top: 11px;
+  margin-right: 10px;
+  pointer-events: none;
+}
+
+.lexical .toolbar .divider {
+  width: 1px;
+  background-color: #eee;
+  margin: 0 4px;
+}
+
+.lexical .sticky-note-container {
+  position: absolute;
+  z-index: 9;
+  width: 120px;
+  display: inline-block;
+}
+
+.lexical .sticky-note {
+  line-height: 1;
+  text-align: left;
+  width: 120px;
+  margin: 25px;
+  padding: 20px 10px;
+  position: relative;
+  border: 1px solid #e8e8e8;
+  font-size: 24px;
+  border-bottom-right-radius: 60px 5px;
+  display: block;
+  cursor: move;
+}
+
+.lexical .sticky-note:after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  right: -0px;
+  bottom: 20px;
+  width: 120px;
+  height: 25px;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 15px 5px rgba(0, 0, 0, 0.4);
+  transform: matrix(-1, -0.1, 0, 1, 0, 0);
+}
+
+.lexical .sticky-note.yellow {
+  border-top: 1px solid #fdfd86;
+  background: linear-gradient(
+    135deg,
+    #ffff88 81%,
+    #ffff88 82%,
+    #ffff88 82%,
+    #ffffc6 100%
+  );
+}
+
+.lexical .sticky-note.pink {
+  border-top: 1px solid #e7d1e4;
+  background: linear-gradient(
+    135deg,
+    #f7cbe8 81%,
+    #f7cbe8 82%,
+    #f7cbe8 82%,
+    #e7bfe1 100%
+  );
+}
+
+.lexical .sticky-note-container.dragging {
+  transition: none !important;
+}
+
+.lexical .sticky-note div {
+  cursor: text;
+}
+
+.lexical .sticky-note .delete {
+  border: 0;
+  background: none;
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 10px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.lexical .sticky-note .delete:hover {
+  font-weight: bold;
+  opacity: 1;
+}
+
+.lexical .sticky-note .color {
+  border: 0;
+  background: none;
+  position: absolute;
+  top: 8px;
+  right: 25px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.lexical .sticky-note .color:hover {
+  opacity: 1;
+}
+
+.lexical .sticky-note .color i {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background-size: contain;
+}
+
+.lexical .excalidraw-button {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+.lexical .excalidraw-button.selected {
+  outline: 2px solid rgb(60, 132, 244);
+  user-select: none;
+}
+
+.lexical .github-corner:hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out;
+}
+
+@keyframes octocat-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+
+  20%,
+  60% {
+    transform: rotate(-25deg);
+  }
+
+  40%,
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
+@media (max-width: 500px) {
+  .lexical .github-corner:hover .octo-arm {
+    animation: none;
+  }
+
+  .lexical .github-corner .octo-arm {
+    animation: octocat-wave 560ms ease-in-out;
+  }
+}
+
+.lexical .spacer {
+  letter-spacing: -2px;
+}
+
+.lexical button.item i {
+  opacity: 0.6;
+}
+
+.lexical button.item.dropdown-item-active {
+  background-color: rgba(223, 232, 250, 0.3);
+}
+
+.lexical button.item.dropdown-item-active i {
+  opacity: 1;
+}
+
+.lexical hr {
+  padding: 2px 2px;
+  border: none;
+  margin: 1em 0;
+  cursor: pointer;
+}
+
+.lexical hr:after {
+  content: '';
+  display: block;
+  height: 2px;
+  background-color: #ccc;
+  line-height: 2px;
+}
+
+.lexical hr.selected {
+  outline: 2px solid rgb(60, 132, 244);
+  user-select: none;
+}
+
+.lexical .dialog-dropdown {
+  background-color: #eee !important;
+  margin-bottom: 10px;
+  width: 100%;
+}

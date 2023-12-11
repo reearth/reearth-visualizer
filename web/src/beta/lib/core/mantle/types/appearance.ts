@@ -32,6 +32,7 @@ export type AppearanceTypes = {
 
 export type MarkerAppearance = {
   show?: boolean;
+  height?: number;
   heightReference?: "none" | "clamp" | "relative";
   style?: "none" | "point" | "image";
   pointSize?: number;
@@ -132,6 +133,9 @@ export type ModelAppearance = {
   near?: number;
   far?: number;
   pbr?: boolean;
+  specularEnvironmentMaps?: string;
+  sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+  imageBasedLightIntensity?: number;
 };
 
 export type Cesium3DTilesAppearance = {
@@ -142,11 +146,16 @@ export type Cesium3DTilesAppearance = {
   colorBlendMode?: "highlight" | "replace" | "mix" | "default";
   edgeWidth?: number;
   edgeColor?: string;
+  selectedFeatureColor?: string; // This doesn't support expression
   tileset?: string;
+  apiKey?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
   pointSize?: number;
   meta?: unknown;
   pbr?: boolean;
+  specularEnvironmentMaps?: string;
+  sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+  imageBasedLightIntensity?: number;
 };
 
 export type LegacyPhotooverlayAppearance = {

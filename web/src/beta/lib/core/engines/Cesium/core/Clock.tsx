@@ -1,75 +1,45 @@
 import { Clock as CesiumClock, ClockRange, ClockStep, JulianDate } from "cesium";
-import { useCallback, useEffect, useMemo } from "react";
-import { Clock, useCesium } from "resium";
+import { useCallback, useMemo } from "react";
+import { Clock } from "resium";
 
-import { truncMinutes } from "@reearth/beta/utils/time";
-
-import type { Clock as ClockType, SceneProperty } from "../..";
+import { TimelineManagerRef } from "../../../Map/useTimelineManager";
 
 export type Props = {
-  property?: SceneProperty;
-  clock?: ClockType;
-  onTick?: (d: Date, clock: { start: Date; stop: Date }) => void;
+  timelineManagerRef?: TimelineManagerRef;
 };
 
-export default function ReearthClock({ property, clock, onTick }: Props): JSX.Element | null {
-  const { animation, visible, stepType, rangeType, multiplier, step } = property?.timeline ?? {};
-  const startTime = useMemo(
-    () => (clock?.start ? JulianDate.fromDate(clock.start) : undefined),
-    [clock?.start],
-  );
-  const stopTime = useMemo(
-    () => (clock?.stop ? JulianDate.fromDate(clock?.stop) : undefined),
-    [clock?.stop],
-  );
+export default function ReearthClock({ timelineManagerRef }: Props): JSX.Element | null {
+  const { start, stop, current } = timelineManagerRef?.current?.computedTimeline ?? {};
+  const { animation, stepType, rangeType, multiplier } = timelineManagerRef?.current?.options ?? {};
+
+  const startTime = useMemo(() => (start ? JulianDate.fromDate(start) : undefined), [start]);
+  const stopTime = useMemo(() => (stop ? JulianDate.fromDate(stop) : undefined), [stop]);
   const currentTime = useMemo(
-    () => (clock?.current ? JulianDate.fromDate(clock?.current) : undefined),
-    [clock],
+    () => (current ? JulianDate.fromDate(current) : undefined),
+    [current],
   );
   const clockStep =
     stepType === "fixed" ? ClockStep.TICK_DEPENDENT : ClockStep.SYSTEM_CLOCK_MULTIPLIER;
-  const clockMultiplier = stepType === "fixed" ? step ?? 1 : multiplier ?? 1;
-
-  const { viewer } = useCesium();
+  const clockMultiplier = multiplier ?? 1;
 
   const handleTick = useCallback(
     (clock: CesiumClock) => {
       const start = JulianDate.toDate(clock.startTime);
       const stop = JulianDate.toDate(clock.stopTime);
 
-      // Truncate minutes for displaying correctly time on timeline widget
-      const truncatedStart = truncMinutes(new Date(start));
-      if (viewer && start.toISOString() !== truncatedStart.toISOString()) {
-        viewer.clock.startTime = JulianDate.fromDate(truncatedStart);
-      }
-
       // NOTE: Must not update state. This event will be called every frame.
-      onTick?.(JulianDate.toDate(clock.currentTime), {
+      timelineManagerRef?.current?.handleTick?.(JulianDate.toDate(clock.currentTime), {
         start,
         stop,
       });
     },
-    [onTick, viewer],
+    [timelineManagerRef],
   );
-
-  useEffect(() => {
-    if (!viewer) return;
-    if (viewer.animation?.container) {
-      (viewer.animation.container as HTMLDivElement).style.visibility = visible
-        ? "visible"
-        : "hidden";
-    }
-    if (viewer.timeline?.container) {
-      (viewer.timeline.container as HTMLDivElement).style.visibility = visible
-        ? "visible"
-        : "hidden";
-    }
-    viewer.forceResize();
-  }, [viewer, visible]);
 
   return (
     <Clock
       shouldAnimate={animation}
+      canAnimate={animation}
       startTime={startTime}
       stopTime={stopTime}
       currentTime={currentTime}

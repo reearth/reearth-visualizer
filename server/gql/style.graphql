@@ -1,0 +1,47 @@
+type Style {
+  id: ID!
+  name: String!
+  value: JSON!
+  sceneId: ID!
+  scene: Scene
+}
+
+# InputType
+
+input AddStyleInput {
+  sceneId: ID!
+  name: String!
+  value: JSON!
+}
+
+input UpdateStyleInput {
+  styleId: ID!
+  name: String
+  value: JSON
+}
+
+input RemoveStyleInput {
+  styleId: ID!
+}
+
+# Payload
+
+type AddStylePayload {
+  style: Style!
+}
+
+type UpdateStylePayload {
+  style: Style!
+}
+
+type RemoveStylePayload {
+  styleId: ID!
+}
+
+#extend type Query{ }
+
+extend type Mutation {
+  addStyle(input: AddStyleInput!): AddStylePayload
+  updateStyle(input: UpdateStyleInput!): UpdateStylePayload
+  removeStyle(input: RemoveStyleInput!): RemoveStylePayload
+}

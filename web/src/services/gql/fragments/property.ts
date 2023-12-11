@@ -30,6 +30,7 @@ const propertyFragment = gql`
   fragment PropertySchemaGroupFragment on PropertySchemaGroup {
     schemaGroupId
     title
+    collection
     translatedTitle(lang: $lang)
     isList
     representativeFieldId

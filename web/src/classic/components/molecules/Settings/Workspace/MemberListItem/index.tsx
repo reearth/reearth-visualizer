@@ -9,7 +9,7 @@ import { styled } from "@reearth/services/theme";
 
 import EditableItem from "../../Project/EditableItem";
 
-export type Role = "READER" | "WRITER" | "OWNER";
+export type Role = "READER" | "WRITER" | "MAINTAINER" | "OWNER";
 
 type user = {
   id?: string;
@@ -20,13 +20,13 @@ export type Props = {
   user: user;
   role: Role;
   owner?: boolean;
-  isMyself?: boolean;
+  isMe?: boolean;
   personal?: boolean;
   onChangeRole: (role: Role) => void;
   onRemove: () => void;
 };
 
-const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRemove }) => {
+const MemberListItem: React.FC<Props> = ({ user, role, owner, isMe, onChangeRole, onRemove }) => {
   const t = useT();
   const saveEdit = useCallback(
     (role?: string) => {
@@ -39,8 +39,11 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
   const roles = [
     { key: "READER", label: t("Reader") },
     { key: "WRITER", label: t("Writer") },
+    { key: "MAINTAINER", label: t("Maintainer") },
     { key: "OWNER", label: t("Owner") },
   ];
+
+  const editable = owner && !isMe;
 
   return (
     <Wrapper align="flex-start" justify="space-between">
@@ -54,9 +57,9 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
         currentItem={role}
         body={roles.find(r => r.key === role)?.label}
         onSubmit={saveEdit}
-        disabled={!(owner === true && role !== "OWNER")}
+        disabled={!editable}
       />
-      {owner === true && role !== "OWNER" && <StyledIcon icon="bin" size={20} onClick={onRemove} />}
+      {editable && <StyledIcon icon="bin" size={20} onClick={onRemove} />}
     </Wrapper>
   );
 };
@@ -64,6 +67,7 @@ const MemberListItem: React.FC<Props> = ({ user, role, owner, onChangeRole, onRe
 const Wrapper = styled(Flex)`
   width: 100%;
   height: 100px;
+  padding-right: ${metricsSizes["l"]}px;
   color: ${({ theme }) => theme.classic.properties.contentsText};
 `;
 
@@ -72,10 +76,10 @@ const StyledEditableItem = styled(EditableItem)`
 `;
 
 const StyledIcon = styled(Icon)`
-  padding: 0;
-  margin: 0 ${metricsSizes["l"]}px;
   cursor: pointer;
+  margin-left: ${metricsSizes["l"]}px;
 `;
+
 const StyleAvatar = styled(Avatar)`
   margin-right: ${metricsSizes["m"]}px;
 `;

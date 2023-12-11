@@ -1,6 +1,10 @@
 package interfaces
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+)
 
 type ListOperation string
 
@@ -17,15 +21,19 @@ var (
 )
 
 type Container struct {
-	Asset     Asset
-	Dataset   Dataset
-	Layer     Layer
-	Plugin    Plugin
-	Project   Project
-	Property  Property
-	Published Published
-	Scene     Scene
-	Tag       Tag
-	Workspace Workspace
-	User      User
+	Asset        Asset
+	Dataset      Dataset
+	Layer        Layer
+	NLSLayer     NLSLayer
+	Plugin       Plugin
+	Policy       Policy
+	Project      Project
+	Property     Property
+	Published    Published
+	Scene        Scene
+	Tag          Tag
+	StoryTelling Storytelling
+	Style        Style
+	User         accountinterfaces.User
+	Workspace    accountinterfaces.Workspace
 }

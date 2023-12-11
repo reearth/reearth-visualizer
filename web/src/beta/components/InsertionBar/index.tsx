@@ -72,7 +72,7 @@ const InsertionBar: React.FC<Props> = ({
         </ButtonWrapper>
       </Wrapper>
       <Portal>
-        <div ref={popperElement} style={{ ...styles.popper, zIndex: 1000 }} {...attributes.popper}>
+        <div ref={popperElement} style={{ ...styles.popper }} {...attributes.popper}>
           {children}
         </div>
       </Portal>
@@ -81,7 +81,7 @@ const InsertionBar: React.FC<Props> = ({
 };
 
 const StyledAddButton = styled(Icon)`
-  background: ${({ theme }) => theme.general.bg.main};
+  background: ${({ theme }) => theme.bg[2]};
   cursor: pointer;
   display: block;
   padding: 0 3px;
@@ -93,8 +93,7 @@ const ButtonWrapper = styled.div<{ visible?: boolean; hovered?: boolean }>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: ${({ hovered, theme }) =>
-    hovered ? theme.general.content.strong : theme.general.content.main};
+  color: ${({ hovered, theme }) => (hovered ? theme.content.withBackground : theme.content.main)};
 `;
 
 const InsertLine = styled.div<{ circleVisible?: boolean }>`
@@ -104,7 +103,7 @@ const InsertLine = styled.div<{ circleVisible?: boolean }>`
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: ${({ theme }) => theme.general.select};
+  background: ${({ theme }) => theme.select.main};
 
   &::before {
     display: ${props => (props.circleVisible ? "block" : "none")};
@@ -114,7 +113,7 @@ const InsertLine = styled.div<{ circleVisible?: boolean }>`
     top: -4px;
     width: 6px;
     height: 6px;
-    border: 2px solid ${({ theme }) => theme.general.select};
+    border: 2px solid ${({ theme }) => theme.select.main};
     border-radius: 50%;
   }
 `;
@@ -135,7 +134,7 @@ const Wrapper = styled.div<WrapperProps>`
   position: absolute;
   left: 0;
   width: 100%;
-  z-index: ${props => props.theme.zIndexes.infoBox};
+  z-index: ${props => props.theme.zIndexes.visualizer.storyPage.indicator.unselected};
   top: ${props => (props.pos === "top" ? "0%" : "100%")};
   transform: translateY(-50%);
   height: 15px;

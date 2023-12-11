@@ -25,6 +25,7 @@ type Config struct {
 	Host_Web         string
 	Dev              bool
 	DB               string `default:"mongodb://localhost"`
+	DB_Account       string
 	GraphQL          GraphQLConfig
 	Published        PublishedConfig
 	GCPProject       string `envconfig:"GOOGLE_CLOUD_PROJECT"`
@@ -60,6 +61,9 @@ type Config struct {
 	Auth_TTL      *int
 	Auth_ClientID *string
 	Auth_JWKSURI  *string
+
+	// system extensions
+	Ext_Plugin []string
 }
 
 func ReadConfig(debug bool) (*Config, error) {

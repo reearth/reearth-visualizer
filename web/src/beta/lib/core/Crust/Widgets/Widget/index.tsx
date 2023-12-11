@@ -2,6 +2,8 @@ import { ComponentType, ReactNode, useMemo } from "react";
 
 import type { TickEvent } from "@reearth/beta/lib/core/Map";
 
+import { TimelineManagerRef, TimelineCommitter } from "../../../Map/useTimelineManager";
+
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {
   Theme,
@@ -30,13 +32,12 @@ export type Props = {
   isMobile?: boolean;
   context?: Context;
   onExtend?: (id: string, extended: boolean | undefined) => void;
-  onVisibilityChange?: (id: string, visible: boolean) => void;
   renderWidget?: (w: Widget) => ReactNode;
 };
 
 export type Context = {
   clock?: Clock;
-  overriddenClock?: Partial<Clock>;
+  timelineManagerRef?: TimelineManagerRef;
   updateClockOnLoad?: boolean;
   camera?: Camera;
   initialCamera?: Camera;
@@ -52,7 +53,7 @@ export type Context = {
     featureId: string | undefined,
     options?: { reason?: string },
   ) => void;
-  onPlay?: () => void;
+  onPlay?: (committer?: TimelineCommitter) => void;
   onPause?: () => void;
   onSpeedChange?: (speed: number) => void;
   onTimeChange?: (time: Date) => void;
@@ -99,7 +100,7 @@ export default function WidgetComponent({
   if (!w) return null;
 
   const builtinWidgetId = `${w.pluginId}/${w.extensionId}`;
-  const Builtin = isBuiltinWidget(builtinWidgetId) ? builtin[builtinWidgetId] : undefined;
+  const Builtin = isBuiltinWidget(builtinWidgetId) ? builtin()[builtinWidgetId] : undefined;
 
   return Builtin ? (
     <div

@@ -1,16 +1,16 @@
 import React from "react";
 
 import Account from "@reearth/classic/components/organisms/Settings/Account";
-import { AuthenticationRequiredPage, withAuthorisation } from "@reearth/services/auth";
+import { AuthenticatedPage } from "@reearth/services/auth";
 
 export type Props = {
   path?: string;
 };
 
 const AccountPage: React.FC<Props> = () => (
-  <AuthenticationRequiredPage>
+  <AuthenticatedPage>
     <Account />
-  </AuthenticationRequiredPage>
+  </AuthenticatedPage>
 );
 
-export default withAuthorisation()(AccountPage);
+export default AccountPage;

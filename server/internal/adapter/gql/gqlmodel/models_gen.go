@@ -22,6 +22,10 @@ type LayerTag interface {
 	IsLayerTag()
 }
 
+type NLSLayer interface {
+	IsNLSLayer()
+}
+
 type Node interface {
 	IsNode()
 }
@@ -108,12 +112,35 @@ type AddMemberToTeamPayload struct {
 	Team *Team `json:"team"`
 }
 
+type AddNLSLayerSimpleInput struct {
+	LayerType string `json:"layerType"`
+	Title     string `json:"title"`
+	SceneID   ID     `json:"sceneId"`
+	Config    JSON   `json:"config"`
+	Index     *int   `json:"index"`
+	Visible   *bool  `json:"visible"`
+}
+
+type AddNLSLayerSimplePayload struct {
+	Layers *NLSLayerSimple `json:"layers"`
+}
+
 type AddPropertyItemInput struct {
 	PropertyID     ID          `json:"propertyId"`
 	SchemaGroupID  ID          `json:"schemaGroupId"`
 	Index          *int        `json:"index"`
 	NameFieldValue interface{} `json:"nameFieldValue"`
 	NameFieldType  *ValueType  `json:"nameFieldType"`
+}
+
+type AddStyleInput struct {
+	SceneID ID     `json:"sceneId"`
+	Name    string `json:"name"`
+	Value   JSON   `json:"value"`
+}
+
+type AddStylePayload struct {
+	Style *Style `json:"style"`
 }
 
 type AddWidgetInput struct {
@@ -221,6 +248,37 @@ type CreateSceneInput struct {
 
 type CreateScenePayload struct {
 	Scene *Scene `json:"scene"`
+}
+
+type CreateStoryBlockInput struct {
+	StoryID     ID   `json:"storyId"`
+	PageID      ID   `json:"pageId"`
+	PluginID    ID   `json:"pluginId"`
+	ExtensionID ID   `json:"extensionId"`
+	Index       *int `json:"index"`
+}
+
+type CreateStoryBlockPayload struct {
+	Block *StoryBlock `json:"block"`
+	Page  *StoryPage  `json:"page"`
+	Story *Story      `json:"story"`
+	Index int         `json:"index"`
+}
+
+type CreateStoryInput struct {
+	SceneID ID     `json:"sceneId"`
+	Title   string `json:"title"`
+	Index   *int   `json:"index"`
+}
+
+type CreateStoryPageInput struct {
+	SceneID         ID      `json:"sceneId"`
+	StoryID         ID      `json:"storyId"`
+	Title           *string `json:"title"`
+	Swipeable       *bool   `json:"swipeable"`
+	Layers          []ID    `json:"layers"`
+	SwipeableLayers []ID    `json:"swipeableLayers"`
+	Index           *int    `json:"index"`
 }
 
 type CreateTagGroupInput struct {
@@ -346,6 +404,26 @@ type DeleteProjectPayload struct {
 	ProjectID ID `json:"projectId"`
 }
 
+type DeleteStoryInput struct {
+	SceneID ID `json:"sceneId"`
+	StoryID ID `json:"storyId"`
+}
+
+type DeleteStoryPageInput struct {
+	SceneID ID `json:"sceneId"`
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
+}
+
+type DeleteStoryPagePayload struct {
+	PageID ID     `json:"pageId"`
+	Story  *Story `json:"story"`
+}
+
+type DeleteStoryPayload struct {
+	StoryID ID `json:"storyId"`
+}
+
 type DeleteTeamInput struct {
 	TeamID ID `json:"teamId"`
 }
@@ -370,6 +448,12 @@ type DetachTagItemFromGroupInput struct {
 
 type DetachTagItemFromGroupPayload struct {
 	Tag *TagGroup `json:"tag"`
+}
+
+type DuplicateStoryPageInput struct {
+	SceneID ID `json:"sceneId"`
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
 }
 
 type ImportDatasetFromGoogleSheetInput struct {
@@ -645,11 +729,87 @@ type MovePropertyItemInput struct {
 	Index         int `json:"index"`
 }
 
+type MoveStoryBlockInput struct {
+	StoryID ID  `json:"storyId"`
+	PageID  ID  `json:"pageId"`
+	BlockID ID  `json:"blockId"`
+	Index   int `json:"index"`
+}
+
+type MoveStoryBlockPayload struct {
+	Page    *StoryPage `json:"page"`
+	Story   *Story     `json:"story"`
+	BlockID ID         `json:"blockId"`
+	Index   int        `json:"index"`
+}
+
+type MoveStoryInput struct {
+	SceneID ID  `json:"sceneId"`
+	StoryID ID  `json:"storyId"`
+	Index   int `json:"index"`
+}
+
+type MoveStoryPageInput struct {
+	StoryID ID  `json:"storyId"`
+	PageID  ID  `json:"pageId"`
+	Index   int `json:"index"`
+}
+
+type MoveStoryPagePayload struct {
+	Page  *StoryPage `json:"page"`
+	Story *Story     `json:"story"`
+	Index int        `json:"index"`
+}
+
+type MoveStoryPayload struct {
+	StoryID ID       `json:"storyId"`
+	Index   int      `json:"index"`
+	Stories []*Story `json:"stories"`
+}
+
+type NLSLayerGroup struct {
+	ID          ID         `json:"id"`
+	LayerType   string     `json:"layerType"`
+	SceneID     ID         `json:"sceneId"`
+	Children    []NLSLayer `json:"children"`
+	ChildrenIds []ID       `json:"childrenIds"`
+	Config      JSON       `json:"config"`
+	Title       string     `json:"title"`
+	Visible     bool       `json:"visible"`
+	Infobox     *Infobox   `json:"infobox"`
+	Tags        []LayerTag `json:"tags"`
+	Scene       *Scene     `json:"scene"`
+}
+
+func (NLSLayerGroup) IsNLSLayer() {}
+
+type NLSLayerSimple struct {
+	ID        ID         `json:"id"`
+	LayerType string     `json:"layerType"`
+	SceneID   ID         `json:"sceneId"`
+	Config    JSON       `json:"config"`
+	Title     string     `json:"title"`
+	Visible   bool       `json:"visible"`
+	Infobox   *Infobox   `json:"infobox"`
+	Tags      []LayerTag `json:"tags"`
+	Scene     *Scene     `json:"scene"`
+}
+
+func (NLSLayerSimple) IsNLSLayer() {}
+
 type PageInfo struct {
 	StartCursor     *usecasex.Cursor `json:"startCursor"`
 	EndCursor       *usecasex.Cursor `json:"endCursor"`
 	HasNextPage     bool             `json:"hasNextPage"`
 	HasPreviousPage bool             `json:"hasPreviousPage"`
+}
+
+type PageLayerInput struct {
+	SceneID   ID    `json:"sceneId"`
+	StoryID   ID    `json:"storyId"`
+	PageID    ID    `json:"pageId"`
+	Swipeable *bool `json:"swipeable"`
+	LayerID   ID    `json:"layerId"`
 }
 
 type Pagination struct {
@@ -877,6 +1037,7 @@ type PropertySchemaGroup struct {
 	SchemaGroupID         ID                     `json:"schemaGroupId"`
 	SchemaID              ID                     `json:"schemaId"`
 	Fields                []*PropertySchemaField `json:"fields"`
+	Collection            *string                `json:"collection"`
 	IsList                bool                   `json:"isList"`
 	IsAvailableIf         *PropertyCondition     `json:"isAvailableIf"`
 	Title                 *string                `json:"title"`
@@ -891,6 +1052,12 @@ type PublishProjectInput struct {
 	ProjectID ID                `json:"projectId"`
 	Alias     *string           `json:"alias"`
 	Status    PublishmentStatus `json:"status"`
+}
+
+type PublishStoryInput struct {
+	StoryID ID                `json:"storyId"`
+	Alias   *string           `json:"alias"`
+	Status  PublishmentStatus `json:"status"`
 }
 
 type Rect struct {
@@ -967,6 +1134,14 @@ type RemoveMyAuthInput struct {
 	Auth string `json:"auth"`
 }
 
+type RemoveNLSLayerInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type RemoveNLSLayerPayload struct {
+	LayerID ID `json:"layerId"`
+}
+
 type RemovePropertyFieldInput struct {
 	PropertyID    ID  `json:"propertyId"`
 	SchemaGroupID *ID `json:"schemaGroupId"`
@@ -978,6 +1153,26 @@ type RemovePropertyItemInput struct {
 	PropertyID    ID `json:"propertyId"`
 	SchemaGroupID ID `json:"schemaGroupId"`
 	ItemID        ID `json:"itemId"`
+}
+
+type RemoveStoryBlockInput struct {
+	StoryID ID `json:"storyId"`
+	PageID  ID `json:"pageId"`
+	BlockID ID `json:"blockId"`
+}
+
+type RemoveStoryBlockPayload struct {
+	BlockID ID         `json:"blockId"`
+	Page    *StoryPage `json:"page"`
+	Story   *Story     `json:"story"`
+}
+
+type RemoveStyleInput struct {
+	StyleID ID `json:"styleId"`
+}
+
+type RemoveStylePayload struct {
+	StyleID ID `json:"styleId"`
 }
 
 type RemoveTagInput struct {
@@ -1014,6 +1209,9 @@ type Scene struct {
 	Team              *Team                    `json:"team"`
 	Property          *Property                `json:"property"`
 	RootLayer         *LayerGroup              `json:"rootLayer"`
+	NewLayers         []NLSLayer               `json:"newLayers"`
+	Stories           []*Story                 `json:"stories"`
+	Styles            []*Style                 `json:"styles"`
 	DatasetSchemas    *DatasetSchemaConnection `json:"datasetSchemas"`
 	TagIds            []ID                     `json:"tagIds"`
 	Tags              []Tag                    `json:"tags"`
@@ -1052,6 +1250,87 @@ type SignupInput struct {
 type SignupPayload struct {
 	User *User `json:"user"`
 	Team *Team `json:"team"`
+}
+
+type Spacing struct {
+	Top    float64 `json:"top"`
+	Bottom float64 `json:"bottom"`
+	Left   float64 `json:"left"`
+	Right  float64 `json:"right"`
+}
+
+type Story struct {
+	ID                ID                `json:"id"`
+	Title             string            `json:"title"`
+	Alias             string            `json:"alias"`
+	PropertyID        ID                `json:"propertyId"`
+	Property          *Property         `json:"property"`
+	Pages             []*StoryPage      `json:"pages"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
+	PublishedAt       *time.Time        `json:"publishedAt"`
+	SceneID           ID                `json:"sceneId"`
+	Scene             *Scene            `json:"scene"`
+	PanelPosition     Position          `json:"panelPosition"`
+	BgColor           *string           `json:"bgColor"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
+	PublicTitle       string            `json:"publicTitle"`
+	PublicDescription string            `json:"publicDescription"`
+	PublicImage       string            `json:"publicImage"`
+	PublicNoIndex     bool              `json:"publicNoIndex"`
+}
+
+func (Story) IsNode() {}
+
+type StoryBlock struct {
+	ID              ID               `json:"id"`
+	PluginID        ID               `json:"pluginId"`
+	Plugin          *Plugin          `json:"plugin"`
+	ExtensionID     ID               `json:"extensionId"`
+	Extension       *PluginExtension `json:"extension"`
+	PropertyID      ID               `json:"propertyId"`
+	Property        *Property        `json:"property"`
+	LinkedDatasetID *ID              `json:"linkedDatasetId"`
+}
+
+func (StoryBlock) IsNode() {}
+
+type StoryPage struct {
+	ID                 ID            `json:"id"`
+	Title              string        `json:"title"`
+	Blocks             []*StoryBlock `json:"blocks"`
+	Swipeable          bool          `json:"swipeable"`
+	LayersIds          []ID          `json:"layersIds"`
+	Layers             []Layer       `json:"layers"`
+	SwipeableLayersIds []ID          `json:"swipeableLayersIds"`
+	SwipeableLayers    []Layer       `json:"swipeableLayers"`
+	PropertyID         ID            `json:"propertyId"`
+	Property           *Property     `json:"property"`
+	CreatedAt          time.Time     `json:"createdAt"`
+	SceneID            ID            `json:"sceneId"`
+	Scene              *Scene        `json:"scene"`
+}
+
+func (StoryPage) IsNode() {}
+
+type StoryPagePayload struct {
+	Page  *StoryPage `json:"page"`
+	Story *Story     `json:"story"`
+}
+
+type StoryPayload struct {
+	Story *Story `json:"story"`
+}
+
+type Style struct {
+	ID      ID     `json:"id"`
+	Name    string `json:"name"`
+	Value   JSON   `json:"value"`
+	SceneID ID     `json:"sceneId"`
+	Scene   *Scene `json:"scene"`
 }
 
 type SyncDatasetInput struct {
@@ -1112,6 +1391,12 @@ type TeamMember struct {
 	UserID ID    `json:"userId"`
 	Role   Role  `json:"role"`
 	User   *User `json:"user"`
+}
+
+type Timeline struct {
+	CurrentTime *string `json:"currentTime"`
+	StartTime   *string `json:"startTime"`
+	EndTime     *string `json:"endTime"`
 }
 
 type Typography struct {
@@ -1196,6 +1481,17 @@ type UpdateMemberOfTeamPayload struct {
 	Team *Team `json:"team"`
 }
 
+type UpdateNLSLayerInput struct {
+	LayerID ID      `json:"layerId"`
+	Name    *string `json:"name"`
+	Visible *bool   `json:"visible"`
+	Config  JSON    `json:"config"`
+}
+
+type UpdateNLSLayerPayload struct {
+	Layer NLSLayer `json:"layer"`
+}
+
 type UpdateProjectInput struct {
 	ProjectID         ID       `json:"projectId"`
 	Name              *string  `json:"name"`
@@ -1235,6 +1531,45 @@ type UpdatePropertyValueInput struct {
 	FieldID       ID          `json:"fieldId"`
 	Value         interface{} `json:"value"`
 	Type          ValueType   `json:"type"`
+}
+
+type UpdateStoryInput struct {
+	SceneID           ID        `json:"sceneId"`
+	StoryID           ID        `json:"storyId"`
+	Title             *string   `json:"title"`
+	Index             *int      `json:"index"`
+	PanelPosition     *Position `json:"panelPosition"`
+	BgColor           *string   `json:"bgColor"`
+	IsBasicAuthActive *bool     `json:"isBasicAuthActive"`
+	BasicAuthUsername *string   `json:"basicAuthUsername"`
+	BasicAuthPassword *string   `json:"basicAuthPassword"`
+	Alias             *string   `json:"alias"`
+	PublicTitle       *string   `json:"publicTitle"`
+	PublicDescription *string   `json:"publicDescription"`
+	PublicImage       *string   `json:"publicImage"`
+	PublicNoIndex     *bool     `json:"publicNoIndex"`
+	DeletePublicImage *bool     `json:"deletePublicImage"`
+}
+
+type UpdateStoryPageInput struct {
+	SceneID         ID      `json:"sceneId"`
+	StoryID         ID      `json:"storyId"`
+	PageID          ID      `json:"pageId"`
+	Title           *string `json:"title"`
+	Swipeable       *bool   `json:"swipeable"`
+	Layers          []ID    `json:"layers"`
+	SwipeableLayers []ID    `json:"swipeableLayers"`
+	Index           *int    `json:"index"`
+}
+
+type UpdateStyleInput struct {
+	StyleID ID      `json:"styleId"`
+	Name    *string `json:"name"`
+	Value   JSON    `json:"value"`
+}
+
+type UpdateStylePayload struct {
+	Style *Style `json:"style"`
 }
 
 type UpdateTagInput struct {
@@ -1589,6 +1924,10 @@ const (
 	PluginExtensionTypeBlock      PluginExtensionType = "BLOCK"
 	PluginExtensionTypeVisualizer PluginExtensionType = "VISUALIZER"
 	PluginExtensionTypeInfobox    PluginExtensionType = "INFOBOX"
+	PluginExtensionTypeCluster    PluginExtensionType = "Cluster"
+	PluginExtensionTypeStory      PluginExtensionType = "Story"
+	PluginExtensionTypeStoryPage  PluginExtensionType = "StoryPage"
+	PluginExtensionTypeStoryBlock PluginExtensionType = "StoryBlock"
 )
 
 var AllPluginExtensionType = []PluginExtensionType{
@@ -1597,11 +1936,15 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypeBlock,
 	PluginExtensionTypeVisualizer,
 	PluginExtensionTypeInfobox,
+	PluginExtensionTypeCluster,
+	PluginExtensionTypeStory,
+	PluginExtensionTypeStoryPage,
+	PluginExtensionTypeStoryBlock,
 }
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock:
 		return true
 	}
 	return false
@@ -1628,6 +1971,47 @@ func (e PluginExtensionType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type Position string
+
+const (
+	PositionLeft  Position = "LEFT"
+	PositionRight Position = "RIGHT"
+)
+
+var AllPosition = []Position{
+	PositionLeft,
+	PositionRight,
+}
+
+func (e Position) IsValid() bool {
+	switch e {
+	case PositionLeft, PositionRight:
+		return true
+	}
+	return false
+}
+
+func (e Position) String() string {
+	return string(e)
+}
+
+func (e *Position) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Position(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Position", str)
+	}
+	return nil
+}
+
+func (e Position) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type PropertySchemaFieldUI string
 
 const (
@@ -1642,6 +2026,8 @@ const (
 	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
 	PropertySchemaFieldUICameraPose PropertySchemaFieldUI = "CAMERA_POSE"
 	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
+	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
+	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -1656,11 +2042,13 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIFile,
 	PropertySchemaFieldUICameraPose,
 	PropertySchemaFieldUIDatetime,
+	PropertySchemaFieldUIMargin,
+	PropertySchemaFieldUIPadding,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding:
 		return true
 	}
 	return false
@@ -1733,20 +2121,22 @@ func (e PublishmentStatus) MarshalGQL(w io.Writer) {
 type Role string
 
 const (
-	RoleReader Role = "READER"
-	RoleWriter Role = "WRITER"
-	RoleOwner  Role = "OWNER"
+	RoleReader     Role = "READER"
+	RoleWriter     Role = "WRITER"
+	RoleMaintainer Role = "MAINTAINER"
+	RoleOwner      Role = "OWNER"
 )
 
 var AllRole = []Role{
 	RoleReader,
 	RoleWriter,
+	RoleMaintainer,
 	RoleOwner,
 }
 
 func (e Role) IsValid() bool {
 	switch e {
-	case RoleReader, RoleWriter, RoleOwner:
+	case RoleReader, RoleWriter, RoleMaintainer, RoleOwner:
 		return true
 	}
 	return false
@@ -1878,6 +2268,9 @@ const (
 	ValueTypeCoordinates  ValueType = "COORDINATES"
 	ValueTypePolygon      ValueType = "POLYGON"
 	ValueTypeRect         ValueType = "RECT"
+	ValueTypeSpacing      ValueType = "SPACING"
+	ValueTypeArray        ValueType = "ARRAY"
+	ValueTypeTimeline     ValueType = "TIMELINE"
 )
 
 var AllValueType = []ValueType{
@@ -1893,11 +2286,14 @@ var AllValueType = []ValueType{
 	ValueTypeCoordinates,
 	ValueTypePolygon,
 	ValueTypeRect,
+	ValueTypeSpacing,
+	ValueTypeArray,
+	ValueTypeTimeline,
 }
 
 func (e ValueType) IsValid() bool {
 	switch e {
-	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect:
+	case ValueTypeBool, ValueTypeNumber, ValueTypeString, ValueTypeRef, ValueTypeURL, ValueTypeLatlng, ValueTypeLatlngheight, ValueTypeCamera, ValueTypeTypography, ValueTypeCoordinates, ValueTypePolygon, ValueTypeRect, ValueTypeSpacing, ValueTypeArray, ValueTypeTimeline:
 		return true
 	}
 	return false

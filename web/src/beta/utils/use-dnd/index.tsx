@@ -9,7 +9,11 @@ export * from "./drag";
 export * from "./drop";
 
 export const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => (
-  <DndProvider backend={HTML5Backend}>{children}</DndProvider>
+  <DndProvider
+    backend={HTML5Backend}
+    options={{ enableMouseEvents: true, enableTouchEvents: true }}>
+    {children}
+  </DndProvider>
 );
 
 export const useDraggingItemType = () =>

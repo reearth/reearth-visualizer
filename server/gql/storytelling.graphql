@@ -1,0 +1,243 @@
+type Story implements Node {
+  id: ID!
+  title: String!
+  alias: String!
+  propertyId: ID!
+  property: Property
+  pages: [StoryPage!]!
+  publishmentStatus: PublishmentStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedAt: DateTime
+  sceneId: ID!
+  scene: Scene
+  panelPosition: Position!
+  bgColor: String
+
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
+}
+
+type StoryPage implements Node {
+  id: ID!
+  title: String!
+  blocks: [StoryBlock!]!
+  swipeable: Boolean!
+  layersIds: [ID!]!
+  layers: [Layer!]!
+  swipeableLayersIds: [ID!]
+  swipeableLayers: [Layer!]
+  propertyId: ID!
+  property: Property
+  createdAt: DateTime!
+  sceneId: ID!
+  scene: Scene
+}
+
+type StoryBlock implements Node {
+  id: ID!
+  pluginId: ID!
+  plugin: Plugin
+  extensionId: ID!
+  extension: PluginExtension
+  propertyId: ID!
+  property: Property
+  linkedDatasetId: ID
+}
+
+enum Position {
+  LEFT
+  RIGHT
+}
+
+# InputType
+
+input CreateStoryInput {
+  sceneId: ID!
+  title: String!
+  index: Int
+}
+
+input UpdateStoryInput {
+  sceneId: ID!
+  storyId: ID!
+  title: String
+  index: Int
+  panelPosition: Position
+  bgColor: String
+
+#  publishment
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  alias: String
+  publicTitle: String
+  publicDescription: String
+  publicImage: String
+  publicNoIndex: Boolean
+  deletePublicImage: Boolean
+}
+
+input MoveStoryInput {
+  sceneId: ID!
+  storyId: ID!
+  index: Int!
+}
+
+input DeleteStoryInput {
+  sceneId: ID!
+  storyId: ID!
+}
+
+input PublishStoryInput {
+  storyId: ID!
+  alias: String
+  status: PublishmentStatus!
+}
+
+input CreateStoryPageInput {
+  sceneId: ID!
+  storyId: ID!
+  title: String
+  swipeable: Boolean
+  layers: [ID!]
+  swipeableLayers: [ID!]
+  index: Int
+}
+
+input UpdateStoryPageInput {
+  sceneId: ID!
+  storyId: ID!
+  pageId: ID!
+  title: String
+  swipeable: Boolean
+  layers: [ID!]
+  swipeableLayers: [ID!]
+  index: Int
+}
+
+input MoveStoryPageInput {
+  storyId: ID!
+  pageId: ID!
+  index: Int!
+}
+
+input DuplicateStoryPageInput {
+  sceneId: ID!
+  storyId: ID!
+  pageId: ID!
+}
+
+input DeleteStoryPageInput {
+  sceneId: ID!
+  storyId: ID!
+  pageId: ID!
+}
+
+input PageLayerInput {
+  sceneId: ID!
+  storyId: ID!
+  pageId: ID!
+  swipeable: Boolean
+  layerId: ID!
+}
+
+input CreateStoryBlockInput {
+  storyId: ID!
+  pageId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  index: Int
+}
+
+input MoveStoryBlockInput {
+  storyId: ID!
+  pageId: ID!
+  blockId: ID!
+  index: Int!
+}
+
+input RemoveStoryBlockInput {
+  storyId: ID!
+  pageId: ID!
+  blockId: ID!
+}
+
+# Payload
+
+type StoryPayload {
+  story: Story!
+}
+
+type DeleteStoryPayload {
+  storyId: ID!
+}
+
+type MoveStoryPayload {
+  storyId: ID!
+  index: Int!
+  stories: [Story!]!
+}
+
+type StoryPagePayload {
+  page: StoryPage!
+  story: Story!
+}
+
+type MoveStoryPagePayload {
+  page: StoryPage!
+  story: Story!
+  index: Int!
+}
+
+type DeleteStoryPagePayload {
+  pageId: ID!
+  story: Story!
+}
+
+type CreateStoryBlockPayload {
+  block: StoryBlock!
+  page: StoryPage!
+  story: Story!
+  index: Int!
+}
+
+type MoveStoryBlockPayload {
+  page: StoryPage!
+  story: Story!
+  blockId: ID!
+  index: Int!
+}
+
+type RemoveStoryBlockPayload {
+  blockId: ID!
+  page: StoryPage!
+  story: Story!
+}
+
+extend type Mutation {
+  createStory(input: CreateStoryInput!): StoryPayload!
+  updateStory(input: UpdateStoryInput!): StoryPayload!
+  deleteStory(input: DeleteStoryInput!): DeleteStoryPayload!
+  publishStory(input: PublishStoryInput!): StoryPayload!
+  moveStory(input: MoveStoryInput!): MoveStoryPayload!
+
+  createStoryPage(input: CreateStoryPageInput!): StoryPagePayload!
+  updateStoryPage(input: UpdateStoryPageInput!): StoryPagePayload!
+  removeStoryPage(input: DeleteStoryPageInput!): DeleteStoryPagePayload!
+  moveStoryPage(input: MoveStoryPageInput!): MoveStoryPagePayload!
+  duplicateStoryPage(input: DuplicateStoryPageInput!): StoryPagePayload!
+
+  addPageLayer(input: PageLayerInput!): StoryPagePayload!
+  removePageLayer(input: PageLayerInput!): StoryPagePayload!
+
+
+  createStoryBlock(input: CreateStoryBlockInput!): CreateStoryBlockPayload!
+  moveStoryBlock(input: MoveStoryBlockInput!): MoveStoryBlockPayload!
+  removeStoryBlock(input: RemoveStoryBlockInput!): RemoveStoryBlockPayload!
+}

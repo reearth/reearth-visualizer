@@ -7,6 +7,8 @@ import type {
   RefObject,
 } from "react";
 
+import { FlyTo } from "@reearth/beta/lib/core/types";
+
 import type {
   LatLngHeight,
   Camera,
@@ -61,7 +63,7 @@ export type EngineRef = {
   getCamera: () => Camera | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
-  flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
+  flyTo: FlyTo;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;

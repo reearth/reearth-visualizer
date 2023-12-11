@@ -57,7 +57,7 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Dataset:   NewDatasetLoader(usecases.Dataset),
 		Layer:     NewLayerLoader(usecases.Layer),
 		Plugin:    NewPluginLoader(usecases.Plugin),
-		Policy:    NewPolicyLoader(usecases.Workspace),
+		Policy:    NewPolicyLoader(usecases.Policy),
 		Project:   NewProjectLoader(usecases.Project),
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),

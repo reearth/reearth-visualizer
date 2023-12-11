@@ -10,8 +10,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/layer/encoding"
 	"github.com/reearth/reearth/server/pkg/layer/merging"
+	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/tag"
 )
 
@@ -21,18 +23,25 @@ const (
 )
 
 type Builder struct {
-	ploader  property.Loader
-	tloader  tag.SceneLoader
-	exporter *encoding.Exporter
-	encoder  *encoder
+	ploader   property.Loader
+	tloader   tag.SceneLoader
+	nlsloader nlslayer.Loader
+	exporter  *encoding.Exporter
+	encoder   *encoder
+
+	scene       *scene.Scene
+	nlsLayer    *nlslayer.NLSLayerList
+	layerStyles *scene.StyleList
+	story       *storytelling.Story
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader) *Builder {
+func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader) *Builder {
 	e := &encoder{}
 	return &Builder{
-		ploader: pl,
-		tloader: tsl,
-		encoder: e,
+		ploader:   pl,
+		tloader:   tsl,
+		nlsloader: nlsl,
+		encoder:   e,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
 				LayerLoader:    ll,
@@ -47,35 +56,121 @@ func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loa
 	}
 }
 
-func (b *Builder) BuildScene(ctx context.Context, w io.Writer, s *scene.Scene, publishedAt time.Time) error {
+func (b *Builder) ForScene(s *scene.Scene) *Builder {
 	if b == nil {
 		return nil
 	}
+	b.scene = s
+	return b
+}
 
-	res, err := b.buildScene(ctx, s, publishedAt)
+func (b *Builder) WithNLSLayers(nlsLayer *nlslayer.NLSLayerList) *Builder {
+	if b == nil {
+		return nil
+	}
+	b.nlsLayer = nlsLayer
+	return b
+}
+
+func (b *Builder) WithLayerStyle(layerStyles *scene.StyleList) *Builder {
+	if b == nil {
+		return nil
+	}
+	b.layerStyles = layerStyles
+	return b
+}
+
+func (b *Builder) WithStory(s *storytelling.Story) *Builder {
+	if b == nil {
+		return nil
+	}
+	b.story = s
+	return b
+}
+
+func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, coreSupport bool) error {
+	if b == nil || b.scene == nil {
+		return nil
+	}
+
+	res, err := b.buildScene(ctx, publishedAt, coreSupport)
 	if err != nil {
 		return err
+	}
+
+	if b.story != nil {
+		story, err := b.buildStory(ctx)
+		if err != nil {
+			return err
+		}
+		res.Story = story
+	}
+
+	if b.nlsLayer != nil {
+		nlsLayers, err := b.buildNLSLayers(ctx)
+		if err != nil {
+			return err
+		}
+		res.NLSLayers = nlsLayers
+	}
+
+	if b.layerStyles != nil {
+		layerStyles, err := b.buildLayerStyles(ctx)
+		if err != nil {
+			return err
+		}
+		res.LayerStyles = layerStyles
 	}
 
 	return json.NewEncoder(w).Encode(res)
 }
 
-func (b *Builder) buildScene(ctx context.Context, s *scene.Scene, publishedAt time.Time) (*sceneJSON, error) {
+func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSupport bool) (*sceneJSON, error) {
 	if b == nil {
 		return nil, nil
 	}
 
 	// properties
-	p, err := b.ploader(ctx, s.Properties()...)
+	p, err := b.ploader(ctx, b.scene.Properties()...)
 	if err != nil {
 		return nil, err
 	}
 
 	// layers
-	if err := b.exporter.ExportLayerByID(ctx, s.RootLayer()); err != nil {
+	if err := b.exporter.ExportLayerByID(ctx, b.scene.RootLayer()); err != nil {
 		return nil, err
 	}
 	layers := b.encoder.Result()
 
-	return b.scene(ctx, s, publishedAt, layers, p)
+	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport)
+}
+
+func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {
+	if b == nil {
+		return nil, nil
+	}
+
+	// properties
+	p, err := b.ploader(ctx, b.story.Properties()...)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.storyJSON(ctx, p)
+}
+
+func (b *Builder) buildNLSLayers(ctx context.Context) ([]*nlsLayerJSON, error) {
+	if b == nil {
+		return nil, nil
+	}
+
+	return b.nlsLayersJSON(ctx)
+}
+
+func (b *Builder) buildLayerStyles(ctx context.Context) ([]*layerStylesJSON, error) {
+	if b == nil {
+		return nil, nil
+	}
+
+	return b.layerStylesJSON(ctx)
 }

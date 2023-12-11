@@ -1,4 +1,5 @@
-export type { Camera, FlyToDestination, LookAtDestination, Theme, Clock } from "../types";
+export type { Camera, Theme, Clock } from "../types";
+export type { FlyToDestination, LookAtDestination } from "../../types";
 
 export type InternalWidget<P = any> = Omit<Widget<P>, "layout" | "extended"> & {
   extended?: boolean;

@@ -10,6 +10,7 @@ type DatasetSchema struct{}
 type Cluster struct{}
 type InfoboxField struct{}
 type Layer struct{}
+type NLSLayer struct{}
 type PluginExtension struct{}
 type Project struct{}
 type Property struct{}
@@ -21,6 +22,7 @@ type Tag struct{}
 type Workspace struct{}
 type User struct{}
 type Widget struct{}
+type Style struct{}
 
 func (Asset) Type() string               { return "asset" }
 func (AuthRequest) Type() string         { return "authRequest" }
@@ -30,6 +32,7 @@ func (DatasetSchema) Type() string       { return "datasetSchema" }
 func (Cluster) Type() string             { return "cluster" }
 func (InfoboxField) Type() string        { return "infoboxField" }
 func (Layer) Type() string               { return "layer" }
+func (NLSLayer) Type() string            { return "nlsLayer" }
 func (PluginExtension) Type() string     { return "pluginExtension" }
 func (Project) Type() string             { return "project" }
 func (Property) Type() string            { return "property" }
@@ -41,6 +44,7 @@ func (Tag) Type() string                 { return "tag" }
 func (Workspace) Type() string           { return "workspace" }
 func (User) Type() string                { return "user" }
 func (Widget) Type() string              { return "widget" }
+func (Style) Type() string               { return "style" }
 
 type AssetID = idx.ID[Asset]
 type AuthRequestID = idx.ID[AuthRequest]
@@ -50,6 +54,7 @@ type DatasetSchemaID = idx.ID[DatasetSchema]
 type ClusterID = idx.ID[Cluster]
 type InfoboxFieldID = idx.ID[InfoboxField]
 type LayerID = idx.ID[Layer]
+type NLSLayerID = idx.ID[NLSLayer]
 type ProjectID = idx.ID[Project]
 type PropertyID = idx.ID[Property]
 type PropertyItemID = idx.ID[PropertyItem]
@@ -58,6 +63,7 @@ type TagID = idx.ID[Tag]
 type WorkspaceID = idx.ID[Workspace]
 type UserID = idx.ID[User]
 type WidgetID = idx.ID[Widget]
+type StyleID = idx.ID[Style]
 
 type PluginExtensionID = idx.StringID[PluginExtension]
 type PropertySchemaGroupID = idx.StringID[PropertySchemaGroup]
@@ -71,14 +77,14 @@ var NewDatasetSchemaID = idx.New[DatasetSchema]
 var NewClusterID = idx.New[Cluster]
 var NewInfoboxFieldID = idx.New[InfoboxField]
 var NewLayerID = idx.New[Layer]
+var NewNLSLayerID = idx.New[NLSLayer]
 var NewProjectID = idx.New[Project]
 var NewPropertyID = idx.New[Property]
 var NewPropertyItemID = idx.New[PropertyItem]
 var NewSceneID = idx.New[Scene]
 var NewTagID = idx.New[Tag]
-var NewWorkspaceID = idx.New[Workspace]
-var NewUserID = idx.New[User]
 var NewWidgetID = idx.New[Widget]
+var NewStyleID = idx.New[Style]
 
 var MustAssetID = idx.Must[Asset]
 var MustAuthRequestID = idx.Must[AuthRequest]
@@ -88,6 +94,7 @@ var MustDatasetSchemaID = idx.Must[DatasetSchema]
 var MustClusterID = idx.Must[Cluster]
 var MustInfoboxFieldID = idx.Must[InfoboxField]
 var MustLayerID = idx.Must[Layer]
+var MustNLSLayerID = idx.Must[NLSLayer]
 var MustProjectID = idx.Must[Project]
 var MustPropertyID = idx.Must[Property]
 var MustPropertyItemID = idx.Must[PropertyItem]
@@ -96,6 +103,7 @@ var MustTagID = idx.Must[Tag]
 var MustWorkspaceID = idx.Must[Workspace]
 var MustUserID = idx.Must[User]
 var MustWidgetID = idx.Must[Widget]
+var MustStyleID = idx.Must[Style]
 
 var AssetIDFrom = idx.From[Asset]
 var AuthRequestIDFrom = idx.From[AuthRequest]
@@ -105,6 +113,7 @@ var DatasetSchemaIDFrom = idx.From[DatasetSchema]
 var ClusterIDFrom = idx.From[Cluster]
 var InfoboxFieldIDFrom = idx.From[InfoboxField]
 var LayerIDFrom = idx.From[Layer]
+var NLSLayerIDFrom = idx.From[NLSLayer]
 var ProjectIDFrom = idx.From[Project]
 var PropertyIDFrom = idx.From[Property]
 var PropertyItemIDFrom = idx.From[PropertyItem]
@@ -113,6 +122,7 @@ var TagIDFrom = idx.From[Tag]
 var WorkspaceIDFrom = idx.From[Workspace]
 var UserIDFrom = idx.From[User]
 var WidgetIDFrom = idx.From[Widget]
+var StyleIDFrom = idx.From[Style]
 
 var AssetIDFromRef = idx.FromRef[Asset]
 var AuthRequestIDFromRef = idx.FromRef[AuthRequest]
@@ -122,6 +132,7 @@ var DatasetSchemaIDFromRef = idx.FromRef[DatasetSchema]
 var ClusterIDFromRef = idx.FromRef[Cluster]
 var InfoboxFieldIDFromRef = idx.FromRef[InfoboxField]
 var LayerIDFromRef = idx.FromRef[Layer]
+var NLSLayerIDFromRef = idx.FromRef[NLSLayer]
 var ProjectIDFromRef = idx.FromRef[Project]
 var PropertyIDFromRef = idx.FromRef[Property]
 var PropertyItemIDFromRef = idx.FromRef[PropertyItem]
@@ -130,6 +141,7 @@ var TagIDFromRef = idx.FromRef[Tag]
 var WorkspaceIDFromRef = idx.FromRef[Workspace]
 var UserIDFromRef = idx.FromRef[User]
 var WidgetIDFromRef = idx.FromRef[Widget]
+var StyleIDFromRef = idx.FromRef[Style]
 
 var PluginExtensionIDFromRef = idx.StringIDFromRef[PluginExtension]
 var PropertyFieldIDFromRef = idx.StringIDFromRef[PropertyField]
@@ -143,6 +155,7 @@ type DatasetSchemaIDList = idx.List[DatasetSchema]
 type ClusterIDList = idx.List[Cluster]
 type InfoboxFieldIDList = idx.List[InfoboxField]
 type LayerIDList = idx.List[Layer]
+type NLSLayerIDList = idx.List[NLSLayer]
 type ProjectIDList = idx.List[Project]
 type PropertyIDList = idx.List[Property]
 type PropertyItemIDList = idx.List[PropertyItem]
@@ -151,6 +164,7 @@ type TagIDList = idx.List[Tag]
 type WorkspaceIDList = idx.List[Workspace]
 type UserIDList = idx.List[User]
 type WidgetIDList = idx.List[Widget]
+type StyleIDList = idx.List[Style]
 
 var AssetIDListFrom = idx.ListFrom[Asset]
 var AuthRequestIDListFrom = idx.ListFrom[AuthRequest]
@@ -160,6 +174,7 @@ var DatasetSchemaIDListFrom = idx.ListFrom[DatasetSchema]
 var ClusterIDListFrom = idx.ListFrom[Cluster]
 var InfoboxFieldIDListFrom = idx.ListFrom[InfoboxField]
 var LayerIDListFrom = idx.ListFrom[Layer]
+var NLSLayerIDListFrom = idx.ListFrom[NLSLayer]
 var ProjectIDListFrom = idx.ListFrom[Project]
 var PropertyIDListFrom = idx.ListFrom[Property]
 var PropertyItemIDListFrom = idx.ListFrom[PropertyItem]
@@ -168,6 +183,7 @@ var TagIDListFrom = idx.ListFrom[Tag]
 var WorkspaceIDListFrom = idx.ListFrom[Workspace]
 var UserIDListFrom = idx.ListFrom[User]
 var WidgetIDListFrom = idx.ListFrom[Widget]
+var StyleIDListFrom = idx.ListFrom[Style]
 
 type AssetIDSet = idx.Set[Asset]
 type AuthRequestIDSet = idx.Set[AuthRequest]
@@ -177,6 +193,7 @@ type DatasetSchemaIDSet = idx.Set[DatasetSchema]
 type ClusterIDSet = idx.Set[Cluster]
 type InfoboxFieldIDSet = idx.Set[InfoboxField]
 type LayerIDSet = idx.Set[Layer]
+type NLSLayerIDSet = idx.Set[NLSLayer]
 type ProjectIDSet = idx.Set[Project]
 type PropertyIDSet = idx.Set[Property]
 type PropertyItemIDSet = idx.Set[PropertyItem]
@@ -185,6 +202,7 @@ type TagIDSet = idx.Set[Tag]
 type WorkspaceIDSet = idx.Set[Workspace]
 type UserIDSet = idx.Set[User]
 type WidgetIDSet = idx.Set[Widget]
+type StyleIDSet = idx.Set[Style]
 
 var NewAssetIDSet = idx.NewSet[Asset]
 var NewAuthRequestIDSet = idx.NewSet[AuthRequest]
@@ -194,6 +212,7 @@ var NewDatasetSchemaIDSet = idx.NewSet[DatasetSchema]
 var NewClusterIDSet = idx.NewSet[Cluster]
 var NewInfoboxFieldIDSet = idx.NewSet[InfoboxField]
 var NewLayerIDSet = idx.NewSet[Layer]
+var NewNLSLayerIDSet = idx.NewSet[NLSLayer]
 var NewProjectIDSet = idx.NewSet[Project]
 var NewPropertyIDSet = idx.NewSet[Property]
 var NewPropertyItemIDSet = idx.NewSet[PropertyItem]
@@ -202,3 +221,42 @@ var NewTagIDSet = idx.NewSet[Tag]
 var NewWorkspaceIDSet = idx.NewSet[Workspace]
 var NewUserIDSet = idx.NewSet[User]
 var NewWidgetIDSet = idx.NewSet[Widget]
+var NewStyleIDSet = idx.NewSet[Style]
+
+// Storytelling ids
+
+type Story struct{}
+type Page struct{}
+type Block struct{}
+
+func (Story) Type() string { return "story" }
+func (Page) Type() string  { return "page" }
+func (Block) Type() string { return "block" }
+
+type StoryID = idx.ID[Story]
+type PageID = idx.ID[Page]
+type BlockID = idx.ID[Block]
+
+var NewStoryID = idx.New[Story]
+var NewPageID = idx.New[Page]
+var NewBlockID = idx.New[Block]
+
+var MustStoryID = idx.Must[Story]
+var MustPageID = idx.Must[Page]
+var MustBlockID = idx.Must[Block]
+
+var StoryIDFrom = idx.From[Story]
+var PageIDFrom = idx.From[Page]
+var BlockIDFrom = idx.From[Block]
+
+var StoryIDFromRef = idx.FromRef[Story]
+var PageIDFromRef = idx.FromRef[Page]
+var BlockIDFromRef = idx.FromRef[Block]
+
+type StoryIDList = idx.List[Story]
+type PageIDList = idx.List[Page]
+type BlockIDList = idx.List[Block]
+
+var StoryIDListFrom = idx.ListFrom[Story]
+var PageIDListFrom = idx.ListFrom[Page]
+var BlockIDListFrom = idx.ListFrom[Block]

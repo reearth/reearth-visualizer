@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import type { CameraPosition, NaiveLayer } from "@reearth/beta/lib/core/mantle";
+import type { CameraPosition, ComputedFeature, NaiveLayer } from "@reearth/beta/lib/core/mantle";
 import {
-  type MouseEventHandles,
-  type MouseEvents,
   events,
   useGet,
-  CameraOptions,
-  LookAtDestination,
-  FlyToDestination,
-  LayerSelectionReason,
-  TickEventCallback,
+  type MouseEventHandles,
+  type MouseEvents,
+  type LayerSelectionReason,
+  type TickEventCallback,
 } from "@reearth/beta/lib/core/Map";
+
+import { TimelineCommitter } from "../../Map/useTimelineManager";
+import { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 
 import { commonReearth } from "./api";
 import { InteractionMode, ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
@@ -21,7 +21,7 @@ import usePluginInstances from "./usePluginInstances";
 
 export type SelectedReearthEventType = Pick<
   ReearthEventType,
-  "cameramove" | "select" | "tick" | "resize" | keyof MouseEvents | "layeredit"
+  "cameramove" | "select" | "tick" | "timelinecommit" | "resize" | keyof MouseEvents | "layeredit"
 >;
 
 export default function ({
@@ -39,6 +39,7 @@ export default function ({
   floatingWidgets,
   camera,
   interactionMode,
+  timelineManagerRef,
   overrideInteractionMode,
   useExperimentalSandbox,
   overrideSceneProperty,
@@ -63,19 +64,74 @@ export default function ({
   const getTags = useGet(tags ?? []);
   const getCamera = useGet(camera);
   const getClock = useCallback(() => {
-    const clock = engineRef?.getClock();
     return {
-      startTime: clock?.start,
-      stopTime: clock?.stop,
-      currentTime: clock?.current,
-      playing: clock?.playing,
-      paused: !clock?.playing,
-      speed: clock?.speed,
-      play: engineRef?.play,
-      pause: engineRef?.pause,
-      tick: engineRef?.tick,
+      get startTime() {
+        return timelineManagerRef?.current?.timeline?.start;
+      },
+      get stopTime() {
+        return timelineManagerRef?.current?.timeline?.stop;
+      },
+      get currentTime() {
+        return timelineManagerRef?.current?.timeline?.current;
+      },
+      get playing() {
+        return !!timelineManagerRef?.current?.options?.animation;
+      },
+      get paused() {
+        return !timelineManagerRef?.current?.options?.animation;
+      },
+      get speed() {
+        return timelineManagerRef?.current?.options?.multiplier;
+      },
+      get stepType() {
+        return timelineManagerRef?.current?.options?.stepType;
+      },
+      get rangeType() {
+        return timelineManagerRef?.current?.options?.rangeType;
+      },
+      play: () => {
+        timelineManagerRef?.current?.commit({
+          cmd: "PLAY",
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      pause: () => {
+        timelineManagerRef?.current?.commit({
+          cmd: "PAUSE",
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      setTime: (time: { start: Date | string; stop: Date | string; current: Date | string }) => {
+        timelineManagerRef?.current?.commit({
+          cmd: "SET_TIME",
+          payload: { ...time },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      setSpeed: (speed: number) => {
+        timelineManagerRef?.current?.commit({
+          cmd: "SET_OPTIONS",
+          payload: { multiplier: speed },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      setStepType: (stepType: "rate" | "fixed") => {
+        timelineManagerRef?.current?.commit({
+          cmd: "SET_OPTIONS",
+          payload: { stepType },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      setRangeType: (rangeType: "unbounded" | "clamped" | "bounced") => {
+        timelineManagerRef?.current?.commit({
+          cmd: "SET_OPTIONS",
+          payload: { rangeType },
+          committer: { source: "pluginAPI", id: "window" },
+        });
+      },
+      tick: timelineManagerRef?.current?.tick,
     };
-  }, [engineRef]);
+  }, [timelineManagerRef]);
   const getInteractionMode = useGet(
     useMemo<InteractionMode>(
       () => ({ mode: interactionMode, override: overrideInteractionMode }),
@@ -94,8 +150,8 @@ export default function ({
     [overrideSceneProperty],
   );
 
-  const flyTo = useCallback(
-    (target: string | FlyToDestination, options?: CameraOptions | undefined) => {
+  const flyTo: FlyTo = useCallback(
+    (target, options) => {
       engineRef?.flyTo(target, options);
     },
     [engineRef],
@@ -111,6 +167,13 @@ export default function ({
   const cameraViewport = useCallback(() => {
     return engineRef?.getViewport();
   }, [engineRef]);
+
+  const getCameraFovInfo = useCallback(
+    (options: { withTerrain?: boolean; calcViewSize?: boolean }) => {
+      return engineRef?.getCameraFovInfo(options);
+    },
+    [engineRef],
+  );
 
   const layersInViewport = useCallback(() => {
     return layersRef?.findAll(layer => !!engineRef?.inViewport(layer?.property?.default?.location));
@@ -240,6 +303,20 @@ export default function ({
     [engineRef],
   );
 
+  const findFeatureById = useCallback(
+    (layerId: string, featureId: string) => {
+      return engineRef?.findFeatureById(layerId, featureId);
+    },
+    [engineRef],
+  );
+
+  const findFeaturesByIds = useCallback(
+    (layerId: string, featureIds: string[]) => {
+      return engineRef?.findFeaturesByIds(layerId, featureIds);
+    },
+    [engineRef],
+  );
+
   const addLayer = useCallback(
     (layer: NaiveLayer) => {
       return layersRef?.add(layer)?.id;
@@ -255,12 +332,15 @@ export default function ({
   );
 
   const selectLayer = useCallback(
-    (
-      layerId: string | undefined,
-      featureId?: string | undefined,
-      reason?: LayerSelectionReason | undefined,
-    ) => {
-      layersRef?.select(layerId, featureId, reason);
+    (layerId: string | undefined, reason?: LayerSelectionReason | undefined) => {
+      layersRef?.select(layerId, reason);
+    },
+    [layersRef],
+  );
+
+  const selectFeatures = useCallback(
+    (layers: { layerId?: string; featureId?: string[] }[]) => {
+      layersRef?.selectFeatures(layers);
     },
     [layersRef],
   );
@@ -277,6 +357,19 @@ export default function ({
       layersRef?.hide(...args);
     },
     [layersRef],
+  );
+
+  const pickManyFromViewport = useCallback(
+    (
+      windowPosition: [x: number, y: number],
+      windowWidth: number,
+      windowHeight: number,
+      // TODO: Get condition as expression for plugin
+      condition?: (f: ComputedFeature) => boolean,
+    ) => {
+      return engineRef?.pickManyFromViewport(windowPosition, windowWidth, windowHeight, condition);
+    },
+    [engineRef],
   );
 
   const value = useMemo<Context>(
@@ -301,6 +394,7 @@ export default function ({
         hideLayer,
         addLayer,
         selectLayer,
+        selectFeatures,
         overrideLayerProperty,
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
@@ -309,6 +403,7 @@ export default function ({
         zoomIn,
         zoomOut,
         cameraViewport,
+        getCameraFovInfo,
         rotateRight,
         orbit,
         captureScreen,
@@ -325,10 +420,14 @@ export default function ({
         moveRight,
         moveOverTerrain,
         flyToGround,
+        findFeatureById,
+        findFeaturesByIds,
+        pickManyFromViewport,
       }),
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
+      timelineManagerRef,
       useExperimentalSandbox,
     }),
     [
@@ -351,6 +450,7 @@ export default function ({
       hideLayer,
       addLayer,
       selectLayer,
+      selectFeatures,
       overrideLayerProperty,
       overrideScenePropertyCommon,
       layersInViewport,
@@ -359,6 +459,7 @@ export default function ({
       zoomIn,
       zoomOut,
       cameraViewport,
+      getCameraFovInfo,
       rotateRight,
       orbit,
       captureScreen,
@@ -378,7 +479,11 @@ export default function ({
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
+      timelineManagerRef,
       useExperimentalSandbox,
+      findFeatureById,
+      findFeaturesByIds,
+      pickManyFromViewport,
     ],
   );
 
@@ -415,9 +520,16 @@ export default function ({
 
   const onTickEvent = useCallback(
     (fn: TickEventCallback) => {
-      mapRef?.current?.engine.onTick?.(fn);
+      timelineManagerRef?.current?.onTick(fn);
     },
-    [mapRef],
+    [timelineManagerRef],
+  );
+
+  const onTimelineCommitEvent = useCallback(
+    (fn: (committer: TimelineCommitter) => void) => {
+      timelineManagerRef?.current?.onCommit(fn);
+    },
+    [timelineManagerRef],
   );
 
   useEffect(() => {
@@ -450,7 +562,10 @@ export default function ({
     onTickEvent(e => {
       emit("tick", e);
     });
-  }, [emit, onMouseEvent, onLayerEdit, onTickEvent]);
+    onTimelineCommitEvent(e => {
+      emit("timelinecommit", e);
+    });
+  }, [emit, onMouseEvent, onLayerEdit, onTickEvent, onTimelineCommitEvent]);
 
   // expose plugin API for developers
   useEffect(() => {

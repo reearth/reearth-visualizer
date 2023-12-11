@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -89,12 +89,12 @@ func TestAuth0(t *testing.T) {
 	})
 
 	newEmail := "xxxxx"
-	r, err := a.UpdateUser(context.Background(), gateway.AuthenticatorUpdateUserParam{
+	r, err := a.UpdateUser(context.Background(), accountgateway.AuthenticatorUpdateUserParam{
 		ID:    userID,
 		Email: &newEmail,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, gateway.AuthenticatorUser{
+	assert.Equal(t, accountgateway.AuthenticatorUser{
 		ID:            userID,
 		Email:         newEmail,
 		EmailVerified: true,

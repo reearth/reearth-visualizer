@@ -1,9 +1,9 @@
-import { forwardRef, type ForwardRefRenderFunction } from "react";
+import { forwardRef, RefObject, type ForwardRefRenderFunction, type MutableRefObject } from "react";
 
 import { SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
-import type { ComputedLayer } from "../types";
+import type { ComputedLayer, EngineRef, RequestingRenderMode } from "../types";
 
 import useHooks, { LayerSelectionReason, type Ref } from "./hooks";
 
@@ -30,14 +30,16 @@ export type {
   Cluster,
 } from "../ClusteredLayers";
 
-export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
-  hiddenLayers?: string[];
-  selectedLayerId?: {
+export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden" | "selectedLayerId"> & {
+  selectedLayer?: {
     layerId?: string;
     featureId?: string;
+    reason?: LayerSelectionReason;
   };
-  selectionReason?: LayerSelectionReason;
+  hiddenLayers?: string[];
   sceneProperty?: any;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
+  engineRef?: RefObject<EngineRef>;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -48,22 +50,23 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden"> & {
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (
-  { layers, hiddenLayers, selectedLayerId, selectionReason, onLayerSelect, ...props },
+  { layers, selectedLayer, hiddenLayers, requestingRenderMode, engineRef, onLayerSelect, ...props },
   ref,
 ) => {
   const { atomMap, flattenedLayers, isHidden } = useHooks({
     layers,
     ref,
     hiddenLayers,
-    selectedLayerId,
-    selectionReason,
+    selectedLayer,
+    requestingRenderMode,
+    engineRef,
     onLayerSelect,
   });
 
   return (
     <ClusteredLayers
       {...props}
-      selectedLayerId={selectedLayerId}
+      selectedLayer={selectedLayer}
       layers={flattenedLayers}
       atomMap={atomMap}
       isHidden={isHidden}

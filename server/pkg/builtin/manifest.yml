@@ -1,9 +1,280 @@
+$schema: ../../schemas/plugin_manifest.json
 id: reearth
 system: true
 name: Re:Earth Official Plugin
 description: Official Plugin
 author: Re:Earth
 extensions:
+  - id: cesium-beta
+    name: Cesium Beta
+    description: Description
+    visualizer: cesium
+    type: visualizer
+    schema:
+      groups:
+        - id: default
+          collection: main
+          title: Main
+          fields:
+            - id: sceneMode
+              type: string
+              title: Scene mode
+              description: Specify scene mode.
+              defaultValue: 3d
+              choices:
+                - key: 3d
+                  label: 3D
+                - key: 2d
+                  label: 2D
+                - key: columbus
+                  label: 2.5D (Columbus View)
+            - id: ion
+              type: string
+              title: Cesium Ion API access token
+              description: Cesium Ion account users may use their personal API keys to be able to use their Cesium Ion assets(tile data, 3D data, etc) with their project.
+            - id: vr
+              type: bool
+              title: VR
+              description: Enable VR mode to split the screen into left and right.
+        - id: tiles
+          collection: tiles
+          title: Tiles
+          description: You may change the look of the Earth by obtaining map tile data and setting it here.
+          list: true
+          representativeField: tile_type
+          fields:
+            - id: tile_type
+              type: string
+              title: Tile type
+              defaultValue: default
+              choices:
+                - key: default
+                  label: Default
+                - key: default_label
+                  label: Labelled
+                - key: default_road
+                  label: Road Map
+                - key: stamen_watercolor
+                  label: Stamen Watercolor
+                - key: stamen_toner
+                  label: Stamen Toner
+                - key: open_street_map
+                  label: OpenStreetMap
+                - key: esri_world_topo
+                  label: ESRI Topography
+                - key: black_marble
+                  label: Earth at night
+                - key: japan_gsi_standard
+                  label: Japan GSI Standard Map
+                - key: url
+                  label: URL
+            - id: tile_url
+              type: string
+              title: Tile map URL
+              availableIf:
+                field: tile_type
+                type: string
+                value: url
+            - id: tile_zoomLevel
+              type: array
+              title: zoom level
+              description: "Change the zoom level of the selected tile map. Min:0, Max:30"
+              defaultValue: [0,30]
+              ui: range
+              min: 0
+              max: 30
+            - id: tile_opacity
+              type: number
+              title: Opacity
+              description: "Change the opacity of the selected tile map. Min: 0 Max: 1"
+              defaultValue: 1
+              ui: slider
+              min: 0
+              max: 1
+        - id: terrain
+          collection: terrain
+          title: Terrain
+          fields:
+            - id: terrain
+              type: bool
+              title: Enable
+              description: Show elevation when close to the surface.
+            - id: terrainType
+              type: string
+              title: Terrain type
+              description: Specify terrain type.
+              defaultValue: cesium
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+              choices:
+                - key: cesium
+                  label: Cesium World Terrain
+                - key: arcgis
+                  label: ArcGIS Terrain
+                - key: cesiumion
+                  label: Cesium Ion
+            - id: terrainCesiumIonAsset
+              type: string
+              title: Terrain Cesium Ion asset ID
+              description: Specify the ID of a terrain asset registered on Cesium Ion.
+              availableIf:
+                field: terrainType
+                type: string
+                value: cesiumion
+            - id: terrainCesiumIonAccessToken
+              type: string
+              title: Terrain Cesium Ion access token
+              description: Specify a Cesium Ion access token if you want to override the access token in the scene-wide settings for this tile.
+              availableIf:
+                field: terrainType
+                type: string
+                value: cesiumion
+            - id: terrainCesiumIonUrl
+              type: string
+              title: Terrain URL
+              description: Specify the URL of Cesium's terrain server if it is delivered on-premises rather than Cesum Ion. This takes precedence over the asset ID setting.
+              availableIf:
+                field: terrainType
+                type: string
+                value: cesiumion
+            - id: terrainExaggeration
+              type: number
+              title: Terrain exaggeration
+              description: A scalar used to exaggerate the terrain. Defaults to 1.0 (no exaggeration). A value of 2.0 scales the terrain by 2x. A value of 0.0 makes the terrain completely flat.
+              defaultValue: 1
+              suffix: x
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: terrainExaggerationRelativeHeight
+              type: number
+              title: Terrain exaggeration relative height
+              description: The height from which terrain is exaggerated. Defaults to 0.0. Terrain that is above this height will scale upwards and terrain that is below this height will scale downwards.
+              defaultValue: 0
+              suffix: m
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+            - id: depthTestAgainstTerrain
+              type: bool
+              title: Hide objects under terrain
+              description: Hides objects under the terrain. Depending on the loading status of the terrain, objects may be shown or hidden.
+              availableIf:
+                field: terrain
+                type: bool
+                value: true
+        - id: globeLighting
+          collection: globe
+          title: Globe Lighting
+          fields:
+            - id: globeLighting
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: This property will support the globe receive an Entity's Lighting.
+        - id: globeShadow
+          collection: globe
+          title: Globe Shadow
+          fields:
+            - id: globeShadow
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: This property will support the globe receive an Entity's shadows.
+        - id: globeAtmosphere
+          collection: globe
+          title: Globe Atmosphere
+          fields:
+            - id: globeAtmosphere
+              type: bool
+              title: Enable
+              defaultValue: true
+              description: This setting handles the so-called atmosphere effect of Earth.
+            - id: globeAtmosphereIntensity
+              type: number
+              title: Light Intensity
+              description: "Change the light intensity of the selected tile map. Min: 0 Max: 30"
+              defaultValue: 10
+              ui: slider
+              min: 0
+              max: 30
+              availableIf:
+                field: globeAtmosphere
+                type: bool
+                value: true
+        - id: skyBox
+          collection: sky
+          title: Sky Box
+          fields:
+            - id: skyBox
+              type: bool
+              title: Enable
+              defaultValue: true
+              description: Description needed.
+        - id: sun
+          collection: sky
+          title: Sun
+          fields:
+            - id: sun
+              type: bool
+              title: Enable
+              defaultValue: true
+              description: Description needed.
+        - id: moon
+          collection: sky
+          title: Moon
+          fields:
+            - id: moon
+              type: bool
+              title: Enable
+              defaultValue: true
+              description: Description needed.
+        - id: skyAtmosphere
+          collection: sky
+          title: Sky Atmosphere
+          fields:
+            - id: skyAtmosphere
+              type: bool
+              title: Enable
+              defaultValue: true
+              description: Description neeeded.
+            - id: skyAtmosphereIntensity
+              type: number
+              title: Light Intensity
+              description: "Change the light intensity of the selected tile map. Min: 0 Max: 200"
+              defaultValue: 50
+              ui: slider
+              min: 0
+              max: 200
+              availableIf:
+                field: skyAtmosphere
+                type: bool
+                value: true
+        - id: camera
+          collection: camera
+          title: Camera
+          fields:
+            - id: camera
+              type: camera
+              title: Initial camera position
+              description: The starting position of your project.
+            - id: allowEnterGround
+              type: bool
+              title: Enter the ground
+              defaultValue: false
+              description: Set to true to allow the camera to enter the surface of the earth.
+            - id: fov
+              type: number
+              title: FOV
+              # description: Description needed
+              defaultValue: 3
+              ui: slider
+              min: 0
+              max: 10
   - id: cesium
     name: Cesium
     description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.
@@ -1733,6 +2004,7 @@ extensions:
         - id: menu
           title: Menu
           list: true
+          representativeField: menuTitle
           availableIf:
             field: buttonType
             type: string
@@ -1838,6 +2110,7 @@ extensions:
               title: Duration
               suffix: s
               min: 0
+              defaultValue: 2
             - id: cameraDelay
               type: number
               title: Delay
@@ -2013,3 +2286,297 @@ extensions:
                   label: Desktop only
                 - key: mobile
                   label: Mobile only
+  - id: story
+    name: Story
+    type: story
+    description: Storytelling story
+  - id: storyPage
+    name: Page
+    type: storyPage
+    description: Storytelling Page
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+              defaultValue: { top: 20, bottom: 20, left: 20, right: 20 }
+            - id: gap
+              title: Gap
+              type: number
+              suffix: px
+              defaultValue: 20
+        - id: title
+          title: Title Setting
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: cameraAnimation
+          title: Camera Animation
+          fields:
+            - id: cameraPosition
+              type: camera
+              title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+              defaultValue: 2
+        - id: timePoint
+          title: Time Point Setting
+          fields:
+            - id: timePoint
+              type: string
+              ui: datetime
+              title: Time
+  - id: textStoryBlock
+    name: Text
+    type: storyBlock
+    description: Storytelling Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Text
+          fields:
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+  - id: mdTextStoryBlock
+    name: MD Text
+    type: storyBlock
+    description: Storytelling MD Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: MD Text
+          fields:
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+  - id: imageStoryBlock
+    name: Image
+    type: storyBlock
+    description: Storytelling Image Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Image
+          fields:
+            - id: src
+              type: url
+              title: Image
+              ui: image
+  - id: videoStoryBlock
+    name: Video
+    type: storyBlock
+    description: Storytelling Video Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Video
+          fields:
+            - id: src
+              type: url
+              title: Video
+              ui: video
+  - id: cameraButtonStoryBlock
+    name: Camera Button
+    type: storyBlock
+    description: Storytelling Camera Button
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Camera Button
+          list: true
+          representativeField: title
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: bgColor
+              type: string
+              title: Background Color
+              ui: color
+            - id: cameraPosition
+              type: camera
+              title: Camera position
+            - id: cameraDuration
+              type: number
+              title: Duration
+              suffix: s
+              min: 0
+              defaultValue: 2
+  - id: linkButtonStoryBlock
+    name: Link Button
+    type: storyBlock
+    description: Storytelling Link Button
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Link Button
+          list: true
+          representativeField: title
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: bgColor
+              type: string
+              title: Background Color
+              ui: color
+            - id: url
+              type: url
+              title: Link URL
+  - id: showLayersStoryBlock
+    name: Show Layers Button
+    type: storyBlock
+    description: Storytelling Show Layers 
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Switch Layer
+          list: true
+          representativeField: title
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: color
+              type: string
+              title: Color
+              ui: color
+            - id: bgColor
+              type: string
+              title: Background Color
+              ui: color
+            - id: showLayers
+              type: array
+              title: Show Layers
+              ui: layer
+              choices:
+  - id: timelineStoryBlock
+    name: Timeline
+    type: storyBlock
+    description: Storytelling Timeline Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Timeline Setting
+          fields:
+            - id: timelineSetting
+              type: timeline
+              ui: datetime
+              title: Timeline Setting
+            - id: playMode
+              type: string
+              title: Play Mode
+              description: Specify play mode.
+              defaultValue: once
+              choices:
+                - key: once
+                  label: Once
+                - key: loop
+                  label: Loop
+  - id: nextPageStoryBlock
+    name: Next Page Button
+    type: storyBlock
+    description: Down button that will skip to next page.

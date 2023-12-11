@@ -12,6 +12,7 @@ type SchemaGroup struct {
 	isAvailableIf       *Condition
 	title               i18n.String
 	representativeField *FieldID
+	collection          i18n.String
 }
 
 // ID returns id
@@ -88,6 +89,13 @@ func (s *SchemaGroup) Title() i18n.String {
 		return nil
 	}
 	return s.title.Clone()
+}
+
+func (s *SchemaGroup) Collection() i18n.String {
+	if s == nil {
+		return nil
+	}
+	return s.collection.Clone()
 }
 
 // RepresentativeFieldID returns the representative field ID of the group

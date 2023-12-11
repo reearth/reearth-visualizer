@@ -8,7 +8,7 @@ import { typographyStyles } from "./utils";
 export { typographyStyles } from "../utils";
 
 export const Title = styled.div<{ infoboxProperty?: InfoboxProperty }>`
-  color: ${props => props.theme.general.content.main};
+  color: ${props => props.theme.content.main};
   font-size: ${fonts.sizes.footnote}px;
   ${({ infoboxProperty }) => typographyStyles(infoboxProperty?.typography)}
 `;
@@ -23,9 +23,9 @@ export const Border = styled.div<{
       (!isHovered && !isSelected) || !isEditable
         ? "transparent"
         : isHovered
-        ? theme.general.border
+        ? theme.outline.main
         : isSelected
-        ? theme.general.select
-        : theme.general.content.weak};
+        ? theme.select.main
+        : theme.content.weak};
   border-radius: 6px;
 `;

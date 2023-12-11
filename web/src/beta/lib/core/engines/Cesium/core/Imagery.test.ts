@@ -26,7 +26,6 @@ test("useImageryProviders", () => {
   rerender({ tiles: [{ id: "1", tile_type: "default" }] });
 
   expect(result.current.providers).toEqual({ "1": ["default", undefined, { hoge: undefined }] });
-  expect(result.current.updated).toBe(false);
   expect(result.current.providers["1"][2]).toBe(prevImageryProvider); // 1's provider should be reused
   expect(provider).toBeCalledTimes(1);
 

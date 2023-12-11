@@ -298,5 +298,4 @@ extend type Mutation {
   importLayer(input: ImportLayerInput!): ImportLayerPayload
   attachTagToLayer(input: AttachTagToLayerInput!): AttachTagToLayerPayload
   detachTagFromLayer(input: DetachTagFromLayerInput!): DetachTagFromLayerPayload
-
 }

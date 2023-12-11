@@ -30,6 +30,13 @@ export type Typography = {
   underline?: boolean;
 };
 
+export type Spacing = {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
+};
+
 export type Coordinates = LatLngHeight[];
 
 export type Polygon = LatLngHeight[][];
@@ -85,6 +92,14 @@ export type EXPERIMENTAL_clipping = {
   direction?: "inside" | "outside";
 };
 
+export type Array = any[];
+
+export type Timeline = {
+  startTime?: string;
+  endTime?: string;
+  currentTime?: string;
+};
+
 // Don't forget adding a new field to valueTypeMapper also!
 export type ValueTypes = {
   string: string;
@@ -100,6 +115,9 @@ export type ValueTypes = {
   rect: Rect;
   ref: string;
   tiletype: string;
+  spacing: Spacing;
+  array: Array;
+  timeline: Timeline;
 };
 
 export type ValueType = keyof ValueTypes;

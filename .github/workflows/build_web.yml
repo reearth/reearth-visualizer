@@ -27,6 +27,8 @@ jobs:
       run:
         working-directory: web
     if: github.event.inputs.name
+    env:
+      NODE_OPTIONS: "--max-old-space-size=8192"
     steps:
       - uses: actions/setup-node@v3
         with:

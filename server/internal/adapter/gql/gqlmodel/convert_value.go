@@ -14,6 +14,14 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 	switch v2 := v.(type) {
 	case bool:
 		return v2
+	case int:
+		return v2
+	case int32:
+		return v2
+	case int64:
+		return v2
+	case float32:
+		return v2
 	case float64:
 		return v2
 	case string:
@@ -73,6 +81,12 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 			North: v2.North,
 			South: v2.South,
 		}
+	case []any:
+		gqlArray := make([]any, len(v2))
+		for i, item := range v2 {
+			gqlArray[i] = valueInterfaceToGqlValue(item)
+		}
+		return gqlArray
 	}
 	return nil
 }

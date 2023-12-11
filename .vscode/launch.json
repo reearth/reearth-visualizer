@@ -8,6 +8,7 @@
       "mode": "auto",
       "cwd": "${workspaceRoot}/server",
       "program": "${workspaceRoot}/server/cmd/reearth",
+      "envFile": "${workspaceRoot}/server/.env",
       "env": {},
       "args": []
     }

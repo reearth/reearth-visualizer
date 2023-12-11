@@ -12,6 +12,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
+	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -22,26 +26,32 @@ type ContainerConfig struct {
 	PublishedIndexURL  *url.URL
 }
 
-func NewContainer(r *repo.Container, g *gateway.Container, config ContainerConfig) interfaces.Container {
+func NewContainer(r *repo.Container, g *gateway.Container,
+	ar *accountrepo.Container, ag *accountgateway.Container,
+	config ContainerConfig) interfaces.Container {
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
-		published = NewPublishedWithURL(r.Project, g.File, config.PublishedIndexURL)
+		published = NewPublishedWithURL(r.Project, r.Storytelling, g.File, config.PublishedIndexURL)
 	} else {
-		published = NewPublished(r.Project, g.File, config.PublishedIndexHTML)
+		published = NewPublished(r.Project, r.Storytelling, g.File, config.PublishedIndexHTML)
 	}
 
 	return interfaces.Container{
-		Asset:     NewAsset(r, g),
-		Dataset:   NewDataset(r, g),
-		Layer:     NewLayer(r),
-		Plugin:    NewPlugin(r, g),
-		Project:   NewProject(r, g),
-		Property:  NewProperty(r, g),
-		Published: published,
-		Scene:     NewScene(r, g),
-		Tag:       NewTag(r),
-		Workspace: NewWorkspace(r),
-		User:      NewUser(r, g, config.SignupSecret, config.AuthSrvUIDomain),
+		Asset:        NewAsset(r, g),
+		Dataset:      NewDataset(r, g),
+		Layer:        NewLayer(r),
+		NLSLayer:     NewNLSLayer(r),
+		Style:        NewStyle(r),
+		Plugin:       NewPlugin(r, g),
+		Policy:       NewPolicy(r),
+		Project:      NewProject(r, g),
+		Property:     NewProperty(r, g),
+		Published:    published,
+		Scene:        NewScene(r, g),
+		Tag:          NewTag(r),
+		StoryTelling: NewStorytelling(r, g),
+		Workspace:    accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
+		User:         accountinteractor.NewUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain),
 	}
 }
 
@@ -55,7 +65,7 @@ func (common) OnlyOperator(op *usecase.Operator) error {
 	return nil
 }
 
-func (i common) CanReadWorkspace(t id.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanReadWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
@@ -65,7 +75,7 @@ func (i common) CanReadWorkspace(t id.WorkspaceID, op *usecase.Operator) error {
 	return nil
 }
 
-func (i common) CanWriteWorkspace(t id.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanWriteWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}

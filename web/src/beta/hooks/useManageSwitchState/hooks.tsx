@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 export type SwitchField<T> = {
   id: string;
@@ -11,6 +11,9 @@ export type Props<T> = {
 
 export const useManageSwitchState = <T,>({ fields }: Props<T>) => {
   const [fieldsState, setFieldsState] = useState(fields);
+  useEffect(() => {
+    setFieldsState(fields);
+  }, [fields]);
   const handleActivate = useCallback((id: string) => {
     setFieldsState(f =>
       f.map(v => ({

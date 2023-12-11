@@ -3,21 +3,21 @@ package memory
 import (
 	"context"
 
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 	"golang.org/x/exp/slices"
 )
 
 type Policy struct {
-	m util.SyncMap[workspace.PolicyID, *workspace.Policy]
+	m util.SyncMap[policy.ID, *policy.Policy]
 }
 
 func NewPolicy() *Policy {
 	return &Policy{}
 }
 
-func NewPolicyWith(policies ...*workspace.Policy) *Policy {
+func NewPolicyWith(policies ...*policy.Policy) *Policy {
 	r := NewPolicy()
 	for _, p := range policies {
 		if p == nil {
@@ -28,7 +28,7 @@ func NewPolicyWith(policies ...*workspace.Policy) *Policy {
 	return r
 }
 
-func (r *Policy) FindByID(_ context.Context, id workspace.PolicyID) (*workspace.Policy, error) {
+func (r *Policy) FindByID(_ context.Context, id policy.ID) (*policy.Policy, error) {
 	p, ok := r.m.Load(id)
 	if !ok {
 		return nil, rerror.ErrNotFound
@@ -36,10 +36,10 @@ func (r *Policy) FindByID(_ context.Context, id workspace.PolicyID) (*workspace.
 	return p.Clone(), nil
 }
 
-func (r *Policy) FindByIDs(_ context.Context, ids []workspace.PolicyID) ([]*workspace.Policy, error) {
+func (r *Policy) FindByIDs(_ context.Context, ids []policy.ID) ([]*policy.Policy, error) {
 	policies := r.m.LoadAll(ids...)
-	slices.SortStableFunc(policies, func(a, b *workspace.Policy) bool {
+	slices.SortStableFunc(policies, func(a, b *policy.Policy) bool {
 		return a.ID() < b.ID()
 	})
-	return util.Map(policies, func(p *workspace.Policy) *workspace.Policy { return p.Clone() }), nil
+	return util.Map(policies, func(p *policy.Policy) *policy.Policy { return p.Clone() }), nil
 }

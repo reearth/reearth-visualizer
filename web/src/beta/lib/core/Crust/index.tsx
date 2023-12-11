@@ -1,9 +1,10 @@
-import type { ReactNode, RefObject } from "react";
+import { type ReactNode, type RefObject } from "react";
 
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import type { Clock, LayerEditEvent, LayerSelectionReason } from "../Map";
+import type { LayerEditEvent, LayerSelectionReason } from "../Map";
+import type { TimelineManagerRef } from "../Map/useTimelineManager";
 import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
@@ -59,7 +60,6 @@ export type Props = {
   isMobile?: boolean;
   mapRef?: RefObject<MapRef>;
   sceneProperty?: SceneProperty;
-  overriddenClock: Clock;
   viewport?: Viewport;
   camera?: Camera;
   interactionMode: InteractionModeType;
@@ -90,6 +90,8 @@ export type Props = {
   // plugin
   externalPlugin: ExternalPluginProps;
   useExperimentalSandbox?: boolean;
+  // timeline manager
+  timelineManagerRef?: TimelineManagerRef;
   // widget events
   onWidgetLayoutUpdate?: (
     id: string,
@@ -128,11 +130,9 @@ export default function Crust({
   isMobile,
   mapRef,
   sceneProperty,
-  overriddenClock,
   viewport,
   camera,
   interactionMode,
-  overrideInteractionMode,
   tags,
   selectedLayerId,
   selectedReason,
@@ -151,6 +151,8 @@ export default function Crust({
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
+  timelineManagerRef,
+  overrideInteractionMode,
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
@@ -180,7 +182,7 @@ export default function Crust({
     camera,
     sceneProperty,
     selectedLayerId,
-    overriddenClock,
+    timelineManagerRef,
   });
 
   return (
@@ -203,6 +205,7 @@ export default function Crust({
       overrideInteractionMode={overrideInteractionMode}
       useExperimentalSandbox={useExperimentalSandbox}
       overrideSceneProperty={overrideSceneProperty}
+      timelineManagerRef={timelineManagerRef}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}

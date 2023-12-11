@@ -189,3 +189,27 @@ func (i *Infobox) ValidateProperties(pm property.Map) error {
 
 	return nil
 }
+
+func (i *Infobox) Clone() *Infobox {
+	if i == nil {
+		return nil
+	}
+
+	clonedFields := make([]*InfoboxField, len(i.fields))
+	for idx, field := range i.fields {
+		if field != nil {
+			clonedFields[idx] = field.Clone()
+		}
+	}
+
+	clonedIDs := make(map[InfoboxFieldID]struct{})
+	for id, val := range i.ids {
+		clonedIDs[id] = val
+	}
+
+	return &Infobox{
+		property: i.property,
+		fields:   clonedFields,
+		ids:      clonedIDs,
+	}
+}

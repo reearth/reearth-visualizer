@@ -11,7 +11,15 @@ import {
   evalFeature,
   type Data,
 } from "../../mantle";
-import type { Atom, DataRange, Layer, ComputedLayer, ComputedFeature, Feature } from "../types";
+import type {
+  Atom,
+  DataRange,
+  Layer,
+  ComputedLayer,
+  ComputedFeature,
+  Feature,
+  LayerSimple,
+} from "../types";
 
 export type { Atom as Atom } from "../types";
 
@@ -35,6 +43,10 @@ export default function useHooks({
   selectedFeatureId?: string;
 }) {
   const [computedLayer, set] = useAtom(useMemo(() => atom ?? createAtom(), [atom]));
+  const writeLayer = useCallback(
+    (value: Partial<Pick<LayerSimple, "properties">>) => set({ type: "writeLayer", value }),
+    [set],
+  );
   const writeFeatures = useCallback(
     (features: Feature[]) => set({ type: "writeFeatures", features }),
     [set],
@@ -131,6 +143,7 @@ export default function useHooks({
   return {
     computedLayer,
     handleFeatureRequest: requestFetch,
+    handleLayerFetch: writeLayer,
     handleFeatureFetch: writeFeatures,
     handleComputedFeatureFetch: writeComputedFeatures,
     handleFeatureDelete: deleteFeatures,

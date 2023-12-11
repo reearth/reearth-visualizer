@@ -32,10 +32,10 @@ const Avatar: React.FC<Props> = ({
       justify="center"
       size={size}
       avatar={avatar}
-      background={background ?? theme.general.bg.veryWeak}
+      background={background ?? theme.bg[4]}
       borderRadius={borderRadius}>
       {innerText && (
-        <Text size="h4" color={theme.general.content.strong}>
+        <Text size="h4" color={theme.content.withBackground}>
           {typeof innerText === "number" ? `+${innerText.toString()}` : innerText.charAt(0)}
         </Text>
       )}

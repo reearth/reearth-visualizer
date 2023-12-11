@@ -6,6 +6,8 @@ scalar Lang
 scalar FileSize
 scalar TranslatedString
 scalar Cursor
+scalar JSON
+scalar Array
 
 # Meta Type
 
@@ -67,6 +69,13 @@ type Camera {
   fov: Float!
 }
 
+type Spacing {
+  top: Float!
+  bottom: Float!
+  left: Float!
+  right: Float!
+}
+
 type Rect {
   west: Float!
   south: Float!
@@ -83,6 +92,12 @@ type Typography {
   bold: Boolean
   italic: Boolean
   underline: Boolean
+}
+
+type Timeline {
+  currentTime: String
+  startTime: String
+  endTime: String
 }
 
 enum TextAlign {

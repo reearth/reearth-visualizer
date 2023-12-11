@@ -1,4 +1,4 @@
-import PublishedPage from "@reearth/classic/components/pages/Published";
+import PublishedPage from "@reearth/beta/pages/PublishedPage";
 
 import { Provider as DndProvider } from "./classic/util/use-dnd";
 import { PublishedProvider as I18nProvider } from "./services/i18n";

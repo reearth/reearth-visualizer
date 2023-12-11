@@ -12,6 +12,7 @@ import { Globe as CesiumGlobe } from "resium";
 import { objKeys } from "@reearth/beta/utils/util";
 
 import type { SceneProperty, TerrainProperty } from "../..";
+import { toColor } from "../common";
 
 export type Props = {
   property?: SceneProperty;
@@ -31,6 +32,7 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     const opts = {
       terrain: terrainProperty?.terrain,
       terrainType: terrainProperty?.terrainType,
+      terrainNormal: terrainProperty?.terrainNormal,
       terrainCesiumIonAccessToken:
         terrainProperty?.terrainCesiumIonAccessToken || cesiumIonAccessToken,
       terrainCesiumIonAsset: terrainProperty?.terrainCesiumIonAsset,
@@ -44,13 +46,27 @@ export default function Globe({ property, cesiumIonAccessToken }: Props): JSX.El
     terrainProperty?.terrainCesiumIonAccessToken,
     terrainProperty?.terrainCesiumIonAsset,
     terrainProperty?.terrainCesiumIonUrl,
+    terrainProperty?.terrainNormal,
     cesiumIonAccessToken,
   ]);
 
+  const baseColor = useMemo(
+    () => toColor(property?.atmosphere?.globeBaseColor),
+    [property?.atmosphere?.globeBaseColor],
+  );
+
   return (
     <CesiumGlobe
-      enableLighting={!!property?.atmosphere?.enable_lighting}
-      showGroundAtmosphere={property?.atmosphere?.ground_atmosphere ?? true}
+      baseColor={baseColor}
+      enableLighting={
+        !!(property?.atmosphere?.enable_lighting ?? property?.globeLighting?.globeLighting)
+      }
+      showGroundAtmosphere={
+        property?.atmosphere?.ground_atmosphere ??
+        property?.globeAtmosphere?.globeAtmosphere ??
+        true
+      }
+      atmosphereLightIntensity={property?.globeAtmosphere?.globeAtmosphereIntensity}
       atmosphereSaturationShift={property?.atmosphere?.surturation_shift}
       atmosphereHueShift={property?.atmosphere?.hue_shift}
       atmosphereBrightnessShift={property?.atmosphere?.brightness_shift}
@@ -82,24 +98,32 @@ const terrainProviders: {
     | ((
         opts: Pick<
           TerrainProperty,
-          "terrainCesiumIonAccessToken" | "terrainCesiumIonAsset" | "terrainCesiumIonUrl"
+          | "terrainCesiumIonAccessToken"
+          | "terrainCesiumIonAsset"
+          | "terrainCesiumIonUrl"
+          | "terrainNormal"
         >,
       ) => TerrainProvider | null);
 } = {
-  cesium: ({ terrainCesiumIonAccessToken }) =>
-    // https://github.com/CesiumGS/cesium/blob/main/Source/Core/createWorldTerrain.js
+  cesium: ({ terrainCesiumIonAccessToken, terrainNormal }) =>
     new CesiumTerrainProvider({
       url: IonResource.fromAssetId(1, {
         accessToken: terrainCesiumIonAccessToken,
       }),
-      requestVertexNormals: false,
+      requestVertexNormals: terrainNormal,
       requestWaterMask: false,
     }),
-  arcgis: () =>
+  arcgis: ({ terrainNormal }) =>
     new ArcGISTiledElevationTerrainProvider({
       url: "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+      requestVertexNormals: terrainNormal,
     }),
-  cesiumion: ({ terrainCesiumIonAccessToken, terrainCesiumIonAsset, terrainCesiumIonUrl }) =>
+  cesiumion: ({
+    terrainCesiumIonAccessToken,
+    terrainCesiumIonAsset,
+    terrainCesiumIonUrl,
+    terrainNormal,
+  }) =>
     terrainCesiumIonAsset
       ? new CesiumTerrainProvider({
           url:
@@ -107,7 +131,7 @@ const terrainProviders: {
             IonResource.fromAssetId(parseInt(terrainCesiumIonAsset, 10), {
               accessToken: terrainCesiumIonAccessToken,
             }),
-          requestVertexNormals: true,
+          requestVertexNormals: terrainNormal,
         })
       : null,
 };

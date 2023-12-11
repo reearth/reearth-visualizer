@@ -1,12 +1,12 @@
 package mongodoc
 
 import (
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/mongox"
 )
 
 type PolicyDocument struct {
-	ID                    workspace.PolicyID
+	ID                    policy.ID
 	Name                  string `bson:"name,omitempty"`
 	ProjectCount          *int
 	PublishedProjectCount *int
@@ -17,8 +17,8 @@ type PolicyDocument struct {
 	AssetStorageSize      *int64
 }
 
-func (d PolicyDocument) Model() *workspace.Policy {
-	return workspace.NewPolicy(workspace.PolicyOption{
+func (d PolicyDocument) Model() *policy.Policy {
+	return policy.New(policy.Option{
 		ID:                    d.ID,
 		Name:                  d.Name,
 		ProjectCount:          d.ProjectCount,
@@ -31,10 +31,10 @@ func (d PolicyDocument) Model() *workspace.Policy {
 	})
 }
 
-type PolicyConsumer = mongox.SliceFuncConsumer[*PolicyDocument, *workspace.Policy]
+type PolicyConsumer = mongox.SliceFuncConsumer[*PolicyDocument, *policy.Policy]
 
 func NewPolicyConsumer() *PolicyConsumer {
-	return mongox.NewSliceFuncConsumer(func(d *PolicyDocument) (*workspace.Policy, error) {
+	return mongox.NewSliceFuncConsumer(func(d *PolicyDocument) (*policy.Policy, error) {
 		return d.Model(), nil
 	})
 }

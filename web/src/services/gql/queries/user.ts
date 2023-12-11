@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "@reearth/services/gql/__gen__";
 
-export const GET_USER_BY_SEARCH = gql`
+export const GET_USER_BY_SEARCH = gql(`
   query GetUserBySearch($nameOrEmail: String!) {
     searchUser(nameOrEmail: $nameOrEmail) {
       id
@@ -8,31 +8,19 @@ export const GET_USER_BY_SEARCH = gql`
       email
     }
   }
-`;
+`);
 
-export const GET_ME = gql`
+export const GET_ME = gql(`
   query GetMe {
     me {
       id
       name
       email
+      lang
+      theme
       myTeam {
         id
         name
-        projects(first: 100) {
-          nodes {
-            id
-            publishmentStatus
-            isArchived
-            name
-            imageUrl
-            description
-            visualizer
-            scene {
-              id
-            }
-          }
-        }
         policyId
         policy {
           id
@@ -70,62 +58,13 @@ export const GET_ME = gql`
           datasetSchemaCount
           datasetCount
         }
-        projects(first: 100) {
-          nodes {
-            id
-            publishmentStatus
-            isArchived
-            name
-            imageUrl
-            description
-            visualizer
-            scene {
-              id
-            }
-          }
-        }
       }
       auths
     }
   }
-`;
+`);
 
-export const GET_PROFILE = gql`
-  query GetProfile {
-    me {
-      id
-      name
-      email
-      lang
-      theme
-      myTeam {
-        id
-        name
-      }
-      auths
-    }
-  }
-`;
-
-export const GET_LANGUAGE = gql`
-  query GetLanguage {
-    me {
-      id
-      lang
-    }
-  }
-`;
-
-export const GET_THEME = gql`
-  query GetTheme {
-    me {
-      id
-      theme
-    }
-  }
-`;
-
-export const UPDATE_ME = gql`
+export const UPDATE_ME = gql(`
   mutation UpdateMe(
     $name: String
     $email: String
@@ -157,12 +96,12 @@ export const UPDATE_ME = gql`
       }
     }
   }
-`;
+`);
 
-export const DELETE_ME = gql`
+export const DELETE_ME = gql(`
   mutation DeleteMe($userId: ID!) {
     deleteMe(input: { userId: $userId }) {
       userId
     }
   }
-`;
+`);

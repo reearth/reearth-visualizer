@@ -23,6 +23,7 @@ const (
 	gcsAssetBasePath  string = "assets"
 	gcsPluginBasePath string = "plugins"
 	gcsMapBasePath    string = "maps"
+	gcsStoryBasePath  string = "stories"
 	fileSizeLimit     int64  = 1024 * 1024 * 100 // about 100MB
 )
 
@@ -159,6 +160,43 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 		return gateway.ErrInvalidFile
 	}
 	return f.delete(ctx, path.Join(gcsMapBasePath, sn))
+}
+
+// Stories
+
+func (f *fileRepo) ReadStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
+	if name == "" {
+		return nil, rerror.ErrNotFound
+	}
+	return f.read(ctx, path.Join(gcsStoryBasePath, sanitize.Path(name)+".json"))
+}
+
+func (f *fileRepo) UploadStory(ctx context.Context, content io.Reader, name string) error {
+	sn := sanitize.Path(name + ".json")
+	if sn == "" {
+		return gateway.ErrInvalidFile
+	}
+	_, err := f.upload(ctx, path.Join(gcsStoryBasePath, sn), content)
+	return err
+}
+
+func (f *fileRepo) MoveStory(ctx context.Context, oldName, name string) error {
+	from := sanitize.Path(oldName + ".json")
+	dest := sanitize.Path(name + ".json")
+	if from == "" || dest == "" {
+		return gateway.ErrInvalidFile
+	}
+	return f.move(ctx, path.Join(gcsStoryBasePath, from), path.Join(gcsStoryBasePath, dest))
+}
+
+func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
+	log.Infofc(ctx, "gcs: story deleted: %s", name)
+
+	sn := sanitize.Path(name + ".json")
+	if sn == "" {
+		return gateway.ErrInvalidFile
+	}
+	return f.delete(ctx, path.Join(gcsStoryBasePath, sn))
 }
 
 // helpers

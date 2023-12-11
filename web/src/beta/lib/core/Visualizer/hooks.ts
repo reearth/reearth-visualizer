@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { clone } from "lodash-es";
+import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 
 // TODO: Move these utils
-import { convertTime, truncMinutes } from "@reearth/beta/utils/time";
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
 import type { Block, BuiltinWidgets, InteractionModeType } from "../Crust";
@@ -19,48 +19,54 @@ import type {
   DefaultInfobox,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
+import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
 
 const viewportMobileMaxWidth = 768;
 
-export default function useHooks({
-  selectedBlockId: initialSelectedBlockId,
-  camera: initialCamera,
-  interactionMode: initialInteractionMode,
-  sceneProperty,
-  isEditable,
-  rootLayerId,
-  zoomedLayerId,
-  ownBuiltinWidgets,
-  onLayerSelect,
-  onBlockSelect,
-  onCameraChange,
-  onInteractionModeChange,
-  onZoomToLayer,
-  onLayerDrop,
-}: {
-  selectedBlockId?: string;
-  camera?: Camera;
-  interactionMode?: InteractionModeType;
-  isEditable?: boolean;
-  rootLayerId?: string;
-  sceneProperty?: SceneProperty;
-  zoomedLayerId?: string;
-  ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
-  onLayerSelect?: (
-    layerId: string | undefined,
-    featureId: string | undefined,
-    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
-    reason: LayerSelectionReason | undefined,
-  ) => void;
-  onBlockSelect?: (blockId?: string) => void;
-  onCameraChange?: (camera: Camera) => void;
-  onInteractionModeChange?: (mode: InteractionModeType) => void;
-  onZoomToLayer?: (layerId: string | undefined) => void;
-  onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
-}) {
+export default function useHooks(
+  {
+    selectedBlockId: initialSelectedBlockId,
+    camera: initialCamera,
+    interactionMode: initialInteractionMode,
+    sceneProperty,
+    isEditable,
+    rootLayerId,
+    zoomedLayerId,
+    ownBuiltinWidgets,
+    onLayerSelect,
+    onBlockSelect,
+    onCameraChange,
+    onInteractionModeChange,
+    onZoomToLayer,
+    onLayerDrop,
+  }: {
+    selectedBlockId?: string;
+    camera?: Camera;
+    interactionMode?: InteractionModeType;
+    isEditable?: boolean;
+    rootLayerId?: string;
+    sceneProperty?: SceneProperty;
+    zoomedLayerId?: string;
+    ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
+    onLayerSelect?: (
+      layerId: string | undefined,
+      layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+      feature: ComputedFeature | undefined,
+      reason: LayerSelectionReason | undefined,
+    ) => void;
+    onBlockSelect?: (blockId?: string) => void;
+    onCameraChange?: (camera: Camera) => void;
+    onInteractionModeChange?: (mode: InteractionModeType) => void;
+    onZoomToLayer?: (layerId: string | undefined) => void;
+    onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+  },
+  ref: Ref<MapRef | null>,
+) {
   const mapRef = useRef<MapRef>(null);
+
+  useImperativeHandle(ref, () => mapRef.current, []);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -99,10 +105,7 @@ export default function useHooks({
   }>({});
   const [selectedFeature, selectFeature] = useState<Feature>();
   const [selectedComputedFeature, selectComputedFeature] = useState<ComputedFeature>();
-  useEffect(() => {
-    const { layerId, featureId, layer, reason } = selectedLayer;
-    onLayerSelect?.(layerId, featureId, async () => layer, reason);
-  }, [onLayerSelect, selectedLayer]);
+
   const handleLayerSelect = useCallback(
     async (
       layerId: string | undefined,
@@ -111,14 +114,30 @@ export default function useHooks({
       reason: LayerSelectionReason | undefined,
       info: SelectedFeatureInfo | undefined,
     ) => {
+      if (selectedLayer.layerId === layerId && selectedLayer.featureId === featureId) return;
+
       const computedLayer = await layer?.();
+      const computedFeature =
+        layerId && featureId
+          ? mapRef.current?.engine.findComputedFeatureById?.(layerId, featureId) ?? info?.feature
+          : undefined;
 
-      selectFeature(computedLayer?.originalFeatures.find(f => f.id === featureId));
-      selectComputedFeature(computedLayer?.features.find(f => f.id === featureId) ?? info?.feature);
+      selectFeature(
+        layerId && featureId
+          ? mapRef.current?.engine.findFeatureById?.(layerId, featureId)
+          : undefined,
+      );
+      selectComputedFeature(computedFeature);
 
-      selectLayer({ layerId, featureId, layer: computedLayer, reason });
+      selectLayer(l =>
+        l.layerId === layerId && l.featureId === featureId
+          ? l
+          : { layerId, featureId, layer: computedLayer, reason },
+      );
+
+      onLayerSelect?.(layerId, layer, computedFeature, reason);
     },
-    [],
+    [selectedLayer, onLayerSelect],
   );
 
   // blocks
@@ -135,11 +154,10 @@ export default function useHooks({
   const defaultInfobox = selectedLayer.reason?.defaultInfobox;
   const infobox = useMemo(
     () =>
-      selectedLayer
+      selectedLayer.layer?.layer?.infobox
         ? {
             title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
             isEditable: !!selectedLayer.layer?.layer?.infobox,
-            visible: !!selectedLayer.layer?.layer?.infobox || !!defaultInfobox,
             property: selectedLayer.layer?.layer?.infobox?.property?.default,
             blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }
@@ -152,47 +170,71 @@ export default function useHooks({
     }
   }, [infobox]);
 
+  const timelineManagerRef: TimelineManagerRef = useRef();
+
   // scene
-  const [overriddenSceneProperty, overrideSceneProperty] = useOverriddenProperty(sceneProperty);
+  const [overriddenSceneProperty, originalOverrideSceneProperty] =
+    useOverriddenProperty(sceneProperty);
 
-  // clock
-  const overriddenClock = useMemo(() => {
-    const { start, stop, current } = overriddenSceneProperty.timeline || {};
-    const startTime = convertTime(start)?.getTime();
-    const stopTime = convertTime(stop)?.getTime();
-    const currentTime = convertTime(current)?.getTime();
-
-    const DEFAULT_NEXT_RANGE = 86400000; // a day
-
-    // To avoid out of range error in Cesium, we need to turn back a hour.
-    const now = Date.now() - 3600000;
-
-    const convertedStartTime = startTime
-      ? Math.min(now, startTime)
-      : stopTime
-      ? Math.min(now, stopTime - DEFAULT_NEXT_RANGE)
-      : now - DEFAULT_NEXT_RANGE;
-
-    const convertedStopTime = stopTime
-      ? Math.min(stopTime, now)
-      : startTime
-      ? Math.min(now, startTime + DEFAULT_NEXT_RANGE)
-      : now;
-
-    return {
-      start: start || stop ? truncMinutes(new Date(convertedStartTime)) : undefined,
-      stop: start || stop ? new Date(convertedStopTime) : undefined,
-      current:
-        start || stop || current
-          ? new Date(
-              Math.max(
-                Math.min(convertedStopTime, currentTime || convertedStartTime),
-                convertedStartTime,
-              ),
-            )
-          : undefined,
-    };
-  }, [overriddenSceneProperty]);
+  const overrideSceneProperty = useCallback(
+    (pluginId: string, property: SceneProperty) => {
+      if (property.timeline) {
+        const filteredTimeline = clone(property.timeline);
+        delete filteredTimeline.visible;
+        if (Object.keys(filteredTimeline).length > 0) {
+          if (
+            filteredTimeline.current !== undefined ||
+            filteredTimeline.start !== undefined ||
+            filteredTimeline.stop !== undefined
+          ) {
+            timelineManagerRef?.current?.commit({
+              cmd: "SET_TIME",
+              payload: {
+                start:
+                  filteredTimeline.start ?? timelineManagerRef?.current?.computedTimeline.start,
+                stop: filteredTimeline.stop ?? timelineManagerRef?.current?.computedTimeline.stop,
+                current:
+                  filteredTimeline.current ?? timelineManagerRef?.current?.computedTimeline.current,
+              },
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+          if (
+            filteredTimeline.multiplier !== undefined ||
+            filteredTimeline.stepType !== undefined ||
+            filteredTimeline.rangeType !== undefined
+          ) {
+            timelineManagerRef?.current?.commit({
+              cmd: "SET_OPTIONS",
+              payload: {
+                stepType: filteredTimeline.stepType,
+                multiplier: filteredTimeline.multiplier,
+                rangeType: filteredTimeline.rangeType,
+              },
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+          if (filteredTimeline.animation !== undefined) {
+            timelineManagerRef?.current?.commit({
+              cmd: filteredTimeline.animation ? "PLAY" : "PAUSE",
+              committer: {
+                source: "overrideSceneProperty",
+                id: pluginId,
+              },
+            });
+          }
+        }
+      }
+      originalOverrideSceneProperty(pluginId, property);
+    },
+    [timelineManagerRef, originalOverrideSceneProperty],
+  );
 
   // block
   const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
@@ -263,7 +305,7 @@ export default function useHooks({
   return {
     mapRef,
     wrapperRef,
-    selectedLayer: selectedLayer,
+    selectedLayer,
     selectedFeature,
     selectedComputedFeature,
     selectedBlock,
@@ -273,11 +315,11 @@ export default function useHooks({
     featureFlags,
     isMobile,
     overriddenSceneProperty,
-    overriddenClock,
     isDroppable,
     infobox,
     isLayerDragging,
     shouldRender,
+    timelineManagerRef,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

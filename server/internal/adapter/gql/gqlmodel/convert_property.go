@@ -36,6 +36,19 @@ func ToPropertyValue(v *property.Value) *interface{} {
 			Italic:     v2.Italic,
 			Underline:  v2.Underline,
 		}
+	case property.Spacing:
+		res = Spacing{
+			Top:    v2.Top,
+			Bottom: v2.Bottom,
+			Left:   v2.Left,
+			Right:  v2.Right,
+		}
+	case property.Timeline:
+		res = Timeline{
+			CurrentTime: v2.CurrentTime,
+			StartTime:   v2.StartTime,
+			EndTime:     v2.EndTime,
+		}
 	default:
 		res = valueInterfaceToGqlValue(v2)
 	}
@@ -86,6 +99,19 @@ func FromPropertyValueAndType(v interface{}, t ValueType) *property.Value {
 			Bold:       v2.Bold,
 			Italic:     v2.Italic,
 			Underline:  v2.Underline,
+		}
+	case *Spacing:
+		v = property.Spacing{
+			Top:    v2.Top,
+			Bottom: v2.Bottom,
+			Left:   v2.Left,
+			Right:  v2.Right,
+		}
+	case *Timeline:
+		v = property.Timeline{
+			CurrentTime: v2.CurrentTime,
+			StartTime:   v2.StartTime,
+			EndTime:     v2.EndTime,
 		}
 	default:
 		v = gqlValueToValueInterface(v2)
@@ -288,6 +314,12 @@ func ToPropertySchemaFieldUI(ui *property.SchemaFieldUI) *PropertySchemaFieldUI 
 		ui2 = PropertySchemaFieldUILayer
 	case property.SchemaFieldUICameraPose:
 		ui2 = PropertySchemaFieldUICameraPose
+	case property.SchemaFieldUIPadding:
+		ui2 = PropertySchemaFieldUIPadding
+	case property.SchemaFieldUIMargin:
+		ui2 = PropertySchemaFieldUIMargin
+	case property.SchemaFieldUIDateTime:
+		ui2 = PropertySchemaFieldUIDatetime
 	}
 	if ui2 != PropertySchemaFieldUI("") {
 		return &ui2
@@ -386,6 +418,7 @@ func ToPropertySchemaGroup(g *property.SchemaGroup, s property.SchemaID) *Proper
 		IsList:                g.IsList(),
 		Title:                 g.Title().StringRef(),
 		Fields:                fields,
+		Collection:            g.Collection().StringRef(),
 		RepresentativeFieldID: IDFromStringRef(representativeFieldID),
 		RepresentativeField:   representativeField,
 		AllTranslatedTitle:    g.Title(),

@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 
 import { DEFAULT_TAG_ID } from "@reearth/classic/components/molecules/EarthEditor/TagPane/common";
 import { TagGroup } from "@reearth/classic/components/molecules/EarthEditor/TagPane/SceneTagPane";
-import { useAuth } from "@reearth/services/auth";
 import {
   useAttachTagToLayerMutation,
   useCreateTagGroupMutation,
@@ -12,7 +11,8 @@ import {
   useGetSceneTagsQuery,
   useRemoveTagMutation,
   useUpdateTagMutation,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
+import { useAuth } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useSceneId, useSelected } from "@reearth/services/state";
 

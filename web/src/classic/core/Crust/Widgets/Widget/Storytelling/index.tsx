@@ -21,6 +21,7 @@ export type Property = {
     range?: number;
     camera?: Camera;
     autoStart?: boolean;
+    visible?: "always" | "desktop" | "mobile";
   };
   stories?: StoryType[];
 };

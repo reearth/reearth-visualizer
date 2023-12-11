@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import NotFound from "@reearth/beta/components/NotFound";
 import Editor from "@reearth/beta/features/Editor";
 import { isTab } from "@reearth/beta/features/Navbar";
-import { AuthenticationRequiredPage } from "@reearth/services/auth";
+import Page from "@reearth/beta/pages/Page";
 
 type Props = {};
 
@@ -13,9 +13,10 @@ const EditorPage: React.FC<Props> = () => {
   return !sceneId || !tab || !isTab(tab) ? (
     <NotFound />
   ) : (
-    <AuthenticationRequiredPage>
-      <Editor tab={tab} sceneId={sceneId} />
-    </AuthenticationRequiredPage>
+    <Page
+      sceneId={sceneId}
+      renderItem={props => <Editor tab={tab} sceneId={sceneId} {...props} />}
+    />
   );
 };
 

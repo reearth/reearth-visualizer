@@ -5,7 +5,7 @@ import CanvasArea from "@reearth/classic/components/organisms/EarthEditor/Canvas
 import CoreCanvasArea from "@reearth/classic/components/organisms/EarthEditor/core/CanvasArea";
 import { useCore } from "@reearth/classic/util/use-core";
 import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
-import { withAuthorisation, AuthenticationRequiredPage } from "@reearth/services/auth";
+import { AuthenticatedPage } from "@reearth/services/auth";
 import { useSceneId } from "@reearth/services/state";
 import { PublishedAppProvider as ThemeProvider } from "@reearth/services/theme";
 
@@ -25,12 +25,12 @@ const PreviewPage: React.FC<Props> = () => {
   return sceneId2 ? (
     <ThemeProvider>
       <DndProvider>
-        <AuthenticationRequiredPage>
+        <AuthenticatedPage>
           {typeof core === "boolean" && (core ? <CoreCanvasArea /> : <CanvasArea />)}
-        </AuthenticationRequiredPage>
+        </AuthenticatedPage>
       </DndProvider>
     </ThemeProvider>
   ) : null;
 };
 
-export default withAuthorisation()(PreviewPage);
+export default PreviewPage;

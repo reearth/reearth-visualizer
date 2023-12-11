@@ -2,13 +2,13 @@ package mongodoc
 
 import (
 	"github.com/reearth/reearth/server/pkg/config"
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearth/server/pkg/policy"
 )
 
 type ConfigDocument struct {
 	Migration     int64
 	Auth          *Auth
-	DefaultPolicy *workspace.PolicyID
+	DefaultPolicy *policy.ID
 }
 
 type Auth struct {

@@ -16,25 +16,27 @@ type PropertySchemaDocument struct {
 }
 
 type PropertySchemaGroupDocument struct {
-	ID            string
-	Fields        []*PropertySchemaFieldDocument
-	List          bool
-	IsAvailableIf *PropertyConditonDocument
-	Title         map[string]string
+	ID                    string
+	Fields                []*PropertySchemaFieldDocument
+	List                  bool
+	IsAvailableIf         *PropertyConditonDocument
+	Title                 map[string]string
+	RepresentativeFieldID *string `bson:",omitempty"`
 }
 
 type PropertySchemaFieldDocument struct {
-	ID           string
-	Type         string
-	Name         map[string]string
-	Description  map[string]string
-	Prefix       string
-	Suffix       string
-	DefaultValue interface{}
-	UI           *string
-	Min          *float64
-	Max          *float64
-	Choices      []PropertySchemaFieldChoiceDocument
+	ID            string
+	Type          string
+	Name          map[string]string
+	Description   map[string]string
+	Prefix        string
+	Suffix        string
+	DefaultValue  interface{}
+	UI            *string
+	Min           *float64
+	Max           *float64
+	Choices       []PropertySchemaFieldChoiceDocument
+	IsAvailableIf *PropertyConditonDocument `bson:",omitempty"`
 }
 
 type PropertySchemaFieldChoiceDocument struct {
@@ -73,16 +75,17 @@ func NewPropertySchemaField(f *property.SchemaField) *PropertySchemaFieldDocumen
 	}
 
 	field := &PropertySchemaFieldDocument{
-		ID:           string(f.ID()),
-		Name:         f.Title(),
-		Suffix:       f.Suffix(),
-		Prefix:       f.Prefix(),
-		Description:  f.Description(),
-		Type:         string(f.Type()),
-		DefaultValue: f.DefaultValue().Value(),
-		UI:           f.UI().StringRef(),
-		Min:          f.Min(),
-		Max:          f.Max(),
+		ID:            string(f.ID()),
+		Name:          f.Title(),
+		Suffix:        f.Suffix(),
+		Prefix:        f.Prefix(),
+		Description:   f.Description(),
+		Type:          string(f.Type()),
+		DefaultValue:  f.DefaultValue().Value(),
+		UI:            f.UI().StringRef(),
+		Min:           f.Min(),
+		Max:           f.Max(),
+		IsAvailableIf: newPropertyCondition(f.IsAvailableIf()),
 	}
 	if choices := f.Choices(); choices != nil {
 		field.Choices = make([]PropertySchemaFieldChoiceDocument, 0, len(choices))
@@ -167,6 +170,7 @@ func ToModelPropertySchemaField(f *PropertySchemaFieldDocument) (*property.Schem
 		MinRef(f.Min).
 		MaxRef(f.Max).
 		Choices(choices).
+		IsAvailableIf(toModelPropertyCondition(f.IsAvailableIf)).
 		Build()
 }
 
@@ -232,11 +236,12 @@ func newPropertySchemaGroup(p *property.SchemaGroup) *PropertySchemaGroupDocumen
 	}
 
 	return &PropertySchemaGroupDocument{
-		ID:            string(p.ID()),
-		List:          p.IsList(),
-		IsAvailableIf: newPropertyCondition(p.IsAvailableIf()),
-		Title:         p.Title(),
-		Fields:        fields,
+		ID:                    string(p.ID()),
+		List:                  p.IsList(),
+		IsAvailableIf:         newPropertyCondition(p.IsAvailableIf()),
+		Title:                 p.Title(),
+		RepresentativeFieldID: p.RepresentativeFieldID().StringRef(),
+		Fields:                fields,
 	}
 }
 
@@ -260,6 +265,7 @@ func (d *PropertySchemaGroupDocument) Model() (*property.SchemaGroup, error) {
 		Title(d.Title).
 		IsAvailableIf(toModelPropertyCondition(d.IsAvailableIf)).
 		Fields(fields).
+		RepresentativeField(id.PropertyFieldIDFromRef(d.RepresentativeFieldID)).
 		Build()
 }
 

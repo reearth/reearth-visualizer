@@ -14,6 +14,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -23,8 +25,8 @@ type Project struct {
 	commonSceneLock
 	assetRepo         repo.Asset
 	projectRepo       repo.Project
-	userRepo          repo.User
-	workspaceRepo     repo.Workspace
+	userRepo          accountrepo.User
+	workspaceRepo     accountrepo.Workspace
 	sceneRepo         repo.Scene
 	propertyRepo      repo.Property
 	layerRepo         repo.Layer
@@ -34,6 +36,8 @@ type Project struct {
 	transaction       usecasex.Transaction
 	policyRepo        repo.Policy
 	file              gateway.File
+	nlsLayerRepo      repo.NLSLayer
+	layerStyles       repo.Style
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
@@ -52,6 +56,8 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		transaction:       r.Transaction,
 		policyRepo:        r.Policy,
 		file:              gr.File,
+		nlsLayerRepo:      r.NLSLayer,
+		layerStyles:       r.Style,
 	}
 }
 
@@ -59,7 +65,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Oper
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id id.WorkspaceID, p *usecasex.Pagination, _ *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, p *usecasex.Pagination, _ *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 	return i.projectRepo.FindByWorkspace(ctx, id, p)
 }
 
@@ -263,6 +269,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if err != nil {
 		return nil, err
 	}
+	coreSupport := prj.CoreSupport()
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
@@ -272,18 +279,25 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
-	if prj.PublishmentStatus() == project.PublishmentStatusPrivate {
-		// enforce policy
+	// enforce policy
+	if params.Status != project.PublishmentStatusPrivate {
 		if policyID := operator.Policy(ws.Policy()); policyID != nil {
 			p, err := i.policyRepo.FindByID(ctx, *policyID)
 			if err != nil {
 				return nil, err
 			}
-			s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+
+			projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
 			if err != nil {
 				return nil, err
 			}
-			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
+
+			// newrly published
+			if prj.PublishmentStatus() == project.PublishmentStatusPrivate {
+				projectCount += 1
+			}
+
+			if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
 				return nil, err
 			}
 		}
@@ -326,6 +340,16 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newPublishedAlias := newAlias
 
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	// Lock
 	if err := i.UpdateSceneLock(ctx, sceneID, scene.LockModeFree, scene.LockModePublishing); err != nil {
 		return nil, err
@@ -357,7 +381,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.DatasetGraphLoaderFrom(i.datasetRepo),
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
-			).BuildScene(ctx, w, s, time.Now())
+				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport)
 		}()
 
 		// Save

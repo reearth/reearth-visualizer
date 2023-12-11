@@ -28,6 +28,7 @@ test("simple", () => {
     },
     onFeatureDelete: expect.any(Function),
     onFeatureFetch: expect.any(Function),
+    onLayerFetch: expect.any(Function),
     onComputedFeatureFetch: expect.any(Function),
     onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
@@ -45,6 +46,7 @@ test("simple", () => {
     },
     onFeatureDelete: expect.any(Function),
     onFeatureFetch: expect.any(Function),
+    onLayerFetch: expect.any(Function),
     onComputedFeatureFetch: expect.any(Function),
     onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
@@ -72,7 +74,7 @@ test("tree", () => {
       id: "a",
       type: "group",
       children: [
-        { id: "b", type: "simple" },
+        { id: "b", type: "simple", visible: true },
         { id: "c", type: "group", children: [] },
       ],
     },
@@ -83,7 +85,7 @@ test("tree", () => {
   expect(Feature.mock.calls[0][0].layer).toEqual({
     id: "b",
     features: [],
-    layer: { id: "b", type: "simple" },
+    layer: { id: "b", type: "simple", visible: true },
     status: "ready",
     originalFeatures: [],
   });
@@ -105,7 +107,7 @@ test("ref", async () => {
         ref.current?.replace({ id: layerId.current, type: "simple", title: "A" });
         ss(ref.current?.findById(layerId.current)?.title ?? "");
       } else {
-        const newLayer = ref.current?.add({ type: "simple", title: "a" });
+        const newLayer = ref.current?.add({ type: "simple", title: "a", visible: true });
         layerId.current = newLayer?.id ?? "";
         ss(newLayer?.title ?? "");
       }
@@ -119,7 +121,6 @@ test("ref", async () => {
     );
   }
 
-  // add should add layers and getLayer should return a lazy layer
   const { rerender } = render(<Comp />);
 
   await waitFor(() => expect(screen.getByTestId("layer")).toHaveTextContent("a"));
@@ -128,17 +129,15 @@ test("ref", async () => {
   expect(Feature.mock.calls[0][0].layer).toEqual({
     id: expect.any(String),
     features: [],
-    layer: { id: expect.any(String), type: "simple", title: "a" },
+    layer: { id: expect.any(String), type: "simple", title: "a", visible: true },
     status: "ready",
     originalFeatures: [],
   });
 
-  // update should update the layer
   rerender(<Comp replace />);
 
   await waitFor(() => expect(screen.getByTestId("layer")).toHaveTextContent("A"));
 
-  // deleteLayer should delete the layer and getLayer should return nothing
   rerender(<Comp del />);
 
   await waitFor(() => expect(screen.getByTestId("layer")).toBeEmptyDOMElement());
@@ -149,6 +148,7 @@ test("computed", async () => {
     {
       id: "x",
       type: "simple",
+      visible: true,
       data: {
         type: "geojson",
         value: {

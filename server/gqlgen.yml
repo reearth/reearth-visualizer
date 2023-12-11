@@ -26,6 +26,10 @@ models:
     model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Lang
   ID:
     model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.ID
+  JSON:
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.JSON
+  Array:
+    model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Array
   Asset:
     fields:
       team:
@@ -300,9 +304,15 @@ models:
         resolver: true
       rootLayer:
         resolver: true
+      newLayers:
+        resolver: true
       datasetSchemas:
         resolver: true
       tags:
+        resolver: true
+      stories:
+        resolver: true
+      styles:
         resolver: true
   SceneWidget:
     fields:
@@ -360,3 +370,41 @@ models:
         resolver: true
       myTeam:
         resolver: true
+  Story:
+    fields:
+      scene:
+        resolver: true
+      property:
+        resolver: true
+  StoryPage:
+    fields:
+      scene:
+        resolver: true
+      property:
+        resolver: true
+      layers:
+        resolver: true
+      swipeableLayers:
+        resolver: true
+  StoryBlock:
+    fields:
+      scene:
+        resolver: true
+      property:
+        resolver: true
+      plugin:
+        resolver: true
+      pluginExtension:
+        resolver: true
+  NLSLayerSimple:
+    fields:
+      scene:
+        resolver: true
+  NLSLayerGroup:
+    fields:
+      scene:
+        resolver: true
+  Style:
+    fields:
+      scene:
+        resolver: true  

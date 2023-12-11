@@ -7,17 +7,27 @@ import Portal from "../Portal";
 
 export type Props = {
   className?: string;
+  animationSize?: number;
+  animationColor?: string;
   portal?: boolean;
   fixed?: boolean;
   relative?: boolean;
   overlay?: boolean;
 };
 
-const Loading: React.FC<Props> = ({ className, portal, fixed, relative, overlay }) => {
+const Loading: React.FC<Props> = ({
+  className,
+  animationSize,
+  animationColor,
+  portal,
+  fixed,
+  relative,
+  overlay,
+}) => {
   const theme = useTheme();
   const loading = (
     <LoadingWrapper className={className} fixed={fixed} overlay={overlay} relative={relative}>
-      <RingLoader size={33} color={theme.general.content.main} />
+      <RingLoader size={animationSize ?? 33} color={animationColor ?? theme.select.main} />
     </LoadingWrapper>
   );
   return portal ? <Portal>{loading}</Portal> : loading;
@@ -33,9 +43,9 @@ const LoadingWrapper = styled.div<{ fixed?: boolean; overlay?: boolean; relative
   position: ${({ fixed, relative }) => (fixed ? "fixed" : relative ? "relative" : "absolute")};
   top: 0;
   left: 0;
-  background: ${({ overlay, theme }) => (overlay ? theme.general.bg.veryStrong : null)};
+  background: ${({ overlay, theme }) => (overlay ? theme.bg[0] : null)};
   opacity: 0.8;
-  z-index: ${props => props.theme.zIndexes.loading};
+  z-index: ${props => props.theme.zIndexes.editor.loading};
 `;
 
 export default Loading;

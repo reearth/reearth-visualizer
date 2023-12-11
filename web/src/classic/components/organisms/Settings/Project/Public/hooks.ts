@@ -8,7 +8,7 @@ import {
   PublishmentStatus,
   usePublishProjectMutation,
   useUpdateProjectMutation,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 import { useLang as useCurrentLang } from "@reearth/services/i18n";
 import {
   useWorkspace,

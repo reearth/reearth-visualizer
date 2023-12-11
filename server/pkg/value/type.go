@@ -25,6 +25,7 @@ var defaultTypes = TypePropertyMap{
 	TypeRef:          &propertyRef{},
 	TypeString:       &propertyString{},
 	TypeURL:          &propertyURL{},
+	TypeArray:        &propertyArray{},
 }
 
 func (t Type) Default() bool {

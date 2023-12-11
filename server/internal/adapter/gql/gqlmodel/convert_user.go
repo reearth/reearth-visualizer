@@ -1,7 +1,7 @@
 package gqlmodel
 
 import (
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/util"
 )
 

@@ -12,8 +12,8 @@ import {
   useUpdateMemberOfTeamMutation,
   Role,
   useRemoveMemberFromTeamMutation,
-} from "@reearth/services/gql";
-import { Team } from "@reearth/services/gql/graphql-client-api";
+} from "@reearth/classic/gql";
+import { Team } from "@reearth/classic/gql/graphql-client-api";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
@@ -183,6 +183,7 @@ export default (params: Params) => {
             role: {
               READER: Role.Reader,
               WRITER: Role.Writer,
+              MAINTAINER: Role.Maintainer,
               OWNER: Role.Owner,
             }[role],
           },

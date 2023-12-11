@@ -19,12 +19,12 @@ const DropHolder: React.FC<Props> = ({ className }) => {
 
 const DraggableView = styled.div`
   position: absolute;
-  z-index: ${props => props.theme.zIndexes.dropDown};
+  z-index: ${props => props.theme.zIndexes.visualizer.overlay};
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: ${props => props.theme.general.select};
+  background: ${props => props.theme.select.main};
   opacity: 0.5;
   display: flex;
   align-items: center;
@@ -32,7 +32,7 @@ const DraggableView = styled.div`
 `;
 
 const DragMessage = styled.p`
-  color: ${props => props.theme.general.content.main};
+  color: ${props => props.theme.content.main};
   opacity: 1;
 `;
 

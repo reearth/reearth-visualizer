@@ -5,7 +5,7 @@ import {
   useGetLayerPropertyQuery,
   useGetLinkableDatasetsQuery,
   useGetLayersFromLayerIdQuery,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 import { Selected } from "@reearth/services/state";
 
 import { convert, Pane, convertLinkableDatasets, convertLayers } from "./convert";

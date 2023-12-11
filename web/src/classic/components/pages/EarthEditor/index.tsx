@@ -11,7 +11,7 @@ import PrimitiveHeader from "@reearth/classic/components/organisms/EarthEditor/P
 import RightMenu from "@reearth/classic/components/organisms/EarthEditor/RightMenu";
 import { useCore } from "@reearth/classic/util/use-core";
 import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
-import { withAuthorisation, AuthenticationRequiredPage } from "@reearth/services/auth";
+import { AuthenticatedPage } from "@reearth/services/auth";
 
 import useHooks from "./hooks";
 
@@ -25,7 +25,7 @@ const EarthEditor: React.FC<Props> = () => {
   const core = useCore("earth_editor");
 
   return (
-    <AuthenticationRequiredPage>
+    <AuthenticatedPage>
       <BrowserWidthWarning />
       <DndProvider>
         <EarthEditorPage
@@ -41,8 +41,8 @@ const EarthEditor: React.FC<Props> = () => {
           right={<RightMenu />}
         />
       </DndProvider>
-    </AuthenticationRequiredPage>
+    </AuthenticatedPage>
   );
 };
 
-export default withAuthorisation()(EarthEditor);
+export default EarthEditor;

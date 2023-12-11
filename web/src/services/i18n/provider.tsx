@@ -4,14 +4,16 @@ import { I18nextProvider } from "react-i18next";
 import "dayjs/locale/ja";
 
 import { useAuth } from "@reearth/services/auth";
-import { useGetLanguageQuery } from "@reearth/services/gql";
+
+import { useMeFetcher } from "../api";
 
 import i18n from "./i18n";
 
 export default function Provider({ children }: { children?: ReactNode }) {
   const { isAuthenticated } = useAuth();
-  const { data } = useGetLanguageQuery({ skip: !isAuthenticated });
-  const locale = data?.me?.lang;
+  const { useMeQuery } = useMeFetcher();
+  const { me } = useMeQuery({ skip: !isAuthenticated });
+  const locale = me?.lang;
 
   dayjs.locale(locale);
 

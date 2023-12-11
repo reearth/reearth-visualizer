@@ -48,3 +48,24 @@ export const bindFunc3 = <F extends (a: A, b: B, c: C, ...args: any[]) => any, A
   isPresent(f) && isPresent(a) && isPresent(b) && isPresent(c)
     ? (...args: Args3<F>) => f(a, b, c, ...args)
     : undefined;
+export function checkIfFileType(url: string, fileTypes: string) {
+  const formats = fileTypes.split(/,.|\./).splice(1);
+  let regexString = "\\.(";
+
+  for (let i = 0; i < formats.length; i++) {
+    if (i === formats.length - 1) {
+      regexString += formats[i];
+    } else {
+      regexString += formats[i] + "|";
+    }
+  }
+  regexString += ")$";
+
+  const regex = new RegExp(regexString);
+
+  return regex.test(url);
+}
+
+export const isEmptyString = function (text: string): boolean {
+  return text === null || /^ *$/.test(text);
+};

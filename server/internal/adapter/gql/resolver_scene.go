@@ -53,6 +53,21 @@ func (r *sceneResolver) RootLayer(ctx context.Context, obj *gqlmodel.Scene) (*gq
 	return layerGroup, nil
 }
 
+func (r *sceneResolver) NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error) {
+	sid, err := gqlmodel.ToID[id.Scene](obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	nlslayer, err := usecases(ctx).NLSLayer.FetchByScene(ctx, sid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	res := gqlmodel.ToNLSLayers(nlslayer, nil)
+	return res, nil
+}
+
 func (r *sceneResolver) DatasetSchemas(ctx context.Context, obj *gqlmodel.Scene, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.DatasetSchemaConnection, error) {
 	return loaders(ctx).Dataset.FindSchemaByScene(ctx, obj.ID, first, last, before, after)
 }
@@ -72,6 +87,36 @@ func (r *sceneResolver) Tags(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmod
 	for _, t := range tags {
 		res = append(res, gqlmodel.ToTag(*t))
 	}
+	return res, nil
+}
+
+func (r *sceneResolver) Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error) {
+	sid, err := gqlmodel.ToID[id.Scene](obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	stories, err := usecases(ctx).StoryTelling.FetchByScene(ctx, sid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	res := gqlmodel.ToStories(*stories)
+	return res, nil
+}
+
+func (r *sceneResolver) Styles(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Style, error) {
+	sid, err := gqlmodel.ToID[id.Scene](obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	styles, err := usecases(ctx).Style.FetchByScene(ctx, sid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	res := gqlmodel.ToStyles(*styles)
 	return res, nil
 }
 

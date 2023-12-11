@@ -1,10 +1,10 @@
 import { lazy } from "react";
 import { BrowserRouter as Router, Navigate, Route, Routes, useParams } from "react-router-dom";
 
+import NotFound from "@reearth/beta/components/NotFound";
 import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
 import PasswordResetPage from "@reearth/classic/components/pages/Authentication/PasswordReset";
 import SignupPage from "@reearth/classic/components/pages/Authentication/SignupPage";
-import NotFound from "@reearth/classic/components/pages/NotFound";
 import AccountSettings from "@reearth/classic/components/pages/Settings/Account";
 import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
 import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
@@ -20,6 +20,7 @@ import RootPage from "../../classic/components/pages/Authentication/RootPage";
 import Preview from "../../classic/components/pages/Preview";
 
 const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
+const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
 
 const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
 const Dashboard = lazy(() => import("@reearth/classic/components/pages/Dashboard"));
@@ -33,6 +34,10 @@ export const AppRoutes = () => {
       <StyledRouter>
         <Routes>
           <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
+          <Route
+            path="settings/project/:projectId/:tab?/:subId?"
+            element={<BetaProjectSettings />}
+          />
           {/* Beta routes - end */}
           {/* classic routes - start */}
           <Route index={true} element={<RootPage />} />
@@ -85,10 +90,7 @@ const redirects = [
   ["/settings/workspace/:workspaceId", "/settings/workspaces/:workspaceId"],
   ["/settings/workspace/:workspaceId/projects", "/settings/workspaces/:workspaceId/projects"],
   ["/settings/workspace/:workspaceId/asset", "/settings/workspaces/:workspaceId/asset"],
-  ["/settings/project/:projectId", "/settings/projects/:projectId"],
-  ["/settings/project/:projectId/public", "/settings/projects/:projectId/public"],
   ["/settings/project/:projectId/dataset", "/settings/projects/:projectId/dataset"],
-  ["/settings/project/:projectId/plugins", "/settings/projects/:projectId/plugins"],
 ];
 
 function Redirect({ to }: { to: string }) {

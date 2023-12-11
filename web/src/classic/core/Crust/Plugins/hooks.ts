@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { CameraPosition, NaiveLayer } from "@reearth/classic/core/mantle";
 import {
   type MouseEventHandles,
@@ -13,7 +14,7 @@ import {
   TickEventCallback,
 } from "@reearth/classic/core/Map";
 
-import { commonReearth } from "./api";
+import { CommonReearth, commonReearth } from "./api";
 import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
 import { Context, Props } from "./types";
 import useClientStorage from "./useClientStorage";
@@ -86,8 +87,8 @@ export default function ({
     [overrideSceneProperty],
   );
 
-  const flyTo = useCallback(
-    (target: string | FlyToDestination, options?: CameraOptions | undefined) => {
+  const flyTo: FlyTo = useCallback(
+    (target, options) => {
       engineRef?.flyTo(target, options);
     },
     [engineRef],
@@ -444,7 +445,7 @@ export default function ({
 
   // expose plugin API for developers
   useEffect(() => {
-    window.reearth = value.reearth;
+    ((window as any).reearth as CommonReearth) = value.reearth;
     return () => {
       delete window.reearth;
     };

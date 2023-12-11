@@ -5,8 +5,10 @@ import type {
   ReactNode,
   CSSProperties,
   RefObject,
+  MutableRefObject,
 } from "react";
 
+import { PickedFeature } from "../../engines/Cesium/pickMany";
 import type {
   LatLngHeight,
   Camera,
@@ -14,13 +16,17 @@ import type {
   LatLng,
   DataType,
   SelectedFeatureInfo,
+  Feature,
+  ComputedFeature,
 } from "../../mantle";
+import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 import type {
   FeatureComponentType,
   ClusterComponentType,
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
+import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
   FeatureComponentProps,
@@ -59,9 +65,15 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
+  getCameraFovInfo: (options: { withTerrain?: boolean; calcViewSize?: boolean }) =>
+    | {
+        center?: LatLngHeight;
+        viewSize?: number;
+      }
+    | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
-  flyTo: (target: string | FlyToDestination, options?: CameraOptions) => void;
+  flyTo: FlyTo;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
@@ -94,6 +106,22 @@ export type EngineRef = {
   onTick: TickEvent;
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
+  findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
+  findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
+  findComputedFeatureById: (layerId: string, featureId: string) => ComputedFeature | undefined;
+  findComputedFeaturesByIds: (
+    layerId: string,
+    featureId: string[],
+  ) => ComputedFeature[] | undefined;
+  selectFeatures: (layerId: string, featureId: string[]) => void;
+  unselectFeatures: (layerId: string, featureId: string[]) => void;
+  pickManyFromViewport: (
+    windowPosition: [x: number, y: number],
+    windowWidth: number,
+    windowHeight: number,
+    // TODO: Get condition as expression for plugin
+    condition?: (f: PickedFeature) => boolean,
+  ) => PickedFeature[] | undefined;
 };
 
 export type EngineProps = {
@@ -102,7 +130,6 @@ export type EngineProps = {
   isEditable?: boolean;
   isBuilt?: boolean;
   property?: SceneProperty;
-  overriddenClock?: Clock;
   camera?: Camera;
   small?: boolean;
   children?: ReactNode;
@@ -118,6 +145,8 @@ export type EngineProps = {
   shouldRender?: boolean;
   meta?: Record<string, unknown>;
   layersRef?: RefObject<LayersRef>;
+  requestingRenderMode?: MutableRefObject<RequestingRenderMode>;
+  timelineManagerRef?: TimelineManagerRef;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId?: string,
@@ -132,6 +161,7 @@ export type EngineProps = {
     position: LatLng | undefined,
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  onMount?: () => void;
 };
 
 export type LayerEditEvent = {
@@ -198,47 +228,6 @@ export type MouseEventHandles = {
 export type SceneMode = "3d" | "2d" | "columbus";
 export type IndicatorTypes = "default" | "crosshair" | "custom";
 
-export type FlyToDestination = {
-  /** Degrees */
-  lat?: number;
-  /** Degrees */
-  lng?: number;
-  /** Meters */
-  height?: number;
-  /** Radian */
-  heading?: number;
-  /** Radian */
-  pitch?: number;
-  /** Radian */
-  roll?: number;
-  /** Radian */
-  fov?: number;
-};
-
-export type LookAtDestination = {
-  /** Degrees */
-  lat?: number;
-  /** Degrees */
-  lng?: number;
-  /** Meters */
-  height?: number;
-  /** Radian */
-  heading?: number;
-  /** Radian */
-  pitch?: number;
-  /** Radian */
-  range?: number;
-  /** Radian */
-  fov?: number;
-};
-
-export type CameraOptions = {
-  /** Seconds */
-  duration?: number;
-  easing?: (time: number) => number;
-  withoutAnimation?: boolean;
-};
-
 export type TerrainProperty = {
   terrain?: boolean;
   terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
@@ -249,9 +238,63 @@ export type TerrainProperty = {
   terrainCesiumIonAccessToken?: string;
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
+  terrainNormal?: boolean;
 };
 
 export type SceneProperty = {
+  main?: {
+    sceneMode?: SceneMode; // default: scene3d
+    ion?: string;
+    vr?: boolean;
+  };
+  tiles?: {
+    id: string;
+    tile_type?: string;
+    tile_url?: string;
+    tile_zoomLevel?: number[];
+    tile_opacity?: number;
+  }[];
+  terrain?: {
+    terrain?: boolean;
+    terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
+    terrainCesiumIonAsset?: string;
+    terrainCesiumIonAccessToken?: string;
+    terrainCesiumIonUrl?: string;
+    terrainExaggeration?: number; // default: 1
+    terrainExaggerationRelativeHeight?: number; // default: 0
+    depthTestAgainstTerrain?: boolean;
+  };
+  globeLighting?: {
+    globeLighting?: boolean;
+  };
+  globeShadow?: {
+    globeShadow?: boolean;
+  };
+  globeAtmosphere?: {
+    globeAtmosphere?: boolean;
+    globeAtmosphereIntensity?: number; // default: 10
+  };
+  skyBox?: {
+    skyBox?: boolean;
+  };
+  sun?: {
+    sun?: boolean;
+  };
+  moon?: {
+    moon?: boolean;
+  };
+  skyAtmosphere?: {
+    skyAtmosphere?: boolean;
+    skyAtmosphereIntensity?: number; // default: 50
+  };
+  camera?: {
+    camera?: Camera;
+    allowEnterGround?: boolean;
+    fov?: number;
+  };
+} & LegacySceneProperty;
+
+type LegacySceneProperty = {
   default?: {
     camera?: Camera;
     allowEnterGround?: boolean;
@@ -277,13 +320,13 @@ export type SceneProperty = {
     id: string;
     tile_type?: string;
     tile_url?: string;
-    tile_maxLevel?: number;
-    tile_minLevel?: number;
+    tile_zoomLevel?: number[];
     tile_opacity?: number;
   }[];
   terrain?: TerrainProperty;
   atmosphere?: {
     enable_sun?: boolean;
+    enableMoon?: boolean;
     enable_lighting?: boolean;
     ground_atmosphere?: boolean;
     sky_atmosphere?: boolean;
@@ -291,11 +334,17 @@ export type SceneProperty = {
     shadowResolution?: 1024 | 2048 | 4096;
     softShadow?: boolean;
     shadowDarkness?: number;
+    shadowMaximumDistance?: number;
     fog?: boolean;
     fog_density?: number;
-    brightness_shift?: number;
     hue_shift?: number;
+    brightness_shift?: number;
     surturation_shift?: number;
+    skyboxBrightnessShift?: number;
+    skyboxSurturationShift?: number;
+    globeShadowDarkness?: number;
+    globeImageBasedLighting?: boolean;
+    globeBaseColor?: string;
   };
   timeline?: {
     animation?: boolean;
@@ -318,6 +367,12 @@ export type SceneProperty = {
     themeSelectColor?: string;
     themeBackgroundColor?: string;
   };
+  ambientOcclusion?: {
+    enabled?: boolean;
+    quality?: "low" | "medium" | "high" | "extreme";
+    intensity?: number;
+    ambientOcclusionOnly?: boolean;
+  };
   light?: {
     lightType?: "sunLight" | "directionalLight";
     lightDirectionX?: number;
@@ -325,6 +380,13 @@ export type SceneProperty = {
     lightDirectionZ?: number;
     lightColor?: string;
     lightIntensity?: number;
+    specularEnvironmentMaps?: string;
+    sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
+    imageBasedLightIntensity?: number;
+  };
+  render?: {
+    antialias?: "low" | "medium" | "high" | "extreme";
+    debugFramePerSecond?: boolean;
   };
 };
 
@@ -338,3 +400,5 @@ export type Engine = {
   clusterComponent: ClusterComponentType;
   delegatedDataTypes?: DataType[];
 };
+
+export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame

@@ -96,6 +96,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
           invisibleWidgetIDs={invisibleWidgetIDs}
           theme={theme}
           built={built}
+          isMobile={isMobile}
           renderWidget={renderWidget}
           onWidgetAreaSelect={onWidgetAreaSelect}>
           {(!isMobile || hasInner) && (
@@ -106,6 +107,7 @@ const WidgetAlignSystem: React.FC<Props> = ({
               zone={alignSystem?.inner}
               layoutConstraint={layoutConstraint}
               built={built}
+              isMobile={isMobile}
               renderWidget={renderWidget}
               onWidgetAreaSelect={onWidgetAreaSelect}
             />

@@ -6,7 +6,9 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearth/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/samber/lo"
 	"golang.org/x/text/language"
 )
@@ -39,6 +41,13 @@ func getLang(ctx context.Context, lang *language.Tag) string {
 
 func getOperator(ctx context.Context) *usecase.Operator {
 	return adapter.Operator(ctx)
+}
+
+func getAcOperator(ctx context.Context) *accountusecase.Operator {
+	if op := getOperator(ctx); op != nil {
+		return op.AcOperator
+	}
+	return nil
 }
 
 func usecases(ctx context.Context) *interfaces.Container {

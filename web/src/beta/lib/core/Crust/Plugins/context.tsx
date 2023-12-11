@@ -11,7 +11,7 @@ export const PluginProvider: FC<PropsWithChildren<{ value: Context }>> = ({ chil
 export const usePluginContext = (): Context => {
   const ctx = useContext(PluginContext);
   if (!ctx) {
-    throw new Error("Could not found PluginProvider");
+    throw new Error("Could not find PluginProvider");
   }
 
   return ctx;

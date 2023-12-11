@@ -50,13 +50,16 @@ const Project: React.FC<Props> = ({ className, project }) => {
           <Actions isHovered={isHovered}>
             <ButtonWrapper>
               <StyledLink
-                to={
-                  project.projectType === "beta" ? `/scene/${sceneId}/scene` : `/edit/${sceneId}`
-                }>
+                to={project.projectType === "beta" ? `/scene/${sceneId}/map` : `/edit/${sceneId}`}>
                 <Button large buttonType="primary" icon="earthEditor" />
               </StyledLink>
               <Button large buttonType="primary" icon="preview" onClick={onPreviewOpen} />
-              <StyledLink to={`/settings/projects/${id}`}>
+              <StyledLink
+                to={
+                  project.projectType === "beta"
+                    ? `/settings/project/${id}`
+                    : `/settings/projects/${id}`
+                }>
                 <Button large buttonType="primary" icon="settings" />
               </StyledLink>
             </ButtonWrapper>

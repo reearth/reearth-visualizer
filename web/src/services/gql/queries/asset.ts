@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "@reearth/services/gql/__gen__";
 
-export const GET_ASSETS = gql`
+export const GET_ASSETS = gql(`
   query GetAssets($teamId: ID!, $sort: AssetSortType, $keyword: String, $pagination: Pagination) {
     assets(teamId: $teamId, keyword: $keyword, sort: $sort, pagination: $pagination) {
       edges {
@@ -31,9 +31,9 @@ export const GET_ASSETS = gql`
       totalCount
     }
   }
-`;
+`);
 
-export const CREATE_ASSET = gql`
+export const CREATE_ASSET = gql(`
   mutation CreateAsset($teamId: ID!, $file: Upload!) {
     createAsset(input: { teamId: $teamId, file: $file }) {
       asset {
@@ -46,12 +46,12 @@ export const CREATE_ASSET = gql`
       }
     }
   }
-`;
+`);
 
-export const REMOVE_ASSET = gql`
+export const REMOVE_ASSET = gql(`
   mutation RemoveAsset($assetId: ID!) {
     removeAsset(input: { assetId: $assetId }) {
       assetId
     }
   }
-`;
+`);

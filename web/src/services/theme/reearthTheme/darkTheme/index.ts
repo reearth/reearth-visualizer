@@ -1,99 +1,49 @@
-import commonTheme from "../common";
-import commonColors from "../common/colors";
-import type { Theme } from "../types";
+import { gray, blue, white, coolGray, red, yellow, rgba } from "@carbon/colors";
 
-import colors from "./colors";
+import commonTheme from "../common";
+import { brandBlue } from "../common/colors";
+import type { Theme } from "../types";
 
 const darkTheme: Theme = {
   ...commonTheme,
-  general: {
-    select: colors.functional.select,
-    bg: {
-      transparent: commonColors.general.transparentBlack,
-      veryWeak: colors.bg[5],
-      weak: colors.bg[4],
-      main: colors.bg[3],
-      strong: colors.bg[2],
-      veryStrong: colors.bg[1],
-    },
-    border: colors.bg[5],
-    button: {
-      primary: {
-        main: colors.primary.main,
-        hover: colors.primary.main,
-        disable: "",
-        content: colors.primary.main,
-        contentHover: colors.text.strong,
-        contentDisable: colors.primary.weakest,
-      },
-      secondary: {
-        main: colors.secondary.main,
-        hover: colors.secondary.main,
-        disable: "",
-        content: colors.secondary.main,
-        contentHover: colors.text.strong,
-        contentDisable: colors.secondary.weakest,
-      },
-      danger: {
-        main: colors.danger.main,
-        hover: colors.danger.main,
-        disable: "",
-        content: colors.danger.main,
-        contentHover: colors.text.strong,
-        contentDisable: colors.danger.weakest,
-      },
-    },
-    content: {
-      weak: colors.text.weak,
-      main: colors.text.main,
-      strong: colors.text.strong,
-    },
+  bg: {
+    transparentBlack: rgba("#000000", 0.7),
+    0: gray[100],
+    1: gray[90],
+    2: gray[80],
+    3: gray[70],
+    4: gray[60],
   },
-  dashboard: {
-    workspace: {},
-    quickStart: {},
-    projectList: {},
+  content: {
+    withBackground: white,
+    weaker: gray[70],
+    weak: gray[60],
+    main: gray[20],
+    strong: gray[10],
   },
-  editor: {
-    secondaryNavbar: {},
-    infobox: {},
-    widgetAlignSystem: {
-      vertical: {
-        bg: commonColors.brand.blue.strongest50,
-        border: commonColors.brand.blue.strongest,
-      },
-      horizontal: {
-        bg: commonColors.brand.orange.main50,
-        border: commonColors.brand.orange.main,
-      },
-    },
-    slider: {
-      bg: colors.bg[3],
-      border: colors.outline.weak,
-      main: colors.primary.main,
-    },
+  select: { weaker: rgba(brandBlue.main, 0.2), main: brandBlue.main, strong: brandBlue.light },
+  item: { default: "#FFFFFF", hover: gray[90] },
+  outline: {
+    weakest: rgba("#000000", 0.25),
+    weaker: gray[80],
+    weak: gray[70],
+    main: gray[40],
   },
-  settings: {},
-  notifications: {
-    bg: {
-      success: "",
-      info: "",
-      warning: "",
-      error: "",
-    },
-    content: "",
+  primary: {
+    weak: blue[70],
+    main: blue[60],
+    strong: blue[50],
   },
-  navbar: {
-    bg: {
-      main: colors.bg[2],
-      hover: "",
-    },
-    avatarBg: "",
-    tabButton: {
-      selectedBg: "",
-      selectedContent: "",
-    },
+  secondary: {
+    weak: coolGray[80],
+    main: coolGray[60],
+    strong: coolGray[20],
   },
+  dangerous: {
+    main: red[60],
+  },
+  warning: { main: yellow[30] },
+  placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(brandBlue.main, 0.2) },
 };
 
 export default darkTheme;

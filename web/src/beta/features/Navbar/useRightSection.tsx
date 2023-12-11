@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import TabButton from "@reearth/beta/features/Navbar/TabButton";
+import TabButton from "@reearth/beta/components/TabButton";
 import { useEditorNavigation } from "@reearth/beta/hooks/navigationHooks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -9,7 +9,7 @@ import { Tab } from ".";
 
 type Props = {
   currentTab?: Tab;
-  sceneId: string;
+  sceneId?: string;
   page: "editor" | "settings";
 };
 
@@ -22,22 +22,22 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
       return (
         <RightSection>
           <TabButton
-            onClick={() => handleEditorNavigation("scene")}
-            selected={currentTab === "scene"}
-            label={t("Scene")}
+            onClick={() => handleEditorNavigation?.("map")}
+            selected={currentTab === "map"}
+            label={t("Map")}
           />
           <TabButton
-            onClick={() => handleEditorNavigation("story")}
+            onClick={() => handleEditorNavigation?.("story")}
             selected={currentTab === "story"}
             label={t("Story")}
           />
           <TabButton
-            onClick={() => handleEditorNavigation("widgets")}
+            onClick={() => handleEditorNavigation?.("widgets")}
             selected={currentTab === "widgets"}
             label={t("Widgets")}
           />
           <TabButton
-            onClick={() => handleEditorNavigation("publish")}
+            onClick={() => handleEditorNavigation?.("publish")}
             selected={currentTab === "publish"}
             label={t("Publish")}
           />
@@ -55,10 +55,8 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
 
 const RightSection = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: flex-end;
   gap: 4px;
-  height: 35px;
 `;
 
 export default useRightSide;

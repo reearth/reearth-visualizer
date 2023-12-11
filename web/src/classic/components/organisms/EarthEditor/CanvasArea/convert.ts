@@ -16,7 +16,6 @@ import {
   isBuiltinWidget,
 } from "@reearth/classic/components/molecules/Visualizer/Widget/builtin";
 import { WidgetAreaPadding } from "@reearth/classic/components/molecules/Visualizer/WidgetAlignSystem/hooks";
-import { valueFromGQL } from "@reearth/classic/util/value";
 import {
   GetBlocksQuery,
   Maybe,
@@ -27,22 +26,20 @@ import {
   WidgetZone as WidgetZoneType,
   WidgetSection as WidgetSectionType,
   WidgetArea as WidgetAreaType,
-  PropertyGroupFragmentFragment,
-  PropertyFieldFragmentFragment,
-  PropertySchemaGroupFragmentFragment,
-  PropertySchemaFieldFragmentFragment,
-  EarthLayerItemFragment,
   EarthLayerCommonFragment,
-} from "@reearth/services/gql";
+  EarthLayerItemFragment,
+  PropertySchemaGroupFragmentFragment,
+} from "@reearth/classic/gql";
+import { valueFromGQL } from "@reearth/classic/util/value";
+
+type PropertyGroupFragmentFragment = Extract<
+  PropertyItemFragmentFragment,
+  { __typename?: "PropertyGroup" }
+>;
+type PropertySchemaFieldFragmentFragment = PropertySchemaGroupFragmentFragment["fields"][number];
+type PropertyFieldFragmentFragment = PropertyGroupFragmentFragment["fields"][number];
 
 export type { Layer } from "@reearth/classic/components/molecules/Visualizer";
-
-// export type RawLayer =
-//   | (EarthLayerItemFragment & EarthLayerCommonFragment)
-//   | ({
-//     __typename: "LayerGroup";
-//     layers?: RawLayer[] | null | undefined;
-//   } & EarthLayerCommonFragment);
 
 export type RawLayer = EarthLayerCommonFragment &
   (
@@ -380,10 +377,10 @@ export const convertWidgets = (
         left: padding?.left ?? 6,
         right: padding?.right ?? 6,
       },
+      gap: area?.gap ?? 6,
       widgets: areaWidgets,
       background: area?.background as string | undefined,
       centered: area?.centered,
-      gap: area?.gap,
     };
   };
 

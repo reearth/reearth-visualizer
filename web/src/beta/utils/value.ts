@@ -3,6 +3,8 @@ import { Color } from "cesium";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
 
+import { LayerAppearanceTypes } from "../lib/core/mantle";
+
 export type LatLng = {
   lat: number;
   lng: number;
@@ -22,6 +24,13 @@ export type Camera = {
   pitch: number;
   roll: number;
   fov: number;
+};
+
+export type Spacing = {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
 };
 
 export type Typography = {
@@ -56,7 +65,7 @@ export type Plane = {
   pitch: number;
 };
 
-// Familiar with Cesium
+// Similar to Cesium
 export type EXPERIMENTAL_clipping = {
   planes?: {
     normal: {
@@ -84,6 +93,14 @@ export type EXPERIMENTAL_clipping = {
   roll?: number;
 };
 
+export type Array = any[];
+
+export type Timeline = {
+  startTime?: string;
+  endTime?: string;
+  currentTime?: string;
+};
+
 // Don't forget adding a new field to valueTypeMapper also!
 export type ValueTypes = {
   string: string;
@@ -99,9 +116,12 @@ export type ValueTypes = {
   rect: Rect;
   ref: string;
   tiletype: string;
+  spacing: Spacing;
+  array: Array;
+  timeline: Timeline;
 };
 
-const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
+const valueTypeMapper: Record<GQLValueType, ValueType> = {
   [GQLValueType.Bool]: "bool",
   [GQLValueType.Number]: "number",
   [GQLValueType.String]: "string",
@@ -114,6 +134,9 @@ const valueTypeMapper: Partial<Record<GQLValueType, ValueType>> = {
   [GQLValueType.Polygon]: "polygon",
   [GQLValueType.Rect]: "rect",
   [GQLValueType.Ref]: "ref",
+  [GQLValueType.Spacing]: "spacing",
+  [GQLValueType.Array]: "array",
+  [GQLValueType.Timeline]: "timeline",
 };
 
 export type ValueType = keyof ValueTypes;
@@ -159,7 +182,7 @@ export function valueToGQL<T extends ValueType>(
   return val ?? null;
 }
 
-export const valueTypeFromGQL = (t: GQLValueType): ValueType | undefined => {
+export const valueTypeFromGQL = (t: GQLValueType): ValueType => {
   return valueTypeMapper[t];
 };
 
@@ -216,4 +239,22 @@ export const typographyStyles = (t?: Typography) => {
 export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
   string: "",
+};
+
+export const DEFAULT_LAYER_STYLE: Partial<LayerAppearanceTypes> = {
+  "3dtiles": {
+    show: true,
+  },
+  resource: {
+    clampToGround: true,
+  },
+  marker: {
+    heightReference: "clamp",
+  },
+  polygon: {
+    heightReference: "clamp",
+  },
+  polyline: {
+    clampToGround: true,
+  },
 };

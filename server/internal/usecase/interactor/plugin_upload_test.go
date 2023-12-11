@@ -16,6 +16,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -85,7 +87,7 @@ func mockFS(files map[string]string) afero.Fs {
 func TestPlugin_Upload_New(t *testing.T) {
 	// upload a new plugin
 	ctx := context.Background()
-	ws := id.NewWorkspaceID()
+	ws := accountdomain.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 
@@ -106,8 +108,10 @@ func TestPlugin_Upload_New(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableWorkspaces: []id.WorkspaceID{ws},
-		WritableScenes:     []id.SceneID{sid},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
+		},
+		WritableScenes: []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
@@ -141,7 +145,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	// old plugin files should be deleted
 
 	ctx := context.Background()
-	ws := id.NewWorkspaceID()
+	ws := accountdomain.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 	eid1 := id.PluginExtensionID("marker")
@@ -188,8 +192,10 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableWorkspaces: []id.WorkspaceID{ws},
-		WritableScenes:     []id.SceneID{sid},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
+		},
+		WritableScenes: []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())
@@ -253,7 +259,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	// plugin ID of property and layers should be updated
 
 	ctx := context.Background()
-	ws := id.NewWorkspaceID()
+	ws := accountdomain.NewWorkspaceID()
 	sid := id.NewSceneID()
 	oldpid := id.MustPluginID("testplugin~1.0.0").WithScene(sid.Ref())
 	pid := mockPluginID.WithScene(sid.Ref())
@@ -314,8 +320,10 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		WritableWorkspaces: []id.WorkspaceID{ws},
-		WritableScenes:     []id.SceneID{sid},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
+		},
+		WritableScenes: []id.SceneID{sid},
 	}
 
 	reader := bytes.NewReader(mockPluginArchiveZip.Bytes())

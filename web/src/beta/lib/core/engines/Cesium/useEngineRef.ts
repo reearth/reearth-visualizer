@@ -5,7 +5,7 @@ import { CesiumComponentRef } from "resium";
 
 import { TickEventCallback } from "@reearth/beta/lib/core/Map";
 
-import type { EngineRef, MouseEvents, MouseEvent } from "..";
+import type { EngineRef, MouseEvents, MouseEvent, Feature, ComputedFeature } from "..";
 
 import {
   getLocationFromScreen,
@@ -27,9 +27,20 @@ import {
   zoom,
   lookAtWithoutAnimation,
   sampleTerrainHeight,
+  getCameraEllipsoidIntersection,
+  getCameraTerrainIntersection,
+  cartesianToLatLngHeight,
 } from "./common";
-import { getTag } from "./Feature";
-import { findEntity } from "./utils";
+import { attachTag, getTag } from "./Feature";
+import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
+import {
+  convertCesium3DTileFeatureProperties,
+  convertEntityDescription,
+  convertEntityProperties,
+  convertObjToComputedFeature,
+  findEntity,
+  findFeaturesFromLayer,
+} from "./utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
@@ -71,6 +82,40 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
+      getCameraFovInfo: ({ withTerrain, calcViewSize }) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        try {
+          let center;
+          let cartesian;
+          let viewSize;
+          if (withTerrain) {
+            cartesian = getCameraTerrainIntersection(viewer.scene);
+            if (cartesian) {
+              center = cartesianToLatLngHeight(cartesian, viewer.scene);
+            }
+          }
+          if (!center) {
+            cartesian = new Cesium.Cartesian3();
+            getCameraEllipsoidIntersection(viewer.scene, cartesian);
+            center = cartesianToLatLngHeight(cartesian, viewer.scene);
+          }
+          if (
+            calcViewSize &&
+            cartesian &&
+            viewer.scene.camera.frustum instanceof Cesium.PerspectiveFrustum
+          ) {
+            const distance = Cesium.Cartesian3.distance(viewer.scene.camera.positionWC, cartesian);
+            viewSize = distance * Math.tan(viewer.scene.camera.frustum.fov / 2);
+          }
+          return {
+            center,
+            viewSize,
+          };
+        } catch (e) {
+          return undefined;
+        }
+      },
       sampleTerrainHeight: async (lng, lat) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
@@ -93,7 +138,8 @@ export default function useEngineRef(
           if (!viewer || viewer.isDestroyed()) return;
 
           const layerOrFeatureId = target;
-          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId);
+          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId, true);
+          // `viewer.flyTo` doesn't support Cesium3DTileFeature.
           if (
             entityFromFeatureId &&
             !(
@@ -110,7 +156,7 @@ export default function useEngineRef(
                 const entities = d.entities.values;
                 const e = entities.find(e => getTag(e)?.layerId === layerOrFeatureId);
                 if (e) {
-                  viewer.flyTo(d);
+                  viewer.flyTo(d, options);
                   return;
                 }
               }
@@ -436,6 +482,138 @@ export default function useEngineRef(
             ),
             Cesium.Cartographic.fromDegrees(location.lng, location.lat),
           )
+        );
+      },
+      findFeatureById: (layerId: string, featureId: string): Feature | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const entity = findEntity(viewer, layerId, featureId);
+        const tag = getTag(entity);
+        if (!tag?.featureId) {
+          return;
+        }
+        if (entity instanceof Cesium.Entity) {
+          // TODO: Return description for CZML
+          return {
+            type: "feature",
+            id: tag.featureId,
+            properties: convertEntityProperties(viewer.clock.currentTime, entity),
+            metaData: {
+              description: convertEntityDescription(viewer.clock.currentTime, entity),
+            },
+          };
+        }
+        if (
+          entity instanceof Cesium.Cesium3DTileFeature ||
+          entity instanceof Cesium.Cesium3DTilePointFeature
+        ) {
+          return {
+            type: "feature",
+            id: tag.featureId,
+            properties: convertCesium3DTileFeatureProperties(entity),
+          };
+        }
+        return;
+      },
+      findFeaturesByIds: (layerId: string, featureIds: string[]): Feature[] | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return findFeaturesFromLayer(viewer, layerId, featureIds, e => {
+          const f = convertObjToComputedFeature(viewer.clock.currentTime, e)?.[1];
+          return f
+            ? ({
+                ...f,
+                type: "feature",
+              } as Feature)
+            : undefined;
+        });
+      },
+      findComputedFeatureById: (
+        layerId: string,
+        featureId: string,
+      ): ComputedFeature | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const entity = findEntity(viewer, layerId, featureId);
+        const tag = getTag(entity);
+        if (!tag?.featureId) {
+          return;
+        }
+        if (entity instanceof Cesium.Entity) {
+          // TODO: Return description for CZML
+          return (
+            tag.computedFeature ?? {
+              type: "computedFeature",
+              id: tag.featureId,
+              properties: convertEntityProperties(viewer.clock.currentTime, entity),
+              metaData: {
+                description: convertEntityDescription(viewer.clock.currentTime, entity),
+              },
+            }
+          );
+        }
+        if (
+          entity instanceof Cesium.Cesium3DTileFeature ||
+          entity instanceof Cesium.Cesium3DTilePointFeature
+        ) {
+          return (
+            tag.computedFeature ?? {
+              type: "computedFeature",
+              id: tag.featureId,
+              properties: convertCesium3DTileFeatureProperties(entity),
+            }
+          );
+        }
+        return;
+      },
+      findComputedFeaturesByIds: (
+        layerId: string,
+        featureIds: string[],
+      ): ComputedFeature[] | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return findFeaturesFromLayer(
+          viewer,
+          layerId,
+          featureIds,
+          e => convertObjToComputedFeature(viewer.clock.currentTime, e)?.[1],
+        );
+      },
+      selectFeatures: (layerId: string, featureId: string[]) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        findFeaturesFromLayer(viewer, layerId, featureId, entity => {
+          const tag = getTag(entity) ?? {};
+          const updatedTag = { ...tag, isFeatureSelected: true };
+          attachTag(entity, updatedTag);
+          return entity;
+        });
+      },
+      unselectFeatures: (layerId: string, featureId: string[]) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        findFeaturesFromLayer(viewer, layerId, featureId, entity => {
+          const tag = getTag(entity) ?? {};
+          tag.isFeatureSelected = false;
+          attachTag(entity, tag);
+          return entity;
+        });
+      },
+      pickManyFromViewport: (
+        windowPosition: [x: number, y: number],
+        windowWidth: number,
+        windowHeight: number,
+        // TODO: Get condition as expression for plugin
+        condition?: (f: PickedFeature) => boolean,
+      ): PickedFeature[] | undefined => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return pickManyFromViewportAsFeature(
+          viewer,
+          new Cesium.Cartesian2(windowPosition[0], windowPosition[1]),
+          windowWidth,
+          windowHeight,
+          condition,
         );
       },
       onTick: cb => {

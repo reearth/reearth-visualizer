@@ -6,9 +6,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
-	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/user"
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
@@ -42,7 +43,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			// debug mode
 			if cfg.Debug {
 				if userID := c.Request().Header.Get(debugUserHeader); userID != "" {
-					if uId, err := id.UserIDFrom(userID); err == nil {
+					if uId, err := accountdomain.UserIDFrom(userID); err == nil {
 						user2, err := cfg.Repos.User.FindByID(ctx, uId)
 						if err == nil && user2 != nil {
 							u = user2
@@ -52,7 +53,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			}
 
 			if u == nil && userID != "" {
-				if userID2, err := id.UserIDFrom(userID); err == nil {
+				if userID2, err := accountdomain.UserIDFrom(userID); err == nil {
 					u, err = cfg.Repos.User.FindByID(ctx, userID2)
 					if err != nil && err != rerror.ErrNotFound {
 						return err
@@ -65,7 +66,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			if u == nil && au != nil {
 				var err error
 				// find user
-				u, err = cfg.Repos.User.FindByAuth0Sub(ctx, au.Sub)
+				u, err = cfg.Repos.User.FindBySub(ctx, au.Sub)
 				if err != nil && err != rerror.ErrNotFound {
 					return err
 				}
@@ -114,17 +115,24 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 
 	readableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleReader).IDs()
 	writableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleWriter).IDs()
+	maintainingWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleMaintainer).IDs()
 	owningWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleOwner).IDs()
+	defaultPolicy := util.CloneRef(cfg.Config.Policy.Default)
 
 	return &usecase.Operator{
-		User:               uid,
-		ReadableWorkspaces: readableWorkspaces,
-		WritableWorkspaces: writableWorkspaces,
-		OwningWorkspaces:   owningWorkspaces,
-		ReadableScenes:     scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
-		WritableScenes:     scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
-		OwningScenes:       scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
-		DefaultPolicy:      util.CloneRef(cfg.Config.Policy.Default),
+		AcOperator: &accountusecase.Operator{
+			User:                   &uid,
+			ReadableWorkspaces:     readableWorkspaces,
+			WritableWorkspaces:     writableWorkspaces,
+			MaintainableWorkspaces: maintainingWorkspaces,
+			OwningWorkspaces:       owningWorkspaces,
+			DefaultPolicy:          defaultPolicy,
+		},
+		ReadableScenes:    scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
+		WritableScenes:    scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
+		MaintainingScenes: scenes.FilterByWorkspace(maintainingWorkspaces...).IDs(),
+		OwningScenes:      scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
+		DefaultPolicy:     defaultPolicy,
 	}, nil
 }
 

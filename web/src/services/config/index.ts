@@ -1,6 +1,10 @@
-import { Viewer } from "cesium";
+import { type Viewer } from "cesium";
 
-import { Extensions, loadExtensions } from "./extensions";
+import { type CognitoParams, configureCognito } from "./aws";
+import { defaultConfig } from "./defaultConfig";
+import { type Extensions, loadExtensions } from "./extensions";
+import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
+import { type UnsafeBuiltinPlugin, loadUnsafeBuiltinPlugins } from "./unsafeBuiltinPlugin";
 
 export type Config = {
   version?: string;
@@ -11,32 +15,19 @@ export type Config = {
   auth0Domain?: string;
   auth0Audience?: string;
   authProvider?: string;
-  cognitoRegion?: string;
-  cognitoUserPoolId?: string;
-  cognitoUserPoolWebClientId?: string;
-  cognitoOauthScope?: string;
-  cognitoOauthDomain?: string;
-  cognitoOauthRedirectSignIn?: string;
-  cognitoOauthRedirectSignOut?: string;
-  cognitoOauthResponseType?: string;
+  cognito?: CognitoParams;
   googleApiKey?: string;
   googleClientId?: string;
   sentryDsn?: string;
   sentryEnv?: string;
   cesiumIonAccessToken?: string;
   developerMode?: boolean;
+  earlyAccessAdmins?: string[];
   brand?: {
     logoUrl?: string;
     background?: string;
   };
-  passwordPolicy?: {
-    tooShort?: RegExp;
-    tooLong?: RegExp;
-    whitespace?: RegExp;
-    lowSecurity?: RegExp;
-    medSecurity?: RegExp;
-    highSecurity?: RegExp;
-  };
+  passwordPolicy?: PasswordPolicy;
   ip?: string;
   policy?: {
     modalTitle: Record<string, string> | string;
@@ -54,7 +45,9 @@ export type Config = {
   documentationUrl?: string;
   marketplaceUrl?: string;
   extensionUrls?: string[];
+  unsafePluginUrls?: string[];
   extensions?: Extensions;
+  unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
 };
 
 declare global {
@@ -66,97 +59,17 @@ declare global {
   }
 }
 
-export const defaultConfig: Config = {
-  api: "/api",
-  plugins: "/plugins",
-  published: window.origin + "/p/{}/",
-  auth0Audience: "http://localhost:8080",
-  auth0Domain: "http://localhost:8080",
-  auth0ClientId: "reearth-authsrv-client-default",
-  authProvider: "auth0",
-  policy: {
-    modalTitle: {
-      en: "Re:Earth Cloud",
-      ja: "Re:Earth Cloud",
-    },
-    modalDescription: {
-      en: "This is your currently subscribed to plan. If this plan stops meeting your needs, Re:Earth has other plans available. ",
-      ja: "日本語版にほなsdflkjlksdjf",
-    },
-    url: {
-      en: "https://reearth.io/service/cloud",
-      ja: "https://reearth.io/ja/service/cloud",
-    },
-    limitNotifications: {
-      asset: {
-        en: "Your workspace has reached its plan's limit for assets. Please check reearth.io/service/cloud for details.",
-        ja: "",
-      },
-      createProject: {
-        en: "Your workspace has reached its plan's limit for projects. Please check reearth.io/service/cloud for details.",
-        ja: "",
-      },
-      dataset: {
-        en: "Your workspace has reached its plan's limit for dataset. Please check reearth.io/service/cloud for details.",
-        ja: "",
-      },
-      member: {
-        en: "Your workspace has reached its plan's limit for new members. Please check reearth.io/service/cloud for details.",
-        ja: "",
-      },
-      layer: {
-        en: "Your workspace has reached its plan's limit for layers. Please check reearth.io/service/cloud for details.",
-        ja: "",
-      },
-      publishProject: {
-        en: "Your workspace has reached its plan's limit for publishing projects. Please check reearth.io/service/cloud for details.",
-        ja: "",
-      },
-    },
-  },
-};
-
-export function convertPasswordPolicy(passwordPolicy?: {
-  [key: string]: string;
-}): { [key: string]: RegExp | undefined } | undefined {
-  if (!passwordPolicy) return;
-  return Object.fromEntries(
-    Object.entries(passwordPolicy)
-      .map(([k, v]) => {
-        if (typeof v !== "string") return [k, undefined];
-        try {
-          return [k, new RegExp(v)];
-        } catch {
-          return [k, undefined];
-        }
-      })
-      .filter(i => !!i[1]),
-  );
-}
-
-// IIFE
-// function importExternal(url: string) {
-//   return new Promise((res, rej) => {
-//     const script = document.createElement("script");
-//     script.src = url;
-//     script.async = true;
-//     script.onload = () => {
-//       if (!window.REEARTH_CONFIG) return;
-//       res(window.REEARTH_CONFIG.extensions);
-//     };
-//     script.onerror = rej;
-
-//     document.body.appendChild(script);
-//   });
-// }
-
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
-  const config = {
+  const config: Config = {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json()),
   };
+
+  if (config?.cognito) {
+    configureCognito(config);
+  }
 
   if (config?.passwordPolicy) {
     config.passwordPolicy = convertPasswordPolicy(
@@ -167,6 +80,10 @@ export default async function loadConfig() {
   if (config?.extensionUrls) {
     const extensions = await loadExtensions(config.extensionUrls);
     config.extensions = extensions;
+  }
+
+  if (config.unsafePluginUrls) {
+    config.unsafeBuiltinPlugins = await loadUnsafeBuiltinPlugins(config.unsafePluginUrls);
   }
 
   window.REEARTH_CONFIG = config;

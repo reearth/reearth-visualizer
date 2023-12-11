@@ -8,9 +8,12 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
+	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -20,19 +23,19 @@ import (
 func TestProject_Create(t *testing.T) {
 	ctx := context.Background()
 
-	po := workspace.NewPolicy(workspace.PolicyOption{
-		ID:           workspace.PolicyID("policy"),
+	po := policy.New(policy.Option{
+		ID:           policy.ID("policy"),
 		ProjectCount: lo.ToPtr(2),
 	})
 
 	uc := &Project{
 		projectRepo:   memory.NewProject(),
-		workspaceRepo: memory.NewWorkspace(),
+		workspaceRepo: accountmemory.NewWorkspace(),
 		transaction:   &usecasex.NopTransaction{},
 		policyRepo:    memory.NewPolicyWith(po),
 	}
 
-	ws := workspace.New().NewID().Policy(workspace.PolicyID("policy").Ref()).MustBuild()
+	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	wsid2 := workspace.NewID()
 	_ = uc.workspaceRepo.Save(ctx, ws)
 	pId1, pId2 := project.NewID(), project.NewID()
@@ -48,7 +51,9 @@ func TestProject_Create(t *testing.T) {
 		Alias:       lo.ToPtr("aliasalias"),
 		Archived:    lo.ToPtr(false),
 	}, &usecase.Operator{
-		WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
 	})
 	assert.NoError(t, err)
 	want := project.New().
@@ -77,7 +82,9 @@ func TestProject_Create(t *testing.T) {
 		Archived:    lo.ToPtr(false),
 		CoreSupport: lo.ToPtr(true),
 	}, &usecase.Operator{
-		WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
 	})
 	assert.NoError(t, err)
 	want = project.New().
@@ -99,7 +106,9 @@ func TestProject_Create(t *testing.T) {
 		WorkspaceID: wsid2,
 		Visualizer:  visualizer.VisualizerCesium,
 	}, &usecase.Operator{
-		WritableWorkspaces: workspace.IDList{wsid2},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{wsid2},
+		},
 	})
 	assert.Same(t, rerror.ErrNotFound, err)
 	assert.Nil(t, got)
@@ -109,7 +118,9 @@ func TestProject_Create(t *testing.T) {
 		WorkspaceID: ws.ID(),
 		Visualizer:  visualizer.VisualizerCesium,
 	}, &usecase.Operator{
-		ReadableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountusecase.Operator{
+			ReadableWorkspaces: workspace.IDList{ws.ID()},
+		},
 	})
 	assert.Same(t, interfaces.ErrOperationDenied, err)
 	assert.Nil(t, got)
@@ -119,8 +130,10 @@ func TestProject_Create(t *testing.T) {
 		WorkspaceID: ws.ID(),
 		Visualizer:  visualizer.VisualizerCesium,
 	}, &usecase.Operator{
-		WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
 	})
-	assert.Same(t, workspace.ErrPolicyViolation, err)
+	assert.Same(t, policy.ErrPolicyViolation, err)
 	assert.Nil(t, got)
 }

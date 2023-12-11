@@ -1,0 +1,449 @@
+.DefaultLexicalEditorTheme__ltr {
+  text-align: left;
+}
+.DefaultLexicalEditorTheme__rtl {
+  text-align: right;
+}
+.DefaultLexicalEditorTheme__paragraph {
+  margin: 0;
+  position: relative;
+}
+.DefaultLexicalEditorTheme__quote {
+  margin: 0;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: rgb(101, 103, 107);
+  border-left-color: rgb(206, 208, 212);
+  border-left-width: 4px;
+  border-left-style: solid;
+  padding-left: 16px;
+}
+.DefaultLexicalEditorTheme__h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+.DefaultLexicalEditorTheme__h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+.DefaultLexicalEditorTheme__h3 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 700;
+}
+.DefaultLexicalEditorTheme__indent {
+  --lexical-indent-base-value: 40px;
+}
+.DefaultLexicalEditorTheme__textBold {
+  font-weight: bold;
+}
+.DefaultLexicalEditorTheme__textItalic {
+  font-style: italic;
+}
+.DefaultLexicalEditorTheme__textUnderline {
+  text-decoration: underline;
+}
+.DefaultLexicalEditorTheme__textStrikethrough {
+  text-decoration: line-through;
+}
+.DefaultLexicalEditorTheme__textUnderlineStrikethrough {
+  text-decoration: underline line-through;
+}
+.DefaultLexicalEditorTheme__textSubscript {
+  font-size: 0.8em;
+  vertical-align: sub !important;
+}
+.DefaultLexicalEditorTheme__textSuperscript {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+.DefaultLexicalEditorTheme__textCode {
+  background-color: rgb(240, 242, 245);
+  padding: 1px 0.25rem;
+  font-family: Menlo, Consolas, Monaco, monospace;
+  font-size: 94%;
+}
+.DefaultLexicalEditorTheme__hashtag {
+  background-color: rgba(88, 144, 255, 0.15);
+  border-bottom: 1px solid rgba(88, 144, 255, 0.3);
+}
+.DefaultLexicalEditorTheme__link {
+  color: rgb(33, 111, 219);
+  text-decoration: none;
+}
+.DefaultLexicalEditorTheme__link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.DefaultLexicalEditorTheme__code {
+  background-color: rgb(240, 242, 245);
+  font-family: Menlo, Consolas, Monaco, monospace;
+  display: block;
+  padding: 8px 8px 8px 52px;
+  line-height: 1.53;
+  font-size: 13px;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+  position: relative;
+  tab-size: 2;
+}
+.DefaultLexicalEditorTheme__code:before {
+  content: attr(data-gutter);
+  position: absolute;
+  background-color: #eee;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #ccc;
+  padding: 8px;
+  color: #777;
+  white-space: pre-wrap;
+  text-align: right;
+  min-width: 25px;
+}
+.DefaultLexicalEditorTheme__table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  table-layout: fixed;
+  width: max-content;
+  margin: 30px 0;
+}
+.DefaultLexicalEditorTheme__tableSelection *::selection {
+  background-color: transparent;
+}
+.DefaultLexicalEditorTheme__tableSelected {
+  outline: 2px solid rgb(60, 132, 244);
+}
+.DefaultLexicalEditorTheme__tableCell {
+  border: 1px solid #bbb;
+  width: 75px;
+  min-width: 75px;
+  vertical-align: top;
+  text-align: start;
+  padding: 6px 8px;
+  position: relative;
+  outline: none;
+}
+.DefaultLexicalEditorTheme__tableCellSortedIndicator {
+  display: block;
+  opacity: 0.5;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #999;
+}
+.DefaultLexicalEditorTheme__tableCellResizer {
+  position: absolute;
+  right: -4px;
+  height: 100%;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 10;
+  top: 0;
+}
+.DefaultLexicalEditorTheme__tableCellHeader {
+  background-color: #f2f3f5;
+  text-align: start;
+}
+.DefaultLexicalEditorTheme__tableCellSelected {
+  background-color: #c9dbf0;
+}
+.DefaultLexicalEditorTheme__tableCellPrimarySelected {
+  border: 2px solid rgb(60, 132, 244);
+  display: block;
+  height: calc(100% - 2px);
+  position: absolute;
+  width: calc(100% - 2px);
+  left: -1px;
+  top: -1px;
+  z-index: 2;
+}
+.DefaultLexicalEditorTheme__tableCellEditing {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+}
+.DefaultLexicalEditorTheme__tableAddColumns {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  background-color: #eee;
+  height: 100%;
+  right: 0;
+  animation: table-controls 0.2s ease;
+  border: 0;
+  cursor: pointer;
+}
+.DefaultLexicalEditorTheme__tableAddColumns:after {
+  background-image: url(../images/icons/plus.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: block;
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+}
+.DefaultLexicalEditorTheme__tableAddColumns:hover {
+  background-color: #c9dbf0;
+}
+.DefaultLexicalEditorTheme__tableAddRows {
+  position: absolute;
+  bottom: -25px;
+  width: calc(100% - 25px);
+  background-color: #eee;
+  height: 20px;
+  left: 0;
+  animation: table-controls 0.2s ease;
+  border: 0;
+  cursor: pointer;
+}
+.DefaultLexicalEditorTheme__tableAddRows:after {
+  background-image: url(../images/icons/plus.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: block;
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+}
+.DefaultLexicalEditorTheme__tableAddRows:hover {
+  background-color: #c9dbf0;
+}
+@keyframes table-controls {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.DefaultLexicalEditorTheme__tableCellResizeRuler {
+  display: block;
+  position: absolute;
+  width: 1px;
+  background-color: rgb(60, 132, 244);
+  height: 100%;
+  top: 0;
+}
+.DefaultLexicalEditorTheme__tableCellActionButtonContainer {
+  display: block;
+  right: 5px;
+  top: 6px;
+  position: absolute;
+  z-index: 4;
+  width: 20px;
+  height: 20px;
+}
+.DefaultLexicalEditorTheme__tableCellActionButton {
+  background-color: #eee;
+  display: block;
+  border: 0;
+  border-radius: 20px;
+  width: 20px;
+  height: 20px;
+  color: #222;
+  cursor: pointer;
+}
+.DefaultLexicalEditorTheme__tableCellActionButton:hover {
+  background-color: #ddd;
+}
+.DefaultLexicalEditorTheme__characterLimit {
+  display: inline;
+  background-color: #ffbbbb !important;
+}
+.DefaultLexicalEditorTheme__ol1 {
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
+}
+.DefaultLexicalEditorTheme__ol2 {
+  padding: 0;
+  margin: 0;
+  list-style-type: upper-alpha;
+  list-style-position: inside;
+}
+.DefaultLexicalEditorTheme__ol3 {
+  padding: 0;
+  margin: 0;
+  list-style-type: lower-alpha;
+  list-style-position: inside;
+}
+.DefaultLexicalEditorTheme__ol4 {
+  padding: 0;
+  margin: 0;
+  list-style-type: upper-roman;
+  list-style-position: inside;
+}
+.DefaultLexicalEditorTheme__ol5 {
+  padding: 0;
+  margin: 0;
+  list-style-type: lower-roman;
+  list-style-position: inside;
+}
+.DefaultLexicalEditorTheme__ul {
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
+}
+.DefaultLexicalEditorTheme__listItem {
+  margin: 0 32px;
+}
+.DefaultLexicalEditorTheme__listItemChecked,
+.DefaultLexicalEditorTheme__listItemUnchecked {
+  position: relative;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding-left: 24px;
+  padding-right: 24px;
+  list-style-type: none;
+  outline: none;
+}
+.DefaultLexicalEditorTheme__listItemChecked {
+  text-decoration: line-through;
+}
+.DefaultLexicalEditorTheme__listItemUnchecked:before,
+.DefaultLexicalEditorTheme__listItemChecked:before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  top: 2px;
+  left: 0;
+  cursor: pointer;
+  display: block;
+  background-size: cover;
+  position: absolute;
+}
+.DefaultLexicalEditorTheme__listItemUnchecked[dir='rtl']:before,
+.DefaultLexicalEditorTheme__listItemChecked[dir='rtl']:before {
+  left: auto;
+  right: 0;
+}
+.DefaultLexicalEditorTheme__listItemUnchecked:focus:before,
+.DefaultLexicalEditorTheme__listItemChecked:focus:before {
+  box-shadow: 0 0 0 2px #a6cdfe;
+  border-radius: 2px;
+}
+.DefaultLexicalEditorTheme__listItemUnchecked:before {
+  border: 1px solid #999;
+  border-radius: 2px;
+}
+.DefaultLexicalEditorTheme__listItemChecked:before {
+  border: 1px solid rgb(61, 135, 245);
+  border-radius: 2px;
+  background-color: #3d87f5;
+  background-repeat: no-repeat;
+}
+.DefaultLexicalEditorTheme__listItemChecked:after {
+  content: '';
+  cursor: pointer;
+  border-color: #fff;
+  border-style: solid;
+  position: absolute;
+  display: block;
+  top: 6px;
+  width: 3px;
+  left: 7px;
+  right: 7px;
+  height: 6px;
+  transform: rotate(45deg);
+  border-width: 0 2px 2px 0;
+}
+.DefaultLexicalEditorTheme__nestedListItem {
+  list-style-type: none;
+}
+.DefaultLexicalEditorTheme__nestedListItem:before,
+.DefaultLexicalEditorTheme__nestedListItem:after {
+  display: none;
+}
+.DefaultLexicalEditorTheme__tokenComment {
+  color: slategray;
+}
+.DefaultLexicalEditorTheme__tokenPunctuation {
+  color: #999;
+}
+.DefaultLexicalEditorTheme__tokenProperty {
+  color: #905;
+}
+.DefaultLexicalEditorTheme__tokenSelector {
+  color: #690;
+}
+.DefaultLexicalEditorTheme__tokenOperator {
+  color: #9a6e3a;
+}
+.DefaultLexicalEditorTheme__tokenAttr {
+  color: #07a;
+}
+.DefaultLexicalEditorTheme__tokenVariable {
+  color: #e90;
+}
+.DefaultLexicalEditorTheme__tokenFunction {
+  color: #dd4a68;
+}
+.DefaultLexicalEditorTheme__mark {
+  background: rgba(255, 212, 0, 0.14);
+  border-bottom: 2px solid rgba(255, 212, 0, 0.3);
+  padding-bottom: 2px;
+}
+.DefaultLexicalEditorTheme__markOverlap {
+  background: rgba(255, 212, 0, 0.3);
+  border-bottom: 2px solid rgba(255, 212, 0, 0.7);
+}
+.DefaultLexicalEditorTheme__mark.selected {
+  background: rgba(255, 212, 0, 0.5);
+  border-bottom: 2px solid rgba(255, 212, 0, 1);
+}
+.DefaultLexicalEditorTheme__markOverlap.selected {
+  background: rgba(255, 212, 0, 0.7);
+  border-bottom: 2px solid rgba(255, 212, 0, 0.7);
+}
+.DefaultLexicalEditorTheme__embedBlock {
+  user-select: none;
+}
+.DefaultLexicalEditorTheme__embedBlockFocus {
+  outline: 2px solid rgb(60, 132, 244);
+}
+.DefaultLexicalEditorTheme__layoutContaner {
+  display: grid;
+  gap: 10px;
+  margin: 10px 0;
+}
+.DefaultLexicalEditorTheme__layoutItem {
+  border: 1px dashed #ddd;
+  padding: 8px 16px;
+}
+.DefaultLexicalEditorTheme__blockCursor {
+  display: block;
+  pointer-events: none;
+  position: absolute;
+}
+.DefaultLexicalEditorTheme__blockCursor:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -2px;
+  width: 20px;
+  border-top: 1px solid black;
+  animation: CursorBlink 1.1s steps(2, start) infinite;
+}
+@keyframes CursorBlink {
+  to {
+    visibility: hidden;
+  }
+}

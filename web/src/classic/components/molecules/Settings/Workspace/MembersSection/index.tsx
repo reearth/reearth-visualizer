@@ -80,7 +80,7 @@ const MembersSection: React.FC<Props> = ({
                 user={user}
                 role={role}
                 owner={owner}
-                isMyself={me?.id === user.id}
+                isMe={me?.id === user.id}
                 onChangeRole={role => updateMemberOfWorkspace(user.id, role)}
                 onRemove={() => removeMemberFromWorkspace(user.id)}
               />

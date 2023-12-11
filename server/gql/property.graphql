@@ -17,6 +17,7 @@ type PropertySchemaGroup {
   schemaGroupId: ID!
   schemaId: ID!
   fields: [PropertySchemaField!]!
+  collection: String
   isList: Boolean!
   isAvailableIf: PropertyCondition
   title: String
@@ -58,6 +59,8 @@ enum PropertySchemaFieldUI {
   FILE
   CAMERA_POSE
   DATETIME
+  MARGIN
+  PADDING
 }
 
 type PropertySchemaFieldChoice {
@@ -190,6 +193,9 @@ enum ValueType {
   COORDINATES
   POLYGON
   RECT
+  SPACING
+  ARRAY
+  TIMELINE
 }
 
 # InputType

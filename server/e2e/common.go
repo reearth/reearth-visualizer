@@ -14,6 +14,10 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
+	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
@@ -26,17 +30,17 @@ func init() {
 }
 
 func StartServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) *httpexpect.Expect {
-	e, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
+	e, _, _ := StartServerAndRepos(t, cfg, useMongo, seeder)
 	return e
 }
 
-func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container) {
+func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container) {
 	ctx := context.Background()
 
-	var repos *repo.Container
 	if useMongo {
 		db := mongotest.Connect(t)(t)
-		repos = lo.Must(mongo.New(ctx, db, false))
+		accountRepos := lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, false))
+		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
 	} else {
 		repos = memory.New()
 	}
@@ -47,9 +51,22 @@ func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder
 		}
 	}
 
-	return StartServerWithRepos(t, cfg, repos), repos
+	return repos
 }
-func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) *httpexpect.Expect {
+
+func initGateway() *gateway.Container {
+	return &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	}
+}
+
+func StartServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	repos := initRepos(t, useMongo, seeder)
+	gateways := initGateway()
+	return StartServerWithRepos(t, cfg, repos, gateways), repos, gateways
+}
+
+func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container, gateways *gateway.Container) *httpexpect.Expect {
 	t.Helper()
 
 	if testing.Short() {
@@ -64,12 +81,10 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 	}
 
 	srv := app.NewServer(ctx, &app.ServerConfig{
-		Config: cfg,
-		Repos:  repos,
-		Gateways: &gateway.Container{
-			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-		},
-		Debug: true,
+		Config:   cfg,
+		Repos:    repos,
+		Gateways: gateways,
+		Debug:    true,
 	})
 
 	ch := make(chan error)
@@ -97,4 +112,60 @@ type GraphQLRequest struct {
 	OperationName string         `json:"operationName"`
 	Query         string         `json:"query"`
 	Variables     map[string]any `json:"variables"`
+}
+
+func StartGQLServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+	e, r := StartGQLServerAndRepos(t, cfg, useMongo, seeder)
+	return e, r
+}
+
+func StartGQLServerAndRepos(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+	repos := initRepos(t, useMongo, seeder)
+	acRepos := repos.AccountRepos()
+	return StartGQLServerWithRepos(t, cfg, repos, acRepos), acRepos
+}
+
+func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container, accountrepos *accountrepo.Container) *httpexpect.Expect {
+	t.Helper()
+
+	if testing.Short() {
+		t.SkipNow()
+	}
+
+	ctx := context.Background()
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		t.Fatalf("server failed to listen: %v", err)
+	}
+
+	srv := app.NewServer(ctx, &app.ServerConfig{
+		Config:       cfg,
+		Repos:        repos,
+		AccountRepos: accountrepos,
+		Gateways: &gateway.Container{
+			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+		},
+		AccountGateways: &accountgateway.Container{
+			Mailer: mailer.New(ctx, &mailer.Config{}),
+		},
+		Debug: true,
+	})
+
+	ch := make(chan error)
+	go func() {
+		if err := srv.Serve(l); err != http.ErrServerClosed {
+			ch <- err
+		}
+		close(ch)
+	}()
+	t.Cleanup(func() {
+		if err := srv.Shutdown(context.Background()); err != nil {
+			t.Fatalf("server shutdown: %v", err)
+		}
+
+		if err := <-ch; err != nil {
+			t.Fatalf("server serve: %v", err)
+		}
+	})
+	return httpexpect.New(t, "http://"+l.Addr().String())
 }

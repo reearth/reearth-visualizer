@@ -27,6 +27,7 @@ export const tiles = {
     new OpenStreetMapImageryProvider({
       url: "https://stamen-tiles.a.ssl.fastly.net/watercolor/",
       credit: "Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.",
+      fileExtension: "jpg",
     }),
   stamen_toner: () =>
     new OpenStreetMapImageryProvider({

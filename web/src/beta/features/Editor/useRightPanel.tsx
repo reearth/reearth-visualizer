@@ -1,86 +1,105 @@
 import { ReactNode, useMemo } from "react";
 
-import SidePanel, { SidePanelContent } from "@reearth/beta/features/Editor/SidePanel";
-import { Tab } from "@reearth/beta/features/Navbar";
+import type { Tab } from "@reearth/beta/features/Navbar";
+import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { Camera } from "@reearth/beta/utils/value";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Scene } from "@reearth/services/api/sceneApi";
+import type { Page } from "@reearth/services/api/storytellingApi/utils";
+
+import MapSidePanel from "./tabs/map/RightPanel";
+import StorySidePanel from "./tabs/story/RightPanel";
+import WidgetSidePanel from "./tabs/widgets/RightPanel";
+import { LayerConfigUpdateProps } from "./useLayers";
+import { LayerStyleValueUpdateProps } from "./useLayerStyles";
 
 type Props = {
+  layerStyles: LayerStyle[];
+  scene?: Scene;
+  sceneSettings?: Item[];
   tab: Tab;
+  sceneId?: string;
+  nlsLayers: NLSLayer[];
+  currentPage?: Page;
+  currentCamera?: Camera;
+  selectedLayerStyleId?: string;
+  selectedSceneSetting?: string;
+  onFlyTo?: FlyTo;
+  onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
+  onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
+  onPageUpdate?: (id: string, layers: string[]) => void;
 };
 
-const getSceneContents = (): SidePanelContent[] => {
-  return [
-    {
-      id: "Outline",
-      title: "Outline",
-      children: (
-        <>
-          {[...Array(100)].map((_, i) => (
-            <div key={i}>scrollable / {i}</div>
-          ))}
-        </>
-      ),
-    },
-  ];
-};
-const getStoryContents = (): SidePanelContent[] => {
-  return [
-    {
-      id: "Outline",
-      title: "Outline",
-      children: (
-        <>
-          {[...Array(100)].map((_, i) => (
-            <div key={i}>scrollable / {i}</div>
-          ))}
-        </>
-      ),
-    },
-  ];
-};
-
-const getWidgetContents = (): SidePanelContent[] => {
-  return [
-    {
-      id: "Widget Manager",
-      title: "Widget Manager",
-      children: (
-        <>
-          {[...Array(100)].map((_, i) => (
-            <div key={i}>scrollable / {i}</div>
-          ))}
-        </>
-      ),
-    },
-    {
-      id: "Widget Setting",
-      title: "Widget Setting",
-      maxHeight: "30%",
-      children: (
-        <>
-          {[...Array(100)].map((_, i) => (
-            <div key={i}>scrollable / {i}</div>
-          ))}
-        </>
-      ),
-    },
-  ];
-};
-
-export default ({ tab }: Props) => {
+export default ({
+  scene,
+  layerStyles,
+  tab,
+  sceneId,
+  nlsLayers,
+  currentPage,
+  selectedLayerStyleId,
+  selectedSceneSetting,
+  sceneSettings,
+  currentCamera,
+  onPageUpdate,
+  onFlyTo,
+  onLayerStyleValueUpdate,
+  onLayerConfigUpdate,
+}: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
-      case "scene":
-        return <SidePanel location="right" contents={getSceneContents()} />;
+      case "map":
+        return (
+          <MapSidePanel
+            scene={scene}
+            layerStyles={layerStyles}
+            layers={nlsLayers}
+            sceneId={sceneId}
+            sceneSettings={sceneSettings}
+            currentCamera={currentCamera}
+            selectedLayerStyleId={selectedLayerStyleId}
+            selectedSceneSetting={selectedSceneSetting}
+            onFlyTo={onFlyTo}
+            onLayerStyleValueUpdate={onLayerStyleValueUpdate}
+            onLayerConfigUpdate={onLayerConfigUpdate}
+          />
+        );
       case "story":
-        return <SidePanel location="right" contents={getStoryContents()} />;
+        return (
+          <StorySidePanel
+            selectedPage={currentPage}
+            currentCamera={currentCamera}
+            layers={nlsLayers}
+            tab={tab}
+            onFlyTo={onFlyTo}
+            onPageUpdate={onPageUpdate}
+          />
+        );
       case "widgets":
-        return <SidePanel location="right" contents={getWidgetContents()} />;
+        return <WidgetSidePanel sceneId={sceneId} />;
 
       case "publish":
       default:
         return undefined;
     }
-  }, [tab]);
+  }, [
+    scene,
+    tab,
+    layerStyles,
+    nlsLayers,
+    sceneId,
+    currentCamera,
+    selectedLayerStyleId,
+    selectedSceneSetting,
+    sceneSettings,
+    currentPage,
+    onFlyTo,
+    onLayerStyleValueUpdate,
+    onLayerConfigUpdate,
+    onPageUpdate,
+  ]);
 
   return {
     rightPanel,

@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import Dashboard from "@reearth/classic/components/organisms/Dashboard";
-import { AuthenticationRequiredPage, withAuthorisation } from "@reearth/services/auth";
+import { AuthenticatedPage } from "@reearth/services/auth";
 
 export type Props = {
   path?: string;
@@ -11,10 +11,10 @@ export type Props = {
 const DashboardPage: React.FC<Props> = () => {
   const { workspaceId } = useParams();
   return (
-    <AuthenticationRequiredPage>
+    <AuthenticatedPage>
       <Dashboard workspaceId={workspaceId} />
-    </AuthenticationRequiredPage>
+    </AuthenticatedPage>
   );
 };
 
-export default withAuthorisation()(DashboardPage);
+export default DashboardPage;

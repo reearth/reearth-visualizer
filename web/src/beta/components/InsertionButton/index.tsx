@@ -38,15 +38,15 @@ const Border = styled.object`
   height: 1px;
   width: 100%;
 
-  background: ${props => props.theme.general.select};
+  background: ${props => props.theme.select.main};
   border-radius: 1px;
 `;
 
 const StyledIcon = styled(Icon)`
-  background: ${props => props.theme.general.select};
+  background: ${props => props.theme.select.main};
   border-radius: 50%;
   padding: 2px;
-  color: ${props => props.theme.general.bg.transparent};
+  color: ${props => props.theme.bg.transparentBlack};
 `;
 
 export default InsertionButton;

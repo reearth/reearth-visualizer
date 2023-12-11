@@ -12,6 +12,7 @@ import type {
   DataType,
   Feature,
   Layer,
+  LayerSimple,
 } from "../types";
 import { appearanceKeys } from "../types";
 
@@ -21,9 +22,13 @@ export type Atom = ReturnType<typeof computeAtom>;
 
 export type Command =
   | { type: "setLayer"; layer?: Layer }
+  | { type: "writeLayer"; value: Partial<Pick<LayerSimple, "properties">> }
   | { type: "requestFetch"; range: DataRange }
   | { type: "writeFeatures"; features: Feature[] }
-  | { type: "writeComputedFeatures"; value: { feature: Feature[]; computed: ComputedFeature[] } }
+  | {
+      type: "writeComputedFeatures";
+      value: { feature: Feature[]; computed: ComputedFeature[]; needComputingLayer?: boolean };
+    }
   | { type: "deleteFeatures"; features: string[] }
   | { type: "deleteComputedFeatures"; features: string[] }
   | { type: "override"; overrides?: Record<string, any> }
@@ -65,6 +70,7 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
         currentLayer.type === "simple" && currentLayer.data
           ? get(dataAtoms.getAll)(currentLayer.id, currentLayer.data)?.flat() ?? []
           : [],
+      properties: currentLayer.type === "simple" ? currentLayer.properties : undefined,
       ...get(computedResult)?.layer,
     };
   });
@@ -164,8 +170,19 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     set(computedResult, result);
   });
 
-  const set = atom(null, async (_get, set, value: Layer | undefined) => {
-    set(layer, value);
+  const set = atom(null, async (get, set, value: Layer | undefined) => {
+    set(layer, l =>
+      value
+        ? {
+            ...value,
+            ...("properties" in value
+              ? { properties: value.properties }
+              : l && "properties" in l
+              ? { properties: l.properties }
+              : {}),
+          }
+        : undefined,
+    );
     await set(compute, undefined);
   });
 
@@ -174,6 +191,13 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
     if (currentLayer?.type !== "simple" || !currentLayer.data) return;
 
     await set(dataAtoms.fetch, { data: currentLayer.data, range: value, layerId: currentLayer.id });
+  });
+
+  // For delegated data
+  const writeLayer = atom(null, (get, set, value: Partial<Pick<LayerSimple, "properties">>) => {
+    const currentLayer = get(layer);
+    if (currentLayer?.type !== "simple" || !currentLayer.data) return;
+    set(layer, { ...currentLayer, ...value });
   });
 
   const writeFeatures = atom(null, async (get, set, value: Feature[]) => {
@@ -190,7 +214,11 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
 
   const writeComputedFeatures = atom(
     null,
-    async (get, set, value: { feature: Feature[]; computed: ComputedFeature[] }) => {
+    async (
+      get,
+      set,
+      value: { feature: Feature[]; computed: ComputedFeature[]; needComputingLayer?: boolean },
+    ) => {
       const currentLayer = get(layer);
       if (currentLayer?.type !== "simple" || !currentLayer.data) return;
 
@@ -208,21 +236,19 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
         layerId: currentLayer.id,
       });
 
-      const computedLayer = await evalLayer(currentLayer, {
-        getAllFeatures: async () => undefined,
-        getFeatures: async () => undefined,
-      });
-
-      if (!computedLayer) {
-        return;
-      }
+      const computedLayer = value.needComputingLayer
+        ? await evalLayer(currentLayer, {
+            getAllFeatures: async () => undefined,
+            getFeatures: async () => undefined,
+          })
+        : undefined;
 
       set(layerStatus, "ready");
 
       const prevResult = get(computedResult);
 
       const result = {
-        layer: computedLayer.layer,
+        layer: computedLayer?.layer,
         features: [...(prevResult?.features || []), ...value.computed],
       };
 
@@ -284,6 +310,9 @@ export function computeAtom(cache?: typeof globalDataFeaturesCache) {
       switch (value.type) {
         case "setLayer":
           await s(set, value.layer);
+          break;
+        case "writeLayer":
+          await s(writeLayer, value.value);
           break;
         case "requestFetch":
           await s(requestFetch, value.range);

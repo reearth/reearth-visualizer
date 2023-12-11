@@ -62,7 +62,9 @@ export function evalLayerAppearances(
   }
 
   return Object.fromEntries(
-    Object.entries(appearance).map(([k, v]) => [k, recursiveValEval(v, layer, feature)]),
+    Object.entries(appearance)
+      .map(([k, v]) => (v ? [k, recursiveValEval(v, layer, feature)] : undefined))
+      .filter((v): v is [keyof LayerAppearanceTypes, LayerAppearanceTypes] => !!v),
   );
 }
 
@@ -120,7 +122,7 @@ function hasExpression(e: any): e is ExpressionContainer {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasNonExpressionObject(v: any): boolean {
-  return typeof v === "object" && v && !("expression" in v);
+  return typeof v === "object" && v && !("expression" in v) && !Array.isArray(v);
 }
 
 function evalExpression(

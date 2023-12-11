@@ -5,7 +5,7 @@ import {
   useUpdateProjectMutation,
   useArchiveProjectMutation,
   useDeleteProjectMutation,
-} from "@reearth/services/gql";
+} from "@reearth/classic/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useNotification } from "@reearth/services/state";
 

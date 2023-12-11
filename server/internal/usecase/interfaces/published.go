@@ -4,9 +4,17 @@ import (
 	"context"
 	"io"
 	"net/url"
-
-	"github.com/reearth/reearth/server/pkg/project"
 )
+
+type HasPublicMeta interface {
+	PublicTitle() string
+	PublicDescription() string
+	PublicImage() string
+	PublicNoIndex() bool
+	IsBasicAuthActive() bool
+	BasicAuthUsername() string
+	BasicAuthPassword() string
+}
 
 type ProjectPublishedMetadata struct {
 	Title             string `json:"title,omitempty"`
@@ -18,15 +26,15 @@ type ProjectPublishedMetadata struct {
 	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
 }
 
-func ProjectPublishedMetadataFrom(prj *project.Project) ProjectPublishedMetadata {
+func PublishedMetadataFrom(i HasPublicMeta) ProjectPublishedMetadata {
 	return ProjectPublishedMetadata{
-		Title:             prj.PublicTitle(),
-		Description:       prj.PublicDescription(),
-		Image:             prj.PublicImage(),
-		Noindex:           prj.PublicNoIndex(),
-		IsBasicAuthActive: prj.IsBasicAuthActive(),
-		BasicAuthUsername: prj.BasicAuthUsername(),
-		BasicAuthPassword: prj.BasicAuthPassword(),
+		Title:             i.PublicTitle(),
+		Description:       i.PublicDescription(),
+		Image:             i.PublicImage(),
+		Noindex:           i.PublicNoIndex(),
+		IsBasicAuthActive: i.IsBasicAuthActive(),
+		BasicAuthUsername: i.BasicAuthUsername(),
+		BasicAuthPassword: i.BasicAuthPassword(),
 	}
 }
 

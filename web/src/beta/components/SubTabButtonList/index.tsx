@@ -17,7 +17,7 @@ const SubTabButtonList: React.FC<Props> = ({ items, onChange }) => {
     <>
       {items.map((item, index) => (
         <SubTabButton key={index} disabled={!!item?.active} onClick={() => onChange?.(item.id)}>
-          <Text size="footnote" color={theme.general.content.main}>
+          <Text size="footnote" color={theme.content.main}>
             {item.name}
           </Text>
         </SubTabButton>
@@ -27,13 +27,13 @@ const SubTabButtonList: React.FC<Props> = ({ items, onChange }) => {
 };
 
 const SubTabButton = styled.button<{ disabled: boolean }>`
-  background: ${({ disabled, theme }) => (disabled ? theme.general.select : "inherit")};
+  background: ${({ disabled, theme }) => (disabled ? theme.select.main : "inherit")};
   padding: 8px;
   height: 32px;
   border-radius: 4px 4px 0px 0px;
   transition: all 0.5s;
   :hover {
-    background: ${({ theme }) => theme.general.select};
+    background: ${({ theme }) => theme.select.main};
   }
   text-align: center;
 `;

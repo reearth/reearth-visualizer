@@ -20,32 +20,37 @@ type sceneJSON struct {
 	WidgetAlignSystem *widgetAlignSystemJSON  `json:"widgetAlignSystem"`
 	Tags              []*tagJSON              `json:"tags"`
 	Clusters          []*clusterJSON          `json:"clusters"`
+	Story             *storyJSON              `json:"story,omitempty"`
+	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
+	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
+	CoreSupport       bool                    `json:"coreSupport"`
 }
 
-func (b *Builder) scene(ctx context.Context, s *scene.Scene, publishedAt time.Time, l []*layerJSON, p []*property.Property) (*sceneJSON, error) {
-	tags, err := b.tags(ctx, s)
+func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property, coreSupport bool) (*sceneJSON, error) {
+	tags, err := b.tags(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return &sceneJSON{
 		SchemaVersion:     version,
-		ID:                s.ID().String(),
+		ID:                b.scene.ID().String(),
 		PublishedAt:       publishedAt,
-		Property:          b.property(ctx, findProperty(p, s.Property())),
-		Plugins:           b.plugins(ctx, s, p),
-		Widgets:           b.widgets(ctx, s, p),
-		Clusters:          b.clusters(ctx, s, p),
+		Property:          b.property(ctx, findProperty(p, b.scene.Property())),
+		Plugins:           b.plugins(ctx, p),
+		Widgets:           b.widgets(ctx, p),
+		Clusters:          b.clusters(ctx, p),
 		Layers:            l,
 		Tags:              tags,
-		WidgetAlignSystem: buildWidgetAlignSystem(s.Widgets().Alignment()),
+		WidgetAlignSystem: buildWidgetAlignSystem(b.scene.Widgets().Alignment()),
+		CoreSupport:       coreSupport,
 	}, nil
 }
 
-func (b *Builder) plugins(ctx context.Context, s *scene.Scene, p []*property.Property) map[string]propertyJSON {
-	scenePlugins := s.Plugins().Plugins()
+func (b *Builder) plugins(ctx context.Context, p []*property.Property) map[string]propertyJSON {
+	plugins := b.scene.Plugins().Plugins()
 	res := map[string]propertyJSON{}
-	for _, sp := range scenePlugins {
+	for _, sp := range plugins {
 		if sp == nil {
 			continue
 		}
@@ -56,8 +61,8 @@ func (b *Builder) plugins(ctx context.Context, s *scene.Scene, p []*property.Pro
 	return res
 }
 
-func (b *Builder) widgets(ctx context.Context, s *scene.Scene, p []*property.Property) []*widgetJSON {
-	sceneWidgets := s.Widgets().Widgets()
+func (b *Builder) widgets(ctx context.Context, p []*property.Property) []*widgetJSON {
+	sceneWidgets := b.scene.Widgets().Widgets()
 	res := make([]*widgetJSON, 0, len(sceneWidgets))
 	for _, w := range sceneWidgets {
 		if !w.Enabled() {
@@ -75,8 +80,8 @@ func (b *Builder) widgets(ctx context.Context, s *scene.Scene, p []*property.Pro
 	return res
 }
 
-func (b *Builder) clusters(ctx context.Context, s *scene.Scene, p []*property.Property) []*clusterJSON {
-	sceneClusters := s.Clusters().Clusters()
+func (b *Builder) clusters(ctx context.Context, p []*property.Property) []*clusterJSON {
+	sceneClusters := b.scene.Clusters().Clusters()
 	res := make([]*clusterJSON, 0, len(sceneClusters))
 	for _, c := range sceneClusters {
 		res = append(res, &clusterJSON{
@@ -88,8 +93,8 @@ func (b *Builder) clusters(ctx context.Context, s *scene.Scene, p []*property.Pr
 	return res
 }
 
-func (b *Builder) tags(ctx context.Context, s *scene.Scene) ([]*tagJSON, error) {
-	tags, err := b.tloader(ctx, s.ID())
+func (b *Builder) tags(ctx context.Context) ([]*tagJSON, error) {
+	tags, err := b.tloader(ctx, b.scene.ID())
 	if err != nil {
 		return nil, err
 	}

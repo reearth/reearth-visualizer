@@ -4,7 +4,7 @@ import type { LegacyLayer, ComputedLayer, Layer } from "../../mantle";
 import type { LazyLayer } from "./hooks";
 
 export const layerKeys = objKeys<
-  Exclude<KeysOfUnion<Layer | LegacyLayer | LazyLayer>, "id" | "compat">
+  Exclude<KeysOfUnion<Layer | LegacyLayer | LazyLayer>, "id" | "compat" | "_updateStyle">
 >({
   // layer
   children: 1,
@@ -17,6 +17,7 @@ export const layerKeys = objKeys<
   creator: 1,
   computed: 1,
   defines: 1,
+  layerStyleId: 1,
   // appearance
   ...appearanceKeyObj,
   // legacy layer

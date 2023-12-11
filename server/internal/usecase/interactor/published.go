@@ -23,23 +23,26 @@ import (
 
 type Published struct {
 	project      repo.Project
+	Storytelling repo.Storytelling
 	file         gateway.File
 	indexHTML    *util.Cache[string]
 	indexHTMLStr string
 }
 
-func NewPublished(project repo.Project, file gateway.File, indexHTML string) interfaces.Published {
+func NewPublished(project repo.Project, storytelling repo.Storytelling, file gateway.File, indexHTML string) interfaces.Published {
 	return &Published{
 		project:      project,
+		Storytelling: storytelling,
 		file:         file,
 		indexHTMLStr: indexHTML,
 	}
 }
 
-func NewPublishedWithURL(project repo.Project, file gateway.File, indexHTMLURL *url.URL) interfaces.Published {
+func NewPublishedWithURL(project repo.Project, storytelling repo.Storytelling, file gateway.File, indexHTMLURL *url.URL) interfaces.Published {
 	return &Published{
-		project: project,
-		file:    file,
+		project:      project,
+		file:         file,
+		Storytelling: storytelling,
 		indexHTML: util.NewCache(func(c context.Context, i string) (string, error) {
 			req, err := http.NewRequestWithContext(c, http.MethodGet, indexHTMLURL.String(), nil)
 			if err != nil {
@@ -69,23 +72,41 @@ func NewPublishedWithURL(project repo.Project, file gateway.File, indexHTMLURL *
 
 func (i *Published) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
 	prj, err := i.project.FindByPublicName(ctx, name)
-	if err != nil || prj == nil {
-		if err == nil {
-			err = rerror.ErrNotFound
-		}
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return interfaces.ProjectPublishedMetadata{}, err
 	}
 
-	return interfaces.ProjectPublishedMetadataFrom(prj), nil
+	if prj == nil {
+		story, err := i.Storytelling.FindByPublicName(ctx, name)
+		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+			return interfaces.ProjectPublishedMetadata{}, err
+		}
+		if story != nil {
+			return interfaces.PublishedMetadataFrom(story), nil
+		}
+		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
+	}
+
+	return interfaces.PublishedMetadataFrom(prj), nil
 }
 
 func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 	r, err := i.file.ReadBuiltSceneFile(ctx, name)
-	if err != nil {
+	if err != nil && err != rerror.ErrNotFound {
 		return nil, err
 	}
+	if r != nil {
+		return r, nil
+	}
 
-	return r, nil
+	r, err = i.file.ReadStoryFile(ctx, name)
+	if err != nil && err != rerror.ErrNotFound {
+		return nil, err
+	}
+	if r != nil {
+		return r, nil
+	}
+	return nil, rerror.ErrNotFound
 }
 
 func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string, error) {
@@ -106,12 +127,21 @@ func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string,
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return "", err
 	}
-	if prj == nil {
-		return htmlStr, nil
+	if prj != nil {
+		md := interfaces.PublishedMetadataFrom(prj)
+		return renderIndex(htmlStr, u.String(), md), nil
 	}
 
-	md := interfaces.ProjectPublishedMetadataFrom(prj)
-	return renderIndex(htmlStr, u.String(), md), nil
+	story, err := i.Storytelling.FindByPublicName(ctx, name)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return "", err
+	}
+	if story != nil {
+		md := interfaces.PublishedMetadataFrom(story)
+		return renderIndex(htmlStr, u.String(), md), nil
+	}
+
+	return htmlStr, nil
 }
 
 const headers = `{{if .title}}  <meta name="twitter:title" content="{{.title}}" />

@@ -90,17 +90,17 @@ const InsertArea = styled.div`
 `;
 
 const StyledIcon = styled(Icon)`
-  color: ${props => props.theme.general.select};
+  color: ${props => props.theme.select.main};
 `;
 
 const Button = styled.div`
-  color: ${props => props.theme.general.select};
+  color: ${props => props.theme.select.main};
   margin: 0 3px;
 `;
 
 const Line = styled.div`
   width: 43%;
-  background-color: ${props => props.theme.general.select};
+  background-color: ${props => props.theme.select.main};
   height: 2px;
   margin-top: -2px;
 `;

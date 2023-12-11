@@ -1,51 +1,68 @@
 import RCSlider from "rc-slider";
 import React, { ComponentProps } from "react";
 
-import { styled, css } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import "rc-slider/assets/index.css";
 
-type Props = {
-  min: number;
-  max: number;
-  frame?: boolean;
-} & Omit<ComponentProps<typeof RCSlider>, "defaultValue">;
+const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
 
-const Slider: React.FC<Props> = ({ frame = false, ...props }) => (
-  <Wrapper frame={frame}>
-    <StyledSlider {...props} />
-  </Wrapper>
-);
+export type Props = {
+  min?: number;
+  max?: number;
+} & ComponentProps<typeof SliderWithTooltip>;
 
-const Wrapper = styled.div<{ frame: boolean }>`
-  display: flex;
-  align-items: center;
-  border: ${({ frame, theme }) => (frame ? `solid 1px ${theme.editor.slider.border}` : "none")};
-  border-radius: 3px;
-  background: ${({ frame, theme }) => (frame ? theme.editor.slider.bg : "transparent")};
+const Slider: React.FC<Props> = ({ ...props }) => {
+  const calculatedStep = props.step ? props.step : props.max ? props.max / 10 : 0.1;
+  return (
+    <SliderStyled disabled={props.disabled as boolean}>
+      <SliderWithTooltip step={calculatedStep} {...props} />
+    </SliderStyled>
+  );
+};
+
+const SliderStyled = styled.div<{ disabled: boolean }>`
   width: 100%;
-  flex: 1;
-  box-sizing: border-box;
-  ${({ frame }) =>
-    frame &&
-    css`
-      padding: 6px 12px;
-      margin-right: 5px;
-    `};
-`;
+  .rc-slider-disabled {
+    background-color: transparent;
+    opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+    cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
+  }
 
-const StyledSlider = styled(RCSlider)`
+  .rc-slider-rail {
+    height: 8px;
+  }
+
   .rc-slider-handle {
-    background-color: ${({ theme }) => theme.editor.slider.main};
-    border: ${({ theme }) => theme.editor.slider.main};
+    background-color: ${({ theme }) => theme.item.default};
+    border: ${({ theme }) => theme.primary.weak};
+    height: 12px;
+    width: 12px;
+    margin-top: -2px;
   }
 
   .rc-slider-track {
-    background-color: ${({ theme }) => theme.editor.slider.main};
+    background-color: ${({ theme }) => theme.primary.weak};
+    height: 8px;
   }
 
-  .rc-slider-handle:focus {
-    box-shadow: none;
+  .rc-slider-rail {
+    background-color: ${({ theme }) => theme.outline.weaker};
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+  }
+
+  .rc-slider-tooltip-arrow {
+    background-color: transparent;
+    border-top-color: ${({ theme }) => theme.bg[2]};
+    bottom: 2px;
+    margin-left: -8px;
+    border-width: 9px 8px 0;
+  }
+
+  .rc-slider-tooltip-inner {
+    background-color: ${({ theme }) => theme.bg[2]};
+    color: ${({ theme }) => theme.content.main};
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
   }
 `;
 
