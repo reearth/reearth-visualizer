@@ -168,9 +168,13 @@ export const StyledText = styled(Text)`
   padding: 8px 10px;
 `;
 
+export const PropertyContentWrapper = styled.div`
+  display: block;
+  margin-bottom: 100px;
+`;
+
 export const PropertyContent = styled.div`
   display: flex;
-  margin-bottom: 100px;
   border-bottom: ${({ theme }) => `1px solid ${theme.outline.weak}`};
 
   & > :first-child {

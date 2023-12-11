@@ -254,7 +254,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           />
         )}
         {showSketchLayerManager && (
-          <SketchLayerManager sceneId={sceneId} onClose={handleSketchLayerManagerCloser} />
+          <SketchLayerManager
+            onSubmit={handleLayerAdd}
+            sceneId={sceneId}
+            onClose={handleSketchLayerManagerCloser}
+          />
         )}
       </Wrapper>
     </DndProvider>
