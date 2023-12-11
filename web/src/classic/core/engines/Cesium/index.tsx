@@ -20,6 +20,7 @@ import type { Engine, EngineProps, EngineRef } from "..";
 import Cluster from "./Cluster";
 import Clock from "./core/Clock";
 import Globe from "./core/Globe";
+import GoogleTiles from "./core/GoogleTiles";
 import ImageryLayers from "./core/Imagery";
 import Indicator from "./core/Indicator";
 import Event from "./Event";
@@ -188,6 +189,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       <Sun show={property?.atmosphere?.enable_sun ?? true} />
       <SkyAtmosphere show={property?.atmosphere?.sky_atmosphere ?? true} />
       <Globe property={property} cesiumIonAccessToken={cesiumIonAccessToken} />
+      <GoogleTiles/>
       <featureContext.Provider value={context}>{ready ? children : null}</featureContext.Provider>
     </Viewer>
   );
