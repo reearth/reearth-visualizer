@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import SelectField from "@reearth/beta/components/fields/SelectField";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -9,6 +8,15 @@ import {
   Input,
   SubmitWrapper,
   InputWrapper,
+  AddButtonWrapper,
+  SelectWrapper,
+  PropertyList,
+  PropertyListHeader,
+  StyledText,
+  DataTypeContent,
+  PropertyContent,
+  DataTypeText,
+  DeleteDataType,
 } from "@reearth/beta/features/Editor/utils";
 import { useT } from "@reearth/services/i18n";
 
@@ -35,17 +43,39 @@ const CustomedProperties: React.FC<SketchProps> = ({ onClose }) => {
               onChange={e => setValue(e.target.value)}
             />
           </InputGroup>
-          <InputGroup label={t("Type")} description={t("Type of data you want to add.")}>
-            <SelectField
-              value={layerValue}
-              options={[].map(v => ({ key: v, label: v }))}
-              attachToRoot
-              onChange={setLayerValue}
-            />
-          </InputGroup>
+          <SelectWrapper
+            value={layerValue}
+            name={t("Type")}
+            description={t("Type of data you want to add.")}
+            options={[].map(v => ({ key: v, label: v }))}
+            attachToRoot
+            onChange={setLayerValue}
+          />
         </InputWrapper>
+        <AddButtonWrapper>
+          <Button
+            text={t("Add to proprety list")}
+            buttonType="primary"
+            size="medium"
+            disabled={!value}
+            onClick={handleSubmit}
+          />
+        </AddButtonWrapper>
       </AssetWrapper>
 
+      <PropertyList>
+        <PropertyListHeader>
+          <StyledText size="footnote">{t("Name")}</StyledText>
+          <StyledText size="footnote">{t("Data Types")}</StyledText>
+        </PropertyListHeader>
+        <PropertyContent>
+          <StyledText size="footnote">{t("Name")}</StyledText>
+          <DataTypeContent>
+            <DataTypeText size="footnote">{t("Data Types")}</DataTypeText>{" "}
+            <DeleteDataType icon="bin" size={16} />
+          </DataTypeContent>
+        </PropertyContent>
+      </PropertyList>
       <SubmitWrapper>
         <Button
           text={t("Create")}

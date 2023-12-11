@@ -1,4 +1,6 @@
+import SelectField from "@reearth/beta/components/fields/SelectField";
 import Icon from "@reearth/beta/components/Icon";
+import Text from "@reearth/beta/components/Text";
 import generateRandomString from "@reearth/beta/utils/generate-random-string";
 import { styled } from "@reearth/services/theme";
 
@@ -20,6 +22,7 @@ const InputGroupWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 `;
 
 const Label = styled.label`
@@ -45,6 +48,7 @@ export const Input = styled.input`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-top: auto;
   ::placeholder {
     color: ${({ theme }) => theme.content.weaker};
   }
@@ -128,7 +132,69 @@ export const LayerStyleIcon = styled(Icon)`
 
 export const InputWrapper = styled.div`
   display: flex;
+  gap: 12px;
+`;
+
+export const AddButtonWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+`;
+export const SelectWrapper = styled(SelectField)`
+  display: block;
+  margin-top: 4px;
+  width: 100%;
+`;
+
+export const PropertyList = styled.div`
+  display: block;
+  margin-top: 24px;
+  border-radius: 4px;
+  border: ${({ theme }) => `1px solid ${theme.outline.weak}`};
+`;
+
+export const PropertyListHeader = styled.div`
+  display: flex;
+  background: ${({ theme }) => theme.bg[2]};
+  & > :first-child {
+    border-right: ${({ theme }) => `1px solid ${theme.outline.weak}`};
+  }
+`;
+
+export const StyledText = styled(Text)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 40%;
+  padding: 8px 10px;
+`;
+
+export const PropertyContent = styled.div`
+  display: flex;
+  margin-bottom: 100px;
+  border-bottom: ${({ theme }) => `1px solid ${theme.outline.weak}`};
+
+  & > :first-child {
+    border-right: ${({ theme }) => `1px solid ${theme.outline.weak}`};
+  }
+`;
+
+export const DataTypeContent = styled.div`
+  display: flex;
+  width: 55%;
   justify-content: space-between;
+  & > :first-child {
+    border-right: ${({ theme }) => `1px solid ${theme.outline.weak}`};
+  }
+`;
+
+export const DataTypeText = styled(Text)`
+  width: 85%;
+  padding: 8px 10px;
+`;
+export const DeleteDataType = styled(Icon)`
+  cursor: pointer;
+  outline: none;
+  padding-top: 12px;
 `;
 
 export const generateTitle = (url: string, layerName?: string): string => {
