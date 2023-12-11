@@ -10,7 +10,7 @@
         "test": "vitest",
         "coverage": "vitest --coverage",
         "e2e": "playwright test",
-        "prepare": "cd .. && husky install web/.husky",
+        "prepare": "cd .. && husky install",
         "build": "vite build",
         "build:preview": "run-s build storybook:build",
         "clean": "del coverage dist node_modules/.cache",
@@ -26,9 +26,6 @@
     },
     "engines": {
         "node": ">=16"
-    },
-    "lint-staged": {
-        "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix"
     },
     "devDependencies": {
         "@emotion/jest": "11.11.0",
