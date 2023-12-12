@@ -109,6 +109,10 @@ const BlockWrapper: React.FC<Props> = ({
         isEditable={isEditable}
         hideHoverUI={disableSelection}
         overrideGroupId={groupId === "title" ? groupId : undefined}
+        onClick={e => {
+          handleBlockClick(e);
+        }}
+        onDoubleClick={handleDoubleClick}
         onClickAway={onClickAway}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
@@ -120,11 +124,7 @@ const BlockWrapper: React.FC<Props> = ({
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
-          disableSelection={disableSelection}
-          onClick={e => {
-            handleBlockClick(e);
-          }}
-          onDoubleClick={handleDoubleClick}>
+          disableSelection={disableSelection}>
           {children ?? (isEditable && <Template icon={icon} />)}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (

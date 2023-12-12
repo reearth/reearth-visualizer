@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { MouseEvent, ReactNode } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
@@ -25,7 +25,8 @@ type Props = {
   overrideGroupId?: string;
   onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<Element>) => void;
+  onDoubleClick?: (e: MouseEvent<Element>) => void;
   onClickAway?: () => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
@@ -69,6 +70,7 @@ const SelectableArea: React.FC<Props> = ({
   onSettingsToggle,
   onRemove,
   onClick,
+  onDoubleClick,
   onClickAway,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -91,8 +93,10 @@ const SelectableArea: React.FC<Props> = ({
         noBorder={noBorder}
         hideHoverUI={hideHoverUI}
         onMouseOver={handleHoverChange(true)}
-        onMouseOut={handleHoverChange(false)}
-        onClick={onClick}>
+        onMouseOut={handleHoverChange(false)}>
+        <div onClick={onClick} onDoubleClick={onDoubleClick}>
+          {children}
+        </div>
         {(isSelected || (!hideHoverUI && isHovered)) && (
           <ActionPanel
             title={title}
@@ -109,6 +113,7 @@ const SelectableArea: React.FC<Props> = ({
             setShowPadding={setShowPadding}
             onEditModeToggle={onEditModeToggle}
             onSettingsToggle={onSettingsToggle}
+            onClick={onClick}
             onRemove={onRemove}
             onPropertyUpdate={onPropertyUpdate}
             onPropertyItemAdd={onPropertyItemAdd}
@@ -116,7 +121,6 @@ const SelectableArea: React.FC<Props> = ({
             onPropertyItemDelete={onPropertyItemDelete}
           />
         )}
-        {children}
       </Wrapper>
     </ClickAwayListener>
   );

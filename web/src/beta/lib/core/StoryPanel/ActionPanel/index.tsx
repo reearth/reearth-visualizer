@@ -32,6 +32,7 @@ type Props = {
   overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
+  onClick?: (e: any) => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -68,6 +69,7 @@ const ActionPanel: React.FC<Props> = ({
   overrideGroupId,
   setShowPadding,
   onSettingsToggle,
+  onClick,
   onRemove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -101,6 +103,7 @@ const ActionPanel: React.FC<Props> = ({
     }
     return menuItems;
   }, [settingsTitle, panelSettings, t, setShowPadding, onRemove, handleRemove]);
+
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
       {dndEnabled && (
@@ -112,15 +115,13 @@ const ActionPanel: React.FC<Props> = ({
         open={showSettings && isSelected}
         onOpenChange={() => onSettingsToggle?.()}
         placement="bottom-start">
-        <BlockOptions isSelected={isSelected}>
+        <BlockOptions isSelected={isSelected} onClick={!isSelected ? onClick : undefined}>
           {actionItems.map(
             (a, idx) =>
               !a.hide && (
                 <Fragment key={idx}>
                   <Popover.Trigger asChild>
-                    <OptionWrapper
-                      showPointer={!isSelected || !!a.onClick}
-                      onClick={a.onClick ?? stopClickPropagation}>
+                    <OptionWrapper showPointer={!isSelected || !!a.onClick} onClick={a.onClick}>
                       <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
                       {a.name && (
                         <OptionText size="footnote" customColor>

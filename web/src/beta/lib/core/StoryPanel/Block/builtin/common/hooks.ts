@@ -57,7 +57,7 @@ export default ({
   );
 
   const handleBlockClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
+    (e: MouseEvent<Element>) => {
       e.stopPropagation();
       if ((showSettings && isSelected) || editMode) return;
       handleSingleClick();
