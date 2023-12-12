@@ -1,6 +1,5 @@
 import React, { ReactNode, useMemo } from "react";
 
-import GlobalModal from "@reearth/classic/components/organisms/GlobalModal"; // todo: migrate to beta
 import { useMeFetcher, useProjectFetcher, useSceneFetcher } from "@reearth/services/api";
 import { AuthenticatedPage } from "@reearth/services/auth";
 
@@ -49,7 +48,6 @@ const PageWrapper: React.FC<Props> = ({ sceneId, projectId, workspaceId, renderI
     <Loading animationSize={80} />
   ) : (
     <>
-      <GlobalModal />
       {renderItem({
         sceneId,
         projectId: currentProjectId,
