@@ -126,6 +126,7 @@ const BlockWrapper: React.FC<Props> = ({
           isEditable={isEditable}
           disableSelection={disableSelection}>
           {children ?? (isEditable && <Template icon={icon} />)}
+          {!editMode && isEditable && <Overlay disableSelection={disableSelection} />}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
@@ -163,10 +164,18 @@ const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelec
   cursor: ${({ isEditable, disableSelection }) =>
     isEditable && !disableSelection ? "pointer" : "default"};
   color: black;
+  position: relative;
 `;
 
 const EditorPanel = styled.div`
   background: ${({ theme }) => theme.bg[1]};
   color: ${({ theme }) => theme.content.main};
   padding: 12px;
+`;
+
+const Overlay = styled.div<{ disableSelection?: boolean }>`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  ${({ disableSelection }) => !disableSelection && "cursor: pointer;"}
 `;
