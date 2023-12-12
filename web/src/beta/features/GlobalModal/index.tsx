@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useAuth } from "@reearth/services/auth";
+import { config } from "@reearth/services/config";
 import { useLang as useCurrentLang } from "@reearth/services/i18n";
 import {
   NotificationType,
@@ -9,7 +10,8 @@ import {
 } from "@reearth/services/state";
 
 const GlobalModal: React.FC = () => {
-  const extensions = window.REEARTH_CONFIG?.extensions?.globalModal;
+  const extensions = config()?.extensions?.globalModal;
+
   const { getAccessToken, logout } = useAuth();
   const currentLang = useCurrentLang();
   const [currentTheme] = useCurrentTheme();
@@ -18,15 +20,15 @@ const GlobalModal: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string>();
 
   useEffect(() => {
+    if (accessToken) return;
     getAccessToken().then(token => {
       setAccessToken(token);
     });
-  }, [getAccessToken]);
+  }, [accessToken, getAccessToken]);
 
   const handleNotificationChange = useCallback(
-    (type: NotificationType, text: string, heading?: string) => {
-      setNotification({ type, text, heading });
-    },
+    (type: NotificationType, text: string, heading?: string) =>
+      setNotification({ type, text, heading }),
     [setNotification],
   );
 
