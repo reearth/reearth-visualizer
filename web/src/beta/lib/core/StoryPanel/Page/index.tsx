@@ -7,7 +7,11 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
+import {
+  STORY_PANEL_CONTENT_ELEMENT_ID,
+  MIN_STORY_PAGE_PADDING_IN_EDITOR,
+  MIN_STORY_PAGE_GAP_IN_EDITOR,
+} from "../constants";
 import { useElementOnScreen } from "../hooks/useElementOnScreen";
 import SelectableArea from "../SelectableArea";
 
@@ -128,7 +132,7 @@ const StoryPanel: React.FC<Props> = ({
   return (
     <SelectableArea
       title={page?.title !== "Untitled" ? page?.title : t("Page")}
-      position="right-bottom"
+      position="left-bottom"
       icon="storyPage"
       noBorder
       isSelected={selectedPageId === page?.id}
@@ -147,7 +151,10 @@ const StoryPanel: React.FC<Props> = ({
       <Wrapper
         id={page?.id}
         ref={containerRef}
+        isEditable={isEditable}
+        minPaddingInEditor={MIN_STORY_PAGE_PADDING_IN_EDITOR}
         padding={panelSettings?.padding?.value}
+        minGapInEditor={MIN_STORY_PAGE_GAP_IN_EDITOR}
         gap={panelSettings?.gap?.value}>
         <PageTitleWrapper>
           {(isEditable || titleProperty?.title?.title?.value) && (
@@ -245,16 +252,39 @@ const StoryPanel: React.FC<Props> = ({
 
 export default StoryPanel;
 
-const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
+const Wrapper = styled.div<{
+  padding: Spacing;
+  gap?: number;
+  isEditable?: boolean;
+  minPaddingInEditor: Spacing;
+  minGapInEditor: number;
+}>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
-  ${({ gap }) => gap && `gap: ${gap}px;`}
+  ${({ gap, isEditable, minGapInEditor }) =>
+    gap && `gap: ${isEditable && gap < minGapInEditor ? minGapInEditor : gap}px;`}
 
-  ${({ padding }) => `padding-top: ${padding.top}px;`}
-  ${({ padding }) => `padding-bottom: ${padding.bottom}px;`}
-  ${({ padding }) => `padding-left: ${padding.left}px;`}
-  ${({ padding }) => `padding-right: ${padding.right}px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-top: ${
+      isEditable && padding.top < minPaddingInEditor.top ? minPaddingInEditor.top : padding.top
+    }px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-bottom: ${
+      isEditable && padding.bottom < minPaddingInEditor.bottom
+        ? minPaddingInEditor.bottom
+        : padding.bottom
+    }px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-left: ${
+      isEditable && padding.left < minPaddingInEditor.left ? minPaddingInEditor.left : padding.left
+    }px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-right: ${
+      isEditable && padding.right < minPaddingInEditor.right
+        ? minPaddingInEditor.right
+        : padding.right
+    }px;`}
   box-sizing: border-box;
 `;
 

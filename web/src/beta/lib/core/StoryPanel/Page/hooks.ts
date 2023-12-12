@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  DEFAULT_STORY_PAGE_GAP,
-  DEFAULT_STORY_PAGE_PADDING,
-  MIN_STORY_PAGE_GAP_IN_EDITOR,
-} from "../constants";
+import { DEFAULT_STORY_PAGE_GAP, DEFAULT_STORY_PAGE_PADDING } from "../constants";
 import { usePanelContext } from "../context";
 import { StoryPage } from "../types";
 import { calculatePaddingValue } from "../utils";
@@ -62,9 +58,7 @@ export default ({
       },
       gap: {
         ...property?.panel?.gap,
-        value:
-          property?.panel?.gap?.value ??
-          (isEditable ? MIN_STORY_PAGE_GAP_IN_EDITOR : DEFAULT_STORY_PAGE_GAP),
+        value: property?.panel?.gap?.value ?? DEFAULT_STORY_PAGE_GAP,
       },
     }),
     [property?.panel, isEditable],
