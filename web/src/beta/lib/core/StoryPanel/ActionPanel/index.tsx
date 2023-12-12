@@ -29,7 +29,6 @@ type Props = {
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
-  isHovered?: boolean;
   overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
@@ -192,14 +191,14 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   `
       : position === "left-bottom"
       ? `
-  left: -1px;
+  left: 0;
   top: 0;
   `
       : position === "right-bottom"
       ? `
   top: 0;
-  right: -1px;
-  `
+  right: 0;
+    `
       : `
   right: -1px;
   top: -25px;

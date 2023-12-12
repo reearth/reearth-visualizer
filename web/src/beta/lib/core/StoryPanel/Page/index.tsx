@@ -128,7 +128,7 @@ const StoryPanel: React.FC<Props> = ({
   return (
     <SelectableArea
       title={page?.title !== "Untitled" ? page?.title : t("Page")}
-      position="left-bottom"
+      position="right-bottom"
       icon="storyPage"
       noBorder
       isSelected={selectedPageId === page?.id}
@@ -136,6 +136,7 @@ const StoryPanel: React.FC<Props> = ({
       panelSettings={panelSettings}
       showSettings={showPageSettings}
       isEditable={isEditable}
+      hideHoverUI={disableSelection}
       onClick={() => onPageSelect?.(page?.id)}
       onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}

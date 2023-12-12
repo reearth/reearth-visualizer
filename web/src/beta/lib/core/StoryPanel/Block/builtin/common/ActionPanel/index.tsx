@@ -18,7 +18,6 @@ type Props = {
   dndEnabled?: boolean;
   position?: ActionPosition;
   overrideGroupId?: string;
-  hideHoverUI?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
@@ -53,7 +52,6 @@ const BlockActionPanel: React.FC<Props> = ({
   editMode,
   dndEnabled,
   panelSettings,
-  hideHoverUI,
   onEditModeToggle,
   onSettingsToggle,
   ...actionProps
@@ -68,7 +66,7 @@ const BlockActionPanel: React.FC<Props> = ({
     onSettingsToggle,
   });
 
-  return !hideHoverUI || isSelected ? (
+  return (
     <ActionPanel
       dndEnabled={dndEnabled}
       isSelected={isSelected}
@@ -77,7 +75,7 @@ const BlockActionPanel: React.FC<Props> = ({
       onSettingsToggle={onSettingsToggle}
       {...actionProps}
     />
-  ) : null;
+  );
 };
 
 export default BlockActionPanel;

@@ -99,6 +99,7 @@ const BlockWrapper: React.FC<Props> = ({
       <SelectableArea
         title={title}
         icon={icon}
+        position="right-bottom"
         isSelected={isSelected}
         propertyId={propertyId}
         dndEnabled={dndEnabled}

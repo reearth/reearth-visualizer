@@ -75,7 +75,7 @@ const SelectableArea: React.FC<Props> = ({
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { showPadding, setShowPadding, handleClickAway } = useHooks({
+  const { showPadding, isHovered, handleHoverChange, setShowPadding, handleClickAway } = useHooks({
     editMode,
     isSelected,
     onEditModeToggle,
@@ -90,29 +90,32 @@ const SelectableArea: React.FC<Props> = ({
         isSelected={isSelected}
         noBorder={noBorder}
         hideHoverUI={hideHoverUI}
+        onMouseOver={handleHoverChange(true)}
+        onMouseOut={handleHoverChange(false)}
         onClick={onClick}>
-        <ActionPanel
-          title={title}
-          icon={icon}
-          isSelected={isSelected}
-          showSettings={showSettings}
-          showPadding={showPadding}
-          editMode={editMode}
-          propertyId={propertyId}
-          panelSettings={panelSettings}
-          dndEnabled={dndEnabled}
-          position={position}
-          overrideGroupId={overrideGroupId}
-          hideHoverUI={hideHoverUI}
-          setShowPadding={setShowPadding}
-          onEditModeToggle={onEditModeToggle}
-          onSettingsToggle={onSettingsToggle}
-          onRemove={onRemove}
-          onPropertyUpdate={onPropertyUpdate}
-          onPropertyItemAdd={onPropertyItemAdd}
-          onPropertyItemMove={onPropertyItemMove}
-          onPropertyItemDelete={onPropertyItemDelete}
-        />
+        {(isSelected || (!hideHoverUI && isHovered)) && (
+          <ActionPanel
+            title={title}
+            icon={icon}
+            isSelected={isSelected}
+            showSettings={showSettings}
+            showPadding={showPadding}
+            editMode={editMode}
+            propertyId={propertyId}
+            panelSettings={panelSettings}
+            dndEnabled={dndEnabled}
+            position={position}
+            overrideGroupId={overrideGroupId}
+            setShowPadding={setShowPadding}
+            onEditModeToggle={onEditModeToggle}
+            onSettingsToggle={onSettingsToggle}
+            onRemove={onRemove}
+            onPropertyUpdate={onPropertyUpdate}
+            onPropertyItemAdd={onPropertyItemAdd}
+            onPropertyItemMove={onPropertyItemMove}
+            onPropertyItemDelete={onPropertyItemDelete}
+          />
+        )}
         {children}
       </Wrapper>
     </ClickAwayListener>
@@ -127,11 +130,9 @@ const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean; hideHover
   transition: all 0.3s;
   padding: 1px;
   position: relative;
-  overflow: ${({ isSelected }) => (isSelected ? "visible" : "hidden")};
 
   :hover {
     border-color: ${({ isSelected, hideHoverUI, theme }) =>
       !hideHoverUI && !isSelected && theme.select.weaker};
-    overflow: visible;
   }
 `;

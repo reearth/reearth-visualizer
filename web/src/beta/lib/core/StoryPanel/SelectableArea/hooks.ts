@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 
 type Props = {
   editMode?: boolean;
@@ -9,6 +9,7 @@ type Props = {
 
 export default ({ editMode, isSelected, onEditModeToggle, onClickAway }: Props) => {
   const [showPadding, setShowPadding] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (!isSelected && editMode) {
@@ -21,8 +22,18 @@ export default ({ editMode, isSelected, onEditModeToggle, onClickAway }: Props) 
     onClickAway?.();
   }, [onClickAway]);
 
+  const handleHoverChange = useCallback(
+    (isHovered: boolean) => (e?: MouseEvent<Element>) => {
+      e?.stopPropagation();
+      setIsHovered(isHovered);
+    },
+    [],
+  );
+
   return {
     showPadding,
+    isHovered,
+    handleHoverChange,
     setShowPadding,
     handleClickAway,
   };

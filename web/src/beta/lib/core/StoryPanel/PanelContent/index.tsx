@@ -84,7 +84,7 @@ const StoryContent: React.FC<Props> = ({
     <PagesWrapper
       id={STORY_PANEL_CONTENT_ELEMENT_ID}
       showingIndicator={showingIndicator}
-      isEditable={isEditable || disableSelection}>
+      isEditable={isEditable && !disableSelection}>
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage

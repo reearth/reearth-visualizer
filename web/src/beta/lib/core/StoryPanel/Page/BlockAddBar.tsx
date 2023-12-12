@@ -66,7 +66,12 @@ const BlockAddBar: React.FC<Props> = ({
     <Wrapper>
       <Popover.Provider open={openBlocks} placement="bottom-start" onOpenChange={onBlockOpen}>
         <Popover.Trigger asChild>
-          <Bar id={id} persist={persist} height={showAreaHeight}>
+          <Bar
+            id={id}
+            persist={persist}
+            height={showAreaHeight}
+            onClick={e => e.stopPropagation()}
+            onMouseOver={e => e.stopPropagation()}>
             <StyledIcon icon="plus" persist={persist} size={16} onClick={handleBlockOpen} />
             <Line persist={persist} />
           </Bar>
@@ -83,14 +88,14 @@ export default BlockAddBar;
 
 const Wrapper = styled.div`
   position: relative;
-  background: green;
   z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlockAddBar};
 `;
 
 const Bar = styled.div<{ persist?: boolean; height?: number }>`
   position: absolute;
   left: 0;
-  right: 100px;
+  right: 0;
+  left: 0;
   display: flex;
   align-items: center;
   gap: 10px;
