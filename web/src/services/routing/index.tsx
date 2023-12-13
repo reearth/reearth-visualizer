@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { BrowserRouter as Router, Navigate, Route, Routes, useParams } from "react-router-dom";
 
 import NotFound from "@reearth/beta/components/NotFound";
+import BetaEditor from "@reearth/beta/pages/EditorPage";
 import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
 import PasswordResetPage from "@reearth/classic/components/pages/Authentication/PasswordReset";
 import SignupPage from "@reearth/classic/components/pages/Authentication/SignupPage";
@@ -19,7 +20,6 @@ import { styled } from "@reearth/services/theme";
 import RootPage from "../../classic/components/pages/Authentication/RootPage";
 import Preview from "../../classic/components/pages/Preview";
 
-const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
 const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
 
 const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));

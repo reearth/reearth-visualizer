@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback } from "react";
+import { MutableRefObject, lazy, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
@@ -7,13 +7,15 @@ import StoryPanel, {
   StoryPanelRef,
   type InstallableStoryBlock,
 } from "@reearth/beta/lib/core/StoryPanel";
-import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
+import { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 
 import useHooks from "./hooks";
+
+const CoreVisualizer = lazy(() => import("@reearth/beta/lib/core/Visualizer"));
 
 export type Props = {
   visualizerRef?: MutableRefObject<MapRef | null>;
