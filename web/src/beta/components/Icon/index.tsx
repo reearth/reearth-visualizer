@@ -12,8 +12,7 @@ export type Icons = keyof typeof Icons;
 export type Props = {
   className?: string;
   icon?: string | Icons;
-  size?: string | number;
-  alt?: string;
+  size?: number;
   color?: string;
   stroke?: string;
   style?: CSSProperties;
@@ -26,7 +25,6 @@ export type Props = {
 const Icon: React.FC<Props> = ({
   className,
   icon,
-  alt,
   style,
   color,
   stroke,
@@ -44,22 +42,6 @@ const Icon: React.FC<Props> = ({
   if (!icon) return null;
 
   const aria = ariaProps(props);
-  const sizeStr = typeof size === "number" ? `${size}px` : size;
-  if (!src) {
-    return (
-      <StyledImg
-        className={className}
-        src={icon}
-        alt={alt}
-        style={style}
-        role={role}
-        size={sizeStr}
-        notransition={notransition}
-        onClick={onClick}
-        {...aria}
-      />
-    );
-  }
 
   return (
     <StyledSvg
@@ -68,7 +50,7 @@ const Icon: React.FC<Props> = ({
       role={role}
       color={color}
       stroke={stroke}
-      size={sizeStr}
+      size={size}
       onClick={onClick}
       style={{
         ...style,
@@ -83,21 +65,15 @@ const Icon: React.FC<Props> = ({
   );
 };
 
-const StyledImg = styled.img<{ size?: string; notransition?: boolean }>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  ${({ notransition }) => !notransition && "transition: all 0.3s;"}
-`;
-
 const StyledSvg = styled(SVG)<{
   color?: string;
   stroke?: string;
-  size?: string;
+  size?: number;
 }>`
   font-size: 0;
   display: inline-block;
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
+  width: ${({ size }) => size + "px"};
+  height: ${({ size }) => size + "px"};
   color: ${({ color }) => color};
   ${({ stroke }) => stroke && `stroke: ${stroke};`}
   transition-property: color, background;
