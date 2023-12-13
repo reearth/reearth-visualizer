@@ -24,7 +24,7 @@ const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettin
 
 const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
 const Dashboard = lazy(() => import("@reearth/classic/components/pages/Dashboard"));
-const GraphQLPlayground = lazy(() => import("@reearth/classic/components/pages/GraphQLPlayground"));
+const GraphQLPlayground = lazy(() => import("@reearth/beta/pages/GraphQLPlayground"));
 const PluginEditor = lazy(() => import("../../classic/components/pages/PluginEditor"));
 
 export const AppRoutes = () => {
@@ -38,6 +38,7 @@ export const AppRoutes = () => {
             path="settings/project/:projectId/:tab?/:subId?"
             element={<BetaProjectSettings />}
           />
+          <Route path="graphql" element={<GraphQLPlayground />} />
           {/* Beta routes - end */}
           {/* classic routes - start */}
           <Route index={true} element={<RootPage />} />
@@ -69,7 +70,6 @@ export const AppRoutes = () => {
             </Route>
             <Route path="*" element={<Navigate to="/settings/account" />} />
           </Route>
-          <Route path="graphql" element={<GraphQLPlayground />} />
           {...redirects.map(([from, to]) => (
             <Route key={from} path={from} element={<Redirect to={to} />} />
           ))}
