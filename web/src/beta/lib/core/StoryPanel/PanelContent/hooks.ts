@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
+import { usePanelContext } from "../context";
 
 export type { StoryPage } from "../hooks";
 export { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
@@ -17,9 +18,15 @@ export default ({
   ) => Promise<void>;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
 }) => {
+  const storyPanelContext = usePanelContext();
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   const [pageGap, setPageGap] = useState<number>();
+
+  const disableSelection = useMemo(
+    () => storyPanelContext?.disableSelection,
+    [storyPanelContext?.disableSelection],
+  );
 
   const handleBlockCreate = useCallback(
     (pageId: string) =>
@@ -54,6 +61,7 @@ export default ({
   return {
     pageGap,
     scrollTimeoutRef,
+    disableSelection,
     handleBlockCreate,
     handleBlockDelete,
   };

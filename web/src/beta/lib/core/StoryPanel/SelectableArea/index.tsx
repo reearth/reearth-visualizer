@@ -1,9 +1,10 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { MouseEvent, ReactNode } from "react";
 
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
+import ClickAwayListener from "../ClickAwayListener";
 
 import useHooks from "./hooks";
 
@@ -20,11 +21,13 @@ type Props = {
   position?: ActionPosition;
   noBorder?: boolean;
   isEditable?: boolean;
+  hideHoverUI?: boolean;
   overrideGroupId?: string;
-  setEditMode?: Dispatch<SetStateAction<boolean>>;
-  onEditModeToggle?: () => void;
+  onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<Element>) => void;
+  onDoubleClick?: (e: MouseEvent<Element>) => void;
+  onClickAway?: () => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -60,66 +63,80 @@ const SelectableArea: React.FC<Props> = ({
   position,
   noBorder,
   isEditable,
+  hideHoverUI,
   panelSettings,
   overrideGroupId,
-  setEditMode,
   onEditModeToggle,
   onSettingsToggle,
   onRemove,
   onClick,
+  onDoubleClick,
+  onClickAway,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { showPadding, setShowPadding } = useHooks({
+  const { showPadding, isHovered, handleHoverChange, setShowPadding, handleClickAway } = useHooks({
     editMode,
     isSelected,
-    setEditMode,
+    onEditModeToggle,
+    onClickAway,
   });
 
   return !isEditable ? (
     <>{children}</>
   ) : (
-    <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
-      <ActionPanel
-        title={title}
-        icon={icon}
+    <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
+      <Wrapper
         isSelected={isSelected}
-        showSettings={showSettings}
-        showPadding={showPadding}
-        editMode={editMode}
-        propertyId={propertyId}
-        panelSettings={panelSettings}
-        dndEnabled={dndEnabled}
-        position={position}
-        overrideGroupId={overrideGroupId}
-        setShowPadding={setShowPadding}
-        onEditModeToggle={onEditModeToggle}
-        onSettingsToggle={onSettingsToggle}
-        onRemove={onRemove}
-        onPropertyUpdate={onPropertyUpdate}
-        onPropertyItemAdd={onPropertyItemAdd}
-        onPropertyItemMove={onPropertyItemMove}
-        onPropertyItemDelete={onPropertyItemDelete}
-      />
-      {children}
-    </Wrapper>
+        noBorder={noBorder}
+        hideHoverUI={hideHoverUI}
+        onMouseOver={handleHoverChange(true)}
+        onMouseOut={handleHoverChange(false)}>
+        <div onClick={onClick} onDoubleClick={onDoubleClick}>
+          {children}
+        </div>
+        {(isSelected || (!hideHoverUI && isHovered)) && (
+          <ActionPanel
+            title={title}
+            icon={icon}
+            isSelected={isSelected}
+            showSettings={showSettings}
+            showPadding={showPadding}
+            editMode={editMode}
+            propertyId={propertyId}
+            panelSettings={panelSettings}
+            dndEnabled={dndEnabled}
+            position={position}
+            overrideGroupId={overrideGroupId}
+            setShowPadding={setShowPadding}
+            onEditModeToggle={onEditModeToggle}
+            onSettingsToggle={onSettingsToggle}
+            onClick={onClick}
+            onRemove={onRemove}
+            onPropertyUpdate={onPropertyUpdate}
+            onPropertyItemAdd={onPropertyItemAdd}
+            onPropertyItemMove={onPropertyItemMove}
+            onPropertyItemDelete={onPropertyItemDelete}
+          />
+        )}
+      </Wrapper>
+    </ClickAwayListener>
   );
 };
 
 export default SelectableArea;
 
-const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean }>`
+const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean; hideHoverUI?: boolean }>`
   ${({ noBorder, isSelected, theme }) =>
     !noBorder && `border: 1px solid ${isSelected ? theme.select.main : "transparent"};`}
   transition: all 0.3s;
   padding: 1px;
   position: relative;
-  overflow: ${({ isSelected }) => (isSelected ? "visible" : "hidden")};
 
   :hover {
-    border-color: ${({ isSelected, theme }) => !isSelected && theme.select.weaker};
-    overflow: visible;
+    border-color: ${({ isSelected, hideHoverUI, theme }) =>
+      !hideHoverUI && !isSelected && theme.select.weaker};
   }
 `;
