@@ -1,5 +1,4 @@
-import svgToMiniDataURI from "mini-svg-data-uri";
-import React, { AriaAttributes, AriaRole, CSSProperties, MouseEvent, memo, useMemo } from "react";
+import { AriaAttributes, AriaRole, CSSProperties, MouseEvent, memo, useMemo } from "react";
 import SVG from "react-inlinesvg";
 
 import { ariaProps } from "@reearth/beta/utils/aria";
@@ -35,10 +34,7 @@ const Icon: React.FC<Props> = ({
   onClick,
   ...props
 }) => {
-  const src = useMemo(
-    () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
-    [icon],
-  );
+  const src = useMemo(() => Icons[icon as Icons], [icon]);
   if (!icon) return null;
 
   const aria = ariaProps(props);
