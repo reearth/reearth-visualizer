@@ -39,4 +39,6 @@ export type LookAtDestination = {
   range?: number;
   /** Radian */
   fov?: number;
+  /** Meters */
+  radius?: number;
 };

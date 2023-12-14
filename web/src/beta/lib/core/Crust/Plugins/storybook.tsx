@@ -94,6 +94,9 @@ export const context: Context = {
       captureScreen: act("captureScreen"),
       getLocationFromScreen: act("getLocationFromScreen"),
       sampleTerrainHeight: act("sampleTerrainHeight"),
+      computeGlobeHeight: act("computeGlobeHeight"),
+      toXYZ: act("toXYZ"),
+      toLngLatHeight: act("toLngLatHeight"),
       pickManyFromViewport: act("pickManyFromViewport"),
     },
     layers: {
@@ -124,6 +127,7 @@ export const context: Context = {
         pitch: 0,
         roll: 0,
         fov: Math.PI * (60 / 180),
+        aspectRatio: 1,
       },
       viewport: { west: 0, east: 0, north: 0, south: 0 },
       getFovInfo: act("getFovInfo"),
