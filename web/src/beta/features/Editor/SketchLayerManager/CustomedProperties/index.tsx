@@ -66,7 +66,7 @@ const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
       config: {
         data: {
           url: layerName !== "" ? layerName : parsedValue,
-          type: "3dtiles", // put this here for test while waiting for the API
+          type: "geojson",
           value: propertyList,
         },
       },
@@ -88,7 +88,7 @@ const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
           </InputGroup>
           <SelectWrapper
             value={dataType}
-            name={t("Type")}
+            name={t("Data Type")}
             description={t("Type of data you want to add.")}
             options={["Text", "URL"].map(v => ({ key: v, label: v }))}
             attachToRoot

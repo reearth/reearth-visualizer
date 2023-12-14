@@ -31,7 +31,7 @@ const General: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit }) => {
       config: {
         data: {
           url: layerName !== "" ? layerName : parsedValue,
-          type: "3dtiles", // put this here for test while waiting for the API
+          type: "geojson",
           value: layerName,
         },
       },
