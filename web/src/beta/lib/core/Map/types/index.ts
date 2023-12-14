@@ -73,6 +73,19 @@ export type EngineRef = {
     | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  toXYZ: (
+    lng: number,
+    lat: number,
+    height: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [x: number, y: number, z: number] | undefined;
+  toLngLatHeight: (
+    x: number,
+    y: number,
+    z: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [lng: number, lat: number, height: number] | undefined;
   flyTo: FlyTo;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;

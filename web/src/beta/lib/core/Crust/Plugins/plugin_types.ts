@@ -128,6 +128,19 @@ export type Scene = {
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
   readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  readonly computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly toXYZ: (
+    lng: number,
+    lat: number,
+    height: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [x: number, y: number, z: number] | undefined;
+  readonly toLngLatHeight: (
+    x: number,
+    y: number,
+    z: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [lng: number, lat: number, height: number] | undefined;
   readonly pickManyFromViewport: (
     windowPosition: [x: number, y: number],
     windowWidth: number,

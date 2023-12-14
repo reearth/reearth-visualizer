@@ -313,6 +313,8 @@ export const lookAt = (
     range?: number;
     /** Field of view expressed in radians */
     fov?: number;
+    /** Radius of bounding sphere */
+    radius?: number;
   },
   options?: {
     /** Seconds */
@@ -337,8 +339,11 @@ export const lookAt = (
       : undefined;
 
   if (position) {
-    cesiumCamera.flyToBoundingSphere(new BoundingSphere(position), {
-      offset: new HeadingPitchRange(camera.heading, camera.pitch, camera.range),
+    cesiumCamera.flyToBoundingSphere(new BoundingSphere(position, camera.radius), {
+      offset:
+        camera.heading !== undefined || camera.pitch !== undefined || camera.range !== undefined
+          ? new HeadingPitchRange(camera.heading, camera.pitch, camera.range)
+          : undefined,
       duration: options?.duration,
       easingFunction: options?.easing,
     });
@@ -496,7 +501,8 @@ export const getCamera = (viewer: Viewer | CesiumWidget | undefined): Camera | u
   const lng = CesiumMath.toDegrees(longitude);
   const { heading, pitch, roll } = camera;
   const fov = camera.frustum instanceof PerspectiveFrustum ? camera.frustum.fov : 1;
-  return { lng, lat, height, heading, pitch, roll, fov };
+  const aspectRatio = camera.frustum instanceof PerspectiveFrustum ? camera.frustum.aspectRatio : 1;
+  return { lng, lat, height, heading, pitch, roll, fov, aspectRatio };
 };
 
 export const getClock = (clock: CesiumClock | undefined): Clock | undefined => {

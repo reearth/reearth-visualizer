@@ -428,6 +428,9 @@ export function commonReearth({
   captureScreen,
   getLocationFromScreen,
   sampleTerrainHeight,
+  computeGlobeHeight,
+  toXYZ,
+  toLngLatHeight,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -475,6 +478,9 @@ export function commonReearth({
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
   sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
+  computeGlobeHeight: GlobalThis["reearth"]["scene"]["computeGlobeHeight"];
+  toXYZ: GlobalThis["reearth"]["scene"]["toXYZ"];
+  toLngLatHeight: GlobalThis["reearth"]["scene"]["toLngLatHeight"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -548,6 +554,9 @@ export function commonReearth({
       captureScreen,
       getLocationFromScreen,
       sampleTerrainHeight,
+      computeGlobeHeight,
+      toXYZ,
+      toLngLatHeight,
       pickManyFromViewport,
     },
     get viewport() {
