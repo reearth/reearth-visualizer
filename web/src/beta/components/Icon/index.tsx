@@ -10,7 +10,7 @@ export type Icons = keyof typeof Icons;
 
 export type Props = {
   className?: string;
-  icon: string | Icons;
+  icon?: string | Icons;
   size?: number;
   color?: string;
   stroke?: string;
@@ -23,7 +23,7 @@ export type Props = {
 
 const Icon: React.FC<Props> = ({
   className,
-  icon,
+  icon = "",
   style,
   color,
   stroke,
