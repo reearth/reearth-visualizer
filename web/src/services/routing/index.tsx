@@ -1,70 +1,37 @@
-import { lazy } from "react";
 import { BrowserRouter as Router, Navigate, Route, Routes, useParams } from "react-router-dom";
 
-// import NotFound from "@reearth/beta/components/NotFound";
-// import BetaEditor from "@reearth/beta/pages/EditorPage";
-// import LoginPage from "@reearth/classic/components/pages/Authentication/LoginPage";
-// import PasswordResetPage from "@reearth/classic/components/pages/Authentication/PasswordReset";
-// import SignupPage from "@reearth/classic/components/pages/Authentication/SignupPage";
-// import AccountSettings from "@reearth/classic/components/pages/Settings/Account";
-// import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
-// import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
-// import PluginSettings from "@reearth/classic/components/pages/Settings/Project/Plugin";
-// import PublicSettings from "@reearth/classic/components/pages/Settings/Project/Public";
-// import SettingsProjectList from "@reearth/classic/components/pages/Settings/ProjectList";
-// import WorkspaceSettings from "@reearth/classic/components/pages/Settings/Workspace";
-// import AssetSettings from "@reearth/classic/components/pages/Settings/Workspace/Asset";
-// import WorkspaceList from "@reearth/classic/components/pages/Settings/WorkspaceList";
 import { styled } from "@reearth/services/theme";
 
-const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
-const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
-const LoginPage = lazy(() => import("@reearth/classic/components/pages/Authentication/LoginPage"));
-const PasswordResetPage = lazy(
-  () => import("@reearth/classic/components/pages/Authentication/PasswordReset"),
-);
-const SignupPage = lazy(
-  () => import("@reearth/classic/components/pages/Authentication/SignupPage"),
-);
-const AccountSettings = lazy(() => import("@reearth/classic/components/pages/Settings/Account"));
-const ProjectSettings = lazy(() => import("@reearth/classic/components/pages/Settings/Project"));
-const DatasetSettings = lazy(
-  () => import("@reearth/classic/components/pages/Settings/Project/Dataset"),
-);
-const PluginSettings = lazy(
-  () => import("@reearth/classic/components/pages/Settings/Project/Plugin"),
-);
-const PublicSettings = lazy(
-  () => import("@reearth/classic/components/pages/Settings/Project/Public"),
-);
-const SettingsProjectList = lazy(
-  () => import("@reearth/classic/components/pages/Settings/ProjectList"),
-);
-const WorkspaceSettings = lazy(
-  () => import("@reearth/classic/components/pages/Settings/Workspace"),
-);
-const AssetSettings = lazy(
-  () => import("@reearth/classic/components/pages/Settings/Workspace/Asset"),
-);
-const WorkspaceList = lazy(
-  () => import("@reearth/classic/components/pages/Settings/WorkspaceList"),
-);
-const RootPage = lazy(() => import("../../classic/components/pages/Authentication/RootPage"));
-const Preview = lazy(() => import("../../classic/components/pages/Preview"));
-
-const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
-
-const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
-const Dashboard = lazy(() => import("@reearth/classic/components/pages/Dashboard"));
-const GraphQLPlayground = lazy(() => import("@reearth/beta/pages/GraphQLPlayground"));
-const PluginEditor = lazy(() => import("../../classic/components/pages/PluginEditor"));
+import {
+  BetaEditor,
+  BetaProjectSettings,
+  GraphQLPlayground,
+  RootPage,
+  LoginPage,
+  SignupPage,
+  PasswordResetPage,
+  Dashboard,
+  EarthEditor,
+  Preview,
+  PluginEditor,
+  AccountSettings,
+  WorkspaceList,
+  WorkspaceSettings,
+  SettingsProjectList,
+  AssetSettings,
+  ProjectSettings,
+  DatasetSettings,
+  PluginSettings,
+  PublicSettings,
+  NotFound,
+} from "./lazyRoutes";
 
 export const AppRoutes = () => {
   return (
     <>
-      {/* Beta routes - start */}
       <StyledRouter>
         <Routes>
+          {/* Beta routes - start */}
           <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
           <Route
             path="settings/project/:projectId/:tab?/:subId?"
