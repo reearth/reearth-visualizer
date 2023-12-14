@@ -80,8 +80,7 @@ export default ({
             gutter="end"
             initialSize={metrics.propertyMenuWidth}
             minSize={metrics.propertyMenuMinWidth}
-            localStorageKey="mapLeftPanel"
-            tab="map">
+            localStorageKey="mapLeftPanel">
             <MapSidePanel
               scene={scene}
               layers={nlsLayers}
@@ -104,8 +103,7 @@ export default ({
             gutter="end"
             initialSize={metrics.propertyMenuWidth}
             minSize={metrics.propertyMenuMinWidth}
-            localStorageKey="storyLeftPanel"
-            tab="story">
+            localStorageKey="storyLeftPanel">
             <StorySidePanel
               selectedStory={selectedStory}
               selectedPageId={currentPageId}

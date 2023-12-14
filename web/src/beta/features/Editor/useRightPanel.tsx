@@ -59,8 +59,7 @@ export default ({
             gutter="start"
             initialSize={metrics.propertyMenuWidth}
             minSize={metrics.propertyMenuMinWidth}
-            localStorageKey="mapRightPanel"
-            tab="map">
+            localStorageKey="mapRightPanel">
             <MapSidePanel
               scene={scene}
               layerStyles={layerStyles}
@@ -83,8 +82,7 @@ export default ({
             gutter="start"
             initialSize={metrics.propertyMenuWidth}
             minSize={metrics.propertyMenuMinWidth}
-            localStorageKey="storyRightPanel"
-            tab="story">
+            localStorageKey="storyRightPanel">
             <StorySidePanel
               selectedPage={currentPage}
               currentCamera={currentCamera}
@@ -102,8 +100,7 @@ export default ({
             gutter="start"
             initialSize={metrics.propertyMenuWidth}
             minSize={metrics.propertyMenuMinWidth}
-            localStorageKey="widgetRightPanel"
-            tab="widgets">
+            localStorageKey="widgetRightPanel">
             <WidgetSidePanel sceneId={sceneId} />
           </Resizable>
         );

@@ -46,8 +46,6 @@ export default (
     return savedState ? JSON.parse(savedState) : null;
   }, []);
 
-  const parsedState = getLocalStorageParsedState(localStorageKey);
-
   const [startingSize, setStartingSize] = useState(initialSize);
   const [isResizing, setIsResizing] = useState(false);
   const [size, setSize] = useState(initialSize);
@@ -70,6 +68,24 @@ export default (
     },
     [getLocalStorageParsedState, initialSize],
   );
+
+  useEffect(() => {
+    const setSizeBasedOnTab = () => {
+      if (localStorageKey) {
+        const parsedState = getLocalStorageParsedState(localStorageKey);
+        const storedSize = parsedState?.size;
+
+        if (storedSize !== undefined) {
+          setSize(storedSize);
+          setMinimized(parsedState.minimized);
+        } else {
+          setSize(initialSize);
+          setMinimized(false);
+        }
+      }
+    };
+    setSizeBasedOnTab();
+  }, [setSizeFromStorage, localStorageKey, getLocalStorageParsedState, initialSize]);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -180,7 +196,7 @@ export default (
   );
 
   const handleResetSize = useCallback(() => {
-    if (!parsedState || !localStorageKey) return;
+    if (!localStorageKey) return;
     localStorage.setItem(
       localStorageKey,
       JSON.stringify({
@@ -195,7 +211,7 @@ export default (
 
     setMinimized(false);
     setSize(initialSize);
-  }, [initialSize, localStorageKey, parsedState]);
+  }, [initialSize, localStorageKey]);
 
   return {
     size: size || initialSize,
