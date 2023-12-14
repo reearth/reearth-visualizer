@@ -27,7 +27,7 @@
         "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
     },
     "engines": {
-        "node": ">=16"
+        "node": ">=18"
     },
     "lint-staged": {
         "**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint --fix"
@@ -70,7 +70,7 @@
         "@types/styled-components": "5.1.29",
         "@types/tinycolor2": "1.4.5",
         "@types/uuid": "9.0.6",
-        "@vitejs/plugin-react": "4.1.0",
+        "@vitejs/plugin-react": "4.2.1",
         "@vitest/coverage-v8": "0.34.6",
         "@welldone-software/why-did-you-render": "7.0.1",
         "del-cli": "5.1.0",
