@@ -17,7 +17,15 @@ import pkg from "./package.json";
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
-  plugins: [svgr(), react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
+  plugins: [
+    svgr(),
+    react({ babel: { compact: true } }),
+    yaml(),
+    cesium(),
+    serverHeaders(),
+    config(),
+    tsconfigPaths(),
+  ],
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),
