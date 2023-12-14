@@ -3,6 +3,7 @@ export const zIndex = {
     widget: 200,
     storyPanel: 200,
     storyBlock: 205,
+    storyBlockAddBar: 210,
     storyPage: {
       indicator: {
         unselected: 210,

@@ -74,16 +74,17 @@ const StoryContent: React.FC<Props> = ({
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { pageGap, scrollTimeoutRef, handleBlockCreate, handleBlockDelete } = useHooks({
-    onBlockCreate,
-    onBlockDelete,
-  });
+  const { pageGap, scrollTimeoutRef, disableSelection, handleBlockCreate, handleBlockDelete } =
+    useHooks({
+      onBlockCreate,
+      onBlockDelete,
+    });
 
   return (
     <PagesWrapper
       id={STORY_PANEL_CONTENT_ELEMENT_ID}
       showingIndicator={showingIndicator}
-      isEditable={isEditable}>
+      isEditable={isEditable && !disableSelection}>
       {pages?.map(p => (
         <Fragment key={p.id}>
           <StoryPage
@@ -101,14 +102,14 @@ const StoryContent: React.FC<Props> = ({
             onBlockCreate={handleBlockCreate(p.id)}
             onBlockDelete={handleBlockDelete(p.id)}
             onBlockSelect={onBlockSelect}
+            onBlockDoubleClick={onBlockDoubleClick}
             onBlockMove={onBlockMove}
             onPropertyUpdate={onPropertyUpdate}
             onPropertyItemAdd={onPropertyItemAdd}
             onPropertyItemMove={onPropertyItemMove}
-            onPropertyItemDelete={onPropertyItemDelete}
-            onBlockDoubleClick={onBlockDoubleClick}
-          />
-          <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
+            onPropertyItemDelete={onPropertyItemDelete}>
+            <PageGap height={pageGap} onClick={() => onPageSelect?.(p.id)} />
+          </StoryPage>
         </Fragment>
       ))}
     </PagesWrapper>
