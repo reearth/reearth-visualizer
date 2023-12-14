@@ -26,7 +26,7 @@ import { DEFAULT_BLOCK_PADDING } from "../common/hooks";
 
 import { PaddingProp } from "./Editor";
 
-import { TimelineValues } from ".";
+import { DEFAULT_PADDING, TimelineValues } from ".";
 
 type TimelineProps = {
   currentTime: number;
@@ -51,7 +51,6 @@ type TimelineProps = {
 };
 
 type TimeEventHandler = (time: Date, committerId: string) => void;
-const DEFAULT_PADDING = 40;
 
 export default ({
   currentTime,

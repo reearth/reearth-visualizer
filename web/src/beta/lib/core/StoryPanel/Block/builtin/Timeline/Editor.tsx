@@ -5,9 +5,8 @@ import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelin
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { TimelineValues } from ".";
+import { DEFAULT_PADDING, TimelineValues } from ".";
 
-const DEFAULT_PADDING = 40;
 export type PaddingProp = {
   bottom: number;
   top: number;
