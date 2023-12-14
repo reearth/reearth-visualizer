@@ -189,7 +189,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           currentTab={tab}
         />
         <MainSection>
-          {leftPanel && leftPanel}
+          {leftPanel && (
+            <Resizable
+              direction="vertical"
+              gutter="end"
+              initialSize={metrics.propertyMenuWidth}
+              minSize={metrics.propertyMenuMinWidth}
+              localStorageKey={`${tab}LeftPanel`}>
+              {leftPanel}
+            </Resizable>
+          )}
           <Center>
             <CenterContent>
               {secondaryNavbar}
@@ -223,7 +232,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               )}
             </CenterContent>
           </Center>
-          {rightPanel && rightPanel}
+          {rightPanel && (
+            <Resizable
+              direction="vertical"
+              gutter="start"
+              initialSize={metrics.propertyMenuWidth}
+              minSize={metrics.propertyMenuMinWidth}
+              localStorageKey={`${tab}RightPanel`}>
+              {rightPanel}
+            </Resizable>
+          )}
         </MainSection>
 
         {showDataSourceManager && (

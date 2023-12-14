@@ -53,22 +53,6 @@ export default (
   const [minimized, setMinimized] = useState(false);
   const [difference, setDifference] = useState(0);
 
-  const setSizeFromStorage = useCallback(
-    (localStorageKey: string) => {
-      const parsedState = getLocalStorageParsedState(localStorageKey);
-      const storedSize = parsedState?.size;
-
-      if (storedSize !== undefined) {
-        setSize(storedSize);
-        setMinimized(parsedState.minimized);
-      } else {
-        setSize(initialSize);
-        setMinimized(false);
-      }
-    },
-    [getLocalStorageParsedState, initialSize],
-  );
-
   useEffect(() => {
     const setSizeBasedOnTab = () => {
       if (localStorageKey) {
@@ -85,7 +69,7 @@ export default (
       }
     };
     setSizeBasedOnTab();
-  }, [setSizeFromStorage, localStorageKey, getLocalStorageParsedState, initialSize]);
+  }, [localStorageKey, getLocalStorageParsedState, initialSize]);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -142,13 +126,11 @@ export default (
     setPosition({ x: 0, y: 0 });
     setStartingSize(size);
     setDifference(0);
-    if (!localStorageKey) return;
-
     const storedData = {
       size,
       minimized,
     };
-    setLocalStorageData(localStorageKey, storedData);
+    localStorageKey && setLocalStorageData(localStorageKey, storedData);
   }, [isResizing, localStorageKey, minimized, size]);
 
   const bindEventListeners = useCallback(() => {
@@ -176,16 +158,7 @@ export default (
     }
     bindEventListeners();
     return () => unbindEventListeners();
-  }, [
-    bindEventListeners,
-    difference,
-    isResizing,
-    localStorageKey,
-    minimized,
-    size,
-    startingSize,
-    unbindEventListeners,
-  ]);
+  }, [bindEventListeners, isResizing, unbindEventListeners]);
 
   const gutterProps = useMemo(
     () => ({
@@ -196,21 +169,13 @@ export default (
   );
 
   const handleResetSize = useCallback(() => {
-    if (!localStorageKey) return;
-    localStorage.setItem(
-      localStorageKey,
-      JSON.stringify({
-        [localStorageKey]: {
-          size: initialSize,
-          minimized: false,
-          difference: 0,
-          startingSize: initialSize,
-        },
-      }),
-    );
-
     setMinimized(false);
     setSize(initialSize);
+    localStorageKey &&
+      setLocalStorageData(localStorageKey, {
+        size: initialSize,
+        minimized: false,
+      });
   }, [initialSize, localStorageKey]);
 
   return {
@@ -218,6 +183,5 @@ export default (
     gutterProps,
     minimized,
     handleResetSize,
-    setSizeFromStorage,
   };
 };
