@@ -10,7 +10,6 @@ export type TimelineValues = {
   startTime: string;
   endTime: string;
 };
-export const DEFAULT_PADDING = 40;
 
 const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
   const timeline = useMemo(() => {

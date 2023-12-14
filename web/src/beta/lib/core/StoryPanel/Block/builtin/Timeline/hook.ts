@@ -26,7 +26,7 @@ import { DEFAULT_BLOCK_PADDING } from "../common/hooks";
 
 import { PaddingProp } from "./Editor";
 
-import { DEFAULT_PADDING, TimelineValues } from ".";
+import { TimelineValues } from ".";
 
 type TimelineProps = {
   currentTime: number;
@@ -78,6 +78,7 @@ export default ({
   const [activeBlock, setActiveBlock] = useState("");
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   const [committer, setCommiter] = useState<TimelineCommitter>({
     source: "storyTimelineBlock",
@@ -118,20 +119,6 @@ export default ({
       },
     };
   }, [property?.panel]);
-
-  const paddingCheck = useMemo(() => {
-    return Math.max(
-      padding?.left || 0,
-      padding?.right || 0,
-      panelSettings?.padding.value.left || 0,
-      panelSettings?.padding.value.right || 0,
-    );
-  }, [
-    padding?.left,
-    padding?.right,
-    panelSettings?.padding.value.left,
-    panelSettings?.padding.value.right,
-  ]);
 
   const handlePopOver = useCallback(() => {
     !inEditor && setIsOpen(!isOpen);
@@ -364,20 +351,34 @@ export default ({
     removeOnCommitEventListener,
     removeTickEventListener,
   ]);
+  const blockRef = useRef<HTMLDivElement>(null);
+
+  const handleResize = useCallback(() => {
+    if ((padding || panelSettings?.padding.value) && blockRef.current) {
+      const blockWidth = blockRef.current.offsetWidth;
+      const thresholdWidth = 360;
+      setIsMinimized(blockWidth < thresholdWidth);
+    }
+  }, [padding, panelSettings?.padding.value]);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
 
   const sliderPosition = useMemo(() => {
     const initialPosition = (() => {
-      if (paddingCheck > DEFAULT_PADDING) {
-        if (paddingCheck < 70) {
-          return 5;
-        } else if (paddingCheck === 100) {
-          return 6;
-        }
+      if (!isMinimized) {
+        return 4;
       }
-      return 4;
+
+      return 4.5;
     })();
 
-    const finalPosition = paddingCheck > DEFAULT_PADDING ? 94.5 : 93.5;
+    const finalPosition = isMinimized ? 94.5 : 93.5;
 
     if (range) {
       if (!inEditor) {
@@ -392,7 +393,7 @@ export default ({
       }
     }
     return initialPosition;
-  }, [paddingCheck, range, inEditor, currentTime]);
+  }, [isMinimized, range, inEditor, currentTime]);
 
   return {
     formattedCurrentTime,
@@ -404,7 +405,8 @@ export default ({
     isOpen,
     selected,
     isActive,
-    paddingCheck,
+    isMinimized,
+    blockRef,
     handleOnSelect,
     handlePopOver,
     toggleIsPlaying: handleOnPlay,

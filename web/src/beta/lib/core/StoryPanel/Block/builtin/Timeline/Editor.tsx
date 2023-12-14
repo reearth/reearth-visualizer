@@ -5,7 +5,7 @@ import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelin
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { DEFAULT_PADDING, TimelineValues } from ".";
+import { TimelineValues } from ".";
 
 export type PaddingProp = {
   bottom: number;
@@ -60,7 +60,8 @@ const TimelineEditor = ({
     selected,
     sliderPosition,
     isActive,
-    paddingCheck,
+    blockRef,
+    isMinimized,
     handleOnSelect,
     handlePopOver,
     toggleIsPlaying,
@@ -93,13 +94,13 @@ const TimelineEditor = ({
   });
 
   return (
-    <Wrapper>
-      <TimelineWrapper padding={paddingCheck}>
-        <TimelineControl padding={paddingCheck}>
+    <Wrapper ref={blockRef}>
+      <TimelineWrapper isMinimized={isMinimized}>
+        <TimelineControl isMinimized={isMinimized}>
           <StyledIcon activeBlock={isActive}>
             <Icon icon="timelineStoryBlockSolid" size={16} />
           </StyledIcon>
-          <PlayControl padding={paddingCheck}>
+          <PlayControl isMinimized={isMinimized}>
             <PlayButton
               isClicked={true}
               isPlaying={isPlayingReversed}
@@ -120,7 +121,7 @@ const TimelineEditor = ({
               <Icon icon="timelinePlayRight" size={14} />
             </PlayButton>
           </PlayControl>
-          <PopoverWrapper padding={paddingCheck}>
+          <PopoverWrapper isMinimized={isMinimized}>
             <Popover.Provider open={isOpen} placement="bottom-start" onOpenChange={handlePopOver}>
               <Popover.Trigger asChild>
                 <InputWrapper onClick={handlePopOver}>
@@ -143,7 +144,7 @@ const TimelineEditor = ({
             </Popover.Provider>
           </PopoverWrapper>
         </TimelineControl>
-        <CurrentTime padding={paddingCheck}>{currentTime && formattedCurrentTime}</CurrentTime>
+        <CurrentTime isMinimized={isMinimized}>{currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineWrapper>
       <TimelineSlider>
         <ScaleList
@@ -153,19 +154,19 @@ const TimelineEditor = ({
           {[...Array(11)].map((_, idx) => (
             <Scale key={idx}>
               {idx === 0 ? (
-                <ScaleLabel padding={paddingCheck}>
+                <ScaleLabel isMinimized={isMinimized}>
                   {timeRange?.startTime?.date}
                   <br />
                   {timeRange?.startTime?.time}
                 </ScaleLabel>
               ) : idx === 5 ? (
-                <ScaleLabel padding={paddingCheck}>
+                <ScaleLabel isMinimized={isMinimized}>
                   {timeRange?.midTime?.date}
                   <br />
                   {timeRange?.midTime?.time}
                 </ScaleLabel>
               ) : idx === 10 ? (
-                <ScaleLabel padding={paddingCheck}>
+                <ScaleLabel isMinimized={isMinimized}>
                   {timeRange?.endTime?.date}
                   <br />
                   {timeRange?.endTime?.time}
@@ -198,20 +199,20 @@ const Wrapper = styled.div`
   user-select: none;
 `;
 
-const TimelineWrapper = styled.div<{ padding: number }>`
+const TimelineWrapper = styled.div<{ isMinimized: boolean }>`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: ${({ padding }) => (padding > DEFAULT_PADDING ? "" : "25px")};
-  flex-direction: ${({ padding }) => (padding > DEFAULT_PADDING ? "column" : "row")};
+  gap: ${({ isMinimized }) => (isMinimized ? "" : "25px")};
+  flex-direction: ${({ isMinimized }) => (isMinimized ? "column" : "row")};
 `;
 
-const TimelineControl = styled.div<{ padding: number }>`
+const TimelineControl = styled.div<{ isMinimized: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${({ padding }) => (padding > DEFAULT_PADDING ? "0" : "18px")};
-  width: ${({ padding }) => (padding > DEFAULT_PADDING ? "100%" : "auto")};
+  gap: ${({ isMinimized }) => (isMinimized ? "0" : "18px")};
+  width: ${({ isMinimized }) => (isMinimized ? "100%" : "auto")};
 `;
 
 const StyledIcon = styled.div<{ activeBlock: boolean }>`
@@ -223,17 +224,17 @@ const StyledIcon = styled.div<{ activeBlock: boolean }>`
   margin-bottom: 6px;
 `;
 
-const PlayControl = styled.div<{ padding: number }>`
+const PlayControl = styled.div<{ isMinimized: boolean }>`
   display: flex;
   gap: 10px;
-  margin-left: ${({ padding }) => (padding > DEFAULT_PADDING ? "auto" : "0")};
+  margin-left: ${({ isMinimized }) => (isMinimized ? "auto" : "0")};
 `;
 
-const CurrentTime = styled.div<{ padding: number }>`
+const CurrentTime = styled.div<{ isMinimized: boolean }>`
   color: ${({ theme }) => theme.content.weaker};
-  padding-right: ${({ padding }) => (padding > DEFAULT_PADDING ? "8px" : "0")};
+  padding-right: ${({ isMinimized }) => (isMinimized ? "8px" : "0")};
   font-size: 12px;
-  margin-left: ${({ padding }) => (padding > DEFAULT_PADDING ? "auto" : "0")};
+  margin-left: ${({ isMinimized }) => (isMinimized ? "auto" : "0")};
 `;
 
 const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
@@ -261,8 +262,8 @@ const Select = styled.div`
   padding-right: 12px;
   color: ${({ theme }) => theme.content.weaker};
 `;
-const PopoverWrapper = styled.div<{ padding: number }>`
-  padding: ${({ padding }) => (padding > DEFAULT_PADDING ? "0 10px" : "0")};
+const PopoverWrapper = styled.div<{ isMinimized: boolean }>`
+  padding: ${({ isMinimized }) => (isMinimized ? "0 10px" : "0")};
 `;
 
 const PickerWrapper = styled(Popover.Content)`
@@ -325,8 +326,8 @@ const Scale = styled.div`
   width: calc(100% / 11);
 `;
 
-const ScaleLabel = styled.div<{ padding: number }>`
-  font-size: ${({ padding }) => (padding > 60 ? "8px" : "10px")};
+const ScaleLabel = styled.div<{ isMinimized: boolean }>`
+  font-size: ${({ isMinimized }) => (isMinimized ? "8px" : "10px")};
   position: relative;
   bottom: 28px;
   right: 16px;
