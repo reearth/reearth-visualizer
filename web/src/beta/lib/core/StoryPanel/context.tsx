@@ -3,6 +3,8 @@ import { createContext, FC, PropsWithChildren, useContext } from "react";
 export type StoryPanelContext = {
   pageIds?: string[];
   layerOverride?: { extensionId: string; layerIds?: string[] };
+  disableSelection?: boolean;
+  onSelectionDisable?: (disabled?: boolean) => void;
   onLayerOverride?: (id?: string, layerIds?: string[]) => void;
   onJumpToPage?: (newPageIndex: number) => void;
 };

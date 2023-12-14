@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, MouseEvent, SetStateAction } from "react";
 
 import ActionPanel, { type ActionPosition } from "../../../../ActionPanel";
 
@@ -19,8 +19,9 @@ type Props = {
   position?: ActionPosition;
   overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
-  onEditModeToggle?: () => void;
+  onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
+  onClick?: (e: MouseEvent<Element>) => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
