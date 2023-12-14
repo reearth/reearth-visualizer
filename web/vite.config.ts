@@ -5,7 +5,7 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 
 import yaml from "@rollup/plugin-yaml";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import { readEnv } from "read-env";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
@@ -17,15 +17,7 @@ import pkg from "./package.json";
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
-  plugins: [
-    svgr(),
-    react({ babel: { compact: true } }),
-    yaml(),
-    cesium(),
-    serverHeaders(),
-    config(),
-    tsconfigPaths(),
-  ],
+  plugins: [svgr(), react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),
