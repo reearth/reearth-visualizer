@@ -8,8 +8,8 @@ type Props = {
   isSelected?: boolean;
   editMode?: boolean;
   panelSettings?: any;
-  onEditModeToggle?: (e: MouseEvent<HTMLDivElement>) => void;
-  onSettingsToggle?: (e: MouseEvent<HTMLDivElement>) => void;
+  onEditModeToggle?: (enable: boolean) => void;
+  onSettingsToggle?: (e?: MouseEvent<HTMLDivElement>) => void;
 };
 
 export default ({
@@ -33,7 +33,7 @@ export default ({
       menuItems.push({
         icon: editMode ? "exit" : "storyBlockEdit",
         hide: !isSelected,
-        onClick: onEditModeToggle,
+        onClick: () => onEditModeToggle?.(!editMode),
       });
     }
 

@@ -70,6 +70,8 @@ export type MarkerAppearance = {
   extrude?: boolean;
   near?: number;
   far?: number;
+  pixelOffset?: [number, number];
+  eyeOffset?: [number, number, number];
 };
 
 export type PolylineAppearance = {

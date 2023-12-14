@@ -1,4 +1,4 @@
-import { Fragment, MutableRefObject, useEffect } from "react";
+import { Fragment, MutableRefObject, ReactNode, useEffect } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
@@ -7,7 +7,11 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import StoryBlock from "../Block";
-import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
+import {
+  STORY_PANEL_CONTENT_ELEMENT_ID,
+  MIN_STORY_PAGE_PADDING_IN_EDITOR,
+  MIN_STORY_PAGE_GAP_IN_EDITOR,
+} from "../constants";
 import { useElementOnScreen } from "../hooks/useElementOnScreen";
 import SelectableArea from "../SelectableArea";
 
@@ -17,12 +21,13 @@ import useHooks, { type StoryPage } from "./hooks";
 type Props = {
   page?: StoryPage;
   selectedPageId?: string;
-  installableStoryBlocks?: InstallableStoryBlock[];
   selectedStoryBlockId?: string;
+  installableStoryBlocks?: InstallableStoryBlock[];
   showPageSettings?: boolean;
   isEditable?: boolean;
   isAutoScrolling?: MutableRefObject<boolean>;
   scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  children?: ReactNode;
   onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
@@ -60,12 +65,13 @@ type Props = {
 const StoryPanel: React.FC<Props> = ({
   page,
   selectedPageId,
-  installableStoryBlocks,
   selectedStoryBlockId,
+  installableStoryBlocks,
   showPageSettings,
   isEditable,
   scrollTimeoutRef,
   isAutoScrolling,
+  children,
   onCurrentPageChange,
   onPageSettingsToggle,
   onPageSelect,
@@ -88,6 +94,7 @@ const StoryPanel: React.FC<Props> = ({
     propertyId,
     panelSettings,
     storyBlocks,
+    disableSelection,
     setStoryBlocks,
     handleBlockOpen,
     handleBlockCreate,
@@ -133,7 +140,9 @@ const StoryPanel: React.FC<Props> = ({
       panelSettings={panelSettings}
       showSettings={showPageSettings}
       isEditable={isEditable}
+      hideHoverUI={disableSelection}
       onClick={() => onPageSelect?.(page?.id)}
+      onClickAway={onPageSelect}
       onSettingsToggle={onPageSettingsToggle}
       onPropertyUpdate={onPropertyUpdate}
       onPropertyItemAdd={onPropertyItemAdd}
@@ -142,7 +151,10 @@ const StoryPanel: React.FC<Props> = ({
       <Wrapper
         id={page?.id}
         ref={containerRef}
+        isEditable={isEditable}
+        minPaddingInEditor={MIN_STORY_PAGE_PADDING_IN_EDITOR}
         padding={panelSettings?.padding?.value}
+        minGapInEditor={MIN_STORY_PAGE_GAP_IN_EDITOR}
         gap={panelSettings?.gap?.value}>
         <PageTitleWrapper>
           {(isEditable || titleProperty?.title?.title?.value) && (
@@ -162,17 +174,20 @@ const StoryPanel: React.FC<Props> = ({
               isSelected={selectedStoryBlockId === titleId}
               onClick={() => onBlockSelect?.(titleId)}
               onBlockDoubleClick={() => onBlockDoubleClick?.(titleId)}
+              onClickAway={onBlockSelect}
               onPropertyUpdate={onPropertyUpdate}
               onPropertyItemAdd={onPropertyItemAdd}
               onPropertyItemMove={onPropertyItemMove}
               onPropertyItemDelete={onPropertyItemDelete}
             />
           )}
-          {isEditable && (
+          {isEditable && !disableSelection && (
             <BlockAddBar
+              id={titleId + "below-bar"}
               alwaysShow={storyBlocks && storyBlocks.length < 1}
               openBlocks={openBlocksIndex === -1}
               installableStoryBlocks={installableStoryBlocks}
+              showAreaHeight={panelSettings?.gap?.value}
               onBlockOpen={() => handleBlockOpen(-1)}
               onBlockAdd={handleBlockCreate(0)}
             />
@@ -207,6 +222,7 @@ const StoryPanel: React.FC<Props> = ({
                     isEditable={isEditable}
                     onClick={() => onBlockSelect?.(b.id)}
                     onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
+                    onClickAway={onBlockSelect}
                     onRemove={onBlockDelete}
                     onPropertyUpdate={onPropertyUpdate}
                     onPropertyItemAdd={onPropertyItemAdd}
@@ -214,10 +230,12 @@ const StoryPanel: React.FC<Props> = ({
                     onPropertyItemDelete={onPropertyItemDelete}
                     padding={panelSettings?.padding?.value}
                   />
-                  {isEditable && (
+                  {isEditable && !disableSelection && (
                     <BlockAddBar
+                      id={b.id + "below-bar"}
                       openBlocks={openBlocksIndex === idx}
                       installableStoryBlocks={installableStoryBlocks}
+                      showAreaHeight={panelSettings?.gap?.value}
                       onBlockOpen={() => handleBlockOpen(idx)}
                       onBlockAdd={handleBlockCreate(idx + 1)}
                     />
@@ -228,22 +246,46 @@ const StoryPanel: React.FC<Props> = ({
           />
         )}
       </Wrapper>
+      {children}
     </SelectableArea>
   );
 };
 
 export default StoryPanel;
 
-const Wrapper = styled.div<{ padding: Spacing; gap?: number }>`
+const Wrapper = styled.div<{
+  padding: Spacing;
+  gap?: number;
+  isEditable?: boolean;
+  minPaddingInEditor: Spacing;
+  minGapInEditor: number;
+}>`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.content.weaker};
-  ${({ gap }) => gap && `gap: ${gap}px;`}
+  ${({ gap, isEditable, minGapInEditor }) =>
+    gap && `gap: ${isEditable && gap < minGapInEditor ? minGapInEditor : gap}px;`}
 
-  ${({ padding }) => `padding-top: ${padding.top}px;`}
-  ${({ padding }) => `padding-bottom: ${padding.bottom}px;`}
-  ${({ padding }) => `padding-left: ${padding.left}px;`}
-  ${({ padding }) => `padding-right: ${padding.right}px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-top: ${
+      isEditable && padding.top < minPaddingInEditor.top ? minPaddingInEditor.top : padding.top
+    }px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-bottom: ${
+      isEditable && padding.bottom < minPaddingInEditor.bottom
+        ? minPaddingInEditor.bottom
+        : padding.bottom
+    }px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-left: ${
+      isEditable && padding.left < minPaddingInEditor.left ? minPaddingInEditor.left : padding.left
+    }px;`}
+  ${({ padding, isEditable, minPaddingInEditor }) =>
+    `padding-right: ${
+      isEditable && padding.right < minPaddingInEditor.right
+        ? minPaddingInEditor.right
+        : padding.right
+    }px;`}
   box-sizing: border-box;
 `;
 
