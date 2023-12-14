@@ -52,12 +52,11 @@ const Icon: React.FC<Props> = ({
     `;
   }, [icon]);
 
-  const aria = ariaProps(props);
+  const aria = useMemo(() => ariaProps(props), [props]);
 
   return SvgIcon ? (
     <SvgIcon
       className={className}
-      // src={src}
       role={role}
       color={color}
       stroke={stroke}
