@@ -121,6 +121,35 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return await sampleTerrainHeight(viewer.scene, lng, lat);
       },
+      computeGlobeHeight: (lng, lat, height) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return viewer.scene.globe.getHeight(Cesium.Cartographic.fromDegrees(lng, lat, height));
+      },
+      toXYZ: (lng, lat, height, options) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const cartesian = Cesium.Cartesian3.fromDegrees(
+          lng,
+          lat,
+          height,
+          options?.useGlobeEllipsoid ? viewer.scene.globe.ellipsoid : undefined,
+        );
+        return [cartesian.x, cartesian.y, cartesian.z];
+      },
+      toLngLatHeight: (x, y, z, options) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const cart = Cesium.Cartographic.fromCartesian(
+          Cesium.Cartesian3.fromElements(x, y, z),
+          options?.useGlobeEllipsoid ? viewer.scene.globe.ellipsoid : undefined,
+        );
+        return [
+          CesiumMath.toDegrees(cart.longitude),
+          CesiumMath.toDegrees(cart.latitude),
+          cart.height,
+        ];
+      },
       flyTo: (target, options) => {
         if (target && typeof target === "object") {
           const viewer = cesium.current?.cesiumElement;

@@ -77,6 +77,8 @@ export type CameraPosition = {
   roll: number;
   /** Field of view expressed in radians */
   fov: number;
+  /** Aspect ratio of frustum */
+  aspectRatio?: number;
 };
 
 export type Typography = {

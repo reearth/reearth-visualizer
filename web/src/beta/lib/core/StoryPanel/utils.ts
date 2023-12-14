@@ -3,8 +3,6 @@ import type { Item } from "@reearth/services/api/propertyApi/utils";
 
 import type { Spacing } from "../mantle";
 
-import { MIN_STORY_PAGE_PADDING_IN_EDITOR } from "./constants";
-
 export const getFieldValue = (items: Item[], fieldId: string, fieldGroup?: string) => {
   const d = items.find(i => i.schemaGroup === (fieldGroup ?? "default")) ?? items[0];
   const isList = d && "items" in d;
@@ -32,10 +30,7 @@ export const calculatePaddingValue = (
       };
     }
     return {
-      [position]:
-        editorMode && v < MIN_STORY_PAGE_PADDING_IN_EDITOR[position]
-          ? MIN_STORY_PAGE_PADDING_IN_EDITOR[position]
-          : v,
+      [position]: v,
     };
   };
 
