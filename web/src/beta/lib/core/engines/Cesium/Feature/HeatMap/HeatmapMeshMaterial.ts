@@ -1,4 +1,4 @@
-import { Cartesian2, Material, Rectangle } from "@cesium/engine";
+import { Cartesian2, Material, Rectangle } from "cesium";
 
 import { Bound, LUT } from "@reearth/beta/lib/core/mantle";
 
@@ -16,7 +16,7 @@ export type HeatmapMeshMaterialOptions = {
   maxValue?: number;
   bound?: Bound;
   cropBound?: Bound;
-  colorMap?: LUT;
+  colorMapLUT?: LUT;
   opacity?: number;
   contourSpacing?: number;
   contourThickness?: number;
@@ -32,7 +32,7 @@ export function createHeatmapMeshMaterial({
   maxValue = 100,
   bound,
   cropBound,
-  colorMap = viridisColorMapLUT,
+  colorMapLUT = viridisColorMapLUT,
   opacity = 1,
   contourSpacing = 10,
   contourThickness = 1,
@@ -59,7 +59,7 @@ export function createHeatmapMeshMaterial({
     fabric: {
       type: "HeatmapMesh",
       uniforms: {
-        colorMap: createColorMapImage(colorMap),
+        colorMap: createColorMapImage(colorMapLUT),
         image,
         imageScale,
         imageOffset,

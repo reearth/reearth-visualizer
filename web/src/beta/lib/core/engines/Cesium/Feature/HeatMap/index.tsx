@@ -1,6 +1,5 @@
-import { BoundingSphere, Intersect, PerspectiveFrustum, Rectangle } from "@cesium/engine";
 import * as turf from "@turf/turf";
-import { Cartesian3 } from "cesium";
+import { BoundingSphere, Intersect, PerspectiveFrustum, Rectangle, Cartesian3 } from "cesium";
 import { useEffect, useMemo, useState } from "react";
 import { useCesium } from "resium";
 import invariant from "tiny-invariant";
@@ -32,6 +31,8 @@ export default function HeatMap({ property, isVisible }: Props) {
     contourAlpha = 0.2,
     logarithmic = false,
   } = property ?? {};
+
+  console.log("width: ", width);
 
   const { scene } = useCesium();
 
@@ -112,7 +113,7 @@ export default function HeatMap({ property, isVisible }: Props) {
     <HeatmapMesh
       meshImageData={meshImageData}
       geometry={geometry}
-      colorMap={colorMap}
+      colorMapLUT={colorMap}
       opacity={opacity}
       minValue={colorRange[0]}
       maxValue={colorRange[1]}

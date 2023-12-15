@@ -5,7 +5,7 @@ import {
   GeometryInstance,
   GroundPrimitive,
   PolygonGeometry,
-} from "@cesium/engine";
+} from "cesium";
 import { type MultiPolygon, type Polygon } from "geojson";
 import { pick } from "lodash-es";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
@@ -30,7 +30,7 @@ export type HeatmapMeshProps = Omit<HeatmapMeshMaterialOptions, "image"> & {
 };
 
 export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
-  ({ meshImageData, geometry, colorMap, ...props }, ref) => {
+  ({ meshImageData, geometry, colorMapLUT, bound, cropBound, ...props }, ref) => {
     const { scene } = useCesium();
     const groundPrimitives = scene?.groundPrimitives;
     const primitivesRef = useRef<GroundPrimitive[]>();
@@ -40,6 +40,8 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
         image: meshImageData.image,
         width: meshImageData.width,
         height: meshImageData.height,
+        bound,
+        cropBound,
       }),
     );
 
@@ -87,8 +89,10 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
 
     useEffect(() => {
       material.uniforms.colorMap =
-        colorMap != null ? createColorMapImage(colorMap) : createColorMapImage(viridisColorMapLUT);
-    }, [colorMap, material]);
+        colorMapLUT != null
+          ? createColorMapImage(colorMapLUT)
+          : createColorMapImage(viridisColorMapLUT);
+    }, [colorMapLUT, material]);
 
     Object.assign(
       material.uniforms,
@@ -100,8 +104,6 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
         "contourThickness",
         "contourAlpha",
         "logarithmic",
-        "rectangle",
-        "cropRectangle",
       ]),
     );
 
