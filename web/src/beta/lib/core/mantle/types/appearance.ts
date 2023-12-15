@@ -28,6 +28,7 @@ export type AppearanceTypes = {
   photooverlay: LegacyPhotooverlayAppearance;
   resource: ResourceAppearance;
   raster: RasterAppearance;
+  transition: TransitionAppearance;
 };
 
 export type MarkerAppearance = {
@@ -234,6 +235,11 @@ export type BoxAppearance = {
   far?: number;
 };
 
+export type TransitionAppearance = {
+  useTransition?: boolean;
+  translate?: [lng: number, lat: number, height: number];
+};
+
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   marker: 1,
   polyline: 1,
@@ -245,6 +251,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   photooverlay: 1,
   resource: 1,
   raster: 1,
+  transition: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);
