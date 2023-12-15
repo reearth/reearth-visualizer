@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import {
   Navigate,
   Route,
@@ -7,31 +8,36 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 
+import RootPage from "@reearth/classic/components/pages/Authentication/RootPage";
+import Dashboard from "@reearth/classic/components/pages/Dashboard";
+import AccountSettings from "@reearth/classic/components/pages/Settings/Account";
+import ProjectSettings from "@reearth/classic/components/pages/Settings/Project";
+import DatasetSettings from "@reearth/classic/components/pages/Settings/Project/Dataset";
+import PluginSettings from "@reearth/classic/components/pages/Settings/Project/Plugin";
+import PublicSettings from "@reearth/classic/components/pages/Settings/Project/Public";
+import SettingsProjectList from "@reearth/classic/components/pages/Settings/ProjectList";
+import WorkspaceSettings from "@reearth/classic/components/pages/Settings/Workspace";
+import AssetSettings from "@reearth/classic/components/pages/Settings/Workspace/Asset";
+import WorkspaceList from "@reearth/classic/components/pages/Settings/WorkspaceList";
 import { styled } from "@reearth/services/theme";
 
-import {
-  BetaEditor,
-  BetaProjectSettings,
-  GraphQLPlayground,
-  RootPage,
-  LoginPage,
-  SignupPage,
-  PasswordResetPage,
-  Dashboard,
-  EarthEditor,
-  Preview,
-  PluginEditor,
-  AccountSettings,
-  WorkspaceList,
-  WorkspaceSettings,
-  SettingsProjectList,
-  AssetSettings,
-  ProjectSettings,
-  DatasetSettings,
-  PluginSettings,
-  PublicSettings,
-  NotFound,
-} from "./lazyRoutes";
+const BetaEditor = lazy(() => import("@reearth/beta/pages/EditorPage"));
+const BetaProjectSettings = lazy(() => import("@reearth/beta/pages/ProjectSettingsPage"));
+
+const NotFound = lazy(() => import("@reearth/beta/components/NotFound"));
+const LoginPage = lazy(() => import("@reearth/classic/components/pages/Authentication/LoginPage"));
+const PasswordResetPage = lazy(
+  () => import("@reearth/classic/components/pages/Authentication/PasswordReset"),
+);
+
+const SignupPage = lazy(
+  () => import("@reearth/classic/components/pages/Authentication/SignupPage"),
+);
+const Preview = lazy(() => import("@reearth/classic/components/pages/Preview"));
+const EarthEditor = lazy(() => import("@reearth/classic/components/pages/EarthEditor"));
+
+const GraphQLPlayground = lazy(() => import("@reearth/beta/pages/GraphQLPlayground"));
+const PluginEditor = lazy(() => import("@reearth/classic/components/pages/PluginEditor"));
 
 export const AppRoutes = () => {
   const router = createBrowserRouter(
