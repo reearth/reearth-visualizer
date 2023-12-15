@@ -1,6 +1,5 @@
-import svgToMiniDataURI from "mini-svg-data-uri";
-import React, { AriaAttributes, AriaRole, CSSProperties, MouseEvent, memo, useMemo } from "react";
-import SVG from "react-inlinesvg";
+import { AriaAttributes, AriaRole, CSSProperties, MouseEvent, memo, useMemo } from "react";
+// import SVG from "react-inlinesvg";
 
 import { ariaProps } from "@reearth/beta/utils/aria";
 import { styled } from "@reearth/services/theme";
@@ -12,8 +11,7 @@ export type Icons = keyof typeof Icons;
 export type Props = {
   className?: string;
   icon?: string | Icons;
-  size?: string | number;
-  alt?: string;
+  size?: number;
   color?: string;
   stroke?: string;
   style?: CSSProperties;
@@ -25,8 +23,7 @@ export type Props = {
 
 const Icon: React.FC<Props> = ({
   className,
-  icon,
-  alt,
+  icon = "",
   style,
   color,
   stroke,
@@ -37,38 +34,33 @@ const Icon: React.FC<Props> = ({
   onClick,
   ...props
 }) => {
-  const src = useMemo(
-    () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
-    [icon],
-  );
-  if (!icon) return null;
+  const SvgIcon = useMemo(() => {
+    const SvgComponent = Icons[icon as Icons];
+    if (!SvgComponent) return null;
+    return styled(SvgComponent)<{
+      color?: string;
+      stroke?: string;
+      size?: number;
+    }>`
+      font-size: 0;
+      display: inline-block;
+      width: ${({ size }) => size + "px"};
+      height: ${({ size }) => size + "px"};
+      color: ${({ color }) => color};
+      ${({ stroke }) => stroke && `stroke: ${stroke};`}
+      transition-property: color, background;
+    `;
+  }, [icon]);
 
-  const aria = ariaProps(props);
-  const sizeStr = typeof size === "number" ? `${size}px` : size;
-  if (!src) {
-    return (
-      <StyledImg
-        className={className}
-        src={icon}
-        alt={alt}
-        style={style}
-        role={role}
-        size={sizeStr}
-        notransition={notransition}
-        onClick={onClick}
-        {...aria}
-      />
-    );
-  }
+  const aria = useMemo(() => ariaProps(props), [props]);
 
-  return (
-    <StyledSvg
+  return SvgIcon ? (
+    <SvgIcon
       className={className}
-      src={src}
       role={role}
       color={color}
       stroke={stroke}
-      size={sizeStr}
+      size={size}
       onClick={onClick}
       style={{
         ...style,
@@ -80,27 +72,7 @@ const Icon: React.FC<Props> = ({
       }}
       {...aria}
     />
-  );
+  ) : null;
 };
-
-const StyledImg = styled.img<{ size?: string; notransition?: boolean }>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  ${({ notransition }) => !notransition && "transition: all 0.3s;"}
-`;
-
-const StyledSvg = styled(SVG)<{
-  color?: string;
-  stroke?: string;
-  size?: string;
-}>`
-  font-size: 0;
-  display: inline-block;
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  color: ${({ color }) => color};
-  ${({ stroke }) => stroke && `stroke: ${stroke};`}
-  transition-property: color, background;
-`;
 
 export default memo(Icon);

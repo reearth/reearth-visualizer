@@ -245,11 +245,6 @@ aria-label-adjust-angle: 角度を調節する
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: 元の位置に戻る
 aria-label-zoom-out: ズームアウト
-Close timeline: タイムラインを閉じる
-Playback timeline: タイムラインを逆再生する
-Play timeline: タイムラインを再生する
-ellipse: 円錐
-Open timeline: タイムラインを開く
 Spacing settings: 余白設定
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
@@ -283,6 +278,11 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Close timeline: タイムラインを閉じる
+Playback timeline: タイムラインを逆再生する
+Play timeline: タイムラインを再生する
+ellipse: 円錐
+Open timeline: タイムラインを開く
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
 Username or email: ユーザー名またはメールアドレス
