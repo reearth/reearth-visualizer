@@ -26,7 +26,16 @@ export * from "./utils";
 export { context, type Context } from "./context";
 export { getTag } from "./utils";
 
-const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureComponentConfig]> = {
+const NON_RENDERABLE_APPEARANCE = ["transition"] as const;
+const isRenderableAppearance = (
+  k: keyof AppearanceTypes,
+): k is Exclude<keyof AppearanceTypes, (typeof NON_RENDERABLE_APPEARANCE)[number]> =>
+  !(NON_RENDERABLE_APPEARANCE as unknown as string[]).includes(k);
+
+const components: Record<
+  Exclude<keyof AppearanceTypes, (typeof NON_RENDERABLE_APPEARANCE)[number]>,
+  [FeatureComponent, FeatureComponentConfig]
+> = {
   marker: [Marker, markerConfig],
   polyline: [Polyline, polylineConfig],
   polygon: [Polygon, polygonConfig],
@@ -92,10 +101,13 @@ export default function Feature({
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
-  const cacheable = !data?.updateInterval;
+  const useTransition = !!layer?.transition?.useTransition;
+  const cacheable = !data?.updateInterval && !useTransition;
   const urlMD5 = useMemo(() => (data?.url ? generateIDWithMD5(data.url) : ""), [data?.url]);
 
   const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
+    if (!isRenderableAppearance(k)) return null;
+
     const useSceneSphericalHarmonicCoefficients =
       !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
     const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
@@ -109,7 +121,7 @@ export default function Feature({
           f?.id ?? ""
         }_${k}_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
           JSON.stringify(f?.[k]) ?? ""
-        }`,
+        }_${JSON.stringify(layer.transition) ?? ""}`,
       );
 
     if (cacheable) {
@@ -140,8 +152,8 @@ export default function Feature({
       const component = (
         <C
           {...props}
-          key={componentId}
-          id={componentId}
+          key={!useTransition ? componentId : undefined}
+          id={!useTransition ? componentId : f?.id ?? layer.id}
           property={f ? f[k] : layer[k] || pickProperty(k, layer)}
           geometry={f?.geometry}
           feature={f}
