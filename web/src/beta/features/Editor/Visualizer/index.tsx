@@ -7,7 +7,8 @@ import StoryPanel, {
   StoryPanelRef,
   type InstallableStoryBlock,
 } from "@reearth/beta/lib/core/StoryPanel";
-import CoreVisualizer, { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
+import { type Props as VisualizerProps } from "@reearth/beta/lib/core/Visualizer";
+import CoreVisualizer from "@reearth/beta/lib/core/Visualizer";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { config } from "@reearth/services/config";

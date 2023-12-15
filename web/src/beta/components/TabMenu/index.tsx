@@ -32,7 +32,7 @@ const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange }) => {
             key={id}
             onClick={() => onSelectedTabChange(id)}
             selected={id === selectedTab}>
-            <Icon icon={icon} alt={"Tab " + id} size={20} />
+            <Icon icon={icon} size={20} />
           </TabIconWrapper>
         ))}
       </Tabs>
