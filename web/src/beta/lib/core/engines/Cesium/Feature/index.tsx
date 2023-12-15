@@ -26,11 +26,11 @@ export * from "./utils";
 export { context, type Context } from "./context";
 export { getTag } from "./utils";
 
-const NON_RENDERABLE_APPEARANCE = ["transition"] as const;
+const NON_RENDERABLE_APPEARANCE = ["transition"] satisfies (keyof AppearanceTypes)[];
 const isRenderableAppearance = (
   k: keyof AppearanceTypes,
 ): k is Exclude<keyof AppearanceTypes, (typeof NON_RENDERABLE_APPEARANCE)[number]> =>
-  !(NON_RENDERABLE_APPEARANCE as unknown as string[]).includes(k);
+  !(NON_RENDERABLE_APPEARANCE as string[]).includes(k);
 
 const components: Record<
   Exclude<keyof AppearanceTypes, (typeof NON_RENDERABLE_APPEARANCE)[number]>,
