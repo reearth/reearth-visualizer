@@ -11,8 +11,10 @@ import {
   Cartographic,
   SunLight,
   DirectionalLight,
+  Viewer as CesiumViewer,
+  Primitive,
+  ShadowMap,
 } from "cesium";
-import type { Viewer as CesiumViewer, ShadowMap } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
@@ -20,7 +22,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef, FEATURE_FLAGS, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
+import { LayersRef, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -33,6 +35,7 @@ import type {
   MouseEvents,
   LayerEditEvent,
 } from "..";
+import { FEATURE_FLAGS } from "../../Crust";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
 import { TimelineManagerRef } from "../../Map/useTimelineManager";
 
@@ -317,7 +320,9 @@ export default ({
     }
   }, [camera, engineAPI]);
 
-  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | InternalCesium3DTileFeature>();
+  const prevSelectedEntity = useRef<
+    Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive
+  >();
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
@@ -585,6 +590,16 @@ export default ({
         if (tag) {
           onLayerSelect?.(tag.layerId, String(tag.featureId));
           prevSelectedEntity.current = model;
+        }
+        return;
+      }
+
+      if (target?.primitive && target.primitive instanceof Primitive) {
+        const primitive = target.primitive;
+        const tag = getTag(primitive);
+        if (tag) {
+          onLayerSelect?.(tag.layerId, String(tag.featureId));
+          prevSelectedEntity.current = primitive;
         }
         return;
       }

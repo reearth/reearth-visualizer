@@ -168,13 +168,22 @@ export default function useEngineRef(
 
           const layerOrFeatureId = target;
           const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId, true);
+
+          if (entityFromFeatureId instanceof Cesium.Primitive) {
+            viewer.scene.camera.flyToBoundingSphere(
+              Cesium.BoundingSphere.fromTransformation(entityFromFeatureId.modelMatrix),
+            );
+            return;
+          }
+
           // `viewer.flyTo` doesn't support Cesium3DTileFeature.
           if (
             entityFromFeatureId &&
             !(
               entityFromFeatureId instanceof Cesium.Cesium3DTileFeature ||
               entityFromFeatureId instanceof Cesium.Cesium3DTilePointFeature ||
-              entityFromFeatureId instanceof Cesium.Model
+              entityFromFeatureId instanceof Cesium.Model ||
+              entityFromFeatureId instanceof Cesium.Primitive
             )
           ) {
             viewer.flyTo(entityFromFeatureId, options);
@@ -203,12 +212,21 @@ export default function useEngineRef(
             }
 
             const entityFromLayerId = findEntity(viewer, layerOrFeatureId);
+
+            if (entityFromLayerId instanceof Cesium.Primitive) {
+              viewer.scene.camera.flyToBoundingSphere(
+                Cesium.BoundingSphere.fromTransformation(entityFromLayerId.modelMatrix),
+              );
+              return;
+            }
+
             if (
               entityFromLayerId &&
               !(
                 entityFromLayerId instanceof Cesium.Cesium3DTileFeature ||
                 entityFromLayerId instanceof Cesium.Cesium3DTilePointFeature ||
-                entityFromLayerId instanceof Cesium.Model
+                entityFromLayerId instanceof Cesium.Model ||
+                entityFromLayerId instanceof Cesium.Primitive
               )
             ) {
               viewer.flyTo(entityFromLayerId, options);

@@ -1,126 +1,127 @@
 /* eslint-disable import/order */
+/// <reference types="vite-plugin-svgr/client" />
 
 // Primitives
-import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg";
+import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg?react";
 
 // Infobox Blocks
-import Infobox from "./Icons/infoboxIcon.svg";
-import InfoHTML from "./Icons/infoboxHTMLIcon.svg";
-import InfoLocation from "./Icons/infoboxLocationIcon.svg";
-import InfoTable from "./Icons/infoboxTableIcon.svg";
-import InfoText from "./Icons/infoboxTextIcon.svg";
-import InfoVideo from "./Icons/infoboxVideoIcon.svg";
+import Infobox from "./Icons/infoboxIcon.svg?react";
+import InfoHTML from "./Icons/infoboxHTMLIcon.svg?react";
+import InfoLocation from "./Icons/infoboxLocationIcon.svg?react";
+import InfoTable from "./Icons/infoboxTableIcon.svg?react";
+import InfoText from "./Icons/infoboxTextIcon.svg?react";
+import InfoVideo from "./Icons/infoboxVideoIcon.svg?react";
 
 // Arrow
-import ArrowUpDown from "./Icons/arrowUpDown.svg";
-import ArrowLeft from "./Icons/arrowLeft.svg";
-import ArrowRight from "./Icons/arrowRight.svg";
-import ArrowLongLeft from "./Icons/arrowLongLeft.svg";
-import ArrowLongRight from "./Icons/arrowLongRight.svg";
-import ArrowDown from "./Icons/arrowDown.svg";
-import ArrowToggle from "./Icons/arrowToggle.svg";
+import ArrowUpDown from "./Icons/arrowUpDown.svg?react";
+import ArrowLeft from "./Icons/arrowLeft.svg?react";
+import ArrowRight from "./Icons/arrowRight.svg?react";
+import ArrowLongLeft from "./Icons/arrowLongLeft.svg?react";
+import ArrowLongRight from "./Icons/arrowLongRight.svg?react";
+import ArrowDown from "./Icons/arrowDown.svg?react";
+import ArrowToggle from "./Icons/arrowToggle.svg?react";
 
 // Indicator
-import Crosshair from "./Icons/crosshair.svg";
+import Crosshair from "./Icons/crosshair.svg?react";
 
 // Fields / Actions
-import FolderPlus from "./Icons/folderPlus.svg";
-import PlusSquare from "./Icons/plusSquare.svg";
-import Cancel from "./Icons/cancel.svg";
-import ActionButton from "./Icons/actionButton.svg";
-import Help from "./Icons/help.svg";
-import CheckMark from "./Icons/checkMark.svg";
-import Plus from "./Icons/plus.svg";
-import Minus from "./Icons/minus.svg";
-import Alert from "./Icons/alert.svg";
-import DndHandle from "./Icons/dndHandle.svg";
-import Bin from "./Icons/bin.svg";
-import Install from "./Icons/install.svg";
-import UploadSimple from "./Icons/uploadSimple.svg";
-import Search from "./Icons/search.svg";
-import AddLayerIcon from "./Icons/addLayer.svg";
-import ZoomToLayer from "./Icons/zoomToLayer.svg";
-import LayerStyleIcon from "./Icons/layerStyle.svg";
-import AddLayerStyleButtonIcon from "./Icons/addLayerStyleButton.svg";
-import LayerInspector from "./Icons/layerInspector.svg";
-import LayerIcon from "./Icons/layer.svg";
-import Clock from "./Icons/Clock.svg";
+import FolderPlus from "./Icons/folderPlus.svg?react";
+import PlusSquare from "./Icons/plusSquare.svg?react";
+import Cancel from "./Icons/cancel.svg?react";
+import ActionButton from "./Icons/actionButton.svg?react";
+import Help from "./Icons/help.svg?react";
+import CheckMark from "./Icons/checkMark.svg?react";
+import Plus from "./Icons/plus.svg?react";
+import Minus from "./Icons/minus.svg?react";
+import Alert from "./Icons/alert.svg?react";
+import DndHandle from "./Icons/dndHandle.svg?react";
+import Bin from "./Icons/bin.svg?react";
+import Install from "./Icons/install.svg?react";
+import UploadSimple from "./Icons/uploadSimple.svg?react";
+import Search from "./Icons/search.svg?react";
+import AddLayerIcon from "./Icons/addLayer.svg?react";
+import ZoomToLayer from "./Icons/zoomToLayer.svg?react";
+import LayerStyleIcon from "./Icons/layerStyle.svg?react";
+import AddLayerStyleButtonIcon from "./Icons/addLayerStyleButton.svg?react";
+import LayerInspector from "./Icons/layerInspector.svg?react";
+import LayerIcon from "./Icons/layer.svg?react";
+import Clock from "./Icons/Clock.svg?react";
 
 // MSIC
-import CheckCircle from "./Icons/checkCircle.svg";
+import CheckCircle from "./Icons/checkCircle.svg?react";
 
 // Dataset
-import File from "./Icons/fileIcon.svg";
+import File from "./Icons/fileIcon.svg?react";
 
 // Timeline
-import Timeline from "./Icons/timeline.svg";
-import PlayRight from "./Icons/play-right.svg";
-import PlayLeft from "./Icons/play-left.svg";
-import Ellipse from "./Icons/ellipse.svg";
-import TimelinePlayRight from "./Icons/timeline-play-right.svg";
-import TimelinePlayLeft from "./Icons/timeline-play-left.svg";
-import Pause from "./Icons/pause.svg";
-import Slider from "./Icons/slider.svg";
-import Set from "./Icons/set.svg";
+import Timeline from "./Icons/timeline.svg?react";
+import PlayRight from "./Icons/play-right.svg?react";
+import PlayLeft from "./Icons/play-left.svg?react";
+import Ellipse from "./Icons/ellipse.svg?react";
+import TimelinePlayRight from "./Icons/timeline-play-right.svg?react";
+import TimelinePlayLeft from "./Icons/timeline-play-left.svg?react";
+import Pause from "./Icons/pause.svg?react";
+import Slider from "./Icons/slider.svg?react";
+import Set from "./Icons/set.svg?react";
 
 // Dashboard
-import Dashboard from "./Icons/dashboard.svg";
-import Scene from "./Icons/scene.svg";
-import Logout from "./Icons/logout.svg";
+import Dashboard from "./Icons/dashboard.svg?react";
+import Scene from "./Icons/scene.svg?react";
+import Logout from "./Icons/logout.svg?react";
 
 // Workspaces
-import WorkspaceAdd from "./Icons/workspaceAdd.svg";
-import Workspaces from "./Icons/workspaces.svg";
+import WorkspaceAdd from "./Icons/workspaceAdd.svg?react";
+import Workspaces from "./Icons/workspaces.svg?react";
 
 // Storytelling tab
-import StoryPage from "./Icons/storyPage.svg";
-import Square from "./Icons/square.svg";
-import Swiper from "./Icons/swiper.svg";
-import Book from "./Icons/book.svg";
-import Copy from "./Icons/copy.svg";
-import GearSix from "./Icons/gearSix.svg";
-import PencilSimple from "./Icons/pencilSimple.svg";
-import Trash from "./Icons/trash.svg";
-import TextStoryBlock from "./Icons/textStoryBlock.svg";
-import Edit from "./Icons/storyBlockEdit.svg";
-import Exit from "./Icons/exit.svg";
-import Settings from "./Icons/settings.svg";
-import Padding from "./Icons/padding.svg";
-import TitleStoryBlock from "./Icons/titleStoryBlock.svg";
-import VideoStoryBlock from "./Icons/videoStoryBlock.svg";
-import ImageStoryBlock from "./Icons/imageStoryBlock.svg";
-import MdTextStoryBlock from "./Icons/mdTextStoryBlock.svg";
-import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg";
-import ShowLayersStoryBlock from "./Icons/showLayersStoryBlock.svg";
-import TimelineStoryBlock from "./Icons/timelineStoryBlock.svg";
-import TimelineStoryBlockSolid from "./Icons/timelineStoryBlockSolid.svg";
-import NextPageStoryBlock from "./Icons/nextPageStoryBlock.svg";
+import StoryPage from "./Icons/storyPage.svg?react";
+import Square from "./Icons/square.svg?react";
+import Swiper from "./Icons/swiper.svg?react";
+import Book from "./Icons/book.svg?react";
+import Copy from "./Icons/copy.svg?react";
+import GearSix from "./Icons/gearSix.svg?react";
+import PencilSimple from "./Icons/pencilSimple.svg?react";
+import Trash from "./Icons/trash.svg?react";
+import TextStoryBlock from "./Icons/textStoryBlock.svg?react";
+import Edit from "./Icons/storyBlockEdit.svg?react";
+import Exit from "./Icons/exit.svg?react";
+import Settings from "./Icons/settings.svg?react";
+import Padding from "./Icons/padding.svg?react";
+import TitleStoryBlock from "./Icons/titleStoryBlock.svg?react";
+import VideoStoryBlock from "./Icons/videoStoryBlock.svg?react";
+import ImageStoryBlock from "./Icons/imageStoryBlock.svg?react";
+import MdTextStoryBlock from "./Icons/mdTextStoryBlock.svg?react";
+import CameraButtonStoryBlock from "./Icons/cameraButtonStoryBlock.svg?react";
+import ShowLayersStoryBlock from "./Icons/showLayersStoryBlock.svg?react";
+import TimelineStoryBlock from "./Icons/timelineStoryBlock.svg?react";
+import TimelineStoryBlockSolid from "./Icons/timelineStoryBlockSolid.svg?react";
+import NextPageStoryBlock from "./Icons/nextPageStoryBlock.svg?react";
 
 // Widget tab
-import Desktop from "./Icons/desktop.svg";
-import Mobile from "./Icons/mobile.svg";
-import WidgetSystem from "./Icons/widgetSystem.svg";
-import Widgets from "./Icons/widgetsIcon.svg";
-import WidgetMenu from "./Icons/widgetMenu.svg";
-import WidgetButton from "./Icons/widgetButton.svg";
-import WidgetStory from "./Icons/widgetStorytelling.svg";
-import StorytellingMenu from "./Icons/storytellingMenu.svg";
-import WidgetSplash from "./Icons/widgetSplashscreen.svg";
-import WidgetNavigator from "./Icons/widgetNavigator.svg";
-import NavigatorAngle from "./Icons/navigatorAngle.svg";
-import Compass from "./Icons/compass.svg";
-import CompassFocus from "./Icons/compassFocus.svg";
-import House from "./Icons/house.svg";
-import Plugin from "./Icons/plugin.svg";
+import Desktop from "./Icons/desktop.svg?react";
+import Mobile from "./Icons/mobile.svg?react";
+import WidgetSystem from "./Icons/widgetSystem.svg?react";
+import Widgets from "./Icons/widgetsIcon.svg?react";
+import WidgetMenu from "./Icons/widgetMenu.svg?react";
+import WidgetButton from "./Icons/widgetButton.svg?react";
+import WidgetStory from "./Icons/widgetStorytelling.svg?react";
+import StorytellingMenu from "./Icons/storytellingMenu.svg?react";
+import WidgetSplash from "./Icons/widgetSplashscreen.svg?react";
+import WidgetNavigator from "./Icons/widgetNavigator.svg?react";
+import NavigatorAngle from "./Icons/navigatorAngle.svg?react";
+import Compass from "./Icons/compass.svg?react";
+import CompassFocus from "./Icons/compassFocus.svg?react";
+import House from "./Icons/house.svg?react";
+import Plugin from "./Icons/plugin.svg?react";
 
 // Logos
-import Logo from "./Icons/reearthLogo.svg";
-import LogoColorful from "./Icons/reearthLogoColorful.svg";
+import Logo from "./Icons/reearthLogo.svg?react";
+import LogoColorful from "./Icons/reearthLogoColorful.svg?react";
 
 // Plug-ins
-import UploadZipPlugin from "./Icons/uploadZipPlugin.svg";
-import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg";
-import Marketplace from "./Icons/marketplace.svg";
+import UploadZipPlugin from "./Icons/uploadZipPlugin.svg?react";
+import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg?react";
+import Marketplace from "./Icons/marketplace.svg?react";
 
 export default {
   layer: LayerIcon,

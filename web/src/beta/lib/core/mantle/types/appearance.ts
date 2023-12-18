@@ -28,6 +28,8 @@ export type AppearanceTypes = {
   photooverlay: LegacyPhotooverlayAppearance;
   resource: ResourceAppearance;
   raster: RasterAppearance;
+  frustum: FrustumAppearance;
+  transition: TransitionAppearance;
 };
 
 export type MarkerAppearance = {
@@ -140,6 +142,15 @@ export type ModelAppearance = {
   imageBasedLightIntensity?: number;
 };
 
+export type FrustumAppearance = {
+  show?: boolean;
+  color?: string;
+  opacity?: number;
+  zoom?: number;
+  aspectRatio?: number;
+  length?: number;
+};
+
 export type Cesium3DTilesAppearance = {
   show?: boolean;
   color?: string;
@@ -234,6 +245,13 @@ export type BoxAppearance = {
   far?: number;
 };
 
+export type TransitionAppearance = {
+  useTransition?: boolean;
+  translate?: [lng: number, lat: number, height: number];
+  rotate?: [heading: number, pitch: number, roll: number];
+  scale?: [x: number, y: number, z: number];
+};
+
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   marker: 1,
   polyline: 1,
@@ -245,6 +263,8 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   photooverlay: 1,
   resource: 1,
   raster: 1,
+  frustum: 1,
+  transition: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);

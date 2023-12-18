@@ -2,7 +2,6 @@ import { memo } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
-import { useT } from "@reearth/services/i18n";
 import { styled, PublishTheme } from "@reearth/services/theme";
 
 import { BORDER_WIDTH, PADDING_HORIZONTAL, KNOB_SIZE } from "./constants";
@@ -77,13 +76,12 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
     onPlayReversed,
     onSpeedChange: onSpeedChangeProps,
   });
-  const t = useT();
 
   return isOpened ? (
     <Container publishedTheme={theme}>
       <div style={{ width: "32px" }}>
         <CloseButton publishedTheme={theme} onClick={onClose}>
-          <Icon alt={t("Close timeline")} icon="cancel" size={16} />
+          <Icon icon="cancel" size={16} />
         </CloseButton>
       </div>
       <ToolBox>
@@ -92,7 +90,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             publishedTheme={theme}
             isPlaying={isPlayingReversed}
             onClick={toggleIsPlayingReversed}>
-            <Icon alt={t("Playback timeline")} icon="playLeft" size={16} />
+            <Icon icon="playLeft" size={16} />
           </PlayButton>
         </li>
         <li>
@@ -101,7 +99,7 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
             publishedTheme={theme}
             isPlaying={isPlaying}
             onClick={toggleIsPlaying}>
-            <Icon alt={t("Play timeline")} icon="playRight" size={16} />
+            <Icon icon="playRight" size={16} />
           </PlayButton>
         </li>
         <li>
@@ -153,13 +151,13 @@ const Timeline: React.FC<Props> = memo(function TimelinePresenter({
           style={{
             left: currentPosition + PADDING_HORIZONTAL - KNOB_SIZE / 2,
           }}>
-          <Icon icon="ellipse" alt={t("ellipse")} size={KNOB_SIZE} />
+          <Icon icon="ellipse" size={KNOB_SIZE} />
         </IconWrapper>
       </ScaleBox>
     </Container>
   ) : (
     <OpenButton publishedTheme={theme} onClick={onOpen}>
-      <Icon alt={t("Open timeline")} icon="timeline" size={24} />
+      <Icon icon="timeline" size={24} />
     </OpenButton>
   );
 });
