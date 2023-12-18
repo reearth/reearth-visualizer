@@ -11,13 +11,17 @@ const SidePanelSectionField: React.FC<{
   startCollapsed?: boolean;
   gap?: number;
   children?: ReactNode;
-}> = ({ className, title, startCollapsed, gap, children }) => {
+  storageKey?: string;
+}> = ({ className, title, startCollapsed, gap, children, storageKey }) => {
   const theme = useTheme();
-  const [opened, setOpened] = useState<boolean>();
+  const [opened, setOpened] = useState<boolean>(() => {
+    const storedValue = localStorage.getItem(storageKey || "");
+    return storedValue ? JSON.parse(storedValue) : !startCollapsed ?? true;
+  });
 
   useEffect(() => {
-    setOpened(!startCollapsed ?? true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    localStorage.setItem(storageKey || "", JSON.stringify(opened));
+  }, [opened, storageKey]);
 
   return (
     <Field className={className}>
