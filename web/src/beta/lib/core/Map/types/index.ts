@@ -18,6 +18,7 @@ import type {
   SelectedFeatureInfo,
   Feature,
   ComputedFeature,
+  CameraPosition,
 } from "../../mantle";
 import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 import type {
@@ -73,6 +74,28 @@ export type EngineRef = {
     | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  toXYZ: (
+    lng: number,
+    lat: number,
+    height: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [x: number, y: number, z: number] | undefined;
+  toLngLatHeight: (
+    x: number,
+    y: number,
+    z: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [lng: number, lat: number, height: number] | undefined;
+  convertScreenToPositionOffset: (
+    rawPosition: [x: number, y: number, z: number],
+    screenOffset: [x: number, y: number],
+  ) => [x: number, y: number, z: number] | undefined;
+  isPositionVisible: (position: [x: number, y: number, z: number]) => boolean;
+  setView: (camera: CameraPosition) => void;
+  toWindowPosition: (
+    position: [x: number, y: number, z: number],
+  ) => [x: number, y: number] | undefined;
   flyTo: FlyTo;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;

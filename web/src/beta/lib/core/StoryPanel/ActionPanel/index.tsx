@@ -15,7 +15,7 @@ export type ActionItem = {
   icon: string;
   name?: string;
   hide?: boolean;
-  onClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 };
 
 export type ActionPosition = "left-top" | "left-bottom" | "right-top" | "right-bottom";
@@ -29,10 +29,10 @@ type Props = {
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
-  isHovered?: boolean;
   overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
+  onClick?: (e: any) => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -69,6 +69,7 @@ const ActionPanel: React.FC<Props> = ({
   overrideGroupId,
   setShowPadding,
   onSettingsToggle,
+  onClick,
   onRemove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -102,6 +103,7 @@ const ActionPanel: React.FC<Props> = ({
     }
     return menuItems;
   }, [settingsTitle, panelSettings, t, setShowPadding, onRemove, handleRemove]);
+
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
       {dndEnabled && (
@@ -113,15 +115,13 @@ const ActionPanel: React.FC<Props> = ({
         open={showSettings && isSelected}
         onOpenChange={() => onSettingsToggle?.()}
         placement="bottom-start">
-        <BlockOptions isSelected={isSelected}>
+        <BlockOptions isSelected={isSelected} onClick={!isSelected ? onClick : undefined}>
           {actionItems.map(
             (a, idx) =>
               !a.hide && (
                 <Fragment key={idx}>
                   <Popover.Trigger asChild>
-                    <OptionWrapper
-                      showPointer={!isSelected || !!a.onClick}
-                      onClick={a.onClick ?? stopClickPropagation}>
+                    <OptionWrapper showPointer={!isSelected || !!a.onClick} onClick={a.onClick}>
                       <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
                       {a.name && (
                         <OptionText size="footnote" customColor>
@@ -192,14 +192,14 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   `
       : position === "left-bottom"
       ? `
-  left: -1px;
+  left: 0;
   top: 0;
   `
       : position === "right-bottom"
       ? `
   top: 0;
-  right: -1px;
-  `
+  right: 0;
+    `
       : `
   right: -1px;
   top: -25px;

@@ -88,7 +88,6 @@ const Wrapper = styled.div<{
 const Inner = styled.div`
   display: flex;
   align-items: center;
-  height: 100%;
   width: 100%;
   padding: 8px 4px 8px 4px;
   border-radius: 4px;

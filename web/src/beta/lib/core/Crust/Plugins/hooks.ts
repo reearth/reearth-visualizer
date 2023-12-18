@@ -228,6 +228,73 @@ export default function ({
     [engineRef],
   );
 
+  const computeGlobeHeight = useCallback(
+    (lng: number, lat: number, height?: number) => {
+      return engineRef?.computeGlobeHeight(lng, lat, height);
+    },
+    [engineRef],
+  );
+
+  const toXYZ = useCallback(
+    (
+      lng: number,
+      lat: number,
+      height: number,
+      options?:
+        | {
+            useGlobeEllipsoid?: boolean | undefined;
+          }
+        | undefined,
+    ) => {
+      return engineRef?.toXYZ(lng, lat, height, options);
+    },
+    [engineRef],
+  );
+
+  const toLngLatHeight = useCallback(
+    (
+      x: number,
+      y: number,
+      z: number,
+      options?:
+        | {
+            useGlobeEllipsoid?: boolean | undefined;
+          }
+        | undefined,
+    ) => {
+      return engineRef?.toLngLatHeight(x, y, z, options);
+    },
+    [engineRef],
+  );
+
+  const convertScreenToPositionOffset = useCallback(
+    (rawPosition: [x: number, y: number, z: number], screenOffset: [x: number, y: number]) => {
+      return engineRef?.convertScreenToPositionOffset(rawPosition, screenOffset);
+    },
+    [engineRef],
+  );
+
+  const isPositionVisible = useCallback(
+    (position: [x: number, y: number, z: number]) => {
+      return !!engineRef?.isPositionVisible(position);
+    },
+    [engineRef],
+  );
+
+  const setView = useCallback(
+    (camera: CameraPosition) => {
+      return engineRef?.setView(camera);
+    },
+    [engineRef],
+  );
+
+  const toWindowPosition = useCallback(
+    (position: [x: number, y: number, z: number]) => {
+      return engineRef?.toWindowPosition(position);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -404,6 +471,13 @@ export default function ({
         zoomOut,
         cameraViewport,
         getCameraFovInfo,
+        computeGlobeHeight,
+        toXYZ,
+        toLngLatHeight,
+        convertScreenToPositionOffset,
+        isPositionVisible,
+        setView,
+        toWindowPosition,
         rotateRight,
         orbit,
         captureScreen,
@@ -466,6 +540,13 @@ export default function ({
       getLocationFromScreen,
       sampleTerrainHeight,
       enableScreenSpaceCameraController,
+      computeGlobeHeight,
+      toXYZ,
+      toLngLatHeight,
+      convertScreenToPositionOffset,
+      isPositionVisible,
+      setView,
+      toWindowPosition,
       lookHorizontal,
       lookVertical,
       moveForward,

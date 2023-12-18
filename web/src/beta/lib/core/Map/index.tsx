@@ -1,12 +1,13 @@
 import { forwardRef, useMemo, type Ref } from "react";
 
+import { INTERACTION_MODES } from "../Crust";
+
 import useHooks, { MapRef } from "./hooks";
 import Layers, { type Props as LayersProps } from "./Layers";
 import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
 export { useGet, type WrappedRef, type Undefinable, useOverriddenProperty } from "./utils";
-export { FEATURE_FLAGS } from "../Crust/featureFlags";
 
 export type {
   NaiveLayer,
@@ -46,6 +47,7 @@ function Map(
     timelineManagerRef,
     sceneProperty,
     onLayerSelect,
+    featureFlags = INTERACTION_MODES.default,
     ...props
   }: Props,
   ref: Ref<MapRef>,
@@ -87,6 +89,7 @@ function Map(
       requestingRenderMode={requestingRenderMode}
       timelineManagerRef={timelineManagerRef}
       onLayerSelect={handleEngineLayerSelect}
+      featureFlags={featureFlags}
       {...props}>
       <Layers
         ref={layersRef}

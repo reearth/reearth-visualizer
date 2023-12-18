@@ -15,6 +15,7 @@ import {
   Scene,
   Viewer,
   Cesium3DTilePointFeature,
+  Primitive,
 } from "cesium";
 
 import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox";
@@ -140,7 +141,7 @@ export function findEntity(
   layerId?: string,
   featureId?: string,
   withoutTileFeature?: boolean,
-): Entity | Cesium3DTileset | InternalCesium3DTileFeature | undefined {
+): Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";
   if (!id) return;
@@ -161,10 +162,10 @@ export function findEntity(
     }
   }
 
-  // Find Cesium3DTileset
+  // Find Cesium3DTileset or Primitive
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset)) {
+    if (!(prim instanceof Cesium3DTileset) && !(prim instanceof Primitive)) {
       continue;
     }
 
@@ -179,7 +180,7 @@ export function findEntity(
     if (!prim.ready) continue;
 
     // Skip to search 3dtiles features if `withoutTileFeature` is `true`.
-    if (!withoutTileFeature) {
+    if (!withoutTileFeature && prim instanceof Cesium3DTileset) {
       const target = findFeatureFrom3DTile(prim.root, featureId);
       if (target) {
         return target;
