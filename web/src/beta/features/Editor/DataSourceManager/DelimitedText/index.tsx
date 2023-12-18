@@ -63,8 +63,8 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     <ColJustifyBetween>
       <AssetWrapper>
         <InputGroup
-          label="Source Type"
-          description="Select the type of data source you want to add.">
+          label={t("Source Type")}
+          description={t("Select the type of data source you want to add.")}>
           <SourceTypeWrapper>
             <RadioGroup
               options={DataSourceOptions}
@@ -80,28 +80,35 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             description={t("URL of the data source you want to add.")}>
             <Input
               type="text"
-              placeholder="Input Text"
+              placeholder={t("Input Text")}
               value={value}
               onChange={e => setValue(e.target.value)}
             />
           </InputGroup>
         )}
         {sourceType == "local" && (
-          <URLField fileType="asset" value={value} name={t("Asset")} onChange={handleOnChange} />
+          <URLField
+            fileType="asset"
+            entityType="file"
+            value={value}
+            fileFormat="CSV"
+            name={t("Asset")}
+            onChange={handleOnChange}
+          />
         )}
-        <Text size="body">Point coordinates</Text>
-        <InputGroup label="Latitude Field" description="Description around">
+        <Text size="body">{t("Point coordinates")}</Text>
+        <InputGroup label={t("Latitude Field")}>
           <Input
             type="text"
-            placeholder="Input Text"
+            placeholder={t("Input Text")}
             value={lat}
             onChange={e => setLat(e.target.value)}
           />
         </InputGroup>
-        <InputGroup label="Longitude Field" description="Description around">
+        <InputGroup label={t("Longitude Field")}>
           <Input
             type="text"
-            placeholder="Input Text"
+            placeholder={t("Input Text")}
             value={long}
             onChange={e => setLong(e.target.value)}
           />
@@ -109,11 +116,13 @@ const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       </AssetWrapper>
       <SubmitWrapper>
         <Button
-          text="Add to Layer"
+          text={t("Add to Layer")}
           buttonType="primary"
           size="medium"
           onClick={handleSubmit}
-          disabled={(sourceType === "url" || sourceType === "value") && !value}
+          disabled={
+            (sourceType === "url" || sourceType === "value" || sourceType === "local") && !value
+          }
         />
       </SubmitWrapper>
     </ColJustifyBetween>

@@ -15,7 +15,7 @@ export type Props = {
   name: string;
   url?: string;
   icon?: string;
-  iconSize?: string;
+  iconSize?: number;
   checked?: boolean;
   selected?: boolean;
   actionContent?: ReactNode;
@@ -109,7 +109,6 @@ const CatalogCard: React.FC<Props> = ({
       {isEditing ? (
         <StyledTextInput
           value={newName}
-          timeout={0}
           autoFocus
           onChange={handleNameChange}
           onBlur={handleEditExit}
@@ -120,7 +119,7 @@ const CatalogCard: React.FC<Props> = ({
           {name}
         </FileName>
       )}
-      {checked && <StyledIcon icon="checkCircle" alt="checked" size="18px" />}
+      {checked && <StyledIcon icon="checkCircle" size={18} />}
 
       {actionContent && (
         <Popover.Provider
@@ -218,7 +217,6 @@ const ActionIcon = styled.button`
 `;
 
 const StyledPopoverContent = styled(Popover.Content)`
-  z-index: 1000;
   position: relative;
 `;
 

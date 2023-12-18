@@ -110,7 +110,7 @@ const BlockWrapper = styled.div<{
 
 const Handle = styled.div<{ isHovered: boolean; isSelected: boolean }>`
   position: absolute;
-  z-index: 2;
+  // z-index: 2;
   top: 0;
   right: 0;
   padding: 5px;

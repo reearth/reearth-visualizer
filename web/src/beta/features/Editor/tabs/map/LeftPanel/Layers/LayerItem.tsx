@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
@@ -8,6 +8,7 @@ import type {
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
 } from "@reearth/beta/features/Editor/useLayers";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 import { styled } from "@reearth/services/theme";
 
 type LayerItemProps = {
@@ -36,42 +37,33 @@ const LayerItem = ({
   const [newValue, setNewValue] = useState(layerTitle);
   const [isVisible, setIsVisible] = useState(visible);
   const [value, setValue] = useState(isVisible ? "V" : "");
-  const [clickTimeoutId, setClickTimeoutId] = useState<any>(null);
 
   const handleActionMenuToggle = useCallback(() => setActionOpen(prev => !prev), []);
 
-  const handleClick = useCallback(() => {
-    if (clickTimeoutId) {
-      clearTimeout(clickTimeoutId);
-      setClickTimeoutId(null);
-    }
-    const timeoutId = setTimeout(() => {
-      onSelect();
-    }, 200);
-    setClickTimeoutId(timeoutId);
-  }, [onSelect, clickTimeoutId]);
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => onSelect?.(),
+    () => setIsEditing(true),
+  );
 
-  const handleLayerTitleClick = useCallback(() => {
-    if (clickTimeoutId) {
-      clearTimeout(clickTimeoutId);
-      setClickTimeoutId(null);
-    }
-    setIsEditing(true);
-  }, [clickTimeoutId]);
+  useEffect(() => {
+    setNewValue(layerTitle);
+  }, [layerTitle]);
 
-  const handleChange = useCallback((newTitle: string) => setNewValue(newTitle), []);
-
-  const handleTitleSubmit = useCallback(() => {
-    setIsEditing(false);
-    if (newValue.trim() !== "") {
-      onLayerNameUpdate({ layerId: id, name: newValue });
-    }
-  }, [id, newValue, onLayerNameUpdate]);
+  const handleTitleSubmit = useCallback(
+    (newTitle: string) => {
+      setNewValue(newTitle);
+      setIsEditing(false);
+      if (newTitle.trim() !== "") {
+        onLayerNameUpdate({ layerId: id, name: newTitle });
+      }
+    },
+    [id, onLayerNameUpdate],
+  );
 
   const handleEditExit = useCallback(
     (e?: React.KeyboardEvent<HTMLInputElement>) => {
       if (layerTitle !== newValue && e?.key !== "Escape") {
-        handleTitleSubmit();
+        handleTitleSubmit(newValue);
       } else {
         setNewValue(layerTitle);
       }
@@ -96,7 +88,7 @@ const LayerItem = ({
       isSelected={isSelected}
       isOpenAction={isActionOpen}
       actionPlacement="bottom-end"
-      onItemClick={handleClick}
+      onItemClick={handleSingleClick}
       onActionClick={handleActionMenuToggle}
       onOpenChange={isOpen => setActionOpen(!!isOpen)}
       actionContent={
@@ -111,45 +103,35 @@ const LayerItem = ({
           ]}
         />
       }>
-      <ContentWrapper>
+      <>
         {isEditing ? (
           <StyledTextInput
             value={newValue}
-            timeout={0}
             autoFocus
-            onChange={handleChange}
+            onChange={handleTitleSubmit}
             onExit={handleEditExit}
             onBlur={handleEditExit}
           />
         ) : (
-          <LayerTitle onDoubleClick={handleLayerTitleClick}>{layerTitle}</LayerTitle>
+          <TitleText size="footnote" onDoubleClick={handleDoubleClick}>
+            {layerTitle}
+          </TitleText>
         )}
         <HideLayer onClick={handleUpdateVisibility}>
           <Text size="footnote">{value}</Text>
         </HideLayer>
-      </ContentWrapper>
+      </>
     </ListItem>
   );
 };
 
 export default LayerItem;
 
-const LayerTitle = styled.div`
-  overflow: hidden;
-  color: ${({ theme }) => theme.content.main};
-  text-overflow: ellipsis;
-  font-family: Noto Sans;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+const TitleText = styled(Text)`
+  flex: 1;
+  word-break: break-all;
+  text-align: left;
+  padding-right: 10px;
 `;
 
 const HideLayer = styled.div`

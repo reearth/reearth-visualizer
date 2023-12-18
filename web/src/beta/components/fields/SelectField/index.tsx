@@ -20,6 +20,7 @@ type CommonProps = {
   // Property field
   name?: string;
   description?: string;
+  attachToRoot?: boolean;
 };
 
 export type SingleSelectProps = {
@@ -46,6 +47,7 @@ const SelectField: React.FC<Props> = ({
   disabled = false,
   name,
   description,
+  attachToRoot,
 }) => {
   const t = useT();
 
@@ -110,7 +112,7 @@ const SelectField: React.FC<Props> = ({
               <ArrowIcon icon="arrowDown" open={open} size={12} />
             </InputWrapper>
           </Popover.Trigger>
-          <PickerWrapper attachToRoot>
+          <PickerWrapper attachToRoot={attachToRoot}>
             {options?.map(({ label: value, key }) => (
               <OptionWrapper
                 key={key}
@@ -132,7 +134,7 @@ const SelectField: React.FC<Props> = ({
                   </Text>
                   <CancelIcon
                     icon="cancel"
-                    size={12}
+                    size={16}
                     onClick={() => !disabled && handleClick(key)}
                     disabled={disabled}
                   />
@@ -152,7 +154,6 @@ const ProviderWrapper = styled.div<{ multiSelect: boolean }>`
   gap: 6px;
   border-radius: 4px;
   padding: 4px;
-  border: ${({ theme, multiSelect }) => (multiSelect ? `1px solid ${theme.outline.weak}` : "none")};
 `;
 
 const InputWrapper = styled.div<{ disabled: boolean }>`
@@ -194,12 +195,12 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>`
   right: 10px;
   top: 50%;
   transform: ${({ open }) => (open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)")};
+  color: ${({ theme }) => theme.content.main};
 `;
 
 const PickerWrapper = styled(Popover.Content)`
   min-width: 150px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
-  gap: 4px;
   outline: none;
   border-radius: 4px;
   background: ${({ theme }) => theme.bg[1]};
@@ -207,16 +208,17 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* TODO: Need standardized z-index */
-  z-index: 1;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 const OptionWrapper = styled.div<{ selected: boolean }>`
   display: flex;
-  padding: 7px 12px;
+  padding: 4px 8px;
   align-items: center;
   cursor: "pointer";
   background: ${({ theme, selected }) => (selected ? theme.bg[2] : "inherit")};
+
   &:hover {
     background: ${({ theme, selected }) => (selected ? theme.bg[2] : theme.select.main)};
   }
@@ -229,23 +231,28 @@ const CheckIcon = styled(Icon)`
 const SelectedWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   max-height: 125px;
   overflow: auto;
 `;
 
 const Selected = styled.div<{ disabled: boolean }>`
   display: flex;
-  padding: 7px 12px;
+  padding: 4px 8px;
   align-items: center;
   justify-content: space-between;
-  border-radius: 2px;
+  border-radius: 4px;
   background: ${({ theme }) => theme.bg[2]};
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
 const CancelIcon = styled(Icon)<{ disabled: boolean }>`
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  color: ${({ theme }) => theme.content.weak};
+
+  :hover {
+    color: ${({ theme }) => theme.content.main};
+  }
 `;
 
 export default SelectField;

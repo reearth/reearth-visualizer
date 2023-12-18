@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Cartesian3, PolygonHierarchy } from "cesium";
 import { isEqual } from "lodash-es";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Entity, PolygonGraphics, PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
@@ -9,6 +9,7 @@ import { Polygon as PolygonValue, toColor } from "@reearth/beta/utils/value";
 
 import type { PolygonAppearance } from "../../..";
 import { classificationType, heightReference, shadowMode } from "../../common";
+import { useContext } from "../context";
 import {
   EntityExt,
   toDistanceDisplayCondition,
@@ -41,6 +42,8 @@ export default function Polygon({
         : undefined,
     [geometry?.coordinates, geometry?.type, property?.polygon],
   );
+
+  const { requestRender } = useContext();
 
   const {
     show = true,
@@ -106,6 +109,10 @@ export default function Polygon({
     () => toDistanceDisplayCondition(property?.near, property?.far),
     [property?.near, property?.far],
   );
+
+  useEffect(() => {
+    requestRender?.();
+  });
 
   return !isVisible || !coordiantes || !show ? null : (
     <>

@@ -1,5 +1,6 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { MouseEvent, ReactNode } from "react";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
@@ -20,10 +21,12 @@ type Props = {
   position?: ActionPosition;
   noBorder?: boolean;
   isEditable?: boolean;
-  setEditMode?: Dispatch<SetStateAction<boolean>>;
-  onEditModeToggle?: () => void;
+  hideHoverUI?: boolean;
+  overrideGroupId?: string;
+  onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<Element>) => void;
+  onDoubleClick?: (e: MouseEvent<Element>) => void;
   onClickAway?: () => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
@@ -31,12 +34,21 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
-    v?: any,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const SelectableArea: React.FC<Props> = ({
@@ -51,22 +63,24 @@ const SelectableArea: React.FC<Props> = ({
   position,
   noBorder,
   isEditable,
+  hideHoverUI,
   panelSettings,
-  setEditMode,
+  overrideGroupId,
   onEditModeToggle,
   onSettingsToggle,
-  onClick,
-  onClickAway,
   onRemove,
+  onClick,
+  onDoubleClick,
+  onClickAway,
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const { showPadding, setShowPadding, handleClickAway } = useHooks({
+  const { showPadding, isHovered, handleHoverChange, setShowPadding, handleClickAway } = useHooks({
     editMode,
     isSelected,
-    setEditMode,
+    onEditModeToggle,
     onClickAway,
   });
 
@@ -74,28 +88,39 @@ const SelectableArea: React.FC<Props> = ({
     <>{children}</>
   ) : (
     <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
-      <Wrapper isSelected={isSelected} noBorder={noBorder} onClick={onClick}>
-        <ActionPanel
-          title={title}
-          icon={icon}
-          isSelected={isSelected}
-          showSettings={showSettings}
-          showPadding={showPadding}
-          editMode={editMode}
-          propertyId={propertyId}
-          panelSettings={panelSettings}
-          dndEnabled={dndEnabled}
-          position={position}
-          setShowPadding={setShowPadding}
-          onEditModeToggle={onEditModeToggle}
-          onSettingsToggle={onSettingsToggle}
-          onRemove={onRemove}
-          onPropertyUpdate={onPropertyUpdate}
-          onPropertyItemAdd={onPropertyItemAdd}
-          onPropertyItemMove={onPropertyItemMove}
-          onPropertyItemDelete={onPropertyItemDelete}
-        />
-        {children}
+      <Wrapper
+        isSelected={isSelected}
+        noBorder={noBorder}
+        hideHoverUI={hideHoverUI}
+        onMouseOver={handleHoverChange(true)}
+        onMouseOut={handleHoverChange(false)}>
+        <div onClick={onClick} onDoubleClick={onDoubleClick}>
+          {children}
+        </div>
+        {(isSelected || (!hideHoverUI && isHovered)) && (
+          <ActionPanel
+            title={title}
+            icon={icon}
+            isSelected={isSelected}
+            showSettings={showSettings}
+            showPadding={showPadding}
+            editMode={editMode}
+            propertyId={propertyId}
+            panelSettings={panelSettings}
+            dndEnabled={dndEnabled}
+            position={position}
+            overrideGroupId={overrideGroupId}
+            setShowPadding={setShowPadding}
+            onEditModeToggle={onEditModeToggle}
+            onSettingsToggle={onSettingsToggle}
+            onClick={onClick}
+            onRemove={onRemove}
+            onPropertyUpdate={onPropertyUpdate}
+            onPropertyItemAdd={onPropertyItemAdd}
+            onPropertyItemMove={onPropertyItemMove}
+            onPropertyItemDelete={onPropertyItemDelete}
+          />
+        )}
       </Wrapper>
     </ClickAwayListener>
   );
@@ -103,16 +128,15 @@ const SelectableArea: React.FC<Props> = ({
 
 export default SelectableArea;
 
-const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean }>`
+const Wrapper = styled.div<{ isSelected?: boolean; noBorder?: boolean; hideHoverUI?: boolean }>`
   ${({ noBorder, isSelected, theme }) =>
     !noBorder && `border: 1px solid ${isSelected ? theme.select.main : "transparent"};`}
   transition: all 0.3s;
   padding: 1px;
   position: relative;
-  overflow: ${({ isSelected }) => (isSelected ? "visible" : "hidden")};
 
   :hover {
-    border-color: ${({ isSelected, theme }) => !isSelected && theme.select.weaker};
-    overflow: visible;
+    border-color: ${({ isSelected, hideHoverUI, theme }) =>
+      !hideHoverUI && !isSelected && theme.select.weaker};
   }
 `;

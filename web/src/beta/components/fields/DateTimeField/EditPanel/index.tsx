@@ -113,8 +113,6 @@ const SelectWrapper = styled.div`
   width: 95%;
 `;
 const CustomSelect = styled(SelectField)`
-  height: 120px;
-  overflow-y: auto;
   width: 100%;
 `;
 export default EditPanel;

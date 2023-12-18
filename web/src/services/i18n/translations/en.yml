@@ -24,7 +24,7 @@ Time: Time
 Time Zone: Time Zone
 set: set
 Remove: Remove
-Add Item: Add Item
+Add: Add
 Settings: Settings
 Options: Options
 Please choose an option: Please choose an option
@@ -48,17 +48,17 @@ A To Z: A To Z
 Z To A: Z To A
 Size Small to Large: Size Small to Large
 Size Large to Small: Size Large to Small
-File Format: ''
-File format of the data source you want to add.: ''
-From Assets: ''
-From Web: ''
-From Value: ''
-Source Type: ''
-Select the type of data source you want to add.: ''
+File Format: File Format
+File format of the data source you want to add.: File format of the data source you want to add.
+From Assets: From Assets
+From Web: From Web
+From Value: From Value
+Source Type: Source Type
+Select the type of data source you want to add.: Select the type of data source you want to add.
 Resource URL: Resource URL
-URL of the data source you want to add.: ''
-Input Text: ''
-Value: ''
+URL of the data source you want to add.: URL of the data source you want to add.
+Input Text: Input Text
+Value: Value
 Write syntactically correct data based on the file format you have selected above.: >-
   Write syntactically correct data based on the file format you have selected
   above.
@@ -66,6 +66,15 @@ Input data here: Input data here
 Asset: Asset
 Prioritize Performance: Prioritize Performance
 Add to Layer: Add to Layer
+Point coordinates: Point coordinates
+Latitude Field: Latitude Field
+Longitude Field: Longitude Field
+Data Source Manager: Data Source Manager
+Common: Common
+CSV: CSV
+WMS: WMS
+Vector Tile: Vector Tile
+3D Tiles: 3D Tiles
 Choose layer to add: Choose layer to add
 Layer of the data source you want to add.: Layer of the data source you want to add
 layer name: Layer name
@@ -73,6 +82,15 @@ Layer: Layer
 Layers: Layers
 All Layers: All Layers
 Layer Style: Layer Style
+Style_: Style_
+Delete: Delete
+Main: Main
+Tiles: Tiles
+Terrain: Terrain
+Globe: Globe
+Sky: Sky
+Camera: Camera
+Unknown scene setting: Unknown scene setting
 Scene: Scene
 Outline: Outline
 Add Layer from Resource: Add Layer from Resource
@@ -84,6 +102,7 @@ Data: Data
 Feature: Feature
 Styling: Styling
 Format: Format
+Save: Save
 Published: Published
 Unpublished: Unpublished
 Story: Story
@@ -113,7 +132,7 @@ More options: More options
 Need to change domain related settings?: Need to change domain related settings?
 Go to settings: Go to settings
 Search engine indexing: Search engine indexing
-Page will be available as result on search engines: ''
+Page will be available as result on search engines: Page will be available as result on search engines
 Unpublishing: Unpublishing
 Your project will be unpublished.: Your project will be unpublished.
 This means that anybody with the URL will become unable to view this project.: This means that anybody with the URL will become unable to view this project.
@@ -171,7 +190,6 @@ You have reached a policy limit. Please contact an administrator of your Re:Eart
 Something went wrong. Please try again later.: Something went wrong. Please try again later.
 Project Settings: Project Settings
 Upload file: Upload file
-Delete: Delete
 You are about to delete one or more assets from the current workspace.: You are about to delete one or more assets from the current workspace.
 Please make sure no selected assets are in use. This cannot be undone.: Please make sure no selected assets are in use. This cannot be undone.
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: >-
@@ -248,16 +266,11 @@ aria-label-adjust-angle: adjust angle
 aria-label-zoom-in: zoom in
 aria-label-Go-to-the-home-position: Go to the home position
 aria-label-zoom-out: zoom out
-Close timeline: Close timeline
-Playback timeline: Playback timeline
-Play timeline: Play timeline
-ellipse: ellipse
-Open timeline: Open timeline
 Spacing settings: Spacing settings
 New Camera: New Camera
 New Camera Button: New Camera Button
 Buttons List: Buttons List
-New Layer Button: New Layer Button
+New Layers Button: New Layers Button
 Add markdown text here: Add markdown text here
 Unsupported field type: Unsupported field type
 Drop here: Drop here
@@ -286,6 +299,11 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
+Close timeline: Close timeline
+Playback timeline: Playback timeline
+Play timeline: Play timeline
+ellipse: ellipse
+Open timeline: Open timeline
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
@@ -321,7 +339,6 @@ Alphabetical: Alphabetical
 Assets Library: Assets Library
 Use URL: Use URL
 Add video URL: Add video URL
-Save: Save
 Select Asset: Select Asset
 Your browser is too small: Your browser is too small
 Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.: >-
@@ -374,7 +391,6 @@ Export: Export
 Preview: Preview
 Layer selection: Layer selection
 Selectable Layers: Selectable Layers
-Add: Add
 Stories: Stories
 Delete Selected Layer: Delete Selected Layer
 Create New Folder: Create New Folder

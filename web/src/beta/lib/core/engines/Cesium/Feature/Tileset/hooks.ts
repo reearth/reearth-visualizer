@@ -186,9 +186,7 @@ const useFeature = ({
         const raw = feature.raw;
         const tag = getTag(raw);
         const properties =
-          viewer && !(raw instanceof Model)
-            ? convertCesium3DTileFeatureProperties(viewer, raw)
-            : {};
+          viewer && !(raw instanceof Model) ? convertCesium3DTileFeatureProperties(raw) : {};
 
         const computedFeature = evalFeature(layer, { ...feature?.feature, properties });
 

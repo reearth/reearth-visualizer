@@ -176,6 +176,10 @@ export default function Model({
     }
   }, [imageBasedLighting]);
 
+  useEffect(() => {
+    requestRender?.();
+  });
+
   // if data type is gltf, layer should be rendered. Otherwise only features should be rendererd.
   return (isGltfData ? feature : !feature) || !isVisible || !show || !actualUrl ? null : (
     <EntityExt

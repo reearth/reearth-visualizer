@@ -228,6 +228,45 @@ export default function ({
     [engineRef],
   );
 
+  const computeGlobeHeight = useCallback(
+    (lng: number, lat: number, height?: number) => {
+      return engineRef?.computeGlobeHeight(lng, lat, height);
+    },
+    [engineRef],
+  );
+
+  const toXYZ = useCallback(
+    (
+      lng: number,
+      lat: number,
+      height: number,
+      options?:
+        | {
+            useGlobeEllipsoid?: boolean | undefined;
+          }
+        | undefined,
+    ) => {
+      return engineRef?.toXYZ(lng, lat, height, options);
+    },
+    [engineRef],
+  );
+
+  const toLngLatHeight = useCallback(
+    (
+      x: number,
+      y: number,
+      z: number,
+      options?:
+        | {
+            useGlobeEllipsoid?: boolean | undefined;
+          }
+        | undefined,
+    ) => {
+      return engineRef?.toLngLatHeight(x, y, z, options);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -404,6 +443,9 @@ export default function ({
         zoomOut,
         cameraViewport,
         getCameraFovInfo,
+        computeGlobeHeight,
+        toXYZ,
+        toLngLatHeight,
         rotateRight,
         orbit,
         captureScreen,
@@ -466,6 +508,9 @@ export default function ({
       getLocationFromScreen,
       sampleTerrainHeight,
       enableScreenSpaceCameraController,
+      computeGlobeHeight,
+      toXYZ,
+      toLngLatHeight,
       lookHorizontal,
       lookVertical,
       moveForward,

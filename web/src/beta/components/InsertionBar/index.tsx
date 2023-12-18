@@ -72,7 +72,7 @@ const InsertionBar: React.FC<Props> = ({
         </ButtonWrapper>
       </Wrapper>
       <Portal>
-        <div ref={popperElement} style={{ ...styles.popper, zIndex: 1000 }} {...attributes.popper}>
+        <div ref={popperElement} style={{ ...styles.popper }} {...attributes.popper}>
           {children}
         </div>
       </Portal>
@@ -134,7 +134,7 @@ const Wrapper = styled.div<WrapperProps>`
   position: absolute;
   left: 0;
   width: 100%;
-  z-index: ${props => props.theme.zIndexes.infoBox};
+  z-index: ${props => props.theme.zIndexes.visualizer.storyPage.indicator.unselected};
   top: ${props => (props.pos === "top" ? "0%" : "100%")};
   transform: translateY(-50%);
   height: 15px;

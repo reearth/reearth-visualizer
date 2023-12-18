@@ -1,11 +1,11 @@
 * @rot1024
 
 /server/        @pyshx
-/web/           @KaWaite
+/web/           @airslice
 /web/e2e/       @keiya01
 
 /web/src/classic/core/  @keiya01
 
 /web/src/beta/lib/core/ @keiya01
-/web/src/beta/lib/core/StoryPanel @KaWaite
+/web/src/beta/lib/core/StoryPanel @mkumbobeaty
 

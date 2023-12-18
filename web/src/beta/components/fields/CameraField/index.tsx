@@ -83,9 +83,9 @@ const CameraField: React.FC<Props> = ({
           <InputWrapper disabled={disabled}>
             <Input positionSet={!!value}>
               {value && <ZoomToIcon icon="zoomToLayer" size={10} onClick={handleFlyto} />}
-              <Text size="footnote" customColor>
+              <StyledText size="footnote" customColor>
                 {value ? t("Position Set") : t("Not set")}
-              </Text>
+              </StyledText>
               <DeleteIcon icon="bin" size={10} disabled={!value} onClick={handleRemoveSetting} />
             </Input>
             <TriggerButton
@@ -128,7 +128,8 @@ const CameraField: React.FC<Props> = ({
 const InputWrapper = styled.div<{ disabled?: boolean }>`
   display: flex;
   gap: 10px;
-  height: 28px;
+
+  flex-wrap: wrap;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 `;
 
@@ -139,6 +140,7 @@ const Input = styled.div<{ positionSet?: boolean }>`
   gap: 4px;
   flex: 1;
   padding: 0 8px;
+  height: 28px;
   border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.outline.weak};
   color: ${({ theme }) => theme.content.main};
@@ -148,7 +150,12 @@ const Input = styled.div<{ positionSet?: boolean }>`
   color: ${({ theme, positionSet }) => (positionSet ? theme.content.main : theme.content.weak)};
 `;
 
+const StyledText = styled(Text)`
+  white-space: nowrap;
+`;
+
 const TriggerButton = styled(Button)`
+  height: 28px;
   margin: 0;
 `;
 

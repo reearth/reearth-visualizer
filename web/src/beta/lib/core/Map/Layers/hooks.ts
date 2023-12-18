@@ -341,7 +341,6 @@ export default function useHooks({
 
       const property = layer?.property;
       const rawLayer = compat({
-        ...originalLayer,
         ...(originalLayer.compat && property
           ? {
               type: originalLayer.type === "group" ? "group" : "item",
@@ -357,14 +356,17 @@ export default function useHooks({
         ...(!originalLayer.compat && property ? { property } : {}),
         ...res,
       });
+
       if (!rawLayer) return;
 
       if (
-        rawLayer.type === "simple" &&
-        rawLayer.data?.value &&
+        originalLayer.type === "simple" &&
+        originalLayer.data?.value &&
         // If data isn't cachable, reuse layer id for performance.
-        DATA_CACHE_KEYS.some(k => !rawLayer.data?.[k]) &&
-        Object.isExtensible(rawLayer.data.value)
+        DATA_CACHE_KEYS.some(k => !originalLayer.data?.[k]) &&
+        Object.isExtensible(originalLayer.data.value) &&
+        rawLayer.type === "simple" &&
+        rawLayer?.data?.value
       ) {
         // If layer property is overridden, feature is legacy layer.
         // So we can set layer id to prevent unnecessary render.
@@ -426,6 +428,7 @@ export default function useHooks({
         );
         return newLayers;
       });
+      setOverridenLayers(layers => layers.filter(l => !ids.includes(l.id)));
     },
     [layerMap, atomMap, lazyLayerMap, initialSelectedLayer, showLayer, select],
   );
@@ -821,7 +824,8 @@ function useSelection({
         layerId?: string;
         featureId?: string[];
       }[],
-    ) => {
+    ): boolean => {
+      let shouldUpdate = false;
       for (const { layerId, featureId } of layers) {
         if (!layerId || !featureId) continue;
 
@@ -838,13 +842,14 @@ function useSelection({
 
         if (featureId.length) {
           engineRef?.current?.selectFeatures(layerId, featureId);
-          updateStyle(layerId);
           selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds =
             selectedFeatureIds.current[selectedFeatureIdsIndex].featureIds.concat(featureId);
+          shouldUpdate = true;
         }
       }
+      return shouldUpdate;
     },
-    [engineRef, updateStyle],
+    [engineRef],
   );
 
   const selectFeatures = useCallback(
@@ -856,16 +861,26 @@ function useSelection({
       options?: LayerSelectionReason,
       info?: SelectedFeatureInfo,
     ) => {
+      let shouldUpdate = false;
       selectedFeatureIds.current.forEach(id => {
         engineRef?.current?.unselectFeatures(id.layerId, id.featureIds);
-        updateStyle(id.layerId);
+        shouldUpdate = true;
       });
 
+      const prevSelectedFeatureIds = selectedFeatureIds.current;
       selectedFeatureIds.current = [];
 
       updateSelectedLayerForFeature(layers, options, info);
 
-      updateEngineFeatures(layers);
+      shouldUpdate = updateEngineFeatures(layers) || shouldUpdate;
+
+      if (!shouldUpdate) return;
+
+      for (const { layerId } of [...layers, ...prevSelectedFeatureIds]) {
+        if (!layerId) continue;
+        // Wait 1 frame for cesium to synchronize the updated value.
+        requestAnimationFrame(() => updateStyle(layerId));
+      }
     },
     [engineRef, updateStyle, updateEngineFeatures, updateSelectedLayerForFeature],
   );

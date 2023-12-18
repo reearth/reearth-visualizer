@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, MouseEvent, SetStateAction } from "react";
 
 import ActionPanel, { type ActionPosition } from "../../../../ActionPanel";
 
@@ -17,21 +17,33 @@ type Props = {
   panelSettings?: any;
   dndEnabled?: boolean;
   position?: ActionPosition;
+  overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
-  onEditModeToggle?: () => void;
+  onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
+  onClick?: (e: MouseEvent<Element>) => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
+    vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const BlockActionPanel: React.FC<Props> = ({
@@ -40,6 +52,7 @@ const BlockActionPanel: React.FC<Props> = ({
   isSelected,
   editMode,
   dndEnabled,
+  panelSettings,
   onEditModeToggle,
   onSettingsToggle,
   ...actionProps
@@ -49,6 +62,7 @@ const BlockActionPanel: React.FC<Props> = ({
     icon,
     isSelected,
     editMode,
+    panelSettings,
     onEditModeToggle,
     onSettingsToggle,
   });
@@ -58,6 +72,7 @@ const BlockActionPanel: React.FC<Props> = ({
       dndEnabled={dndEnabled}
       isSelected={isSelected}
       actionItems={actionItems}
+      panelSettings={panelSettings}
       onSettingsToggle={onSettingsToggle}
       {...actionProps}
     />

@@ -1,4 +1,4 @@
-import { Placement, OffsetOptions } from "@floating-ui/react";
+import { Placement, OffsetOptions, ShiftOptions } from "@floating-ui/react";
 
 export type PopoverOptions = {
   initialOpen?: boolean;
@@ -6,5 +6,6 @@ export type PopoverOptions = {
   modal?: boolean; // @see https://floating-ui.com/docs/floatingfocusmanager#modal
   open?: boolean;
   offset?: OffsetOptions; // @see https://floating-ui.com/docs/offset
+  shift?: ShiftOptions;
   onOpenChange?: (open: boolean) => void;
 };

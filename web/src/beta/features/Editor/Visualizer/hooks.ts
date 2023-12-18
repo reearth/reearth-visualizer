@@ -198,10 +198,8 @@ export default ({
   };
 
   // Story
-  const story = useMemo(
-    () => convertStory(scene?.stories.find(s => s.id === storyId)),
-    [storyId, scene?.stories],
-  );
+  const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
+
   const handleCurrentPageChange = useCallback(
     (pageId?: string) => selectSelectedStoryPageId(pageId),
     [selectSelectedStoryPageId],

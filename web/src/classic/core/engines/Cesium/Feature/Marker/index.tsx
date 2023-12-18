@@ -73,7 +73,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
   }, [coordinates]);
 
   const extrudePoints = useMemo(() => {
-    return extrude && coordinates && typeof coordinates[3] === "number"
+    return extrude && coordinates && typeof coordinates[2] === "number"
       ? [
           Cartesian3.fromDegrees(coordinates[0], coordinates[1], coordinates[2]),
           Cartesian3.fromDegrees(coordinates[0], coordinates[1], 0),

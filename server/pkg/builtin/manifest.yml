@@ -13,7 +13,7 @@ extensions:
     schema:
       groups:
         - id: default
-          collection: Main
+          collection: main
           title: Main
           fields:
             - id: sceneMode
@@ -23,11 +23,11 @@ extensions:
               defaultValue: 3d
               choices:
                 - key: 3d
-                  label: Scene 3D
+                  label: 3D
                 - key: 2d
-                  label: Scene 2D
+                  label: 2D
                 - key: columbus
-                  label: Columbus View
+                  label: 2.5D (Columbus View)
             - id: ion
               type: string
               title: Cesium Ion API access token
@@ -37,7 +37,7 @@ extensions:
               title: VR
               description: Enable VR mode to split the screen into left and right.
         - id: tiles
-          collection: Tiles
+          collection: tiles
           title: Tiles
           description: You may change the look of the Earth by obtaining map tile data and setting it here.
           list: true
@@ -76,10 +76,11 @@ extensions:
                 type: string
                 value: url
             - id: tile_zoomLevel
-              type: number
+              type: array
               title: zoom level
-              description: "Change the Zoom Level of the selected tile map. Min: 0 Max: 1"
-              ui: slider
+              description: "Change the zoom level of the selected tile map. Min:0, Max:30"
+              defaultValue: [0,30]
+              ui: range
               min: 0
               max: 30
             - id: tile_opacity
@@ -91,7 +92,7 @@ extensions:
               min: 0
               max: 1
         - id: terrain
-          collection: Terrain
+          collection: terrain
           title: Terrain
           fields:
             - id: terrain
@@ -167,25 +168,25 @@ extensions:
                 type: bool
                 value: true
         - id: globeLighting
-          collection: Globe
+          collection: globe
           title: Globe Lighting
           fields:
             - id: globeLighting
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys Lighting.
+              description: This property will support the globe receive an Entity's Lighting.
         - id: globeShadow
-          collection: Globe
+          collection: globe
           title: Globe Shadow
           fields:
             - id: globeShadow
               type: bool
               title: Enable
               defaultValue: false
-              description: This property will support the globe receive Entitys shadows.
+              description: This property will support the globe receive an Entity's shadows.
         - id: globeAtmosphere
-          collection: Globe
+          collection: globe
           title: Globe Atmosphere
           fields:
             - id: globeAtmosphere
@@ -206,7 +207,7 @@ extensions:
                 type: bool
                 value: true
         - id: skyBox
-          collection: Sky
+          collection: sky
           title: Sky Box
           fields:
             - id: skyBox
@@ -215,7 +216,7 @@ extensions:
               defaultValue: true
               description: Description needed.
         - id: sun
-          collection: Sky
+          collection: sky
           title: Sun
           fields:
             - id: sun
@@ -224,7 +225,7 @@ extensions:
               defaultValue: true
               description: Description needed.
         - id: moon
-          collection: Sky
+          collection: sky
           title: Moon
           fields:
             - id: moon
@@ -233,7 +234,7 @@ extensions:
               defaultValue: true
               description: Description needed.
         - id: skyAtmosphere
-          collection: Sky
+          collection: sky
           title: Sky Atmosphere
           fields:
             - id: skyAtmosphere
@@ -254,7 +255,7 @@ extensions:
                 type: bool
                 value: true
         - id: camera
-          collection: Camera
+          collection: camera
           title: Camera
           fields:
             - id: camera
@@ -2320,6 +2321,12 @@ extensions:
               type: string
               title: Color
               ui: color
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
         - id: cameraAnimation
           title: Camera Animation
           fields:
@@ -2340,7 +2347,7 @@ extensions:
               ui: datetime
               title: Time
   - id: textStoryBlock
-    name: Text Block
+    name: Text
     type: storyBlock
     description: Storytelling Text Block
     schema:
@@ -2362,7 +2369,7 @@ extensions:
               title: Content
               ui: multiline
   - id: mdTextStoryBlock
-    name: MD Text Block
+    name: MD Text
     type: storyBlock
     description: Storytelling MD Text Block
     schema:
@@ -2384,7 +2391,7 @@ extensions:
               title: Content
               ui: multiline
   - id: imageStoryBlock
-    name: Image Block
+    name: Image
     type: storyBlock
     description: Storytelling Image Block
     schema:
@@ -2406,7 +2413,7 @@ extensions:
               title: Image
               ui: image
   - id: videoStoryBlock
-    name: Video Block
+    name: Video
     type: storyBlock
     description: Storytelling Video Block
     schema:
@@ -2501,40 +2508,8 @@ extensions:
             - id: url
               type: url
               title: Link URL
-  - id: timelineStoryBlock
-    name: Timeline Block
-    type: storyBlock
-    description: Storytelling Timeline Block
-    schema:
-      groups:
-        - id: panel
-          title: Panel Setting
-          fields:
-            - id: padding
-              type: spacing
-              title: Padding
-              ui: padding
-              min: 0
-              max: 100
-        - id: default
-          title: Timeline Setting
-          fields:
-            - id: timelineSetting
-              type: timeline
-              ui: datetime
-              title: Timeline Setting
-            - id: playMode
-              type: string
-              title: Play Mode
-              description: Specify play mode.
-              defaultValue: once
-              choices:
-                - key: once
-                  label: Once
-                - key: loop
-                  label: Loop
   - id: showLayersStoryBlock
-    name: Show Layers
+    name: Show Layers Button
     type: storyBlock
     description: Storytelling Show Layers 
     schema:
@@ -2569,3 +2544,39 @@ extensions:
               title: Show Layers
               ui: layer
               choices:
+  - id: timelineStoryBlock
+    name: Timeline
+    type: storyBlock
+    description: Storytelling Timeline Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Timeline Setting
+          fields:
+            - id: timelineSetting
+              type: timeline
+              ui: datetime
+              title: Timeline Setting
+            - id: playMode
+              type: string
+              title: Play Mode
+              description: Specify play mode.
+              defaultValue: once
+              choices:
+                - key: once
+                  label: Once
+                - key: loop
+                  label: Loop
+  - id: nextPageStoryBlock
+    name: Next Page Button
+    type: storyBlock
+    description: Down button that will skip to next page.

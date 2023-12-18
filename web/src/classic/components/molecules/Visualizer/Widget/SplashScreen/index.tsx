@@ -44,7 +44,6 @@ const SplashScreen = ({ widget, inEditor }: Props): JSX.Element | null => {
     overlayTitle: title,
   } = property?.overlay ?? {};
   const camera = (property as Property | undefined)?.camera?.filter(c => !!c.cameraPosition);
-
   const [cameraSequence, setCameraSequence] = useState(0);
   const [delayedCameraSequence, setDelayedCameraSequence] = useState(-1);
   const currentCamera = camera?.[cameraSequence];

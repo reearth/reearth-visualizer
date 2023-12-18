@@ -1,5 +1,6 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import ContentPage from "@reearth/beta/features/Editor/tabs/story/LeftPanel/ContentPage";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
 
@@ -11,6 +12,14 @@ type Props = {
   onPageDelete: (id: string) => void;
   onPageAdd: (isSwipeable: boolean) => void;
   onPageMove: (id: string, targetIndex: number) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
 };
 
 const StoryLeftPanel: React.FC<Props> = ({
@@ -21,6 +30,7 @@ const StoryLeftPanel: React.FC<Props> = ({
   onPageDelete,
   onPageAdd,
   onPageMove,
+  onPropertyUpdate,
 }) => {
   const t = useT();
 
@@ -47,6 +57,7 @@ const StoryLeftPanel: React.FC<Props> = ({
               onPageDuplicate={onPageDuplicate}
               onPageDelete={onPageDelete}
               onPageMove={onPageMove}
+              onPropertyUpdate={onPropertyUpdate}
             />
           ),
         },

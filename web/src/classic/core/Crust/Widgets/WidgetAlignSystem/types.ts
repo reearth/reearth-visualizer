@@ -18,7 +18,7 @@ export type WidgetArea = {
   align?: Alignment;
   padding?: WidgetAreaPadding;
   widgets?: InternalWidget[];
-  gap?: number | null;
+  gap?: number;
   centered?: boolean;
   background?: string;
 };
@@ -58,4 +58,5 @@ export type WidgetProps = {
   extended?: boolean;
   editing: boolean;
   onExtend?: (id: string, extended: boolean | undefined) => void;
+  onVisibilityChange?: (id: string, visible: boolean) => void;
 };

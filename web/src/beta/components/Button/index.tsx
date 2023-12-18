@@ -17,7 +17,6 @@ export interface Props {
   icon?: string;
   iconPosition?: "left" | "right";
   margin?: string;
-
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
@@ -41,9 +40,7 @@ const Button: React.FC<Props> = ({
     return !!text || !!children;
   }, [children, text]);
 
-  const iSize = useMemo(() => {
-    return size === "medium" ? "16px" : "12px";
-  }, [size]);
+  const iSize = useMemo(() => (size === "medium" ? 16 : 12), [size]);
 
   const WrappedIcon = useMemo(() => {
     return icon ? (

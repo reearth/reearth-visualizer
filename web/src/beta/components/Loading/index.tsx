@@ -45,7 +45,7 @@ const LoadingWrapper = styled.div<{ fixed?: boolean; overlay?: boolean; relative
   left: 0;
   background: ${({ overlay, theme }) => (overlay ? theme.bg[0] : null)};
   opacity: 0.8;
-  z-index: ${props => props.theme.zIndexes.loading};
+  z-index: ${props => props.theme.zIndexes.editor.loading};
 `;
 
 export default Loading;

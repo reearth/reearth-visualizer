@@ -71,16 +71,39 @@ const CameraBlockEditor: React.FC<Props> = ({
 
   return (
     <EditorWrapper>
-      <ListField
-        name={t("Buttons List")}
-        items={listItems}
-        addItem={handleItemAdd}
-        removeItem={handleItemRemove}
-        onItemDrop={handleItemMove}
-        selected={selected}
-        onSelect={setSelected}
-        atLeastOneItem
-      />
+      <GroupWrapper>
+        <ListField
+          name={t("Buttons List")}
+          items={listItems}
+          addItem={handleItemAdd}
+          removeItem={handleItemRemove}
+          onItemDrop={handleItemMove}
+          selected={selected}
+          onSelect={setSelected}
+          atLeastOneItem
+        />
+        <FieldGroup disabled={!editorProperties}>
+          <TextField
+            name={editorProperties?.title?.title}
+            description={editorProperties?.title?.description}
+            value={editorProperties?.title?.value}
+            onChange={value => debounceOnUpdate(selected, "title", "string", value)}
+          />
+          <ColorField
+            name={editorProperties?.color?.title}
+            description={editorProperties?.color?.description}
+            value={editorProperties?.color?.value}
+            onChange={value => debounceOnUpdate(selected, "color", "string", value)}
+          />
+          <ColorField
+            name={editorProperties?.bgColor?.title}
+            description={editorProperties?.bgColor?.description}
+            value={editorProperties?.bgColor?.value}
+            onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
+          />
+        </FieldGroup>
+      </GroupWrapper>
+
       <FieldGroup disabled={!editorProperties}>
         <CameraField
           name={editorProperties?.cameraPosition?.title}
@@ -96,24 +119,6 @@ const CameraBlockEditor: React.FC<Props> = ({
           value={editorProperties?.cameraDuration?.value}
           onChange={value => handleUpdate(selected, "cameraDuration", "number", value || 0)}
         />
-        <TextField
-          name={editorProperties?.title?.title}
-          description={editorProperties?.title?.description}
-          value={editorProperties?.title?.value}
-          onChange={value => debounceOnUpdate(selected, "title", "string", value)}
-        />
-        <ColorField
-          name={editorProperties?.color?.title}
-          description={editorProperties?.color?.description}
-          value={editorProperties?.color?.value}
-          onChange={value => debounceOnUpdate(selected, "color", "string", value)}
-        />
-        <ColorField
-          name={editorProperties?.bgColor?.title}
-          description={editorProperties?.bgColor?.description}
-          value={editorProperties?.bgColor?.value}
-          onChange={value => debounceOnUpdate(selected, "bgColor", "string", value)}
-        />
       </FieldGroup>
     </EditorWrapper>
   );
@@ -125,11 +130,16 @@ const EditorWrapper = styled.div`
   background: ${({ theme }) => theme.bg[1]};
 `;
 
+const GroupWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 55% 42%;
+  grid-gap: 10px;
+`;
+
 const FieldGroup = styled.div<{ disabled: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 10px;
   opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "inherit")};
   pointer-events: ${({ disabled }) => (disabled ? "none" : "inherit")};

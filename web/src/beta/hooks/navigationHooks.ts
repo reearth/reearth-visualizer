@@ -8,6 +8,7 @@ export const useEditorNavigation = ({ sceneId }: { sceneId?: string }) => {
 
   const handleNavigate = useCallback(
     (tab: Tab) => {
+      if (!sceneId) return;
       navigate(`/scene/${sceneId}/${tab}`);
     },
     [sceneId, navigate],
@@ -21,6 +22,7 @@ export const useSettingsNavigation = ({ projectId }: { projectId?: string }) => 
 
   const handleNavigate = useCallback(
     (page?: "public" | "story" | "asset" | "plugin") => {
+      if (!projectId || !page) return;
       navigate(`/settings/project/${projectId}/${page}`);
     },
     [projectId, navigate],

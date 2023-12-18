@@ -93,7 +93,7 @@ export default function Indicator({
     indicator_type === "crosshair" ? (
       <StyledIcon
         icon="crosshair"
-        size="48px"
+        size={48}
         className={className}
         transition={transiton}
         style={{ left: pos.x + "px", top: pos.y + "px" }}

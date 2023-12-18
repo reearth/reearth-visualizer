@@ -13,7 +13,6 @@ export { degreeToRadian, radianToDegree } from "./utils";
 export type Props = {
   theme?: Theme;
   degree: number;
-  editing?: boolean;
   /**
    * Pass degree of circle as callback arguments.
    * This event is invoked when mouse down on outer circle and mouse move.
@@ -43,7 +42,6 @@ export type Props = {
 const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
   theme,
   degree,
-  editing,
   onRotate,
   onStartOrbit,
   onEndOrbit,
@@ -67,7 +65,7 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
   return (
     <Container>
       <CompassContainer>
-        <Compass ref={compassRef} editing={!!editing}>
+        <Compass ref={compassRef}>
           <CompassIcon onMouseDown={handleOnMouseDownCompass} publishedTheme={theme}>
             <Icon
               icon="compass"
@@ -82,13 +80,10 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
                 transform: `rotate(${compassFocusDegree}deg)`,
               }}
               data-testid="compassFocus">
-              <Icon icon="compassFocus" color={theme?.select} alt="" size={30} />
+              <Icon icon="compassFocus" color={theme?.select} size={30} />
             </CompassFocusIcon>
           )}
-          <AngleIcon
-            onMouseDown={handleOnMouseDownAngle}
-            publishedTheme={theme}
-            editing={!!editing}>
+          <AngleIcon onMouseDown={handleOnMouseDownAngle} publishedTheme={theme}>
             <Icon icon="navigatorAngle" aria-label={t("aria-label-adjust-angle")} size={32} />
           </AngleIcon>
         </Compass>
@@ -132,14 +127,13 @@ const Help = styled.button`
   user-select: none;
 `;
 
-const Compass = styled.div<{ editing: boolean }>`
+const Compass = styled.div`
   position: relative;
   display: inline-grid;
   place-items: center;
   width: 64px;
   height: 64px;
   cursor: pointer;
-  ${({ editing }) => (!editing ? "z-index: 1;" : "")}
 `;
 
 const CompassIcon = styled.div<{ publishedTheme?: Theme }>`
@@ -167,7 +161,7 @@ const CompassFocusIcon = styled.div`
   height: 64px;
 `;
 
-const AngleIcon = styled.div<{ publishedTheme?: Theme; editing: boolean }>`
+const AngleIcon = styled.div<{ publishedTheme?: Theme }>`
   & circle {
     fill: ${({ theme, publishedTheme }) => publishedTheme?.background || theme.bg[0]};
   }
@@ -177,7 +171,6 @@ const AngleIcon = styled.div<{ publishedTheme?: Theme; editing: boolean }>`
   display: inline-block;
   height: 32px;
   width: 32px;
-  ${({ editing }) => (!editing ? "z-index: 1;" : "")}
 `;
 
 const Tool = styled.div<{ publishedTheme?: Theme }>`

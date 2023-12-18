@@ -68,7 +68,6 @@ const PublicSettingsDetail: React.FC<Props> = ({
             onChange={(publicTitle: string) => {
               setLocalPublicInfo(s => ({ ...s, publicTitle }));
             }}
-            timeout={0}
           />
           <TextAreaField
             name={t("Description")}
@@ -120,7 +119,6 @@ const PublicSettingsDetail: React.FC<Props> = ({
             onChange={(basicAuthUsername: string) => {
               setBasicAuthorization(s => ({ ...s, basicAuthUsername }));
             }}
-            timeout={0}
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
           <TextInput
@@ -129,7 +127,6 @@ const PublicSettingsDetail: React.FC<Props> = ({
             onChange={(basicAuthPassword: string) => {
               setBasicAuthorization(s => ({ ...s, basicAuthPassword }));
             }}
-            timeout={0}
             disabled={!localBasicAuthorization.isBasicAuthActive}
           />
           <ButtonWrapper>
@@ -151,7 +148,6 @@ const PublicSettingsDetail: React.FC<Props> = ({
             onChange={(alias: string) => {
               setLocalAlias(alias);
             }}
-            timeout={0}
             description={t(
               "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.",
             )}

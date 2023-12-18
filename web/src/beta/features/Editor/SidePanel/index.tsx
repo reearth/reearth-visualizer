@@ -72,7 +72,7 @@ const ActionArea = styled.div`
 `;
 
 const Content = styled.div<{ hasActions?: boolean }>`
-  padding: ${({ hasActions }) => (hasActions ? "0" : "8px 4px")};
+  padding: ${({ hasActions }) => (hasActions ? "0" : "8px")};
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   overflow-y: auto;

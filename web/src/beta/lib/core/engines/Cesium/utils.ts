@@ -15,6 +15,7 @@ import {
   Scene,
   Viewer,
   Cesium3DTilePointFeature,
+  Primitive,
 } from "cesium";
 
 import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox";
@@ -140,7 +141,7 @@ export function findEntity(
   layerId?: string,
   featureId?: string,
   withoutTileFeature?: boolean,
-): Entity | Cesium3DTileset | InternalCesium3DTileFeature | undefined {
+): Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";
   if (!id) return;
@@ -161,10 +162,10 @@ export function findEntity(
     }
   }
 
-  // Find Cesium3DTileset
+  // Find Cesium3DTileset or Primitive
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset)) {
+    if (!(prim instanceof Cesium3DTileset) && !(prim instanceof Primitive)) {
       continue;
     }
 
@@ -179,7 +180,7 @@ export function findEntity(
     if (!prim.ready) continue;
 
     // Skip to search 3dtiles features if `withoutTileFeature` is `true`.
-    if (!withoutTileFeature) {
+    if (!withoutTileFeature && prim instanceof Cesium3DTileset) {
       const target = findFeatureFrom3DTile(prim.root, featureId);
       if (target) {
         return target;
@@ -321,27 +322,30 @@ export function getPixelRatio(scene: Scene): number {
   ).pixelRatio;
 }
 
-export const convertEntityProperties = (viewer: Viewer, entity: Entity) => {
-  return (
-    entity.properties &&
-    Object.fromEntries(
-      entity.properties.propertyNames.map(key => [
-        key,
-        entity.properties?.getValue(viewer.clock.currentTime)?.[key],
-      ]),
-    )
-  );
+export const convertEntityProperties = (currentTime: JulianDate, entity: Entity) => {
+  const properties = entity.properties?.getValue(currentTime);
+  return entity.properties && properties
+    ? Object.fromEntries(entity.properties.propertyNames.map(key => [key, properties[key]]))
+    : {};
+};
+
+export const convertEntityDescription = (
+  currentTime: JulianDate,
+  entity: Entity,
+): string | undefined => {
+  const description = entity.description?.getValue(currentTime);
+  if (typeof description !== "string") return;
+  return description;
 };
 
 export const convertCesium3DTileFeatureProperties = (
-  viewer: Viewer,
   feature: Cesium3DTileFeature | Cesium3DTilePointFeature,
 ) => {
   return Object.fromEntries(feature.getPropertyIds().map(id => [id, feature.getProperty(id)]));
 };
 
 export const convertObjToComputedFeature = (
-  viewer: Viewer,
+  currentTime: JulianDate,
   obj: object,
 ): [layerId: string | undefined, feature: ComputedFeature] | undefined => {
   if (obj instanceof Cesium3DTileFeature || obj instanceof Cesium3DTilePointFeature) {
@@ -351,7 +355,7 @@ export const convertObjToComputedFeature = (
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: convertCesium3DTileFeatureProperties(viewer, obj),
+        properties: convertCesium3DTileFeatureProperties(obj),
       },
     ];
   }
@@ -376,7 +380,10 @@ export const convertObjToComputedFeature = (
       tag?.computedFeature ?? {
         type: "computedFeature",
         id: tag?.featureId ?? "",
-        properties: convertEntityProperties(viewer, entity),
+        properties: convertEntityProperties(currentTime, entity),
+        metaData: {
+          description: convertEntityDescription(currentTime, entity),
+        },
       },
     ];
   }

@@ -70,7 +70,7 @@ const ContainerSettings: React.FC<Props> = ({ widgetArea, onWidgetAreaStateChang
 
       <TextInput
         name={t("Gap spacing")}
-        value={(widgetArea?.gap ?? 0).toString()}
+        value={(widgetArea?.gap ?? 6).toString()}
         onChange={newVal => {
           onWidgetAreaStateChange({
             ...widgetArea,

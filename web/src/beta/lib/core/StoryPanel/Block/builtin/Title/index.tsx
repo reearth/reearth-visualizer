@@ -25,7 +25,8 @@ const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
     () => property?.title?.color?.value as ValueTypes["string"],
     [property?.title?.color?.value],
   );
-  const hasEmptySpace = isEmptyString(title);
+
+  const hasEmptySpace = useMemo(() => isEmptyString(title), [title]);
 
   return (
     <BlockWrapper

@@ -4,6 +4,7 @@ import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices"
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import { usePropertyFetcher } from "@reearth/services/api";
 import {
   useWidgetAlignEditorActivated,
   useIsVisualizerReady,
@@ -31,6 +32,7 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const handleDataSourceManagerCloser = useCallback(() => setShowDataSourceManager(false), []);
 
   const handleDataSourceManagerOpener = useCallback(() => setShowDataSourceManager(true), []);
+  const { useUpdatePropertyValue } = usePropertyFetcher();
 
   const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
 
@@ -86,6 +88,20 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     [setCurrentCamera],
   );
 
+  const handlePropertyValueUpdate = useCallback(
+    async (
+      propertyId?: string,
+      schemaItemId?: string,
+      fieldId?: string,
+      itemId?: string,
+      vt?: any,
+      v?: any,
+    ) => {
+      if (!propertyId || !schemaItemId || !fieldId || !vt) return;
+      await useUpdatePropertyValue(propertyId, schemaItemId, itemId, fieldId, "en", v, vt);
+    },
+    [useUpdatePropertyValue],
+  );
   return {
     visualizerRef,
     isVisualizerReady,
@@ -102,5 +118,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     handleWidgetEditorToggle,
     handleFlyTo,
     handleCameraUpdate,
+    handlePropertyValueUpdate,
   };
 };

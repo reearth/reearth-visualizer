@@ -9,8 +9,9 @@ const SidePanelSectionField: React.FC<{
   className?: string;
   title?: string;
   startCollapsed?: boolean;
+  gap?: number;
   children?: ReactNode;
-}> = ({ className, title, startCollapsed, children }) => {
+}> = ({ className, title, startCollapsed, gap, children }) => {
   const theme = useTheme();
   const [opened, setOpened] = useState<boolean>();
 
@@ -28,7 +29,7 @@ const SidePanelSectionField: React.FC<{
           <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
         </Header>
       )}
-      {opened && children && <Content>{children}</Content>}
+      {opened && children && <Content gap={gap}>{children}</Content>}
     </Field>
   );
 };
@@ -52,11 +53,11 @@ const ArrowIcon = styled(Icon)<{ opened?: boolean }>`
   transition: all 0.2s;
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ gap?: number }>`
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: ${({ gap }) => (gap ?? 16) + "px"} 16px;
 `;
 
 export default SidePanelSectionField;

@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -69,13 +70,13 @@ export default ({
   const [activeBlock, setActiveBlock] = useState("");
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+
   const [committer, setCommiter] = useState<TimelineCommitter>({
     source: "storyTimelineBlock",
     id: blockId,
   });
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
 
   const [selected, setSelected] = useState("1min/sec");
   const formattedCurrentTime = useMemo(() => {
@@ -188,9 +189,9 @@ export default ({
         setIsPlaying?.(false);
       }
       committer?.id && onPause?.(committer.id);
-      setIsPause(!isPause);
+      setIsPause(true);
     }
-  }, [committer.id, inEditor, isPause, isPlaying, isPlayingReversed, onPause]);
+  }, [committer.id, inEditor, isPlaying, isPlayingReversed, onPause]);
 
   const handleTick = useCallback(
     (current: Date) => {
@@ -214,6 +215,63 @@ export default ({
     if (isPlayingReversed) onTimeChange?.(new Date(range?.end), committer.id);
   }, [range, onTimeChange, committer.id, isPlayingReversed]);
 
+  const handleOnDrag: TimeEventHandler = useCallback(
+    (time: Date, committerId: string) => {
+      onTimeChange?.(time, committerId);
+      setCurrentTime?.(getNewDate(new Date(time)).getTime());
+      handleOnPause();
+    },
+    [handleOnPause, onTimeChange, setCurrentTime],
+  );
+
+  const [target, setTarget] = useState<HTMLElement | null>(null);
+  const distX = useRef<number>(0);
+  const distY = useRef<number>(0);
+
+  const handleOnStartMove = (e: React.MouseEvent) => {
+    const targetElement = e.currentTarget as HTMLElement;
+    setTarget(targetElement);
+    const evt = e;
+    distX.current = Math.abs(targetElement.offsetLeft - evt.clientX);
+    distY.current = Math.abs(targetElement.offsetTop - evt.clientY);
+    targetElement.style.pointerEvents = "none";
+  };
+
+  const handleOnEndMove = useCallback(() => {
+    if (target) {
+      target.style.pointerEvents = "initial";
+      setTarget(null);
+    }
+  }, [target]);
+
+  const handleOnMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!handleOnDrag || !e.target || !range) {
+        return;
+      }
+      if (target && target.style.pointerEvents === "none" && !inEditor) {
+        const evt = e;
+        let newPosition = evt.clientX - distX.current;
+        newPosition = Math.max(newPosition, 16);
+        newPosition = Math.min(newPosition, 372);
+        target.style.left = `${newPosition}px`;
+        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
+        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+      }
+    },
+    [committer?.id, handleOnDrag, inEditor, range, target],
+  );
+
+  const handleOnClick: MouseEventHandler = useCallback(
+    e => {
+      if (!inEditor && range) {
+        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
+        committer?.id && handleOnDrag(new Date(conv), committer?.id);
+      }
+    },
+    [inEditor, range, committer?.id, handleOnDrag],
+  );
+
   const handleTimelineCommitterChange = useCallback(
     (committer: TimelineCommitter) => {
       if (
@@ -223,23 +281,22 @@ export default ({
       ) {
         setActiveBlock(" ");
         setIsActive(false);
-        setIsPause(false);
         setIsPlaying(false);
         setIsPlayingReversed(false);
-
         const currentTimeValue = timelineValues?.currentTime ?? "";
         timelineValues
           ? setCurrentTime?.(getNewDate(new Date(currentTimeValue.substring(0, 19))).getTime())
           : setCurrentTime?.(range?.start);
       }
+      setIsPause(false);
     },
     [activeBlock, isActive, range, setCurrentTime, timelineValues],
   );
 
   useEffect(() => {
     if (
-      (isPlaying && JSON.stringify(current) >= JSON.stringify(timeRange.endTime)) ||
-      (isPlayingReversed && JSON.stringify(current) <= JSON.stringify(timeRange.startTime))
+      (range && isPlaying && JSON.stringify(currentTime) >= JSON.stringify(range?.end)) ||
+      (range && isPlayingReversed && JSON.stringify(currentTime) <= JSON.stringify(range.start))
     ) {
       if (playMode === "loop") {
         return handleOnResetAndPlay();
@@ -249,6 +306,7 @@ export default ({
     }
   }, [
     current,
+    currentTime,
     handleOnPause,
     handleOnPlay,
     handleOnReset,
@@ -256,12 +314,14 @@ export default ({
     isPlaying,
     isPlayingReversed,
     playMode,
+    range,
     timeRange.endTime,
     timeRange.startTime,
   ]);
 
   useEffect(() => {
-    if (isActive) onTick?.(handleTick), onCommit?.(handleTimelineCommitterChange);
+    if (isActive) onTick?.(handleTick);
+    onCommit?.(handleTimelineCommitterChange);
     return () => {
       removeTickEventListener?.(handleTick);
       removeOnCommitEventListener?.(handleTimelineCommitterChange);
@@ -278,61 +338,16 @@ export default ({
     removeTickEventListener,
   ]);
 
-  const handleOnDrag: TimeEventHandler = useCallback(
-    (time: Date, committerId: string) => {
-      onTimeChange?.(time, committerId);
-      setCurrentTime?.(currentTime);
-    },
-    [currentTime, onTimeChange, setCurrentTime],
-  );
-
-  const handleOnMouseDown = useCallback(() => {
-    setIsDragging(true);
-  }, []);
-
-  const handleOnMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  const handleOnMouseMove: MouseEventHandler = useCallback(
-    e => {
-      if (isDragging || !handleOnDrag || !e.target || !range) {
-        return;
-      }
-      if (isPlaying || isPlayingReversed) {
-        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
-      }
-    },
-    [isDragging, handleOnDrag, range, isPlaying, isPlayingReversed, committer?.id],
-  );
-
-  useEffect(() => {
-    window.addEventListener("mouseup", handleOnMouseUp, { passive: true });
-    return () => {
-      window.removeEventListener("mouseup", handleOnMouseUp);
-    };
-  }, [handleOnMouseUp]);
-
-  const handleOnClick: MouseEventHandler = useCallback(
-    e => {
-      if ((isPlaying || isPlayingReversed || isPause) && range) {
-        const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
-        committer?.id && handleOnDrag(new Date(conv), committer?.id);
-      }
-    },
-    [isPlaying, isPlayingReversed, isPause, range, committer?.id, handleOnDrag],
-  );
-
   const sliderPosition = useMemo(() => {
     if (range) {
       if (!inEditor) {
         const totalRange = range?.end - range.start;
         const currentPosition = currentTime - range.start;
-        let positionPercentage = (currentPosition / totalRange) * 370;
+        let positionPercentage = (currentPosition / totalRange) * 356 + 16;
 
-        positionPercentage = Math.max(positionPercentage, 16);
         positionPercentage = Math.round(positionPercentage);
+        positionPercentage = Math.max(positionPercentage, 16);
+        positionPercentage = Math.min(positionPercentage, 372);
         return positionPercentage;
       }
     }
@@ -355,8 +370,9 @@ export default ({
     toggleIsPlayingReversed: handleOnPlayReversed,
     toggleIsPause: handleOnPause,
     handleOnSpeedChange,
-    handleOnMouseDown,
     handleOnMouseMove,
     handleOnClick,
+    handleOnEndMove,
+    handleOnStartMove,
   };
 };

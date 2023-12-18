@@ -1,7 +1,9 @@
-import { MouseEvent, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, MouseEvent } from "react";
 
 import { Spacing } from "@reearth/beta/lib/core/mantle";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
 
+import { usePanelContext } from "../../../context";
 import { calculatePaddingValue } from "../../../utils";
 
 export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };
@@ -12,35 +14,55 @@ export default ({
   property,
   isEditable,
   onClick,
+  onBlockDoubleClick,
 }: {
   name?: string | null;
   isSelected?: boolean;
   property?: any;
   isEditable?: boolean;
   onClick: (() => void) | undefined;
+  onBlockDoubleClick: (() => void) | undefined;
 }) => {
+  const storyPanelContext = usePanelContext();
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+
+  const disableSelection = useMemo(
+    () => storyPanelContext?.disableSelection,
+    [storyPanelContext?.disableSelection],
+  );
+
+  const handleEditModeToggle = useCallback(
+    (enable: boolean) => {
+      storyPanelContext?.onSelectionDisable?.(enable);
+      setEditMode?.(enable);
+    },
+    [storyPanelContext],
+  );
+
+  const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
+
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
-  const [clickCount, setClickCount] = useState(0);
+
+  const handleBlockDoubleClick = useCallback(() => {
+    if (isEditable && !storyPanelContext.disableSelection) {
+      onBlockDoubleClick?.();
+      handleEditModeToggle(true);
+    }
+  }, [isEditable, storyPanelContext, onBlockDoubleClick, handleEditModeToggle]);
+
+  const [handleSingleClick, handleDoubleClick] = useDoubleClick(
+    () => onClick?.(),
+    () => handleBlockDoubleClick?.(),
+  );
 
   const handleBlockClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
+    (e: MouseEvent<Element>) => {
       e.stopPropagation();
       if ((showSettings && isSelected) || editMode) return;
-      if (clickCount === 0) {
-        setClickCount(1);
-        onClick?.();
-        setTimeout(() => {
-          setClickCount(0);
-        }, 300);
-      } else if (clickCount === 1) {
-        setClickCount(0);
-        setEditMode(true);
-        onClick?.();
-      }
+      handleSingleClick();
     },
-    [showSettings, isSelected, editMode, clickCount, onClick],
+    [showSettings, isSelected, editMode, handleSingleClick],
   );
 
   const defaultSettings = useMemo(() => property?.default ?? property?.title, [property]);
@@ -50,23 +72,19 @@ export default ({
     [property],
   );
 
-  const panelSettings = useMemo(
-    () => ({
+  const panelSettings = useMemo(() => {
+    if (!property?.panel) return undefined;
+    return {
       padding: {
         ...property?.panel?.padding,
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
-          property?.panel?.padding.value,
+          property?.panel?.padding?.value,
           isEditable,
         ),
       },
-    }),
-    [property?.panel, isEditable],
-  );
-
-  const handleEditModeToggle = useCallback(() => setEditMode?.(em => !em), []);
-
-  const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
+    };
+  }, [property?.panel, isEditable]);
 
   return {
     title,
@@ -75,9 +93,10 @@ export default ({
     showSettings,
     defaultSettings,
     panelSettings,
-    setEditMode,
+    disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
+    handleDoubleClick,
   };
 };

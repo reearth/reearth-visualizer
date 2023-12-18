@@ -55,8 +55,10 @@ const TimelineEditor = ({
     toggleIsPlaying,
     toggleIsPlayingReversed,
     toggleIsPause,
-    handleOnMouseDown,
     handleOnClick,
+    handleOnMouseMove,
+    handleOnEndMove,
+    handleOnStartMove,
   } = useHooks({
     currentTime,
     range,
@@ -81,7 +83,7 @@ const TimelineEditor = ({
     <Wrapper>
       <TimelineControl>
         <StyledIcon activeBlock={isActive}>
-          <Icon icon="timelineStoryBlock" size={16} />
+          <Icon icon="timelineStoryBlockSolid" size={16} />
         </StyledIcon>
         <PlayControl>
           <PlayButton
@@ -127,7 +129,10 @@ const TimelineEditor = ({
         <CurrentTime>{currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineControl>
       <TimelineSlider>
-        <ScaleList onClick={handleOnClick} onMouseDown={handleOnMouseDown}>
+        <ScaleList
+          onClick={handleOnClick}
+          onMouseMove={handleOnMouseMove}
+          onMouseUp={handleOnEndMove}>
           {[...Array(11)].map((_, idx) => (
             <Scale key={idx}>
               {idx === 0 ? (
@@ -150,6 +155,7 @@ const TimelineEditor = ({
           ))}
         </ScaleList>
         <IconWrapper
+          onMouseDown={handleOnStartMove}
           isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
             left: `${sliderPosition}px`,
@@ -157,6 +163,7 @@ const TimelineEditor = ({
           <Icon icon="slider" />
         </IconWrapper>
       </TimelineSlider>
+      <div />
     </Wrapper>
   );
 };
@@ -168,6 +175,7 @@ const Wrapper = styled.div`
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.bg[3]};
   width: 100%;
+  user-select: none;
 `;
 
 const TimelineControl = styled.div`
@@ -226,7 +234,7 @@ const PickerWrapper = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 2;
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlock};
 `;
 
 const InputOptions = styled.option`
@@ -253,19 +261,23 @@ const TimelineSlider = styled.div`
   width: 100%;
   border-radius: 0px 0 8px 8px;
   position: relative;
+  overflow: hidden;
 `;
 
 const ScaleList = styled.div`
-  width: 99%;
   display: flex;
   height: 38px;
   align-items: flex-end;
-  padding-left: 17px;
+  position: absolute;
+  left: 18px;
+  right: -12px;
+  cursor: pointer;
 `;
 
 const IconWrapper = styled.div<{ isPlaying: boolean }>`
   position: absolute;
   top: 4px;
+  cursor: pointer;
   color: ${({ isPlaying, theme }) => (isPlaying ? theme.select.main : "")};
 `;
 
@@ -275,6 +287,7 @@ const Scale = styled.div`
   margin: 0 auto;
   flex: 1;
   text-align: center;
+  width: calc(100% / 11);
 `;
 
 const ScaleLabel = styled.div`

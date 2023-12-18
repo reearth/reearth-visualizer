@@ -15,7 +15,7 @@ export type ActionItem = {
   icon: string;
   name?: string;
   hide?: boolean;
-  onClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 };
 
 export type ActionPosition = "left-top" | "left-bottom" | "right-top" | "right-bottom";
@@ -29,21 +29,32 @@ type Props = {
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
-  isHovered?: boolean;
+  overrideGroupId?: string;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
+  onClick?: (e: any) => void;
   onRemove?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: string,
+    vt?: any,
     v?: any,
   ) => Promise<void>;
-  onPropertyItemAdd?: () => Promise<void>;
-  onPropertyItemMove?: () => Promise<void>;
-  onPropertyItemDelete?: () => Promise<void>;
+  onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const ActionPanel: React.FC<Props> = ({
@@ -55,8 +66,10 @@ const ActionPanel: React.FC<Props> = ({
   actionItems,
   position,
   dndEnabled,
+  overrideGroupId,
   setShowPadding,
   onSettingsToggle,
+  onClick,
   onRemove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -73,13 +86,14 @@ const ActionPanel: React.FC<Props> = ({
   const settingsTitle = useMemo(() => t("Spacing settings"), [t]);
 
   const popoverContent = useMemo(() => {
-    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [
-      {
+    const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [];
+    if (panelSettings) {
+      menuItems.push({
         name: settingsTitle,
         icon: "padding",
         onClick: () => setShowPadding(true),
-      },
-    ];
+      });
+    }
     if (onRemove) {
       menuItems.push({
         name: t("Remove"),
@@ -88,7 +102,7 @@ const ActionPanel: React.FC<Props> = ({
       });
     }
     return menuItems;
-  }, [settingsTitle, t, setShowPadding, onRemove, handleRemove]);
+  }, [settingsTitle, panelSettings, t, setShowPadding, onRemove, handleRemove]);
 
   return (
     <Wrapper isSelected={isSelected} position={position} onClick={stopClickPropagation}>
@@ -101,15 +115,13 @@ const ActionPanel: React.FC<Props> = ({
         open={showSettings && isSelected}
         onOpenChange={() => onSettingsToggle?.()}
         placement="bottom-start">
-        <BlockOptions isSelected={isSelected}>
+        <BlockOptions isSelected={isSelected} onClick={!isSelected ? onClick : undefined}>
           {actionItems.map(
             (a, idx) =>
               !a.hide && (
                 <Fragment key={idx}>
                   <Popover.Trigger asChild>
-                    <OptionWrapper
-                      showPointer={!isSelected || !!a.onClick}
-                      onClick={a.onClick ?? stopClickPropagation}>
+                    <OptionWrapper showPointer={!isSelected || !!a.onClick} onClick={a.onClick}>
                       <OptionIcon icon={a.icon} size={16} border={idx !== 0} />
                       {a.name && (
                         <OptionText size="footnote" customColor>
@@ -122,7 +134,7 @@ const ActionPanel: React.FC<Props> = ({
               ),
           )}
         </BlockOptions>
-        <Popover.Content>
+        <StyledPopoverContent attachToRoot>
           {showPadding ? (
             <SettingsDropdown>
               <SettingsHeading>
@@ -135,7 +147,7 @@ const ActionPanel: React.FC<Props> = ({
                 <SettingsContent>
                   {Object.keys(panelSettings).map((fieldId, index) => {
                     const field = panelSettings[fieldId];
-                    const groupId = "panel";
+                    const groupId = overrideGroupId || "panel";
                     return (
                       <FieldComponent
                         key={index}
@@ -156,7 +168,7 @@ const ActionPanel: React.FC<Props> = ({
           ) : (
             <PopoverMenuContent size="sm" items={popoverContent} />
           )}
-        </Popover.Content>
+        </StyledPopoverContent>
       </Popover.Provider>
     </Wrapper>
   );
@@ -166,7 +178,6 @@ export default ActionPanel;
 
 const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   ${({ isSelected }) => !isSelected && "background: #f1f1f1;"}
-  z-index: 1;
   color: ${({ theme }) => theme.select.main};
   display: flex;
   align-items: center;
@@ -181,19 +192,18 @@ const Wrapper = styled.div<{ isSelected?: boolean; position?: ActionPosition }>`
   `
       : position === "left-bottom"
       ? `
-  left: -1px;
+  left: 0;
   top: 0;
   `
       : position === "right-bottom"
       ? `
   top: 0;
-  right: -1px;
-  `
+  right: 0;
+    `
       : `
   right: -1px;
   top: -25px;
   `}
-  z-index: 1;
 `;
 
 const BlockOptions = styled.div<{ isSelected?: boolean }>`
@@ -202,6 +212,10 @@ const BlockOptions = styled.div<{ isSelected?: boolean }>`
   display: flex;
   align-items: center;
   height: 24px;
+`;
+
+const StyledPopoverContent = styled(Popover.Content)`
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.storyBlock};
 `;
 
 const OptionWrapper = styled.div<{ showPointer?: boolean }>`
@@ -221,7 +235,6 @@ const OptionIcon = styled(Icon)<{ border?: boolean }>`
 `;
 
 const SettingsDropdown = styled.div`
-  z-index: 999;
   background: ${({ theme }) => theme.bg[1]};
   border-radius: 2px;
   border: 1px solid ${({ theme }) => theme.bg[3]};

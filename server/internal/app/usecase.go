@@ -14,11 +14,17 @@ import (
 
 func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
+		repos := r
+
 		if op := adapter.Operator(ctx); op != nil {
+
+			ws := repo.WorkspaceFilterFromOperator(op)
+			sc := repo.SceneFilterFromOperator(op)
+
 			// apply filters to repos
-			r = r.Filtered(
-				repo.WorkspaceFilterFromOperator(op),
-				repo.SceneFilterFromOperator(op),
+			repos = repos.Filtered(
+				ws,
+				sc,
 			)
 		}
 
@@ -30,7 +36,7 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 			ar2 = ar
 		}
 
-		uc := interactor.NewContainer(r, g, ar2, ag, config)
+		uc := interactor.NewContainer(repos, g, ar2, ag, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
 		return ctx
 	})

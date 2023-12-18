@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	storytellingIndexes       = []string{"alias", "alias,publishmentstatus", "scene"}
+	storytellingIndexes       = []string{"alias", "alias,status", "scene"}
 	storytellingUniqueIndexes = []string{"id"}
 )
 
@@ -79,7 +79,7 @@ func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*stor
 
 	f := bson.D{
 		{Key: "alias", Value: name},
-		{Key: "publishmentstatus", Value: bson.D{{Key: "$in", Value: []string{"public", "limited"}}}},
+		{Key: "status", Value: bson.D{{Key: "$in", Value: []string{"public", "limited"}}}},
 	}
 
 	return r.findOne(ctx, f, false)

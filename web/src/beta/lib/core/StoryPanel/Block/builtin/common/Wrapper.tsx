@@ -29,7 +29,9 @@ type Props = {
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
   onClick?: () => void;
+  onClickAway?: () => void;
   onRemove?: () => void;
+  onBlockDoubleClick?: () => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -63,6 +65,8 @@ const BlockWrapper: React.FC<Props> = ({
   dndEnabled = true,
   settingsEnabled = true,
   onClick,
+  onBlockDoubleClick,
+  onClickAway,
   onRemove,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -76,16 +80,18 @@ const BlockWrapper: React.FC<Props> = ({
     showSettings,
     defaultSettings,
     panelSettings,
-    setEditMode,
+    disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,
     handleBlockClick,
+    handleDoubleClick,
   } = useHooks({
     name,
     isSelected,
     property,
     isEditable,
     onClick,
+    onBlockDoubleClick,
   });
 
   return (
@@ -93,6 +99,7 @@ const BlockWrapper: React.FC<Props> = ({
       <SelectableArea
         title={title}
         icon={icon}
+        position="right-bottom"
         isSelected={isSelected}
         propertyId={propertyId}
         dndEnabled={dndEnabled}
@@ -100,7 +107,13 @@ const BlockWrapper: React.FC<Props> = ({
         panelSettings={panelSettings}
         editMode={editMode}
         isEditable={isEditable}
-        setEditMode={setEditMode}
+        hideHoverUI={disableSelection}
+        overrideGroupId={groupId === "title" ? groupId : undefined}
+        onClick={e => {
+          handleBlockClick(e);
+        }}
+        onDoubleClick={handleDoubleClick}
+        onClickAway={onClickAway}
         onEditModeToggle={handleEditModeToggle}
         onSettingsToggle={handleSettingsToggle}
         onRemove={onRemove}
@@ -111,18 +124,17 @@ const BlockWrapper: React.FC<Props> = ({
         <Block
           padding={panelSettings?.padding?.value}
           isEditable={isEditable}
-          onClick={e => {
-            handleBlockClick(e);
-          }}>
+          disableSelection={disableSelection}>
           {children ?? (isEditable && <Template icon={icon} />)}
+          {!editMode && isEditable && <Overlay disableSelection={disableSelection} />}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
           <EditorPanel onClick={stopClickPropagation}>
-            {Object.keys(defaultSettings).map(fieldId => {
+            {Object.keys(defaultSettings).map((fieldId, idx) => {
               const field = defaultSettings[fieldId];
               return (
                 <FieldComponent
-                  key={groupId + propertyId}
+                  key={groupId + propertyId + idx}
                   propertyId={propertyId}
                   groupId={groupId}
                   fieldId={fieldId}
@@ -143,18 +155,27 @@ const BlockWrapper: React.FC<Props> = ({
 
 export default BlockWrapper;
 
-const Block = styled.div<{ padding?: Spacing; isEditable?: boolean }>`
+const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelection?: boolean }>`
   display: flex;
   padding-top: ${({ padding }) => padding?.top + "px" ?? 0};
   padding-bottom: ${({ padding }) => padding?.bottom + "px" ?? 0};
   padding-left: ${({ padding }) => padding?.left + "px" ?? 0};
   padding-right: ${({ padding }) => padding?.right + "px" ?? 0};
-  cursor: ${({ isEditable }) => (isEditable ? "pointer" : "default")};
+  cursor: ${({ isEditable, disableSelection }) =>
+    isEditable && !disableSelection ? "pointer" : "default"};
   color: black;
+  position: relative;
 `;
 
 const EditorPanel = styled.div`
   background: ${({ theme }) => theme.bg[1]};
   color: ${({ theme }) => theme.content.main};
   padding: 12px;
+`;
+
+const Overlay = styled.div<{ disableSelection?: boolean }>`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  ${({ disableSelection }) => !disableSelection && "cursor: pointer;"}
 `;

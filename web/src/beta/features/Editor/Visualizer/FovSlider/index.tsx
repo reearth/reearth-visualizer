@@ -61,7 +61,6 @@ const FovSlider: React.FC<Props> = ({ visible, onIsCapturingChange, camera, onFo
 const StyledFloatedPanel = styled(FloatedPanel)`
   top: 10px;
   right: 10px;
-  z-index: ${props => props.theme.zIndexes.propertyFieldPopup};
 `;
 
 const Wrapper = styled.div`

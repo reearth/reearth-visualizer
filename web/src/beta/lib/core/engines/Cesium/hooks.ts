@@ -11,8 +11,10 @@ import {
   Cartographic,
   SunLight,
   DirectionalLight,
+  Viewer as CesiumViewer,
+  Primitive,
+  ShadowMap,
 } from "cesium";
-import type { Viewer as CesiumViewer, ShadowMap } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
 import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
@@ -20,7 +22,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef, FEATURE_FLAGS, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
+import { LayersRef, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -33,6 +35,7 @@ import type {
   MouseEvents,
   LayerEditEvent,
 } from "..";
+import { FEATURE_FLAGS } from "../../Crust";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
 import { TimelineManagerRef } from "../../Map/useTimelineManager";
 
@@ -317,7 +320,9 @@ export default ({
     }
   }, [camera, engineAPI]);
 
-  const prevSelectedEntity = useRef<Entity | Cesium3DTileset | InternalCesium3DTileFeature>();
+  const prevSelectedEntity = useRef<
+    Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive
+  >();
   // manage layer selection
   useEffect(() => {
     const viewer = cesium.current?.cesiumElement;
@@ -589,6 +594,16 @@ export default ({
         return;
       }
 
+      if (target?.primitive && target.primitive instanceof Primitive) {
+        const primitive = target.primitive;
+        const tag = getTag(primitive);
+        if (tag) {
+          onLayerSelect?.(tag.layerId, String(tag.featureId));
+          prevSelectedEntity.current = primitive;
+        }
+        return;
+      }
+
       // Check imagery layer
       // ref: https://github.com/CesiumGS/cesium/blob/96b978e0c53aba3bc4f1191111e0be61781ae9dd/packages/widgets/Source/Viewer/Viewer.js#L167
       if (target === undefined && e.position) {
@@ -743,11 +758,13 @@ export default ({
     if (!cesium.current?.cesiumElement) return;
     const allowCameraMove = !!(featureFlags & FEATURE_FLAGS.CAMERA_MOVE);
     const allowCameraZoom = !!(featureFlags & FEATURE_FLAGS.CAMERA_ZOOM);
+    const allowCameraTilt = !!(featureFlags & FEATURE_FLAGS.CAMERA_TILT);
+    const allowCameraLook = !!(featureFlags & FEATURE_FLAGS.CAMERA_LOOK);
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTranslate =
       allowCameraMove;
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableRotate = allowCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = allowCameraMove;
-    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraMove;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableLook = allowCameraLook;
+    cesium.current.cesiumElement.scene.screenSpaceCameraController.enableTilt = allowCameraTilt;
     cesium.current.cesiumElement.scene.screenSpaceCameraController.enableZoom = allowCameraZoom;
   }, [featureFlags]);
 

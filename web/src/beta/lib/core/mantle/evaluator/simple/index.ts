@@ -62,7 +62,9 @@ export function evalLayerAppearances(
   }
 
   return Object.fromEntries(
-    Object.entries(appearance).map(([k, v]) => [k, recursiveValEval(v, layer, feature)]),
+    Object.entries(appearance)
+      .map(([k, v]) => (v ? [k, recursiveValEval(v, layer, feature)] : undefined))
+      .filter((v): v is [keyof LayerAppearanceTypes, LayerAppearanceTypes] => !!v),
   );
 }
 

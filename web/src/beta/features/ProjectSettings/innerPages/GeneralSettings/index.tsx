@@ -90,7 +90,6 @@ const GeneralSettings: React.FC<Props> = ({
                 name={t("Name")}
                 value={project.name}
                 onChange={name => setLocalName(name)}
-                timeout={0}
               />
               <TextAreaField
                 name={t("Description")}
@@ -212,7 +211,7 @@ const GeneralSettings: React.FC<Props> = ({
         <Text size="body" weight="bold">
           {t("Please type your project name to continue.")}
         </Text>
-        <TextInput name={" "} value={""} onChange={name => setArchiveInputName(name)} timeout={0} />
+        <TextInput name={" "} value={""} onChange={name => setArchiveInputName(name)} />
       </Modal>
 
       <Modal
@@ -251,12 +250,7 @@ const GeneralSettings: React.FC<Props> = ({
         <Text size="body" weight="bold">
           {t("Please type your project name to continue.")}
         </Text>
-        <TextInput
-          name={" "}
-          value={""}
-          onChange={name => setUnarchiveInputName(name)}
-          timeout={0}
-        />
+        <TextInput name={" "} value={""} onChange={name => setUnarchiveInputName(name)} />
       </Modal>
 
       <Modal
@@ -293,7 +287,7 @@ const GeneralSettings: React.FC<Props> = ({
         <Text size="body" weight="bold">
           {t("Please type your project name to continue.")}
         </Text>
-        <TextInput name={" "} value={""} onChange={name => setDeleteInputName(name)} timeout={0} />
+        <TextInput name={" "} value={""} onChange={name => setDeleteInputName(name)} />
       </Modal>
     </InnerPage>
   ) : null;
