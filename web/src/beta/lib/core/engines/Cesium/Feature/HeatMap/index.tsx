@@ -94,7 +94,7 @@ export default function HeatMap({ property, isVisible }: Props) {
     property ?? {};
 
   const colorRange =
-    minValue && maxValue
+    minValue != null && maxValue != null
       ? [minValue, maxValue]
       : extendRange([0, 100], [0, meshImageData?.outlierThreshold || 0]);
 

@@ -48,7 +48,7 @@ export function createHeatmapMeshMaterial({
     cropBound?.north,
   );
   const rectangle = new Rectangle(bound?.west, bound?.south, bound?.east, bound?.north);
-  if (rectangle != null && cropRectangle != null) {
+  if (cropBound != null && rectangle != null && cropRectangle != null) {
     imageScale.x = cropRectangle.width / rectangle.width;
     imageScale.y = cropRectangle.height / rectangle.height;
     imageOffset.x = (cropRectangle.west - rectangle.west) / rectangle.width;
