@@ -16,7 +16,7 @@ export type Props = FeatureProps<Property>;
 
 export type Property = HeatMapAppearance;
 
-export default function HeatMap({ property, isVisible }: Props) {
+export default function HeatMap({ property, isVisible, layer, feature }: Props) {
   const {
     valueMap,
     colorMap = flareColorMapLUT,
@@ -31,7 +31,6 @@ export default function HeatMap({ property, isVisible }: Props) {
     contourAlpha = 0.2,
     logarithmic = false,
   } = property ?? {};
-
   const { scene } = useCesium();
 
   const boundingSphere = BoundingSphere.fromRectangle3D(
@@ -76,20 +75,21 @@ export default function HeatMap({ property, isVisible }: Props) {
   }, [scene]);
 
   const [meshImageData, setMeshImageData] = useState<MeshImageData>();
+  const reversingImageNeeded = property?.maxValue == null && property?.minValue == null;
   useEffect(() => {
-    if (!visible) return;
-
-    fetchImageAndCreateMeshImageData(valueMap)
+    if (!visible || !valueMap) return;
+    fetchImageAndCreateMeshImageData(valueMap, reversingImageNeeded)
       .then(meshImageData => {
         setMeshImageData(meshImageData);
       })
-      .catch(error => {
-        console.error(error);
-      });
-  }, [valueMap, visible]);
+      .catch(() => {});
+  }, [reversingImageNeeded, valueMap, visible]);
 
-  const { contourSpacing = Math.max(10, (meshImageData?.outlierThreshold || 0) / 20) } =
-    property ?? {};
+  const {
+    contourSpacing = maxValue != null
+      ? Math.max(10, maxValue / 20)
+      : Math.max(10, (meshImageData?.outlierThreshold || 0) / 20),
+  } = property ?? {};
 
   const colorRange =
     minValue != null && maxValue != null
@@ -109,6 +109,9 @@ export default function HeatMap({ property, isVisible }: Props) {
   }
   return (
     <HeatmapMesh
+      layer={layer}
+      feature={feature}
+      boundingSphere={boundingSphere}
       meshImageData={meshImageData}
       geometry={geometry}
       colorMapLUT={colorMap}

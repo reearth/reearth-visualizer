@@ -1,6 +1,6 @@
 import {
   ArcType,
-  ClassificationType,
+  BoundingSphere,
   EllipsoidSurfaceAppearance,
   GeometryInstance,
   GroundPrimitive,
@@ -8,10 +8,20 @@ import {
 } from "cesium";
 import { type MultiPolygon, type Polygon } from "geojson";
 import { pick } from "lodash-es";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useMemo,
+  useLayoutEffect,
+} from "react";
 import { useCesium } from "resium";
 
+import { ComputedFeature, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import { useConstant } from "@reearth/beta/utils/util";
+
+import { attachTag } from "../utils";
 
 import { createColorMapImage } from "./colorMap";
 import { viridisColorMapLUT } from "./constants";
@@ -25,15 +35,31 @@ export type HeatmapMeshHandle = {
 };
 
 export type HeatmapMeshProps = Omit<HeatmapMeshMaterialOptions, "image"> & {
+  layer?: ComputedLayer;
+  feature?: ComputedFeature;
+  boundingSphere: BoundingSphere;
   meshImageData: MeshImageData;
   geometry: Polygon | MultiPolygon;
 };
 
 export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
-  ({ meshImageData, geometry, colorMapLUT, bound, cropBound, ...props }, ref) => {
+  (
+    {
+      layer,
+      feature,
+      boundingSphere,
+      meshImageData,
+      geometry,
+      colorMapLUT,
+      bound,
+      cropBound,
+      ...props
+    },
+    ref,
+  ) => {
     const { scene } = useCesium();
-    const groundPrimitives = scene?.groundPrimitives;
-    const primitivesRef = useRef<GroundPrimitive[]>();
+    const groundPrimitives = scene?.primitives;
+    const primitiveRef = useRef<GroundPrimitive>();
 
     const material = useConstant(() =>
       createHeatmapMeshMaterial({
@@ -45,41 +71,60 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
       }),
     );
 
-    useEffect(() => {
-      if (groundPrimitives?.isDestroyed()) {
-        return;
-      }
-      const primitives = convertPolygonToHierarchyArray(geometry).map(polygonHierarchy => {
+    const geometryInstances = useMemo(() => {
+      return convertPolygonToHierarchyArray(geometry).map(polygonHierarchy => {
         const instance = new GeometryInstance({
           geometry: new PolygonGeometry({
             polygonHierarchy,
             arcType: ArcType.GEODESIC,
             vertexFormat: EllipsoidSurfaceAppearance.VERTEX_FORMAT,
           }),
+          id: layer?.id,
         });
+
+        return instance;
+      });
+    }, [geometry, layer?.id]);
+
+    // Since we expect a single feature, we directly access the first one
+    const geometryInstance = geometryInstances[0];
+
+    useEffect(() => {
+      if (groundPrimitives?.isDestroyed()) {
+        return;
+      }
+      const primitive =
         // TODO: Needs trapezoidal texture projection to accurately map the
         // data. See also: https://github.com/CesiumGS/cesium/issues/4164
-        return new GroundPrimitive({
-          geometryInstances: instance,
-          classificationType: ClassificationType.BOTH,
+        new GroundPrimitive({
+          geometryInstances: geometryInstance,
           appearance: new EllipsoidSurfaceAppearance({
             material,
           }),
         });
-      });
-      primitives.forEach(primitive => {
-        groundPrimitives?.add(primitive);
-      });
-      primitivesRef.current = primitives;
+      groundPrimitives?.add(primitive);
+      primitiveRef.current = primitive;
+
       return () => {
         if (!groundPrimitives?.isDestroyed()) {
-          primitives.forEach(primitive => {
-            groundPrimitives?.remove(primitive);
-          });
+          groundPrimitives?.remove(primitive);
         }
-        primitivesRef.current = undefined;
+        primitiveRef.current = undefined;
       };
-    }, [meshImageData, geometry, groundPrimitives, material]);
+    }, [geometryInstance, groundPrimitives, material, scene]);
+
+    useLayoutEffect(() => {
+      // Code for attaching tag
+      if (!primitiveRef.current || primitiveRef.current?.isDestroyed()) return;
+      console.log("layerId: ", layer?.id);
+      console.log("feature?.id: ", feature?.id);
+      console.log("boundingSphere: ", boundingSphere);
+      attachTag(primitiveRef.current, {
+        layerId: layer?.id,
+        featureId: feature?.id,
+        originalProperties: boundingSphere,
+      });
+    }, [layer?.id, feature?.id, boundingSphere]);
 
     useEffect(() => {
       material.uniforms.image = meshImageData.image;
@@ -114,21 +159,19 @@ export const HeatmapMesh = forwardRef<HeatmapMeshHandle, HeatmapMeshProps>(
           if (groundPrimitives?.isDestroyed()) {
             return;
           }
-          primitivesRef.current?.forEach(primitive => {
-            if (groundPrimitives?.contains(primitive)) {
-              groundPrimitives?.raiseToTop(primitive);
-            }
-          });
+
+          if (groundPrimitives?.contains(primitiveRef)) {
+            groundPrimitives?.raiseToTop(primitiveRef);
+          }
         },
         sendToBack: () => {
           if (groundPrimitives?.isDestroyed()) {
             return;
           }
-          primitivesRef.current?.forEach(primitive => {
-            if (groundPrimitives?.contains(primitive)) {
-              groundPrimitives?.lowerToBottom(primitive);
-            }
-          });
+
+          if (groundPrimitives?.contains(primitiveRef)) {
+            groundPrimitives?.lowerToBottom(primitiveRef);
+          }
         },
       }),
       [groundPrimitives],

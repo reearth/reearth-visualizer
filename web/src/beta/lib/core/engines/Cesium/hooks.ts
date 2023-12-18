@@ -13,6 +13,7 @@ import {
   DirectionalLight,
   Viewer as CesiumViewer,
   Primitive,
+  GroundPrimitive,
   ShadowMap,
 } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
@@ -321,7 +322,7 @@ export default ({
   }, [camera, engineAPI]);
 
   const prevSelectedEntity = useRef<
-    Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive
+    Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive | GroundPrimitive
   >();
   // manage layer selection
   useEffect(() => {
@@ -594,7 +595,10 @@ export default ({
         return;
       }
 
-      if (target?.primitive && target.primitive instanceof Primitive) {
+      if (
+        target?.primitive &&
+        (target.primitive instanceof Primitive || target.primitive instanceof GroundPrimitive)
+      ) {
         const primitive = target.primitive;
         const tag = getTag(primitive);
         if (tag) {

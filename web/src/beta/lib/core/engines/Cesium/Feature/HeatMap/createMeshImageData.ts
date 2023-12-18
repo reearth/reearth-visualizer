@@ -9,12 +9,10 @@ export type MeshImageData = {
   outlierThreshold?: number;
 };
 
-export async function fetchImageAndCreateMeshImageData(url?: string): Promise<MeshImageData> {
-  if (typeof url !== "string") {
-    console.error("URL for valueMap is undefined");
-    return Promise.reject("Invalid URL");
-  }
-
+export async function fetchImageAndCreateMeshImageData(
+  url: string,
+  reversingImageNeeded?: boolean,
+): Promise<MeshImageData> {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   if (!ctx) {
@@ -29,11 +27,13 @@ export async function fetchImageAndCreateMeshImageData(url?: string): Promise<Me
       ctx.drawImage(img, 0, 0);
 
       const imageData = ctx.getImageData(0, 0, img.width, img.height).data;
-      const { minValue, maxValue, outlierThreshold } = reverseMeshDataAndComputeValues(
-        imageData,
-        img.width,
-        img.height,
-      );
+      const { minValue, maxValue, outlierThreshold } = reversingImageNeeded
+        ? reverseMeshDataAndComputeValues(imageData, img.width, img.height)
+        : {
+            minValue: 0,
+            maxValue: 100,
+            outlierThreshold: 100,
+          };
 
       resolve({
         image: canvas,
