@@ -24,6 +24,7 @@ export type AppearanceTypes = {
   model: ModelAppearance;
   "3dtiles": Cesium3DTilesAppearance;
   ellipsoid: EllipsoidAppearance;
+  ellipse: EllipseAppearance;
   box: BoxAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
   resource: ResourceAppearance;
@@ -108,6 +109,18 @@ export type EllipsoidAppearance = {
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   radius?: number;
+  fillColor?: string;
+  near?: number;
+  far?: number;
+};
+
+export type EllipseAppearance = {
+  show?: boolean;
+  heightReference?: "none" | "clamp" | "relative";
+  classificationType?: ClassificationType;
+  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  radius?: number;
+  fill?: boolean;
   fillColor?: string;
   near?: number;
   far?: number;
@@ -257,6 +270,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   polyline: 1,
   polygon: 1,
   ellipsoid: 1,
+  ellipse: 1,
   model: 1,
   "3dtiles": 1,
   box: 1,
