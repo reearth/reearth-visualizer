@@ -194,7 +194,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               direction="vertical"
               gutter="end"
               initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}>
+              minSize={metrics.propertyMenuMinWidth}
+              localStorageKey={`${tab}LeftPanel`}>
               {leftPanel}
             </Resizable>
           )}
@@ -224,7 +225,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   gutter="start"
                   initialSize={metrics.bottomPanelMinHeight}
                   minSize={metrics.bottomPanelMinHeight}
-                  maxSize={metrics.bottomPanelMaxHeight}>
+                  maxSize={metrics.bottomPanelMaxHeight}
+                  localStorageKey="bottomPanel">
                   {bottomPanel}
                 </Resizable>
               )}
@@ -235,7 +237,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               direction="vertical"
               gutter="start"
               initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}>
+              minSize={metrics.propertyMenuMinWidth}
+              localStorageKey={`${tab}RightPanel`}>
               {rightPanel}
             </Resizable>
           )}
