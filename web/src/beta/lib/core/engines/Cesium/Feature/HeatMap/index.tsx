@@ -88,7 +88,7 @@ export default function HeatMap({ property, isVisible }: Props) {
       });
   }, [valueMap, visible]);
 
-  const { contourSpacing = Math.max(10, meshImageData?.outlierThreshold || 0 / 20) } =
+  const { contourSpacing = Math.max(10, (meshImageData?.outlierThreshold || 0) / 20) } =
     property ?? {};
 
   const colorRange =

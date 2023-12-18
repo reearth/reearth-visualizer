@@ -1,3 +1,5 @@
+import { quantile } from "d3";
+
 export type MeshImageData = {
   image: HTMLCanvasElement;
   width: number;
@@ -57,22 +59,16 @@ export async function fetchImageAndCreateMeshImageData(url?: string): Promise<Me
   });
 }
 
-export const MAX_VALUE = 0x7fffff;
-export const MIN_VALUE = -0x800000;
-
-function quantile(sortedValues: number[], q: number): number {
-  const pos = (sortedValues.length - 1) * q;
-  const base = Math.floor(pos);
-  const rest = pos - base;
-
-  if (sortedValues[base + 1] !== undefined) {
-    return sortedValues[base] + rest * (sortedValues[base + 1] - sortedValues[base]);
-  } else {
-    return sortedValues[base];
-  }
+function computeOutlierThreshold(values: number[]): number {
+  return (
+    quantile(
+      values.filter(value => value > 0),
+      0.999,
+    ) ?? 0
+  );
 }
 
-export function reverseMeshDataAndComputeValues(
+function reverseMeshDataAndComputeValues(
   data: Uint8ClampedArray,
   width: number,
   height: number,
@@ -80,29 +76,29 @@ export function reverseMeshDataAndComputeValues(
 ): Omit<MeshImageData, "image" | "width" | "height"> {
   let minValue = Infinity;
   let maxValue = -Infinity;
-  const valuesForOutlierCalculation: number[] = [];
+  const valuesForOutlierCalculation = [];
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const i = (y * width + x) * 4;
-      const b = data[i];
+      const r = data[i];
       const g = data[i + 1];
-      const r = data[i + 2];
-      const combined = (r << 16) | (g << 8) | b;
-      let originalValue = combined - 0x800000;
+      const b = data[i + 2];
+
+      let originalValue = ((((r << 16) >>> 0) + ((g << 8) >>> 0) + b) >>> 0) - 0x800000;
+
       if (scale !== 1) {
         originalValue /= scale;
       }
+
       minValue = Math.min(minValue, originalValue);
       maxValue = Math.max(maxValue, originalValue);
-      if (originalValue > 0) {
-        valuesForOutlierCalculation.push(Math.abs(originalValue));
-      }
+
+      valuesForOutlierCalculation.push(Math.abs(originalValue));
     }
   }
 
-  valuesForOutlierCalculation.sort((a, b) => a - b);
-  const outlierThreshold = quantile(valuesForOutlierCalculation, 0.999) ?? 0;
+  const outlierThreshold = computeOutlierThreshold(valuesForOutlierCalculation);
 
   return {
     minValue,
