@@ -428,6 +428,7 @@ export default function useHooks({
         );
         return newLayers;
       });
+      setOverridenLayers(layers => layers.filter(l => !ids.includes(l.id)));
     },
     [layerMap, atomMap, lazyLayerMap, initialSelectedLayer, showLayer, select],
   );
