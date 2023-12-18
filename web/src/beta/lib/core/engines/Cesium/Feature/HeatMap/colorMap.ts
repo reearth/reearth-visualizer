@@ -1,3 +1,5 @@
+// ref: https://github.com/takram-design-engineering/plateau-view/blob/main/libs/color-maps/src/ColorMap.ts
+
 import { interpolate, quantize, rgb, scaleLinear, type ScaleLinear } from "d3";
 import invariant from "tiny-invariant";
 

@@ -1,3 +1,5 @@
+// ref: https://github.com/takram-design-engineering/plateau-view/blob/main/libs/heatmap/src/shaders/sampleBicubic.glsl
+
 vec2 unpack(vec4 value) {
   return vec2(
     dot(value.rgb, vec3(16711680.0, 65280.0, 255.0)) - 8388608.0,

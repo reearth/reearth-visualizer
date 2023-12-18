@@ -1,3 +1,5 @@
+// ref: https://github.com/takram-design-engineering/plateau-view/blob/main/libs/heatmap/src/shaders/heatmapMeshMaterial.glsl
+
 uniform sampler2D colorMap;
 uniform sampler2D image;
 uniform vec2 imageScale;

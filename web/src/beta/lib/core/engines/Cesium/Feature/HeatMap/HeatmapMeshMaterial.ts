@@ -1,3 +1,5 @@
+// ref: https://github.com/takram-design-engineering/plateau-view/blob/main/libs/heatmap/src/HeatmapMeshMaterial.ts
+
 import { Cartesian2, Material, Rectangle } from "cesium";
 
 import { Bound, LUT } from "@reearth/beta/lib/core/mantle";

@@ -1,5 +1,6 @@
 import { LUT } from "@reearth/beta/lib/core/mantle";
 
+// Reference: https://github.com/matplotlib/matplotlib/blob/main/lib/matplotlib/_cm_listed.py
 export const viridisColorMapLUT: LUT = [
   [0.267004, 0.004874, 0.329415],
   [0.26851, 0.009605, 0.335427],
@@ -259,6 +260,7 @@ export const viridisColorMapLUT: LUT = [
   [0.993248, 0.906157, 0.143936],
 ];
 
+// Reference: https://github.com/mwaskom/seaborn/blob/master/seaborn/cm.py
 export const flareColorMapLUT: LUT = [
   [0.92907237, 0.68878959, 0.50411509],
   [0.92891402, 0.68494686, 0.50173994],

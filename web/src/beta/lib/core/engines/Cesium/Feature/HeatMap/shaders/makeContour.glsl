@@ -1,3 +1,4 @@
+// ref: https://github.com/takram-design-engineering/plateau-view/blob/main/libs/heatmap/src/shaders/makeContour.glsl
 // Reference: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Shaders/Materials/ElevationContourMaterial.glsl
 
 float makeContour(float value, float spacing, float width) {

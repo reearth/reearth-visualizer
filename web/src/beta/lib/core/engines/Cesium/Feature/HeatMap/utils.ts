@@ -1,3 +1,5 @@
+// ref: https://github.com/takram-design-engineering/plateau-view/blob/main/libs/cesium-helpers/src/convertPolygonToHierarchyArray.ts
+
 import { Cartesian3, type PolygonHierarchy } from "@cesium/engine";
 import unkinkPolygon from "@turf/unkink-polygon";
 import { type MultiPolygon, type Polygon, type Position } from "geojson";
