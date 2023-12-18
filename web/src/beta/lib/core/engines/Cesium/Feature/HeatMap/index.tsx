@@ -32,8 +32,6 @@ export default function HeatMap({ property, isVisible }: Props) {
     logarithmic = false,
   } = property ?? {};
 
-  console.log("width: ", width);
-
   const { scene } = useCesium();
 
   const boundingSphere = BoundingSphere.fromRectangle3D(
