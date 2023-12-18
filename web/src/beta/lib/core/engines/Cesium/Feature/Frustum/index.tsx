@@ -109,6 +109,7 @@ export default function Frustum({ isVisible, property, geometry, layer, feature 
   );
 
   useEffect(() => {
+    if (!primitiveRef.current || primitiveRef.current.cesiumElement?.isDestroyed()) return;
     requestRender?.();
   });
 
