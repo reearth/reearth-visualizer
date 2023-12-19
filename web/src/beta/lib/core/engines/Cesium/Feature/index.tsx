@@ -79,7 +79,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
 // Some layer that is delegated data is not computed when layer is updated.
 // Feature's property of delegated data type is calculated when feature is loaded.
 // So in case of delegated data type, to attach property to layer, we need to use normal property before calculated.
-const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster", "3dtiles"];
+const PICKABLE_APPEARANCE: (keyof AppearanceTypes)[] = ["raster", "3dtiles", "heatMap"];
 const pickProperty = (k: keyof AppearanceTypes, layer: ComputedLayer) => {
   if (!PICKABLE_APPEARANCE.includes(k)) {
     return;

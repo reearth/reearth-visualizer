@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf";
 import { BoundingSphere, Intersect, PerspectiveFrustum, Rectangle, Cartesian3 } from "cesium";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useCesium } from "resium";
 import invariant from "tiny-invariant";
 
@@ -16,7 +16,7 @@ export type Props = FeatureProps<Property>;
 
 export type Property = HeatMapAppearance;
 
-export default function HeatMap({ property, isVisible, layer, feature }: Props) {
+export default memo(function HeatMap({ property, isVisible, layer, feature }: Props) {
   const {
     valueMap,
     colorMap = flareColorMapLUT,
@@ -33,8 +33,15 @@ export default function HeatMap({ property, isVisible, layer, feature }: Props) 
   } = property ?? {};
   const { scene } = useCesium();
 
-  const boundingSphere = BoundingSphere.fromRectangle3D(
-    Rectangle.fromDegrees(bounds?.west, bounds?.south, bounds?.east, bounds?.north),
+  // Bounds is nested object, and this cause unnecessary render frequently, so wrap with useMemo.
+  const boudsRef = useMemo(
+    () => [bounds?.west ?? 0, bounds?.south ?? 0, bounds?.east ?? 0, bounds?.north ?? 0] as const,
+    [bounds?.west, bounds?.south, bounds?.east, bounds?.north],
+  );
+
+  const boundingSphere = useMemo(
+    () => BoundingSphere.fromRectangle3D(Rectangle.fromDegrees(...boudsRef)),
+    [boudsRef],
   );
 
   const [visible, setVisible] = useState(false);
@@ -96,12 +103,13 @@ export default function HeatMap({ property, isVisible, layer, feature }: Props) 
       ? [minValue, maxValue]
       : extendRange([0, 100], [0, meshImageData?.outlierThreshold || 0]);
 
+  const hasBounds = !!bounds;
   const geometry = useMemo(
     () =>
-      meshImageData != null && bounds
-        ? turf.bboxPolygon([bounds.east, bounds.south, bounds.west, bounds.north]).geometry
+      meshImageData != null && hasBounds
+        ? turf.bboxPolygon([boudsRef[0], boudsRef[1], boudsRef[2], boudsRef[3]]).geometry
         : undefined,
-    [bounds, meshImageData],
+    [hasBounds, boudsRef, meshImageData],
   );
 
   if (!isVisible || meshImageData == null || geometry == null) {
@@ -128,7 +136,7 @@ export default function HeatMap({ property, isVisible, layer, feature }: Props) 
       height={height || meshImageData.height}
     />
   );
-}
+});
 
 function extendRange(a: number[], b: number[]): [number, number] {
   invariant(a.length === 2);
