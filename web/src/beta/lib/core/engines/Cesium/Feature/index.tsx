@@ -9,6 +9,7 @@ import Box, { config as boxConfig } from "./Box";
 import Ellipse, { config as ellipseConfig } from "./Ellipse";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
 import Frustum, { config as frustumConfig } from "./Frustum";
+import HeatMap, { config as heatMapConfig } from "./HeatMap";
 import Marker, { config as markerConfig } from "./Marker";
 import Model, { config as modelConfig } from "./Model";
 import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
@@ -49,6 +50,7 @@ const components: Record<
   photooverlay: [PhotoOverlay, photoOverlayConfig],
   resource: [Resource, resourceConfig],
   raster: [Raster, rasterConfig],
+  heatMap: [HeatMap, heatMapConfig],
   frustum: [Frustum, frustumConfig],
 };
 
@@ -71,6 +73,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   gml: [],
   gltf: ["model"],
   tiles: ["raster"],
+  heatMap: ["heatMap"],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.

@@ -261,11 +261,19 @@ export default function useEngineRef(
           if (!viewer || viewer.isDestroyed()) return;
 
           const layerOrFeatureId = target;
-          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId, true);
-
+          const entityFromFeatureId = findEntity(viewer, layerOrFeatureId, layerOrFeatureId, true);
+          const tag = getTag(entityFromFeatureId);
           if (entityFromFeatureId instanceof Cesium.Primitive) {
             viewer.scene.camera.flyToBoundingSphere(
               Cesium.BoundingSphere.fromTransformation(entityFromFeatureId.modelMatrix),
+            );
+            return;
+          }
+
+          // specifically added for HeatMap, consult @pyshx before making changes here
+          if (entityFromFeatureId instanceof Cesium.GroundPrimitive) {
+            viewer.scene.camera.flyToBoundingSphere(
+              tag?.originalProperties as Cesium.BoundingSphere,
             );
             return;
           }
@@ -277,7 +285,8 @@ export default function useEngineRef(
               entityFromFeatureId instanceof Cesium.Cesium3DTileFeature ||
               entityFromFeatureId instanceof Cesium.Cesium3DTilePointFeature ||
               entityFromFeatureId instanceof Cesium.Model ||
-              entityFromFeatureId instanceof Cesium.Primitive
+              entityFromFeatureId instanceof Cesium.Primitive ||
+              entityFromFeatureId instanceof Cesium.GroundPrimitive
             )
           ) {
             viewer.flyTo(entityFromFeatureId, options);
@@ -320,7 +329,8 @@ export default function useEngineRef(
                 entityFromLayerId instanceof Cesium.Cesium3DTileFeature ||
                 entityFromLayerId instanceof Cesium.Cesium3DTilePointFeature ||
                 entityFromLayerId instanceof Cesium.Model ||
-                entityFromLayerId instanceof Cesium.Primitive
+                entityFromLayerId instanceof Cesium.Primitive ||
+                entityFromLayerId instanceof Cesium.GroundPrimitive
               )
             ) {
               viewer.flyTo(entityFromLayerId, options);

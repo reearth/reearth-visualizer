@@ -112,7 +112,8 @@ export type DataType =
   | "georss"
   | "gltf"
   | "tiles"
-  | "tms";
+  | "tms"
+  | "heatMap";
 
 export type TimeInterval = [start: Date, end?: Date];
 

@@ -2,6 +2,8 @@ import { objKeys } from "../utils";
 
 import type { ExpressionContainer } from "./expression";
 import type {
+  LUT,
+  Bound,
   Camera,
   ClassificationType,
   EXPERIMENTAL_clipping,
@@ -29,6 +31,7 @@ export type AppearanceTypes = {
   photooverlay: LegacyPhotooverlayAppearance;
   resource: ResourceAppearance;
   raster: RasterAppearance;
+  heatMap: HeatMapAppearance;
   frustum: FrustumAppearance;
   transition: TransitionAppearance;
 };
@@ -102,6 +105,22 @@ export type PolygonAppearance = {
   far?: number;
   extrudedHeight?: number;
   classificationType?: ClassificationType;
+};
+
+export type HeatMapAppearance = {
+  valueMap: string;
+  bounds: Bound;
+  colorMap?: LUT;
+  cropBounds?: Bound;
+  width?: number;
+  height?: number;
+  minValue?: number;
+  maxValue?: number;
+  opacity?: number;
+  contourSpacing?: number;
+  contourThickness?: number;
+  contourAlpha?: number;
+  logarithmic?: boolean;
 };
 
 export type EllipsoidAppearance = {
@@ -277,6 +296,7 @@ export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   photooverlay: 1,
   resource: 1,
   raster: 1,
+  heatMap: 1,
   frustum: 1,
   transition: 1,
 };
