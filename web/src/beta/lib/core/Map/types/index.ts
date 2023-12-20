@@ -252,6 +252,10 @@ export type TerrainProperty = {
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
   terrainNormal?: boolean;
+  heatmap?: boolean;
+  minHeight?: number;
+  maxHeight?: number;
+  logarithmin?: boolean;
 };
 
 export type SceneProperty = {
