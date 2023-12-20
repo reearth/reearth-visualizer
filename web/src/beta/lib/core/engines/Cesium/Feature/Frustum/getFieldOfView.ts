@@ -1,4 +1,4 @@
-import { Cartesian2, PerspectiveFrustum, type Camera } from "@cesium/engine";
+import { Camera, Cartesian2, PerspectiveFrustum } from "cesium";
 import invariant from "tiny-invariant";
 
 const cartesianScratch = new Cartesian2();
