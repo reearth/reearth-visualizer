@@ -17,6 +17,7 @@ export type Camera = {
   pitch: number;
   roll: number;
   fov: number;
+  aspectRatio?: number;
 };
 
 export type Typography = {
@@ -36,6 +37,16 @@ export type Spacing = {
   right: number;
   top: number;
 };
+
+export type Bound = {
+  east: number;
+  north: number;
+  south: number;
+  west: number;
+};
+
+export type ColorTuple = [number, number, number];
+export type LUT = readonly ColorTuple[];
 
 export type Coordinates = LatLngHeight[];
 

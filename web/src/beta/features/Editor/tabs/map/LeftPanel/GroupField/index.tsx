@@ -64,7 +64,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
 
   return (
     <>
-      <StyledSidePanelSectionField title={t("Scene")} startCollapsed gap={0}>
+      <StyledSidePanelSectionField title={t("Scene")} startCollapsed gap={0} storageKey="scene">
         {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
           (collection, index) =>
             collection && (
@@ -77,7 +77,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
             ),
         )}
       </StyledSidePanelSectionField>
-      <StyledSidePanelSectionField title={t("Layers")}>
+      <StyledSidePanelSectionField title={t("Layers")} storageKey="layer">
         <Layers
           layers={layers}
           selectedLayerId={selectedLayerId}

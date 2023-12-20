@@ -428,6 +428,13 @@ export function commonReearth({
   captureScreen,
   getLocationFromScreen,
   sampleTerrainHeight,
+  computeGlobeHeight,
+  toXYZ,
+  toLngLatHeight,
+  convertScreenToPositionOffset,
+  isPositionVisible,
+  setView,
+  toWindowPosition,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -475,6 +482,13 @@ export function commonReearth({
   captureScreen: GlobalThis["reearth"]["scene"]["captureScreen"];
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
   sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
+  computeGlobeHeight: GlobalThis["reearth"]["scene"]["computeGlobeHeight"];
+  toXYZ: GlobalThis["reearth"]["scene"]["toXYZ"];
+  toLngLatHeight: GlobalThis["reearth"]["scene"]["toLngLatHeight"];
+  convertScreenToPositionOffset: GlobalThis["reearth"]["scene"]["convertScreenToPositionOffset"];
+  isPositionVisible: GlobalThis["reearth"]["scene"]["isPositionVisible"];
+  setView: GlobalThis["reearth"]["camera"]["setView"];
+  toWindowPosition: GlobalThis["reearth"]["scene"]["toWindowPosition"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -522,6 +536,7 @@ export function commonReearth({
         moveRight,
         moveOverTerrain,
         flyToGround,
+        setView,
       },
       get property() {
         return sceneProperty?.();
@@ -548,6 +563,12 @@ export function commonReearth({
       captureScreen,
       getLocationFromScreen,
       sampleTerrainHeight,
+      computeGlobeHeight,
+      toXYZ,
+      toLngLatHeight,
+      convertScreenToPositionOffset,
+      isPositionVisible,
+      toWindowPosition,
       pickManyFromViewport,
     },
     get viewport() {
@@ -579,6 +600,7 @@ export function commonReearth({
       moveRight,
       moveOverTerrain,
       flyToGround,
+      setView,
     },
     layers: {
       get layersInViewport() {
