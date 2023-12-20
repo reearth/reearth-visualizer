@@ -64,7 +64,9 @@ export const useOverrideGlobeShader = ({
     // NOTE: Support the spherical harmonic coefficient only when the terrain normal is enabled.
     // Because it's difficult to control the shader for the entire globe.
     // ref: https://github.com/CesiumGS/cesium/blob/af4e2bebbef25259f049b05822adf2958fce11ff/packages/engine/Source/Shaders/GlobeFS.glsl#L408
-    if (!cesium.current?.cesiumElement || !enableLighting || !hasVertexNormals) return;
+    // if (!cesium.current?.cesiumElement || !enableLighting || !hasVertexNormals) return;
+    // TODO: Fix this befor merge
+    if (!cesium.current?.cesiumElement || !hasVertexNormals) return;
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
     const surfaceShaderSet = globe._surfaceShaderSet;
@@ -88,13 +90,26 @@ export const useOverrideGlobeShader = ({
 
     let replacedGlobeFS;
     try {
+      // TODO: Fix this befor merge
+      // replacedGlobeFS = new StringMatcher()
+      //   .replace(
+      //     [
+      //       "float diffuseIntensity = clamp(czm_getLambertDiffuse(czm_lightDirectionEC, normalize(v_normalEC)) * u_lambertDiffuseMultiplier + u_vertexShadowDarkness, 0.0, 1.0);",
+      //       "vec4 finalColor = vec4(color.rgb * czm_lightColor * diffuseIntensity, color.a);",
+      //     ],
+      //     "vec4 finalColor = reearth_computeImageBasedLightingColor(color);",
+      //   )
+      //   .execute(GlobeFS);
       replacedGlobeFS = new StringMatcher()
         .replace(
           [
-            "float diffuseIntensity = clamp(czm_getLambertDiffuse(czm_lightDirectionEC, normalize(v_normalEC)) * u_lambertDiffuseMultiplier + u_vertexShadowDarkness, 0.0, 1.0);",
-            "vec4 finalColor = vec4(color.rgb * czm_lightColor * diffuseIntensity, color.a);",
+            "#ifdef APPLY_COLOR_TO_ALPHA",
+            "vec3 colorDiff = abs(color.rgb - colorToAlpha.rgb);",
+            "colorDiff.r = max(max(colorDiff.r, colorDiff.g), colorDiff.b);",
+            "alpha = czm_branchFreeTernary(colorDiff.r < colorToAlpha.a, 0.0, alpha);",
+            "#endif",
           ],
-          "vec4 finalColor = reearth_computeImageBasedLightingColor(color);",
+          "vec4 finalColor = reearth_calculateElevationMapForGlobe()",
         )
         .execute(GlobeFS);
     } catch (e) {
