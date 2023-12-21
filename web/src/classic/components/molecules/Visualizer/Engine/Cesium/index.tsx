@@ -1,4 +1,4 @@
-import { ArcType, Color, ScreenSpaceEventType } from "cesium";
+import { ArcType, Color, ScreenSpaceEventType, ShadowMode } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -108,6 +108,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         !property?.timeline?.animation && !isLayerDraggable && !shouldRender ? Infinity : undefined
       }
       shadows={!!property?.atmosphere?.shadows}
+      // TEST
+      terrainShadows={property?.atmosphere?.shadows ? ShadowMode.ENABLED : ShadowMode.DISABLED}
+      // TEST
       onClick={handleClick}
       onDoubleClick={mouseEventHandles.doubleclick}
       onMouseDown={mouseEventHandles.mousedown}
