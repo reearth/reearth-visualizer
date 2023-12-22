@@ -6,7 +6,10 @@ import { ComputedFeature, DataType, guessType } from "@reearth/beta/lib/core/man
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
 import Box, { config as boxConfig } from "./Box";
+import Ellipse, { config as ellipseConfig } from "./Ellipse";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
+import Frustum, { config as frustumConfig } from "./Frustum";
+import HeatMap, { config as heatMapConfig } from "./HeatMap";
 import Marker, { config as markerConfig } from "./Marker";
 import Model, { config as modelConfig } from "./Model";
 import PhotoOverlay, { config as photoOverlayConfig } from "./PhotoOverlay";
@@ -26,17 +29,29 @@ export * from "./utils";
 export { context, type Context } from "./context";
 export { getTag } from "./utils";
 
-const components: Record<keyof AppearanceTypes, [FeatureComponent, FeatureComponentConfig]> = {
+const NON_RENDERABLE_APPEARANCE = ["transition"] satisfies (keyof AppearanceTypes)[];
+const isRenderableAppearance = (
+  k: keyof AppearanceTypes,
+): k is Exclude<keyof AppearanceTypes, (typeof NON_RENDERABLE_APPEARANCE)[number]> =>
+  !(NON_RENDERABLE_APPEARANCE as string[]).includes(k);
+
+const components: Record<
+  Exclude<keyof AppearanceTypes, (typeof NON_RENDERABLE_APPEARANCE)[number]>,
+  [FeatureComponent, FeatureComponentConfig]
+> = {
   marker: [Marker, markerConfig],
   polyline: [Polyline, polylineConfig],
   polygon: [Polygon, polygonConfig],
   ellipsoid: [Ellipsoid, ellipsoidConfig],
+  ellipse: [Ellipse, ellipseConfig],
   model: [Model, modelConfig],
   "3dtiles": [Tileset, tilesetConfig],
   box: [Box, boxConfig],
   photooverlay: [PhotoOverlay, photoOverlayConfig],
   resource: [Resource, resourceConfig],
   raster: [Raster, rasterConfig],
+  heatMap: [HeatMap, heatMapConfig],
+  frustum: [Frustum, frustumConfig],
 };
 
 // This indicates what component should render for file extension.
@@ -58,6 +73,7 @@ const displayConfig: Record<DataType, (keyof typeof components)[] | "auto"> = {
   gml: [],
   gltf: ["model"],
   tiles: ["raster"],
+  heatMap: ["heatMap"],
 };
 
 // Some layer that is delegated data is not computed when layer is updated.
@@ -92,10 +108,13 @@ export default function Feature({
   const areAllDisplayTypeNoFeature =
     Array.isArray(displayType) &&
     displayType.every(k => components[k][1].noFeature && !components[k][1].noLayer);
-  const cacheable = !data?.updateInterval;
+  const useTransition = !!layer?.transition?.useTransition;
+  const cacheable = !data?.updateInterval && !useTransition;
   const urlMD5 = useMemo(() => (data?.url ? generateIDWithMD5(data.url) : ""), [data?.url]);
 
   const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
+    if (!isRenderableAppearance(k)) return null;
+
     const useSceneSphericalHarmonicCoefficients =
       !!props.sceneProperty?.light?.sphericalHarmonicCoefficients;
     const useSceneSpecularEnvironmentMaps = !!props.sceneProperty?.light?.specularEnvironmentMaps;
@@ -109,7 +128,7 @@ export default function Feature({
           f?.id ?? ""
         }_${k}_${isVisible}_${useSceneSphericalHarmonicCoefficients}_${useSceneSpecularEnvironmentMaps}_${
           JSON.stringify(f?.[k]) ?? ""
-        }`,
+        }_${JSON.stringify(layer.transition) ?? ""}`,
       );
 
     if (cacheable) {
@@ -140,8 +159,8 @@ export default function Feature({
       const component = (
         <C
           {...props}
-          key={componentId}
-          id={componentId}
+          key={!useTransition ? componentId : undefined}
+          id={!useTransition ? componentId : f?.id ?? layer.id}
           property={f ? f[k] : layer[k] || pickProperty(k, layer)}
           geometry={f?.geometry}
           feature={f}

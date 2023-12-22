@@ -48,7 +48,7 @@ const Settings: React.FC<Props> = ({
   return (
     <Wrapper>
       {tab == "story" && (
-        <SidePanelSectionField title={t("Layers")}>
+        <SidePanelSectionField title={t("Layers")} storageKey="storyLayer">
           {layers && layers?.length > 0 && (
             <LayerWrapper>
               <AllLayers>

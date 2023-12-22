@@ -141,6 +141,14 @@ export type Scene = {
     z: number,
     options?: { useGlobeEllipsoid?: boolean },
   ) => [lng: number, lat: number, height: number] | undefined;
+  readonly convertScreenToPositionOffset: (
+    rawPosition: [x: number, y: number, z: number],
+    screenOffset: [x: number, y: number],
+  ) => [x: number, y: number, z: number] | undefined;
+  readonly isPositionVisible: (position: [x: number, y: number, z: number]) => boolean;
+  readonly toWindowPosition: (
+    position: [x: number, y: number, z: number],
+  ) => [x: number, y: number] | undefined;
   readonly pickManyFromViewport: (
     windowPosition: [x: number, y: number],
     windowWidth: number,
@@ -185,6 +193,7 @@ export type Camera = {
     options?: CameraOptions,
     offset?: number,
   ) => void;
+  readonly setView: (camera: CameraPosition) => void;
 };
 
 export type Clock = {

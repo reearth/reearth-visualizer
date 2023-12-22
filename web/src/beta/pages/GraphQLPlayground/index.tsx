@@ -2,7 +2,8 @@ import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import { useEffect, useState } from "react";
 
-import Filled from "@reearth/classic/components/atoms/Filled";
+import Filled from "@reearth/beta/components/Filled";
+import Text from "@reearth/beta/components/Text";
 import { useAuth } from "@reearth/services/auth";
 
 const fetcher = createGraphiQLFetcher({
@@ -23,6 +24,6 @@ export default function GraphQLPlayground(_: { path?: string }): JSX.Element {
       <GraphiQL fetcher={fetcher} isHeadersEditorEnabled headers={headers} />
     </Filled>
   ) : (
-    <div>Please log in to Re:Earth</div>
+    <Text size="h2">Please log in to Re:Earth</Text>
   );
 }

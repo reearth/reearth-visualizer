@@ -22,6 +22,7 @@ export type {
 export type {
   Cesium3DTilesAppearance,
   EllipsoidAppearance,
+  EllipseAppearance,
   PolygonAppearance,
   PolylineAppearance,
   MarkerAppearance,

@@ -1,5 +1,13 @@
-import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from "cesium";
-import { useEffect, useMemo } from "react";
+import {
+  Cartesian3,
+  Color,
+  HorizontalOrigin,
+  VerticalOrigin,
+  Cartesian2,
+  CallbackProperty,
+  PositionProperty,
+} from "cesium";
+import { useEffect, useMemo, useRef } from "react";
 import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
 import { toCSSFont } from "@reearth/beta/utils/value";
@@ -72,6 +80,21 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     pixelOffset,
     heightReference: hr,
   } = property ?? {};
+
+  const { useTransition, translate } = layer?.transition ?? {};
+  const translatedCoords = useMemo(
+    () => (translate ? Cartesian3.fromDegrees(...translate) : undefined),
+    [translate],
+  );
+  const translatedCoordsRef = useRef(translatedCoords);
+  translatedCoordsRef.current = translatedCoords;
+  // CallbackProperty forces to disable the request render mode,
+  // so we need to be able to switch the use of `CallbackProperty` for performance.
+  const translateCallbackProperty = useMemo(
+    () =>
+      useTransition ? new CallbackProperty(() => translatedCoordsRef.current, false) : undefined,
+    [useTransition],
+  );
 
   const pos = useMemo(() => {
     return coordinates
@@ -174,7 +197,11 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
       )}
       <EntityExt
         id={id}
-        position={pos}
+        position={
+          useTransition
+            ? (translateCallbackProperty as unknown as PositionProperty)
+            : translatedCoords ?? pos
+        }
         layerId={layer?.id}
         featureId={feature?.id}
         draggable

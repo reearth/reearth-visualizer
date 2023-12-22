@@ -277,11 +277,6 @@ aria-label-adjust-angle: adjust angle
 aria-label-zoom-in: zoom in
 aria-label-Go-to-the-home-position: Go to the home position
 aria-label-zoom-out: zoom out
-Close timeline: Close timeline
-Playback timeline: Playback timeline
-Play timeline: Play timeline
-ellipse: ellipse
-Open timeline: Open timeline
 Spacing settings: Spacing settings
 New Camera: New Camera
 New Camera Button: New Camera Button
@@ -315,6 +310,11 @@ Strikethrough: Strikethrough
 Subscript: Subscript
 Superscript: Superscript
 Clear Formatting: Clear Formatting
+Close timeline: Close timeline
+Playback timeline: Playback timeline
+Play timeline: Play timeline
+ellipse: ellipse
+Open timeline: Open timeline
 Welcome: Welcome
 Log in to Re:Earth to continue.: Log in to Re:Earth to continue.
 Username or email: Username or email
