@@ -83,7 +83,7 @@ export const formatDateForTimeline = (time: number, options: { detail?: boolean 
   const seconds = `${d.getSeconds()}`.padStart(2, "0");
   const timezone = formatTimezone(time);
 
-  return `${year} ${month} ${date} ${hour}:${minutes}:${seconds}${timezone}`;
+  return `${year} ${month} ${date} ${hour}:${minutes}:${seconds} ${timezone}`;
 };
 
 export const formatDateForSliderTimeline = (time: number, options: { detail?: boolean } = {}) => {

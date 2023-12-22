@@ -228,6 +228,7 @@ const StoryPanel: React.FC<Props> = ({
                     onPropertyItemAdd={onPropertyItemAdd}
                     onPropertyItemMove={onPropertyItemMove}
                     onPropertyItemDelete={onPropertyItemDelete}
+                    padding={panelSettings?.padding?.value}
                   />
                   {isEditable && !disableSelection && (
                     <BlockAddBar
