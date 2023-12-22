@@ -38,6 +38,16 @@ export type Spacing = {
   top: number;
 };
 
+export type Bound = {
+  east: number;
+  north: number;
+  south: number;
+  west: number;
+};
+
+export type ColorTuple = [number, number, number];
+export type LUT = readonly ColorTuple[];
+
 export type Coordinates = LatLngHeight[];
 
 export type Polygon = LatLngHeight[][];
