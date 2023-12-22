@@ -7,32 +7,33 @@ import {
   InputGroup,
   Input,
   SubmitWrapper,
-  LayerWrapper,
-  LayerStyleIcon,
-  generateTitle,
+  SelectWrapper,
 } from "@reearth/beta/features/Editor/utils";
 import { useT } from "@reearth/services/i18n";
 
 import { SketchProps } from "..";
 
-const General: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit }) => {
+const General: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [layerName, setLayerName] = useState("");
+
   const [layerStyle, setLayerStyle] = useState("");
+  const layerStyleOption = layerStyles ? layerStyles : [];
 
   const handleSubmit = () => {
-    const parsedValue = "data:text/plain;charset=UTF-8," + encodeURIComponent(layerName);
-
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateTitle("sketchLayer", layerName),
+      title: layerName,
       visible: true,
       config: {
+        properties: {
+          name: layerName,
+          layerStyle: layerStyle,
+        },
         data: {
-          url: layerName !== "" ? layerName : parsedValue,
           type: "geojson",
-          value: layerName,
+          isSketchLayer: true,
         },
       },
     });
@@ -50,17 +51,15 @@ const General: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit }) => {
             onChange={e => setLayerName(e.target.value)}
           />
         </InputGroup>
-        <InputGroup label={t("Layer Style")} description={t("Layer style you want to add.")}>
-          <LayerWrapper>
-            <Input
-              type="text"
-              placeholder={t("layer name")}
-              value={layerStyle}
-              onChange={e => setLayerStyle(e.target.value)}
-            />
-            <LayerStyleIcon icon="layerStyle" size={16} />
-          </LayerWrapper>
-        </InputGroup>
+
+        <SelectWrapper
+          value={layerStyle}
+          name={t("Layer Style")}
+          description={t("Layer style you want to add.")}
+          options={layerStyleOption?.map(v => ({ key: v.id, label: v.name }))}
+          attachToRoot
+          onChange={setLayerStyle}
+        />
       </AssetWrapper>
 
       <SubmitWrapper>

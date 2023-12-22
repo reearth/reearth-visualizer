@@ -22,12 +22,9 @@ import {
 } from "@reearth/beta/features/Editor/utils";
 import { useT } from "@reearth/services/i18n";
 
-import { SketchProps } from "..";
+import { SketchProps, dataTypes } from "..";
 
-type Property = {
-  name: string;
-  dataType: string;
-};
+type Property = { [x: string]: string };
 
 const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit }) => {
   const t = useT();
@@ -36,12 +33,9 @@ const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
   const [propertyList, setPropertyList] = useState<Property[]>([]);
 
   const handleAddToPropertyToList = useCallback(() => {
-    const data: Property = {
-      name: layerName,
-      dataType: dataType,
-    };
+    const newData = { [layerName]: dataType };
 
-    setPropertyList(prev => [...prev, data]);
+    setPropertyList(prev => [...prev, newData]);
     setLayerName("");
     setDataType("");
   }, [dataType, layerName]);
@@ -56,20 +50,18 @@ const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
   );
 
   const handleSubmit = () => {
-    const parsedValue = "data:text/plain;charset=UTF-8," + encodeURIComponent(layerName);
-
     onSubmit({
       layerType: "simple",
       sceneId,
-      title: generateTitle("sketchLayer", layerName),
       visible: true,
       config: {
+        properties: propertyList,
         data: {
-          url: layerName !== "" ? layerName : parsedValue,
           type: "geojson",
-          value: propertyList,
+          isSketchLayer: true,
         },
       },
+      title: generateTitle(layerName),
     });
     onClose();
   };
@@ -90,7 +82,7 @@ const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
             value={dataType}
             name={t("Data Type")}
             description={t("Type of data you want to add.")}
-            options={["Text", "URL"].map(v => ({ key: v, label: v }))}
+            options={dataTypes.map(v => ({ key: v, label: v }))}
             attachToRoot
             onChange={setDataType}
           />
@@ -113,12 +105,12 @@ const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
         </PropertyListHeader>
         <PropertyContentWrapper>
           {propertyList.length > 0 &&
-            propertyList.map(({ name, dataType }, i) => {
+            propertyList.map((item, i) => {
               return (
                 <PropertyContent key={i}>
-                  <StyledText size="footnote">{name}</StyledText>
+                  <StyledText size="footnote">{Object.keys(item)[0]}</StyledText>
                   <DataTypeContent>
-                    <DataTypeText size="footnote">{dataType}</DataTypeText>{" "}
+                    <DataTypeText size="footnote">{Object.values(item)[0]}</DataTypeText>{" "}
                     <DeleteDataType
                       icon="bin"
                       size={16}

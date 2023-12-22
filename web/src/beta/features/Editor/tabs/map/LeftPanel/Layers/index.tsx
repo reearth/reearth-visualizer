@@ -95,6 +95,7 @@ const Layers: React.FC<LayersProps> = ({
       {layers.map(layer => (
         <LayerItem
           key={layer.id}
+          isSketchLayer={layer?.config?.data.isSketchLayer}
           id={layer.id}
           layerTitle={layer.title}
           visible={layer.visible}

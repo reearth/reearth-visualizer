@@ -261,6 +261,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             onSubmit={handleLayerAdd}
             sceneId={sceneId}
             onClose={handleSketchLayerManagerCloser}
+            layerStyles={layerStyles}
           />
         )}
       </Wrapper>

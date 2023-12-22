@@ -71,6 +71,7 @@ export type Data = {
   value?: any;
   layers?: string | string[];
   jsonProperties?: string[];
+  isSketchLayer?: boolean;
   updateInterval?: number; // milliseconds
   parameters?: Record<string, any>;
   idProperty?: string;
@@ -114,6 +115,15 @@ export type DataType =
   | "tiles"
   | "tms"
   | "heatMap";
+
+export type SketchLayerDataType =
+  | "Text"
+  | "TextArea"
+  | "URL"
+  | "Asset"
+  | "Float"
+  | "Int"
+  | "Boolean";
 
 export type TimeInterval = [start: Date, end?: Date];
 

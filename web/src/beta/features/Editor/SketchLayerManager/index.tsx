@@ -2,6 +2,8 @@ import React, { useCallback, useMemo, useState } from "react";
 
 import Modal from "@reearth/beta/components/Modal";
 import TabMenu from "@reearth/beta/components/TabMenu";
+import { SketchLayerDataType } from "@reearth/beta/lib/core/mantle/types";
+import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 import { LayerAddProps } from "../useLayers";
@@ -11,6 +13,7 @@ import General from "./General";
 
 export type SketchProps = {
   sceneId: string;
+  layerStyles?: LayerStyle[];
   onClose: () => void;
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
@@ -21,7 +24,17 @@ type TabObject = {
   component?: JSX.Element | undefined;
 };
 
-const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit }) => {
+export const dataTypes: SketchLayerDataType[] = [
+  "Text",
+  "TextArea",
+  "URL",
+  "Asset",
+  "Float",
+  "Int",
+  "Boolean",
+];
+
+const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
 
@@ -34,7 +47,14 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
       {
         id: "general",
         name: t("General"),
-        component: <General onClose={onClose} sceneId={sceneId} onSubmit={onSubmit} />,
+        component: (
+          <General
+            onClose={onClose}
+            sceneId={sceneId}
+            layerStyles={layerStyles}
+            onSubmit={onSubmit}
+          />
+        ),
       },
       {
         id: "customized Properties",
@@ -42,7 +62,7 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
         component: <CustomedProperties onClose={onClose} sceneId={sceneId} onSubmit={onSubmit} />,
       },
     ],
-    [onClose, onSubmit, sceneId, t],
+    [layerStyles, onClose, onSubmit, sceneId, t],
   );
 
   return (

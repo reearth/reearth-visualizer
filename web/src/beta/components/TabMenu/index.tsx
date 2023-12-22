@@ -30,12 +30,12 @@ const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange, menuAlignm
   return (
     <Wrapper menuAlignment={menuAlignment}>
       <Tabs menuAlignment={menuAlignment}>
-        {tabs.map(({ id, icon }) => (
+        {tabs.map(({ id, icon, name }) => (
           <TabIconWrapper
             key={id}
             onClick={() => onSelectedTabChange(id)}
             selected={id === selectedTab}>
-            <Icon icon={icon} size={20} />
+            {icon ? <Icon icon={icon} size={20} /> : <TabHeader size="footnote">{name}</TabHeader>}
           </TabIconWrapper>
         ))}
       </Tabs>
@@ -75,6 +75,10 @@ const TabIconWrapper = styled.div<{ selected: boolean }>`
   cursor: pointer;
   color: ${({ selected, theme }) => (selected ? theme.content.main : theme.content.weak)};
   background: ${props => (props.selected ? props.theme.bg[1] : "inherit")};
+`;
+
+const TabHeader = styled(Text)`
+  padding: 4px;
 `;
 
 const Header = styled.div`
