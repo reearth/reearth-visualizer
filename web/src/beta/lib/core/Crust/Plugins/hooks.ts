@@ -267,6 +267,44 @@ export default function ({
     [engineRef],
   );
 
+  const convertScreenToPositionOffset = useCallback(
+    (rawPosition: [x: number, y: number, z: number], screenOffset: [x: number, y: number]) => {
+      return engineRef?.convertScreenToPositionOffset(rawPosition, screenOffset);
+    },
+    [engineRef],
+  );
+
+  const isPositionVisible = useCallback(
+    (position: [x: number, y: number, z: number]) => {
+      return !!engineRef?.isPositionVisible(position);
+    },
+    [engineRef],
+  );
+
+  const setView = useCallback(
+    (camera: CameraPosition) => {
+      return engineRef?.setView(camera);
+    },
+    [engineRef],
+  );
+
+  const toWindowPosition = useCallback(
+    (position: [x: number, y: number, z: number]) => {
+      return engineRef?.toWindowPosition(position);
+    },
+    [engineRef],
+  );
+
+  const flyToBBox = useCallback(
+    (
+      bbox: [number, number, number, number],
+      options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+    ) => {
+      return engineRef?.flyToBBox(bbox, options);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -438,6 +476,7 @@ export default function ({
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
         flyTo,
+        flyToBBox,
         lookAt,
         zoomIn,
         zoomOut,
@@ -446,6 +485,10 @@ export default function ({
         computeGlobeHeight,
         toXYZ,
         toLngLatHeight,
+        convertScreenToPositionOffset,
+        isPositionVisible,
+        setView,
+        toWindowPosition,
         rotateRight,
         orbit,
         captureScreen,
@@ -497,6 +540,7 @@ export default function ({
       overrideScenePropertyCommon,
       layersInViewport,
       flyTo,
+      flyToBBox,
       lookAt,
       zoomIn,
       zoomOut,
@@ -511,6 +555,10 @@ export default function ({
       computeGlobeHeight,
       toXYZ,
       toLngLatHeight,
+      convertScreenToPositionOffset,
+      isPositionVisible,
+      setView,
+      toWindowPosition,
       lookHorizontal,
       lookVertical,
       moveForward,

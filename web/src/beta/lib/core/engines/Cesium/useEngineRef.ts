@@ -1,3 +1,4 @@
+import { EllipsoidalOccluder } from "@cesium/engine";
 import * as Cesium from "cesium";
 import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
@@ -150,6 +151,99 @@ export default function useEngineRef(
           cart.height,
         ];
       },
+      // Calculate window position from WGS coordinates.
+      // TODO: We might need to support other WGS, but it's only WGS84 for now.
+      toWindowPosition: (position: [x: number, y: number, z: number]) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const result = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+          viewer.scene,
+          Cesium.Cartesian3.fromElements(...position),
+        );
+        return [result.x, result.y];
+      },
+      // Calculate next positino from screen(window) offset.
+      // Ref: https://github.com/takram-design-engineering/plateau-view/blob/6c8225d626cd8085e5d10ffe8980837814c333b0/libs/pedestrian/src/convertScreenToPositionOffset.ts
+      convertScreenToPositionOffset: (rawPosition, screenOffset) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+
+        const position = Cesium.Cartesian3.fromElements(...rawPosition);
+
+        const resultScratch = new Cesium.Cartesian3();
+        const cartographicScratch = new Cesium.Cartographic();
+        const radiiScratch = new Cesium.Cartesian3();
+        const ellipsoidScratch = new Cesium.Ellipsoid();
+        const rayScratch = new Cesium.Ray();
+        const projectionScratch = new Cesium.Cartesian3();
+
+        const scene = viewer.scene;
+        const ellipsoid = scene.globe.ellipsoid;
+        let cartographic;
+        try {
+          cartographic = Cesium.Cartographic.fromCartesian(
+            position,
+            ellipsoid,
+            cartographicScratch,
+          );
+        } catch (error) {
+          return;
+        }
+        radiiScratch.x = ellipsoid.radii.x + cartographic.height;
+        radiiScratch.y = ellipsoid.radii.y + cartographic.height;
+        radiiScratch.z = ellipsoid.radii.z + cartographic.height;
+        const offsetEllipsoid = Cesium.Ellipsoid.fromCartesian3(radiiScratch, ellipsoidScratch);
+        const windowPosition = new Cesium.Cartesian2();
+        try {
+          [windowPosition.x, windowPosition.y] = e.toWindowPosition(rawPosition) ?? [0, 0];
+        } catch (error) {
+          return;
+        }
+        windowPosition.x += screenOffset[0];
+        windowPosition.y += screenOffset[1];
+        const ray = scene.camera.getPickRay(windowPosition, rayScratch);
+        if (ray == null) {
+          return;
+        }
+        const intersection = Cesium.IntersectionTests.rayEllipsoid(ray, offsetEllipsoid);
+        if (intersection == null) {
+          return;
+        }
+        const projection = Cesium.Ray.getPoint(ray, intersection.start, projectionScratch);
+        const result = Cesium.Cartesian3.subtract(projection, position, resultScratch);
+        return [result.x, result.y, result.z];
+      },
+      // Check if the position is visible on globe.
+      isPositionVisible: position => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return false;
+        const occluder = new EllipsoidalOccluder(Cesium.Ellipsoid.WGS84, Cesium.Cartesian3.ZERO);
+        occluder.cameraPosition = viewer.scene.camera.position;
+        return occluder.isPointVisible(Cesium.Cartesian3.fromElements(...position));
+      },
+      setView: camera => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return false;
+        const scene = viewer.scene;
+        if (camera.lng || camera.lat || camera.height) {
+          const xyz = Cesium.Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height);
+          scene.camera.position.x = xyz.x;
+          scene.camera.position.y = xyz.y;
+          scene.camera.position.z = xyz.z;
+        }
+        if (camera.heading || camera.pitch) {
+          scene.camera.setView({
+            orientation: {
+              heading: camera.heading,
+              pitch: camera.pitch,
+            },
+          });
+        }
+        if (camera.fov && scene.camera.frustum instanceof Cesium.PerspectiveFrustum) {
+          scene.camera.frustum.fov = camera.fov;
+        }
+        return;
+      },
       flyTo: (target, options) => {
         if (target && typeof target === "object") {
           const viewer = cesium.current?.cesiumElement;
@@ -167,11 +261,19 @@ export default function useEngineRef(
           if (!viewer || viewer.isDestroyed()) return;
 
           const layerOrFeatureId = target;
-          const entityFromFeatureId = findEntity(viewer, undefined, layerOrFeatureId, true);
-
+          const entityFromFeatureId = findEntity(viewer, layerOrFeatureId, layerOrFeatureId, true);
+          const tag = getTag(entityFromFeatureId);
           if (entityFromFeatureId instanceof Cesium.Primitive) {
             viewer.scene.camera.flyToBoundingSphere(
               Cesium.BoundingSphere.fromTransformation(entityFromFeatureId.modelMatrix),
+            );
+            return;
+          }
+
+          // specifically added for HeatMap, consult @pyshx before making changes here
+          if (entityFromFeatureId instanceof Cesium.GroundPrimitive) {
+            viewer.scene.camera.flyToBoundingSphere(
+              tag?.originalProperties as Cesium.BoundingSphere,
             );
             return;
           }
@@ -183,7 +285,8 @@ export default function useEngineRef(
               entityFromFeatureId instanceof Cesium.Cesium3DTileFeature ||
               entityFromFeatureId instanceof Cesium.Cesium3DTilePointFeature ||
               entityFromFeatureId instanceof Cesium.Model ||
-              entityFromFeatureId instanceof Cesium.Primitive
+              entityFromFeatureId instanceof Cesium.Primitive ||
+              entityFromFeatureId instanceof Cesium.GroundPrimitive
             )
           ) {
             viewer.flyTo(entityFromFeatureId, options);
@@ -226,13 +329,41 @@ export default function useEngineRef(
                 entityFromLayerId instanceof Cesium.Cesium3DTileFeature ||
                 entityFromLayerId instanceof Cesium.Cesium3DTilePointFeature ||
                 entityFromLayerId instanceof Cesium.Model ||
-                entityFromLayerId instanceof Cesium.Primitive
+                entityFromLayerId instanceof Cesium.Primitive ||
+                entityFromLayerId instanceof Cesium.GroundPrimitive
               )
             ) {
               viewer.flyTo(entityFromLayerId, options);
             }
           }
         }
+      },
+      flyToBBox: (bbox, options) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+
+        cancelCameraFlight.current?.();
+
+        const boundingSphere = Cesium.BoundingSphere.fromRectangle3D(
+          Cesium.Rectangle.fromDegrees(...bbox),
+        );
+
+        const camera = viewer.scene.camera;
+
+        viewer.camera.flyToBoundingSphere(boundingSphere, {
+          offset: {
+            heading: options?.heading
+              ? CesiumMath.toDegrees(options.heading)
+              : viewer.scene.camera.heading,
+            pitch: options?.pitch ? CesiumMath.toDegrees(options.pitch) : camera.pitch,
+            range: options?.range ?? 0,
+          },
+          duration: options?.duration,
+        });
+
+        cancelCameraFlight.current = () => {
+          camera?.cancelFlight();
+        };
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

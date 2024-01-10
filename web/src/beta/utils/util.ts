@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 import { Args, Args3, Args2 } from "@reearth/types";
 
 /**
@@ -69,3 +71,11 @@ export function checkIfFileType(url: string, fileTypes: string) {
 export const isEmptyString = function (text: string): boolean {
   return text === null || /^ *$/.test(text);
 };
+
+export function useConstant<T>(callback: () => T): T {
+  const ref = useRef<{ value: T }>();
+  if (ref.current == null) {
+    ref.current = { value: callback() };
+  }
+  return ref.current.value;
+}

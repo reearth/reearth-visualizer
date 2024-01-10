@@ -97,6 +97,9 @@ export const context: Context = {
       computeGlobeHeight: act("computeGlobeHeight"),
       toXYZ: act("toXYZ"),
       toLngLatHeight: act("toLngLatHeight"),
+      convertScreenToPositionOffset: act("convertScreenToPositionOffset"),
+      isPositionVisible: act("isPositionVisible"),
+      toWindowPosition: act("toWindowPosition"),
       pickManyFromViewport: act("pickManyFromViewport"),
     },
     layers: {
@@ -133,6 +136,7 @@ export const context: Context = {
       getFovInfo: act("getFovInfo"),
       enableScreenSpaceController: act("enableScreenSpaceController"),
       flyTo: act("flyTo"),
+      flyToBBox: act("flyToBBox"),
       lookAt: act("lookAt"),
       zoomIn: act("zoomIn"),
       zoomOut: act("zoomOut"),
@@ -148,6 +152,7 @@ export const context: Context = {
       moveRight: act("moveRight"),
       moveOverTerrain: act("moveOverTerrain"),
       flyToGround: act("flyToGround"),
+      setView: act("setView"),
     },
     clock: {
       startTime: new Date("2022-06-01"),

@@ -14,6 +14,7 @@ import {
   Cesium3DTilePointFeature,
   ImageryLayer,
   Primitive,
+  GroundPrimitive,
 } from "cesium";
 import md5 from "js-md5";
 import { pick } from "lodash-es";
@@ -102,6 +103,7 @@ export function attachTag(
     | InternalCesium3DTileFeature
     | ImageryLayer
     | Primitive
+    | GroundPrimitive
     | null
     | undefined,
   tag: Tag,
@@ -128,6 +130,11 @@ export function attachTag(
     return;
   }
 
+  if (entity instanceof GroundPrimitive) {
+    (entity as any)[tagKey] = tag;
+    return;
+  }
+
   if (!entity.properties) {
     entity.properties = new PropertyBag();
   }
@@ -145,6 +152,7 @@ export function getTag(
     | Cesium3DTileFeature
     | Cesium3DTilePointFeature
     | Primitive
+    | GroundPrimitive
     | Model
     | ImageryLayer
     | null
@@ -166,6 +174,10 @@ export function getTag(
   }
 
   if (entity instanceof Primitive) {
+    return (entity as any)[tagKey];
+  }
+
+  if (entity instanceof GroundPrimitive) {
     return (entity as any)[tagKey];
   }
 

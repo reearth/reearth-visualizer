@@ -7,12 +7,21 @@ import { styled } from "@reearth/services/theme";
 
 import { TimelineValues } from ".";
 
+export type PaddingProp = {
+  bottom: number;
+  top: number;
+  left?: number;
+  right?: number;
+};
+
 type TimelineProps = {
   blockId?: string;
   isSelected?: boolean;
   timelineValues?: TimelineValues;
   inEditor?: boolean;
   playMode?: string;
+  padding?: PaddingProp;
+  property?: any;
 };
 
 const TimelineEditor = ({
@@ -21,9 +30,10 @@ const TimelineEditor = ({
   timelineValues,
   inEditor,
   playMode,
+  padding,
+  property,
 }: TimelineProps) => {
   const t = useT();
-
   const {
     currentTime,
     range,
@@ -50,6 +60,8 @@ const TimelineEditor = ({
     selected,
     sliderPosition,
     isActive,
+    blockRef,
+    isMinimized,
     handleOnSelect,
     handlePopOver,
     toggleIsPlaying,
@@ -67,6 +79,8 @@ const TimelineEditor = ({
     inEditor,
     speed,
     playMode,
+    padding,
+    property,
     onPlay,
     onSpeedChange,
     onPause,
@@ -80,54 +94,58 @@ const TimelineEditor = ({
   });
 
   return (
-    <Wrapper>
-      <TimelineControl>
-        <StyledIcon activeBlock={isActive}>
-          <Icon icon="timelineStoryBlockSolid" size={16} />
-        </StyledIcon>
-        <PlayControl>
-          <PlayButton
-            isClicked={true}
-            isPlaying={isPlayingReversed}
-            onClick={toggleIsPlayingReversed}>
-            <Icon icon="timelinePlayLeft" />
-          </PlayButton>
-          <PlayButton
-            isPlaying={isPause}
-            isClicked={isPlaying || isPlayingReversed || isPause}
-            onClick={() => {
-              if (isPlaying || isPlayingReversed || isPause) {
-                toggleIsPause();
-              }
-            }}>
-            <Icon icon="pause" />
-          </PlayButton>
-          <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
-            <Icon icon="timelinePlayRight" />
-          </PlayButton>
-        </PlayControl>
-        <Popover.Provider open={isOpen} placement="bottom-start" onOpenChange={handlePopOver}>
-          <Popover.Trigger asChild>
-            <InputWrapper onClick={handlePopOver}>
-              <Select>{selected && t(`${selected}`)}</Select>
-              <ArrowIcon icon="arrowDown" open={isOpen} size={16} />
-            </InputWrapper>
-          </Popover.Trigger>
-          <PickerWrapper attachToRoot>
-            {playSpeedOptions?.map((playSpeed, key) => (
-              <InputOptions
-                key={key}
-                value={playSpeed.seconds}
-                onClick={() => {
-                  handleOnSelect(playSpeed.timeString, playSpeed.seconds);
-                }}>
-                {playSpeed.timeString}
-              </InputOptions>
-            ))}
-          </PickerWrapper>
-        </Popover.Provider>
-        <CurrentTime>{currentTime && formattedCurrentTime}</CurrentTime>
-      </TimelineControl>
+    <Wrapper ref={blockRef}>
+      <TimelineWrapper isMinimized={isMinimized}>
+        <TimelineControl isMinimized={isMinimized}>
+          <StyledIcon activeBlock={isActive}>
+            <Icon icon="timelineStoryBlockSolid" size={16} />
+          </StyledIcon>
+          <PlayControl isMinimized={isMinimized}>
+            <PlayButton
+              isClicked={true}
+              isPlaying={isPlayingReversed}
+              onClick={toggleIsPlayingReversed}>
+              <Icon icon="timelinePlayLeft" size={14} />
+            </PlayButton>
+            <PlayButton
+              isPlaying={isPause}
+              isClicked={isPlaying || isPlayingReversed || isPause}
+              onClick={() => {
+                if (isPlaying || isPlayingReversed || isPause) {
+                  toggleIsPause();
+                }
+              }}>
+              <Icon icon="pause" size={14} />
+            </PlayButton>
+            <PlayButton isClicked={true} isPlaying={isPlaying} onClick={toggleIsPlaying}>
+              <Icon icon="timelinePlayRight" size={14} />
+            </PlayButton>
+          </PlayControl>
+          <PopoverWrapper isMinimized={isMinimized}>
+            <Popover.Provider open={isOpen} placement="bottom-start" onOpenChange={handlePopOver}>
+              <Popover.Trigger asChild>
+                <InputWrapper onClick={handlePopOver}>
+                  <Select>{selected && t(`${selected}`)}</Select>
+                  <ArrowIcon icon="arrowDown" open={isOpen} size={16} />
+                </InputWrapper>
+              </Popover.Trigger>
+              <PickerWrapper attachToRoot>
+                {playSpeedOptions?.map((playSpeed, key) => (
+                  <InputOptions
+                    key={key}
+                    value={playSpeed.seconds}
+                    onClick={() => {
+                      handleOnSelect(playSpeed.timeString, playSpeed.seconds);
+                    }}>
+                    {playSpeed.timeString}
+                  </InputOptions>
+                ))}
+              </PickerWrapper>
+            </Popover.Provider>
+          </PopoverWrapper>
+        </TimelineControl>
+        <CurrentTime isMinimized={isMinimized}>{currentTime && formattedCurrentTime}</CurrentTime>
+      </TimelineWrapper>
       <TimelineSlider>
         <ScaleList
           onClick={handleOnClick}
@@ -136,20 +154,23 @@ const TimelineEditor = ({
           {[...Array(11)].map((_, idx) => (
             <Scale key={idx}>
               {idx === 0 ? (
-                <>
-                  <ScaleLabel>{timeRange?.startTime?.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.startTime?.time}</ScaleLabel>
-                </>
+                <ScaleLabel isMinimized={isMinimized}>
+                  {timeRange?.startTime?.date}
+                  <br />
+                  {timeRange?.startTime?.time}
+                </ScaleLabel>
               ) : idx === 5 ? (
-                <>
-                  <ScaleLabel>{timeRange?.midTime?.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.midTime?.time}</ScaleLabel>
-                </>
+                <ScaleLabel isMinimized={isMinimized}>
+                  {timeRange?.midTime?.date}
+                  <br />
+                  {timeRange?.midTime?.time}
+                </ScaleLabel>
               ) : idx === 10 ? (
-                <>
-                  <ScaleLabel>{timeRange?.endTime?.date}</ScaleLabel>
-                  <ScaleLabel>{timeRange?.endTime?.time}</ScaleLabel>
-                </>
+                <ScaleLabel isMinimized={isMinimized}>
+                  {timeRange?.endTime?.date}
+                  <br />
+                  {timeRange?.endTime?.time}
+                </ScaleLabel>
               ) : null}
             </Scale>
           ))}
@@ -158,7 +179,7 @@ const TimelineEditor = ({
           onMouseDown={handleOnStartMove}
           isPlaying={isPlaying || isPlayingReversed || isPause}
           style={{
-            left: `${sliderPosition}px`,
+            left: `${sliderPosition}%`,
           }}>
           <Icon icon="slider" />
         </IconWrapper>
@@ -178,11 +199,20 @@ const Wrapper = styled.div`
   user-select: none;
 `;
 
-const TimelineControl = styled.div`
+const TimelineWrapper = styled.div<{ isMinimized: boolean }>`
   display: flex;
   align-items: center;
   padding-bottom: 6px;
-  gap: 16px;
+  gap: ${({ isMinimized }) => (isMinimized ? "" : "25px")};
+  flex-direction: ${({ isMinimized }) => (isMinimized ? "column" : "row")};
+`;
+
+const TimelineControl = styled.div<{ isMinimized: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${({ isMinimized }) => (isMinimized ? "0" : "18px")};
+  width: ${({ isMinimized }) => (isMinimized ? "100%" : "auto")};
 `;
 
 const StyledIcon = styled.div<{ activeBlock: boolean }>`
@@ -191,10 +221,20 @@ const StyledIcon = styled.div<{ activeBlock: boolean }>`
   background: ${({ activeBlock, theme }) => (activeBlock ? theme.select.main : theme.bg[4])};
   padding: 4px 6px 2px;
   border-radius: 6px 0 8px 0;
+  margin-bottom: 6px;
 `;
-const PlayControl = styled.div`
+
+const PlayControl = styled.div<{ isMinimized: boolean }>`
   display: flex;
   gap: 10px;
+  margin-left: ${({ isMinimized }) => (isMinimized ? "auto" : "0")};
+`;
+
+const CurrentTime = styled.div<{ isMinimized: boolean }>`
+  color: ${({ theme }) => theme.content.weaker};
+  padding-right: ${({ isMinimized }) => (isMinimized ? "8px" : "0")};
+  font-size: 12px;
+  margin-left: ${({ isMinimized }) => (isMinimized ? "auto" : "0")};
 `;
 
 const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
@@ -206,12 +246,11 @@ const PlayButton = styled.div<{ isPlaying?: boolean; isClicked?: boolean }>`
 const InputWrapper = styled.div`
   position: relative;
   cursor: pointer;
-  width: 90px;
 `;
 
 const ArrowIcon = styled(Icon)<{ open: boolean }>`
   position: absolute;
-  right: 10px;
+  right: -6px;
   top: 60%;
   transform: ${({ open }) => (open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)")};
   color: ${({ theme }) => theme.content.weaker};
@@ -222,6 +261,9 @@ const Select = styled.div`
   line-height: 1;
   padding-right: 12px;
   color: ${({ theme }) => theme.content.weaker};
+`;
+const PopoverWrapper = styled.div<{ isMinimized: boolean }>`
+  padding: ${({ isMinimized }) => (isMinimized ? "0 10px" : "0")};
 `;
 
 const PickerWrapper = styled(Popover.Content)`
@@ -247,12 +289,6 @@ const InputOptions = styled.option`
     background: ${({ theme }) => theme.bg[2]};
   }
   color: ${({ theme }) => theme.content.main};
-`;
-
-const CurrentTime = styled.div`
-  color: ${({ theme }) => theme.content.weaker};
-  position: relative;
-  font-size: 13px;
 `;
 
 const TimelineSlider = styled.div`
@@ -290,9 +326,10 @@ const Scale = styled.div`
   width: calc(100% / 11);
 `;
 
-const ScaleLabel = styled.div`
-  font-size: 10px;
+const ScaleLabel = styled.div<{ isMinimized: boolean }>`
+  font-size: ${({ isMinimized }) => (isMinimized ? "8px" : "10px")};
   position: relative;
   bottom: 28px;
-  right: 15px;
+  right: 16px;
+  width: 34px;
 `;
