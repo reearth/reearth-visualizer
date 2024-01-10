@@ -31,6 +31,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   setView: 1,
   toWindowPosition: 1,
   getViewport: 1,
+  flyToBBox: 1,
   lookAt: 1,
   lookAtLayer: 1,
   lookHorizontal: 1,
