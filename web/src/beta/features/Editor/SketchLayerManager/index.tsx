@@ -18,7 +18,7 @@ export type SketchProps = {
   sceneId?: string;
   layerStyles?: LayerStyle[];
   propertyList?: Property[];
-  layerName: string;
+  layerName?: string;
   layerStyle?: string;
   setLayerName?: (value: string) => void;
   setLayerStyle?: (value: string) => void;
@@ -94,11 +94,7 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
         id: "customized Properties",
         name: t("Customized Properties"),
         component: (
-          <CustomedProperties
-            propertyList={propertyList}
-            setPropertyList={setPropertyList}
-            layerName={layerName}
-          />
+          <CustomedProperties propertyList={propertyList} setPropertyList={setPropertyList} />
         ),
       },
     ],

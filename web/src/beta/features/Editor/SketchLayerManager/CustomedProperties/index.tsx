@@ -25,16 +25,16 @@ import { SketchProps, dataTypes } from "..";
 
 const CustomedProperties: React.FC<SketchProps> = ({ propertyList = [], setPropertyList }) => {
   const t = useT();
-  const [layerName, setLayerName] = useState<string>("");
+  const [propertyName, setPropertyName] = useState<string>("");
   const [dataType, setDataType] = useState<string>("");
 
   const handleAddToPropertyToList = useCallback(() => {
-    const newData = { [layerName]: dataType };
+    const newData = { [propertyName]: dataType };
 
     setPropertyList?.([...propertyList, newData]);
-    setLayerName("");
+    setPropertyName("");
     setDataType("");
-  }, [dataType, layerName, propertyList, setPropertyList]);
+  }, [dataType, propertyName, propertyList, setPropertyList]);
 
   const handleDeletePropertyToList = useCallback(
     (idx: number) => {
@@ -53,8 +53,8 @@ const CustomedProperties: React.FC<SketchProps> = ({ propertyList = [], setPrope
             <Input
               type="text"
               placeholder={t("Input Text")}
-              value={layerName}
-              onChange={e => setLayerName(e.target.value)}
+              value={propertyName}
+              onChange={e => setPropertyName(e.target.value)}
             />
           </InputGroup>
           <SelectWrapper
@@ -71,7 +71,7 @@ const CustomedProperties: React.FC<SketchProps> = ({ propertyList = [], setPrope
             text={t("Add to proprety list")}
             buttonType="primary"
             size="medium"
-            disabled={!layerName}
+            disabled={!propertyName}
             onClick={handleAddToPropertyToList}
           />
         </AddButtonWrapper>
