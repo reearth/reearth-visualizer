@@ -295,6 +295,16 @@ export default function ({
     [engineRef],
   );
 
+  const flyToBBox = useCallback(
+    (
+      bbox: [number, number, number, number],
+      options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+    ) => {
+      return engineRef?.flyToBBox(bbox, options);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -466,6 +476,7 @@ export default function ({
         overrideSceneProperty: overrideScenePropertyCommon,
         layersInViewport,
         flyTo,
+        flyToBBox,
         lookAt,
         zoomIn,
         zoomOut,
@@ -529,6 +540,7 @@ export default function ({
       overrideScenePropertyCommon,
       layersInViewport,
       flyTo,
+      flyToBBox,
       lookAt,
       zoomIn,
       zoomOut,

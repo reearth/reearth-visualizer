@@ -97,6 +97,10 @@ export type EngineRef = {
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
   flyTo: FlyTo;
+  flyToBBox: (
+    bbox: [number, number, number, number],
+    options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+  ) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;

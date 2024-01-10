@@ -338,6 +338,33 @@ export default function useEngineRef(
           }
         }
       },
+      flyToBBox: (bbox, options) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+
+        cancelCameraFlight.current?.();
+
+        const boundingSphere = Cesium.BoundingSphere.fromRectangle3D(
+          Cesium.Rectangle.fromDegrees(...bbox),
+        );
+
+        const camera = viewer.scene.camera;
+
+        viewer.camera.flyToBoundingSphere(boundingSphere, {
+          offset: {
+            heading: options?.heading
+              ? CesiumMath.toDegrees(options.heading)
+              : viewer.scene.camera.heading,
+            pitch: options?.pitch ? CesiumMath.toDegrees(options.pitch) : camera.pitch,
+            range: options?.range ?? 0,
+          },
+          duration: options?.duration,
+        });
+
+        cancelCameraFlight.current = () => {
+          camera?.cancelFlight();
+        };
+      },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
