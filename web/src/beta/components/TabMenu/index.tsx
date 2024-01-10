@@ -34,7 +34,8 @@ const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange, menuAlignm
           <TabIconWrapper
             key={id}
             onClick={() => onSelectedTabChange(id)}
-            selected={id === selectedTab}>
+            selected={id === selectedTab}
+            menuAlignment={menuAlignment}>
             {icon ? <Icon icon={icon} size={20} /> : <TabHeader size="footnote">{name}</TabHeader>}
           </TabIconWrapper>
         ))}
@@ -60,6 +61,7 @@ const Wrapper = styled.div<{ menuAlignment?: menuAlignment }>`
   flex-flow: column nowrap;
   position: relative;
   background: ${({ theme }) => theme.bg[1]};
+  border-radius: 4px;
 `;
 
 const Tabs = styled.div<{ menuAlignment?: menuAlignment }>`
@@ -69,7 +71,7 @@ const Tabs = styled.div<{ menuAlignment?: menuAlignment }>`
   flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "row" : "column")} nowrap;
 `;
 
-const TabIconWrapper = styled.div<{ selected: boolean }>`
+const TabIconWrapper = styled.div<{ selected: boolean; menuAlignment?: menuAlignment }>`
   padding: 4px;
   display: flex;
   justify-content: center;
@@ -77,6 +79,8 @@ const TabIconWrapper = styled.div<{ selected: boolean }>`
   cursor: pointer;
   color: ${({ selected, theme }) => (selected ? theme.content.main : theme.content.weak)};
   background: ${props => (props.selected ? props.theme.bg[1] : "inherit")};
+  border-top-right-radius: ${({ menuAlignment }) => (menuAlignment === "top" ? "4px" : "0")};
+  border-top-left-radius: ${({ menuAlignment }) => (menuAlignment === "top" ? "4px" : "0")};
 `;
 
 const TabHeader = styled(Text)`
@@ -92,5 +96,4 @@ const Header = styled.div`
 const MainArea = styled.div`
   display: block;
   padding: 12px;
-  background: ${({ theme }) => theme.bg[1]};
 `;

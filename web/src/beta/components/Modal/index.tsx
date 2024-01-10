@@ -135,6 +135,8 @@ const ButtonWrapper = styled.div`
   gap: ${({ theme }) => theme.spacing.normal}px;
   padding: ${({ theme }) => theme.spacing.normal}px;
   background: ${({ theme }) => theme.bg[1]};
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
 `;
 
 export default Modal;

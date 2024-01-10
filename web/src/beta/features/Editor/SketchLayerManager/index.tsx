@@ -107,7 +107,7 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
       isVisible={true}
       title={t("New Sketch Layer")}
       onClose={onClose}
-      button1={<Button text={t("Cancel")} />}
+      button1={<Button text={t("Cancel")} onClick={onClose} />}
       button2={
         <Button
           text={t("Create")}
