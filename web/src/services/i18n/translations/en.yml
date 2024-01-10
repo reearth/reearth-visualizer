@@ -82,18 +82,19 @@ Layer: Layer
 Layers: Layers
 All Layers: All Layers
 Name: Name
-Layer name you want to add.: Layer name you want to add.
+Property name you want to add.: 'Property name you want to add'
 Data Type: Data Type
 Type of data you want to add.: Type of data you want to add.
 Add to proprety list: Add to proprety list
 Data Types: Data Types
-Create: Create
 Layer Name: Layer Name
+Layer name you want to add.: Layer name you want to add.
 Layer Style: Layer Style
 Layer style you want to add.: Layer style you want to add.
 General: General
 Customized Properties: Customized Properties
 New Sketch Layer: New Sketch Layer
+Create: Create
 Style_: Style_
 Delete: Delete
 Main: Main
