@@ -11,11 +11,15 @@ import { LayerAddProps } from "../useLayers";
 import CustomedProperties from "./CustomedProperties";
 import General from "./General";
 
+export type Property = { [x: string]: string };
+
 export type SketchProps = {
   sceneId: string;
   layerStyles?: LayerStyle[];
   onClose: () => void;
   onSubmit: (layerAddInp: LayerAddProps) => void;
+  propertyList?: Property[];
+  setPropertyList?: (prev: Property[]) => void;
 };
 
 type TabObject = {
@@ -37,6 +41,7 @@ export const dataTypes: SketchLayerDataType[] = [
 const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
+  const [propertyList, setPropertyList] = useState<{ [x: string]: string }[]>([]);
 
   const handleTabChange = useCallback((newTab: string) => {
     setSelectedTab(newTab);
@@ -59,10 +64,18 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
       {
         id: "customized Properties",
         name: t("Customized Properties"),
-        component: <CustomedProperties onClose={onClose} sceneId={sceneId} onSubmit={onSubmit} />,
+        component: (
+          <CustomedProperties
+            propertyList={propertyList}
+            setPropertyList={setPropertyList}
+            onClose={onClose}
+            sceneId={sceneId}
+            onSubmit={onSubmit}
+          />
+        ),
       },
     ],
-    [layerStyles, onClose, onSubmit, sceneId, t],
+    [layerStyles, onClose, onSubmit, propertyList, sceneId, t],
   );
 
   return (

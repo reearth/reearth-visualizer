@@ -24,29 +24,32 @@ import { useT } from "@reearth/services/i18n";
 
 import { SketchProps, dataTypes } from "..";
 
-type Property = { [x: string]: string };
-
-const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit }) => {
+const CustomedProperties: React.FC<SketchProps> = ({
+  sceneId,
+  propertyList = [],
+  setPropertyList,
+  onClose,
+  onSubmit,
+}) => {
   const t = useT();
   const [layerName, setLayerName] = useState<string>("");
   const [dataType, setDataType] = useState<string>("");
-  const [propertyList, setPropertyList] = useState<Property[]>([]);
 
   const handleAddToPropertyToList = useCallback(() => {
     const newData = { [layerName]: dataType };
 
-    setPropertyList(prev => [...prev, newData]);
+    setPropertyList?.([...propertyList, newData]);
     setLayerName("");
     setDataType("");
-  }, [dataType, layerName]);
+  }, [dataType, layerName, propertyList, setPropertyList]);
 
   const handleDeletePropertyToList = useCallback(
     (idx: number) => {
       const updatedPropertiesList = [...propertyList];
       updatedPropertiesList.splice(idx, 1);
-      setPropertyList(updatedPropertiesList);
+      setPropertyList?.(updatedPropertiesList);
     },
-    [propertyList],
+    [propertyList, setPropertyList],
   );
 
   const handleSubmit = () => {
@@ -104,8 +107,8 @@ const CustomedProperties: React.FC<SketchProps> = ({ sceneId, onClose, onSubmit 
           <StyledText size="footnote">{t("Data Types")}</StyledText>
         </PropertyListHeader>
         <PropertyContentWrapper>
-          {propertyList.length > 0 &&
-            propertyList.map((item, i) => {
+          {propertyList?.length > 0 &&
+            propertyList?.map((item, i) => {
               return (
                 <PropertyContent key={i}>
                   <StyledText size="footnote">{Object.keys(item)[0]}</StyledText>
