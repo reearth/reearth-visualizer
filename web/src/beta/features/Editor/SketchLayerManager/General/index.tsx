@@ -1,6 +1,3 @@
-import { useState } from "react";
-
-import Button from "@reearth/beta/components/Button";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -13,32 +10,15 @@ import { useT } from "@reearth/services/i18n";
 
 import { SketchProps } from "..";
 
-const General: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
+const General: React.FC<SketchProps> = ({
+  layerStyles,
+  layerName,
+  layerStyle,
+  setLayerName,
+  setLayerStyle = () => {},
+}) => {
   const t = useT();
-  const [layerName, setLayerName] = useState("");
-
-  const [layerStyle, setLayerStyle] = useState("");
   const layerStyleOption = layerStyles ? layerStyles : [];
-
-  const handleSubmit = () => {
-    onSubmit({
-      layerType: "simple",
-      sceneId,
-      title: layerName,
-      visible: true,
-      config: {
-        properties: {
-          name: layerName,
-          layerStyle: layerStyle,
-        },
-        data: {
-          type: "geojson",
-          isSketchLayer: true,
-        },
-      },
-    });
-    onClose();
-  };
 
   return (
     <ColJustifyBetween>
@@ -48,7 +28,7 @@ const General: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmi
             type="text"
             placeholder={t("Input Text")}
             value={layerName}
-            onChange={e => setLayerName(e.target.value)}
+            onChange={e => setLayerName?.(e.target.value)}
           />
         </InputGroup>
 
@@ -62,15 +42,7 @@ const General: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmi
         />
       </AssetWrapper>
 
-      <SubmitWrapper>
-        <Button
-          text={t("Create")}
-          buttonType="primary"
-          size="medium"
-          onClick={handleSubmit}
-          disabled={!layerName}
-        />
-      </SubmitWrapper>
+      <SubmitWrapper />
     </ColJustifyBetween>
   );
 };

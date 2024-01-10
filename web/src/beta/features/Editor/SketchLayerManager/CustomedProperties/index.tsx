@@ -18,19 +18,12 @@ import {
   DataTypeText,
   DeleteDataType,
   PropertyContentWrapper,
-  generateTitle,
 } from "@reearth/beta/features/Editor/utils";
 import { useT } from "@reearth/services/i18n";
 
 import { SketchProps, dataTypes } from "..";
 
-const CustomedProperties: React.FC<SketchProps> = ({
-  sceneId,
-  propertyList = [],
-  setPropertyList,
-  onClose,
-  onSubmit,
-}) => {
+const CustomedProperties: React.FC<SketchProps> = ({ propertyList = [], setPropertyList }) => {
   const t = useT();
   const [layerName, setLayerName] = useState<string>("");
   const [dataType, setDataType] = useState<string>("");
@@ -52,28 +45,11 @@ const CustomedProperties: React.FC<SketchProps> = ({
     [propertyList, setPropertyList],
   );
 
-  const handleSubmit = () => {
-    onSubmit({
-      layerType: "simple",
-      sceneId,
-      visible: true,
-      config: {
-        properties: propertyList,
-        data: {
-          type: "geojson",
-          isSketchLayer: true,
-        },
-      },
-      title: generateTitle(layerName),
-    });
-    onClose();
-  };
-
   return (
     <ColJustifyBetween>
       <AssetWrapper>
         <InputWrapper>
-          <InputGroup label={t("Name")} description={t("Layer name you want to add.")}>
+          <InputGroup label={t("Name")} description={t("Property name you want to add.")}>
             <Input
               type="text"
               placeholder={t("Input Text")}
@@ -126,15 +102,7 @@ const CustomedProperties: React.FC<SketchProps> = ({
         </PropertyContentWrapper>
       </PropertyList>
 
-      <SubmitWrapper>
-        <Button
-          text={t("Create")}
-          buttonType="primary"
-          size="medium"
-          onClick={handleSubmit}
-          disabled={!propertyList.length}
-        />
-      </SubmitWrapper>
+      <SubmitWrapper />
     </ColJustifyBetween>
   );
 };

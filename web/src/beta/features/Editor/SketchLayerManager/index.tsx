@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 
+import Button from "@reearth/beta/components/Button";
 import Modal from "@reearth/beta/components/Modal";
 import TabMenu from "@reearth/beta/components/TabMenu";
 import { SketchLayerDataType } from "@reearth/beta/lib/core/mantle/types";
@@ -14,11 +15,15 @@ import General from "./General";
 export type Property = { [x: string]: string };
 
 export type SketchProps = {
-  sceneId: string;
+  sceneId?: string;
   layerStyles?: LayerStyle[];
-  onClose: () => void;
-  onSubmit: (layerAddInp: LayerAddProps) => void;
   propertyList?: Property[];
+  layerName: string;
+  layerStyle?: string;
+  setLayerName?: (value: string) => void;
+  setLayerStyle?: (value: string) => void;
+  onClose?: () => void;
+  onSubmit?: (layerAddInp: LayerAddProps) => void;
   setPropertyList?: (prev: Property[]) => void;
 };
 
@@ -42,10 +47,33 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
   const [propertyList, setPropertyList] = useState<{ [x: string]: string }[]>([]);
+  const [layerName, setLayerName] = useState("");
+  const [layerStyle, setLayerStyle] = useState("");
 
   const handleTabChange = useCallback((newTab: string) => {
     setSelectedTab(newTab);
   }, []);
+
+  const handleSubmit = () => {
+    onSubmit?.({
+      layerType: "simple",
+      sceneId: sceneId || "",
+      title: layerName,
+      visible: true,
+      config: {
+        properties: {
+          name: layerName,
+          layerStyle: layerStyle,
+          customProperties: propertyList,
+        },
+        data: {
+          type: "geojson",
+          isSketchLayer: true,
+        },
+      },
+    });
+    onClose?.();
+  };
 
   const tabs: TabObject[] = useMemo(
     () => [
@@ -54,10 +82,11 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
         name: t("General"),
         component: (
           <General
-            onClose={onClose}
-            sceneId={sceneId}
             layerStyles={layerStyles}
-            onSubmit={onSubmit}
+            layerName={layerName}
+            layerStyle={layerStyle}
+            setLayerName={setLayerName}
+            setLayerStyle={setLayerStyle}
           />
         ),
       },
@@ -68,14 +97,12 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
           <CustomedProperties
             propertyList={propertyList}
             setPropertyList={setPropertyList}
-            onClose={onClose}
-            sceneId={sceneId}
-            onSubmit={onSubmit}
+            layerName={layerName}
           />
         ),
       },
     ],
-    [layerStyles, onClose, onSubmit, propertyList, sceneId, t],
+    [layerName, layerStyle, layerStyles, propertyList, t],
   );
 
   return (
@@ -84,6 +111,16 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
       isVisible={true}
       title={t("New Sketch Layer")}
       onClose={onClose}
+      button1={<Button text={t("Cancel")} />}
+      button2={
+        <Button
+          text={t("Create")}
+          buttonType="primary"
+          size="medium"
+          disabled={!layerName}
+          onClick={handleSubmit}
+        />
+      }
       isContent={true}>
       <TabMenu
         menuAlignment="top"

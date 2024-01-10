@@ -132,9 +132,9 @@ const ButtonWrapper = styled.div`
   flex-direction: row;
   align-self: stretch;
   justify-content: flex-end;
-  border-top: 1px solid ${({ theme }) => theme.bg[3]};
   gap: ${({ theme }) => theme.spacing.normal}px;
   padding: ${({ theme }) => theme.spacing.normal}px;
+  background: ${({ theme }) => theme.bg[1]};
 `;
 
 export default Modal;
