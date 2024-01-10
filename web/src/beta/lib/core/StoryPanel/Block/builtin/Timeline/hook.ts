@@ -14,6 +14,7 @@ import {
 } from "@reearth/beta/lib/core/Map/useTimelineManager";
 import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import {
+  calculatePaddingValue,
   convertPositionToTime,
   formatDateForSliderTimeline,
   formatDateForTimeline,
@@ -21,6 +22,9 @@ import {
 } from "@reearth/beta/lib/core/StoryPanel/utils";
 
 import { getNewDate } from "../../../hooks/useTimelineBlock";
+import { DEFAULT_BLOCK_PADDING } from "../common/hooks";
+
+import { PaddingProp } from "./Editor";
 
 import { TimelineValues } from ".";
 
@@ -33,6 +37,8 @@ type TimelineProps = {
   speed: number;
   playMode?: string;
   timelineValues?: TimelineValues;
+  padding?: PaddingProp;
+  property?: any;
   onPlay?: (committer: TimelineCommitter) => void;
   onSpeedChange?: (speed: number, committerId?: string) => void;
   onPause: (committerId: string) => void;
@@ -55,6 +61,8 @@ export default ({
   speed,
   playMode,
   timelineValues,
+  padding,
+  property,
   onPlay,
   onSpeedChange,
   onPause,
@@ -70,6 +78,7 @@ export default ({
   const [activeBlock, setActiveBlock] = useState("");
   const [isPlayingReversed, setIsPlayingReversed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   const [committer, setCommiter] = useState<TimelineCommitter>({
     source: "storyTimelineBlock",
@@ -100,6 +109,16 @@ export default ({
     }
     return {};
   }, [range]);
+
+  const panelSettings = useMemo(() => {
+    if (!property?.panel) return undefined;
+    return {
+      padding: {
+        ...property?.panel?.padding,
+        value: calculatePaddingValue(DEFAULT_BLOCK_PADDING, property?.panel?.padding?.value),
+      },
+    };
+  }, [property?.panel]);
 
   const handlePopOver = useCallback(() => {
     !inEditor && setIsOpen(!isOpen);
@@ -250,11 +269,6 @@ export default ({
         return;
       }
       if (target && target.style.pointerEvents === "none" && !inEditor) {
-        const evt = e;
-        let newPosition = evt.clientX - distX.current;
-        newPosition = Math.max(newPosition, 16);
-        newPosition = Math.min(newPosition, 372);
-        target.style.left = `${newPosition}px`;
         const conv = convertPositionToTime(e as unknown as MouseEvent, range.start, range.end);
         committer?.id && handleOnDrag(new Date(conv), committer?.id);
       }
@@ -337,22 +351,49 @@ export default ({
     removeOnCommitEventListener,
     removeTickEventListener,
   ]);
+  const blockRef = useRef<HTMLDivElement>(null);
+
+  const handleResize = useCallback(() => {
+    if ((padding || panelSettings?.padding.value) && blockRef.current) {
+      const blockWidth = blockRef.current.offsetWidth;
+      const thresholdWidth = 360;
+      setIsMinimized(blockWidth < thresholdWidth);
+    }
+  }, [padding, panelSettings?.padding.value]);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
 
   const sliderPosition = useMemo(() => {
+    const initialPosition = (() => {
+      if (!isMinimized) {
+        return 4;
+      }
+
+      return 4.5;
+    })();
+
+    const finalPosition = isMinimized ? 94.5 : 93.5;
+
     if (range) {
       if (!inEditor) {
         const totalRange = range?.end - range.start;
         const currentPosition = currentTime - range.start;
-        let positionPercentage = (currentPosition / totalRange) * 356 + 16;
+        let positionPercentage = (currentPosition / totalRange) * 90 + initialPosition;
 
         positionPercentage = Math.round(positionPercentage);
-        positionPercentage = Math.max(positionPercentage, 16);
-        positionPercentage = Math.min(positionPercentage, 372);
+        positionPercentage = Math.max(positionPercentage, initialPosition);
+        positionPercentage = Math.min(positionPercentage, finalPosition);
         return positionPercentage;
       }
     }
-    return 16;
-  }, [range, inEditor, currentTime]);
+    return initialPosition;
+  }, [isMinimized, range, inEditor, currentTime]);
 
   return {
     formattedCurrentTime,
@@ -364,6 +405,8 @@ export default ({
     isOpen,
     selected,
     isActive,
+    isMinimized,
+    blockRef,
     handleOnSelect,
     handlePopOver,
     toggleIsPlaying: handleOnPlay,
