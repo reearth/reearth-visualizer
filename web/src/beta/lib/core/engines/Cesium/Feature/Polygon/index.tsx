@@ -18,7 +18,10 @@ import {
   type FeatureProps,
 } from "../utils";
 
-export type Props = FeatureProps<Property> & { disableWorkaround?: boolean };
+export type Props = FeatureProps<Property> & {
+  disableWorkaround?: boolean;
+  hideIndicator?: boolean;
+};
 
 export type Property = PolygonAppearance & {
   polygon?: PolygonValue;
@@ -32,6 +35,7 @@ export default function Polygon({
   layer,
   feature,
   disableWorkaround,
+  hideIndicator,
 }: Props) {
   const coordiantes = useMemo(
     () =>
@@ -121,6 +125,7 @@ export default function Polygon({
         layerId={layer?.id}
         featureId={feature?.id}
         availability={availability}
+        hideIndicator={hideIndicator}
         properties={feature?.properties}>
         <PolygonGraphics
           hierarchy={hierarchy}

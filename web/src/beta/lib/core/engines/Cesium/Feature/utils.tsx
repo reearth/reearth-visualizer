@@ -66,6 +66,7 @@ export type Tag = {
   originalProperties?: any;
   computedFeature?: ComputedFeature;
   isFeatureSelected?: boolean;
+  hideIndicator?: boolean;
 };
 
 export const EntityExt = forwardRef(EntityExtComponent);
@@ -77,6 +78,7 @@ function EntityExtComponent(
     draggable,
     unselectable,
     legacyLocationPropertyKey,
+    hideIndicator,
     ...props
   }: ComponentProps<typeof Entity> & Tag,
   ref: ForwardedRef<CesiumComponentRef<CesiumEntity>>,
@@ -90,8 +92,17 @@ function EntityExtComponent(
       draggable,
       unselectable,
       legacyLocationPropertyKey,
+      hideIndicator: hideIndicator,
     });
-  }, [draggable, featureId, layerId, legacyLocationPropertyKey, props.id, unselectable]);
+  }, [
+    draggable,
+    featureId,
+    layerId,
+    legacyLocationPropertyKey,
+    props.id,
+    unselectable,
+    hideIndicator,
+  ]);
 
   return <Entity ref={composeRefs(ref, r)} {...props} />;
 }
