@@ -25,7 +25,9 @@ import {
 
 import marker from "./marker.svg";
 
-export type Props = FeatureProps<Property>;
+export type Props = FeatureProps<Property> & {
+  hideIndicator?: boolean;
+};
 
 export type Property = MarkerAppearance & {
   // compat
@@ -33,7 +35,15 @@ export type Property = MarkerAppearance & {
   height?: number;
 };
 
-export default function Marker({ property, id, isVisible, geometry, layer, feature }: Props) {
+export default function Marker({
+  property,
+  id,
+  isVisible,
+  geometry,
+  layer,
+  feature,
+  hideIndicator,
+}: Props) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -186,7 +196,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
           featureId={feature?.id}
           unselectable
           properties={feature?.properties}
-          availability={availability}>
+          availability={availability}
+          hideIndicator={hideIndicator}>
           <PolylineGraphics
             positions={extrudePoints}
             material={extrudePointsLineColor}

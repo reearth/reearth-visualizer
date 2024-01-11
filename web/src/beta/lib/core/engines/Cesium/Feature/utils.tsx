@@ -92,7 +92,7 @@ function EntityExtComponent(
       draggable,
       unselectable,
       legacyLocationPropertyKey,
-      hideIndicator: hideIndicator,
+      hideIndicator,
     });
   }, [
     draggable,
