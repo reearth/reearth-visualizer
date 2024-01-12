@@ -85,6 +85,9 @@ const Asset: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               : undefined,
           type: fileFormat.toLowerCase() as DataType,
           value: parsedValue,
+          geojson: {
+            useAsResource: prioritizePerformance,
+          },
         },
       },
     });
