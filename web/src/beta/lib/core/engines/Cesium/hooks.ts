@@ -850,6 +850,17 @@ export default ({
     viewer.forceResize();
   }, [property]);
 
+  const globe = cesium.current?.cesiumElement?.scene.globe;
+
+  useEffect(() => {
+    if (globe) {
+      const surface = (globe as any)._surface;
+      if (surface) {
+        surface.tileProvider._debug.wireframe = property?.render?.showWireframe ?? false;
+      }
+    }
+  }, [globe, property?.render?.showWireframe]);
+
   return {
     backgroundColor,
     cesium,

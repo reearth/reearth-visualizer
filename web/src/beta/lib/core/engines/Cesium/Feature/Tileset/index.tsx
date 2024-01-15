@@ -9,7 +9,10 @@ import { type FeatureComponentConfig, type FeatureProps } from "../utils";
 
 import { useHooks } from "./hooks";
 
-export type Props = FeatureProps<Property>;
+export type Props = FeatureProps<Property> & {
+  showWireframe?: boolean;
+  showBoundingVolume?: boolean;
+};
 
 export type Property = Cesium3DTilesAppearance;
 
@@ -24,6 +27,8 @@ function Tileset({
   evalFeature,
   onComputedFeatureFetch,
   onLayerFetch,
+  showWireframe,
+  showBoundingVolume,
   ...props
 }: Props): JSX.Element | null {
   const { shadows, colorBlendMode, pbr } = property ?? {};
@@ -70,6 +75,8 @@ function Tileset({
         colorBlendMode={colorBlendModeFor3DTile(colorBlendMode)}
         imageBasedLighting={imageBasedLighting}
         onReady={handleReady}
+        debugWireframe={showWireframe}
+        debugShowBoundingVolume={showBoundingVolume}
       />
       {builtinBoxProps && (
         <Box

@@ -319,6 +319,7 @@ export type SceneProperty = {
     allowEnterGround?: boolean;
     fov?: number;
   };
+  render?: { showWireframe?: boolean };
 } & LegacySceneProperty;
 
 type LegacySceneProperty = {
