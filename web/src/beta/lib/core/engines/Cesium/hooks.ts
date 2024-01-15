@@ -355,9 +355,13 @@ export default ({
 
     if (prevSelectedEntity.current === entity) return;
 
-    if (!entity || entity instanceof Entity) {
+    const tag = getTag(entity);
+    if (!entity || (entity instanceof Entity && !tag?.hideIndicator)) {
       viewer.selectedEntity = entity;
+    } else {
+      viewer.selectedEntity = undefined;
     }
+
     prevSelectedEntity.current = entity;
 
     // TODO: Support layers.selectFeature API for MVT
@@ -388,7 +392,6 @@ export default ({
       }
     }
 
-    const tag = getTag(entity);
     if (tag?.unselectable) return;
 
     if (entity && entity instanceof Cesium3DTileFeature) {
