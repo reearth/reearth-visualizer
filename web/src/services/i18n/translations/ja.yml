@@ -79,7 +79,20 @@ layer name: レイヤー名
 Layer: レイヤー
 Layers: レイヤー
 All Layers: 全てのレイヤー
+Name: 名前
+Property name you want to add.: ''
+Data Type: ''
+Type of data you want to add.: ''
+Add to proprety list: ''
+Data Types: ''
+Layer Name: ''
+Layer name you want to add.: ''
 Layer Style: レイヤースタイル
+Layer style you want to add.: ''
+General: ''
+Customized Properties: ''
+New Sketch Layer: ''
+Create: 作成
 Style_: スタイル_
 Delete: 削除
 Main: メイン
@@ -92,6 +105,7 @@ Unknown scene setting: 不明なシーン設定
 Scene: シーン
 Outline: アウトライン
 Add Layer from Resource: リソースからレイヤーを追加
+Add Sketch Layer: ''
 Inspector: インスペクター
 ID: ID
 Geometry: ジオメトリ
@@ -159,7 +173,6 @@ Select Layer Style: レイヤースタイル選択
 No layerStyle match your search.: 検索からレイヤースタイルを見つけられません。
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: レイヤースタイルをまだ作成していません。「レイヤースタイル」パネルの＋ボタンをクリックし作成してください。
 Create New Workspace: 新規ワークスペース作成
-Create: 作成
 Workspace Name: ワークスペース名
 Account Settings: アカウント設定
 Workspaces: ワークスペース
@@ -186,7 +199,6 @@ You are about to delete one or more assets from the current workspace.: 1つま�
 Please make sure no selected assets are in use. This cannot be undone.: 選択されたアセットが使用されていないことを確認してください。この操作は取り消せません。
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブ化すると、削除とアーカイブ化解除以外の編集は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブ化を解除してください。
 Project Info: プロジェクト情報
-Name: 名前
 Description: プロジェクト概要
 Thumbnail: サムネイル画像
 Submit: 反映
@@ -245,11 +257,6 @@ aria-label-adjust-angle: 角度を調節する
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: 元の位置に戻る
 aria-label-zoom-out: ズームアウト
-Close timeline: タイムラインを閉じる
-Playback timeline: タイムラインを逆再生する
-Play timeline: タイムラインを再生する
-ellipse: 円錐
-Open timeline: タイムラインを開く
 Spacing settings: 余白設定
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
@@ -283,6 +290,11 @@ Strikethrough: 取り消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Close timeline: タイムラインを閉じる
+Playback timeline: タイムラインを逆再生する
+Play timeline: タイムラインを再生する
+ellipse: 円錐
+Open timeline: タイムラインを開く
 Welcome: ようこそ
 Log in to Re:Earth to continue.: Re:Earthにログイン
 Username or email: ユーザー名またはメールアドレス

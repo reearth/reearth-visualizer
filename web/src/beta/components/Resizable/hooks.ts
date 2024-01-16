@@ -1,5 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 
+import { setLocalStorageData } from "@reearth/beta/utils/localstorage";
+
 export type Direction = "vertical" | "horizontal";
 export type Gutter = "start" | "end";
 
@@ -7,9 +9,6 @@ const getPositionFromEvent = (e: React.MouseEvent | React.TouchEvent) => {
   const { nativeEvent } = e;
   if (nativeEvent instanceof MouseEvent) {
     const { clientX: x, clientY: y, which } = nativeEvent;
-
-    // When user click with right button the resize is stuck in resizing mode until users clicks again, dont continue if right click is used.
-    // https://github.com/bokuweb/re-resizable/blob/06dd269f835a201b03b4f62f37533784d855fdd2/src/index.tsx#L611
     if (which === 3) return;
 
     return { x, y };
@@ -30,7 +29,7 @@ const getDelta = (direction: Direction, deltaX: number, deltaY: number) =>
 const getSize = (size: number, delta: number, minSize?: number, maxSize?: number) => {
   let newSize = size + delta;
   if (minSize !== undefined && newSize < minSize) newSize = minSize;
-  if (maxSize !== undefined && newSize > maxSize) newSize = maxSize; // New check for maxSize
+  if (maxSize !== undefined && newSize > maxSize) newSize = maxSize;
   return newSize;
 };
 
@@ -40,15 +39,37 @@ export default (
   initialSize: number,
   minSize: number,
   maxSize?: number,
+  localStorageKey?: string,
 ) => {
-  const [startingSize, setStartingSize] = useState(initialSize);
+  const getLocalStorageParsedState = useCallback((localStorageKey?: string) => {
+    const savedState = localStorageKey && localStorage.getItem(localStorageKey);
+    return savedState ? JSON.parse(savedState) : null;
+  }, []);
 
+  const [startingSize, setStartingSize] = useState(initialSize);
   const [isResizing, setIsResizing] = useState(false);
   const [size, setSize] = useState(initialSize);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [minimized, setMinimized] = useState(false);
-
   const [difference, setDifference] = useState(0);
+
+  useEffect(() => {
+    const setSizeBasedOnTab = () => {
+      if (localStorageKey) {
+        const parsedState = getLocalStorageParsedState(localStorageKey);
+        const storedSize = parsedState?.size;
+
+        if (storedSize !== undefined) {
+          setSize(storedSize);
+          setMinimized(parsedState.minimized);
+        } else {
+          setSize(initialSize);
+          setMinimized(false);
+        }
+      }
+    };
+    setSizeBasedOnTab();
+  }, [localStorageKey, getLocalStorageParsedState, initialSize]);
 
   const onResizeStart = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -80,6 +101,7 @@ export default (
       if (!minimized && startingSize + newDiff <= minSize / 2) {
         setMinimized(true);
       }
+
       setPosition({ x, y });
     },
     [
@@ -104,7 +126,12 @@ export default (
     setPosition({ x: 0, y: 0 });
     setStartingSize(size);
     setDifference(0);
-  }, [isResizing, size]);
+    const storedData = {
+      size,
+      minimized,
+    };
+    localStorageKey && setLocalStorageData(localStorageKey, storedData);
+  }, [isResizing, localStorageKey, minimized, size]);
 
   const bindEventListeners = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -144,7 +171,17 @@ export default (
   const handleResetSize = useCallback(() => {
     setMinimized(false);
     setSize(initialSize);
-  }, [initialSize]);
+    localStorageKey &&
+      setLocalStorageData(localStorageKey, {
+        size: initialSize,
+        minimized: false,
+      });
+  }, [initialSize, localStorageKey]);
 
-  return { size, gutterProps, minimized, handleResetSize };
+  return {
+    size: size || initialSize,
+    gutterProps,
+    minimized,
+    handleResetSize,
+  };
 };

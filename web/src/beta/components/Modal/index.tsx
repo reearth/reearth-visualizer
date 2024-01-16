@@ -22,6 +22,7 @@ type Props = {
   button2?: ReactNode;
   children?: ReactNode;
   isVisible?: boolean;
+  isContent?: boolean;
   onClose?: () => void;
   onTabChange?: (tabId: string) => void;
   sidebarTabs?: SidebarTab[];
@@ -35,6 +36,7 @@ const Modal: React.FC<Props> = ({
   button2,
   children,
   isVisible,
+  isContent,
   onClose,
   onTabChange,
   sidebarTabs,
@@ -77,7 +79,7 @@ const Modal: React.FC<Props> = ({
         )}
         <ContentWrapper>
           {tabs.length > 0 && <Content>{tabs.find(tab => tab.active === true)?.content}</Content>}
-          {children && <Content> {children}</Content>}
+          {children && <Content isContent={isContent}> {children}</Content>}
           {button1 || button2 ? (
             <ButtonWrapper>
               {tabs.find(tab => tab.active === true)?.tabButton1 ?? button1}
@@ -117,9 +119,9 @@ const ContentWrapper = styled.div`
   flex: 1;
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ isContent?: boolean }>`
   display: flex;
-  padding: ${({ theme }) => theme.spacing.super}px;
+  padding: ${({ isContent, theme }) => (isContent ? theme.spacing.normal : theme.spacing.super)}px;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.largest}px;
   align-self: stretch;
@@ -130,9 +132,11 @@ const ButtonWrapper = styled.div`
   flex-direction: row;
   align-self: stretch;
   justify-content: flex-end;
-  border-top: 1px solid ${({ theme }) => theme.bg[3]};
   gap: ${({ theme }) => theme.spacing.normal}px;
   padding: ${({ theme }) => theme.spacing.normal}px;
+  background: ${({ theme }) => theme.bg[1]};
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
 `;
 
 export default Modal;

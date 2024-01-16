@@ -13,6 +13,7 @@ import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
+import SketchLayerManager from "./SketchLayerManager";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 import useScene from "./useScene";
@@ -34,8 +35,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     showWidgetEditor,
     showDataSourceManager,
     currentCamera,
+    showSketchLayerManager,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
+    handleSketchLayerManagerCloser,
+    handleSketchLayerManagerOpener,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
@@ -136,6 +140,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerVisibilityUpate: handleLayerVisibilityUpdate,
     onSceneSettingSelect: handleSceneSettingSelected,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
+    onSketchLayerManagerOpen: handleSketchLayerManagerOpener,
     onFlyTo: handleFlyTo,
     onPropertyUpdate: handlePropertyValueUpdate,
   });
@@ -194,7 +199,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               direction="vertical"
               gutter="end"
               initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}>
+              minSize={metrics.propertyMenuMinWidth}
+              localStorageKey={`${tab}LeftPanel`}>
               {leftPanel}
             </Resizable>
           )}
@@ -224,7 +230,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   gutter="start"
                   initialSize={metrics.bottomPanelMinHeight}
                   minSize={metrics.bottomPanelMinHeight}
-                  maxSize={metrics.bottomPanelMaxHeight}>
+                  maxSize={metrics.bottomPanelMaxHeight}
+                  localStorageKey="bottomPanel">
                   {bottomPanel}
                 </Resizable>
               )}
@@ -235,7 +242,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               direction="vertical"
               gutter="start"
               initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}>
+              minSize={metrics.propertyMenuMinWidth}
+              localStorageKey={`${tab}RightPanel`}>
               {rightPanel}
             </Resizable>
           )}
@@ -246,6 +254,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             sceneId={sceneId}
             onClose={handleDataSourceManagerCloser}
             onSubmit={handleLayerAdd}
+          />
+        )}
+        {showSketchLayerManager && (
+          <SketchLayerManager
+            onSubmit={handleLayerAdd}
+            sceneId={sceneId}
+            onClose={handleSketchLayerManagerCloser}
+            layerStyles={layerStyles}
           />
         )}
       </Wrapper>

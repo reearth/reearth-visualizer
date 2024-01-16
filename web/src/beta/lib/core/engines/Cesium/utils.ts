@@ -15,6 +15,8 @@ import {
   Scene,
   Viewer,
   Cesium3DTilePointFeature,
+  Primitive,
+  GroundPrimitive,
 } from "cesium";
 
 import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox";
@@ -140,13 +142,21 @@ export function findEntity(
   layerId?: string,
   featureId?: string,
   withoutTileFeature?: boolean,
-): Entity | Cesium3DTileset | InternalCesium3DTileFeature | undefined {
+):
+  | Entity
+  | Cesium3DTileset
+  | InternalCesium3DTileFeature
+  | Primitive
+  | GroundPrimitive
+  | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";
   if (!id) return;
 
   let entity = viewer.entities.getById(id);
   if (entity) return entity;
+
+  // we can store groundPrimitives as a state as aren't saved as unique entities in the viewer, i.e Workaround for making FlyTo for HeatMaps: @pyshx
 
   entity = viewer.entities.values.find(e => getTag(e)?.[keyName] === id);
   if (entity) return entity;
@@ -161,10 +171,14 @@ export function findEntity(
     }
   }
 
-  // Find Cesium3DTileset
+  // Find Cesium3DTileset or Primitive or GroundPrimitive
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset)) {
+    if (
+      !(prim instanceof Cesium3DTileset) &&
+      !(prim instanceof Primitive) &&
+      !(prim instanceof GroundPrimitive)
+    ) {
       continue;
     }
 
@@ -179,7 +193,7 @@ export function findEntity(
     if (!prim.ready) continue;
 
     // Skip to search 3dtiles features if `withoutTileFeature` is `true`.
-    if (!withoutTileFeature) {
+    if (!withoutTileFeature && prim instanceof Cesium3DTileset) {
       const target = findFeatureFrom3DTile(prim.root, featureId);
       if (target) {
         return target;

@@ -164,7 +164,7 @@ const InputWrapper = styled.div<{ disabled: boolean }>`
 `;
 
 const Select = styled.div<{ open: boolean; selected: boolean }>`
-  padding: 7px 8px;
+  padding: 9px 8px;
   /* The width + placement of the arrow icon */
   padding-right: 22px;
   border-radius: 4px;

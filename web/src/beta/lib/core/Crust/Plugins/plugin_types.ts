@@ -128,6 +128,27 @@ export type Scene = {
     withTerrain?: boolean,
   ) => LatLngHeight | undefined;
   readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
+  readonly computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly toXYZ: (
+    lng: number,
+    lat: number,
+    height: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [x: number, y: number, z: number] | undefined;
+  readonly toLngLatHeight: (
+    x: number,
+    y: number,
+    z: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [lng: number, lat: number, height: number] | undefined;
+  readonly convertScreenToPositionOffset: (
+    rawPosition: [x: number, y: number, z: number],
+    screenOffset: [x: number, y: number],
+  ) => [x: number, y: number, z: number] | undefined;
+  readonly isPositionVisible: (position: [x: number, y: number, z: number]) => boolean;
+  readonly toWindowPosition: (
+    position: [x: number, y: number, z: number],
+  ) => [x: number, y: number] | undefined;
   readonly pickManyFromViewport: (
     windowPosition: [x: number, y: number],
     windowWidth: number,
@@ -151,6 +172,10 @@ export type Camera = {
   readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
   readonly flyTo: (destination: string | FlyToDestination, options?: CameraOptions) => void;
+  readonly flyToBBox: (
+    bbox: [number, number, number, number],
+    options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+  ) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */
@@ -172,6 +197,7 @@ export type Camera = {
     options?: CameraOptions,
     offset?: number,
   ) => void;
+  readonly setView: (camera: CameraPosition) => void;
 };
 
 export type Clock = {

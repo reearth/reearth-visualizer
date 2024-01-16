@@ -21,6 +21,12 @@ export type CommonProps = {
   block?: StoryBlock;
   theme?: Theme;
   currentCamera?: Camera;
+  padding?: {
+    bottom: number;
+    top: number;
+    left?: number;
+    right?: number;
+  };
   onClick?: () => void;
   onBlockDoubleClick?: () => void;
   onClickAway?: () => void;

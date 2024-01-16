@@ -1,5 +1,13 @@
-import { Cartesian3, Color, HorizontalOrigin, VerticalOrigin, Cartesian2 } from "cesium";
-import { useEffect, useMemo } from "react";
+import {
+  Cartesian3,
+  Color,
+  HorizontalOrigin,
+  VerticalOrigin,
+  Cartesian2,
+  CallbackProperty,
+  PositionProperty,
+} from "cesium";
+import { useEffect, useMemo, useRef } from "react";
 import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
 
 import { toCSSFont } from "@reearth/beta/utils/value";
@@ -68,8 +76,25 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     imageShadowBlur: shadowBlur,
     imageShadowPositionX: shadowOffsetX,
     imageShadowPositionY: shadowOffsetY,
+    eyeOffset,
+    pixelOffset,
     heightReference: hr,
   } = property ?? {};
+
+  const { useTransition, translate } = layer?.transition ?? {};
+  const translatedCoords = useMemo(
+    () => (translate ? Cartesian3.fromDegrees(...translate) : undefined),
+    [translate],
+  );
+  const translatedCoordsRef = useRef(translatedCoords);
+  translatedCoordsRef.current = translatedCoords;
+  // CallbackProperty forces to disable the request render mode,
+  // so we need to be able to switch the use of `CallbackProperty` for performance.
+  const translateCallbackProperty = useMemo(
+    () =>
+      useTransition ? new CallbackProperty(() => translatedCoordsRef.current, false) : undefined,
+    [useTransition],
+  );
 
   const pos = useMemo(() => {
     return coordinates
@@ -98,7 +123,17 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     shadowOffsetY,
   });
 
-  const pixelOffset = useMemo(() => {
+  const cartPixelOffset = useMemo(
+    () => (pixelOffset ? new Cartesian2(...pixelOffset) : undefined),
+    [pixelOffset],
+  );
+  const cartEyeOffset = useMemo(
+    () => (eyeOffset ? new Cartesian3(...eyeOffset) : undefined),
+    [eyeOffset],
+  );
+
+  const labelPixelOffset = useMemo(() => {
+    if (cartPixelOffset) return cartPixelOffset;
     const padding = 15;
     const x = (isStyleImage ? imgw : pointSize) / 2 + padding;
     const y = (isStyleImage ? imgh : pointSize) / 2 + padding;
@@ -110,7 +145,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         ? y * (labelPos.includes("top") ? -1 : 1)
         : 0,
     );
-  }, [isStyleImage, imgw, pointSize, imgh, labelPos]);
+  }, [isStyleImage, imgw, pointSize, imgh, labelPos, cartPixelOffset]);
 
   const extrudePointsLineColor = useMemo(() => {
     return Color.WHITE.withAlpha(0.4);
@@ -162,7 +197,11 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
       )}
       <EntityExt
         id={id}
-        position={pos}
+        position={
+          useTransition
+            ? (translateCallbackProperty as unknown as PositionProperty)
+            : translatedCoords ?? pos
+        }
         layerId={layer?.id}
         featureId={feature?.id}
         draggable
@@ -186,6 +225,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             heightReference={heightReference(hr)}
             distanceDisplayCondition={distanceDisplayCondition}
             sizeInMeters={imageSizeInMeters}
+            pixelOffset={cartPixelOffset}
+            eyeOffset={cartEyeOffset}
           />
         )}
         {label && (
@@ -204,7 +245,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
                 ? VerticalOrigin.BOTTOM
                 : VerticalOrigin.CENTER
             }
-            pixelOffset={pixelOffset}
+            pixelOffset={labelPixelOffset}
             fillColor={labelColorCesium}
             font={toCSSFont(labelTypography, { fontSize: 30 })}
             text={stringLabelText}

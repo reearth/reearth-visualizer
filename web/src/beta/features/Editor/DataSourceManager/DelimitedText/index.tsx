@@ -4,9 +4,6 @@ import Button from "@reearth/beta/components/Button";
 import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Text from "@reearth/beta/components/Text";
-import { useT } from "@reearth/services/i18n";
-
-import { DataProps, SourceType, DataSourceOptType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -15,7 +12,10 @@ import {
   SourceTypeWrapper,
   SubmitWrapper,
   generateTitle,
-} from "../utils";
+} from "@reearth/beta/features/Editor/utils";
+import { useT } from "@reearth/services/i18n";
+
+import { DataProps, SourceType, DataSourceOptType } from "..";
 
 const DelimitedText: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();

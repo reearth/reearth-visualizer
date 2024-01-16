@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   locales: ["en", "ja"],
   output: "src/services/i18n/translations/$LOCALE.yml",
   input: ["src/**/*.{ts,tsx}"],

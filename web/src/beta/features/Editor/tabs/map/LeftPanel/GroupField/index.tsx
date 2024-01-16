@@ -24,6 +24,7 @@ type GroupSectionFieldProps = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: (groupId: string) => void;
   onDataSourceManagerOpen: () => void;
+  onSketchLayerManagerOpen: () => void;
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onFlyTo?: FlyTo;
 };
@@ -38,6 +39,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onSketchLayerManagerOpen,
   onLayerVisibilityUpate,
   onFlyTo,
 }) => {
@@ -64,7 +66,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
 
   return (
     <>
-      <StyledSidePanelSectionField title={t("Scene")} startCollapsed gap={0}>
+      <StyledSidePanelSectionField title={t("Scene")} startCollapsed gap={0} storageKey="scene">
         {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
           (collection, index) =>
             collection && (
@@ -77,7 +79,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
             ),
         )}
       </StyledSidePanelSectionField>
-      <StyledSidePanelSectionField title={t("Layers")}>
+      <StyledSidePanelSectionField title={t("Layers")} storageKey="layer">
         <Layers
           layers={layers}
           selectedLayerId={selectedLayerId}
@@ -85,6 +87,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
           onLayerNameUpdate={onLayerNameUpdate}
           onLayerSelect={onLayerSelect}
           onDataSourceManagerOpen={onDataSourceManagerOpen}
+          onSketchLayerManagerOpen={onSketchLayerManagerOpen}
           onLayerVisibilityUpate={onLayerVisibilityUpate}
           onFlyTo={onFlyTo}
         />

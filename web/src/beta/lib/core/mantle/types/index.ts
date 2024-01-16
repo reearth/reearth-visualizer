@@ -71,6 +71,7 @@ export type Data = {
   value?: any;
   layers?: string | string[];
   jsonProperties?: string[];
+  isSketchLayer?: boolean;
   updateInterval?: number; // milliseconds
   parameters?: Record<string, any>;
   idProperty?: string;
@@ -112,7 +113,8 @@ export type DataType =
   | "georss"
   | "gltf"
   | "tiles"
-  | "tms";
+  | "tms"
+  | "heatMap";
 
 export type TimeInterval = [start: Date, end?: Date];
 

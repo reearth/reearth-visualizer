@@ -2,6 +2,8 @@ import { objKeys } from "../utils";
 
 import type { ExpressionContainer } from "./expression";
 import type {
+  LUT,
+  Bound,
   Camera,
   ClassificationType,
   EXPERIMENTAL_clipping,
@@ -24,10 +26,14 @@ export type AppearanceTypes = {
   model: ModelAppearance;
   "3dtiles": Cesium3DTilesAppearance;
   ellipsoid: EllipsoidAppearance;
+  ellipse: EllipseAppearance;
   box: BoxAppearance;
   photooverlay: LegacyPhotooverlayAppearance;
   resource: ResourceAppearance;
   raster: RasterAppearance;
+  heatMap: HeatMapAppearance;
+  frustum: FrustumAppearance;
+  transition: TransitionAppearance;
 };
 
 export type MarkerAppearance = {
@@ -70,6 +76,8 @@ export type MarkerAppearance = {
   extrude?: boolean;
   near?: number;
   far?: number;
+  pixelOffset?: [number, number];
+  eyeOffset?: [number, number, number];
 };
 
 export type PolylineAppearance = {
@@ -99,11 +107,39 @@ export type PolygonAppearance = {
   classificationType?: ClassificationType;
 };
 
+export type HeatMapAppearance = {
+  valueMap: string;
+  bounds: Bound;
+  colorMap?: LUT;
+  cropBounds?: Bound;
+  width?: number;
+  height?: number;
+  minValue?: number;
+  maxValue?: number;
+  opacity?: number;
+  contourSpacing?: number;
+  contourThickness?: number;
+  contourAlpha?: number;
+  logarithmic?: boolean;
+};
+
 export type EllipsoidAppearance = {
   show?: boolean;
   heightReference?: "none" | "clamp" | "relative";
   shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
   radius?: number;
+  fillColor?: string;
+  near?: number;
+  far?: number;
+};
+
+export type EllipseAppearance = {
+  show?: boolean;
+  heightReference?: "none" | "clamp" | "relative";
+  classificationType?: ClassificationType;
+  shadows?: "disabled" | "enabled" | "cast_only" | "receive_only";
+  radius?: number;
+  fill?: boolean;
   fillColor?: string;
   near?: number;
   far?: number;
@@ -136,6 +172,15 @@ export type ModelAppearance = {
   specularEnvironmentMaps?: string;
   sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
   imageBasedLightIntensity?: number;
+};
+
+export type FrustumAppearance = {
+  show?: boolean;
+  color?: string;
+  opacity?: number;
+  zoom?: number;
+  aspectRatio?: number;
+  length?: number;
 };
 
 export type Cesium3DTilesAppearance = {
@@ -232,17 +277,28 @@ export type BoxAppearance = {
   far?: number;
 };
 
+export type TransitionAppearance = {
+  useTransition?: boolean;
+  translate?: [lng: number, lat: number, height: number];
+  rotate?: [heading: number, pitch: number, roll: number];
+  scale?: [x: number, y: number, z: number];
+};
+
 export const appearanceKeyObj: { [k in keyof AppearanceTypes]: 1 } = {
   marker: 1,
   polyline: 1,
   polygon: 1,
   ellipsoid: 1,
+  ellipse: 1,
   model: 1,
   "3dtiles": 1,
   box: 1,
   photooverlay: 1,
   resource: 1,
   raster: 1,
+  heatMap: 1,
+  frustum: 1,
+  transition: 1,
 };
 
 export const appearanceKeys = objKeys<keyof AppearanceTypes>(appearanceKeyObj);

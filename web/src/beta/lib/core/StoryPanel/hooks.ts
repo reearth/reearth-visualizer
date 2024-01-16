@@ -34,6 +34,13 @@ export default (
   const [currentPageId, setCurrentPageId] = useState<string>();
   const [selectedPageId, setSelectedPageId] = useState<string>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
+  const [disableSelection, setDisableSelection] = useState(false);
+
+  const handleSelectionDisable = useCallback(
+    (disabled?: boolean) => setDisableSelection(!!disabled),
+    [],
+  );
+
   const [layerOverride, setLayerOverride] = useState<{
     extensionId: string;
     layerIds?: string[];
@@ -46,29 +53,33 @@ export default (
 
   const handlePageSelect = useCallback(
     (pageId?: string) => {
-      if (!isEditable) return;
+      if (!isEditable || pageId === selectedPageId || disableSelection) return;
       if (selectedBlockId) {
-        setSelectedBlockId(selectedBlockId);
+        setSelectedBlockId(undefined);
       }
-      setSelectedPageId(pid => (pageId && pid !== pageId ? pageId : undefined));
+      setSelectedPageId(pageId);
     },
-    [selectedBlockId, isEditable],
+    [selectedPageId, selectedBlockId, isEditable, disableSelection],
   );
 
   const handleBlockSelect = useCallback(
     (blockId?: string) => {
-      if (!isEditable) return;
+      if (!isEditable || blockId === selectedBlockId || disableSelection) return;
       if (selectedPageId) {
         setSelectedPageId(undefined);
       }
-      setSelectedBlockId(id => (!blockId || id === blockId ? undefined : blockId));
+      setSelectedBlockId(blockId);
     },
-    [selectedPageId, isEditable],
+    [selectedPageId, selectedBlockId, isEditable, disableSelection],
   );
 
-  const handleBlockDouleClick = useCallback((blockId?: string) => {
-    setSelectedBlockId(id => (!blockId || id === blockId ? blockId : blockId));
-  }, []);
+  const handleBlockDoubleClick = useCallback(
+    (blockId?: string) => {
+      if (disableSelection) return;
+      setSelectedBlockId(blockId);
+    },
+    [disableSelection],
+  );
 
   const onTimeChange = useCallback(
     (time: Date) => {
@@ -211,13 +222,15 @@ export default (
     showPageSettings,
     isAutoScrolling,
     layerOverride,
+    disableSelection,
     setCurrentPageId,
     setLayerOverride,
+    handleSelectionDisable,
     handleLayerOverride,
     handlePageSettingsToggle,
     handlePageSelect,
     handleBlockSelect,
-    handleBlockDouleClick,
+    handleBlockDoubleClick,
     handleCurrentPageChange,
   };
 };
