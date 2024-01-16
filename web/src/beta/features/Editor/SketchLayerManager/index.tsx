@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import Button from "@reearth/beta/components/Button";
 import Modal from "@reearth/beta/components/Modal";
 import TabMenu from "@reearth/beta/components/TabMenu";
-import { SketchLayerDataType } from "@reearth/beta/lib/core/mantle/types";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 
@@ -11,6 +10,7 @@ import { LayerAddProps } from "../useLayers";
 
 import CustomedProperties from "./CustomedProperties";
 import General from "./General";
+import { SketchLayerDataType } from "./types";
 
 export type Property = { [x: string]: string };
 

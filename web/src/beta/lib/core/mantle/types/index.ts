@@ -116,15 +116,6 @@ export type DataType =
   | "tms"
   | "heatMap";
 
-export type SketchLayerDataType =
-  | "Text"
-  | "TextArea"
-  | "URL"
-  | "Asset"
-  | "Float"
-  | "Int"
-  | "Boolean";
-
 export type TimeInterval = [start: Date, end?: Date];
 
 // Feature
