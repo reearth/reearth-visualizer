@@ -4,9 +4,9 @@ import { ClockStep, JulianDate, Math as CesiumMath } from "cesium";
 import { useImperativeHandle, Ref, RefObject, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
-import { TickEventCallback } from "@reearth/beta/lib/core/Map";
+import { MouseEventCallbacks, TickEventCallback } from "@reearth/beta/lib/core/Map";
 
-import type { EngineRef, MouseEvents, MouseEvent, Feature, ComputedFeature } from "..";
+import type { EngineRef, MouseEventProps, Feature, ComputedFeature } from "..";
 
 import {
   getLocationFromScreen,
@@ -31,6 +31,7 @@ import {
   getCameraEllipsoidIntersection,
   getCameraTerrainIntersection,
   cartesianToLatLngHeight,
+  getExtrudedHeight,
 } from "./common";
 import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
@@ -48,21 +49,21 @@ export default function useEngineRef(
   cesium: RefObject<CesiumComponentRef<Cesium.Viewer>>,
 ): EngineRef {
   const cancelCameraFlight = useRef<() => void>();
-  const mouseEventCallbacks = useRef<MouseEvents>({
-    click: undefined,
-    doubleclick: undefined,
-    mousedown: undefined,
-    mouseup: undefined,
-    rightclick: undefined,
-    rightdown: undefined,
-    rightup: undefined,
-    middleclick: undefined,
-    middledown: undefined,
-    middleup: undefined,
-    mousemove: undefined,
-    mouseenter: undefined,
-    mouseleave: undefined,
-    wheel: undefined,
+  const mouseEventCallbacks = useRef<MouseEventCallbacks>({
+    click: [],
+    doubleclick: [],
+    mousedown: [],
+    mouseup: [],
+    rightclick: [],
+    rightdown: [],
+    rightup: [],
+    middleclick: [],
+    middledown: [],
+    middleup: [],
+    mousemove: [],
+    mouseenter: [],
+    mouseleave: [],
+    wheel: [],
   });
   const tickEventCallback = useRef<TickEventCallback[]>([]);
   const e = useMemo((): EngineRef => {
@@ -243,6 +244,50 @@ export default function useEngineRef(
           scene.camera.frustum.fov = camera.fov;
         }
         return;
+      },
+      getExtrudedHeight: (position, windowPosition) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return getExtrudedHeight(
+          viewer.scene,
+          new Cesium.Cartesian3(position[0], position[1], position[2]),
+          new Cesium.Cartesian2(windowPosition[0], windowPosition[1]),
+        );
+      },
+      getNormal: (point, cartesianScratch) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        return scene.globe.ellipsoid.geodeticSurfaceNormal(point, cartesianScratch);
+      },
+      getSurfaceDistance: (point1, point2) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const geodesic = new Cesium.EllipsoidGeodesic(undefined, undefined, scene.globe.ellipsoid);
+        geodesic.setEndPoints(
+          Cesium.Cartographic.fromCartesian(
+            point1,
+            scene.globe.ellipsoid,
+            new Cesium.Cartographic(),
+          ),
+          Cesium.Cartographic.fromCartesian(
+            point2,
+            scene.globe.ellipsoid,
+            new Cesium.Cartographic(),
+          ),
+        );
+        return geodesic.surfaceDistance;
+      },
+      getScene: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return viewer.scene;
+      },
+      getEntities: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return viewer.entities;
       },
       flyTo: (target, options) => {
         if (target && typeof target === "object") {
@@ -565,47 +610,47 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         flyToGround(viewer, cancelCameraFlight, camera, options, offset);
       },
-      onClick: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.click = cb;
+      onClick: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.click.push(cb);
       },
-      onDoubleClick: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.doubleclick = cb;
+      onDoubleClick: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.doubleclick.push(cb);
       },
-      onMouseDown: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.mousedown = cb;
+      onMouseDown: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.mousedown.push(cb);
       },
-      onMouseUp: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.mouseup = cb;
+      onMouseUp: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.mouseup.push(cb);
       },
-      onRightClick: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.rightclick = cb;
+      onRightClick: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.rightclick.push(cb);
       },
-      onRightDown: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.rightdown = cb;
+      onRightDown: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.rightdown.push(cb);
       },
-      onRightUp: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.rightup = cb;
+      onRightUp: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.rightup.push(cb);
       },
-      onMiddleClick: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.middleclick = cb;
+      onMiddleClick: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.middleclick.push(cb);
       },
-      onMiddleDown: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.middledown = cb;
+      onMiddleDown: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.middledown.push(cb);
       },
-      onMiddleUp: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.middleup = cb;
+      onMiddleUp: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.middleup.push(cb);
       },
-      onMouseMove: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.mousemove = cb;
+      onMouseMove: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.mousemove.push(cb);
       },
-      onMouseEnter: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.mouseenter = cb;
+      onMouseEnter: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.mouseenter.push(cb);
       },
-      onMouseLeave: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.mouseleave = cb;
+      onMouseLeave: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.mouseleave.push(cb);
       },
-      onWheel: (cb: ((props: MouseEvent) => void) | undefined) => {
-        mouseEventCallbacks.current.wheel = cb;
+      onWheel: (cb: (props: MouseEventProps) => void) => {
+        mouseEventCallbacks.current.wheel.push(cb);
       },
       mouseEventCallbacks: mouseEventCallbacks.current,
       changeSpeed: (speed: number) => {

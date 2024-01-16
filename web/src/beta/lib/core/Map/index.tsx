@@ -4,6 +4,7 @@ import { INTERACTION_MODES } from "../Crust";
 
 import useHooks, { MapRef } from "./hooks";
 import Layers, { type Props as LayersProps } from "./Layers";
+import Sketch from "./Sketch";
 import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
@@ -57,6 +58,7 @@ function Map(
   const {
     engineRef,
     layersRef,
+    sketchRef,
     selectedLayer,
     requestingRenderMode,
     handleLayerSelect,
@@ -109,6 +111,7 @@ function Map(
         requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
       />
+      <Sketch ref={sketchRef} layersRef={layersRef} engineRef={engineRef} />
     </Engine>
   ) : null;
 }

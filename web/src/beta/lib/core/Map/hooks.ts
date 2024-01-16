@@ -10,6 +10,7 @@ import type {
   ComputedLayer,
   RequestingRenderMode,
   SceneProperty,
+  SketchRef,
 } from "./types";
 import useTimelineManager, { TimelineManagerRef } from "./useTimelineManager";
 
@@ -38,6 +39,7 @@ export default function ({
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
+  const sketchRef = useRef<SketchRef>(null);
   const requestingRenderMode = useRef<RequestingRenderMode>(NO_REQUEST_RENDER);
 
   useImperativeHandle(
@@ -46,6 +48,7 @@ export default function ({
       mapRef({
         engineRef,
         layersRef,
+        sketchRef,
         timelineManagerRef,
       }),
     [timelineManagerRef],
@@ -105,6 +108,7 @@ export default function ({
   return {
     engineRef,
     layersRef,
+    sketchRef,
     selectedLayer,
     requestingRenderMode,
     handleLayerSelect,

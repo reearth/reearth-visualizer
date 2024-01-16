@@ -1,6 +1,7 @@
 import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
+import { type InteractionModeType } from "@reearth/beta/features/Editor/useInteractionMode";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
 import StoryPanel, {
@@ -22,6 +23,7 @@ export type Props = {
   isBuilt?: boolean;
   inEditor?: boolean;
   currentCamera?: Camera;
+  interactionMode?: InteractionModeType;
   // storytelling
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
@@ -37,6 +39,7 @@ const Visualizer: React.FC<Props> = ({
   isBuilt,
   inEditor,
   currentCamera,
+  interactionMode,
   storyPanelRef,
   showStoryPanel,
   selectedStory,
@@ -115,6 +118,7 @@ const Visualizer: React.FC<Props> = ({
         useExperimentalSandbox={useExperimentalSandbox}
         camera={currentCamera}
         storyPanelPosition={story?.position}
+        interactionMode={interactionMode}
         onCameraChange={onCameraChange}
         onLayerSelect={selectLayer}
         onWidgetLayoutUpdate={onWidgetUpdate}
