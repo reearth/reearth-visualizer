@@ -334,6 +334,13 @@ export type SceneProperty = {
     tile_opacity?: number;
     heatmap?: boolean;
   }[];
+  tileLabels?: {
+    id: string;
+    labelType: "japan_gsi_optimal_bvmap"; // | "other_map"
+    fillColor?: string;
+    outlineColor?: string;
+    params: Record<string, any>; // Function isn't allowed
+  }[];
   terrain?: {
     terrain?: boolean;
     terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
