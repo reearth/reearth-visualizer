@@ -14,6 +14,7 @@ import { metrics, styled } from "@reearth/services/theme";
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import SketchLayerManager from "./SketchLayerManager";
+import useInteractionMode from "./useInteractionMode";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 import useScene from "./useScene";
@@ -172,6 +173,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerStyleSelect: handleLayerStyleSelected,
   });
 
+  const {
+    interactionMode,
+    selectedSketchTool,
+    sketchModeDisabled,
+    handleInteractionModeChange,
+    handleSelectedSketchToolChange,
+  } = useInteractionMode({ tab, selectedLayer, visualizerRef, handleLayerConfigUpdate });
+
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     sceneId,
@@ -179,6 +188,12 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
+    interactionMode,
+    selectedLayer,
+    selectedSketchTool,
+    sketchModeDisabled,
+    onInteractionModeChange: handleInteractionModeChange,
+    onSelectedSketchToolChange: handleSelectedSketchToolChange,
     handleProjectTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
@@ -220,6 +235,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   selectedStory={selectedStory}
                   installableBlocks={installableStoryBlocks}
                   currentCamera={currentCamera}
+                  interactionMode={interactionMode}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
                 />

@@ -1,3 +1,4 @@
+import { Cartesian3, EntityCollection, Scene } from "cesium";
 import type {
   ForwardRefExoticComponent,
   PropsWithoutRef,
@@ -27,6 +28,7 @@ import type {
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
+import { SketchFeatureCallback } from "../Sketch/hooks";
 import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
@@ -60,8 +62,6 @@ export type {
 export * from "./event";
 
 export type EngineRef = {
-  [index in keyof MouseEventHandles]: MouseEventHandles[index];
-} & {
   name: string;
   requestRender: () => void;
   getViewport: () => Rect | undefined;
@@ -96,6 +96,14 @@ export type EngineRef = {
   toWindowPosition: (
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
+  getExtrudedHeight: (
+    position: [x: number, y: number, z: number],
+    windowPosition: [x: number, y: number],
+  ) => number | undefined;
+  getNormal: (point: Cartesian3, cartesianScratch: Cartesian3) => Cartesian3 | undefined;
+  getSurfaceDistance: (point1: Cartesian3, point2: Cartesian3) => number | undefined;
+  getScene: () => Scene | undefined;
+  getEntities: () => EntityCollection | undefined;
   flyTo: FlyTo;
   flyToBBox: (
     bbox: [number, number, number, number],
@@ -121,7 +129,7 @@ export type EngineRef = {
   moveRight: (amount: number) => void;
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
-  mouseEventCallbacks: MouseEvents;
+  mouseEventCallbacks: MouseEventCallbacks;
   pause: () => void;
   play: () => void;
   changeSpeed: (speed: number) => void;
@@ -149,7 +157,7 @@ export type EngineRef = {
     // TODO: Get condition as expression for plugin
     condition?: (f: PickedFeature) => boolean,
   ) => PickedFeature[] | undefined;
-};
+} & MouseEventHandles;
 
 export type EngineProps = {
   className?: string;
@@ -205,7 +213,7 @@ export type Clock = {
   playing?: boolean;
 };
 
-export type MouseEvent = {
+export type MouseEventProps = {
   x?: number;
   y?: number;
   lat?: number;
@@ -215,25 +223,29 @@ export type MouseEvent = {
   delta?: number;
 };
 
-export type MouseEvents = {
-  click: ((props: MouseEvent) => void) | undefined;
-  doubleclick: ((props: MouseEvent) => void) | undefined;
-  mousedown: ((props: MouseEvent) => void) | undefined;
-  mouseup: ((props: MouseEvent) => void) | undefined;
-  rightclick: ((props: MouseEvent) => void) | undefined;
-  rightdown: ((props: MouseEvent) => void) | undefined;
-  rightup: ((props: MouseEvent) => void) | undefined;
-  middleclick: ((props: MouseEvent) => void) | undefined;
-  middledown: ((props: MouseEvent) => void) | undefined;
-  middleup: ((props: MouseEvent) => void) | undefined;
-  mousemove: ((props: MouseEvent) => void) | undefined;
-  mouseenter: ((props: MouseEvent) => void) | undefined;
-  mouseleave: ((props: MouseEvent) => void) | undefined;
-  wheel: ((props: MouseEvent) => void) | undefined;
-};
+export type MouseEventCallback = (props: MouseEventProps) => void;
+export type MouseWheelEventCallback = (props: MouseEventProps) => void;
+export type MouseEventTypes =
+  | "click"
+  | "doubleclick"
+  | "mousedown"
+  | "mouseup"
+  | "rightclick"
+  | "rightdown"
+  | "rightup"
+  | "middleclick"
+  | "middledown"
+  | "middleup"
+  | "mousemove"
+  | "mouseenter"
+  | "mouseleave"
+  | "wheel";
 
-export type TickEvent = (cb: TickEventCallback) => void;
-export type TickEventCallback = (current: Date, clock: { start: Date; stop: Date }) => void;
+export type MouseEvents = {
+  [key in MouseEventTypes]: MouseEventCallback;
+} & {
+  wheel: MouseWheelEventCallback;
+};
 
 export type MouseEventHandles = {
   onClick: (fn: MouseEvents["click"]) => void;
@@ -251,6 +263,11 @@ export type MouseEventHandles = {
   onMouseLeave: (fn: MouseEvents["mouseleave"]) => void;
   onWheel: (fn: MouseEvents["wheel"]) => void;
 };
+
+export type MouseEventCallbacks = { [key in keyof MouseEvents]: MouseEvents[key][] };
+
+export type TickEvent = (cb: TickEventCallback) => void;
+export type TickEventCallback = (current: Date, clock: { start: Date; stop: Date }) => void;
 
 export type SceneMode = "3d" | "2d" | "columbus";
 export type IndicatorTypes = "default" | "crosshair" | "custom";
@@ -429,3 +446,11 @@ export type Engine = {
 };
 
 export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame
+
+export type SketchType = "marker" | "polyline" | "circle" | "rectangle" | "polygon";
+
+export type SketchRef = {
+  enable: (enable: boolean) => void;
+  setType: (type: SketchType) => void;
+  onFeatureCreate: (cb: SketchFeatureCallback) => void;
+};

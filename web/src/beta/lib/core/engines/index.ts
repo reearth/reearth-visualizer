@@ -6,7 +6,7 @@ export type {
   EngineProps,
   LayerSelectionReason,
   SceneProperty,
-  MouseEvent,
+  MouseEventProps,
   MouseEvents,
   Geometry,
   AppearanceTypes,

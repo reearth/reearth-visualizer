@@ -1,12 +1,13 @@
 import type { RefObject } from "react";
 
-import type { EngineRef, LayersRef } from "./types";
+import type { EngineRef, LayersRef, SketchRef } from "./types";
 import { TimelineManagerRef } from "./useTimelineManager";
 import { FunctionKeys, WrappedRef, wrapRef } from "./utils";
 
 export type MapRef = {
   engine: WrappedRef<EngineRef>;
   layers: WrappedRef<LayersRef>;
+  sketch: WrappedRef<SketchRef>;
   timeline?: TimelineManagerRef;
 };
 
@@ -77,6 +78,11 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   selectFeatures: 1,
   unselectFeatures: 1,
   pickManyFromViewport: 1,
+  getExtrudedHeight: 1,
+  getNormal: 1,
+  getSurfaceDistance: 1,
+  getScene: 1,
+  getEntities: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -102,18 +108,27 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   overriddenLayers: 1,
 };
 
+const sketchRefKeys: FunctionKeys<SketchRef> = {
+  setType: 1,
+  enable: 1,
+  onFeatureCreate: 1,
+};
+
 export function mapRef({
   engineRef,
   layersRef,
+  sketchRef,
   timelineManagerRef,
 }: {
   engineRef: RefObject<EngineRef>;
   layersRef: RefObject<LayersRef>;
+  sketchRef: RefObject<SketchRef>;
   timelineManagerRef?: TimelineManagerRef;
 }): MapRef {
   return {
     engine: wrapRef(engineRef, engineRefKeys),
     layers: wrapRef(layersRef, layersRefKeys),
+    sketch: wrapRef(sketchRef, sketchRefKeys),
     timeline: timelineManagerRef,
   };
 }

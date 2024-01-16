@@ -32,7 +32,7 @@ import type {
   LayerSelectionReason,
   EngineRef,
   SceneProperty,
-  MouseEvent,
+  MouseEventProps,
   MouseEvents,
   LayerEditEvent,
 } from "..";
@@ -48,6 +48,9 @@ import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
+
+type CesiumMouseEvent = (movement: CesiumMovementEvent, target: RootEventTarget) => void;
+type CesiumMouseWheelEvent = (delta: number) => void;
 
 export default ({
   ref,
@@ -432,27 +435,6 @@ export default ({
     }
   }, [cesium, selectedLayerId, onLayerSelect, layersRef, featureFlags]);
 
-  const handleMouseEvent = useCallback(
-    (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
-      if (engineAPI.mouseEventCallbacks[type]) {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        const position = e.position || e.startPosition;
-        const props: MouseEvent = {
-          x: position?.x,
-          y: position?.y,
-          ...(position
-            ? getLocationFromScreen(viewer.scene, position.x, position.y, true) ?? {}
-            : {}),
-        };
-        const layerId = getLayerId(target);
-        if (layerId) props.layerId = layerId;
-        engineAPI.mouseEventCallbacks[type]?.(props);
-      }
-    },
-    [engineAPI],
-  );
-
   const sphericalHarmonicCoefficients = useMemo(
     () =>
       property?.light?.sphericalHarmonicCoefficients
@@ -473,15 +455,42 @@ export default ({
     hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
   });
 
+  const handleMouseEvent = useCallback(
+    (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
+      if (engineAPI.mouseEventCallbacks[type]?.length > 0) {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const position = e.position || e.startPosition;
+        const props: MouseEventProps = {
+          x: position?.x,
+          y: position?.y,
+          ...(position
+            ? getLocationFromScreen(viewer.scene, position.x, position.y, true) ?? {}
+            : {}),
+        };
+        const layerId = getLayerId(target);
+        if (layerId) props.layerId = layerId;
+        engineAPI.mouseEventCallbacks[type].forEach(cb => cb(props));
+      }
+    },
+    [engineAPI],
+  );
+
   const handleMouseWheel = useCallback(
     (delta: number) => {
-      engineAPI.mouseEventCallbacks.wheel?.({ delta });
+      if (engineAPI.mouseEventCallbacks.wheel.length > 0) {
+        engineAPI.mouseEventCallbacks.wheel.forEach(cb => cb({ delta }));
+      }
     },
     [engineAPI],
   );
 
   const mouseEventHandles = useMemo(() => {
-    const mouseEvents: { [index in keyof MouseEvents]: undefined | any } = {
+    const mouseEvents: {
+      [index in keyof Omit<MouseEvents, "wheel">]: undefined | CesiumMouseEvent;
+    } & {
+      wheel: CesiumMouseWheelEvent | undefined;
+    } = {
       click: undefined,
       doubleclick: undefined,
       mousedown: undefined,
@@ -495,17 +504,15 @@ export default ({
       mousemove: undefined,
       mouseenter: undefined,
       mouseleave: undefined,
-      wheel: undefined,
+      wheel: (delta: number) => {
+        handleMouseWheel(delta);
+      },
     };
     (Object.keys(mouseEvents) as (keyof MouseEvents)[]).forEach(type => {
-      mouseEvents[type] =
-        type === "wheel"
-          ? (delta: number) => {
-              handleMouseWheel(delta);
-            }
-          : (e: CesiumMovementEvent, target: RootEventTarget) => {
-              handleMouseEvent(type as keyof MouseEvents, e, target);
-            };
+      if (type !== "wheel")
+        mouseEvents[type] = (e: CesiumMovementEvent, target: RootEventTarget) => {
+          handleMouseEvent(type as keyof MouseEvents, e, target);
+        };
     });
     return mouseEvents;
   }, [handleMouseEvent, handleMouseWheel]);
