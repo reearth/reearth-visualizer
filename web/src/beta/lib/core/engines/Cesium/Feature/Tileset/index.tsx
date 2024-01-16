@@ -27,11 +27,9 @@ function Tileset({
   evalFeature,
   onComputedFeatureFetch,
   onLayerFetch,
-  showWireframe,
-  showBoundingVolume,
   ...props
 }: Props): JSX.Element | null {
-  const { shadows, colorBlendMode, pbr } = property ?? {};
+  const { shadows, colorBlendMode, pbr, showWireframe, showBoundingVolume } = property ?? {};
   const boxId = `${layer?.id}_box`;
   const {
     tilesetUrl,
