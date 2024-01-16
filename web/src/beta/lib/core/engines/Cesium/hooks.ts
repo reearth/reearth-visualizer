@@ -49,6 +49,14 @@ import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
+interface CustomGlobeSurface {
+  tileProvider: {
+    _debug: {
+      wireframe: boolean;
+    };
+  };
+}
+
 export default ({
   ref,
   property,
@@ -854,7 +862,7 @@ export default ({
 
   useEffect(() => {
     if (globe) {
-      const surface = (globe as any)._surface;
+      const surface = (globe as any)._surface as CustomGlobeSurface;
       if (surface) {
         surface.tileProvider._debug.wireframe = property?.render?.showWireframe ?? false;
       }
