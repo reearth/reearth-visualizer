@@ -25,9 +25,7 @@ import {
 
 import marker from "./marker.svg";
 
-export type Props = FeatureProps<Property> & {
-  hideIndicator?: boolean;
-};
+export type Props = FeatureProps<Property>;
 
 export type Property = MarkerAppearance & {
   // compat
@@ -35,15 +33,7 @@ export type Property = MarkerAppearance & {
   height?: number;
 };
 
-export default function Marker({
-  property,
-  id,
-  isVisible,
-  geometry,
-  layer,
-  feature,
-  hideIndicator,
-}: Props) {
+export default function Marker({ property, id, isVisible, geometry, layer, feature }: Props) {
   const coordinates = useMemo(
     () =>
       geometry?.type === "Point"
@@ -89,6 +79,7 @@ export default function Marker({
     eyeOffset,
     pixelOffset,
     heightReference: hr,
+    hideIndicator,
   } = property ?? {};
 
   const { useTransition, translate } = layer?.transition ?? {};
