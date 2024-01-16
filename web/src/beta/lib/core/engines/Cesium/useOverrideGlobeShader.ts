@@ -14,6 +14,7 @@ import { StringMatcher } from "../../utils/StringMatcher";
 import GlobeFSCustoms from "./Shaders/OverriddenShaders/GlobeFS/Customs.glsl?raw";
 import GlobeFSDefinitions from "./Shaders/OverriddenShaders/GlobeFS/Definitions.glsl?raw";
 import { PrivateCesiumGlobe } from "./types";
+import { VertexTerrainElevationMaterial } from "./VertexTerrainElevationMaterial";
 
 function makeGlobeShadersDirty(globe: Globe): void {
   // Invoke the internal makeShadersDirty() by setting a material to globe to
@@ -100,6 +101,12 @@ export const useOverrideGlobeShader = ({
       //     "vec4 finalColor = reearth_computeImageBasedLightingColor(color);",
       //   )
       //   .execute(GlobeFS);
+      console.log("Shader execution start!!");
+      globe.material = new VertexTerrainElevationMaterial();
+      globe.material.uniforms.minHeight = 0;
+      globe.material.uniforms.maxHeight = 4000;
+      globe.material.uniforms.logarithmic = true;
+      console.log(globe.material);
       replacedGlobeFS = new StringMatcher()
         .replace(
           [
@@ -109,9 +116,36 @@ export const useOverrideGlobeShader = ({
             "alpha = czm_branchFreeTernary(colorDiff.r < colorToAlpha.a, 0.0, alpha);",
             "#endif",
           ],
-          "vec4 finalColor = reearth_calculateElevationMapForGlobe()",
+          `// colorToAlpha is used as an identification of imagery layer here.
+          if (greaterThan(colorToAlpha, vec4(0.9)) == bvec4(true)) {
+            float decodedValue = dot(color, vec3(16711680.0, 65280.0, 255.0));
+            float height = (decodedValue - 8388607.0) * 0.01;
+            float minHeight = czm_branchFreeTernary(
+              logarithmic_3,
+              pseudoLog(minHeight_1),
+              minHeight_1
+            );
+            float maxHeight = czm_branchFreeTernary(
+              logarithmic_3,
+              pseudoLog(maxHeight_2),
+              maxHeight_2
+            );
+            float value = czm_branchFreeTernary(
+              logarithmic_3,
+              pseudoLog(height),
+              height
+            );
+            float normalizedHeight = clamp(
+              (value - minHeight) / (maxHeight - minHeight),
+              0.0,
+              1.0
+            );
+            vec4 mappedColor = texture(colorMap_0, vec2(normalizedHeight, 0.5));
+            color = mappedColor.rgb;
+            }`,
         )
         .execute(GlobeFS);
+      console.log("shader execution ended !!");
     } catch (e) {
       if (import.meta.env.DEV) {
         throw new Error(`Failed to override GlobeFS: ${JSON.stringify(e)}`);
