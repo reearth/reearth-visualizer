@@ -22,6 +22,7 @@ function LeftPanelLayers() {
       onLayerNameUpdate={(_inp: LayerNameUpdateProps) => {}}
       onLayerSelect={(_id: string) => {}}
       onDataSourceManagerOpen={() => {}}
+      onSketchLayerManagerOpen={() => {}}
       onLayerVisibilityUpate={(_inp: LayerVisibilityUpdateProps) => {}}
     />
   );

@@ -81,7 +81,20 @@ layer name: Layer name
 Layer: Layer
 Layers: Layers
 All Layers: All Layers
+Name: Name
+Property name you want to add.: 'Property name you want to add'
+Data Type: Data Type
+Type of data you want to add.: Type of data you want to add.
+Add to proprety list: Add to proprety list
+Data Types: Data Types
+Layer Name: Layer Name
+Layer name you want to add.: Layer name you want to add.
 Layer Style: Layer Style
+Layer style you want to add.: Layer style you want to add.
+General: General
+Customized Properties: Customized Properties
+New Sketch Layer: New Sketch Layer
+Create: Create
 Style_: Style_
 Delete: Delete
 Main: Main
@@ -94,6 +107,7 @@ Unknown scene setting: Unknown scene setting
 Scene: Scene
 Outline: Outline
 Add Layer from Resource: Add Layer from Resource
+Add Sketch Layer: ''
 Inspector: Inspector
 ID: ID
 Geometry: Geometry
@@ -167,7 +181,6 @@ Select Layer Style: Select Layer Style
 No layerStyle match your search.: ''
 You haven't added any layerStyle yet. Click the add button in the bottom panel to get started.: ''
 Create New Workspace: Create New Workspace
-Create: Create
 Workspace Name: Workspace Name
 Account Settings: Account Settings
 Workspaces: Workspaces
@@ -196,7 +209,6 @@ Most project settings are hidden when the project is archived. Please unarchive 
   Most project settings are hidden when the project is archived. Please
   unarchive the project to view and edit these settings.
 Project Info: Project Info
-Name: Name
 Description: Description
 Thumbnail: Thumbnail
 Submit: ''
