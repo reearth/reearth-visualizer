@@ -49,6 +49,14 @@ import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
 
+interface CustomGlobeSurface {
+  tileProvider: {
+    _debug: {
+      wireframe: boolean;
+    };
+  };
+}
+
 export default ({
   ref,
   property,
@@ -849,6 +857,17 @@ export default ({
     }
     viewer.forceResize();
   }, [property]);
+
+  const globe = cesium.current?.cesiumElement?.scene.globe;
+
+  useEffect(() => {
+    if (globe) {
+      const surface = (globe as any)._surface as CustomGlobeSurface;
+      if (surface) {
+        surface.tileProvider._debug.wireframe = property?.render?.showWireframe ?? false;
+      }
+    }
+  }, [globe, property?.render?.showWireframe]);
 
   return {
     backgroundColor,

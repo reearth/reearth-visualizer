@@ -201,6 +201,8 @@ export type Cesium3DTilesAppearance = {
   specularEnvironmentMaps?: string;
   sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
   imageBasedLightIntensity?: number;
+  showWireframe?: boolean;
+  showBoundingVolume?: boolean;
 };
 
 export type LegacyPhotooverlayAppearance = {
