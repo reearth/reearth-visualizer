@@ -212,6 +212,7 @@ const tagObj: { [k in keyof Tag]: 1 } = {
   originalProperties: 1,
   computedFeature: 1,
   isFeatureSelected: 1,
+  hideIndicator: 1,
 };
 
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];
