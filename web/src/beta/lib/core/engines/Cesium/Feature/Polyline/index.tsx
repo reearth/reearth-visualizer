@@ -77,8 +77,8 @@ export default function Polyline({
       layerId={layer?.id}
       featureId={feature?.id}
       availability={availability}
-      properties={feature?.properties}>
-      hideIndicator={hideIndicator}
+      properties={feature?.properties}
+      hideIndicator={hideIndicator}>
       <PolylineGraphics
         positions={positions}
         width={strokeWidth}

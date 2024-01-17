@@ -125,8 +125,8 @@ export default function Polygon({
         layerId={layer?.id}
         featureId={feature?.id}
         availability={availability}
-        hideIndicator={hideIndicator}
-        properties={feature?.properties}>
+        properties={feature?.properties}
+        hideIndicator={hideIndicator}>
         <PolygonGraphics
           hierarchy={hierarchy}
           fill={fill}

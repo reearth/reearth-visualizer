@@ -208,8 +208,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         featureId={feature?.id}
         draggable
         properties={feature?.properties}
-        availability={availability}>
-        hideIndicator={hideIndicator}
+        availability={availability}
+        hideIndicator={hideIndicator}>
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}
