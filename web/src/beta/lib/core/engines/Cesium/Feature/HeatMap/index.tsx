@@ -6,6 +6,7 @@ import invariant from "tiny-invariant";
 
 import { HeatMapAppearance } from "@reearth/beta/lib/core/mantle";
 
+import { usePreRender } from "../../hooks/useSceneEvent";
 import { FeatureComponentConfig, FeatureProps } from "../utils";
 
 import { flareColorMapLUT } from "./constants";
@@ -45,37 +46,33 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
   );
 
   const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const isVisible = (): boolean => {
-      if (!scene?.camera) {
-        return false;
-      }
 
-      const camera = scene?.camera;
-      const frustum = camera?.frustum;
-      invariant(frustum instanceof PerspectiveFrustum);
-      const cullingVolume = frustum.computeCullingVolume(
-        camera?.position || Cartesian3.ONE,
-        camera?.direction || Cartesian3.ONE,
-        camera?.up || Cartesian3.ONE,
-      );
-      return cullingVolume.computeVisibility(boundingSphere) !== Intersect.OUTSIDE;
-    };
-    if (isVisible()) {
-      setVisible(true);
-      return;
+  const checkVisiblity = (): boolean => {
+    if (scene && !scene.camera) {
+      return false;
     }
-    const callback = (): void => {
-      if (isVisible()) {
-        setVisible(true);
-        scene?.camera?.changed.removeEventListener(callback);
-      }
-    };
-    scene?.camera?.changed.addEventListener(callback);
-    return () => {
-      scene?.camera?.changed.removeEventListener(callback);
-    };
-  }, [boundingSphere, scene]);
+
+    const camera = scene?.camera;
+    const frustum = camera?.frustum;
+    invariant(
+      frustum instanceof PerspectiveFrustum,
+      "Frustum should be a PerspectiveFrustum instance",
+    );
+
+    const cullingVolume = frustum.computeCullingVolume(
+      camera?.position || Cartesian3.ONE,
+      camera?.direction || Cartesian3.ONE,
+      camera?.up || Cartesian3.ONE,
+    );
+    return cullingVolume.computeVisibility(boundingSphere) !== Intersect.OUTSIDE;
+  };
+
+  usePreRender(() => {
+    const currentVisibility = checkVisiblity();
+    if (currentVisibility !== visible) {
+      setVisible(currentVisibility);
+    }
+  });
 
   useEffect(() => {
     return () => {
