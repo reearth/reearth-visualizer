@@ -17,23 +17,12 @@ import {
   type FeatureProps,
 } from "../utils";
 
-export type Props = FeatureProps<Property> & {
-  hideIndicator?: boolean;
-};
-
+export type Props = FeatureProps<Property>;
 export type Property = PolylineAppearance & {
   coordinates?: Coordinates;
 };
 
-export default function Polyline({
-  id,
-  isVisible,
-  property,
-  geometry,
-  layer,
-  feature,
-  hideIndicator,
-}: Props) {
+export default function Polyline({ id, isVisible, property, geometry, layer, feature }: Props) {
   const { show = true } = property || {};
   const coordinates = useMemo(
     () =>
@@ -53,6 +42,7 @@ export default function Polyline({
     strokeWidth = 1,
     shadows,
     classificationType: ct,
+    hideIndicator,
   } = property ?? {};
 
   const positions = useCustomCompareMemo(

@@ -20,7 +20,6 @@ import {
 
 export type Props = FeatureProps<Property> & {
   disableWorkaround?: boolean;
-  hideIndicator?: boolean;
 };
 
 export type Property = PolygonAppearance & {
@@ -35,7 +34,6 @@ export default function Polygon({
   layer,
   feature,
   disableWorkaround,
-  hideIndicator,
 }: Props) {
   const coordiantes = useMemo(
     () =>
@@ -60,6 +58,7 @@ export default function Polygon({
     shadows,
     extrudedHeight,
     classificationType: ct,
+    hideIndicator,
   } = property ?? {};
 
   const hierarchy = useCustomCompareMemo(
