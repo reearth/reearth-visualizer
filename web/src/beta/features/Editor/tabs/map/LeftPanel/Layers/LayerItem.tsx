@@ -16,6 +16,7 @@ type LayerItemProps = {
   layerTitle: string;
   isSelected: boolean;
   visible: boolean;
+  isSketchLayer?: boolean;
   onDelete: () => void;
   onSelect: () => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
@@ -27,6 +28,7 @@ const LayerItem = ({
   layerTitle,
   isSelected,
   visible,
+  isSketchLayer,
   onDelete,
   onSelect,
   onLayerNameUpdate,
@@ -117,6 +119,7 @@ const LayerItem = ({
             {layerTitle}
           </TitleText>
         )}
+        {isSketchLayer && <SketchLayer>S</SketchLayer>}
         <HideLayer onClick={handleUpdateVisibility}>
           <Text size="footnote">{value}</Text>
         </HideLayer>
@@ -150,6 +153,10 @@ const HideLayer = styled.div`
   }
 `;
 
+const SketchLayer = styled.div`
+  display: flex;
+  padding-right: 12px;
+`;
 const StyledTextInput = styled(TextInput)`
   width: 100%;
   font-size: 12px;

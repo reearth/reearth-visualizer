@@ -1,9 +1,6 @@
 import { useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { useT } from "@reearth/services/i18n";
-
-import { DataProps } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -11,7 +8,10 @@ import {
   Input,
   SubmitWrapper,
   generateTitle,
-} from "../utils";
+} from "@reearth/beta/features/Editor/utils";
+import { useT } from "@reearth/services/i18n";
+
+import { DataProps } from "..";
 
 const ThreeDTiles: React.FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();

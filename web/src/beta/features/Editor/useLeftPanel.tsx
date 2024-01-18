@@ -36,6 +36,7 @@ type Props = {
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onLayerSelect: (id: string) => void;
   onDataSourceManagerOpen: () => void;
+  onSketchLayerManagerOpen: () => void;
   onFlyTo?: FlyTo;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -65,6 +66,7 @@ export default ({
   onLayerSelect,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onSketchLayerManagerOpen,
   onLayerVisibilityUpate,
   onFlyTo,
   onPropertyUpdate,
@@ -84,6 +86,7 @@ export default ({
             onLayerSelect={onLayerSelect}
             onSceneSettingSelect={onSceneSettingSelect}
             onDataSourceManagerOpen={onDataSourceManagerOpen}
+            onSketchLayerManagerOpen={onSketchLayerManagerOpen}
             onFlyTo={onFlyTo}
           />
         );
@@ -117,6 +120,7 @@ export default ({
     onLayerSelect,
     onSceneSettingSelect,
     onDataSourceManagerOpen,
+    onSketchLayerManagerOpen,
     onFlyTo,
     selectedStory,
     currentPageId,
