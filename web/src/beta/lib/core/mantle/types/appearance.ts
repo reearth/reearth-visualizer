@@ -78,6 +78,7 @@ export type MarkerAppearance = {
   far?: number;
   pixelOffset?: [number, number];
   eyeOffset?: [number, number, number];
+  hideIndicator?: boolean;
 };
 
 export type PolylineAppearance = {
@@ -89,6 +90,7 @@ export type PolylineAppearance = {
   near?: number;
   far?: number;
   classificationType?: ClassificationType;
+  hideIndicator?: boolean;
 };
 
 export type PolygonAppearance = {
@@ -105,6 +107,7 @@ export type PolygonAppearance = {
   far?: number;
   extrudedHeight?: number;
   classificationType?: ClassificationType;
+  hideIndicator?: boolean;
 };
 
 export type HeatMapAppearance = {
