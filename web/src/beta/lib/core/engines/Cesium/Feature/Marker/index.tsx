@@ -79,6 +79,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     eyeOffset,
     pixelOffset,
     heightReference: hr,
+    hideIndicator,
   } = property ?? {};
 
   const { useTransition, translate } = layer?.transition ?? {};
@@ -186,7 +187,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
           featureId={feature?.id}
           unselectable
           properties={feature?.properties}
-          availability={availability}>
+          availability={availability}
+          hideIndicator={hideIndicator}>
           <PolylineGraphics
             positions={extrudePoints}
             material={extrudePointsLineColor}
@@ -206,7 +208,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         featureId={feature?.id}
         draggable
         properties={feature?.properties}
-        availability={availability}>
+        availability={availability}
+        hideIndicator={hideIndicator}>
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}
