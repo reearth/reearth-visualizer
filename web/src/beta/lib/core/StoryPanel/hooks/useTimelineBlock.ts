@@ -4,7 +4,7 @@ import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
 import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManager";
 import { TimelineValues } from "../Block/builtin/Timeline";
-import { convertOptionToSeconds, formatDateToSting } from "../utils";
+import { convertOptionToSeconds, formatDateToSting, formatTimezone, getTimeZone } from "../utils";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
 
@@ -31,7 +31,7 @@ export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
   const playSpeedOptions = useMemo(() => {
-    const speedOpt = ["1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
+    const speedOpt = ["1sec/sec", "0.5min/sec", "1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
     return convertOptionToSeconds(speedOpt);
   }, []);
 
@@ -40,6 +40,8 @@ export default (timelineValues?: TimelineValues) => {
   const [currentTime, setCurrentTime] = useState(
     getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
   );
+
+  const [timezone, setTimezone] = useState<string>(formatTimezone(currentTime));
 
   const range = useMemo(() => {
     if (timelineValues) {
@@ -135,6 +137,8 @@ export default (timelineValues?: TimelineValues) => {
   useEffect(() => {
     if (timelineValues) {
       const t = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
+      const timezoneOffset = getTimeZone(timelineValues?.currentTime);
+      setTimezone(timezoneOffset);
       return setCurrentTime(t);
     } else {
       return setCurrentTime(
@@ -148,6 +152,7 @@ export default (timelineValues?: TimelineValues) => {
     range,
     playSpeedOptions,
     speed,
+    timezone,
     onPlay,
     onSpeedChange: handleOnSpeedChange,
     onPause,

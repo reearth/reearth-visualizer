@@ -1,6 +1,9 @@
+import { useMemo } from "react";
+
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
+import { getTimeZone } from "@reearth/beta/lib/core/StoryPanel/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -32,6 +35,18 @@ const EditPanel = ({
     setTimelineValues,
   });
 
+  const checkTimezone = useMemo(() => {
+    if (!timelineValues) return false;
+
+    const startTimezone = getTimeZone(timelineValues?.startTime);
+    const currentTimezone = getTimeZone(timelineValues?.currentTime);
+    const endTimezone = getTimeZone(timelineValues?.endTime);
+
+    const areTimezonesEqual = startTimezone === currentTimezone && currentTimezone === endTimezone;
+
+    return areTimezonesEqual;
+  }, [timelineValues]);
+
   return (
     <Modal
       isVisible={isVisible}
@@ -42,7 +57,7 @@ const EditPanel = ({
         <Button
           text={t("Apply")}
           buttonType="primary"
-          disabled={!isDisabled || warning}
+          disabled={!isDisabled || warning || !checkTimezone}
           onClick={onAppyChange}
         />
       }>

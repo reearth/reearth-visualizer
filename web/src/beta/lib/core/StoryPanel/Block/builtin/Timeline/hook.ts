@@ -39,6 +39,7 @@ type TimelineProps = {
   timelineValues?: TimelineValues;
   padding?: PaddingProp;
   property?: any;
+  timezone?: string;
   onPlay?: (committer: TimelineCommitter) => void;
   onSpeedChange?: (speed: number, committerId?: string) => void;
   onPause: (committerId: string) => void;
@@ -63,6 +64,7 @@ export default ({
   timelineValues,
   padding,
   property,
+  timezone,
   onPlay,
   onSpeedChange,
   onPause,
@@ -87,11 +89,12 @@ export default ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selected, setSelected] = useState("1min/sec");
+  const [selected, setSelected] = useState("1sec/sec");
   const formattedCurrentTime = useMemo(() => {
-    const textDate = formatDateForTimeline(currentTime, { detail: true });
+    const textDate = formatDateForTimeline(currentTime, { detail: true }, timezone);
+
     return textDate;
-  }, [currentTime]);
+  }, [currentTime, timezone]);
 
   const current = formatRangeDateAndTime(
     formatDateForSliderTimeline(currentTime, { detail: true }),

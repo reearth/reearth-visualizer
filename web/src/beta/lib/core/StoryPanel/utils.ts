@@ -59,7 +59,7 @@ const MONTH_LABEL_LIST = [
   "Dec",
 ];
 
-const formatTimezone = (time: number) => {
+export const formatTimezone = (time: number) => {
   const d = new Date(time);
   const timezoneOffset = d.getTimezoneOffset();
   const timezoneSign = timezoneOffset >= 0 ? "-" : "+";
@@ -68,7 +68,11 @@ const formatTimezone = (time: number) => {
   const timezone = `${timezoneSign}${timezoneHours}:${timezoneMinutes.toString().padStart(2, "0")}`;
   return timezone;
 };
-export const formatDateForTimeline = (time: number, options: { detail?: boolean } = {}) => {
+export const formatDateForTimeline = (
+  time: number,
+  options: { detail?: boolean } = {},
+  timezone?: string,
+) => {
   const d = new Date(time);
 
   const year = d.getFullYear();
@@ -76,12 +80,10 @@ export const formatDateForTimeline = (time: number, options: { detail?: boolean 
   const date = `${d.getDate()}`.padStart(2, "0");
   const hour = `${d.getHours()}`.padStart(2, "0");
   if (!options.detail) {
-    const timezone = formatTimezone(time);
     return `${year} ${month} ${date} ${hour}:00:00.00 ${timezone}`;
   }
   const minutes = `${d.getMinutes()}`.padStart(2, "0");
   const seconds = `${d.getSeconds()}`.padStart(2, "0");
-  const timezone = formatTimezone(time);
 
   return `${year} ${month} ${date} ${hour}:${minutes}:${seconds} ${timezone}`;
 };
@@ -159,4 +161,10 @@ export const convertPositionToTime = (e: MouseEvent, start: number, end: number)
   const rangeDiff = end - start;
   const sec = rangeDiff * percent;
   return Math.min(Math.max(start, start + sec), end);
+};
+
+export const getTimeZone = (time: string) => {
+  const zone = time.match(/([-+]\d{1,2}:\d{2})$/);
+  const timezoneOffset = zone?.[1];
+  return timezoneOffset || "";
 };
