@@ -29,6 +29,7 @@ import type {
   Ref as LayersRef,
 } from "../Layers";
 import { SketchFeatureCallback } from "../Sketch/hooks";
+import { SketchType } from "../Sketch/types";
 import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
@@ -447,10 +448,8 @@ export type Engine = {
 
 export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame
 
-export type SketchType = "marker" | "polyline" | "circle" | "rectangle" | "polygon";
-
 export type SketchRef = {
-  enable: (enable: boolean) => void;
   setType: (type: SketchType) => void;
   onFeatureCreate: (cb: SketchFeatureCallback) => void;
+  onTypeChange: (cb: (type: SketchType | undefined) => void) => void;
 };

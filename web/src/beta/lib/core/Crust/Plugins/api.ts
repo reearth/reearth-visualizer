@@ -404,6 +404,7 @@ export function commonReearth({
   tags,
   camera,
   clock,
+  sketch,
   interactionMode,
   pluginInstances,
   viewport,
@@ -459,6 +460,7 @@ export function commonReearth({
   viewport: () => GlobalThis["reearth"]["viewport"];
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
+  sketch: () => GlobalThis["reearth"]["sketch"];
   interactionMode: () => GlobalThis["reearth"]["interactionMode"];
   pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
@@ -708,6 +710,9 @@ export function commonReearth({
       get instances() {
         return pluginInstances().meta.current;
       },
+    },
+    get sketch() {
+      return sketch?.();
     },
     ...events,
   };

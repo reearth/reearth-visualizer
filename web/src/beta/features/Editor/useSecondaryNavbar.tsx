@@ -3,12 +3,9 @@ import { ReactNode, useMemo } from "react";
 import Toolbar from "@reearth/beta/features/Editor/tabs/map/Toolbar";
 import PublishNav, { type ProjectType } from "@reearth/beta/features/Editor/tabs/publish/Nav";
 import WidgetNav, { type Device } from "@reearth/beta/features/Editor/tabs/widgets/Nav";
-import {
-  type InteractionModeType,
-  type SketchToolType,
-} from "@reearth/beta/features/Editor/useInteractionMode";
 import { Tab } from "@reearth/beta/features/Navbar";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
+import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 
 type Props = {
   tab: Tab;
@@ -18,11 +15,9 @@ type Props = {
   selectedDevice: Device;
   selectedProjectType?: ProjectType;
   interactionMode: InteractionModeType;
-  selectedLayer: NLSLayer | undefined;
-  selectedSketchTool: SketchToolType;
-  sketchModeDisabled: boolean;
+  selectedSketchTool: SketchType | undefined;
   onInteractionModeChange: (mode: InteractionModeType) => void;
-  onSelectedSketchToolChange: (tool: SketchToolType) => void;
+  onSelectedSketchToolChange: (tool: SketchType) => void;
   handleProjectTypeChange: (type: ProjectType) => void;
   handleDeviceChange: (device: Device) => void;
   handleWidgetEditorToggle: () => void;
@@ -36,9 +31,7 @@ export default ({
   selectedDevice,
   selectedProjectType,
   interactionMode,
-  selectedLayer,
   selectedSketchTool,
-  sketchModeDisabled,
   onInteractionModeChange,
   onSelectedSketchToolChange,
   handleProjectTypeChange,
@@ -70,8 +63,6 @@ export default ({
           <Toolbar
             interactionMode={interactionMode}
             selectedSketchTool={selectedSketchTool}
-            sketchModeDisabled={sketchModeDisabled}
-            selectedLayer={selectedLayer}
             onInteractionModeChange={onInteractionModeChange}
             onSelectedSketchToolChange={onSelectedSketchToolChange}
           />
@@ -89,8 +80,6 @@ export default ({
     showWidgetEditor,
     interactionMode,
     selectedSketchTool,
-    selectedLayer,
-    sketchModeDisabled,
     onInteractionModeChange,
     onSelectedSketchToolChange,
     handleDeviceChange,

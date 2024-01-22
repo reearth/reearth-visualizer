@@ -138,6 +138,12 @@ export default function ({
       [interactionMode, overrideInteractionMode],
     ),
   );
+  const getSketch = useCallback(
+    () => ({
+      setType: mapRef?.current?.sketch?.setType,
+    }),
+    [mapRef],
+  );
   const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
   const getSelectedLayer = useGet(selectedLayer);
@@ -461,6 +467,7 @@ export default function ({
         tags: getTags,
         camera: getCamera,
         clock: getClock,
+        sketch: getSketch,
         interactionMode: getInteractionMode,
         pluginInstances: getPluginInstances,
         viewport: getViewport,
@@ -525,6 +532,7 @@ export default function ({
       getTags,
       getCamera,
       getClock,
+      getSketch,
       getInteractionMode,
       getPluginInstances,
       getViewport,

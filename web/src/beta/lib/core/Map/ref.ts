@@ -110,8 +110,8 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
 
 const sketchRefKeys: FunctionKeys<SketchRef> = {
   setType: 1,
-  enable: 1,
   onFeatureCreate: 1,
+  onTypeChange: 1,
 };
 
 export function mapRef({

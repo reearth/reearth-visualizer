@@ -115,6 +115,7 @@ export type Props = {
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
+  onInteractionModeChange?: (mode: InteractionModeType) => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 } & ExternalPluginProps;
 
@@ -164,6 +165,7 @@ const Visualizer = memo(
         onBlockDelete,
         onBlockInsert,
         onZoomToLayer,
+        onInteractionModeChange,
         onMount,
         renderInfoboxInsertionPopup,
       },
@@ -212,6 +214,7 @@ const Visualizer = memo(
           onCameraChange,
           onZoomToLayer,
           onLayerDrop,
+          onInteractionModeChange,
         },
         ref,
       );
@@ -294,12 +297,14 @@ const Visualizer = memo(
                   small={small}
                   ready={ready}
                   timelineManagerRef={timelineManagerRef}
+                  interactionMode={interactionMode}
                   onCameraChange={handleCameraChange}
                   onLayerDrag={handleLayerDrag}
                   onLayerDrop={handleLayerDrop}
                   onLayerSelect={handleLayerSelect}
                   onLayerEdit={handleLayerEdit}
                   onMount={onMount}
+                  overrideInteractionMode={handleInteractionModeChange}
                 />
               </Filled>
               {storyPanelPosition === "right" && storyPanel}

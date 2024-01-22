@@ -20,6 +20,7 @@ import type {
   Feature,
 } from "@reearth/beta/lib/core/Map";
 
+import { SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
 import { Block } from "../Infobox";
@@ -102,6 +103,7 @@ export type Reearth = {
   readonly scene: Undefinable<Scene>;
   readonly viewport?: Viewport;
   readonly clientStorage: ClientStorage;
+  readonly sketch: Sketch;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -417,6 +419,12 @@ export type ViewportSize = {
 
 export type Viewport = ViewportSize & {
   readonly query: Record<string, string>;
+};
+
+export type Sketch = {
+  // readonly enable?: (enable: boolean) => void;
+  readonly setType?: (type: SketchType) => void;
+  // readonly onFeatureCreate?: (cb: SketchFeatureCallback) => void;
 };
 
 /** Cesium API: available only when the plugin is a primitive */

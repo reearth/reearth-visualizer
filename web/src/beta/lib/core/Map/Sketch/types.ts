@@ -3,21 +3,32 @@ import { type SetRequired } from "type-fest";
 
 export const SKETCH_OBJECT = "SKETCH_OBJECT";
 
-export type SketchGeometryType = "circle" | "rectangle" | "polygon" | "marker" | "polyline";
+export type SketchType =
+  | "marker"
+  | "polyline"
+  | "circle"
+  | "rectangle"
+  | "polygon"
+  | "extrudedCircle"
+  | "extrudedRectangle"
+  | "extrudedPolygon";
 
-export function isSketchGeometryType(value: unknown): value is SketchGeometryType {
+export function isSketchType(value: unknown): value is SketchType {
   return (
+    value === "marker" ||
+    value === "polyline" ||
     value === "circle" ||
     value === "rectangle" ||
     value === "polygon" ||
-    value === "marker" ||
-    value === "polyline"
+    value === "extrudedCircle" ||
+    value === "extrudedRectangle" ||
+    value === "extrudedPolygon"
   );
 }
 
 export interface SketchFeatureProperties {
   id: string;
-  type?: SketchGeometryType;
+  type?: SketchType;
   positions?: Array<[number, number, number]>;
   extrudedHeight?: number;
 }

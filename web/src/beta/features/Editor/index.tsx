@@ -176,7 +176,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     interactionMode,
     selectedSketchTool,
-    sketchModeDisabled,
     handleInteractionModeChange,
     handleSelectedSketchToolChange,
   } = useInteractionMode({ tab, selectedLayer, visualizerRef, handleLayerConfigUpdate });
@@ -189,9 +188,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedProjectType,
     showWidgetEditor,
     interactionMode,
-    selectedLayer,
     selectedSketchTool,
-    sketchModeDisabled,
     onInteractionModeChange: handleInteractionModeChange,
     onSelectedSketchToolChange: handleSelectedSketchToolChange,
     handleProjectTypeChange,
@@ -238,6 +235,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   interactionMode={interactionMode}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
+                  onInteractionModeChange={handleInteractionModeChange}
                 />
               </VisualizerWrapper>
               {bottomPanel && (

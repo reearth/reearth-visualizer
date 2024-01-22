@@ -1,13 +1,38 @@
 import { Cartesian3, Cartographic, Math as CesiumMath, type Ellipsoid } from "@cesium/engine";
 import ellipse from "@turf/ellipse";
-import { lineString, polygon } from "@turf/helpers";
-import { type LineString, type MultiPolygon, type Polygon } from "geojson";
+import { lineString, polygon, point } from "@turf/helpers";
+import { type LineString, type MultiPolygon, type Polygon, type Point } from "geojson";
 
-import { type SketchGeometryType } from "./types";
+import { type SketchType } from "./types";
 
 const cartographicScratch = new Cartographic();
 const cartesianScratch1 = new Cartesian3();
 const cartesianScratch2 = new Cartesian3();
+
+function createPoint(
+  controlPoints: readonly Cartesian3[],
+  ellipsoid?: Ellipsoid,
+): Point | undefined {
+  if (controlPoints.length !== 1) {
+    return;
+  }
+  try {
+    const cartographic = Cartographic.fromCartesian(
+      controlPoints[0],
+      ellipsoid,
+      cartographicScratch,
+    );
+    const feature = point([
+      CesiumMath.toDegrees(cartographic.longitude),
+      CesiumMath.toDegrees(cartographic.latitude),
+    ]);
+    console.log("point feature", feature);
+    return feature.geometry;
+  } catch (error) {
+    console.error(error);
+  }
+  return;
+}
 
 function createCircle(
   controlPoints: readonly Cartesian3[],
@@ -98,6 +123,34 @@ function createRectangle(
   return;
 }
 
+function createPolyline(
+  controlPoints: readonly Cartesian3[],
+  ellipsoid?: Ellipsoid,
+): LineString | undefined {
+  if (controlPoints.length < 2) {
+    return;
+  }
+  try {
+    const feature = lineString(
+      controlPoints.map(controlPoint => {
+        const cartographic = Cartographic.fromCartesian(
+          controlPoint,
+          ellipsoid,
+          cartographicScratch,
+        );
+        return [
+          CesiumMath.toDegrees(cartographic.longitude),
+          CesiumMath.toDegrees(cartographic.latitude),
+        ];
+      }),
+    );
+    return feature.geometry;
+  } catch (error) {
+    console.error(error);
+  }
+  return;
+}
+
 function createPolygon(
   controlPoints: readonly Cartesian3[],
   ellipsoid?: Ellipsoid,
@@ -144,7 +197,7 @@ function createPolygon(
 }
 
 export interface GeometryOptions {
-  type: SketchGeometryType;
+  type: SketchType;
   controlPoints: readonly Cartesian3[];
   ellipsoid?: Ellipsoid;
 }
@@ -153,13 +206,20 @@ export function createGeometry({
   type,
   controlPoints,
   ellipsoid,
-}: GeometryOptions): LineString | Polygon | MultiPolygon | undefined {
+}: GeometryOptions): LineString | Polygon | MultiPolygon | Point | undefined {
   switch (type) {
+    case "marker":
+      return createPoint(controlPoints, ellipsoid);
+    case "polyline":
+      return createPolyline(controlPoints, ellipsoid);
     case "circle":
+    case "extrudedCircle":
       return createCircle(controlPoints, ellipsoid);
     case "rectangle":
+    case "extrudedRectangle":
       return createRectangle(controlPoints, ellipsoid);
     case "polygon":
+    case "extrudedPolygon":
       return createPolygon(controlPoints, ellipsoid);
     default:
       return;

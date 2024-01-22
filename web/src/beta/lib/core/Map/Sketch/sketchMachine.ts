@@ -3,15 +3,18 @@ import { Cartesian2, Cartesian3 } from "cesium";
 import invariant from "tiny-invariant";
 import { createMachine, type StateFrom } from "xstate";
 
-import { type SketchGeometryType } from "./types";
+import { type SketchType } from "./types";
 
 export type EventObject =
   | ((
+      | { type: "MARKER" }
+      | { type: "POLYLINE" }
       | { type: "CIRCLE" }
       | { type: "RECTANGLE" }
       | { type: "POLYGON" }
-      | { type: "MARKER" }
-      | { type: "POLYLINE" }
+      | { type: "EXTRUDED_CIRCLE" }
+      | { type: "EXTRUDED_RECTANGLE" }
+      | { type: "EXTRUDED_POLYGON" }
       | { type: "NEXT" }
       | { type: "EXTRUDE" }
     ) & {
@@ -19,12 +22,13 @@ export type EventObject =
       controlPoint: Cartesian3;
     })
   | { type: "CREATE" }
-  | { type: "CANCEL" };
+  | { type: "CANCEL" }
+  | { type: "ABORT" };
 
 interface Context {
   lastPointerPosition?: Cartesian2;
   lastControlPoint?: Cartesian3;
-  type?: SketchGeometryType;
+  type?: SketchType;
   controlPoints?: Cartesian3[];
 }
 
@@ -37,6 +41,14 @@ export function createSketchMachine() {
       states: {
         idle: {
           on: {
+            MARKER: {
+              target: "drawing.marker",
+              actions: ["createMarker"],
+            },
+            POLYLINE: {
+              target: "drawing.polyline",
+              actions: ["createPolyline"],
+            },
             CIRCLE: {
               target: "drawing.circle",
               actions: ["createCircle"],
@@ -49,18 +61,42 @@ export function createSketchMachine() {
               target: "drawing.polygon",
               actions: ["createPolygon"],
             },
-            MARKER: {
-              target: "drawing.marker",
-              actions: ["createMarker"],
+            EXTRUDED_CIRCLE: {
+              target: "drawing.circle",
+              actions: ["createExtrudedCircle"],
             },
-            POLYLINE: {
-              target: "drawing.polyline",
-              actions: ["createPolyline"],
+            EXTRUDED_RECTANGLE: {
+              target: "drawing.extrudedRectangle",
+              actions: ["createExtrudedRectangle"],
+            },
+            EXTRUDED_POLYGON: {
+              target: "drawing.extrudedPolygon",
+              actions: ["createExtrudedPolygon"],
             },
           },
         },
         drawing: {
           states: {
+            marker: {
+              initial: "vertex",
+              states: {
+                vertex: {},
+              },
+            },
+            polyline: {
+              initial: "vertex",
+              states: {
+                vertex: {
+                  on: {
+                    NEXT: {
+                      target: "vertex",
+                      internal: true,
+                      actions: ["pushPosition"],
+                    },
+                  },
+                },
+              },
+            },
             circle: {
               initial: "vertex",
               states: {
@@ -75,6 +111,22 @@ export function createSketchMachine() {
               },
             },
             rectangle: {
+              initial: "vertex",
+              states: {
+                vertex: {
+                  on: {
+                    NEXT: [
+                      {
+                        target: "vertex",
+                        internal: true,
+                        actions: ["pushPosition"],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            extrudedRectangle: {
               initial: "vertex",
               states: {
                 vertex: {
@@ -105,28 +157,11 @@ export function createSketchMachine() {
                       internal: true,
                       actions: ["pushPosition"],
                     },
-                    EXTRUDE: {
-                      target: "#sketch.extruding",
-                      actions: ["pushPosition"],
-                    },
                   },
                 },
               },
             },
-            marker: {
-              initial: "vertex",
-              states: {
-                vertex: {
-                  on: {
-                    NEXT: {
-                      target: "#sketch.extruding",
-                      actions: ["pushPosition"],
-                    },
-                  },
-                },
-              },
-            },
-            polyline: {
+            extrudedPolygon: {
               initial: "vertex",
               states: {
                 vertex: {
@@ -160,6 +195,14 @@ export function createSketchMachine() {
                 actions: ["clearDrawing"],
               },
             ],
+            ABORT: {
+              target: "idle",
+              actions: ["clearDrawing"],
+            },
+            CREATE: {
+              target: "idle",
+              actions: ["clearDrawing"],
+            },
           },
         },
         extruding: {
@@ -171,6 +214,10 @@ export function createSketchMachine() {
             CANCEL: {
               target: "drawing.history",
               actions: ["popPosition"],
+            },
+            ABORT: {
+              target: "idle",
+              actions: ["clearDrawing"],
             },
           },
         },
@@ -192,6 +239,20 @@ export function createSketchMachine() {
         },
       },
       actions: {
+        createMarker: (context, event) => {
+          context.lastPointerPosition = event.pointerPosition.clone();
+          const controlPoint = event.controlPoint.clone();
+          context.lastControlPoint = controlPoint;
+          context.type = "marker";
+          context.controlPoints = [controlPoint];
+        },
+        createPolyline: (context, event) => {
+          context.lastPointerPosition = event.pointerPosition.clone();
+          const controlPoint = event.controlPoint.clone();
+          context.lastControlPoint = controlPoint;
+          context.type = "polyline";
+          context.controlPoints = [controlPoint];
+        },
         createCircle: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone();
           const controlPoint = event.controlPoint.clone();
@@ -213,18 +274,25 @@ export function createSketchMachine() {
           context.type = "polygon";
           context.controlPoints = [controlPoint];
         },
-        createMarker: (context, event) => {
+        createExtrudedCircle: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone();
           const controlPoint = event.controlPoint.clone();
           context.lastControlPoint = controlPoint;
-          context.type = "marker";
+          context.type = "extrudedCircle";
           context.controlPoints = [controlPoint];
         },
-        createPolyline: (context, event) => {
+        createExtrudedRectangle: (context, event) => {
           context.lastPointerPosition = event.pointerPosition.clone();
           const controlPoint = event.controlPoint.clone();
           context.lastControlPoint = controlPoint;
-          context.type = "polyline";
+          context.type = "extrudedRectangle";
+          context.controlPoints = [controlPoint];
+        },
+        createExtrudedPolygon: (context, event) => {
+          context.lastPointerPosition = event.pointerPosition.clone();
+          const controlPoint = event.controlPoint.clone();
+          context.lastControlPoint = controlPoint;
+          context.type = "extrudedPolygon";
           context.controlPoints = [controlPoint];
         },
         pushPosition: (context, event) => {

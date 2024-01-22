@@ -1,7 +1,7 @@
 import { MutableRefObject, useCallback } from "react";
 
 import ContentPicker from "@reearth/beta/components/ContentPicker";
-import { type InteractionModeType } from "@reearth/beta/features/Editor/useInteractionMode";
+import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
 import StoryPanel, {
@@ -31,6 +31,7 @@ export type Props = {
   installableBlocks?: InstallableStoryBlock[];
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
+  onInteractionModeChange: (mode: InteractionModeType) => void;
 };
 
 const Visualizer: React.FC<Props> = ({
@@ -46,6 +47,7 @@ const Visualizer: React.FC<Props> = ({
   installableBlocks,
   onStoryBlockMove,
   onCameraChange,
+  onInteractionModeChange,
 }) => {
   const {
     rootLayerId,
@@ -132,6 +134,7 @@ const Visualizer: React.FC<Props> = ({
         onLayerDrop={handleDropLayer}
         onZoomToLayer={zoomToLayer}
         onMount={handleMount}
+        onInteractionModeChange={onInteractionModeChange}
         renderInfoboxInsertionPopup={renderInfoboxInsertionPopUp}>
         {showStoryPanel && (
           <StoryPanel

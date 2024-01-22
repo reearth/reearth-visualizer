@@ -1,6 +1,6 @@
 import { forwardRef, useMemo, type Ref } from "react";
 
-import { INTERACTION_MODES } from "../Crust";
+import { INTERACTION_MODES, InteractionModeType } from "../Crust";
 
 import useHooks, { MapRef } from "./hooks";
 import Layers, { type Props as LayersProps } from "./Layers";
@@ -33,7 +33,10 @@ export type Props = {
   LayersProps,
   "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes" | "selectedLayerId"
 > &
-  Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId">;
+  Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId"> & {
+    interactionMode: InteractionModeType;
+    overrideInteractionMode: (mode: InteractionModeType) => void;
+  };
 
 function Map(
   {
@@ -47,7 +50,9 @@ function Map(
     overrides,
     timelineManagerRef,
     sceneProperty,
+    interactionMode,
     onLayerSelect,
+    // overrideInteractionMode,
     featureFlags = INTERACTION_MODES.default,
     ...props
   }: Props,
@@ -111,7 +116,13 @@ function Map(
         requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
       />
-      <Sketch ref={sketchRef} layersRef={layersRef} engineRef={engineRef} />
+      <Sketch
+        ref={sketchRef}
+        layersRef={layersRef}
+        engineRef={engineRef}
+        interactionMode={interactionMode}
+        // overrideInteractionMode={overrideInteractionMode}
+      />
     </Engine>
   ) : null;
 }

@@ -36,7 +36,10 @@ const SurfaceControlPoints: FC<SurfaceControlPointsProps> = memo(
       controlPoints = [p1, p2, p5];
       measurementPoints = [p4, p5];
       showLine = true;
-    } else if (controlPoints.length === 2) {
+    } else if (type === "marker") {
+      measurementPoints = undefined;
+      controlPoints = [];
+    } else if (controlPoints.length >= 2) {
       measurementPoints = controlPoints.slice(-2) as [Cartesian3, Cartesian3];
       showLine = type === "circle";
     }
@@ -46,7 +49,7 @@ const SurfaceControlPoints: FC<SurfaceControlPointsProps> = memo(
         {controlPoints.map((controlPoint, index) => (
           <ControlPoint key={index} position={controlPoint} clampToGround />
         ))}
-        {measurementPoints != null && (
+        {measurementPoints != undefined && (
           <SurfaceMeasurement
             a={measurementPoints[0]}
             b={measurementPoints[1]}

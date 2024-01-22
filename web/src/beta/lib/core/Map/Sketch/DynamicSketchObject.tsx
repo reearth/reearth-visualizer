@@ -30,7 +30,9 @@ const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
     );
 
     const { positionsArray, hierarchyArray } = useMemo(() => {
-      if (g?.type === "LineString") {
+      if (g?.type === "Point") {
+        return {};
+      } else if (g?.type === "LineString") {
         return { positionsArray: convertGeometryToPositionsArray(g) };
       } else if (g != null) {
         return {
@@ -42,7 +44,7 @@ const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
     }, [g]);
 
     // TODO: entity style API
-    const primaryColor = useMemo(() => Color.fromCssColorString("#f90"), []);
+    const primaryColor = useMemo(() => Color.fromCssColorString("#00bebe"), []);
 
     return (
       <>

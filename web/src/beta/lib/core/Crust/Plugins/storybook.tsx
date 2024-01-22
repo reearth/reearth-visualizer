@@ -171,6 +171,7 @@ export const context: Context = {
       isMobile: false,
       query: {},
     },
+    sketch: {} as any,
     on: act("on"),
     off: act("off"),
     once: act("once"),

@@ -110,6 +110,11 @@ export default function Polygon({
     [property?.near, property?.far],
   );
 
+  const extrudedHeightProperty: { extrudedHeight: number } | undefined = useMemo(
+    () => (extrudedHeight ? { extrudedHeight } : undefined),
+    [extrudedHeight],
+  );
+
   useEffect(() => {
     requestRender?.();
   });
@@ -131,9 +136,9 @@ export default function Polygon({
           outlineWidth={strokeWidth}
           heightReference={heightReference(hr)}
           shadows={shadowMode(shadows)}
-          extrudedHeight={extrudedHeight}
           distanceDisplayCondition={distanceDisplayCondition}
           classificationType={classificationType(ct)}
+          {...extrudedHeightProperty}
         />
       </EntityExt>
       {/* workaround */}

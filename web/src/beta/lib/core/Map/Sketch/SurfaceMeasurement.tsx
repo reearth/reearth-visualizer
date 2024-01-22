@@ -81,7 +81,6 @@ export const SurfaceMeasurement: FC<SurfaceMeasurementProps> = ({
   // const distance = geodesic.surfaceDistance;
   const visualizer = useVisualizer();
   const distance = visualizer.current?.engine.getSurfaceDistance(a, b) ?? 0;
-  console.log(distance);
   return (
     <>
       <ScreenSpaceElement position={Cartesian3.midpoint(a, b, position)}>

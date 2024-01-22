@@ -13,8 +13,11 @@ export interface Typegen0 {
     services: never;
   };
   eventsCausingActions: {
-    clearDrawing: "CANCEL" | "CREATE";
+    clearDrawing: "ABORT" | "CANCEL" | "CREATE";
     createCircle: "CIRCLE";
+    createExtrudedCircle: "EXTRUDED_CIRCLE";
+    createExtrudedPolygon: "EXTRUDED_POLYGON";
+    createExtrudedRectangle: "EXTRUDED_RECTANGLE";
     createMarker: "MARKER";
     createPolygon: "POLYGON";
     createPolyline: "POLYLINE";
@@ -32,6 +35,10 @@ export interface Typegen0 {
     | "drawing"
     | "drawing.circle"
     | "drawing.circle.vertex"
+    | "drawing.extrudedPolygon"
+    | "drawing.extrudedPolygon.vertex"
+    | "drawing.extrudedRectangle"
+    | "drawing.extrudedRectangle.vertex"
     | "drawing.marker"
     | "drawing.marker.vertex"
     | "drawing.polygon"
@@ -45,12 +52,16 @@ export interface Typegen0 {
     | {
         drawing?:
           | "circle"
+          | "extrudedPolygon"
+          | "extrudedRectangle"
           | "marker"
           | "polygon"
           | "polyline"
           | "rectangle"
           | {
               circle?: "vertex";
+              extrudedPolygon?: "vertex";
+              extrudedRectangle?: "vertex";
               marker?: "vertex";
               polygon?: "vertex";
               polyline?: "vertex";
