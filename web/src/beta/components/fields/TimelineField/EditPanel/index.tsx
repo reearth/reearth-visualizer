@@ -28,7 +28,15 @@ const EditPanel = ({
   onChange,
 }: EditPanelProps) => {
   const t = useT();
-  const { isDisabled, warning, handleOnChange, onAppyChange } = useHooks({
+  const {
+    isDisabled,
+    warning,
+    disabledFields,
+    setDisabledFields,
+    handleOnChange,
+    onAppyChange,
+    handlePopoverOpen,
+  } = useHooks({
     timelineValues,
     onChange,
     onClose,
@@ -67,18 +75,30 @@ const EditPanel = ({
           description={t("Start time for the timeline")}
           onChange={newValue => handleOnChange(newValue || "", "startTime")}
           value={timelineValues?.startTime}
+          fieldName={"startTime"}
+          disableField={disabledFields.includes("startTime")}
+          setDisabledFields={setDisabledFields}
+          onPopoverOpen={handlePopoverOpen}
         />
         <CustomDateTimeField
           name={t("* Current Time")}
           description={t("Current time should be between start and end time")}
           onChange={newValue => handleOnChange(newValue || "", "currentTime")}
           value={timelineValues?.currentTime}
+          disableField={disabledFields.includes("currentTime")}
+          fieldName={"currentTime"}
+          setDisabledFields={setDisabledFields}
+          onPopoverOpen={handlePopoverOpen}
         />
         <CustomDateTimeField
           name={t("* End Time")}
           onChange={newValue => handleOnChange(newValue || "", "endTime")}
           description={t("End time for the timeline")}
           value={timelineValues?.endTime}
+          fieldName={"endTime"}
+          disableField={disabledFields.includes("endTime")}
+          setDisabledFields={setDisabledFields}
+          onPopoverOpen={handlePopoverOpen}
         />
         {warning && (
           <DangerItem>

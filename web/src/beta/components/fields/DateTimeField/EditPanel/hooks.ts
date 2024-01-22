@@ -41,7 +41,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
       info => info.timezone === selectedTimezone.timezone,
     );
     if (selectedTimezoneInfo) {
-      const formattedDateTime = `${date}T${time}:00${selectedTimezoneInfo.offset}`;
+      const formattedDateTime = `${date}T${time} ${selectedTimezoneInfo.offset}`;
       setDateTime?.(formattedDateTime);
       onChange?.(formattedDateTime);
     }
@@ -58,10 +58,10 @@ export default ({ value, onChange, setDateTime }: Props) => {
   useEffect(() => {
     if (value) {
       const [parsedDate, timeWithOffset] = value.split("T");
-      const [parsedTime, timezoneOffset] = timeWithOffset.split(/[-+]/);
+      const [parsedTime, timezoneOffset] = timeWithOffset.split(/ [-+]/);
 
-      setDate(parsedDate);
       setTime(parsedTime);
+      setDate(parsedDate);
 
       const updatedTimezone = offsetFromUTC.find(
         info =>
