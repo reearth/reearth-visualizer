@@ -304,7 +304,6 @@ const Visualizer = memo(
                   onLayerSelect={handleLayerSelect}
                   onLayerEdit={handleLayerEdit}
                   onMount={onMount}
-                  overrideInteractionMode={handleInteractionModeChange}
                 />
               </Filled>
               {storyPanelPosition === "right" && storyPanel}

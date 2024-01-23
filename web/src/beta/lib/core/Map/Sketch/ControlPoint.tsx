@@ -64,8 +64,5 @@ export const ControlPoint: FC<ControlPointProps> = ({ position, clampToGround = 
     [clampToGround, positionProperty],
   );
 
-  // const scene = useCesium(({ scene }) => scene);
-  // scene.requestRender();
-
   return <Entity {...options} />;
 };

@@ -34,14 +34,9 @@ const MeasurementLine: FC<{
           color,
           dashLength: 8,
         }),
-        // TODO: Want to apply depthFailMaterial but doesn't work with
-        // dynamic polyline: https://github.com/CesiumGS/cesium/issues/5333
       },
     };
   }, [color, positionsProperty]);
-
-  // const scene = useCesium(({ scene }) => scene);
-  // scene.requestRender();
 
   return <Entity {...options} />;
 };

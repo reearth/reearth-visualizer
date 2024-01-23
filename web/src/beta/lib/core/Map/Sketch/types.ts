@@ -1,8 +1,3 @@
-import { type Feature, type MultiPolygon, type Polygon } from "geojson";
-import { type SetRequired } from "type-fest";
-
-export const SKETCH_OBJECT = "SKETCH_OBJECT";
-
 export type SketchType =
   | "marker"
   | "polyline"
@@ -25,14 +20,3 @@ export function isSketchType(value: unknown): value is SketchType {
     value === "extrudedPolygon"
   );
 }
-
-export interface SketchFeatureProperties {
-  id: string;
-  type?: SketchType;
-  positions?: Array<[number, number, number]>;
-  extrudedHeight?: number;
-}
-
-export type SketchFeature = Feature<Polygon | MultiPolygon, SketchFeatureProperties>;
-
-export type GeometryFeature = SetRequired<Feature<Polygon | MultiPolygon>, "id">;

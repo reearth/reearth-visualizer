@@ -46,8 +46,6 @@ const MeasurementLine: FC<{
 
   const visualizer = useVisualizer();
   visualizer.current?.engine.requestRender();
-  // const scene = useCesium(({ scene }) => scene);
-  // scene.requestRender();
 
   return <Entity {...options} />;
 };
@@ -59,9 +57,6 @@ export interface SurfaceMeasurementProps {
   showLine?: boolean;
 }
 
-// const cartographicScratch1 = new Cartographic();
-// const cartographicScratch2 = new Cartographic();
-
 export const SurfaceMeasurement: FC<SurfaceMeasurementProps> = ({
   a,
   b,
@@ -69,16 +64,6 @@ export const SurfaceMeasurement: FC<SurfaceMeasurementProps> = ({
   showLine = false,
 }) => {
   const position = useConstant(() => new Cartesian3());
-  // const scene = useCesium(({ scene }) => scene);
-  // const geodesic = useMemo(
-  //   () => new EllipsoidGeodesic(undefined, undefined, scene.globe.ellipsoid),
-  //   [scene],
-  // );
-  // geodesic.setEndPoints(
-  //   Cartographic.fromCartesian(a, scene.globe.ellipsoid, cartographicScratch1),
-  //   Cartographic.fromCartesian(b, scene.globe.ellipsoid, cartographicScratch2),
-  // );
-  // const distance = geodesic.surfaceDistance;
   const visualizer = useVisualizer();
   const distance = visualizer.current?.engine.getSurfaceDistance(a, b) ?? 0;
   return (

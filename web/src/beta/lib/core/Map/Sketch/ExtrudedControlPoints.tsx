@@ -20,14 +20,12 @@ const cartesianScratch = new Cartesian3();
 
 const ExtrudedControlPoints: FC<ExtrudedControlPointsProps> = memo(
   ({ geometryOptions: { controlPoints }, extrudedHeight, color }) => {
-    // const scene = useCesium(({ scene }) => scene);
     const visualizer = useVisualizer();
 
     const controlPoint = controlPoints[controlPoints.length - 1];
     const normal = visualizer.current?.engine.getNormal(controlPoint, cartesianScratch);
 
     invariant(normal !== undefined);
-    // const normal = scene.globe.ellipsoid.geodeticSurfaceNormal(controlPoint, cartesianScratch);
     const extrudedPoint = Cartesian3.add(
       controlPoint,
       Cartesian3.multiplyByScalar(normal, extrudedHeight, cartesianScratch),

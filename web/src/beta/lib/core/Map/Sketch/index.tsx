@@ -10,7 +10,6 @@ type Props = {
   layersRef: RefObject<LayersRef>;
   engineRef: RefObject<EngineRef>;
   interactionMode: InteractionModeType;
-  // overrideInteractionMode: (mode: InteractionModeType) => void;
 };
 
 const Sketch: ForwardRefRenderFunction<SketchRef, Props> = (
@@ -22,7 +21,6 @@ const Sketch: ForwardRefRenderFunction<SketchRef, Props> = (
     layersRef,
     engineRef,
     interactionMode,
-    // overrideInteractionMode,
   });
   if (state.matches("idle")) {
     return null;

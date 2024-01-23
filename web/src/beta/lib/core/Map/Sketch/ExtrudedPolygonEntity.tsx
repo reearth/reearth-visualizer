@@ -69,8 +69,6 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
 
   const visualizer = useVisualizer();
   visualizer.current?.engine.requestRender();
-  // const scene = useCesium(({ scene }) => scene);
-  // scene.requestRender();
 
   return <Entity id={id} {...options} />;
 };

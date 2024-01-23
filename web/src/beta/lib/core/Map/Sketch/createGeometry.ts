@@ -26,7 +26,6 @@ function createPoint(
       CesiumMath.toDegrees(cartographic.longitude),
       CesiumMath.toDegrees(cartographic.latitude),
     ]);
-    console.log("point feature", feature);
     return feature.geometry;
   } catch (error) {
     console.error(error);

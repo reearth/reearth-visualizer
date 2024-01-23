@@ -34,8 +34,7 @@ export type Props = {
   "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes" | "selectedLayerId"
 > &
   Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId"> & {
-    interactionMode: InteractionModeType;
-    overrideInteractionMode: (mode: InteractionModeType) => void;
+    interactionMode?: InteractionModeType;
   };
 
 function Map(
@@ -50,9 +49,8 @@ function Map(
     overrides,
     timelineManagerRef,
     sceneProperty,
-    interactionMode,
+    interactionMode = "default",
     onLayerSelect,
-    // overrideInteractionMode,
     featureFlags = INTERACTION_MODES.default,
     ...props
   }: Props,
@@ -121,7 +119,6 @@ function Map(
         layersRef={layersRef}
         engineRef={engineRef}
         interactionMode={interactionMode}
-        // overrideInteractionMode={overrideInteractionMode}
       />
     </Engine>
   ) : null;

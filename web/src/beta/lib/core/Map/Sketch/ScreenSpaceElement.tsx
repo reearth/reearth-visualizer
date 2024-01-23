@@ -1,10 +1,4 @@
-import {
-  Cartesian2,
-  Cartesian3,
-  Ellipsoid,
-  EllipsoidalOccluder,
-  // SceneTransforms,
-} from "@cesium/engine";
+import { Cartesian2, Cartesian3, Ellipsoid, EllipsoidalOccluder } from "@cesium/engine";
 import { motion, useMotionValue } from "framer-motion";
 import { forwardRef, useRef, type ComponentPropsWithRef } from "react";
 import { useMergeRefs } from "use-callback-ref";
@@ -30,8 +24,6 @@ export interface ScreenSpaceElementProps extends ComponentPropsWithRef<typeof Ro
 
 const occluder = new EllipsoidalOccluder(Ellipsoid.WGS84, Cartesian3.ZERO);
 
-// const windowPositionScratch = new Cartesian2();
-
 const ScreenSpaceElement = forwardRef<HTMLDivElement, ScreenSpaceElementProps>(
   ({ position: positionProp, children, ...props }, forwardedRef) => {
     const position = useConstant(() => new Cartesian3());
@@ -43,7 +35,7 @@ const ScreenSpaceElement = forwardRef<HTMLDivElement, ScreenSpaceElementProps>(
     const visualizer = useVisualizer();
 
     const ref = useRef<HTMLDivElement>(null);
-    // const scene = useCesium(({ scene }) => scene, { indirect: true });
+
     usePreRender(() => {
       if (ref.current == null) {
         return;
@@ -56,16 +48,11 @@ const ScreenSpaceElement = forwardRef<HTMLDivElement, ScreenSpaceElementProps>(
           position.z,
         ]);
         windowPosition = new Cartesian2(pos?.[0], pos?.[1]);
-        // windowPosition = SceneTransforms.wgs84ToWindowCoordinates(
-        //   scene,
-        //   position,
-        //   windowPositionScratch,
-        // );
       } catch (error) {
         motionDisplay.set("none");
         return;
       }
-      // occluder.cameraPosition = scene.camera.position;
+
       const camera = visualizer.current?.engine.getCamera();
       if (!camera) return;
       const xyz = visualizer.current?.engine.toXYZ(camera?.lng, camera?.lat, camera?.height);
