@@ -148,8 +148,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
 
   const handleLeftDown = useCallback(
     (props: MouseEventProps) => {
-      console.log("handleLeftDown", props);
-
       if (
         disableInteraction ||
         !type ||
@@ -159,17 +157,13 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
       ) {
         return;
       }
-      console.log("handleLeftDown-2");
       if (!state.matches("idle")) {
         return;
       }
-      console.log("handleLeftDown-3");
       invariant(state.context.lastControlPoint == null);
-      console.log("handleLeftDown-4");
       const controlPoint = new Cartesian3(
         ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
       );
-      console.log("handleLeftDown-5", controlPoint);
       if (controlPoint == null) {
         return;
       }
@@ -190,14 +184,12 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
       });
       setGeometryOptions(null);
       markerGeometryRef.current = null;
-      console.log("handleLeftDown-finish");
     },
     [state, disableInteraction, type, engineRef, send],
   );
 
   const handleMouseMove = useCallback(
     (props: MouseEventProps) => {
-      // console.log("handleMouseMove", props);
       if (
         disableInteraction ||
         props.lng === undefined ||
@@ -208,12 +200,9 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
       ) {
         return;
       }
-      console.log("handleMouseMove-2");
       pointerPositionRef.current = new Cartesian2(props.x, props.y);
       pointerLocationRef.current = [props.lng, props.lat, props.height];
-
       if (state.matches("drawing")) {
-        console.log("handleMouseMove-3");
         invariant(state.context.type != null);
         invariant(state.context.controlPoints != null);
         const controlPoint = new Cartesian3(
@@ -224,7 +213,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         }
         updateGeometryOptions(controlPoint);
       } else if (state.matches("extruding")) {
-        console.log("handleMouseMove-4");
         invariant(state.context.lastControlPoint != null);
         const extrudedHeight = engineRef.current?.getExtrudedHeight(
           [
@@ -238,14 +226,12 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
           setExtrudedHeight(extrudedHeight);
         }
       }
-      console.log("handleMouseMove-finish");
     },
     [disableInteraction, state, engineRef, updateGeometryOptions, setExtrudedHeight],
   );
 
   const handleLeftUp = useCallback(
     (props: MouseEventProps) => {
-      console.log("handleLeftUp", props);
       if (
         disableInteraction ||
         props.lng === undefined ||
@@ -254,8 +240,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
       ) {
         return;
       }
-
-      console.log("handleLeftUp-2");
       if (
         state.context.controlPoints?.length === 1 &&
         state.context.lastPointerPosition != null &&
@@ -267,12 +251,10 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
           5, // Epsilon in pixels
         )
       ) {
-        console.log("handleLeftUp-Too close");
         return; // Too close to the first position user clicked.
       }
 
       if (state.matches("drawing")) {
-        console.log("handleLeftUp-3");
         const controlPoint = new Cartesian3(
           ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
         );
@@ -292,17 +274,14 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
           setGeometryOptions(null);
           return;
         }
-        console.log("handleLeftUp-4");
         if (controlPoint == null || hasDuplicate(controlPoint, state.context.controlPoints)) {
           return;
         }
-        console.log("handleLeftUp-5");
         if (
           state.context.type === "circle" ||
           (state.context.type === "rectangle" && state.context.controlPoints?.length === 2)
         ) {
           const feature = createFeature();
-          console.log("handleLeftUp-6", feature);
           if (feature == null) {
             return;
           }
@@ -311,7 +290,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
           setGeometryOptions(null);
           return;
         } else {
-          console.log("handleLeftUp-7");
           send({
             type: "NEXT",
             pointerPosition: new Cartesian2(props.x, props.y),
@@ -320,7 +298,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         }
       } else if (state.matches("extruding")) {
         const feature = createFeature();
-        console.log("handleLeftUp-8", feature);
         if (feature == null) {
           return;
         }
@@ -328,7 +305,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         send({ type: "CREATE" });
         setGeometryOptions(null);
       }
-      console.log("handleLeftUp-finish");
     },
     [
       disableInteraction,
@@ -343,7 +319,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
 
   const handleDoubleClick = useCallback(
     (props: MouseEventProps) => {
-      console.log("handleDoubleClick", props);
       if (
         disableInteraction ||
         props.lng === undefined ||
@@ -352,16 +327,10 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
       ) {
         return;
       }
-      console.log("handleDoubleClick-2");
       if (state.matches("drawing.extrudedPolygon")) {
-        console.log("handleDoubleClick-3");
         const controlPoint = new Cartesian3(
           ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
         );
-        // if (controlPoint == null || hasDuplicate(controlPoint, state.context.controlPoints)) {
-        //   return;
-        // }
-        console.log("handleDoubleClick-4");
         send({
           type: "EXTRUDE",
           pointerPosition: new Cartesian2(props.x, props.y),
@@ -369,7 +338,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         });
       } else if (state.matches("drawing.polyline") || state.matches("drawing.polygon")) {
         const feature = createFeature();
-        console.log("handleDoubleClick-5", feature);
         if (feature == null) {
           return;
         }
