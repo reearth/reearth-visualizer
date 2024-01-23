@@ -18,7 +18,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [selectedTimezone, setSelectedTimezone] = useState<TimezoneInfo>({
-    offset: "+0:00",
+    offset: "+00:00",
     timezone: "Africa/Abidjan",
   });
 
@@ -41,7 +41,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
       info => info.timezone === selectedTimezone.timezone,
     );
     if (selectedTimezoneInfo) {
-      const formattedDateTime = `${date}T${time} ${selectedTimezoneInfo.offset}`;
+      const formattedDateTime = `${date}T${time}${selectedTimezoneInfo.offset}`;
       setDateTime?.(formattedDateTime);
       onChange?.(formattedDateTime);
     }
@@ -58,7 +58,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
   useEffect(() => {
     if (value) {
       const [parsedDate, timeWithOffset] = value.split("T");
-      const [parsedTime, timezoneOffset] = timeWithOffset.split(/ [-+]/);
+      const [parsedTime, timezoneOffset] = timeWithOffset.split(/[-+]/);
 
       setTime(parsedTime);
       setDate(parsedDate);
@@ -72,7 +72,7 @@ export default ({ value, onChange, setDateTime }: Props) => {
     } else {
       setDate("");
       setTime("");
-      setSelectedTimezone({ offset: "+0:00", timezone: "Africa/Abidjan" });
+      setSelectedTimezone({ offset: "+00:00", timezone: "Africa/Abidjan" });
     }
   }, [value, offsetFromUTC]);
 

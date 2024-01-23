@@ -73,7 +73,10 @@ export const formatDateForTimeline = (
   options: { detail?: boolean } = {},
   timezone?: string,
 ) => {
-  const d = new Date(time);
+  const localTimezoneOffset = new Date().getTimezoneOffset();
+  const d = new Date(
+    time + (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+  );
 
   const year = d.getFullYear();
   const month = MONTH_LABEL_LIST[d.getMonth()];
@@ -88,8 +91,15 @@ export const formatDateForTimeline = (
   return `${year} ${month} ${date} ${hour}:${minutes}:${seconds} ${timezone}`;
 };
 
-export const formatDateForSliderTimeline = (time: number, options: { detail?: boolean } = {}) => {
-  const d = new Date(time);
+export const formatDateForSliderTimeline = (
+  time: number,
+  options: { detail?: boolean } = {},
+  timezone?: string,
+) => {
+  const localTimezoneOffset = new Date().getTimezoneOffset();
+  const d = new Date(
+    time + (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+  );
 
   const month = MONTH_LABEL_LIST[d.getMonth()];
   const date = `${d.getDate()}`.padStart(2, "0");
@@ -167,4 +177,19 @@ export const getTimeZone = (time: string) => {
   const zone = time.match(/([-+]\d{1,2}:\d{2})$/);
   const timezoneOffset = zone?.[1];
   return timezoneOffset || "";
+};
+
+export const formatISO8601 = (time: string) => {
+  // For backforad compatibility
+  // from: 2021-08-31T00:00:00 +9:00
+  // from: 2021-08-31T00:00:00+9:00
+  // to: 2021-08-31T00:00:00+09:00
+  const timezone = getTimeZone(time);
+  const splitZone = timezone.split(":");
+  if (splitZone[0].length === 2) {
+    return time
+      .replace(timezone, `${splitZone[0][0]}0${splitZone[0][1]}:${splitZone[1]}`)
+      .replace(" ", "");
+  }
+  return time.replace(" ", "");
 };

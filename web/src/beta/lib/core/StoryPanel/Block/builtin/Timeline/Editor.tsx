@@ -146,7 +146,7 @@ const TimelineEditor = ({
             </Popover.Provider>
           </PopoverWrapper>
         </TimelineControl>
-        <CurrentTime isMinimized={isMinimized}>{currentTime && formattedCurrentTime}</CurrentTime>
+        <CurrentTime isMinimized={isMinimized}>{!!currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineWrapper>
       <TimelineSlider>
         <ScaleList

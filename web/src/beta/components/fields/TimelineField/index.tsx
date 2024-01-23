@@ -154,7 +154,7 @@ const TextWrapper = styled(Text)`
     background: ${({ theme }) => theme.content.main};
     border: 1px solid ${({ theme }) => theme.outline.main};
   }
-  &:nth-child(2) {
+  &:nth-of-type(2) {
     ::after {
       background: transparent;
       border: 1px solid ${({ theme }) => theme.outline.main};

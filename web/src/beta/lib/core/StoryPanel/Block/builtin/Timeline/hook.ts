@@ -97,21 +97,25 @@ export default ({
   }, [currentTime, timezone]);
 
   const current = formatRangeDateAndTime(
-    formatDateForSliderTimeline(currentTime, { detail: true }),
+    formatDateForSliderTimeline(currentTime, { detail: true }, timezone),
   );
 
   const timeRange = useMemo(() => {
     if (range) {
       return {
         startTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.start, { detail: true }),
+          formatDateForSliderTimeline(range.start, { detail: true }, timezone),
         ),
-        midTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.mid, { detail: true })),
-        endTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.end, { detail: true })),
+        midTime: formatRangeDateAndTime(
+          formatDateForSliderTimeline(range.mid, { detail: true }, timezone),
+        ),
+        endTime: formatRangeDateAndTime(
+          formatDateForSliderTimeline(range.end, { detail: true }, timezone),
+        ),
       };
     }
     return {};
-  }, [range]);
+  }, [range, timezone]);
 
   const panelSettings = useMemo(() => {
     if (!property?.panel) return undefined;
