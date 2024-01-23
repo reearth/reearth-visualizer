@@ -106,6 +106,9 @@ export const useOverrideGlobeShader = ({
       globe.material.uniforms.minHeight = 0;
       globe.material.uniforms.maxHeight = 4000;
       globe.material.uniforms.logarithmic = true;
+
+      // This will log the variables needed in the shader below.
+      // we need the minHeight, maxHeight and logarithmic
       console.log(globe.material);
       replacedGlobeFS = new StringMatcher()
         .replace(
@@ -116,7 +119,8 @@ export const useOverrideGlobeShader = ({
             "alpha = czm_branchFreeTernary(colorDiff.r < colorToAlpha.a, 0.0, alpha);",
             "#endif",
           ],
-          `// colorToAlpha is used as an identification of imagery layer here.
+          `
+          // colorToAlpha is used as an identification of imagery layer here.
           if (greaterThan(colorToAlpha, vec4(0.9)) == bvec4(true)) {
             float decodedValue = dot(color, vec3(16711680.0, 65280.0, 255.0));
             float height = (decodedValue - 8388607.0) * 0.01;
@@ -142,7 +146,8 @@ export const useOverrideGlobeShader = ({
             );
             vec4 mappedColor = texture(colorMap_0, vec2(normalizedHeight, 0.5));
             color = mappedColor.rgb;
-            }`,
+            }
+        `,
         )
         .execute(GlobeFS);
       console.log("shader execution ended !!");
