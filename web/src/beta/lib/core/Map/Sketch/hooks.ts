@@ -358,9 +358,9 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         const controlPoint = new Cartesian3(
           ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
         );
-        if (controlPoint == null || hasDuplicate(controlPoint, state.context.controlPoints)) {
-          return;
-        }
+        // if (controlPoint == null || hasDuplicate(controlPoint, state.context.controlPoints)) {
+        //   return;
+        // }
         console.log("handleDoubleClick-4");
         send({
           type: "EXTRUDE",
