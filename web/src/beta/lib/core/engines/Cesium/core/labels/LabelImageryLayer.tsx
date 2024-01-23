@@ -1,4 +1,4 @@
-import { WebMercatorTilingScheme } from "@cesium/engine";
+import { WebMercatorTilingScheme, ImageryLayer as CesiumImageryLayer } from "@cesium/engine";
 import { forwardRef } from "react";
 import { ImageryLayer, CesiumComponentRef } from "resium";
 
@@ -34,7 +34,7 @@ export const LabelImageryLayer = forwardRef<ImageryLayerHandle, LabelImageryLaye
     },
     ref,
   ) => {
-    const cesiumRef = ref as React.Ref<CesiumComponentRef<typeof ImageryLayer>>;
+    const cesiumRef = ref as React.Ref<CesiumComponentRef<CesiumImageryLayer>>;
     const imageryProvider = useInstance({
       keys: [url, tilingScheme, tileWidth, tileHeight, minimumDataLevel, maximumDataLevel],
       create: () =>
