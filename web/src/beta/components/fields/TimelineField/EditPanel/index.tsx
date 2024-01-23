@@ -43,7 +43,7 @@ const EditPanel = ({
     setTimelineValues,
   });
 
-  const checkTimezone = useMemo(() => {
+  const timezoneMatches = useMemo(() => {
     if (!timelineValues) return false;
 
     const startTimezone = getTimeZone(timelineValues?.startTime);
@@ -65,7 +65,7 @@ const EditPanel = ({
         <Button
           text={t("Apply")}
           buttonType="primary"
-          disabled={!isDisabled || warning || !checkTimezone}
+          disabled={!isDisabled || warning || !timezoneMatches}
           onClick={onAppyChange}
         />
       }>
