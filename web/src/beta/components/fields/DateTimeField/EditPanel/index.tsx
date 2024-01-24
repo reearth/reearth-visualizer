@@ -45,7 +45,7 @@ const EditPanel: React.FC<Props> = ({ onChange, onClose, value, setDateTime }) =
         <TextWrapper>
           <Label>{t("Time")}</Label>
 
-          <Input type="time" value={time} onChange={handleTimeChange} />
+          <Input type="time" value={time} onChange={handleTimeChange} step={1} />
         </TextWrapper>
         <SelectWrapper>
           <Label>{t("Time Zone")}</Label>
