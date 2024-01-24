@@ -72,7 +72,7 @@ export default ({
     [property],
   );
 
-  const panelSettings = useMemo(() => {
+  const generalBlockSettings = useMemo(() => {
     if (!property?.panel) return undefined;
     return {
       padding: {
@@ -92,7 +92,7 @@ export default ({
     editMode,
     showSettings,
     defaultSettings,
-    panelSettings,
+    generalBlockSettings,
     disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,

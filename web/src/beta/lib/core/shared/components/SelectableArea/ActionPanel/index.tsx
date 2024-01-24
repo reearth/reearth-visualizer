@@ -14,7 +14,7 @@ type Props = {
   showPadding?: boolean;
   editMode?: boolean;
   propertyId?: string;
-  panelSettings?: any;
+  contentSettings?: any;
   dndEnabled?: boolean;
   position?: ActionPosition;
   overrideGroupId?: string;
@@ -52,7 +52,7 @@ const ActionPanel: React.FC<Props> = ({
   isSelected,
   editMode,
   dndEnabled,
-  panelSettings,
+  contentSettings,
   setShowPadding,
   onEditModeToggle,
   onSettingsToggle,
@@ -64,7 +64,7 @@ const ActionPanel: React.FC<Props> = ({
     icon,
     isSelected,
     editMode,
-    panelSettings,
+    contentSettings,
     setShowPadding,
     onEditModeToggle,
     onSettingsToggle,
@@ -77,7 +77,7 @@ const ActionPanel: React.FC<Props> = ({
       dndEnabled={dndEnabled}
       isSelected={isSelected}
       actionItems={actionItems}
-      panelSettings={panelSettings}
+      contentSettings={contentSettings}
       settingsTitle={settingsTitle}
       popoverContent={popoverContent}
       setShowPadding={setShowPadding}

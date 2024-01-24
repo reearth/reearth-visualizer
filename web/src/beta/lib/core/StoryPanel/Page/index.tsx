@@ -137,7 +137,7 @@ const StoryPanel: React.FC<Props> = ({
       noBorder
       isSelected={selectedPageId === page?.id}
       propertyId={propertyId}
-      panelSettings={panelSettings}
+      contentSettings={panelSettings}
       showSettings={showPageSettings}
       isEditable={isEditable}
       hideHoverUI={disableSelection}

@@ -30,7 +30,7 @@ type Props = {
   showSettings?: boolean;
   showPadding?: boolean;
   propertyId?: string;
-  panelSettings?: any;
+  contentSettings?: any;
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
@@ -73,7 +73,7 @@ const ActionPanel: ForwardRefRenderFunction<HTMLDivElement, Props> = (
     showSettings,
     showPadding,
     propertyId,
-    panelSettings,
+    contentSettings,
     actionItems,
     dndEnabled,
     position,
@@ -128,10 +128,10 @@ const ActionPanel: ForwardRefRenderFunction<HTMLDivElement, Props> = (
               </Text>
               <CancelIcon icon="cancel" size={14} onClick={() => setShowPadding(false)} />
             </SettingsHeading>
-            {propertyId && panelSettings && (
+            {propertyId && contentSettings && (
               <SettingsContent>
-                {Object.keys(panelSettings).map((fieldId, index) => {
-                  const field = panelSettings[fieldId];
+                {Object.keys(contentSettings).map((fieldId, index) => {
+                  const field = contentSettings[fieldId];
                   const groupId = overrideGroupId || "panel";
                   return (
                     <FieldComponent

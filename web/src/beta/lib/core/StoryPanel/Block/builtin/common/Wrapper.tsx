@@ -79,7 +79,7 @@ const BlockWrapper: React.FC<Props> = ({
     editMode,
     showSettings,
     defaultSettings,
-    panelSettings,
+    generalBlockSettings,
     disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,
@@ -104,7 +104,7 @@ const BlockWrapper: React.FC<Props> = ({
         propertyId={propertyId}
         dndEnabled={dndEnabled}
         showSettings={showSettings}
-        panelSettings={panelSettings}
+        contentSettings={generalBlockSettings}
         editMode={editMode}
         isEditable={isEditable}
         hideHoverUI={disableSelection}
@@ -122,7 +122,7 @@ const BlockWrapper: React.FC<Props> = ({
         onPropertyItemMove={onPropertyItemMove}
         onPropertyItemDelete={onPropertyItemDelete}>
         <Block
-          padding={panelSettings?.padding?.value}
+          padding={generalBlockSettings?.padding?.value}
           isEditable={isEditable}
           disableSelection={disableSelection}>
           {children ?? (isEditable && <Template icon={icon} />)}

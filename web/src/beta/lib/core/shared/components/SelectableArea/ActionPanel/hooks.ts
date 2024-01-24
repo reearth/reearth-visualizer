@@ -11,7 +11,7 @@ type Props = {
   icon?: string;
   isSelected?: boolean;
   editMode?: boolean;
-  panelSettings?: any;
+  contentSettings?: any;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onRemove?: () => void;
   onEditModeToggle?: (enable: boolean) => void;
@@ -23,7 +23,7 @@ export default ({
   icon,
   isSelected,
   editMode,
-  panelSettings,
+  contentSettings,
   setShowPadding,
   onRemove,
   onEditModeToggle,
@@ -41,7 +41,7 @@ export default ({
 
   const popoverContent = useMemo(() => {
     const menuItems: { name: string; icon: Icons; onClick: () => void }[] = [];
-    if (panelSettings) {
+    if (contentSettings) {
       menuItems.push({
         name: settingsTitle,
         icon: "padding",
@@ -56,7 +56,7 @@ export default ({
       });
     }
     return menuItems;
-  }, [settingsTitle, panelSettings, t, setShowPadding, onRemove, handleRemove]);
+  }, [settingsTitle, contentSettings, t, setShowPadding, onRemove, handleRemove]);
 
   const actionItems: ActionItem[] = useMemo(() => {
     const menuItems: ActionItem[] = [
@@ -66,7 +66,7 @@ export default ({
       },
     ];
 
-    if (onEditModeToggle && !!panelSettings) {
+    if (onEditModeToggle && !!contentSettings) {
       menuItems.push({
         icon: editMode ? "exit" : "storyBlockEdit",
         hide: !isSelected,
@@ -83,7 +83,7 @@ export default ({
     }
 
     return menuItems;
-  }, [title, icon, isSelected, editMode, panelSettings, t, onEditModeToggle, onSettingsToggle]);
+  }, [title, icon, isSelected, editMode, contentSettings, t, onEditModeToggle, onSettingsToggle]);
 
   return {
     dndItemContextRef,
