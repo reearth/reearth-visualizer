@@ -22,7 +22,7 @@ import { isNotNullish } from "../../../Feature/HeatMap/utils";
 
 import { getAnnotationType, type AnnotationType } from "./getAnnotationType";
 import { getTileCoords } from "./helpers";
-import { type LabelImageryProvider } from "./LabelImageryProvider";
+import { type JapanGSIOptimalBVmapLabelImageryProvider } from "./JapanGSIOptimalBVmapLabelImageryProvider";
 import { type Imagery, type ImageryCoords, type KeyedImagery } from "./types";
 
 type LabelOptions = Partial<
@@ -156,21 +156,21 @@ function getPosition(
   return Cartographic.toCartesian(cartographic, ellipsoid, result);
 }
 
-export interface LabelImageryProps {
-  imageryProvider: LabelImageryProvider;
+export interface JapanGSIOptimalBVmapLabelImageryProps {
+  imageryProvider: JapanGSIOptimalBVmapLabelImageryProvider;
   imagery: KeyedImagery;
   descendants?: readonly Imagery[];
   height?: number;
   style?: AnnotationStyle;
 }
 
-export const LabelImagery: FC<LabelImageryProps> = memo(
+export const JapanGSIOptimalBVmapLabelImagery: FC<JapanGSIOptimalBVmapLabelImageryProps> = memo(
   ({ imageryProvider, imagery, descendants, height = 50, style = defaultStyle }) => {
     const cesiumContext = useCesium();
 
     const tile = suspend(
       async () => await imageryProvider.tileCache.get(getTileCoords(imagery, 16)),
-      [LabelImagery, imagery.key],
+      [JapanGSIOptimalBVmapLabelImagery, imagery.key],
     );
 
     const bounds = useMemo(
@@ -305,4 +305,4 @@ export const LabelImagery: FC<LabelImageryProps> = memo(
   },
 );
 
-LabelImagery.displayName = "LabelImagery";
+JapanGSIOptimalBVmapLabelImagery.displayName = "JapanGSIOptimalBVmapLabelImagery";

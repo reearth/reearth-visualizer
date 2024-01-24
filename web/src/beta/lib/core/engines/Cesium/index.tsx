@@ -23,7 +23,7 @@ import Clock from "./core/Clock";
 import Globe from "./core/Globe";
 import ImageryLayers from "./core/Imagery";
 import Indicator from "./core/Indicator";
-import JapanGSIOptimalBVmapLabelImageryLayers from "./core/labels/LabelImageryLayers";
+import { JapanGSIOptimalBVmapLabelImageryLayers } from "./core/labels/JapanGSIOptimalBVmapLabelImageryLayer";
 import Event from "./Event";
 import Feature, { context as featureContext } from "./Feature";
 import useHooks from "./hooks";

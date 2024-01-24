@@ -7,11 +7,14 @@ import { useCesium } from "resium";
 import { assertType } from "../../../../../utils/assertType";
 import { type ImageryLayerHandle } from "../../../../../utils/ImageryLayer";
 import { usePreRender } from "../../../hooks/useSceneEvent";
-import { LabelImageryLayer } from "../LabelImageryLayer";
+import { JapanGSIOptimalBVmapLabelImageryLayers } from "../JapanGSIOptimalBVmapLabelImageryLayer";
 
 import { makeKey } from "./helpers";
-import { LabelImagery, type AnnotationStyle } from "./LabelImagery";
-import { LabelImageryProvider } from "./LabelImageryProvider";
+import {
+  JapanGSIOptimalBVmapLabelImagery,
+  type AnnotationStyle,
+} from "./JapanGSIOptimalBVmapLabelImagery";
+import { JapanGSIOptimalBVmapLabelImageryProvider } from "./JapanGSIOptimalBVmapLabelImageryProvider";
 import { type Imagery, type ImageryCoords, type KeyedImagery } from "./types";
 
 interface TileImagery {
@@ -131,7 +134,7 @@ function getImageriesToRender(scene: Scene, imageryProvider: ImageryProvider): K
 }
 
 const LabelImageryCollection: FC<{
-  imageryProvider: LabelImageryProvider;
+  imageryProvider: JapanGSIOptimalBVmapLabelImageryProvider;
   imageriesAtom: Atom<KeyedImagery[]>;
   style?: AnnotationStyle;
 }> = ({ imageryProvider, imageriesAtom, style }) => {
@@ -140,7 +143,7 @@ const LabelImageryCollection: FC<{
     <>
       {imageries.map(imagery => (
         <Suspense key={imagery.key}>
-          <LabelImagery
+          <JapanGSIOptimalBVmapLabelImagery
             imageryProvider={imageryProvider}
             imagery={imagery}
             descendants={imagery.descendants}
@@ -157,10 +160,11 @@ export interface VectorMapLabelProps {
 }
 
 export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
-  const [imageryProvider, setImageryProvider] = useState<LabelImageryProvider>();
+  const [imageryProvider, setImageryProvider] =
+    useState<JapanGSIOptimalBVmapLabelImageryProvider>();
   const setRef = useCallback((handle: ImageryLayerHandle | null) => {
     setImageryProvider(
-      handle?.imageryLayer.imageryProvider instanceof LabelImageryProvider
+      handle?.imageryLayer.imageryProvider instanceof JapanGSIOptimalBVmapLabelImageryProvider
         ? handle.imageryLayer.imageryProvider
         : undefined,
     );
@@ -215,7 +219,7 @@ export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
 
   return (
     <>
-      <LabelImageryLayer
+      <JapanGSIOptimalBVmapLabelImageryLayers
         ref={setRef}
         url="https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/{z}/{x}/{y}.pbf"
         tileWidth={1024}

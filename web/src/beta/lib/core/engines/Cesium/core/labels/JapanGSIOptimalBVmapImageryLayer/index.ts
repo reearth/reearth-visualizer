@@ -1,3 +1,3 @@
 export * from "./getAnnotationType";
-export { type AnnotationStyle } from "./LabelImagery";
+export { type AnnotationStyle } from "./JapanGSIOptimalBVmapLabelImagery";
 export * from "./VectorMapLabel";
