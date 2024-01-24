@@ -12,6 +12,7 @@ import { TerrainProperty } from "..";
 import { useImmutableFunction } from "../../hooks/useRefFunction";
 import { StringMatcher } from "../../utils/StringMatcher";
 
+import { createColorMapImage } from "./Feature/HeatMap/colorMap";
 import GlobeFSDefinitions from "./Shaders/OverriddenShaders/GlobeFS/Definitions.glsl?raw";
 import HeatmapForTerrainFS from "./Shaders/OverriddenShaders/GlobeFS/HeatmapForTerrain.glsl?raw";
 import IBLFS from "./Shaders/OverriddenShaders/GlobeFS/IBL.glsl?raw";
@@ -121,7 +122,13 @@ const useIBL = ({
 
 const useTerrainHeatmap = ({
   cesium,
-  terrain: { heatmapType, heatmapMaxHeight, heatmapMinHeight, heatmapLogarithmic } = {},
+  terrain: {
+    heatmapType,
+    heatmapMaxHeight,
+    heatmapMinHeight,
+    heatmapLogarithmic,
+    heatmapColorLUT,
+  } = {},
 }: {
   cesium: RefObject<CesiumComponentRef<Viewer>>;
   terrain: TerrainProperty | undefined;
@@ -158,9 +165,15 @@ const useTerrainHeatmap = ({
     globe.material.uniforms.minHeight = heatmapMinHeight ?? globe.material.uniforms.minHeight;
     globe.material.uniforms.maxHeight = heatmapMaxHeight ?? globe.material.uniforms.maxHeight;
     globe.material.uniforms.logarithmic = heatmapLogarithmic ?? globe.material.uniforms.logarithmic;
-
-    // makeGlobeShadersDirty(globe);
   }, [cesium, isCustomHeatmapEnabled, heatmapMaxHeight, heatmapMinHeight, heatmapLogarithmic]);
+
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement || !isCustomHeatmapEnabled || !heatmapColorLUT) return;
+    const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
+    if (!(globe.material instanceof VertexTerrainElevationMaterial)) return;
+
+    globe.material.uniforms.colorMap = createColorMapImage(heatmapColorLUT);
+  }, [cesium, isCustomHeatmapEnabled, heatmapColorLUT]);
 
   return { isCustomHeatmapEnabled, shaderForTerrainHeatmap };
 };

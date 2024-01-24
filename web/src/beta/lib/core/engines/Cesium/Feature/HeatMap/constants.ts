@@ -521,7 +521,7 @@ export const flareColorMapLUT: LUT = [
 ];
 
 // Reference: https://github.com/takram-design-engineering/plateau-view/blob/main/libs/color-maps/src/colorMaps/turbo.ts
-export const heatMapColorMap: LUT = [
+export const turboColorMap: LUT = [
   [0.18995, 0.07176, 0.23217],
   [0.19483, 0.08339, 0.26149],
   [0.19956, 0.09498, 0.29024],

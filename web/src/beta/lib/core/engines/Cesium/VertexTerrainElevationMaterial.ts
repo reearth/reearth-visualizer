@@ -1,7 +1,7 @@
 import { Ellipsoid, Material } from "@cesium/engine";
 
 import { createColorMapImage } from "@reearth/beta/lib/core/engines/Cesium/Feature/HeatMap/colorMap";
-import { heatMapColorMap } from "@reearth/beta/lib/core/engines/Cesium/Feature/HeatMap/constants";
+import { turboColorMap } from "@reearth/beta/lib/core/engines/Cesium/Feature/HeatMap/constants";
 
 import { JapanSeaLevelEllipsoid } from "./JapanSeaLevelEllipsoid";
 import source from "./vertexTerrainElevationMaterial.glsl?raw";
@@ -12,7 +12,7 @@ export class VertexTerrainElevationMaterial extends Material {
       fabric: {
         type: "VertexTerrainElevation",
         uniforms: {
-          colorMap: createColorMapImage(heatMapColorMap),
+          colorMap: createColorMapImage(turboColorMap),
           minHeight: 0,
           maxHeight: 1000,
           logarithmic: false,

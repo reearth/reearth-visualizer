@@ -8,8 +8,7 @@ import { HeatMapAppearance } from "@reearth/beta/lib/core/mantle";
 
 import { FeatureComponentConfig, FeatureProps } from "../utils";
 
-// import { flareColorMapLUT } from "./constants";
-import { heatMapColorMap } from "./constants";
+import { flareColorMapLUT } from "./constants";
 import { fetchImageAndCreateMeshImageData, MeshImageData } from "./createMeshImageData";
 import { HeatmapMesh } from "./HeatmapMesh";
 
@@ -20,7 +19,7 @@ export type Property = HeatMapAppearance;
 export default memo(function HeatMap({ property, isVisible, layer, feature }: Props) {
   const {
     valueMap,
-    // colorMap = flareColorMapLUT,
+    colorMap = flareColorMapLUT,
     width,
     height,
     bounds,
@@ -123,8 +122,7 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
       boundingSphere={boundingSphere}
       meshImageData={meshImageData}
       geometry={geometry}
-      // colorMapLUT={colorMap}
-      colorMapLUT={heatMapColorMap}
+      colorMapLUT={colorMap}
       opacity={opacity}
       minValue={colorRange[0]}
       maxValue={colorRange[1]}
