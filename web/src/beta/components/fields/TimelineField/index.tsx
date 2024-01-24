@@ -49,13 +49,13 @@ const TimelineField: React.FC<Props> = ({ name, description, value, onChange }) 
           <Input dataTimeSet={!!timelineValues}>
             <Timeline>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.startTime ?? t("not set")}
+                {timelineValues?.startTime ? timelineValues?.startTime : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.currentTime ?? t("not set")}
+                {timelineValues?.currentTime ? timelineValues?.currentTime : t("not set")}
               </TextWrapper>
               <TextWrapper size="footnote" customColor>
-                {timelineValues?.endTime ?? t("not set")}
+                {timelineValues?.endTime ? timelineValues?.endTime : t("not set")}
               </TextWrapper>
             </Timeline>
             <DeleteIcon
@@ -154,7 +154,7 @@ const TextWrapper = styled(Text)`
     background: ${({ theme }) => theme.content.main};
     border: 1px solid ${({ theme }) => theme.outline.main};
   }
-  &:nth-child(2) {
+  &:nth-of-type(2) {
     ::after {
       background: transparent;
       border: 1px solid ${({ theme }) => theme.outline.main};

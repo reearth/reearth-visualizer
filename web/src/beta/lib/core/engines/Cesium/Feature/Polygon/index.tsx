@@ -18,7 +18,9 @@ import {
   type FeatureProps,
 } from "../utils";
 
-export type Props = FeatureProps<Property> & { disableWorkaround?: boolean };
+export type Props = FeatureProps<Property> & {
+  disableWorkaround?: boolean;
+};
 
 export type Property = PolygonAppearance & {
   polygon?: PolygonValue;
@@ -56,6 +58,7 @@ export default function Polygon({
     shadows,
     extrudedHeight,
     classificationType: ct,
+    hideIndicator,
   } = property ?? {};
 
   const hierarchy = useCustomCompareMemo(
@@ -126,7 +129,8 @@ export default function Polygon({
         layerId={layer?.id}
         featureId={feature?.id}
         availability={availability}
-        properties={feature?.properties}>
+        properties={feature?.properties}
+        hideIndicator={hideIndicator}>
         <PolygonGraphics
           hierarchy={hierarchy}
           fill={fill}

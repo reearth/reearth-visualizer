@@ -4,7 +4,13 @@ import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
 import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManager";
 import { TimelineValues } from "../Block/builtin/Timeline";
-import { convertOptionToSeconds, formatDateToSting } from "../utils";
+import {
+  convertOptionToSeconds,
+  formatDateToSting,
+  formatISO8601,
+  formatTimezone,
+  getTimeZone,
+} from "../utils";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
 
@@ -31,7 +37,7 @@ export default (timelineValues?: TimelineValues) => {
   const visualizerContext = useVisualizer();
 
   const playSpeedOptions = useMemo(() => {
-    const speedOpt = ["1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
+    const speedOpt = ["1sec/sec", "0.5min/sec", "1min/sec", "0.1hr/sec", "0.5hr/sec", "1hr/sec"];
     return convertOptionToSeconds(speedOpt);
   }, []);
 
@@ -41,10 +47,12 @@ export default (timelineValues?: TimelineValues) => {
     getNewDate(visualizerContext?.current?.timeline?.current?.timeline?.current).getTime(),
   );
 
+  const [timezone, setTimezone] = useState<string>(formatTimezone(currentTime));
+
   const range = useMemo(() => {
     if (timelineValues) {
-      const startTime = getNewDate(new Date(timelineValues?.startTime.substring(0, 19))).getTime();
-      const endTime = getNewDate(new Date(timelineValues?.endTime.substring(0, 19))).getTime();
+      const startTime = getNewDate(new Date(formatISO8601(timelineValues?.startTime))).getTime();
+      const endTime = getNewDate(new Date(formatISO8601(timelineValues?.endTime))).getTime();
       return timeRange(startTime, endTime);
     } else {
       return timeRange(
@@ -134,7 +142,10 @@ export default (timelineValues?: TimelineValues) => {
 
   useEffect(() => {
     if (timelineValues) {
-      const t = getNewDate(new Date(timelineValues?.currentTime.substring(0, 19))).getTime();
+      const iso8601Time = formatISO8601(timelineValues?.currentTime);
+      const t = getNewDate(new Date(iso8601Time)).getTime();
+      const timezoneOffset = getTimeZone(iso8601Time);
+      setTimezone(timezoneOffset);
       return setCurrentTime(t);
     } else {
       return setCurrentTime(
@@ -148,6 +159,7 @@ export default (timelineValues?: TimelineValues) => {
     range,
     playSpeedOptions,
     speed,
+    timezone,
     onPlay,
     onSpeedChange: handleOnSpeedChange,
     onPause,

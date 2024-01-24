@@ -8,6 +8,7 @@ export type Props = {
   placeholder?: string;
   autoFocus?: boolean;
   type?: HTMLInputTypeAttribute;
+  step?: number;
   onChange?: (text: string) => void;
   onBlur?: () => void;
   onExit?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -19,6 +20,7 @@ const TextInput: React.FC<Props> = ({
   value,
   placeholder,
   autoFocus,
+  step,
   onChange,
   onBlur,
   onExit,
@@ -68,6 +70,7 @@ const TextInput: React.FC<Props> = ({
       onBlur={handleBlur}
       onKeyUp={handleExit}
       disabled={!!disabled}
+      step={step}
     />
   );
 };
