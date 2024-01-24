@@ -1,3 +1,4 @@
+import { WebMercatorTilingScheme } from "@cesium/engine";
 import {
   ImageryProvider,
   ArcGisMapServerImageryProvider,
@@ -6,6 +7,8 @@ import {
   IonWorldImageryStyle,
   UrlTemplateImageryProvider,
 } from "cesium";
+
+import { JapanGSIOptimalBVmapLabelImageryProvider } from "./labels/JapanGSIOptimalBVmapImageryLayer/JapanGSIOptimalBVmapLabelImageryProvider";
 
 export const tiles = {
   default: ({ cesiumIonAccessToken } = {}) =>
@@ -56,4 +59,22 @@ export const tiles = {
   url: ({ url } = {}) => (url ? new UrlTemplateImageryProvider({ url }) : null),
 } as {
   [key: string]: (opts?: { url?: string; cesiumIonAccessToken?: string }) => ImageryProvider | null;
+};
+
+export const labelTiles = {
+  japan_gsi_optimal_bvmap: (params: {
+    url: string;
+    minimumLevel?: number;
+    maximumLevel?: number;
+    minimumDataLevel: number;
+    maximumDataLevel: number;
+  }) =>
+    new JapanGSIOptimalBVmapLabelImageryProvider({
+      url: params.url,
+      tilingScheme: new WebMercatorTilingScheme(),
+      tileWidth: 256,
+      tileHeight: 256,
+      minimumDataLevel: params.minimumDataLevel,
+      maximumDataLevel: params.maximumDataLevel,
+    }),
 };

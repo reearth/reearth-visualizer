@@ -15,13 +15,13 @@ import { TileCache, ZxySource } from "protomaps";
 
 import { getTileCoords, makeKey } from "./helpers";
 
-export interface ImageryProviderBaseOptions {
+export interface JapanGSIOptimalBVmapImageryProviderBaseOptions {
   tilingScheme?: TilingScheme;
   tileWidth?: number;
   tileHeight?: number;
 }
 
-export abstract class ImageryProviderBase implements ImageryProvider {
+export abstract class JapanGSIOptimalBVmapImageryProviderBase implements ImageryProvider {
   // Deprecated fields
   readonly defaultAlpha = undefined;
   readonly defaultNightAlpha = undefined;
@@ -48,7 +48,7 @@ export abstract class ImageryProviderBase implements ImageryProvider {
   proxy: Proxy = undefined as any;
   hasAlphaChannel = true;
 
-  constructor(options?: ImageryProviderBaseOptions) {
+  constructor(options?: JapanGSIOptimalBVmapImageryProviderBaseOptions) {
     if (options?.tilingScheme != null) {
       this.tilingScheme = options.tilingScheme;
     }
@@ -93,13 +93,14 @@ export abstract class ImageryProviderBase implements ImageryProvider {
   }
 }
 
-export interface LabelImageryProviderOptions extends ImageryProviderBaseOptions {
+export interface JapanGSIOptimalBVmapLabelImageryProviderOptions
+  extends JapanGSIOptimalBVmapImageryProviderBaseOptions {
   url: string;
   minimumDataLevel: number;
   maximumDataLevel: number;
 }
 
-export class LabelImageryProvider extends ImageryProviderBase {
+export class JapanGSIOptimalBVmapLabelImageryProvider extends JapanGSIOptimalBVmapImageryProviderBase {
   minimumDataLevel: number;
   maximumDataLevel: number;
 
@@ -107,7 +108,7 @@ export class LabelImageryProvider extends ImageryProviderBase {
   private readonly image: HTMLCanvasElement;
   private readonly discardedTileCoords = new Set<string>();
 
-  constructor(options: LabelImageryProviderOptions) {
+  constructor(options: JapanGSIOptimalBVmapLabelImageryProviderOptions) {
     super(options);
     this.tileDiscardPolicy = new DiscardEmptyTileImagePolicy();
     this.minimumDataLevel = options.minimumDataLevel;
