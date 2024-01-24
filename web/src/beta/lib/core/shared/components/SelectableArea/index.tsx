@@ -3,9 +3,9 @@ import { MouseEvent, ReactNode } from "react";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
-import ClickAwayListener from "../ClickAwayListener";
+import ClickAwayListener from "../../../StoryPanel/ClickAwayListener";
 
+import ActionPanel, { type ActionPosition } from "./ActionPanel";
 import useHooks from "./hooks";
 
 type Props = {

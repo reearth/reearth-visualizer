@@ -6,6 +6,7 @@ import type { InstallableStoryBlock } from "@reearth/services/api/storytellingAp
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import SelectableArea from "../../shared/components/SelectableArea";
 import StoryBlock from "../Block";
 import {
   STORY_PANEL_CONTENT_ELEMENT_ID,
@@ -13,7 +14,6 @@ import {
   MIN_STORY_PAGE_GAP_IN_EDITOR,
 } from "../constants";
 import { useElementOnScreen } from "../hooks/useElementOnScreen";
-import SelectableArea from "../SelectableArea";
 
 import BlockAddBar from "./BlockAddBar";
 import useHooks, { type StoryPage } from "./hooks";
