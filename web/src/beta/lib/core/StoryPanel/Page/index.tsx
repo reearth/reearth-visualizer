@@ -1,21 +1,23 @@
 import { Fragment, MutableRefObject, ReactNode, useEffect } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
-import type { Spacing, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import BlockAddBar from "../../shared/components/BlockAddBar";
+import ContentWrapper from "../../shared/components/ContentWrapper";
 import SelectableArea from "../../shared/components/SelectableArea";
+import { useElementOnScreen } from "../../shared/hooks/useElementOnScreen";
 import StoryBlock from "../Block";
 import {
   STORY_PANEL_CONTENT_ELEMENT_ID,
   MIN_STORY_PAGE_PADDING_IN_EDITOR,
   MIN_STORY_PAGE_GAP_IN_EDITOR,
+  STORY_PANEL_WIDTH,
 } from "../constants";
-import { useElementOnScreen } from "../hooks/useElementOnScreen";
 
-import BlockAddBar from "./BlockAddBar";
 import useHooks, { type StoryPage } from "./hooks";
 
 type Props = {
@@ -148,7 +150,7 @@ const StoryPanel: React.FC<Props> = ({
       onPropertyItemAdd={onPropertyItemAdd}
       onPropertyItemDelete={onPropertyItemDelete}
       onPropertyItemMove={onPropertyItemMove}>
-      <Wrapper
+      <ContentWrapper
         id={page?.id}
         ref={containerRef}
         isEditable={isEditable}
@@ -186,8 +188,9 @@ const StoryPanel: React.FC<Props> = ({
               id={titleId + "below-bar"}
               alwaysShow={storyBlocks && storyBlocks.length < 1}
               openBlocks={openBlocksIndex === -1}
-              installableStoryBlocks={installableStoryBlocks}
+              installableBlocks={installableStoryBlocks}
               showAreaHeight={panelSettings?.gap?.value}
+              parentWidth={STORY_PANEL_WIDTH}
               onBlockOpen={() => handleBlockOpen(-1)}
               onBlockAdd={handleBlockCreate(0)}
             />
@@ -234,8 +237,9 @@ const StoryPanel: React.FC<Props> = ({
                     <BlockAddBar
                       id={b.id + "below-bar"}
                       openBlocks={openBlocksIndex === idx}
-                      installableStoryBlocks={installableStoryBlocks}
+                      installableBlocks={installableStoryBlocks}
                       showAreaHeight={panelSettings?.gap?.value}
+                      parentWidth={STORY_PANEL_WIDTH}
                       onBlockOpen={() => handleBlockOpen(idx)}
                       onBlockAdd={handleBlockCreate(idx + 1)}
                     />
@@ -245,49 +249,13 @@ const StoryPanel: React.FC<Props> = ({
             }}
           />
         )}
-      </Wrapper>
+      </ContentWrapper>
       {children}
     </SelectableArea>
   );
 };
 
 export default StoryPanel;
-
-const Wrapper = styled.div<{
-  padding: Spacing;
-  gap?: number;
-  isEditable?: boolean;
-  minPaddingInEditor: Spacing;
-  minGapInEditor: number;
-}>`
-  display: flex;
-  flex-direction: column;
-  color: ${({ theme }) => theme.content.weaker};
-  ${({ gap, isEditable, minGapInEditor }) =>
-    gap && `gap: ${isEditable && gap < minGapInEditor ? minGapInEditor : gap}px;`}
-
-  ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-top: ${
-      isEditable && padding.top < minPaddingInEditor.top ? minPaddingInEditor.top : padding.top
-    }px;`}
-  ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-bottom: ${
-      isEditable && padding.bottom < minPaddingInEditor.bottom
-        ? minPaddingInEditor.bottom
-        : padding.bottom
-    }px;`}
-  ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-left: ${
-      isEditable && padding.left < minPaddingInEditor.left ? minPaddingInEditor.left : padding.left
-    }px;`}
-  ${({ padding, isEditable, minPaddingInEditor }) =>
-    `padding-right: ${
-      isEditable && padding.right < minPaddingInEditor.right
-        ? minPaddingInEditor.right
-        : padding.right
-    }px;`}
-  box-sizing: border-box;
-`;
 
 const PageTitleWrapper = styled.div`
   position: relative;

@@ -14,7 +14,7 @@ import Text from "@reearth/beta/components/Text";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
 
-import { FieldComponent } from "../../../StoryPanel/hooks/useFieldComponent";
+import { FieldComponent } from "../../hooks/useFieldComponent";
 
 export type ActionItem = {
   icon: string;

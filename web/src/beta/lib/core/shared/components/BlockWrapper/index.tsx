@@ -3,9 +3,9 @@ import { ReactNode, createContext } from "react";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
 
-import SelectableArea from "../../../../shared/components/SelectableArea";
-import { FieldComponent } from "../../../hooks/useFieldComponent";
-import Template from "../../Template";
+import Template from "../../../StoryPanel/Block/Template";
+import { FieldComponent } from "../../hooks/useFieldComponent";
+import SelectableArea from "../SelectableArea";
 
 import useHooks from "./hooks";
 

@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
 import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManager";
-import { TimelineValues } from "../Block/builtin/Timeline";
-import { convertOptionToSeconds, formatDateToSting } from "../utils";
+import { TimelineValues } from "../../StoryPanel/Block/builtin/Timeline";
+import { convertOptionToSeconds, formatDateToSting } from "../../StoryPanel/utils";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
 
