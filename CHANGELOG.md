@@ -2,6 +2,161 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.20.0 - 2024-01-24
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- GlobalModal not showing when it should ([#857](https://github.com/reearth/reearth/pull/857)) [`8df7d0`](https://github.com/reearth/reearth/commit/8df7d0)
+- Support built-in widget visible on WAS ([#839](https://github.com/reearth/reearth/pull/839)) [`227ae7`](https://github.com/reearth/reearth/commit/227ae7)
+- Core marker extrude check for coordinates height ([#834](https://github.com/reearth/reearth/pull/834)) [`7fcaa2`](https://github.com/reearth/reearth/commit/7fcaa2)
+
+#### 🧪 Testing
+
+- Fix useEngineRef [`854de7`](https://github.com/reearth/reearth/commit/854de7)
+
+#### Miscellaneous Tasks
+
+- Handle invalid date in time convert ([#878](https://github.com/reearth/reearth/pull/878)) [`c8e825`](https://github.com/reearth/reearth/commit/c8e825)
+- Timeline bug fixing ([#876](https://github.com/reearth/reearth/pull/876)) [`46593d`](https://github.com/reearth/reearth/commit/46593d)
+- Disable PBR when material has texture ([#875](https://github.com/reearth/reearth/pull/875)) [`969a63`](https://github.com/reearth/reearth/commit/969a63)
+- Add hideIndicator On Selecting ([#866](https://github.com/reearth/reearth/pull/866)) [`9a1e32`](https://github.com/reearth/reearth/commit/9a1e32)
+- Fix scene undefined bug in heatmap ([#873](https://github.com/reearth/reearth/pull/873)) [`ace172`](https://github.com/reearth/reearth/commit/ace172)
+- Invoke requestRender before capture screen [`86f666`](https://github.com/reearth/reearth/commit/86f666)
+- Sketch layer UI implementation ([#855](https://github.com/reearth/reearth/pull/855)) [`9b9d4b`](https://github.com/reearth/reearth/commit/9b9d4b)
+- Add flyToBBox ([#865](https://github.com/reearth/reearth/pull/865)) [`76ada0`](https://github.com/reearth/reearth/commit/76ada0)
+- Timeline with padding ([#853](https://github.com/reearth/reearth/pull/853)) [`a16870`](https://github.com/reearth/reearth/commit/a16870)
+- Fix frustum instance [`146872`](https://github.com/reearth/reearth/commit/146872)
+- Add support for heatMap in beta ([#835](https://github.com/reearth/reearth/pull/835)) [`0c4c02`](https://github.com/reearth/reearth/commit/0c4c02)
+- Add some functionalities for pedestrian ([#862](https://github.com/reearth/reearth/pull/862)) [`293335`](https://github.com/reearth/reearth/commit/293335)
+- Remember the editor settings ([#825](https://github.com/reearth/reearth/pull/825)) [`02aac2`](https://github.com/reearth/reearth/commit/02aac2)
+- Add frustum model ([#861](https://github.com/reearth/reearth/pull/861)) [`2b6895`](https://github.com/reearth/reearth/commit/2b6895)
+- Add transition appearance ([#860](https://github.com/reearth/reearth/pull/860)) [`fb496e`](https://github.com/reearth/reearth/commit/fb496e)
+- Refactoring web code ([#858](https://github.com/reearth/reearth/pull/858)) [`7f0e76`](https://github.com/reearth/reearth/commit/7f0e76)
+- Extend camera and marker APIs for pedestrian ([#859](https://github.com/reearth/reearth/pull/859)) [`1d35d9`](https://github.com/reearth/reearth/commit/1d35d9)
+- Improve Story Panel UX ([#856](https://github.com/reearth/reearth/pull/856)) [`d8d9f3`](https://github.com/reearth/reearth/commit/d8d9f3)
+- Multiple bug fixes ([#854](https://github.com/reearth/reearth/pull/854)) [`574037`](https://github.com/reearth/reearth/commit/574037)
+- Fix assets not refetching ([#852](https://github.com/reearth/reearth/pull/852)) [`0b60ec`](https://github.com/reearth/reearth/commit/0b60ec)
+- Fix published WAS area padding ([#850](https://github.com/reearth/reearth/pull/850)) [`569681`](https://github.com/reearth/reearth/commit/569681)
+- Fixing a few bugs ([#849](https://github.com/reearth/reearth/pull/849)) [`c8ad89`](https://github.com/reearth/reearth/commit/c8ad89)
+- Color bug fix ([#843](https://github.com/reearth/reearth/pull/843)) [`76f514`](https://github.com/reearth/reearth/commit/76f514)
+- Stringify label text ([#848](https://github.com/reearth/reearth/pull/848)) [`17bcc6`](https://github.com/reearth/reearth/commit/17bcc6)
+- Next page button story block ([#846](https://github.com/reearth/reearth/pull/846)) [`7aa346`](https://github.com/reearth/reearth/commit/7aa346)
+- Fix timeline block breaking when time set to current day ([#847](https://github.com/reearth/reearth/pull/847)) [`a69d81`](https://github.com/reearth/reearth/commit/a69d81)
+- Fix unsafe builtin widget logic to work well on published page ([#845](https://github.com/reearth/reearth/pull/845)) [`1b1e83`](https://github.com/reearth/reearth/commit/1b1e83)
+- Fix title padding changes updating page padding ([#840](https://github.com/reearth/reearth/pull/840)) [`42d9ed`](https://github.com/reearth/reearth/commit/42d9ed)
+- Finalize Japanese translations ([#842](https://github.com/reearth/reearth/pull/842)) [`1ff1f7`](https://github.com/reearth/reearth/commit/1ff1f7)
+- Add page name tag to indicator and fix some small bugs ([#841](https://github.com/reearth/reearth/pull/841)) [`968b6b`](https://github.com/reearth/reearth/commit/968b6b)
+- Improve asset modal ([#838](https://github.com/reearth/reearth/pull/838)) [`68c18d`](https://github.com/reearth/reearth/commit/68c18d)
+- Modify zoom level field ([#808](https://github.com/reearth/reearth/pull/808)) [`1b79cf`](https://github.com/reearth/reearth/commit/1b79cf)
+- Fix story block creation and preview ([#837](https://github.com/reearth/reearth/pull/837)) [`ebf99c`](https://github.com/reearth/reearth/commit/ebf99c)
+- Update switch layer block functionality  ([#833](https://github.com/reearth/reearth/pull/833)) [`ed2931`](https://github.com/reearth/reearth/commit/ed2931)
+- Fix story block bugs ([#829](https://github.com/reearth/reearth/pull/829)) [`d6bf3e`](https://github.com/reearth/reearth/commit/d6bf3e)
+- Timefield bug fix ([#828](https://github.com/reearth/reearth/pull/828)) [`df99b1`](https://github.com/reearth/reearth/commit/df99b1)
+- Fix story page bugs ([#826](https://github.com/reearth/reearth/pull/826)) [`09338f`](https://github.com/reearth/reearth/commit/09338f)
+- Fix type errors in align system [`91a821`](https://github.com/reearth/reearth/commit/91a821)
+- Fix camera behavior in interaction mode ([#824](https://github.com/reearth/reearth/pull/824)) [`912d68`](https://github.com/reearth/reearth/commit/912d68)
+- Fix WAS gap [`b80a31`](https://github.com/reearth/reearth/commit/b80a31)
+- Fix padding settings for page ([#823](https://github.com/reearth/reearth/pull/823)) [`f9a7d4`](https://github.com/reearth/reearth/commit/f9a7d4)
+- Reset current page on tab change ([#822](https://github.com/reearth/reearth/pull/822)) [`972fda`](https://github.com/reearth/reearth/commit/972fda)
+- Fix timeline field component&[#39](https://github.com/reearth/reearth/pull/39);s popover ([#821](https://github.com/reearth/reearth/pull/821)) [`a38df1`](https://github.com/reearth/reearth/commit/a38df1)
+- Story block edit Panel layout ([#810](https://github.com/reearth/reearth/pull/810)) [`67a0d6`](https://github.com/reearth/reearth/commit/67a0d6)
+- Double click on page name ([#815](https://github.com/reearth/reearth/pull/815)) [`ccf3c2`](https://github.com/reearth/reearth/commit/ccf3c2)
+- Drag in timeline blog ([#802](https://github.com/reearth/reearth/pull/802)) [`f4fc80`](https://github.com/reearth/reearth/commit/f4fc80)
+- Add an API to get description from entity ([#813](https://github.com/reearth/reearth/pull/813)) [`75c326`](https://github.com/reearth/reearth/commit/75c326)
+- Beta zindexes ([#751](https://github.com/reearth/reearth/pull/751)) [`4b7161`](https://github.com/reearth/reearth/commit/4b7161)
+- Fix overriding layer structure ([#818](https://github.com/reearth/reearth/pull/818)) [`034e98`](https://github.com/reearth/reearth/commit/034e98)
+- Fix layer freezing after feature selection [`030528`](https://github.com/reearth/reearth/commit/030528)
+- Fix feature unselection ([#812](https://github.com/reearth/reearth/pull/812)) [`3e6b7c`](https://github.com/reearth/reearth/commit/3e6b7c)
+- Story page click away ([#806](https://github.com/reearth/reearth/pull/806)) [`b97cd2`](https://github.com/reearth/reearth/commit/b97cd2)
+- Move doubleClick with debounce to utils ([#811](https://github.com/reearth/reearth/pull/811)) [`80b65f`](https://github.com/reearth/reearth/commit/80b65f)
+- Ui and ux fixes ([#809](https://github.com/reearth/reearth/pull/809)) [`770edb`](https://github.com/reearth/reearth/commit/770edb)
+- UI updates ([#805](https://github.com/reearth/reearth/pull/805)) [`621416`](https://github.com/reearth/reearth/commit/621416)
+- Multi layer Select ([#757](https://github.com/reearth/reearth/pull/757)) [`0e75fa`](https://github.com/reearth/reearth/commit/0e75fa)
+- Fix classic notification bar ([#804](https://github.com/reearth/reearth/pull/804)) [`1ca153`](https://github.com/reearth/reearth/commit/1ca153)
+- Fix error in Timeline block [`0b0290`](https://github.com/reearth/reearth/commit/0b0290)
+- Fix story panel bg in published project [`f8df61`](https://github.com/reearth/reearth/commit/f8df61)
+- Handle misfiring of singleClick on doubleClick at layerName and layerStyleName ([#800](https://github.com/reearth/reearth/pull/800)) [`d539d3`](https://github.com/reearth/reearth/commit/d539d3)
+- Bug fixes ([#803](https://github.com/reearth/reearth/pull/803)) [`8e4ada`](https://github.com/reearth/reearth/commit/8e4ada)
+- Fix gap field component ([#801](https://github.com/reearth/reearth/pull/801)) [`f9b18c`](https://github.com/reearth/reearth/commit/f9b18c)
+- Add story background setting ([#775](https://github.com/reearth/reearth/pull/775)) [`f8ea05`](https://github.com/reearth/reearth/commit/f8ea05)
+- Collapse side panels ([#799](https://github.com/reearth/reearth/pull/799)) [`8aa78f`](https://github.com/reearth/reearth/commit/8aa78f)
+- Visualizer clock update  ([#782](https://github.com/reearth/reearth/pull/782)) [`9c4c84`](https://github.com/reearth/reearth/commit/9c4c84)
+- Timeline block ([#750](https://github.com/reearth/reearth/pull/750)) [`f5ab49`](https://github.com/reearth/reearth/commit/f5ab49)
+- Fix text and camera button blocks ([#797](https://github.com/reearth/reearth/pull/797)) [`b97d67`](https://github.com/reearth/reearth/commit/b97d67)
+- New beta notification ([#796](https://github.com/reearth/reearth/pull/796)) [`607773`](https://github.com/reearth/reearth/commit/607773)
+- Slider fixes ([#795](https://github.com/reearth/reearth/pull/795)) [`801396`](https://github.com/reearth/reearth/commit/801396)
+- Auto create page on project creation ([#794](https://github.com/reearth/reearth/pull/794)) [`6d5360`](https://github.com/reearth/reearth/commit/6d5360)
+- Storyblock ux update ([#776](https://github.com/reearth/reearth/pull/776)) [`0c16b4`](https://github.com/reearth/reearth/commit/0c16b4)
+- Misc bug fixes improvements ([#793](https://github.com/reearth/reearth/pull/793)) [`b09909`](https://github.com/reearth/reearth/commit/b09909)
+- 3dtile feature select support in UI ([#792](https://github.com/reearth/reearth/pull/792)) [`be18c6`](https://github.com/reearth/reearth/commit/be18c6)
+- Add scene setting ([#755](https://github.com/reearth/reearth/pull/755)) [`f9e53a`](https://github.com/reearth/reearth/commit/f9e53a)
+- Minor fixes in map editor ([#789](https://github.com/reearth/reearth/pull/789)) [`56c4c0`](https://github.com/reearth/reearth/commit/56c4c0)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Cannot find storytelling by public name [`76b996`](https://github.com/reearth/reearth/commit/76b996)
+- Serve published metadata of storytelling ([#851](https://github.com/reearth/reearth/pull/851)) [`7850d0`](https://github.com/reearth/reearth/commit/7850d0)
+- Repo filter remains between different contexts [`887daf`](https://github.com/reearth/reearth/commit/887daf)
+
+#### Miscellaneous Tasks
+
+- Add panel setting to manifest ([#827](https://github.com/reearth/reearth/pull/827)) [`89457b`](https://github.com/reearth/reearth/commit/89457b)
+- Modify zoom level in manifest ([#807](https://github.com/reearth/reearth/pull/807)) [`ae5594`](https://github.com/reearth/reearth/commit/ae5594)
+- Remove empty property group [`7c5587`](https://github.com/reearth/reearth/commit/7c5587)
+- Update convert value in gql [`3bbd0f`](https://github.com/reearth/reearth/commit/3bbd0f)
+- Add array in convert value of gql [`ee5844`](https://github.com/reearth/reearth/commit/ee5844)
+- Add cameraDuration on the cameraButtonStoryBlock [`a69cd6`](https://github.com/reearth/reearth/commit/a69cd6)
+- Remove background setting from manifest [`86cc00`](https://github.com/reearth/reearth/commit/86cc00)
+- Remove debug statements [`a875a2`](https://github.com/reearth/reearth/commit/a875a2)
+- Add bgColor w story in memory, refactors and add test [`df9e95`](https://github.com/reearth/reearth/commit/df9e95)
+- Add position, bgColor &amp; title to story &amp; page json respectively for published story ([#787](https://github.com/reearth/reearth/pull/787)) [`cea0d7`](https://github.com/reearth/reearth/commit/cea0d7)
+- Add bgColor to story mutation resolver [`c158b6`](https://github.com/reearth/reearth/commit/c158b6)
+- Add bgColor to story ([#791](https://github.com/reearth/reearth/pull/791)) [`93aba7`](https://github.com/reearth/reearth/commit/93aba7)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Wireframe for globe and tileset ([#870](https://github.com/reearth/reearth/pull/870)) [`75c04f`](https://github.com/reearth/reearth/commit/75c04f)
+- Fix title&[#39](https://github.com/reearth/reearth/pull/39);s panel setting ([#831](https://github.com/reearth/reearth/pull/831)) [`b60713`](https://github.com/reearth/reearth/commit/b60713)
+- Modify the description of zoom level ([#832](https://github.com/reearth/reearth/pull/832)) [`021404`](https://github.com/reearth/reearth/commit/021404)
+- Fix input field popover ([#819](https://github.com/reearth/reearth/pull/819)) [`d42279`](https://github.com/reearth/reearth/commit/d42279)
+- Remove the timeOut from text input ([#814](https://github.com/reearth/reearth/pull/814)) [`4ad7bb`](https://github.com/reearth/reearth/commit/4ad7bb)
+
+#### 
+
+- Fix feature selection...again [`5e3012`](https://github.com/reearth/reearth/commit/5e3012)
+
+### chore
+
+#### 🔧 Bug Fixes
+
+- Invoke requestRender in primitive features whenever component is updated ([#817](https://github.com/reearth/reearth/pull/817)) [`e3ed8c`](https://github.com/reearth/reearth/commit/e3ed8c)
+
+### sever
+
+#### Miscellaneous Tasks
+
+- Fix story publishing for prod ([#844](https://github.com/reearth/reearth/pull/844)) [`c250a2`](https://github.com/reearth/reearth/commit/c250a2)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Wireframe for globe and tileset ([#870](https://github.com/reearth/reearth/pull/870)) [`75c04f`](https://github.com/reearth/reearth/commit/75c04f)
+- Fix title&[#39](https://github.com/reearth/reearth/pull/39);s panel setting ([#831](https://github.com/reearth/reearth/pull/831)) [`b60713`](https://github.com/reearth/reearth/commit/b60713)
+- Modify the description of zoom level ([#832](https://github.com/reearth/reearth/pull/832)) [`021404`](https://github.com/reearth/reearth/commit/021404)
+- Fix input field popover ([#819](https://github.com/reearth/reearth/pull/819)) [`d42279`](https://github.com/reearth/reearth/commit/d42279)
+- Remove the timeOut from text input ([#814](https://github.com/reearth/reearth/pull/814)) [`4ad7bb`](https://github.com/reearth/reearth/commit/4ad7bb)
+
+#### 
+
+- Fix feature selection...again [`5e3012`](https://github.com/reearth/reearth/commit/5e3012)
+
 ## 0.19.0 - 2023-11-06
 
 ### Web

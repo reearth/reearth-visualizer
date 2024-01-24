@@ -58,6 +58,25 @@ export default ({ timelineValues, onChange, onClose, setTimelineValues }: Props)
     [timelineValues, setTimelineValues],
   );
 
+  const [disabledFields, setDisabledFields] = useState<string[]>([]);
+
+  const handlePopoverOpen = useCallback((fieldId?: string) => {
+    switch (fieldId) {
+      case "startTime":
+        setDisabledFields(["endTime", "currentTime"]);
+        break;
+      case "endTime":
+        setDisabledFields(["startTime", "currentTime"]);
+        break;
+      case "currentTime":
+        setDisabledFields(["startTime", "endTime"]);
+        break;
+      default:
+        setDisabledFields([]);
+        break;
+    }
+  }, []);
+
   const handleApplyChange = useCallback(() => {
     if (
       timelineValues?.currentTime !== "" &&
@@ -79,7 +98,10 @@ export default ({ timelineValues, onChange, onClose, setTimelineValues }: Props)
   return {
     warning,
     isDisabled,
+    disabledFields,
+    setDisabledFields,
     handleOnChange,
+    handlePopoverOpen,
     onAppyChange: handleApplyChange,
   };
 };

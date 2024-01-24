@@ -17,6 +17,7 @@ type Props = {
   onLayerSelect: (id: string) => void;
   onSceneSettingSelect: (groupId: string) => void;
   onDataSourceManagerOpen: () => void;
+  onSketchLayerManagerOpen: () => void;
   onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
   onFlyTo?: FlyTo;
 };
@@ -31,6 +32,7 @@ const MapSidePanel: React.FC<Props> = ({
   onLayerNameUpdate,
   onSceneSettingSelect,
   onDataSourceManagerOpen,
+  onSketchLayerManagerOpen,
   onLayerVisibilityUpate,
   onFlyTo,
 }) => {
@@ -54,6 +56,7 @@ const MapSidePanel: React.FC<Props> = ({
               onLayerSelect={onLayerSelect}
               onSceneSettingSelect={onSceneSettingSelect}
               onDataSourceManagerOpen={onDataSourceManagerOpen}
+              onSketchLayerManagerOpen={onSketchLayerManagerOpen}
               onLayerVisibilityUpate={onLayerVisibilityUpate}
               onFlyTo={onFlyTo}
             />

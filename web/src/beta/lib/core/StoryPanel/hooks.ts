@@ -6,6 +6,7 @@ import { MapRef } from "../Crust/types";
 import { useVisualizer } from "../Visualizer";
 
 import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";
+import { formatISO8601 } from "./utils";
 
 export type { Story, StoryPage } from "@reearth/beta/lib/core/StoryPanel/types";
 
@@ -99,12 +100,8 @@ export default (
   const handlePageTime = useCallback(
     (page: StoryPage) => {
       const timePointField = page.property?.timePoint;
-      const currentTime = timePointField?.timePoint?.value;
-      if (!currentTime) onTimeChange?.(new Date());
-      else {
-        const getNewDate = new Date(currentTime.substring(0, 19)).getTime();
-        return onTimeChange?.(new Date(getNewDate));
-      }
+      if (!timePointField?.timePoint?.value) return;
+      return onTimeChange?.(new Date(formatISO8601(timePointField?.timePoint?.value) ?? ""));
     },
     [onTimeChange],
   );

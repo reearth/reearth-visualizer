@@ -455,12 +455,16 @@ test("getClock", () => {
 test("captureScreen", () => {
   const mockViewerRender = vi.fn();
   const mockCanvasToDataURL = vi.fn();
+  const mockRequestRender = vi.fn();
   const mockViewerIsDestroyed = vi.fn(() => false);
   const { result } = renderHook(() => {
     const cesium = useRef<CesiumComponentRef<CesiumViewer>>({
       cesiumElement: {
         render: mockViewerRender,
         isDestroyed: mockViewerIsDestroyed,
+        scene: {
+          requestRender: mockRequestRender,
+        },
         canvas: {
           toDataURL: mockCanvasToDataURL,
         },
@@ -473,6 +477,7 @@ test("captureScreen", () => {
 
   result.current.current?.captureScreen();
   expect(mockViewerRender).toHaveBeenCalledTimes(1);
+  expect(mockRequestRender).toHaveBeenCalledTimes(1);
   expect(mockCanvasToDataURL).toHaveBeenCalledTimes(1);
 
   result.current.current?.captureScreen("image/jpeg", 0.8);

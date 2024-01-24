@@ -1,10 +1,6 @@
 import { FC } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { useT } from "@reearth/services/i18n";
-
-import { DataProps } from "..";
-import useHooks from "../hooks";
 import {
   AddLayerWrapper,
   AssetWrapper,
@@ -15,7 +11,11 @@ import {
   LayerWrapper,
   SubmitWrapper,
   generateTitle,
-} from "../utils";
+} from "@reearth/beta/features/Editor/utils";
+import { useT } from "@reearth/services/i18n";
+
+import { DataProps } from "..";
+import useHooks from "../hooks";
 
 const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const t = useT();
