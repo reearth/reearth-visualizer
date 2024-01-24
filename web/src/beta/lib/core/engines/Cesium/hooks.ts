@@ -471,6 +471,7 @@ export default ({
     globeImageBasedLighting: property?.atmosphere?.globeImageBasedLighting,
     enableLighting: property?.atmosphere?.enable_lighting ?? property?.globeLighting?.globeLighting,
     hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
+    terrain: property?.terrain,
   });
 
   const handleMouseWheel = useCallback(
