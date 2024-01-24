@@ -1,8 +1,11 @@
 export const convertTime = (time: string | Date | undefined): Date | undefined => {
   if (!time) return;
-  if (time instanceof Date) return time;
+  if (time instanceof Date) {
+    return !isNaN(time.getTime()) ? time : undefined;
+  }
   try {
-    return new Date(time);
+    const dateTime = new Date(time);
+    return !isNaN(dateTime.getTime()) ? dateTime : undefined;
   } catch {
     return undefined;
   }
