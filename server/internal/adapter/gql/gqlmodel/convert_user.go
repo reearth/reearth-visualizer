@@ -17,6 +17,18 @@ func ToUser(u *user.User) *User {
 	}
 }
 
+func SimpleToUser(u *user.Simple) *User {
+	if u == nil {
+		return nil
+	}
+
+	return &User{
+		ID:    IDFrom(u.ID),
+		Name:  u.Name,
+		Email: u.Email,
+	}
+}
+
 func ToMe(u *user.User) *Me {
 	if u == nil {
 		return nil

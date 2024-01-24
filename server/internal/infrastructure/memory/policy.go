@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"cmp"
 	"context"
 
 	"github.com/reearth/reearth/server/pkg/policy"
@@ -38,8 +39,8 @@ func (r *Policy) FindByID(_ context.Context, id policy.ID) (*policy.Policy, erro
 
 func (r *Policy) FindByIDs(_ context.Context, ids []policy.ID) ([]*policy.Policy, error) {
 	policies := r.m.LoadAll(ids...)
-	slices.SortStableFunc(policies, func(a, b *policy.Policy) bool {
-		return a.ID() < b.ID()
+	slices.SortStableFunc(policies, func(a, b *policy.Policy) int {
+		return cmp.Compare(a.ID().String(), b.ID().String())
 	})
 	return util.Map(policies, func(p *policy.Policy) *policy.Policy { return p.Clone() }), nil
 }
