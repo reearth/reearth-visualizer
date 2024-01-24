@@ -59,6 +59,11 @@ export default ({ value, onChange, setDateTime }: Props) => {
     if (value) {
       const [parsedDate, timeWithOffset] = value.split("T");
       const [parsedTime, timezoneOffset] = timeWithOffset.split(/[-+]/);
+      const [timezoneOffsetHour, timezoneOffsetMinute] = timezoneOffset.split(":");
+      const formattedTimezoneOffset =
+        timezoneOffsetHour.length === 2
+          ? timezoneOffset
+          : `${timezoneOffsetHour.padStart(2, "0")}:${timezoneOffsetMinute}`;
 
       setTime(parsedTime);
       setDate(parsedDate);
@@ -66,7 +71,9 @@ export default ({ value, onChange, setDateTime }: Props) => {
       const updatedTimezone = offsetFromUTC.find(
         info =>
           info.offset ===
-          (timeWithOffset.includes("-") ? `-${timezoneOffset}` : `+${timezoneOffset}`),
+          (timeWithOffset.includes("-")
+            ? `-${formattedTimezoneOffset}`
+            : `+${formattedTimezoneOffset}`),
       );
       updatedTimezone && setSelectedTimezone(updatedTimezone);
     } else {
