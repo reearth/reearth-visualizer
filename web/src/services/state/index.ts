@@ -106,11 +106,6 @@ export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
 const notification = atom<Notification | undefined>(undefined);
 export const useNotification = () => useAtom(notification);
 
-// Sketch
-// export type InteractionModeType = "default" | "sketch";
-// const interactionMode = atom<InteractionModeType | undefined>(undefined);
-// export const useInteractionMode = () => useAtom(interactionMode);
-
 // --------------------------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------------------------
 // Not sure we need below in Beta. Currently being used in classic.Not sure we need below in Beta. Currently being used in classic.
