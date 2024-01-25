@@ -110,6 +110,7 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
 
 const sketchRefKeys: FunctionKeys<SketchRef> = {
   setType: 1,
+  setColor: 1,
   onFeatureCreate: 1,
   onTypeChange: 1,
 };

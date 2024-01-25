@@ -422,9 +422,8 @@ export type Viewport = ViewportSize & {
 };
 
 export type Sketch = {
-  // readonly enable?: (enable: boolean) => void;
   readonly setType?: (type: SketchType) => void;
-  // readonly onFeatureCreate?: (cb: SketchFeatureCallback) => void;
+  readonly setColor?: (color: string) => void;
 };
 
 /** Cesium API: available only when the plugin is a primitive */

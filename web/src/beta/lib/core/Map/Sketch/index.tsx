@@ -22,7 +22,7 @@ type SketchComponentProps = RequireExactlyOne<
     geometryOptions?: GeometryOptions | null;
     extrudedHeight?: number;
     disableShadow?: boolean;
-    // color?: Color;
+    color?: string;
   },
   "geometry" | "geometryOptions"
 >;
@@ -38,7 +38,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, Props> = (
   { layersRef, engineRef, interactionMode, SketchComponent },
   ref,
 ) => {
-  const { state, extrudedHeight, geometryOptions } = useHooks({
+  const { state, extrudedHeight, geometryOptions, color } = useHooks({
     ref,
     layersRef,
     engineRef,
@@ -50,6 +50,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, Props> = (
   return SketchComponent ? (
     <SketchComponent
       geometryOptions={geometryOptions}
+      color={color}
       {...(state.matches("extruding") && {
         extrudedHeight,
       })}

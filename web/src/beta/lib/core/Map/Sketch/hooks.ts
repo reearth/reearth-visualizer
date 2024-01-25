@@ -44,6 +44,7 @@ const sketchMachine = createSketchMachine();
 export default function useHooks({ ref, engineRef, layersRef, interactionMode }: Props) {
   const [state, send] = useMachine(sketchMachine);
   const [type, updateType] = useState<SketchType>();
+  const [color, updateColor] = useState<string>();
 
   const disableInteraction = useMemo(() => interactionMode !== "sketch", [interactionMode]);
 
@@ -63,6 +64,10 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
     },
     [interactionMode],
   );
+
+  const setColor = useCallback((color: string) => {
+    updateColor(color);
+  }, []);
 
   const createFeature = useCallback(() => {
     const geoOptions = type === "marker" ? markerGeometryRef.current : geometryOptions;
@@ -428,8 +433,9 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
     }
   }, [disableInteraction, send, updateGeometryOptions]);
 
-  useImperativeHandle(ref, () => ({ setType, onTypeChange, onFeatureCreate }), [
+  useImperativeHandle(ref, () => ({ setType, setColor, onTypeChange, onFeatureCreate }), [
     setType,
+    setColor,
     onTypeChange,
     onFeatureCreate,
   ]);
@@ -438,6 +444,7 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
     state,
     extrudedHeight,
     geometryOptions,
+    color,
   };
 }
 

@@ -24,13 +24,15 @@ export type SketchComponentProps = RequireExactlyOne<
     } | null;
     extrudedHeight?: number;
     disableShadow?: boolean;
-    color?: Color;
+    color?: string;
   },
   "geometry" | "geometryOptions"
 >;
 
+const DEFAULT_SKETCH_COLOR = "#00bebe";
+
 const SketchComponent: FC<SketchComponentProps> = memo(
-  ({ geometry, geometryOptions, extrudedHeight, disableShadow, color }) => {
+  ({ geometry, geometryOptions, extrudedHeight, disableShadow, color: stringColor }) => {
     const cartesianGeometryOptions: GeometryOptions | null = useMemo(
       () =>
         geometryOptions
@@ -62,28 +64,27 @@ const SketchComponent: FC<SketchComponentProps> = memo(
       return {};
     }, [g]);
 
-    // TODO: entity style API
-    const defaultColor = useMemo(() => Color.fromCssColorString("#00bebe"), []);
+    const color = useMemo(
+      () => Color.fromCssColorString(stringColor ?? DEFAULT_SKETCH_COLOR),
+      [stringColor],
+    );
 
     return (
       <>
         {positionsArray?.map((positions, index) => (
-          <PolylineEntity key={index} dynamic positions={positions} color={color ?? defaultColor} />
+          <PolylineEntity key={index} dynamic positions={positions} color={color} />
         ))}
         {hierarchyArray?.map((hierarchy, index) => (
-          <PolygonEntity key={index} dynamic hierarchy={hierarchy} color={color ?? defaultColor} />
+          <PolygonEntity key={index} dynamic hierarchy={hierarchy} color={color} />
         ))}
         {cartesianGeometryOptions != null && extrudedHeight == null && (
-          <SurfaceControlPoints
-            geometryOptions={cartesianGeometryOptions}
-            color={color ?? defaultColor}
-          />
+          <SurfaceControlPoints geometryOptions={cartesianGeometryOptions} color={color} />
         )}
         {cartesianGeometryOptions != null && extrudedHeight != null && (
           <ExtrudedControlPoints
             geometryOptions={cartesianGeometryOptions}
             extrudedHeight={extrudedHeight}
-            color={color ?? defaultColor}
+            color={color}
           />
         )}
         {extrudedHeight != null &&
@@ -94,7 +95,7 @@ const SketchComponent: FC<SketchComponentProps> = memo(
               hierarchy={hierarchy}
               extrudedHeight={extrudedHeight}
               disableShadow={disableShadow}
-              color={color ?? defaultColor}
+              color={color}
             />
           ))}
       </>

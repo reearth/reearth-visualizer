@@ -477,6 +477,7 @@ export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every post
 
 export type SketchRef = {
   setType: (type: SketchType) => void;
+  setColor: (color: string) => void;
   onFeatureCreate: (cb: SketchFeatureCallback) => void;
   onTypeChange: (cb: (type: SketchType | undefined) => void) => void;
 };

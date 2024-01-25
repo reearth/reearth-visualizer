@@ -141,6 +141,7 @@ export default function ({
   const getSketch = useCallback(
     () => ({
       setType: mapRef?.current?.sketch?.setType,
+      setColor: mapRef?.current?.sketch?.setColor,
     }),
     [mapRef],
   );
