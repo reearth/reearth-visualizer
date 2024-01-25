@@ -178,7 +178,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedSketchTool,
     handleInteractionModeChange,
     handleSelectedSketchToolChange,
-  } = useInteractionMode({ tab, selectedLayer, visualizerRef, handleLayerConfigUpdate });
+  } = useInteractionMode({ tab, nlsLayers, selectedLayer, visualizerRef, handleLayerConfigUpdate });
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
