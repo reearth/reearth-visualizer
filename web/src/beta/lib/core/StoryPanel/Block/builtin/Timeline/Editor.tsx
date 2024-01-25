@@ -39,6 +39,7 @@ const TimelineEditor = ({
     range,
     playSpeedOptions,
     speed,
+    timezone,
     onPlay,
     onSpeedChange,
     onPause,
@@ -81,6 +82,7 @@ const TimelineEditor = ({
     playMode,
     padding,
     property,
+    timezone,
     onPlay,
     onSpeedChange,
     onPause,
@@ -144,7 +146,7 @@ const TimelineEditor = ({
             </Popover.Provider>
           </PopoverWrapper>
         </TimelineControl>
-        <CurrentTime isMinimized={isMinimized}>{currentTime && formattedCurrentTime}</CurrentTime>
+        <CurrentTime isMinimized={isMinimized}>{!!currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineWrapper>
       <TimelineSlider>
         <ScaleList
