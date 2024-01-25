@@ -268,6 +268,7 @@ export type TerrainProperty = {
   terrainUrl?: string;
   terrainNormal?: boolean;
   // TODO: Add encode option
+  // Need to specify a tile from `tiles` option with `heatmap` option.
   heatmapType?: "custom"; // TODO: Support Cesium's terrain heatmap as built-in: https://sandcastle.cesium.com/?src=Globe%20Materials.html
   heatmapColorLUT?: LUT;
   heatmapMinHeight?: number;
