@@ -79,10 +79,10 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   unselectFeatures: 1,
   pickManyFromViewport: 1,
   getExtrudedHeight: 1,
-  getNormal: 1,
   getSurfaceDistance: 1,
-  getScene: 1,
-  getEntities: 1,
+  equalsEpsilon2d: 1,
+  equalsEpsilon3d: 1,
+  createGeometry: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {

@@ -91,6 +91,7 @@ export type PolylineAppearance = {
   far?: number;
   classificationType?: ClassificationType;
   hideIndicator?: boolean;
+  selectedFeatureColor?: string; // This doesn't support expression
 };
 
 export type PolygonAppearance = {
@@ -108,6 +109,7 @@ export type PolygonAppearance = {
   extrudedHeight?: number;
   classificationType?: ClassificationType;
   hideIndicator?: boolean;
+  selectedFeatureColor?: string; // This doesn't support expression
 };
 
 export type HeatMapAppearance = {

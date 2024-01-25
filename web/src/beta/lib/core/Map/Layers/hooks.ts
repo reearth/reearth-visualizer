@@ -276,7 +276,6 @@ export default function useHooks({
       setTempLayers(layers => [...layers, newLayer]);
 
       const newLazyLayer = findById(newLayer.id);
-      console.log(newLazyLayer);
       if (!newLazyLayer) throw new Error("layer not found");
 
       return newLazyLayer;

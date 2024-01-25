@@ -38,11 +38,12 @@ export default ({ tab, selectedLayer, visualizerRef, handleLayerConfigUpdate }: 
   );
 
   const handleFeatureCreate = useCallback(
-    (feature: Feature<Polygon | MultiPolygon | Point | LineString> | null) => {
+    async (feature: Feature<Polygon | MultiPolygon | Point | LineString> | null) => {
       selectSketchTool(undefined);
       // TODO: Create a new layer if there is no selected sketch layer
       if (!selectedLayer?.id || !selectedLayer.config?.data?.isSketchLayer) return;
-      handleLayerConfigUpdate({
+      const featureId = uuidv4();
+      await handleLayerConfigUpdate({
         layerId: selectedLayer.id,
         config: {
           data: {
@@ -51,14 +52,24 @@ export default ({ tab, selectedLayer, visualizerRef, handleLayerConfigUpdate }: 
               type: "FeatureCollection",
               features: [
                 ...(selectedLayer.config?.data?.value?.features ?? []),
-                { ...feature, id: uuidv4() },
+                { ...feature, id: featureId },
               ],
             },
           },
         },
       });
+      requestAnimationFrame(() => {
+        visualizerRef.current?.layers.selectFeatures([
+          { layerId: selectedLayer.id, featureId: [featureId] },
+        ]);
+      });
+      // setTimeout(() => {
+      //   visualizerRef.current?.layers.selectFeatures([
+      //     { layerId: selectedLayer.id, featureId: [featureId] },
+      //   ]);
+      // }, 1000);
     },
-    [selectedLayer, handleLayerConfigUpdate],
+    [selectedLayer, visualizerRef, handleLayerConfigUpdate],
   );
 
   const handleTypeChange = useCallback(

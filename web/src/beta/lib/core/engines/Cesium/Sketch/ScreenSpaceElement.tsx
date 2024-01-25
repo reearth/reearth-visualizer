@@ -6,9 +6,8 @@ import { useMergeRefs } from "use-callback-ref";
 import { useConstant } from "@reearth/beta/utils/util";
 import { styled } from "@reearth/services/theme";
 
-// import { useCesium } from "./useCesium";
-import { usePreRender } from "../../engines/Cesium/hooks/useSceneEvent";
-import { useVisualizer } from "../../Visualizer";
+import { useVisualizer } from "../../../Visualizer";
+import { usePreRender } from "../hooks/useSceneEvent";
 
 const Root = styled(motion.div)({
   position: "absolute",

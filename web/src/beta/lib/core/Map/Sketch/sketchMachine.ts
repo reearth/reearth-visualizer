@@ -1,9 +1,12 @@
 // TODO: Refactor: move cesium related code to engine.
-import { Cartesian2, Cartesian3 } from "cesium";
+// import { Cartesian2, Cartesian3 } from "cesium";
 import invariant from "tiny-invariant";
 import { createMachine, type StateFrom } from "xstate";
 
 import { type SketchType } from "./types";
+
+export type Position2d = [number, number];
+export type Position3d = [number, number, number];
 
 export type EventObject =
   | ((
@@ -18,18 +21,18 @@ export type EventObject =
       | { type: "NEXT" }
       | { type: "EXTRUDE" }
     ) & {
-      pointerPosition: Cartesian2;
-      controlPoint: Cartesian3;
+      pointerPosition: Position2d;
+      controlPoint: Position3d;
     })
   | { type: "CREATE" }
   | { type: "CANCEL" }
   | { type: "ABORT" };
 
 interface Context {
-  lastPointerPosition?: Cartesian2;
-  lastControlPoint?: Cartesian3;
+  lastPointerPosition?: Position2d;
+  lastControlPoint?: Position3d;
   type?: SketchType;
-  controlPoints?: Cartesian3[];
+  controlPoints?: Position3d[];
 }
 
 export function createSketchMachine() {
@@ -240,64 +243,64 @@ export function createSketchMachine() {
       },
       actions: {
         createMarker: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "marker";
           context.controlPoints = [controlPoint];
         },
         createPolyline: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "polyline";
           context.controlPoints = [controlPoint];
         },
         createCircle: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "circle";
           context.controlPoints = [controlPoint];
         },
         createRectangle: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "rectangle";
           context.controlPoints = [controlPoint];
         },
         createPolygon: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "polygon";
           context.controlPoints = [controlPoint];
         },
         createExtrudedCircle: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "extrudedCircle";
           context.controlPoints = [controlPoint];
         },
         createExtrudedRectangle: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "extrudedRectangle";
           context.controlPoints = [controlPoint];
         },
         createExtrudedPolygon: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.type = "extrudedPolygon";
           context.controlPoints = [controlPoint];
         },
         pushPosition: (context, event) => {
-          context.lastPointerPosition = event.pointerPosition.clone();
-          const controlPoint = event.controlPoint.clone();
+          context.lastPointerPosition = [...event.pointerPosition];
+          const controlPoint = [...event.controlPoint] as Position3d;
           context.lastControlPoint = controlPoint;
           context.controlPoints?.push(controlPoint);
         },

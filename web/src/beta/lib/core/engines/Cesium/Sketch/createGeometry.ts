@@ -3,7 +3,7 @@ import ellipse from "@turf/ellipse";
 import { lineString, polygon, point } from "@turf/helpers";
 import { type LineString, type MultiPolygon, type Polygon, type Point } from "geojson";
 
-import { type SketchType } from "./types";
+import { type SketchType } from "../../../Map/Sketch/types";
 
 const cartographicScratch = new Cartographic();
 const cartesianScratch1 = new Cartesian3();
@@ -198,28 +198,26 @@ function createPolygon(
 export interface GeometryOptions {
   type: SketchType;
   controlPoints: readonly Cartesian3[];
-  ellipsoid?: Ellipsoid;
 }
 
 export function createGeometry({
   type,
   controlPoints,
-  ellipsoid,
 }: GeometryOptions): LineString | Polygon | MultiPolygon | Point | undefined {
   switch (type) {
     case "marker":
-      return createPoint(controlPoints, ellipsoid);
+      return createPoint(controlPoints);
     case "polyline":
-      return createPolyline(controlPoints, ellipsoid);
+      return createPolyline(controlPoints);
     case "circle":
     case "extrudedCircle":
-      return createCircle(controlPoints, ellipsoid);
+      return createCircle(controlPoints);
     case "rectangle":
     case "extrudedRectangle":
-      return createRectangle(controlPoints, ellipsoid);
+      return createRectangle(controlPoints);
     case "polygon":
     case "extrudedPolygon":
-      return createPolygon(controlPoints, ellipsoid);
+      return createPolygon(controlPoints);
     default:
       return;
   }

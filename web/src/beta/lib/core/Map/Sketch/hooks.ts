@@ -1,7 +1,5 @@
-// TODO: Refactor: move cesium related code to engine.
 import { feature } from "@turf/helpers";
 import { useMachine } from "@xstate/react";
-import { Cartesian2, Cartesian3 } from "cesium";
 import { Feature, MultiPolygon, Polygon, Point, LineString } from "geojson";
 import {
   ForwardedRef,
@@ -19,8 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import { InteractionModeType } from "../../Crust";
 import { EngineRef, LayersRef, MouseEventCallback, MouseEventProps, SketchRef } from "../types";
 
-import { GeometryOptions, createGeometry } from "./createGeometry";
-import { createSketchMachine } from "./sketchMachine";
+import { Position3d, createSketchMachine } from "./sketchMachine";
 import { SketchType } from "./types";
 import { useWindowEvent } from "./utils";
 
@@ -35,6 +32,11 @@ type Props = {
   interactionMode: InteractionModeType;
 };
 
+type GeometryOptionsXYZ = {
+  type: SketchType;
+  controlPoints: Position3d[];
+};
+
 const PLUGIN_LAYER_ID_LENGTH = 36;
 
 const sketchMachine = createSketchMachine();
@@ -45,10 +47,9 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
 
   const disableInteraction = useMemo(() => interactionMode !== "sketch", [interactionMode]);
 
-  const [geometryOptions, setGeometryOptions] = useState<GeometryOptions | null>(null);
+  const [geometryOptions, setGeometryOptions] = useState<GeometryOptionsXYZ | null>(null);
   const [extrudedHeight, setExtrudedHeight] = useState(0);
-  const markerGeometryRef = useRef<GeometryOptions | null>(null);
-  const pointerPositionRef = useRef<Cartesian2>();
+  const markerGeometryRef = useRef<GeometryOptionsXYZ | null>(null);
   const pointerLocationRef = useRef<[lng: number, lat: number, height: number]>();
 
   const onFeatureCreateRef = useRef<SketchFeatureCallback>();
@@ -68,20 +69,20 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
     if (geoOptions == null) {
       return null;
     }
-    const geometry = createGeometry(geoOptions);
+    const geometry = engineRef.current?.createGeometry(geoOptions);
     if (geometry == null || (type !== "polyline" && geometry.type === "LineString")) {
       return null;
     }
     return feature(geometry, {
       id: uuidv4(),
       type: geoOptions.type,
-      positions: geoOptions.controlPoints.map(({ x, y, z }): [number, number, number] => [x, y, z]),
+      positions: geoOptions.controlPoints,
       extrudedHeight,
     });
-  }, [extrudedHeight, geometryOptions, markerGeometryRef, type]);
+  }, [extrudedHeight, geometryOptions, markerGeometryRef, type, engineRef]);
 
   const updateGeometryOptions = useCallback(
-    (controlPoint?: Cartesian3) => {
+    (controlPoint?: Position3d) => {
       setExtrudedHeight(0);
       if (state.context.type == null || state.context.controlPoints == null) {
         setGeometryOptions(null);
@@ -113,7 +114,7 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         {
           id: string;
           type: SketchType;
-          positions: [number, number, number][];
+          positions: readonly Position3d[];
           extrudedHeight: number;
         }
       > | null,
@@ -126,6 +127,7 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         selectedLayer.type === "simple" &&
         selectedLayer.computed?.layer.type === "simple"
       ) {
+        const featureId = uuidv4();
         layersRef.current?.override(selectedLayer.id, {
           data: {
             ...selectedLayer.data,
@@ -134,10 +136,15 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
               type: "FeatureCollection",
               features: [
                 ...(selectedLayer.computed?.layer?.data?.value?.features ?? []),
-                { ...feature, id: uuidv4() },
+                { ...feature, id: featureId },
               ],
             },
           },
+        });
+        requestAnimationFrame(() => {
+          layersRef.current?.selectFeatures([
+            { layerId: selectedLayer.id, featureId: [featureId] },
+          ]);
         });
       } else {
         onFeatureCreateRef.current?.(feature);
@@ -153,7 +160,9 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         !type ||
         props.lng === undefined ||
         props.lat === undefined ||
-        props.height === undefined
+        props.height === undefined ||
+        props.x === undefined ||
+        props.y === undefined
       ) {
         return;
       }
@@ -161,9 +170,7 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         return;
       }
       invariant(state.context.lastControlPoint == null);
-      const controlPoint = new Cartesian3(
-        ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
-      );
+      const controlPoint = engineRef.current?.toXYZ(props.lng, props.lat, props.height);
       if (controlPoint == null) {
         return;
       }
@@ -179,7 +186,7 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
           extrudedRectangle: "EXTRUDED_RECTANGLE" as const,
           extrudedPolygon: "EXTRUDED_POLYGON" as const,
         }[type],
-        pointerPosition: new Cartesian2(props.x, props.y),
+        pointerPosition: [props.x, props.y],
         controlPoint,
       });
       setGeometryOptions(null);
@@ -196,30 +203,27 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         props.lat === undefined ||
         props.height === undefined ||
         props.x === undefined ||
-        props.y === undefined
+        props.y === undefined ||
+        !engineRef.current
       ) {
         return;
       }
-      pointerPositionRef.current = new Cartesian2(props.x, props.y);
       pointerLocationRef.current = [props.lng, props.lat, props.height];
       if (state.matches("drawing")) {
         invariant(state.context.type != null);
         invariant(state.context.controlPoints != null);
-        const controlPoint = new Cartesian3(
-          ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
-        );
-        if (controlPoint == null || hasDuplicate(controlPoint, state.context.controlPoints)) {
+        const controlPoint = engineRef.current?.toXYZ(props.lng, props.lat, props.height);
+        if (
+          controlPoint == null ||
+          hasDuplicate(engineRef.current.equalsEpsilon3d, controlPoint, state.context.controlPoints)
+        ) {
           return;
         }
         updateGeometryOptions(controlPoint);
       } else if (state.matches("extruding")) {
         invariant(state.context.lastControlPoint != null);
         const extrudedHeight = engineRef.current?.getExtrudedHeight(
-          [
-            state.context.lastControlPoint.x,
-            state.context.lastControlPoint.y,
-            state.context.lastControlPoint.z,
-          ],
+          state.context.lastControlPoint,
           [props.x, props.y],
         );
         if (extrudedHeight != null) {
@@ -236,7 +240,10 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         disableInteraction ||
         props.lng === undefined ||
         props.lat === undefined ||
-        props.height === undefined
+        props.height === undefined ||
+        props.x === undefined ||
+        props.y === undefined ||
+        !engineRef.current
       ) {
         return;
       }
@@ -244,20 +251,19 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         state.context.controlPoints?.length === 1 &&
         state.context.lastPointerPosition != null &&
         state.context.type !== "marker" &&
-        Cartesian2.equalsEpsilon(
-          new Cartesian2(props.x, props.y),
+        engineRef.current?.equalsEpsilon2d(
+          [props.x, props.y],
           state.context.lastPointerPosition,
           0,
-          5, // Epsilon in pixels
+          5,
         )
       ) {
         return; // Too close to the first position user clicked.
       }
 
       if (state.matches("drawing")) {
-        const controlPoint = new Cartesian3(
-          ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
-        );
+        const controlPoint = engineRef.current?.toXYZ(props.lng, props.lat, props.height);
+        if (controlPoint == null) return;
 
         if (state.context.type === "marker") {
           markerGeometryRef.current = {
@@ -274,7 +280,13 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
           setGeometryOptions(null);
           return;
         }
-        if (controlPoint == null || hasDuplicate(controlPoint, state.context.controlPoints)) {
+        if (
+          hasDuplicate(
+            engineRef.current?.equalsEpsilon3d,
+            controlPoint,
+            state.context.controlPoints,
+          )
+        ) {
           return;
         }
         if (
@@ -290,9 +302,10 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
           setGeometryOptions(null);
           return;
         } else {
+          if (props.x === undefined || props.y === undefined) return;
           send({
             type: "NEXT",
-            pointerPosition: new Cartesian2(props.x, props.y),
+            pointerPosition: [props.x, props.y],
             controlPoint,
           });
         }
@@ -323,17 +336,18 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
         disableInteraction ||
         props.lng === undefined ||
         props.lat === undefined ||
-        props.height === undefined
+        props.height === undefined ||
+        props.x === undefined ||
+        props.y === undefined
       ) {
         return;
       }
       if (state.matches("drawing.extrudedPolygon")) {
-        const controlPoint = new Cartesian3(
-          ...(engineRef.current?.toXYZ(props.lng, props.lat, props.height) ?? []),
-        );
+        const controlPoint = engineRef.current?.toXYZ(props.lng, props.lat, props.height);
+        if (controlPoint == null) return;
         send({
           type: "EXTRUDE",
-          pointerPosition: new Cartesian2(props.x, props.y),
+          pointerPosition: [props.x, props.y],
           controlPoint,
         });
       } else if (state.matches("drawing.polyline") || state.matches("drawing.polygon")) {
@@ -401,7 +415,7 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
       send({ type: "CANCEL" });
       const controlPoint =
         pointerLocationRef.current != null
-          ? new Cartesian3(...(engineRef.current?.toXYZ(...pointerLocationRef.current) ?? []))
+          ? engineRef.current?.toXYZ(...pointerLocationRef.current)
           : undefined;
       updateGeometryOptions(controlPoint);
     }
@@ -415,7 +429,6 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
   }, [disableInteraction, send, updateGeometryOptions]);
 
   useImperativeHandle(ref, () => ({ setType, onTypeChange, onFeatureCreate }), [
-    // enable,
     setType,
     onTypeChange,
     onFeatureCreate,
@@ -428,14 +441,15 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
   };
 }
 
-function hasDuplicate(controlPoint: Cartesian3, controlPoints?: readonly Cartesian3[]): boolean {
-  return (
-    controlPoints?.some(another =>
-      controlPoint.equalsEpsilon(
-        another,
-        0,
-        1e-7, // Epsilon in radians
-      ),
-    ) === true
-  );
+function hasDuplicate(
+  equalFunction: (
+    point1: Position3d,
+    point2: Position3d,
+    relativeEpsilon: number | undefined,
+    absoluteEpsilon: number | undefined,
+  ) => boolean,
+  controlPoint: Position3d,
+  controlPoints?: readonly Position3d[],
+): boolean {
+  return controlPoints?.some(another => equalFunction(controlPoint, another, 0, 1e-7)) === true;
 }

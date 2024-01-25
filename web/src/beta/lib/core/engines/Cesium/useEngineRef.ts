@@ -7,6 +7,8 @@ import { CesiumComponentRef } from "resium";
 import { MouseEventCallbacks, TickEventCallback } from "@reearth/beta/lib/core/Map";
 
 import type { EngineRef, MouseEventProps, Feature, ComputedFeature } from "..";
+import { SketchType } from "../../Map/Sketch/types";
+import { Position2d, Position3d } from "../../types";
 
 import {
   getLocationFromScreen,
@@ -35,6 +37,7 @@ import {
 } from "./common";
 import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
+import { createGeometry } from "./Sketch/createGeometry";
 import {
   convertCesium3DTileFeatureProperties,
   convertEntityDescription,
@@ -254,12 +257,6 @@ export default function useEngineRef(
           new Cesium.Cartesian2(windowPosition[0], windowPosition[1]),
         );
       },
-      getNormal: (point, cartesianScratch) => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        const scene = viewer.scene;
-        return scene.globe.ellipsoid.geodeticSurfaceNormal(point, cartesianScratch);
-      },
       getSurfaceDistance: (point1, point2) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
@@ -279,15 +276,43 @@ export default function useEngineRef(
         );
         return geodesic.surfaceDistance;
       },
-      getScene: () => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        return viewer.scene;
+      equalsEpsilon2d: (
+        point1: Position2d,
+        point2: Position2d,
+        relativeEpsilon = 0.0,
+        absoluteEpsilon = 0.0,
+      ) => {
+        return Cesium.Cartesian2.equalsEpsilon(
+          new Cesium.Cartesian2(point1[0], point1[1]),
+          new Cesium.Cartesian2(point2[0], point2[1]),
+          relativeEpsilon,
+          absoluteEpsilon,
+        );
       },
-      getEntities: () => {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        return viewer.entities;
+      equalsEpsilon3d: (
+        point1: Position3d,
+        point2: Position3d,
+        relativeEpsilon = 0.0,
+        absoluteEpsilon = 0.0,
+      ) => {
+        return Cesium.Cartesian3.equalsEpsilon(
+          new Cesium.Cartesian3(point1[0], point1[1], point1[2]),
+          new Cesium.Cartesian3(point2[0], point2[1], point2[2]),
+          relativeEpsilon,
+          absoluteEpsilon,
+        );
+      },
+      createGeometry: ({
+        type,
+        controlPoints,
+      }: {
+        type: SketchType;
+        controlPoints: Position3d[];
+      }) => {
+        return createGeometry({
+          type,
+          controlPoints: controlPoints.map(p => new Cesium.Cartesian3(...p)),
+        });
       },
       flyTo: (target, options) => {
         if (target && typeof target === "object") {

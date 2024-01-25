@@ -119,6 +119,7 @@ function Map(
         layersRef={layersRef}
         engineRef={engineRef}
         interactionMode={interactionMode}
+        SketchComponent={currentEngine?.sketchComponent}
       />
     </Engine>
   ) : null;

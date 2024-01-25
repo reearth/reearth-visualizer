@@ -1,9 +1,13 @@
 import { Color } from "@cesium/engine";
+import { Cartesian3 } from "cesium";
 import { type LineString, type MultiPolygon, type Polygon } from "geojson";
 import { memo, useMemo, type FC } from "react";
 import { type RequireExactlyOne } from "type-fest";
 
-import { createGeometry, type GeometryOptions } from "./createGeometry";
+import { SketchType } from "../../../Map/Sketch/types";
+import { Position3d } from "../../../types";
+
+import { createGeometry, GeometryOptions } from "./createGeometry";
 import ExtrudedControlPoints from "./ExtrudedControlPoints";
 import { ExtrudedPolygonEntity } from "./ExtrudedPolygonEntity";
 import { PolygonEntity } from "./PolygonEntity";
@@ -11,10 +15,13 @@ import { PolylineEntity } from "./PolylineEntity";
 import SurfaceControlPoints from "./SurfaceControlPoints";
 import { convertGeometryToPositionsArray, convertPolygonToHierarchyArray } from "./utils";
 
-export type DynamicSketchObjectProps = RequireExactlyOne<
+export type SketchComponentProps = RequireExactlyOne<
   {
     geometry?: LineString | Polygon | MultiPolygon | null;
-    geometryOptions?: GeometryOptions | null;
+    geometryOptions?: {
+      type: SketchType;
+      controlPoints: readonly Position3d[];
+    } | null;
     extrudedHeight?: number;
     disableShadow?: boolean;
     color?: Color;
@@ -22,11 +29,23 @@ export type DynamicSketchObjectProps = RequireExactlyOne<
   "geometry" | "geometryOptions"
 >;
 
-const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
+const SketchComponent: FC<SketchComponentProps> = memo(
   ({ geometry, geometryOptions, extrudedHeight, disableShadow, color }) => {
+    const cartesianGeometryOptions: GeometryOptions | null = useMemo(
+      () =>
+        geometryOptions
+          ? {
+              ...geometryOptions,
+              controlPoints: geometryOptions?.controlPoints.map(p => new Cartesian3(...p)),
+            }
+          : null,
+      [geometryOptions],
+    );
+
     const g = useMemo(
-      () => geometry ?? (geometryOptions ? createGeometry(geometryOptions) : null),
-      [geometry, geometryOptions],
+      () =>
+        geometry ?? (cartesianGeometryOptions ? createGeometry(cartesianGeometryOptions) : null),
+      [geometry, cartesianGeometryOptions],
     );
 
     const { positionsArray, hierarchyArray } = useMemo(() => {
@@ -44,24 +63,27 @@ const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
     }, [g]);
 
     // TODO: entity style API
-    const primaryColor = useMemo(() => Color.fromCssColorString("#00bebe"), []);
+    const defaultColor = useMemo(() => Color.fromCssColorString("#00bebe"), []);
 
     return (
       <>
         {positionsArray?.map((positions, index) => (
-          <PolylineEntity key={index} dynamic positions={positions} color={color ?? primaryColor} />
+          <PolylineEntity key={index} dynamic positions={positions} color={color ?? defaultColor} />
         ))}
         {hierarchyArray?.map((hierarchy, index) => (
-          <PolygonEntity key={index} dynamic hierarchy={hierarchy} color={color ?? primaryColor} />
+          <PolygonEntity key={index} dynamic hierarchy={hierarchy} color={color ?? defaultColor} />
         ))}
-        {geometryOptions != null && extrudedHeight == null && (
-          <SurfaceControlPoints geometryOptions={geometryOptions} color={color ?? primaryColor} />
+        {cartesianGeometryOptions != null && extrudedHeight == null && (
+          <SurfaceControlPoints
+            geometryOptions={cartesianGeometryOptions}
+            color={color ?? defaultColor}
+          />
         )}
-        {geometryOptions != null && extrudedHeight != null && (
+        {cartesianGeometryOptions != null && extrudedHeight != null && (
           <ExtrudedControlPoints
-            geometryOptions={geometryOptions}
+            geometryOptions={cartesianGeometryOptions}
             extrudedHeight={extrudedHeight}
-            color={color ?? primaryColor}
+            color={color ?? defaultColor}
           />
         )}
         {extrudedHeight != null &&
@@ -72,7 +94,7 @@ const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
               hierarchy={hierarchy}
               extrudedHeight={extrudedHeight}
               disableShadow={disableShadow}
-              color={color ?? primaryColor}
+              color={color ?? defaultColor}
             />
           ))}
       </>
@@ -80,6 +102,6 @@ const DynamicSketchObject: FC<DynamicSketchObjectProps> = memo(
   },
 );
 
-DynamicSketchObject.displayName = "DynamicSketchObject";
+SketchComponent.displayName = "SketchComponent";
 
-export default DynamicSketchObject;
+export default SketchComponent;

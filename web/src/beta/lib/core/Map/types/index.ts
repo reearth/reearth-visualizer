@@ -1,4 +1,5 @@
-import { Cartesian3, EntityCollection, Scene } from "cesium";
+import { Cartesian3 } from "cesium";
+import { type LineString, type MultiPolygon, type Polygon, type Point } from "geojson";
 import type {
   ForwardRefExoticComponent,
   PropsWithoutRef,
@@ -21,13 +22,21 @@ import type {
   ComputedFeature,
   CameraPosition,
 } from "../../mantle";
-import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
+import type {
+  CameraOptions,
+  FlyTo,
+  FlyToDestination,
+  LookAtDestination,
+  Position2d,
+  Position3d,
+} from "../../types";
 import type {
   FeatureComponentType,
   ClusterComponentType,
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
+import { SketchComponentType } from "../Sketch";
 import { SketchFeatureCallback } from "../Sketch/hooks";
 import { SketchType } from "../Sketch/types";
 import type { TimelineManagerRef } from "../useTimelineManager";
@@ -101,10 +110,26 @@ export type EngineRef = {
     position: [x: number, y: number, z: number],
     windowPosition: [x: number, y: number],
   ) => number | undefined;
-  getNormal: (point: Cartesian3, cartesianScratch: Cartesian3) => Cartesian3 | undefined;
   getSurfaceDistance: (point1: Cartesian3, point2: Cartesian3) => number | undefined;
-  getScene: () => Scene | undefined;
-  getEntities: () => EntityCollection | undefined;
+  equalsEpsilon2d: (
+    point1: Position2d,
+    point2: Position2d,
+    relativeEpsilon: number | undefined,
+    absoluteEpsilon: number | undefined,
+  ) => boolean;
+  equalsEpsilon3d: (
+    point1: Position3d,
+    point2: Position3d,
+    relativeEpsilon: number | undefined,
+    absoluteEpsilon: number | undefined,
+  ) => boolean;
+  createGeometry: ({
+    type,
+    controlPoints,
+  }: {
+    type: SketchType;
+    controlPoints: Position3d[];
+  }) => LineString | Polygon | MultiPolygon | Point | undefined;
   flyTo: FlyTo;
   flyToBBox: (
     bbox: [number, number, number, number],
@@ -444,6 +469,7 @@ export type Engine = {
   component: EngineComponent;
   featureComponent: FeatureComponentType;
   clusterComponent: ClusterComponentType;
+  sketchComponent: SketchComponentType;
   delegatedDataTypes?: DataType[];
 };
 

@@ -8,7 +8,7 @@ import { useMemo, useRef, type FC } from "react";
 
 import { useConstant } from "@reearth/beta/utils/util";
 
-import { useVisualizer } from "../../Visualizer";
+import { useVisualizer } from "../../../Visualizer";
 
 import { Entity, type EntityProps } from "./Entity";
 

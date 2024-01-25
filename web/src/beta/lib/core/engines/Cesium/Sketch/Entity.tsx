@@ -1,8 +1,7 @@
 import { Entity as CesiumEntity, type EntityCollection } from "@cesium/engine";
 import { omit } from "lodash-es";
 import { forwardRef, memo, useEffect, useState } from "react";
-
-import { useVisualizer } from "../../Visualizer";
+import { useCesium } from "resium";
 
 import { assignForwardedRef } from "./utils";
 
@@ -12,9 +11,9 @@ export interface EntityProps extends CesiumEntity.ConstructorOptions {
 
 export const Entity = memo(
   forwardRef<CesiumEntity, EntityProps>(({ entities: entitiesProp, ...options }, ref) => {
-    const visualizer = useVisualizer();
-    const scene = visualizer.current?.engine.getScene();
-    const defaultEntities = visualizer.current?.engine.getEntities();
+    const { viewer } = useCesium();
+    const scene = viewer?.scene;
+    const defaultEntities = viewer?.entities;
     const entities = entitiesProp ?? defaultEntities;
     const [entity, setEntity] = useState(() => new CesiumEntity(options));
 

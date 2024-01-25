@@ -5,7 +5,6 @@ import {
   type PositionProperty,
   type Property,
 } from "@cesium/engine";
-// import { Entity, useCesium, type EntityProps } from "@takram/plateau-cesium";
 import { useMemo, useRef, type FC } from "react";
 import { Entity } from "resium";
 import invariant from "tiny-invariant";

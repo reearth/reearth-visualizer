@@ -1,13 +1,14 @@
 import { Cartesian3 } from "cesium";
 import { isEqual } from "lodash-es";
 import { useEffect, useMemo } from "react";
-import { PolylineGraphics } from "resium";
+import { PolylineGraphics, useCesium } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/beta/utils/value";
 
 import type { PolylineAppearance } from "../../..";
 import { classificationType, shadowMode } from "../../common";
+import { findEntity } from "../../utils";
 import { useContext } from "../context";
 import {
   EntityExt,
@@ -15,6 +16,7 @@ import {
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
+  getTag,
 } from "../utils";
 
 export type Props = FeatureProps<Property>;
@@ -50,7 +52,18 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     [coordinates ?? []],
     isEqual,
   );
-  const material = useMemo(() => toColor(strokeColor), [strokeColor]);
+
+  const { viewer } = useCesium();
+  const entity = viewer ? findEntity(viewer, layer?.id, feature?.id) : undefined;
+  const tag = getTag(entity);
+
+  const material = useMemo(
+    () =>
+      tag?.isFeatureSelected && typeof layer?.["polyline"]?.selectedFeatureColor === "string"
+        ? toColor(layer["polyline"]?.selectedFeatureColor)
+        : toColor(strokeColor),
+    [strokeColor, layer, tag?.isFeatureSelected],
+  );
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
     () => toDistanceDisplayCondition(property?.near, property?.far),

@@ -1,10 +1,9 @@
 import { CallbackProperty, Cartesian3, type Color } from "@cesium/engine";
 import { memo, useRef, type FC } from "react";
+import { useCesium } from "resium";
 import invariant from "tiny-invariant";
 
 import { useConstant } from "@reearth/beta/utils/util";
-
-import { useVisualizer } from "../../Visualizer";
 
 import { ControlPoint } from "./ControlPoint";
 import { type GeometryOptions } from "./createGeometry";
@@ -20,10 +19,12 @@ const cartesianScratch = new Cartesian3();
 
 const ExtrudedControlPoints: FC<ExtrudedControlPointsProps> = memo(
   ({ geometryOptions: { controlPoints }, extrudedHeight, color }) => {
-    const visualizer = useVisualizer();
-
+    const { viewer } = useCesium();
     const controlPoint = controlPoints[controlPoints.length - 1];
-    const normal = visualizer.current?.engine.getNormal(controlPoint, cartesianScratch);
+    const normal = viewer?.scene?.globe.ellipsoid.geodeticSurfaceNormal(
+      controlPoint,
+      cartesianScratch,
+    );
 
     invariant(normal !== undefined);
     const extrudedPoint = Cartesian3.add(

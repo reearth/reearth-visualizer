@@ -2,13 +2,14 @@
 import { Cartesian3, PolygonHierarchy } from "cesium";
 import { isEqual } from "lodash-es";
 import { useEffect, useMemo } from "react";
-import { Entity, PolygonGraphics, PolylineGraphics } from "resium";
+import { Entity, PolygonGraphics, PolylineGraphics, useCesium } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/beta/utils/value";
 
 import type { PolygonAppearance } from "../../..";
 import { classificationType, heightReference, shadowMode } from "../../common";
+import { findEntity } from "../../utils";
 import { useContext } from "../context";
 import {
   EntityExt,
@@ -16,6 +17,7 @@ import {
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
+  getTag,
 } from "../utils";
 
 export type Props = FeatureProps<Property> & {
@@ -106,7 +108,21 @@ export default function Polygon({
     () => (stroke ? toColor(strokeColor) : undefined),
     [stroke, strokeColor],
   );
-  const memoFillColor = useMemo(() => (fill ? toColor(fillColor) : undefined), [fill, fillColor]);
+
+  const { viewer } = useCesium();
+  const entity = viewer ? findEntity(viewer, layer?.id, feature?.id) : undefined;
+  const tag = getTag(entity);
+
+  const memoFillColor = useMemo(
+    () =>
+      fill
+        ? tag?.isFeatureSelected && typeof layer?.["polygon"]?.selectedFeatureColor === "string"
+          ? toColor(layer["polygon"]?.selectedFeatureColor)
+          : toColor(fillColor)
+        : undefined,
+    [fill, fillColor, viewer, layer?.id, feature?.id, tag?.isFeatureSelected],
+  );
+
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
     () => toDistanceDisplayCondition(property?.near, property?.far),
