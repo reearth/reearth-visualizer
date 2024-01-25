@@ -339,13 +339,7 @@ export type SceneProperty = {
     labelType: "japan_gsi_optimal_bvmap"; // | "other_map"
     fillColor?: string;
     outlineColor?: string;
-    params: {
-      url: string;
-      minimumLevel?: number;
-      maximumLevel?: number;
-      minimumDataLevel: number;
-      maximumDataLevel: number;
-    };
+    params: Record<string, any>; // Function isn't allowed
   }[];
   terrain?: {
     terrain?: boolean;
