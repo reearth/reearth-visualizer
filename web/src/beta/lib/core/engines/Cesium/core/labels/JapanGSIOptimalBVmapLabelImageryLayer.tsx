@@ -9,48 +9,46 @@ export interface TileLabelConfig {
   labelType: "japan_gsi_optimal_bvmap";
   fillColor?: string;
   outlineColor?: string;
-  params: {
-    url: string;
-    minimumLevel?: number;
-    maximumLevel?: number;
-    minimumDataLevel: number;
-    maximumDataLevel: number;
-  };
+  params: Record<string, any>;
 }
 
 interface JapanGSIOptimalBVmapLabelImageryLayersProps {
   tileLabels?: TileLabelConfig[];
 }
 
+const useImageryProvider = (tileLabelConfig: TileLabelConfig) => {
+  const imageryProvider = useMemo(() => {
+    if (!tileLabelConfig) return null;
+
+    return new JapanGSIOptimalBVmapLabelImageryProvider({
+      url: "https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/{z}/{x}/{y}.pbf",
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      tileWidth: 1024,
+      tileHeight: 1024,
+      minimumDataLevel: 4,
+      maximumDataLevel: 16,
+    });
+  }, [tileLabelConfig]);
+
+  return imageryProvider;
+};
+
 const JapanGSIOptimalBVmapLabelImageryLayers = forwardRef(
   ({ tileLabels = [] }: JapanGSIOptimalBVmapLabelImageryLayersProps, ref: React.Ref<any>) => {
-    const imageryProviders = useMemo(
-      () =>
-        tileLabels.map(tileLabel => {
-          const { params } = tileLabel;
-          return new JapanGSIOptimalBVmapLabelImageryProvider({
-            url: params.url,
-            tilingScheme: new Cesium.WebMercatorTilingScheme(),
-            tileWidth: 256,
-            tileHeight: 256,
-            minimumDataLevel: params.minimumDataLevel,
-            maximumDataLevel: params.maximumDataLevel,
-          });
-        }),
-      [tileLabels],
-    );
-
+    const imageryLayers = useMemo(() => tileLabels.map(useImageryProvider), [tileLabels]);
     return (
       <>
-        {imageryProviders.map((imageryProvider, index) => (
-          <ImageryLayer
-            ref={index === 0 ? ref : undefined}
-            key={tileLabels[index].id}
-            imageryProvider={imageryProvider}
-            minimumTerrainLevel={tileLabels[index].params.minimumLevel}
-            maximumTerrainLevel={tileLabels[index].params.maximumLevel}
-          />
-        ))}
+        {imageryLayers.map((imageryProvider, index) => {
+          if (!imageryProvider) return null;
+          return (
+            <ImageryLayer
+              ref={index === 0 ? ref : undefined}
+              key={tileLabels[index].id}
+              imageryProvider={imageryProvider}
+              maximumTerrainLevel={17}
+            />
+          );
+        })}
       </>
     );
   },
