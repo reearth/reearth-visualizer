@@ -1,12 +1,10 @@
-import { ImageryLayer as CesiumImageryLayer } from "@cesium/engine";
-import { forwardRef } from "react";
-import { ImageryLayer, CesiumComponentRef } from "resium";
+import * as Cesium from "cesium";
+import { useMemo, forwardRef } from "react";
+import { ImageryLayer } from "resium";
 
-import { type ImageryLayerHandle } from "../../../../utils/ImageryLayer";
-import { useInstance } from "../../hooks/useInstance";
-import { labelTiles as labelTilesPresets } from "../presets";
+import { JapanGSIOptimalBVmapLabelImageryProvider } from "./JapanGSIOptimalBVmapImageryLayer/JapanGSIOptimalBVmapLabelImageryProvider";
 
-export interface JapanGSIOptimalBVmapLabelImageryLayerProps {
+export interface TileLabelConfig {
   id: string;
   labelType: "japan_gsi_optimal_bvmap";
   fillColor?: string;
@@ -20,53 +18,44 @@ export interface JapanGSIOptimalBVmapLabelImageryLayerProps {
   };
 }
 
-export type JapanGSIOptimalBVmapLabelImageryLayerConfig = {
-  id: string;
-  labelType: "japan_gsi_optimal_bvmap";
-  fillColor?: string;
-  outlineColor?: string;
-  params: Record<string, any>;
-};
-
 interface JapanGSIOptimalBVmapLabelImageryLayersProps {
-  layersConfig?: JapanGSIOptimalBVmapLabelImageryLayerConfig[];
+  tileLabels?: TileLabelConfig[];
 }
 
-const JapanGSIOptimalBVmapLabelImageryLayer = forwardRef<
-  ImageryLayerHandle[],
-  JapanGSIOptimalBVmapLabelImageryLayerProps
->(({ id, labelType, params }, ref) => {
-  const cesiumRef = ref as React.Ref<CesiumComponentRef<CesiumImageryLayer>>;
-  const imageryProvider = useInstance({
-    keys: [id, labelType, ...Object.values(params)],
-    create: () => labelTilesPresets[labelType](params),
-  });
-  return <ImageryLayer ref={cesiumRef} imageryProvider={imageryProvider} />;
-});
-
-export const JapanGSIOptimalBVmapLabelImageryLayers: React.FC<
-  JapanGSIOptimalBVmapLabelImageryLayersProps
-> = ({ layersConfig }) => {
-  return (
-    <>
-      {layersConfig?.map(({ id, labelType, fillColor, outlineColor, params }) => (
-        <JapanGSIOptimalBVmapLabelImageryLayer
-          key={id}
-          id={id}
-          labelType={labelType}
-          fillColor={fillColor}
-          outlineColor={outlineColor}
-          params={{
+const JapanGSIOptimalBVmapLabelImageryLayers = forwardRef(
+  ({ tileLabels = [] }: JapanGSIOptimalBVmapLabelImageryLayersProps, ref: React.Ref<any>) => {
+    const imageryProviders = useMemo(
+      () =>
+        tileLabels.map(tileLabel => {
+          const { params } = tileLabel;
+          return new JapanGSIOptimalBVmapLabelImageryProvider({
             url: params.url,
-            minimumLevel: params.minimumLevel,
-            maximumLevel: params.maximumLevel,
+            tilingScheme: new Cesium.WebMercatorTilingScheme(),
+            tileWidth: 256,
+            tileHeight: 256,
             minimumDataLevel: params.minimumDataLevel,
             maximumDataLevel: params.maximumDataLevel,
-          }}
-        />
-      ))}
-    </>
-  );
-};
+          });
+        }),
+      [tileLabels],
+    );
 
-JapanGSIOptimalBVmapLabelImageryLayer.displayName = "JapanGSIOptimalBVmapLabelImageryLayer";
+    return (
+      <>
+        {imageryProviders.map((imageryProvider, index) => (
+          <ImageryLayer
+            ref={index === 0 ? ref : undefined}
+            key={tileLabels[index].id}
+            imageryProvider={imageryProvider}
+            minimumTerrainLevel={tileLabels[index].params.minimumLevel}
+            maximumTerrainLevel={tileLabels[index].params.maximumLevel}
+          />
+        ))}
+      </>
+    );
+  },
+);
+
+export default JapanGSIOptimalBVmapLabelImageryLayers;
+
+JapanGSIOptimalBVmapLabelImageryLayers.displayName = "JapanGSIOptimalBVmapLabelImageryLayers";

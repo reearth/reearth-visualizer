@@ -7,7 +7,7 @@ import { useCesium } from "resium";
 import { assertType } from "../../../../../utils/assertType";
 import { type ImageryLayerHandle } from "../../../../../utils/ImageryLayer";
 import { usePreRender } from "../../../hooks/useSceneEvent";
-import { JapanGSIOptimalBVmapLabelImageryLayers } from "../JapanGSIOptimalBVmapLabelImageryLayer";
+import JapanGSIOptimalBVmapLabelImageryLayers from "../JapanGSIOptimalBVmapLabelImageryLayer";
 
 import { makeKey } from "./helpers";
 import {
