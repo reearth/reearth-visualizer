@@ -422,7 +422,7 @@ export type Viewport = ViewportSize & {
 };
 
 export type Sketch = {
-  readonly setType?: (type: SketchType) => void;
+  readonly setType?: (type: SketchType | undefined) => void;
   readonly setColor?: (color: string) => void;
 };
 

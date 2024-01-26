@@ -43,7 +43,7 @@ const sketchMachine = createSketchMachine();
 
 export default function useHooks({ ref, engineRef, layersRef, interactionMode }: Props) {
   const [state, send] = useMachine(sketchMachine);
-  const [type, updateType] = useState<SketchType>();
+  const [type, updateType] = useState<SketchType | undefined>();
   const [color, updateColor] = useState<string>();
 
   const disableInteraction = useMemo(() => interactionMode !== "sketch", [interactionMode]);
@@ -57,7 +57,7 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
   const onTypeChangeRef = useRef<(type: SketchType | undefined) => void>();
 
   const setType = useCallback(
-    (type: SketchType) => {
+    (type: SketchType | undefined) => {
       invariant(interactionMode === "sketch", 'Interaction mode must be "sketch"');
       updateType(type);
       onTypeChangeRef.current?.(type);
@@ -368,6 +368,12 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
     [disableInteraction, state, engineRef, send, handleFeatureCreate, createFeature],
   );
 
+  const handleRightClick = useCallback(() => {
+    if (state.matches("idle")) return;
+    send({ type: "ABORT" });
+    updateGeometryOptions(undefined);
+  }, [state, send, updateGeometryOptions]);
+
   const mouseDownEventRef = useRef<MouseEventCallback>(handleLeftDown);
   mouseDownEventRef.current = handleLeftDown;
   const mouseMoveEventRef = useRef<MouseEventCallback>(handleMouseMove);
@@ -376,6 +382,8 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
   mouseUpEventRef.current = handleLeftUp;
   const mouseDoubleClickEventRef = useRef<MouseEventCallback>(handleDoubleClick);
   mouseDoubleClickEventRef.current = handleDoubleClick;
+  const mouseRightClickEventRef = useRef<() => void>(handleRightClick);
+  mouseRightClickEventRef.current = handleRightClick;
 
   const onMouseDown = useCallback(
     (props: MouseEventProps) => {
@@ -405,12 +413,17 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
     [mouseDoubleClickEventRef],
   );
 
+  const onMouseRightClick = useCallback(() => {
+    mouseRightClickEventRef.current?.();
+  }, [mouseRightClickEventRef]);
+
   useEffect(() => {
     engineRef.current?.onMouseDown(onMouseDown);
     engineRef.current?.onMouseMove(onMouseMove);
     engineRef.current?.onMouseUp(onMouseUp);
     engineRef.current?.onDoubleClick(onMouseDoubleClick);
-  }, [engineRef, onMouseDown, onMouseMove, onMouseUp, onMouseDoubleClick]);
+    engineRef.current?.onRightClick(onMouseRightClick);
+  }, [engineRef, onMouseDown, onMouseMove, onMouseUp, onMouseDoubleClick, onMouseRightClick]);
 
   useWindowEvent("keydown", event => {
     if (disableInteraction) {

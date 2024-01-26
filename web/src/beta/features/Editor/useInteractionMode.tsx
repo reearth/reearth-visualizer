@@ -40,9 +40,8 @@ export default ({
   }, []);
 
   const handleSelectedSketchToolChange = useCallback(
-    (type: SketchType) => {
+    (type: SketchType | undefined) => {
       selectSketchTool(type);
-      if (!type) return;
       visualizerRef.current?.sketch?.setType?.(type);
     },
     [visualizerRef],
@@ -50,11 +49,11 @@ export default ({
 
   const handleFeatureCreate = useCallback(
     async (feature: Feature<Polygon | MultiPolygon | Point | LineString> | null) => {
-      selectSketchTool(undefined);
-      // TODO: Create a new layer if there is no selected sketch layer
+      handleSelectedSketchToolChange(undefined);
+      // TODO: create a new layer if there is no selected sketch layer
       if (!selectedLayer?.id || !selectedLayer.config?.data?.isSketchLayer) return;
       const featureId = uuidv4();
-      // TODO: Add custom properties
+      // TODO: support custom properties
       const customProperties = {};
       await handleLayerConfigUpdate({
         layerId: selectedLayer.id,
@@ -80,7 +79,7 @@ export default ({
         featureId: [featureId],
       };
     },
-    [selectedLayer, handleLayerConfigUpdate],
+    [selectedLayer, handleLayerConfigUpdate, handleSelectedSketchToolChange],
   );
 
   useEffect(() => {
