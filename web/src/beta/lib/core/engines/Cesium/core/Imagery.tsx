@@ -1,4 +1,4 @@
-import { ImageryProvider } from "cesium";
+import { Color, ImageryProvider } from "cesium";
 import { isEqual } from "lodash-es";
 import { useCallback, useMemo, useRef, useLayoutEffect } from "react";
 import { ImageryLayer } from "resium";
@@ -19,6 +19,7 @@ export type Tile = {
   tile_type?: string;
   tile_opacity?: number;
   tile_zoomLevel?: number[];
+  heatmap?: boolean;
 };
 
 export type Props = {
@@ -44,7 +45,7 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
     <>
       {tiles
         ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
-        .map(({ id, tile_opacity: opacity, tile_zoomLevel, provider }, i) =>
+        .map(({ id, tile_opacity: opacity, tile_zoomLevel, provider, heatmap }, i) =>
           provider ? (
             <ImageryLayer
               key={`${id}_${i}_${counter.current}`}
@@ -53,6 +54,8 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
               maximumTerrainLevel={tile_zoomLevel?.[1]}
               alpha={opacity}
               index={i}
+              colorToAlpha={heatmap ? Color.WHITE : undefined}
+              colorToAlphaThreshold={heatmap ? 1 : undefined}
             />
           ) : null,
         )}
