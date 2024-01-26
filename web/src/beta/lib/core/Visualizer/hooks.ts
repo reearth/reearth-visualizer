@@ -150,6 +150,8 @@ export default function useHooks(
     [selectedLayer.layer?.layer?.infobox?.blocks],
   );
 
+  console.log("SL", selectedLayer);
+
   // Infobox
   const defaultInfobox = selectedLayer.reason?.defaultInfobox;
   const infobox = useMemo(
@@ -161,7 +163,12 @@ export default function useHooks(
             property: selectedLayer.layer?.layer?.infobox?.property?.default,
             blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
           }
-        : undefined,
+        : {
+            title: "Test",
+            isEditable: true,
+            property: {},
+            blocks: [],
+          },
     [selectedLayer, defaultInfobox, blocks],
   );
   const handleInfoboxClose = useCallback(() => {

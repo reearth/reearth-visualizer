@@ -1,28 +1,44 @@
-import Text from "@reearth/beta/components/Text";
-// import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { useMemo } from "react";
+
+import NumberField from "@reearth/beta/components/fields/NumberField";
+import SelectField from "@reearth/beta/components/fields/SelectField";
+import SpacingInput from "@reearth/beta/components/fields/SpacingInput";
+import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
   //   selectedLayer: NLSLayer;
+  // position?: InfoboxPosition;
 };
 
 const Infobox: React.FC<Props> = () => {
   const t = useT();
+  const positionOptions = useMemo(
+    () => [
+      { key: "left", label: t("Left") },
+      { key: "right", label: t("Right") },
+    ],
+    [t],
+  );
+
   return (
     <Wrapper>
-      <Text size="body">{t("Format")}</Text>
-      <ValueWrapper>
-        <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
-          ASDFLJKASDF
-        </StyledText>
-      </ValueWrapper>
-      <Text size="body">{t("Resource URL")}</Text>
-      <ValueWrapper>
-        <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
-          AAA
-        </StyledText>
-      </ValueWrapper>
+      <ToggleField
+        name={t("Enable Infobox")}
+        description={t("Show infobox when the user clicks on a layer")}
+        checked={true}
+        onChange={() => console.log("trying to change the unchangeable")}
+      />
+      <SelectField
+        name={t("Position")}
+        description={t("Position of the infobox. Options are left or right")}
+        value={"right"}
+        options={positionOptions}
+        onChange={() => console.log("trying to change the unchangeable")}
+      />
+      <SpacingInput name={t("Padding")} />
+      <NumberField name={t("Gap")} suffix="px" />
     </Wrapper>
   );
 };
@@ -33,14 +49,4 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-`;
-
-const ValueWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  border-radius: 4px;
-  padding: 4px 8px;
-`;
-
-const StyledText = styled(Text)`
-  word-break: break-all;
 `;

@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import type { BlockProps } from "./Infobox";
+import type { BlockProps } from "./Infobox/OldInfobox";
 import {
   Plugin,
   type CommonPluginProps,
@@ -68,18 +68,14 @@ export default function useHook({
   );
 
   return {
+    shownPluginModalInfo,
+    shownPluginPopupInfo,
+    pluginModalContainerRef,
+    pluginPopupContainerRef,
     renderWidget,
     renderBlock,
-
-    // For Modal
-    shownPluginModalInfo,
     onPluginModalShow,
-    pluginModalContainerRef,
-
-    // For Popup
-    shownPluginPopupInfo,
     onPluginPopupShow,
-    pluginPopupContainerRef,
   };
 }
 

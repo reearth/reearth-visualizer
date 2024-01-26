@@ -22,7 +22,7 @@ import type {
 
 import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
-import { Block } from "../Infobox";
+import { Block } from "../Infobox/OldInfobox";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 

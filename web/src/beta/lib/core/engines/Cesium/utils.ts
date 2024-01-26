@@ -19,7 +19,7 @@ import {
   GroundPrimitive,
 } from "cesium";
 
-import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox";
+import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox/OldInfobox";
 import { ComputedFeature, DefaultInfobox } from "@reearth/beta/lib/core/Map";
 
 import { getTag } from "./Feature";

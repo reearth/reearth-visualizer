@@ -3,7 +3,7 @@ import { Events, Layer, LayersRef, NaiveLayer, LazyLayer } from "@reearth/beta/l
 import { merge } from "@reearth/beta/utils/object";
 
 import { TimelineManagerRef } from "../../Map/useTimelineManager";
-import type { Block } from "../Infobox";
+import type { Block } from "../Infobox/OldInfobox";
 import type { MapRef } from "../types";
 import type { Widget, WidgetLocationOptions } from "../Widgets";
 

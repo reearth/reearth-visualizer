@@ -9,7 +9,8 @@ import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
-import Infobox, { Block, InfoboxProperty } from "./Infobox";
+// import Infobox, { Block, InfoboxProperty } from "./Infobox/OldInfobox";
+import Infobox from "./Infobox";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
 import type {
@@ -31,7 +32,7 @@ import Widgets, {
 
 export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 
-export type { Block } from "./Infobox";
+export type { Block } from "./Infobox/OldInfobox";
 
 export type { ExternalPluginProps } from "./Plugins";
 export { INTERACTION_MODES } from "./interactionMode";
@@ -82,8 +83,8 @@ export type Props = {
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   floatingWidgets?: InternalWidget[];
   // infobox
-  infoboxProperty?: InfoboxProperty;
-  blocks?: Block[];
+  // infoboxProperty?: InfoboxProperty;
+  // blocks?: Block[];
   infoboxTitle?: string;
   selectedBlockId?: string;
   showInfoboxTitle?: boolean;
@@ -145,11 +146,11 @@ export default function Crust({
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
   floatingWidgets,
-  blocks,
-  infoboxProperty,
-  infoboxTitle,
+  // blocks,
+  // infoboxProperty,
+  // infoboxTitle,
   infoboxVisible,
-  selectedBlockId,
+  // selectedBlockId,
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
@@ -158,25 +159,26 @@ export default function Crust({
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
-  onInfoboxMaskClick,
-  onInfoboxClose,
-  onBlockSelect,
-  onBlockChange,
-  onBlockMove,
-  onBlockDelete,
-  onBlockInsert,
-  renderInfoboxInsertionPopup,
+  // onInfoboxMaskClick,
+  // onInfoboxClose,
+  // onBlockSelect,
+  // onBlockChange,
+  // onBlockMove,
+  // onBlockDelete,
+  // onBlockInsert,
+  // renderInfoboxInsertionPopup,
   overrideSceneProperty,
   onLayerEdit,
 }: Props): JSX.Element | null {
   const {
-    renderBlock,
-    renderWidget,
     shownPluginModalInfo,
     shownPluginPopupInfo,
-    onPluginModalShow,
     pluginModalContainerRef,
     pluginPopupContainerRef,
+    renderWidget,
+    // renderBlock,
+    onPluginModalShow,
+    // onPluginPopupShow,
   } = useHooks({ mapRef, ...externalPlugin });
   const theme = usePublishTheme(sceneProperty?.theme);
   const widgetContext = useWidgetContext({
@@ -204,15 +206,15 @@ export default function Crust({
       floatingWidgets={floatingWidgets}
       camera={camera}
       interactionMode={interactionMode}
-      overrideInteractionMode={overrideInteractionMode}
-      useExperimentalSandbox={useExperimentalSandbox}
-      overrideSceneProperty={overrideSceneProperty}
       timelineManagerRef={timelineManagerRef}
+      useExperimentalSandbox={useExperimentalSandbox}
+      overrideInteractionMode={overrideInteractionMode}
+      overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
+        ref={pluginModalContainerRef}
         shownPluginModalInfo={shownPluginModalInfo}
         onPluginModalShow={onPluginModalShow}
-        ref={pluginModalContainerRef}
       />
       <PopupContainer shownPluginPopupInfo={shownPluginPopupInfo} ref={pluginPopupContainerRef} />
       <Widgets
@@ -232,7 +234,8 @@ export default function Crust({
         onWidgetAreaSelect={onWidgetAreaSelect}
         renderWidget={renderWidget}
       />
-      <Infobox
+      <Infobox visible={infoboxVisible} />
+      {/* <Infobox
         isBuilt={isBuilt}
         isEditable={isEditable}
         blocks={blocks}
@@ -252,7 +255,7 @@ export default function Crust({
         renderBlock={renderBlock}
         renderInsertionPopup={renderInfoboxInsertionPopup}
         onClose={onInfoboxClose}
-      />
+      /> */}
     </Plugins>
   );
 }
