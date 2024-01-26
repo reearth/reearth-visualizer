@@ -19,6 +19,7 @@ import type {
   Feature,
   ComputedFeature,
   CameraPosition,
+  LUT,
 } from "../../mantle";
 import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 import type {
@@ -266,6 +267,13 @@ export type TerrainProperty = {
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
   terrainNormal?: boolean;
+  // TODO: Add encode option
+  // Need to specify a tile from `tiles` option with `heatmap` option.
+  heatmapType?: "custom"; // TODO: Support Cesium's terrain heatmap as built-in: https://sandcastle.cesium.com/?src=Globe%20Materials.html
+  heatmapColorLUT?: LUT;
+  heatmapMinHeight?: number;
+  heatmapMaxHeight?: number;
+  heatmapLogarithmic?: boolean;
 };
 
 export type SceneProperty = {
@@ -280,6 +288,7 @@ export type SceneProperty = {
     tile_url?: string;
     tile_zoomLevel?: number[];
     tile_opacity?: number;
+    heatmap?: boolean;
   }[];
   terrain?: {
     terrain?: boolean;
