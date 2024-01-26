@@ -1,9 +1,8 @@
-import { Feature, MultiPolygon, Polygon, Point, LineString } from "geojson";
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { InteractionModeType, MapRef } from "@reearth/beta/lib/core/Crust/types";
-import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
+import { MapRef } from "@reearth/beta/lib/core/Crust/types";
+import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 import { Tab } from "../Navbar";
@@ -25,31 +24,24 @@ export default ({
   visualizerRef,
   handleLayerConfigUpdate,
 }: Props) => {
-  const [interactionMode, setInteractionMode] = useState<InteractionModeType>("default");
-
-  const [selectedSketchTool, selectSketchTool] = useState<SketchType | undefined>(undefined);
-  const currentTypeRef = useRef<SketchType | undefined>(selectedSketchTool);
-  currentTypeRef.current = selectedSketchTool;
+  const [sketchType, setSketchType] = useState<SketchType | undefined>(undefined);
 
   const pendingSketchSelectionRef = useRef<{ layerId: string; featureId: string[] } | undefined>(
     undefined,
   );
 
-  const handleInteractionModeChange = useCallback((mode: InteractionModeType) => {
-    setInteractionMode(mode);
-  }, []);
-
-  const handleSelectedSketchToolChange = useCallback(
+  const handleSketchTypeChange = useCallback(
     (type: SketchType | undefined) => {
-      selectSketchTool(type);
+      if (type === sketchType) return;
+      setSketchType(type);
       visualizerRef.current?.sketch?.setType?.(type);
     },
-    [visualizerRef],
+    [visualizerRef, sketchType],
   );
 
-  const handleFeatureCreate = useCallback(
-    async (feature: Feature<Polygon | MultiPolygon | Point | LineString> | null) => {
-      handleSelectedSketchToolChange(undefined);
+  const handleSketchFeatureCreate = useCallback(
+    async (feature: SketchFeature | null) => {
+      handleSketchTypeChange(undefined);
       // TODO: create a new layer if there is no selected sketch layer
       if (!selectedLayer?.id || !selectedLayer.config?.data?.isSketchLayer) return;
       const featureId = uuidv4();
@@ -79,7 +71,7 @@ export default ({
         featureId: [featureId],
       };
     },
-    [selectedLayer, handleLayerConfigUpdate, handleSelectedSketchToolChange],
+    [selectedLayer, handleLayerConfigUpdate, handleSketchTypeChange],
   );
 
   useEffect(() => {
@@ -89,34 +81,13 @@ export default ({
     }
   }, [nlsLayers, pendingSketchSelectionRef, visualizerRef]);
 
-  const handleTypeChange = useCallback(
-    (type: SketchType | undefined) => {
-      if (type !== currentTypeRef.current) {
-        selectSketchTool(type);
-      }
-    },
-    [currentTypeRef],
-  );
-
   useEffect(() => {
-    visualizerRef.current?.sketch?.onFeatureCreate?.(handleFeatureCreate);
-    visualizerRef.current?.sketch?.onTypeChange?.(handleTypeChange);
-  }, [visualizerRef, handleFeatureCreate, handleTypeChange]);
-
-  useEffect(() => {
-    if (interactionMode !== "sketch") {
-      selectSketchTool(undefined);
-    }
-  }, [interactionMode, visualizerRef]);
-
-  useEffect(() => {
-    setInteractionMode("default");
+    setSketchType(undefined);
   }, [tab]);
 
   return {
-    interactionMode,
-    selectedSketchTool,
-    handleInteractionModeChange,
-    handleSelectedSketchToolChange,
+    sketchType,
+    handleSketchTypeChange,
+    handleSketchFeatureCreate,
   };
 };

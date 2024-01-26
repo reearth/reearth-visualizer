@@ -17,6 +17,7 @@ import type {
   SceneProperty,
   LayerEditEvent,
   DefaultInfobox,
+  CursorType,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 import { TimelineManagerRef } from "../Map/useTimelineManager";
@@ -249,6 +250,13 @@ export default function useHooks(
   );
   const interactionMode = _interactionMode || "default";
 
+  const [cursor, setCursor] = useState<CursorType>("auto");
+  useEffect(() => {
+    setCursor(
+      interactionMode === "sketch" ? "crosshair" : interactionMode === "move" ? "grab" : "auto",
+    );
+  }, [interactionMode]);
+
   // feature flags
   const featureFlags = INTERACTION_MODES[interactionMode];
 
@@ -320,6 +328,7 @@ export default function useHooks(
     isLayerDragging,
     shouldRender,
     timelineManagerRef,
+    cursor,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

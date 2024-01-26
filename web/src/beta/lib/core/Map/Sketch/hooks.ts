@@ -1,13 +1,12 @@
 import { feature } from "@turf/helpers";
 import { useMachine } from "@xstate/react";
-import { Feature, MultiPolygon, Polygon, Point, LineString } from "geojson";
+import { Feature as GeojsonFeature, MultiPolygon, Polygon, Point, LineString } from "geojson";
 import {
   ForwardedRef,
   RefObject,
   useCallback,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -15,14 +14,22 @@ import invariant from "tiny-invariant";
 import { v4 as uuidv4 } from "uuid";
 
 import { InteractionModeType } from "../../Crust";
-import { EngineRef, LayersRef, MouseEventCallback, MouseEventProps, SketchRef } from "../types";
+import { LazyLayer } from "../Layers";
+import {
+  Feature,
+  EngineRef,
+  LayersRef,
+  MouseEventCallback,
+  MouseEventProps,
+  SketchRef,
+} from "../types";
 
 import { Position3d, createSketchMachine } from "./sketchMachine";
-import { SketchType } from "./types";
+import { GeometryOptionsXYZ, SketchType, SketchFeature } from "./types";
 import { useWindowEvent } from "./utils";
 
 export type SketchFeatureCallback = (
-  feature: Feature<Polygon | MultiPolygon | Point | LineString> | null,
+  feature: GeojsonFeature<Polygon | MultiPolygon | Point | LineString> | null,
 ) => void;
 
 type Props = {
@@ -30,40 +37,38 @@ type Props = {
   layersRef: RefObject<LayersRef>;
   engineRef: RefObject<EngineRef>;
   interactionMode: InteractionModeType;
-};
-
-type GeometryOptionsXYZ = {
-  type: SketchType;
-  controlPoints: Position3d[];
+  selectedFeature?: Feature;
+  overrideInteractionMode?: (mode: InteractionModeType) => void;
+  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
 };
 
 const PLUGIN_LAYER_ID_LENGTH = 36;
 
 const sketchMachine = createSketchMachine();
 
-export default function useHooks({ ref, engineRef, layersRef, interactionMode }: Props) {
+export default function useHooks({
+  ref,
+  engineRef,
+  layersRef,
+  selectedFeature,
+  overrideInteractionMode,
+  onSketchTypeChange,
+  onSketchFeatureCreate,
+}: Props) {
   const [state, send] = useMachine(sketchMachine);
   const [type, updateType] = useState<SketchType | undefined>();
   const [color, updateColor] = useState<string>();
-
-  const disableInteraction = useMemo(() => interactionMode !== "sketch", [interactionMode]);
+  const [disableInteraction, setDisableInteraction] = useState(false);
 
   const [geometryOptions, setGeometryOptions] = useState<GeometryOptionsXYZ | null>(null);
   const [extrudedHeight, setExtrudedHeight] = useState(0);
   const markerGeometryRef = useRef<GeometryOptionsXYZ | null>(null);
   const pointerLocationRef = useRef<[lng: number, lat: number, height: number]>();
 
-  const onFeatureCreateRef = useRef<SketchFeatureCallback>();
-  const onTypeChangeRef = useRef<(type: SketchType | undefined) => void>();
-
-  const setType = useCallback(
-    (type: SketchType | undefined) => {
-      invariant(interactionMode === "sketch", 'Interaction mode must be "sketch"');
-      updateType(type);
-      onTypeChangeRef.current?.(type);
-    },
-    [interactionMode],
-  );
+  const setType = useCallback((type: SketchType | undefined) => {
+    updateType(type);
+  }, []);
 
   const setColor = useCallback((color: string) => {
     updateColor(color);
@@ -104,58 +109,68 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
     [state, setGeometryOptions, setExtrudedHeight],
   );
 
-  const onFeatureCreate = useCallback((cb: SketchFeatureCallback) => {
-    onFeatureCreateRef.current = cb;
-  }, []);
+  const pluginLayerFeatureAdd = useCallback(
+    (layer: LazyLayer, feature: SketchFeature) => {
+      if (layer.type !== "simple" || layer.computed?.layer.type !== "simple") return;
+      const featureId = uuidv4();
+      layersRef.current?.override(layer.id, {
+        data: {
+          ...layer.data,
+          type: "geojson",
+          value: {
+            type: "FeatureCollection",
+            features: [
+              ...(layer.computed?.layer?.data?.value?.features ?? []),
+              { ...feature, id: featureId },
+            ],
+          },
+        },
+      });
+      return featureId;
+    },
+    [layersRef],
+  );
 
-  const onTypeChange = useCallback((cb: (type: SketchType | undefined) => void) => {
-    onTypeChangeRef.current = cb;
-  }, []);
+  const pluginLayerFeatureRemove = useCallback(
+    (layer: LazyLayer, featureId: string) => {
+      if (layer.type !== "simple" || layer.computed?.layer.type !== "simple") return;
+      layersRef.current?.override(layer.id, {
+        data: {
+          ...layer.data,
+          type: "geojson",
+          value: {
+            type: "FeatureCollection",
+            features: [
+              ...(layer.computed?.layer?.data?.value?.features ?? []).filter(
+                (feature: GeojsonFeature) => feature.id !== featureId,
+              ),
+            ],
+          },
+        },
+      });
+    },
+    [layersRef],
+  );
 
   const handleFeatureCreate = useCallback(
-    (
-      feature: Feature<
-        Polygon | MultiPolygon | Point | LineString,
-        {
-          id: string;
-          type: SketchType;
-          positions: readonly Position3d[];
-          extrudedHeight: number;
-        }
-      > | null,
-    ) => {
+    (feature: SketchFeature) => {
       const selectedLayer = layersRef.current?.selectedLayer();
       // Currently use id length to identify plugin layer
       // Plan to have a property to identify in the future
-      if (
-        selectedLayer?.id?.length === PLUGIN_LAYER_ID_LENGTH &&
-        selectedLayer.type === "simple" &&
-        selectedLayer.computed?.layer.type === "simple"
-      ) {
-        const featureId = uuidv4();
-        layersRef.current?.override(selectedLayer.id, {
-          data: {
-            ...selectedLayer.data,
-            type: "geojson",
-            value: {
-              type: "FeatureCollection",
-              features: [
-                ...(selectedLayer.computed?.layer?.data?.value?.features ?? []),
-                { ...feature, id: featureId },
-              ],
-            },
-          },
-        });
-        requestAnimationFrame(() => {
-          layersRef.current?.selectFeatures([
-            { layerId: selectedLayer.id, featureId: [featureId] },
-          ]);
-        });
+      if (selectedLayer?.id?.length === PLUGIN_LAYER_ID_LENGTH) {
+        const featureId = pluginLayerFeatureAdd(selectedLayer, feature);
+        if (featureId) {
+          requestAnimationFrame(() => {
+            layersRef.current?.selectFeatures([
+              { layerId: selectedLayer.id, featureId: [featureId] },
+            ]);
+          });
+        }
       } else {
-        onFeatureCreateRef.current?.(feature);
+        onSketchFeatureCreate?.(feature);
       }
     },
-    [layersRef],
+    [layersRef, pluginLayerFeatureAdd, onSketchFeatureCreate],
   );
 
   const handleLeftDown = useCallback(
@@ -369,10 +384,13 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
   );
 
   const handleRightClick = useCallback(() => {
+    if (type !== undefined) {
+      setType(undefined);
+    }
     if (state.matches("idle")) return;
     send({ type: "ABORT" });
     updateGeometryOptions(undefined);
-  }, [state, send, updateGeometryOptions]);
+  }, [type, state, send, setType, updateGeometryOptions]);
 
   const mouseDownEventRef = useRef<MouseEventCallback>(handleLeftDown);
   mouseDownEventRef.current = handleLeftDown;
@@ -426,32 +444,51 @@ export default function useHooks({ ref, engineRef, layersRef, interactionMode }:
   }, [engineRef, onMouseDown, onMouseMove, onMouseUp, onMouseDoubleClick, onMouseRightClick]);
 
   useWindowEvent("keydown", event => {
-    if (disableInteraction) {
-      return;
+    if (type === undefined) return;
+    if (event.code === "Space") {
+      setDisableInteraction(true);
+      overrideInteractionMode?.("move");
+    } else {
+      if (disableInteraction) {
+        return;
+      }
+      if (event.key === "Escape") {
+        send({ type: "CANCEL" });
+        const controlPoint =
+          pointerLocationRef.current != null
+            ? engineRef.current?.toXYZ(...pointerLocationRef.current)
+            : undefined;
+        updateGeometryOptions(controlPoint);
+      } else if (event.key === "Delete" && state.matches("idle") && selectedFeature?.id) {
+        const selectedLayer = layersRef.current?.selectedLayer();
+        if (selectedLayer?.id?.length === PLUGIN_LAYER_ID_LENGTH) {
+          pluginLayerFeatureRemove(selectedLayer, selectedFeature.id);
+        }
+      }
     }
-    if (event.key === "Escape") {
-      send({ type: "CANCEL" });
-      const controlPoint =
-        pointerLocationRef.current != null
-          ? engineRef.current?.toXYZ(...pointerLocationRef.current)
-          : undefined;
-      updateGeometryOptions(controlPoint);
+  });
+
+  useWindowEvent("keyup", event => {
+    if (type === undefined) return;
+    if (event.code === "Space") {
+      overrideInteractionMode?.("sketch");
+      setDisableInteraction(false);
     }
   });
 
   useEffect(() => {
-    if (disableInteraction) {
+    if (type === undefined) {
       send({ type: "ABORT" });
       updateGeometryOptions(undefined);
     }
-  }, [disableInteraction, send, updateGeometryOptions]);
+  }, [type, send, updateGeometryOptions]);
 
-  useImperativeHandle(ref, () => ({ setType, setColor, onTypeChange, onFeatureCreate }), [
-    setType,
-    setColor,
-    onTypeChange,
-    onFeatureCreate,
-  ]);
+  useEffect(() => {
+    overrideInteractionMode?.(type ? "sketch" : "default");
+    onSketchTypeChange?.(type);
+  }, [type, overrideInteractionMode, onSketchTypeChange]);
+
+  useImperativeHandle(ref, () => ({ setType, setColor }), [setType, setColor]);
 
   return {
     state,

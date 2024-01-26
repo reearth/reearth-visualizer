@@ -4,7 +4,6 @@ import Toolbar from "@reearth/beta/features/Editor/tabs/map/Toolbar";
 import PublishNav, { type ProjectType } from "@reearth/beta/features/Editor/tabs/publish/Nav";
 import WidgetNav, { type Device } from "@reearth/beta/features/Editor/tabs/widgets/Nav";
 import { Tab } from "@reearth/beta/features/Navbar";
-import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
 import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 
 type Props = {
@@ -14,10 +13,9 @@ type Props = {
   showWidgetEditor?: boolean;
   selectedDevice: Device;
   selectedProjectType?: ProjectType;
-  interactionMode: InteractionModeType;
-  selectedSketchTool: SketchType | undefined;
-  onInteractionModeChange: (mode: InteractionModeType) => void;
-  onSelectedSketchToolChange: (tool: SketchType) => void;
+  sketchType: SketchType | undefined;
+  isSketchLayerSelected: boolean;
+  handleSketchTypeChange: (tool: SketchType | undefined) => void;
   handleProjectTypeChange: (type: ProjectType) => void;
   handleDeviceChange: (device: Device) => void;
   handleWidgetEditorToggle: () => void;
@@ -30,10 +28,9 @@ export default ({
   showWidgetEditor,
   selectedDevice,
   selectedProjectType,
-  interactionMode,
-  selectedSketchTool,
-  onInteractionModeChange,
-  onSelectedSketchToolChange,
+  sketchType,
+  isSketchLayerSelected,
+  handleSketchTypeChange,
   handleProjectTypeChange,
   handleDeviceChange,
   handleWidgetEditorToggle,
@@ -61,10 +58,9 @@ export default ({
       case "map":
         return (
           <Toolbar
-            interactionMode={interactionMode}
-            selectedSketchTool={selectedSketchTool}
-            onInteractionModeChange={onInteractionModeChange}
-            onSelectedSketchToolChange={onSelectedSketchToolChange}
+            enable={isSketchLayerSelected}
+            sketchType={sketchType}
+            onSketchTypeChange={handleSketchTypeChange}
           />
         );
       case "story":
@@ -78,10 +74,9 @@ export default ({
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
-    interactionMode,
-    selectedSketchTool,
-    onInteractionModeChange,
-    onSelectedSketchToolChange,
+    sketchType,
+    isSketchLayerSelected,
+    handleSketchTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
     handleProjectTypeChange,

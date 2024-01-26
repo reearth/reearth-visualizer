@@ -1,3 +1,7 @@
+import { Feature as GeojsonFeature, MultiPolygon, Polygon, Point, LineString } from "geojson";
+
+import { Position3d } from "../../types";
+
 export type SketchType =
   | "marker"
   | "polyline"
@@ -7,6 +11,21 @@ export type SketchType =
   | "extrudedCircle"
   | "extrudedRectangle"
   | "extrudedPolygon";
+
+export type GeometryOptionsXYZ = {
+  type: SketchType;
+  controlPoints: Position3d[];
+};
+
+export type SketchFeature = GeojsonFeature<
+  Polygon | MultiPolygon | Point | LineString,
+  {
+    id: string;
+    type: SketchType;
+    positions: readonly Position3d[];
+    extrudedHeight: number;
+  }
+>;
 
 export function isSketchType(value: unknown): value is SketchType {
   return (

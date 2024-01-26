@@ -1,86 +1,70 @@
-import { useMemo } from "react";
+import { useEffect } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
-import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
 import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import { styled } from "@reearth/services/theme";
 
 type Props = {
-  interactionMode: InteractionModeType;
-  selectedSketchTool: SketchType | undefined;
-  onInteractionModeChange: (mode: InteractionModeType) => void;
-  onSelectedSketchToolChange: (tool: SketchType) => void;
+  enable: boolean;
+  sketchType: SketchType | undefined;
+  onSketchTypeChange: (type: SketchType | undefined) => void;
 };
-const Toolbar: React.FC<Props> = ({
-  interactionMode,
-  selectedSketchTool,
-  onInteractionModeChange,
-  onSelectedSketchToolChange,
-}) => {
-  const isSketchMode = useMemo(() => interactionMode === "sketch", [interactionMode]);
+const Toolbar: React.FC<Props> = ({ enable, sketchType, onSketchTypeChange }) => {
+  useEffect(() => {
+    if (!enable) onSketchTypeChange(undefined);
+  }, [enable, onSketchTypeChange]);
+
   return (
     <StyledSecondaryNav>
       <ButtonGroup>
         <ToolButton
-          icon="pointer"
-          selected={interactionMode === "default"}
-          onClick={() => onInteractionModeChange("default")}
-        />
-        <ToolButton
-          icon="sketch"
-          selected={interactionMode === "sketch"}
-          onClick={() => onInteractionModeChange("sketch")}
-        />
-      </ButtonGroup>
-      <ButtonGroup>
-        <ToolButton
           icon="marker"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "marker"}
-          onClick={() => onSelectedSketchToolChange("marker")}
+          disabled={!enable}
+          selected={sketchType === "marker"}
+          onClick={() => onSketchTypeChange("marker")}
         />
         <ToolButton
           icon="polyline"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "polyline"}
-          onClick={() => onSelectedSketchToolChange("polyline")}
+          disabled={!enable}
+          selected={sketchType === "polyline"}
+          onClick={() => onSketchTypeChange("polyline")}
         />
         <ToolButton
           icon="circleOutline"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "circle"}
-          onClick={() => onSelectedSketchToolChange("circle")}
+          disabled={!enable}
+          selected={sketchType === "circle"}
+          onClick={() => onSketchTypeChange("circle")}
         />
         <ToolButton
           icon="squareOutline"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "rectangle"}
-          onClick={() => onSelectedSketchToolChange("rectangle")}
+          disabled={!enable}
+          selected={sketchType === "rectangle"}
+          onClick={() => onSketchTypeChange("rectangle")}
         />
         <ToolButton
           icon="polygon"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "polygon"}
-          onClick={() => onSelectedSketchToolChange("polygon")}
+          disabled={!enable}
+          selected={sketchType === "polygon"}
+          onClick={() => onSketchTypeChange("polygon")}
         />
         <ToolButton
           icon="cylinder"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "extrudedCircle"}
-          onClick={() => onSelectedSketchToolChange("extrudedCircle")}
+          disabled={!enable}
+          selected={sketchType === "extrudedCircle"}
+          onClick={() => onSketchTypeChange("extrudedCircle")}
         />
         <ToolButton
           icon="box"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "extrudedRectangle"}
-          onClick={() => onSelectedSketchToolChange("extrudedRectangle")}
+          disabled={!enable}
+          selected={sketchType === "extrudedRectangle"}
+          onClick={() => onSketchTypeChange("extrudedRectangle")}
         />
         <ToolButton
           icon="polygonExtruded"
-          disabled={!isSketchMode}
-          selected={selectedSketchTool === "extrudedPolygon"}
-          onClick={() => onSelectedSketchToolChange("extrudedPolygon")}
+          disabled={!enable}
+          selected={sketchType === "extrudedPolygon"}
+          onClick={() => onSketchTypeChange("extrudedPolygon")}
         />
       </ButtonGroup>
     </StyledSecondaryNav>

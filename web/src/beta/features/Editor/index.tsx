@@ -14,10 +14,10 @@ import { metrics, styled } from "@reearth/services/theme";
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
 import SketchLayerManager from "./SketchLayerManager";
-import useInteractionMode from "./useInteractionMode";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 import useScene from "./useScene";
+import useSketch from "./useSketch";
 
 type Props = {
   sceneId: string;
@@ -173,12 +173,13 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerStyleSelect: handleLayerStyleSelected,
   });
 
-  const {
-    interactionMode,
-    selectedSketchTool,
-    handleInteractionModeChange,
-    handleSelectedSketchToolChange,
-  } = useInteractionMode({ tab, nlsLayers, selectedLayer, visualizerRef, handleLayerConfigUpdate });
+  const { sketchType, handleSketchTypeChange, handleSketchFeatureCreate } = useSketch({
+    tab,
+    nlsLayers,
+    selectedLayer,
+    visualizerRef,
+    handleLayerConfigUpdate,
+  });
 
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
@@ -187,10 +188,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
-    interactionMode,
-    selectedSketchTool,
-    onInteractionModeChange: handleInteractionModeChange,
-    onSelectedSketchToolChange: handleSelectedSketchToolChange,
+    sketchType,
+    isSketchLayerSelected: !!selectedLayer?.config?.data?.isSketchLayer,
+    handleSketchTypeChange,
     handleProjectTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
@@ -232,10 +232,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   selectedStory={selectedStory}
                   installableBlocks={installableStoryBlocks}
                   currentCamera={currentCamera}
-                  interactionMode={interactionMode}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
-                  onInteractionModeChange={handleInteractionModeChange}
+                  onSketchTypeChange={handleSketchTypeChange}
+                  onSketchFeatureCreate={handleSketchFeatureCreate}
                 />
               </VisualizerWrapper>
               {bottomPanel && (

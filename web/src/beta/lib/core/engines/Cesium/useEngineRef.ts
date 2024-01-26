@@ -38,6 +38,7 @@ import {
 import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
 import { createGeometry } from "./Sketch/createGeometry";
+import { CursorType } from "./types";
 import {
   convertCesium3DTileFeatureProperties,
   convertEntityDescription,
@@ -313,6 +314,12 @@ export default function useEngineRef(
           type,
           controlPoints: controlPoints.map(p => new Cesium.Cartesian3(...p)),
         });
+      },
+      setCursor: (cursor: CursorType) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        viewer.canvas.style.cursor = cursor ?? "auto";
+        return null;
       },
       flyTo: (target, options) => {
         if (target && typeof target === "object") {

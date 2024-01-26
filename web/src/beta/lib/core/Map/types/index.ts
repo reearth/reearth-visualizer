@@ -11,6 +11,7 @@ import type {
 } from "react";
 
 import { PickedFeature } from "../../engines/Cesium/pickMany";
+import { CursorType } from "../../engines/Cesium/types";
 import type {
   LatLngHeight,
   Camera,
@@ -37,7 +38,6 @@ import type {
   Ref as LayersRef,
 } from "../Layers";
 import { SketchComponentType } from "../Sketch";
-import { SketchFeatureCallback } from "../Sketch/hooks";
 import { SketchType } from "../Sketch/types";
 import type { TimelineManagerRef } from "../useTimelineManager";
 
@@ -130,6 +130,7 @@ export type EngineRef = {
     type: SketchType;
     controlPoints: Position3d[];
   }) => LineString | Polygon | MultiPolygon | Point | undefined;
+  setCursor: (cursor: CursorType) => void;
   flyTo: FlyTo;
   flyToBBox: (
     bbox: [number, number, number, number],
@@ -478,6 +479,4 @@ export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every post
 export type SketchRef = {
   setType: (type: SketchType | undefined) => void;
   setColor: (color: string) => void;
-  onFeatureCreate: (cb: SketchFeatureCallback) => void;
-  onTypeChange: (cb: (type: SketchType | undefined) => void) => void;
 };

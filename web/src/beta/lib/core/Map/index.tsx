@@ -1,10 +1,10 @@
 import { forwardRef, useMemo, type Ref } from "react";
 
-import { INTERACTION_MODES, InteractionModeType } from "../Crust";
+import { INTERACTION_MODES } from "../Crust";
 
 import useHooks, { MapRef } from "./hooks";
 import Layers, { type Props as LayersProps } from "./Layers";
-import Sketch from "./Sketch";
+import Sketch, { SketchProps } from "./Sketch";
 import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
@@ -26,6 +26,8 @@ export type {
 
 export type { MapRef as Ref } from "./hooks";
 
+export type CursorType = "auto" | "grab" | "crosshair";
+
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
@@ -33,8 +35,9 @@ export type Props = {
   LayersProps,
   "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes" | "selectedLayerId"
 > &
-  Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId"> & {
-    interactionMode?: InteractionModeType;
+  Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId"> &
+  Omit<SketchProps, "layersRef" | "engineRef" | "SketchComponent"> & {
+    cursor?: CursorType;
   };
 
 function Map(
@@ -49,8 +52,13 @@ function Map(
     overrides,
     timelineManagerRef,
     sceneProperty,
-    interactionMode = "default",
+    interactionMode,
+    selectedFeature,
+    cursor,
     onLayerSelect,
+    overrideInteractionMode,
+    onSketchTypeChange,
+    onSketchFeatureCreate,
     featureFlags = INTERACTION_MODES.default,
     ...props
   }: Props,
@@ -70,6 +78,7 @@ function Map(
     ref,
     sceneProperty,
     timelineManagerRef,
+    cursor,
     onLayerSelect,
   });
 
@@ -119,7 +128,11 @@ function Map(
         layersRef={layersRef}
         engineRef={engineRef}
         interactionMode={interactionMode}
+        selectedFeature={selectedFeature}
         SketchComponent={currentEngine?.sketchComponent}
+        overrideInteractionMode={overrideInteractionMode}
+        onSketchTypeChange={onSketchTypeChange}
+        onSketchFeatureCreate={onSketchFeatureCreate}
       />
     </Engine>
   ) : null;

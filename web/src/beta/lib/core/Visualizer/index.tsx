@@ -35,6 +35,7 @@ import Map, {
   type ComputedLayer,
 } from "../Map";
 import { Ref as MapRef } from "../Map";
+import { SketchFeature, SketchType } from "../Map/Sketch/types";
 import { Position } from "../StoryPanel/types";
 
 import { VisualizerProvider } from "./context";
@@ -115,6 +116,8 @@ export type Props = {
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
+  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   onInteractionModeChange?: (mode: InteractionModeType) => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 } & ExternalPluginProps;
@@ -167,6 +170,8 @@ const Visualizer = memo(
         onZoomToLayer,
         onInteractionModeChange,
         onMount,
+        onSketchTypeChange,
+        onSketchFeatureCreate,
         renderInfoboxInsertionPopup,
       },
       ref: Ref<MapRef | null>,
@@ -189,6 +194,7 @@ const Visualizer = memo(
         infobox,
         shouldRender,
         timelineManagerRef,
+        cursor,
         handleLayerSelect,
         handleBlockSelect,
         handleCameraChange,
@@ -298,11 +304,16 @@ const Visualizer = memo(
                   ready={ready}
                   timelineManagerRef={timelineManagerRef}
                   interactionMode={interactionMode}
+                  selectedFeature={selectedFeature}
+                  cursor={cursor}
                   onCameraChange={handleCameraChange}
                   onLayerDrag={handleLayerDrag}
                   onLayerDrop={handleLayerDrop}
                   onLayerSelect={handleLayerSelect}
                   onLayerEdit={handleLayerEdit}
+                  overrideInteractionMode={handleInteractionModeChange}
+                  onSketchTypeChange={onSketchTypeChange}
+                  onSketchFeatureCreate={onSketchFeatureCreate}
                   onMount={onMount}
                 />
               </Filled>

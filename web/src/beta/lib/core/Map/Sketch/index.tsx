@@ -4,10 +4,10 @@ import { RequireExactlyOne } from "type-fest";
 
 import { InteractionModeType } from "../../Crust";
 import { Position3d } from "../../types";
-import { EngineRef, LayersRef, SketchRef } from "../types";
+import { EngineRef, Feature, LayersRef, SketchRef } from "../types";
 
 import useHooks from "./hooks";
-import { SketchType } from "./types";
+import { SketchFeature, SketchType } from "./types";
 
 export type SketchComponentType = ComponentType<SketchComponentProps>;
 
@@ -27,15 +27,28 @@ type SketchComponentProps = RequireExactlyOne<
   "geometry" | "geometryOptions"
 >;
 
-type Props = {
+export type SketchProps = {
   layersRef: RefObject<LayersRef>;
   engineRef: RefObject<EngineRef>;
-  interactionMode: InteractionModeType;
   SketchComponent?: SketchComponentType;
+  selectedFeature?: Feature;
+  interactionMode?: InteractionModeType;
+  overrideInteractionMode?: (mode: InteractionModeType) => void;
+  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
 };
 
-const Sketch: ForwardRefRenderFunction<SketchRef, Props> = (
-  { layersRef, engineRef, interactionMode, SketchComponent },
+const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
+  {
+    layersRef,
+    engineRef,
+    interactionMode = "default",
+    selectedFeature,
+    SketchComponent,
+    overrideInteractionMode,
+    onSketchTypeChange,
+    onSketchFeatureCreate,
+  },
   ref,
 ) => {
   const { state, extrudedHeight, geometryOptions, color } = useHooks({
@@ -43,6 +56,10 @@ const Sketch: ForwardRefRenderFunction<SketchRef, Props> = (
     layersRef,
     engineRef,
     interactionMode,
+    selectedFeature,
+    overrideInteractionMode,
+    onSketchTypeChange,
+    onSketchFeatureCreate,
   });
   if (state.matches("idle")) {
     return null;

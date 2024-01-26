@@ -83,6 +83,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   equalsEpsilon2d: 1,
   equalsEpsilon3d: 1,
   createGeometry: 1,
+  setCursor: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -111,8 +112,6 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
 const sketchRefKeys: FunctionKeys<SketchRef> = {
   setType: 1,
   setColor: 1,
-  onFeatureCreate: 1,
-  onTypeChange: 1,
 };
 
 export function mapRef({
