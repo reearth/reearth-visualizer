@@ -21,49 +21,49 @@ const Toolbar: React.FC<Props> = ({ enable, sketchType, onSketchTypeChange }) =>
         <ToolButton
           icon="marker"
           disabled={!enable}
-          selected={sketchType === "marker"}
+          selected={enable && sketchType === "marker"}
           onClick={() => onSketchTypeChange("marker")}
         />
         <ToolButton
           icon="polyline"
           disabled={!enable}
-          selected={sketchType === "polyline"}
+          selected={enable && sketchType === "polyline"}
           onClick={() => onSketchTypeChange("polyline")}
         />
         <ToolButton
           icon="circleOutline"
           disabled={!enable}
-          selected={sketchType === "circle"}
+          selected={enable && sketchType === "circle"}
           onClick={() => onSketchTypeChange("circle")}
         />
         <ToolButton
           icon="squareOutline"
           disabled={!enable}
-          selected={sketchType === "rectangle"}
+          selected={enable && sketchType === "rectangle"}
           onClick={() => onSketchTypeChange("rectangle")}
         />
         <ToolButton
           icon="polygon"
           disabled={!enable}
-          selected={sketchType === "polygon"}
+          selected={enable && sketchType === "polygon"}
           onClick={() => onSketchTypeChange("polygon")}
         />
         <ToolButton
           icon="cylinder"
           disabled={!enable}
-          selected={sketchType === "extrudedCircle"}
+          selected={enable && sketchType === "extrudedCircle"}
           onClick={() => onSketchTypeChange("extrudedCircle")}
         />
         <ToolButton
           icon="box"
           disabled={!enable}
-          selected={sketchType === "extrudedRectangle"}
+          selected={enable && sketchType === "extrudedRectangle"}
           onClick={() => onSketchTypeChange("extrudedRectangle")}
         />
         <ToolButton
           icon="polygonExtruded"
           disabled={!enable}
-          selected={sketchType === "extrudedPolygon"}
+          selected={enable && sketchType === "extrudedPolygon"}
           onClick={() => onSketchTypeChange("extrudedPolygon")}
         />
       </ButtonGroup>

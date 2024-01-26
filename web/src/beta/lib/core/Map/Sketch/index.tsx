@@ -2,9 +2,12 @@ import { type LineString, type MultiPolygon, type Polygon } from "geojson";
 import { ComponentType, ForwardRefRenderFunction, RefObject, forwardRef } from "react";
 import { RequireExactlyOne } from "type-fest";
 
+import { ComputedLayer } from "@reearth/classic/core/Map";
+
 import { InteractionModeType } from "../../Crust";
+import { SelectedFeatureInfo } from "../../mantle";
 import { Position3d } from "../../types";
-import { EngineRef, Feature, LayersRef, SketchRef } from "../types";
+import { EngineRef, Feature, LayerSelectionReason, LayersRef, SketchRef } from "../types";
 
 import useHooks from "./hooks";
 import { SketchFeature, SketchType } from "./types";
@@ -27,6 +30,14 @@ type SketchComponentProps = RequireExactlyOne<
   "geometry" | "geometryOptions"
 >;
 
+export type OnLayerSelectType = (
+  layerId: string | undefined,
+  featureId: string | undefined,
+  layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+  reason: LayerSelectionReason | undefined,
+  info: SelectedFeatureInfo | undefined,
+) => void;
+
 export type SketchProps = {
   layersRef: RefObject<LayersRef>;
   engineRef: RefObject<EngineRef>;
@@ -36,6 +47,7 @@ export type SketchProps = {
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onLayerSelect?: OnLayerSelectType;
 };
 
 const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
@@ -48,6 +60,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
     overrideInteractionMode,
     onSketchTypeChange,
     onSketchFeatureCreate,
+    onLayerSelect,
   },
   ref,
 ) => {
@@ -60,6 +73,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
     overrideInteractionMode,
     onSketchTypeChange,
     onSketchFeatureCreate,
+    onLayerSelect,
   });
   if (state.matches("idle")) {
     return null;

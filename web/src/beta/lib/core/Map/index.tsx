@@ -130,6 +130,7 @@ function Map(
         interactionMode={interactionMode}
         selectedFeature={selectedFeature}
         SketchComponent={currentEngine?.sketchComponent}
+        onLayerSelect={handleLayerSelect}
         overrideInteractionMode={overrideInteractionMode}
         onSketchTypeChange={onSketchTypeChange}
         onSketchFeatureCreate={onSketchFeatureCreate}

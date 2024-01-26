@@ -1,6 +1,7 @@
 import { feature } from "@turf/helpers";
 import { useMachine } from "@xstate/react";
 import { Feature as GeojsonFeature, MultiPolygon, Polygon, Point, LineString } from "geojson";
+import { cloneDeep, merge } from "lodash-es";
 import {
   ForwardedRef,
   RefObject,
@@ -24,9 +25,12 @@ import {
   SketchRef,
 } from "../types";
 
+import { PRESET_APPEARANCE } from "./presetAppearance";
 import { Position3d, createSketchMachine } from "./sketchMachine";
-import { GeometryOptionsXYZ, SketchType, SketchFeature } from "./types";
+import { GeometryOptionsXYZ, SketchType, SketchFeature, SketchAppearance } from "./types";
 import { useWindowEvent } from "./utils";
+
+import { OnLayerSelectType } from ".";
 
 export type SketchFeatureCallback = (
   feature: GeojsonFeature<Polygon | MultiPolygon | Point | LineString> | null,
@@ -39,8 +43,9 @@ type Props = {
   interactionMode: InteractionModeType;
   selectedFeature?: Feature;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
-  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchTypeChange?: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onLayerSelect?: OnLayerSelectType;
 };
 
 const PLUGIN_LAYER_ID_LENGTH = 36;
@@ -55,23 +60,33 @@ export default function useHooks({
   overrideInteractionMode,
   onSketchTypeChange,
   onSketchFeatureCreate,
+  onLayerSelect,
 }: Props) {
   const [state, send] = useMachine(sketchMachine);
   const [type, updateType] = useState<SketchType | undefined>();
+  const [from, updateFrom] = useState<"editor" | "plugin">("editor");
   const [color, updateColor] = useState<string>();
   const [disableInteraction, setDisableInteraction] = useState(false);
+  const [defaultAppearance, updateDefaultAppearance] = useState<SketchAppearance | undefined>(
+    PRESET_APPEARANCE,
+  );
 
   const [geometryOptions, setGeometryOptions] = useState<GeometryOptionsXYZ | null>(null);
   const [extrudedHeight, setExtrudedHeight] = useState(0);
   const markerGeometryRef = useRef<GeometryOptionsXYZ | null>(null);
   const pointerLocationRef = useRef<[lng: number, lat: number, height: number]>();
 
-  const setType = useCallback((type: SketchType | undefined) => {
+  const setType = useCallback((type: SketchType | undefined, from?: "editor" | "plugin") => {
     updateType(type);
+    updateFrom(from ?? "editor");
   }, []);
 
   const setColor = useCallback((color: string) => {
     updateColor(color);
+  }, []);
+
+  const setDefaultAppearance = useCallback((appearance: SketchAppearance) => {
+    updateDefaultAppearance(merge(cloneDeep(PRESET_APPEARANCE), appearance));
   }, []);
 
   const createFeature = useCallback(() => {
@@ -109,7 +124,27 @@ export default function useHooks({
     [state, setGeometryOptions, setExtrudedHeight],
   );
 
-  const pluginLayerFeatureAdd = useCallback(
+  const pluginSketchLayerCreate = useCallback(
+    (feature: SketchFeature) => {
+      const featureId = uuidv4();
+      const newLayer = layersRef.current?.add({
+        type: "simple",
+        data: {
+          type: "geojson",
+          isSketchLayer: true,
+          value: {
+            type: "FeatureCollection",
+            features: [{ ...feature, id: featureId }],
+          },
+        },
+        ...defaultAppearance,
+      });
+      return { layerId: newLayer?.id, featureId };
+    },
+    [layersRef, defaultAppearance],
+  );
+
+  const pluginSketchLayerFeatureAdd = useCallback(
     (layer: LazyLayer, feature: SketchFeature) => {
       if (layer.type !== "simple" || layer.computed?.layer.type !== "simple") return;
       const featureId = uuidv4();
@@ -131,7 +166,7 @@ export default function useHooks({
     [layersRef],
   );
 
-  const pluginLayerFeatureRemove = useCallback(
+  const pluginSketchLayerFeatureRemove = useCallback(
     (layer: LazyLayer, featureId: string) => {
       if (layer.type !== "simple" || layer.computed?.layer.type !== "simple") return;
       layersRef.current?.override(layer.id, {
@@ -154,23 +189,37 @@ export default function useHooks({
 
   const handleFeatureCreate = useCallback(
     (feature: SketchFeature) => {
+      updateType(undefined);
+      if (from === "editor") {
+        onSketchFeatureCreate?.(feature);
+        return;
+      }
       const selectedLayer = layersRef.current?.selectedLayer();
-      // Currently use id length to identify plugin layer
-      // Plan to have a property to identify in the future
-      if (selectedLayer?.id?.length === PLUGIN_LAYER_ID_LENGTH) {
-        const featureId = pluginLayerFeatureAdd(selectedLayer, feature);
-        if (featureId) {
+      if (selectedLayer?.id?.length !== PLUGIN_LAYER_ID_LENGTH) {
+        // Create a new layer if no layer is selected
+        const { layerId, featureId } = pluginSketchLayerCreate(feature);
+        if (layerId && featureId) {
           requestAnimationFrame(() => {
-            layersRef.current?.selectFeatures([
-              { layerId: selectedLayer.id, featureId: [featureId] },
-            ]);
+            onLayerSelect?.(layerId, featureId, undefined, undefined, undefined);
           });
         }
       } else {
-        onSketchFeatureCreate?.(feature);
+        const featureId = pluginSketchLayerFeatureAdd(selectedLayer, feature);
+        if (featureId) {
+          requestAnimationFrame(() => {
+            onLayerSelect?.(selectedLayer.id, featureId, undefined, undefined, undefined);
+          });
+        }
       }
     },
-    [layersRef, pluginLayerFeatureAdd, onSketchFeatureCreate],
+    [
+      layersRef,
+      from,
+      pluginSketchLayerCreate,
+      pluginSketchLayerFeatureAdd,
+      onSketchFeatureCreate,
+      onLayerSelect,
+    ],
   );
 
   const handleLeftDown = useCallback(
@@ -385,12 +434,12 @@ export default function useHooks({
 
   const handleRightClick = useCallback(() => {
     if (type !== undefined) {
-      setType(undefined);
+      updateType(undefined);
     }
     if (state.matches("idle")) return;
     send({ type: "ABORT" });
     updateGeometryOptions(undefined);
-  }, [type, state, send, setType, updateGeometryOptions]);
+  }, [type, state, send, updateGeometryOptions]);
 
   const mouseDownEventRef = useRef<MouseEventCallback>(handleLeftDown);
   mouseDownEventRef.current = handleLeftDown;
@@ -462,7 +511,7 @@ export default function useHooks({
       } else if (event.key === "Delete" && state.matches("idle") && selectedFeature?.id) {
         const selectedLayer = layersRef.current?.selectedLayer();
         if (selectedLayer?.id?.length === PLUGIN_LAYER_ID_LENGTH) {
-          pluginLayerFeatureRemove(selectedLayer, selectedFeature.id);
+          pluginSketchLayerFeatureRemove(selectedLayer, selectedFeature.id);
         }
       }
     }
@@ -485,10 +534,14 @@ export default function useHooks({
 
   useEffect(() => {
     overrideInteractionMode?.(type ? "sketch" : "default");
-    onSketchTypeChange?.(type);
-  }, [type, overrideInteractionMode, onSketchTypeChange]);
+    onSketchTypeChange?.(type, from);
+  }, [type, from, overrideInteractionMode, onSketchTypeChange]);
 
-  useImperativeHandle(ref, () => ({ setType, setColor }), [setType, setColor]);
+  useImperativeHandle(ref, () => ({ setType, setColor, setDefaultAppearance }), [
+    setType,
+    setColor,
+    setDefaultAppearance,
+  ]);
 
   return {
     state,

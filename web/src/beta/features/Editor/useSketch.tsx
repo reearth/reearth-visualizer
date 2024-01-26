@@ -31,17 +31,15 @@ export default ({
   );
 
   const handleSketchTypeChange = useCallback(
-    (type: SketchType | undefined) => {
-      if (type === sketchType) return;
+    (type: SketchType | undefined, from: "editor" | "plugin" = "editor") => {
       setSketchType(type);
-      visualizerRef.current?.sketch?.setType?.(type);
+      if (from === "editor") visualizerRef.current?.sketch?.setType?.(type);
     },
-    [visualizerRef, sketchType],
+    [visualizerRef],
   );
 
   const handleSketchFeatureCreate = useCallback(
     async (feature: SketchFeature | null) => {
-      handleSketchTypeChange(undefined);
       // TODO: create a new layer if there is no selected sketch layer
       if (!selectedLayer?.id || !selectedLayer.config?.data?.isSketchLayer) return;
       const featureId = uuidv4();
@@ -71,7 +69,7 @@ export default ({
         featureId: [featureId],
       };
     },
-    [selectedLayer, handleLayerConfigUpdate, handleSketchTypeChange],
+    [selectedLayer, handleLayerConfigUpdate],
   );
 
   useEffect(() => {

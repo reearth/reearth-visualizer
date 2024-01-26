@@ -1,5 +1,6 @@
 import { Feature as GeojsonFeature, MultiPolygon, Polygon, Point, LineString } from "geojson";
 
+import { LayerAppearanceTypes } from "../../mantle";
 import { Position3d } from "../../types";
 
 export type SketchType =
@@ -26,6 +27,8 @@ export type SketchFeature = GeojsonFeature<
     extrudedHeight: number;
   }
 >;
+
+export type SketchAppearance = Partial<LayerAppearanceTypes>;
 
 export function isSketchType(value: unknown): value is SketchType {
   return (

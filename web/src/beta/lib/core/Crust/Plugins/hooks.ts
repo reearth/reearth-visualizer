@@ -10,6 +10,7 @@ import {
   type TickEventCallback,
 } from "@reearth/beta/lib/core/Map";
 
+import { SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 
@@ -140,8 +141,9 @@ export default function ({
   );
   const getSketch = useCallback(
     () => ({
-      setType: mapRef?.current?.sketch?.setType,
+      setType: (type: SketchType | undefined) => mapRef?.current?.sketch?.setType(type, "plugin"),
       setColor: mapRef?.current?.sketch?.setColor,
+      setDefaultAppearance: mapRef?.current?.sketch?.setDefaultAppearance,
     }),
     [mapRef],
   );

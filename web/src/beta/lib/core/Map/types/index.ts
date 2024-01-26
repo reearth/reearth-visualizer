@@ -38,7 +38,7 @@ import type {
   Ref as LayersRef,
 } from "../Layers";
 import { SketchComponentType } from "../Sketch";
-import { SketchType } from "../Sketch/types";
+import { SketchAppearance, SketchType } from "../Sketch/types";
 import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
@@ -477,6 +477,7 @@ export type Engine = {
 export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame
 
 export type SketchRef = {
-  setType: (type: SketchType | undefined) => void;
+  setType: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   setColor: (color: string) => void;
+  setDefaultAppearance: (appearance: SketchAppearance) => void;
 };

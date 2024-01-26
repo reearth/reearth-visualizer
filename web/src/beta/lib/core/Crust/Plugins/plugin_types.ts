@@ -20,7 +20,7 @@ import type {
   Feature,
 } from "@reearth/beta/lib/core/Map";
 
-import { SketchType } from "../../Map/Sketch/types";
+import { SketchAppearance, SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
 import { Block } from "../Infobox";
@@ -424,6 +424,7 @@ export type Viewport = ViewportSize & {
 export type Sketch = {
   readonly setType?: (type: SketchType | undefined) => void;
   readonly setColor?: (color: string) => void;
+  readonly setDefaultAppearance?: (appearance: SketchAppearance) => void;
 };
 
 /** Cesium API: available only when the plugin is a primitive */
