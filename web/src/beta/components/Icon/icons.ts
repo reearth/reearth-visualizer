@@ -4,7 +4,7 @@
 // Primitives
 import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg?react";
 
-// Infobox Blocks
+// Infobox
 import Infobox from "./Icons/infoboxIcon.svg?react";
 import InfoHTML from "./Icons/infoboxHTMLIcon.svg?react";
 import InfoLocation from "./Icons/infoboxLocationIcon.svg?react";
