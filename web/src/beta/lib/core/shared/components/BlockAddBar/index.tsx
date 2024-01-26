@@ -6,40 +6,40 @@ import PopoverMenuContent, { MenuItem } from "@reearth/beta/components/PopoverMe
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
 
-import { STORY_PANEL_WIDTH } from "../constants";
-
 type Props = {
   id?: string;
-  installableStoryBlocks?: InstallableStoryBlock[];
+  installableBlocks?: InstallableStoryBlock[];
   openBlocks: boolean;
   alwaysShow?: boolean;
   showAreaHeight?: number;
+  parentWidth?: number;
   onBlockOpen: () => void;
   onBlockAdd?: (extensionId?: string, pluginId?: string) => void;
 };
 
 const BlockAddBar: React.FC<Props> = ({
   id,
-  installableStoryBlocks,
+  installableBlocks,
   openBlocks,
   alwaysShow,
   showAreaHeight,
+  parentWidth,
   onBlockOpen,
   onBlockAdd,
 }) => {
   const items: MenuItem[] = useMemo(
     () =>
-      installableStoryBlocks?.map?.(sb => {
+      installableBlocks?.map?.(b => {
         return {
-          name: sb.name,
-          icon: sb.extensionId ?? "plugin",
+          name: b.name,
+          icon: b.extensionId ?? "plugin",
           onClick: () => {
-            onBlockAdd?.(sb.extensionId, sb.pluginId);
+            onBlockAdd?.(b.extensionId, b.pluginId);
             onBlockOpen();
           },
         };
       }) ?? [],
-    [installableStoryBlocks, onBlockAdd, onBlockOpen],
+    [installableBlocks, onBlockAdd, onBlockOpen],
   );
 
   const handleBlockOpen = useCallback(
@@ -55,12 +55,12 @@ const BlockAddBar: React.FC<Props> = ({
   useEffect(() => {
     if (!id) return;
     const persistUI = alwaysShow || openBlocks;
-    const listener = showWhenCloseToElement(id, persistUI);
+    const listener = showWhenCloseToElement(id, persistUI, parentWidth);
     document.addEventListener("mousemove", listener);
     return () => {
       document.removeEventListener("mousemove", listener);
     };
-  }, [id, alwaysShow, openBlocks]);
+  }, [id, alwaysShow, parentWidth, openBlocks]);
 
   return (
     <Wrapper>
@@ -120,45 +120,49 @@ const Line = styled.div<{ persist?: boolean }>`
   opacity: ${({ persist }) => (persist ? "100%" : "0%")};
 `;
 
-const showWhenCloseToElement = (id?: string, persist?: boolean) => (event: MouseEvent) => {
-  if (!id) return;
+const showWhenCloseToElement =
+  (id?: string, persist?: boolean, parentWidth?: number) => (event: MouseEvent) => {
+    if (!id) return;
 
-  const targetElement = document.getElementById(id) as HTMLElement;
-  if (!targetElement) return;
-  // Get the cursor position
-  const cursorX = event.clientX;
-  const cursorY = event.clientY;
+    const targetElement = document.getElementById(id) as HTMLElement;
+    if (!targetElement) return;
+    // Get the cursor position
+    const cursorX = event.clientX;
+    const cursorY = event.clientY;
 
-  // Get the position and dimensions of the target element
-  const targetRect = targetElement.getBoundingClientRect();
-  const targetX = targetRect.x;
-  const targetY = targetRect.y;
-  const targetWidth = targetRect.width;
-  const targetHeight = targetRect.height;
+    // Get the position and dimensions of the target element
+    const targetRect = targetElement.getBoundingClientRect();
+    const targetX = targetRect.x;
+    const targetY = targetRect.y;
+    const targetWidth = targetRect.width;
+    const targetHeight = targetRect.height;
 
-  // Calculate the distance between the cursor and the center of the target element
-  const distanceX = Math.abs(cursorX - (targetX + targetWidth / 2));
-  const distanceY = Math.abs(cursorY - (targetY + targetHeight / 2));
+    // Calculate the distance between the cursor and the center of the target element
+    const distanceX = Math.abs(cursorX - (targetX + targetWidth / 2));
+    const distanceY = Math.abs(cursorY - (targetY + targetHeight / 2));
 
-  // These values are how far from the center (x or y axis) of the element the cursor can be
-  const yProximityThreshold = 10;
-  const xProximityThreshold = STORY_PANEL_WIDTH / 2;
-
-  // If the cursor is close enough to the target element, show it; otherwise, hide it
-  if (distanceX < xProximityThreshold && distanceY < yProximityThreshold) {
-    const children = targetElement.children;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i] as HTMLElement;
-      if (child.style.opacity === "100%") return;
-      child.style.opacity = "100%";
+    // These values are how far from the center (x or y axis) of the element the cursor can be
+    const yProximityThreshold = 10;
+    let xProximityThreshold = 10;
+    if (parentWidth) {
+      xProximityThreshold = parentWidth / 2;
     }
-  } else {
-    if (persist) return;
-    const children = targetElement.children;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i] as HTMLElement;
-      if (child.style.opacity === "0%") return;
-      child.style.opacity = "0%";
+
+    // If the cursor is close enough to the target element, show it; otherwise, hide it
+    if (distanceX < xProximityThreshold && distanceY < yProximityThreshold) {
+      const children = targetElement.children;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i] as HTMLElement;
+        if (child.style.opacity === "100%") return;
+        child.style.opacity = "100%";
+      }
+    } else {
+      if (persist) return;
+      const children = targetElement.children;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i] as HTMLElement;
+        if (child.style.opacity === "0%") return;
+        child.style.opacity = "0%";
+      }
     }
-  }
-};
+  };

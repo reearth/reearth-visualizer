@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
-import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
+import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
 import type { CommonProps as BlockProps } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import { styled } from "@reearth/services/theme";
 
