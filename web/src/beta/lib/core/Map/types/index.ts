@@ -337,9 +337,7 @@ export type SceneProperty = {
   tileLabels?: {
     id: string;
     labelType: "japan_gsi_optimal_bvmap"; // | "other_map"
-    fillColor?: string;
-    outlineColor?: string;
-    params: Record<string, any>; // Function isn't allowed
+    style: Record<string, any>; // Function isn't allowed
   }[];
   terrain?: {
     terrain?: boolean;

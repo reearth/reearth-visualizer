@@ -162,10 +162,18 @@ export interface JapanGSIOptimalBVmapLabelImageryProps {
   descendants?: readonly Imagery[];
   height?: number;
   style?: AnnotationStyle;
+  labelCollection?: LabelCollection;
 }
 
 export const JapanGSIOptimalBVmapLabelImagery: FC<JapanGSIOptimalBVmapLabelImageryProps> = memo(
-  ({ imageryProvider, imagery, descendants, height = 50, style = defaultStyle }) => {
+  ({
+    imageryProvider,
+    imagery,
+    descendants,
+    height = 50,
+    style = defaultStyle,
+    labelCollection,
+  }) => {
     const cesiumContext = useCesium();
 
     const tile = suspend(
@@ -246,11 +254,9 @@ export const JapanGSIOptimalBVmapLabelImagery: FC<JapanGSIOptimalBVmapLabelImage
     updateVisibilityRef.current = updateVisibility;
 
     useEffect(() => {
-      if (!cesiumContext?.scene) {
+      if (!scene || !labelCollection) {
         return;
       }
-      const labelCollection = new LabelCollection();
-      cesiumContext?.scene?.primitives.add(labelCollection);
       const texts: string[] = [];
       const labels = annotations
         .map((feature): [AnnotationFeature, Label] | undefined => {
@@ -285,17 +291,17 @@ export const JapanGSIOptimalBVmapLabelImagery: FC<JapanGSIOptimalBVmapLabelImage
             labelCollection.remove(label);
           });
         }
-        if (!scene?.isDestroyed()) {
+        if (!scene.isDestroyed()) {
           scene?.postRender.removeEventListener(removeLabels);
         }
       };
       return () => {
         labelsRef.current = undefined;
-        if (!scene?.isDestroyed()) {
+        if (!scene.isDestroyed()) {
           scene?.postRender.addEventListener(removeLabels);
         }
       };
-    }, [cesiumContext?.scene, style, annotations, scene]);
+    }, [style, annotations, scene, labelCollection]);
 
     useEffect(() => {
       updateVisibility();

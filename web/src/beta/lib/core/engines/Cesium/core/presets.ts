@@ -8,7 +8,7 @@ import {
   UrlTemplateImageryProvider,
 } from "cesium";
 
-import { JapanGSIOptimalBVmapLabelImageryProvider } from "./labels/JapanGSIOptimalBVmapImageryLayer/JapanGSIOptimalBVmapLabelImageryProvider";
+import { JapanGSIOptimalBVmapLabelImageryProvider } from "./labels/JapanGSIOptimalBVmapVectorMapLabel/JapanGSIOptimalBVmapLabelImageryProvider";
 
 export const tiles = {
   default: ({ cesiumIonAccessToken } = {}) =>

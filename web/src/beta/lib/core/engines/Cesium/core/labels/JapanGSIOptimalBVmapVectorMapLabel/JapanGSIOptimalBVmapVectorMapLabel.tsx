@@ -1,19 +1,24 @@
-import { type Globe, type ImageryProvider, type LabelCollection, type Scene } from "@cesium/engine";
+import {
+  type Globe,
+  type ImageryProvider,
+  type Scene,
+  type ImageryLayer as CesiumImageryLayer,
+  LabelCollection,
+} from "cesium";
 import { atom, useAtomValue, useSetAtom, type Atom, type SetStateAction } from "jotai";
 import { fromPairs, uniqBy, xorBy } from "lodash-es";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
-import { useCesium } from "resium";
+import { CesiumComponentRef, useCesium } from "resium";
 
 import { assertType } from "../../../../../utils/assertType";
-import { type ImageryLayerHandle } from "../../../../../utils/ImageryLayer";
 import { usePreRender } from "../../../hooks/useSceneEvent";
-import JapanGSIOptimalBVmapLabelImageryLayers from "../JapanGSIOptimalBVmapLabelImageryLayer";
 
 import { makeKey } from "./helpers";
 import {
   JapanGSIOptimalBVmapLabelImagery,
   type AnnotationStyle,
 } from "./JapanGSIOptimalBVmapLabelImagery";
+import { LabelImageryLayer } from "./JapanGSIOptimalBVmapLabelImageryLayer";
 import { JapanGSIOptimalBVmapLabelImageryProvider } from "./JapanGSIOptimalBVmapLabelImageryProvider";
 import { type Imagery, type ImageryCoords, type KeyedImagery } from "./types";
 
@@ -137,7 +142,8 @@ const LabelImageryCollection: FC<{
   imageryProvider: JapanGSIOptimalBVmapLabelImageryProvider;
   imageriesAtom: Atom<KeyedImagery[]>;
   style?: AnnotationStyle;
-}> = ({ imageryProvider, imageriesAtom, style }) => {
+  labelCollection?: LabelCollection;
+}> = ({ imageryProvider, imageriesAtom, style, labelCollection }) => {
   const imageries = useAtomValue(imageriesAtom);
   return (
     <>
@@ -148,6 +154,7 @@ const LabelImageryCollection: FC<{
             imagery={imagery}
             descendants={imagery.descendants}
             style={style}
+            labelCollection={labelCollection}
           />
         </Suspense>
       ))}
@@ -159,13 +166,13 @@ export interface VectorMapLabelProps {
   style?: AnnotationStyle;
 }
 
-export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
+export const JapanGSIOptimalBVmapVectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
   const [imageryProvider, setImageryProvider] =
     useState<JapanGSIOptimalBVmapLabelImageryProvider>();
-  const setRef = useCallback((handle: ImageryLayerHandle | null) => {
+  const setRef = useCallback((handle: CesiumComponentRef<CesiumImageryLayer> | null) => {
     setImageryProvider(
-      handle?.imageryLayer.imageryProvider instanceof JapanGSIOptimalBVmapLabelImageryProvider
-        ? handle.imageryLayer.imageryProvider
+      handle?.cesiumElement?.imageryProvider instanceof JapanGSIOptimalBVmapLabelImageryProvider
+        ? handle.cesiumElement.imageryProvider
         : undefined,
     );
   }, []);
@@ -196,8 +203,17 @@ export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
     setImageries(imageries);
   });
 
-  const scene = useCesium().scene;
-  const labels = (scene as any).labels as LabelCollection;
+  const { labelCollection, scene } = useCesium();
+  const isLabelCollectionInitialized = useRef(false);
+  const labels = useMemo(() => {
+    return labelCollection ?? (scene ? new LabelCollection({ scene }) : undefined);
+  }, [scene, labelCollection]);
+  useEffect(() => {
+    if (!labelCollection && scene && !isLabelCollectionInitialized.current) {
+      scene.primitives.add(labels);
+      isLabelCollectionInitialized.current = true;
+    }
+  }, [labelCollection, labels, scene]);
   const labelsToUpdateRef = useRef(0);
   usePreRender(scene => {
     assertType<
@@ -205,7 +221,7 @@ export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
         _labelsToUpdate: readonly unknown[];
       }
     >(labels);
-    if (labelsToUpdateRef.current !== labels._labelsToUpdate.length) {
+    if (labels && labelsToUpdateRef.current !== labels._labelsToUpdate.length) {
       scene.requestRender();
       labelsToUpdateRef.current = labels._labelsToUpdate.length;
     }
@@ -219,12 +235,21 @@ export const VectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
 
   return (
     <>
-      <JapanGSIOptimalBVmapLabelImageryLayers ref={setRef} />
+      <LabelImageryLayer
+        ref={setRef}
+        url="https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/{z}/{x}/{y}.pbf"
+        tileWidth={1024}
+        tileHeight={1024}
+        maximumLevel={17}
+        minimumDataLevel={4}
+        maximumDataLevel={16}
+      />
       {imageryProvider != null && (
         <LabelImageryCollection
           imageryProvider={imageryProvider}
           imageriesAtom={imageriesAtom}
           style={style}
+          labelCollection={labels}
         />
       )}
     </>
