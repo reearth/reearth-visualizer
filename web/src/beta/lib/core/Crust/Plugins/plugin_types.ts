@@ -20,7 +20,7 @@ import type {
   Feature,
 } from "@reearth/beta/lib/core/Map";
 
-import { SketchAppearance, SketchType } from "../../Map/Sketch/types";
+import { SketchAppearance, SketchEventProps, SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
 import { Block } from "../Infobox";
@@ -262,6 +262,7 @@ export type ReearthEventType = {
   modalclose: [];
   popupclose: [];
   pluginmessage: [props: PluginMessage];
+  sketchfeaturecreated: [props: SketchEventProps];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */

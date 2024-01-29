@@ -59,6 +59,7 @@ function Map(
     overrideInteractionMode,
     onSketchTypeChange,
     onSketchFeatureCreate,
+    onPluginSketchFeatureCreated,
     featureFlags = INTERACTION_MODES.default,
     ...props
   }: Props,
@@ -134,6 +135,7 @@ function Map(
         overrideInteractionMode={overrideInteractionMode}
         onSketchTypeChange={onSketchTypeChange}
         onSketchFeatureCreate={onSketchFeatureCreate}
+        onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       />
     </Engine>
   ) : null;

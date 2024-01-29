@@ -10,7 +10,7 @@ import { Position3d } from "../../types";
 import { EngineRef, Feature, LayerSelectionReason, LayersRef, SketchRef } from "../types";
 
 import useHooks from "./hooks";
-import { SketchFeature, SketchType } from "./types";
+import { SketchEventProps, SketchFeature, SketchType } from "./types";
 
 export type SketchComponentType = ComponentType<SketchComponentProps>;
 
@@ -47,6 +47,7 @@ export type SketchProps = {
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onPluginSketchFeatureCreated?: (props: SketchEventProps) => void;
   onLayerSelect?: OnLayerSelectType;
 };
 
@@ -60,6 +61,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
     overrideInteractionMode,
     onSketchTypeChange,
     onSketchFeatureCreate,
+    onPluginSketchFeatureCreated,
     onLayerSelect,
   },
   ref,
@@ -73,6 +75,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
     overrideInteractionMode,
     onSketchTypeChange,
     onSketchFeatureCreate,
+    onPluginSketchFeatureCreated,
     onLayerSelect,
   });
   if (state.matches("idle")) {

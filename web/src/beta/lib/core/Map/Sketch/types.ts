@@ -28,6 +28,13 @@ export type SketchFeature = GeojsonFeature<
   }
 >;
 
+export type SketchEventProps = {
+  layerId: string;
+  featureId: string;
+};
+
+export type SketchEventCallback = (event: SketchEventProps) => void;
+
 export type SketchAppearance = Partial<LayerAppearanceTypes>;
 
 export function isSketchType(value: unknown): value is SketchType {

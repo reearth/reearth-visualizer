@@ -22,7 +22,14 @@ import usePluginInstances from "./usePluginInstances";
 
 export type SelectedReearthEventType = Pick<
   ReearthEventType,
-  "cameramove" | "select" | "tick" | "timelinecommit" | "resize" | keyof MouseEvents | "layeredit"
+  | "cameramove"
+  | "select"
+  | "tick"
+  | "timelinecommit"
+  | "resize"
+  | keyof MouseEvents
+  | "layeredit"
+  | "sketchfeaturecreated"
 >;
 
 export default function ({
@@ -45,6 +52,7 @@ export default function ({
   useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
+  onPluginSketchFeatureCreated,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
 
@@ -669,7 +677,17 @@ export default function ({
     onTimelineCommitEvent(e => {
       emit("timelinecommit", e);
     });
-  }, [emit, onMouseEvent, onLayerEdit, onTickEvent, onTimelineCommitEvent]);
+    onPluginSketchFeatureCreated(e => {
+      emit("sketchfeaturecreated", e);
+    });
+  }, [
+    emit,
+    onMouseEvent,
+    onLayerEdit,
+    onTickEvent,
+    onTimelineCommitEvent,
+    onPluginSketchFeatureCreated,
+  ]);
 
   // expose plugin API for developers
   useEffect(() => {

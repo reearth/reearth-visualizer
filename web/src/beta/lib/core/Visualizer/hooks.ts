@@ -20,6 +20,7 @@ import type {
   CursorType,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
+import { SketchEventCallback, SketchEventProps } from "../Map/Sketch/types";
 import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
@@ -273,6 +274,15 @@ export default function useHooks(
     onLayerEditRef.current?.(e);
   }, []);
 
+  // plugin sketch feature events
+  const pluginSketchFeatureCreatedCallbacks = useRef<SketchEventCallback[]>([]);
+  const onPluginSketchFeatureCreated = useCallback((cb: SketchEventCallback) => {
+    pluginSketchFeatureCreatedCallbacks.current.push(cb);
+  }, []);
+  const handlePluginSketchFeatureCreated = useCallback((props: SketchEventProps) => {
+    pluginSketchFeatureCreatedCallbacks.current.forEach(fn => fn(props));
+  }, []);
+
   // zoom to layer
   useEffect(() => {
     if (zoomedLayerId) {
@@ -339,6 +349,8 @@ export default function useHooks(
     handleLayerEdit,
     onLayerEdit,
     handleInfoboxClose,
+    onPluginSketchFeatureCreated,
+    handlePluginSketchFeatureCreated,
   };
 }
 

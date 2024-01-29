@@ -274,6 +274,7 @@ export function useAPI({
         "resize",
         "layeredit",
         "timelinecommit",
+        "sketchfeaturecreated",
       ]);
     }
 

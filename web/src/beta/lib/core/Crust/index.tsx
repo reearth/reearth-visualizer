@@ -4,6 +4,7 @@ import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { LayerEditEvent, LayerSelectionReason } from "../Map";
+import { SketchEventCallback } from "../Map/Sketch/types";
 import type { TimelineManagerRef } from "../Map/useTimelineManager";
 import type { Viewport } from "../Visualizer";
 
@@ -122,6 +123,7 @@ export type Props = {
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
+  onPluginSketchFeatureCreated: (fn: SketchEventCallback) => void;
 };
 
 export default function Crust({
@@ -168,6 +170,7 @@ export default function Crust({
   renderInfoboxInsertionPopup,
   overrideSceneProperty,
   onLayerEdit,
+  onPluginSketchFeatureCreated,
 }: Props): JSX.Element | null {
   const {
     renderBlock,
@@ -208,7 +211,8 @@ export default function Crust({
       useExperimentalSandbox={useExperimentalSandbox}
       overrideSceneProperty={overrideSceneProperty}
       timelineManagerRef={timelineManagerRef}
-      onLayerEdit={onLayerEdit}>
+      onLayerEdit={onLayerEdit}
+      onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}
         onPluginModalShow={onPluginModalShow}

@@ -25,9 +25,15 @@ import {
   SketchRef,
 } from "../types";
 
-import { PRESET_APPEARANCE } from "./presetAppearance";
+import { PRESET_APPEARANCE } from "./preset";
 import { Position3d, createSketchMachine } from "./sketchMachine";
-import { GeometryOptionsXYZ, SketchType, SketchFeature, SketchAppearance } from "./types";
+import {
+  GeometryOptionsXYZ,
+  SketchType,
+  SketchFeature,
+  SketchAppearance,
+  SketchEventProps,
+} from "./types";
 import { useWindowEvent } from "./utils";
 
 import { OnLayerSelectType } from ".";
@@ -45,6 +51,7 @@ type Props = {
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onSketchTypeChange?: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onPluginSketchFeatureCreated?: (props: SketchEventProps) => void;
   onLayerSelect?: OnLayerSelectType;
 };
 
@@ -60,6 +67,7 @@ export default function useHooks({
   overrideInteractionMode,
   onSketchTypeChange,
   onSketchFeatureCreate,
+  onPluginSketchFeatureCreated,
   onLayerSelect,
 }: Props) {
   const [state, send] = useMachine(sketchMachine);
@@ -202,6 +210,7 @@ export default function useHooks({
           requestAnimationFrame(() => {
             onLayerSelect?.(layerId, featureId, undefined, undefined, undefined);
           });
+          onPluginSketchFeatureCreated?.({ layerId, featureId });
         }
       } else {
         const featureId = pluginSketchLayerFeatureAdd(selectedLayer, feature);
@@ -209,6 +218,7 @@ export default function useHooks({
           requestAnimationFrame(() => {
             onLayerSelect?.(selectedLayer.id, featureId, undefined, undefined, undefined);
           });
+          onPluginSketchFeatureCreated?.({ layerId: selectedLayer.id, featureId });
         }
       }
     },
@@ -218,6 +228,7 @@ export default function useHooks({
       pluginSketchLayerCreate,
       pluginSketchLayerFeatureAdd,
       onSketchFeatureCreate,
+      onPluginSketchFeatureCreated,
       onLayerSelect,
     ],
   );
