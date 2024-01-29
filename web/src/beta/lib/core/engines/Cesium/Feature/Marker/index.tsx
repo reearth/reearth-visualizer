@@ -8,12 +8,19 @@ import {
   PositionProperty,
 } from "cesium";
 import { useEffect, useMemo, useRef } from "react";
-import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
+import {
+  BillboardGraphics,
+  PointGraphics,
+  LabelGraphics,
+  PolylineGraphics,
+  useCesium,
+} from "resium";
 
 import { toCSSFont } from "@reearth/beta/utils/value";
 
 import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";
+import { findEntity } from "../../utils";
 import { useContext } from "../context";
 import {
   EntityExt,
@@ -21,6 +28,7 @@ import {
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
+  getTag,
 } from "../utils";
 
 import marker from "./marker.svg";
@@ -152,8 +160,28 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     return Color.WHITE.withAlpha(0.4);
   }, []);
 
-  const imageColorCesium = useMemo(() => toColor(imageColor), [imageColor]);
-  const pointColorCesium = useMemo(() => toColor(pointColor), [pointColor]);
+  const { viewer } = useCesium();
+  const entity = viewer ? findEntity(viewer, layer?.id, feature?.id) : undefined;
+  const tag = getTag(entity);
+
+  const imageColorCesium = useMemo(
+    () =>
+      toColor(
+        tag?.isFeatureSelected && typeof layer?.["marker"]?.selectedFeatureColor === "string"
+          ? layer["marker"]?.selectedFeatureColor
+          : imageColor,
+      ),
+    [imageColor, layer, tag?.isFeatureSelected],
+  );
+  const pointColorCesium = useMemo(
+    () =>
+      toColor(
+        tag?.isFeatureSelected && typeof layer?.["marker"]?.selectedFeatureColor === "string"
+          ? layer["marker"]?.selectedFeatureColor
+          : pointColor,
+      ),
+    [pointColor, layer, tag?.isFeatureSelected],
+  );
   const pointOutlineColorCesium = useMemo(() => toColor(pointOutlineColor), [pointOutlineColor]);
   const labelColorCesium = useMemo(() => toColor(labelTypography?.color), [labelTypography?.color]);
   const labelBackgroundColorCesium = useMemo(

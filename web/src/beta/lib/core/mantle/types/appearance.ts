@@ -79,6 +79,7 @@ export type MarkerAppearance = {
   pixelOffset?: [number, number];
   eyeOffset?: [number, number, number];
   hideIndicator?: boolean;
+  selectedFeatureColor?: string; // This doesn't support expression
 };
 
 export type PolylineAppearance = {
