@@ -28,10 +28,6 @@ function getEvaluateBinaryComponentwise(operation: any, allowScalar: boolean): B
       return operation(left, right);
     }
 
-    if (typeof left === "number" && typeof right === "number") {
-      return operation(left, right);
-    }
-
     if (typeof left === "string" && typeof right === "string") {
       return operation(left, right);
     }
