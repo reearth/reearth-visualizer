@@ -1,4 +1,4 @@
-type BinaryFunction = (call: string, left: number, right: number) => number;
+type BinaryFunction = (call: string, left: number | string, right: number | string) => any;
 
 export function getEvaluateBinaryFunction(call: string): (feature: any) => number {
   const evaluate = binaryFunctions[call];
@@ -14,6 +14,7 @@ export const binaryFunctions: { [key: string]: BinaryFunction } = {
   pow: getEvaluateBinaryComponentwise(Math.pow, false),
   min: getEvaluateBinaryComponentwise(Math.min, true),
   max: getEvaluateBinaryComponentwise(Math.max, true),
+  startsWith: getEvaluateBinaryComponentwise(startsWith, false),
 };
 
 function getEvaluateBinaryComponentwise(operation: any, allowScalar: boolean): BinaryFunction {
@@ -27,8 +28,20 @@ function getEvaluateBinaryComponentwise(operation: any, allowScalar: boolean): B
       return operation(left, right);
     }
 
+    if (typeof left === "number" && typeof right === "number") {
+      return operation(left, right);
+    }
+
+    if (typeof left === "string" && typeof right === "string") {
+      return operation(left, right);
+    }
+
     throw new Error(
       `Function "${call}" requires vector or number arguments of matching types. Arguments are ${left} and ${right}.`,
     );
   };
+}
+
+function startsWith(left: string, right: string): boolean {
+  return left.startsWith(right);
 }
