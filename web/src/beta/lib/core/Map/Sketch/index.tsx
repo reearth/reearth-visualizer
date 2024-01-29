@@ -2,10 +2,8 @@ import { type LineString, type MultiPolygon, type Polygon } from "geojson";
 import { ComponentType, ForwardRefRenderFunction, RefObject, forwardRef } from "react";
 import { RequireExactlyOne } from "type-fest";
 
-import { ComputedLayer } from "@reearth/classic/core/Map";
-
 import { InteractionModeType } from "../../Crust";
-import { SelectedFeatureInfo } from "../../mantle";
+import { ComputedLayer, SelectedFeatureInfo } from "../../mantle";
 import { Position3d } from "../../types";
 import { EngineRef, Feature, LayerSelectionReason, LayersRef, SketchRef } from "../types";
 

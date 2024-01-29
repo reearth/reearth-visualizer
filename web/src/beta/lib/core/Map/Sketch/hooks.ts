@@ -15,7 +15,7 @@ import invariant from "tiny-invariant";
 import { v4 as uuidv4 } from "uuid";
 
 import { InteractionModeType } from "../../Crust";
-import { LazyLayer } from "../Layers";
+import { LayerSimple, LazyLayer } from "../Layers";
 import {
   Feature,
   EngineRef,
@@ -154,7 +154,7 @@ export default function useHooks({
 
   const pluginSketchLayerFeatureAdd = useCallback(
     (layer: LazyLayer, feature: SketchFeature) => {
-      if (layer.type !== "simple" || layer.computed?.layer.type !== "simple") return;
+      if (layer.type !== "simple") return {};
       const featureId = uuidv4();
       layersRef.current?.override(layer.id, {
         data: {
@@ -163,13 +163,13 @@ export default function useHooks({
           value: {
             type: "FeatureCollection",
             features: [
-              ...(layer.computed?.layer?.data?.value?.features ?? []),
+              ...((layer.computed?.layer as LayerSimple)?.data?.value?.features ?? []),
               { ...feature, id: featureId },
             ],
           },
         },
       });
-      return featureId;
+      return { layerId: layer.id, featureId };
     },
     [layersRef],
   );
@@ -203,23 +203,32 @@ export default function useHooks({
         return;
       }
       const selectedLayer = layersRef.current?.selectedLayer();
-      if (selectedLayer?.id?.length !== PLUGIN_LAYER_ID_LENGTH) {
-        // Create a new layer if no layer is selected
-        const { layerId, featureId } = pluginSketchLayerCreate(feature);
-        if (layerId && featureId) {
-          requestAnimationFrame(() => {
-            onLayerSelect?.(layerId, featureId, undefined, undefined, undefined);
-          });
-          onPluginSketchFeatureCreated?.({ layerId, featureId });
-        }
-      } else {
-        const featureId = pluginSketchLayerFeatureAdd(selectedLayer, feature);
-        if (featureId) {
-          requestAnimationFrame(() => {
-            onLayerSelect?.(selectedLayer.id, featureId, undefined, undefined, undefined);
-          });
-          onPluginSketchFeatureCreated?.({ layerId: selectedLayer.id, featureId });
-        }
+      const { layerId, featureId } =
+        selectedLayer?.id?.length !== PLUGIN_LAYER_ID_LENGTH ||
+        selectedLayer.type !== "simple" ||
+        selectedLayer.computed?.layer.type !== "simple"
+          ? pluginSketchLayerCreate(feature)
+          : pluginSketchLayerFeatureAdd(selectedLayer, feature);
+
+      if (layerId && featureId) {
+        requestAnimationFrame(() => {
+          onLayerSelect?.(
+            layerId,
+            featureId,
+            layerId
+              ? () =>
+                  new Promise(resolve => {
+                    // Wait until computed feature is ready
+                    queueMicrotask(() => {
+                      resolve(layersRef.current?.findById?.(layerId)?.computed);
+                    });
+                  })
+              : undefined,
+            undefined,
+            undefined,
+          );
+        });
+        onPluginSketchFeatureCreated?.({ layerId, featureId });
       }
     },
     [
