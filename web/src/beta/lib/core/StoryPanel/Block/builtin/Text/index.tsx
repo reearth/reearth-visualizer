@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import RichText from "@reearth/beta/lib/lexical/RichTextEditor";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
+import BlockWrapper from "../../../../shared/components/BlockWrapper";
 import { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../common/Wrapper";
 
 import TextBlockEditor from "./Editor";
 

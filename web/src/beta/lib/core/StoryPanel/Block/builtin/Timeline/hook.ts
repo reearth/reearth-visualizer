@@ -21,8 +21,8 @@ import {
   formatRangeDateAndTime,
 } from "@reearth/beta/lib/core/StoryPanel/utils";
 
-import { getNewDate } from "../../../hooks/useTimelineBlock";
-import { DEFAULT_BLOCK_PADDING } from "../common/hooks";
+import { DEFAULT_BLOCK_PADDING } from "../../../../shared/components/BlockWrapper/hooks";
+import { getNewDate } from "../../../../shared/hooks/useTimelineBlock";
 
 import { PaddingProp } from "./Editor";
 
