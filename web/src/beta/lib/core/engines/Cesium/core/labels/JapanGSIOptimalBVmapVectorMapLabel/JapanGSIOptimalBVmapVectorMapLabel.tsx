@@ -229,6 +229,7 @@ export const JapanGSIOptimalBVmapVectorMapLabel: FC<VectorMapLabelProps> = ({ st
 
   useEffect(() => {
     return () => {
+      if (scene?.isDestroyed()) return;
       scene?.requestRender();
     };
   }, [scene]);
