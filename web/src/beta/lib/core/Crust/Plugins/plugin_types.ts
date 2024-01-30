@@ -263,6 +263,7 @@ export type ReearthEventType = {
   popupclose: [];
   pluginmessage: [props: PluginMessage];
   sketchfeaturecreated: [props: SketchEventProps];
+  sketchtypechange: [props: SketchType | undefined];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */

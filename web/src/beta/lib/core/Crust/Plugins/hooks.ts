@@ -30,6 +30,7 @@ export type SelectedReearthEventType = Pick<
   | keyof MouseEvents
   | "layeredit"
   | "sketchfeaturecreated"
+  | "sketchtypechange"
 >;
 
 export default function ({
@@ -53,6 +54,7 @@ export default function ({
   overrideSceneProperty,
   onLayerEdit,
   onPluginSketchFeatureCreated,
+  onSketchTypeChange,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
 
@@ -680,6 +682,9 @@ export default function ({
     onPluginSketchFeatureCreated(e => {
       emit("sketchfeaturecreated", e);
     });
+    onSketchTypeChange(e => {
+      emit("sketchtypechange", e);
+    });
   }, [
     emit,
     onMouseEvent,
@@ -687,6 +692,7 @@ export default function ({
     onTickEvent,
     onTimelineCommitEvent,
     onPluginSketchFeatureCreated,
+    onSketchTypeChange,
   ]);
 
   // expose plugin API for developers

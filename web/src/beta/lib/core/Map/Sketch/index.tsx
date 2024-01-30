@@ -43,7 +43,7 @@ export type SketchProps = {
   selectedFeature?: Feature;
   interactionMode?: InteractionModeType;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
-  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchTypeChange?: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   onPluginSketchFeatureCreated?: (props: SketchEventProps) => void;
   onLayerSelect?: OnLayerSelectType;

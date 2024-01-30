@@ -20,7 +20,7 @@ import type {
   CursorType,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
-import { SketchEventCallback, SketchEventProps } from "../Map/Sketch/types";
+import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
 import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
@@ -43,6 +43,7 @@ export default function useHooks(
     onInteractionModeChange,
     onZoomToLayer,
     onLayerDrop,
+    onSketchTypeChangeProp,
   }: {
     selectedBlockId?: string;
     camera?: Camera;
@@ -63,6 +64,7 @@ export default function useHooks(
     onInteractionModeChange?: (mode: InteractionModeType) => void;
     onZoomToLayer?: (layerId: string | undefined) => void;
     onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+    onSketchTypeChangeProp?: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   },
   ref: Ref<MapRef | null>,
 ) {
@@ -275,13 +277,25 @@ export default function useHooks(
   }, []);
 
   // plugin sketch feature events
-  const pluginSketchFeatureCreatedCallbacks = useRef<SketchEventCallback[]>([]);
+  const onPluginSketchFeatureCreatedCallbacksRef = useRef<SketchEventCallback[]>([]);
   const onPluginSketchFeatureCreated = useCallback((cb: SketchEventCallback) => {
-    pluginSketchFeatureCreatedCallbacks.current.push(cb);
+    onPluginSketchFeatureCreatedCallbacksRef.current.push(cb);
   }, []);
   const handlePluginSketchFeatureCreated = useCallback((props: SketchEventProps) => {
-    pluginSketchFeatureCreatedCallbacks.current.forEach(fn => fn(props));
+    onPluginSketchFeatureCreatedCallbacksRef.current.forEach(fn => fn(props));
   }, []);
+
+  const onSketchTypeChangeCallbacksRef = useRef<((type: SketchType | undefined) => void)[]>([]);
+  const onSketchTypeChange = useCallback((cb: (type: SketchType | undefined) => void) => {
+    onSketchTypeChangeCallbacksRef.current.push(cb);
+  }, []);
+  const handleSketchTypeChange = useCallback(
+    (type: SketchType | undefined, from?: "editor" | "plugin") => {
+      onSketchTypeChangeCallbacksRef.current.forEach(fn => fn(type));
+      onSketchTypeChangeProp?.(type, from);
+    },
+    [onSketchTypeChangeProp],
+  );
 
   // zoom to layer
   useEffect(() => {
@@ -351,6 +365,8 @@ export default function useHooks(
     handleInfoboxClose,
     onPluginSketchFeatureCreated,
     handlePluginSketchFeatureCreated,
+    onSketchTypeChange,
+    handleSketchTypeChange,
   };
 }
 

@@ -13,7 +13,7 @@ import type {
 } from "@reearth/beta/lib/core/Map";
 import type { Viewport } from "@reearth/beta/lib/core/Visualizer";
 
-import { SketchEventCallback } from "../../Map/Sketch/types";
+import { SketchEventCallback, SketchType } from "../../Map/Sketch/types";
 import { TimelineManagerRef } from "../../Map/useTimelineManager";
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
@@ -44,6 +44,7 @@ export type Props = PropsWithChildren<{
   overrideInteractionMode: (mode: InteractionModeType) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
+  onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
 }>;
 
 export type Context = {

@@ -275,6 +275,7 @@ export function useAPI({
         "layeredit",
         "timelinecommit",
         "sketchfeaturecreated",
+        "sketchtypechange",
       ]);
     }
 

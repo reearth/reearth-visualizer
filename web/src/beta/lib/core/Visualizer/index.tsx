@@ -170,7 +170,7 @@ const Visualizer = memo(
         onZoomToLayer,
         onInteractionModeChange,
         onMount,
-        onSketchTypeChange,
+        onSketchTypeChange: onSketchTypeChangeProp,
         onSketchFeatureCreate,
         renderInfoboxInsertionPopup,
       },
@@ -207,6 +207,8 @@ const Visualizer = memo(
         handleInfoboxClose,
         onPluginSketchFeatureCreated,
         handlePluginSketchFeatureCreated,
+        onSketchTypeChange,
+        handleSketchTypeChange,
       } = useHooks(
         {
           rootLayerId,
@@ -223,6 +225,7 @@ const Visualizer = memo(
           onZoomToLayer,
           onLayerDrop,
           onInteractionModeChange,
+          onSketchTypeChangeProp,
         },
         ref,
       );
@@ -284,6 +287,7 @@ const Visualizer = memo(
                   renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
                   onLayerEdit={onLayerEdit}
                   onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
+                  onSketchTypeChange={onSketchTypeChange}
                 />
                 <Map
                   ref={mapRef}
@@ -315,9 +319,9 @@ const Visualizer = memo(
                   onLayerSelect={handleLayerSelect}
                   onLayerEdit={handleLayerEdit}
                   overrideInteractionMode={handleInteractionModeChange}
-                  onSketchTypeChange={onSketchTypeChange}
                   onSketchFeatureCreate={onSketchFeatureCreate}
                   onPluginSketchFeatureCreated={handlePluginSketchFeatureCreated}
+                  onSketchTypeChange={handleSketchTypeChange}
                   onMount={onMount}
                 />
               </Filled>
