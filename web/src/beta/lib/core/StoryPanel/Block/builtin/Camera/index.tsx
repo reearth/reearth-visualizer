@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 
+import BlockWrapper from "../../../../shared/components/BlockWrapper";
 import type { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../common/Wrapper";
 
 import Content from "./Content";
 import { type CameraBlock as CameraBlockType } from "./Editor";

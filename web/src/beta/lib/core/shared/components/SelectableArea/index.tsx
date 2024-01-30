@@ -3,9 +3,9 @@ import { MouseEvent, ReactNode } from "react";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import ActionPanel, { type ActionPosition } from "../Block/builtin/common/ActionPanel";
-import ClickAwayListener from "../ClickAwayListener";
+import ClickAwayListener from "../../../StoryPanel/ClickAwayListener";
 
+import ActionPanel, { type ActionPosition } from "./ActionPanel";
 import useHooks from "./hooks";
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
   isSelected?: boolean;
   children: ReactNode;
   propertyId?: string;
-  panelSettings?: any;
+  contentSettings?: any;
   dndEnabled?: boolean;
   showSettings?: boolean;
   editMode?: boolean;
@@ -64,7 +64,7 @@ const SelectableArea: React.FC<Props> = ({
   noBorder,
   isEditable,
   hideHoverUI,
-  panelSettings,
+  contentSettings,
   overrideGroupId,
   onEditModeToggle,
   onSettingsToggle,
@@ -106,7 +106,7 @@ const SelectableArea: React.FC<Props> = ({
             showPadding={showPadding}
             editMode={editMode}
             propertyId={propertyId}
-            panelSettings={panelSettings}
+            contentSettings={contentSettings}
             dndEnabled={dndEnabled}
             position={position}
             overrideGroupId={overrideGroupId}

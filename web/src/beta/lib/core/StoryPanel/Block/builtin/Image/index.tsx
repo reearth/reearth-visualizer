@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import BlockWrapper from "@reearth/beta/lib/core/StoryPanel/Block/builtin/common/Wrapper";
+import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
 import type { CommonProps as BlockProps } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import type { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";

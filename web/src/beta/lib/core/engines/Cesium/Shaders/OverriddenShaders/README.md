@@ -6,7 +6,7 @@ The structure have to be as follow.
 
 ```
 ShaderName/
-  Customs.glsl ... Define your own custom functions
+  XXX.glsl ... Define your own custom functions
   Definitions.glsl ... Definition for each variable or function.
 ```
 
