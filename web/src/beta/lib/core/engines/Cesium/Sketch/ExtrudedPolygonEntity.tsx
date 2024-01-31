@@ -46,12 +46,6 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
   );
   const extrudedHeight = dynamic ? extrudedHeightProperty : extrudedHeightProp;
 
-  // Non-constant callback property in color doesn't request render in every
-  // frame; prevents it from flashing when the color changes instead.
-  const colorRef = useRef(color);
-  colorRef.current = color;
-  const colorProperty = useConstant(() => new CallbackProperty(() => colorRef.current, false));
-
   const options = useMemo(
     (): EntityProps => ({
       polygon: {
@@ -59,12 +53,12 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
         extrudedHeight,
         extrudedHeightReference: HeightReference.RELATIVE_TO_GROUND,
         fill: true,
-        material: new ColorMaterialProperty(colorProperty),
+        material: new ColorMaterialProperty(color),
         classificationType: ClassificationType.TERRAIN,
         shadows: disableShadow ? ShadowMode.DISABLED : ShadowMode.ENABLED,
       },
     }),
-    [extrudedHeight, disableShadow, hierarchy, colorProperty],
+    [extrudedHeight, disableShadow, hierarchy, color],
   );
 
   const { requestRender } = useContext();

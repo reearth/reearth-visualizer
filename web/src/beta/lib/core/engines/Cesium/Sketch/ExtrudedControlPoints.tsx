@@ -1,9 +1,7 @@
-import { CallbackProperty, Cartesian3, type Color } from "@cesium/engine";
-import { memo, useRef, type FC } from "react";
+import { Cartesian3, type Color } from "@cesium/engine";
+import { memo, type FC } from "react";
 import { useCesium } from "resium";
 import invariant from "tiny-invariant";
-
-import { useConstant } from "@reearth/beta/utils/util";
 
 import { ControlPoint } from "./ControlPoint";
 import { type GeometryOptions } from "./createGeometry";
@@ -33,16 +31,10 @@ const ExtrudedControlPoints: FC<ExtrudedControlPointsProps> = memo(
       cartesianScratch,
     );
 
-    const extrudedPointRef = useRef(extrudedPoint);
-    extrudedPointRef.current = extrudedPoint;
-    const extrudedPointProperty = useConstant(
-      () => new CallbackProperty(() => extrudedPointRef.current, false),
-    );
-
     return (
       <>
         <ControlPoint position={controlPoint} clampToGround />
-        <ControlPoint position={extrudedPointProperty} />
+        <ControlPoint position={extrudedPoint} />
         <ExtrudedMeasurement
           a={controlPoint}
           b={extrudedPoint}
