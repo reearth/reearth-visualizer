@@ -15,14 +15,36 @@ export type Props = {
   name?: string;
   description?: string;
   value?: string;
+  disableField?: boolean;
+  fieldName?: string;
   onChange?: (value?: string | undefined) => void;
+  onPopoverOpen?: (fieldId?: string) => void;
+  setDisabledFields?: (value: string[]) => void;
 };
 
-const DateTimeField: React.FC<Props> = ({ name, description, value, onChange }) => {
+const DateTimeField: React.FC<Props> = ({
+  name,
+  description,
+  value,
+  disableField,
+  fieldName,
+  onChange,
+  onPopoverOpen,
+  setDisabledFields,
+}) => {
   const [open, setOpen] = useState(false);
   const t = useT();
 
-  const handlePopOver = useCallback(() => setOpen(!open), [open]);
+  const handlePopOver = useCallback(() => {
+    if (disableField) {
+      setOpen(false);
+    } else {
+      onPopoverOpen?.(fieldName);
+      setOpen(!open);
+    }
+    if (open) setDisabledFields?.([]);
+  }, [disableField, open, onPopoverOpen, setDisabledFields, fieldName]);
+
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
     setDateTime("");
@@ -76,7 +98,6 @@ export default DateTimeField;
 const InputWrapper = styled.div<{ disabled?: boolean }>`
   display: flex;
   width: 100%;
-  gap: 10px;
   flex-wrap: wrap;
 `;
 
@@ -105,7 +126,7 @@ const StyledText = styled(Text)`
 `;
 
 const TriggerButton = styled(Button)`
-  margin: 0;
+  margin-left: 10px;
 `;
 
 const DeleteIcon = styled(Icon)<{ disabled?: boolean }>`

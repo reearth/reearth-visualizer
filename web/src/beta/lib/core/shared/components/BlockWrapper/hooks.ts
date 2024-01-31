@@ -3,8 +3,8 @@ import { useCallback, useMemo, useState, MouseEvent } from "react";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 
-import { usePanelContext } from "../../../context";
-import { calculatePaddingValue } from "../../../utils";
+import { usePanelContext } from "../../../StoryPanel/context";
+import { calculatePaddingValue } from "../../../StoryPanel/utils";
 
 export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };
 
@@ -72,7 +72,7 @@ export default ({
     [property],
   );
 
-  const panelSettings = useMemo(() => {
+  const generalBlockSettings = useMemo(() => {
     if (!property?.panel) return undefined;
     return {
       padding: {
@@ -92,7 +92,7 @@ export default ({
     editMode,
     showSettings,
     defaultSettings,
-    panelSettings,
+    generalBlockSettings,
     disableSelection,
     handleEditModeToggle,
     handleSettingsToggle,

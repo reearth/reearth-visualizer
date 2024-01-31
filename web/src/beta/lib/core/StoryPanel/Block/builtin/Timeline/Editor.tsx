@@ -1,7 +1,7 @@
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
+import useTimelineBlock from "@reearth/beta/lib/core/shared/hooks/useTimelineBlock";
 import useHooks from "@reearth/beta/lib/core/StoryPanel/Block/builtin/Timeline/hook";
-import useTimelineBlock from "@reearth/beta/lib/core/StoryPanel/hooks/useTimelineBlock";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -39,6 +39,7 @@ const TimelineEditor = ({
     range,
     playSpeedOptions,
     speed,
+    timezone,
     onPlay,
     onSpeedChange,
     onPause,
@@ -81,6 +82,7 @@ const TimelineEditor = ({
     playMode,
     padding,
     property,
+    timezone,
     onPlay,
     onSpeedChange,
     onPause,
@@ -144,7 +146,7 @@ const TimelineEditor = ({
             </Popover.Provider>
           </PopoverWrapper>
         </TimelineControl>
-        <CurrentTime isMinimized={isMinimized}>{currentTime && formattedCurrentTime}</CurrentTime>
+        <CurrentTime isMinimized={isMinimized}>{!!currentTime && formattedCurrentTime}</CurrentTime>
       </TimelineWrapper>
       <TimelineSlider>
         <ScaleList

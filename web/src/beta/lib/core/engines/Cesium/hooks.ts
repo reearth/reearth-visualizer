@@ -355,9 +355,13 @@ export default ({
 
     if (prevSelectedEntity.current === entity) return;
 
-    if (!entity || entity instanceof Entity) {
+    const tag = getTag(entity);
+    if (!entity || (entity instanceof Entity && !tag?.hideIndicator)) {
       viewer.selectedEntity = entity;
+    } else {
+      viewer.selectedEntity = undefined;
     }
+
     prevSelectedEntity.current = entity;
 
     // TODO: Support layers.selectFeature API for MVT
@@ -388,7 +392,6 @@ export default ({
       }
     }
 
-    const tag = getTag(entity);
     if (tag?.unselectable) return;
 
     if (entity && entity instanceof Cesium3DTileFeature) {
@@ -479,6 +482,7 @@ export default ({
     globeImageBasedLighting: property?.atmosphere?.globeImageBasedLighting,
     enableLighting: property?.atmosphere?.enable_lighting ?? property?.globeLighting?.globeLighting,
     hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
+    terrain: property?.terrain,
   });
 
   const handleMouseWheel = useCallback(
@@ -529,7 +533,14 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
-      viewer.selectedEntity = undefined;
+      const entity =
+        findEntity(viewer, undefined, selectedLayerId?.featureId) ||
+        findEntity(viewer, selectedLayerId?.layerId);
+
+      const tag = getTag(entity);
+      if (!entity || (entity instanceof Entity && !tag?.hideIndicator)) {
+        viewer.selectedEntity = undefined;
+      }
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
@@ -554,7 +565,11 @@ export default ({
             : undefined,
         );
         prevSelectedEntity.current = target.id;
-        viewer.selectedEntity = target.id;
+        if (target.id instanceof Entity && !tag?.hideIndicator) {
+          viewer.selectedEntity = target.id;
+        } else {
+          viewer.selectedEntity = undefined;
+        }
         return;
       }
 
@@ -638,9 +653,11 @@ export default ({
                 // ref: https://github.com/CesiumGS/cesium/blob/9295450e64c3077d96ad579012068ea05f97842c/packages/widgets/Source/Viewer/Viewer.js#L1843-L1876
                 // issue: https://github.com/CesiumGS/cesium/issues/7965
                 requestAnimationFrame(() => {
-                  viewer.selectedEntity = new Entity({
-                    position: Cartographic.toCartesian(pos),
-                  });
+                  if (!tag?.hideIndicator) {
+                    viewer.selectedEntity = new Entity({
+                      position: Cartographic.toCartesian(pos),
+                    });
+                  }
                 });
               }
 
@@ -675,10 +692,19 @@ export default ({
         }
       }
 
-      viewer.selectedEntity = undefined;
+      if (!entity || (entity instanceof Entity && !tag?.hideIndicator)) {
+        viewer.selectedEntity = undefined;
+      }
       onLayerSelect?.();
     },
-    [onLayerSelect, mouseEventHandles, layersRef, featureFlags],
+    [
+      onLayerSelect,
+      mouseEventHandles,
+      layersRef,
+      featureFlags,
+      selectedLayerId?.featureId,
+      selectedLayerId?.layerId,
+    ],
   );
 
   // E2E test

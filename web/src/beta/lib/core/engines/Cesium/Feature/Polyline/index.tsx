@@ -18,7 +18,6 @@ import {
 } from "../utils";
 
 export type Props = FeatureProps<Property>;
-
 export type Property = PolylineAppearance & {
   coordinates?: Coordinates;
 };
@@ -43,6 +42,7 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     strokeWidth = 1,
     shadows,
     classificationType: ct,
+    hideIndicator,
   } = property ?? {};
 
   const positions = useCustomCompareMemo(
@@ -67,7 +67,8 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
       layerId={layer?.id}
       featureId={feature?.id}
       availability={availability}
-      properties={feature?.properties}>
+      properties={feature?.properties}
+      hideIndicator={hideIndicator}>
       <PolylineGraphics
         positions={positions}
         width={strokeWidth}
