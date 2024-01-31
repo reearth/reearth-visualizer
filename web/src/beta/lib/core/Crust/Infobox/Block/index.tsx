@@ -1,28 +1,28 @@
 import { useCallback, type ComponentType, type ReactNode } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
+import type { CommonBlockProps, BlockProps } from "@reearth/beta/lib/core/shared/types";
 import { styled } from "@reearth/services/theme";
 
-import type { CommonBlockProps, BlockProps } from "../../shared/types";
-import { StoryBlock } from "../types";
+import { InfoboxBlock } from "../types";
 
-import builtin, { isBuiltinStoryBlock } from "./builtin";
+import builtin, { isBuiltinInfoboxBlock } from "./builtin";
 
 export type Props = {
-  renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
+  renderBlock?: (block: BlockProps<InfoboxBlock>) => ReactNode;
   layer?: Layer;
   pageId?: string;
-} & CommonBlockProps<StoryBlock>;
+} & CommonBlockProps<InfoboxBlock>;
 
-export type Component = ComponentType<CommonBlockProps<StoryBlock>>;
+export type Component = ComponentType<CommonBlockProps<InfoboxBlock>>;
 
-export default function StoryBlockComponent({
+export default function InfoboxBlockComponent({
   renderBlock,
   onRemove,
   ...props
 }: Props): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
-  const Builtin = isBuiltinStoryBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
+  const Builtin = isBuiltinInfoboxBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
   const handleRemove = useCallback(
     () => props.block?.id && onRemove?.(props.block.id),
     [props.block?.id, onRemove],

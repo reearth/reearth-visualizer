@@ -1,12 +1,4 @@
-import {
-  memo,
-  forwardRef,
-  CSSProperties,
-  type ReactNode,
-  type Ref,
-  type PropsWithChildren,
-  useMemo,
-} from "react";
+import { memo, forwardRef, CSSProperties, type Ref, type PropsWithChildren, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { styled } from "@reearth/services/theme";
@@ -24,8 +16,6 @@ import Crust, {
 } from "../Crust";
 import { ComputedFeature, Tag } from "../mantle";
 import Map, {
-  type ValueTypes,
-  type ValueType,
   type SceneProperty,
   type Layer,
   type LayerSelectionReason,
@@ -78,7 +68,6 @@ export type Props = {
   small?: boolean;
   ready?: boolean;
   tags?: Tag[]; // TODO: remove completely from beta core
-  selectedBlockId?: string;
   useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
@@ -101,21 +90,10 @@ export type Props = {
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
-  onInfoboxMaskClick?: () => void;
-  onBlockSelect?: (id?: string) => void;
-  onBlockChange?: <T extends ValueType>(
-    blockId: string,
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-  ) => void;
-  onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
-  onBlockDelete?: (id: string) => void;
-  onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
+  onBlockMove?: (id: string, targetIndex: number) => void;
+  onBlockDelete?: (id: string) => Promise<void>;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
-  renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 } & ExternalPluginProps;
 
 const Visualizer = memo(
@@ -138,7 +116,6 @@ const Visualizer = memo(
         small,
         ready,
         tags,
-        selectedBlockId,
         selectedWidgetArea,
         hiddenLayers,
         camera: initialCamera,
@@ -157,15 +134,10 @@ const Visualizer = memo(
         onWidgetLayoutUpdate,
         onWidgetAlignmentUpdate,
         onWidgetAreaSelect,
-        onInfoboxMaskClick,
-        onBlockSelect,
-        onBlockChange,
         onBlockMove,
         onBlockDelete,
-        onBlockInsert,
         onZoomToLayer,
         onMount,
-        renderInfoboxInsertionPopup,
       },
       ref: Ref<MapRef | null>,
     ) => {
@@ -173,7 +145,6 @@ const Visualizer = memo(
         mapRef,
         wrapperRef,
         selectedLayer,
-        selectedBlock,
         selectedFeature,
         selectedComputedFeature,
         viewport,
@@ -183,32 +154,28 @@ const Visualizer = memo(
         isMobile,
         overriddenSceneProperty,
         isDroppable,
-        isLayerDragging,
         infobox,
+        isLayerDragging,
         shouldRender,
         timelineManagerRef,
+        overrideSceneProperty,
         handleLayerSelect,
-        handleBlockSelect,
-        handleCameraChange,
-        handleInteractionModeChange,
         handleLayerDrag,
         handleLayerDrop,
-        overrideSceneProperty,
         handleLayerEdit,
         onLayerEdit,
-        handleInfoboxClose,
+        handleCameraChange,
+        handleInteractionModeChange,
       } = useHooks(
         {
           rootLayerId,
           isEditable,
           camera: initialCamera,
           interactionMode: initialInteractionMode,
-          selectedBlockId,
           sceneProperty,
           zoomedLayerId,
           ownBuiltinWidgets,
           onLayerSelect,
-          onBlockSelect,
           onCameraChange,
           onZoomToLayer,
           onLayerDrop,
@@ -233,11 +200,11 @@ const Visualizer = memo(
                   tags={tags}
                   viewport={viewport}
                   isBuilt={isBuilt}
-                  isEditable={isEditable && infobox?.isEditable}
+                  isEditable={isEditable}
                   inEditor={inEditor}
                   sceneProperty={overriddenSceneProperty}
                   overrideSceneProperty={overrideSceneProperty}
-                  blocks={infobox?.blocks}
+                  infobox={infobox}
                   camera={camera}
                   interactionMode={interactionMode}
                   overrideInteractionMode={handleInteractionModeChange}
@@ -247,10 +214,6 @@ const Visualizer = memo(
                   selectedFeature={selectedFeature}
                   selectedComputedFeature={selectedComputedFeature}
                   selectedReason={selectedLayer.reason}
-                  infoboxProperty={infobox?.property}
-                  infoboxTitle={infobox?.title}
-                  infoboxVisible={!!infobox}
-                  selectedBlockId={selectedBlock}
                   selectedLayerId={selectedLayerIdForCrust}
                   widgetAlignSystem={widgetAlignSystem}
                   widgetAlignSystemEditing={widgetAlignSystemEditing}
@@ -263,14 +226,8 @@ const Visualizer = memo(
                   onWidgetLayoutUpdate={onWidgetLayoutUpdate}
                   onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
                   onWidgetAreaSelect={onWidgetAreaSelect}
-                  onInfoboxMaskClick={onInfoboxMaskClick}
-                  onInfoboxClose={handleInfoboxClose}
-                  onBlockSelect={handleBlockSelect}
-                  onBlockChange={onBlockChange}
                   onBlockMove={onBlockMove}
                   onBlockDelete={onBlockDelete}
-                  onBlockInsert={onBlockInsert}
-                  renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
                   onLayerEdit={onLayerEdit}
                 />
                 <Map

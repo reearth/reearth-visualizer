@@ -1,4 +1,4 @@
-import { type ReactNode, type RefObject } from "react";
+import { type RefObject } from "react";
 
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
@@ -9,18 +9,11 @@ import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
-// import Infobox, { Block, InfoboxProperty } from "./Infobox/OldInfobox";
 import Infobox from "./Infobox";
+import { Infobox as InfoboxType } from "./Infobox/types";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
-import type {
-  ValueTypes,
-  ValueType,
-  MapRef,
-  SceneProperty,
-  Camera,
-  InteractionModeType,
-} from "./types";
+import type { MapRef, SceneProperty, Camera, InteractionModeType } from "./types";
 import Widgets, {
   type WidgetAlignSystem as WidgetAlignSystemType,
   type Alignment,
@@ -82,14 +75,9 @@ export type Props = {
   widgetAlignSystemEditing?: boolean;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   floatingWidgets?: InternalWidget[];
-  // infobox
-  // infoboxProperty?: InfoboxProperty;
-  // blocks?: Block[];
-  infoboxTitle?: string;
-  selectedBlockId?: string;
-  showInfoboxTitle?: boolean;
   selectedWidgetArea?: WidgetAreaType;
-  infoboxVisible?: boolean;
+  // infobox
+  infobox?: InfoboxType;
   // plugin
   externalPlugin: ExternalPluginProps;
   useExperimentalSandbox?: boolean;
@@ -107,20 +95,13 @@ export type Props = {
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // infobox events
-  onInfoboxMaskClick?: () => void;
-  onInfoboxClose?: () => void;
-  onBlockSelect?: (id?: string) => void;
-  onBlockChange?: <T extends ValueType>(
-    blockId: string,
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-  ) => void;
-  onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
-  onBlockDelete?: (id: string) => void;
-  onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
-  renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
+  onBlockCreate?: (
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void>;
+  onBlockMove?: (id: string, targetIndex: number) => void;
+  onBlockDelete?: (blockId: string) => Promise<void>;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
 };
@@ -146,11 +127,7 @@ export default function Crust({
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
   floatingWidgets,
-  // blocks,
-  // infoboxProperty,
-  // infoboxTitle,
-  infoboxVisible,
-  // selectedBlockId,
+  infobox,
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
@@ -159,14 +136,9 @@ export default function Crust({
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
-  // onInfoboxMaskClick,
-  // onInfoboxClose,
-  // onBlockSelect,
-  // onBlockChange,
-  // onBlockMove,
-  // onBlockDelete,
-  // onBlockInsert,
-  // renderInfoboxInsertionPopup,
+  onBlockCreate,
+  onBlockMove,
+  onBlockDelete,
   overrideSceneProperty,
   onLayerEdit,
 }: Props): JSX.Element | null {
@@ -176,9 +148,8 @@ export default function Crust({
     pluginModalContainerRef,
     pluginPopupContainerRef,
     renderWidget,
-    // renderBlock,
+    renderBlock,
     onPluginModalShow,
-    // onPluginPopupShow,
   } = useHooks({ mapRef, ...externalPlugin });
   const theme = usePublishTheme(sceneProperty?.theme);
   const widgetContext = useWidgetContext({
@@ -234,7 +205,15 @@ export default function Crust({
         onWidgetAreaSelect={onWidgetAreaSelect}
         renderWidget={renderWidget}
       />
-      <Infobox visible={infoboxVisible} />
+      <Infobox
+        visible={!!infobox}
+        infobox={infobox}
+        renderBlock={renderBlock}
+        isEditable={isEditable}
+        onBlockCreate={onBlockCreate}
+        onBlockDelete={onBlockDelete}
+        onBlockMove={onBlockMove}
+      />
       {/* <Infobox
         isBuilt={isBuilt}
         isEditable={isEditable}

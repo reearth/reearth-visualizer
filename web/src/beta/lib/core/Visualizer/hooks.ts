@@ -5,7 +5,8 @@ import { useWindowSize } from "react-use";
 // TODO: Move these utils
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
-import type { Block, BuiltinWidgets, InteractionModeType } from "../Crust";
+import type { BuiltinWidgets, InteractionModeType } from "../Crust";
+import { Infobox as InfoboxType } from "../Crust/Infobox/types";
 import { INTERACTION_MODES } from "../Crust/interactionMode";
 import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
 import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
@@ -16,7 +17,6 @@ import type {
   ComputedLayer,
   SceneProperty,
   LayerEditEvent,
-  DefaultInfobox,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 import { TimelineManagerRef } from "../Map/useTimelineManager";
@@ -27,7 +27,6 @@ const viewportMobileMaxWidth = 768;
 
 export default function useHooks(
   {
-    selectedBlockId: initialSelectedBlockId,
     camera: initialCamera,
     interactionMode: initialInteractionMode,
     sceneProperty,
@@ -36,13 +35,11 @@ export default function useHooks(
     zoomedLayerId,
     ownBuiltinWidgets,
     onLayerSelect,
-    onBlockSelect,
     onCameraChange,
     onInteractionModeChange,
     onZoomToLayer,
     onLayerDrop,
   }: {
-    selectedBlockId?: string;
     camera?: Camera;
     interactionMode?: InteractionModeType;
     isEditable?: boolean;
@@ -56,7 +53,6 @@ export default function useHooks(
       feature: ComputedFeature | undefined,
       reason: LayerSelectionReason | undefined,
     ) => void;
-    onBlockSelect?: (blockId?: string) => void;
     onCameraChange?: (camera: Camera) => void;
     onInteractionModeChange?: (mode: InteractionModeType) => void;
     onZoomToLayer?: (layerId: string | undefined) => void;
@@ -150,32 +146,38 @@ export default function useHooks(
     [selectedLayer.layer?.layer?.infobox?.blocks],
   );
 
-  console.log("SL", selectedLayer);
+  console.log("SL", selectedLayer.layer?.layer?.infobox);
 
   // Infobox
   const defaultInfobox = selectedLayer.reason?.defaultInfobox;
-  const infobox = useMemo(
+  const infobox: InfoboxType = useMemo(
     () =>
       selectedLayer.layer?.layer?.infobox
         ? {
             title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
-            isEditable: !!selectedLayer.layer?.layer?.infobox,
-            property: selectedLayer.layer?.layer?.infobox?.property?.default,
-            blocks: blocks?.length ? blocks : defaultInfoboxBlocks(defaultInfobox),
+            property: selectedLayer.layer?.layer?.infobox?.property,
+            blocks,
           }
         : {
             title: "Test",
-            isEditable: true,
             property: {},
-            blocks: [],
+            blocks: [
+              {
+                id: "asdfasdf",
+                name: "IMAGE BLOCK",
+                pluginId: "reearth",
+                extensionId: "imageInfoboxBlock",
+              },
+              {
+                id: "asdfasdf22",
+                name: "IMAGE BLOCK",
+                pluginId: "reearth",
+                extensionId: "imageInfoboxBlock",
+              },
+            ],
           },
     [selectedLayer, defaultInfobox, blocks],
   );
-  const handleInfoboxClose = useCallback(() => {
-    if (infobox?.property?.unselectOnClose) {
-      mapRef?.current?.layers.select(undefined);
-    }
-  }, [infobox]);
 
   const timelineManagerRef: TimelineManagerRef = useRef();
 
@@ -242,9 +244,6 @@ export default function useHooks(
     },
     [timelineManagerRef, originalOverrideSceneProperty],
   );
-
-  // block
-  const [selectedBlock, selectBlock] = useValue(initialSelectedBlockId, onBlockSelect);
 
   // camera
   const [camera, changeCamera] = useValue(initialCamera, onCameraChange);
@@ -315,7 +314,6 @@ export default function useHooks(
     selectedLayer,
     selectedFeature,
     selectedComputedFeature,
-    selectedBlock,
     viewport,
     camera,
     interactionMode,
@@ -327,16 +325,14 @@ export default function useHooks(
     isLayerDragging,
     shouldRender,
     timelineManagerRef,
+    overrideSceneProperty,
     handleLayerSelect,
-    handleBlockSelect: selectBlock,
-    handleCameraChange: changeCamera,
-    handleInteractionModeChange: changeInteractionMode,
     handleLayerDrag,
     handleLayerDrop,
-    overrideSceneProperty,
     handleLayerEdit,
     onLayerEdit,
-    handleInfoboxClose,
+    handleCameraChange: changeCamera,
+    handleInteractionModeChange: changeInteractionMode,
   };
 }
 
@@ -361,43 +357,4 @@ function useValue<T>(
   }, [initial]);
 
   return [state, handleOnChange];
-}
-
-function defaultInfoboxBlocks(defaultInfobox: DefaultInfobox | undefined): Block[] | undefined {
-  if (defaultInfobox?.content.type === "table") {
-    return Array.isArray(defaultInfobox?.content.value)
-      ? [
-          {
-            id: "content",
-            pluginId: "reearth",
-            extensionId: "dlblock",
-            property: {
-              items: defaultInfobox.content.value.map((c, i) => ({
-                id: i,
-                item_title: c.key,
-                item_datastr: String(c.value),
-                item_datatype: "string",
-              })),
-            },
-          },
-        ]
-      : undefined;
-  }
-
-  if (defaultInfobox?.content.type === "html") {
-    return defaultInfobox.content.value
-      ? [
-          {
-            id: "content",
-            pluginId: "reearth",
-            extensionId: "htmlblock",
-            property: {
-              html: defaultInfobox.content.value,
-            },
-          },
-        ]
-      : undefined;
-  }
-
-  return undefined;
 }

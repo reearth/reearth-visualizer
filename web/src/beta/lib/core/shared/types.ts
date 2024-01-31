@@ -4,21 +4,29 @@ import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { Camera } from "@reearth/beta/utils/value";
 
-import { StoryBlock } from "../types";
+export type InstallableBlock = {
+  name: string;
+  description?: string;
+  pluginId: string;
+  extensionId: string;
+  icon?: string;
+  singleOnly?: boolean;
+  type?: string;
+};
 
-export type BlockProps = {
-  block?: StoryBlock;
+export type BlockProps<T = unknown> = {
+  block?: T;
   layer?: Layer;
   onClick?: () => void;
   onBlockDoubleClick?: () => void;
 };
 
-export type CommonProps = {
+export type CommonBlockProps<T = unknown> = {
   pageId?: string;
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
-  block?: StoryBlock;
+  block?: T;
   theme?: Theme;
   currentCamera?: Camera;
   padding?: {
@@ -30,7 +38,7 @@ export type CommonProps = {
   onClick?: () => void;
   onBlockDoubleClick?: () => void;
   onClickAway?: () => void;
-  onRemove?: (pageId?: string, id?: string) => void;
+  onRemove?: (id: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -52,10 +60,4 @@ export type CommonProps = {
     itemId?: string,
   ) => Promise<void>;
   onFlyTo?: FlyTo;
-};
-
-export type Range = {
-  start: number;
-  mid: number;
-  end: number;
 };

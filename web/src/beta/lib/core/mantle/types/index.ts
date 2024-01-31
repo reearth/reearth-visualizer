@@ -7,7 +7,8 @@ import type {
   MultiPolygon,
 } from "geojson";
 
-import type { Infobox, Block, Tag } from "../compat/types";
+import type { Infobox, InfoboxBlock } from "../../Crust/Infobox/types";
+import type { Tag } from "../compat/types";
 
 import type { AppearanceTypes, LayerAppearanceTypes } from "./appearance";
 import type { Events } from "./events";
@@ -57,7 +58,7 @@ export type NaiveLayerGroup = Omit<LayerGroup, "id" | "children" | "infobox"> & 
   children?: NaiveLayer[];
 };
 export type NaiveInfobox = Omit<Infobox, "id" | "blocks"> & { blocks?: NaiveBlock[] };
-export type NaiveBlock<P = any> = Omit<Block<P>, "id">;
+export type NaiveBlock<P = any> = Omit<InfoboxBlock<P>, "id">;
 
 export type SelectedFeatureInfo = {
   feature?: ComputedFeature;

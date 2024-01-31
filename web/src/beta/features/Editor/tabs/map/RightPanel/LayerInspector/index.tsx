@@ -84,7 +84,6 @@ const InspectorTabs: React.FC<Props> = ({
       },
       {
         id: "infobox",
-        name: t("Infobox"),
         component: <Infobox />,
         icon: "infobox",
       },

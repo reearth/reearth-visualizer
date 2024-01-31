@@ -1,13 +1,8 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
-import type {
-  LatLng,
-  ValueTypes,
-  ComputedLayer,
-  ComputedFeature,
-} from "@reearth/beta/lib/core/mantle";
-import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/beta/lib/core/mantle";
+import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -18,9 +13,6 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
-  useSceneMode,
-  useIsCapturing,
-  useSelectedBlock,
   useWidgetAlignEditorActivated,
   useSelectedWidgetArea,
   useIsVisualizerReady,
@@ -33,7 +25,6 @@ import {
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
-import type { BlockType } from "./type";
 
 export default ({
   sceneId,
@@ -59,9 +50,6 @@ export default ({
 
   const { scene } = useSceneQuery({ sceneId });
 
-  const [sceneMode, setSceneMode] = useSceneMode();
-  const [isCapturing, onIsCapturingChange] = useIsCapturing();
-  const [selectedBlock, selectBlock] = useSelectedBlock();
   const [_, selectSelectedStoryPageId] = useSelectedStoryPageId();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
@@ -79,10 +67,6 @@ export default ({
   // TODO: Fix to use exact type through GQL typing
   const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
 
-  useEffect(() => {
-    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
-  }, [sceneProperty, setSceneMode]);
-
   // Layers
   const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
 
@@ -95,7 +79,7 @@ export default ({
     }));
   }, [nlsLayers, layerStyles, showStoryPanel]);
 
-  const selectLayer = useCallback(
+  const handleLayerSelect = useCallback(
     async (
       id?: string,
       layer?: () => Promise<ComputedLayer | undefined>,
@@ -115,7 +99,7 @@ export default ({
     [selectedLayer, setSelectedLayer, setSelectedLayerStyle, setSelectedSceneSetting],
   );
 
-  const handleDropLayer = useCallback(
+  const handleLayerDrop = useCallback(
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
@@ -126,14 +110,14 @@ export default ({
   // Widgets
   const widgets = convertWidgets(scene);
 
-  const onWidgetUpdate = useCallback(
+  const handleWidgetUpdate = useCallback(
     async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
       await useUpdateWidget(id, update, sceneId);
     },
     [sceneId, useUpdateWidget],
   );
 
-  const onWidgetAlignSystemUpdate = useCallback(
+  const handleWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
       await useUpdateWidgetAlignSystem(
         { zone: location.zone, section: location.section, area: location.area, align },
@@ -153,54 +137,26 @@ export default ({
     [scene?.plugins],
   );
 
-  // Infobox - NOTE: this is from classic. TBD but will change significantly
-  const onBlockChange = useCallback(
-    async <T extends keyof ValueTypes>(
-      blockId: string,
-      _schemaGroupId: string,
-      _fid: string,
-      _v: ValueTypes[T],
-      vt: T,
-      selectedLayer?: Layer,
-    ) => {
-      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
-        ?.propertyId as string | undefined;
-      if (!propertyId) return;
-
-      console.log("Block has been changed!");
-    },
-    [],
-  );
-
-  const onBlockMove = useCallback(
-    async (_id: string, _fromIndex: number, _toIndex: number) => {
+  const handleInfoboxBlockMove = useCallback(
+    async (id: string, targetIndex: number) => {
       if (!selectedLayer) return;
-      console.log("Block has been moved!");
+      console.log("Block has been moved!", id, targetIndex);
     },
     [selectedLayer],
   );
 
-  const onBlockRemove = useCallback(
-    async (_id: string) => {
+  const handleInfoboxBlockRemove = useCallback(
+    async (id: string) => {
       if (!selectedLayer) return;
-      console.log("Block has been removed!");
+      console.log("Block has been removed!", id);
     },
     [selectedLayer],
   );
-
-  // block selector
-  const blocks: BlockType[] = useMemo(() => [], []);
-  const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
-    const b = blocks?.[bi];
-    if (b?.pluginId && b?.extensionId && selectedLayer) {
-      console.log("Block has been inserted!");
-    }
-  };
 
   // Story
   const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
 
-  const handleCurrentPageChange = useCallback(
+  const handleStoryPageChange = useCallback(
     (pageId?: string) => selectSelectedStoryPageId(pageId),
     [selectSelectedStoryPageId],
   );
@@ -281,41 +237,32 @@ export default ({
   }, [isBuilt, title]);
 
   return {
-    sceneId,
     rootLayerId,
-    selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
-    widgets,
     layers,
+    widgets,
     story,
-    blocks,
-    isCapturing,
-    sceneMode,
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
     useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
     isVisualizerReady,
-    selectWidgetArea: setSelectedWidgetArea,
     zoomedLayerId,
-    handleCurrentPageChange,
+    handleLayerSelect,
+    handleLayerDrop,
+    handleStoryPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
+    handleInfoboxBlockMove,
+    handleInfoboxBlockRemove,
+    handleWidgetUpdate,
+    handleWidgetAlignSystemUpdate,
+    selectWidgetArea: setSelectedWidgetArea,
     handlePropertyValueUpdate,
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
-    selectLayer,
-    selectBlock,
-    onBlockChange,
-    onBlockMove,
-    onBlockRemove,
-    onBlockInsert,
-    onWidgetUpdate,
-    onWidgetAlignSystemUpdate,
-    onIsCapturingChange,
-    handleDropLayer,
     handleMount,
     zoomToLayer,
   };
