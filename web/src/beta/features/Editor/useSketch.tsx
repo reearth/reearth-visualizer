@@ -26,7 +26,7 @@ export default ({
 }: Props) => {
   const [sketchType, setSketchType] = useState<SketchType | undefined>(undefined);
 
-  const pendingSketchSelectionRef = useRef<{ layerId: string; featureId: string[] } | undefined>(
+  const pendingSketchSelectionRef = useRef<{ layerId: string; featureId: string } | undefined>(
     undefined,
   );
 
@@ -66,17 +66,22 @@ export default ({
       });
       pendingSketchSelectionRef.current = {
         layerId: selectedLayer.id,
-        featureId: [featureId],
+        featureId,
       };
     },
     [selectedLayer, handleLayerConfigUpdate],
   );
 
   useEffect(() => {
-    if (pendingSketchSelectionRef.current) {
-      visualizerRef.current?.layers.selectFeatures([pendingSketchSelectionRef.current]);
-      pendingSketchSelectionRef.current = undefined;
-    }
+    requestAnimationFrame(() => {
+      if (pendingSketchSelectionRef.current) {
+        visualizerRef.current?.layers.selectFeature(
+          pendingSketchSelectionRef.current.layerId,
+          pendingSketchSelectionRef.current.featureId,
+        );
+        pendingSketchSelectionRef.current = undefined;
+      }
+    });
   }, [nlsLayers, pendingSketchSelectionRef, visualizerRef]);
 
   useEffect(() => {

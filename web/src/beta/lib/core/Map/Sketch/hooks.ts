@@ -107,7 +107,6 @@ export default function useHooks({
       return null;
     }
     return feature(geometry, {
-      id: uuidv4(),
       type: geoOptions.type,
       positions: geoOptions.controlPoints,
       extrudedHeight,

@@ -359,7 +359,7 @@ export default ({
     if (prevSelectedEntity.current === entity) return;
 
     const tag = getTag(entity);
-    if (!entity || (entity instanceof Entity && !tag?.hideIndicator)) {
+    if (entity instanceof Entity && !tag?.hideIndicator) {
       viewer.selectedEntity = entity;
     } else {
       viewer.selectedEntity = undefined;
@@ -545,7 +545,7 @@ export default ({
         findEntity(viewer, selectedLayerId?.layerId);
 
       const tag = getTag(entity);
-      if (!entity || (entity instanceof Entity && !tag?.hideIndicator)) {
+      if (!entity || (entity instanceof Entity && tag?.hideIndicator)) {
         viewer.selectedEntity = undefined;
       }
 
@@ -699,7 +699,7 @@ export default ({
         }
       }
 
-      if (!entity || (entity instanceof Entity && !tag?.hideIndicator)) {
+      if (!entity || (entity instanceof Entity && tag?.hideIndicator)) {
         viewer.selectedEntity = undefined;
       }
       onLayerSelect?.();

@@ -70,6 +70,7 @@ export type Ref = {
     reason?: LayerSelectionReason,
     info?: SelectedFeatureInfo,
   ) => void;
+  selectFeature: (layerId: string | undefined, featureId: string | undefined) => void;
   selectFeatures: (
     layers: {
       layerId?: string;
@@ -391,7 +392,7 @@ export default function useHooks({
     [override],
   );
 
-  const { select, selectFeatures, selectedLayer } = useSelection({
+  const { select, selectFeature, selectFeatures, selectedLayer } = useSelection({
     initialSelectedLayer,
     getLazyLayer: findById,
     onLayerSelect,
@@ -545,6 +546,7 @@ export default function useHooks({
       hide: hideLayers,
       show: showLayers,
       select,
+      selectFeature,
       selectFeatures,
       selectedLayer,
       overriddenLayers: overriddenLayersGetter,
@@ -567,6 +569,7 @@ export default function useHooks({
       hideLayers,
       showLayers,
       select,
+      selectFeature,
       selectFeatures,
       selectedLayer,
       overriddenLayersGetter,
@@ -885,9 +888,37 @@ function useSelection({
     [engineRef, updateStyle, updateEngineFeatures, updateSelectedLayerForFeature],
   );
 
+  const selectFeature = useCallback(
+    (
+      layerId: string | undefined,
+      featureId: string | undefined,
+      options?: LayerSelectionReason,
+      info?: SelectedFeatureInfo,
+    ) => {
+      if (!layerId || !featureId) return;
+      onLayerSelect?.(
+        layerId,
+        featureId,
+        layerId
+          ? () =>
+              new Promise(resolve => {
+                // Wait until computed feature is ready
+                queueMicrotask(() => {
+                  resolve(getLazyLayer(layerId)?.computed);
+                });
+              })
+          : undefined,
+        options,
+        info,
+      );
+    },
+    [getLazyLayer, onLayerSelect],
+  );
+
   return {
     selectedLayer: selectedLayerForRef,
     select,
+    selectFeature,
     selectFeatures,
   };
 }
