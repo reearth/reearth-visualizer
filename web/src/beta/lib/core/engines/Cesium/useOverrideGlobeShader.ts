@@ -5,15 +5,58 @@
 
 import { ShaderSource } from "@cesium/engine";
 import { Viewer, Globe, Material, Cartesian3 } from "cesium";
-import { RefObject, useEffect } from "react";
+import { RefObject, useEffect, useMemo } from "react";
 import { CesiumComponentRef } from "resium";
 
+import { TerrainProperty } from "..";
 import { useImmutableFunction } from "../../hooks/useRefFunction";
 import { StringMatcher } from "../../utils/StringMatcher";
 
-import GlobeFSCustoms from "./Shaders/OverriddenShaders/GlobeFS/Customs.glsl?raw";
+import { createColorMapImage } from "./Feature/HeatMap/colorMap";
 import GlobeFSDefinitions from "./Shaders/OverriddenShaders/GlobeFS/Definitions.glsl?raw";
+import HeatmapForTerrainFS from "./Shaders/OverriddenShaders/GlobeFS/HeatmapForTerrain.glsl?raw";
+import IBLFS from "./Shaders/OverriddenShaders/GlobeFS/IBL.glsl?raw";
 import { PrivateCesiumGlobe } from "./types";
+import { VertexTerrainElevationMaterial } from "./VertexTerrainElevationMaterial";
+
+const defaultMatcher = new StringMatcher()
+  // Use the diffuse of the globe material as initial color, as I want to
+  // render imagery layers over it.
+  .replace(
+    "vec4 color = computeDayColor(u_initialColor",
+    /* glsl */ `
+    vec4 initialColor;
+    #ifdef APPLY_MATERIAL
+      czm_materialInput materialInput;
+      materialInput.st = v_textureCoordinates.st;
+      materialInput.normalEC = normalize(v_normalEC);
+      materialInput.positionToEyeEC = -v_positionEC;
+      materialInput.tangentToEyeMatrix = czm_eastNorthUpToEyeCoordinates(v_positionMC, normalize(v_normalEC));
+      materialInput.slope = v_slope;
+      materialInput.height = v_height;
+      materialInput.aspect = v_aspect;
+      czm_material material = czm_getMaterial(materialInput);
+      initialColor = vec4(material.diffuse, material.alpha);
+    #else
+      initialColor = u_initialColor;
+    #endif
+    vec4 color = computeDayColor(initialColor`,
+  )
+  .erase([
+    "#ifdef APPLY_MATERIAL",
+    "czm_materialInput materialInput;",
+    "materialInput.st = v_textureCoordinates.st;",
+    "materialInput.normalEC = normalize(v_normalEC);",
+    "materialInput.positionToEyeEC = -v_positionEC;",
+    "materialInput.tangentToEyeMatrix = czm_eastNorthUpToEyeCoordinates(v_positionMC, normalize(v_normalEC));",
+    "materialInput.slope = v_slope;",
+    "materialInput.height = v_height;",
+    "materialInput.aspect = v_aspect;",
+    "czm_material material = czm_getMaterial(materialInput);",
+    "vec4 materialColor = vec4(material.diffuse, material.alpha);",
+    "color = alphaBlend(materialColor, color);",
+    "#endif",
+  ]);
 
 function makeGlobeShadersDirty(globe: Globe): void {
   // Invoke the internal makeShadersDirty() by setting a material to globe to
@@ -30,6 +73,111 @@ function makeGlobeShadersDirty(globe: Globe): void {
   }
 }
 
+const useIBL = ({
+  sphericalHarmonicCoefficients,
+  globeImageBasedLighting,
+  hasVertexNormals,
+  enableLighting,
+}: {
+  sphericalHarmonicCoefficients?: Cartesian3[];
+  globeImageBasedLighting?: boolean;
+  hasVertexNormals?: boolean;
+  enableLighting?: boolean;
+}) => {
+  const isIBLEnabled = useMemo(
+    () => hasVertexNormals && enableLighting,
+    [hasVertexNormals, enableLighting],
+  );
+  const sphericalHarmonicCoefficientsRefFunc = useImmutableFunction(
+    sphericalHarmonicCoefficients || [],
+  );
+  const globeImageBasedLightingRefFunc = useImmutableFunction(
+    globeImageBasedLighting && !!sphericalHarmonicCoefficients,
+  );
+  const uniformMapForIBL = useMemo(
+    () => ({
+      u_reearth_sphericalHarmonicCoefficients: sphericalHarmonicCoefficientsRefFunc,
+      u_reearth_globeImageBasedLighting: globeImageBasedLightingRefFunc,
+    }),
+    [sphericalHarmonicCoefficientsRefFunc, globeImageBasedLightingRefFunc],
+  );
+  const shaderForIBL = useMemo(
+    () =>
+      new StringMatcher().replace(
+        [
+          "float diffuseIntensity = clamp(czm_getLambertDiffuse(czm_lightDirectionEC, normalize(v_normalEC)) * u_lambertDiffuseMultiplier + u_vertexShadowDarkness, 0.0, 1.0);",
+          "vec4 finalColor = vec4(color.rgb * czm_lightColor * diffuseIntensity, color.a);",
+        ],
+        "vec4 finalColor = reearth_computeImageBasedLightingColor(color);",
+      ),
+    [],
+  );
+
+  return {
+    uniformMapForIBL,
+    isIBLEnabled,
+    shaderForIBL,
+  };
+};
+
+const useTerrainHeatmap = ({
+  cesium,
+  terrain: {
+    heatmapType,
+    heatmapMaxHeight,
+    heatmapMinHeight,
+    heatmapLogarithmic,
+    heatmapColorLUT,
+  } = {},
+}: {
+  cesium: RefObject<CesiumComponentRef<Viewer>>;
+  terrain: TerrainProperty | undefined;
+}) => {
+  const isCustomHeatmapEnabled = useMemo(() => heatmapType === "custom", [heatmapType]);
+
+  const shaderForTerrainHeatmap = useMemo(
+    () =>
+      new StringMatcher().replace(
+        [
+          "#ifdef APPLY_COLOR_TO_ALPHA",
+          "vec3 colorDiff = abs(color.rgb - colorToAlpha.rgb);",
+          "colorDiff.r = max(max(colorDiff.r, colorDiff.g), colorDiff.b);",
+          "alpha = czm_branchFreeTernary(colorDiff.r < colorToAlpha.a, 0.0, alpha);",
+          "#endif",
+        ],
+        `color = reearth_calculateElevationMapForGlobe(colorToAlpha, color);`,
+      ),
+    [],
+  );
+
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement || !isCustomHeatmapEnabled) return;
+    const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
+
+    globe.material = new VertexTerrainElevationMaterial();
+  }, [cesium, isCustomHeatmapEnabled]);
+
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement || !isCustomHeatmapEnabled) return;
+    const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
+    if (!(globe.material instanceof VertexTerrainElevationMaterial)) return;
+
+    globe.material.uniforms.minHeight = heatmapMinHeight ?? globe.material.uniforms.minHeight;
+    globe.material.uniforms.maxHeight = heatmapMaxHeight ?? globe.material.uniforms.maxHeight;
+    globe.material.uniforms.logarithmic = heatmapLogarithmic ?? globe.material.uniforms.logarithmic;
+  }, [cesium, isCustomHeatmapEnabled, heatmapMaxHeight, heatmapMinHeight, heatmapLogarithmic]);
+
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement || !isCustomHeatmapEnabled || !heatmapColorLUT) return;
+    const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
+    if (!(globe.material instanceof VertexTerrainElevationMaterial)) return;
+
+    globe.material.uniforms.colorMap = createColorMapImage(heatmapColorLUT);
+  }, [cesium, isCustomHeatmapEnabled, heatmapColorLUT]);
+
+  return { isCustomHeatmapEnabled, shaderForTerrainHeatmap };
+};
+
 export const useOverrideGlobeShader = ({
   cesium,
   sphericalHarmonicCoefficients,
@@ -37,6 +185,7 @@ export const useOverrideGlobeShader = ({
   globeImageBasedLighting,
   hasVertexNormals,
   enableLighting,
+  terrain,
 }: {
   cesium: RefObject<CesiumComponentRef<Viewer>>;
   sphericalHarmonicCoefficients?: Cartesian3[];
@@ -44,19 +193,25 @@ export const useOverrideGlobeShader = ({
   globeImageBasedLighting?: boolean;
   hasVertexNormals?: boolean;
   enableLighting?: boolean;
+  terrain: TerrainProperty | undefined;
 }) => {
-  const sphericalHarmonicCoefficientsRefFunc = useImmutableFunction(
-    sphericalHarmonicCoefficients || [],
-  );
-  const globeImageBasedLightingRefFunc = useImmutableFunction(
-    globeImageBasedLighting && !!sphericalHarmonicCoefficients,
-  );
+  const { uniformMapForIBL, isIBLEnabled, shaderForIBL } = useIBL({
+    sphericalHarmonicCoefficients,
+    globeImageBasedLighting,
+    hasVertexNormals,
+    enableLighting,
+  });
+
+  const { isCustomHeatmapEnabled, shaderForTerrainHeatmap } = useTerrainHeatmap({
+    cesium,
+    terrain,
+  });
 
   useEffect(() => {
-    if (!cesium.current?.cesiumElement || !globeShadowDarkness || !hasVertexNormals) return;
+    if (!cesium.current?.cesiumElement || !hasVertexNormals) return;
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
-    globe.vertexShadowDarkness = globeShadowDarkness;
+    globe.vertexShadowDarkness = globeShadowDarkness ?? globe.vertexShadowDarkness;
   }, [cesium, globeShadowDarkness, hasVertexNormals]);
 
   // This need to be invoked before Globe is updated.
@@ -64,7 +219,7 @@ export const useOverrideGlobeShader = ({
     // NOTE: Support the spherical harmonic coefficient only when the terrain normal is enabled.
     // Because it's difficult to control the shader for the entire globe.
     // ref: https://github.com/CesiumGS/cesium/blob/af4e2bebbef25259f049b05822adf2958fce11ff/packages/engine/Source/Shaders/GlobeFS.glsl#L408
-    if (!cesium.current?.cesiumElement || !enableLighting || !hasVertexNormals) return;
+    if (!cesium.current?.cesiumElement || (!isIBLEnabled && !isCustomHeatmapEnabled)) return;
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
     const surfaceShaderSet = globe._surfaceShaderSet;
@@ -86,23 +241,22 @@ export const useOverrideGlobeShader = ({
       return;
     }
 
-    let replacedGlobeFS;
-    try {
-      replacedGlobeFS = new StringMatcher()
-        .replace(
-          [
-            "float diffuseIntensity = clamp(czm_getLambertDiffuse(czm_lightDirectionEC, normalize(v_normalEC)) * u_lambertDiffuseMultiplier + u_vertexShadowDarkness, 0.0, 1.0);",
-            "vec4 finalColor = vec4(color.rgb * czm_lightColor * diffuseIntensity, color.a);",
-          ],
-          "vec4 finalColor = reearth_computeImageBasedLightingColor(color);",
-        )
-        .execute(GlobeFS);
-    } catch (e) {
-      if (import.meta.env.DEV) {
-        throw new Error(`Failed to override GlobeFS: ${JSON.stringify(e)}`);
-      }
-      return;
+    const matchers: StringMatcher[] = [];
+    const shaders: string[] = [];
+    if (isIBLEnabled) {
+      matchers.push(shaderForIBL);
+      shaders.push(IBLFS);
     }
+
+    if (isCustomHeatmapEnabled) {
+      // This will log the variables needed in the shader below.
+      // we need the minHeight, maxHeight and logarithmic
+      matchers.push(shaderForTerrainHeatmap);
+      shaders.push(HeatmapForTerrainFS);
+    }
+
+    // This means there is no overridden shader.
+    if (!matchers.length) return;
 
     if (!globe?._surface?._tileProvider) {
       if (import.meta.env.DEV) {
@@ -113,16 +267,17 @@ export const useOverrideGlobeShader = ({
 
     makeGlobeShadersDirty(globe);
 
+    const replacedGlobeFS = defaultMatcher.concat(...matchers).execute(GlobeFS);
+
     globe._surface._tileProvider.materialUniformMap = {
       ...(globe._surface._tileProvider.materialUniformMap ?? {}),
-      u_reearth_sphericalHarmonicCoefficients: sphericalHarmonicCoefficientsRefFunc,
-      u_reearth_globeImageBasedLighting: globeImageBasedLightingRefFunc, // Avoid to rerender globe.
+      ...uniformMapForIBL,
     };
 
     surfaceShaderSet.baseFragmentShaderSource = new ShaderSource({
       sources: [
         ...baseFragmentShaderSource.sources.slice(0, -1),
-        GlobeFSDefinitions + replacedGlobeFS + GlobeFSCustoms,
+        GlobeFSDefinitions + replacedGlobeFS + shaders.join(""),
       ],
       defines: baseFragmentShaderSource.defines,
     });
@@ -133,10 +288,13 @@ export const useOverrideGlobeShader = ({
       }
     };
   }, [
-    sphericalHarmonicCoefficientsRefFunc,
-    globeImageBasedLightingRefFunc,
+    uniformMapForIBL,
     enableLighting,
     cesium,
     hasVertexNormals,
+    isCustomHeatmapEnabled,
+    isIBLEnabled,
+    shaderForIBL,
+    shaderForTerrainHeatmap,
   ]);
 };

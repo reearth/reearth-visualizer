@@ -533,3 +533,35 @@ describe("Conditional styling", () => {
     });
   });
 });
+
+test("startsWith function", () => {
+  expect(
+    evalLayerAppearances(
+      {
+        marker: {
+          pointColor: "#FF0000",
+          pointSize: {
+            expression: {
+              conditions: [
+                ["startsWith('abc', 'a')", "200"],
+                ["true", "1"],
+              ],
+            },
+          },
+        },
+      },
+      {
+        id: "x",
+        type: "simple",
+        properties: {
+          blah: "value",
+        },
+      },
+    ),
+  ).toEqual({
+    marker: {
+      pointColor: "#FF0000", // blue
+      pointSize: 200,
+    },
+  });
+});

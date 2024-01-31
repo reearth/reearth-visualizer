@@ -4,8 +4,8 @@ import Button from "@reearth/beta/components/Button";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { BlockContext } from "../../../../shared/components/BlockWrapper";
 import { usePanelContext } from "../../../context";
-import { BlockContext } from "../common/Wrapper";
 
 import LayerEditor, { type LayerBlock as LayerBlockType } from "./Editor";
 

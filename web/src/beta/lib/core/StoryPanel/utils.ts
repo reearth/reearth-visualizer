@@ -59,7 +59,7 @@ const MONTH_LABEL_LIST = [
   "Dec",
 ];
 
-const formatTimezone = (time: number) => {
+export const formatTimezone = (time: number) => {
   const d = new Date(time);
   const timezoneOffset = d.getTimezoneOffset();
   const timezoneSign = timezoneOffset >= 0 ? "-" : "+";
@@ -68,26 +68,38 @@ const formatTimezone = (time: number) => {
   const timezone = `${timezoneSign}${timezoneHours}:${timezoneMinutes.toString().padStart(2, "0")}`;
   return timezone;
 };
-export const formatDateForTimeline = (time: number, options: { detail?: boolean } = {}) => {
-  const d = new Date(time);
+export const formatDateForTimeline = (
+  time: number,
+  options: { detail?: boolean } = {},
+  timezone?: string,
+) => {
+  const localTimezoneOffset = new Date().getTimezoneOffset();
+  const d = new Date(
+    time + (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+  );
 
   const year = d.getFullYear();
   const month = MONTH_LABEL_LIST[d.getMonth()];
   const date = `${d.getDate()}`.padStart(2, "0");
   const hour = `${d.getHours()}`.padStart(2, "0");
   if (!options.detail) {
-    const timezone = formatTimezone(time);
     return `${year} ${month} ${date} ${hour}:00:00.00 ${timezone}`;
   }
   const minutes = `${d.getMinutes()}`.padStart(2, "0");
   const seconds = `${d.getSeconds()}`.padStart(2, "0");
-  const timezone = formatTimezone(time);
 
   return `${year} ${month} ${date} ${hour}:${minutes}:${seconds} ${timezone}`;
 };
 
-export const formatDateForSliderTimeline = (time: number, options: { detail?: boolean } = {}) => {
-  const d = new Date(time);
+export const formatDateForSliderTimeline = (
+  time: number,
+  options: { detail?: boolean } = {},
+  timezone?: string,
+) => {
+  const localTimezoneOffset = new Date().getTimezoneOffset();
+  const d = new Date(
+    time + (localTimezoneOffset + Number(timezone?.split(":")[0]) * 60) * 60 * 1000,
+  );
 
   const month = MONTH_LABEL_LIST[d.getMonth()];
   const date = `${d.getDate()}`.padStart(2, "0");
@@ -159,4 +171,25 @@ export const convertPositionToTime = (e: MouseEvent, start: number, end: number)
   const rangeDiff = end - start;
   const sec = rangeDiff * percent;
   return Math.min(Math.max(start, start + sec), end);
+};
+
+export const getTimeZone = (time: string) => {
+  const zone = time.match(/([-+]\d{1,2}:\d{2})$/);
+  const timezoneOffset = zone?.[1];
+  return timezoneOffset || "";
+};
+
+export const formatISO8601 = (time: string) => {
+  // For backforad compatibility
+  // from: 2021-08-31T00:00:00 +9:00
+  // from: 2021-08-31T00:00:00+9:00
+  // to: 2021-08-31T00:00:00+09:00
+  const timezone = getTimeZone(time);
+  const splitZone = timezone.split(":");
+  if (splitZone[0].length === 2) {
+    return time
+      .replace(timezone, `${splitZone[0][0]}0${splitZone[0][1]}:${splitZone[1]}`)
+      .replace(" ", "");
+  }
+  return time.replace(" ", "");
 };
