@@ -6,7 +6,7 @@ import { useMergeRefs } from "use-callback-ref";
 import { useConstant } from "@reearth/beta/utils/util";
 import { styled } from "@reearth/services/theme";
 
-import { useVisualizer } from "../../../Visualizer";
+import { useContext } from "../Feature/context";
 import { usePreRender } from "../hooks/useSceneEvent";
 
 const Root = styled(motion.div)({
@@ -31,7 +31,7 @@ const ScreenSpaceElement = forwardRef<HTMLDivElement, ScreenSpaceElementProps>(
     const motionTransform = useMotionValue("");
     const motionDisplay = useMotionValue("none");
 
-    const visualizer = useVisualizer();
+    const { toWindowPosition, getCamera, toXYZ, isPositionVisible } = useContext();
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -41,20 +41,16 @@ const ScreenSpaceElement = forwardRef<HTMLDivElement, ScreenSpaceElementProps>(
       }
       let windowPosition;
       try {
-        const pos = visualizer.current?.engine.toWindowPosition([
-          position.x,
-          position.y,
-          position.z,
-        ]);
+        const pos = toWindowPosition?.([position.x, position.y, position.z]);
         windowPosition = new Cartesian2(pos?.[0], pos?.[1]);
       } catch (error) {
         motionDisplay.set("none");
         return;
       }
 
-      const camera = visualizer.current?.engine.getCamera();
+      const camera = getCamera?.();
       if (!camera) return;
-      const xyz = visualizer.current?.engine.toXYZ(camera?.lng, camera?.lat, camera?.height);
+      const xyz = toXYZ?.(camera?.lng, camera?.lat, camera?.height);
       if (!xyz) return;
       occluder.cameraPosition = new Cartesian3(xyz[0], xyz[1], xyz[2]);
       if (
@@ -63,7 +59,7 @@ const ScreenSpaceElement = forwardRef<HTMLDivElement, ScreenSpaceElementProps>(
         windowPosition.y < 0 ||
         windowPosition.x > window.innerWidth ||
         windowPosition.y > window.innerHeight ||
-        !occluder.isPointVisible(position)
+        !isPositionVisible?.([position.x, position.y, position.z])
       ) {
         motionDisplay.set("none");
         return;

@@ -15,6 +15,16 @@ export type Context = {
   onLayerEdit?: (e: LayerEditEvent) => void;
   requestRender?: () => void;
   getSurfaceDistance?: (point1: Cartesian3, point2: Cartesian3) => number | undefined;
+  toXYZ?: (
+    lng: number,
+    lat: number,
+    height: number,
+    options?: { useGlobeEllipsoid?: boolean },
+  ) => [x: number, y: number, z: number] | undefined;
+  toWindowPosition?: (
+    position: [x: number, y: number, z: number],
+  ) => [x: number, y: number] | undefined;
+  isPositionVisible?: (position: [x: number, y: number, z: number]) => boolean;
 };
 
 export const context = createContext<Context>({});

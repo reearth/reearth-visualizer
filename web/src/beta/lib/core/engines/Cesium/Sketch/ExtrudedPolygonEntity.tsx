@@ -11,7 +11,7 @@ import { useMemo, useRef, type FC } from "react";
 
 import { useConstant } from "@reearth/beta/utils/util";
 
-import { useVisualizer } from "../../../Visualizer";
+import { useContext } from "../Feature/context";
 
 import { Entity, type EntityProps } from "./Entity";
 
@@ -67,8 +67,8 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
     [extrudedHeight, disableShadow, hierarchy, colorProperty],
   );
 
-  const visualizer = useVisualizer();
-  visualizer.current?.engine.requestRender();
+  const { requestRender } = useContext();
+  requestRender?.();
 
   return <Entity id={id} {...options} />;
 };

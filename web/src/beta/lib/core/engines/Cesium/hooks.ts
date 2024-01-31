@@ -796,6 +796,9 @@ export default ({
       onLayerEdit,
       requestRender: engineAPI.requestRender,
       getSurfaceDistance: engineAPI.getSurfaceDistance,
+      toXYZ: engineAPI.toXYZ,
+      toWindowPosition: engineAPI.toWindowPosition,
+      isPositionVisible: engineAPI.isPositionVisible,
     }),
     [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
   );
