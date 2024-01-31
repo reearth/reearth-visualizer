@@ -115,6 +115,14 @@ Properties: Properties
 Data: Data
 Feature: Feature
 Styling: Styling
+Left: Left
+Right: Right
+Enable Infobox: Enable Infobox
+Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
+Position: Position
+Position of the infobox. Options are left or right: Position of the infobox. Options are left or right
+Padding: Padding
+Gap: Gap
 Format: Format
 Save: Save
 Published: Published
@@ -264,8 +272,6 @@ Site name: Site name
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
   You are about to change the site name for your project. Only alphanumeric
   characters and hyphens are allows.
-Left: Left
-Right: Right
 Story Panel: Story Panel
 Panel Position: Panel Position
 Background Color: Background Color
@@ -452,7 +458,6 @@ You are deleting the infobox and all its contents. Are you sure you want to do t
   You are deleting the infobox and all its contents. Are you sure you want to do
   that?
 List: List
-Padding: ''
 Gap Spacing: Gap Spacing
 Align Center: ''
 Enable Editor Mode: Enable Editor Mode

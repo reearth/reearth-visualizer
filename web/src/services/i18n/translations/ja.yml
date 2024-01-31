@@ -105,7 +105,7 @@ Unknown scene setting: 不明なシーン設定
 Scene: シーン
 Outline: アウトライン
 Add Layer from Resource: リソースからレイヤーを追加
-Add Sketch Layer: ''
+Add Sketch Layer: スケッチレイヤーを追加
 Inspector: インスペクター
 ID: ID
 Geometry: ジオメトリ
@@ -113,6 +113,14 @@ Properties: プロパティ
 Data: データ
 Feature: フィーチャー
 Styling: スタイリング
+Left: 左
+Right: 右
+Enable Infobox: インフォボックスを有効化
+Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
+Position: 一位
+Position of the infobox. Options are left or right: インフォボックスの位置。左または右を選択
+Padding: 余白
+Gap: 間隔
 Format: フォーマット
 Save: 保存
 Published: 一般公開
@@ -243,8 +251,6 @@ Password: パスワード
 Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
-Left: 左
-Right: 右
 Story Panel: ストーリーパネル
 Panel Position: パネルポジション
 Background Color: 背景色
@@ -417,7 +423,6 @@ Template: テンプレート
 template: テンプレート
 You are deleting the infobox and all its contents. Are you sure you want to do that?: インフォボックスとその内容を削除します。本当によろしいですか？
 List: リスト
-Padding: 余白
 Gap Spacing: 間隔
 Align Center: 中央に配置
 Enable Editor Mode: ウィジェットの配置を編集
