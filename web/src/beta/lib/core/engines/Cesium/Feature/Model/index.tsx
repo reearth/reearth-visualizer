@@ -15,7 +15,10 @@ import type { ModelAppearance } from "../../..";
 import { colorBlendMode, heightReference, shadowMode } from "../../common";
 import { arrayToCartecian3 } from "../../helpers/sphericalHaromic";
 import { useSceneEvent } from "../../hooks/useSceneEvent";
-import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
+import {
+  NonPBRLightingShader,
+  NonPBRWithTextureLightingShader,
+} from "../../Shaders/CustomShaders/NonPBRLightingShader";
 import { useContext } from "../context";
 import {
   EntityExt,
@@ -195,7 +198,13 @@ export default function Model({
         uri={actualUrl}
         scale={scale}
         shadows={shadowMode(shadows)}
-        customShader={pbr === false ? NonPBRLightingShader : undefined}
+        customShader={
+          pbr === false
+            ? NonPBRLightingShader
+            : pbr === "withTexture"
+            ? NonPBRWithTextureLightingShader
+            : undefined
+        }
         colorBlendMode={colorBlendMode(colorBlend)}
         colorBlendAmount={colorBlendAmount}
         color={modelColor}
