@@ -9,7 +9,7 @@ import { Polygon as PolygonValue, toColor } from "@reearth/beta/utils/value";
 
 import type { PolygonAppearance } from "../../..";
 import { classificationType, heightReference, shadowMode } from "../../common";
-import { findEntity } from "../../utils";
+import { findEntity } from "../../utils/utils";
 import { useContext } from "../context";
 import {
   EntityExt,

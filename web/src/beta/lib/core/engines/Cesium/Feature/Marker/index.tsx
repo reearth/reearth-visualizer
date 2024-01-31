@@ -20,7 +20,7 @@ import { toCSSFont } from "@reearth/beta/utils/value";
 
 import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";
-import { findEntity } from "../../utils";
+import { findEntity } from "../../utils/utils";
 import { useContext } from "../context";
 import {
   EntityExt,

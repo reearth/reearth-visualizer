@@ -47,7 +47,7 @@ import { arrayToCartecian3 } from "./helpers/sphericalHaromic";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
-import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
+import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils/utils";
 
 interface CustomGlobeSurface {
   tileProvider: {

@@ -8,7 +8,7 @@ import { Coordinates, toColor } from "@reearth/beta/utils/value";
 
 import type { PolylineAppearance } from "../../..";
 import { classificationType, shadowMode } from "../../common";
-import { findEntity } from "../../utils";
+import { findEntity } from "../../utils/utils";
 import { useContext } from "../context";
 import {
   EntityExt,

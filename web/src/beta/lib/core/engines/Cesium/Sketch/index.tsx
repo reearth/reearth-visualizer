@@ -1,3 +1,5 @@
+// Reference: Sketch feature is basically referenced from https://github.com/takram-design-engineering/plateau-view/blob/main/libs/sketch/src/DynamicSketchObject.tsx
+
 import { Color } from "@cesium/engine";
 import { Cartesian3 } from "cesium";
 import { type LineString, type MultiPolygon, type Polygon } from "geojson";
@@ -6,6 +8,7 @@ import { type RequireExactlyOne } from "type-fest";
 
 import { SketchType } from "../../../Map/Sketch/types";
 import { Position3d } from "../../../types";
+import { convertGeometryToPositionsArray, convertPolygonToHierarchyArray } from "../utils/polygon";
 
 import { createGeometry, GeometryOptions } from "./createGeometry";
 import ExtrudedControlPoints from "./ExtrudedControlPoints";
@@ -13,7 +16,6 @@ import { ExtrudedPolygonEntity } from "./ExtrudedPolygonEntity";
 import { PolygonEntity } from "./PolygonEntity";
 import { PolylineEntity } from "./PolylineEntity";
 import SurfaceControlPoints from "./SurfaceControlPoints";
-import { convertGeometryToPositionsArray, convertPolygonToHierarchyArray } from "./utils";
 
 export type SketchComponentProps = RequireExactlyOne<
   {

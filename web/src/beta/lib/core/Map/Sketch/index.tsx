@@ -1,3 +1,5 @@
+// Reference: Sketch feature is basically referenced from https://github.com/takram-design-engineering/plateau-view/blob/main/libs/sketch/src/SketchTool.tsx
+
 import { type LineString, type MultiPolygon, type Polygon } from "geojson";
 import { ComponentType, ForwardRefRenderFunction, RefObject, forwardRef } from "react";
 import { RequireExactlyOne } from "type-fest";

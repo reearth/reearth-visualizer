@@ -46,7 +46,7 @@ import {
   convertObjToComputedFeature,
   findEntity,
   findFeaturesFromLayer,
-} from "./utils";
+} from "./utils/utils";
 
 export default function useEngineRef(
   ref: Ref<EngineRef>,
