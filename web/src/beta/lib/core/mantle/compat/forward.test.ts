@@ -1,7 +1,9 @@
 import { expect, test } from "vitest";
 
+import { Infobox } from "../../Crust/Infobox/types";
+
 import { convertLegacyCluster, convertLegacyLayer } from "./forward";
-import type { Infobox, LegacyCluster, Tag } from "./types";
+import type { LegacyCluster, Tag } from "./types";
 
 const infobox: Infobox = { blocks: [], property: { default: { bgcolor: "red" } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];

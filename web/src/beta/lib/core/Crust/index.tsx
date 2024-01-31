@@ -101,7 +101,7 @@ export type Props = {
     index?: number | undefined,
   ) => Promise<void>;
   onBlockMove?: (id: string, targetIndex: number) => void;
-  onBlockDelete?: (blockId: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string) => Promise<void>;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
 };

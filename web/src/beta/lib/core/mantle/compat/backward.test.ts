@@ -1,7 +1,9 @@
 import { expect, test } from "vitest";
 
+import { Infobox } from "../../Crust/Infobox/types";
+
 import { convertLayer, getCompat } from "./backward";
-import type { Infobox, Tag } from "./types";
+import type { Tag } from "./types";
 
 const infobox: Infobox = { blocks: [], property: { default: { bgcolor: "red" } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];

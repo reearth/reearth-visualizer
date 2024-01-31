@@ -4,6 +4,7 @@ import {
   type WidgetArea,
   type Alignment,
 } from "@reearth/beta/lib/core/Crust";
+import { InfoboxBlock } from "@reearth/beta/lib/core/Crust/Infobox/types";
 import {
   BuiltinWidgets,
   Widget as RawWidget,
@@ -13,7 +14,7 @@ import {
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
 import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
-import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
+import type { Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -389,7 +390,7 @@ const processInfobox = (
   if (!used) return;
   return {
     property: processProperty(parent?.property, orig?.property),
-    blocks: used.fields.map<Block>(f => ({
+    blocks: used.fields.map<InfoboxBlock>(f => ({
       id: f.id,
       pluginId: f.pluginId,
       extensionId: f.extensionId,

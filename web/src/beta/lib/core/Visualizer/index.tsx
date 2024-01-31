@@ -91,7 +91,7 @@ export type Props = {
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   onBlockMove?: (id: string, targetIndex: number) => void;
-  onBlockDelete?: (id: string) => Promise<void>;
+  onBlockDelete?: (id?: string) => Promise<void>;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
 } & ExternalPluginProps;

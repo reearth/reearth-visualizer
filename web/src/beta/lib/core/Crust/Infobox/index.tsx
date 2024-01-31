@@ -39,7 +39,7 @@ export type Props = {
     index?: number | undefined,
   ) => Promise<void>;
   onBlockMove?: (id: string, targetIndex: number) => void;
-  onBlockDelete?: (blockId: string) => Promise<void>;
+  onBlockDelete?: (blockId?: string) => Promise<void>;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,

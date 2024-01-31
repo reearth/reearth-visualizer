@@ -146,8 +146,8 @@ export default ({
   );
 
   const handleInfoboxBlockRemove = useCallback(
-    async (id: string) => {
-      if (!selectedLayer) return;
+    async (id?: string) => {
+      if (!selectedLayer || !id) return;
       console.log("Block has been removed!", id);
     },
     [selectedLayer],

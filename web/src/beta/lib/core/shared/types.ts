@@ -38,7 +38,7 @@ export type CommonBlockProps<T = unknown> = {
   onClick?: () => void;
   onBlockDoubleClick?: () => void;
   onClickAway?: () => void;
-  onRemove?: (id: string) => void;
+  onRemove?: (id?: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
