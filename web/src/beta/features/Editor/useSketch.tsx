@@ -73,14 +73,17 @@ export default ({
   );
 
   useEffect(() => {
+    // Workaround: Delay 2 frames to ensure the computed layer & feature can be found.
     requestAnimationFrame(() => {
-      if (pendingSketchSelectionRef.current) {
-        visualizerRef.current?.layers.selectFeature(
-          pendingSketchSelectionRef.current.layerId,
-          pendingSketchSelectionRef.current.featureId,
-        );
-        pendingSketchSelectionRef.current = undefined;
-      }
+      requestAnimationFrame(() => {
+        if (pendingSketchSelectionRef.current) {
+          visualizerRef.current?.layers.selectFeature(
+            pendingSketchSelectionRef.current.layerId,
+            pendingSketchSelectionRef.current.featureId,
+          );
+          pendingSketchSelectionRef.current = undefined;
+        }
+      });
     });
   }, [nlsLayers, pendingSketchSelectionRef, visualizerRef]);
 

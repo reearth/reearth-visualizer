@@ -70,7 +70,12 @@ export type Ref = {
     reason?: LayerSelectionReason,
     info?: SelectedFeatureInfo,
   ) => void;
-  selectFeature: (layerId: string | undefined, featureId: string | undefined) => void;
+  selectFeature: (
+    layerId: string | undefined,
+    featureId: string | undefined,
+    reason?: LayerSelectionReason,
+    info?: SelectedFeatureInfo,
+  ) => void;
   selectFeatures: (
     layers: {
       layerId?: string;
