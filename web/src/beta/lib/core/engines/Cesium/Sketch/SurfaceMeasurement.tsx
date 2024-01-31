@@ -11,6 +11,7 @@ import { useMemo, useRef, type FC } from "react";
 import { useConstant } from "@reearth/beta/utils/util";
 
 import { useVisualizer } from "../../../Visualizer";
+import { useContext } from "../Feature/context";
 
 import { Entity, type EntityProps } from "./Entity";
 import { MeasurementText } from "./MeasurementText";
@@ -64,9 +65,11 @@ export const SurfaceMeasurement: FC<SurfaceMeasurementProps> = ({
   showLine = false,
 }) => {
   const position = useConstant(() => new Cartesian3());
-  const visualizer = useVisualizer();
-  const distance = visualizer.current?.engine.getSurfaceDistance(a, b) ?? 0;
-  return (
+
+  const { getSurfaceDistance } = useContext();
+  const distance = getSurfaceDistance?.(a, b);
+
+  return distance !== undefined ? (
     <>
       <ScreenSpaceElement position={Cartesian3.midpoint(a, b, position)}>
         <MeasurementText>
@@ -75,5 +78,5 @@ export const SurfaceMeasurement: FC<SurfaceMeasurementProps> = ({
       </ScreenSpaceElement>
       {showLine && <MeasurementLine a={a} b={b} color={color} />}
     </>
-  );
+  ) : null;
 };

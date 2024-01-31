@@ -795,6 +795,7 @@ export default ({
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       requestRender: engineAPI.requestRender,
+      getSurfaceDistance: engineAPI.getSurfaceDistance,
     }),
     [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
   );
