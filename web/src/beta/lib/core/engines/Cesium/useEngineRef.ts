@@ -365,6 +365,14 @@ export default function useEngineRef(
           camera?.cancelFlight();
         };
       },
+      rotateCameraOnCenter: (radian: number) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const target = getCameraEllipsoidIntersection(scene, new Cesium.Cartesian3());
+        if (!target) return;
+        scene.camera.rotate(target, radian);
+      },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;

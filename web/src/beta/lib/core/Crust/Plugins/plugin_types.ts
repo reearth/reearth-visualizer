@@ -176,6 +176,7 @@ export type Camera = {
     bbox: [number, number, number, number],
     options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
   ) => void;
+  readonly rotateCameraOnCenter: (radian: number) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */

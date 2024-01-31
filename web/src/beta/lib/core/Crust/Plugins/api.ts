@@ -436,6 +436,7 @@ export function commonReearth({
   setView,
   toWindowPosition,
   flyToBBox,
+  rotateCameraOnCenter,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -491,6 +492,7 @@ export function commonReearth({
   setView: GlobalThis["reearth"]["camera"]["setView"];
   toWindowPosition: GlobalThis["reearth"]["scene"]["toWindowPosition"];
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
+  rotateCameraOnCenter: GlobalThis["reearth"]["camera"]["rotateCameraOnCenter"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -540,6 +542,7 @@ export function commonReearth({
         flyToGround,
         setView,
         flyToBBox,
+        rotateCameraOnCenter,
       },
       get property() {
         return sceneProperty?.();
@@ -605,6 +608,7 @@ export function commonReearth({
       flyToGround,
       setView,
       flyToBBox,
+      rotateCameraOnCenter,
     },
     layers: {
       get layersInViewport() {

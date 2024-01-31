@@ -305,6 +305,13 @@ export default function ({
     [engineRef],
   );
 
+  const rotateCameraOnCenter = useCallback(
+    (radian: number) => {
+      return engineRef?.rotateCameraOnCenter(radian);
+    },
+    [engineRef],
+  );
+
   const enableScreenSpaceCameraController = useCallback(
     (enabled: boolean) => engineRef?.enableScreenSpaceCameraController(enabled),
     [engineRef],
@@ -477,6 +484,7 @@ export default function ({
         layersInViewport,
         flyTo,
         flyToBBox,
+        rotateCameraOnCenter,
         lookAt,
         zoomIn,
         zoomOut,
@@ -541,17 +549,12 @@ export default function ({
       layersInViewport,
       flyTo,
       flyToBBox,
+      rotateCameraOnCenter,
       lookAt,
       zoomIn,
       zoomOut,
       cameraViewport,
       getCameraFovInfo,
-      rotateRight,
-      orbit,
-      captureScreen,
-      getLocationFromScreen,
-      sampleTerrainHeight,
-      enableScreenSpaceCameraController,
       computeGlobeHeight,
       toXYZ,
       toLngLatHeight,
@@ -559,6 +562,12 @@ export default function ({
       isPositionVisible,
       setView,
       toWindowPosition,
+      rotateRight,
+      orbit,
+      captureScreen,
+      getLocationFromScreen,
+      sampleTerrainHeight,
+      enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
       moveForward,
@@ -569,14 +578,14 @@ export default function ({
       moveRight,
       moveOverTerrain,
       flyToGround,
+      findFeatureById,
+      findFeaturesByIds,
+      pickManyFromViewport,
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
       timelineManagerRef,
       useExperimentalSandbox,
-      findFeatureById,
-      findFeaturesByIds,
-      pickManyFromViewport,
     ],
   );
 

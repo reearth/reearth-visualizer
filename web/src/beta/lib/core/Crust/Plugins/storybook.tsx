@@ -137,6 +137,7 @@ export const context: Context = {
       enableScreenSpaceController: act("enableScreenSpaceController"),
       flyTo: act("flyTo"),
       flyToBBox: act("flyToBBox"),
+      rotateCameraOnCenter: act("rotateCameraOnCenter"),
       lookAt: act("lookAt"),
       zoomIn: act("zoomIn"),
       zoomOut: act("zoomOut"),

@@ -102,6 +102,7 @@ export type EngineRef = {
     bbox: [number, number, number, number],
     options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
   ) => void;
+  rotateCameraOnCenter: (radian: number) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
