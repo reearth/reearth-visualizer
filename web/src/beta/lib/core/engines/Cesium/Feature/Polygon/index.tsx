@@ -1,15 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Cartesian3, PolygonHierarchy } from "cesium";
+import { Cartesian3, Entity as CesiumEntity, PolygonHierarchy } from "cesium";
 import { isEqual } from "lodash-es";
-import { useEffect, useMemo } from "react";
-import { Entity, PolygonGraphics, PolylineGraphics, useCesium } from "resium";
+import { useEffect, useMemo, useRef } from "react";
+import { CesiumComponentRef, Entity, PolygonGraphics, PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/beta/utils/value";
 
 import type { PolygonAppearance } from "../../..";
 import { classificationType, heightReference, shadowMode } from "../../common";
-import { findEntity } from "../../utils/utils";
 import { useContext } from "../context";
 import {
   EntityExt,
@@ -109,9 +108,8 @@ export default function Polygon({
     [stroke, strokeColor],
   );
 
-  const { viewer } = useCesium();
-  const entity = viewer ? findEntity(viewer, layer?.id, feature?.id) : undefined;
-  const tag = getTag(entity);
+  const entityRef = useRef<CesiumComponentRef<CesiumEntity>>(null);
+  const tag = getTag(entityRef.current?.cesiumElement);
 
   const memoFillColor = useMemo(
     () =>
@@ -120,7 +118,7 @@ export default function Polygon({
           ? toColor(layer["polygon"]?.selectedFeatureColor)
           : toColor(fillColor)
         : undefined,
-    [fill, fillColor, viewer, layer?.id, feature?.id, tag?.isFeatureSelected],
+    [fill, fillColor, layer?.id, feature?.id, tag?.isFeatureSelected],
   );
 
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
@@ -144,6 +142,7 @@ export default function Polygon({
         id={id}
         layerId={layer?.id}
         featureId={feature?.id}
+        ref={entityRef}
         availability={availability}
         properties={feature?.properties}
         hideIndicator={hideIndicator}>

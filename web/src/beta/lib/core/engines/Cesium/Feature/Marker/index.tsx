@@ -6,6 +6,7 @@ import {
   Cartesian2,
   CallbackProperty,
   PositionProperty,
+  Entity,
 } from "cesium";
 import { useEffect, useMemo, useRef } from "react";
 import {
@@ -13,14 +14,13 @@ import {
   PointGraphics,
   LabelGraphics,
   PolylineGraphics,
-  useCesium,
+  CesiumComponentRef,
 } from "resium";
 
 import { toCSSFont } from "@reearth/beta/utils/value";
 
 import type { MarkerAppearance } from "../../..";
 import { useIcon, ho, vo, heightReference, toColor } from "../../common";
-import { findEntity } from "../../utils/utils";
 import { useContext } from "../context";
 import {
   EntityExt,
@@ -160,9 +160,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     return Color.WHITE.withAlpha(0.4);
   }, []);
 
-  const { viewer } = useCesium();
-  const entity = viewer ? findEntity(viewer, layer?.id, feature?.id) : undefined;
-  const tag = getTag(entity);
+  const entityRef = useRef<CesiumComponentRef<Entity>>(null);
+  const tag = getTag(entityRef.current?.cesiumElement);
 
   const imageColorCesium = useMemo(
     () =>
@@ -234,6 +233,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         }
         layerId={layer?.id}
         featureId={feature?.id}
+        ref={entityRef}
         draggable
         properties={feature?.properties}
         availability={availability}

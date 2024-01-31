@@ -1,14 +1,13 @@
-import { Cartesian3 } from "cesium";
+import { Cartesian3, Entity } from "cesium";
 import { isEqual } from "lodash-es";
-import { useEffect, useMemo } from "react";
-import { PolylineGraphics, useCesium } from "resium";
+import { useEffect, useMemo, useRef } from "react";
+import { CesiumComponentRef, PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/beta/utils/value";
 
 import type { PolylineAppearance } from "../../..";
 import { classificationType, shadowMode } from "../../common";
-import { findEntity } from "../../utils/utils";
 import { useContext } from "../context";
 import {
   EntityExt,
@@ -53,9 +52,8 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     isEqual,
   );
 
-  const { viewer } = useCesium();
-  const entity = viewer ? findEntity(viewer, layer?.id, feature?.id) : undefined;
-  const tag = getTag(entity);
+  const entityRef = useRef<CesiumComponentRef<Entity>>(null);
+  const tag = getTag(entityRef.current?.cesiumElement);
 
   const material = useMemo(
     () =>
@@ -79,6 +77,7 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
       id={id}
       layerId={layer?.id}
       featureId={feature?.id}
+      ref={entityRef}
       availability={availability}
       properties={feature?.properties}
       hideIndicator={hideIndicator}>
