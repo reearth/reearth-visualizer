@@ -13,7 +13,6 @@ const TextBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...p
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src],
   );
-  console.log(block);
 
   return (
     <BlockWrapper

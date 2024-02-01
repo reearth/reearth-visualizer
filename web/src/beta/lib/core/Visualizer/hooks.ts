@@ -161,6 +161,7 @@ export default function useHooks(
                 name: "Image",
                 pluginId: "reearth",
                 extensionId: "imageInfoboxBlock",
+                propertyId: "sadfl333322211",
                 property: {
                   default: {
                     src: {
@@ -189,12 +190,43 @@ export default function useHooks(
                 name: "Text",
                 pluginId: "reearth",
                 extensionId: "textInfoboxBlock",
+                propertyId: "sadfl333322112",
                 property: {
                   default: {
                     src: {
                       value: "https://www.w3schools.com/w3images/lights.jpg",
                       type: "text",
                       title: "Text text text",
+                    },
+                  },
+                  panel: {
+                    padding: {
+                      title: "PADDDING!@#",
+                      type: "spacing",
+                      max: 100,
+                      value: {
+                        top: 42,
+                        bottom: 2,
+                        left: 2,
+                        right: 2,
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                id: "sadfl3333222",
+                name: "Property",
+                pluginId: "reearth",
+                extensionId: "propertyInfoboxBlock",
+                propertyId: "sadfl3333222",
+                property: {
+                  default: {
+                    displayType: {
+                      choices: ["root", "all", "custom"],
+                      value: "root", // root | all | custom
+                      type: "array",
+                      title: "Display Type",
                     },
                   },
                   panel: {

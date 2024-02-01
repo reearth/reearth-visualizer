@@ -85,8 +85,7 @@ const Wrapper = styled.div`
   gap: 8px;
   padding-left: 4px;
   padding-right: 4px;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  margin: 2px 1px 1px 1px;
   border-radius: 8px;
   background: ${({ theme }) => theme.bg[0]};
 `;

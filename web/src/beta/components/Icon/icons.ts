@@ -7,7 +7,8 @@ import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg?react";
 // Infobox
 import Infobox from "./Icons/infoboxIcon.svg?react";
 import InfoboxImageBlock from "./Icons/imageInfoboxBlock.svg?react";
-import InfoboxTextBlock from "./Icons/textBlock.svg?react";
+import TextBlock from "./Icons/textBlock.svg?react";
+import InfoboxPropertyBlock from "./Icons/propertyInfoboxBlock.svg?react";
 
 // Arrow
 import ArrowUpDown from "./Icons/arrowUpDown.svg?react";
@@ -79,7 +80,6 @@ import Copy from "./Icons/copy.svg?react";
 import GearSix from "./Icons/gearSix.svg?react";
 import PencilSimple from "./Icons/pencilSimple.svg?react";
 import Trash from "./Icons/trash.svg?react";
-import TextStoryBlock from "./Icons/textBlock.svg?react";
 import Edit from "./Icons/storyBlockEdit.svg?react";
 import Exit from "./Icons/exit.svg?react";
 import Settings from "./Icons/settings.svg?react";
@@ -191,9 +191,10 @@ export default {
   padding: Padding,
   infobox: Infobox,
   imageInfoboxBlock: InfoboxImageBlock,
-  textInfoboxBlock: InfoboxTextBlock,
+  textInfoboxBlock: TextBlock,
+  propertyInfoboxBlock: InfoboxPropertyBlock,
   clock: Clock,
-  textStoryBlock: TextStoryBlock,
+  textStoryBlock: TextBlock,
   titleStoryBlock: TitleStoryBlock,
   videoStoryBlock: VideoStoryBlock,
   imageStoryBlock: ImageStoryBlock,

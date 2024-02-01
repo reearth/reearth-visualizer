@@ -317,7 +317,9 @@ const VisualizerWrapper = styled.div<{
 }>`
   flex: 1;
   min-height: 0;
-  border-radius: 4px;
+  padding: 2px;
   width: ${({ visualizerWidth }) =>
-    typeof visualizerWidth === "number" ? `${visualizerWidth}px` : visualizerWidth};
+    typeof visualizerWidth === "number"
+      ? `calc(${visualizerWidth} - 4px)`
+      : `calc(${visualizerWidth} - 4px)`};
 `;
