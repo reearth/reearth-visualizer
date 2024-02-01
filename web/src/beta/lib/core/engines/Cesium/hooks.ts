@@ -361,8 +361,6 @@ export default ({
     const tag = getTag(entity);
     if (entity instanceof Entity && !tag?.hideIndicator) {
       viewer.selectedEntity = entity;
-    } else {
-      viewer.selectedEntity = undefined;
     }
 
     prevSelectedEntity.current = entity;
@@ -540,15 +538,6 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
-      const entity =
-        findEntity(viewer, undefined, selectedLayerId?.featureId) ||
-        findEntity(viewer, selectedLayerId?.layerId);
-
-      const tag = getTag(entity);
-      if (!entity || (entity instanceof Entity && tag?.hideIndicator)) {
-        viewer.selectedEntity = undefined;
-      }
-
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
         const layer = tag?.layerId
@@ -574,8 +563,6 @@ export default ({
         prevSelectedEntity.current = target.id;
         if (target.id instanceof Entity && !tag?.hideIndicator) {
           viewer.selectedEntity = target.id;
-        } else {
-          viewer.selectedEntity = undefined;
         }
         return;
       }
@@ -700,19 +687,9 @@ export default ({
         }
       }
 
-      if (!entity || (entity instanceof Entity && tag?.hideIndicator)) {
-        viewer.selectedEntity = undefined;
-      }
       onLayerSelect?.();
     },
-    [
-      onLayerSelect,
-      mouseEventHandles,
-      layersRef,
-      featureFlags,
-      selectedLayerId?.featureId,
-      selectedLayerId?.layerId,
-    ],
+    [onLayerSelect, mouseEventHandles, layersRef, featureFlags],
   );
 
   // E2E test
