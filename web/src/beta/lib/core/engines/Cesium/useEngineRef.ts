@@ -365,7 +365,7 @@ export default function useEngineRef(
           camera?.cancelFlight();
         };
       },
-      rotateCameraOnCenter: (radian: number) => {
+      rotateOnCenter: (radian: number) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         const scene = viewer.scene;
@@ -377,7 +377,10 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         if (options?.withoutAnimation) {
-          return lookAtWithoutAnimation(viewer.scene, { ...getCamera(viewer), ...camera });
+          return lookAtWithoutAnimation(viewer.scene, {
+            ...getCamera(viewer),
+            ...camera,
+          });
         }
         cancelCameraFlight.current?.();
         cancelCameraFlight.current = lookAt(

@@ -298,16 +298,20 @@ export default function ({
   const flyToBBox = useCallback(
     (
       bbox: [number, number, number, number],
-      options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+      options?: CameraOptions & {
+        heading?: number;
+        pitch?: number;
+        range?: number;
+      },
     ) => {
       return engineRef?.flyToBBox(bbox, options);
     },
     [engineRef],
   );
 
-  const rotateCameraOnCenter = useCallback(
+  const rotateOnCenter = useCallback(
     (radian: number) => {
-      return engineRef?.rotateCameraOnCenter(radian);
+      return engineRef?.rotateOnCenter(radian);
     },
     [engineRef],
   );
@@ -484,7 +488,7 @@ export default function ({
         layersInViewport,
         flyTo,
         flyToBBox,
-        rotateCameraOnCenter,
+        rotateOnCenter,
         lookAt,
         zoomIn,
         zoomOut,
@@ -549,7 +553,7 @@ export default function ({
       layersInViewport,
       flyTo,
       flyToBBox,
-      rotateCameraOnCenter,
+      rotateOnCenter,
       lookAt,
       zoomIn,
       zoomOut,
