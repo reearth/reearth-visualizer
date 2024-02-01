@@ -10,6 +10,7 @@ import {
   type TickEventCallback,
 } from "@reearth/beta/lib/core/Map";
 
+import { SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
 
@@ -21,7 +22,15 @@ import usePluginInstances from "./usePluginInstances";
 
 export type SelectedReearthEventType = Pick<
   ReearthEventType,
-  "cameramove" | "select" | "tick" | "timelinecommit" | "resize" | keyof MouseEvents | "layeredit"
+  | "cameramove"
+  | "select"
+  | "tick"
+  | "timelinecommit"
+  | "resize"
+  | keyof MouseEvents
+  | "layeredit"
+  | "sketchfeaturecreated"
+  | "sketchtypechange"
 >;
 
 export default function ({
@@ -44,6 +53,8 @@ export default function ({
   useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
+  onPluginSketchFeatureCreated,
+  onSketchTypeChange,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
 
@@ -137,6 +148,14 @@ export default function ({
       () => ({ mode: interactionMode, override: overrideInteractionMode }),
       [interactionMode, overrideInteractionMode],
     ),
+  );
+  const getSketch = useCallback(
+    () => ({
+      setType: (type: SketchType | undefined) => mapRef?.current?.sketch?.setType(type, "plugin"),
+      setColor: mapRef?.current?.sketch?.setColor,
+      setDefaultAppearance: mapRef?.current?.sketch?.setDefaultAppearance,
+    }),
+    [mapRef],
   );
   const getPluginInstances = useGet(pluginInstances);
   const getViewport = useGet(viewport as Viewport);
@@ -426,6 +445,13 @@ export default function ({
     [layersRef],
   );
 
+  const selectFeature = useCallback(
+    (layerId: string | undefined, featureId: string | undefined) => {
+      layersRef?.selectFeature(layerId, featureId);
+    },
+    [layersRef],
+  );
+
   const selectFeatures = useCallback(
     (layers: { layerId?: string; featureId?: string[] }[]) => {
       layersRef?.selectFeatures(layers);
@@ -472,6 +498,7 @@ export default function ({
         tags: getTags,
         camera: getCamera,
         clock: getClock,
+        sketch: getSketch,
         interactionMode: getInteractionMode,
         pluginInstances: getPluginInstances,
         viewport: getViewport,
@@ -482,6 +509,7 @@ export default function ({
         hideLayer,
         addLayer,
         selectLayer,
+        selectFeature,
         selectFeatures,
         overrideLayerProperty,
         overrideSceneProperty: overrideScenePropertyCommon,
@@ -537,6 +565,7 @@ export default function ({
       getTags,
       getCamera,
       getClock,
+      getSketch,
       getInteractionMode,
       getPluginInstances,
       getViewport,
@@ -547,6 +576,7 @@ export default function ({
       hideLayer,
       addLayer,
       selectLayer,
+      selectFeature,
       selectFeatures,
       overrideLayerProperty,
       overrideScenePropertyCommon,
@@ -671,7 +701,21 @@ export default function ({
     onTimelineCommitEvent(e => {
       emit("timelinecommit", e);
     });
-  }, [emit, onMouseEvent, onLayerEdit, onTickEvent, onTimelineCommitEvent]);
+    onPluginSketchFeatureCreated(e => {
+      emit("sketchfeaturecreated", e);
+    });
+    onSketchTypeChange(e => {
+      emit("sketchtypechange", e);
+    });
+  }, [
+    emit,
+    onMouseEvent,
+    onLayerEdit,
+    onTickEvent,
+    onTimelineCommitEvent,
+    onPluginSketchFeatureCreated,
+    onSketchTypeChange,
+  ]);
 
   // expose plugin API for developers
   useEffect(() => {

@@ -17,12 +17,16 @@ const LayerData: React.FC<Props> = ({ selectedLayer }) => {
           {selectedLayer.config?.data?.type}
         </StyledText>
       </ValueWrapper>
-      <Text size="body">{t("Resource URL")}</Text>
-      <ValueWrapper>
-        <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
-          {selectedLayer.config?.data?.url}
-        </StyledText>
-      </ValueWrapper>
+      {!!selectedLayer.config?.data?.url && (
+        <>
+          <Text size="body">{t("Resource URL")}</Text>
+          <ValueWrapper>
+            <StyledText size="body" otherProperties={{ userSelect: "auto" }}>
+              {selectedLayer.config?.data?.url}
+            </StyledText>
+          </ValueWrapper>
+        </>
+      )}
     </Wrapper>
   );
 };
