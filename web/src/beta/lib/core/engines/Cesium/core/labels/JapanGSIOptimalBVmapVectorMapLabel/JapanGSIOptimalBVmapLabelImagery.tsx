@@ -103,7 +103,10 @@ function resolveStyle(code: number, style?: AnnotationStyle): Partial<LabelOptio
     typeStyle,
   );
   const convertedStyle = Object.fromEntries(
-    Object.entries(mergedStyle).map(([k, v]) => [k, isColor(v) ? toColor(v) : v]),
+    Object.entries(mergedStyle).map(([k, v]) => [
+      k,
+      typeof v === "string" && isColor(v) ? toColor(v) : v,
+    ]),
   );
   return {
     scaleByDistance,
