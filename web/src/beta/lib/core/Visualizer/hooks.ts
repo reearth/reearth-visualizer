@@ -17,8 +17,10 @@ import type {
   ComputedLayer,
   SceneProperty,
   LayerEditEvent,
+  CursorType,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
+import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
 import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
@@ -39,6 +41,7 @@ export default function useHooks(
     onInteractionModeChange,
     onZoomToLayer,
     onLayerDrop,
+    onSketchTypeChangeProp,
   }: {
     camera?: Camera;
     interactionMode?: InteractionModeType;
@@ -57,6 +60,7 @@ export default function useHooks(
     onInteractionModeChange?: (mode: InteractionModeType) => void;
     onZoomToLayer?: (layerId: string | undefined) => void;
     onLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
+    onSketchTypeChangeProp?: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   },
   ref: Ref<MapRef | null>,
 ) {
@@ -267,6 +271,13 @@ export default function useHooks(
   );
   const interactionMode = _interactionMode || "default";
 
+  const [cursor, setCursor] = useState<CursorType>("auto");
+  useEffect(() => {
+    setCursor(
+      interactionMode === "sketch" ? "crosshair" : interactionMode === "move" ? "grab" : "auto",
+    );
+  }, [interactionMode]);
+
   // feature flags
   const featureFlags = INTERACTION_MODES[interactionMode];
 
@@ -282,6 +293,27 @@ export default function useHooks(
   const handleLayerEdit = useCallback((e: LayerEditEvent) => {
     onLayerEditRef.current?.(e);
   }, []);
+
+  // plugin sketch feature events
+  const onPluginSketchFeatureCreatedCallbacksRef = useRef<SketchEventCallback[]>([]);
+  const onPluginSketchFeatureCreated = useCallback((cb: SketchEventCallback) => {
+    onPluginSketchFeatureCreatedCallbacksRef.current.push(cb);
+  }, []);
+  const handlePluginSketchFeatureCreated = useCallback((props: SketchEventProps) => {
+    onPluginSketchFeatureCreatedCallbacksRef.current.forEach(fn => fn(props));
+  }, []);
+
+  const onSketchTypeChangeCallbacksRef = useRef<((type: SketchType | undefined) => void)[]>([]);
+  const onSketchTypeChange = useCallback((cb: (type: SketchType | undefined) => void) => {
+    onSketchTypeChangeCallbacksRef.current.push(cb);
+  }, []);
+  const handleSketchTypeChange = useCallback(
+    (type: SketchType | undefined, from?: "editor" | "plugin") => {
+      onSketchTypeChangeCallbacksRef.current.forEach(fn => fn(type));
+      onSketchTypeChangeProp?.(type, from);
+    },
+    [onSketchTypeChangeProp],
+  );
 
   // zoom to layer
   useEffect(() => {
@@ -337,6 +369,7 @@ export default function useHooks(
     isLayerDragging,
     shouldRender,
     timelineManagerRef,
+    cursor,
     overrideSceneProperty,
     handleLayerSelect,
     handleLayerDrag,
@@ -345,6 +378,10 @@ export default function useHooks(
     onLayerEdit,
     handleCameraChange: changeCamera,
     handleInteractionModeChange: changeInteractionMode,
+    onPluginSketchFeatureCreated,
+    handlePluginSketchFeatureCreated,
+    onSketchTypeChange,
+    handleSketchTypeChange,
   };
 }
 

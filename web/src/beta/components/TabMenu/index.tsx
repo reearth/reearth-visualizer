@@ -57,7 +57,6 @@ export default TabMenu;
 const Wrapper = styled.div<{ menuAlignment?: menuAlignment }>`
   display: ${({ menuAlignment }) => (menuAlignment === "top" ? "flex" : "grid")};
   grid-template-columns: 28px 1fr;
-  height: 100%;
   flex-flow: column nowrap;
   position: relative;
   background: ${({ theme }) => theme.bg[1]};

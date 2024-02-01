@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Cartesian3, PolygonHierarchy } from "cesium";
+import { Cartesian3, Entity as CesiumEntity, PolygonHierarchy } from "cesium";
 import { isEqual } from "lodash-es";
-import { useEffect, useMemo } from "react";
-import { Entity, PolygonGraphics, PolylineGraphics } from "resium";
+import { useEffect, useMemo, useRef } from "react";
+import { CesiumComponentRef, Entity, PolygonGraphics, PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Polygon as PolygonValue, toColor } from "@reearth/beta/utils/value";
@@ -16,6 +16,7 @@ import {
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
+  getTag,
 } from "../utils";
 
 export type Props = FeatureProps<Property> & {
@@ -106,11 +107,29 @@ export default function Polygon({
     () => (stroke ? toColor(strokeColor) : undefined),
     [stroke, strokeColor],
   );
-  const memoFillColor = useMemo(() => (fill ? toColor(fillColor) : undefined), [fill, fillColor]);
+
+  const entityRef = useRef<CesiumComponentRef<CesiumEntity>>(null);
+  const tag = getTag(entityRef.current?.cesiumElement);
+
+  const memoFillColor = useMemo(
+    () =>
+      fill
+        ? tag?.isFeatureSelected && typeof layer?.["polygon"]?.selectedFeatureColor === "string"
+          ? toColor(layer["polygon"]?.selectedFeatureColor)
+          : toColor(fillColor)
+        : undefined,
+    [fill, fillColor, layer?.id, feature?.id, tag?.isFeatureSelected],
+  );
+
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
     () => toDistanceDisplayCondition(property?.near, property?.far),
     [property?.near, property?.far],
+  );
+
+  const extrudedHeightProperty: { extrudedHeight: number } | undefined = useMemo(
+    () => (extrudedHeight ? { extrudedHeight } : undefined),
+    [extrudedHeight],
   );
 
   useEffect(() => {
@@ -123,6 +142,7 @@ export default function Polygon({
         id={id}
         layerId={layer?.id}
         featureId={feature?.id}
+        ref={entityRef}
         availability={availability}
         properties={feature?.properties}
         hideIndicator={hideIndicator}>
@@ -135,9 +155,9 @@ export default function Polygon({
           outlineWidth={strokeWidth}
           heightReference={heightReference(hr)}
           shadows={shadowMode(shadows)}
-          extrudedHeight={extrudedHeight}
           distanceDisplayCondition={distanceDisplayCondition}
           classificationType={classificationType(ct)}
+          {...extrudedHeightProperty}
         />
       </EntityExt>
       {/* workaround */}

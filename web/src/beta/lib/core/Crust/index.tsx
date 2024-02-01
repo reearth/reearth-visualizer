@@ -4,6 +4,7 @@ import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { LayerEditEvent, LayerSelectionReason } from "../Map";
+import { SketchEventCallback, SketchType } from "../Map/Sketch/types";
 import type { TimelineManagerRef } from "../Map/useTimelineManager";
 import type { Viewport } from "../Visualizer";
 
@@ -104,6 +105,8 @@ export type Props = {
   onBlockDelete?: (blockId?: string) => Promise<void>;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
+  onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
+  onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
 };
 
 export default function Crust({
@@ -141,6 +144,8 @@ export default function Crust({
   onBlockDelete,
   overrideSceneProperty,
   onLayerEdit,
+  onPluginSketchFeatureCreated,
+  onSketchTypeChange,
 }: Props): JSX.Element | null {
   const {
     shownPluginModalInfo,
@@ -181,6 +186,8 @@ export default function Crust({
       useExperimentalSandbox={useExperimentalSandbox}
       overrideInteractionMode={overrideInteractionMode}
       overrideSceneProperty={overrideSceneProperty}
+      onSketchTypeChange={onSketchTypeChange}
+      onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       onLayerEdit={onLayerEdit}>
       <ModalContainer
         ref={pluginModalContainerRef}

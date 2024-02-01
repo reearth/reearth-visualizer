@@ -119,6 +119,18 @@ import UploadZipPlugin from "./Icons/uploadZipPlugin.svg?react";
 import PublicGitHubRepo from "./Icons/publicGitHubRepo.svg?react";
 import Marketplace from "./Icons/marketplace.svg?react";
 
+// Sketch
+import Pointer from "./Icons/pointer.svg?react";
+import Sketch from "./Icons/sketch.svg?react";
+import Marker from "./Icons/marker.svg?react";
+import Polyline from "./Icons/polyline.svg?react";
+import SquareOutline from "./Icons/squareOutline.svg?react";
+import CircleOutline from "./Icons/circleOutline.svg?react";
+import Polygon from "./Icons/polygon.svg?react";
+import Box from "./Icons/box.svg?react";
+import Cylinder from "./Icons/cylinder.svg?react";
+import PolygonExtruded from "./Icons/polygonExtruded.svg?react";
+
 export default {
   layer: LayerIcon,
   addLayerStyle: AddLayerStyleButtonIcon,
@@ -211,4 +223,14 @@ export default {
   uploadSimple: UploadSimple,
   search: Search,
   checkCircle: CheckCircle,
+  pointer: Pointer,
+  sketch: Sketch,
+  marker: Marker,
+  polyline: Polyline,
+  polygon: Polygon,
+  box: Box,
+  cylinder: Cylinder,
+  squareOutline: SquareOutline,
+  circleOutline: CircleOutline,
+  polygonExtruded: PolygonExtruded,
 };

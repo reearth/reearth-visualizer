@@ -22,8 +22,8 @@ import {
 import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox/OldInfobox";
 import { ComputedFeature, DefaultInfobox } from "@reearth/beta/lib/core/Map";
 
-import { getTag } from "./Feature";
-import type { InternalCesium3DTileFeature } from "./types";
+import { getTag } from "../Feature";
+import type { InternalCesium3DTileFeature } from "../types";
 
 export const convertCartesian3ToPosition = (
   cesium?: CesiumViewer,

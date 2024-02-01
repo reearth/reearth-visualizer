@@ -1,6 +1,8 @@
 import { MutableRefObject } from "react";
 
+import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
+import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
 import StoryPanel, {
   StoryPanelRef,
@@ -20,6 +22,7 @@ export type Props = {
   isBuilt?: boolean;
   inEditor?: boolean;
   currentCamera?: Camera;
+  interactionMode?: InteractionModeType;
   // storytelling
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
@@ -27,6 +30,8 @@ export type Props = {
   installableBlocks?: InstallableStoryBlock[];
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
+  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
 };
 
 const Visualizer: React.FC<Props> = ({
@@ -35,12 +40,15 @@ const Visualizer: React.FC<Props> = ({
   isBuilt,
   inEditor,
   currentCamera,
+  interactionMode,
   storyPanelRef,
   showStoryPanel,
   selectedStory,
   installableBlocks,
   onStoryBlockMove,
   onCameraChange,
+  onSketchTypeChange,
+  onSketchFeatureCreate,
 }) => {
   const {
     rootLayerId,
@@ -98,6 +106,7 @@ const Visualizer: React.FC<Props> = ({
         useExperimentalSandbox={useExperimentalSandbox}
         camera={currentCamera}
         storyPanelPosition={story?.position}
+        interactionMode={interactionMode}
         onCameraChange={onCameraChange}
         onLayerSelect={handleLayerSelect}
         onLayerDrop={handleLayerDrop}
@@ -107,6 +116,8 @@ const Visualizer: React.FC<Props> = ({
         onBlockMove={handleInfoboxBlockMove}
         onBlockDelete={handleInfoboxBlockRemove}
         onZoomToLayer={zoomToLayer}
+        onSketchTypeChange={onSketchTypeChange}
+        onSketchFeatureCreate={onSketchFeatureCreate}
         onMount={handleMount}>
         {showStoryPanel && (
           <StoryPanel

@@ -25,6 +25,7 @@ import Map, {
   type ComputedLayer,
 } from "../Map";
 import { Ref as MapRef } from "../Map";
+import { SketchFeature, SketchType } from "../Map/Sketch/types";
 import { Position } from "../StoryPanel/types";
 
 import { VisualizerProvider } from "./context";
@@ -94,6 +95,9 @@ export type Props = {
   onBlockDelete?: (id?: string) => Promise<void>;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
+  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onInteractionModeChange?: (mode: InteractionModeType) => void;
 } & ExternalPluginProps;
 
 const Visualizer = memo(
@@ -137,7 +141,10 @@ const Visualizer = memo(
         onBlockMove,
         onBlockDelete,
         onZoomToLayer,
+        onInteractionModeChange,
         onMount,
+        onSketchTypeChange: onSketchTypeChangeProp,
+        onSketchFeatureCreate,
       },
       ref: Ref<MapRef | null>,
     ) => {
@@ -159,6 +166,7 @@ const Visualizer = memo(
         shouldRender,
         timelineManagerRef,
         overrideSceneProperty,
+        cursor,
         handleLayerSelect,
         handleLayerDrag,
         handleLayerDrop,
@@ -166,6 +174,10 @@ const Visualizer = memo(
         onLayerEdit,
         handleCameraChange,
         handleInteractionModeChange,
+        onPluginSketchFeatureCreated,
+        handlePluginSketchFeatureCreated,
+        onSketchTypeChange,
+        handleSketchTypeChange,
       } = useHooks(
         {
           rootLayerId,
@@ -179,6 +191,8 @@ const Visualizer = memo(
           onCameraChange,
           onZoomToLayer,
           onLayerDrop,
+          onInteractionModeChange,
+          onSketchTypeChangeProp,
         },
         ref,
       );
@@ -229,6 +243,8 @@ const Visualizer = memo(
                   onBlockMove={onBlockMove}
                   onBlockDelete={onBlockDelete}
                   onLayerEdit={onLayerEdit}
+                  onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
+                  onSketchTypeChange={onSketchTypeChange}
                 />
                 <Map
                   ref={mapRef}
@@ -251,11 +267,18 @@ const Visualizer = memo(
                   small={small}
                   ready={ready}
                   timelineManagerRef={timelineManagerRef}
+                  interactionMode={interactionMode}
+                  selectedFeature={selectedFeature}
+                  cursor={cursor}
                   onCameraChange={handleCameraChange}
                   onLayerDrag={handleLayerDrag}
                   onLayerDrop={handleLayerDrop}
                   onLayerSelect={handleLayerSelect}
                   onLayerEdit={handleLayerEdit}
+                  overrideInteractionMode={handleInteractionModeChange}
+                  onSketchFeatureCreate={onSketchFeatureCreate}
+                  onPluginSketchFeatureCreated={handlePluginSketchFeatureCreated}
+                  onSketchTypeChange={handleSketchTypeChange}
                   onMount={onMount}
                 />
               </Filled>

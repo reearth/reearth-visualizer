@@ -17,6 +17,7 @@ import SketchLayerManager from "./SketchLayerManager";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 import useScene from "./useScene";
+import useSketch from "./useSketch";
 
 type Props = {
   sceneId: string;
@@ -172,6 +173,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerStyleSelect: handleLayerStyleSelected,
   });
 
+  const { sketchType, handleSketchTypeChange, handleSketchFeatureCreate } = useSketch({
+    tab,
+    nlsLayers,
+    selectedLayer,
+    visualizerRef,
+    handleLayerConfigUpdate,
+  });
+
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     sceneId,
@@ -179,6 +188,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
+    sketchType,
+    isSketchLayerSelected: !!selectedLayer?.config?.data?.isSketchLayer,
+    handleSketchTypeChange,
     handleProjectTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
@@ -222,6 +234,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   currentCamera={currentCamera}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
+                  onSketchTypeChange={handleSketchTypeChange}
+                  onSketchFeatureCreate={handleSketchFeatureCreate}
                 />
               </VisualizerWrapper>
               {bottomPanel && (

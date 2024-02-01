@@ -1,8 +1,10 @@
 import { ReactNode, useMemo } from "react";
 
+import Toolbar from "@reearth/beta/features/Editor/tabs/map/Toolbar";
 import PublishNav, { type ProjectType } from "@reearth/beta/features/Editor/tabs/publish/Nav";
 import WidgetNav, { type Device } from "@reearth/beta/features/Editor/tabs/widgets/Nav";
 import { Tab } from "@reearth/beta/features/Navbar";
+import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 
 type Props = {
   tab: Tab;
@@ -11,6 +13,9 @@ type Props = {
   showWidgetEditor?: boolean;
   selectedDevice: Device;
   selectedProjectType?: ProjectType;
+  sketchType: SketchType | undefined;
+  isSketchLayerSelected: boolean;
+  handleSketchTypeChange: (tool: SketchType | undefined) => void;
   handleProjectTypeChange: (type: ProjectType) => void;
   handleDeviceChange: (device: Device) => void;
   handleWidgetEditorToggle: () => void;
@@ -23,6 +28,9 @@ export default ({
   showWidgetEditor,
   selectedDevice,
   selectedProjectType,
+  sketchType,
+  isSketchLayerSelected,
+  handleSketchTypeChange,
   handleProjectTypeChange,
   handleDeviceChange,
   handleWidgetEditorToggle,
@@ -48,6 +56,13 @@ export default ({
           />
         );
       case "map":
+        return (
+          <Toolbar
+            enable={isSketchLayerSelected}
+            sketchType={sketchType}
+            onSketchTypeChange={handleSketchTypeChange}
+          />
+        );
       case "story":
       default:
         return undefined;
@@ -59,6 +74,9 @@ export default ({
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
+    sketchType,
+    isSketchLayerSelected,
+    handleSketchTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
     handleProjectTypeChange,

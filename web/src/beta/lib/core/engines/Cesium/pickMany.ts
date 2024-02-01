@@ -15,7 +15,7 @@ import invariant from "tiny-invariant";
 import { ComputedFeature } from "../../Map";
 import { assertType } from "../../utils";
 
-import { convertObjToComputedFeature, getPixelRatio } from "./utils";
+import { convertObjToComputedFeature, getPixelRatio } from "./utils/utils";
 
 declare module "@cesium/engine" {
   // eslint-disable-next-line @typescript-eslint/no-namespace

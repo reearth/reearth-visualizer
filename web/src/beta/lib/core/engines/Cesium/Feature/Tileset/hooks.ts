@@ -44,7 +44,7 @@ import {
   convertCesium3DTileFeatureProperties,
   lookupFeatures,
   translationWithClamping,
-} from "../../utils";
+} from "../../utils/utils";
 import { useContext } from "../context";
 import {
   usePick,
