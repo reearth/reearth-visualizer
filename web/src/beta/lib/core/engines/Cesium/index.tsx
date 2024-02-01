@@ -28,6 +28,7 @@ import Feature, { context as featureContext } from "./Feature";
 import useHooks from "./hooks";
 import { AmbientOcclusion, AmbientOcclusionOutputType } from "./PostProcesses/hbao";
 import { AMBIENT_OCCLUSION_QUALITY } from "./PostProcesses/hbao/config";
+import Sketch from "./Sketch";
 
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   {
@@ -231,5 +232,6 @@ export const engine: Engine = {
   component: Component,
   featureComponent: Feature,
   clusterComponent: Cluster,
+  sketchComponent: Sketch,
   delegatedDataTypes: ["czml", "wms", "mvt", "3dtiles", "osm-buildings", "kml"],
 };

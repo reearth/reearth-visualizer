@@ -13,7 +13,10 @@ const layers: Layer[] = [
     type: "simple",
     data: {
       type: "geojson",
-      value: { type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } },
+      value: {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [0, 0] },
+      },
     },
     marker: {
       imageColor: "#fff",
@@ -34,7 +37,10 @@ const layers: Layer[] = [
     type: "simple",
     data: {
       type: "geojson",
-      value: { type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } },
+      value: {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [0, 0] },
+      },
     },
     marker: {
       imageColor: "#fff",
@@ -55,7 +61,10 @@ const layers: Layer[] = [
     type: "simple",
     data: {
       type: "geojson",
-      value: { type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } },
+      value: {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [0, 0] },
+      },
     },
     marker: {
       imageColor: "#fff",
@@ -106,6 +115,7 @@ export const context: Context = {
       hide: act("layers.hide"),
       show: act("layers.show"),
       select: act("layers.select"),
+      selectFeature: act("layers.selectFeature"),
       selectFeatures: act("layers.selectFeatures"),
       add: act("layers.add"),
       findById: act("layers.findById"),
@@ -137,6 +147,7 @@ export const context: Context = {
       enableScreenSpaceController: act("enableScreenSpaceController"),
       flyTo: act("flyTo"),
       flyToBBox: act("flyToBBox"),
+      rotateOnCenter: act("rotateOnCenter"),
       lookAt: act("lookAt"),
       zoomIn: act("zoomIn"),
       zoomOut: act("zoomOut"),
@@ -171,6 +182,7 @@ export const context: Context = {
       isMobile: false,
       query: {},
     },
+    sketch: {} as any,
     on: act("on"),
     off: act("off"),
     once: act("once"),

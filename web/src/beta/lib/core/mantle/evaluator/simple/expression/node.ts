@@ -189,6 +189,8 @@ export class Node {
       property = feature.properties[String(this._value)];
     } else if (String(this._value) === "id") {
       property = feature?.id;
+    } else if (feature && String(this._value) === "rootProperties") {
+      property = feature.properties;
     }
     if (typeof property === "undefined") {
       property = "";

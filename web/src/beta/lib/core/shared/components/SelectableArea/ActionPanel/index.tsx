@@ -1,6 +1,6 @@
 import { Dispatch, MouseEvent, SetStateAction } from "react";
 
-import ActionPanel, { type ActionPosition } from "../../../../ActionPanel";
+import ActionPanelUI, { type ActionPosition } from "../../ActionPanel";
 
 import useHooks from "./hooks";
 
@@ -14,7 +14,7 @@ type Props = {
   showPadding?: boolean;
   editMode?: boolean;
   propertyId?: string;
-  panelSettings?: any;
+  contentSettings?: any;
   dndEnabled?: boolean;
   position?: ActionPosition;
   overrideGroupId?: string;
@@ -46,37 +46,45 @@ type Props = {
   ) => Promise<void>;
 };
 
-const BlockActionPanel: React.FC<Props> = ({
+const ActionPanel: React.FC<Props> = ({
   title,
   icon,
   isSelected,
   editMode,
   dndEnabled,
-  panelSettings,
+  contentSettings,
+  setShowPadding,
   onEditModeToggle,
   onSettingsToggle,
+  onRemove,
   ...actionProps
 }) => {
-  const { actionItems } = useHooks({
+  const { dndItemContextRef, settingsTitle, popoverContent, actionItems } = useHooks({
     title,
     icon,
     isSelected,
     editMode,
-    panelSettings,
+    contentSettings,
+    setShowPadding,
     onEditModeToggle,
     onSettingsToggle,
+    onRemove,
   });
 
   return (
-    <ActionPanel
+    <ActionPanelUI
+      ref={dndItemContextRef}
       dndEnabled={dndEnabled}
       isSelected={isSelected}
       actionItems={actionItems}
-      panelSettings={panelSettings}
+      contentSettings={contentSettings}
+      settingsTitle={settingsTitle}
+      popoverContent={popoverContent}
+      setShowPadding={setShowPadding}
       onSettingsToggle={onSettingsToggle}
       {...actionProps}
     />
   );
 };
 
-export default BlockActionPanel;
+export default ActionPanel;

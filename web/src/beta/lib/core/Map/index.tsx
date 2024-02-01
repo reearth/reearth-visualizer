@@ -4,6 +4,7 @@ import { INTERACTION_MODES } from "../Crust";
 
 import useHooks, { MapRef } from "./hooks";
 import Layers, { type Props as LayersProps } from "./Layers";
+import Sketch, { SketchProps } from "./Sketch";
 import type { Engine, EngineProps } from "./types";
 
 export * from "./types";
@@ -25,6 +26,8 @@ export type {
 
 export type { MapRef as Ref } from "./hooks";
 
+export type CursorType = "auto" | "grab" | "crosshair";
+
 export type Props = {
   engines?: Record<string, Engine>;
   engine?: string;
@@ -32,7 +35,10 @@ export type Props = {
   LayersProps,
   "Feature" | "clusterComponent" | "selectionReason" | "delegatedDataTypes" | "selectedLayerId"
 > &
-  Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId">;
+  Omit<EngineProps, "onLayerSelect" | "layerSelectionReason" | "selectedLayerId"> &
+  Omit<SketchProps, "layersRef" | "engineRef" | "SketchComponent"> & {
+    cursor?: CursorType;
+  };
 
 function Map(
   {
@@ -46,7 +52,14 @@ function Map(
     overrides,
     timelineManagerRef,
     sceneProperty,
+    interactionMode,
+    selectedFeature,
+    cursor,
     onLayerSelect,
+    overrideInteractionMode,
+    onSketchTypeChange,
+    onSketchFeatureCreate,
+    onPluginSketchFeatureCreated,
     featureFlags = INTERACTION_MODES.default,
     ...props
   }: Props,
@@ -57,6 +70,7 @@ function Map(
   const {
     engineRef,
     layersRef,
+    sketchRef,
     selectedLayer,
     requestingRenderMode,
     handleLayerSelect,
@@ -65,6 +79,7 @@ function Map(
     ref,
     sceneProperty,
     timelineManagerRef,
+    cursor,
     onLayerSelect,
   });
 
@@ -108,6 +123,19 @@ function Map(
         sceneProperty={props.property}
         requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
+      />
+      <Sketch
+        ref={sketchRef}
+        layersRef={layersRef}
+        engineRef={engineRef}
+        interactionMode={interactionMode}
+        selectedFeature={selectedFeature}
+        SketchComponent={currentEngine?.sketchComponent}
+        onLayerSelect={handleLayerSelect}
+        overrideInteractionMode={overrideInteractionMode}
+        onSketchTypeChange={onSketchTypeChange}
+        onSketchFeatureCreate={onSketchFeatureCreate}
+        onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       />
     </Engine>
   ) : null;
