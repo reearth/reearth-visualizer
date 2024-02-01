@@ -7,4 +7,5 @@ export const GAP_DEFAULT_VALUE = 10;
 
 // Infobox Blocks
 export const IMAGE_BUILTIN_INFOBOX_BLOCK_ID = "reearth/imageInfoboxBlock";
+export const TEXT_BUILTIN_INFOBOX_BLOCK_ID = "reearth/textInfoboxBlock";
 export const PROPERTY_BUILTIN_INFOBOX_BLOCK_ID = "reearth/propertyInfoboxBlock";

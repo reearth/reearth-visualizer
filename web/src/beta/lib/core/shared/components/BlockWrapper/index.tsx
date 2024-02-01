@@ -167,7 +167,6 @@ const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelec
     isEditable && !disableSelection ? "pointer" : "default"};
   color: black;
   position: relative;
-  text-wrap: wrap;
 `;
 
 const EditorPanel = styled.div`

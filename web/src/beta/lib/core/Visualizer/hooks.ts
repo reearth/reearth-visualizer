@@ -185,10 +185,32 @@ export default function useHooks(
                 },
               },
               {
-                id: "asdfasdf22",
-                name: "Image 2",
+                id: "sadfl3333",
+                name: "Text",
                 pluginId: "reearth",
-                extensionId: "imageInfoboxBlock",
+                extensionId: "textInfoboxBlock",
+                property: {
+                  default: {
+                    src: {
+                      value: "https://www.w3schools.com/w3images/lights.jpg",
+                      type: "text",
+                      title: "Text text text",
+                    },
+                  },
+                  panel: {
+                    padding: {
+                      title: "PADDDING!@#",
+                      type: "spacing",
+                      max: 100,
+                      value: {
+                        top: 42,
+                        bottom: 2,
+                        left: 2,
+                        right: 2,
+                      },
+                    },
+                  },
+                },
               },
             ],
           },
