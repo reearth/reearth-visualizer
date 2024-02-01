@@ -136,27 +136,17 @@ export default function useHooks(
     [selectedLayer, onLayerSelect],
   );
 
-  // blocks
-  const blocks = useMemo(
-    () =>
-      selectedLayer.layer?.layer?.infobox?.blocks?.map(b => ({
-        ...b,
-        property: b.property?.default ?? b.property,
-      })),
-    [selectedLayer.layer?.layer?.infobox?.blocks],
-  );
-
-  console.log("SL", selectedLayer.layer?.layer?.infobox);
-
   // Infobox
-  const defaultInfobox = selectedLayer.reason?.defaultInfobox;
   const infobox: InfoboxType = useMemo(
     () =>
       selectedLayer.layer?.layer?.infobox
         ? {
-            title: selectedLayer.layer?.layer?.title || defaultInfobox?.title,
+            title: selectedLayer.layer?.layer?.title,
             property: selectedLayer.layer?.layer?.infobox?.property,
-            blocks,
+            blocks: selectedLayer.layer?.layer?.infobox?.blocks?.map(b => ({
+              ...b,
+              property: b.property?.default ?? b.property,
+            })),
           }
         : {
             title: "Test",
@@ -164,19 +154,41 @@ export default function useHooks(
             blocks: [
               {
                 id: "asdfasdf",
-                name: "IMAGE BLOCK",
+                name: "Image",
                 pluginId: "reearth",
                 extensionId: "imageInfoboxBlock",
+                property: {
+                  default: {
+                    src: {
+                      value: "https://www.w3schools.com/w3images/lights.jpg",
+                      type: "url",
+                      title: "ImageT",
+                    },
+                  },
+                  panel: {
+                    padding: {
+                      title: "PADDDING!@#",
+                      type: "spacing",
+                      max: 100,
+                      value: {
+                        top: 2,
+                        bottom: 2,
+                        left: 2,
+                        right: 2,
+                      },
+                    },
+                  },
+                },
               },
               {
                 id: "asdfasdf22",
-                name: "IMAGE BLOCK",
+                name: "Image 2",
                 pluginId: "reearth",
                 extensionId: "imageInfoboxBlock",
               },
             ],
           },
-    [selectedLayer, defaultInfobox, blocks],
+    [selectedLayer],
   );
 
   const timelineManagerRef: TimelineManagerRef = useRef();

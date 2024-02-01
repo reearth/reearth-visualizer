@@ -3,11 +3,12 @@ import { styled } from "@reearth/services/theme";
 
 type Props = {
   icon?: string;
+  height?: number;
 };
 
-const Template: React.FC<Props> = ({ icon }) => {
+const Template: React.FC<Props> = ({ icon, height }) => {
   return (
-    <Wrapper>
+    <Wrapper height={height}>
       <Icon icon={icon ?? "plugin"} size={32} />
     </Wrapper>
   );
@@ -15,9 +16,9 @@ const Template: React.FC<Props> = ({ icon }) => {
 
 export default Template;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ height?: number }>`
   display: flex;
-  height: 255px;
+  height: ${({ height }) => `${height ?? 255}px`};
   justify-content: center;
   align-items: center;
   flex: 1;

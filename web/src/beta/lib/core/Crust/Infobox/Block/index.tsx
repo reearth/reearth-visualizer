@@ -29,7 +29,7 @@ export default function InfoboxBlockComponent({
   );
 
   return Builtin ? (
-    <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />
+    <Builtin {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
     <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}

@@ -35,6 +35,7 @@ export type CommonBlockProps<T = unknown> = {
     left?: number;
     right?: number;
   };
+  minHeight?: number;
   onClick?: () => void;
   onBlockDoubleClick?: () => void;
   onClickAway?: () => void;

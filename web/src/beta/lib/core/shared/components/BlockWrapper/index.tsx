@@ -28,6 +28,7 @@ type Props = {
   property?: any;
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
+  minHeight?: number;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
@@ -64,6 +65,7 @@ const BlockWrapper: React.FC<Props> = ({
   property,
   dndEnabled = true,
   settingsEnabled = true,
+  minHeight,
   onClick,
   onBlockDoubleClick,
   onClickAway,
@@ -125,7 +127,7 @@ const BlockWrapper: React.FC<Props> = ({
           padding={generalBlockSettings?.padding?.value}
           isEditable={isEditable}
           disableSelection={disableSelection}>
-          {children ?? (isEditable && <Template icon={icon} />)}
+          {children ?? (isEditable && <Template icon={icon} height={minHeight} />)}
           {!editMode && isEditable && <Overlay disableSelection={disableSelection} />}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
