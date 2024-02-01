@@ -3,7 +3,10 @@ import { Cesium3DTileset } from "resium";
 
 import type { Cesium3DTilesAppearance, ComputedLayer } from "../../..";
 import { colorBlendModeFor3DTile, shadowMode } from "../../common";
-import { NonPBRLightingShader } from "../../Shaders/CustomShaders/NonPBRLightingShader";
+import {
+  NonPBRLightingShader,
+  NonPBRWithTextureLightingShader,
+} from "../../Shaders/CustomShaders/NonPBRLightingShader";
 import Box from "../Box";
 import { type FeatureComponentConfig, type FeatureProps } from "../utils";
 
@@ -66,7 +69,13 @@ function Tileset({
       <Cesium3DTileset
         ref={ref}
         url={tilesetUrl}
-        customShader={pbr === false ? NonPBRLightingShader : undefined}
+        customShader={
+          pbr === false
+            ? NonPBRLightingShader
+            : pbr === "withTexture"
+            ? NonPBRWithTextureLightingShader
+            : undefined
+        }
         style={style}
         shadows={shadowMode(shadows)}
         clippingPlanes={clippingPlanes}

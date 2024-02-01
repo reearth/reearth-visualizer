@@ -404,6 +404,7 @@ export function commonReearth({
   tags,
   camera,
   clock,
+  sketch,
   interactionMode,
   pluginInstances,
   viewport,
@@ -411,6 +412,7 @@ export function commonReearth({
   selectedFeature,
   layerSelectionReason,
   selectLayer,
+  selectFeature,
   selectFeatures,
   showLayer,
   hideLayer,
@@ -436,6 +438,7 @@ export function commonReearth({
   setView,
   toWindowPosition,
   flyToBBox,
+  rotateOnCenter,
   enableScreenSpaceCameraController,
   lookHorizontal,
   lookVertical,
@@ -459,12 +462,14 @@ export function commonReearth({
   viewport: () => GlobalThis["reearth"]["viewport"];
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
+  sketch: () => GlobalThis["reearth"]["sketch"];
   interactionMode: () => GlobalThis["reearth"]["interactionMode"];
   pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   selectLayer: LayersRef["select"];
+  selectFeature: LayersRef["selectFeature"];
   selectFeatures: LayersRef["selectFeatures"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
@@ -491,6 +496,7 @@ export function commonReearth({
   setView: GlobalThis["reearth"]["camera"]["setView"];
   toWindowPosition: GlobalThis["reearth"]["scene"]["toWindowPosition"];
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
+  rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -540,6 +546,7 @@ export function commonReearth({
         flyToGround,
         setView,
         flyToBBox,
+        rotateOnCenter,
       },
       get property() {
         return sceneProperty?.();
@@ -605,6 +612,7 @@ export function commonReearth({
       flyToGround,
       setView,
       flyToBBox,
+      rotateOnCenter,
     },
     layers: {
       get layersInViewport() {
@@ -612,6 +620,9 @@ export function commonReearth({
       },
       get select() {
         return selectLayer;
+      },
+      get selectFeature() {
+        return selectFeature;
       },
       get selectFeatures() {
         return selectFeatures;
@@ -708,6 +719,9 @@ export function commonReearth({
       get instances() {
         return pluginInstances().meta.current;
       },
+    },
+    get sketch() {
+      return sketch?.();
     },
     ...events,
   };

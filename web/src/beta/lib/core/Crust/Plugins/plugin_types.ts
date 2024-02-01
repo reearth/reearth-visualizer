@@ -20,6 +20,7 @@ import type {
   Feature,
 } from "@reearth/beta/lib/core/Map";
 
+import { SketchAppearance, SketchEventProps, SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
 import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
 import { Block } from "../Infobox";
@@ -102,6 +103,7 @@ export type Reearth = {
   readonly scene: Undefinable<Scene>;
   readonly viewport?: Viewport;
   readonly clientStorage: ClientStorage;
+  readonly sketch: Sketch;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -174,8 +176,13 @@ export type Camera = {
   readonly flyTo: (destination: string | FlyToDestination, options?: CameraOptions) => void;
   readonly flyToBBox: (
     bbox: [number, number, number, number],
-    options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+    options?: CameraOptions & {
+      heading?: number;
+      pitch?: number;
+      range?: number;
+    },
   ) => void;
+  readonly rotateOnCenter: (radian: number) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */
@@ -260,6 +267,8 @@ export type ReearthEventType = {
   modalclose: [];
   popupclose: [];
   pluginmessage: [props: PluginMessage];
+  sketchfeaturecreated: [props: SketchEventProps];
+  sketchtypechange: [props: SketchType | undefined];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -417,6 +426,12 @@ export type ViewportSize = {
 
 export type Viewport = ViewportSize & {
   readonly query: Record<string, string>;
+};
+
+export type Sketch = {
+  readonly setType?: (type: SketchType | undefined) => void;
+  readonly setColor?: (color: string) => void;
+  readonly setDefaultAppearance?: (appearance: SketchAppearance) => void;
 };
 
 /** Cesium API: available only when the plugin is a primitive */

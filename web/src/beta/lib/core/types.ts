@@ -42,3 +42,6 @@ export type LookAtDestination = {
   /** Meters */
   radius?: number;
 };
+
+export type Position2d = [x: number, y: number];
+export type Position3d = [x: number, y: number, z: number];

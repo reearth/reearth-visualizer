@@ -1,3 +1,5 @@
+import { Cartesian3 } from "cesium";
+import { type LineString, type MultiPolygon, type Polygon, type Point } from "geojson";
 import type {
   ForwardRefExoticComponent,
   PropsWithoutRef,
@@ -9,6 +11,7 @@ import type {
 } from "react";
 
 import { PickedFeature } from "../../engines/Cesium/pickMany";
+import { CursorType } from "../../engines/Cesium/types";
 import type {
   LatLngHeight,
   Camera,
@@ -19,14 +22,24 @@ import type {
   Feature,
   ComputedFeature,
   CameraPosition,
+  LUT,
 } from "../../mantle";
-import type { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
+import type {
+  CameraOptions,
+  FlyTo,
+  FlyToDestination,
+  LookAtDestination,
+  Position2d,
+  Position3d,
+} from "../../types";
 import type {
   FeatureComponentType,
   ClusterComponentType,
   LayerSelectionReason,
   Ref as LayersRef,
 } from "../Layers";
+import { SketchComponentType } from "../Sketch";
+import { SketchAppearance, SketchType } from "../Sketch/types";
 import type { TimelineManagerRef } from "../useTimelineManager";
 
 export type {
@@ -60,8 +73,6 @@ export type {
 export * from "./event";
 
 export type EngineRef = {
-  [index in keyof MouseEventHandles]: MouseEventHandles[index];
-} & {
   name: string;
   requestRender: () => void;
   getViewport: () => Rect | undefined;
@@ -96,11 +107,41 @@ export type EngineRef = {
   toWindowPosition: (
     position: [x: number, y: number, z: number],
   ) => [x: number, y: number] | undefined;
+  getExtrudedHeight: (
+    position: [x: number, y: number, z: number],
+    windowPosition: [x: number, y: number],
+  ) => number | undefined;
+  getSurfaceDistance: (point1: Cartesian3, point2: Cartesian3) => number | undefined;
+  equalsEpsilon2d: (
+    point1: Position2d,
+    point2: Position2d,
+    relativeEpsilon: number | undefined,
+    absoluteEpsilon: number | undefined,
+  ) => boolean;
+  equalsEpsilon3d: (
+    point1: Position3d,
+    point2: Position3d,
+    relativeEpsilon: number | undefined,
+    absoluteEpsilon: number | undefined,
+  ) => boolean;
+  createGeometry: ({
+    type,
+    controlPoints,
+  }: {
+    type: SketchType;
+    controlPoints: Position3d[];
+  }) => LineString | Polygon | MultiPolygon | Point | undefined;
+  setCursor: (cursor: CursorType) => void;
   flyTo: FlyTo;
   flyToBBox: (
     bbox: [number, number, number, number],
-    options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+    options?: CameraOptions & {
+      heading?: number;
+      pitch?: number;
+      range?: number;
+    },
   ) => void;
+  rotateOnCenter: (radian: number) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
@@ -121,7 +162,7 @@ export type EngineRef = {
   moveRight: (amount: number) => void;
   moveOverTerrain: (offset?: number) => void;
   flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
-  mouseEventCallbacks: MouseEvents;
+  mouseEventCallbacks: MouseEventCallbacks;
   pause: () => void;
   play: () => void;
   changeSpeed: (speed: number) => void;
@@ -149,7 +190,7 @@ export type EngineRef = {
     // TODO: Get condition as expression for plugin
     condition?: (f: PickedFeature) => boolean,
   ) => PickedFeature[] | undefined;
-};
+} & MouseEventHandles;
 
 export type EngineProps = {
   className?: string;
@@ -193,7 +234,12 @@ export type EngineProps = {
 
 export type LayerEditEvent = {
   layerId: string | undefined;
-  scale?: { width: number; length: number; height: number; location: LatLngHeight };
+  scale?: {
+    width: number;
+    length: number;
+    height: number;
+    location: LatLngHeight;
+  };
   rotate?: { heading: number; pitch: number; roll: number };
 };
 
@@ -205,7 +251,7 @@ export type Clock = {
   playing?: boolean;
 };
 
-export type MouseEvent = {
+export type MouseEventProps = {
   x?: number;
   y?: number;
   lat?: number;
@@ -215,25 +261,29 @@ export type MouseEvent = {
   delta?: number;
 };
 
-export type MouseEvents = {
-  click: ((props: MouseEvent) => void) | undefined;
-  doubleclick: ((props: MouseEvent) => void) | undefined;
-  mousedown: ((props: MouseEvent) => void) | undefined;
-  mouseup: ((props: MouseEvent) => void) | undefined;
-  rightclick: ((props: MouseEvent) => void) | undefined;
-  rightdown: ((props: MouseEvent) => void) | undefined;
-  rightup: ((props: MouseEvent) => void) | undefined;
-  middleclick: ((props: MouseEvent) => void) | undefined;
-  middledown: ((props: MouseEvent) => void) | undefined;
-  middleup: ((props: MouseEvent) => void) | undefined;
-  mousemove: ((props: MouseEvent) => void) | undefined;
-  mouseenter: ((props: MouseEvent) => void) | undefined;
-  mouseleave: ((props: MouseEvent) => void) | undefined;
-  wheel: ((props: MouseEvent) => void) | undefined;
-};
+export type MouseEventCallback = (props: MouseEventProps) => void;
+export type MouseWheelEventCallback = (props: MouseEventProps) => void;
+export type MouseEventTypes =
+  | "click"
+  | "doubleclick"
+  | "mousedown"
+  | "mouseup"
+  | "rightclick"
+  | "rightdown"
+  | "rightup"
+  | "middleclick"
+  | "middledown"
+  | "middleup"
+  | "mousemove"
+  | "mouseenter"
+  | "mouseleave"
+  | "wheel";
 
-export type TickEvent = (cb: TickEventCallback) => void;
-export type TickEventCallback = (current: Date, clock: { start: Date; stop: Date }) => void;
+export type MouseEvents = {
+  [key in MouseEventTypes]: MouseEventCallback;
+} & {
+  wheel: MouseWheelEventCallback;
+};
 
 export type MouseEventHandles = {
   onClick: (fn: MouseEvents["click"]) => void;
@@ -252,6 +302,11 @@ export type MouseEventHandles = {
   onWheel: (fn: MouseEvents["wheel"]) => void;
 };
 
+export type MouseEventCallbacks = { [key in keyof MouseEvents]: MouseEvents[key][] };
+
+export type TickEvent = (cb: TickEventCallback) => void;
+export type TickEventCallback = (current: Date, clock: { start: Date; stop: Date }) => void;
+
 export type SceneMode = "3d" | "2d" | "columbus";
 export type IndicatorTypes = "default" | "crosshair" | "custom";
 
@@ -266,6 +321,13 @@ export type TerrainProperty = {
   terrainCesiumIonUrl?: string;
   terrainUrl?: string;
   terrainNormal?: boolean;
+  // TODO: Add encode option
+  // Need to specify a tile from `tiles` option with `heatmap` option.
+  heatmapType?: "custom"; // TODO: Support Cesium's terrain heatmap as built-in: https://sandcastle.cesium.com/?src=Globe%20Materials.html
+  heatmapColorLUT?: LUT;
+  heatmapMinHeight?: number;
+  heatmapMaxHeight?: number;
+  heatmapLogarithmic?: boolean;
 };
 
 export type SceneProperty = {
@@ -280,6 +342,7 @@ export type SceneProperty = {
     tile_url?: string;
     tile_zoomLevel?: number[];
     tile_opacity?: number;
+    heatmap?: boolean;
   }[];
   terrain?: {
     terrain?: boolean;
@@ -426,7 +489,14 @@ export type Engine = {
   component: EngineComponent;
   featureComponent: FeatureComponentType;
   clusterComponent: ClusterComponentType;
+  sketchComponent: SketchComponentType;
   delegatedDataTypes?: DataType[];
 };
 
 export type RequestingRenderMode = -1 | 0 | 1; // -1: force render on every postUpdate, 0: no request to render, 1: request one frame
+
+export type SketchRef = {
+  setType: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
+  setColor: (color: string) => void;
+  setDefaultAppearance: (appearance: SketchAppearance) => void;
+};

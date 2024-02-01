@@ -1,12 +1,13 @@
 import type { RefObject } from "react";
 
-import type { EngineRef, LayersRef } from "./types";
+import type { EngineRef, LayersRef, SketchRef } from "./types";
 import { TimelineManagerRef } from "./useTimelineManager";
 import { FunctionKeys, WrappedRef, wrapRef } from "./utils";
 
 export type MapRef = {
   engine: WrappedRef<EngineRef>;
   layers: WrappedRef<LayersRef>;
+  sketch: WrappedRef<SketchRef>;
   timeline?: TimelineManagerRef;
 };
 
@@ -32,6 +33,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   toWindowPosition: 1,
   getViewport: 1,
   flyToBBox: 1,
+  rotateOnCenter: 1,
   lookAt: 1,
   lookAtLayer: 1,
   lookHorizontal: 1,
@@ -77,6 +79,12 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   selectFeatures: 1,
   unselectFeatures: 1,
   pickManyFromViewport: 1,
+  getExtrudedHeight: 1,
+  getSurfaceDistance: 1,
+  equalsEpsilon2d: 1,
+  equalsEpsilon3d: 1,
+  createGeometry: 1,
+  setCursor: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -95,6 +103,7 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   override: 1,
   replace: 1,
   select: 1,
+  selectFeature: 1,
   selectFeatures: 1,
   selectedLayer: 1,
   show: 1,
@@ -102,18 +111,27 @@ const layersRefKeys: FunctionKeys<LayersRef> = {
   overriddenLayers: 1,
 };
 
+const sketchRefKeys: FunctionKeys<SketchRef> = {
+  setType: 1,
+  setColor: 1,
+  setDefaultAppearance: 1,
+};
+
 export function mapRef({
   engineRef,
   layersRef,
+  sketchRef,
   timelineManagerRef,
 }: {
   engineRef: RefObject<EngineRef>;
   layersRef: RefObject<LayersRef>;
+  sketchRef: RefObject<SketchRef>;
   timelineManagerRef?: TimelineManagerRef;
 }): MapRef {
   return {
     engine: wrapRef(engineRef, engineRefKeys),
     layers: wrapRef(layersRef, layersRefKeys),
+    sketch: wrapRef(sketchRef, sketchRefKeys),
     timeline: timelineManagerRef,
   };
 }
