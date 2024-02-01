@@ -174,7 +174,7 @@ export type ModelAppearance = {
   silhouetteSize?: number; // default: 1
   near?: number;
   far?: number;
-  pbr?: boolean;
+  pbr?: boolean | "withTexture";
   specularEnvironmentMaps?: string;
   sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
   imageBasedLightIntensity?: number;
@@ -203,7 +203,7 @@ export type Cesium3DTilesAppearance = {
   experimental_clipping?: EXPERIMENTAL_clipping;
   pointSize?: number;
   meta?: unknown;
-  pbr?: boolean;
+  pbr?: boolean | "withTexture";
   specularEnvironmentMaps?: string;
   sphericalHarmonicCoefficients?: [x: number, y: number, z: number][];
   imageBasedLightIntensity?: number;
