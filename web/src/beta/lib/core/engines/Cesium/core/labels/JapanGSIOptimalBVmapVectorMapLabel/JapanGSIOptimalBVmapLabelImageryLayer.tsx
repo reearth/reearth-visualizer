@@ -2,14 +2,13 @@ import { WebMercatorTilingScheme, ImageryLayer as CesiumImageryLayer } from "ces
 import { forwardRef } from "react";
 import { CesiumComponentRef, ImageryLayer } from "resium";
 
-import { ImageryLayerProps } from "@reearth/beta/lib/core/utils";
-
 import { useInstance } from "../../../hooks/useInstance";
 
 import {
   JapanGSIOptimalBVmapLabelImageryProvider,
   type JapanGSIOptimalBVmapLabelImageryProviderOptions,
 } from "./JapanGSIOptimalBVmapLabelImageryProvider";
+import { ImageryLayerProps } from "./types";
 
 export interface LabelImageryLayerProps
   extends Omit<ImageryLayerProps, "imageryProvider">,
