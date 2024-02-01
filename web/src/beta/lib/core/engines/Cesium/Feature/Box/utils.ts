@@ -14,7 +14,7 @@ import {
 
 import type { Geometry } from "@reearth/beta/lib/core/mantle";
 
-import { translationWithClamping } from "../../utils";
+import { translationWithClamping } from "../../utils/utils";
 
 import type { Property } from ".";
 

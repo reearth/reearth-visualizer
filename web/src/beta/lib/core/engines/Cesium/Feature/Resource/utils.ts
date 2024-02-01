@@ -16,7 +16,7 @@ import {
 import { EvalFeature } from "@reearth/beta/lib/core/Map";
 
 import { heightReference, shadowMode, toColor } from "../../common";
-import { convertEntityDescription, convertEntityProperties } from "../../utils";
+import { convertEntityDescription, convertEntityProperties } from "../../utils/utils";
 import { attachTag, extractSimpleLayer, getTag, Tag } from "../utils";
 
 export function overrideOriginalProperties(

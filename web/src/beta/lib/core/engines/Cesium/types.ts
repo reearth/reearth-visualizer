@@ -20,3 +20,5 @@ export type PrivateCesiumGlobe = Globe & {
     baseFragmentShaderSource?: ShaderSource;
   };
 };
+
+export type CursorType = "default" | "auto" | "help" | "pointer" | "grab" | "crosshair";

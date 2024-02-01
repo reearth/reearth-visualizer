@@ -24,13 +24,13 @@ import { useCesium } from "resium";
 import { ComputedFeature, ComputedLayer } from "@reearth/beta/lib/core/mantle";
 import { useConstant } from "@reearth/beta/utils/util";
 
+import { convertPolygonToHierarchyArray } from "../../utils/polygon";
 import { attachTag } from "../utils";
 
 import { createColorMapImage } from "./colorMap";
 import { viridisColorMapLUT } from "./constants";
 import { type MeshImageData } from "./createMeshImageData";
 import { createHeatmapMeshMaterial, type HeatmapMeshMaterialOptions } from "./HeatmapMeshMaterial";
-import { convertPolygonToHierarchyArray } from "./utils";
 
 export type HeatmapMeshHandle = {
   bringToFront: () => void;
