@@ -18,6 +18,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, type FC } from "react";
 import { useCesium } from "resium";
 import { suspend } from "suspend-react";
 
+import { isColor, toColor } from "../../../common";
 import { isNotNullish } from "../../../Feature/HeatMap/utils";
 
 import { getAnnotationType, type AnnotationType } from "./getAnnotationType";
@@ -101,12 +102,15 @@ function resolveStyle(code: number, style?: AnnotationStyle): Partial<LabelOptio
     style?.default,
     typeStyle,
   );
+  const convertedStyle = Object.fromEntries(
+    Object.entries(mergedStyle).map(([k, v]) => [k, isColor(v) ? toColor(v) : v]),
+  );
   return {
     scaleByDistance,
-    ...omit(mergedStyle, ["fontSize", "fontFamily"]),
+    ...omit(convertedStyle, ["fontSize", "fontFamily"]),
     font:
-      mergedStyle?.fontSize != null && mergedStyle.fontFamily != null
-        ? `${mergedStyle.fontSize * fontScale}pt ${mergedStyle.fontFamily}`
+      convertedStyle?.fontSize != null && convertedStyle.fontFamily != null
+        ? `${convertedStyle.fontSize * fontScale}pt ${convertedStyle.fontFamily}`
         : undefined,
   };
 }

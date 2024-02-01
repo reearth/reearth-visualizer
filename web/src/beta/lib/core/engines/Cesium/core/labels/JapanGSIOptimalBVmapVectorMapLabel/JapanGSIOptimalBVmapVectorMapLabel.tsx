@@ -163,7 +163,7 @@ const LabelImageryCollection: FC<{
 };
 
 export interface VectorMapLabelProps {
-  style?: AnnotationStyle;
+  style?: Record<string, any>;
 }
 
 export const JapanGSIOptimalBVmapVectorMapLabel: FC<VectorMapLabelProps> = ({ style }) => {
