@@ -404,6 +404,7 @@ export function commonReearth({
   tags,
   camera,
   clock,
+  sketch,
   interactionMode,
   pluginInstances,
   viewport,
@@ -411,6 +412,7 @@ export function commonReearth({
   selectedFeature,
   layerSelectionReason,
   selectLayer,
+  selectFeature,
   selectFeatures,
   showLayer,
   hideLayer,
@@ -459,12 +461,14 @@ export function commonReearth({
   viewport: () => GlobalThis["reearth"]["viewport"];
   camera: () => GlobalThis["reearth"]["camera"]["position"];
   clock: () => GlobalThis["reearth"]["clock"];
+  sketch: () => GlobalThis["reearth"]["sketch"];
   interactionMode: () => GlobalThis["reearth"]["interactionMode"];
   pluginInstances: () => PluginInstances;
   selectedLayer: () => GlobalThis["reearth"]["layers"]["selected"];
   selectedFeature: () => GlobalThis["reearth"]["layers"]["selectedFeature"];
   layerSelectionReason: () => GlobalThis["reearth"]["layers"]["selectionReason"];
   selectLayer: LayersRef["select"];
+  selectFeature: LayersRef["selectFeature"];
   selectFeatures: LayersRef["selectFeatures"];
   layersInViewport: GlobalThis["reearth"]["layers"]["layersInViewport"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
@@ -613,6 +617,9 @@ export function commonReearth({
       get select() {
         return selectLayer;
       },
+      get selectFeature() {
+        return selectFeature;
+      },
       get selectFeatures() {
         return selectFeatures;
       },
@@ -708,6 +715,9 @@ export function commonReearth({
       get instances() {
         return pluginInstances().meta.current;
       },
+    },
+    get sketch() {
+      return sketch?.();
     },
     ...events,
   };

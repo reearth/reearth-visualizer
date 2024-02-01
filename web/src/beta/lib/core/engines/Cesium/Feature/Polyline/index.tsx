@@ -1,7 +1,7 @@
-import { Cartesian3 } from "cesium";
+import { Cartesian3, Entity } from "cesium";
 import { isEqual } from "lodash-es";
-import { useEffect, useMemo } from "react";
-import { PolylineGraphics } from "resium";
+import { useEffect, useMemo, useRef } from "react";
+import { CesiumComponentRef, PolylineGraphics } from "resium";
 import { useCustomCompareMemo } from "use-custom-compare";
 
 import { Coordinates, toColor } from "@reearth/beta/utils/value";
@@ -15,6 +15,7 @@ import {
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
+  getTag,
 } from "../utils";
 
 export type Props = FeatureProps<Property>;
@@ -50,7 +51,17 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
     [coordinates ?? []],
     isEqual,
   );
-  const material = useMemo(() => toColor(strokeColor), [strokeColor]);
+
+  const entityRef = useRef<CesiumComponentRef<Entity>>(null);
+  const tag = getTag(entityRef.current?.cesiumElement);
+
+  const material = useMemo(
+    () =>
+      tag?.isFeatureSelected && typeof layer?.["polyline"]?.selectedFeatureColor === "string"
+        ? toColor(layer["polyline"]?.selectedFeatureColor)
+        : toColor(strokeColor),
+    [strokeColor, layer, tag?.isFeatureSelected],
+  );
   const availability = useMemo(() => toTimeInterval(feature?.interval), [feature?.interval]);
   const distanceDisplayCondition = useMemo(
     () => toDistanceDisplayCondition(property?.near, property?.far),
@@ -66,6 +77,7 @@ export default function Polyline({ id, isVisible, property, geometry, layer, fea
       id={id}
       layerId={layer?.id}
       featureId={feature?.id}
+      ref={entityRef}
       availability={availability}
       properties={feature?.properties}
       hideIndicator={hideIndicator}>

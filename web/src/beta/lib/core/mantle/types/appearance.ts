@@ -79,6 +79,7 @@ export type MarkerAppearance = {
   pixelOffset?: [number, number];
   eyeOffset?: [number, number, number];
   hideIndicator?: boolean;
+  selectedFeatureColor?: string; // This doesn't support expression
 };
 
 export type PolylineAppearance = {
@@ -91,6 +92,7 @@ export type PolylineAppearance = {
   far?: number;
   classificationType?: ClassificationType;
   hideIndicator?: boolean;
+  selectedFeatureColor?: string; // This doesn't support expression
 };
 
 export type PolygonAppearance = {
@@ -108,6 +110,7 @@ export type PolygonAppearance = {
   extrudedHeight?: number;
   classificationType?: ClassificationType;
   hideIndicator?: boolean;
+  selectedFeatureColor?: string; // This doesn't support expression
 };
 
 export type HeatMapAppearance = {

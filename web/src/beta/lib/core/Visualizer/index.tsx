@@ -35,6 +35,7 @@ import Map, {
   type ComputedLayer,
 } from "../Map";
 import { Ref as MapRef } from "../Map";
+import { SketchFeature, SketchType } from "../Map/Sketch/types";
 import { Position } from "../StoryPanel/types";
 
 import { VisualizerProvider } from "./context";
@@ -115,6 +116,9 @@ export type Props = {
   onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
+  onSketchTypeChange?: (type: SketchType | undefined) => void;
+  onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  onInteractionModeChange?: (mode: InteractionModeType) => void;
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 } & ExternalPluginProps;
 
@@ -164,7 +168,10 @@ const Visualizer = memo(
         onBlockDelete,
         onBlockInsert,
         onZoomToLayer,
+        onInteractionModeChange,
         onMount,
+        onSketchTypeChange: onSketchTypeChangeProp,
+        onSketchFeatureCreate,
         renderInfoboxInsertionPopup,
       },
       ref: Ref<MapRef | null>,
@@ -187,6 +194,7 @@ const Visualizer = memo(
         infobox,
         shouldRender,
         timelineManagerRef,
+        cursor,
         handleLayerSelect,
         handleBlockSelect,
         handleCameraChange,
@@ -197,6 +205,10 @@ const Visualizer = memo(
         handleLayerEdit,
         onLayerEdit,
         handleInfoboxClose,
+        onPluginSketchFeatureCreated,
+        handlePluginSketchFeatureCreated,
+        onSketchTypeChange,
+        handleSketchTypeChange,
       } = useHooks(
         {
           rootLayerId,
@@ -212,6 +224,8 @@ const Visualizer = memo(
           onCameraChange,
           onZoomToLayer,
           onLayerDrop,
+          onInteractionModeChange,
+          onSketchTypeChangeProp,
         },
         ref,
       );
@@ -272,6 +286,8 @@ const Visualizer = memo(
                   onBlockInsert={onBlockInsert}
                   renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
                   onLayerEdit={onLayerEdit}
+                  onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
+                  onSketchTypeChange={onSketchTypeChange}
                 />
                 <Map
                   ref={mapRef}
@@ -294,11 +310,18 @@ const Visualizer = memo(
                   small={small}
                   ready={ready}
                   timelineManagerRef={timelineManagerRef}
+                  interactionMode={interactionMode}
+                  selectedFeature={selectedFeature}
+                  cursor={cursor}
                   onCameraChange={handleCameraChange}
                   onLayerDrag={handleLayerDrag}
                   onLayerDrop={handleLayerDrop}
                   onLayerSelect={handleLayerSelect}
                   onLayerEdit={handleLayerEdit}
+                  overrideInteractionMode={handleInteractionModeChange}
+                  onSketchFeatureCreate={onSketchFeatureCreate}
+                  onPluginSketchFeatureCreated={handlePluginSketchFeatureCreated}
+                  onSketchTypeChange={handleSketchTypeChange}
                   onMount={onMount}
                 />
               </Filled>
