@@ -18,8 +18,8 @@ import { memo, useCallback, useEffect, useMemo, useRef, type FC } from "react";
 import { useCesium } from "resium";
 import { suspend } from "suspend-react";
 
+import { isNotNullish } from "../../../../Cesium/utils/polygon";
 import { isColor, toColor } from "../../../common";
-import { isNotNullish } from "../../../Feature/HeatMap/utils";
 
 import { getAnnotationType, type AnnotationType } from "./getAnnotationType";
 import { getTileCoords } from "./helpers";
