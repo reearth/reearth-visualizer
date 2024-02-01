@@ -13,7 +13,10 @@ const layers: Layer[] = [
     type: "simple",
     data: {
       type: "geojson",
-      value: { type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } },
+      value: {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [0, 0] },
+      },
     },
     marker: {
       imageColor: "#fff",
@@ -34,7 +37,10 @@ const layers: Layer[] = [
     type: "simple",
     data: {
       type: "geojson",
-      value: { type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } },
+      value: {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [0, 0] },
+      },
     },
     marker: {
       imageColor: "#fff",
@@ -55,7 +61,10 @@ const layers: Layer[] = [
     type: "simple",
     data: {
       type: "geojson",
-      value: { type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } },
+      value: {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [0, 0] },
+      },
     },
     marker: {
       imageColor: "#fff",
@@ -138,6 +147,7 @@ export const context: Context = {
       enableScreenSpaceController: act("enableScreenSpaceController"),
       flyTo: act("flyTo"),
       flyToBBox: act("flyToBBox"),
+      rotateOnCenter: act("rotateOnCenter"),
       lookAt: act("lookAt"),
       zoomIn: act("zoomIn"),
       zoomOut: act("zoomOut"),
