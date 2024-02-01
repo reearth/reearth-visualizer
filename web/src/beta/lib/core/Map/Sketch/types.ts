@@ -21,6 +21,7 @@ export type GeometryOptionsXYZ = {
 export type SketchFeature = GeojsonFeature<
   Polygon | MultiPolygon | Point | LineString,
   {
+    id: string;
     type: SketchType;
     positions: readonly Position3d[];
     extrudedHeight: number;

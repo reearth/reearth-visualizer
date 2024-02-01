@@ -107,6 +107,7 @@ export default function useHooks({
       return null;
     }
     return feature(geometry, {
+      id: uuidv4(),
       type: geoOptions.type,
       positions: geoOptions.controlPoints,
       extrudedHeight,
@@ -133,7 +134,6 @@ export default function useHooks({
 
   const pluginSketchLayerCreate = useCallback(
     (feature: SketchFeature) => {
-      const featureId = uuidv4();
       const newLayer = layersRef.current?.add({
         type: "simple",
         data: {
@@ -141,12 +141,12 @@ export default function useHooks({
           isSketchLayer: true,
           value: {
             type: "FeatureCollection",
-            features: [{ ...feature, id: featureId }],
+            features: [{ ...feature, id: feature.properties.id }],
           },
         },
         ...defaultAppearance,
       });
-      return { layerId: newLayer?.id, featureId };
+      return { layerId: newLayer?.id, featureId: feature.properties.id };
     },
     [layersRef, defaultAppearance],
   );
@@ -154,7 +154,6 @@ export default function useHooks({
   const pluginSketchLayerFeatureAdd = useCallback(
     (layer: LazyLayer, feature: SketchFeature) => {
       if (layer.type !== "simple") return {};
-      const featureId = uuidv4();
       layersRef.current?.override(layer.id, {
         data: {
           ...layer.data,
@@ -163,12 +162,12 @@ export default function useHooks({
             type: "FeatureCollection",
             features: [
               ...((layer.computed?.layer as LayerSimple)?.data?.value?.features ?? []),
-              { ...feature, id: featureId },
+              { ...feature, id: feature.properties.id },
             ],
           },
         },
       });
-      return { layerId: layer.id, featureId };
+      return { layerId: layer.id, featureId: feature.properties.id };
     },
     [layersRef],
   );
