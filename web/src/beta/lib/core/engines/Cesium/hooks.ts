@@ -538,6 +538,8 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
+      viewer.selectedEntity = undefined;
+
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
         const layer = tag?.layerId
@@ -686,6 +688,8 @@ export default ({
           }
         }
       }
+
+      viewer.selectedEntity = undefined;
 
       onLayerSelect?.();
     },
