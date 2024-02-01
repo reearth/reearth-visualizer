@@ -297,7 +297,6 @@ const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
   height: 0;
-  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const Center = styled.div`
