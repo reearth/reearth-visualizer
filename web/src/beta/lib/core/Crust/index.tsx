@@ -215,11 +215,15 @@ export default function Crust({
       <Infobox
         visible={!!infobox}
         infobox={infobox}
-        renderBlock={renderBlock}
         isEditable={isEditable}
+        renderBlock={renderBlock}
         onBlockCreate={onBlockCreate}
         onBlockDelete={onBlockDelete}
         onBlockMove={onBlockMove}
+        onPropertyItemAdd={async () => console.log("ADD")}
+        onPropertyItemDelete={async () => console.log("DELETE")}
+        onPropertyItemMove={async () => console.log("MOVE")}
+        onPropertyUpdate={async () => console.log("UPDATE")}
       />
       {/* <Infobox
         isBuilt={isBuilt}

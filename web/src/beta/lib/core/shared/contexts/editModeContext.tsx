@@ -7,7 +7,7 @@ export type EditModeContext = {
 
 const EditModeContext = createContext<EditModeContext | undefined>(undefined);
 
-export const EditModelProvider: FC<PropsWithChildren<{ value: EditModeContext }>> = ({
+export const EditModeProvider: FC<PropsWithChildren<{ value: EditModeContext }>> = ({
   children,
   value,
 }) => <EditModeContext.Provider value={value}>{children}</EditModeContext.Provider>;

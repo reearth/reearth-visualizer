@@ -5,7 +5,7 @@ import { Spacing } from "@reearth/beta/lib/core/mantle";
 import BlockAddBar from "@reearth/beta/lib/core/shared/components/BlockAddBar";
 import {
   EditModeContext,
-  EditModelProvider,
+  EditModeProvider,
 } from "@reearth/beta/lib/core/shared/contexts/editModeContext";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { InstallableInfoboxBlock } from "@reearth/services/api/infoboxApi/blocks";
@@ -124,15 +124,14 @@ const Infobox: React.FC<Props> = ({
 
   const editModeContext: EditModeContext = useMemo(
     () => ({
-      isEditable,
       disableSelection,
       onSelectionDisable: handleSelectionDisable,
     }),
-    [isEditable, disableSelection, handleSelectionDisable],
+    [disableSelection, handleSelectionDisable],
   );
 
   return (
-    <EditModelProvider value={editModeContext}>
+    <EditModeProvider value={editModeContext}>
       <Wrapper visible={visible} position={position} padding={padding} gap={gap}>
         {infoboxBlocks && infoboxBlocks.length > 0 && (
           <DragAndDropList
@@ -186,7 +185,7 @@ const Infobox: React.FC<Props> = ({
           />
         )}
       </Wrapper>
-    </EditModelProvider>
+    </EditModeProvider>
   );
 };
 

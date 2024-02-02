@@ -4,7 +4,7 @@ import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { BlockProvider } from "../shared/contexts/blockContext";
-import { EditModelProvider } from "../shared/contexts/editModeContext";
+import { EditModeProvider } from "../shared/contexts/editModeContext";
 import { InstallableBlock } from "../shared/types";
 
 import { STORY_PANEL_WIDTH } from "./constants";
@@ -132,7 +132,7 @@ export const StoryPanel = memo(
 
       return (
         <PanelProvider value={panelContext}>
-          <EditModelProvider value={editModeContext}>
+          <EditModeProvider value={editModeContext}>
             <BlockProvider value={blockContext}>
               <PanelWrapper bgColor={selectedStory?.bgColor}>
                 {!!pageInfo && (
@@ -167,7 +167,7 @@ export const StoryPanel = memo(
                 />
               </PanelWrapper>
             </BlockProvider>
-          </EditModelProvider>
+          </EditModeProvider>
         </PanelProvider>
       );
     },

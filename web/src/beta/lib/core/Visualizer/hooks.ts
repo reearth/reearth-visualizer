@@ -157,6 +157,62 @@ export default function useHooks(
             property: {},
             blocks: [
               {
+                id: "sadfl3333222",
+                name: "Property",
+                pluginId: "reearth",
+                extensionId: "propertyInfoboxBlock",
+                propertyId: "sadfl3333222",
+                property: {
+                  default: {
+                    displayType: {
+                      type: "string",
+                      ui: "selection",
+                      title: "Display Type",
+                      choices: [
+                        { key: "root", label: "Root only" },
+                        { key: "all", label: "All fields" },
+                        { key: "custom", label: "Custom" },
+                      ],
+                      value: "custom", // root | all | custom
+                    },
+                    propertyList: {
+                      availableIf: {
+                        field: "displayType",
+                        type: "string",
+                        value: "custom",
+                      },
+                      type: "array",
+                      title: "Property List",
+                      value: [
+                        {
+                          key: "key1",
+                          title: "My Title",
+                          field: "someField",
+                        },
+                        {
+                          key: "key2",
+                          title: "My Title2",
+                          field: "someField2",
+                        },
+                      ],
+                    },
+                  },
+                  panel: {
+                    padding: {
+                      title: "PADDDING!@#",
+                      type: "spacing",
+                      max: 100,
+                      value: {
+                        top: 42,
+                        bottom: 2,
+                        left: 2,
+                        right: 2,
+                      },
+                    },
+                  },
+                },
+              },
+              {
                 id: "asdfasdf",
                 name: "Image",
                 pluginId: "reearth",
@@ -197,36 +253,6 @@ export default function useHooks(
                       value: "https://www.w3schools.com/w3images/lights.jpg",
                       type: "text",
                       title: "Text text text",
-                    },
-                  },
-                  panel: {
-                    padding: {
-                      title: "PADDDING!@#",
-                      type: "spacing",
-                      max: 100,
-                      value: {
-                        top: 42,
-                        bottom: 2,
-                        left: 2,
-                        right: 2,
-                      },
-                    },
-                  },
-                },
-              },
-              {
-                id: "sadfl3333222",
-                name: "Property",
-                pluginId: "reearth",
-                extensionId: "propertyInfoboxBlock",
-                propertyId: "sadfl3333222",
-                property: {
-                  default: {
-                    displayType: {
-                      choices: ["root", "all", "custom"],
-                      value: "root", // root | all | custom
-                      type: "array",
-                      title: "Display Type",
                     },
                   },
                   panel: {

@@ -3,6 +3,7 @@ import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Property from "..";
 
 export type Props = {
+  className?: string;
   name?: string;
   description?: string;
   value?: string;
@@ -12,15 +13,16 @@ export type Props = {
 };
 
 const TextField: React.FC<Props> = ({
+  className,
   name,
   description,
   value,
   placeholder,
-  onChange,
   disabled,
+  onChange,
 }) => {
   return (
-    <Property name={name} description={description}>
+    <Property className={className} name={name} description={description}>
       <TextInput value={value} placeholder={placeholder} onChange={onChange} disabled={disabled} />
     </Property>
   );
