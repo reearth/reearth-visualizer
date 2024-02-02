@@ -489,4 +489,7 @@ export type SketchRef = {
   setType: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   setColor: (color: string) => void;
   setDefaultAppearance: (appearance: SketchAppearance) => void;
+  createDataOnly: (dataOnly: boolean) => void;
+  allowRightClickToAbort: (allow: boolean) => void;
+  allowAutoResetInteractionMode: (allow: boolean) => void;
 };

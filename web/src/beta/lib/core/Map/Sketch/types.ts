@@ -29,8 +29,9 @@ export type SketchFeature = GeojsonFeature<
 >;
 
 export type SketchEventProps = {
-  layerId: string;
-  featureId: string;
+  layerId?: string;
+  featureId?: string;
+  feature?: SketchFeature;
 };
 
 export type SketchEventCallback = (event: SketchEventProps) => void;

@@ -85,6 +85,7 @@ export type Reearth = {
       ) => void;
       findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
       findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+      selectFeature?: (layerId: string, featureId: string) => void;
       selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
       selectionReason?: LayerSelectionReason;
       // For compat
@@ -427,6 +428,9 @@ export type Sketch = {
   readonly setType?: (type: SketchType | undefined) => void;
   readonly setColor?: (color: string) => void;
   readonly setDefaultAppearance?: (appearance: SketchAppearance) => void;
+  readonly createDataOnly?: (dataOnly: boolean) => void;
+  readonly allowRightClickToAbort?: (allow: boolean) => void;
+  readonly allowAutoResetInteractionMode?: (allow: boolean) => void;
 };
 
 /** Cesium API: available only when the plugin is a primitive */
