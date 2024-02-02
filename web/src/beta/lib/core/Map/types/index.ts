@@ -135,8 +135,13 @@ export type EngineRef = {
   flyTo: FlyTo;
   flyToBBox: (
     bbox: [number, number, number, number],
-    options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+    options?: CameraOptions & {
+      heading?: number;
+      pitch?: number;
+      range?: number;
+    },
   ) => void;
+  rotateOnCenter: (radian: number) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
@@ -229,7 +234,12 @@ export type EngineProps = {
 
 export type LayerEditEvent = {
   layerId: string | undefined;
-  scale?: { width: number; length: number; height: number; location: LatLngHeight };
+  scale?: {
+    width: number;
+    length: number;
+    height: number;
+    location: LatLngHeight;
+  };
   rotate?: { heading: number; pitch: number; roll: number };
 };
 
