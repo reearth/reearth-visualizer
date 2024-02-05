@@ -317,9 +317,20 @@ export default function ({
   const flyToBBox = useCallback(
     (
       bbox: [number, number, number, number],
-      options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+      options?: CameraOptions & {
+        heading?: number;
+        pitch?: number;
+        range?: number;
+      },
     ) => {
       return engineRef?.flyToBBox(bbox, options);
+    },
+    [engineRef],
+  );
+
+  const rotateOnCenter = useCallback(
+    (radian: number) => {
+      return engineRef?.rotateOnCenter(radian);
     },
     [engineRef],
   );
@@ -505,6 +516,7 @@ export default function ({
         layersInViewport,
         flyTo,
         flyToBBox,
+        rotateOnCenter,
         lookAt,
         zoomIn,
         zoomOut,
@@ -571,17 +583,12 @@ export default function ({
       layersInViewport,
       flyTo,
       flyToBBox,
+      rotateOnCenter,
       lookAt,
       zoomIn,
       zoomOut,
       cameraViewport,
       getCameraFovInfo,
-      rotateRight,
-      orbit,
-      captureScreen,
-      getLocationFromScreen,
-      sampleTerrainHeight,
-      enableScreenSpaceCameraController,
       computeGlobeHeight,
       toXYZ,
       toLngLatHeight,
@@ -589,6 +596,12 @@ export default function ({
       isPositionVisible,
       setView,
       toWindowPosition,
+      rotateRight,
+      orbit,
+      captureScreen,
+      getLocationFromScreen,
+      sampleTerrainHeight,
+      enableScreenSpaceCameraController,
       lookHorizontal,
       lookVertical,
       moveForward,
@@ -599,14 +612,14 @@ export default function ({
       moveRight,
       moveOverTerrain,
       flyToGround,
+      findFeatureById,
+      findFeaturesByIds,
+      pickManyFromViewport,
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
       timelineManagerRef,
       useExperimentalSandbox,
-      findFeatureById,
-      findFeaturesByIds,
-      pickManyFromViewport,
     ],
   );
 
