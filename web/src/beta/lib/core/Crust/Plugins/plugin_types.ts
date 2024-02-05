@@ -176,8 +176,13 @@ export type Camera = {
   readonly flyTo: (destination: string | FlyToDestination, options?: CameraOptions) => void;
   readonly flyToBBox: (
     bbox: [number, number, number, number],
-    options?: CameraOptions & { heading?: number; pitch?: number; range?: number },
+    options?: CameraOptions & {
+      heading?: number;
+      pitch?: number;
+      range?: number;
+    },
   ) => void;
+  readonly rotateOnCenter: (radian: number) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */
