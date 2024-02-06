@@ -653,6 +653,8 @@ export default ({
                 return;
               }
 
+              const tag = getTag(f.imageryLayer);
+
               const pos = f.position;
               if (pos) {
                 // NOTE: Instantiate temporal Cesium.Entity to display indicator.
@@ -668,7 +670,6 @@ export default ({
                 });
               }
 
-              const tag = getTag(f.imageryLayer);
               const layer = tag?.layerId
                 ? layersRef?.current?.overriddenLayers().find(l => l.id === tag.layerId) ??
                   layersRef?.current?.findById(tag.layerId)
