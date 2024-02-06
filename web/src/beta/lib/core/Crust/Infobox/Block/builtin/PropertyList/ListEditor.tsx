@@ -106,6 +106,7 @@ const FieldWrapper = styled.div`
   gap: 4px;
   align-items: center;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 const Field = styled.div`
