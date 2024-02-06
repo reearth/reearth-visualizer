@@ -154,6 +154,9 @@ export default function ({
       setType: (type: SketchType | undefined) => mapRef?.current?.sketch?.setType(type, "plugin"),
       setColor: mapRef?.current?.sketch?.setColor,
       setDefaultAppearance: mapRef?.current?.sketch?.setDefaultAppearance,
+      createDataOnly: mapRef?.current?.sketch?.createDataOnly,
+      allowRightClickToAbort: mapRef?.current?.sketch?.allowRightClickToAbort,
+      allowAutoResetInteractionMode: mapRef?.current?.sketch?.allowAutoResetInteractionMode,
     }),
     [mapRef],
   );
