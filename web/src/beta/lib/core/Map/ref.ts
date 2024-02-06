@@ -116,6 +116,9 @@ const sketchRefKeys: FunctionKeys<SketchRef> = {
   setType: 1,
   setColor: 1,
   setDefaultAppearance: 1,
+  createDataOnly: 1,
+  allowRightClickToAbort: 1,
+  allowAutoResetInteractionMode: 1,
 };
 
 export function mapRef({
