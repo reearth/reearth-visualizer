@@ -604,6 +604,7 @@ export default function useEngineRef(
         viewer.scene.screenSpaceCameraController.enableTilt = enable;
         viewer.scene.screenSpaceCameraController.enableLook = enable;
       },
+
       lookHorizontal: amount => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed() || !viewer.scene || !amount) return;
@@ -890,6 +891,7 @@ export default function useEngineRef(
         tickEventCallback.current = tickEventCallback.current.filter(c => c !== cb) || [];
       },
       tickEventCallback,
+      ...cesium.current?.cesiumElement,
     };
   }, [cesium]);
 
