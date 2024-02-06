@@ -44,6 +44,7 @@ type Props = {
   onMouseUp?: EdgeEventCallback;
   onMouseEnter?: EdgeEventCallback;
   onMouseLeave?: EdgeEventCallback;
+  hideIndicator?: boolean;
 };
 
 export const Edge: FC<Props> = memo(function EdgePresenter({
@@ -61,6 +62,7 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   onMouseDown,
   onMouseMove,
   onMouseUp,
+  hideIndicator,
 }) {
   const { cbp, outlineColor } = useHooks({
     id: layerId,
@@ -76,7 +78,11 @@ export const Edge: FC<Props> = memo(function EdgePresenter({
   });
 
   return (
-    <EntityExt layerId={layerId} featureId={featureId} availability={availability}>
+    <EntityExt
+      layerId={layerId}
+      featureId={featureId}
+      availability={availability}
+      hideIndicator={hideIndicator}>
       <PolylineGraphics
         positions={cbp}
         width={width}

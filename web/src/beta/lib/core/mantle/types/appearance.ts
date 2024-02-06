@@ -284,6 +284,7 @@ export type BoxAppearance = {
   activeEdgeIndex?: number; // 0 ~ 11
   near?: number;
   far?: number;
+  hideIndicator?: boolean;
 };
 
 export type TransitionAppearance = {

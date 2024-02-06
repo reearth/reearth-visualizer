@@ -24,6 +24,7 @@ export const Side: FC<{
   fill?: boolean;
   availability?: TimeIntervalCollection;
   distanceDisplayCondition?: DistanceDisplayCondition;
+  hideIndicator?: boolean;
 }> = memo(function SidePresenter({
   layerId,
   featureId,
@@ -36,6 +37,7 @@ export const Side: FC<{
   trs,
   availability,
   distanceDisplayCondition,
+  hideIndicator,
 }) {
   const { cbRef, plane, dimension, orientation, outlineColorCb } = useHooks({
     planeLocal,
@@ -51,7 +53,8 @@ export const Side: FC<{
       featureId={featureId}
       position={cbRef}
       orientation={orientation}
-      availability={availability}>
+      availability={availability}
+      hideIndicator={hideIndicator}>
       <PlaneGraphics
         plane={plane}
         dimensions={dimension}

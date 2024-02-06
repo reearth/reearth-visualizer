@@ -40,6 +40,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     activeBox,
     activeEdgeIndex,
     activeScalePointIndex,
+    hideIndicator,
   } = property ?? {};
   const {
     style,
@@ -74,6 +75,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
           trs={trs}
           availability={availability}
           distanceDisplayCondition={distanceDisplayCondition}
+          hideIndicator={hideIndicator}
         />
       ))}
       {BOX_EDGES.map((edge, i) => {
@@ -96,6 +98,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onMouseUp={edge.isDraggable ? handleEdgeMouseUp : undefined}
             availability={availability}
             distanceDisplayCondition={distanceDisplayCondition}
+            hideIndicator={hideIndicator}
           />
         );
       })}
@@ -127,6 +130,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             onPointMouseUp={handlePointMouseUp}
             availability={availability}
             distanceDisplayCondition={distanceDisplayCondition}
+            hideIndicator={hideIndicator}
           />
         ))}
     </>
