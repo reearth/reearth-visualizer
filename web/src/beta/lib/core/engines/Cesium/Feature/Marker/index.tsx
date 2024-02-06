@@ -90,8 +90,6 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     hideIndicator,
   } = property ?? {};
 
-  console.log("hideIndicator index.tsx", hideIndicator);
-
   const { useTransition, translate } = layer?.transition ?? {};
   const translatedCoords = useMemo(
     () => (translate ? Cartesian3.fromDegrees(...translate) : undefined),
