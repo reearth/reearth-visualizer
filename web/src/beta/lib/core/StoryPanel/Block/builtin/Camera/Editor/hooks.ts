@@ -73,7 +73,7 @@ export default ({
       itemId: string,
       fieldId: string,
       fieldType: keyof ValueTypes,
-      updatedValue: ValueTypes[keyof ValueTypes],
+      updatedValue?: ValueTypes[keyof ValueTypes],
     ) => {
       if (!propertyId || !itemId) return;
 
