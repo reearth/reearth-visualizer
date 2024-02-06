@@ -42,9 +42,10 @@ const URLField: React.FC<Props> = ({
 
   const handleChange = useCallback(
     (inputValue?: string, name?: string) => {
-      if (!inputValue) return;
-
-      if (
+      if (!inputValue) {
+        setCurrentValue(inputValue);
+        onChange?.(inputValue, name);
+      } else if (
         fileType === "asset" &&
         !(checkIfFileType(inputValue, FILE_FORMATS) || checkIfFileType(inputValue, IMAGE_FORMATS))
       ) {
@@ -53,11 +54,10 @@ const URLField: React.FC<Props> = ({
           text: t("Wrong file format"),
         });
         setCurrentValue(undefined);
-        return;
+      } else {
+        setCurrentValue(inputValue);
+        onChange?.(inputValue, name);
       }
-
-      setCurrentValue(inputValue);
-      onChange?.(inputValue, name);
     },
     [fileType, onChange, setNotification, t],
   );

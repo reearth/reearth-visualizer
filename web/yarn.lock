@@ -10309,7 +10309,7 @@ cesium-dnd@1.1.0:
   resolved "https://registry.yarnpkg.com/cesium-dnd/-/cesium-dnd-1.1.0.tgz#30c7232eec9f84ad0d4f2c959cbd61ac29028086"
   integrity sha512-Peo0bGIg5eOO/BrVDCovkPhQnWW3GBAjVnghh5NVmavDZjqS+A5R4Yj3IOG9tmYNSdtunsDqj5yxnMxQWx/KAA==
 
-cesium-mvt-imagery-provider@^1.4.0:
+cesium-mvt-imagery-provider@1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/cesium-mvt-imagery-provider/-/cesium-mvt-imagery-provider-1.4.0.tgz#a01765e5fe9632a629ba1aeae7f6fc59bce89e7f"
   integrity sha512-5xbyyomFAspYw8lHjBNKJw4+QQM1U0cROZyoHbMBSwwljAg7VUm6o3LzkXvZabCdDcVP1NcH9oOHg5Sn4z4MEQ==
