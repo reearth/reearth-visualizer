@@ -1,6 +1,4 @@
-import type { Layer } from "@reearth/beta/lib/core/mantle";
-
-import { Typography } from "../types";
+import type { Layer, Spacing } from "@reearth/beta/lib/core/mantle";
 
 export type Infobox<BP = any> = {
   property?: InfoboxProperty;
@@ -9,23 +7,21 @@ export type Infobox<BP = any> = {
 
 export type InfoboxProperty = {
   default?: {
-    showTitle?: boolean;
-    title?: string;
-    height?: number;
-    heightType?: "auto" | "manual";
-    infoboxPaddingTop?: number;
-    infoboxPaddingBottom?: number;
-    infoboxPaddingLeft?: number;
-    infoboxPaddingRight?: number;
-    size?: "small" | "medium" | "large";
-    position?: "right" | "middle" | "left";
-    typography?: Typography;
-    bgcolor?: string;
-    outlineColor?: string;
-    outlineWidth?: number;
-    useMask?: boolean;
-    defaultContent?: "description" | "attributes";
-    unselectOnClose?: boolean;
+    position?: "right" | "left";
+    padding?: Spacing;
+    gap?: number;
+    // showTitle?: boolean;
+    // height?: number;
+    // title?: string;
+    // heightType?: "auto" | "manual";
+    // size?: "small" | "medium" | "large";
+    // typography?: Typography;
+    // bgcolor?: string;
+    // outlineColor?: string;
+    // outlineWidth?: number;
+    // useMask?: boolean;
+    // defaultContent?: "description" | "attributes";
+    // unselectOnClose?: boolean;
   };
 };
 

@@ -24,12 +24,9 @@ import type { Infobox, InfoboxBlockProps } from "./types";
 export type InfoboxPosition = "right" | "left";
 
 export type Props = {
-  //   size?: "small" | "medium" | "large";
-  position?: InfoboxPosition;
-  padding?: Spacing;
-  gap?: number;
   infobox: Infobox;
   isEditable?: boolean;
+  inEditor?: boolean;
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   renderBlock?: (block: InfoboxBlockProps) => ReactNode;
   onBlockCreate?: (
@@ -63,10 +60,8 @@ export type Props = {
 
 const Infobox: React.FC<Props> = ({
   infobox,
-  position = POSITION_DEFAULT_VALUE,
-  padding,
-  gap,
   isEditable,
+  inEditor,
   installableInfoboxBlocks,
   onBlockCreate,
   onBlockMove,
@@ -81,6 +76,16 @@ const Infobox: React.FC<Props> = ({
   const [infoboxBlocks, setInfoboxBlocks] = useState(infobox.blocks ?? []);
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
+
+  const padding = useMemo(
+    () => infobox.property?.default?.padding,
+    [infobox.property?.default?.padding],
+  );
+  const gap = useMemo(() => infobox.property?.default?.gap, [infobox.property?.default?.gap]);
+  const position = useMemo(
+    () => infobox.property?.default?.position,
+    [infobox.property?.default?.position],
+  );
 
   const handleBlockOpen = useCallback(
     (index: number) => {
@@ -155,7 +160,7 @@ const Infobox: React.FC<Props> = ({
                   <InfoboxBlockComponent
                     key={b.id}
                     block={b}
-                    isEditable={isEditable}
+                    isEditable={inEditor}
                     isSelected={b.id === selectedBlockId}
                     onClick={() => handleBlockSelect(b.id)}
                     onBlockDoubleClick={() => handleBlockDoubleClick(b.id)}
@@ -199,14 +204,14 @@ const Wrapper = styled.div<{
   gap: ${({ gap }) => gap ?? GAP_DEFAULT_VALUE}px;
   position: absolute;
   top: 37px;
-  ${({ position }) => (position === "right" ? "right: 13px" : "left: 13px")};
+  ${({ position }) => `${position ?? POSITION_DEFAULT_VALUE}: 13px`};
   height: 515px;
   width: ${INFOBOX_WIDTH}px;
   background: #ffffff;
   border-radius: 6px;
   z-index: ${({ theme }) => theme.zIndexes.visualizer.infobox};
   box-sizing: border-box;
-  overflow: scroll;
+  overflow: auto;
   padding-top: ${({ padding }) => padding?.top ?? PADDING_DEFAULT_VALUE}px;
   padding-bottom: ${({ padding }) => padding?.bottom ?? PADDING_DEFAULT_VALUE}px;
   padding-left: ${({ padding }) => padding?.left ?? PADDING_DEFAULT_VALUE}px;

@@ -53,7 +53,7 @@ const Content: React.FC<Props> = ({ block }) => {
         if (value && typeof value === "object") {
           return (
             <ObjectWrapper key={key}>
-              <JsonView src={value} theme="a11y" />
+              <StyledJsonView src={value} />
             </ObjectWrapper>
           );
         }
@@ -105,6 +105,11 @@ const ObjectWrapper = styled.div`
 
 const StyledText = styled(Text)`
   color: ${({ theme }) => theme.content.weaker};
+`;
+
+const StyledJsonView = styled(JsonView)`
+  word-wrap: break-word;
+  min-width: 0;
 `;
 
 function isEven(number: number) {

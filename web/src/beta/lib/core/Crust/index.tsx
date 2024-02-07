@@ -216,6 +216,7 @@ export default function Crust({
         <Infobox
           infobox={infobox}
           isEditable={isEditable}
+          inEditor={inEditor}
           renderBlock={renderBlock}
           onBlockCreate={onBlockCreate}
           onBlockDelete={onBlockDelete}

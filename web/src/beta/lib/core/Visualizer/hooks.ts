@@ -141,20 +141,24 @@ export default function useHooks(
   );
 
   // Infobox
-  const infobox: InfoboxType = useMemo(
+  const infobox: InfoboxType | undefined = useMemo(
     () =>
-      selectedLayer.layer?.layer?.infobox
+      selectedLayer.featureId
         ? {
-            title: selectedLayer.layer?.layer?.title,
-            property: selectedLayer.layer?.layer?.infobox?.property,
-            blocks: selectedLayer.layer?.layer?.infobox?.blocks?.map(b => ({
-              ...b,
-              property: b.property?.default ?? b.property,
-            })),
-          }
-        : {
             title: "Test",
-            property: {},
+            property: {
+              default: {
+                enabled: true,
+                position: "right", // left | right
+                padding: {
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                },
+                gap: 12,
+              },
+            },
             blocks: [
               {
                 id: "sadfl3333222",
@@ -203,7 +207,7 @@ export default function useHooks(
                       type: "spacing",
                       max: 100,
                       value: {
-                        top: 42,
+                        // top: 42,
                         bottom: 2,
                         left: 2,
                         right: 2,
@@ -261,7 +265,7 @@ export default function useHooks(
                       type: "spacing",
                       max: 100,
                       value: {
-                        top: 42,
+                        // top: 42,
                         bottom: 2,
                         left: 2,
                         right: 2,
@@ -271,7 +275,8 @@ export default function useHooks(
                 },
               },
             ],
-          },
+          }
+        : undefined,
     [selectedLayer],
   );
 
