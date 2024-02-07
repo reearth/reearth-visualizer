@@ -1,4 +1,4 @@
-import { useCallback, type ComponentType, type ReactNode } from "react";
+import { useCallback, type ComponentType, type ReactNode, memo } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import type { CommonBlockProps, BlockProps } from "@reearth/beta/lib/core/shared/types";
@@ -16,11 +16,7 @@ export type Props = {
 
 export type Component = ComponentType<CommonBlockProps<InfoboxBlock>>;
 
-export default function InfoboxBlockComponent({
-  renderBlock,
-  onRemove,
-  ...props
-}: Props): JSX.Element | null {
+const InfoboxBlockComponent = ({ renderBlock, onRemove, ...props }: Props): JSX.Element | null => {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
   const Builtin = isBuiltinInfoboxBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
   const handleRemove = useCallback(
@@ -35,7 +31,9 @@ export default function InfoboxBlockComponent({
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
     </Wrapper>
   ) : null;
-}
+};
+
+export default memo(InfoboxBlockComponent);
 
 const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
   border: 1px solid

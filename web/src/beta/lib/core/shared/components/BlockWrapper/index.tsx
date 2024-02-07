@@ -1,4 +1,4 @@
-import { ReactNode, createContext } from "react";
+import { ReactNode, createContext, memo } from "react";
 
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
@@ -155,7 +155,7 @@ const BlockWrapper: React.FC<Props> = ({
   );
 };
 
-export default BlockWrapper;
+export default memo(BlockWrapper);
 
 const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelection?: boolean }>`
   display: flex;

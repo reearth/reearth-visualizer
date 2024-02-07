@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useCallback, useMemo, useState } from "react";
+import { Fragment, ReactNode, memo, useCallback, useMemo, useState } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
@@ -28,8 +28,7 @@ export type Props = {
   position?: InfoboxPosition;
   padding?: Spacing;
   gap?: number;
-  visible?: boolean;
-  infobox?: Infobox;
+  infobox: Infobox;
   isEditable?: boolean;
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   renderBlock?: (block: InfoboxBlockProps) => ReactNode;
@@ -64,7 +63,6 @@ export type Props = {
 
 const Infobox: React.FC<Props> = ({
   infobox,
-  visible,
   position = POSITION_DEFAULT_VALUE,
   padding,
   gap,
@@ -80,7 +78,7 @@ const Infobox: React.FC<Props> = ({
 }) => {
   const [disableSelection, setDisableSelection] = useState(false);
 
-  const [infoboxBlocks, setInfoboxBlocks] = useState(infobox?.blocks ?? []);
+  const [infoboxBlocks, setInfoboxBlocks] = useState(infobox.blocks ?? []);
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
@@ -132,7 +130,7 @@ const Infobox: React.FC<Props> = ({
 
   return (
     <EditModeProvider value={editModeContext}>
-      <Wrapper visible={visible} position={position} padding={padding} gap={gap}>
+      <Wrapper position={position} padding={padding} gap={gap}>
         {infoboxBlocks && infoboxBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey={INFOBOX_UNIQUE_KEY}
@@ -189,10 +187,9 @@ const Infobox: React.FC<Props> = ({
   );
 };
 
-export default Infobox;
+export default memo(Infobox);
 
 const Wrapper = styled.div<{
-  visible?: boolean;
   position?: InfoboxPosition;
   padding?: Spacing;
   gap?: number;
@@ -205,7 +202,6 @@ const Wrapper = styled.div<{
   ${({ position }) => (position === "right" ? "right: 13px" : "left: 13px")};
   height: 515px;
   width: ${INFOBOX_WIDTH}px;
-  opacity: ${({ visible }) => (visible ? 1 : 0)};
   background: #ffffff;
   border-radius: 6px;
   z-index: ${({ theme }) => theme.zIndexes.visualizer.infobox};

@@ -1,8 +1,9 @@
-import { useContext } from "react";
+import { memo, useContext } from "react";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
+import Text from "@reearth/beta/components/Text";
 import { BlockContext } from "@reearth/beta/lib/core/shared/components/BlockWrapper";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 import { styled } from "@reearth/services/theme";
@@ -41,32 +42,36 @@ const Content: React.FC<Props> = ({ block }) => {
   const context = useContext(BlockContext);
   const visualizer = useVisualizer();
 
-  if (visualizer?.current?.layers.selectedFeature()?.properties) {
-    console.log("SELECTED FEATURE1111", visualizer?.current?.layers.selectedFeature()?.properties);
-    // Object.values(visualizer?.current?.layers.selectedFeature()?.properties)?.map(p => {
-    //   console.log("P:", p);
-    // });
-  }
+  const properties = filterChildObjectsToEnd(
+    visualizer.current?.layers.selectedFeature()?.properties,
+  );
 
   return (
     <Wrapper>
-      {visualizer?.current?.layers.selectedFeature()?.properties &&
-        Object.keys(visualizer.current.layers.selectedFeature()?.properties)?.map((p, idx) => {
-          const field = visualizer?.current?.layers.selectedFeature()?.properties[p];
-          if (field && typeof field === "object") {
-            return (
-              <ObjectWrapper key={p}>
-                <JsonView src={field} theme="a11y" />
-              </ObjectWrapper>
-            );
-          }
+      {properties?.map((field, idx) => {
+        const [key, value]: [string, any] = Object.entries(field)[0];
+        if (value && typeof value === "object") {
           return (
-            <PropertyWrapper key={p} isEven={isEven(idx)}>
-              <p>{p}</p>
-              <p>{visualizer?.current?.layers.selectedFeature()?.properties[p]}</p>
-            </PropertyWrapper>
+            <ObjectWrapper key={key}>
+              <JsonView src={value} theme="a11y" />
+            </ObjectWrapper>
           );
-        })}
+        }
+        return (
+          <PropertyWrapper key={idx} isEven={isEven(idx)}>
+            <TextWrapper>
+              <StyledText size="body" customColor>
+                {key}
+              </StyledText>
+            </TextWrapper>
+            <TextWrapper>
+              <StyledText size="body" customColor>
+                {value ?? "N/A"}
+              </StyledText>
+            </TextWrapper>
+          </PropertyWrapper>
+        );
+      })}
       {context?.editMode && (
         <ListEditor propertyId={block?.propertyId} property={block?.property?.default} />
       )}
@@ -74,7 +79,7 @@ const Content: React.FC<Props> = ({ block }) => {
   );
 };
 
-export default Content;
+export default memo(Content);
 
 const Wrapper = styled.div`
   width: 100%;
@@ -83,16 +88,49 @@ const Wrapper = styled.div`
 const PropertyWrapper = styled.div<{ isEven?: boolean }>`
   display: flex;
   justify-content: space-between;
+  gap: 16px;
   background: ${({ isEven }) => isEven && "#F4F4F4"};
   padding: 8px 16px;
   box-sizing: border-box;
   width: 100%;
 `;
 
+const TextWrapper = styled.div`
+  flex: 1;
+`;
+
 const ObjectWrapper = styled.div`
   margin-top: 8px;
 `;
 
+const StyledText = styled(Text)`
+  color: ${({ theme }) => theme.content.weaker};
+`;
+
 function isEven(number: number) {
   return !!(number % 2 === 0);
+}
+
+function filterChildObjectsToEnd(inputObject?: any): any[] {
+  if (!inputObject) return [];
+  const arrayResult: any[] = [];
+  const childObjects: [string, any][] = [];
+
+  // Iterate over the properties of the input object
+  for (const key in inputObject) {
+    if (typeof inputObject[key] === "object" && inputObject[key] !== null) {
+      // If the property value is an object, store it to process later
+      childObjects.push([key, inputObject[key]]);
+    } else {
+      // If it's not an object, push it to the result array
+      arrayResult.push({ [key]: inputObject[key] });
+    }
+  }
+
+  // Push child objects to the end of the result array
+  childObjects.forEach(([key, value]) => {
+    arrayResult.push({ [key]: value });
+  });
+
+  return arrayResult;
 }

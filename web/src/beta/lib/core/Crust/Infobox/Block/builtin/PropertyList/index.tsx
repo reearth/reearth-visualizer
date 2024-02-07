@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/lib/core/shared/types";
 
@@ -20,4 +22,4 @@ const PropertyList: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, .
   );
 };
 
-export default PropertyList;
+export default memo(PropertyList);
