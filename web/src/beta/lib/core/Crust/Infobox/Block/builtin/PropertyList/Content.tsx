@@ -53,20 +53,24 @@ const Content: React.FC<Props> = ({ block }) => {
         if (value && typeof value === "object") {
           return (
             <ObjectWrapper key={key}>
-              <StyledJsonView src={value} />
+              <JsonView
+                src={value}
+                theme="a11y"
+                style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
+              />
             </ObjectWrapper>
           );
         }
         return (
           <PropertyWrapper key={idx} isEven={isEven(idx)}>
             <TextWrapper>
-              <StyledText size="body" customColor>
+              <StyledText size="body" customColor otherProperties={{ userSelect: "auto" }}>
                 {key}
               </StyledText>
             </TextWrapper>
             <TextWrapper>
-              <StyledText size="body" customColor>
-                {value ?? "N/A"}
+              <StyledText size="body" customColor otherProperties={{ userSelect: "auto" }}>
+                {value}
               </StyledText>
             </TextWrapper>
           </PropertyWrapper>
@@ -105,11 +109,6 @@ const ObjectWrapper = styled.div`
 
 const StyledText = styled(Text)`
   color: ${({ theme }) => theme.content.weaker};
-`;
-
-const StyledJsonView = styled(JsonView)`
-  word-wrap: break-word;
-  min-width: 0;
 `;
 
 function isEven(number: number) {
