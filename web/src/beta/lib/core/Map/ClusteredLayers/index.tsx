@@ -1,5 +1,6 @@
 import { ComponentType, useMemo, useCallback, ReactNode } from "react";
 
+import { InteractionModeType } from "../../Crust";
 import LayerComponent, { type CommonProps, type Props as LayerProps } from "../Layer";
 import type { Layer, Atom, Typography, DataType } from "../types";
 
@@ -17,6 +18,7 @@ export type Props = {
   sceneProperty?: any;
   clusterComponent?: ClusterComponentType;
   Feature?: LayerProps["Feature"];
+  interactionMode?: InteractionModeType;
 } & Omit<CommonProps, "isSelected" | "isHidden" | "selectedFeatureId">;
 
 export type Cluster = {
@@ -53,6 +55,7 @@ export default function ClusteredLayers({
   selectedLayer,
   overrides,
   delegatedDataTypes,
+  interactionMode,
   isHidden,
   ...props
 }: Props): JSX.Element | null {
@@ -76,6 +79,7 @@ export default function ClusteredLayers({
           selectedFeatureId={selectedLayer?.featureId}
           isHidden={isHidden?.(layer.id)}
           delegatedDataTypes={delegatedDataTypes}
+          interactionMode={interactionMode}
         />
       );
     },
@@ -87,6 +91,7 @@ export default function ClusteredLayers({
       selectedLayer?.featureId,
       isHidden,
       delegatedDataTypes,
+      interactionMode,
     ],
   );
 
