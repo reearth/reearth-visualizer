@@ -1,5 +1,4 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
@@ -41,8 +40,7 @@ export default ({
   const handleSketchFeatureCreate = useCallback(
     async (feature: SketchFeature | null) => {
       // TODO: create a new layer if there is no selected sketch layer
-      if (!selectedLayer?.id || !selectedLayer.config?.data?.isSketchLayer) return;
-      const featureId = uuidv4();
+      if (!feature || !selectedLayer?.id || !selectedLayer.config?.data?.isSketchLayer) return;
       // TODO: support custom properties
       const customProperties = {};
       await handleLayerConfigUpdate({
@@ -56,8 +54,8 @@ export default ({
                 ...(selectedLayer.config?.data?.value?.features ?? []),
                 {
                   ...feature,
-                  id: featureId,
-                  properties: { ...feature?.properties, ...customProperties },
+                  id: feature.properties.id,
+                  properties: { ...feature.properties, ...customProperties },
                 },
               ],
             },
@@ -66,7 +64,7 @@ export default ({
       });
       pendingSketchSelectionRef.current = {
         layerId: selectedLayer.id,
-        featureId,
+        featureId: feature.properties.id,
       };
     },
     [selectedLayer, handleLayerConfigUpdate],
