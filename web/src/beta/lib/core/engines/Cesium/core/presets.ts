@@ -6,6 +6,7 @@ import {
   OpenStreetMapImageryProvider,
   IonWorldImageryStyle,
   UrlTemplateImageryProvider,
+  DiscardEmptyTileImagePolicy,
 } from "cesium";
 
 import { JapanGSIOptimalBVmapLabelImageryProvider } from "./labels/JapanGSIOptimalBVmapVectorMapLabel/JapanGSIOptimalBVmapLabelImageryProvider";
@@ -56,9 +57,19 @@ export const tiles = {
     new OpenStreetMapImageryProvider({
       url: "https://cyberjapandata.gsi.go.jp/xyz/std/",
     }),
-  url: ({ url } = {}) => (url ? new UrlTemplateImageryProvider({ url }) : null),
+  url: ({ url, heatmap } = {}) =>
+    url
+      ? new UrlTemplateImageryProvider({
+          url,
+          tileDiscardPolicy: heatmap ? new DiscardEmptyTileImagePolicy() : undefined,
+        })
+      : null,
 } as {
-  [key: string]: (opts?: { url?: string; cesiumIonAccessToken?: string }) => ImageryProvider | null;
+  [key: string]: (opts?: {
+    url?: string;
+    cesiumIonAccessToken?: string;
+    heatmap?: boolean;
+  }) => ImageryProvider | null;
 };
 
 export const labelTiles = {
