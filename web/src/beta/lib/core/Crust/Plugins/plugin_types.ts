@@ -22,7 +22,12 @@ import type {
 
 import { SketchAppearance, SketchEventProps, SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
-import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
+import {
+  CameraOptions,
+  FlyToDestination,
+  LookAtDestination,
+  screenSpaceOptions,
+} from "../../types";
 import { Block } from "../Infobox";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
@@ -184,6 +189,7 @@ export type Camera = {
     },
   ) => void;
   readonly rotateOnCenter: (radian: number) => void;
+  readonly overrideScreenSpaceController: (options: screenSpaceOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */

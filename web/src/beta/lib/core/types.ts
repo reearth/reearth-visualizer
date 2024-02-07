@@ -45,3 +45,10 @@ export type LookAtDestination = {
 
 export type Position2d = [x: number, y: number];
 export type Position3d = [x: number, y: number, z: number];
+
+export type screenSpaceOptions = {
+  useKeyboard: boolean;
+  tiltByRightButton: boolean;
+  ctrl: string;
+  shift: string;
+};

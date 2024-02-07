@@ -8,7 +8,7 @@ import { MouseEventCallbacks, TickEventCallback } from "@reearth/beta/lib/core/M
 
 import type { EngineRef, MouseEventProps, Feature, ComputedFeature } from "..";
 import { SketchType } from "../../Map/Sketch/types";
-import { Position2d, Position3d } from "../../types";
+import { Position2d, Position3d, screenSpaceOptions } from "../../types";
 
 import {
   getLocationFromScreen,
@@ -34,6 +34,7 @@ import {
   getCameraTerrainIntersection,
   cartesianToLatLngHeight,
   getExtrudedHeight,
+  overrideScreenSpaceController,
 } from "./common";
 import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
@@ -449,6 +450,18 @@ export default function useEngineRef(
         const target = getCameraEllipsoidIntersection(scene, new Cesium.Cartesian3());
         if (!target) return;
         scene.camera.rotate(target, radian);
+      },
+      overrideScreenSpaceController: (options: screenSpaceOptions) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+
+        const controller = viewer.scene?.screenSpaceCameraController;
+        const minimumZoomDistance = 1.5;
+        const maximumZoomDistance = Infinity;
+        controller.minimumZoomDistance = minimumZoomDistance;
+        controller.maximumZoomDistance = maximumZoomDistance;
+        controller.enableCollisionDetection = !options.useKeyboard;
+        overrideScreenSpaceController(controller, options);
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

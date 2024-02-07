@@ -33,6 +33,8 @@ import {
   SceneMode,
   Cesium3DTileColorBlendMode,
   Plane,
+  CameraEventType,
+  ScreenSpaceCameraController,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -42,7 +44,7 @@ import { tweenInterval } from "@reearth/beta/utils/raf";
 import { LatLngHeight } from "@reearth/beta/utils/value";
 
 import type { Camera, Clock } from "..";
-import type { CameraOptions, FlyToDestination } from "../../types";
+import type { CameraOptions, FlyToDestination, screenSpaceOptions } from "../../types";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -832,3 +834,71 @@ export function getExtrudedHeight(
   }
   return;
 }
+
+export const overrideScreenSpaceController = (
+  controller: ScreenSpaceCameraController,
+  options: screenSpaceOptions,
+) => {
+  const defaultAssignments = {
+    translateEventTypes: CameraEventType.LEFT_DRAG,
+    zoomEventTypes: [CameraEventType.RIGHT_DRAG, CameraEventType.WHEEL, CameraEventType.PINCH],
+    rotateEventTypes: CameraEventType.LEFT_DRAG,
+    tiltEventTypes: [
+      CameraEventType.MIDDLE_DRAG,
+      CameraEventType.PINCH,
+      {
+        eventType: CameraEventType.LEFT_DRAG,
+        modifier: options.ctrl,
+      },
+      {
+        eventType: CameraEventType.RIGHT_DRAG,
+        modifier: options.ctrl,
+      },
+    ],
+    lookEventTypes: [
+      {
+        eventType: CameraEventType.LEFT_DRAG,
+        modifier: options.shift,
+      },
+    ],
+  };
+  if (options.useKeyboard) {
+    Object.assign(controller, {
+      zoomEventTypes: [],
+      rotateEventTypes: [],
+      tiltEventTypes: [],
+      lookEventTypes: [
+        CameraEventType.LEFT_DRAG,
+        {
+          eventType: CameraEventType.LEFT_DRAG,
+          modifier: options.ctrl,
+        },
+        {
+          eventType: CameraEventType.LEFT_DRAG,
+          modifier: options.shift,
+        },
+      ],
+    });
+  } else if (options.tiltByRightButton) {
+    Object.assign(controller, {
+      ...defaultAssignments,
+      // Remove right drag from zoom event types.
+      zoomEventTypes: [CameraEventType.MIDDLE_DRAG, CameraEventType.WHEEL, CameraEventType.PINCH],
+      // Change control-drag to right drag for tilt event types.
+      tiltEventTypes: [
+        CameraEventType.RIGHT_DRAG,
+        CameraEventType.PINCH,
+        {
+          eventType: CameraEventType.LEFT_DRAG,
+          modifier: options.ctrl,
+        },
+        {
+          eventType: CameraEventType.RIGHT_DRAG,
+          modifier: options.ctrl,
+        },
+      ],
+    });
+  } else {
+    Object.assign(controller, defaultAssignments);
+  }
+};

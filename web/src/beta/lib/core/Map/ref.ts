@@ -34,6 +34,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   getViewport: 1,
   flyToBBox: 1,
   rotateOnCenter: 1,
+  overrideScreenSpaceController: 1,
   lookAt: 1,
   lookAtLayer: 1,
   lookHorizontal: 1,
