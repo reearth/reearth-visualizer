@@ -1,4 +1,4 @@
-import { Ellipsoid, Material } from "@cesium/engine";
+import { Ellipsoid, Material } from "cesium";
 
 import { createColorMapImage } from "@reearth/beta/lib/core/engines/Cesium/Feature/HeatMap/colorMap";
 import { turboColorMap } from "@reearth/beta/lib/core/engines/Cesium/Feature/HeatMap/constants";
