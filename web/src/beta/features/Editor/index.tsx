@@ -13,9 +13,11 @@ import { metrics, styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
+import SketchLayerManager from "./SketchLayerManager";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 import useScene from "./useScene";
+import useSketch from "./useSketch";
 
 type Props = {
   sceneId: string;
@@ -34,8 +36,11 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     showWidgetEditor,
     showDataSourceManager,
     currentCamera,
+    showSketchLayerManager,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
+    handleSketchLayerManagerCloser,
+    handleSketchLayerManagerOpener,
     handleDeviceChange,
     handleProjectTypeChange,
     handleWidgetEditorToggle,
@@ -136,6 +141,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerVisibilityUpate: handleLayerVisibilityUpdate,
     onSceneSettingSelect: handleSceneSettingSelected,
     onDataSourceManagerOpen: handleDataSourceManagerOpener,
+    onSketchLayerManagerOpen: handleSketchLayerManagerOpener,
     onFlyTo: handleFlyTo,
     onPropertyUpdate: handlePropertyValueUpdate,
   });
@@ -167,6 +173,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerStyleSelect: handleLayerStyleSelected,
   });
 
+  const { sketchType, handleSketchTypeChange, handleSketchFeatureCreate } = useSketch({
+    tab,
+    nlsLayers,
+    selectedLayer,
+    visualizerRef,
+    handleLayerConfigUpdate,
+  });
+
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     sceneId,
@@ -174,6 +188,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedDevice,
     selectedProjectType,
     showWidgetEditor,
+    sketchType,
+    isSketchLayerSelected: !!selectedLayer?.config?.data?.isSketchLayer,
+    handleSketchTypeChange,
     handleProjectTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
@@ -217,6 +234,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   currentCamera={currentCamera}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
+                  onSketchTypeChange={handleSketchTypeChange}
+                  onSketchFeatureCreate={handleSketchFeatureCreate}
                 />
               </VisualizerWrapper>
               {bottomPanel && (
@@ -249,6 +268,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             sceneId={sceneId}
             onClose={handleDataSourceManagerCloser}
             onSubmit={handleLayerAdd}
+          />
+        )}
+        {showSketchLayerManager && (
+          <SketchLayerManager
+            onSubmit={handleLayerAdd}
+            sceneId={sceneId}
+            onClose={handleSketchLayerManagerCloser}
+            layerStyles={layerStyles}
           />
         )}
       </Wrapper>

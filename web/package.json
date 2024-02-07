@@ -120,6 +120,7 @@
         "@types/d3": "^7.4.3",
         "@types/escape-string-regexp": "2.0.1",
         "@ungap/event-target": "0.2.4",
+        "@xstate/react": "3.2.1",
         "apollo-link-sentry": "3.2.3",
         "apollo-upload-client": "17.0.0",
         "array-move": "4.0.0",
@@ -127,7 +128,7 @@
         "axios": "1.6.0",
         "cesium": "1.105.2",
         "cesium-dnd": "1.1.0",
-        "cesium-mvt-imagery-provider": "1.3.0",
+        "cesium-mvt-imagery-provider": "1.4.0",
         "core-js": "3.33.2",
         "crypto-js": "4.2.0",
         "csv-parse": "5.5.2",
@@ -138,6 +139,7 @@
         "escape-string-regexp": "5.0.0",
         "fast-xml-parser": "4.3.2",
         "formik": "2.4.5",
+        "framer-motion": "10.18.0",
         "github-markdown-css": "5.4.0",
         "graphiql": "2.4.4",
         "graphql": "16.6.0",
@@ -157,6 +159,7 @@
         "mini-svg-data-uri": "1.4.4",
         "moment-timezone": "0.5.43",
         "parse-domain": "7.0.1",
+        "protomaps": "^1.23.1",
         "quickjs-emscripten": "0.23.0",
         "quickjs-emscripten-sync": "1.5.2",
         "rc-slider": "9.7.5",
@@ -185,11 +188,13 @@
         "react18-json-view": "0.2.6",
         "remark-gfm": "3.0.1",
         "resium": "1.16.1",
+        "suspend-react": "^0.1.3",
         "tinycolor2": "1.6.0",
         "ts-easing": "0.2.0",
         "use-callback-ref": "1.3.0",
         "use-custom-compare": "1.4.0",
         "use-file-input": "1.0.0",
-        "uuid": "9.0.1"
+        "uuid": "9.0.1",
+        "xstate": "4.38.2"
     }
 }

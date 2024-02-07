@@ -6,9 +6,16 @@ import {
   Cartesian2,
   CallbackProperty,
   PositionProperty,
+  Entity,
 } from "cesium";
 import { useEffect, useMemo, useRef } from "react";
-import { BillboardGraphics, PointGraphics, LabelGraphics, PolylineGraphics } from "resium";
+import {
+  BillboardGraphics,
+  PointGraphics,
+  LabelGraphics,
+  PolylineGraphics,
+  CesiumComponentRef,
+} from "resium";
 
 import { toCSSFont } from "@reearth/beta/utils/value";
 
@@ -21,6 +28,7 @@ import {
   toTimeInterval,
   type FeatureComponentConfig,
   type FeatureProps,
+  getTag,
 } from "../utils";
 
 import marker from "./marker.svg";
@@ -79,6 +87,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     eyeOffset,
     pixelOffset,
     heightReference: hr,
+    hideIndicator,
   } = property ?? {};
 
   const { useTransition, translate } = layer?.transition ?? {};
@@ -151,8 +160,27 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
     return Color.WHITE.withAlpha(0.4);
   }, []);
 
-  const imageColorCesium = useMemo(() => toColor(imageColor), [imageColor]);
-  const pointColorCesium = useMemo(() => toColor(pointColor), [pointColor]);
+  const entityRef = useRef<CesiumComponentRef<Entity>>(null);
+  const tag = getTag(entityRef.current?.cesiumElement);
+
+  const imageColorCesium = useMemo(
+    () =>
+      toColor(
+        tag?.isFeatureSelected && typeof layer?.["marker"]?.selectedFeatureColor === "string"
+          ? layer["marker"]?.selectedFeatureColor
+          : imageColor,
+      ),
+    [imageColor, layer, tag?.isFeatureSelected],
+  );
+  const pointColorCesium = useMemo(
+    () =>
+      toColor(
+        tag?.isFeatureSelected && typeof layer?.["marker"]?.selectedFeatureColor === "string"
+          ? layer["marker"]?.selectedFeatureColor
+          : pointColor,
+      ),
+    [pointColor, layer, tag?.isFeatureSelected],
+  );
   const pointOutlineColorCesium = useMemo(() => toColor(pointOutlineColor), [pointOutlineColor]);
   const labelColorCesium = useMemo(() => toColor(labelTypography?.color), [labelTypography?.color]);
   const labelBackgroundColorCesium = useMemo(
@@ -186,7 +214,8 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
           featureId={feature?.id}
           unselectable
           properties={feature?.properties}
-          availability={availability}>
+          availability={availability}
+          hideIndicator={hideIndicator}>
           <PolylineGraphics
             positions={extrudePoints}
             material={extrudePointsLineColor}
@@ -204,9 +233,11 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
         }
         layerId={layer?.id}
         featureId={feature?.id}
+        ref={entityRef}
         draggable
         properties={feature?.properties}
-        availability={availability}>
+        availability={availability}
+        hideIndicator={hideIndicator}>
         {style === "point" ? (
           <PointGraphics
             pixelSize={pointSize}

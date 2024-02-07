@@ -6,8 +6,8 @@ import { ValueTypes } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import BlockWrapper from "../../../../shared/components/BlockWrapper";
 import { CommonProps as BlockProps } from "../../types";
-import BlockWrapper from "../common/Wrapper";
 
 export type Props = BlockProps;
 

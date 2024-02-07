@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, type Ref, useState, useCallback } from "react";
+import { useImperativeHandle, useRef, type Ref, useState, useCallback, useEffect } from "react";
 
 import { SelectedFeatureInfo } from "../mantle";
 
@@ -10,8 +10,11 @@ import type {
   ComputedLayer,
   RequestingRenderMode,
   SceneProperty,
+  SketchRef,
 } from "./types";
 import useTimelineManager, { TimelineManagerRef } from "./useTimelineManager";
+
+import { CursorType } from ".";
 
 export type { MapRef } from "./ref";
 
@@ -23,11 +26,13 @@ export default function ({
   ref,
   sceneProperty,
   timelineManagerRef,
+  cursor,
   onLayerSelect,
 }: {
   ref: Ref<MapRef>;
   sceneProperty?: SceneProperty;
   timelineManagerRef?: TimelineManagerRef;
+  cursor?: CursorType;
   onLayerSelect?: (
     layerId: string | undefined,
     featureId: string | undefined,
@@ -38,6 +43,7 @@ export default function ({
 }) {
   const engineRef = useRef<EngineRef>(null);
   const layersRef = useRef<LayersRef>(null);
+  const sketchRef = useRef<SketchRef>(null);
   const requestingRenderMode = useRef<RequestingRenderMode>(NO_REQUEST_RENDER);
 
   useImperativeHandle(
@@ -46,6 +52,7 @@ export default function ({
       mapRef({
         engineRef,
         layersRef,
+        sketchRef,
         timelineManagerRef,
       }),
     [timelineManagerRef],
@@ -102,9 +109,16 @@ export default function ({
     timelineManagerRef,
   });
 
+  useEffect(() => {
+    if (cursor) {
+      engineRef.current?.setCursor(cursor);
+    }
+  }, [cursor]);
+
   return {
     engineRef,
     layersRef,
+    sketchRef,
     selectedLayer,
     requestingRenderMode,
     handleLayerSelect,

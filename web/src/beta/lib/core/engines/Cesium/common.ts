@@ -32,6 +32,7 @@ import {
   Color,
   SceneMode,
   Cesium3DTileColorBlendMode,
+  Plane,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -759,6 +760,8 @@ export async function sampleTerrainHeightFromCartesian(scene: Scene, translation
   return await sampleTerrainHeight(scene, lng, lat);
 }
 
+export const isColor = (c?: string) => c?.match(/^#[A-Fa-f0-9]|^rgba?/);
+
 export const toColor = (c?: string) => {
   if (!c || typeof c !== "string") return undefined;
 
@@ -777,3 +780,55 @@ export const updateMapController = (viewer: Viewer, enabled: boolean) => {
   viewer.scene.screenSpaceCameraController.enableTilt = enabled;
   viewer.scene.screenSpaceCameraController.enableZoom = enabled;
 };
+
+export function getExtrudedHeight(
+  scene: Scene,
+  position: Cartesian3,
+  windowPosition: Cartesian2,
+): number | undefined {
+  const cartesianScratch = new Cartesian3();
+  const normalScratch = new Cartesian3();
+  const rayScratch = new Ray();
+  const planeScratch = new Plane(Cartesian3.UNIT_X, 0);
+  const cartographicScratch = new Cartographic();
+  let intersection;
+  try {
+    const normal = scene.globe.ellipsoid.geodeticSurfaceNormal(position, normalScratch);
+    const ray = scene.camera.getPickRay(windowPosition, rayScratch);
+    if (ray == null) {
+      return;
+    }
+    // Plane coincident with surface normal and perpendicular to another plane
+    // coincident with the ray direction.
+    const plane = Plane.fromPointNormal(
+      position,
+      Cartesian3.normalize(
+        Cartesian3.cross(
+          normal,
+          Cartesian3.cross(normal, ray.direction, cartesianScratch),
+          cartesianScratch,
+        ),
+        cartesianScratch,
+      ),
+      planeScratch,
+    );
+    intersection = IntersectionTests.rayPlane(ray, plane, cartesianScratch);
+    if (intersection == null) {
+      return;
+    }
+    const toHeight = Cartographic.fromCartesian(
+      intersection,
+      scene.globe.ellipsoid,
+      cartographicScratch,
+    ).height;
+    const fromHeight = Cartographic.fromCartesian(
+      position,
+      scene.globe.ellipsoid,
+      cartographicScratch,
+    ).height;
+    return Math.max(0, toHeight - fromHeight);
+  } catch (error) {
+    console.error(error);
+  }
+  return;
+}

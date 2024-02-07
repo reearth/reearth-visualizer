@@ -23,11 +23,13 @@ import Clock from "./core/Clock";
 import Globe from "./core/Globe";
 import ImageryLayers from "./core/Imagery";
 import Indicator from "./core/Indicator";
+import JapanGSIOptimalBVmapLabelImageryLayers from "./core/labels/LabelImageryLayers";
 import Event from "./Event";
 import Feature, { context as featureContext } from "./Feature";
 import useHooks from "./hooks";
 import { AmbientOcclusion, AmbientOcclusionOutputType } from "./PostProcesses/hbao";
 import { AMBIENT_OCCLUSION_QUALITY } from "./PostProcesses/hbao/config";
+import Sketch from "./Sketch";
 
 const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
   {
@@ -140,6 +142,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       <Event onMount={handleMount} onUnmount={handleUnmount} />
       <Clock timelineManagerRef={timelineManagerRef} />
       <ImageryLayers tiles={property?.tiles} cesiumIonAccessToken={cesiumIonAccessToken} />
+      <JapanGSIOptimalBVmapLabelImageryLayers tileLabels={property?.tileLabels} />
       <Indicator property={property} timelineManagerRef={timelineManagerRef} />
       <ScreenSpaceEventHandler useDefault>
         {/* remove default click event */}
@@ -231,5 +234,6 @@ export const engine: Engine = {
   component: Component,
   featureComponent: Feature,
   clusterComponent: Cluster,
+  sketchComponent: Sketch,
   delegatedDataTypes: ["czml", "wms", "mvt", "3dtiles", "osm-buildings", "kml"],
 };

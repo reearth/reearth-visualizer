@@ -1,7 +1,7 @@
 import { Entity, JulianDate } from "cesium";
 import { expect, test } from "vitest";
 
-import { attachTag } from "./common";
+import { attachTag, isColor } from "./common";
 
 test("attachTag", () => {
   const entity = new Entity();
@@ -27,4 +27,12 @@ test("attachTag", () => {
 
   attachTag(entity, "tag_a", undefined);
   expect(entity.properties?.hasProperty("tag_a")).toBe(false);
+});
+
+test("isColor", () => {
+  expect(isColor("#0f0f0f")).toBeTruthy();
+  expect(isColor("#0f0")).toBeTruthy();
+  expect(isColor("abc")).toBeFalsy();
+  expect(isColor("rgb(0, 0, 0)")).toBeTruthy();
+  expect(isColor("rgba(0, 0, 0, 0.5)")).toBeTruthy();
 });

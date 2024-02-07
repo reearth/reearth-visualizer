@@ -6,6 +6,7 @@ import invariant from "tiny-invariant";
 
 import { HeatMapAppearance } from "@reearth/beta/lib/core/mantle";
 
+import { usePreRender } from "../../hooks/useSceneEvent";
 import { FeatureComponentConfig, FeatureProps } from "../utils";
 
 import { flareColorMapLUT } from "./constants";
@@ -45,33 +46,33 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
   );
 
   const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const isVisible = (): boolean => {
-      const camera = scene?.camera;
-      const frustum = camera?.frustum;
-      invariant(frustum instanceof PerspectiveFrustum);
-      const cullingVolume = frustum.computeCullingVolume(
-        camera?.position || Cartesian3.ONE,
-        camera?.direction || Cartesian3.ONE,
-        camera?.up || Cartesian3.ONE,
-      );
-      return cullingVolume.computeVisibility(boundingSphere) !== Intersect.OUTSIDE;
-    };
-    if (isVisible()) {
-      setVisible(true);
-      return;
+
+  const checkVisiblity = (): boolean => {
+    if (scene && !scene.camera) {
+      return false;
     }
-    const callback = (): void => {
-      if (isVisible()) {
-        setVisible(true);
-        scene?.camera?.changed.removeEventListener(callback);
-      }
-    };
-    scene?.camera?.changed.addEventListener(callback);
-    return () => {
-      scene?.camera?.changed.removeEventListener(callback);
-    };
-  }, [boundingSphere, scene]);
+
+    const camera = scene?.camera;
+    const frustum = camera?.frustum;
+    invariant(
+      frustum instanceof PerspectiveFrustum,
+      "Frustum should be a PerspectiveFrustum instance",
+    );
+
+    const cullingVolume = frustum.computeCullingVolume(
+      camera?.position || Cartesian3.ONE,
+      camera?.direction || Cartesian3.ONE,
+      camera?.up || Cartesian3.ONE,
+    );
+    return cullingVolume.computeVisibility(boundingSphere) !== Intersect.OUTSIDE;
+  };
+
+  usePreRender(() => {
+    const currentVisibility = checkVisiblity();
+    if (currentVisibility !== visible) {
+      setVisible(currentVisibility);
+    }
+  });
 
   useEffect(() => {
     return () => {
@@ -92,6 +93,20 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
       .catch(() => {});
   }, [reversingImageNeeded, valueMap, visible]);
 
+  const hasBounds = !!bounds;
+
+  const geometry = useMemo(
+    () =>
+      meshImageData != null && hasBounds
+        ? turf.bboxPolygon([boudsRef[0], boudsRef[1], boudsRef[2], boudsRef[3]]).geometry
+        : undefined,
+    [hasBounds, boudsRef, meshImageData],
+  );
+
+  if (!scene) {
+    return null;
+  }
+
   const {
     contourSpacing = maxValue != null
       ? Math.max(10, maxValue / 20)
@@ -102,15 +117,6 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
     minValue != null && maxValue != null
       ? [minValue, maxValue]
       : extendRange([0, 100], [0, meshImageData?.outlierThreshold || 0]);
-
-  const hasBounds = !!bounds;
-  const geometry = useMemo(
-    () =>
-      meshImageData != null && hasBounds
-        ? turf.bboxPolygon([boudsRef[0], boudsRef[1], boudsRef[2], boudsRef[3]]).geometry
-        : undefined,
-    [hasBounds, boudsRef, meshImageData],
-  );
 
   if (!isVisible || meshImageData == null || geometry == null) {
     return null;

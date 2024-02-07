@@ -6,10 +6,6 @@ import URLField from "@reearth/beta/components/fields/URLField";
 import RadioGroup from "@reearth/beta/components/RadioGroup";
 import Toggle from "@reearth/beta/components/Toggle";
 import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
-import { DataType } from "@reearth/beta/lib/core/Map";
-import { useT } from "@reearth/services/i18n";
-
-import { DataProps, DataSourceOptType, SourceType } from "..";
 import {
   ColJustifyBetween,
   AssetWrapper,
@@ -19,7 +15,11 @@ import {
   SubmitWrapper,
   TextArea,
   generateTitle,
-} from "../utils";
+} from "@reearth/beta/features/Editor/utils";
+import { DataType } from "@reearth/beta/lib/core/Map";
+import { useT } from "@reearth/services/i18n";
+
+import { DataProps, DataSourceOptType, SourceType } from "..";
 
 const SelectDataType: React.FC<{
   fileFormat: AcceptedFileFormat;

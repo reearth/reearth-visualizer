@@ -5,7 +5,7 @@ import Markdown from "@reearth/beta/components/Markdown";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { BlockContext } from "../common/Wrapper";
+import { BlockContext } from "../../../../shared/components/BlockWrapper";
 
 export type Props = {
   text: string;

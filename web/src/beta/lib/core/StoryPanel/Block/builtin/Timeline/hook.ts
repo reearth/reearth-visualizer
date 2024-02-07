@@ -21,8 +21,8 @@ import {
   formatRangeDateAndTime,
 } from "@reearth/beta/lib/core/StoryPanel/utils";
 
-import { getNewDate } from "../../../hooks/useTimelineBlock";
-import { DEFAULT_BLOCK_PADDING } from "../common/hooks";
+import { DEFAULT_BLOCK_PADDING } from "../../../../shared/components/BlockWrapper/hooks";
+import { getNewDate } from "../../../../shared/hooks/useTimelineBlock";
 
 import { PaddingProp } from "./Editor";
 
@@ -39,6 +39,7 @@ type TimelineProps = {
   timelineValues?: TimelineValues;
   padding?: PaddingProp;
   property?: any;
+  timezone?: string;
   onPlay?: (committer: TimelineCommitter) => void;
   onSpeedChange?: (speed: number, committerId?: string) => void;
   onPause: (committerId: string) => void;
@@ -63,6 +64,7 @@ export default ({
   timelineValues,
   padding,
   property,
+  timezone,
   onPlay,
   onSpeedChange,
   onPause,
@@ -87,28 +89,33 @@ export default ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selected, setSelected] = useState("1min/sec");
+  const [selected, setSelected] = useState("1sec/sec");
   const formattedCurrentTime = useMemo(() => {
-    const textDate = formatDateForTimeline(currentTime, { detail: true });
+    const textDate = formatDateForTimeline(currentTime, { detail: true }, timezone);
+
     return textDate;
-  }, [currentTime]);
+  }, [currentTime, timezone]);
 
   const current = formatRangeDateAndTime(
-    formatDateForSliderTimeline(currentTime, { detail: true }),
+    formatDateForSliderTimeline(currentTime, { detail: true }, timezone),
   );
 
   const timeRange = useMemo(() => {
     if (range) {
       return {
         startTime: formatRangeDateAndTime(
-          formatDateForSliderTimeline(range.start, { detail: true }),
+          formatDateForSliderTimeline(range.start, { detail: true }, timezone),
         ),
-        midTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.mid, { detail: true })),
-        endTime: formatRangeDateAndTime(formatDateForSliderTimeline(range.end, { detail: true })),
+        midTime: formatRangeDateAndTime(
+          formatDateForSliderTimeline(range.mid, { detail: true }, timezone),
+        ),
+        endTime: formatRangeDateAndTime(
+          formatDateForSliderTimeline(range.end, { detail: true }, timezone),
+        ),
       };
     }
     return {};
-  }, [range]);
+  }, [range, timezone]);
 
   const panelSettings = useMemo(() => {
     if (!property?.panel) return undefined;

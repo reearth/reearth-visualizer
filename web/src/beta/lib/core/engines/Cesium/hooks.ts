@@ -32,7 +32,7 @@ import type {
   LayerSelectionReason,
   EngineRef,
   SceneProperty,
-  MouseEvent,
+  MouseEventProps,
   MouseEvents,
   LayerEditEvent,
 } from "..";
@@ -47,7 +47,18 @@ import { arrayToCartecian3 } from "./helpers/sphericalHaromic";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
-import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils";
+import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils/utils";
+
+interface CustomGlobeSurface {
+  tileProvider: {
+    _debug: {
+      wireframe: boolean;
+    };
+  };
+}
+
+type CesiumMouseEvent = (movement: CesiumMovementEvent, target: RootEventTarget) => void;
+type CesiumMouseWheelEvent = (delta: number) => void;
 
 export default ({
   ref,
@@ -347,9 +358,13 @@ export default ({
 
     if (prevSelectedEntity.current === entity) return;
 
-    if (!entity || entity instanceof Entity) {
+    const tag = getTag(entity);
+    if (entity instanceof Entity && !tag?.hideIndicator) {
       viewer.selectedEntity = entity;
+    } else {
+      viewer.selectedEntity = undefined;
     }
+
     prevSelectedEntity.current = entity;
 
     // TODO: Support layers.selectFeature API for MVT
@@ -380,7 +395,6 @@ export default ({
       }
     }
 
-    const tag = getTag(entity);
     if (tag?.unselectable) return;
 
     if (entity && entity instanceof Cesium3DTileFeature) {
@@ -432,27 +446,6 @@ export default ({
     }
   }, [cesium, selectedLayerId, onLayerSelect, layersRef, featureFlags]);
 
-  const handleMouseEvent = useCallback(
-    (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
-      if (engineAPI.mouseEventCallbacks[type]) {
-        const viewer = cesium.current?.cesiumElement;
-        if (!viewer || viewer.isDestroyed()) return;
-        const position = e.position || e.startPosition;
-        const props: MouseEvent = {
-          x: position?.x,
-          y: position?.y,
-          ...(position
-            ? getLocationFromScreen(viewer.scene, position.x, position.y, true) ?? {}
-            : {}),
-        };
-        const layerId = getLayerId(target);
-        if (layerId) props.layerId = layerId;
-        engineAPI.mouseEventCallbacks[type]?.(props);
-      }
-    },
-    [engineAPI],
-  );
-
   const sphericalHarmonicCoefficients = useMemo(
     () =>
       property?.light?.sphericalHarmonicCoefficients
@@ -471,17 +464,45 @@ export default ({
     globeImageBasedLighting: property?.atmosphere?.globeImageBasedLighting,
     enableLighting: property?.atmosphere?.enable_lighting ?? property?.globeLighting?.globeLighting,
     hasVertexNormals: property?.terrain?.terrain && property.terrain.terrainNormal,
+    terrain: property?.terrain,
   });
+
+  const handleMouseEvent = useCallback(
+    (type: keyof MouseEvents, e: CesiumMovementEvent, target: RootEventTarget) => {
+      if (engineAPI.mouseEventCallbacks[type]?.length > 0) {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const position = e.position || e.startPosition;
+        const props: MouseEventProps = {
+          x: position?.x,
+          y: position?.y,
+          ...(position
+            ? getLocationFromScreen(viewer.scene, position.x, position.y, true) ?? {}
+            : {}),
+        };
+        const layerId = getLayerId(target);
+        if (layerId) props.layerId = layerId;
+        engineAPI.mouseEventCallbacks[type].forEach(cb => cb(props));
+      }
+    },
+    [engineAPI],
+  );
 
   const handleMouseWheel = useCallback(
     (delta: number) => {
-      engineAPI.mouseEventCallbacks.wheel?.({ delta });
+      if (engineAPI.mouseEventCallbacks.wheel.length > 0) {
+        engineAPI.mouseEventCallbacks.wheel.forEach(cb => cb({ delta }));
+      }
     },
     [engineAPI],
   );
 
   const mouseEventHandles = useMemo(() => {
-    const mouseEvents: { [index in keyof MouseEvents]: undefined | any } = {
+    const mouseEvents: {
+      [index in keyof Omit<MouseEvents, "wheel">]: undefined | CesiumMouseEvent;
+    } & {
+      wheel: CesiumMouseWheelEvent | undefined;
+    } = {
       click: undefined,
       doubleclick: undefined,
       mousedown: undefined,
@@ -495,17 +516,15 @@ export default ({
       mousemove: undefined,
       mouseenter: undefined,
       mouseleave: undefined,
-      wheel: undefined,
+      wheel: (delta: number) => {
+        handleMouseWheel(delta);
+      },
     };
     (Object.keys(mouseEvents) as (keyof MouseEvents)[]).forEach(type => {
-      mouseEvents[type] =
-        type === "wheel"
-          ? (delta: number) => {
-              handleMouseWheel(delta);
-            }
-          : (e: CesiumMovementEvent, target: RootEventTarget) => {
-              handleMouseEvent(type as keyof MouseEvents, e, target);
-            };
+      if (type !== "wheel")
+        mouseEvents[type] = (e: CesiumMovementEvent, target: RootEventTarget) => {
+          handleMouseEvent(type as keyof MouseEvents, e, target);
+        };
     });
     return mouseEvents;
   }, [handleMouseEvent, handleMouseWheel]);
@@ -521,7 +540,14 @@ export default ({
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
 
-      viewer.selectedEntity = undefined;
+      const entity =
+        findEntity(viewer, undefined, selectedLayerId?.featureId) ||
+        findEntity(viewer, selectedLayerId?.layerId);
+
+      const tag = getTag(entity);
+      if (!entity || (entity instanceof Entity && tag?.hideIndicator)) {
+        viewer.selectedEntity = undefined;
+      }
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
@@ -546,7 +572,11 @@ export default ({
             : undefined,
         );
         prevSelectedEntity.current = target.id;
-        viewer.selectedEntity = target.id;
+        if (target.id instanceof Entity && !tag?.hideIndicator) {
+          viewer.selectedEntity = target.id;
+        } else {
+          viewer.selectedEntity = undefined;
+        }
         return;
       }
 
@@ -630,9 +660,11 @@ export default ({
                 // ref: https://github.com/CesiumGS/cesium/blob/9295450e64c3077d96ad579012068ea05f97842c/packages/widgets/Source/Viewer/Viewer.js#L1843-L1876
                 // issue: https://github.com/CesiumGS/cesium/issues/7965
                 requestAnimationFrame(() => {
-                  viewer.selectedEntity = new Entity({
-                    position: Cartographic.toCartesian(pos),
-                  });
+                  if (!tag?.hideIndicator) {
+                    viewer.selectedEntity = new Entity({
+                      position: Cartographic.toCartesian(pos),
+                    });
+                  }
                 });
               }
 
@@ -667,10 +699,19 @@ export default ({
         }
       }
 
-      viewer.selectedEntity = undefined;
+      if (!entity || (entity instanceof Entity && tag?.hideIndicator)) {
+        viewer.selectedEntity = undefined;
+      }
       onLayerSelect?.();
     },
-    [onLayerSelect, mouseEventHandles, layersRef, featureFlags],
+    [
+      onLayerSelect,
+      mouseEventHandles,
+      layersRef,
+      featureFlags,
+      selectedLayerId?.featureId,
+      selectedLayerId?.layerId,
+    ],
   );
 
   // E2E test
@@ -754,6 +795,10 @@ export default ({
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       requestRender: engineAPI.requestRender,
+      getSurfaceDistance: engineAPI.getSurfaceDistance,
+      toXYZ: engineAPI.toXYZ,
+      toWindowPosition: engineAPI.toWindowPosition,
+      isPositionVisible: engineAPI.isPositionVisible,
     }),
     [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
   );
@@ -849,6 +894,17 @@ export default ({
     }
     viewer.forceResize();
   }, [property]);
+
+  const globe = cesium.current?.cesiumElement?.scene.globe;
+
+  useEffect(() => {
+    if (globe) {
+      const surface = (globe as any)._surface as CustomGlobeSurface;
+      if (surface) {
+        surface.tileProvider._debug.wireframe = property?.render?.showWireframe ?? false;
+      }
+    }
+  }, [globe, property?.render?.showWireframe]);
 
   return {
     backgroundColor,
