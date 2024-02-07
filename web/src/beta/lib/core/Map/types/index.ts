@@ -87,6 +87,7 @@ export type EngineRef = {
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  getGlobeHeight: () => void;
   toXYZ: (
     lng: number,
     lat: number,

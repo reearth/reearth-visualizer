@@ -25,6 +25,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   getLocationFromScreen: 1,
   sampleTerrainHeight: 1,
   computeGlobeHeight: 1,
+  getGlobeHeight: 1,
   toXYZ: 1,
   toLngLatHeight: 1,
   convertScreenToPositionOffset: 1,

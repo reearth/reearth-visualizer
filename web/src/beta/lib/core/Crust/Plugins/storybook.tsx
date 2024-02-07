@@ -104,6 +104,7 @@ export const context: Context = {
       getLocationFromScreen: act("getLocationFromScreen"),
       sampleTerrainHeight: act("sampleTerrainHeight"),
       computeGlobeHeight: act("computeGlobeHeight"),
+      getGlobeHeight: act("getGlobeHeight"),
       toXYZ: act("toXYZ"),
       toLngLatHeight: act("toLngLatHeight"),
       convertScreenToPositionOffset: act("convertScreenToPositionOffset"),

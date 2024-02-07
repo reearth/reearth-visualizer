@@ -133,6 +133,16 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return viewer.scene.globe.getHeight(Cesium.Cartographic.fromDegrees(lng, lat, height));
       },
+      getGlobeHeight: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const { globeHeight } = scene as Cesium.Scene & { globeHeight?: number };
+        if (!scene || globeHeight == null) {
+          return;
+        }
+        return globeHeight;
+      },
       toXYZ: (lng, lat, height, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
