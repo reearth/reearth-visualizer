@@ -85,7 +85,7 @@ export default function Feature({
   const data = extractSimpleLayerData(layer);
   const ext = !data?.type || (data.type as string) === "auto" ? guessType(data?.url) : undefined;
   let displayType = data?.type && displayConfig[ext ?? data.type];
-  if (layer.features?.length > FEATURE_DELEGATE_THRESHOLD) {
+  if (layer.features?.length > FEATURE_DELEGATE_THRESHOLD || data?.geojson?.useAsResource) {
     displayType = ["resource"];
   }
   const areAllDisplayTypeNoFeature =
