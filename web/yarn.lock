@@ -17056,10 +17056,10 @@ react-use@17.4.0:
     ts-easing "^0.2.0"
     tslib "^2.1.0"
 
-react18-json-view@0.2.6:
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/react18-json-view/-/react18-json-view-0.2.6.tgz#c47874aa4a461716be29d6bf1321d0048bae0537"
-  integrity sha512-RHAY880UwC7SClyQBoij50q2InpSrj5zmP2DCL73vEaaVTyj/QbMPBk4FRKMQ7LF8FSxhh+VI6mK3AhlBaCBxw==
+react18-json-view@0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/react18-json-view/-/react18-json-view-0.2.7.tgz#8ecd6eb08ef6780fa662b70671a7db8a16e14f71"
+  integrity sha512-u1H0ZrjrYZUuXEyjcMU+/lVbFi890SNacTcYQT+e7/TI7OeczHyLwcngY4JbtZgfhwjIU078O1+NKh97IVVwZw==
 
 react@18.2.0:
   version "18.2.0"
