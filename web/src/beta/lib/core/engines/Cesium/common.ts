@@ -760,6 +760,8 @@ export async function sampleTerrainHeightFromCartesian(scene: Scene, translation
   return await sampleTerrainHeight(scene, lng, lat);
 }
 
+export const isColor = (c?: string) => c?.match(/^#[A-Fa-f0-9]|^rgba?/);
+
 export const toColor = (c?: string) => {
   if (!c || typeof c !== "string") return undefined;
 
