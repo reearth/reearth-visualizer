@@ -593,12 +593,12 @@ export const overrideScreenSpaceController = (options?: ScreenSpaceCameraControl
       };
 
       if (typeof str === "string") {
-        if (cameraEventTypeMap[str]) {
+        if (cameraEventTypeMap[str] !== undefined) {
           return cameraEventTypeMap[str];
         } else if (keyboardEventModifierMap[str]) {
           return keyboardEventModifierMap[str];
         } else {
-          throw new Error(`Unknown string: ${str}`);
+          return str;
         }
       } else {
         const { eventType, modifier } = str;
