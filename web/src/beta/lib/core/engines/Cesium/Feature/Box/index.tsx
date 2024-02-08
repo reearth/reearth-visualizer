@@ -27,6 +27,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   layer,
   feature,
   onLayerEdit,
+  // interactionMode,
 }) {
   const {
     show = true,
