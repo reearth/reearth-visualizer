@@ -34,7 +34,6 @@ import {
   Cesium3DTileColorBlendMode,
   Plane,
   CameraEventType,
-  ScreenSpaceCameraController,
   KeyboardEventModifier,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
@@ -45,7 +44,14 @@ import { tweenInterval } from "@reearth/beta/utils/raf";
 import { LatLngHeight } from "@reearth/beta/utils/value";
 
 import type { Camera, Clock } from "..";
-import type { CameraOptions, FlyToDestination, screenSpaceOptions } from "../../types";
+import type {
+  CameraOptions,
+  FlyToDestination,
+  ModifiedCameraEventType,
+  OverideCameraEventType,
+  OverideKeyboardEventModifier,
+  ScreenSpaceCameraControllerOptions,
+} from "../../types";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -563,6 +569,62 @@ export const heightReference = (
     }
   )[heightReference || ""]);
 
+export const overrideScreenSpaceController = (options?: ScreenSpaceCameraControllerOptions) => {
+  const mapStringToCesiumConstants = (
+    arr:
+      | (OverideCameraEventType | OverideKeyboardEventModifier | ModifiedCameraEventType)[]
+      | undefined,
+  ): (CameraEventType | KeyboardEventModifier | any)[] => {
+    if (!Array.isArray(arr)) return [];
+
+    return arr.map(str => {
+      const cameraEventTypeMap: { [key: string]: CameraEventType } = {
+        left_drag: CameraEventType.LEFT_DRAG,
+        right_drag: CameraEventType.RIGHT_DRAG,
+        middle_drag: CameraEventType.MIDDLE_DRAG,
+        wheel: CameraEventType.WHEEL,
+        pinch: CameraEventType.PINCH,
+      };
+
+      const keyboardEventModifierMap: { [key: string]: KeyboardEventModifier } = {
+        ctrl: KeyboardEventModifier.CTRL,
+        shift: KeyboardEventModifier.SHIFT,
+        alt: KeyboardEventModifier.ALT,
+      };
+
+      if (typeof str === "string") {
+        if (cameraEventTypeMap[str]) {
+          return cameraEventTypeMap[str];
+        } else if (keyboardEventModifierMap[str]) {
+          return keyboardEventModifierMap[str];
+        } else {
+          throw new Error(`Unknown string: ${str}`);
+        }
+      } else {
+        const { eventType, modifier } = str;
+        const mappedEventType = cameraEventTypeMap[eventType];
+        const mappedModifier = keyboardEventModifierMap[modifier];
+
+        const modifiedCameraEvent = {
+          eventType: mappedEventType,
+          modifier: mappedModifier,
+        };
+
+        return modifiedCameraEvent;
+      }
+    });
+  };
+
+  const overidenAssignments = {
+    translateEventTypes: mapStringToCesiumConstants(options?.translateEventTypes),
+    zoomEventTypes: mapStringToCesiumConstants(options?.zoomEventTypes),
+    rotateEventTypes: mapStringToCesiumConstants(options?.rotateEventTypes),
+    tiltEventTypes: mapStringToCesiumConstants(options?.tiltEventTypes),
+    lookEventTypes: mapStringToCesiumConstants(options?.lookEventTypes),
+  };
+  return overidenAssignments;
+};
+
 export const classificationType = (
   classificationType?: ClassificationType,
 ): CesiumClassificationType | undefined =>
@@ -835,72 +897,3 @@ export function getExtrudedHeight(
   }
   return;
 }
-
-export const overrideScreenSpaceController = (
-  controller: ScreenSpaceCameraController,
-  options: screenSpaceOptions,
-) => {
-  const defaultAssignments = {
-    translateEventTypes: CameraEventType.LEFT_DRAG,
-    zoomEventTypes: [CameraEventType.RIGHT_DRAG, CameraEventType.WHEEL, CameraEventType.PINCH],
-    rotateEventTypes: CameraEventType.LEFT_DRAG,
-    tiltEventTypes: [
-      CameraEventType.MIDDLE_DRAG,
-      CameraEventType.PINCH,
-      {
-        eventType: CameraEventType.LEFT_DRAG,
-        modifier: options.ctrl,
-      },
-      {
-        eventType: CameraEventType.RIGHT_DRAG,
-        modifier: options.ctrl,
-      },
-    ],
-    lookEventTypes: [
-      {
-        eventType: CameraEventType.LEFT_DRAG,
-        modifier: KeyboardEventModifier.SHIFT,
-      },
-    ],
-  };
-
-  if (options.useKeyboard) {
-    Object.assign(controller, {
-      zoomEventTypes: [],
-      rotateEventTypes: [],
-      tiltEventTypes: [],
-      lookEventTypes: [
-        CameraEventType.LEFT_DRAG,
-        {
-          eventType: CameraEventType.LEFT_DRAG,
-          modifier: KeyboardEventModifier.CTRL,
-        },
-        {
-          eventType: CameraEventType.LEFT_DRAG,
-          modifier: KeyboardEventModifier.SHIFT,
-        },
-      ],
-    });
-  } else if (options.tiltByRightButton) {
-    Object.assign(controller, {
-      ...defaultAssignments,
-      // Remove right drag from zoom event types.
-      zoomEventTypes: [CameraEventType.MIDDLE_DRAG, CameraEventType.WHEEL, CameraEventType.PINCH],
-      // Change control-drag to right drag for tilt event types.
-      tiltEventTypes: [
-        CameraEventType.RIGHT_DRAG,
-        CameraEventType.PINCH,
-        {
-          eventType: CameraEventType.LEFT_DRAG,
-          modifier: KeyboardEventModifier.CTRL,
-        },
-        {
-          eventType: CameraEventType.RIGHT_DRAG,
-          modifier: KeyboardEventModifier.CTRL,
-        },
-      ],
-    });
-  } else {
-    Object.assign(controller, defaultAssignments);
-  }
-};

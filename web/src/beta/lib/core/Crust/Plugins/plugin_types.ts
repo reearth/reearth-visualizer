@@ -26,7 +26,7 @@ import {
   CameraOptions,
   FlyToDestination,
   LookAtDestination,
-  screenSpaceOptions,
+  ScreenSpaceCameraControllerOptions,
 } from "../../types";
 import { Block } from "../Infobox";
 import { InteractionModeType } from "../types";
@@ -190,7 +190,7 @@ export type Camera = {
     },
   ) => void;
   readonly rotateOnCenter: (radian: number) => void;
-  readonly overrideScreenSpaceController: (options: screenSpaceOptions) => void;
+  readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */

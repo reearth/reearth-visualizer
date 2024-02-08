@@ -8,7 +8,7 @@ import { MouseEventCallbacks, TickEventCallback } from "@reearth/beta/lib/core/M
 
 import type { EngineRef, MouseEventProps, Feature, ComputedFeature } from "..";
 import { SketchType } from "../../Map/Sketch/types";
-import { Position2d, Position3d, screenSpaceOptions } from "../../types";
+import { Position2d, Position3d } from "../../types";
 
 import {
   getLocationFromScreen,
@@ -461,7 +461,7 @@ export default function useEngineRef(
         if (!target) return;
         scene.camera.rotate(target, radian);
       },
-      overrideScreenSpaceController: (options: screenSpaceOptions) => {
+      overrideScreenSpaceController: (options?) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
 
@@ -470,9 +470,11 @@ export default function useEngineRef(
         const maximumZoomDistance = Infinity;
         controller.minimumZoomDistance = minimumZoomDistance;
         controller.maximumZoomDistance = maximumZoomDistance;
-        controller.enableCollisionDetection = !options.useKeyboard;
-        overrideScreenSpaceController(controller, options);
-        return controller;
+        controller.enableCollisionDetection = true;
+        const result = overrideScreenSpaceController(options);
+
+        const newController = Object.assign({}, controller, result);
+        return newController;
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

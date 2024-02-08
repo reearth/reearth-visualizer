@@ -46,9 +46,18 @@ export type LookAtDestination = {
 export type Position2d = [x: number, y: number];
 export type Position3d = [x: number, y: number, z: number];
 
-export type screenSpaceOptions = {
-  useKeyboard: boolean;
-  tiltByRightButton: boolean;
-  ctrl: string;
-  shift: string;
+export type OverideCameraEventType = "left_drag" | "right_drag" | "middle_drag" | "wheel" | "pinch";
+export type OverideKeyboardEventModifier = "ctrl" | "shift" | "alt";
+
+export type ScreenSpaceCameraControllerOptions = {
+  zoomEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
+  rotateEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
+  tiltEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
+  lookEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
+  translateEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
+};
+
+export type ModifiedCameraEventType = {
+  eventType: OverideCameraEventType;
+  modifier: OverideKeyboardEventModifier;
 };

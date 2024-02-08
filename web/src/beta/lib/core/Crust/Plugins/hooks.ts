@@ -17,7 +17,7 @@ import {
   FlyTo,
   FlyToDestination,
   LookAtDestination,
-  screenSpaceOptions,
+  ScreenSpaceCameraControllerOptions,
 } from "../../types";
 
 import { commonReearth } from "./api";
@@ -354,7 +354,7 @@ export default function ({
   );
 
   const overrideScreenSpaceController = useCallback(
-    (options: screenSpaceOptions) => {
+    (options: ScreenSpaceCameraControllerOptions) => {
       return engineRef?.overrideScreenSpaceController(options);
     },
     [engineRef],

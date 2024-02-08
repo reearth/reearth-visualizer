@@ -31,7 +31,7 @@ import type {
   LookAtDestination,
   Position2d,
   Position3d,
-  screenSpaceOptions,
+  ScreenSpaceCameraControllerOptions,
 } from "../../types";
 import type {
   FeatureComponentType,
@@ -144,7 +144,7 @@ export type EngineRef = {
     },
   ) => void;
   rotateOnCenter: (radian: number) => void;
-  overrideScreenSpaceController: (options: screenSpaceOptions) => void;
+  overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
