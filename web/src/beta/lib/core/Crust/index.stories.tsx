@@ -22,6 +22,7 @@ const Template: Story<Props & { engine: Engine; interactionMode: InteractionMode
         engine="a"
         engines={{ a: engine }}
         ref={ref}
+        interactionMode={args.interactionMode}
         featureFlags={INTERACTION_MODES[args.interactionMode]}
       />
       <Component {...args} mapRef={ref} />
