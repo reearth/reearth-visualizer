@@ -18,7 +18,7 @@ export type Props = {
   sceneProperty?: any;
   clusterComponent?: ClusterComponentType;
   Feature?: LayerProps["Feature"];
-  interactionMode?: InteractionModeType;
+  interactionMode: InteractionModeType;
 } & Omit<CommonProps, "isSelected" | "isHidden" | "selectedFeatureId">;
 
 export type Cluster = {

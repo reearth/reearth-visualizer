@@ -27,6 +27,7 @@ import { pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
+import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 
 import type {
@@ -363,6 +364,7 @@ export const useHooks = ({
   evalFeature,
   onComputedFeatureFetch,
   onLayerFetch,
+  interactionMode,
 }: {
   id: string;
   boxId: string;
@@ -375,6 +377,7 @@ export const useHooks = ({
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (f: Feature[], cf: ComputedFeature[]) => void;
   onLayerFetch?: (value: Partial<Pick<LayerSimple, "properties">>) => void;
+  interactionMode: InteractionModeType;
 }) => {
   const { viewer } = useCesium();
   const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping, apiKey } = property ?? {};
@@ -392,7 +395,7 @@ export const useHooks = ({
     direction = "inside",
     builtinBoxProps,
     allowEnterGround,
-  } = useClippingBox({ clipping: experimental_clipping, boxId });
+  } = useClippingBox({ clipping: experimental_clipping, boxId, interactionMode });
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type, idProperty } = useData(layer);
 

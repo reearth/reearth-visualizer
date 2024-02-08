@@ -48,7 +48,7 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden" | "selected
     reason: LayerSelectionReason | undefined,
     info: SelectedFeatureInfo | undefined,
   ) => void;
-  interactionMode?: InteractionModeType;
+  interactionMode: InteractionModeType;
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (

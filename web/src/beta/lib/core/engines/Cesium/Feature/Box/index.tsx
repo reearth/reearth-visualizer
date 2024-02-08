@@ -29,7 +29,6 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   onLayerEdit,
   interactionMode,
 }) {
-  console.log("interactionMode", interactionMode);
   const {
     show = true,
     height = 100,

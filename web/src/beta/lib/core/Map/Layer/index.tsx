@@ -38,7 +38,7 @@ export type FeatureComponentProps = {
   onFeatureDelete?: (features: string[]) => void;
   onComputedFeatureDelete?: (features: string[]) => void;
   evalFeature: EvalFeature;
-  interactionMode?: InteractionModeType;
+  interactionMode: InteractionModeType;
 } & CommonProps;
 
 export type Props = {
@@ -48,7 +48,7 @@ export type Props = {
   delegatedDataTypes?: DataType[];
   sceneProperty?: any;
   selectedFeatureId?: string;
-  interactionMode?: InteractionModeType;
+  interactionMode: InteractionModeType;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;

@@ -9,6 +9,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RootEventTarget, useCesium } from "resium";
 
+import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
 import { Camera, EXPERIMENTAL_clipping } from "@reearth/beta/lib/core/mantle";
 import { LayerEditEvent } from "@reearth/beta/lib/core/Map";
 
@@ -84,9 +85,11 @@ export const BUILTIN_BOX_SIDE_PLANES = [
 export const useClippingBox = ({
   clipping,
   boxId,
+  interactionMode,
 }: {
   clipping?: EXPERIMENTAL_clipping;
   boxId: string;
+  interactionMode: InteractionModeType;
 }) => {
   const {
     useBuiltinBox,
@@ -106,6 +109,8 @@ export const useClippingBox = ({
   const isBoxClicked = useRef(false);
   const isTopBottomSidePlaneClicked = useRef(false);
   const currentCameraPosition = useRef<Camera | undefined>();
+
+  const isInteractable = interactionMode === "default" || interactionMode === "move";
 
   // Coordinates
   const [coords, setCoords] = useState(coordinates);
@@ -140,7 +145,7 @@ export const useClippingBox = ({
 
   const handleMouseDown = useCallback(
     (e: any) => {
-      if (!viewer) {
+      if (!viewer || !isInteractable) {
         return;
       }
       const picked = viewer.scene.pick(e.position);
@@ -183,10 +188,10 @@ export const useClippingBox = ({
         }
       }
     },
-    [boxId, boxState, handleUpdateBoxState, viewer],
+    [boxId, boxState, handleUpdateBoxState, viewer, isInteractable],
   );
   const handleMouseUp = useCallback(() => {
-    if (!viewer) {
+    if (!viewer || !isInteractable) {
       return;
     }
     if (boxState.activeScalePointIndex || boxState.activeEdgeIndex) {
@@ -214,10 +219,10 @@ export const useClippingBox = ({
         cursor: "default",
       });
     }
-  }, [boxState, handleUpdateBoxState, viewer]);
+  }, [boxState, handleUpdateBoxState, viewer, isInteractable]);
   const handleMouseMove = useCallback(
     async (e: any) => {
-      if (!isBoxClicked.current || !viewer) return;
+      if (!isBoxClicked.current || !viewer || !isInteractable) return;
 
       const cart = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2]);
 
@@ -271,7 +276,7 @@ export const useClippingBox = ({
         ]);
       }
     },
-    [allowEnterGround, coords, dimensions?.height, viewer],
+    [allowEnterGround, coords, dimensions?.height, viewer, isInteractable],
   );
   const handleMouseEnter = useCallback(
     ({ layerId }: { layerId?: string } | undefined = {}) => {
