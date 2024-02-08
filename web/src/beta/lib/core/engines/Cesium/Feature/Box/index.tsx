@@ -29,6 +29,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   onLayerEdit,
   interactionMode,
 }) {
+  console.log("interactionMode", interactionMode);
   const {
     show = true,
     height = 100,
@@ -105,7 +106,6 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
         );
       })}
       {scalePoint &&
-        isInteractable &&
         SCALE_POINTS.map((vector, i) => (
           <ScalePoints
             key={`${layerId}-scale-point-${i}`}
@@ -128,9 +128,9 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             }}
             visiblePoint={scalePoint}
             visibleAxisLine={axisLine && activeScalePointIndex === i}
-            onPointMouseDown={handlePointMouseDown}
-            onPointMouseMove={handlePointMouseMove}
-            onPointMouseUp={handlePointMouseUp}
+            onPointMouseDown={isInteractable ? handlePointMouseDown : undefined}
+            onPointMouseMove={isInteractable ? handlePointMouseMove : undefined}
+            onPointMouseUp={isInteractable ? handlePointMouseUp : undefined}
             availability={availability}
             distanceDisplayCondition={distanceDisplayCondition}
             hideIndicator={hideIndicator}
