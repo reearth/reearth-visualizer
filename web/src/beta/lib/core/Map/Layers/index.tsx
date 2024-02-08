@@ -59,7 +59,7 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
     requestingRenderMode,
     engineRef,
     onLayerSelect,
-    interactionMode = "default" || "move",
+    interactionMode,
     ...props
   },
   ref,
