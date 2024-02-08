@@ -472,6 +472,7 @@ export default function useEngineRef(
         controller.maximumZoomDistance = maximumZoomDistance;
         controller.enableCollisionDetection = !options.useKeyboard;
         overrideScreenSpaceController(controller, options);
+        return controller;
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

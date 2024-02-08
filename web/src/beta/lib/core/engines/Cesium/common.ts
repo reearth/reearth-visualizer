@@ -35,6 +35,7 @@ import {
   Plane,
   CameraEventType,
   ScreenSpaceCameraController,
+  KeyboardEventModifier,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -858,10 +859,11 @@ export const overrideScreenSpaceController = (
     lookEventTypes: [
       {
         eventType: CameraEventType.LEFT_DRAG,
-        modifier: options.shift,
+        modifier: KeyboardEventModifier.SHIFT,
       },
     ],
   };
+
   if (options.useKeyboard) {
     Object.assign(controller, {
       zoomEventTypes: [],
@@ -871,11 +873,11 @@ export const overrideScreenSpaceController = (
         CameraEventType.LEFT_DRAG,
         {
           eventType: CameraEventType.LEFT_DRAG,
-          modifier: options.ctrl,
+          modifier: KeyboardEventModifier.CTRL,
         },
         {
           eventType: CameraEventType.LEFT_DRAG,
-          modifier: options.shift,
+          modifier: KeyboardEventModifier.SHIFT,
         },
       ],
     });
@@ -890,11 +892,11 @@ export const overrideScreenSpaceController = (
         CameraEventType.PINCH,
         {
           eventType: CameraEventType.LEFT_DRAG,
-          modifier: options.ctrl,
+          modifier: KeyboardEventModifier.CTRL,
         },
         {
           eventType: CameraEventType.RIGHT_DRAG,
-          modifier: options.ctrl,
+          modifier: KeyboardEventModifier.CTRL,
         },
       ],
     });
