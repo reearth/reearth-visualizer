@@ -251,6 +251,7 @@ export type RasterAppearance = {
   maximumLevel?: number;
   credit?: string;
   alpha?: number;
+  hideIndicator?: boolean;
 };
 
 export type BoxAppearance = {
@@ -283,6 +284,7 @@ export type BoxAppearance = {
   activeEdgeIndex?: number; // 0 ~ 11
   near?: number;
   far?: number;
+  hideIndicator?: boolean;
 };
 
 export type TransitionAppearance = {

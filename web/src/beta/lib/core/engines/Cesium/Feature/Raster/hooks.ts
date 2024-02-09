@@ -10,6 +10,7 @@ export const useImageryProvider = (
   layerId: string | undefined,
   property: RasterAppearance | undefined,
 ) => {
+  const { hideIndicator } = property ?? {};
   const { viewer } = useCesium();
   const alpha = property?.alpha;
   useEffect(() => {
@@ -19,11 +20,11 @@ export const useImageryProvider = (
     if (alpha !== undefined && typeof alpha === "number") {
       imageryLayer.alpha = alpha;
     }
-    attachTag(imageryLayer, { layerId });
+    attachTag(imageryLayer, { layerId, hideIndicator });
     return () => {
       imageryLayers.remove(imageryLayer);
     };
-  }, [imageryProvider, viewer, layerId, alpha]);
+  }, [imageryProvider, viewer, layerId, alpha, hideIndicator]);
 };
 
 export const useData = (layer: ComputedLayer | undefined) => {

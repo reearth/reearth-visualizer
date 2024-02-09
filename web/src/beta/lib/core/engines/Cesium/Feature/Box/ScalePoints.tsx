@@ -55,6 +55,7 @@ type Props = {
   onPointMouseDown?: PointEventCallback;
   onPointMouseMove?: PointEventCallback;
   onPointMouseUp?: PointEventCallback;
+  hideIndicator?: boolean;
 };
 
 export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
@@ -78,6 +79,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
   onPointMouseDown,
   onPointMouseMove,
   onPointMouseUp,
+  hideIndicator,
 }) {
   const {
     entitiesPosition,
@@ -107,6 +109,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
         featureId={`${featureId}-${index}`}
         position={entitiesPosition.point}
         orientation={orientation}
+        hideIndicator={hideIndicator}
         availability={availability}>
         <BoxGraphics
           show={visiblePoint}
@@ -124,6 +127,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
         featureId={`${featureId}-opposite-${index}`}
         position={entitiesPosition.oppositePoint}
         orientation={orientation}
+        hideIndicator={hideIndicator}
         availability={availability}>
         <BoxGraphics
           show={visiblePoint}
@@ -139,6 +143,7 @@ export const ScalePoints: FC<Props> = memo(function ScalePointsPresenter({
       <EntityExt
         layerId={`${layerId}-axis-line-${index}`}
         featureId={`${featureId}-axis-line-${index}`}
+        hideIndicator={hideIndicator}
         availability={availability}>
         <PolylineGraphics
           positions={entitiesPosition.axisLine}
