@@ -621,6 +621,9 @@ export const overrideScreenSpaceController = (options?: ScreenSpaceCameraControl
     rotateEventTypes: mapStringToCesiumConstants(options?.rotateEventTypes),
     tiltEventTypes: mapStringToCesiumConstants(options?.tiltEventTypes),
     lookEventTypes: mapStringToCesiumConstants(options?.lookEventTypes),
+    minimumZoomDistance: options?.minimumZoomDistance,
+    maximumZoomDistance: options?.maximumZoomDistance,
+    enableCollisionDetection: options?.enableCollisionDetection,
   };
   return overidenAssignments;
 };

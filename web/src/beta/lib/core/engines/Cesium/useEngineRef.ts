@@ -466,15 +466,8 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
 
         const controller = viewer.scene?.screenSpaceCameraController;
-        const minimumZoomDistance = 1.5;
-        const maximumZoomDistance = Infinity;
-        controller.minimumZoomDistance = minimumZoomDistance;
-        controller.maximumZoomDistance = maximumZoomDistance;
-        controller.enableCollisionDetection = true;
         const result = overrideScreenSpaceController(options);
-
-        const newController = Object.assign({}, controller, result);
-        return newController;
+        Object.assign({}, controller, result);
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

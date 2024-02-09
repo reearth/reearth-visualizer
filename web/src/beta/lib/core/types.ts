@@ -55,6 +55,9 @@ export type ScreenSpaceCameraControllerOptions = {
   tiltEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
   lookEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
   translateEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
+  minimumZoomDistance?: number;
+  maximumZoomDistance?: number;
+  enableCollisionDetection?: boolean;
 };
 
 export type ModifiedCameraEventType = {
