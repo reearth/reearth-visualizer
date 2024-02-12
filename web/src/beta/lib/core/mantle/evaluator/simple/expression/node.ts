@@ -119,6 +119,12 @@ export class Node {
           case "||":
             this.evaluate = this._evaluateOr;
             break;
+          case "==":
+            this.evaluate = this._evaluateEquals;
+            break;
+          case "!=":
+            this.evaluate = this._evaluateNotEquals;
+            break;
           default:
             if (typeof binaryFunctions[value] !== "undefined") {
               this.evaluate = getEvaluateBinaryFunction(value);
@@ -405,6 +411,7 @@ export class Node {
 
     return left !== right;
   }
+
   _evaluateConditional(feature?: Feature) {
     const test = this._test.evaluate(feature);
 
@@ -501,6 +508,43 @@ export class Node {
     }
     return color.toCssHexString();
   }
+
+  _evaluateEquals(feature?: Feature): boolean {
+    const left = this._left.evaluate(feature);
+    const right = this._right.evaluate(feature);
+
+    if (isArray(left) && !isArray(right)) {
+      return (left as any[]).includes(right);
+    }
+
+    if (isArray(right) && !isArray(left)) {
+      return (right as any[]).includes(left);
+    }
+
+    if (isArray(right) && isArray(left)) {
+      console.error("Equals left and right both can't be array at the same time");
+    }
+
+    return left == right;
+  }
+  _evaluateNotEquals(feature?: Feature): boolean {
+    const left = this._left.evaluate(feature);
+    const right = this._right.evaluate(feature);
+
+    if (isArray(left) && !isArray(right)) {
+      return !(left as any[]).includes(right);
+    }
+
+    if (isArray(right) && !isArray(left)) {
+      return !(right as any[]).includes(left);
+    }
+
+    if (isArray(right) && isArray(left)) {
+      console.error("NotEquals left and right both can't be array at the same time");
+    }
+
+    return left != right;
+  }
 }
 
 function cleanseNumberStringInput(input: any): any {
@@ -519,4 +563,8 @@ function cleanseNumberStringInput(input: any): any {
 
 function checkFeature(ast: any): boolean {
   return ast._value === "feature";
+}
+
+function isArray(value: any): boolean {
+  return Array.isArray(value);
 }

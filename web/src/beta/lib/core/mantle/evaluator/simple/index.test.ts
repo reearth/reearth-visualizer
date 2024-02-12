@@ -565,3 +565,44 @@ test("startsWith function", () => {
     },
   });
 });
+
+test("Array equality with value", () => {
+  expect(
+    evalLayerAppearances(
+      {
+        marker: {
+          pointSize: 26,
+          pointColor: {
+            expression: {
+              conditions: [
+                ["(${NewHeight} == 100.0)", "${HeightColor}"],
+                ["true", "color('blue')"],
+              ],
+            },
+          },
+        },
+      },
+      {
+        id: "x",
+        type: "simple",
+        defines: {
+          NewHeight: "[1, 2, 3, 100]",
+          HeightColor: "color('#FF2000')",
+        },
+      },
+      {
+        type: "feature",
+        id: "blah",
+        properties: {
+          bgColor: "#FF0000",
+          Height: 200,
+        },
+      },
+    ),
+  ).toEqual({
+    marker: {
+      pointColor: "#FF2000", // blue
+      pointSize: 26,
+    },
+  });
+});
