@@ -88,11 +88,17 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             layerId={`${layerId}-edge${edge.isDraggable ? `-draggable` : ""}-${i}`}
             index={i}
             edge={edge}
-            isHovered={activeEdgeIndex === i || (!edge.isDraggable && !!activeBox)}
+            isHovered={
+              isInteractable ? activeEdgeIndex === i || (!edge.isDraggable && !!activeBox) : false
+            }
             width={edge.isDraggable ? style.draggableOutlineWidth : style.outlineWidth}
             fillColor={edge.isDraggable ? style.draggableOutlineColor : style.outlineColor}
             hoverColor={
-              edge.isDraggable ? style.activeDraggableOutlineColor : style.activeOutlineColor
+              isInteractable
+                ? edge.isDraggable
+                  ? style.activeDraggableOutlineColor
+                  : style.activeOutlineColor
+                : undefined
             }
             trs={trs}
             onMouseDown={edge.isDraggable && isInteractable ? handleEdgeMouseDown : undefined}
