@@ -34,7 +34,7 @@ import {
   getCameraTerrainIntersection,
   cartesianToLatLngHeight,
   getExtrudedHeight,
-  overrideScreenSpaceController,
+  getOverriddenScreenSpaceCameraOptions,
 } from "./common";
 import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
@@ -464,10 +464,9 @@ export default function useEngineRef(
       overrideScreenSpaceController: (options?) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-
         const controller = viewer.scene?.screenSpaceCameraController;
-        const result = overrideScreenSpaceController(options);
-        Object.assign({}, controller, result);
+        const assignments = getOverriddenScreenSpaceCameraOptions(options);
+        Object.assign(controller, assignments);
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;

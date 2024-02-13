@@ -53,6 +53,8 @@ import type {
   ScreenSpaceCameraControllerOptions,
 } from "../../types";
 
+import { DEFAULT_SCREEN_SPACE_CAMERA_ASSIGNMENTS } from "./constants";
+
 export const layerIdField = `__reearth_layer_id`;
 
 const defaultImageSize = 50;
@@ -569,63 +571,63 @@ export const heightReference = (
     }
   )[heightReference || ""]);
 
-export const overrideScreenSpaceController = (options?: ScreenSpaceCameraControllerOptions) => {
-  const mapStringToCesiumConstants = (
-    arr:
-      | (OverideCameraEventType | OverideKeyboardEventModifier | ModifiedCameraEventType)[]
-      | undefined,
-  ): (CameraEventType | KeyboardEventModifier | any)[] => {
-    if (!Array.isArray(arr)) return [];
+export const getOverriddenScreenSpaceCameraOptions = (
+  options?: ScreenSpaceCameraControllerOptions,
+) => {
+  if (!options) return;
+  const cameraEventTypeMap = new Map<OverideCameraEventType, CameraEventType>([
+    ["left_drag", CameraEventType.LEFT_DRAG],
+    ["right_drag", CameraEventType.RIGHT_DRAG],
+    ["middle_drag", CameraEventType.MIDDLE_DRAG],
+    ["wheel", CameraEventType.WHEEL],
+    ["pinch", CameraEventType.PINCH],
+  ]);
 
-    return arr.map(str => {
-      const cameraEventTypeMap: { [key: string]: CameraEventType } = {
-        left_drag: CameraEventType.LEFT_DRAG,
-        right_drag: CameraEventType.RIGHT_DRAG,
-        middle_drag: CameraEventType.MIDDLE_DRAG,
-        wheel: CameraEventType.WHEEL,
-        pinch: CameraEventType.PINCH,
-      };
+  const keyboardEventModifierMap = new Map<OverideKeyboardEventModifier, KeyboardEventModifier>([
+    ["ctrl", KeyboardEventModifier.CTRL],
+    ["shift", KeyboardEventModifier.SHIFT],
+    ["alt", KeyboardEventModifier.ALT],
+  ]);
 
-      const keyboardEventModifierMap: { [key: string]: KeyboardEventModifier } = {
-        ctrl: KeyboardEventModifier.CTRL,
-        shift: KeyboardEventModifier.SHIFT,
-        alt: KeyboardEventModifier.ALT,
-      };
-
-      if (typeof str === "string") {
-        if (cameraEventTypeMap[str] !== undefined) {
-          return cameraEventTypeMap[str];
-        } else if (keyboardEventModifierMap[str]) {
-          return keyboardEventModifierMap[str];
-        } else {
-          return str;
-        }
+  const convertOptions = (
+    arr: (OverideCameraEventType | ModifiedCameraEventType)[] | undefined,
+  ) => {
+    if (!arr) return;
+    return arr.map((v: OverideCameraEventType | ModifiedCameraEventType) => {
+      if (typeof v === "string") {
+        return cameraEventTypeMap.get(v);
       } else {
-        const { eventType, modifier } = str;
-        const mappedEventType = cameraEventTypeMap[eventType];
-        const mappedModifier = keyboardEventModifierMap[modifier];
-
-        const modifiedCameraEvent = {
-          eventType: mappedEventType,
-          modifier: mappedModifier,
+        return {
+          eventType: cameraEventTypeMap.get(v.eventType),
+          modifier: keyboardEventModifierMap.get(v.modifier),
         };
-
-        return modifiedCameraEvent;
       }
     });
   };
 
-  const overidenAssignments = {
-    translateEventTypes: mapStringToCesiumConstants(options?.translateEventTypes),
-    zoomEventTypes: mapStringToCesiumConstants(options?.zoomEventTypes),
-    rotateEventTypes: mapStringToCesiumConstants(options?.rotateEventTypes),
-    tiltEventTypes: mapStringToCesiumConstants(options?.tiltEventTypes),
-    lookEventTypes: mapStringToCesiumConstants(options?.lookEventTypes),
-    minimumZoomDistance: options?.minimumZoomDistance,
-    maximumZoomDistance: options?.maximumZoomDistance,
-    enableCollisionDetection: options?.enableCollisionDetection,
+  const translateEventTypes = convertOptions(options.translateEventTypes);
+  const zoomEventTypes = convertOptions(options.zoomEventTypes);
+  const rotateEventTypes = convertOptions(options.rotateEventTypes);
+  const tiltEventTypes = convertOptions(options.tiltEventTypes);
+  const lookEventTypes = convertOptions(options.lookEventTypes);
+
+  return {
+    ...DEFAULT_SCREEN_SPACE_CAMERA_ASSIGNMENTS,
+    ...(translateEventTypes && { translateEventTypes }),
+    ...(zoomEventTypes && { zoomEventTypes }),
+    ...(rotateEventTypes && { rotateEventTypes }),
+    ...(tiltEventTypes && { tiltEventTypes }),
+    ...(lookEventTypes && { lookEventTypes }),
+    ...(options.minimumZoomDistance !== undefined && {
+      minimumZoomDistance: options.minimumZoomDistance,
+    }),
+    ...(options.maximumZoomDistance !== undefined && {
+      maximumZoomDistance: options.maximumZoomDistance,
+    }),
+    ...(options.enableCollisionDetection !== undefined && {
+      enableCollisionDetection: options.enableCollisionDetection,
+    }),
   };
-  return overidenAssignments;
 };
 
 export const classificationType = (
