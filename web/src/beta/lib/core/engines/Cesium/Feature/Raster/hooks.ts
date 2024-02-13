@@ -17,6 +17,14 @@ export const useImageryProvider = (
     if (!imageryProvider || !viewer) return;
     const imageryLayers: ImageryLayerCollection = viewer.imageryLayers;
     const imageryLayer = imageryLayers.addImageryProvider(imageryProvider);
+    Object.assign(imageryLayer, {
+      bringToFront: () => {
+        imageryLayers.raiseToTop(imageryLayer);
+      },
+      sendToBack: () => {
+        imageryLayers.lowerToBottom(imageryLayer);
+      },
+    });
     if (alpha !== undefined && typeof alpha === "number") {
       imageryLayer.alpha = alpha;
     }

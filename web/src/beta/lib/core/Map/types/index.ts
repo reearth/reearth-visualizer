@@ -175,6 +175,8 @@ export type EngineRef = {
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
   findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
+  bringToFront: (layerId: string) => void;
+  sendToBack: (layerId: string) => void;
   findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
   findComputedFeatureById: (layerId: string, featureId: string) => ComputedFeature | undefined;
   findComputedFeaturesByIds: (

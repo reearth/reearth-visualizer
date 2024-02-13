@@ -85,6 +85,8 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   equalsEpsilon3d: 1,
   createGeometry: 1,
   setCursor: 1,
+  bringToFront: 1,
+  sendToBack: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {

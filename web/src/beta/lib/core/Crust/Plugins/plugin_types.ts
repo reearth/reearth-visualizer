@@ -85,6 +85,8 @@ export type Reearth = {
       ) => void;
       findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
       findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+      bringToFront?: (layerId: string) => void;
+      sendToBack?: (layerId: string) => void;
       selectFeature?: (layerId?: string, featureId?: string) => void;
       selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
       selectionReason?: LayerSelectionReason;

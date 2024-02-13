@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf";
 import { BoundingSphere, Intersect, PerspectiveFrustum, Rectangle, Cartesian3 } from "cesium";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 import invariant from "tiny-invariant";
 
@@ -11,7 +11,7 @@ import { FeatureComponentConfig, FeatureProps } from "../utils";
 
 import { flareColorMapLUT } from "./constants";
 import { fetchImageAndCreateMeshImageData, MeshImageData } from "./createMeshImageData";
-import { HeatmapMesh } from "./HeatmapMesh";
+import { HeatmapMesh, HeatmapMeshHandle } from "./HeatmapMesh";
 
 export type Props = FeatureProps<Property>;
 
@@ -66,6 +66,14 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
     );
     return cullingVolume.computeVisibility(boundingSphere) !== Intersect.OUTSIDE;
   };
+
+  const heatmapMeshRef = useRef<HeatmapMeshHandle>(null);
+
+  useEffect(() => {
+    if (heatmapMeshRef.current) {
+      heatmapMeshRef.current.sendToBack();
+    }
+  }, []);
 
   usePreRender(() => {
     const currentVisibility = checkVisiblity();
@@ -136,6 +144,7 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
       contourThickness={contourThickness}
       contourAlpha={contourAlpha}
       bound={bounds}
+      ref={heatmapMeshRef}
       cropBound={cropBounds}
       logarithmic={logarithmic}
       width={width || meshImageData.width}
