@@ -31,6 +31,7 @@ import type {
   LookAtDestination,
   Position2d,
   Position3d,
+  ScreenSpaceCameraControllerOptions,
 } from "../../types";
 import type {
   FeatureComponentType,
@@ -86,6 +87,7 @@ export type EngineRef = {
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  getGlobeHeight: () => void;
   toXYZ: (
     lng: number,
     lat: number,
@@ -142,6 +144,7 @@ export type EngineRef = {
     },
   ) => void;
   rotateOnCenter: (radian: number) => void;
+  overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
