@@ -12,7 +12,13 @@ import {
 
 import { SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
-import { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
+import {
+  CameraOptions,
+  FlyTo,
+  FlyToDestination,
+  LookAtDestination,
+  ScreenSpaceCameraControllerOptions,
+} from "../../types";
 
 import { commonReearth } from "./api";
 import { InteractionMode, ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
@@ -257,6 +263,10 @@ export default function ({
     [engineRef],
   );
 
+  const getGlobeHeight = useCallback(() => {
+    return engineRef?.getGlobeHeight();
+  }, [engineRef]);
+
   const toXYZ = useCallback(
     (
       lng: number,
@@ -343,6 +353,12 @@ export default function ({
     [engineRef],
   );
 
+  const overrideScreenSpaceController = useCallback(
+    (options: ScreenSpaceCameraControllerOptions) => {
+      return engineRef?.overrideScreenSpaceController(options);
+    },
+    [engineRef],
+  );
   const lookHorizontal = useCallback(
     (amount: number) => {
       engineRef?.lookHorizontal(amount);
@@ -520,12 +536,14 @@ export default function ({
         flyTo,
         flyToBBox,
         rotateOnCenter,
+        overrideScreenSpaceController,
         lookAt,
         zoomIn,
         zoomOut,
         cameraViewport,
         getCameraFovInfo,
         computeGlobeHeight,
+        getGlobeHeight,
         toXYZ,
         toLngLatHeight,
         convertScreenToPositionOffset,
@@ -587,12 +605,14 @@ export default function ({
       flyTo,
       flyToBBox,
       rotateOnCenter,
+      overrideScreenSpaceController,
       lookAt,
       zoomIn,
       zoomOut,
       cameraViewport,
       getCameraFovInfo,
       computeGlobeHeight,
+      getGlobeHeight,
       toXYZ,
       toLngLatHeight,
       convertScreenToPositionOffset,

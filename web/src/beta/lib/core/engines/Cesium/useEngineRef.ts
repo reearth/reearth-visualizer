@@ -34,6 +34,7 @@ import {
   getCameraTerrainIntersection,
   cartesianToLatLngHeight,
   getExtrudedHeight,
+  getOverriddenScreenSpaceCameraOptions,
 } from "./common";
 import { attachTag, getTag } from "./Feature";
 import { PickedFeature, pickManyFromViewportAsFeature } from "./pickMany";
@@ -131,6 +132,16 @@ export default function useEngineRef(
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         return viewer.scene.globe.getHeight(Cesium.Cartographic.fromDegrees(lng, lat, height));
+      },
+      getGlobeHeight: () => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        const { globeHeight } = scene as Cesium.Scene & { globeHeight?: number };
+        if (!scene || globeHeight == null) {
+          return;
+        }
+        return globeHeight;
       },
       toXYZ: (lng, lat, height, options) => {
         const viewer = cesium.current?.cesiumElement;
@@ -449,6 +460,13 @@ export default function useEngineRef(
         const target = getCameraEllipsoidIntersection(scene, new Cesium.Cartesian3());
         if (!target) return;
         scene.camera.rotate(target, radian);
+      },
+      overrideScreenSpaceController: (options?) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const controller = viewer.scene?.screenSpaceCameraController;
+        const assignments = getOverriddenScreenSpaceCameraOptions(options);
+        Object.assign(controller, assignments);
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
