@@ -209,6 +209,8 @@ const Visualizer = memo(
         handlePluginSketchFeatureCreated,
         onSketchTypeChange,
         handleSketchTypeChange,
+        onLayerVisibility,
+        handleLayerVisibility,
       } = useHooks(
         {
           rootLayerId,
@@ -288,6 +290,7 @@ const Visualizer = memo(
                   onLayerEdit={onLayerEdit}
                   onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
                   onSketchTypeChange={onSketchTypeChange}
+                  onLayerVisibility={onLayerVisibility}
                 />
                 <Map
                   ref={mapRef}
@@ -323,6 +326,7 @@ const Visualizer = memo(
                   onPluginSketchFeatureCreated={handlePluginSketchFeatureCreated}
                   onSketchTypeChange={handleSketchTypeChange}
                   onMount={onMount}
+                  onLayerVisibility={handleLayerVisibility}
                 />
               </Filled>
               {storyPanelPosition === "right" && storyPanel}
