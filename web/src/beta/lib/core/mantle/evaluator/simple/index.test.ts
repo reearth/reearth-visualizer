@@ -573,7 +573,7 @@ test("Array equality with value", () => {
         marker: {
           pointSize: 26,
           pointColor: {
-            expression: '${NewHeight} == 100.1 ? ${HeightColor} : color("blue")',
+            expression: '${NewHeight} == "something" ? ${HeightColor} : color("blue")',
           },
         },
       },
@@ -581,7 +581,7 @@ test("Array equality with value", () => {
         id: "x",
         type: "simple",
         defines: {
-          NewHeight: "[1, 2, 3, 100.1]",
+          NewHeight: "[1, 2, 3, 'something']",
           HeightColor: "color('#FF2000')",
         },
       },
