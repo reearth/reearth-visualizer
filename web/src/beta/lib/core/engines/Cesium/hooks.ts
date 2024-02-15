@@ -23,7 +23,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef, LayerVisibilityEvent, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
+import { LayersRef, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -35,6 +35,7 @@ import type {
   MouseEventProps,
   MouseEvents,
   LayerEditEvent,
+  LayerVisibilityEvent,
 } from "..";
 import { FEATURE_FLAGS } from "../../Crust";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
