@@ -15,6 +15,7 @@ import {
   Primitive,
   GroundPrimitive,
   ShadowMap,
+  ImageryLayer,
 } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -336,7 +337,12 @@ export default ({
   }, [camera, engineAPI]);
 
   const prevSelectedEntity = useRef<
-    Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive | GroundPrimitive
+    | Entity
+    | Cesium3DTileset
+    | InternalCesium3DTileFeature
+    | Primitive
+    | GroundPrimitive
+    | ImageryLayer
   >();
   // manage layer selection
   useEffect(() => {
