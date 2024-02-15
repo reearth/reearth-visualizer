@@ -627,6 +627,15 @@ export const getOverriddenScreenSpaceCameraOptions = (
     ...(options.enableCollisionDetection !== undefined && {
       enableCollisionDetection: options.enableCollisionDetection,
     }),
+    ...(options.enableRotate !== undefined && {
+      enableRotate: options.enableRotate,
+    }),
+    ...(options.enableLook !== undefined && {
+      enableLook: options.enableLook,
+    }),
+    ...(options.enableInputs !== undefined && {
+      enableInputs: options.enableInputs,
+    }),
   };
 };
 

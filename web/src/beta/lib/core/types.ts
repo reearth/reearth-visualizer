@@ -58,6 +58,9 @@ export type ScreenSpaceCameraControllerOptions = {
   minimumZoomDistance?: number;
   maximumZoomDistance?: number;
   enableCollisionDetection?: boolean;
+  enableRotate?: boolean;
+  enableLook?: boolean;
+  enableInputs?: boolean;
 };
 
 export type ModifiedCameraEventType = {
