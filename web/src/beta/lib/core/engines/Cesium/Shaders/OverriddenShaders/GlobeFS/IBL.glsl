@@ -40,7 +40,7 @@ vec4 reearth_computeImageBasedLightingColor(vec4 color) {
                     czm_lightColorHdr, pbrParameters) *
                 u_vertexShadowDarkness;
 
-#ifdef HDR
+#ifndef HDR
     lighting = czm_acesTonemapping(lighting);
     lighting = czm_linearToSrgb(lighting);
 #endif

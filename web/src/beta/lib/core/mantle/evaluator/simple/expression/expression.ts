@@ -15,6 +15,7 @@ export type JPLiteral = {
 export const EXPRESSION_CACHES = new Map<string, Node | Error>();
 export const REPLACED_VARIABLES_CACHE = new Map<string, [string, JPLiteral[]]>();
 const DEFINE_PLACEHOLDER_REGEX_CACHE = new Map<string, RegExp>();
+const DEFINE_REPLACEMENT_CACHE = new Map<string, string>();
 
 export class Expression {
   private _expression: string;
@@ -26,13 +27,13 @@ export class Expression {
     this._feature = feature;
     let literalJP: JPLiteral[] = [];
 
+    expression = replaceDefines(expression, defines);
     const cachedReplacedVariables = REPLACED_VARIABLES_CACHE.get(expression);
     // JSONPath returns simple literal so we can not cache in here
     if (cachedReplacedVariables) {
       [expression, literalJP] = cachedReplacedVariables;
     } else {
       const originalExpression = expression;
-      expression = replaceDefines(expression, defines);
       [expression, literalJP] = replaceVariables(
         removeBackslashes(expression),
         this._feature?.properties,
@@ -78,14 +79,24 @@ export function replaceDefines(expression: string, defines: any): string {
   if (typeof defines === "undefined") {
     return expression;
   }
+  const definesKey = JSON.stringify(Object.entries(defines).sort());
+  const cacheKey = expression + definesKey;
+
+  const cachedResult = DEFINE_REPLACEMENT_CACHE.get(cacheKey);
+  if (cachedResult) {
+    return cachedResult;
+  }
   let definePlaceholderRegex = DEFINE_PLACEHOLDER_REGEX_CACHE.get(expression);
   if (!definePlaceholderRegex) {
     definePlaceholderRegex = new RegExp(`\\$\\{(${Object.keys(defines).join("|")})\\}`, "g");
     DEFINE_PLACEHOLDER_REGEX_CACHE.set(expression, definePlaceholderRegex);
   }
-  return expression.replace(definePlaceholderRegex, (_, key) =>
+  const replacedExpression = expression.replace(definePlaceholderRegex, (_, key) =>
     typeof defines[key] !== "undefined" ? `(${defines[key]})` : "",
   );
+
+  DEFINE_REPLACEMENT_CACHE.set(cacheKey, replacedExpression);
+  return replacedExpression;
 }
 
 export function removeBackslashes(expression: string): string {
