@@ -11,9 +11,7 @@ test("simple", () => {
     { id: "a", type: "simple" },
     { id: "b", type: "simple" },
   ];
-  const { rerender } = render(
-    <Component layers={layers} Feature={Feature} interactionMode="default" />,
-  );
+  const { rerender } = render(<Component layers={layers} Feature={Feature} />);
 
   expect(screen.getAllByText("Hello")[0]).toBeVisible();
   expect(screen.getAllByText("Hello")).toHaveLength(2);
@@ -35,7 +33,6 @@ test("simple", () => {
     onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
     evalFeature: expect.any(Function),
-    interactionMode: "default",
     properties: undefined,
     selectedFeatureId: undefined,
   });
@@ -56,17 +53,14 @@ test("simple", () => {
     onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
     evalFeature: expect.any(Function),
-    interactionMode: "default",
     properties: undefined,
     selectedFeatureId: undefined,
   });
-  expect(Feature).toBeCalled();
-  expect(Feature.mock.calls[0][0].interactionMode).toEqual("default");
 
   Feature.mockClear();
 
   const layers2: LayerSimple[] = [{ id: "c", type: "simple" }];
-  rerender(<Component layers={layers2} Feature={Feature} interactionMode="move" />);
+  rerender(<Component layers={layers2} Feature={Feature} />);
   expect(screen.getByText("Hello")).toBeVisible();
   expect(Feature.mock.calls[0][0].layer).toEqual({
     id: "c",
@@ -75,8 +69,6 @@ test("simple", () => {
     status: "ready",
     originalFeatures: [],
   });
-  expect(Feature).toBeCalled();
-  expect(Feature.mock.calls[0][0].interactionMode).toEqual("move");
 });
 
 test("tree", () => {
@@ -91,7 +83,7 @@ test("tree", () => {
       ],
     },
   ];
-  render(<Component layers={layers} Feature={Feature} interactionMode="default" />);
+  render(<Component layers={layers} Feature={Feature} />);
 
   expect(Feature).toBeCalledTimes(1);
   expect(Feature.mock.calls[0][0].layer).toEqual({
@@ -101,8 +93,6 @@ test("tree", () => {
     status: "ready",
     originalFeatures: [],
   });
-  expect(Feature).toBeCalled();
-  expect(Feature.mock.calls[0][0].interactionMode).toEqual("default");
 });
 
 test("ref", async () => {
@@ -129,7 +119,7 @@ test("ref", async () => {
 
     return (
       <>
-        <Component ref={ref} Feature={Feature} interactionMode="default" />
+        <Component ref={ref} Feature={Feature} />
         <p data-testid="layer">{s}</p>
       </>
     );
@@ -155,8 +145,6 @@ test("ref", async () => {
   rerender(<Comp del />);
 
   await waitFor(() => expect(screen.getByTestId("layer")).toBeEmptyDOMElement());
-  expect(Feature).toBeCalled();
-  expect(Feature.mock.calls[0][0].interactionMode).toEqual("default");
 });
 
 test("computed", async () => {
@@ -188,7 +176,7 @@ test("computed", async () => {
     const ref = useRef<Ref>(null);
     return (
       <>
-        <Component layers={layers} ref={ref} Feature={Feature} interactionMode="default" />
+        <Component layers={layers} ref={ref} Feature={Feature} />
         <p data-testid="layer">{ref.current?.findById("x")?.computed?.id}</p>
       </>
     );
