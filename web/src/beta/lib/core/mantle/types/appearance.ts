@@ -209,6 +209,7 @@ export type Cesium3DTilesAppearance = {
   imageBasedLightIntensity?: number;
   showWireframe?: boolean;
   showBoundingVolume?: boolean;
+  disabledSelection?: boolean;
 };
 
 export type LegacyPhotooverlayAppearance = {
@@ -285,6 +286,7 @@ export type BoxAppearance = {
   near?: number;
   far?: number;
   hideIndicator?: boolean;
+  disabledSelection?: boolean;
 };
 
 export type TransitionAppearance = {

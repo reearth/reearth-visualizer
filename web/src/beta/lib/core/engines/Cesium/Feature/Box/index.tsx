@@ -27,7 +27,6 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
   layer,
   feature,
   onLayerEdit,
-  interactionMode,
 }) {
   const {
     show = true,
@@ -42,6 +41,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     activeEdgeIndex,
     activeScalePointIndex,
     hideIndicator,
+    disabledSelection,
   } = property ?? {};
   const {
     style,
@@ -59,7 +59,6 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
 
   const scalePointDimension = ((width + height + length) / 3) * 0.05;
   const [layerId, featureId] = [layer?.id, feature?.id];
-  const isInteractable = interactionMode === "default" || interactionMode === "move";
 
   return !isVisible || !show ? null : (
     <>
@@ -89,21 +88,23 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             index={i}
             edge={edge}
             isHovered={
-              isInteractable ? activeEdgeIndex === i || (!edge.isDraggable && !!activeBox) : false
+              disabledSelection
+                ? activeEdgeIndex === i || (!edge.isDraggable && !!activeBox)
+                : false
             }
             width={edge.isDraggable ? style.draggableOutlineWidth : style.outlineWidth}
             fillColor={edge.isDraggable ? style.draggableOutlineColor : style.outlineColor}
             hoverColor={
-              isInteractable
+              disabledSelection
                 ? edge.isDraggable
                   ? style.activeDraggableOutlineColor
                   : style.activeOutlineColor
                 : undefined
             }
             trs={trs}
-            onMouseDown={edge.isDraggable && isInteractable ? handleEdgeMouseDown : undefined}
-            onMouseMove={edge.isDraggable && isInteractable ? handleEdgeMouseMove : undefined}
-            onMouseUp={edge.isDraggable && isInteractable ? handleEdgeMouseUp : undefined}
+            onMouseDown={edge.isDraggable && disabledSelection ? handleEdgeMouseDown : undefined}
+            onMouseMove={edge.isDraggable && disabledSelection ? handleEdgeMouseMove : undefined}
+            onMouseUp={edge.isDraggable && disabledSelection ? handleEdgeMouseUp : undefined}
             availability={availability}
             distanceDisplayCondition={distanceDisplayCondition}
             hideIndicator={hideIndicator}
@@ -133,9 +134,9 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             }}
             visiblePoint={scalePoint}
             visibleAxisLine={axisLine && activeScalePointIndex === i}
-            onPointMouseDown={isInteractable ? handlePointMouseDown : undefined}
-            onPointMouseMove={isInteractable ? handlePointMouseMove : undefined}
-            onPointMouseUp={isInteractable ? handlePointMouseUp : undefined}
+            onPointMouseDown={disabledSelection ? handlePointMouseDown : undefined}
+            onPointMouseMove={disabledSelection ? handlePointMouseMove : undefined}
+            onPointMouseUp={disabledSelection ? handlePointMouseUp : undefined}
             availability={availability}
             distanceDisplayCondition={distanceDisplayCondition}
             hideIndicator={hideIndicator}

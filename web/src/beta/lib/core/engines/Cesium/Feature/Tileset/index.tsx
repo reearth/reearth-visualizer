@@ -1,8 +1,6 @@
 import { memo, useMemo } from "react";
 import { Cesium3DTileset } from "resium";
 
-import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
-
 import type { Cesium3DTilesAppearance, ComputedLayer } from "../../..";
 import { colorBlendModeFor3DTile, shadowMode } from "../../common";
 import {
@@ -17,7 +15,6 @@ import { useHooks } from "./hooks";
 export type Props = FeatureProps<Property> & {
   showWireframe?: boolean;
   showBoundingVolume?: boolean;
-  interactionMode: InteractionModeType;
 };
 
 export type Property = Cesium3DTilesAppearance;
@@ -33,7 +30,6 @@ function Tileset({
   evalFeature,
   onComputedFeatureFetch,
   onLayerFetch,
-  interactionMode,
   ...props
 }: Props): JSX.Element | null {
   const { shadows, colorBlendMode, pbr, showWireframe, showBoundingVolume } = property ?? {};
@@ -58,7 +54,6 @@ function Tileset({
     evalFeature,
     onComputedFeatureFetch,
     onLayerFetch,
-    interactionMode,
   });
   const boxProperty = useMemo(
     () => ({
@@ -102,7 +97,6 @@ function Tileset({
           isVisible={builtinBoxProps.visible}
           evalFeature={evalFeature}
           onLayerEdit={builtinBoxProps.handleLayerEdit}
-          interactionMode={interactionMode}
         />
       )}
     </>

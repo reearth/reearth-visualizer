@@ -1,6 +1,5 @@
 import { ComponentType } from "react";
 
-import { InteractionModeType } from "../../Crust";
 import type {
   DataRange,
   Feature,
@@ -38,7 +37,6 @@ export type FeatureComponentProps = {
   onFeatureDelete?: (features: string[]) => void;
   onComputedFeatureDelete?: (features: string[]) => void;
   evalFeature: EvalFeature;
-  interactionMode: InteractionModeType;
 } & CommonProps;
 
 export type Props = {
@@ -48,7 +46,6 @@ export type Props = {
   delegatedDataTypes?: DataType[];
   sceneProperty?: any;
   selectedFeatureId?: string;
-  interactionMode: InteractionModeType;
   /** Feature component should be injected by a map engine. */
   Feature?: ComponentType<FeatureComponentProps>;
 } & CommonProps;
@@ -59,7 +56,6 @@ export default function LayerComponent({
   atom,
   overrides,
   delegatedDataTypes,
-  interactionMode,
   ...props
 }: Props): JSX.Element | null {
   const {
@@ -82,7 +78,6 @@ export default function LayerComponent({
 
   return layer && computedLayer && Feature ? (
     <Feature
-      interactionMode={interactionMode}
       layer={computedLayer}
       onFeatureDelete={handleFeatureDelete}
       onComputedFeatureDelete={handleComputedFeatureDelete}

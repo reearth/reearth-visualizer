@@ -123,7 +123,6 @@ function Map(
         sceneProperty={props.property}
         requestingRenderMode={requestingRenderMode}
         onLayerSelect={handleLayerSelect}
-        interactionMode={interactionMode}
       />
       <Sketch
         ref={sketchRef}

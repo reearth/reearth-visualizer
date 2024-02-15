@@ -2,7 +2,6 @@ import { forwardRef, RefObject, type ForwardRefRenderFunction, type MutableRefOb
 
 import { SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 
-import { InteractionModeType } from "../../Crust";
 import ClusteredLayers, { type Props as ClusteredLayerProps } from "../ClusteredLayers";
 import type { ComputedLayer, EngineRef, RequestingRenderMode } from "../types";
 
@@ -48,20 +47,10 @@ export type Props = Omit<ClusteredLayerProps, "atomMap" | "isHidden" | "selected
     reason: LayerSelectionReason | undefined,
     info: SelectedFeatureInfo | undefined,
   ) => void;
-  interactionMode: InteractionModeType;
 };
 
 const Layers: ForwardRefRenderFunction<Ref, Props> = (
-  {
-    layers,
-    selectedLayer,
-    hiddenLayers,
-    requestingRenderMode,
-    engineRef,
-    onLayerSelect,
-    interactionMode,
-    ...props
-  },
+  { layers, selectedLayer, hiddenLayers, requestingRenderMode, engineRef, onLayerSelect, ...props },
   ref,
 ) => {
   const { atomMap, flattenedLayers, isHidden } = useHooks({
@@ -79,7 +68,6 @@ const Layers: ForwardRefRenderFunction<Ref, Props> = (
       {...props}
       selectedLayer={selectedLayer}
       layers={flattenedLayers}
-      interactionMode={interactionMode}
       atomMap={atomMap}
       isHidden={isHidden}
     />
