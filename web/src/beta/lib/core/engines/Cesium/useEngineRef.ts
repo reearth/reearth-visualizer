@@ -864,6 +864,25 @@ export default function useEngineRef(
           e => convertObjToComputedFeature(viewer.clock.currentTime, e)?.[1],
         );
       },
+
+      bringToFront: (layerId: string) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const entity = findEntity(viewer, layerId);
+        if (!entity) return;
+        if ("bringToFront" in entity && typeof entity.bringToFront === "function") {
+          entity.bringToFront();
+        }
+      },
+      sendToBack: (layerId: string) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const entity = findEntity(viewer, layerId);
+        if (!entity) return;
+        if ("sendToBack" in entity && typeof entity.sendToBack === "function") {
+          entity.sendToBack();
+        }
+      },
       selectFeatures: (layerId: string, featureId: string[]) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
