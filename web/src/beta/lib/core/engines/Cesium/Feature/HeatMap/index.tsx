@@ -7,6 +7,7 @@ import invariant from "tiny-invariant";
 import { HeatMapAppearance } from "@reearth/beta/lib/core/mantle";
 
 import { usePreRender } from "../../hooks/useSceneEvent";
+import { useContext } from "../context";
 import { FeatureComponentConfig, FeatureProps } from "../utils";
 
 import { flareColorMapLUT } from "./constants";
@@ -33,6 +34,8 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
     logarithmic = false,
   } = property ?? {};
   const { scene } = useCesium();
+
+  const ctx = useContext();
 
   // Bounds is nested object, and this cause unnecessary render frequently, so wrap with useMemo.
   const boudsRef = useMemo(
@@ -71,6 +74,9 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
     const currentVisibility = checkVisiblity();
     if (currentVisibility !== visible) {
       setVisible(currentVisibility);
+      if (ctx?.onLayerVisibility && layer?.id) {
+        ctx.onLayerVisibility({ layerId: layer.id });
+      }
     }
   });
 

@@ -46,7 +46,7 @@ export type Props = PropsWithChildren<{
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
-  onLayerVisibility: (cb: (e: LayerVisibilityEvent) => boolean) => void;
+  onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
 }>;
 
 export type Context = {

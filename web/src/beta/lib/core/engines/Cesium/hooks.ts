@@ -23,7 +23,7 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
+import { LayersRef, LayerVisibilityEvent, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -80,6 +80,7 @@ export default ({
   onLayerDrop,
   onLayerEdit,
   onMount,
+  onLayerVisibility,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -112,6 +113,7 @@ export default ({
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
   onMount?: () => void;
+  onLayerVisibility?: (e: LayerVisibilityEvent) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -795,13 +797,14 @@ export default ({
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
+      onLayerVisibility,
       requestRender: engineAPI.requestRender,
       getSurfaceDistance: engineAPI.getSurfaceDistance,
       toXYZ: engineAPI.toXYZ,
       toWindowPosition: engineAPI.toWindowPosition,
       isPositionVisible: engineAPI.isPositionVisible,
     }),
-    [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
+    [selectionReason, engineAPI, onLayerEdit, onLayerVisibility, timelineManagerRef],
   );
 
   useEffect(() => {
