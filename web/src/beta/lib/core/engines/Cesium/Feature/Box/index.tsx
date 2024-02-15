@@ -120,7 +120,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             index={i}
             scalePoint={vector}
             trs={trs}
-            isHovered={activeScalePointIndex === i}
+            isHovered={disabledSelection ? activeScalePointIndex === i : false}
             pointFillColor={scalePointStyle.pointFillColor}
             pointOutlineColor={scalePointStyle.pointOutlineColor}
             hoverPointOutlineColor={scalePointStyle.activePointOutlineColor}
