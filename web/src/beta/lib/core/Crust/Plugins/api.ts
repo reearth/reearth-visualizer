@@ -455,6 +455,8 @@ export function commonReearth({
   findFeatureById,
   findFeaturesByIds,
   pickManyFromViewport,
+  bringToFront,
+  sendToBack,
 }: {
   engineName?: string;
   events: Events<ReearthEventType>;
@@ -516,6 +518,8 @@ export function commonReearth({
   flyToGround: GlobalThis["reearth"]["camera"]["flyToGround"];
   findFeatureById: GlobalThis["reearth"]["layers"]["findFeatureById"];
   findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
+  bringToFront: GlobalThis["reearth"]["layers"]["bringToFront"];
+  sendToBack: GlobalThis["reearth"]["layers"]["sendToBack"];
   pickManyFromViewport: GlobalThis["reearth"]["scene"]["pickManyFromViewport"];
 }): CommonReearth {
   return {
@@ -721,6 +725,8 @@ export function commonReearth({
       },
       findFeatureById,
       findFeaturesByIds,
+      bringToFront,
+      sendToBack,
     },
     plugins: {
       get instances() {

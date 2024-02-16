@@ -507,6 +507,20 @@ export default function ({
     [engineRef],
   );
 
+  const bringToFront = useCallback(
+    (layerId: string) => {
+      return engineRef?.bringToFront(layerId);
+    },
+    [engineRef],
+  );
+
+  const sendToBack = useCallback(
+    (layerId: string) => {
+      return engineRef?.sendToBack(layerId);
+    },
+    [engineRef],
+  );
+
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -571,6 +585,8 @@ export default function ({
         findFeatureById,
         findFeaturesByIds,
         pickManyFromViewport,
+        bringToFront,
+        sendToBack,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -640,6 +656,8 @@ export default function ({
       findFeatureById,
       findFeaturesByIds,
       pickManyFromViewport,
+      bringToFront,
+      sendToBack,
       overrideSceneProperty,
       pluginInstances,
       clientStorage,
