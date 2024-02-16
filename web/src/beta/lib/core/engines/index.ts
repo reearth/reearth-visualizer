@@ -18,6 +18,7 @@ export type {
   TerrainProperty,
   LayerEditEvent,
   EvalFeature,
+  LayerVisibilityEvent,
 } from "../Map";
 export type {
   Cesium3DTilesAppearance,

@@ -18,6 +18,7 @@ import type {
   LayerEditEvent,
   DefaultInfobox,
   CursorType,
+  LayerVisibilityEvent,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
@@ -276,6 +277,15 @@ export default function useHooks(
     onLayerEditRef.current?.(e);
   }, []);
 
+  // layer visiblity
+  const onLayerVisibilityRef = useRef<(e: LayerVisibilityEvent) => void>();
+  const onLayerVisibility = useCallback((cb: (e: LayerVisibilityEvent) => void) => {
+    onLayerVisibilityRef.current = cb;
+  }, []);
+  const handleLayerVisibility = useCallback((e: LayerVisibilityEvent) => {
+    onLayerVisibilityRef.current?.(e);
+  }, []);
+
   // plugin sketch feature events
   const onPluginSketchFeatureCreatedCallbacksRef = useRef<SketchEventCallback[]>([]);
   const onPluginSketchFeatureCreated = useCallback((cb: SketchEventCallback) => {
@@ -367,6 +377,8 @@ export default function useHooks(
     handlePluginSketchFeatureCreated,
     onSketchTypeChange,
     handleSketchTypeChange,
+    onLayerVisibility,
+    handleLayerVisibility,
   };
 }
 

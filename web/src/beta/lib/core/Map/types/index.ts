@@ -235,6 +235,7 @@ export type EngineProps = {
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
   onMount?: () => void;
+  onLayerVisibility?: (e: LayerVisibilityEvent) => void;
 };
 
 export type LayerEditEvent = {
@@ -246,6 +247,10 @@ export type LayerEditEvent = {
     location: LatLngHeight;
   };
   rotate?: { heading: number; pitch: number; roll: number };
+};
+
+export type LayerVisibilityEvent = {
+  layerId: string | undefined;
 };
 
 export type Clock = {

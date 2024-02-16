@@ -36,6 +36,7 @@ import type {
   MouseEventProps,
   MouseEvents,
   LayerEditEvent,
+  LayerVisibilityEvent,
 } from "..";
 import { FEATURE_FLAGS } from "../../Crust";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
@@ -81,6 +82,7 @@ export default ({
   onLayerDrop,
   onLayerEdit,
   onMount,
+  onLayerVisibility,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -113,6 +115,7 @@ export default ({
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
   onMount?: () => void;
+  onLayerVisibility?: (e: LayerVisibilityEvent) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -801,13 +804,14 @@ export default ({
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
+      onLayerVisibility,
       requestRender: engineAPI.requestRender,
       getSurfaceDistance: engineAPI.getSurfaceDistance,
       toXYZ: engineAPI.toXYZ,
       toWindowPosition: engineAPI.toWindowPosition,
       isPositionVisible: engineAPI.isPositionVisible,
     }),
-    [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
+    [selectionReason, engineAPI, onLayerEdit, onLayerVisibility, timelineManagerRef],
   );
 
   useEffect(() => {
