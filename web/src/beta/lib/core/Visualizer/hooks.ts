@@ -283,7 +283,7 @@ export default function useHooks(
     onLayerVisibilityRef.current = cb;
   }, []);
   const handleLayerVisibility = useCallback((e: LayerVisibilityEvent) => {
-    onLayerEditRef.current?.(e);
+    onLayerVisibilityRef.current?.(e);
   }, []);
 
   // plugin sketch feature events

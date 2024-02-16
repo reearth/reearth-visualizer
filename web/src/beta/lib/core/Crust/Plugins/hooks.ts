@@ -733,7 +733,7 @@ export default function ({
       emit("sketchtypechange", e);
     });
     onLayerVisibility(e => {
-      return emit("layerVisibility", e);
+      emit("layerVisibility", e);
     });
   }, [
     emit,
