@@ -1,7 +1,7 @@
 import { Cartesian3 } from "cesium";
 import { createContext, useContext as useReactContext } from "react";
 
-import { LayerEditEvent } from "@reearth/beta/lib/core/Map";
+import { LayerEditEvent, LayerVisibilityEvent } from "@reearth/beta/lib/core/Map";
 
 import type { Camera, LayerSelectionReason } from "../..";
 import { TimelineManagerRef } from "../../../Map/useTimelineManager";
@@ -13,6 +13,7 @@ export type Context = {
   getCamera?: () => Camera | undefined;
   flyTo?: FlyTo;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  onLayerVisibility?: (e: LayerVisibilityEvent) => void;
   requestRender?: () => void;
   getSurfaceDistance?: (point1: Cartesian3, point2: Cartesian3) => number | undefined;
   toXYZ?: (

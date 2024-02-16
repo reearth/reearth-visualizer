@@ -10,6 +10,7 @@ import type {
   ComputedLayer,
   LayerEditEvent,
   LayerSelectionReason,
+  LayerVisibilityEvent,
 } from "@reearth/beta/lib/core/Map";
 import type { Viewport } from "@reearth/beta/lib/core/Visualizer";
 
@@ -45,6 +46,7 @@ export type Props = PropsWithChildren<{
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
+  onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
 }>;
 
 export type Context = {
