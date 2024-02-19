@@ -762,7 +762,6 @@ export default function ({
     onPluginSketchFeatureCreated,
     onSketchTypeChange,
     onLayerVisibility,
-    layersRef,
   ]);
 
   // expose plugin API for developers
