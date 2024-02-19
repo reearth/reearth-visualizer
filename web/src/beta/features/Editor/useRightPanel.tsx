@@ -78,7 +78,9 @@ export default ({
           />
         );
       case "widgets":
-        return <WidgetSidePanel sceneId={sceneId} />;
+        return (
+          <WidgetSidePanel sceneId={sceneId} currentCamera={currentCamera} onFlyTo={onFlyTo} />
+        );
 
       case "publish":
       default:

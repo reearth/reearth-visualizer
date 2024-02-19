@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
@@ -37,22 +37,9 @@ const CameraField: React.FC<Props> = ({
   onFlyTo,
 }) => {
   const t = useT();
-
   const [open, setOpen] = useState<Panel>(undefined);
-  const [newCamera, setNewCamera] = useState<Camera | undefined>(currentCamera ?? value);
 
-  const handleFieldUpdate = useCallback(
-    (key: keyof Camera, update?: number) => {
-      if (!update || !value) return;
-      const updated: Camera = {
-        ...value,
-        [key]: update,
-      };
-      setNewCamera(updated);
-      onFlyTo?.(updated);
-    },
-    [value, onFlyTo],
-  );
+  const initialRawValue = useMemo(() => value ?? currentCamera, [value, currentCamera]);
 
   const handleClose = useCallback(() => setOpen(undefined), []);
 
@@ -69,12 +56,22 @@ const CameraField: React.FC<Props> = ({
     [onSave],
   );
 
-  const handleFlyto = useCallback(() => value && onFlyTo?.(value), [value, onFlyTo]);
+  const handleFlyto = useCallback(
+    (c?: Partial<Camera>) => {
+      const dest = c ?? currentCamera;
+      if (dest) {
+        onFlyTo?.(dest);
+      }
+    },
+    [currentCamera, onFlyTo],
+  );
 
   const handleRemoveSetting = useCallback(() => {
     if (!value) return;
     handleSave();
   }, [value, handleSave]);
+
+  console.log("??", value, currentCamera);
 
   return (
     <Property name={name} description={description}>
@@ -82,7 +79,9 @@ const CameraField: React.FC<Props> = ({
         <Popover.Trigger asChild>
           <InputWrapper disabled={disabled}>
             <Input positionSet={!!value}>
-              {value && <ZoomToIcon icon="zoomToLayer" size={10} onClick={handleFlyto} />}
+              {value && (
+                <ZoomToIcon icon="zoomToLayer" size={10} onClick={() => handleFlyto(value)} />
+              )}
               <StyledText size="footnote" customColor>
                 {value ? t("Position Set") : t("Not set")}
               </StyledText>
@@ -113,9 +112,9 @@ const CameraField: React.FC<Props> = ({
             <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
           ) : open === "editor" ? (
             <EditPanel
-              camera={newCamera}
+              camera={initialRawValue}
               onSave={handleSave}
-              onChange={handleFieldUpdate}
+              onFlyTo={handleFlyto}
               onClose={handleClose}
             />
           ) : null}

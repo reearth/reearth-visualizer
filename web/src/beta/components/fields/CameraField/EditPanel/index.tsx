@@ -12,14 +12,18 @@ import useHooks from "./hooks";
 type Props = {
   camera?: Camera;
   onSave: (value?: Camera) => void;
-  onChange?: (key: keyof Camera, update?: number) => void;
+  onFlyTo?: (camera?: Camera) => void;
   onClose: () => void;
 };
 
-const EditPanel: React.FC<Props> = ({ camera, onSave, onChange, onClose }) => {
+const EditPanel: React.FC<Props> = ({ camera, onSave, onFlyTo, onClose }) => {
   const t = useT();
 
-  const { panelContent, handleChange } = useHooks({ camera, onChange });
+  const { newCamera, panelContent, handleChange, handleSave } = useHooks({
+    camera,
+    onFlyTo,
+    onSave,
+  });
 
   return (
     <PanelCommon title={t("Camera Position Editor")} onClose={onClose}>
@@ -30,8 +34,8 @@ const EditPanel: React.FC<Props> = ({ camera, onSave, onChange, onClose }) => {
             {panelContent[group].map(field => (
               <StyledNumberInput
                 key={field.id}
+                value={newCamera?.[field.id]}
                 inputDescription={field.description}
-                value={camera?.[field.id]}
                 suffix={field.suffix}
                 onChange={handleChange(field.id)}
               />
@@ -42,12 +46,7 @@ const EditPanel: React.FC<Props> = ({ camera, onSave, onChange, onClose }) => {
       <Divider />
       <ButtonWrapper>
         <StyledButton text={t("Cancel")} size="small" onClick={onClose} />
-        <StyledButton
-          text={t("Apply")}
-          size="small"
-          buttonType="primary"
-          onClick={() => onSave(camera)}
-        />
+        <StyledButton text={t("Apply")} size="small" buttonType="primary" onClick={handleSave} />
       </ButtonWrapper>
     </PanelCommon>
   );
