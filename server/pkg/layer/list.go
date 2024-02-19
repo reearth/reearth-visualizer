@@ -201,10 +201,7 @@ func (m Map) Group(i ID) *Group {
 }
 
 func (m Map) Keys() []ID {
-	keys := make([]ID, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
+	keys := list.ExtractKeys[ID, Layer](m)
 	sortIDs(keys)
 	return keys
 }

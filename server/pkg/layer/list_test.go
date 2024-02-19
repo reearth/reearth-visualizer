@@ -396,3 +396,40 @@ func TestMap_Pick(t *testing.T) {
 		})
 	}
 }
+
+func TestMap_Keys(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	m := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+	}
+
+	expectedKeys := []ID{l1.ID(), l2.ID()}
+	sortIDs(expectedKeys)
+
+	tests := []struct {
+		name    string
+		mapData Map
+		want    []ID
+	}{
+		{
+			name:    "valid keys",
+			mapData: m,
+			want:    expectedKeys,
+		},
+		{
+			name:    "empty map",
+			mapData: Map{},
+			want:    []ID{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.mapData.Keys())
+		})
+	}
+}

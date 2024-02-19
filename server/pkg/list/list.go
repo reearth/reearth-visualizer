@@ -6,7 +6,6 @@ type Identifiable[ID comparable] interface {
 	ID() ID
 }
 
-// IDLister is an interface that provides methods for ID list structures.
 type IDLister[ID comparable] interface {
 	LayerCount() int
 	Layers() []ID
@@ -179,4 +178,12 @@ func MapPick[ID comparable, T Identifiable[ID]](m map[ID]*T, idList IDLister[ID]
 		}
 	}
 	return layers
+}
+
+func ExtractKeys[ID comparable, T any](m map[ID]*T) []ID {
+	keys := make([]ID, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
 }
