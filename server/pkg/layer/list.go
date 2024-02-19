@@ -38,17 +38,7 @@ func (ll List) Properties() []PropertyID {
 }
 
 func (ll List) Pick(il *IDList) List {
-	if il == nil {
-		return nil
-	}
-
-	layers := make(List, 0, il.LayerCount())
-	for _, lid := range il.Layers() {
-		if l := ll.Find(lid); l != nil {
-			layers = append(layers, l)
-		}
-	}
-	return layers
+	return list.Pick[ID, Layer](ll, il)
 }
 
 func (ll List) Find(lid ID) *Layer {

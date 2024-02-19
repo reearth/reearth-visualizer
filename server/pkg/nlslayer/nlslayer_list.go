@@ -27,17 +27,7 @@ func (ll NLSLayerList) IDs() *IDList {
 }
 
 func (ll NLSLayerList) Pick(il *IDList) NLSLayerList {
-	if il == nil {
-		return nil
-	}
-
-	layers := make(NLSLayerList, 0, il.LayerCount())
-	for _, lid := range il.Layers() {
-		if l := ll.Find(lid); l != nil {
-			layers = append(layers, l)
-		}
-	}
-	return layers
+	return list.Pick[ID, NLSLayer](ll, il)
 }
 
 func (ll NLSLayerList) Find(lid ID) *NLSLayer {

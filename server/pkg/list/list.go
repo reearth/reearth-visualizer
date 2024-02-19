@@ -1,7 +1,15 @@
 package list
 
+import "reflect"
+
 type Identifiable[ID comparable] interface {
 	ID() ID
+}
+
+// IDLister is an interface that provides methods for ID list structures.
+type IDLister[ID comparable] interface {
+	LayerCount() int
+	Layers() []ID
 }
 
 type MapType[ID comparable, T Identifiable[ID]] map[ID]*T
@@ -11,6 +19,20 @@ func Last[ID comparable, T Identifiable[ID]](slice []*T) *T {
 		return nil
 	}
 	return slice[len(slice)-1]
+}
+
+func Pick[ID comparable, T Identifiable[ID]](slice []*T, idList IDLister[ID]) []*T {
+	if idList == nil || reflect.ValueOf(idList).IsNil() {
+		return nil
+	}
+
+	layers := make([]*T, 0, idList.LayerCount())
+	for _, lid := range idList.Layers() {
+		if l := Find(slice, lid); l != nil {
+			layers = append(layers, l)
+		}
+	}
+	return layers
 }
 
 func Find[ID comparable, T Identifiable[ID]](slice []*T, lid ID) *T {

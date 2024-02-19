@@ -102,6 +102,48 @@ func TestList_Properties(t *testing.T) {
 	}
 }
 
+func TestList_Pick(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+	l3 := NewItem().NewID().Scene(sid).MustBuild()
+
+	allLayers := List{l1.LayerRef(), l2.LayerRef()}
+	idList := NewIDList([]ID{l1.ID(), l3.ID()})
+
+	tests := []struct {
+		name string
+		ll   List
+		il   *IDList
+		want List
+	}{
+		{
+			name: "select existing layers",
+			ll:   allLayers,
+			il:   idList,
+			want: List{l1.LayerRef()},
+		},
+		{
+			name: "nil IDList",
+			ll:   allLayers,
+			il:   nil,
+			want: nil,
+		},
+		{
+			name: "empty list",
+			ll:   List{},
+			il:   idList,
+			want: List{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.ll.Pick(tt.il))
+		})
+	}
+}
+
 func TestList_Find(t *testing.T) {
 	sid := NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
