@@ -6,6 +6,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNLSLayerList_Last(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	tests := []struct {
+		name   string
+		target List
+		want   *Layer
+	}{
+		{
+			name:   "last element",
+			target: List{l1.LayerRef(), l2.LayerRef()},
+			want:   l2.LayerRef(),
+		},
+		{
+			name:   "empty list",
+			target: List{},
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Last())
+		})
+	}
+}
+
 func TestList_IDs(t *testing.T) {
 	sid := NewSceneID()
 	l1 := NewID()
@@ -73,6 +102,22 @@ func TestList_Properties(t *testing.T) {
 	}
 }
 
+func TestList_Map(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	expectedMap := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+	}
+	actualMap := List{l1.LayerRef(), l2.LayerRef()}.Map()
+
+	assert.Equal(t, expectedMap, actualMap)
+	assert.Equal(t, Map{}, List{}.Map())
+	assert.Equal(t, Map{}, List{nil}.Map())
+}
+
 func TestList_Remove(t *testing.T) {
 	sid := NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
@@ -91,4 +136,124 @@ func TestList_AddUnique(t *testing.T) {
 	assert.Equal(t, List{l2.LayerRef(), l1.LayerRef()}, List{l2.LayerRef()}.AddUnique(l1.LayerRef()))
 	assert.Equal(t, List{l2.LayerRef()}, List{l2.LayerRef()}.AddUnique(l2.LayerRef()))
 	assert.Equal(t, List{l1.LayerRef()}, List{}.AddUnique(l1.LayerRef(), l1.LayerRef()))
+}
+
+func TestMap_Add(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	m1 := Map{}
+	m1 = m1.Add(l1.LayerRef(), l2.LayerRef())
+
+	m2 := Map{
+		l1.ID(): l1.LayerRef(),
+	}
+	m2 = m2.Add(nil)
+
+	expectedMap1 := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+	}
+	expectedMap2 := Map{
+		l1.ID(): l1.LayerRef(),
+	}
+
+	assert.Equal(t, expectedMap1, m1)
+	assert.Equal(t, expectedMap2, m2)
+}
+
+func TestMap_Merge(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+	l3 := NewItem().NewID().Scene(sid).MustBuild()
+
+	m1 := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+	}
+	m2 := Map{
+		l3.ID(): l3.LayerRef(),
+	}
+
+	mergedMap := m1.Merge(m2)
+	expectedMap := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+		l3.ID(): l3.LayerRef(),
+	}
+
+	assert.Equal(t, expectedMap, mergedMap)
+}
+
+func TestMap_List(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	m := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+	}
+	list := m.List()
+	expectedList := List{l1.LayerRef(), l2.LayerRef()}
+
+	assert.Equal(t, expectedList, list)
+}
+
+func TestList_Deref(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	tests := []struct {
+		name   string
+		target List
+		want   []Layer
+	}{
+		{
+			name: "non-nil elements",
+			target: List{
+				l1.LayerRef(),
+				l2.LayerRef(),
+			},
+			want: []Layer{*l1.LayerRef(), *l2.LayerRef()},
+		},
+		{
+			name: "including nil element",
+			target: List{
+				l1.LayerRef(),
+				nil,
+				l2.LayerRef(),
+			},
+			want: []Layer{*l1.LayerRef(), nil, *l2.LayerRef()},
+		},
+		{
+			name:   "nil list",
+			target: nil,
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Deref())
+		})
+	}
+}
+
+func TestMap_Clone(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	m := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+	}
+
+	clonedMap := m.Clone()
+
+	assert.Equal(t, m, clonedMap)
 }
