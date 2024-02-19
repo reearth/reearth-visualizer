@@ -139,3 +139,19 @@ func Remove[ID comparable, T Identifiable[ID]](slice []*T, idsToRemove ...ID) []
 	}
 	return result
 }
+
+func AddUnique[ID comparable, T Identifiable[ID]](slice []*T, newList []*T) []*T {
+	res := append([]*T{}, slice...)
+
+	for _, l := range newList {
+		if l == nil {
+			continue
+		}
+		if Find(res, (*l).ID()) != nil {
+			continue
+		}
+		res = append(res, l)
+	}
+
+	return res
+}

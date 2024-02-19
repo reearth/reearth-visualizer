@@ -107,19 +107,7 @@ func (ll List) Remove(lids ...ID) List {
 }
 
 func (ll List) AddUnique(newList ...*Layer) List {
-	res := append(List{}, ll...)
-
-	for _, l := range newList {
-		if l == nil {
-			continue
-		}
-		if res.Find((*l).ID()) != nil {
-			continue
-		}
-		res = append(res, l)
-	}
-
-	return res
+	return list.AddUnique[ID, Layer](ll, newList)
 }
 
 type ItemList []*Item

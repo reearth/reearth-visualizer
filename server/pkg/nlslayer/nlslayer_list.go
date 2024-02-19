@@ -84,19 +84,7 @@ func (ll NLSLayerList) Remove(lids ...ID) NLSLayerList {
 }
 
 func (ll NLSLayerList) AddUnique(newList ...*NLSLayer) NLSLayerList {
-	res := append(NLSLayerList{}, ll...)
-
-	for _, l := range newList {
-		if l == nil {
-			continue
-		}
-		if res.Find((*l).ID()) != nil {
-			continue
-		}
-		res = append(res, l)
-	}
-
-	return res
+	return list.AddUnique[ID, NLSLayer](ll, newList)
 }
 
 type NLSLayerSimpleList []*NLSLayerSimple
