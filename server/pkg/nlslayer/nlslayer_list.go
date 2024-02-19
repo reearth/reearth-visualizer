@@ -41,15 +41,7 @@ func (ll NLSLayerList) Pick(il *IDList) NLSLayerList {
 }
 
 func (ll NLSLayerList) Find(lid ID) *NLSLayer {
-	for _, l := range ll {
-		if l == nil {
-			continue
-		}
-		if (*l).ID() == lid {
-			return l
-		}
-	}
-	return nil
+	return list.Find[ID, NLSLayer](ll, lid)
 }
 
 func (ll NLSLayerList) ToLayerItemList() NLSLayerSimpleList {

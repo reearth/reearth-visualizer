@@ -102,6 +102,51 @@ func TestList_Properties(t *testing.T) {
 	}
 }
 
+func TestList_Find(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+	nonExistentID := NewID()
+
+	tests := []struct {
+		name   string
+		target List
+		lid    ID
+		want   *Layer
+	}{
+		{
+			name:   "find existing element",
+			target: List{l1.LayerRef(), l2.LayerRef()},
+			lid:    l1.ID(),
+			want:   l1.LayerRef(),
+		},
+		{
+			name:   "find non-existing element",
+			target: List{l1.LayerRef(), l2.LayerRef()},
+			lid:    nonExistentID,
+			want:   nil,
+		},
+		{
+			name:   "empty list",
+			target: List{},
+			lid:    l1.ID(),
+			want:   nil,
+		},
+		{
+			name:   "list with nil element",
+			target: List{nil, l2.LayerRef()},
+			lid:    l2.ID(),
+			want:   l2.LayerRef(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Find(tt.lid))
+		})
+	}
+}
+
 func TestList_Map(t *testing.T) {
 	sid := NewSceneID()
 	l1 := NewItem().NewID().Scene(sid).MustBuild()

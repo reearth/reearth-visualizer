@@ -52,15 +52,7 @@ func (ll List) Pick(il *IDList) List {
 }
 
 func (ll List) Find(lid ID) *Layer {
-	for _, l := range ll {
-		if l == nil {
-			continue
-		}
-		if (*l).ID() == lid {
-			return l
-		}
-	}
-	return nil
+	return list.Find[ID, Layer](ll, lid)
 }
 
 func (ll List) FindByDataset(ds DatasetID) *Item {

@@ -13,6 +13,18 @@ func Last[ID comparable, T Identifiable[ID]](slice []*T) *T {
 	return slice[len(slice)-1]
 }
 
+func Find[ID comparable, T Identifiable[ID]](slice []*T, lid ID) *T {
+	for _, item := range slice {
+		if item == nil {
+			continue
+		}
+		if (*item).ID() == lid {
+			return item
+		}
+	}
+	return nil
+}
+
 func Deref[ID comparable, T Identifiable[ID]](slice []*T) []T {
 	if slice == nil {
 		return nil
