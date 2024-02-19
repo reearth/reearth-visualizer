@@ -33,7 +33,7 @@ export default ({
         [key]: update,
       };
       setNewCamera(updated);
-      onFlyTo?.(updated);
+      onFlyTo?.(saveFriendlyCamera(updated));
     },
     [newCamera, onFlyTo],
   );
