@@ -92,7 +92,11 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
                 ? activeEdgeIndex === i || (!edge.isDraggable && !!activeBox)
                 : false
             }
-            width={edge.isDraggable ? style.draggableOutlineWidth : style.outlineWidth}
+            width={
+              edge.isDraggable && disabledSelection
+                ? style.draggableOutlineWidth
+                : style.outlineWidth
+            }
             fillColor={edge.isDraggable ? style.draggableOutlineColor : style.outlineColor}
             hoverColor={
               disabledSelection
