@@ -1,6 +1,9 @@
 package nlslayer
 
-import "github.com/samber/lo"
+import (
+	"github.com/reearth/reearth/server/pkg/list"
+	"github.com/samber/lo"
+)
 
 type NLSLayerList []*NLSLayer
 
@@ -9,10 +12,7 @@ func ListFrom(l []NLSLayer) []*NLSLayer {
 }
 
 func (ll NLSLayerList) Last() *NLSLayer {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return list.Last[ID, NLSLayer](ll)
 }
 
 func (ll NLSLayerList) IDs() *IDList {
@@ -86,18 +86,7 @@ func (ll NLSLayerList) SeparateLayerItemAndGroup() (NLSLayerSimpleList, NLSLayer
 }
 
 func (ll NLSLayerList) Deref() []NLSLayer {
-	if ll == nil {
-		return nil
-	}
-	res := make([]NLSLayer, 0, len(ll))
-	for _, l := range ll {
-		if l != nil {
-			res = append(res, *l)
-		} else {
-			res = append(res, nil)
-		}
-	}
-	return res
+	return list.Deref[ID, NLSLayer](ll)
 }
 
 func (ll NLSLayerList) Loader() Loader {
@@ -105,35 +94,11 @@ func (ll NLSLayerList) Loader() Loader {
 }
 
 func (ll NLSLayerList) Map() Map {
-	m := make(Map, len(ll))
-	m.Add(ll...)
-	return m
+	return list.Map[ID, NLSLayer](ll)
 }
 
 func (ll NLSLayerList) Remove(lids ...ID) NLSLayerList {
-	if ll == nil {
-		return nil
-	}
-
-	res := make(NLSLayerList, 0, len(ll))
-
-	for _, l := range ll {
-		if l == nil {
-			continue
-		}
-		hit := false
-		for _, lid := range lids {
-			if (*l).ID() == lid {
-				hit = true
-				break
-			}
-		}
-		if !hit {
-			res = append(res, l)
-		}
-	}
-
-	return res
+	return list.Remove[ID, NLSLayer](ll, lids...)
 }
 
 func (ll NLSLayerList) AddUnique(newList ...*NLSLayer) NLSLayerList {
@@ -195,57 +160,19 @@ func MapFrom(l NLSLayer) Map {
 }
 
 func (m Map) Add(layers ...*NLSLayer) Map {
-	if m == nil {
-		m = map[ID]*NLSLayer{}
-	}
-	for _, l := range layers {
-		if l == nil {
-			continue
-		}
-		l2 := *l
-		m[l2.ID()] = l
-	}
-	return m
+	return list.Add[ID, NLSLayer](m, layers...)
 }
 
 func (m Map) NLSLayerList() NLSLayerList {
-	if m == nil {
-		return nil
-	}
-	list := make(NLSLayerList, 0, len(m))
-	for _, l := range m {
-		list = append(list, l)
-	}
-	return list
+	return list.List[ID, NLSLayer](m)
 }
 
 func (m Map) Clone() Map {
-	if m == nil {
-		return Map{}
-	}
-	m2 := make(Map, len(m))
-	for k, v := range m {
-		clonedObj := (*v).Clone()
-		clonedLayer, ok := clonedObj.(NLSLayer)
-		if ok {
-			m2[k] = &clonedLayer
-		} else {
-			m2[k] = nil
-		}
-	}
-	return m2
+	return list.Clone[ID, NLSLayer](m)
 }
 
 func (m Map) Merge(m2 Map) Map {
-	if m == nil {
-		return m2.Clone()
-	}
-	m3 := m.Clone()
-	if m2 == nil {
-		return m3
-	}
-
-	return m3.Add(m2.NLSLayerList()...)
+	return list.Merge[ID, NLSLayer](m, m2)
 }
 
 func (m Map) Pick(il *IDList) NLSLayerList {

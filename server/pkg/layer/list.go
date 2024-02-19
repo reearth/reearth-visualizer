@@ -1,6 +1,9 @@
 package layer
 
-import "github.com/samber/lo"
+import (
+	"github.com/reearth/reearth/server/pkg/list"
+	"github.com/samber/lo"
+)
 
 type List []*Layer
 
@@ -9,10 +12,7 @@ func ListFrom(l []Layer) []*Layer {
 }
 
 func (ll List) Last() *Layer {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return list.Last[ID, Layer](ll)
 }
 
 func (ll List) IDs() *IDList {
@@ -109,18 +109,7 @@ func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
 }
 
 func (ll List) Deref() []Layer {
-	if ll == nil {
-		return nil
-	}
-	res := make([]Layer, 0, len(ll))
-	for _, l := range ll {
-		if l != nil {
-			res = append(res, *l)
-		} else {
-			res = append(res, nil)
-		}
-	}
-	return res
+	return list.Deref[ID, Layer](ll)
 }
 
 func (ll List) Loader() Loader {
@@ -128,35 +117,11 @@ func (ll List) Loader() Loader {
 }
 
 func (ll List) Map() Map {
-	m := make(Map, len(ll))
-	m.Add(ll...)
-	return m
+	return list.Map[ID, Layer](ll)
 }
 
 func (ll List) Remove(lids ...ID) List {
-	if ll == nil {
-		return nil
-	}
-
-	res := make(List, 0, len(ll))
-
-	for _, l := range ll {
-		if l == nil {
-			continue
-		}
-		hit := false
-		for _, lid := range lids {
-			if (*l).ID() == lid {
-				hit = true
-				break
-			}
-		}
-		if !hit {
-			res = append(res, l)
-		}
-	}
-
-	return res
+	return list.Remove[ID, Layer](ll, lids...)
 }
 
 func (ll List) AddUnique(newList ...*Layer) List {
@@ -228,54 +193,19 @@ func MapFrom(l Layer) Map {
 }
 
 func (m Map) Add(layers ...*Layer) Map {
-	if m == nil {
-		m = map[ID]*Layer{}
-	}
-	for _, l := range layers {
-		if l == nil {
-			continue
-		}
-		l2 := *l
-		if l2 == nil {
-			continue
-		}
-		m[l2.ID()] = l
-	}
-	return m
+	return list.Add[ID, Layer](m, layers...)
 }
 
 func (m Map) List() List {
-	if m == nil {
-		return nil
-	}
-	list := make(List, 0, len(m))
-	for _, l := range m {
-		list = append(list, l)
-	}
-	return list
+	return list.List[ID, Layer](m)
 }
 
 func (m Map) Clone() Map {
-	if m == nil {
-		return Map{}
-	}
-	m2 := make(Map, len(m))
-	for k, v := range m {
-		m2[k] = v
-	}
-	return m2
+	return list.Clone[ID, Layer](m)
 }
 
 func (m Map) Merge(m2 Map) Map {
-	if m == nil {
-		return m2.Clone()
-	}
-	m3 := m.Clone()
-	if m2 == nil {
-		return m3
-	}
-
-	return m3.Add(m2.List()...)
+	return list.Merge[ID, Layer](m, m2)
 }
 
 func (m Map) Pick(il *IDList) List {
