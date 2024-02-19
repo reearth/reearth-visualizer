@@ -71,7 +71,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
           fill={style.fill}
           fillColor={style.fillColor}
           outlineColor={style.outlineColor}
-          isActive={!!activeBox}
+          isActive={disabledSelection ? !!activeBox : false}
           activeOutlineColor={style.activeOutlineColor}
           trs={trs}
           availability={availability}
@@ -121,9 +121,11 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             scalePoint={vector}
             trs={trs}
             isHovered={disabledSelection ? activeScalePointIndex === i : false}
-            pointFillColor={scalePointStyle.pointFillColor}
-            pointOutlineColor={scalePointStyle.pointOutlineColor}
-            hoverPointOutlineColor={scalePointStyle.activePointOutlineColor}
+            pointFillColor={disabledSelection ? scalePointStyle.pointFillColor : undefined}
+            pointOutlineColor={disabledSelection ? scalePointStyle.pointOutlineColor : undefined}
+            hoverPointOutlineColor={
+              disabledSelection ? scalePointStyle.activePointOutlineColor : undefined
+            }
             pointOutlineWidth={pointOutlineWidth}
             axisLineColor={scalePointStyle.axisLineColor}
             axisLineWidth={axisLineWidth}
