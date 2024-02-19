@@ -21,6 +21,17 @@ func Last[ID comparable, T Identifiable[ID]](slice []*T) *T {
 	return slice[len(slice)-1]
 }
 
+func ExtractIDs[ID comparable, T Identifiable[ID]](slice []*T) []ID {
+	if len(slice) == 0 {
+		return nil
+	}
+	ids := make([]ID, 0, len(slice))
+	for _, item := range Deref(slice) {
+		ids = append(ids, item.ID())
+	}
+	return ids
+}
+
 func Pick[ID comparable, T Identifiable[ID]](slice []*T, idList IDLister[ID]) []*T {
 	if idList == nil || reflect.ValueOf(idList).IsNil() {
 		return nil

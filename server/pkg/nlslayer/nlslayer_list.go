@@ -16,12 +16,9 @@ func (ll NLSLayerList) Last() *NLSLayer {
 }
 
 func (ll NLSLayerList) IDs() *IDList {
-	if len(ll) == 0 {
+	ids := list.ExtractIDs[ID, NLSLayer](ll)
+	if len(ids) == 0 {
 		return nil
-	}
-	ids := make([]ID, 0, len(ll))
-	for _, l := range ll.Deref() {
-		ids = append(ids, l.ID())
 	}
 	return NewIDList(ids)
 }
