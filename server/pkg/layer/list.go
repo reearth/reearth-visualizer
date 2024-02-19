@@ -179,17 +179,7 @@ func (m Map) Merge(m2 Map) Map {
 }
 
 func (m Map) Pick(il *IDList) List {
-	if il == nil {
-		return nil
-	}
-
-	layers := make(List, 0, il.LayerCount())
-	for _, lid := range il.Layers() {
-		if l := m[lid]; l != nil {
-			layers = append(layers, l)
-		}
-	}
-	return layers
+	return list.MapPick[ID, Layer](m, il)
 }
 
 func (m Map) Layer(i ID) Layer {

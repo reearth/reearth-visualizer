@@ -146,17 +146,7 @@ func (m Map) Merge(m2 Map) Map {
 }
 
 func (m Map) Pick(il *IDList) NLSLayerList {
-	if il == nil {
-		return nil
-	}
-
-	layers := make(NLSLayerList, 0, il.LayerCount())
-	for _, lid := range il.Layers() {
-		if l := m[lid]; l != nil {
-			layers = append(layers, l)
-		}
-	}
-	return layers
+	return list.MapPick[ID, NLSLayer](m, il)
 }
 
 func (m Map) NLSLayer(i ID) NLSLayer {

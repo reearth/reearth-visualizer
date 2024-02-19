@@ -155,3 +155,17 @@ func AddUnique[ID comparable, T Identifiable[ID]](slice []*T, newList []*T) []*T
 
 	return res
 }
+
+func MapPick[ID comparable, T Identifiable[ID]](m map[ID]*T, idList IDLister[ID]) []*T {
+	if idList == nil || reflect.ValueOf(idList).IsNil() {
+		return nil
+	}
+
+	layers := make([]*T, 0, idList.LayerCount())
+	for _, lid := range idList.Layers() {
+		if l := m[lid]; l != nil {
+			layers = append(layers, l)
+		}
+	}
+	return layers
+}

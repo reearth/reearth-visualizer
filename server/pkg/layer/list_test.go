@@ -344,3 +344,55 @@ func TestMap_Clone(t *testing.T) {
 
 	assert.Equal(t, m, clonedMap)
 }
+
+func TestMap_Pick(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+	l3 := NewItem().NewID().Scene(sid).MustBuild()
+
+	allLayers := Map{
+		l1.ID(): l1.LayerRef(),
+		l2.ID(): l2.LayerRef(),
+	}
+
+	idList := NewIDList([]ID{l1.ID(), l3.ID()})
+
+	tests := []struct {
+		name string
+		m    Map
+		il   *IDList
+		want List
+	}{
+		{
+			name: "select existing layers",
+			m:    allLayers,
+			il:   idList,
+			want: List{l1.LayerRef()},
+		},
+		{
+			name: "nil IDList",
+			m:    allLayers,
+			il:   nil,
+			want: nil,
+		},
+		{
+			name: "empty map",
+			m:    Map{},
+			il:   idList,
+			want: List{},
+		},
+		{
+			name: "non-existing ID",
+			m:    allLayers,
+			il:   NewIDList([]ID{NewID()}),
+			want: List{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.m.Pick(tt.il))
+		})
+	}
+}
