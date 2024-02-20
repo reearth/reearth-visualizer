@@ -34,7 +34,6 @@ const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
       ],
     };
   }, [t, camera]);
-  console.log("CAPTIURING", camera);
 
   return (
     <PanelCommon title={t("Camera Position Editor")} onClose={onClose}>

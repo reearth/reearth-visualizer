@@ -71,8 +71,6 @@ const CameraField: React.FC<Props> = ({
     handleSave();
   }, [value, handleSave]);
 
-  console.log("??", value, currentCamera);
-
   return (
     <Property name={name} description={description}>
       <Popover.Provider open={!!open} placement="bottom-start">
