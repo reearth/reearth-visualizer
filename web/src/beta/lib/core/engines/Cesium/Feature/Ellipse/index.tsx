@@ -36,8 +36,6 @@ export default function Ellipse({ id, isVisible, property, geometry, layer, feat
   } = property ?? {};
   const { useTransition, translate } = layer?.transition ?? {};
 
-  console.log(translate, radius);
-
   const pos = useMemo(
     () =>
       coordinates
