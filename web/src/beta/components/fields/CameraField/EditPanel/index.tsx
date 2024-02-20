@@ -34,7 +34,7 @@ const EditPanel: React.FC<Props> = ({ camera, onSave, onFlyTo, onClose }) => {
             {panelContent[group].map(field => (
               <StyledNumberInput
                 key={field.id}
-                value={newCamera?.[field.id]}
+                value={newCamera?.[field.id] ?? 0}
                 inputDescription={field.description}
                 suffix={field.suffix}
                 onChange={handleChange(field.id)}

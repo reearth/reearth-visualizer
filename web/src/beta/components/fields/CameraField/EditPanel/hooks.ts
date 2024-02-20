@@ -27,7 +27,7 @@ export default ({
 
   const handleFieldUpdate = useCallback(
     (key: keyof Camera, update?: number) => {
-      if (!update || !newCamera) return;
+      if (update === undefined || !newCamera) return;
       const updated: Camera = {
         ...newCamera,
         [key]: update,

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Icon from "@reearth/beta/components/Icon";
@@ -38,8 +38,6 @@ const CameraField: React.FC<Props> = ({
 }) => {
   const t = useT();
   const [open, setOpen] = useState<Panel>(undefined);
-
-  const initialRawValue = useMemo(() => value ?? currentCamera, [value, currentCamera]);
 
   const handleClose = useCallback(() => setOpen(undefined), []);
 
@@ -110,7 +108,7 @@ const CameraField: React.FC<Props> = ({
             <CapturePanel camera={currentCamera} onSave={handleSave} onClose={handleClose} />
           ) : open === "editor" ? (
             <EditPanel
-              camera={initialRawValue}
+              camera={value}
               onSave={handleSave}
               onFlyTo={handleFlyto}
               onClose={handleClose}
