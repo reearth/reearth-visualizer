@@ -145,6 +145,7 @@ export type EngineRef = {
   ) => void;
   rotateOnCenter: (radian: number) => void;
   overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
+  keyboardCameraRotate: (roll: number) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;

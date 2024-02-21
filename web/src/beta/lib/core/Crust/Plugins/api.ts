@@ -442,6 +442,7 @@ export function commonReearth({
   rotateOnCenter,
   enableScreenSpaceCameraController,
   overrideScreenSpaceController,
+  keyboardCameraRotate,
   lookHorizontal,
   lookVertical,
   moveForward,
@@ -503,6 +504,7 @@ export function commonReearth({
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
   rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
   overrideScreenSpaceController: GlobalThis["reearth"]["camera"]["overrideScreenSpaceController"];
+  keyboardCameraRotate: GlobalThis["reearth"]["camera"]["keyboardCameraRotate"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -556,6 +558,7 @@ export function commonReearth({
         flyToBBox,
         rotateOnCenter,
         overrideScreenSpaceController,
+        keyboardCameraRotate,
       },
       get property() {
         return sceneProperty?.();
@@ -624,6 +627,7 @@ export function commonReearth({
       flyToBBox,
       rotateOnCenter,
       overrideScreenSpaceController,
+      keyboardCameraRotate,
     },
     layers: {
       get layersInViewport() {

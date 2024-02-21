@@ -150,6 +150,7 @@ export const context: Context = {
       flyToBBox: act("flyToBBox"),
       rotateOnCenter: act("rotateOnCenter"),
       overrideScreenSpaceController: act("overrideScreenSpaceController"),
+      keyboardCameraRotate: act("keyboardCameraRotate"),
       lookAt: act("lookAt"),
       zoomIn: act("zoomIn"),
       zoomOut: act("zoomOut"),

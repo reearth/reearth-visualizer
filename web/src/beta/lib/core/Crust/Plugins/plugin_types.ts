@@ -194,6 +194,7 @@ export type Camera = {
   ) => void;
   readonly rotateOnCenter: (radian: number) => void;
   readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
+  readonly keyboardCameraRotate: (roll: number) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */

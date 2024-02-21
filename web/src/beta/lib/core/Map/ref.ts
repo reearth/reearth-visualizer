@@ -36,6 +36,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   flyToBBox: 1,
   rotateOnCenter: 1,
   overrideScreenSpaceController: 1,
+  keyboardCameraRotate: 1,
   lookAt: 1,
   lookAtLayer: 1,
   lookHorizontal: 1,

@@ -361,6 +361,14 @@ export default function ({
     },
     [engineRef],
   );
+
+  const keyboardCameraRotate = useCallback(
+    (roll: number) => {
+      return engineRef?.keyboardCameraRotate(roll);
+    },
+    [engineRef],
+  );
+
   const lookHorizontal = useCallback(
     (amount: number) => {
       engineRef?.lookHorizontal(amount);
@@ -553,6 +561,7 @@ export default function ({
         flyToBBox,
         rotateOnCenter,
         overrideScreenSpaceController,
+        keyboardCameraRotate,
         lookAt,
         zoomIn,
         zoomOut,
@@ -624,6 +633,7 @@ export default function ({
       flyToBBox,
       rotateOnCenter,
       overrideScreenSpaceController,
+      keyboardCameraRotate,
       lookAt,
       zoomIn,
       zoomOut,

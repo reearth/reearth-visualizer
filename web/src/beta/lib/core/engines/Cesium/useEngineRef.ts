@@ -468,6 +468,21 @@ export default function useEngineRef(
         const assignments = getOverriddenScreenSpaceCameraOptions(options);
         Object.assign(controller, assignments);
       },
+
+      keyboardCameraRotate: (roll: number) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        const scene = viewer.scene;
+        if (Math.abs(CesiumMath.negativePiToPi(roll)) > Math.PI / 86400) {
+          scene.camera.setView({
+            orientation: {
+              heading: scene.camera.heading,
+              pitch: scene.camera.pitch,
+              roll: 0,
+            },
+          });
+        }
+      },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
