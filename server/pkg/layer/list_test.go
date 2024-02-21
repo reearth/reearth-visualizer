@@ -279,14 +279,44 @@ func TestMap_List(t *testing.T) {
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
-	m := Map{
-		l1.ID(): l1.LayerRef(),
-		l2.ID(): l2.LayerRef(),
+	tests := []struct {
+		name   string
+		target Map
+		want   List
+	}{
+		{
+			name: "normal case",
+			target: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): l2.LayerRef(),
+			},
+			want: List{l1.LayerRef(), l2.LayerRef()},
+		},
+		{
+			name: "contains nil",
+			target: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): nil,
+			},
+			want: List{l1.LayerRef(), nil},
+		},
+		{
+			name:   "empty slice",
+			target: Map{},
+			want:   List{},
+		},
+		{
+			name:   "nil slice",
+			target: nil,
+			want:   nil,
+		},
 	}
-	list := m.List()
-	expectedList := List{l1.LayerRef(), l2.LayerRef()}
 
-	assert.Equal(t, expectedList, list)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.List())
+		})
+	}
 }
 
 func TestList_Deref(t *testing.T) {
