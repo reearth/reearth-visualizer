@@ -209,7 +209,6 @@ export type Cesium3DTilesAppearance = {
   imageBasedLightIntensity?: number;
   showWireframe?: boolean;
   showBoundingVolume?: boolean;
-  disabledSelection?: boolean;
 };
 
 export type LegacyPhotooverlayAppearance = {
