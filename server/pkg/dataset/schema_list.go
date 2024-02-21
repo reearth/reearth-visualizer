@@ -5,7 +5,7 @@ import "github.com/reearth/reearth/server/pkg/list"
 type SchemaList []*Schema
 
 func (dsl SchemaList) Map() SchemaMap {
-	return list.MapWithIDFunc[SchemaID, Schema](dsl, (*Schema).ID)
+	return list.MapWithIDFunc[SchemaID, Schema](dsl, (*Schema).ID, true)
 }
 
 type SchemaMap map[SchemaID]*Schema
