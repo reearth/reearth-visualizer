@@ -94,8 +94,8 @@ func Map[ID comparable, T Identifiable[ID]](slice []*T) map[ID]*T {
 	return m
 }
 
-func MapWithIDFunc[ID comparable, T any](slice []*T, idFunc func(*T) ID) map[ID]*T {
-	if slice == nil {
+func MapWithIDFunc[ID comparable, T any](slice []*T, idFunc func(*T) ID, checkNil bool) map[ID]*T {
+	if checkNil && slice == nil {
 		return nil
 	}
 	m := make(map[ID]*T, len(slice))
