@@ -6,6 +6,53 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSchemaMap_Slice(t *testing.T) {
+	did1 := NewSchemaID()
+	did2 := NewSchemaID()
+	sid := NewSceneID()
+	d1, _ := NewSchema().ID(did1).Scene(sid).Build()
+	d2, _ := NewSchema().ID(did2).Scene(sid).Build()
+
+	tests := []struct {
+		name   string
+		target SchemaMap
+		want   SchemaList
+	}{
+		{
+			name: "normal case",
+			target: SchemaMap{
+				did1: d1,
+				did2: d2,
+			},
+			want: SchemaList{d1, d2},
+		},
+		{
+			name: "contains nil",
+			target: SchemaMap{
+				did1: d1,
+				did2: nil,
+			},
+			want: SchemaList{d1},
+		},
+		{
+			name:   "empty slice",
+			target: SchemaMap{},
+			want:   SchemaList{},
+		},
+		{
+			name:   "nil slice",
+			target: nil,
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Slice())
+		})
+	}
+}
+
 func TestDatasetSchemaMapGraphSearchByFields(t *testing.T) {
 	did1 := NewSchemaID()
 	did2 := NewSchemaID()

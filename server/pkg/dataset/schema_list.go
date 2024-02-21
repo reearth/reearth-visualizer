@@ -1,5 +1,7 @@
 package dataset
 
+import "github.com/reearth/reearth/server/pkg/list"
+
 type SchemaList []*Schema
 
 func (dsl SchemaList) Map() SchemaMap {
@@ -18,16 +20,7 @@ func (dsl SchemaList) Map() SchemaMap {
 type SchemaMap map[SchemaID]*Schema
 
 func (dsm SchemaMap) Slice() SchemaList {
-	if dsm == nil {
-		return nil
-	}
-	res := make(SchemaList, 0, len(dsm))
-	for _, ds := range dsm {
-		if ds != nil {
-			res = append(res, ds)
-		}
-	}
-	return res
+	return list.List[SchemaID, Schema](dsm, true)
 }
 
 func (dsm SchemaMap) GraphSearchByFields(root SchemaID, fields ...FieldID) (SchemaList, *SchemaField) {

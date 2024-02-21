@@ -13,8 +13,6 @@ type IDLister[ID comparable] interface {
 	Layers() []ID
 }
 
-type MapType[ID comparable, T Identifiable[ID]] map[ID]*T
-
 type Converter[S any, T any] func(*S) *T
 
 func Last[ID comparable, T Identifiable[ID]](slice []*T) *T {
@@ -91,7 +89,7 @@ func Add[ID comparable, T Identifiable[ID]](m map[ID]*T, items ...*T) map[ID]*T 
 }
 
 func Map[ID comparable, T Identifiable[ID]](slice []*T) map[ID]*T {
-	m := make(MapType[ID, T], len(slice))
+	m := make(map[ID]*T, len(slice))
 	Add(m, slice...)
 	return m
 }
@@ -105,16 +103,18 @@ func Merge[ID comparable, T Identifiable[ID]](m map[ID]*T, m2 map[ID]*T) map[ID]
 		return m3
 	}
 
-	return Add(m3, List(m2)...)
+	return Add(m3, List(m2, false)...)
 }
 
-func List[ID comparable, T Identifiable[ID]](m map[ID]*T) []*T {
+func List[ID comparable, T any](m map[ID]*T, skipNil bool) []*T {
 	if m == nil {
 		return nil
 	}
 	list := make([]*T, 0, len(m))
 	for _, l := range m {
-		list = append(list, l)
+		if !skipNil || l != nil {
+			list = append(list, l)
+		}
 	}
 	return list
 }

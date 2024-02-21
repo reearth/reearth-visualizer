@@ -131,7 +131,7 @@ func (m Map) Add(layers ...*NLSLayer) Map {
 }
 
 func (m Map) NLSLayerList() NLSLayerList {
-	return list.List[ID, NLSLayer](m)
+	return list.List[ID, NLSLayer](m, false)
 }
 
 func (m Map) Clone() Map {

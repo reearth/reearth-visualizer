@@ -158,7 +158,7 @@ func (m Map) Add(layers ...*Layer) Map {
 }
 
 func (m Map) List() List {
-	return list.List[ID, Layer](m)
+	return list.List[ID, Layer](m, false)
 }
 
 func (m Map) Clone() Map {
