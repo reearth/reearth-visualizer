@@ -100,6 +100,7 @@ export type EngineRef = {
     z: number,
     options?: { useGlobeEllipsoid?: boolean },
   ) => [lng: number, lat: number, height: number] | undefined;
+  negatuvePiToPi: (angle: number) => void;
   convertScreenToPositionOffset: (
     rawPosition: [x: number, y: number, z: number],
     screenOffset: [x: number, y: number],
@@ -145,7 +146,7 @@ export type EngineRef = {
   ) => void;
   rotateOnCenter: (radian: number) => void;
   overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
-  keyboardCameraRotate: (roll: number) => void;
+  keyboardCameraRotate: () => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;

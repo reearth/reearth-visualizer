@@ -301,6 +301,13 @@ export default function ({
     [engineRef],
   );
 
+  const negatuvePiToPi = useCallback(
+    (angle: number) => {
+      return engineRef?.negatuvePiToPi(angle);
+    },
+    [engineRef],
+  );
+
   const convertScreenToPositionOffset = useCallback(
     (rawPosition: [x: number, y: number, z: number], screenOffset: [x: number, y: number]) => {
       return engineRef?.convertScreenToPositionOffset(rawPosition, screenOffset);
@@ -362,12 +369,9 @@ export default function ({
     [engineRef],
   );
 
-  const keyboardCameraRotate = useCallback(
-    (roll: number) => {
-      return engineRef?.keyboardCameraRotate(roll);
-    },
-    [engineRef],
-  );
+  const keyboardCameraRotate = useCallback(() => {
+    return engineRef?.keyboardCameraRotate();
+  }, [engineRef]);
 
   const lookHorizontal = useCallback(
     (amount: number) => {
@@ -571,6 +575,7 @@ export default function ({
         getGlobeHeight,
         toXYZ,
         toLngLatHeight,
+        negatuvePiToPi,
         convertScreenToPositionOffset,
         isPositionVisible,
         setView,
@@ -643,6 +648,7 @@ export default function ({
       getGlobeHeight,
       toXYZ,
       toLngLatHeight,
+      negatuvePiToPi,
       convertScreenToPositionOffset,
       isPositionVisible,
       setView,

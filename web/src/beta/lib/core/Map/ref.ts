@@ -28,6 +28,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   getGlobeHeight: 1,
   toXYZ: 1,
   toLngLatHeight: 1,
+  negatuvePiToPi: 1,
   convertScreenToPositionOffset: 1,
   isPositionVisible: 1,
   setView: 1,

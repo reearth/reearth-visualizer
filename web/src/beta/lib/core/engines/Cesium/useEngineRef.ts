@@ -167,6 +167,12 @@ export default function useEngineRef(
           cart.height,
         ];
       },
+
+      negatuvePiToPi: (angle: number) => {
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return Math.abs(CesiumMath.negativePiToPi(angle)) > Math.PI / 86400;
+      },
       // Calculate window position from WGS coordinates.
       // TODO: We might need to support other WGS, but it's only WGS84 for now.
       toWindowPosition: (position: [x: number, y: number, z: number]) => {
@@ -469,19 +475,17 @@ export default function useEngineRef(
         Object.assign(controller, assignments);
       },
 
-      keyboardCameraRotate: (roll: number) => {
+      keyboardCameraRotate: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         const scene = viewer.scene;
-        if (Math.abs(CesiumMath.negativePiToPi(roll)) > Math.PI / 86400) {
-          scene.camera.setView({
-            orientation: {
-              heading: scene.camera.heading,
-              pitch: scene.camera.pitch,
-              roll: 0,
-            },
-          });
-        }
+        scene.camera.setView({
+          orientation: {
+            heading: scene.camera.heading,
+            pitch: scene.camera.pitch,
+            roll: 0,
+          },
+        });
       },
       lookAt: (camera, options) => {
         const viewer = cesium.current?.cesiumElement;
