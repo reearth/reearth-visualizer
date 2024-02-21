@@ -84,11 +84,9 @@ export const BUILTIN_BOX_SIDE_PLANES = [
 export const useClippingBox = ({
   clipping,
   boxId,
-  disabledSelection,
 }: {
   clipping?: EXPERIMENTAL_clipping;
   boxId: string;
-  disabledSelection?: boolean;
 }) => {
   const {
     useBuiltinBox,
@@ -101,6 +99,7 @@ export const useClippingBox = ({
     heading,
     pitch,
     roll,
+    disabledSelection,
   } = clipping || {};
 
   const { viewer } = useCesium();

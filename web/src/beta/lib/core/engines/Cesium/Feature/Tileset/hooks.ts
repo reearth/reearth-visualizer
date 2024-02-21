@@ -377,15 +377,7 @@ export const useHooks = ({
   onLayerFetch?: (value: Partial<Pick<LayerSimple, "properties">>) => void;
 }) => {
   const { viewer } = useCesium();
-  const {
-    tileset,
-    styleUrl,
-    edgeColor,
-    edgeWidth,
-    experimental_clipping,
-    apiKey,
-    disabledSelection,
-  } = property ?? {};
+  const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping, apiKey } = property ?? {};
   const {
     width,
     height,
@@ -400,7 +392,7 @@ export const useHooks = ({
     direction = "inside",
     builtinBoxProps,
     allowEnterGround,
-  } = useClippingBox({ clipping: experimental_clipping, boxId, disabledSelection });
+  } = useClippingBox({ clipping: experimental_clipping, boxId });
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type, idProperty } = useData(layer);
 
