@@ -1,6 +1,8 @@
 package list
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type Identifiable[ID comparable] interface {
 	ID() ID
@@ -12,6 +14,8 @@ type IDLister[ID comparable] interface {
 }
 
 type MapType[ID comparable, T Identifiable[ID]] map[ID]*T
+
+type Converter[S any, T any] func(*S) *T
 
 func Last[ID comparable, T Identifiable[ID]](slice []*T) *T {
 	if len(slice) == 0 {
@@ -186,4 +190,14 @@ func ExtractKeys[ID comparable, T any](m map[ID]*T) []ID {
 		keys = append(keys, k)
 	}
 	return keys
+}
+
+func ToGenericList[S any, T any](list []*S, convert Converter[S, T]) []*T {
+	res := make([]*T, 0, len(list))
+	for _, l := range list {
+		if li := convert(l); li != nil {
+			res = append(res, li)
+		}
+	}
+	return res
 }

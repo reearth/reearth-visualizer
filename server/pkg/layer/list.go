@@ -55,13 +55,7 @@ func (ll List) FindByDataset(ds DatasetID) *Item {
 }
 
 func (ll List) ToLayerItemList() ItemList {
-	res := make(ItemList, 0, len(ll))
-	for _, l := range ll {
-		if li := ItemFromLayerRef(l); li != nil {
-			res = append(res, li)
-		}
-	}
-	return res
+	return list.ToGenericList[Layer, Item](ll, ItemFromLayerRef)
 }
 
 func (ll List) ToLayerGroupList() GroupList {

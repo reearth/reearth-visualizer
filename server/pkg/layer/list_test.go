@@ -433,3 +433,39 @@ func TestMap_Keys(t *testing.T) {
 		})
 	}
 }
+
+func TestList_ToLayerItemList(t *testing.T) {
+	sid := NewSceneID()
+	item1 := NewItem().NewID().Scene(sid).MustBuild()
+	item2 := NewItem().NewID().Scene(sid).MustBuild()
+	layer1 := item1.LayerRef()
+	layer2 := item2.LayerRef()
+
+	tests := []struct {
+		name   string
+		target List
+		want   ItemList
+	}{
+		{
+			name:   "convert list to item list",
+			target: List{layer1, layer2},
+			want:   ItemList{item1, item2},
+		},
+		{
+			name:   "handle empty list",
+			target: List{},
+			want:   ItemList{},
+		},
+		{
+			name:   "handle nil elements in list",
+			target: List{nil, layer1},
+			want:   ItemList{item1},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.ToLayerItemList())
+		})
+	}
+}
