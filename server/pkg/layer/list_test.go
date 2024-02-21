@@ -194,15 +194,38 @@ func TestList_Map(t *testing.T) {
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
-	expectedMap := Map{
-		l1.ID(): l1.LayerRef(),
-		l2.ID(): l2.LayerRef(),
+	tests := []struct {
+		name   string
+		target List
+		want   Map
+	}{
+		{
+			name:   "normal case",
+			target: List{l1.LayerRef(), l2.LayerRef()},
+			want:   Map{l1.ID(): l1.LayerRef(), l2.ID(): l2.LayerRef()},
+		},
+		{
+			name:   "contains nil",
+			target: List{l1.LayerRef(), nil},
+			want:   Map{l1.ID(): l1.LayerRef()},
+		},
+		{
+			name:   "empty slice",
+			target: List{},
+			want:   Map{},
+		},
+		{
+			name:   "nil slice",
+			target: nil,
+			want:   Map{},
+		},
 	}
-	actualMap := List{l1.LayerRef(), l2.LayerRef()}.Map()
 
-	assert.Equal(t, expectedMap, actualMap)
-	assert.Equal(t, Map{}, List{}.Map())
-	assert.Equal(t, Map{}, List{nil}.Map())
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Map())
+		})
+	}
 }
 
 func TestList_Remove(t *testing.T) {
@@ -230,24 +253,56 @@ func TestMap_Add(t *testing.T) {
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
-	m1 := Map{}
-	m1 = m1.Add(l1.LayerRef(), l2.LayerRef())
-
-	m2 := Map{
-		l1.ID(): l1.LayerRef(),
+	tests := []struct {
+		name   string
+		target Map
+		args   []*Layer
+		want   Map
+	}{
+		{
+			name:   "normal case",
+			target: Map{},
+			args: []*Layer{
+				l1.LayerRef(),
+				l2.LayerRef(),
+			},
+			want: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): l2.LayerRef(),
+			},
+		},
+		{
+			name: "add to existing map",
+			target: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+			args: []*Layer{
+				l2.LayerRef(),
+			},
+			want: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): l2.LayerRef(),
+			},
+		},
+		{
+			name:   "empty Map",
+			target: Map{},
+			args:   nil,
+			want:   Map{},
+		},
+		{
+			name:   "nil Map",
+			target: nil,
+			args:   nil,
+			want:   Map{},
+		},
 	}
-	m2 = m2.Add(nil)
 
-	expectedMap1 := Map{
-		l1.ID(): l1.LayerRef(),
-		l2.ID(): l2.LayerRef(),
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Add(tt.args...))
+		})
 	}
-	expectedMap2 := Map{
-		l1.ID(): l1.LayerRef(),
-	}
-
-	assert.Equal(t, expectedMap1, m1)
-	assert.Equal(t, expectedMap2, m2)
 }
 
 func TestMap_Merge(t *testing.T) {
