@@ -77,7 +77,7 @@ func Deref[ID comparable, T Identifiable[ID]](slice []*T) []T {
 
 func Add[ID comparable, T Identifiable[ID]](m map[ID]*T, items ...*T) map[ID]*T {
 	if m == nil {
-		return map[ID]*T{}
+		m = map[ID]*T{}
 	}
 	for _, item := range items {
 		if item == nil {
