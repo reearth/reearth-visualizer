@@ -27,7 +27,7 @@ func ExtractIDs[ID comparable, T Identifiable[ID]](slice []*T) []ID {
 		return nil
 	}
 	ids := make([]ID, 0, len(slice))
-	for _, item := range Deref(slice) {
+	for _, item := range Deref[ID, T](slice) {
 		ids = append(ids, item.ID())
 	}
 	return ids
@@ -40,7 +40,7 @@ func Pick[ID comparable, T Identifiable[ID]](slice []*T, idList IDLister[ID]) []
 
 	layers := make([]*T, 0, idList.LayerCount())
 	for _, lid := range idList.Layers() {
-		if l := Find(slice, lid); l != nil {
+		if l := Find[ID, T](slice, lid); l != nil {
 			layers = append(layers, l)
 		}
 	}
@@ -90,7 +90,7 @@ func Add[ID comparable, T Identifiable[ID]](m map[ID]*T, items ...*T) map[ID]*T 
 
 func Map[ID comparable, T Identifiable[ID]](slice []*T) map[ID]*T {
 	m := make(map[ID]*T, len(slice))
-	Add(m, slice...)
+	Add[ID, T](m, slice...)
 	return m
 }
 
@@ -110,14 +110,14 @@ func MapWithIDFunc[ID comparable, T any](slice []*T, idFunc func(*T) ID, checkNi
 
 func Merge[ID comparable, T Identifiable[ID]](m map[ID]*T, m2 map[ID]*T) map[ID]*T {
 	if m == nil {
-		return Clone(m2)
+		return Clone[ID, T](m2)
 	}
-	m3 := Clone(m)
+	m3 := Clone[ID, T](m)
 	if m2 == nil {
 		return m3
 	}
 
-	return Add(m3, List(m2, false)...)
+	return Add[ID, T](m3, List[ID, T](m2, false)...)
 }
 
 func List[ID comparable, T any](m map[ID]*T, skipNil bool) []*T {
@@ -175,7 +175,7 @@ func AddUnique[ID comparable, T Identifiable[ID]](slice []*T, newList []*T) []*T
 		if l == nil {
 			continue
 		}
-		if Find(res, (*l).ID()) != nil {
+		if Find[ID, T](res, (*l).ID()) != nil {
 			continue
 		}
 		res = append(res, l)
