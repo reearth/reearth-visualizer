@@ -32,23 +32,11 @@ func (ll NLSLayerList) Find(lid ID) *NLSLayer {
 }
 
 func (ll NLSLayerList) ToLayerItemList() NLSLayerSimpleList {
-	res := make(NLSLayerSimpleList, 0, len(ll))
-	for _, l := range ll {
-		if li := NLSLayerSimpleFromLayerRef(l); li != nil {
-			res = append(res, li)
-		}
-	}
-	return res
+	return list.ToGenericList[NLSLayer, NLSLayerSimple](ll, NLSLayerSimpleFromLayerRef)
 }
 
 func (ll NLSLayerList) ToNLSLayerGroupList() NLSLayerGroupList {
-	res := make(NLSLayerGroupList, 0, len(ll))
-	for _, l := range ll {
-		if lg := NLSLayerGroupFromLayerRef(l); lg != nil {
-			res = append(res, lg)
-		}
-	}
-	return res
+	return list.ToGenericList[NLSLayer, NLSLayerGroup](ll, NLSLayerGroupFromLayerRef)
 }
 
 func (ll NLSLayerList) SeparateLayerItemAndGroup() (NLSLayerSimpleList, NLSLayerGroupList) {
@@ -96,10 +84,7 @@ func (ll NLSLayerSimpleList) ToLayerList() NLSLayerList {
 }
 
 func (ll NLSLayerSimpleList) Last() *NLSLayerSimple {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return list.Last[NLSLayerSimple](ll)
 }
 
 type NLSLayerGroupList []*NLSLayerGroup
@@ -114,10 +99,7 @@ func (ll NLSLayerGroupList) ToLayerList() NLSLayerList {
 }
 
 func (ll NLSLayerGroupList) Last() *NLSLayerGroup {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return list.Last[NLSLayerGroup](ll)
 }
 
 type Map map[ID]*NLSLayer

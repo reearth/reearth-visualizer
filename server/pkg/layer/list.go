@@ -59,13 +59,7 @@ func (ll List) ToLayerItemList() ItemList {
 }
 
 func (ll List) ToLayerGroupList() GroupList {
-	res := make(GroupList, 0, len(ll))
-	for _, l := range ll {
-		if lg := GroupFromLayerRef(l); lg != nil {
-			res = append(res, lg)
-		}
-	}
-	return res
+	return list.ToGenericList[Layer, Group](ll, GroupFromLayerRef)
 }
 
 func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
@@ -138,10 +132,7 @@ func (ll GroupList) ToLayerList() List {
 }
 
 func (ll GroupList) Last() *Group {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return list.Last[Group](ll)
 }
 
 type Map map[ID]*Layer
