@@ -340,22 +340,87 @@ func TestMap_Merge(t *testing.T) {
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 	l3 := NewItem().NewID().Scene(sid).MustBuild()
 
-	m1 := Map{
-		l1.ID(): l1.LayerRef(),
-		l2.ID(): l2.LayerRef(),
-	}
-	m2 := Map{
-		l3.ID(): l3.LayerRef(),
+	tests := []struct {
+		name        string
+		m1          Map
+		m2          Map
+		expectedMap Map
+	}{
+		{
+			name: "Both maps are non-empty",
+			m1: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): l2.LayerRef(),
+			},
+			m2: Map{
+				l3.ID(): l3.LayerRef(),
+			},
+			expectedMap: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): l2.LayerRef(),
+				l3.ID(): l3.LayerRef(),
+			},
+		},
+		{
+			name: "First map is empty",
+			m1:   Map{},
+			m2: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+			expectedMap: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+		},
+		{
+			name: "Second map is empty",
+			m1: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+			m2: Map{},
+			expectedMap: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+		},
+		{
+			name:        "Both maps are empty",
+			m1:          Map{},
+			m2:          Map{},
+			expectedMap: Map{},
+		},
+		{
+			name: "First map is nil",
+			m1:   nil,
+			m2: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+			expectedMap: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+		},
+		{
+			name: "Second map is nil",
+			m1: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+			m2: nil,
+			expectedMap: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+		},
+		{
+			name:        "Both maps are nil",
+			m1:          nil,
+			m2:          nil,
+			expectedMap: Map{},
+		},
 	}
 
-	mergedMap := m1.Merge(m2)
-	expectedMap := Map{
-		l1.ID(): l1.LayerRef(),
-		l2.ID(): l2.LayerRef(),
-		l3.ID(): l3.LayerRef(),
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mergedMap := tt.m1.Merge(tt.m2)
+			assert.Equal(t, tt.expectedMap, mergedMap)
+		})
 	}
-
-	assert.Equal(t, expectedMap, mergedMap)
 }
 
 func TestMap_List(t *testing.T) {
