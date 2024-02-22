@@ -12,7 +12,7 @@ func ListFrom(l []NLSLayer) []*NLSLayer {
 }
 
 func (ll NLSLayerList) Last() *NLSLayer {
-	return list.Last[ID, NLSLayer](ll)
+	return list.Last[NLSLayer](ll)
 }
 
 func (ll NLSLayerList) IDs() *IDList {

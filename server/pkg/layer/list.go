@@ -12,7 +12,7 @@ func ListFrom(l []Layer) []*Layer {
 }
 
 func (ll List) Last() *Layer {
-	return list.Last[ID, Layer](ll)
+	return list.Last[Layer](ll)
 }
 
 func (ll List) IDs() *IDList {
@@ -123,10 +123,7 @@ func (ll ItemList) ToLayerList() List {
 }
 
 func (ll ItemList) Last() *Item {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return list.Last[Item](ll)
 }
 
 type GroupList []*Group

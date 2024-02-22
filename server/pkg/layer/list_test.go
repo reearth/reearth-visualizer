@@ -35,6 +35,35 @@ func TestNLSLayerList_Last(t *testing.T) {
 	}
 }
 
+func TestItemList_Last(t *testing.T) {
+	sid := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid).MustBuild()
+	l2 := NewItem().NewID().Scene(sid).MustBuild()
+
+	tests := []struct {
+		name   string
+		target ItemList
+		want   *Item
+	}{
+		{
+			name:   "last element",
+			target: ItemList{l1, l2},
+			want:   l2,
+		},
+		{
+			name:   "empty list",
+			target: ItemList{},
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Last())
+		})
+	}
+}
+
 func TestList_IDs(t *testing.T) {
 	sid := NewSceneID()
 	l1 := NewID()

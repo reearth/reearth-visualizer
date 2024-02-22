@@ -15,7 +15,7 @@ type IDLister[ID comparable] interface {
 
 type Converter[S any, T any] func(*S) *T
 
-func Last[ID comparable, T Identifiable[ID]](slice []*T) *T {
+func Last[T any](slice []*T) *T {
 	if len(slice) == 0 {
 		return nil
 	}
