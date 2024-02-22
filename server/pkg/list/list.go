@@ -1,9 +1,5 @@
 package list
 
-import (
-	"reflect"
-)
-
 type Identifiable[ID comparable] interface {
 	ID() ID
 }
@@ -34,7 +30,7 @@ func ExtractIDs[ID comparable, T Identifiable[ID]](slice []*T) []ID {
 }
 
 func Pick[ID comparable, T Identifiable[ID]](slice []*T, idList IDLister[ID]) []*T {
-	if idList == nil || reflect.ValueOf(idList).IsNil() {
+	if idList == nil || idList.LayerCount() == 0 {
 		return nil
 	}
 
@@ -185,7 +181,7 @@ func AddUnique[ID comparable, T Identifiable[ID]](slice []*T, newList []*T) []*T
 }
 
 func MapPick[ID comparable, T Identifiable[ID]](m map[ID]*T, idList IDLister[ID]) []*T {
-	if idList == nil || reflect.ValueOf(idList).IsNil() {
+	if idList == nil || idList.LayerCount() == 0 {
 		return nil
 	}
 
