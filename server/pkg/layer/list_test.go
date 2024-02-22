@@ -278,9 +278,11 @@ func TestList_AddUnique(t *testing.T) {
 }
 
 func TestMap_Add(t *testing.T) {
-	sid := NewSceneID()
-	l1 := NewItem().NewID().Scene(sid).MustBuild()
-	l2 := NewItem().NewID().Scene(sid).MustBuild()
+	sid1 := NewSceneID()
+	sid2 := NewSceneID()
+	l1 := NewItem().NewID().Scene(sid1).MustBuild()
+	l2 := NewItem().NewID().Scene(sid1).MustBuild()
+	l3 := NewItem().NewID().Scene(sid2).MustBuild()
 
 	tests := []struct {
 		name   string
@@ -324,6 +326,40 @@ func TestMap_Add(t *testing.T) {
 			target: nil,
 			args:   nil,
 			want:   Map{},
+		},
+		{
+			name: "add nil layer",
+			target: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+			args: []*Layer{
+				nil,
+			},
+			want: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+		},
+		{
+			name: "add duplicate layer",
+			target: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+			args: []*Layer{
+				l1.LayerRef(),
+			},
+			want: Map{
+				l1.ID(): l1.LayerRef(),
+			},
+		},
+		{
+			name:   "add layer with different scene ID",
+			target: Map{},
+			args: []*Layer{
+				l3.LayerRef(),
+			},
+			want: Map{
+				l3.ID(): l3.LayerRef(),
+			},
 		},
 	}
 
