@@ -420,14 +420,34 @@ func TestMap_Clone(t *testing.T) {
 	l1 := NewItem().NewID().Scene(sid).MustBuild()
 	l2 := NewItem().NewID().Scene(sid).MustBuild()
 
-	m := Map{
-		l1.ID(): l1.LayerRef(),
-		l2.ID(): l2.LayerRef(),
+	tests := []struct {
+		name   string
+		target Map
+		want   Map
+	}{
+		{
+			name: "normal case",
+			target: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): l2.LayerRef(),
+			},
+			want: Map{
+				l1.ID(): l1.LayerRef(),
+				l2.ID(): l2.LayerRef(),
+			},
+		},
+		{
+			name:   "nil case",
+			target: nil,
+			want:   Map{},
+		},
 	}
 
-	clonedMap := m.Clone()
-
-	assert.Equal(t, m, clonedMap)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Clone())
+		})
+	}
 }
 
 func TestMap_Pick(t *testing.T) {

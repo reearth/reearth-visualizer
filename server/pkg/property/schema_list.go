@@ -48,25 +48,11 @@ func (m SchemaMap) Add(schemas ...*Schema) {
 }
 
 func (m SchemaMap) List() SchemaList {
-	if m == nil {
-		return nil
-	}
-	list := make(SchemaList, 0, len(m))
-	for _, l := range m {
-		list = append(list, l)
-	}
-	return list
+	return list.List[SchemaID, Schema](m, false)
 }
 
 func (m SchemaMap) Clone() SchemaMap {
-	if m == nil {
-		return SchemaMap{}
-	}
-	m2 := make(SchemaMap, len(m))
-	for k, v := range m {
-		m2[k] = v
-	}
-	return m2
+	return list.Clone[SchemaID, Schema](m)
 }
 
 func (m SchemaMap) Merge(m2 SchemaMap) SchemaMap {

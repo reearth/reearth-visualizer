@@ -133,7 +133,7 @@ func List[ID comparable, T any](m map[ID]*T, skipNil bool) []*T {
 	return list
 }
 
-func Clone[ID comparable, T Identifiable[ID]](m map[ID]*T) map[ID]*T {
+func Clone[ID comparable, T any](m map[ID]*T) map[ID]*T {
 	if m == nil {
 		return map[ID]*T{}
 	}

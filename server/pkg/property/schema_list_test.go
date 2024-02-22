@@ -46,3 +46,37 @@ func TestSchemaMap_List(t *testing.T) {
 	assert.Contains(t, list, p2)
 	assert.Nil(t, SchemaMap(nil).List())
 }
+
+func TestSchemaMap_Clone(t *testing.T) {
+	p1 := &Schema{id: MustSchemaID("foo~1.0.0/a")}
+	p2 := &Schema{id: MustSchemaID("bar~1.0.0/a")}
+
+	tests := []struct {
+		name   string
+		target SchemaMap
+		want   SchemaMap
+	}{
+		{
+			name: "normal case",
+			target: SchemaMap{
+				p1.ID(): p1,
+				p2.ID(): p2,
+			},
+			want: SchemaMap{
+				p1.ID(): p1,
+				p2.ID(): p2,
+			},
+		},
+		{
+			name:   "nil case",
+			target: nil,
+			want:   SchemaMap{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, tt.target.Clone())
+		})
+	}
+}
