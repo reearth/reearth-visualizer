@@ -168,10 +168,10 @@ export default function useEngineRef(
         ];
       },
 
-      negatuvePiToPi: (angle: number) => {
+      negativePiToPi: (angle: number) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        return Math.abs(CesiumMath.negativePiToPi(angle)) > Math.PI / 86400;
+        return CesiumMath.negativePiToPi(angle);
       },
       // Calculate window position from WGS coordinates.
       // TODO: We might need to support other WGS, but it's only WGS84 for now.
@@ -475,7 +475,7 @@ export default function useEngineRef(
         Object.assign(controller, assignments);
       },
 
-      keyboardCameraRotate: () => {
+      rollCameraHorizontal: () => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         const scene = viewer.scene;

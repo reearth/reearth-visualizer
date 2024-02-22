@@ -153,7 +153,7 @@ export type Scene = {
     z: number,
     options?: { useGlobeEllipsoid?: boolean },
   ) => [lng: number, lat: number, height: number] | undefined;
-  readonly negatuvePiToPi: (angle: number) => void;
+  readonly negativePiToPi: (angle: number) => void;
   readonly convertScreenToPositionOffset: (
     rawPosition: [x: number, y: number, z: number],
     screenOffset: [x: number, y: number],
@@ -195,7 +195,7 @@ export type Camera = {
   ) => void;
   readonly rotateOnCenter: (radian: number) => void;
   readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
-  readonly keyboardCameraRotate: () => void;
+  readonly rollCameraHorizontal: () => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */

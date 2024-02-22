@@ -434,7 +434,7 @@ export function commonReearth({
   getGlobeHeight,
   toXYZ,
   toLngLatHeight,
-  negatuvePiToPi,
+  negativePiToPi,
   convertScreenToPositionOffset,
   isPositionVisible,
   setView,
@@ -443,7 +443,7 @@ export function commonReearth({
   rotateOnCenter,
   enableScreenSpaceCameraController,
   overrideScreenSpaceController,
-  keyboardCameraRotate,
+  rollCameraHorizontal,
   lookHorizontal,
   lookVertical,
   moveForward,
@@ -498,7 +498,7 @@ export function commonReearth({
   getGlobeHeight: GlobalThis["reearth"]["scene"]["getGlobeHeight"];
   toXYZ: GlobalThis["reearth"]["scene"]["toXYZ"];
   toLngLatHeight: GlobalThis["reearth"]["scene"]["toLngLatHeight"];
-  negatuvePiToPi: GlobalThis["reearth"]["scene"]["negatuvePiToPi"];
+  negativePiToPi: GlobalThis["reearth"]["scene"]["negativePiToPi"];
   convertScreenToPositionOffset: GlobalThis["reearth"]["scene"]["convertScreenToPositionOffset"];
   isPositionVisible: GlobalThis["reearth"]["scene"]["isPositionVisible"];
   setView: GlobalThis["reearth"]["camera"]["setView"];
@@ -506,7 +506,7 @@ export function commonReearth({
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
   rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
   overrideScreenSpaceController: GlobalThis["reearth"]["camera"]["overrideScreenSpaceController"];
-  keyboardCameraRotate: GlobalThis["reearth"]["camera"]["keyboardCameraRotate"];
+  rollCameraHorizontal: GlobalThis["reearth"]["camera"]["rollCameraHorizontal"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -560,7 +560,7 @@ export function commonReearth({
         flyToBBox,
         rotateOnCenter,
         overrideScreenSpaceController,
-        keyboardCameraRotate,
+        rollCameraHorizontal,
       },
       get property() {
         return sceneProperty?.();
@@ -591,7 +591,7 @@ export function commonReearth({
       getGlobeHeight,
       toXYZ,
       toLngLatHeight,
-      negatuvePiToPi,
+      negativePiToPi,
       convertScreenToPositionOffset,
       isPositionVisible,
       toWindowPosition,
@@ -630,7 +630,7 @@ export function commonReearth({
       flyToBBox,
       rotateOnCenter,
       overrideScreenSpaceController,
-      keyboardCameraRotate,
+      rollCameraHorizontal,
     },
     layers: {
       get layersInViewport() {

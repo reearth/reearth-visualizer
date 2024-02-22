@@ -301,9 +301,9 @@ export default function ({
     [engineRef],
   );
 
-  const negatuvePiToPi = useCallback(
+  const negativePiToPi = useCallback(
     (angle: number) => {
-      return engineRef?.negatuvePiToPi(angle);
+      return engineRef?.negativePiToPi(angle);
     },
     [engineRef],
   );
@@ -369,8 +369,8 @@ export default function ({
     [engineRef],
   );
 
-  const keyboardCameraRotate = useCallback(() => {
-    return engineRef?.keyboardCameraRotate();
+  const rollCameraHorizontal = useCallback(() => {
+    return engineRef?.rollCameraHorizontal();
   }, [engineRef]);
 
   const lookHorizontal = useCallback(
@@ -565,7 +565,7 @@ export default function ({
         flyToBBox,
         rotateOnCenter,
         overrideScreenSpaceController,
-        keyboardCameraRotate,
+        rollCameraHorizontal,
         lookAt,
         zoomIn,
         zoomOut,
@@ -575,7 +575,7 @@ export default function ({
         getGlobeHeight,
         toXYZ,
         toLngLatHeight,
-        negatuvePiToPi,
+        negativePiToPi,
         convertScreenToPositionOffset,
         isPositionVisible,
         setView,
@@ -638,7 +638,7 @@ export default function ({
       flyToBBox,
       rotateOnCenter,
       overrideScreenSpaceController,
-      keyboardCameraRotate,
+      rollCameraHorizontal,
       lookAt,
       zoomIn,
       zoomOut,
@@ -648,7 +648,7 @@ export default function ({
       getGlobeHeight,
       toXYZ,
       toLngLatHeight,
-      negatuvePiToPi,
+      negativePiToPi,
       convertScreenToPositionOffset,
       isPositionVisible,
       setView,
