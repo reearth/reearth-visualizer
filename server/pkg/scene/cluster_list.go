@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/list"
+
 type ClusterList struct {
 	clusters []*Cluster
 }
@@ -54,14 +56,7 @@ func (tl *ClusterList) Remove(clusters ...ClusterID) {
 	if tl == nil {
 		return
 	}
-	for i := 0; i < len(tl.clusters); i++ {
-		for _, tid := range clusters {
-			if tl.clusters[i].id == tid {
-				tl.clusters = append(tl.clusters[:i], tl.clusters[i+1:]...)
-				i--
-			}
-		}
-	}
+	tl.clusters = list.RemoveByIds[ClusterID, Cluster](tl.clusters, (*Cluster).ID, clusters...)
 }
 
 func (tl *ClusterList) Properties() []PropertyID {

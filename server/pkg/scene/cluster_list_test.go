@@ -153,10 +153,19 @@ func TestList_Remove(t *testing.T) {
 		},
 		{
 			name: "nil_list: return nothing",
+			list: nil,
 			args: args{
 				cluster: c1.ID(),
 			},
 			want: nil,
+		},
+		{
+			name: "empty list: should remove nothing",
+			list: NewClusterListFrom([]*Cluster{}),
+			args: args{
+				cluster: c1.ID(),
+			},
+			want: NewClusterListFrom([]*Cluster{}),
 		},
 	}
 

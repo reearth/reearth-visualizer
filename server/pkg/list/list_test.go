@@ -646,3 +646,52 @@ func TestToGenericList(t *testing.T) {
 		})
 	}
 }
+
+func TestRemoveByIds(t *testing.T) {
+	type ID string
+	type T struct {
+		ID ID
+	}
+	getID := func(t *T) ID {
+		return t.ID
+	}
+
+	tests := []struct {
+		name string
+		list []*T
+		ids  []ID
+		want []*T
+	}{
+		{
+			name: "remove existing items",
+			list: []*T{{ID: "id1"}, {ID: "id2"}, {ID: "id3"}},
+			ids:  []ID{"id1", "id3"},
+			want: []*T{{ID: "id2"}},
+		},
+		{
+			name: "remove non-existing items",
+			list: []*T{{ID: "id1"}, {ID: "id2"}},
+			ids:  []ID{"id3"},
+			want: []*T{{ID: "id1"}, {ID: "id2"}},
+		},
+		{
+			name: "remove all items",
+			list: []*T{{ID: "id1"}, {ID: "id2"}},
+			ids:  []ID{"id1", "id2"},
+			want: []*T{},
+		},
+		{
+			name: "remove from empty slice",
+			list: []*T{},
+			ids:  []ID{"id1", "id2"},
+			want: []*T{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.RemoveByIds[ID, T](tt.list, getID, tt.ids...)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}

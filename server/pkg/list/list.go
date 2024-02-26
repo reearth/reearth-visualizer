@@ -211,3 +211,23 @@ func ToGenericList[S any, T any](list []*S, convert Converter[S, T]) []*T {
 	}
 	return res
 }
+
+func RemoveByIds[ID comparable, T any](list []*T, getId func(*T) ID, ids ...ID) []*T {
+	result := make([]*T, 0, len(list))
+	for _, item := range list {
+		itemID := getId(item)
+		if !contains(ids, itemID) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func contains[ID comparable](ids []ID, id ID) bool {
+	for _, i := range ids {
+		if i == id {
+			return true
+		}
+	}
+	return false
+}
