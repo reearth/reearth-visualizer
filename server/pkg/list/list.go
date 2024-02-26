@@ -214,12 +214,20 @@ func ToGenericList[S any, T any](list []*S, convert Converter[S, T]) []*T {
 
 func Has[ID comparable, T any](list []*T, getId func(*T) ID, id ID) bool {
 	for _, item := range list {
-		itemID := getId(item)
-		if itemID == id {
+		if getId(item) == id {
 			return true
 		}
 	}
 	return false
+}
+
+func Get[ID comparable, T any](list []*T, getId func(*T) ID, id ID) *T {
+	for _, item := range list {
+		if getId(item) == id {
+			return item
+		}
+	}
+	return nil
 }
 
 func RemoveByIds[ID comparable, T any](list []*T, getId func(*T) ID, ids ...ID) []*T {

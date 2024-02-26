@@ -39,12 +39,7 @@ func (tl *ClusterList) Get(cid ClusterID) *Cluster {
 	if tl == nil {
 		return nil
 	}
-	for _, c := range tl.clusters {
-		if c.ID() == cid {
-			return c
-		}
-	}
-	return nil
+	return list.Get[ClusterID, Cluster](tl.clusters, (*Cluster).ID, cid)
 }
 
 func (tl *ClusterList) Remove(clusters ...ClusterID) {
