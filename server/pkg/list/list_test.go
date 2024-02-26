@@ -647,6 +647,55 @@ func TestToGenericList(t *testing.T) {
 	}
 }
 
+func TestHas(t *testing.T) {
+	type ID string
+	type T struct {
+		ID ID
+	}
+	getID := func(t *T) ID {
+		return t.ID
+	}
+
+	tests := []struct {
+		name string
+		list []*T
+		id   ID
+		want bool
+	}{
+		{
+			name: "existing item",
+			list: []*T{{ID: "id1"}, {ID: "id2"}, {ID: "id3"}},
+			id:   "id2",
+			want: true,
+		},
+		{
+			name: "non-existing item",
+			list: []*T{{ID: "id1"}, {ID: "id2"}},
+			id:   "id3",
+			want: false,
+		},
+		{
+			name: "empty list",
+			list: []*T{},
+			id:   "id1",
+			want: false,
+		},
+		{
+			name: "nil list",
+			list: nil,
+			id:   "id1",
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.Has[ID, T](tt.list, getID, tt.id)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestRemoveByIds(t *testing.T) {
 	type ID string
 	type T struct {

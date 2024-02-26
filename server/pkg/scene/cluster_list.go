@@ -25,12 +25,7 @@ func (tl *ClusterList) Has(tid ClusterID) bool {
 	if tl == nil {
 		return false
 	}
-	for _, cluster := range tl.clusters {
-		if cluster.ID() == tid {
-			return true
-		}
-	}
-	return false
+	return list.Has[ClusterID, Cluster](tl.clusters, (*Cluster).ID, tid)
 }
 
 func (tl *ClusterList) Add(clusters ...*Cluster) {
