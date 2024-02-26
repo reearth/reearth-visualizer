@@ -9,6 +9,7 @@ import { styled } from "@reearth/services/theme";
 
 import PanelCommon from "../../common/PanelCommon";
 import type { RowType } from "../types";
+import { radiansToDegrees } from "../utils";
 
 type Props = {
   camera?: Camera;
@@ -22,17 +23,17 @@ const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
   const panelContent: { [key: string]: RowType } = useMemo(() => {
     return {
       [t("Current Position")]: [
-        { id: "lat", description: t("Latitude") },
-        { id: "lng", description: t("Longitude") },
-        { id: "height", description: t("Height") },
+        { id: "lat", description: t("Latitude"), value: camera?.lat },
+        { id: "lng", description: t("Longitude"), value: camera?.lng },
+        { id: "height", description: t("Height"), value: camera?.height },
       ],
       [t("Current Rotation")]: [
-        { id: "heading", description: t("Heading") },
-        { id: "pitch", description: t("Pitch") },
-        { id: "roll", description: t("Roll") },
+        { id: "heading", description: t("Heading"), value: radiansToDegrees(camera?.heading ?? 0) },
+        { id: "pitch", description: t("Pitch"), value: radiansToDegrees(camera?.pitch ?? 0) },
+        { id: "roll", description: t("Roll"), value: radiansToDegrees(camera?.roll ?? 0) },
       ],
     };
-  }, [t]);
+  }, [t, camera]);
 
   return (
     <PanelCommon title={t("Camera Position Editor")} onClose={onClose}>
@@ -44,7 +45,8 @@ const CapturePanel: React.FC<Props> = ({ camera, onSave, onClose }) => {
               <StyledNumberInput
                 key={field.id}
                 inputDescription={field.description}
-                value={camera?.[field.id]}
+                value={field.value}
+                suffix={field.suffix}
                 disabled
               />
             ))}
