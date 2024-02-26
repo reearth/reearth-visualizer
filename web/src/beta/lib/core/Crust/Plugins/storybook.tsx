@@ -166,6 +166,7 @@ export const context: Context = {
       moveOverTerrain: act("moveOverTerrain"),
       flyToGround: act("flyToGround"),
       setView: act("setView"),
+      forceHorizontalRoll: act("forceHorizontalRoll"),
     },
     clock: {
       startTime: new Date("2022-06-01"),
