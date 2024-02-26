@@ -126,6 +126,7 @@ export type Props = {
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
+  onCameraForceHorizontalRollChange: (enable?: boolean) => void;
 };
 
 export default function Crust({
@@ -175,6 +176,7 @@ export default function Crust({
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
+  onCameraForceHorizontalRollChange,
 }: Props): JSX.Element | null {
   const {
     renderBlock,
@@ -218,7 +220,8 @@ export default function Crust({
       onLayerEdit={onLayerEdit}
       onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       onSketchTypeChange={onSketchTypeChange}
-      onLayerVisibility={onLayerVisibility}>
+      onLayerVisibility={onLayerVisibility}
+      onCameraForceHorizontalRollChange={onCameraForceHorizontalRollChange}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}
         onPluginModalShow={onPluginModalShow}

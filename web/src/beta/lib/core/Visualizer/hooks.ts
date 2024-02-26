@@ -247,6 +247,11 @@ export default function useHooks(
   // camera
   const [camera, changeCamera] = useValue(initialCamera, onCameraChange);
 
+  const [cameraForceHorizontalRoll, setCameraForceHorizontalRoll] = useState(false);
+  const handleCameraForceHorizontalRollChange = useCallback((enable?: boolean) => {
+    setCameraForceHorizontalRoll(!!enable);
+  }, []);
+
   // interaction mode
   const [_interactionMode, changeInteractionMode] = useValue(
     initialInteractionMode,
@@ -363,6 +368,8 @@ export default function useHooks(
     shouldRender,
     timelineManagerRef,
     cursor,
+    cameraForceHorizontalRoll,
+    handleCameraForceHorizontalRollChange,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,

@@ -47,6 +47,7 @@ export type Props = PropsWithChildren<{
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
+  onCameraForceHorizontalRollChange: (enable?: boolean) => void;
 }>;
 
 export type Context = {

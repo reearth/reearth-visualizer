@@ -216,6 +216,7 @@ export type Camera = {
     offset?: number,
   ) => void;
   readonly setView: (camera: CameraPosition) => void;
+  readonly forceHorizontalRoll: (enable: boolean) => void;
 };
 
 export type Clock = {
