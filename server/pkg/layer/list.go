@@ -76,7 +76,7 @@ func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
 }
 
 func (ll List) Deref() []Layer {
-	return list.Deref[ID, Layer](ll)
+	return list.Deref[Layer](ll, false)
 }
 
 func (ll List) Loader() Loader {

@@ -53,9 +53,5 @@ func (tl *ClusterList) Properties() []PropertyID {
 	if tl == nil {
 		return nil
 	}
-	res := make([]PropertyID, 0, len(tl.clusters))
-	for _, c := range tl.clusters {
-		res = append(res, c.property)
-	}
-	return res
+	return list.Properties[PropertyID, Cluster](tl.clusters, (*Cluster).Property)
 }

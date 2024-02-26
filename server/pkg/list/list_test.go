@@ -163,35 +163,52 @@ func TestFind(t *testing.T) {
 
 func TestDeref(t *testing.T) {
 	tests := []struct {
-		name  string
-		slice []*MockIdentifiable
-		want  []MockIdentifiable
+		name    string
+		slice   []*MockIdentifiable
+		skipNil bool
+		want    []MockIdentifiable
 	}{
 		{
-			name:  "non-empty slice",
-			slice: []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
-			want:  []MockIdentifiable{{id: "id1"}, {id: "id2"}},
+			name:    "non-empty slice",
+			slice:   []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
+			skipNil: false,
+			want:    []MockIdentifiable{{id: "id1"}, {id: "id2"}},
 		},
 		{
-			name:  "empty slice",
-			slice: []*MockIdentifiable{},
-			want:  []MockIdentifiable{},
+			name:    "empty slice",
+			slice:   []*MockIdentifiable{},
+			skipNil: false,
+			want:    []MockIdentifiable{},
 		},
 		{
-			name:  "nil slice",
-			slice: nil,
-			want:  nil,
+			name:    "nil slice",
+			slice:   nil,
+			skipNil: false,
+			want:    nil,
 		},
 		{
-			name:  "slice with nil element",
-			slice: []*MockIdentifiable{{id: "id1"}, nil, {id: "id3"}},
-			want:  []MockIdentifiable{{id: "id1"}, {id: ""}, {id: "id3"}},
+			name:    "slice with nil element",
+			slice:   []*MockIdentifiable{{id: "id1"}, nil, {id: "id3"}},
+			skipNil: false,
+			want:    []MockIdentifiable{{id: "id1"}, {id: ""}, {id: "id3"}},
+		},
+		{
+			name:    "nil slice with skipNil true",
+			slice:   nil,
+			skipNil: true,
+			want:    []MockIdentifiable{},
+		},
+		{
+			name:    "slice with nil element with skipNil true",
+			slice:   []*MockIdentifiable{{id: "id1"}, nil, {id: "id3"}},
+			skipNil: true,
+			want:    []MockIdentifiable{{id: "id1"}, {id: "id3"}},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := list.Deref[string, MockIdentifiable](tt.slice)
+			got := list.Deref[MockIdentifiable](tt.slice, tt.skipNil)
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -789,6 +806,50 @@ func TestRemoveByIds(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := list.RemoveByIds[ID, T](tt.list, getID, tt.ids...)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestProperties(t *testing.T) {
+	type PropertyID string
+	type T struct {
+		PropertyID PropertyID
+	}
+	getProperty := func(t *T) PropertyID {
+		return t.PropertyID
+	}
+
+	tests := []struct {
+		name string
+		list []*T
+		want []PropertyID
+	}{
+		{
+			name: "non-empty list",
+			list: []*T{{PropertyID: "PropertyID1"}, {PropertyID: "PropertyID2"}},
+			want: []PropertyID{"PropertyID1", "PropertyID2"},
+		},
+		{
+			name: "empty list",
+			list: []*T{},
+			want: []PropertyID{},
+		},
+		{
+			name: "nil list",
+			list: nil,
+			want: nil,
+		},
+		{
+			name: "list with nil element",
+			list: []*T{{PropertyID: "PropertyID1"}, nil, {PropertyID: "PropertyID3"}},
+			want: []PropertyID{"PropertyID1", "PropertyID3"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.Properties[PropertyID, T](tt.list, getProperty)
 			assert.Equal(t, tt.want, got)
 		})
 	}

@@ -53,7 +53,7 @@ func (ll NLSLayerList) SeparateLayerItemAndGroup() (NLSLayerSimpleList, NLSLayer
 }
 
 func (ll NLSLayerList) Deref() []NLSLayer {
-	return list.Deref[ID, NLSLayer](ll)
+	return list.Deref[NLSLayer](ll, false)
 }
 
 func (ll NLSLayerList) Loader() Loader {

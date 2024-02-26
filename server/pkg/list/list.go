@@ -23,7 +23,7 @@ func ExtractIDs[ID comparable, T Identifiable[ID]](slice []*T) []ID {
 		return nil
 	}
 	ids := make([]ID, 0, len(slice))
-	for _, item := range Deref[ID, T](slice) {
+	for _, item := range Deref[T](slice, false) {
 		ids = append(ids, item.ID())
 	}
 	return ids
@@ -55,18 +55,20 @@ func Find[ID comparable, T Identifiable[ID]](slice []*T, lid ID) *T {
 	return nil
 }
 
-func Deref[ID comparable, T Identifiable[ID]](slice []*T) []T {
-	if slice == nil {
+func Deref[T any](list []*T, skipNil bool) []T {
+	if !skipNil && list == nil {
 		return nil
 	}
-	res := make([]T, 0, len(slice))
-	var zeroValue T
-	for _, item := range slice {
-		if item != nil {
-			res = append(res, *item)
-		} else {
-			res = append(res, zeroValue)
+	res := make([]T, 0, len(list))
+	for _, item := range list {
+		if item == nil {
+			if !skipNil {
+				var zeroValue T
+				res = append(res, zeroValue)
+			}
+			continue
 		}
+		res = append(res, *item)
 	}
 	return res
 }
@@ -234,7 +236,7 @@ func RemoveByIds[ID comparable, T any](list []*T, getId func(*T) ID, ids ...ID) 
 	result := make([]*T, 0, len(list))
 	for _, item := range list {
 		itemID := getId(item)
-		if !contains(ids, itemID) {
+		if !contains[ID](ids, itemID) {
 			result = append(result, item)
 		}
 	}
@@ -248,4 +250,17 @@ func contains[ID comparable](ids []ID, id ID) bool {
 		}
 	}
 	return false
+}
+
+func Properties[ID comparable, T any](list []*T, getProperty func(*T) ID) []ID {
+	if list == nil {
+		return nil
+	}
+	ids := make([]ID, 0, len(list))
+	for _, item := range list {
+		if item != nil {
+			ids = append(ids, getProperty(item))
+		}
+	}
+	return ids
 }

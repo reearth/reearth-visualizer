@@ -1,16 +1,11 @@
 package tag
 
+import "github.com/reearth/reearth/server/pkg/list"
+
 type List []Tag
 
 func DerefList(tags []*Tag) List {
-	res := make(List, 0, len(tags))
-	for _, t := range tags {
-		if t == nil {
-			continue
-		}
-		res = append(res, *t)
-	}
-	return res
+	return list.Deref[Tag](tags, true)
 }
 
 func (l List) Items() (res []*Item) {
