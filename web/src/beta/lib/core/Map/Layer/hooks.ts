@@ -25,7 +25,7 @@ export type { Atom as Atom } from "../types";
 
 export const createAtom = computeAtom;
 
-export type EvalFeature = (layer: Layer, feature: Feature) => ComputedFeature | undefined;
+export type EvalFeature = (layer: Layer, feature: Feature) => Promise<ComputedFeature | undefined>;
 
 export default function useHooks({
   layer,

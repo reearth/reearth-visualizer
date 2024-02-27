@@ -32,9 +32,12 @@ export async function evalLayer(
   return;
 }
 
-export function evalFeature(layer: Layer, feature: Feature): ComputedFeature | undefined {
+export async function evalFeature(
+  layer: Layer,
+  feature: Feature,
+): Promise<ComputedFeature | undefined> {
   if (layer.type === "simple") {
-    return evalSimpleLayerFeature(layer, feature);
+    return await evalSimpleLayerFeature(layer, feature);
   }
   return;
 }

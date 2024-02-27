@@ -117,12 +117,12 @@ const hasAppearance = <
   return !!(extractSimpleLayer(layer)?.[namePair[0]] || entity[namePair[1]]);
 };
 
-export const attachStyle = (
+export const attachStyle = async (
   entity: Entity,
   layer: ComputedLayer | undefined,
   evalFeature: EvalFeature,
   currentTime: JulianDate,
-): [Feature, ComputedFeature] | void => {
+): Promise<[Feature, ComputedFeature] | void> => {
   if (!layer) {
     return;
   }
@@ -151,7 +151,7 @@ export const attachStyle = (
         z: coordinates[2],
       },
     };
-    const computedFeature = evalFeature(layer.layer, feature);
+    const computedFeature = await evalFeature(layer.layer, feature);
     if (!computedFeature) {
       return;
     }
@@ -285,7 +285,7 @@ export const attachStyle = (
         z: entityPosition?.z ?? 0,
       },
     };
-    const computedFeature = evalFeature(layer.layer, feature);
+    const computedFeature = await evalFeature(layer.layer, feature);
     if (!computedFeature) {
       return;
     }
@@ -335,7 +335,7 @@ export const attachStyle = (
         z: entityPosition?.z ?? 0,
       },
     };
-    const computedFeature = evalFeature(layer.layer, feature);
+    const computedFeature = await evalFeature(layer.layer, feature);
     if (!computedFeature) {
       return;
     }
