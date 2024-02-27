@@ -120,6 +120,26 @@ func Merge[ID comparable, T Identifiable[ID]](m map[ID]*T, m2 map[ID]*T) map[ID]
 	return Add[ID, T](m3, List[ID, T](m2, false)...)
 }
 
+func ListMerge[T comparable](list []T, list2 []T, getClone func(T) T, duplicateSkip bool) []T {
+	result := make([]T, 0, len(list)+len(list2))
+
+	for _, item := range list {
+		result = append(result, getClone(item))
+	}
+
+	for _, item := range list2 {
+		if duplicateSkip {
+			if !Contains[T](result, item) {
+				result = append(result, getClone(item))
+			}
+		} else {
+			result = append(result, getClone(item))
+		}
+	}
+
+	return result
+}
+
 func List[ID comparable, T any](m map[ID]*T, skipNil bool) []*T {
 	if m == nil {
 		return nil
@@ -142,6 +162,17 @@ func Clone[ID comparable, T any](m map[ID]*T) map[ID]*T {
 		m2[k] = v
 	}
 	return m2
+}
+
+func ListClone[T any](list []T, getClone func(T) T) []T {
+	if list == nil {
+		return nil
+	}
+	list2 := make([]T, len(list))
+	for i, item := range list {
+		list2[i] = getClone(item)
+	}
+	return list2
 }
 
 func Remove[ID comparable, T Identifiable[ID]](slice []*T, idsToRemove ...ID) []*T {
@@ -247,18 +278,28 @@ func Get[ID comparable, T any](list []*T, getId func(*T) ID, id ID) *T {
 	return nil
 }
 
+func RemoveById[ID comparable, T any](list []*T, getId func(*T) ID, id ID) []*T {
+	for index, item := range list {
+		if getId(item) == id {
+			list = append(list[:index], list[index+1:]...)
+			return list
+		}
+	}
+	return list
+}
+
 func RemoveByIds[ID comparable, T any](list []*T, getId func(*T) ID, ids ...ID) []*T {
 	result := make([]*T, 0, len(list))
 	for _, item := range list {
 		itemID := getId(item)
-		if !contains[ID](ids, itemID) {
+		if !Contains[ID](ids, itemID) {
 			result = append(result, item)
 		}
 	}
 	return result
 }
 
-func contains[ID comparable](ids []ID, id ID) bool {
+func Contains[ID comparable](ids []ID, id ID) bool {
 	for _, i := range ids {
 		if i == id {
 			return true
@@ -278,4 +319,26 @@ func Properties[ID comparable, T any](list []*T, getProperty func(*T) ID) []ID {
 		}
 	}
 	return ids
+}
+
+func Filter[ID comparable, T any](list []T, id ID, getId func(T) ID) []T {
+	if len(list) == 0 {
+		return nil
+	}
+	res := make([]T, 0, len(list))
+	for _, item := range list {
+		if getId(item) == id {
+			res = append(res, item)
+		}
+	}
+	return res
+}
+
+func IndexOf[ID comparable, T any](list []*T, getId func(*T) ID, id ID) int {
+	for index, item := range list {
+		if getId(item) == id {
+			return index
+		}
+	}
+	return -1
 }

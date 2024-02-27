@@ -374,6 +374,81 @@ func TestMerge(t *testing.T) {
 	}
 }
 
+func TestListMerge(t *testing.T) {
+	type T struct {
+		ID   string
+		Name string
+	}
+	cloneFunc := func(item T) T {
+		return T{ID: item.ID, Name: item.Name}
+	}
+
+	tests := []struct {
+		name          string
+		list1         []T
+		list2         []T
+		getClone      func(T) T
+		duplicateSkip bool
+		want          []T
+	}{
+		{
+			name:          "merge two non-empty lists",
+			list1:         []T{{ID: "id1", Name: "Item 1"}, {ID: "id3", Name: "Item 3"}},
+			list2:         []T{{ID: "id2", Name: "Item 2"}, {ID: "id4", Name: "Item 4"}},
+			getClone:      cloneFunc,
+			duplicateSkip: false,
+			want:          []T{{ID: "id1", Name: "Item 1"}, {ID: "id3", Name: "Item 3"}, {ID: "id2", Name: "Item 2"}, {ID: "id4", Name: "Item 4"}},
+		},
+		{
+			name:          "merge two non-empty lists with duplicate items",
+			list1:         []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}, {ID: "id3", Name: "Item 3"}},
+			list2:         []T{{ID: "id2", Name: "Item 2"}, {ID: "id4", Name: "Item 4"}},
+			getClone:      cloneFunc,
+			duplicateSkip: false,
+			want:          []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}, {ID: "id3", Name: "Item 3"}, {ID: "id2", Name: "Item 2"}, {ID: "id4", Name: "Item 4"}},
+		},
+		{
+			name:          "merge two non-empty lists with duplicate items and skip",
+			list1:         []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}, {ID: "id3", Name: "Item 3"}},
+			list2:         []T{{ID: "id2", Name: "Item 2"}, {ID: "id4", Name: "Item 4"}},
+			getClone:      cloneFunc,
+			duplicateSkip: true,
+			want:          []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}, {ID: "id3", Name: "Item 3"}, {ID: "id4", Name: "Item 4"}},
+		},
+		{
+			name:          "merge non-empty list with empty list",
+			list1:         []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}},
+			list2:         []T{},
+			getClone:      cloneFunc,
+			duplicateSkip: true,
+			want:          []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}},
+		},
+		{
+			name:          "merge empty list with non-empty list",
+			list1:         []T{},
+			list2:         []T{{ID: "id3", Name: "Item 3"}, {ID: "id4", Name: "Item 4"}},
+			getClone:      cloneFunc,
+			duplicateSkip: false,
+			want:          []T{{ID: "id3", Name: "Item 3"}, {ID: "id4", Name: "Item 4"}},
+		},
+		{
+			name:          "merge two nil lists",
+			list1:         nil,
+			list2:         nil,
+			duplicateSkip: true,
+			getClone:      cloneFunc,
+			want:          []T{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.ListMerge(tt.list1, tt.list2, tt.getClone, tt.duplicateSkip)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestList(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -447,6 +522,49 @@ func TestClone(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := list.Clone[string, MockIdentifiable](tt.m)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestListClone(t *testing.T) {
+	type T struct {
+		ID   string
+		Name string
+	}
+	cloneFunc := func(item T) T {
+		return T{ID: item.ID, Name: item.Name}
+	}
+
+	tests := []struct {
+		name     string
+		list     []T
+		getClone func(T) T
+		want     []T
+	}{
+		{
+			name:     "clone non-empty list",
+			list:     []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}},
+			getClone: cloneFunc,
+			want:     []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}},
+		},
+		{
+			name:     "clone empty list",
+			list:     []T{},
+			getClone: cloneFunc,
+			want:     []T{},
+		},
+		{
+			name:     "clone nil list",
+			list:     nil,
+			getClone: cloneFunc,
+			want:     nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.ListClone(tt.list, tt.getClone)
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -797,6 +915,61 @@ func TestGet(t *testing.T) {
 	}
 }
 
+func TestRemoveById(t *testing.T) {
+	type ID string
+	type T struct {
+		ID ID
+	}
+	getID := func(t *T) ID {
+		return t.ID
+	}
+
+	tests := []struct {
+		name string
+		list []*T
+		id   ID
+		want []*T
+	}{
+		{
+			name: "remove existing items",
+			list: []*T{{ID: "id1"}, {ID: "id2"}, {ID: "id3"}},
+			id:   ID("id1"),
+			want: []*T{{ID: "id2"}, {ID: "id3"}},
+		},
+		{
+			name: "remove non-existing items",
+			list: []*T{{ID: "id1"}, {ID: "id2"}},
+			id:   ID("id3"),
+			want: []*T{{ID: "id1"}, {ID: "id2"}},
+		},
+		{
+			name: "remove duplicate items",
+			list: []*T{{ID: "id1"}, {ID: "id1"}, {ID: "id2"}},
+			id:   ID("id1"),
+			want: []*T{{ID: "id1"}, {ID: "id2"}},
+		},
+		{
+			name: "remove from empty slice",
+			list: []*T{},
+			id:   ID("id1"),
+			want: []*T{},
+		},
+		{
+			name: "remove from nil slice",
+			list: nil,
+			id:   ID("id1"),
+			want: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.RemoveById[ID, T](tt.list, getID, tt.id)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestRemoveByIds(t *testing.T) {
 	type ID string
 	type T struct {
@@ -846,6 +1019,43 @@ func TestRemoveByIds(t *testing.T) {
 	}
 }
 
+func TestContains(t *testing.T) {
+	type ID string
+
+	tests := []struct {
+		name string
+		ids  []ID
+		id   ID
+		want bool
+	}{
+		{
+			name: "string slice contains id",
+			ids:  []ID{"id1", "id2", "id3"},
+			id:   "id2",
+			want: true,
+		},
+		{
+			name: "string slice does not contain id",
+			ids:  []ID{"id1", "id2", "id3"},
+			id:   "id4",
+			want: false,
+		},
+		{
+			name: "nil slice",
+			ids:  nil,
+			id:   "id1",
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.Contains[ID](tt.ids, tt.id)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestProperties(t *testing.T) {
 	type PropertyID string
 	type T struct {
@@ -885,6 +1095,116 @@ func TestProperties(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := list.Properties[PropertyID, T](tt.list, getProperty)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestFilter(t *testing.T) {
+	type ID string
+	type T struct {
+		ID   ID
+		Name string
+	}
+	getID := func(t T) ID {
+		return t.ID
+	}
+
+	tests := []struct {
+		name  string
+		list  []T
+		id    ID
+		getId func(T) ID
+		want  []T
+	}{
+		{
+			name:  "filter existing items by ID",
+			list:  []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}, {ID: "id1", Name: "Item 3"}},
+			id:    "id1",
+			getId: getID,
+			want:  []T{{ID: "id1", Name: "Item 1"}, {ID: "id1", Name: "Item 3"}},
+		},
+		{
+			name:  "filter non-existing item by ID",
+			list:  []T{{ID: "id1", Name: "Item 1"}, {ID: "id2", Name: "Item 2"}},
+			id:    "id3",
+			getId: getID,
+			want:  []T{},
+		},
+		{
+			name:  "empty list",
+			list:  []T{},
+			id:    "id1",
+			getId: getID,
+			want:  nil,
+		},
+		{
+			name:  "nil list",
+			list:  nil,
+			id:    "id1",
+			getId: getID,
+			want:  nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.Filter(tt.list, tt.id, tt.getId)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestIndexOf(t *testing.T) {
+	type ID string
+	type T struct {
+		ID ID
+	}
+	getID := func(t *T) ID {
+		return t.ID
+	}
+
+	tests := []struct {
+		name string
+		list []*T
+		id   ID
+		want int
+	}{
+		{
+			name: "existing item",
+			list: []*T{{ID: "id1"}, {ID: "id2"}, {ID: "id3"}},
+			id:   ID("id1"),
+			want: 0,
+		},
+		{
+			name: "existing item 2",
+			list: []*T{{ID: "id1"}, {ID: "id2"}, {ID: "id3"}},
+			id:   ID("id3"),
+			want: 2,
+		},
+		{
+			name: "non-existing item",
+			list: []*T{{ID: "id1"}, {ID: "id2"}},
+			id:   ID("id3"),
+			want: -1,
+		},
+		{
+			name: "empty slice",
+			list: []*T{},
+			id:   ID("id1"),
+			want: -1,
+		},
+		{
+			name: "nil slice",
+			list: nil,
+			id:   ID("id1"),
+			want: -1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.IndexOf[ID, T](tt.list, getID, tt.id)
 			assert.Equal(t, tt.want, got)
 		})
 	}

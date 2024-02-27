@@ -17,18 +17,7 @@ func (l List) Groups() (res []*Group) {
 }
 
 func (l List) FilterByScene(s SceneID) (res List) {
-	if len(l) == 0 {
-		return
-	}
-
-	res = make(List, 0, len(l))
-	for _, t := range l {
-		if t.Scene() == s {
-			res = append(res, t)
-		}
-	}
-
-	return res
+	return list.Filter[SceneID, Tag](l, s, Tag.Scene)
 }
 
 func (l List) Roots() (res List) {
