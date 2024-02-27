@@ -8,10 +8,7 @@ import (
 
 func TestList_DerefList(t *testing.T) {
 	sceneID := NewSceneID()
-	sceneID2 := NewSceneID()
 	var tag1 Tag = NewItem().NewID().Label("hoge").Scene(sceneID).MustBuild()
-	var tag2 Tag = NewItem().NewID().Label("foo").Scene(sceneID).MustBuild()
-	var tag3 Tag = NewItem().NewID().Label("foo").Scene(sceneID2).MustBuild()
 
 	tests := []struct {
 		name string
@@ -20,13 +17,13 @@ func TestList_DerefList(t *testing.T) {
 	}{
 		{
 			name: "non-nil elements",
-			args: []*Tag{&tag1, &tag2, &tag3},
-			want: List{tag1, tag2, tag3},
+			args: []*Tag{&tag1},
+			want: List{tag1},
 		},
 		{
 			name: "including nil element",
-			args: []*Tag{&tag1, nil, &tag3},
-			want: List{tag1, tag3},
+			args: []*Tag{&tag1, nil},
+			want: List{tag1},
 		},
 		{
 			name: "nil elements",

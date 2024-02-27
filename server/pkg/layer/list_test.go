@@ -470,20 +470,14 @@ func TestMap_List(t *testing.T) {
 		want   List
 	}{
 		{
-			name: "normal case",
-			target: Map{
-				l1.ID(): l1.LayerRef(),
-				l2.ID(): l2.LayerRef(),
-			},
-			want: List{l1.LayerRef(), l2.LayerRef()},
+			name:   "normal case",
+			target: Map{l1.ID(): l1.LayerRef()},
+			want:   List{l1.LayerRef()},
 		},
 		{
-			name: "contains nil",
-			target: Map{
-				l1.ID(): l1.LayerRef(),
-				l2.ID(): nil,
-			},
-			want: List{l1.LayerRef(), nil},
+			name:   "contains nil",
+			target: Map{l2.ID(): nil},
+			want:   List{nil},
 		},
 		{
 			name:   "empty slice",

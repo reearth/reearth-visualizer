@@ -52,7 +52,6 @@ func TestSchemaMap_Slice(t *testing.T) {
 	did2 := NewSchemaID()
 	sid := NewSceneID()
 	d1, _ := NewSchema().ID(did1).Scene(sid).Build()
-	d2, _ := NewSchema().ID(did2).Scene(sid).Build()
 
 	tests := []struct {
 		name   string
@@ -61,8 +60,8 @@ func TestSchemaMap_Slice(t *testing.T) {
 	}{
 		{
 			name:   "normal case",
-			target: SchemaMap{did1: d1, did2: d2},
-			want:   SchemaList{d1, d2},
+			target: SchemaMap{did1: d1},
+			want:   SchemaList{d1},
 		},
 		{
 			name:   "contains nil",

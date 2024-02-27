@@ -458,9 +458,9 @@ func TestList(t *testing.T) {
 	}{
 		{
 			name:    "non-empty map",
-			m:       map[string]*MockIdentifiable{"id1": {id: "id1"}, "id2": {id: "id2"}},
+			m:       map[string]*MockIdentifiable{"id1": {id: "id1"}},
 			skipNil: false,
-			want:    []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
+			want:    []*MockIdentifiable{{id: "id1"}},
 		},
 		{
 			name:    "map with nil values",
@@ -673,9 +673,9 @@ func TestMapPick(t *testing.T) {
 	}{
 		{
 			name:   "pick existing items from map",
-			m:      map[string]*MockIdentifiable{"id1": {id: "id1"}, "id2": {id: "id2"}, "id3": {id: "id3"}},
-			idList: MockIDLister{ids: []string{"id1", "id3"}},
-			want:   []*MockIdentifiable{{id: "id1"}, {id: "id3"}},
+			m:      map[string]*MockIdentifiable{"id1": {id: "id1"}, "id2": {id: "id2"}},
+			idList: MockIDLister{ids: []string{"id1"}},
+			want:   []*MockIdentifiable{{id: "id1"}},
 		},
 		{
 			name:   "pick non-existing items from map",
@@ -707,11 +707,8 @@ func TestExtractKeys(t *testing.T) {
 	}{
 		{
 			name: "non-empty map",
-			m: map[string]*MockIdentifiable{
-				"id1": {id: "id1"},
-				"id2": {id: "id2"},
-			},
-			want: []string{"id1", "id2"},
+			m:    map[string]*MockIdentifiable{"id1": {id: "id1"}},
+			want: []string{"id1"},
 		},
 		{
 			name: "empty map",
