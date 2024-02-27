@@ -379,13 +379,18 @@ export default function useHooks({
       }
 
       const layer2 = { id, ...omit(rawLayer, "id", "type", "children") } as Layer;
-      setOverridenLayers(layers => {
-        const i = layers.findIndex(l => l.id === id);
-        const updated =
-          i < 0 ? [...layers, layer2] : [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
-        overriddenLayersRef.current = updated;
-        return updated;
-      });
+      const currentOverriddenlayers = overriddenLayersRef.current;
+      const i = currentOverriddenlayers.findIndex(l => l.id === id);
+      const updated =
+        i < 0
+          ? [...currentOverriddenlayers, layer2]
+          : [
+              ...currentOverriddenlayers.slice(0, i),
+              layer2,
+              ...currentOverriddenlayers.slice(i + 1),
+            ];
+      overriddenLayersRef.current = updated;
+      setOverridenLayers(updated);
     },
     [layerMap],
   );
@@ -435,11 +440,10 @@ export default function useHooks({
         );
         return newLayers;
       });
-      setOverridenLayers(layers => {
-        const updated = layers.filter(l => !ids.includes(l.id));
-        overriddenLayersRef.current = updated;
-        return updated;
-      });
+      const currentOverriddenlayers = overriddenLayersRef.current;
+      const updated = currentOverriddenlayers.filter(l => !ids.includes(l.id));
+      overriddenLayersRef.current = updated;
+      setOverridenLayers(updated);
     },
     [layerMap, atomMap, lazyLayerMap, initialSelectedLayer, showLayer, select],
   );
@@ -605,11 +609,10 @@ export default function useHooks({
       lazyLayerMap.delete(k);
       showLayer(k);
     });
-    setOverridenLayers(layers => {
-      const updated = layers.filter(l => !deleted?.includes(l.id));
-      overriddenLayersRef.current = updated;
-      return updated;
-    });
+    const currentOverriddenlayers = overriddenLayersRef.current;
+    const updated = currentOverriddenlayers.filter(l => !deleted?.includes(l.id));
+    overriddenLayersRef.current = updated;
+    setOverridenLayers(updated);
 
     prevLayers.current = layers;
   }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
