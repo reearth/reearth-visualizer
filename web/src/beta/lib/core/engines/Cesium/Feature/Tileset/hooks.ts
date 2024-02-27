@@ -199,7 +199,7 @@ const useFeature = ({
         const properties =
           viewer && !(raw instanceof Model) ? convertCesium3DTileFeatureProperties(raw) : {};
 
-        const computedFeature = evalFeature(layer, { ...feature?.feature, properties });
+        const computedFeature = await evalFeature(layer, { ...feature?.feature, properties });
 
         const style = computedFeature?.["3dtiles"];
 

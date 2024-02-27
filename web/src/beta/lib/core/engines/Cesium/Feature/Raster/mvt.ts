@@ -5,7 +5,6 @@ import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import { useEffect, useMemo, useRef } from "react";
 
 import type {
-  ComputedFeature,
   Feature,
   PolygonAppearance,
   Geometry,
@@ -73,66 +72,79 @@ export const useMVT = ({
                 return;
             }
           })();
-          const computedFeature = ((): ComputedFeature | void => {
-            const layer = cachedCalculatedLayerRef.current?.layer;
-            if (layer?.type !== "simple" || !appearanceType) {
-              return;
-            }
-            const feature = makeFeature("", mvtFeature, tile, appearanceType);
-            if (feature) {
-              return evalFeature?.(layer, feature);
-            }
-          })();
 
-          const style = (() => {
-            if (appearanceType === "polygon") {
-              const polygon = computedFeature?.polygon;
-              return {
-                fillStyle:
-                  (polygon?.fill ?? true) && (polygon?.show ?? true)
-                    ? polygon?.fillColor
-                    : "rgba(0,0,0,0)", // hide the feature
-                strokeStyle:
-                  polygon?.stroke && (polygon?.show ?? true)
-                    ? polygon?.strokeColor
-                    : "rgba(0,0,0,0)", // hide the feature
-                lineWidth: polygon?.strokeWidth,
-                lineJoin: polygon?.lineJoin,
-              };
-            }
-            if (appearanceType === "polyline") {
-              const polyline = computedFeature?.polyline;
-              return {
-                fillStyle:
-                  (polyline?.strokeColor ?? true) && (polyline?.show ?? true)
-                    ? polyline?.strokeColor
-                    : "rgba(0,0,0,0)", // hide the feature
-                strokeStyle:
-                  polyline?.strokeColor && (polyline?.show ?? true)
-                    ? polyline?.strokeColor
-                    : "rgba(0,0,0,0)", // hide the feature
-                lineWidth: polyline?.strokeWidth,
-              };
-            }
-            if (appearanceType === "marker") {
-              const marker = computedFeature?.marker;
-              return {
-                fillStyle:
-                  (marker?.pointColor ?? true) && (marker?.show ?? true)
-                    ? marker?.pointColor
-                    : "rgba(0,0,0,0)", // hide the feature
-                strokeStyle:
-                  marker?.pointColor && (marker?.show ?? true)
-                    ? marker?.pointColor
-                    : "rgba(0,0,0,0)", // hide the feature
-                lineWidth: marker?.pointSize,
-              };
-            }
-            return;
-          })();
-          cachedStyleMap.set(styleCacheKey, style);
-          return style;
+          return new Promise(resolve => {
+            const computedFeaturePromise = (() => {
+              const layer = cachedCalculatedLayerRef.current?.layer;
+              if (layer?.type !== "simple" || !appearanceType) {
+                return;
+              }
+              const feature = makeFeature("", mvtFeature, tile, appearanceType);
+              if (feature) {
+                return evalFeature(layer, feature);
+              }
+              return Promise.resolve(null);
+            })();
+
+            computedFeaturePromise
+              ?.then(computedFeature => {
+                const style = (() => {
+                  if (appearanceType === "polygon") {
+                    const polygon = computedFeature?.polygon;
+                    return {
+                      fillStyle:
+                        (polygon?.fill ?? true) && (polygon?.show ?? true)
+                          ? polygon?.fillColor
+                          : "rgba(0,0,0,0)", // hide the feature
+                      strokeStyle:
+                        polygon?.stroke && (polygon?.show ?? true)
+                          ? polygon?.strokeColor
+                          : "rgba(0,0,0,0)", // hide the feature
+                      lineWidth: polygon?.strokeWidth,
+                      lineJoin: polygon?.lineJoin,
+                    };
+                  }
+                  if (appearanceType === "polyline") {
+                    const polyline = computedFeature?.polyline;
+                    return {
+                      fillStyle:
+                        (polyline?.strokeColor ?? true) && (polyline?.show ?? true)
+                          ? polyline?.strokeColor
+                          : "rgba(0,0,0,0)", // hide the feature
+                      strokeStyle:
+                        polyline?.strokeColor && (polyline?.show ?? true)
+                          ? polyline?.strokeColor
+                          : "rgba(0,0,0,0)", // hide the feature
+                      lineWidth: polyline?.strokeWidth,
+                    };
+                  }
+                  if (appearanceType === "marker") {
+                    const marker = computedFeature?.marker;
+                    return {
+                      fillStyle:
+                        (marker?.pointColor ?? true) && (marker?.show ?? true)
+                          ? marker?.pointColor
+                          : "rgba(0,0,0,0)", // hide the feature
+                      strokeStyle:
+                        marker?.pointColor && (marker?.show ?? true)
+                          ? marker?.pointColor
+                          : "rgba(0,0,0,0)", // hide the feature
+                      lineWidth: marker?.pointSize,
+                    };
+                  }
+                  return;
+                })();
+                cachedStyleMap.set(styleCacheKey, style);
+                resolve(style);
+              })
+              .catch(error => {
+                // Handle any error that occurred during evalFeature
+                console.error("Error in evalFeature:", error);
+                resolve(null); // Resolve with null in case of error
+              });
+          });
         },
+
         onSelectFeature: (mvtFeature, tile) => {
           const layer = extractSimpleLayer(cachedCalculatedLayerRef.current?.layer);
           if (!layer) {
@@ -155,14 +167,18 @@ export const useMVT = ({
           const id = mvtFeature.id
             ? String(mvtFeature.id)
             : idFromGeometry(mvtFeature.loadGeometry(), tile);
-          const feature = evalFeature(layer, makeFeature(id, mvtFeature, tile, appearanceType));
           const info = new ImageryLayerFeatureInfo();
-          info.data = {
-            layerId: layer?.id,
-            featureId: id,
-            feature,
-            appearanceType: VectorTileFeature.types[mvtFeature.type].toLowerCase(),
-          };
+          evalFeature(layer, makeFeature(id, mvtFeature, tile, appearanceType)).then(
+            computedFeature => {
+              info.data = {
+                layerId: layer?.id,
+                featureId: id,
+                computedFeature,
+                appearanceType: VectorTileFeature.types[mvtFeature.type].toLowerCase(),
+              };
+            },
+          );
+
           return info;
         },
       });
