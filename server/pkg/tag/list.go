@@ -9,33 +9,11 @@ func DerefList(tags []*Tag) List {
 }
 
 func (l List) Items() (res []*Item) {
-	if len(l) == 0 {
-		return
-	}
-
-	res = make([]*Item, 0, len(l))
-	for _, t := range l {
-		if g := ItemFrom(t); g != nil {
-			res = append(res, g)
-		}
-	}
-
-	return res
+	return list.ToGenericListValue[Tag, Item](l, ItemFrom)
 }
 
 func (l List) Groups() (res []*Group) {
-	if len(l) == 0 {
-		return
-	}
-
-	res = make([]*Group, 0, len(l))
-	for _, t := range l {
-		if g := GroupFrom(t); g != nil {
-			res = append(res, g)
-		}
-	}
-
-	return res
+	return list.ToGenericListValue[Tag, Group](l, GroupFrom)
 }
 
 func (l List) FilterByScene(s SceneID) (res List) {

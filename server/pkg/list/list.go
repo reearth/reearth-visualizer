@@ -11,6 +11,8 @@ type IDLister[ID comparable] interface {
 
 type Converter[S any, T any] func(*S) *T
 
+type ConverterValue[S any, T any] func(S) *T
+
 func Last[T any](slice []*T) *T {
 	if len(slice) == 0 {
 		return nil
@@ -204,10 +206,23 @@ func ExtractKeys[ID comparable, T any](m map[ID]*T) []ID {
 	return keys
 }
 
-func ToGenericList[S any, T any](list []*S, convert Converter[S, T]) []*T {
+func ToGenericList[S any, T any](list []*S, converter Converter[S, T]) []*T {
 	res := make([]*T, 0, len(list))
 	for _, l := range list {
-		if li := convert(l); li != nil {
+		if li := converter(l); li != nil {
+			res = append(res, li)
+		}
+	}
+	return res
+}
+
+func ToGenericListValue[S any, T any](list []S, converter ConverterValue[S, T]) []*T {
+	if len(list) == 0 {
+		return nil
+	}
+	res := make([]*T, 0, len(list))
+	for _, l := range list {
+		if li := converter(l); li != nil {
 			res = append(res, li)
 		}
 	}

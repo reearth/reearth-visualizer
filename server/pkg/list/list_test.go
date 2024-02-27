@@ -616,49 +616,84 @@ func TestExtractKeys(t *testing.T) {
 }
 
 func TestToGenericList(t *testing.T) {
-	convert := func(s *MockIdentifiable) *MockIdentifiable {
+	converter := func(s *MockIdentifiable) *MockIdentifiable {
 		return s
 	}
 
 	tests := []struct {
-		name    string
-		list    []*MockIdentifiable
-		convert func(*MockIdentifiable) *MockIdentifiable
-		want    []*MockIdentifiable
+		name      string
+		list      []*MockIdentifiable
+		converter func(*MockIdentifiable) *MockIdentifiable
+		want      []*MockIdentifiable
 	}{
 		{
-			name: "non-empty list",
-			list: []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
-			convert: func(s *MockIdentifiable) *MockIdentifiable {
-				return s
-			},
-			want: []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
+			name:      "non-empty list",
+			list:      []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
+			converter: converter,
+			want:      []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
 		},
 		{
-			name:    "empty list",
-			list:    []*MockIdentifiable{},
-			convert: convert,
-			want:    []*MockIdentifiable{},
+			name:      "empty list",
+			list:      []*MockIdentifiable{},
+			converter: converter,
+			want:      []*MockIdentifiable{},
 		},
 		{
-			name:    "nil list",
-			list:    nil,
-			convert: convert,
-			want:    []*MockIdentifiable{},
+			name:      "nil list",
+			list:      nil,
+			converter: converter,
+			want:      []*MockIdentifiable{},
 		},
 		{
-			name: "list with nil element",
-			list: []*MockIdentifiable{{id: "id1"}, nil, {id: "id3"}},
-			convert: func(s *MockIdentifiable) *MockIdentifiable {
-				return s
-			},
-			want: []*MockIdentifiable{{id: "id1"}, {id: "id3"}},
+			name:      "list with nil element",
+			list:      []*MockIdentifiable{{id: "id1"}, nil, {id: "id3"}},
+			converter: converter,
+			want:      []*MockIdentifiable{{id: "id1"}, {id: "id3"}},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := list.ToGenericList[MockIdentifiable, MockIdentifiable](tt.list, tt.convert)
+			got := list.ToGenericList[MockIdentifiable, MockIdentifiable](tt.list, tt.converter)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestToGenericListValue(t *testing.T) {
+	converter := func(s MockIdentifiable) *MockIdentifiable {
+		return &s
+	}
+
+	tests := []struct {
+		name      string
+		list      []MockIdentifiable
+		converter func(MockIdentifiable) *MockIdentifiable
+		want      []*MockIdentifiable
+	}{
+		{
+			name:      "non-empty list",
+			list:      []MockIdentifiable{{id: "id1"}, {id: "id2"}},
+			converter: converter,
+			want:      []*MockIdentifiable{{id: "id1"}, {id: "id2"}},
+		},
+		{
+			name:      "empty list",
+			list:      []MockIdentifiable{},
+			converter: converter,
+			want:      nil,
+		},
+		{
+			name:      "nil list",
+			list:      nil,
+			converter: converter,
+			want:      nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := list.ToGenericListValue[MockIdentifiable, MockIdentifiable](tt.list, tt.converter)
 			assert.Equal(t, tt.want, got)
 		})
 	}
