@@ -320,7 +320,6 @@ export default function useHooks({
   );
 
   const overriddenLayersRef = useRef(overriddenLayers);
-  overriddenLayersRef.current = overriddenLayers;
 
   const override = useCallback(
     (id: string, layer?: (Partial<Layer> & { property?: any }) | null) => {
@@ -382,8 +381,10 @@ export default function useHooks({
       const layer2 = { id, ...omit(rawLayer, "id", "type", "children") } as Layer;
       setOverridenLayers(layers => {
         const i = layers.findIndex(l => l.id === id);
-        if (i < 0) return [...layers, layer2];
-        return [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
+        const updated =
+          i < 0 ? [...layers, layer2] : [...layers.slice(0, i), layer2, ...layers.slice(i + 1)];
+        overriddenLayersRef.current = updated;
+        return updated;
       });
     },
     [layerMap],
@@ -434,7 +435,11 @@ export default function useHooks({
         );
         return newLayers;
       });
-      setOverridenLayers(layers => layers.filter(l => !ids.includes(l.id)));
+      setOverridenLayers(layers => {
+        const updated = layers.filter(l => !ids.includes(l.id));
+        overriddenLayersRef.current = updated;
+        return updated;
+      });
     },
     [layerMap, atomMap, lazyLayerMap, initialSelectedLayer, showLayer, select],
   );
@@ -600,7 +605,11 @@ export default function useHooks({
       lazyLayerMap.delete(k);
       showLayer(k);
     });
-    setOverridenLayers(layers => layers.filter(l => !deleted?.includes(l.id)));
+    setOverridenLayers(layers => {
+      const updated = layers.filter(l => !deleted?.includes(l.id));
+      overriddenLayersRef.current = updated;
+      return updated;
+    });
 
     prevLayers.current = layers;
   }, [atomMap, layers, layerMap, lazyLayerMap, setOverridenLayers, showLayer]);
