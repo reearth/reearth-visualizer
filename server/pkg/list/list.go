@@ -13,40 +13,40 @@ type Converter[S any, T any] func(*S) *T
 
 type ConverterValue[S any, T any] func(S) *T
 
-func Last[T any](slice []*T) *T {
-	if len(slice) == 0 {
+func Last[T any](list []*T) *T {
+	if len(list) == 0 {
 		return nil
 	}
-	return slice[len(slice)-1]
+	return list[len(list)-1]
 }
 
-func ExtractIDs[ID comparable, T Identifiable[ID]](slice []*T) []ID {
-	if len(slice) == 0 {
+func ExtractIDs[ID comparable, T Identifiable[ID]](list []*T) []ID {
+	if len(list) == 0 {
 		return nil
 	}
-	ids := make([]ID, 0, len(slice))
-	for _, item := range Deref[T](slice, false) {
+	ids := make([]ID, 0, len(list))
+	for _, item := range Deref[T](list, false) {
 		ids = append(ids, item.ID())
 	}
 	return ids
 }
 
-func Pick[ID comparable, T Identifiable[ID]](slice []*T, idList IDLister[ID]) []*T {
+func Pick[ID comparable, T Identifiable[ID]](list []*T, idList IDLister[ID]) []*T {
 	if idList == nil || idList.LayerCount() == 0 {
 		return nil
 	}
 
 	layers := make([]*T, 0, idList.LayerCount())
 	for _, lid := range idList.Layers() {
-		if l := Find[ID, T](slice, lid); l != nil {
+		if l := Find[ID, T](list, lid); l != nil {
 			layers = append(layers, l)
 		}
 	}
 	return layers
 }
 
-func Find[ID comparable, T Identifiable[ID]](slice []*T, lid ID) *T {
-	for _, item := range slice {
+func Find[ID comparable, T Identifiable[ID]](list []*T, lid ID) *T {
+	for _, item := range list {
 		if item == nil {
 			continue
 		}
@@ -88,18 +88,18 @@ func Add[ID comparable, T Identifiable[ID]](m map[ID]*T, items ...*T) map[ID]*T 
 	return m
 }
 
-func Map[ID comparable, T Identifiable[ID]](slice []*T) map[ID]*T {
-	m := make(map[ID]*T, len(slice))
-	Add[ID, T](m, slice...)
+func Map[ID comparable, T Identifiable[ID]](list []*T) map[ID]*T {
+	m := make(map[ID]*T, len(list))
+	Add[ID, T](m, list...)
 	return m
 }
 
-func MapWithIDFunc[ID comparable, T any](slice []*T, idFunc func(*T) ID, checkNil bool) map[ID]*T {
-	if checkNil && slice == nil {
+func MapWithIDFunc[ID comparable, T any](list []*T, idFunc func(*T) ID, checkNil bool) map[ID]*T {
+	if checkNil && list == nil {
 		return nil
 	}
-	m := make(map[ID]*T, len(slice))
-	for _, item := range slice {
+	m := make(map[ID]*T, len(list))
+	for _, item := range list {
 		if item != nil {
 			id := idFunc(item)
 			m[id] = item
@@ -175,16 +175,16 @@ func ListClone[T any](list []T, getClone func(T) T) []T {
 	return list2
 }
 
-func Remove[ID comparable, T Identifiable[ID]](slice []*T, idsToRemove ...ID) []*T {
-	if slice == nil {
+func Remove[ID comparable, T Identifiable[ID]](list []*T, idsToRemove ...ID) []*T {
+	if list == nil {
 		return nil
 	}
-	if len(slice) == 0 {
+	if len(list) == 0 {
 		return []*T{}
 	}
 
-	result := make([]*T, 0, len(slice))
-	for _, item := range slice {
+	result := make([]*T, 0, len(list))
+	for _, item := range list {
 		remove := false
 		for _, id := range idsToRemove {
 			if (*item).ID() == id {
@@ -199,8 +199,8 @@ func Remove[ID comparable, T Identifiable[ID]](slice []*T, idsToRemove ...ID) []
 	return result
 }
 
-func AddUnique[ID comparable, T Identifiable[ID]](slice []*T, newList []*T) []*T {
-	res := append([]*T{}, slice...)
+func AddUnique[ID comparable, T Identifiable[ID]](list []*T, newList []*T) []*T {
+	res := append([]*T{}, list...)
 
 	for _, l := range newList {
 		if l == nil {
