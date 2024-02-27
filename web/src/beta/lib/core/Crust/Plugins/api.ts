@@ -457,6 +457,7 @@ export function commonReearth({
   pickManyFromViewport,
   bringToFront,
   sendToBack,
+  forceHorizontalRoll,
 }: {
   engineName?: string;
   events: Events<ReearthEventType>;
@@ -503,6 +504,7 @@ export function commonReearth({
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
   rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
   overrideScreenSpaceController: GlobalThis["reearth"]["camera"]["overrideScreenSpaceController"];
+  forceHorizontalRoll: GlobalThis["reearth"]["camera"]["forceHorizontalRoll"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -556,6 +558,7 @@ export function commonReearth({
         flyToBBox,
         rotateOnCenter,
         overrideScreenSpaceController,
+        forceHorizontalRoll,
       },
       get property() {
         return sceneProperty?.();
@@ -624,6 +627,7 @@ export function commonReearth({
       flyToBBox,
       rotateOnCenter,
       overrideScreenSpaceController,
+      forceHorizontalRoll,
     },
     layers: {
       get layersInViewport() {

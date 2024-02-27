@@ -204,6 +204,7 @@ export type EngineProps = {
   isBuilt?: boolean;
   property?: SceneProperty;
   camera?: Camera;
+  cameraForceHorizontalRoll?: boolean;
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
