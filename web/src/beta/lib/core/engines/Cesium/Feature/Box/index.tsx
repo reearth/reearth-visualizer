@@ -41,6 +41,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
     activeEdgeIndex,
     activeScalePointIndex,
     hideIndicator,
+    disabledSelection,
   } = property ?? {};
   const {
     style,
@@ -70,7 +71,7 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
           fill={style.fill}
           fillColor={style.fillColor}
           outlineColor={style.outlineColor}
-          isActive={!!activeBox}
+          isActive={disabledSelection ? !!activeBox : false}
           activeOutlineColor={style.activeOutlineColor}
           trs={trs}
           availability={availability}
@@ -86,16 +87,28 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             layerId={`${layerId}-edge${edge.isDraggable ? `-draggable` : ""}-${i}`}
             index={i}
             edge={edge}
-            isHovered={activeEdgeIndex === i || (!edge.isDraggable && !!activeBox)}
-            width={edge.isDraggable ? style.draggableOutlineWidth : style.outlineWidth}
+            isHovered={
+              disabledSelection
+                ? activeEdgeIndex === i || (!edge.isDraggable && !!activeBox)
+                : false
+            }
+            width={
+              edge.isDraggable && disabledSelection
+                ? style.draggableOutlineWidth
+                : style.outlineWidth
+            }
             fillColor={edge.isDraggable ? style.draggableOutlineColor : style.outlineColor}
             hoverColor={
-              edge.isDraggable ? style.activeDraggableOutlineColor : style.activeOutlineColor
+              disabledSelection
+                ? edge.isDraggable
+                  ? style.activeDraggableOutlineColor
+                  : style.activeOutlineColor
+                : undefined
             }
             trs={trs}
-            onMouseDown={edge.isDraggable ? handleEdgeMouseDown : undefined}
-            onMouseMove={edge.isDraggable ? handleEdgeMouseMove : undefined}
-            onMouseUp={edge.isDraggable ? handleEdgeMouseUp : undefined}
+            onMouseDown={edge.isDraggable && disabledSelection ? handleEdgeMouseDown : undefined}
+            onMouseMove={edge.isDraggable && disabledSelection ? handleEdgeMouseMove : undefined}
+            onMouseUp={edge.isDraggable && disabledSelection ? handleEdgeMouseUp : undefined}
             availability={availability}
             distanceDisplayCondition={distanceDisplayCondition}
             hideIndicator={hideIndicator}
@@ -111,10 +124,12 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             index={i}
             scalePoint={vector}
             trs={trs}
-            isHovered={activeScalePointIndex === i}
-            pointFillColor={scalePointStyle.pointFillColor}
-            pointOutlineColor={scalePointStyle.pointOutlineColor}
-            hoverPointOutlineColor={scalePointStyle.activePointOutlineColor}
+            isHovered={disabledSelection ? activeScalePointIndex === i : false}
+            pointFillColor={disabledSelection ? scalePointStyle.pointFillColor : undefined}
+            pointOutlineColor={disabledSelection ? scalePointStyle.pointOutlineColor : undefined}
+            hoverPointOutlineColor={
+              disabledSelection ? scalePointStyle.activePointOutlineColor : undefined
+            }
             pointOutlineWidth={pointOutlineWidth}
             axisLineColor={scalePointStyle.axisLineColor}
             axisLineWidth={axisLineWidth}
@@ -125,9 +140,9 @@ const Box: React.FC<Props> = memo(function BoxPresenter({
             }}
             visiblePoint={scalePoint}
             visibleAxisLine={axisLine && activeScalePointIndex === i}
-            onPointMouseDown={handlePointMouseDown}
-            onPointMouseMove={handlePointMouseMove}
-            onPointMouseUp={handlePointMouseUp}
+            onPointMouseDown={disabledSelection ? handlePointMouseDown : undefined}
+            onPointMouseMove={disabledSelection ? handlePointMouseMove : undefined}
+            onPointMouseUp={disabledSelection ? handlePointMouseUp : undefined}
             availability={availability}
             distanceDisplayCondition={distanceDisplayCondition}
             hideIndicator={hideIndicator}

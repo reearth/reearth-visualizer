@@ -16,6 +16,8 @@ import {
   GroundPrimitive,
   ShadowMap,
   ImageryLayer,
+  Scene,
+  Math as CesiumMath,
 } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -76,6 +78,7 @@ export default ({
   requestingRenderMode,
   shouldRender,
   timelineManagerRef,
+  cameraForceHorizontalRoll = false,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
@@ -100,6 +103,7 @@ export default ({
   requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
   timelineManagerRef?: TimelineManagerRef;
+  cameraForceHorizontalRoll?: boolean;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -916,6 +920,28 @@ export default ({
       }
     }
   }, [globe, property?.render?.showWireframe]);
+
+  const onPreRenderCallback = useCallback(
+    (scene: Scene) => {
+      if (!scene.camera || !cameraForceHorizontalRoll) return;
+      if (Math.abs(CesiumMath.negativePiToPi(scene.camera.roll)) > Math.PI / 86400) {
+        scene.camera.setView({
+          orientation: {
+            heading: scene.camera.heading,
+            pitch: scene.camera.pitch,
+            roll: 0,
+          },
+        });
+      }
+    },
+    [cameraForceHorizontalRoll],
+  );
+
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer) return;
+    return viewer.scene.preRender.addEventListener(onPreRenderCallback);
+  }, [onPreRenderCallback]);
 
   return {
     backgroundColor,

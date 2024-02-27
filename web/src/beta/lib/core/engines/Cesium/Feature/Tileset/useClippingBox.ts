@@ -99,6 +99,7 @@ export const useClippingBox = ({
     heading,
     pitch,
     roll,
+    disabledSelection,
   } = clipping || {};
 
   const { viewer } = useCesium();
@@ -140,7 +141,7 @@ export const useClippingBox = ({
 
   const handleMouseDown = useCallback(
     (e: any) => {
-      if (!viewer) {
+      if (!viewer || !disabledSelection) {
         return;
       }
       const picked = viewer.scene.pick(e.position);
@@ -183,10 +184,10 @@ export const useClippingBox = ({
         }
       }
     },
-    [boxId, boxState, handleUpdateBoxState, viewer],
+    [boxId, boxState, handleUpdateBoxState, viewer, disabledSelection],
   );
   const handleMouseUp = useCallback(() => {
-    if (!viewer) {
+    if (!viewer || !disabledSelection) {
       return;
     }
     if (boxState.activeScalePointIndex || boxState.activeEdgeIndex) {
@@ -214,10 +215,10 @@ export const useClippingBox = ({
         cursor: "default",
       });
     }
-  }, [boxState, handleUpdateBoxState, viewer]);
+  }, [boxState, handleUpdateBoxState, viewer, disabledSelection]);
   const handleMouseMove = useCallback(
     async (e: any) => {
-      if (!isBoxClicked.current || !viewer) return;
+      if (!isBoxClicked.current || !viewer || !disabledSelection) return;
 
       const cart = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2]);
 
@@ -271,7 +272,7 @@ export const useClippingBox = ({
         ]);
       }
     },
-    [allowEnterGround, coords, dimensions?.height, viewer],
+    [allowEnterGround, coords, dimensions?.height, viewer, disabledSelection],
   );
   const handleMouseEnter = useCallback(
     ({ layerId }: { layerId?: string } | undefined = {}) => {

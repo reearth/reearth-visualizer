@@ -15,6 +15,8 @@ import { configDefaults } from "vitest/config";
 
 import pkg from "./package.json";
 
+const NO_MINIFY = !!process.env.NO_MINIFY;
+
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
   plugins: [svgr(), react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
@@ -22,6 +24,7 @@ export default defineConfig({
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
+  mode: NO_MINIFY ? "development" : undefined,
   server: {
     port: 3000,
   },
@@ -38,6 +41,7 @@ export default defineConfig({
         published: resolve(__dirname, "published.html"),
       },
     },
+    minify: NO_MINIFY ? false : "esbuild",
   },
   resolve: {
     alias: [

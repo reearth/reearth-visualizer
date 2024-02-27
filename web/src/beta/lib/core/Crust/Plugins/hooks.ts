@@ -63,6 +63,7 @@ export default function ({
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
+  onCameraForceHorizontalRollChange,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
 
@@ -587,6 +588,7 @@ export default function ({
         pickManyFromViewport,
         bringToFront,
         sendToBack,
+        forceHorizontalRoll: onCameraForceHorizontalRollChange,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -659,6 +661,7 @@ export default function ({
       bringToFront,
       sendToBack,
       overrideSceneProperty,
+      onCameraForceHorizontalRollChange,
       pluginInstances,
       clientStorage,
       timelineManagerRef,
