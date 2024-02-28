@@ -138,9 +138,9 @@ export default function Resource({
         timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: {
-            start: JulianDate.toDate(ds.clock.currentTime),
-            stop: JulianDate.toDate(ds.clock.startTime),
-            current: JulianDate.toDate(ds.clock.stopTime),
+            start: JulianDate.toDate(ds.clock.startTime),
+            stop: JulianDate.toDate(ds.clock.stopTime),
+            current: JulianDate.toDate(ds.clock.currentTime),
           },
           committer: {
             source: "featureResource",
