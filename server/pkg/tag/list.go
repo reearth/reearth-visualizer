@@ -1,23 +1,23 @@
 package tag
 
-import "github.com/reearth/reearth/server/pkg/list"
+import "github.com/reearth/reearthx/util"
 
 type List []Tag
 
 func DerefList(tags []*Tag) List {
-	return list.Deref[Tag](tags, true)
+	return util.Deref[Tag](tags, true)
 }
 
 func (l List) Items() (res []*Item) {
-	return list.ToGenericListValue[Tag, Item](l, ItemFrom)
+	return util.ToGenericListValue[Tag, Item](l, ItemFrom)
 }
 
 func (l List) Groups() (res []*Group) {
-	return list.ToGenericListValue[Tag, Group](l, GroupFrom)
+	return util.ToGenericListValue[Tag, Group](l, GroupFrom)
 }
 
 func (l List) FilterByScene(s SceneID) (res List) {
-	return list.Filter[SceneID, Tag](l, s, Tag.Scene)
+	return util.ListFilter[SceneID, Tag](l, s, Tag.Scene)
 }
 
 func (l List) Roots() (res List) {

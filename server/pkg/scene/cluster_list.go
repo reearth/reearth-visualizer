@@ -1,6 +1,6 @@
 package scene
 
-import "github.com/reearth/reearth/server/pkg/list"
+import "github.com/reearth/reearthx/util"
 
 type ClusterList struct {
 	clusters []*Cluster
@@ -25,7 +25,7 @@ func (tl *ClusterList) Has(tid ClusterID) bool {
 	if tl == nil {
 		return false
 	}
-	return list.Has[ClusterID, Cluster](tl.clusters, (*Cluster).ID, tid)
+	return util.ListHas[ClusterID, Cluster](tl.clusters, (*Cluster).ID, tid)
 }
 
 func (tl *ClusterList) Add(clusters ...*Cluster) {
@@ -39,19 +39,19 @@ func (tl *ClusterList) Get(cid ClusterID) *Cluster {
 	if tl == nil {
 		return nil
 	}
-	return list.Get[ClusterID, Cluster](tl.clusters, (*Cluster).ID, cid)
+	return util.Get[ClusterID, Cluster](tl.clusters, (*Cluster).ID, cid)
 }
 
 func (tl *ClusterList) Remove(clusters ...ClusterID) {
 	if tl == nil {
 		return
 	}
-	tl.clusters = list.RemoveByIds[ClusterID, Cluster](tl.clusters, (*Cluster).ID, clusters...)
+	tl.clusters = util.RemoveByIds[ClusterID, Cluster](tl.clusters, (*Cluster).ID, clusters...)
 }
 
 func (tl *ClusterList) Properties() []PropertyID {
 	if tl == nil {
 		return nil
 	}
-	return list.Properties[PropertyID, Cluster](tl.clusters, (*Cluster).Property)
+	return util.Properties[PropertyID, Cluster](tl.clusters, (*Cluster).Property)
 }

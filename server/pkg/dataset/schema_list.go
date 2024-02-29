@@ -1,17 +1,17 @@
 package dataset
 
-import "github.com/reearth/reearth/server/pkg/list"
+import "github.com/reearth/reearthx/util"
 
 type SchemaList []*Schema
 
 func (dsl SchemaList) Map() SchemaMap {
-	return list.MapWithIDFunc[SchemaID, Schema](dsl, (*Schema).ID, true)
+	return util.MapWithIDFunc[SchemaID, Schema](dsl, (*Schema).ID, true)
 }
 
 type SchemaMap map[SchemaID]*Schema
 
 func (dsm SchemaMap) Slice() SchemaList {
-	return list.List[SchemaID, Schema](dsm, true)
+	return util.MapList[SchemaID, Schema](dsm, true)
 }
 
 func (dsm SchemaMap) GraphSearchByFields(root SchemaID, fields ...FieldID) (SchemaList, *SchemaField) {

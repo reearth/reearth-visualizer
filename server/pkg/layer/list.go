@@ -1,7 +1,7 @@
 package layer
 
 import (
-	"github.com/reearth/reearth/server/pkg/list"
+	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 )
 
@@ -12,11 +12,11 @@ func ListFrom(l []Layer) []*Layer {
 }
 
 func (ll List) Last() *Layer {
-	return list.Last[Layer](ll)
+	return util.Last[Layer](ll)
 }
 
 func (ll List) IDs() *IDList {
-	ids := list.ExtractIDs[ID, Layer](ll)
+	ids := util.ExtractIDs[ID, Layer](ll)
 	if len(ids) == 0 {
 		return nil
 	}
@@ -35,11 +35,11 @@ func (ll List) Properties() []PropertyID {
 }
 
 func (ll List) Pick(il *IDList) List {
-	return list.Pick[ID, Layer](ll, il)
+	return util.Pick[ID, Layer](ll, il)
 }
 
 func (ll List) Find(lid ID) *Layer {
-	return list.Find[ID, Layer](ll, lid)
+	return util.Find[ID, Layer](ll, lid)
 }
 
 func (ll List) FindByDataset(ds DatasetID) *Item {
@@ -55,11 +55,11 @@ func (ll List) FindByDataset(ds DatasetID) *Item {
 }
 
 func (ll List) ToLayerItemList() ItemList {
-	return list.ToGenericList[Layer, Item](ll, ItemFromLayerRef)
+	return util.ToGenericList[Layer, Item](ll, ItemFromLayerRef)
 }
 
 func (ll List) ToLayerGroupList() GroupList {
-	return list.ToGenericList[Layer, Group](ll, GroupFromLayerRef)
+	return util.ToGenericList[Layer, Group](ll, GroupFromLayerRef)
 }
 
 func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
@@ -76,7 +76,7 @@ func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
 }
 
 func (ll List) Deref() []Layer {
-	return list.Deref[Layer](ll, false)
+	return util.Deref[Layer](ll, false)
 }
 
 func (ll List) Loader() Loader {
@@ -84,15 +84,15 @@ func (ll List) Loader() Loader {
 }
 
 func (ll List) Map() Map {
-	return list.Map[ID, Layer](ll)
+	return util.ListMap[ID, Layer](ll)
 }
 
 func (ll List) Remove(lids ...ID) List {
-	return list.Remove[ID, Layer](ll, lids...)
+	return util.Remove[ID, Layer](ll, lids...)
 }
 
 func (ll List) AddUnique(newList ...*Layer) List {
-	return list.AddUnique[ID, Layer](ll, newList)
+	return util.AddUnique[ID, Layer](ll, newList)
 }
 
 type ItemList []*Item
@@ -117,7 +117,7 @@ func (ll ItemList) ToLayerList() List {
 }
 
 func (ll ItemList) Last() *Item {
-	return list.Last[Item](ll)
+	return util.Last[Item](ll)
 }
 
 type GroupList []*Group
@@ -132,7 +132,7 @@ func (ll GroupList) ToLayerList() List {
 }
 
 func (ll GroupList) Last() *Group {
-	return list.Last[Group](ll)
+	return util.Last[Group](ll)
 }
 
 type Map map[ID]*Layer
@@ -142,23 +142,23 @@ func MapFrom(l Layer) Map {
 }
 
 func (m Map) Add(layers ...*Layer) Map {
-	return list.Add[ID, Layer](m, layers...)
+	return util.MapAdd[ID, Layer](m, layers...)
 }
 
 func (m Map) List() List {
-	return list.List[ID, Layer](m, false)
+	return util.MapList[ID, Layer](m, false)
 }
 
 func (m Map) Clone() Map {
-	return list.Clone[ID, Layer](m)
+	return util.Clone[ID, Layer](m)
 }
 
 func (m Map) Merge(m2 Map) Map {
-	return list.Merge[ID, Layer](m, m2)
+	return util.Merge[ID, Layer](m, m2)
 }
 
 func (m Map) Pick(il *IDList) List {
-	return list.MapPick[ID, Layer](m, il)
+	return util.MapPick[ID, Layer](m, il)
 }
 
 func (m Map) Layer(i ID) Layer {
@@ -183,7 +183,7 @@ func (m Map) Group(i ID) *Group {
 }
 
 func (m Map) Keys() []ID {
-	keys := list.ExtractKeys[ID, Layer](m)
+	keys := util.ExtractKeys[ID, Layer](m)
 	sortIDs(keys)
 	return keys
 }

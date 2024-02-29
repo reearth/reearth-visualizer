@@ -1,6 +1,6 @@
 package property
 
-import "github.com/reearth/reearth/server/pkg/list"
+import "github.com/reearth/reearthx/util"
 
 type SchemaList []*Schema
 
@@ -14,7 +14,7 @@ func (l SchemaList) Find(psid SchemaID) *Schema {
 }
 
 func (l SchemaList) Map() SchemaMap {
-	return list.MapWithIDFunc[SchemaID, Schema](l, (*Schema).ID, false)
+	return util.MapWithIDFunc[SchemaID, Schema](l, (*Schema).ID, false)
 }
 
 func (l SchemaList) Loader() SchemaLoader {
@@ -48,11 +48,11 @@ func (m SchemaMap) Add(schemas ...*Schema) {
 }
 
 func (m SchemaMap) List() SchemaList {
-	return list.List[SchemaID, Schema](m, false)
+	return util.MapList[SchemaID, Schema](m, false)
 }
 
 func (m SchemaMap) Clone() SchemaMap {
-	return list.Clone[SchemaID, Schema](m)
+	return util.Clone[SchemaID, Schema](m)
 }
 
 func (m SchemaMap) Merge(m2 SchemaMap) SchemaMap {
