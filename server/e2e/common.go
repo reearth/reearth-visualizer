@@ -39,7 +39,7 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 
 	if useMongo {
 		db := mongotest.Connect(t)(t)
-		accountRepos := lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, false))
+		accountRepos := lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, false, []accountrepo.User{}))
 		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
 	} else {
 		repos = memory.New()
