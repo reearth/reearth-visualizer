@@ -104,10 +104,11 @@ const RESERVED_WORDS: Record<string, string> = {
   "(": makeReservedWord("opened_parentheses"),
   ")": makeReservedWord("closed_parentheses"),
   "-": makeReservedWord("hyphen"),
+  ":": makeReservedWord("colon"),
 };
 
 const replaceReservedWord = (word: string) => {
-  const wordFiltered = word.replace(/-/g, RESERVED_WORDS["-"]);
+  const wordFiltered = word.replace(/-/g, RESERVED_WORDS["-"]).replace(/:/g, RESERVED_WORDS[":"]);
   if (!/(\]|\)|\})[^[.]+$/.test(wordFiltered)) {
     return wordFiltered;
   }
