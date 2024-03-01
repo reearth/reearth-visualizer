@@ -117,6 +117,8 @@ const hasAppearance = <
   return !!(extractSimpleLayer(layer)?.[namePair[0]] || entity[namePair[1]]);
 };
 
+export const makeFeatureId = (e: Entity) => String(e.id);
+
 export const attachStyle = async (
   entity: Entity,
   layer: ComputedLayer | undefined,
@@ -136,7 +138,7 @@ export const attachStyle = async (
     const coordinates = [position?.x ?? 0, position?.y ?? 0, position?.z ?? 0];
     const feature: Feature = {
       type: "feature",
-      id: String(entity.id),
+      id: makeFeatureId(entity),
       geometry: {
         type: "Point",
         coordinates,
@@ -270,7 +272,7 @@ export const attachStyle = async (
     ]);
     const feature: Feature = {
       type: "feature",
-      id: String(entity.id),
+      id: makeFeatureId(entity),
       geometry: {
         type: "LineString",
         coordinates,
@@ -320,7 +322,7 @@ export const attachStyle = async (
     );
     const feature: Feature = {
       type: "feature",
-      id: String(entity.id),
+      id: makeFeatureId(entity),
       geometry: {
         type: "Polygon",
         coordinates,
