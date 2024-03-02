@@ -67,6 +67,11 @@ export default async function loadConfig() {
     ...(await (await fetch("/reearth_config.json")).json()),
   };
 
+  const cesiumIonToken = await loadCesiumIonToken();
+  if (cesiumIonToken) {
+    config.cesiumIonAccessToken = cesiumIonToken;
+  }
+
   if (config?.cognito) {
     configureCognito(config);
   }
@@ -87,6 +92,17 @@ export default async function loadConfig() {
   }
 
   window.REEARTH_CONFIG = config;
+}
+
+async function loadCesiumIonToken(): Promise<string> {
+  // updating config JSON by CI/CD sometimes can break the config file, so separate files
+  try {
+    const res = await fetch("/cesium_ion_token.txt");
+    return res.text();
+  } catch (e) {
+    // ignore
+  }
+  return "";
 }
 
 export function config(): Config | undefined {
