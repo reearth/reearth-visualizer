@@ -98,7 +98,8 @@ async function loadCesiumIonToken(): Promise<string> {
   // updating config JSON by CI/CD sometimes can break the config file, so separate files
   try {
     const res = await fetch("/cesium_ion_token.txt");
-    return res.text();
+    const token = await res.text();
+    return token.trim();
   } catch (e) {
     // ignore
   }
