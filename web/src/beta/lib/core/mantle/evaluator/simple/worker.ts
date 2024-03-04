@@ -1,18 +1,10 @@
-import { Feature, LayerSimple } from "../../types";
-
-import { evalExpression } from "./evalExpression";
-
-export type ExpressionEvalParams = {
-  expression: unknown;
-  layer: LayerSimple;
-  feature?: Feature;
-};
+import { evalExpression, ExpressionEvalParams } from "./evalExpression";
 
 export type ExpressionWorker = object & {
   evaluateExpression: (params: ExpressionEvalParams) => Promise<unknown>;
 };
 
-self.addEventListener("message", async event => {
+self.onmessage = async (event: MessageEvent) => {
   const { expression, layer, feature }: ExpressionEvalParams = event.data;
 
   try {
@@ -21,4 +13,4 @@ self.addEventListener("message", async event => {
   } catch (error) {
     (self as any).postMessage({ error: (error as Error).message });
   }
-});
+};

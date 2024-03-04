@@ -12,8 +12,9 @@ import {
   TimeInterval,
 } from "../../types";
 
+import { ExpressionEvalParams } from "./evalExpression";
 import { evalTimeInterval } from "./interval";
-import { ExpressionEvalParams } from "./worker";
+import Worker from "./worker?worker";
 import { WorkerQueue } from "./workerPool";
 
 export async function evalSimpleLayer(
@@ -115,15 +116,6 @@ export function clearAllExpressionCaches(
 
 let workerInstance: Worker | null = null;
 
-function getWorkerInstance() {
-  if (workerInstance === null) {
-    workerInstance = new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "module",
-    });
-  }
-  return workerInstance;
-}
-
 function terminateWorker() {
   if (workerInstance !== null) {
     workerInstance.terminate();
@@ -132,9 +124,9 @@ function terminateWorker() {
 }
 
 const evaluationQueue = new WorkerQueue<unknown>(1, terminateWorker);
+const worker = new Worker();
 
 async function evaluateWithWorker(params: ExpressionEvalParams): Promise<unknown> {
-  const worker = getWorkerInstance();
   return new Promise((resolve, reject) => {
     evaluationQueue.enqueue(() =>
       new Promise((resolve, reject) => {
