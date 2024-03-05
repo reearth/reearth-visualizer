@@ -1,61 +1,23 @@
 package tag
 
+import "github.com/reearth/reearthx/util"
+
 type List []Tag
 
 func DerefList(tags []*Tag) List {
-	res := make(List, 0, len(tags))
-	for _, t := range tags {
-		if t == nil {
-			continue
-		}
-		res = append(res, *t)
-	}
-	return res
+	return util.Deref[Tag](tags, true)
 }
 
 func (l List) Items() (res []*Item) {
-	if len(l) == 0 {
-		return
-	}
-
-	res = make([]*Item, 0, len(l))
-	for _, t := range l {
-		if g := ItemFrom(t); g != nil {
-			res = append(res, g)
-		}
-	}
-
-	return res
+	return util.ToGenericListValue[Tag, Item](l, ItemFrom)
 }
 
 func (l List) Groups() (res []*Group) {
-	if len(l) == 0 {
-		return
-	}
-
-	res = make([]*Group, 0, len(l))
-	for _, t := range l {
-		if g := GroupFrom(t); g != nil {
-			res = append(res, g)
-		}
-	}
-
-	return res
+	return util.ToGenericListValue[Tag, Group](l, GroupFrom)
 }
 
 func (l List) FilterByScene(s SceneID) (res List) {
-	if len(l) == 0 {
-		return
-	}
-
-	res = make(List, 0, len(l))
-	for _, t := range l {
-		if t.Scene() == s {
-			res = append(res, t)
-		}
-	}
-
-	return res
+	return util.ListFilter[SceneID, Tag](l, s, Tag.Scene)
 }
 
 func (l List) Roots() (res List) {
