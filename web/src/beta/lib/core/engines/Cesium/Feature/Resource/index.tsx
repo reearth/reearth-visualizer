@@ -50,6 +50,7 @@ export default function Resource({
     markerColor,
     markerSize,
     fill,
+    hideIndicator,
   } = property ?? {};
   const [type, url, updateClock] = useMemo((): [
     ResourceAppearance["type"],
@@ -84,7 +85,7 @@ export default function Resource({
         const res = attachStyle(e, layer, evalFeature, viewer.clock.currentTime);
         const [feature, computedFeature] = res || [];
 
-        attachTag(e, { layerId: layer?.id, featureId: feature?.id });
+        attachTag(e, { layerId: layer?.id, featureId: feature?.id, hideIndicator });
 
         if (feature && !cachedFeatureIds.current.has(feature.id)) {
           features.push(feature);
@@ -103,7 +104,7 @@ export default function Resource({
 
       requestRender?.();
     },
-    [layer, viewer, onComputedFeatureFetch, type, requestRender],
+    [layer, viewer, onComputedFeatureFetch, type, requestRender, hideIndicator],
   );
 
   const initialClock = useRef({
@@ -115,7 +116,7 @@ export default function Resource({
     (ds: DataSource) => {
       ds.entities.values.forEach(e =>
         requestAnimationFrame(() => {
-          attachTag(e, { layerId: layer?.id, featureId: makeFeatureId(e) });
+          attachTag(e, { layerId: layer?.id, featureId: makeFeatureId(e), hideIndicator });
         }),
       );
       if (!updateClock) {
@@ -155,7 +156,7 @@ export default function Resource({
       }
       requestRender?.();
     },
-    [updateClock, timelineManagerRef, layer?.id, requestRender],
+    [updateClock, timelineManagerRef, layer?.id, requestRender, hideIndicator],
   );
 
   // convert hexCodeColorString to ColorValue?s
