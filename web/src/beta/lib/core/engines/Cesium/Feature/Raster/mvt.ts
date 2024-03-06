@@ -55,6 +55,7 @@ export const useMVT = ({
           }
           return currentTime === updatedAt.current;
         },
+        layer: extractSimpleLayer(cachedCalculatedLayerRef.current?.layer) || undefined,
         style: (mvtFeature, tile) => {
           const styleCacheKey = JSON.stringify(mvtFeature.properties);
           const cachedStyle = cachedStyleMap.get(styleCacheKey);
