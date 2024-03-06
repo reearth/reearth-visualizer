@@ -45,3 +45,11 @@ func (s *Style) UpdateValue(sv *StyleValue) {
 func (l *Style) Scene() ID {
 	return l.scene
 }
+
+func (s *Style) Duplicate() *Style {
+	if s == nil {
+		return nil
+	}
+
+	return NewStyle().NewID().Name(s.name).Value(s.value).Scene(s.scene).MustBuild()
+}

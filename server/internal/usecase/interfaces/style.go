@@ -26,4 +26,5 @@ type Style interface {
 	AddStyle(context.Context, AddStyleInput, *usecase.Operator) (*scene.Style, error)
 	UpdateStyle(context.Context, UpdateStyleInput, *usecase.Operator) (*scene.Style, error)
 	RemoveStyle(context.Context, id.StyleID, *usecase.Operator) (id.StyleID, error)
+	DuplicateStyle(context.Context, id.StyleID, *usecase.Operator) (*scene.Style, error)
 }
