@@ -326,6 +326,14 @@ type ComplexityRoot struct {
 		Tag func(childComplexity int) int
 	}
 
+	DuplicateNLSLayerPayload struct {
+		Layer func(childComplexity int) int
+	}
+
+	DuplicateStylePayload struct {
+		Style func(childComplexity int) int
+	}
+
 	ImportDatasetPayload struct {
 		DatasetSchema func(childComplexity int) int
 	}
@@ -607,7 +615,9 @@ type ComplexityRoot struct {
 		DeleteTeam                   func(childComplexity int, input gqlmodel.DeleteTeamInput) int
 		DetachTagFromLayer           func(childComplexity int, input gqlmodel.DetachTagFromLayerInput) int
 		DetachTagItemFromGroup       func(childComplexity int, input gqlmodel.DetachTagItemFromGroupInput) int
+		DuplicateNLSLayer            func(childComplexity int, input gqlmodel.DuplicateNLSLayerInput) int
 		DuplicateStoryPage           func(childComplexity int, input gqlmodel.DuplicateStoryPageInput) int
+		DuplicateStyle               func(childComplexity int, input gqlmodel.DuplicateStyleInput) int
 		ImportDataset                func(childComplexity int, input gqlmodel.ImportDatasetInput) int
 		ImportDatasetFromGoogleSheet func(childComplexity int, input gqlmodel.ImportDatasetFromGoogleSheetInput) int
 		ImportLayer                  func(childComplexity int, input gqlmodel.ImportLayerInput) int
@@ -1474,6 +1484,7 @@ type MutationResolver interface {
 	AddNLSInfoboxBlock(ctx context.Context, input gqlmodel.AddNLSInfoboxBlockInput) (*gqlmodel.AddNLSInfoboxBlockPayload, error)
 	MoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.MoveNLSInfoboxBlockInput) (*gqlmodel.MoveNLSInfoboxBlockPayload, error)
 	RemoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.RemoveNLSInfoboxBlockInput) (*gqlmodel.RemoveNLSInfoboxBlockPayload, error)
+	DuplicateNLSLayer(ctx context.Context, input gqlmodel.DuplicateNLSLayerInput) (*gqlmodel.DuplicateNLSLayerPayload, error)
 	InstallPlugin(ctx context.Context, input gqlmodel.InstallPluginInput) (*gqlmodel.InstallPluginPayload, error)
 	UninstallPlugin(ctx context.Context, input gqlmodel.UninstallPluginInput) (*gqlmodel.UninstallPluginPayload, error)
 	UploadPlugin(ctx context.Context, input gqlmodel.UploadPluginInput) (*gqlmodel.UploadPluginPayload, error)
@@ -1510,6 +1521,7 @@ type MutationResolver interface {
 	AddStyle(ctx context.Context, input gqlmodel.AddStyleInput) (*gqlmodel.AddStylePayload, error)
 	UpdateStyle(ctx context.Context, input gqlmodel.UpdateStyleInput) (*gqlmodel.UpdateStylePayload, error)
 	RemoveStyle(ctx context.Context, input gqlmodel.RemoveStyleInput) (*gqlmodel.RemoveStylePayload, error)
+	DuplicateStyle(ctx context.Context, input gqlmodel.DuplicateStyleInput) (*gqlmodel.DuplicateStylePayload, error)
 	CreateTagItem(ctx context.Context, input gqlmodel.CreateTagItemInput) (*gqlmodel.CreateTagItemPayload, error)
 	CreateTagGroup(ctx context.Context, input gqlmodel.CreateTagGroupInput) (*gqlmodel.CreateTagGroupPayload, error)
 	AttachTagItemToGroup(ctx context.Context, input gqlmodel.AttachTagItemToGroupInput) (*gqlmodel.AttachTagItemToGroupPayload, error)
@@ -2473,6 +2485,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DetachTagItemFromGroupPayload.Tag(childComplexity), true
+
+	case "DuplicateNLSLayerPayload.layer":
+		if e.complexity.DuplicateNLSLayerPayload.Layer == nil {
+			break
+		}
+
+		return e.complexity.DuplicateNLSLayerPayload.Layer(childComplexity), true
+
+	case "DuplicateStylePayload.style":
+		if e.complexity.DuplicateStylePayload.Style == nil {
+			break
+		}
+
+		return e.complexity.DuplicateStylePayload.Style(childComplexity), true
 
 	case "ImportDatasetPayload.datasetSchema":
 		if e.complexity.ImportDatasetPayload.DatasetSchema == nil {
@@ -4064,6 +4090,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DetachTagItemFromGroup(childComplexity, args["input"].(gqlmodel.DetachTagItemFromGroupInput)), true
 
+	case "Mutation.duplicateNLSLayer":
+		if e.complexity.Mutation.DuplicateNLSLayer == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_duplicateNLSLayer_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DuplicateNLSLayer(childComplexity, args["input"].(gqlmodel.DuplicateNLSLayerInput)), true
+
 	case "Mutation.duplicateStoryPage":
 		if e.complexity.Mutation.DuplicateStoryPage == nil {
 			break
@@ -4075,6 +4113,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DuplicateStoryPage(childComplexity, args["input"].(gqlmodel.DuplicateStoryPageInput)), true
+
+	case "Mutation.duplicateStyle":
+		if e.complexity.Mutation.DuplicateStyle == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_duplicateStyle_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DuplicateStyle(childComplexity, args["input"].(gqlmodel.DuplicateStyleInput)), true
 
 	case "Mutation.importDataset":
 		if e.complexity.Mutation.ImportDataset == nil {
@@ -7813,7 +7863,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDeleteTeamInput,
 		ec.unmarshalInputDetachTagFromLayerInput,
 		ec.unmarshalInputDetachTagItemFromGroupInput,
+		ec.unmarshalInputDuplicateNLSLayerInput,
 		ec.unmarshalInputDuplicateStoryPageInput,
+		ec.unmarshalInputDuplicateStyleInput,
 		ec.unmarshalInputImportDatasetFromGoogleSheetInput,
 		ec.unmarshalInputImportDatasetInput,
 		ec.unmarshalInputImportLayerInput,
@@ -8759,6 +8811,10 @@ input RemoveNLSInfoboxBlockInput {
   infoboxBlockId: ID!
 }
 
+input DuplicateNLSLayerInput {
+    layerId: ID!
+}
+
 # Payload
 
 type AddNLSLayerSimplePayload {
@@ -8797,6 +8853,10 @@ type RemoveNLSInfoboxBlockPayload {
   layer: NLSLayer!
 }
 
+type DuplicateNLSLayerPayload {
+    layer: NLSLayer!
+}
+
 extend type Mutation {
   addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
   removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
@@ -8810,6 +8870,7 @@ extend type Mutation {
   removeNLSInfoboxBlock(
     input: RemoveNLSInfoboxBlockInput!
   ): RemoveNLSInfoboxBlockPayload
+  duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
 }`, BuiltIn: false},
 	{Name: "../../../gql/plugin.graphql", Input: `type Plugin {
   id: ID!
@@ -9675,6 +9736,10 @@ input RemoveStyleInput {
   styleId: ID!
 }
 
+input DuplicateStyleInput {
+  styleId: ID!
+}
+
 # Payload
 
 type AddStylePayload {
@@ -9689,12 +9754,17 @@ type RemoveStylePayload {
   styleId: ID!
 }
 
+type DuplicateStylePayload {
+  style: Style!
+}
+
 #extend type Query{ }
 
 extend type Mutation {
   addStyle(input: AddStyleInput!): AddStylePayload
   updateStyle(input: UpdateStyleInput!): UpdateStylePayload
   removeStyle(input: RemoveStyleInput!): RemoveStylePayload
+  duplicateStyle(input: DuplicateStyleInput!): DuplicateStylePayload
 }
 `, BuiltIn: false},
 	{Name: "../../../gql/tag.graphql", Input: `interface Tag {
@@ -10671,6 +10741,21 @@ func (ec *executionContext) field_Mutation_detachTagItemFromGroup_args(ctx conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_duplicateNLSLayer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.DuplicateNLSLayerInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNDuplicateNLSLayerInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateNLSLayerInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_duplicateStoryPage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -10678,6 +10763,21 @@ func (ec *executionContext) field_Mutation_duplicateStoryPage_args(ctx context.C
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNDuplicateStoryPageInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStoryPageInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_duplicateStyle_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.DuplicateStyleInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNDuplicateStyleInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStyleInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -18166,6 +18266,106 @@ func (ec *executionContext) fieldContext_DetachTagItemFromGroupPayload_tag(ctx c
 				return ec.fieldContext_TagGroup_layers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TagGroup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DuplicateNLSLayerPayload_layer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DuplicateNLSLayerPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DuplicateNLSLayerPayload_layer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Layer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.NLSLayer)
+	fc.Result = res
+	return ec.marshalNNLSLayer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNLSLayer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DuplicateNLSLayerPayload_layer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DuplicateNLSLayerPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DuplicateStylePayload_style(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DuplicateStylePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DuplicateStylePayload_style(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Style, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Style)
+	fc.Result = res
+	return ec.marshalNStyle2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStyle(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DuplicateStylePayload_style(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DuplicateStylePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Style_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Style_name(ctx, field)
+			case "value":
+				return ec.fieldContext_Style_value(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_Style_sceneId(ctx, field)
+			case "scene":
+				return ec.fieldContext_Style_scene(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
 		},
 	}
 	return fc, nil
@@ -29420,6 +29620,65 @@ func (ec *executionContext) fieldContext_Mutation_removeNLSInfoboxBlock(ctx cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_duplicateNLSLayer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_duplicateNLSLayer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DuplicateNLSLayer(rctx, fc.Args["input"].(gqlmodel.DuplicateNLSLayerInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DuplicateNLSLayerPayload)
+	fc.Result = res
+	return ec.marshalNDuplicateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateNLSLayerPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_duplicateNLSLayer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "layer":
+				return ec.fieldContext_DuplicateNLSLayerPayload_layer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DuplicateNLSLayerPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_duplicateNLSLayer_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_installPlugin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_installPlugin(ctx, field)
 	if err != nil {
@@ -31539,6 +31798,62 @@ func (ec *executionContext) fieldContext_Mutation_removeStyle(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_removeStyle_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_duplicateStyle(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_duplicateStyle(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DuplicateStyle(rctx, fc.Args["input"].(gqlmodel.DuplicateStyleInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DuplicateStylePayload)
+	fc.Result = res
+	return ec.marshalODuplicateStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStylePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_duplicateStyle(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "style":
+				return ec.fieldContext_DuplicateStylePayload_style(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DuplicateStylePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_duplicateStyle_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -57067,6 +57382,33 @@ func (ec *executionContext) unmarshalInputDetachTagItemFromGroupInput(ctx contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDuplicateNLSLayerInput(ctx context.Context, obj interface{}) (gqlmodel.DuplicateNLSLayerInput, error) {
+	var it gqlmodel.DuplicateNLSLayerInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"layerId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDuplicateStoryPageInput(ctx context.Context, obj interface{}) (gqlmodel.DuplicateStoryPageInput, error) {
 	var it gqlmodel.DuplicateStoryPageInput
 	asMap := map[string]interface{}{}
@@ -57102,6 +57444,33 @@ func (ec *executionContext) unmarshalInputDuplicateStoryPageInput(ctx context.Co
 				return it, err
 			}
 			it.PageID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDuplicateStyleInput(ctx context.Context, obj interface{}) (gqlmodel.DuplicateStyleInput, error) {
+	var it gqlmodel.DuplicateStyleInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"styleId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "styleId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("styleId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StyleID = data
 		}
 	}
 
@@ -62249,6 +62618,84 @@ func (ec *executionContext) _DetachTagItemFromGroupPayload(ctx context.Context, 
 	return out
 }
 
+var duplicateNLSLayerPayloadImplementors = []string{"DuplicateNLSLayerPayload"}
+
+func (ec *executionContext) _DuplicateNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DuplicateNLSLayerPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, duplicateNLSLayerPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DuplicateNLSLayerPayload")
+		case "layer":
+			out.Values[i] = ec._DuplicateNLSLayerPayload_layer(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var duplicateStylePayloadImplementors = []string{"DuplicateStylePayload"}
+
+func (ec *executionContext) _DuplicateStylePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DuplicateStylePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, duplicateStylePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DuplicateStylePayload")
+		case "style":
+			out.Values[i] = ec._DuplicateStylePayload_style(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var importDatasetPayloadImplementors = []string{"ImportDatasetPayload"}
 
 func (ec *executionContext) _ImportDatasetPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ImportDatasetPayload) graphql.Marshaler {
@@ -65702,6 +66149,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_removeNLSInfoboxBlock(ctx, field)
 			})
+		case "duplicateNLSLayer":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_duplicateNLSLayer(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "installPlugin":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_installPlugin(ctx, field)
@@ -65890,6 +66344,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "removeStyle":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_removeStyle(ctx, field)
+			})
+		case "duplicateStyle":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_duplicateStyle(ctx, field)
 			})
 		case "createTagItem":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -74111,8 +74569,32 @@ func (ec *executionContext) unmarshalNDetachTagItemFromGroupInput2githubᚗcom�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNDuplicateNLSLayerInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateNLSLayerInput(ctx context.Context, v interface{}) (gqlmodel.DuplicateNLSLayerInput, error) {
+	res, err := ec.unmarshalInputDuplicateNLSLayerInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDuplicateNLSLayerPayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DuplicateNLSLayerPayload) graphql.Marshaler {
+	return ec._DuplicateNLSLayerPayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDuplicateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateNLSLayerPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DuplicateNLSLayerPayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DuplicateNLSLayerPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNDuplicateStoryPageInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStoryPageInput(ctx context.Context, v interface{}) (gqlmodel.DuplicateStoryPageInput, error) {
 	res, err := ec.unmarshalInputDuplicateStoryPageInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDuplicateStyleInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStyleInput(ctx context.Context, v interface{}) (gqlmodel.DuplicateStyleInput, error) {
+	res, err := ec.unmarshalInputDuplicateStyleInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -77248,6 +77730,13 @@ func (ec *executionContext) marshalODetachTagItemFromGroupPayload2ᚖgithubᚗco
 		return graphql.Null
 	}
 	return ec._DetachTagItemFromGroupPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalODuplicateStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStylePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DuplicateStylePayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DuplicateStylePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOFileSize2ᚖint64(ctx context.Context, v interface{}) (*int64, error) {
