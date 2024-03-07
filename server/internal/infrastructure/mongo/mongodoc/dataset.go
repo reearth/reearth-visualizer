@@ -171,7 +171,19 @@ func toModelDatasetValue(v interface{}, t string) *dataset.Value {
 		return nil
 	}
 	if v2, ok := v.(bson.D); ok {
-		v = v2.Map()
+		bsonBytes, err := bson.Marshal(v2)
+		if err != nil {
+			return nil
+		}
+
+		var vM bson.M
+		err = bson.Unmarshal(bsonBytes, &vM)
+		if err != nil {
+			return nil
+		}
+
+		v = vM
 	}
+
 	return dataset.ValueType(t).ValueFrom(v)
 }
