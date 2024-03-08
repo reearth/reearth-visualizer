@@ -187,11 +187,3 @@ func toModelDatasetValue(v interface{}, t string) *dataset.Value {
 
 	return dataset.ValueType(t).ValueFrom(v)
 }
-
-func dToM(d bson.D) bson.M {
-	m := bson.M{}
-	for _, e := range d {
-		m[e.Key] = e.Value
-	}
-	return m
-}
