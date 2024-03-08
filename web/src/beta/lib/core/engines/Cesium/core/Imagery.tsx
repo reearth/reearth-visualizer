@@ -24,6 +24,7 @@ export type Tile = {
   tile_type?: string;
   tile_opacity?: number;
   tile_zoomLevel?: number[];
+  tile_zoomLevelForURL?: number[];
   heatmap?: boolean;
 };
 
@@ -50,13 +51,13 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
     <>
       {tiles
         ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
-        .map(({ id, tile_opacity: opacity, tile_zoomLevel, tile_type, provider, heatmap }, i) =>
+        .map(({ id, tile_opacity: opacity, tile_zoomLevel, provider, heatmap }, i) =>
           provider ? (
             <ImageryLayer
               key={`${id}_${i}_${counter.current}`}
               imageryProvider={provider}
-              minimumTerrainLevel={tile_type !== "url" ? tile_zoomLevel?.[0] : undefined}
-              maximumTerrainLevel={tile_type !== "url" ? tile_zoomLevel?.[1] : undefined}
+              minimumTerrainLevel={tile_zoomLevel?.[0]}
+              maximumTerrainLevel={tile_zoomLevel?.[1]}
               alpha={opacity}
               index={i}
               colorToAlpha={heatmap ? Color.WHITE : undefined}
@@ -94,7 +95,7 @@ export function useImageryProviders({
         url: t.tile_url,
         cesiumIonAccessToken: ciat,
         heatmap: t.heatmap,
-        tile_zoomLevel: t.tile_zoomLevel,
+        tile_zoomLevel: t.tile_zoomLevelForURL,
       }),
     [presets],
   );
