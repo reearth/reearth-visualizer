@@ -42,21 +42,21 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("mongo error: %+v\n", err)
 	}
 
-	accountUsers := make([]accountrepo.User, 0, len(conf.DB_Users))
-	for _, u := range conf.DB_Users {
-		c, err := mongo.Connect(ctx, options.Client().ApplyURI(u.URI).SetMonitor(otelmongo.NewMonitor()))
-		if err != nil {
-			log.Fatalf("mongo error: %+v\n", err)
-		}
-		accountUsers = append(accountUsers, accountmongo.NewUserWithHost(mongox.NewClient("reearth_account", c), u.Name))
-	}
-
 	// repos
 	accountDatabase := conf.DB_Account
 	accountRepoCompat := false
 	if accountDatabase == "" {
 		accountDatabase = databaseName
 		accountRepoCompat = true
+	}
+
+	accountUsers := make([]accountrepo.User, 0, len(conf.DB_Users))
+	for _, u := range conf.DB_Users {
+		c, err := mongo.Connect(ctx, options.Client().ApplyURI(u.URI).SetMonitor(otelmongo.NewMonitor()))
+		if err != nil {
+			log.Fatalf("mongo error: %+v\n", err)
+		}
+		accountUsers = append(accountUsers, accountmongo.NewUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
 	}
 
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
