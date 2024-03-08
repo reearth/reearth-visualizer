@@ -352,6 +352,7 @@ export type SceneProperty = {
     tile_type?: string;
     tile_url?: string;
     tile_zoomLevel?: number[];
+    tile_zoomLevelForURL?: number[];
     tile_opacity?: number;
     heatmap?: boolean;
   }[];
