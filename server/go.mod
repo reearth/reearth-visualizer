@@ -25,7 +25,7 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.15.0
-	github.com/reearth/reearthx v0.0.0-20240229141256-04bd46953fe6
+	github.com/reearth/reearthx v0.0.0-20240308140749-72a08570c19b
 	github.com/samber/lo v1.39.0
 	github.com/spf13/afero v1.11.0
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
@@ -170,4 +170,6 @@ require (
 	moul.io/http2curl v1.0.1-0.20190925090545-5cd742060b0e // indirect
 )
 
-go 1.20
+go 1.21
+
+toolchain go1.21.0
