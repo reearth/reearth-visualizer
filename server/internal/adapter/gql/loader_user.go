@@ -43,7 +43,7 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 		return nil, err
 	}
 
-	return gqlmodel.SimpleToUser(res), nil
+	return gqlmodel.ToUserFromSimple(res), nil
 }
 
 // data loader

@@ -15,6 +15,9 @@ import {
   Primitive,
   GroundPrimitive,
   ShadowMap,
+  ImageryLayer,
+  Scene,
+  Math as CesiumMath,
 } from "cesium";
 import CesiumDnD, { Context } from "cesium-dnd";
 import { isEqual } from "lodash-es";
@@ -35,6 +38,7 @@ import type {
   MouseEventProps,
   MouseEvents,
   LayerEditEvent,
+  LayerVisibilityEvent,
 } from "..";
 import { FEATURE_FLAGS } from "../../Crust";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
@@ -74,12 +78,14 @@ export default ({
   requestingRenderMode,
   shouldRender,
   timelineManagerRef,
+  cameraForceHorizontalRoll = false,
   onLayerSelect,
   onCameraChange,
   onLayerDrag,
   onLayerDrop,
   onLayerEdit,
   onMount,
+  onLayerVisibility,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -97,6 +103,7 @@ export default ({
   requestingRenderMode?: React.MutableRefObject<RequestingRenderMode>;
   shouldRender?: boolean;
   timelineManagerRef?: TimelineManagerRef;
+  cameraForceHorizontalRoll?: boolean;
   onLayerSelect?: (
     layerId?: string,
     featureId?: string,
@@ -112,6 +119,7 @@ export default ({
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
   onMount?: () => void;
+  onLayerVisibility?: (e: LayerVisibilityEvent) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -333,7 +341,12 @@ export default ({
   }, [camera, engineAPI]);
 
   const prevSelectedEntity = useRef<
-    Entity | Cesium3DTileset | InternalCesium3DTileFeature | Primitive | GroundPrimitive
+    | Entity
+    | Cesium3DTileset
+    | InternalCesium3DTileFeature
+    | Primitive
+    | GroundPrimitive
+    | ImageryLayer
   >();
   // manage layer selection
   useEffect(() => {
@@ -653,6 +666,8 @@ export default ({
                 return;
               }
 
+              const tag = getTag(f.imageryLayer);
+
               const pos = f.position;
               if (pos) {
                 // NOTE: Instantiate temporal Cesium.Entity to display indicator.
@@ -668,7 +683,6 @@ export default ({
                 });
               }
 
-              const tag = getTag(f.imageryLayer);
               const layer = tag?.layerId
                 ? layersRef?.current?.overriddenLayers().find(l => l.id === tag.layerId) ??
                   layersRef?.current?.findById(tag.layerId)
@@ -794,13 +808,14 @@ export default ({
       flyTo: engineAPI.flyTo,
       getCamera: engineAPI.getCamera,
       onLayerEdit,
+      onLayerVisibility,
       requestRender: engineAPI.requestRender,
       getSurfaceDistance: engineAPI.getSurfaceDistance,
       toXYZ: engineAPI.toXYZ,
       toWindowPosition: engineAPI.toWindowPosition,
       isPositionVisible: engineAPI.isPositionVisible,
     }),
-    [selectionReason, engineAPI, onLayerEdit, timelineManagerRef],
+    [selectionReason, engineAPI, onLayerEdit, onLayerVisibility, timelineManagerRef],
   );
 
   useEffect(() => {
@@ -905,6 +920,28 @@ export default ({
       }
     }
   }, [globe, property?.render?.showWireframe]);
+
+  const onPreRenderCallback = useCallback(
+    (scene: Scene) => {
+      if (!scene.camera || !cameraForceHorizontalRoll) return;
+      if (Math.abs(CesiumMath.negativePiToPi(scene.camera.roll)) > Math.PI / 86400) {
+        scene.camera.setView({
+          orientation: {
+            heading: scene.camera.heading,
+            pitch: scene.camera.pitch,
+            roll: 0,
+          },
+        });
+      }
+    },
+    [cameraForceHorizontalRoll],
+  );
+
+  useEffect(() => {
+    const viewer = cesium.current?.cesiumElement;
+    if (!viewer) return;
+    return viewer.scene.preRender.addEventListener(onPreRenderCallback);
+  }, [onPreRenderCallback]);
 
   return {
     backgroundColor,

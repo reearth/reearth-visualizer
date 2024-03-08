@@ -1,4 +1,9 @@
-import { Color, ImageryProvider } from "cesium";
+import {
+  Color,
+  ImageryProvider,
+  TextureMagnificationFilter,
+  TextureMinificationFilter,
+} from "cesium";
 import { isEqual } from "lodash-es";
 import { useCallback, useMemo, useRef, useLayoutEffect } from "react";
 import { ImageryLayer } from "resium";
@@ -19,6 +24,7 @@ export type Tile = {
   tile_type?: string;
   tile_opacity?: number;
   tile_zoomLevel?: number[];
+  tile_zoomLevelForURL?: number[];
   heatmap?: boolean;
 };
 
@@ -56,6 +62,8 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
               index={i}
               colorToAlpha={heatmap ? Color.WHITE : undefined}
               colorToAlphaThreshold={heatmap ? 1 : undefined}
+              magnificationFilter={heatmap ? TextureMagnificationFilter.LINEAR : undefined}
+              minificationFilter={heatmap ? TextureMinificationFilter.NEAREST : undefined}
             />
           ) : null,
         )}
@@ -76,12 +84,19 @@ export function useImageryProviders({
     [key: string]: (opts?: {
       url?: string;
       cesiumIonAccessToken?: string;
+      heatmap?: boolean;
+      tile_zoomLevel?: number[];
     }) => ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
     (t: Tile, ciat?: string) =>
-      presets[t.tile_type || "default"]({ url: t.tile_url, cesiumIonAccessToken: ciat }),
+      presets[t.tile_type || "default"]({
+        url: t.tile_url,
+        cesiumIonAccessToken: ciat,
+        heatmap: t.heatmap,
+        tile_zoomLevel: t.tile_zoomLevelForURL,
+      }),
     [presets],
   );
 

@@ -153,10 +153,19 @@ func TestList_Remove(t *testing.T) {
 		},
 		{
 			name: "nil_list: return nothing",
+			list: nil,
 			args: args{
 				cluster: c1.ID(),
 			},
 			want: nil,
+		},
+		{
+			name: "empty list: should remove nothing",
+			list: NewClusterListFrom([]*Cluster{}),
+			args: args{
+				cluster: c1.ID(),
+			},
+			want: NewClusterListFrom([]*Cluster{}),
 		},
 	}
 
@@ -219,6 +228,41 @@ func TestClusterList_Get(t *testing.T) {
 			t.Parallel()
 			got := tc.list.Get(tc.args.cid)
 			assert.Equal(t, tc.want, got)
+		})
+	}
+}
+
+func TestClusterList_Properties(t *testing.T) {
+	c1, _ := NewCluster(NewClusterID(), "xxx", NewPropertyID())
+	c2, _ := NewCluster(NewClusterID(), "yyy", NewPropertyID())
+
+	tests := []struct {
+		name string
+		list *ClusterList
+		want []PropertyID
+	}{
+		{
+			name: "should return properties",
+			list: NewClusterListFrom([]*Cluster{c1, c2}),
+			want: []PropertyID{c1.property, c2.property},
+		},
+		{
+			name: "nil_list: should return nil",
+			list: nil,
+			want: nil,
+		},
+		{
+			name: "empty_list: should return empty",
+			list: NewClusterListFrom([]*Cluster{}),
+			want: []PropertyID{},
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tc.want, tc.list.Properties())
 		})
 	}
 }

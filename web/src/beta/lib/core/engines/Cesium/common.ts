@@ -33,6 +33,8 @@ import {
   SceneMode,
   Cesium3DTileColorBlendMode,
   Plane,
+  CameraEventType,
+  KeyboardEventModifier,
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -42,7 +44,16 @@ import { tweenInterval } from "@reearth/beta/utils/raf";
 import { LatLngHeight } from "@reearth/beta/utils/value";
 
 import type { Camera, Clock } from "..";
-import type { CameraOptions, FlyToDestination } from "../../types";
+import type {
+  CameraOptions,
+  FlyToDestination,
+  ModifiedCameraEventType,
+  OverideCameraEventType,
+  OverideKeyboardEventModifier,
+  ScreenSpaceCameraControllerOptions,
+} from "../../types";
+
+import { DEFAULT_SCREEN_SPACE_CAMERA_ASSIGNMENTS } from "./constants";
 
 export const layerIdField = `__reearth_layer_id`;
 
@@ -560,6 +571,65 @@ export const heightReference = (
     }
   )[heightReference || ""]);
 
+export const getOverriddenScreenSpaceCameraOptions = (
+  options?: ScreenSpaceCameraControllerOptions,
+) => {
+  if (!options) return;
+  const cameraEventTypeMap = new Map<OverideCameraEventType, CameraEventType>([
+    ["left_drag", CameraEventType.LEFT_DRAG],
+    ["right_drag", CameraEventType.RIGHT_DRAG],
+    ["middle_drag", CameraEventType.MIDDLE_DRAG],
+    ["wheel", CameraEventType.WHEEL],
+    ["pinch", CameraEventType.PINCH],
+  ]);
+
+  const keyboardEventModifierMap = new Map<OverideKeyboardEventModifier, KeyboardEventModifier>([
+    ["ctrl", KeyboardEventModifier.CTRL],
+    ["shift", KeyboardEventModifier.SHIFT],
+    ["alt", KeyboardEventModifier.ALT],
+  ]);
+
+  const convertOptions = (
+    arr: (OverideCameraEventType | ModifiedCameraEventType)[] | undefined,
+  ) => {
+    if (!arr) return;
+    return arr.map((v: OverideCameraEventType | ModifiedCameraEventType) => {
+      if (typeof v === "string") {
+        return cameraEventTypeMap.get(v);
+      } else {
+        return {
+          eventType: cameraEventTypeMap.get(v.eventType),
+          modifier: keyboardEventModifierMap.get(v.modifier),
+        };
+      }
+    });
+  };
+
+  const translateEventTypes = convertOptions(options.translateEventTypes);
+  const zoomEventTypes = convertOptions(options.zoomEventTypes);
+  const rotateEventTypes = convertOptions(options.rotateEventTypes);
+  const tiltEventTypes = convertOptions(options.tiltEventTypes);
+  const lookEventTypes = convertOptions(options.lookEventTypes);
+
+  return {
+    ...DEFAULT_SCREEN_SPACE_CAMERA_ASSIGNMENTS,
+    ...(translateEventTypes && { translateEventTypes }),
+    ...(zoomEventTypes && { zoomEventTypes }),
+    ...(rotateEventTypes && { rotateEventTypes }),
+    ...(tiltEventTypes && { tiltEventTypes }),
+    ...(lookEventTypes && { lookEventTypes }),
+    ...(options.minimumZoomDistance !== undefined && {
+      minimumZoomDistance: options.minimumZoomDistance,
+    }),
+    ...(options.maximumZoomDistance !== undefined && {
+      maximumZoomDistance: options.maximumZoomDistance,
+    }),
+    ...(options.enableCollisionDetection !== undefined && {
+      enableCollisionDetection: options.enableCollisionDetection,
+    }),
+  };
+};
+
 export const classificationType = (
   classificationType?: ClassificationType,
 ): CesiumClassificationType | undefined =>
@@ -759,6 +829,8 @@ export async function sampleTerrainHeightFromCartesian(scene: Scene, translation
   }
   return await sampleTerrainHeight(scene, lng, lat);
 }
+
+export const isColor = (c?: string) => c?.match(/^#[A-Fa-f0-9]|^rgba?/);
 
 export const toColor = (c?: string) => {
   if (!c || typeof c !== "string") return undefined;

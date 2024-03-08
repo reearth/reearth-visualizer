@@ -78,6 +78,9 @@ export default function useHooks({
   const [defaultAppearance, updateDefaultAppearance] = useState<SketchAppearance | undefined>(
     PRESET_APPEARANCE,
   );
+  const createDataOnlyForPluginEnabledRef = useRef(false);
+  const allowRightClickToAbortEnabledRef = useRef(true);
+  const allowAutoResetInteractionModeRef = useRef(true);
 
   const [geometryOptions, setGeometryOptions] = useState<GeometryOptionsXYZ | null>(null);
   const [extrudedHeight, setExtrudedHeight] = useState(0);
@@ -97,6 +100,18 @@ export default function useHooks({
     updateDefaultAppearance(merge(cloneDeep(PRESET_APPEARANCE), appearance));
   }, []);
 
+  const createDataOnly = useCallback((dataOnly: boolean) => {
+    createDataOnlyForPluginEnabledRef.current = !!dataOnly;
+  }, []);
+
+  const allowRightClickToAbort = useCallback((allow: boolean) => {
+    allowRightClickToAbortEnabledRef.current = !!allow;
+  }, []);
+
+  const allowAutoResetInteractionMode = useCallback((allow: boolean) => {
+    allowAutoResetInteractionModeRef.current = !!allow;
+  }, []);
+
   const createFeature = useCallback(() => {
     const geoOptions = type === "marker" ? markerGeometryRef.current : geometryOptions;
     if (geoOptions == null) {
@@ -107,6 +122,7 @@ export default function useHooks({
       return null;
     }
     return feature(geometry, {
+      id: uuidv4(),
       type: geoOptions.type,
       positions: geoOptions.controlPoints,
       extrudedHeight,
@@ -133,7 +149,6 @@ export default function useHooks({
 
   const pluginSketchLayerCreate = useCallback(
     (feature: SketchFeature) => {
-      const featureId = uuidv4();
       const newLayer = layersRef.current?.add({
         type: "simple",
         data: {
@@ -141,12 +156,12 @@ export default function useHooks({
           isSketchLayer: true,
           value: {
             type: "FeatureCollection",
-            features: [{ ...feature, id: featureId }],
+            features: [{ ...feature, id: feature.properties.id }],
           },
         },
         ...defaultAppearance,
       });
-      return { layerId: newLayer?.id, featureId };
+      return { layerId: newLayer?.id, featureId: feature.properties.id };
     },
     [layersRef, defaultAppearance],
   );
@@ -154,7 +169,6 @@ export default function useHooks({
   const pluginSketchLayerFeatureAdd = useCallback(
     (layer: LazyLayer, feature: SketchFeature) => {
       if (layer.type !== "simple") return {};
-      const featureId = uuidv4();
       layersRef.current?.override(layer.id, {
         data: {
           ...layer.data,
@@ -163,12 +177,12 @@ export default function useHooks({
             type: "FeatureCollection",
             features: [
               ...((layer.computed?.layer as LayerSimple)?.data?.value?.features ?? []),
-              { ...feature, id: featureId },
+              { ...feature, id: feature.properties.id },
             ],
           },
         },
       });
-      return { layerId: layer.id, featureId };
+      return { layerId: layer.id, featureId: feature.properties.id };
     },
     [layersRef],
   );
@@ -201,33 +215,38 @@ export default function useHooks({
         onSketchFeatureCreate?.(feature);
         return;
       }
-      const selectedLayer = layersRef.current?.selectedLayer();
-      const { layerId, featureId } =
-        selectedLayer?.id?.length !== PLUGIN_LAYER_ID_LENGTH ||
-        selectedLayer.type !== "simple" ||
-        selectedLayer.computed?.layer.type !== "simple"
-          ? pluginSketchLayerCreate(feature)
-          : pluginSketchLayerFeatureAdd(selectedLayer, feature);
 
-      if (layerId && featureId) {
-        requestAnimationFrame(() => {
-          onLayerSelect?.(
-            layerId,
-            featureId,
-            layerId
-              ? () =>
-                  new Promise(resolve => {
-                    // Wait until computed feature is ready
-                    queueMicrotask(() => {
-                      resolve(layersRef.current?.findById?.(layerId)?.computed);
-                    });
-                  })
-              : undefined,
-            undefined,
-            undefined,
-          );
-        });
-        onPluginSketchFeatureCreated?.({ layerId, featureId });
+      if (!createDataOnlyForPluginEnabledRef.current) {
+        const selectedLayer = layersRef.current?.selectedLayer();
+        const { layerId, featureId } =
+          selectedLayer?.id?.length !== PLUGIN_LAYER_ID_LENGTH ||
+          selectedLayer.type !== "simple" ||
+          selectedLayer.computed?.layer.type !== "simple"
+            ? pluginSketchLayerCreate(feature)
+            : pluginSketchLayerFeatureAdd(selectedLayer, feature);
+
+        if (layerId && featureId) {
+          requestAnimationFrame(() => {
+            onLayerSelect?.(
+              layerId,
+              featureId,
+              layerId
+                ? () =>
+                    new Promise(resolve => {
+                      // Wait until computed feature is ready
+                      queueMicrotask(() => {
+                        resolve(layersRef.current?.findById?.(layerId)?.computed);
+                      });
+                    })
+                : undefined,
+              undefined,
+              undefined,
+            );
+          });
+          onPluginSketchFeatureCreated?.({ layerId, featureId, feature });
+        }
+      } else {
+        onPluginSketchFeatureCreated?.({ feature });
       }
     },
     [
@@ -452,6 +471,9 @@ export default function useHooks({
   );
 
   const handleRightClick = useCallback(() => {
+    if (!allowRightClickToAbortEnabledRef.current) {
+      return;
+    }
     if (type !== undefined) {
       updateType(undefined);
     }
@@ -552,15 +574,34 @@ export default function useHooks({
   }, [type, send, updateGeometryOptions]);
 
   useEffect(() => {
-    overrideInteractionMode?.(type ? "sketch" : "default");
+    if (type) {
+      overrideInteractionMode?.("sketch");
+    } else if (allowAutoResetInteractionModeRef.current) {
+      overrideInteractionMode?.("default");
+    }
+
     onSketchTypeChange?.(type, from);
   }, [type, from, overrideInteractionMode, onSketchTypeChange]);
 
-  useImperativeHandle(ref, () => ({ setType, setColor, setDefaultAppearance }), [
-    setType,
-    setColor,
-    setDefaultAppearance,
-  ]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      setType,
+      setColor,
+      setDefaultAppearance,
+      createDataOnly,
+      allowRightClickToAbort,
+      allowAutoResetInteractionMode,
+    }),
+    [
+      setType,
+      setColor,
+      setDefaultAppearance,
+      createDataOnly,
+      allowRightClickToAbort,
+      allowAutoResetInteractionMode,
+    ],
+  );
 
   return {
     state,

@@ -54,7 +54,7 @@ const NumberInput: React.FC<Props> = ({
 
   const handleValueChange = useCallback(
     (newValue: number | undefined) => {
-      if (!onChange || !isEditing.current) {
+      if (!onChange || isEditing.current === undefined) {
         return;
       }
 
@@ -80,7 +80,7 @@ const NumberInput: React.FC<Props> = ({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.currentTarget.value;
     const parsedValue = parseFloat(newValue);
-    if (!isNaN(parsedValue) || parsedValue === 0) {
+    if (!isNaN(parsedValue)) {
       setInnerValue(parsedValue);
     } else {
       setInnerValue(undefined);
@@ -93,12 +93,12 @@ const NumberInput: React.FC<Props> = ({
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        const value = parseFloat(e.currentTarget.value);
+        const newValue = parseFloat(e.currentTarget.value) ?? value;
 
-        handleValueChange(isNaN(value) ? undefined : value);
+        handleValueChange(isNaN(newValue) ? undefined : newValue);
       }
     },
-    [handleValueChange],
+    [value, handleValueChange],
   );
 
   const handleFocus = useCallback(() => {
@@ -107,11 +107,11 @@ const NumberInput: React.FC<Props> = ({
 
   const handleBlur = useCallback(
     (e: React.SyntheticEvent<HTMLInputElement>) => {
-      const newValue = parseFloat(e.currentTarget.value);
+      const newValue = parseFloat(e.currentTarget.value) ?? value;
       handleValueChange(newValue);
       isEditing.current = false;
     },
-    [handleValueChange],
+    [value, handleValueChange],
   );
 
   return (

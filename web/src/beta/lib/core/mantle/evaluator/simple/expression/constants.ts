@@ -37,6 +37,8 @@ export const binaryOperators = [
   "||",
   "!~",
   "=~",
+  "==",
+  "!=",
 ];
 
 export const backslashRegex = /\\/g;

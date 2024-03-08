@@ -25,6 +25,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   getLocationFromScreen: 1,
   sampleTerrainHeight: 1,
   computeGlobeHeight: 1,
+  getGlobeHeight: 1,
   toXYZ: 1,
   toLngLatHeight: 1,
   convertScreenToPositionOffset: 1,
@@ -34,6 +35,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   getViewport: 1,
   flyToBBox: 1,
   rotateOnCenter: 1,
+  overrideScreenSpaceController: 1,
   lookAt: 1,
   lookAtLayer: 1,
   lookHorizontal: 1,
@@ -85,6 +87,8 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   equalsEpsilon3d: 1,
   createGeometry: 1,
   setCursor: 1,
+  bringToFront: 1,
+  sendToBack: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -115,6 +119,9 @@ const sketchRefKeys: FunctionKeys<SketchRef> = {
   setType: 1,
   setColor: 1,
   setDefaultAppearance: 1,
+  createDataOnly: 1,
+  allowRightClickToAbort: 1,
+  allowAutoResetInteractionMode: 1,
 };
 
 export function mapRef({

@@ -17,7 +17,7 @@ func ToUser(u *user.User) *User {
 	}
 }
 
-func SimpleToUser(u *user.Simple) *User {
+func ToUserFromSimple(u *user.Simple) *User {
 	if u == nil {
 		return nil
 	}

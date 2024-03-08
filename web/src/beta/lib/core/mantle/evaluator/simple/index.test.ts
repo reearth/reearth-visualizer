@@ -565,3 +565,92 @@ test("startsWith function", () => {
     },
   });
 });
+
+test("Array equality with value", () => {
+  expect(
+    evalLayerAppearances(
+      {
+        marker: {
+          pointSize: 26,
+          pointColor: {
+            expression: '${NewHeight} == "something" ? ${HeightColor} : color("blue")',
+          },
+        },
+      },
+      {
+        id: "x",
+        type: "simple",
+        defines: {
+          NewHeight: "[1, 2, 3, 'something']",
+          HeightColor: "color('#FF2000')",
+        },
+      },
+      {
+        type: "feature",
+        id: "blah",
+        properties: {
+          bgColor: "#FF0000",
+          Height: 200,
+        },
+      },
+    ),
+  ).toEqual({
+    marker: {
+      pointColor: "#FF2000", // blue
+      pointSize: 26,
+    },
+  });
+});
+
+test("Conditions with JSONPath, strictly equal and JSONPath result, colon", async () => {
+  expect(
+    await evalLayerAppearances(
+      {
+        marker: {
+          pointColor: "#FF0000",
+          pointSize: {
+            expression: {
+              conditions: [
+                ["${$.phone:Numbers[:1].type} === 'iPhone'", "${$.age}"],
+                ["true", "1"],
+              ],
+            },
+          },
+        },
+      },
+      {
+        id: "x",
+        type: "simple",
+      },
+      {
+        type: "feature",
+        id: "blah",
+        properties: {
+          firstName: "John",
+          lastName: "doe",
+          age: 26,
+          address: {
+            streetAddress: "naist street",
+            city: "Nara",
+            postalCode: "630-0192",
+          },
+          "phone:Numbers": [
+            {
+              type: "iPhone",
+              number: "0123-4567-8888",
+            },
+            {
+              type: "home",
+              number: "0123-4567-8910",
+            },
+          ],
+        },
+      },
+    ),
+  ).toEqual({
+    marker: {
+      pointColor: "#FF0000",
+      pointSize: 26,
+    },
+  });
+});

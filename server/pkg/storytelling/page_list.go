@@ -1,6 +1,9 @@
 package storytelling
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/util"
+)
 
 type PageList struct {
 	pages []*Page
@@ -32,12 +35,7 @@ func (l *PageList) Page(id PageID) *Page {
 	if l == nil || l.pages == nil {
 		return nil
 	}
-	for _, page := range l.pages {
-		if page.Id() == id {
-			return page
-		}
-	}
-	return nil
+	return util.Get[PageID, Page](l.pages, (*Page).Id, id)
 }
 
 func (l *PageList) Move(id PageID, i int) {
@@ -64,24 +62,14 @@ func (l *PageList) Remove(id PageID) {
 	if l == nil || l.pages == nil {
 		return
 	}
-	for index, page := range l.pages {
-		if page.Id() == id {
-			l.pages = append(l.pages[:index], l.pages[index+1:]...)
-			return
-		}
-	}
+	l.pages = util.RemoveById[PageID, Page](l.pages, (*Page).Id, id)
 }
 
 func (l *PageList) IndexOf(id PageID) int {
 	if l == nil || l.pages == nil {
 		return -1
 	}
-	for index, page := range l.pages {
-		if page.Id() == id {
-			return index
-		}
-	}
-	return -1
+	return util.IndexOf[PageID, Page](l.pages, (*Page).Id, id)
 }
 
 func (l *PageList) Properties() id.PropertyIDList {

@@ -31,6 +31,7 @@ import type {
   LookAtDestination,
   Position2d,
   Position3d,
+  ScreenSpaceCameraControllerOptions,
 } from "../../types";
 import type {
   FeatureComponentType,
@@ -86,6 +87,7 @@ export type EngineRef = {
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  getGlobeHeight: () => void;
   toXYZ: (
     lng: number,
     lat: number,
@@ -142,6 +144,7 @@ export type EngineRef = {
     },
   ) => void;
   rotateOnCenter: (radian: number) => void;
+  overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
   lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
@@ -175,6 +178,8 @@ export type EngineRef = {
   tickEventCallback?: RefObject<TickEventCallback[]>;
   removeTickEventListener: TickEvent;
   findFeatureById: (layerId: string, featureId: string) => Feature | undefined;
+  bringToFront: (layerId: string) => void;
+  sendToBack: (layerId: string) => void;
   findFeaturesByIds: (layerId: string, featureId: string[]) => Feature[] | undefined;
   findComputedFeatureById: (layerId: string, featureId: string) => ComputedFeature | undefined;
   findComputedFeaturesByIds: (
@@ -199,6 +204,7 @@ export type EngineProps = {
   isBuilt?: boolean;
   property?: SceneProperty;
   camera?: Camera;
+  cameraForceHorizontalRoll?: boolean;
   small?: boolean;
   children?: ReactNode;
   ready?: boolean;
@@ -230,6 +236,7 @@ export type EngineProps = {
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
   onMount?: () => void;
+  onLayerVisibility?: (e: LayerVisibilityEvent) => void;
 };
 
 export type LayerEditEvent = {
@@ -241,6 +248,10 @@ export type LayerEditEvent = {
     location: LatLngHeight;
   };
   rotate?: { heading: number; pitch: number; roll: number };
+};
+
+export type LayerVisibilityEvent = {
+  layerId: string | undefined;
 };
 
 export type Clock = {
@@ -341,8 +352,14 @@ export type SceneProperty = {
     tile_type?: string;
     tile_url?: string;
     tile_zoomLevel?: number[];
+    tile_zoomLevelForURL?: number[];
     tile_opacity?: number;
     heatmap?: boolean;
+  }[];
+  tileLabels?: {
+    id: string;
+    labelType: "japan_gsi_optimal_bvmap"; // | "other_map"
+    style: Record<string, any>; // Function isn't allowed
   }[];
   terrain?: {
     terrain?: boolean;
@@ -499,4 +516,7 @@ export type SketchRef = {
   setType: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   setColor: (color: string) => void;
   setDefaultAppearance: (appearance: SketchAppearance) => void;
+  createDataOnly: (dataOnly: boolean) => void;
+  allowRightClickToAbort: (allow: boolean) => void;
+  allowAutoResetInteractionMode: (allow: boolean) => void;
 };

@@ -62,7 +62,7 @@ export default ({ value, onChange }: Params) => {
       setRgba(tinycolor(tempColor).toRgb());
       onChange(tempColor);
       setTempColor(undefined);
-    } else if (colorState != value && colorState) {
+    } else if (colorState != value) {
       onChange(colorState);
     }
     setOpen(false);
@@ -70,7 +70,7 @@ export default ({ value, onChange }: Params) => {
 
   const handleHexSave = useCallback(() => {
     const hexPattern = /^#?([a-fA-F0-9]{3,4}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/;
-    if (colorState && hexPattern.test(colorState)) {
+    if (!colorState || hexPattern.test(colorState)) {
       handleSave();
     } else {
       value && setColor(value);

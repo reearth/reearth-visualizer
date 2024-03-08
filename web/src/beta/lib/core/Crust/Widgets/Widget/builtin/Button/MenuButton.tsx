@@ -124,7 +124,7 @@ export default function MenuButton({
         onClick={b && handleClick(b)}
         ref={referenceElement}>
         {(b?.buttonStyle === "icon" || b?.buttonStyle === "texticon") && b?.buttonIcon && (
-          <Icon icon={b?.buttonIcon} size={20} />
+          <img src={b?.buttonIcon} width={20} height={20} />
         )}
         {b?.buttonStyle !== "icon" && (
           <Text

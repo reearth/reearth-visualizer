@@ -4,7 +4,7 @@ export type Props = {
   name?: string;
   description?: string;
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value?: string) => void;
 };
 
 export type RGBA = {
@@ -16,5 +16,5 @@ export type RGBA = {
 
 export type Params = {
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value?: string) => void;
 };

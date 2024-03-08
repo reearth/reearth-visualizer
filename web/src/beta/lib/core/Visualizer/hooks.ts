@@ -18,6 +18,7 @@ import type {
   LayerEditEvent,
   DefaultInfobox,
   CursorType,
+  LayerVisibilityEvent,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
@@ -246,6 +247,11 @@ export default function useHooks(
   // camera
   const [camera, changeCamera] = useValue(initialCamera, onCameraChange);
 
+  const [cameraForceHorizontalRoll, setCameraForceHorizontalRoll] = useState(false);
+  const handleCameraForceHorizontalRollChange = useCallback((enable?: boolean) => {
+    setCameraForceHorizontalRoll(!!enable);
+  }, []);
+
   // interaction mode
   const [_interactionMode, changeInteractionMode] = useValue(
     initialInteractionMode,
@@ -274,6 +280,15 @@ export default function useHooks(
   }, []);
   const handleLayerEdit = useCallback((e: LayerEditEvent) => {
     onLayerEditRef.current?.(e);
+  }, []);
+
+  // layer visiblity
+  const onLayerVisibilityRef = useRef<(e: LayerVisibilityEvent) => void>();
+  const onLayerVisibility = useCallback((cb: (e: LayerVisibilityEvent) => void) => {
+    onLayerVisibilityRef.current = cb;
+  }, []);
+  const handleLayerVisibility = useCallback((e: LayerVisibilityEvent) => {
+    onLayerVisibilityRef.current?.(e);
   }, []);
 
   // plugin sketch feature events
@@ -353,6 +368,8 @@ export default function useHooks(
     shouldRender,
     timelineManagerRef,
     cursor,
+    cameraForceHorizontalRoll,
+    handleCameraForceHorizontalRollChange,
     handleLayerSelect,
     handleBlockSelect: selectBlock,
     handleCameraChange: changeCamera,
@@ -367,6 +384,8 @@ export default function useHooks(
     handlePluginSketchFeatureCreated,
     onSketchTypeChange,
     handleSketchTypeChange,
+    onLayerVisibility,
+    handleLayerVisibility,
   };
 }
 

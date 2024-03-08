@@ -33,6 +33,8 @@ test("simple", () => {
     onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
     evalFeature: expect.any(Function),
+    properties: undefined,
+    selectedFeatureId: undefined,
   });
   expect(Feature.mock.calls[1][0]).toEqual({
     isHidden: false,
@@ -51,6 +53,8 @@ test("simple", () => {
     onComputedFeatureDelete: expect.any(Function),
     onFeatureRequest: expect.any(Function),
     evalFeature: expect.any(Function),
+    properties: undefined,
+    selectedFeatureId: undefined,
   });
 
   Feature.mockClear();

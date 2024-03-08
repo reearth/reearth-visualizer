@@ -853,6 +853,9 @@ type MoveStoryPayload struct {
 	Stories []*Story `json:"stories"`
 }
 
+type Mutation struct {
+}
+
 type NLSLayerGroup struct {
 	ID          ID         `json:"id"`
 	LayerType   string     `json:"layerType"`
@@ -1180,6 +1183,9 @@ type PublishStoryInput struct {
 	StoryID ID                `json:"storyId"`
 	Alias   *string           `json:"alias,omitempty"`
 	Status  PublishmentStatus `json:"status"`
+}
+
+type Query struct {
 }
 
 type Rect struct {

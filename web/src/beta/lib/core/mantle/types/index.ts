@@ -88,6 +88,9 @@ export type Data = {
     noHeader?: boolean;
     disableTypeConversion?: boolean;
   };
+  geojson?: {
+    useAsResource?: boolean;
+  };
 };
 
 export type DataRange = {
