@@ -12,10 +12,10 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 	}
 
 	return &NLSLayerSimple{
-		ID:      IDFrom(l.ID()),
-		SceneID: IDFrom(l.Scene()),
-		Title:   l.Title(),
-		Visible: l.IsVisible(),
+		ID:        IDFrom(l.ID()),
+		SceneID:   IDFrom(l.Scene()),
+		Title:     l.Title(),
+		Visible:   l.IsVisible(),
 		Infobox:   ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
 		LayerType: string(l.LayerType()),
 		Config:    JSON(*l.Config()),

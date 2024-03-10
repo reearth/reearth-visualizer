@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/samber/lo"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/samber/lo"
 )
 
 func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpexpect.Value, string) {
@@ -311,36 +311,35 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 	return requestBody, res, res.Path("$.data.createNLSInfobox.layer.infobox.id").Raw().(string)
 }
 
-func removeNLSInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
-	requestBody := GraphQLRequest{
-		OperationName: "removeNLSInfobox",
-		Query: `mutation removeNLSInfobox($layerId: ID!) {
-			removeNLSInfobox( input: { layerId: $layerId} ) { 
-				layer {
-					id
-					infobox {
-						id
-					}
-				}
-			}
-		}`,
-		Variables: map[string]any{
-			"layerId": layerId,
-		},
-	}
+// func removeNLSInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+// 	requestBody := GraphQLRequest{
+// 		OperationName: "removeNLSInfobox",
+// 		Query: `mutation removeNLSInfobox($layerId: ID!) {
+// 			removeNLSInfobox( input: { layerId: $layerId} ) {
+// 				layer {
+// 					id
+// 					infobox {
+// 						id
+// 					}
+// 				}
+// 			}
+// 		}`,
+// 		Variables: map[string]any{
+// 			"layerId": layerId,
+// 		},
+// 	}
 
-	res := e.POST("/api/graphql").
-		WithHeader("Origin", "https://example.com").
-		WithHeader("X-Reearth-Debug-User", uID.String()).
-		WithHeader("Content-Type", "application/json").
-		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+// 	res := e.POST("/api/graphql").
+// 		WithHeader("Origin", "https://example.com").
+// 		WithHeader("X-Reearth-Debug-User", uID.String()).
+// 		WithHeader("Content-Type", "application/json").
+// 		WithJSON(requestBody).
+// 		Expect().
+// 		Status(http.StatusOK).
+// 		JSON()
 
-	return requestBody, res
-}
-
+// 	return requestBody, res
+// }
 
 func createInfoboxBlock(e *httpexpect.Expect, layerID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
@@ -455,9 +454,9 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 			}
 		}`,
 		Variables: map[string]any{
-			"layerId": layerId,
+			"layerId":        layerId,
 			"infoboxBlockId": infoboxBlockId,
-			"index":   index,
+			"index":          index,
 		},
 	}
 
@@ -475,7 +474,6 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 
 	return requestBody, res, res.Path("$.data.moveNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
-
 
 func TestInfoboxBlocksCRUD(t *testing.T) {
 
@@ -509,9 +507,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("newLayers").Array().
 		Length().Equal(1)
 
-    _, _, _ = createInfobox(e, layerId)
-
-
+	_, _, _ = createInfobox(e, layerId)
 	_, _, blockID1 := createInfoboxBlock(e, layerId, "reearth", "textBlock", nil)
 	_, _, blockID2 := createInfoboxBlock(e, layerId, "reearth", "propertyBlock", nil)
 
@@ -523,13 +519,13 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-	Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
 
 	_, _, blockID3 := createInfoboxBlock(e, layerId, "reearth", "imageblock", lo.ToPtr(1))
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
-	Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID3, blockID1})
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID3, blockID1})
 
 	removeInfoboxBlock(e, layerId, blockID1)
 	removeInfoboxBlock(e, layerId, blockID2)
