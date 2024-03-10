@@ -1810,6 +1810,39 @@ extensions:
               type: string
               title: HTML
               ui: multiline
+  - id: propertyBlock
+    name: Property List Block
+    type: block
+    description: Infobox property Block
+    groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: display_type
+          type: string
+          title: Type
+          defaultValue: rootProperties
+          description: Choose how you wish to show properties
+          choices:
+            - key: allProperties
+              label: All Properties
+            - key: rootProperties
+              label: Root Properties
+            - key: custom
+              label: Customize
+        - id: property_list
+          type: array
+          title: Property List
+          availableIf:
+            field: display_type
+            type: string
+            value: custom
   - id: menu
     type: widget
     name: Menu (legacy)
@@ -2580,3 +2613,46 @@ extensions:
     name: Next Page Button
     type: storyBlock
     description: Down button that will skip to next page.
+  - id: infobox-beta
+    name: Infobox Beta
+    type: infobox
+    description: Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: enableInfobox
+              type: bool
+              title: Enable Infobox
+              defaultValue: false
+            - id: infoboxPosition
+              type: string
+              title: Position
+              defaultValue: right
+              choices:
+                - key: right
+                  label: Right
+                - key: middle
+                  label: Middle
+                - key: left
+                  label: Left
+              availableIf:
+                field: enableInfobox
+                type: bool
+                value: true
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+              defaultValue: { top: 10, bottom: 10, left: 10, right: 10 }
+            - id: infoboxGap
+              type: number
+              title: Infobox Gap
+              min: 0
+              max: 40
+              suffix: px
+              description: "The gap between the top of the infobox. Min: 0  Max: 40"
+            

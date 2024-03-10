@@ -9,8 +9,13 @@ import (
 type ID = id.NLSLayerID
 type SceneID = id.SceneID
 type LayerID = id.LayerID
+type PropertyID = id.PropertyID
+type InfoboxBlockID = id.InfoboxBlockID
+type PluginID = id.PluginID
+type PluginExtensionID = id.PluginExtensionID
 
 var NewID = id.NewNLSLayerID
+var NewInfoboxBlockID = id.NewInfoboxBlockID
 
 var ErrInvalidID = id.ErrInvalidID
 

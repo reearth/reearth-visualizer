@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
+	"github.com/samber/lo"
 	"github.com/reearth/reearth/server/internal/app/config"
 )
 
@@ -273,4 +274,268 @@ func TestNLSLayerCRUD(t *testing.T) {
 
 	// Remove NLSLayer
 	_, _ = removeNLSLayer(e, layerId)
+}
+
+func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateNLSInfobox",
+		Query: `mutation CreateNLSInfobox($layerId: String) {
+			createNLSInfobox( input: {layerId: $layerId} ) { 
+				layer {
+					id
+					infobox
+				}
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId": layerId,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Value("data").Object().
+		Value("createNLSInfobox").Object().
+		Value("layer").Object().
+		Value("infobox").Object().
+		ValueEqual("layerId", layerId)
+
+	return requestBody, res, res.Path("$.data.createNLSInfobox.layer.infobox.id").Raw().(string)
+}
+
+func removeNLSInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "removeNLSInfobox",
+		Query: `mutation removeNLSInfobox($layerId: ID!) {
+			removeNLSInfobox( input: { layerId: $layerId} ) { 
+				layer {
+					id
+					infobox {
+						id
+					}
+				}
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId": layerId,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	return requestBody, res
+}
+
+
+func createInfoboxBlock(e *httpexpect.Expect, layerID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateNLSInfoboxBlock",
+		Query: `mutation CreateNLSInfoboxBlock($layerId: ID!, $pluginId: ID!, $extensionId: ID!, $index: Int ) {
+			createNLSInfoboxBlock( input: {layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index} ) { 
+				infoboxBlock {
+					id
+					blocks {
+						id
+					}
+				}
+				layer {
+					id
+					infobox {
+						id
+						blocks
+					}
+				}
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId":     layerID,
+			"pluginId":    pluginId,
+			"extensionId": extensionId,
+			"index":       idx,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Value("data").Object().
+		Value("createNLSInfoboxBlock").Object().
+		Value("layer").Object().
+		Value("infobox").Object().
+		Value("blocks").Array().NotEmpty()
+
+	return requestBody, res, res.Path("$.data.createNLSInfoboxBlock.infoboxBlock.id").Raw().(string)
+}
+
+func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "RemoveNLSInfoboxBlock",
+		Query: `mutation RemoveNLSInfoboxBlock($layerId: ID!, $infoboxBlockId: ID!) {
+			removeNLSInfoboxBlock( input: {layerId: $layerId , infoboxBlockId: $infoboxBlockId} ) { 
+				story {
+					id
+					pages {
+						id
+					}
+				}
+				page {
+					id
+					title
+					swipeable
+					blocks {
+						id
+					}
+				}
+				blockId
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId":        layerId,
+			"infoboxBlockId": infoboxBlockId,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Path("$.data.removeNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().NotContains(infoboxBlockId)
+
+	return requestBody, res, res.Path("$.data.removeNLSInfoboxBlock.infoboxBlockId").Raw().(string)
+}
+
+func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, index int) (GraphQLRequest, *httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "MoveNLSInfoboxBlock",
+		Query: `mutation MoveNLSInfoboxBlock($layerId: ID!, $infoboxBlockId: ID!, $index: Int!) {
+			moveNLSInfoboxBlock( input: {layerId: $layerId, infoboxBlockId: $infoboxBlockId, index: $index} ) { 
+				story {
+					id
+					pages {
+						id
+					}
+				}
+				page {
+					id
+					title
+					swipeable
+					blocks {
+						id
+					}
+				}
+				blockId
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId": layerId,
+			"infoboxBlockId": infoboxBlockId,
+			"index":   index,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	res.Object().
+		Path("$.data.moveNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().Contains(infoboxBlockId)
+
+	return requestBody, res, res.Path("$.data.moveNLSInfoboxBlock.infoboxBlockId").Raw().(string)
+}
+
+
+func TestInfoboxBlocksCRUD(t *testing.T) {
+
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	pId := createProject(e)
+	_, _, sId := createScene(e, pId)
+
+	// fetch scene
+	_, res := fetchSceneForNewLayers(e, sId)
+
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(0)
+
+	// Add NLSLayer
+	_, _, layerId := addNLSLayerSimple(e, sId)
+
+	_, res = fetchSceneForNewLayers(e, sId)
+
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(1)
+
+    _, _, _ = createInfobox(e, layerId)
+
+
+	_, _, blockID1 := createInfoboxBlock(e, layerId, "reearth", "textBlock", nil)
+	_, _, blockID2 := createInfoboxBlock(e, layerId, "reearth", "propertyBlock", nil)
+
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID1, blockID2})
+
+	_, _, _ = moveInfoboxBlock(e, layerId, blockID1, 1)
+
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+	Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
+
+	_, _, blockID3 := createInfoboxBlock(e, layerId, "reearth", "imageblock", lo.ToPtr(1))
+
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+	Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID3, blockID1})
+
+	removeInfoboxBlock(e, layerId, blockID1)
+	removeInfoboxBlock(e, layerId, blockID2)
+	removeInfoboxBlock(e, layerId, blockID3)
+
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
 }

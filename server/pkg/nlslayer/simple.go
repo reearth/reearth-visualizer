@@ -49,7 +49,7 @@ func (l *NLSLayerSimple) HasInfobox() bool {
 	return l.layerBase.infobox != nil
 }
 
-func (l *NLSLayerSimple) Infobox() *pl.Infobox {
+func (l *NLSLayerSimple) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
@@ -63,21 +63,11 @@ func (l *NLSLayerSimple) SetVisible(visible bool) {
 	l.layerBase.visible = visible
 }
 
-func (l *NLSLayerSimple) SetInfobox(infobox *pl.Infobox) {
+func (l *NLSLayerSimple) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
 	l.layerBase.infobox = infobox
-}
-
-func (l *NLSLayerSimple) Tags() *pl.TagList {
-	if l == nil {
-		return nil
-	}
-	if l.layerBase.tags == nil {
-		l.layerBase.tags = pl.NewTagList(nil)
-	}
-	return l.layerBase.tags
 }
 
 func (l *NLSLayerSimple) LayerRef() *NLSLayer {

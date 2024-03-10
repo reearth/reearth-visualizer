@@ -70,3 +70,104 @@ func (r *mutationResolver) UpdateNLSLayer(ctx context.Context, input gqlmodel.Up
 		Layer: gqlmodel.ToNLSLayer(layer, nil),
 	}, nil
 }
+
+func (r *mutationResolver) CreateNLSInfobox(ctx context.Context, input gqlmodel.CreateNLSInfoboxInput) (*gqlmodel.CreateNLSInfoboxPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.CreateNLSInfobox(ctx, lid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.CreateNLSInfoboxPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) RemoveNLSInfobox(ctx context.Context, input gqlmodel.RemoveNLSInfoboxInput) (*gqlmodel.RemoveNLSInfoboxPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.RemoveNLSInfobox(ctx, lid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.RemoveNLSInfoboxPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) AddNLSInfoboxBlock(ctx context.Context, input gqlmodel.AddNLSInfoboxBlockInput) (*gqlmodel.AddNLSInfoboxBlockPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	pid, err := gqlmodel.ToPluginID(input.PluginID)
+	if err != nil {
+		return nil, err
+	}
+
+	infoboxBlock, layer, err := usecases(ctx).NLSLayer.AddNLSInfoboxBlock(ctx, interfaces.AddNLSInfoboxBlockParam{
+		LayerID:     lid,
+		Index:       input.Index,
+		PluginID:    pid,
+		ExtensionID: id.PluginExtensionID(input.ExtensionID),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.AddNLSInfoboxBlockPayload{
+		InfoboxBlock: gqlmodel.ToNLSInfoboxBlock(infoboxBlock, layer.Scene()),
+		Layer:        gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) MoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.MoveNLSInfoboxBlockInput) (*gqlmodel.MoveNLSInfoboxBlockPayload, error) {
+	lid, ifid, err := gqlmodel.ToID2[id.NLSLayer, id.InfoboxBlock](input.LayerID, input.InfoboxBlockID)
+	if err != nil {
+		return nil, err
+	}
+
+	infoboxBlock, layer, index, err := usecases(ctx).NLSLayer.MoveNLSInfoboxBlock(ctx, interfaces.MoveNLSInfoboxBlockParam{
+		LayerID:        lid,
+		InfoboxBlockID: ifid,
+		Index:          input.Index,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.MoveNLSInfoboxBlockPayload{
+		InfoboxBlockID: gqlmodel.IDFrom(infoboxBlock),
+		Layer:          gqlmodel.ToNLSLayer(layer, nil),
+		Index:          index,
+	}, nil
+}
+
+func (r *mutationResolver) RemoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.RemoveNLSInfoboxBlockInput) (*gqlmodel.RemoveNLSInfoboxBlockPayload, error) {
+	lid, ibid, err := gqlmodel.ToID2[id.NLSLayer, id.InfoboxBlock](input.LayerID, input.InfoboxBlockID)
+	if err != nil {
+		return nil, err
+	}
+
+	infoboxBlock, layer, err := usecases(ctx).NLSLayer.RemoveNLSInfoboxBlock(ctx, interfaces.RemoveNLSInfoboxBlockParam{
+		LayerID:        lid,
+		InfoboxBlockID: ibid,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.RemoveNLSInfoboxBlockPayload{
+		InfoboxBlockID: gqlmodel.IDFrom(infoboxBlock),
+		Layer:          gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}

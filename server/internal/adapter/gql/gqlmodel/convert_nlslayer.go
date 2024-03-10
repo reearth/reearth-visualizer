@@ -12,14 +12,13 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 	}
 
 	return &NLSLayerSimple{
-		ID:        IDFrom(l.ID()),
-		SceneID:   IDFrom(l.Scene()),
-		Title:     l.Title(),
-		Visible:   l.IsVisible(),
-		Infobox:   nil, // Temporarily
+		ID:      IDFrom(l.ID()),
+		SceneID: IDFrom(l.Scene()),
+		Title:   l.Title(),
+		Visible: l.IsVisible(),
+		Infobox:   ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
 		LayerType: string(l.LayerType()),
 		Config:    JSON(*l.Config()),
-		Tags:      ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
 
@@ -55,7 +54,6 @@ func ToNLSLayerGroup(l *nlslayer.NLSLayerGroup, parent *id.NLSLayerID) *NLSLayer
 		Visible:     l.IsVisible(),
 		Config:      JSON(*l.Config()),
 		Infobox:     nil, // Temporarily
-		Tags:        ToLayerTagList(l.Tags(), l.Scene()),
 		ChildrenIds: util.Map(l.Children().Layers(), IDFrom[id.NLSLayer]),
 	}
 }
@@ -78,4 +76,36 @@ func ToNLSLayers(layers nlslayer.NLSLayerList, parent *id.NLSLayerID) []NLSLayer
 	return util.Map(layers, func(l *nlslayer.NLSLayer) NLSLayer {
 		return ToNLSLayer(*l, parent)
 	})
+}
+
+func ToNLSInfoboxBlock(ibf *nlslayer.InfoboxBlock, parentSceneID id.SceneID) *InfoboxBlock {
+	if ibf == nil {
+		return nil
+	}
+
+	return &InfoboxBlock{
+		ID:          IDFrom(ibf.ID()),
+		SceneID:     IDFrom(parentSceneID),
+		PropertyID:  IDFrom(ibf.Property()),
+		PluginID:    IDFromPluginID(ibf.Plugin()),
+		ExtensionID: ID(ibf.Extension()),
+	}
+}
+
+func ToNLSInfobox(ib *nlslayer.Infobox, parent id.NLSLayerID, parentSceneID id.SceneID) *NLSInfobox {
+	if ib == nil {
+		return nil
+	}
+	ibBlocks := ib.Blocks()
+	blocks := make([]*InfoboxBlock, 0, len(ibBlocks))
+	for _, ibf := range ibBlocks {
+		blocks = append(blocks, ToNLSInfoboxBlock(ibf, parentSceneID))
+	}
+
+	return &NLSInfobox{
+		SceneID:    IDFrom(parentSceneID),
+		PropertyID: IDFrom(ib.Property()),
+		Blocks:     blocks,
+		LayerID:    IDFrom(parent),
+	}
 }

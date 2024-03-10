@@ -1,9 +1,5 @@
 package nlslayer
 
-import (
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
-
 type NLSLayer interface {
 	Cloner
 	ID() ID
@@ -14,9 +10,8 @@ type NLSLayer interface {
 	IsVisible() bool
 	SetVisible(bool)
 	HasInfobox() bool
-	Infobox() *pl.Infobox
-	SetInfobox(*pl.Infobox)
-	Tags() *pl.TagList
+	Infobox() *Infobox
+	SetInfobox(*Infobox)
 	Rename(string)
 	UpdateConfig(*Config)
 }
@@ -63,8 +58,7 @@ type layerBase struct {
 	scene     SceneID
 	title     string
 	visible   bool
-	infobox   *pl.Infobox
-	tags      *pl.TagList
+	infobox   *Infobox
 	config    *Config
 }
 
@@ -115,7 +109,7 @@ func (l *layerBase) HasInfobox() bool {
 	return l.infobox != nil
 }
 
-func (l *layerBase) Infobox() *pl.Infobox {
+func (l *layerBase) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
@@ -129,7 +123,7 @@ func (l *layerBase) SetVisible(visible bool) {
 	l.visible = visible
 }
 
-func (l *layerBase) SetInfobox(infobox *pl.Infobox) {
+func (l *layerBase) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
@@ -179,10 +173,6 @@ func (l *layerBase) Clone() *layerBase {
 
 	if l.infobox != nil {
 		cloned.infobox = l.infobox.Clone()
-	}
-
-	if l.tags != nil {
-		cloned.tags = l.tags.Clone()
 	}
 
 	return cloned

@@ -6,74 +6,150 @@ interface NLSLayer {
   config: JSON
   title: String!
   visible: Boolean!
-  infobox: Infobox
-  tags: [LayerTag!]!
+  infobox: NLSInfobox
 }
 
 type NLSLayerSimple implements NLSLayer {
-    id: ID!
-    layerType: String!
-    sceneId: ID!
-    config: JSON
-    title: String!
-    visible: Boolean!
-    infobox: Infobox
-    tags: [LayerTag!]!
-    scene: Scene
+  id: ID!
+  layerType: String!
+  sceneId: ID!
+  config: JSON
+  title: String!
+  visible: Boolean!
+  infobox: NLSInfobox
+  scene: Scene
 }
 
 type NLSLayerGroup implements NLSLayer {
-    id: ID!
-    layerType: String!
-    sceneId: ID!
-    children: [NLSLayer]!
-    childrenIds: [ID!]!
-    config: JSON
-    title: String!
-    visible: Boolean!
-    infobox: Infobox
-    tags: [LayerTag!]!
-    scene: Scene
+  id: ID!
+  layerType: String!
+  sceneId: ID!
+  children: [NLSLayer]!
+  childrenIds: [ID!]!
+  config: JSON
+  title: String!
+  visible: Boolean!
+  infobox: NLSInfobox
+  scene: Scene
+}
+
+type NLSInfobox {
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
+  blocks: [InfoboxBlock!]!
+  property: Property
+  scene: Scene
+}
+
+type InfoboxBlock {
+  id: ID!
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
+  property: Property
+  scene: Scene
+  pluginId: ID!
+  extensionId: ID!
 }
 
 # InputType
 
 input AddNLSLayerSimpleInput {
-    layerType: String!
-    title: String!
-    sceneId: ID!
-    config: JSON
-    index: Int
-    visible: Boolean
+  layerType: String!
+  title: String!
+  sceneId: ID!
+  config: JSON
+  index: Int
+  visible: Boolean
 }
 
 input RemoveNLSLayerInput {
-    layerId: ID!
+  layerId: ID!
 }
 
 input UpdateNLSLayerInput {
-    layerId: ID!
-    name: String
-    visible: Boolean
-    config: JSON
+  layerId: ID!
+  name: String
+  visible: Boolean
+  config: JSON
+}
+
+input CreateNLSInfoboxInput {
+  layerId: ID!
+}
+
+input RemoveNLSInfoboxInput {
+  layerId: ID!
+}
+
+input AddNLSInfoboxBlockInput {
+  layerId: ID!
+  pluginId: ID!
+  extensionId: ID!
+  index: Int
+}
+
+input MoveNLSInfoboxBlockInput {
+  layerId: ID!
+  infoboxBlockId: ID!
+  index: Int!
+}
+
+input RemoveNLSInfoboxBlockInput {
+  layerId: ID!
+  infoboxBlockId: ID!
 }
 
 # Payload
 
 type AddNLSLayerSimplePayload {
-    layers: NLSLayerSimple!
+  layers: NLSLayerSimple!
 }
 
 type RemoveNLSLayerPayload {
-    layerId: ID!
+  layerId: ID!
 }
 
 type UpdateNLSLayerPayload {
-    layer: NLSLayer!
+  layer: NLSLayer!
+}
+
+type CreateNLSInfoboxPayload {
+  layer: NLSLayer!
+}
+
+type RemoveNLSInfoboxPayload {
+  layer: NLSLayer!
+}
+
+type AddNLSInfoboxBlockPayload {
+  infoboxBlock: InfoboxBlock!
+  layer: NLSLayer!
+}
+
+type MoveNLSInfoboxBlockPayload {
+  infoboxBlockId: ID!
+  layer: NLSLayer!
+  index: Int!
+}
+
+type RemoveNLSInfoboxBlockPayload {
+  infoboxBlockId: ID!
+  layer: NLSLayer!
 }
 
 extend type Mutation {
-    addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
-    removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
-    updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
+  addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
+  removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
+  updateNLSLayer(input: UpdateNLSLayerInput!): UpdateNLSLayerPayload!
+  createNLSInfobox(input: CreateNLSInfoboxInput!): CreateNLSInfoboxPayload
+  removeNLSInfobox(input: RemoveNLSInfoboxInput!): RemoveNLSInfoboxPayload
+  addNLSInfoboxBlock(input: AddNLSInfoboxBlockInput!): AddNLSInfoboxBlockPayload
+  moveNLSInfoboxBlock(
+    input: MoveNLSInfoboxBlockInput!
+  ): MoveNLSInfoboxBlockPayload
+  removeNLSInfoboxBlock(
+    input: RemoveNLSInfoboxBlockInput!
+  ): RemoveNLSInfoboxBlockPayload
 }
