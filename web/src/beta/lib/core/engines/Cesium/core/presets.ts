@@ -1,3 +1,4 @@
+import { WebMercatorTilingScheme } from "@cesium/engine";
 import {
   ImageryProvider,
   ArcGisMapServerImageryProvider,
@@ -5,7 +6,10 @@ import {
   OpenStreetMapImageryProvider,
   IonWorldImageryStyle,
   UrlTemplateImageryProvider,
+  DiscardEmptyTileImagePolicy,
 } from "cesium";
+
+import { JapanGSIOptimalBVmapLabelImageryProvider } from "./labels/JapanGSIOptimalBVmapVectorMapLabel/JapanGSIOptimalBVmapLabelImageryProvider";
 
 export const tiles = {
   default: ({ cesiumIonAccessToken } = {}) =>
@@ -53,7 +57,38 @@ export const tiles = {
     new OpenStreetMapImageryProvider({
       url: "https://cyberjapandata.gsi.go.jp/xyz/std/",
     }),
-  url: ({ url } = {}) => (url ? new UrlTemplateImageryProvider({ url }) : null),
+  url: ({ url, heatmap, tile_zoomLevel } = {}) =>
+    url
+      ? new UrlTemplateImageryProvider({
+          url,
+          tileDiscardPolicy: heatmap ? new DiscardEmptyTileImagePolicy() : undefined,
+          minimumLevel: tile_zoomLevel?.[0],
+          maximumLevel: tile_zoomLevel?.[1],
+        })
+      : null,
 } as {
-  [key: string]: (opts?: { url?: string; cesiumIonAccessToken?: string }) => ImageryProvider | null;
+  [key: string]: (opts?: {
+    url?: string;
+    cesiumIonAccessToken?: string;
+    heatmap?: boolean;
+    tile_zoomLevel?: number[];
+  }) => ImageryProvider | null;
+};
+
+export const labelTiles = {
+  japan_gsi_optimal_bvmap: (params: {
+    url: string;
+    minimumLevel?: number;
+    maximumLevel?: number;
+    minimumDataLevel: number;
+    maximumDataLevel: number;
+  }) =>
+    new JapanGSIOptimalBVmapLabelImageryProvider({
+      url: params.url,
+      tilingScheme: new WebMercatorTilingScheme(),
+      tileWidth: 256,
+      tileHeight: 256,
+      minimumDataLevel: params.minimumDataLevel,
+      maximumDataLevel: params.maximumDataLevel,
+    }),
 };

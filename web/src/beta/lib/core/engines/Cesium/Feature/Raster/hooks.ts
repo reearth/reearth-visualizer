@@ -10,20 +10,29 @@ export const useImageryProvider = (
   layerId: string | undefined,
   property: RasterAppearance | undefined,
 ) => {
+  const { hideIndicator } = property ?? {};
   const { viewer } = useCesium();
   const alpha = property?.alpha;
   useEffect(() => {
     if (!imageryProvider || !viewer) return;
     const imageryLayers: ImageryLayerCollection = viewer.imageryLayers;
     const imageryLayer = imageryLayers.addImageryProvider(imageryProvider);
+    Object.assign(imageryLayer, {
+      bringToFront: () => {
+        imageryLayers.raiseToTop(imageryLayer);
+      },
+      sendToBack: () => {
+        imageryLayers.lowerToBottom(imageryLayer);
+      },
+    });
     if (alpha !== undefined && typeof alpha === "number") {
       imageryLayer.alpha = alpha;
     }
-    attachTag(imageryLayer, { layerId });
+    attachTag(imageryLayer, { layerId, hideIndicator });
     return () => {
       imageryLayers.remove(imageryLayer);
     };
-  }, [imageryProvider, viewer, layerId, alpha]);
+  }, [imageryProvider, viewer, layerId, alpha, hideIndicator]);
 };
 
 export const useData = (layer: ComputedLayer | undefined) => {

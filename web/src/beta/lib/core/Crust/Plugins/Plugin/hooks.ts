@@ -276,6 +276,7 @@ export function useAPI({
         "timelinecommit",
         "sketchfeaturecreated",
         "sketchtypechange",
+        "layerVisibility",
       ]);
     }
 

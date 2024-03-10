@@ -2,4 +2,4 @@ import type { Camera } from "@reearth/beta/utils/value";
 
 export type { Camera } from "@reearth/beta/utils/value";
 
-export type RowType = { id: keyof Camera; description?: string; suffix?: string }[];
+export type RowType = { id: keyof Camera; value?: number; description?: string; suffix?: string }[];

@@ -101,6 +101,7 @@ export type EXPERIMENTAL_clipping = {
   pitch?: number;
   roll?: number;
   direction?: "inside" | "outside";
+  disabledSelection?: boolean;
 };
 
 export type Array = any[];

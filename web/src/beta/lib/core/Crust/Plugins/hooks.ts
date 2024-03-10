@@ -12,7 +12,13 @@ import {
 
 import { SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
-import { CameraOptions, FlyTo, FlyToDestination, LookAtDestination } from "../../types";
+import {
+  CameraOptions,
+  FlyTo,
+  FlyToDestination,
+  LookAtDestination,
+  ScreenSpaceCameraControllerOptions,
+} from "../../types";
 
 import { commonReearth } from "./api";
 import { InteractionMode, ReearthEventType, Viewport, ViewportSize } from "./plugin_types";
@@ -31,6 +37,7 @@ export type SelectedReearthEventType = Pick<
   | "layeredit"
   | "sketchfeaturecreated"
   | "sketchtypechange"
+  | "layerVisibility"
 >;
 
 export default function ({
@@ -55,6 +62,8 @@ export default function ({
   onLayerEdit,
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
+  onLayerVisibility,
+  onCameraForceHorizontalRollChange,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
 
@@ -257,6 +266,10 @@ export default function ({
     [engineRef],
   );
 
+  const getGlobeHeight = useCallback(() => {
+    return engineRef?.getGlobeHeight();
+  }, [engineRef]);
+
   const toXYZ = useCallback(
     (
       lng: number,
@@ -343,6 +356,12 @@ export default function ({
     [engineRef],
   );
 
+  const overrideScreenSpaceController = useCallback(
+    (options: ScreenSpaceCameraControllerOptions) => {
+      return engineRef?.overrideScreenSpaceController(options);
+    },
+    [engineRef],
+  );
   const lookHorizontal = useCallback(
     (amount: number) => {
       engineRef?.lookHorizontal(amount);
@@ -489,6 +508,20 @@ export default function ({
     [engineRef],
   );
 
+  const bringToFront = useCallback(
+    (layerId: string) => {
+      return engineRef?.bringToFront(layerId);
+    },
+    [engineRef],
+  );
+
+  const sendToBack = useCallback(
+    (layerId: string) => {
+      return engineRef?.sendToBack(layerId);
+    },
+    [engineRef],
+  );
+
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -520,12 +553,14 @@ export default function ({
         flyTo,
         flyToBBox,
         rotateOnCenter,
+        overrideScreenSpaceController,
         lookAt,
         zoomIn,
         zoomOut,
         cameraViewport,
         getCameraFovInfo,
         computeGlobeHeight,
+        getGlobeHeight,
         toXYZ,
         toLngLatHeight,
         convertScreenToPositionOffset,
@@ -551,6 +586,9 @@ export default function ({
         findFeatureById,
         findFeaturesByIds,
         pickManyFromViewport,
+        bringToFront,
+        sendToBack,
+        forceHorizontalRoll: onCameraForceHorizontalRollChange,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -587,12 +625,14 @@ export default function ({
       flyTo,
       flyToBBox,
       rotateOnCenter,
+      overrideScreenSpaceController,
       lookAt,
       zoomIn,
       zoomOut,
       cameraViewport,
       getCameraFovInfo,
       computeGlobeHeight,
+      getGlobeHeight,
       toXYZ,
       toLngLatHeight,
       convertScreenToPositionOffset,
@@ -618,7 +658,10 @@ export default function ({
       findFeatureById,
       findFeaturesByIds,
       pickManyFromViewport,
+      bringToFront,
+      sendToBack,
       overrideSceneProperty,
+      onCameraForceHorizontalRollChange,
       pluginInstances,
       clientStorage,
       timelineManagerRef,
@@ -710,6 +753,9 @@ export default function ({
     onSketchTypeChange(e => {
       emit("sketchtypechange", e);
     });
+    onLayerVisibility(e => {
+      emit("layerVisibility", e);
+    });
   }, [
     emit,
     onMouseEvent,
@@ -718,6 +764,7 @@ export default function ({
     onTimelineCommitEvent,
     onPluginSketchFeatureCreated,
     onSketchTypeChange,
+    onLayerVisibility,
   ]);
 
   // expose plugin API for developers

@@ -18,11 +18,17 @@ import type {
   Undefinable,
   WrappedRef,
   Feature,
+  LayerVisibilityEvent,
 } from "@reearth/beta/lib/core/Map";
 
 import { SketchAppearance, SketchEventProps, SketchType } from "../../Map/Sketch/types";
 import { TimelineCommitter } from "../../Map/useTimelineManager";
-import { CameraOptions, FlyToDestination, LookAtDestination } from "../../types";
+import {
+  CameraOptions,
+  FlyToDestination,
+  LookAtDestination,
+  ScreenSpaceCameraControllerOptions,
+} from "../../types";
 import { Block } from "../Infobox/OldInfobox";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
@@ -85,6 +91,8 @@ export type Reearth = {
       ) => void;
       findFeatureById?: (layerId: string, featureId: string) => Feature | undefined;
       findFeaturesByIds?: (layerId: string, featureId: string[]) => Feature[] | undefined;
+      bringToFront?: (layerId: string) => void;
+      sendToBack?: (layerId: string) => void;
       selectFeature?: (layerId?: string, featureId?: string) => void;
       selectFeatures?: (layers: { layerId?: string; featureId?: string[] }[]) => void;
       selectionReason?: LayerSelectionReason;
@@ -132,6 +140,7 @@ export type Scene = {
   ) => LatLngHeight | undefined;
   readonly sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
   readonly computeGlobeHeight: (lng: number, lat: number, height?: number) => number | undefined;
+  readonly getGlobeHeight: () => void;
   readonly toXYZ: (
     lng: number,
     lat: number,
@@ -184,6 +193,7 @@ export type Camera = {
     },
   ) => void;
   readonly rotateOnCenter: (radian: number) => void;
+  readonly overrideScreenSpaceController: (options: ScreenSpaceCameraControllerOptions) => void;
   /** Moves the camera position to look at the specified destination. */
   readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
   /** Rotate the camera around the center of earth. */
@@ -206,6 +216,7 @@ export type Camera = {
     offset?: number,
   ) => void;
   readonly setView: (camera: CameraPosition) => void;
+  readonly forceHorizontalRoll: (enable: boolean) => void;
 };
 
 export type Clock = {
@@ -270,6 +281,7 @@ export type ReearthEventType = {
   pluginmessage: [props: PluginMessage];
   sketchfeaturecreated: [props: SketchEventProps];
   sketchtypechange: [props: SketchType | undefined];
+  layerVisibility: [e: LayerVisibilityEvent];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */

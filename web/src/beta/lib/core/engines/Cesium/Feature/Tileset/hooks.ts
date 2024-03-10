@@ -92,7 +92,18 @@ const makeFeatureFrom3DTile = (
       return specifiedId;
     }
     const featureId = getBuiltinFeatureId(tileFeature);
-    return generateIDWithMD5(`${coordinates.x}-${coordinates.y}-${coordinates.z}-${featureId}`);
+    return generateIDWithMD5(
+      `${coordinates.x}-${coordinates.y}-${coordinates.z}-${featureId}-${
+        !(tileFeature instanceof Model)
+          ? JSON.stringify(
+              // Read only root properties.
+              Object.entries(convertCesium3DTileFeatureProperties(tileFeature))
+                .filter((_k, v) => typeof v === "string" || typeof v === "number")
+                .map(([k, v]) => `${k}${v}`),
+            )
+          : ""
+      }`,
+    );
   })();
   return {
     type: "feature",

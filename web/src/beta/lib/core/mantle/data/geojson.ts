@@ -57,7 +57,7 @@ export function processGeoJSON(geojson: GeoJSON, range?: DataRange): Feature[] {
     return [
       {
         type: "feature",
-        id: (geojson.id && String(geojson.id)) || generateRandomString(12),
+        id: generateRandomString(12),
         geometry:
           geo.type === "Point" || geo.type === "LineString" || geo.type === "Polygon"
             ? geo

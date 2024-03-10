@@ -1,17 +1,42 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useT } from "@reearth/services/i18n";
 
 import type { Camera, RowType } from "../types";
+import { saveFriendlyCamera, userFriendlyCamera } from "../utils";
 
 export default ({
   camera,
-  onChange,
+  onFlyTo,
+  onSave,
 }: {
   camera?: Camera;
-  onChange?: (key: keyof Camera, update?: number) => void;
+  onFlyTo?: (c?: Camera) => void;
+  onSave: (value?: Camera) => void;
 }) => {
   const t = useT();
+  const [newCamera, setNewCamera] = useState<Camera | undefined>(
+    camera ? userFriendlyCamera(camera) : undefined,
+  );
+
+  useEffect(() => {
+    if (!newCamera && camera) {
+      setNewCamera(userFriendlyCamera(camera));
+    }
+  }, [newCamera, camera]);
+
+  const handleFieldUpdate = useCallback(
+    (key: keyof Camera, update?: number) => {
+      if (update === undefined || !newCamera) return;
+      const updated: Camera = {
+        ...newCamera,
+        [key]: update,
+      };
+      setNewCamera(updated);
+      onFlyTo?.(saveFriendlyCamera(updated));
+    },
+    [newCamera, onFlyTo],
+  );
 
   const panelContent: { [key: string]: RowType } = useMemo(() => {
     return {
@@ -30,13 +55,22 @@ export default ({
 
   const handleChange = useCallback(
     (field: keyof Camera) => (value?: number) => {
-      if (value === camera?.[field]) return;
-      onChange?.(field, value);
+      if (value === newCamera?.[field]) return;
+      handleFieldUpdate(field, value);
     },
-    [camera, onChange],
+    [newCamera, handleFieldUpdate],
   );
+
+  const handleSave = useCallback(() => {
+    if (!newCamera) return;
+    const saveFriendly = saveFriendlyCamera(newCamera);
+    onSave?.(saveFriendly);
+  }, [newCamera, onSave]);
+
   return {
+    newCamera,
     panelContent,
     handleChange,
+    handleSave,
   };
 };

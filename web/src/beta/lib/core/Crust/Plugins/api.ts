@@ -431,6 +431,7 @@ export function commonReearth({
   getLocationFromScreen,
   sampleTerrainHeight,
   computeGlobeHeight,
+  getGlobeHeight,
   toXYZ,
   toLngLatHeight,
   convertScreenToPositionOffset,
@@ -440,6 +441,7 @@ export function commonReearth({
   flyToBBox,
   rotateOnCenter,
   enableScreenSpaceCameraController,
+  overrideScreenSpaceController,
   lookHorizontal,
   lookVertical,
   moveForward,
@@ -453,6 +455,9 @@ export function commonReearth({
   findFeatureById,
   findFeaturesByIds,
   pickManyFromViewport,
+  bringToFront,
+  sendToBack,
+  forceHorizontalRoll,
 }: {
   engineName?: string;
   events: Events<ReearthEventType>;
@@ -489,6 +494,7 @@ export function commonReearth({
   getLocationFromScreen: GlobalThis["reearth"]["scene"]["getLocationFromScreen"];
   sampleTerrainHeight: GlobalThis["reearth"]["scene"]["sampleTerrainHeight"];
   computeGlobeHeight: GlobalThis["reearth"]["scene"]["computeGlobeHeight"];
+  getGlobeHeight: GlobalThis["reearth"]["scene"]["getGlobeHeight"];
   toXYZ: GlobalThis["reearth"]["scene"]["toXYZ"];
   toLngLatHeight: GlobalThis["reearth"]["scene"]["toLngLatHeight"];
   convertScreenToPositionOffset: GlobalThis["reearth"]["scene"]["convertScreenToPositionOffset"];
@@ -497,6 +503,8 @@ export function commonReearth({
   toWindowPosition: GlobalThis["reearth"]["scene"]["toWindowPosition"];
   flyToBBox: GlobalThis["reearth"]["camera"]["flyToBBox"];
   rotateOnCenter: GlobalThis["reearth"]["camera"]["rotateOnCenter"];
+  overrideScreenSpaceController: GlobalThis["reearth"]["camera"]["overrideScreenSpaceController"];
+  forceHorizontalRoll: GlobalThis["reearth"]["camera"]["forceHorizontalRoll"];
   inEditor: () => GlobalThis["reearth"]["scene"]["inEditor"];
   built: () => GlobalThis["reearth"]["scene"]["built"];
   enableScreenSpaceCameraController: GlobalThis["reearth"]["camera"]["enableScreenSpaceController"];
@@ -512,6 +520,8 @@ export function commonReearth({
   flyToGround: GlobalThis["reearth"]["camera"]["flyToGround"];
   findFeatureById: GlobalThis["reearth"]["layers"]["findFeatureById"];
   findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
+  bringToFront: GlobalThis["reearth"]["layers"]["bringToFront"];
+  sendToBack: GlobalThis["reearth"]["layers"]["sendToBack"];
   pickManyFromViewport: GlobalThis["reearth"]["scene"]["pickManyFromViewport"];
 }): CommonReearth {
   return {
@@ -547,6 +557,8 @@ export function commonReearth({
         setView,
         flyToBBox,
         rotateOnCenter,
+        overrideScreenSpaceController,
+        forceHorizontalRoll,
       },
       get property() {
         return sceneProperty?.();
@@ -574,6 +586,7 @@ export function commonReearth({
       getLocationFromScreen,
       sampleTerrainHeight,
       computeGlobeHeight,
+      getGlobeHeight,
       toXYZ,
       toLngLatHeight,
       convertScreenToPositionOffset,
@@ -613,6 +626,8 @@ export function commonReearth({
       setView,
       flyToBBox,
       rotateOnCenter,
+      overrideScreenSpaceController,
+      forceHorizontalRoll,
     },
     layers: {
       get layersInViewport() {
@@ -714,6 +729,8 @@ export function commonReearth({
       },
       findFeatureById,
       findFeaturesByIds,
+      bringToFront,
+      sendToBack,
     },
     plugins: {
       get instances() {

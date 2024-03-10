@@ -17,6 +17,7 @@ import {
   Cesium3DTilePointFeature,
   Primitive,
   GroundPrimitive,
+  ImageryLayer,
 } from "cesium";
 
 import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox/OldInfobox";
@@ -148,6 +149,7 @@ export function findEntity(
   | InternalCesium3DTileFeature
   | Primitive
   | GroundPrimitive
+  | ImageryLayer
   | undefined {
   const id = featureId ?? layerId;
   const keyName = featureId ? "featureId" : "layerId";
@@ -200,6 +202,15 @@ export function findEntity(
       }
     }
   }
+
+  for (let i = 0; i < viewer.imageryLayers.length; i++) {
+    const imageryLayer = viewer.imageryLayers.get(i);
+    const tag = getTag(imageryLayer);
+    if (tag?.layerId === layerId) {
+      return imageryLayer;
+    }
+  }
+
   return;
 }
 

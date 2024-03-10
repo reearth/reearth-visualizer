@@ -167,6 +167,8 @@ const Visualizer = memo(
         timelineManagerRef,
         overrideSceneProperty,
         cursor,
+        cameraForceHorizontalRoll,
+        handleCameraForceHorizontalRollChange,
         handleLayerSelect,
         handleLayerDrag,
         handleLayerDrop,
@@ -178,6 +180,8 @@ const Visualizer = memo(
         handlePluginSketchFeatureCreated,
         onSketchTypeChange,
         handleSketchTypeChange,
+        onLayerVisibility,
+        handleLayerVisibility,
       } = useHooks(
         {
           rootLayerId,
@@ -245,6 +249,8 @@ const Visualizer = memo(
                   onLayerEdit={onLayerEdit}
                   onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
                   onSketchTypeChange={onSketchTypeChange}
+                  onLayerVisibility={onLayerVisibility}
+                  onCameraForceHorizontalRollChange={handleCameraForceHorizontalRollChange}
                 />
                 <Map
                   ref={mapRef}
@@ -254,6 +260,7 @@ const Visualizer = memo(
                   layers={layers}
                   engines={engines}
                   camera={camera}
+                  cameraForceHorizontalRoll={cameraForceHorizontalRoll}
                   clusters={clusters}
                   hiddenLayers={hiddenLayers}
                   isLayerDragging={isLayerDragging}
@@ -280,6 +287,7 @@ const Visualizer = memo(
                   onPluginSketchFeatureCreated={handlePluginSketchFeatureCreated}
                   onSketchTypeChange={handleSketchTypeChange}
                   onMount={onMount}
+                  onLayerVisibility={handleLayerVisibility}
                 />
               </Filled>
               {storyPanelPosition === "right" && storyPanel}

@@ -99,6 +99,7 @@ export const useClippingBox = ({
     heading,
     pitch,
     roll,
+    disabledSelection,
   } = clipping || {};
 
   const { viewer } = useCesium();
@@ -140,7 +141,7 @@ export const useClippingBox = ({
 
   const handleMouseDown = useCallback(
     (e: any) => {
-      if (!viewer) {
+      if (!viewer || !disabledSelection) {
         return;
       }
       const picked = viewer.scene.pick(e.position);
@@ -183,10 +184,10 @@ export const useClippingBox = ({
         }
       }
     },
-    [boxId, boxState, handleUpdateBoxState, viewer],
+    [boxId, boxState, handleUpdateBoxState, viewer, disabledSelection],
   );
   const handleMouseUp = useCallback(() => {
-    if (!viewer) {
+    if (!viewer || !disabledSelection) {
       return;
     }
     if (boxState.activeScalePointIndex || boxState.activeEdgeIndex) {
@@ -214,25 +215,26 @@ export const useClippingBox = ({
         cursor: "default",
       });
     }
-  }, [boxState, handleUpdateBoxState, viewer]);
+  }, [boxState, handleUpdateBoxState, viewer, disabledSelection]);
+
+  const terrainHeightRef = useRef(0);
   const handleMouseMove = useCallback(
     async (e: any) => {
-      if (!isBoxClicked.current || !viewer) return;
+      if (!isBoxClicked.current || !viewer || !disabledSelection) return;
 
       const cart = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2]);
 
       if (isTopBottomSidePlaneClicked.current) {
         const locationHeight = coords?.[2] || 0;
-        const terrainHeight = await (async () => {
+        const terrainHeight = (() => {
           if (!allowEnterGround) {
             const boxBottomHeight = locationHeight - (dimensions?.height || 0) / 2;
-            const floorHeight =
-              (await sampleTerrainHeight(viewer.scene, coords?.[0] || 0, coords?.[1] || 0)) || 0;
+            const floorHeight = terrainHeightRef.current;
             if (boxBottomHeight < floorHeight) {
-              return boxBottomHeight + (floorHeight - boxBottomHeight);
+              return locationHeight + (floorHeight - boxBottomHeight);
             }
           }
-          return 0;
+          return;
         })();
 
         const prevMousePosition = new Cartesian2(e.startPosition.x, e.startPosition.y);
@@ -262,16 +264,19 @@ export const useClippingBox = ({
         ]);
       } else {
         const position = e.endPosition
-          ? getLocationFromScreen(viewer.scene, e.endPosition.x, e.endPosition.y, true)
+          ? getLocationFromScreen(viewer.scene, e.endPosition.x, e.endPosition.y, !allowEnterGround)
           : undefined;
         setCoords(v => [
           position?.lng || 0,
           position?.lat || 0,
-          (!allowEnterGround ? position?.height : undefined) || v?.[2] || 0,
+          (!allowEnterGround ? position?.height : v?.[2]) || 0,
         ]);
+        sampleTerrainHeight(viewer.scene, coords?.[0] || 0, coords?.[1] || 0).then(height => {
+          terrainHeightRef.current = height || 0;
+        });
       }
     },
-    [allowEnterGround, coords, dimensions?.height, viewer],
+    [allowEnterGround, coords, dimensions?.height, viewer, disabledSelection],
   );
   const handleMouseEnter = useCallback(
     ({ layerId }: { layerId?: string } | undefined = {}) => {
@@ -409,7 +414,10 @@ export const useClippingBox = ({
 
   useEffect(() => () => eventHandler.destroy(), [eventHandler]);
 
-  const boxProperty = useMemo(() => ({ ...boxState, ...dimensions }), [boxState, dimensions]);
+  const boxProperty = useMemo(
+    () => ({ ...boxState, ...dimensions, allowEnterGround }),
+    [boxState, dimensions, allowEnterGround],
+  );
   const builtinBoxProps = useMemo(
     () =>
       useBuiltinBox

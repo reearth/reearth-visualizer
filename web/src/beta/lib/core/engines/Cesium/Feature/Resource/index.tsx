@@ -14,7 +14,7 @@ import {
   type FeatureProps,
 } from "../utils";
 
-import { attachStyle } from "./utils";
+import { attachStyle, makeFeatureId } from "./utils";
 
 export type Props = FeatureProps<Property>;
 export type Property = ResourceAppearance;
@@ -113,6 +113,11 @@ export default function Resource({
   });
   const handleLoad = useCallback(
     (ds: DataSource) => {
+      ds.entities.values.forEach(e =>
+        requestAnimationFrame(() => {
+          attachTag(e, { layerId: layer?.id, featureId: makeFeatureId(e) });
+        }),
+      );
       if (!updateClock) {
         if (
           initialClock.current.current &&
@@ -138,9 +143,9 @@ export default function Resource({
         timelineManagerRef?.current?.commit({
           cmd: "SET_TIME",
           payload: {
-            start: JulianDate.toDate(ds.clock.currentTime),
-            stop: JulianDate.toDate(ds.clock.startTime),
-            current: JulianDate.toDate(ds.clock.stopTime),
+            start: JulianDate.toDate(ds.clock.startTime),
+            stop: JulianDate.toDate(ds.clock.stopTime),
+            current: JulianDate.toDate(ds.clock.currentTime),
           },
           committer: {
             source: "featureResource",

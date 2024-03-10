@@ -1,17 +1,18 @@
 import * as turf from "@turf/turf";
 import { BoundingSphere, Intersect, PerspectiveFrustum, Rectangle, Cartesian3 } from "cesium";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useCesium } from "resium";
 import invariant from "tiny-invariant";
 
 import { HeatMapAppearance } from "@reearth/beta/lib/core/mantle";
 
 import { usePreRender } from "../../hooks/useSceneEvent";
+import { useContext } from "../context";
 import { FeatureComponentConfig, FeatureProps } from "../utils";
 
 import { flareColorMapLUT } from "./constants";
 import { fetchImageAndCreateMeshImageData, MeshImageData } from "./createMeshImageData";
-import { HeatmapMesh } from "./HeatmapMesh";
+import { HeatmapMesh, HeatmapMeshHandle } from "./HeatmapMesh";
 
 export type Props = FeatureProps<Property>;
 
@@ -33,6 +34,8 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
     logarithmic = false,
   } = property ?? {};
   const { scene } = useCesium();
+
+  const ctx = useContext();
 
   // Bounds is nested object, and this cause unnecessary render frequently, so wrap with useMemo.
   const boudsRef = useMemo(
@@ -67,10 +70,21 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
     return cullingVolume.computeVisibility(boundingSphere) !== Intersect.OUTSIDE;
   };
 
+  const heatmapMeshRef = useRef<HeatmapMeshHandle>(null);
+
+  useEffect(() => {
+    if (heatmapMeshRef.current) {
+      heatmapMeshRef.current.sendToBack();
+    }
+  }, []);
+
   usePreRender(() => {
     const currentVisibility = checkVisiblity();
     if (currentVisibility !== visible) {
       setVisible(currentVisibility);
+      if (ctx?.onLayerVisibility && layer?.id) {
+        ctx.onLayerVisibility({ layerId: layer.id });
+      }
     }
   });
 
@@ -136,6 +150,7 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
       contourThickness={contourThickness}
       contourAlpha={contourAlpha}
       bound={bounds}
+      ref={heatmapMeshRef}
       cropBound={cropBounds}
       logarithmic={logarithmic}
       width={width || meshImageData.width}
