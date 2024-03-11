@@ -18,8 +18,6 @@ var (
 	nlsLayerIndexes = []string{
 		"scene",
 		"id,scene",
-		"tags.id",
-		"tags.tags.id",
 		"scene,infobox.blocks",
 		"group.children",
 		"group.children,scene",

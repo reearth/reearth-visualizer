@@ -51,6 +51,7 @@ type InfoboxBlock {
   scene: Scene
   pluginId: ID!
   extensionId: ID!
+  extension: PluginExtension
 }
 
 # InputType

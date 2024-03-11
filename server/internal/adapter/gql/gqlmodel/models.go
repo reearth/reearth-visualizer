@@ -116,6 +116,18 @@ func (d *MergedInfobox) Field(id ID) *MergedInfoboxField {
 	return nil
 }
 
+func (d *NLSInfobox) Block(id ID) *InfoboxBlock {
+	if d == nil || id == "" {
+		return nil
+	}
+	for _, f := range d.Blocks {
+		if f.ID == id {
+			return f
+		}
+	}
+	return nil
+}
+
 func AttachParentLayer(layers []*Layer, parent ID) []Layer {
 	if layers == nil {
 		return nil

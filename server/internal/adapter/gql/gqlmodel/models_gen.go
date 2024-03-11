@@ -552,15 +552,15 @@ type Infobox struct {
 }
 
 type InfoboxBlock struct {
-	ID          ID        `json:"id"`
-	SceneID     ID        `json:"sceneId"`
-	LayerID     ID        `json:"layerId"`
-	PropertyID  ID        `json:"propertyId"`
-	Layer       NLSLayer  `json:"layer"`
-	Property    *Property `json:"property,omitempty"`
-	Scene       *Scene    `json:"scene,omitempty"`
-	PluginID    ID        `json:"pluginId"`
-	ExtensionID ID        `json:"extensionId"`
+	ID          ID               `json:"id"`
+	SceneID     ID               `json:"sceneId"`
+	LayerID     ID               `json:"layerId"`
+	PropertyID  ID               `json:"propertyId"`
+	Property    *Property        `json:"property,omitempty"`
+	Scene       *Scene           `json:"scene,omitempty"`
+	PluginID    ID               `json:"pluginId"`
+	ExtensionID ID               `json:"extensionId"`
+	Extension   *PluginExtension `json:"extension,omitempty"`
 }
 
 type InfoboxField struct {
@@ -904,7 +904,6 @@ type NLSInfobox struct {
 	LayerID    ID              `json:"layerId"`
 	PropertyID ID              `json:"propertyId"`
 	Blocks     []*InfoboxBlock `json:"blocks"`
-	Layer      NLSLayer        `json:"layer"`
 	Property   *Property       `json:"property,omitempty"`
 	Scene      *Scene          `json:"scene,omitempty"`
 }
