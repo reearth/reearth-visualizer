@@ -151,16 +151,32 @@ export default function useHooks(
               default: {
                 enabled: true,
                 position: "right", // left | right
-                padding: {
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                },
+                // padding: {
+                //   top: 0,
+                //   bottom: 0,
+                //   left: 0,
+                //   right: 0,
+                // },
                 gap: 12,
               },
             },
             blocks: [
+              // {
+              //   id: "plugin-block-test",
+              //   name: "Test block",
+              //   pluginId: "myPlugin",
+              //   extensionId: "testBlock",
+              //   propertyId: "1231l2kj",
+              //   property: {
+              //     default: {
+              //       someField: {
+              //         type: "string",
+              //         value: "Some cool field value",
+              //         title: "Some field",
+              //       },
+              //     },
+              //   },
+              // },
               {
                 id: "sadfl3333222",
                 name: "Property",

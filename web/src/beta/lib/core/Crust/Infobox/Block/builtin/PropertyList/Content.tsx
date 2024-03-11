@@ -38,13 +38,15 @@ type Props = {
   ) => Promise<void>;
 };
 
-const Content: React.FC<Props> = ({ block }) => {
+const Content: React.FC<Props> = ({ block, isEditable }) => {
   const context = useContext(BlockContext);
   const visualizer = useVisualizer();
 
   const properties = filterChildObjectsToEnd(
     visualizer.current?.layers.selectedFeature()?.properties,
   );
+
+  console.log("EDIT MODE?? ", !!isEditable);
 
   return (
     <Wrapper>
@@ -56,6 +58,7 @@ const Content: React.FC<Props> = ({ block }) => {
               <JsonView
                 src={value}
                 theme="a11y"
+                collapsed={!!isEditable}
                 style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
               />
             </ObjectWrapper>
