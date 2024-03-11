@@ -46,8 +46,6 @@ const Content: React.FC<Props> = ({ block, isEditable }) => {
     visualizer.current?.layers.selectedFeature()?.properties,
   );
 
-  console.log("EDIT MODE?? ", !!isEditable);
-
   return (
     <Wrapper>
       {properties?.map((field, idx) => {
