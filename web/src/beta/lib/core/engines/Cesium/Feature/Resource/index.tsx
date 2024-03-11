@@ -123,7 +123,6 @@ export default function Resource({
         requestAnimationFrame(() => {
           const tag = getTag(e);
           attachTag(e, {
-            ...tag,
             layerId: layer?.id,
             featureId: makeFeatureId(e),
             hideIndicator: hideIndicator ?? tag?.hideIndicator,
