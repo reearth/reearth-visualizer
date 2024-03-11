@@ -14,14 +14,14 @@ export type InstallableBlock = {
   type?: string;
 };
 
-export type BlockProps<T = unknown> = {
+export type BlockProps<T = any> = {
   block?: T;
   layer?: Layer;
   onClick?: () => void;
   onBlockDoubleClick?: () => void;
 };
 
-export type CommonBlockProps<T = unknown> = {
+export type CommonBlockProps<T = any> = {
   pageId?: string;
   isEditable?: boolean;
   isBuilt?: boolean;

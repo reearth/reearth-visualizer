@@ -9,7 +9,8 @@ import {
   useState,
 } from "react";
 
-import type { BlockProps } from "./Infobox/OldInfobox";
+import type { BlockProps } from "../shared/types";
+
 import {
   Plugin,
   type CommonPluginProps,

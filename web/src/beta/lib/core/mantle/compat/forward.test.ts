@@ -5,7 +5,7 @@ import { Infobox } from "../../Crust/Infobox/types";
 import { convertLegacyCluster, convertLegacyLayer } from "./forward";
 import type { LegacyCluster, Tag } from "./types";
 
-const infobox: Infobox = { blocks: [], property: { default: { bgcolor: "red" } } };
+const infobox: Infobox = { blocks: [], property: { default: { position: "left" } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];
 
 test("group", () => {

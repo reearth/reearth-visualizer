@@ -10,19 +10,9 @@ export type InfoboxProperty = {
     position?: "right" | "left";
     padding?: Spacing;
     gap?: number;
-    // showTitle?: boolean;
-    // height?: number;
-    // title?: string;
-    // heightType?: "auto" | "manual";
-    // size?: "small" | "medium" | "large";
-    // typography?: Typography;
-    // bgcolor?: string;
-    // outlineColor?: string;
-    // outlineWidth?: number;
-    // useMask?: boolean;
-    // defaultContent?: "description" | "attributes";
-    // unselectOnClose?: boolean;
   };
+  // for compat
+  defaultContent?: "description" | "attributes";
 };
 
 export type InfoboxBlock<P = any> = {

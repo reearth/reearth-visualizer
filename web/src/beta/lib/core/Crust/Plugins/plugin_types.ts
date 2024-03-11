@@ -29,7 +29,7 @@ import {
   LookAtDestination,
   ScreenSpaceCameraControllerOptions,
 } from "../../types";
-import { Block } from "../Infobox/OldInfobox";
+import { InfoboxBlock as Block } from "../Infobox/types";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 

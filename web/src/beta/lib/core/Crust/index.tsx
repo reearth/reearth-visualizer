@@ -26,7 +26,7 @@ import Widgets, {
 
 export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 
-export type { Block } from "./Infobox/OldInfobox";
+export type { InfoboxBlock as Block } from "./Infobox/types";
 
 export type { ExternalPluginProps } from "./Plugins";
 export { INTERACTION_MODES } from "./interactionMode";
