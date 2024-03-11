@@ -383,6 +383,8 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 
 	block, err := nlslayer.NewInfoboxBlock().
 		NewID().
+		Plugin(inp.PluginID).
+		Extension(inp.ExtensionID).
 		Property(property.ID()).
 		Build()
 	if err != nil {

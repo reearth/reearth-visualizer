@@ -41,7 +41,6 @@ type NLSLayerInfoboxBlockDocument struct {
 
 type NLSLayerInfoboxDocument struct {
 	Property string
-	LayerID  string
 	Blocks   []NLSLayerInfoboxBlockDocument
 }
 
