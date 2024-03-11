@@ -34,12 +34,13 @@ type NLSLayerGroup implements NLSLayer {
 }
 
 type NLSInfobox {
+  id: ID!
   sceneId: ID!
   layerId: ID!
   propertyId: ID!
   blocks: [InfoboxBlock!]!
   property: Property
-  scene: Scene
+  scene: Scene  
 }
 
 type InfoboxBlock {
@@ -48,10 +49,11 @@ type InfoboxBlock {
   layerId: ID!
   propertyId: ID!
   property: Property
-  scene: Scene
   pluginId: ID!
+  plugin: Plugin
   extensionId: ID!
   extension: PluginExtension
+  scene: Scene
 }
 
 # InputType

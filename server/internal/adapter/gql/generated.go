@@ -353,6 +353,7 @@ type ComplexityRoot struct {
 		ExtensionID func(childComplexity int) int
 		ID          func(childComplexity int) int
 		LayerID     func(childComplexity int) int
+		Plugin      func(childComplexity int) int
 		PluginID    func(childComplexity int) int
 		Property    func(childComplexity int) int
 		PropertyID  func(childComplexity int) int
@@ -667,6 +668,7 @@ type ComplexityRoot struct {
 
 	NLSInfobox struct {
 		Blocks     func(childComplexity int) int
+		ID         func(childComplexity int) int
 		LayerID    func(childComplexity int) int
 		Property   func(childComplexity int) int
 		PropertyID func(childComplexity int) int
@@ -1359,6 +1361,9 @@ type InfoboxResolver interface {
 }
 type InfoboxBlockResolver interface {
 	Property(ctx context.Context, obj *gqlmodel.InfoboxBlock) (*gqlmodel.Property, error)
+
+	Plugin(ctx context.Context, obj *gqlmodel.InfoboxBlock) (*gqlmodel.Plugin, error)
+
 	Scene(ctx context.Context, obj *gqlmodel.InfoboxBlock) (*gqlmodel.Scene, error)
 }
 type InfoboxFieldResolver interface {
@@ -2587,6 +2592,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.InfoboxBlock.LayerID(childComplexity), true
+
+	case "InfoboxBlock.plugin":
+		if e.complexity.InfoboxBlock.Plugin == nil {
+			break
+		}
+
+		return e.complexity.InfoboxBlock.Plugin(childComplexity), true
 
 	case "InfoboxBlock.pluginId":
 		if e.complexity.InfoboxBlock.PluginID == nil {
@@ -4742,6 +4754,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSInfobox.Blocks(childComplexity), true
+
+	case "NLSInfobox.id":
+		if e.complexity.NLSInfobox.ID == nil {
+			break
+		}
+
+		return e.complexity.NLSInfobox.ID(childComplexity), true
 
 	case "NLSInfobox.layerId":
 		if e.complexity.NLSInfobox.LayerID == nil {
@@ -8670,12 +8689,13 @@ type NLSLayerGroup implements NLSLayer {
 }
 
 type NLSInfobox {
+  id: ID!
   sceneId: ID!
   layerId: ID!
   propertyId: ID!
   blocks: [InfoboxBlock!]!
   property: Property
-  scene: Scene
+  scene: Scene  
 }
 
 type InfoboxBlock {
@@ -8684,10 +8704,11 @@ type InfoboxBlock {
   layerId: ID!
   propertyId: ID!
   property: Property
-  scene: Scene
   pluginId: ID!
+  plugin: Plugin
   extensionId: ID!
   extension: PluginExtension
+  scene: Scene
 }
 
 # InputType
@@ -9621,6 +9642,7 @@ extend type Mutation {
 
   addPageLayer(input: PageLayerInput!): StoryPagePayload!
   removePageLayer(input: PageLayerInput!): StoryPagePayload!
+
 
   createStoryBlock(input: CreateStoryBlockInput!): CreateStoryBlockPayload!
   moveStoryBlock(input: MoveStoryBlockInput!): MoveStoryBlockPayload!
@@ -13084,14 +13106,16 @@ func (ec *executionContext) fieldContext_AddNLSInfoboxBlockPayload_infoboxBlock(
 				return ec.fieldContext_InfoboxBlock_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_InfoboxBlock_property(ctx, field)
-			case "scene":
-				return ec.fieldContext_InfoboxBlock_scene(ctx, field)
 			case "pluginId":
 				return ec.fieldContext_InfoboxBlock_pluginId(ctx, field)
+			case "plugin":
+				return ec.fieldContext_InfoboxBlock_plugin(ctx, field)
 			case "extensionId":
 				return ec.fieldContext_InfoboxBlock_extensionId(ctx, field)
 			case "extension":
 				return ec.fieldContext_InfoboxBlock_extension(ctx, field)
+			case "scene":
+				return ec.fieldContext_InfoboxBlock_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type InfoboxBlock", field.Name)
 		},
@@ -19119,91 +19143,6 @@ func (ec *executionContext) fieldContext_InfoboxBlock_property(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _InfoboxBlock_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InfoboxBlock) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_InfoboxBlock_scene(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.InfoboxBlock().Scene(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Scene)
-	fc.Result = res
-	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_InfoboxBlock_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InfoboxBlock",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Scene_id(ctx, field)
-			case "projectId":
-				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
-			case "propertyId":
-				return ec.fieldContext_Scene_propertyId(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Scene_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Scene_updatedAt(ctx, field)
-			case "rootLayerId":
-				return ec.fieldContext_Scene_rootLayerId(ctx, field)
-			case "widgets":
-				return ec.fieldContext_Scene_widgets(ctx, field)
-			case "plugins":
-				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
-			case "project":
-				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
-			case "property":
-				return ec.fieldContext_Scene_property(ctx, field)
-			case "rootLayer":
-				return ec.fieldContext_Scene_rootLayer(ctx, field)
-			case "newLayers":
-				return ec.fieldContext_Scene_newLayers(ctx, field)
-			case "stories":
-				return ec.fieldContext_Scene_stories(ctx, field)
-			case "styles":
-				return ec.fieldContext_Scene_styles(ctx, field)
-			case "datasetSchemas":
-				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
-			case "tagIds":
-				return ec.fieldContext_Scene_tagIds(ctx, field)
-			case "tags":
-				return ec.fieldContext_Scene_tags(ctx, field)
-			case "clusters":
-				return ec.fieldContext_Scene_clusters(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _InfoboxBlock_pluginId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InfoboxBlock) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_InfoboxBlock_pluginId(ctx, field)
 	if err != nil {
@@ -19243,6 +19182,81 @@ func (ec *executionContext) fieldContext_InfoboxBlock_pluginId(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InfoboxBlock_plugin(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InfoboxBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_InfoboxBlock_plugin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.InfoboxBlock().Plugin(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Plugin)
+	fc.Result = res
+	return ec.marshalOPlugin2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPlugin(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_InfoboxBlock_plugin(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InfoboxBlock",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Plugin_id(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_Plugin_sceneId(ctx, field)
+			case "name":
+				return ec.fieldContext_Plugin_name(ctx, field)
+			case "version":
+				return ec.fieldContext_Plugin_version(ctx, field)
+			case "description":
+				return ec.fieldContext_Plugin_description(ctx, field)
+			case "author":
+				return ec.fieldContext_Plugin_author(ctx, field)
+			case "repositoryUrl":
+				return ec.fieldContext_Plugin_repositoryUrl(ctx, field)
+			case "propertySchemaId":
+				return ec.fieldContext_Plugin_propertySchemaId(ctx, field)
+			case "extensions":
+				return ec.fieldContext_Plugin_extensions(ctx, field)
+			case "scenePlugin":
+				return ec.fieldContext_Plugin_scenePlugin(ctx, field)
+			case "allTranslatedDescription":
+				return ec.fieldContext_Plugin_allTranslatedDescription(ctx, field)
+			case "allTranslatedName":
+				return ec.fieldContext_Plugin_allTranslatedName(ctx, field)
+			case "scene":
+				return ec.fieldContext_Plugin_scene(ctx, field)
+			case "translatedName":
+				return ec.fieldContext_Plugin_translatedName(ctx, field)
+			case "translatedDescription":
+				return ec.fieldContext_Plugin_translatedDescription(ctx, field)
+			case "propertySchema":
+				return ec.fieldContext_Plugin_propertySchema(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Plugin", field.Name)
 		},
 	}
 	return fc, nil
@@ -19364,6 +19378,91 @@ func (ec *executionContext) fieldContext_InfoboxBlock_extension(ctx context.Cont
 				return ec.fieldContext_PluginExtension_translatedDescription(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PluginExtension", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _InfoboxBlock_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InfoboxBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_InfoboxBlock_scene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.InfoboxBlock().Scene(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Scene)
+	fc.Result = res
+	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_InfoboxBlock_scene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "InfoboxBlock",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Scene_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Scene_projectId(ctx, field)
+			case "teamId":
+				return ec.fieldContext_Scene_teamId(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_Scene_propertyId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Scene_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Scene_updatedAt(ctx, field)
+			case "rootLayerId":
+				return ec.fieldContext_Scene_rootLayerId(ctx, field)
+			case "widgets":
+				return ec.fieldContext_Scene_widgets(ctx, field)
+			case "plugins":
+				return ec.fieldContext_Scene_plugins(ctx, field)
+			case "widgetAlignSystem":
+				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "project":
+				return ec.fieldContext_Scene_project(ctx, field)
+			case "team":
+				return ec.fieldContext_Scene_team(ctx, field)
+			case "property":
+				return ec.fieldContext_Scene_property(ctx, field)
+			case "rootLayer":
+				return ec.fieldContext_Scene_rootLayer(ctx, field)
+			case "newLayers":
+				return ec.fieldContext_Scene_newLayers(ctx, field)
+			case "stories":
+				return ec.fieldContext_Scene_stories(ctx, field)
+			case "styles":
+				return ec.fieldContext_Scene_styles(ctx, field)
+			case "datasetSchemas":
+				return ec.fieldContext_Scene_datasetSchemas(ctx, field)
+			case "tagIds":
+				return ec.fieldContext_Scene_tagIds(ctx, field)
+			case "tags":
+				return ec.fieldContext_Scene_tags(ctx, field)
+			case "clusters":
+				return ec.fieldContext_Scene_clusters(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
 	}
 	return fc, nil
@@ -32578,6 +32677,50 @@ func (ec *executionContext) fieldContext_Mutation_updateMemberOfTeam(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _NLSInfobox_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSInfobox) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSInfobox_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSInfobox_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSInfobox",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NLSInfobox_sceneId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSInfobox) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NLSInfobox_sceneId(ctx, field)
 	if err != nil {
@@ -32759,14 +32902,16 @@ func (ec *executionContext) fieldContext_NLSInfobox_blocks(ctx context.Context, 
 				return ec.fieldContext_InfoboxBlock_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_InfoboxBlock_property(ctx, field)
-			case "scene":
-				return ec.fieldContext_InfoboxBlock_scene(ctx, field)
 			case "pluginId":
 				return ec.fieldContext_InfoboxBlock_pluginId(ctx, field)
+			case "plugin":
+				return ec.fieldContext_InfoboxBlock_plugin(ctx, field)
 			case "extensionId":
 				return ec.fieldContext_InfoboxBlock_extensionId(ctx, field)
 			case "extension":
 				return ec.fieldContext_InfoboxBlock_extension(ctx, field)
+			case "scene":
+				return ec.fieldContext_InfoboxBlock_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type InfoboxBlock", field.Name)
 		},
@@ -33299,6 +33444,8 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_infobox(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_NLSInfobox_id(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_NLSInfobox_sceneId(ctx, field)
 			case "layerId":
@@ -33700,6 +33847,8 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_infobox(ctx context.Cont
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_NLSInfobox_id(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_NLSInfobox_sceneId(ctx, field)
 			case "layerId":
@@ -62471,6 +62620,51 @@ func (ec *executionContext) _InfoboxBlock(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "pluginId":
+			out.Values[i] = ec._InfoboxBlock_pluginId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "plugin":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._InfoboxBlock_plugin(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "extensionId":
+			out.Values[i] = ec._InfoboxBlock_extensionId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "extension":
+			out.Values[i] = ec._InfoboxBlock_extension(ctx, field, obj)
 		case "scene":
 			field := field
 
@@ -62504,18 +62698,6 @@ func (ec *executionContext) _InfoboxBlock(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "pluginId":
-			out.Values[i] = ec._InfoboxBlock_pluginId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "extensionId":
-			out.Values[i] = ec._InfoboxBlock_extensionId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "extension":
-			out.Values[i] = ec._InfoboxBlock_extension(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -65823,6 +66005,11 @@ func (ec *executionContext) _NLSInfobox(ctx context.Context, sel ast.SelectionSe
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("NLSInfobox")
+		case "id":
+			out.Values[i] = ec._NLSInfobox_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "sceneId":
 			out.Values[i] = ec._NLSInfobox_sceneId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

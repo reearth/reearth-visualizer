@@ -9,6 +9,7 @@ import (
 )
 
 type Infobox struct {
+	id       InfoboxID
 	property PropertyID
 	blocks   []*InfoboxBlock
 	// for checking duplication
@@ -17,6 +18,7 @@ type Infobox struct {
 
 func NewInfobox(Blocks []*InfoboxBlock, p PropertyID) *Infobox {
 	infobox := Infobox{
+		id:       NewInfoboxID(),
 		property: p,
 		blocks:   make([]*InfoboxBlock, len(Blocks)),
 		ids:      make(map[InfoboxBlockID]struct{}, len(Blocks)),

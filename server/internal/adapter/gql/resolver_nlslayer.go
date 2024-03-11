@@ -44,7 +44,6 @@ func (r *nlsInfoboxResolver) Property(ctx context.Context, obj *gqlmodel.NLSInfo
 	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }
 
-
 type infoboxBlockResolver struct{ *Resolver }
 
 func (r *infoboxBlockResolver) Scene(ctx context.Context, obj *gqlmodel.InfoboxBlock) (*gqlmodel.Scene, error) {

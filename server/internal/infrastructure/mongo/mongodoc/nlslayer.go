@@ -41,6 +41,7 @@ type NLSLayerInfoboxBlockDocument struct {
 
 type NLSLayerInfoboxDocument struct {
 	Property string
+	LayerID  string
 	Blocks   []NLSLayerInfoboxBlockDocument
 }
 
@@ -53,7 +54,6 @@ func NewNLSLayerConsumer(scenes []id.SceneID) *NLSLayerConsumer {
 func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 	var group *NLSLayerGroupDocument
 	var simple *NLSLayerSimpleDocument
-	var infobox *NLSLayerInfoboxDocument
 
 	if lg := nlslayer.NLSLayerGroupFromLayer(l); lg != nil {
 		group = &NLSLayerGroupDocument{
@@ -69,28 +69,13 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 		}
 	}
 
-	if ib := l.Infobox(); ib != nil {
-		ibBlocks := ib.Blocks()
-		blocks := make([]NLSLayerInfoboxBlockDocument, 0, len(ibBlocks))
-		for _, f := range ibBlocks {
-			blocks = append(blocks, NLSLayerInfoboxBlockDocument{
-				ID:       f.ID().String(),
-				Property: f.Property().String(),
-			})
-		}
-		infobox = &NLSLayerInfoboxDocument{
-			Property: ib.Property().String(),
-			Blocks:   blocks,
-		}
-	}
-
 	id := l.ID().String()
 	return &NLSLayerDocument{
 		ID:        id,
 		Title:     l.Title(),
 		Visible:   l.IsVisible(),
 		Scene:     l.Scene().String(),
-		Infobox:   infobox,
+		Infobox:   NewNLSInfobox(l.Infobox()),
 		LayerType: string(l.LayerType()),
 		Group:     group,
 		Simple:    simple,
@@ -243,4 +228,24 @@ func ToModelNLSInfobox(ib *NLSLayerInfoboxDocument) (*nlslayer.Infobox, error) {
 		blocks = append(blocks, ibf)
 	}
 	return nlslayer.NewInfobox(blocks, pid), nil
+}
+
+func NewNLSInfobox(ib *nlslayer.Infobox) *NLSLayerInfoboxDocument {
+	if ib == nil {
+		return nil
+	}
+	ibBlocks := ib.Blocks()
+	blocks := make([]NLSLayerInfoboxBlockDocument, 0, len(ibBlocks))
+	for _, f := range ibBlocks {
+		blocks = append(blocks, NLSLayerInfoboxBlockDocument{
+			ID:        f.ID().String(),
+			Plugin:    f.Plugin().String(),
+			Extension: string(f.Extension()),
+			Property:  f.Property().String(),
+		})
+	}
+	return &NLSLayerInfoboxDocument{
+		Property: ib.Property().String(),
+		Blocks:   blocks,
+	}
 }

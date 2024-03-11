@@ -298,11 +298,14 @@ func TestNLSLayerCRUD(t *testing.T) {
 func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateNLSInfobox",
-		Query: `mutation CreateNLSInfobox($layerId: String) {
+		Query: `mutation CreateNLSInfobox($layerId: ID!) {
 			createNLSInfobox( input: {layerId: $layerId} ) { 
 				layer {
 					id
-					infobox
+					infobox {
+						id
+						layerId
+					}
 				}
 			}
 		}`,
@@ -360,28 +363,41 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 // 	return requestBody, res
 // }
 
-func createInfoboxBlock(e *httpexpect.Expect, layerID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
+func addInfoboxBlock(e *httpexpect.Expect, layerId, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
-		OperationName: "CreateNLSInfoboxBlock",
-		Query: `mutation CreateNLSInfoboxBlock($layerId: ID!, $pluginId: ID!, $extensionId: ID!, $index: Int ) {
-			createNLSInfoboxBlock( input: {layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index} ) { 
+		OperationName: "AddNLSInfoboxBlock",
+		Query: `mutation AddNLSInfoboxBlock($layerId: ID!, $pluginId: ID!, $extensionId: ID!, $index: Int) {
+			addNLSInfoboxBlock( input: {layerId: $layerId, pluginId: $pluginId, extensionId: $extensionId, index: $index} ) {
 				infoboxBlock {
 					id
-					blocks {
-						id
-					}
 				}
 				layer {
 					id
 					infobox {
 						id
-						blocks
+						layerId
+						blocks {
+							id
+							propertyId
+							property {
+							  id
+							  items {
+								  ... on PropertyGroup {
+									fields {
+									  id	
+									  value
+									  type
+									}
+								  }
+								}
+							}
+						}
 					}
 				}
 			}
 		}`,
 		Variables: map[string]any{
-			"layerId":     layerID,
+			"layerId":     layerId,
 			"pluginId":    pluginId,
 			"extensionId": extensionId,
 			"index":       idx,
@@ -399,12 +415,12 @@ func createInfoboxBlock(e *httpexpect.Expect, layerID, pluginId, extensionId str
 
 	res.Object().
 		Value("data").Object().
-		Value("createNLSInfoboxBlock").Object().
+		Value("addNLSInfoboxBlock").Object().
 		Value("layer").Object().
 		Value("infobox").Object().
 		Value("blocks").Array().NotEmpty()
 
-	return requestBody, res, res.Path("$.data.createNLSInfoboxBlock.infoboxBlock.id").Raw().(string)
+	return requestBody, res, res.Path("$.data.addNLSInfoboxBlock.infoboxBlock.id").Raw().(string)
 }
 
 func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (GraphQLRequest, *httpexpect.Value, string) {
@@ -412,21 +428,30 @@ func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string) (G
 		OperationName: "RemoveNLSInfoboxBlock",
 		Query: `mutation RemoveNLSInfoboxBlock($layerId: ID!, $infoboxBlockId: ID!) {
 			removeNLSInfoboxBlock( input: {layerId: $layerId , infoboxBlockId: $infoboxBlockId} ) { 
-				story {
+				infoboxBlockId
+				layer {
 					id
-					pages {
+					infobox {
 						id
+						layerId
+						blocks {
+							id
+							propertyId
+							property {
+							  id
+							  items {
+								  ... on PropertyGroup {
+									fields {
+									  id	
+									  value
+									  type
+									}
+								  }
+								}
+							}
+						}
 					}
 				}
-				page {
-					id
-					title
-					swipeable
-					blocks {
-						id
-					}
-				}
-				blockId
 			}
 		}`,
 		Variables: map[string]any{
@@ -455,21 +480,30 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 		OperationName: "MoveNLSInfoboxBlock",
 		Query: `mutation MoveNLSInfoboxBlock($layerId: ID!, $infoboxBlockId: ID!, $index: Int!) {
 			moveNLSInfoboxBlock( input: {layerId: $layerId, infoboxBlockId: $infoboxBlockId, index: $index} ) { 
-				story {
+				infoboxBlockId
+				layer {
 					id
-					pages {
+					infobox {
 						id
+						layerId
+						blocks {
+							id
+							propertyId
+							property {
+							  id
+							  items {
+								  ... on PropertyGroup {
+									fields {
+									  id	
+									  value
+									  type
+									}
+								  }
+								}
+							}
+						}
 					}
 				}
-				page {
-					id
-					title
-					swipeable
-					blocks {
-						id
-					}
-				}
-				blockId
 			}
 		}`,
 		Variables: map[string]any{
@@ -517,7 +551,6 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 
 	// Add NLSLayer
 	_, _, layerId := addNLSLayerSimple(e, sId)
-
 	_, res = fetchSceneForNewLayers(e, sId)
 
 	res.Object().
@@ -527,8 +560,13 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Length().Equal(1)
 
 	_, _, _ = createInfobox(e, layerId)
-	_, _, blockID1 := createInfoboxBlock(e, layerId, "reearth", "textBlock", nil)
-	_, _, blockID2 := createInfoboxBlock(e, layerId, "reearth", "propertyBlock", nil)
+
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+
+	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textblock", nil)
+	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyblock", nil)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
@@ -540,7 +578,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
 
-	_, _, blockID3 := createInfoboxBlock(e, layerId, "reearth", "imageblock", lo.ToPtr(1))
+	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageblock", lo.ToPtr(1))
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().

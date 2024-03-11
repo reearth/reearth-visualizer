@@ -557,10 +557,11 @@ type InfoboxBlock struct {
 	LayerID     ID               `json:"layerId"`
 	PropertyID  ID               `json:"propertyId"`
 	Property    *Property        `json:"property,omitempty"`
-	Scene       *Scene           `json:"scene,omitempty"`
 	PluginID    ID               `json:"pluginId"`
+	Plugin      *Plugin          `json:"plugin,omitempty"`
 	ExtensionID ID               `json:"extensionId"`
 	Extension   *PluginExtension `json:"extension,omitempty"`
+	Scene       *Scene           `json:"scene,omitempty"`
 }
 
 type InfoboxField struct {
@@ -900,6 +901,7 @@ type Mutation struct {
 }
 
 type NLSInfobox struct {
+	ID         ID              `json:"id"`
 	SceneID    ID              `json:"sceneId"`
 	LayerID    ID              `json:"layerId"`
 	PropertyID ID              `json:"propertyId"`
