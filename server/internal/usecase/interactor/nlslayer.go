@@ -7,9 +7,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/nlslayer/nlslayerops"
+	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -19,6 +22,8 @@ type NLSLayer struct {
 	commonSceneLock
 	nlslayerRepo  repo.NLSLayer
 	sceneLockRepo repo.SceneLock
+	propertyRepo  repo.Property
+	pluginRepo    repo.Plugin
 	transaction   usecasex.Transaction
 }
 
@@ -27,6 +32,8 @@ func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		nlslayerRepo:    r.NLSLayer,
 		sceneLockRepo:   r.SceneLock,
+		propertyRepo:    r.Property,
+		pluginRepo:      r.Plugin,
 		transaction:     r.Transaction,
 	}
 }
@@ -204,4 +211,286 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 
 	tx.Commit()
 	return layer, nil
+}
+
+func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	l, err := i.nlslayerRepo.FindByID(ctx, lid)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
+		return nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, l.Scene()); err != nil {
+		return nil, err
+	}
+
+	infobox := l.Infobox()
+	if infobox != nil {
+		return nil, interfaces.ErrInfoboxAlreadyExists
+	}
+
+	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
+	property, err := property.New().NewID().Schema(schema.ID()).Scene(l.Scene()).Build()
+	if err != nil {
+		return nil, err
+	}
+	infobox = nlslayer.NewInfobox(nil, property.ID())
+	l.SetInfobox(infobox)
+
+	err = i.propertyRepo.Save(ctx, property)
+	if err != nil {
+		return nil, err
+	}
+	err = i.nlslayerRepo.Save(ctx, l)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return l, nil
+}
+
+func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, layerID)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, layer.Scene()); err != nil {
+		return nil, err
+	}
+
+	infobox := layer.Infobox()
+	if infobox == nil {
+		return nil, interfaces.ErrInfoboxNotFound
+	}
+
+	layer.SetInfobox(nil)
+
+	err = i.propertyRepo.Remove(ctx, infobox.Property())
+	if err != nil {
+		return nil, err
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *NLSLayer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID, e *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
+	if p == nil {
+		return nil, nil, nil
+	}
+
+	plugin, err := i.pluginRepo.FindByID(ctx, *p)
+	if err != nil {
+		if errors.Is(err, rerror.ErrNotFound) {
+			return nil, nil, interfaces.ErrPluginNotFound
+		}
+		return nil, nil, err
+	}
+
+	if e == nil {
+		return plugin, nil, nil
+	}
+
+	extension := plugin.Extension(*e)
+	if extension == nil {
+		return nil, nil, interfaces.ErrExtensionNotFound
+	}
+
+	return plugin, extension, nil
+}
+
+func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLSInfoboxBlockParam, operator *usecase.Operator) (_ *nlslayer.InfoboxBlock, _ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	l, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
+		return nil, nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, l.Scene()); err != nil {
+		return nil, nil, err
+	}
+
+	infobox := l.Infobox()
+	if infobox == nil {
+		return nil, nil, interfaces.ErrInfoboxNotFound
+	}
+
+	_, extension, err := i.getPlugin(ctx, l.Scene(), &inp.PluginID, &inp.ExtensionID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if extension.Type() != plugin.ExtensionTypeBlock {
+		return nil, nil, interfaces.ErrExtensionTypeMustBeBlock
+	}
+	property, err := property.New().NewID().Schema(extension.Schema()).Scene(l.Scene()).Build()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	block, err := nlslayer.NewInfoboxBlock().
+		NewID().
+		Plugin(inp.PluginID).
+		Extension(inp.ExtensionID).
+		Property(property.ID()).
+		Build()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	index := -1
+	if inp.Index != nil {
+		index = *inp.Index
+	}
+	infobox.Add(block, index)
+
+	err = i.propertyRepo.Save(ctx, property)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = i.nlslayerRepo.Save(ctx, l)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	tx.Commit()
+	return block, l, err
+}
+
+func (i *NLSLayer) MoveNLSInfoboxBlock(ctx context.Context, inp interfaces.MoveNLSInfoboxBlockParam, operator *usecase.Operator) (_ id.InfoboxBlockID, _ nlslayer.NLSLayer, _ int, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return inp.InfoboxBlockID, nil, -1, err
+	}
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return inp.InfoboxBlockID, nil, -1, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, layer.Scene()); err != nil {
+		return inp.InfoboxBlockID, nil, -1, err
+	}
+
+	infobox := layer.Infobox()
+	if infobox == nil {
+		return inp.InfoboxBlockID, nil, -1, interfaces.ErrInfoboxNotFound
+	}
+
+	infobox.Move(inp.InfoboxBlockID, inp.Index)
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return inp.InfoboxBlockID, nil, -1, err
+	}
+
+	tx.Commit()
+	return inp.InfoboxBlockID, layer, inp.Index, err
+}
+
+func (i *NLSLayer) RemoveNLSInfoboxBlock(ctx context.Context, inp interfaces.RemoveNLSInfoboxBlockParam, operator *usecase.Operator) (_ id.InfoboxBlockID, _ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return inp.InfoboxBlockID, nil, err
+	}
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return inp.InfoboxBlockID, nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, layer.Scene()); err != nil {
+		return inp.InfoboxBlockID, nil, err
+	}
+
+	infobox := layer.Infobox()
+	if infobox == nil {
+		return inp.InfoboxBlockID, nil, interfaces.ErrInfoboxNotFound
+	}
+
+	infobox.Remove(inp.InfoboxBlockID)
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return inp.InfoboxBlockID, nil, err
+	}
+
+	tx.Commit()
+	return inp.InfoboxBlockID, layer, err
 }
