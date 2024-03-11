@@ -168,6 +168,25 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 				id
 				layerType
 				config
+				infobox {
+					id
+					blocks {
+						id
+						propertyId
+						property {
+						  id
+						  items {
+							  ... on PropertyGroup {
+								fields {
+								  id	
+								  value
+								  type
+								}
+							  }
+							}
+						}
+					}
+				}
 		 	  }
 			  __typename
 			}
