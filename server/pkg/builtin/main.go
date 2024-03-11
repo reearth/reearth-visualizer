@@ -25,6 +25,7 @@ var (
 	PropertySchemaIDVisualizerCesium     = property.MustSchemaID("reearth/cesium")
 	PropertySchemaIDVisualizerBetaCesium = property.MustSchemaID("reearth/cesium-beta")
 	PropertySchemaIDInfobox              = property.MustSchemaID("reearth/infobox")
+	PropertySchemaIDBetaInfobox          = property.MustSchemaID("reearth/infobox-beta")
 	PropertySchemaIDStory                = property.MustSchemaID("reearth/story")
 	PropertySchemaIDStoryPage            = property.MustSchemaID("reearth/storyPage")
 	PropertySchemaIDStoryBlock           = property.MustSchemaID("reearth/storyBlock")
