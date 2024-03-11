@@ -9,6 +9,7 @@ import type { ResourceAppearance } from "../../..";
 import { useContext } from "../context";
 import {
   attachTag,
+  getTag,
   extractSimpleLayerData,
   type FeatureComponentConfig,
   type FeatureProps,
@@ -85,7 +86,11 @@ export default function Resource({
         const res = attachStyle(e, layer, evalFeature, viewer.clock.currentTime);
         const [feature, computedFeature] = res || [];
 
-        attachTag(e, { layerId: layer?.id, featureId: feature?.id, hideIndicator });
+        attachTag(e, {
+          layerId: layer?.id,
+          featureId: feature?.id,
+          hideIndicator: computedFeature?.resource?.hideIndicator,
+        });
 
         if (feature && !cachedFeatureIds.current.has(feature.id)) {
           features.push(feature);
@@ -104,7 +109,7 @@ export default function Resource({
 
       requestRender?.();
     },
-    [layer, viewer, onComputedFeatureFetch, type, requestRender, hideIndicator],
+    [layer, viewer, onComputedFeatureFetch, type, requestRender],
   );
 
   const initialClock = useRef({
@@ -116,7 +121,13 @@ export default function Resource({
     (ds: DataSource) => {
       ds.entities.values.forEach(e =>
         requestAnimationFrame(() => {
-          attachTag(e, { layerId: layer?.id, featureId: makeFeatureId(e), hideIndicator });
+          const tag = getTag(e);
+          attachTag(e, {
+            ...tag,
+            layerId: layer?.id,
+            featureId: makeFeatureId(e),
+            hideIndicator: hideIndicator ?? tag?.hideIndicator,
+          });
         }),
       );
       if (!updateClock) {
