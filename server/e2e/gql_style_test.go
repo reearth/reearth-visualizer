@@ -118,7 +118,11 @@ func duplicateStyle(e *httpexpect.Expect, styleId string) (GraphQLRequest, *http
 		OperationName: "DuplicateStyle",
 		Query: `mutation DuplicateStyle($styleId: ID!) {
 			duplicateStyle(input: {styleId: $styleId}) {
-				styleId
+				style {
+					id
+					name
+					value
+				}
 			}
 		}`,
 		Variables: map[string]any{
@@ -214,7 +218,7 @@ func TestStyleCRUD(t *testing.T) {
 
 	// Duplicate Style
 	_, duplicateRes := duplicateStyle(e, styleId)
-	duplicatedStyleId := duplicateRes.Path("$.data.duplicateStyle.styleId").String().Raw()
+	duplicatedStyleId := duplicateRes.Path("$.data.duplicateStyle.style.id").Raw().(string)
 
 	_, res4 := fetchSceneForStyles(e, sId)
 

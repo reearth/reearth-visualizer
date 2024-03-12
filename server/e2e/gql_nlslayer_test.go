@@ -161,7 +161,11 @@ func duplicateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *h
 		OperationName: "DuplicateNLSLayer",
 		Query: `mutation DuplicateNLSLayer($layerId: ID!) {
 			duplicateNLSLayer(input: {layerId: $layerId}) {
-				layerId
+				layer {
+					id
+					__typename
+				}
+				__typename
 			}
 		}`,
 		Variables: map[string]any{
@@ -318,7 +322,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 
 	// Duplicate NLSLayer
 	_, duplicateRes := duplicateNLSLayer(e, layerId)
-	duplicatedLayerId := duplicateRes.Path("$.data.duplicateNLSLayer.layerId").String().Raw()
+	duplicatedLayerId := duplicateRes.Path("$.data.duplicateNLSLayer.layer.id").Raw().(string)
 
 	_, res5 := fetchSceneForNewLayers(e, sId)
 	res5.Object().
