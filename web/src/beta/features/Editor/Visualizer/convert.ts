@@ -13,7 +13,6 @@ import {
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
 import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
-import type { Block, Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -24,7 +23,6 @@ import {
   type WidgetSection as WidgetSectionType,
   type WidgetArea as WidgetAreaType,
   type Scene,
-  EarthLayerFragment,
   PropertyFragmentFragment,
   PropertySchemaGroupFragmentFragment,
   PropertyItemFragmentFragment,
@@ -346,7 +344,7 @@ export type RawNLSLayer = NlsLayerCommonFragment & {
 export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[],
-  parent?: RawNLSLayer | null | undefined,
+  _parent?: RawNLSLayer | null | undefined,
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
@@ -370,8 +368,8 @@ export function processLayers(
       id: nlsLayer.id,
       title: nlsLayer.title,
       visible: nlsLayer.visible,
-      infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
-      tags: processLayerTags(nlsLayer.tags ?? []),
+      infobox: undefined,
+      // infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
@@ -381,37 +379,20 @@ export function processLayers(
   });
 }
 
-const processInfobox = (
-  orig: EarthLayerFragment["infobox"] | null | undefined,
-  parent: EarthLayerFragment["infobox"] | null | undefined,
-): Layer["infobox"] => {
-  const used = orig || parent;
-  if (!used) return;
-  return {
-    property: processProperty(parent?.property, orig?.property),
-    blocks: used.fields.map<Block>(f => ({
-      id: f.id,
-      pluginId: f.pluginId,
-      extensionId: f.extensionId,
-      property: processProperty(undefined, f.property),
-      propertyId: f.propertyId, // required by onBlockChange
-    })),
-  };
-};
-
-export function processLayerTags(
-  tags: {
-    tagId: string;
-    tag?: Maybe<{ label: string }>;
-    children?: { tagId: string; tag?: Maybe<{ label: string }> }[];
-  }[],
-): Tag[] {
-  return tags.map(t => ({
-    id: t.tagId,
-    label: t.tag?.label ?? "",
-    tags: t.children?.map(tt => ({
-      id: tt.tagId,
-      label: tt.tag?.label ?? "",
-    })),
-  }));
-}
+// const processInfobox = (
+//   orig: EarthLayerFragment["infobox"] | null | undefined,
+//   parent: EarthLayerFragment["infobox"] | null | undefined,
+// ): Layer["infobox"] => {
+//   const used = orig || parent;
+//   if (!used) return;
+//   return {
+//     property: processProperty(parent?.property, orig?.property),
+//     blocks: used.fields.map<Block>(f => ({
+//       id: f.id,
+//       pluginId: f.pluginId,
+//       extensionId: f.extensionId,
+//       property: processProperty(undefined, f.property),
+//       propertyId: f.propertyId, // required by onBlockChange
+//     })),
+//   };
+// };
