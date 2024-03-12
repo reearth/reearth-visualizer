@@ -156,6 +156,35 @@ func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 	return requestBody, res
 }
 
+func duplicateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "DuplicateNLSLayer",
+		Query: `mutation DuplicateNLSLayer($layerId: ID!) {
+			duplicateNLSLayer(input: {layerId: $layerId}) {
+				layer {
+					id
+					__typename
+				}
+				__typename
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId": layerId,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	return requestBody, res
+}
+
 func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *httpexpect.Value) {
 	fetchSceneRequestBody := GraphQLRequest{
 		OperationName: "GetScene",
@@ -291,8 +320,35 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("newLayers").Array().First().Object().
 		Value("config").Equal(savedConfig)
 
+	// Duplicate NLSLayer
+	_, duplicateRes := duplicateNLSLayer(e, layerId)
+	duplicatedLayerId := duplicateRes.Path("$.data.duplicateNLSLayer.layer.id").Raw().(string)
+
+	_, res5 := fetchSceneForNewLayers(e, sId)
+	res5.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(2)
+
 	// Remove NLSLayer
 	_, _ = removeNLSLayer(e, layerId)
+
+	_, res6 := fetchSceneForNewLayers(e, sId)
+	res6.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(1)
+
+	_, _ = removeNLSLayer(e, duplicatedLayerId)
+
+	_, res7 := fetchSceneForNewLayers(e, sId)
+	res7.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(0)
 }
 
 func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string) {

@@ -503,10 +503,26 @@ type DetachTagItemFromGroupPayload struct {
 	Tag *TagGroup `json:"tag"`
 }
 
+type DuplicateNLSLayerInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type DuplicateNLSLayerPayload struct {
+	Layer NLSLayer `json:"layer"`
+}
+
 type DuplicateStoryPageInput struct {
 	SceneID ID `json:"sceneId"`
 	StoryID ID `json:"storyId"`
 	PageID  ID `json:"pageId"`
+}
+
+type DuplicateStyleInput struct {
+	StyleID ID `json:"styleId"`
+}
+
+type DuplicateStylePayload struct {
+	Style *Style `json:"style"`
 }
 
 type ImportDatasetFromGoogleSheetInput struct {
