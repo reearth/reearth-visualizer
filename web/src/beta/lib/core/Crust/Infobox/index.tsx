@@ -8,8 +8,9 @@ import {
   EditModeProvider,
 } from "@reearth/beta/lib/core/shared/contexts/editModeContext";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import { InstallableInfoboxBlock } from "@reearth/services/api/infoboxApi/blocks";
 import { styled } from "@reearth/services/theme";
+
+import { InstallableBlock } from "../../shared/types";
 
 import InfoboxBlockComponent from "./Block";
 import {
@@ -23,6 +24,10 @@ import type { Infobox, InfoboxBlockProps } from "./types";
 
 export type InfoboxPosition = "right" | "left";
 
+export type InstallableInfoboxBlock = InstallableBlock & {
+  type?: "InfoboxBlock";
+};
+
 export type Props = {
   infobox?: Infobox;
   isEditable?: boolean;
@@ -30,12 +35,12 @@ export type Props = {
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   renderBlock?: (block: InfoboxBlockProps) => ReactNode;
   onBlockCreate?: (
-    extensionId?: string | undefined,
-    pluginId?: string | undefined,
+    pluginId: string,
+    extensionId: string,
     index?: number | undefined,
   ) => Promise<void>;
-  onBlockMove?: (id: string, targetIndex: number) => void;
-  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onBlockDelete?: (id?: string) => Promise<void>;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
@@ -78,11 +83,10 @@ const Infobox: React.FC<Props> = ({
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
   const showInfobox = useMemo(
-    () => !!infobox?.property?.default?.enabled,
-    [infobox?.property?.default?.enabled],
+    () => (infobox ? infobox?.property?.default?.enabled ?? true : false),
+    [infobox],
   );
 
-  console.log("INFO", infobox);
   const padding = useMemo(
     () => infobox?.property?.default?.padding,
     [infobox?.property?.default?.padding],
@@ -112,8 +116,10 @@ const Infobox: React.FC<Props> = ({
   );
 
   const handleBlockCreate = useCallback(
-    (index: number) => (extensionId?: string | undefined, pluginId?: string | undefined) =>
-      onBlockCreate?.(extensionId, pluginId, index),
+    (index: number) => (extensionId?: string | undefined, pluginId?: string | undefined) => {
+      if (!extensionId || !pluginId) return;
+      onBlockCreate?.(pluginId, extensionId, index);
+    },
     [onBlockCreate],
   );
 
@@ -151,9 +157,23 @@ const Infobox: React.FC<Props> = ({
     }
   }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex]);
 
+  console.log("INF", infobox);
+
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
       <Wrapper position={position} padding={padding} gap={gap}>
+        {isEditable && !disableSelection && infoboxBlocks && infoboxBlocks.length < 1 && (
+          <BlockAddBar
+            id="top-bar"
+            openBlocks={openBlocksIndex === 0}
+            installableBlocks={installableInfoboxBlocks}
+            showAreaHeight={gap}
+            parentWidth={INFOBOX_WIDTH}
+            alwaysShow
+            onBlockOpen={() => handleBlockOpen(0)}
+            onBlockAdd={handleBlockCreate?.(0)}
+          />
+        )}
         {infoboxBlocks && infoboxBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey={INFOBOX_UNIQUE_KEY}

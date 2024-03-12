@@ -12,6 +12,8 @@ import { useNotification } from "@reearth/services/state";
 
 import { MutationReturn } from "../types";
 
+import useBlocks from "./blocks";
+
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
@@ -35,7 +37,21 @@ export default () => {
     [createNLSInfoboxMutation, setNotification, t],
   );
 
+  const {
+    useInstallableInfoboxBlocksQuery,
+    useInstalledInfoboxBlocksQuery,
+    useCreateInfoboxBlock,
+    useDeleteInfoboxBlock,
+    useMoveInfoboxBlock,
+  } = useBlocks();
+
   return {
     useCreateNLSInfobox,
+    // blocks
+    useInstallableInfoboxBlocksQuery,
+    useInstalledInfoboxBlocksQuery,
+    useCreateInfoboxBlock,
+    useDeleteInfoboxBlock,
+    useMoveInfoboxBlock,
   };
 };

@@ -79,6 +79,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     isVisualizerReady,
     visualizerRef,
   });
+
   const { scene, selectedSceneSetting, sceneSettings, handleSceneSettingSelect } = useScene({
     sceneId,
   });
@@ -230,7 +231,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   sceneId={sceneId}
                   showStoryPanel={selectedProjectType === "story"}
                   selectedStory={selectedStory}
-                  installableBlocks={installableStoryBlocks}
+                  installableStoryBlocks={installableStoryBlocks}
                   currentCamera={currentCamera}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}

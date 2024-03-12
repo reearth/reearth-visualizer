@@ -384,16 +384,22 @@ export const nlsLayerSimpleFragment = gql`
     title
     visible
     infobox {
-      id
       sceneId
       layerId
       propertyId
-      blocks {
-        id
-      }
       property {
         id
         ...PropertyFragment
+      }
+      blocks {
+        id
+        pluginId
+        extensionId
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
       }
     }
     ... on NLSLayerGroup {

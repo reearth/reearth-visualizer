@@ -37,7 +37,6 @@ export default () => {
     });
 
     const nlsLayers = useMemo(() => getLayers(data), [data]);
-    console.log("NLSLAYERS", nlsLayers);
 
     return { nlsLayers, ...rest };
   }, []);

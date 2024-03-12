@@ -14,6 +14,7 @@ import Crust, {
   BuiltinWidgets,
   InteractionModeType,
 } from "../Crust";
+import { InstallableInfoboxBlock } from "../Crust/Infobox";
 import { ComputedFeature, Tag } from "../mantle";
 import Map, {
   type SceneProperty,
@@ -60,6 +61,7 @@ export type Props = {
   floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
+  installableInfoboxBlocks?: InstallableInfoboxBlock[];
   clusters?: Cluster[]; // TODO: remove completely from beta core
   camera?: Camera;
   storyPanelPosition?: Position;
@@ -91,8 +93,13 @@ export type Props = {
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
-  onBlockMove?: (id: string, targetIndex: number) => void;
-  onBlockDelete?: (id?: string) => Promise<void>;
+  onInfoboxBlockCreate?: (
+    pluginId: string,
+    extensionId: string,
+    index?: number | undefined,
+  ) => Promise<void>;
+  onInfoboxBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onInfoboxBlockDelete?: (id?: string) => Promise<void>;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
@@ -111,6 +118,7 @@ const Visualizer = memo(
         inEditor,
         sceneProperty,
         layers,
+        installableInfoboxBlocks,
         clusters,
         widgetAlignSystem,
         widgetAlignSystemEditing,
@@ -138,8 +146,9 @@ const Visualizer = memo(
         onWidgetLayoutUpdate,
         onWidgetAlignmentUpdate,
         onWidgetAreaSelect,
-        onBlockMove,
-        onBlockDelete,
+        onInfoboxBlockCreate,
+        onInfoboxBlockMove,
+        onInfoboxBlockDelete,
         onZoomToLayer,
         onInteractionModeChange,
         onMount,
@@ -223,6 +232,7 @@ const Visualizer = memo(
                   sceneProperty={overriddenSceneProperty}
                   overrideSceneProperty={overrideSceneProperty}
                   infobox={infobox}
+                  installableInfoboxBlocks={installableInfoboxBlocks}
                   camera={camera}
                   interactionMode={interactionMode}
                   overrideInteractionMode={handleInteractionModeChange}
@@ -244,8 +254,9 @@ const Visualizer = memo(
                   onWidgetLayoutUpdate={onWidgetLayoutUpdate}
                   onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
                   onWidgetAreaSelect={onWidgetAreaSelect}
-                  onBlockMove={onBlockMove}
-                  onBlockDelete={onBlockDelete}
+                  onInfoboxBlockCreate={onInfoboxBlockCreate}
+                  onInfoboxBlockMove={onInfoboxBlockMove}
+                  onInfoboxBlockDelete={onInfoboxBlockDelete}
                   onLayerEdit={onLayerEdit}
                   onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
                   onSketchTypeChange={onSketchTypeChange}

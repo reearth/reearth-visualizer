@@ -10,7 +10,7 @@ import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
-import Infobox from "./Infobox";
+import Infobox, { InstallableInfoboxBlock } from "./Infobox";
 import { Infobox as InfoboxType } from "./Infobox/types";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
@@ -79,6 +79,7 @@ export type Props = {
   selectedWidgetArea?: WidgetAreaType;
   // infobox
   infobox?: InfoboxType;
+  installableInfoboxBlocks?: InstallableInfoboxBlock[];
   // plugin
   externalPlugin: ExternalPluginProps;
   useExperimentalSandbox?: boolean;
@@ -96,13 +97,13 @@ export type Props = {
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // infobox events
-  onBlockCreate?: (
-    extensionId?: string | undefined,
-    pluginId?: string | undefined,
+  onInfoboxBlockCreate?: (
+    pluginId: string,
+    extensionId: string,
     index?: number | undefined,
   ) => Promise<void>;
-  onBlockMove?: (id: string, targetIndex: number) => void;
-  onBlockDelete?: (blockId?: string) => Promise<void>;
+  onInfoboxBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onInfoboxBlockDelete?: (id?: string) => Promise<void>;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
@@ -133,6 +134,7 @@ export default function Crust({
   widgetLayoutConstraint,
   floatingWidgets,
   infobox,
+  installableInfoboxBlocks,
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
@@ -141,9 +143,9 @@ export default function Crust({
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
-  onBlockCreate,
-  onBlockMove,
-  onBlockDelete,
+  onInfoboxBlockCreate,
+  onInfoboxBlockMove,
+  onInfoboxBlockDelete,
   overrideSceneProperty,
   onLayerEdit,
   onPluginSketchFeatureCreated,
@@ -220,12 +222,13 @@ export default function Crust({
       />
       <Infobox
         infobox={infobox}
+        installableInfoboxBlocks={installableInfoboxBlocks}
         isEditable={isEditable}
         inEditor={inEditor}
         renderBlock={renderBlock}
-        onBlockCreate={onBlockCreate}
-        onBlockDelete={onBlockDelete}
-        onBlockMove={onBlockMove}
+        onBlockCreate={onInfoboxBlockCreate}
+        onBlockDelete={onInfoboxBlockDelete}
+        onBlockMove={onInfoboxBlockMove}
         onPropertyItemAdd={async () => console.log("ADD")}
         onPropertyItemDelete={async () => console.log("DELETE")}
         onPropertyItemMove={async () => console.log("MOVE")}

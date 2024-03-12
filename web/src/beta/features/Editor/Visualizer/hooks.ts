@@ -10,6 +10,7 @@ import {
   useStorytellingFetcher,
   usePropertyFetcher,
   useLayerStylesFetcher,
+  useInfoboxFetcher,
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
@@ -44,6 +45,12 @@ export default ({
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
   const { useUpdatePropertyValue, useAddPropertyItem, useMovePropertyItem, useRemovePropertyItem } =
     usePropertyFetcher();
+  const {
+    useInstallableInfoboxBlocksQuery,
+    useCreateInfoboxBlock,
+    useDeleteInfoboxBlock,
+    useMoveInfoboxBlock,
+  } = useInfoboxFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
@@ -137,20 +144,42 @@ export default ({
     [scene?.plugins],
   );
 
+  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
+
+  const handleInfoboxBlockCreate = useCallback(
+    async (pluginId: string, extensionId: string, index?: number) => {
+      if (!selectedLayer) return;
+      await useCreateInfoboxBlock({
+        layerId: selectedLayer.layerId,
+        pluginId,
+        extensionId,
+        index,
+      });
+    },
+    [selectedLayer, useCreateInfoboxBlock],
+  );
+
   const handleInfoboxBlockMove = useCallback(
     async (id: string, targetIndex: number) => {
       if (!selectedLayer) return;
-      console.log("Block has been moved!", id, targetIndex);
+      await useMoveInfoboxBlock({
+        layerId: selectedLayer.layerId,
+        infoboxBlockId: id,
+        index: targetIndex,
+      });
     },
-    [selectedLayer],
+    [selectedLayer, useMoveInfoboxBlock],
   );
 
   const handleInfoboxBlockRemove = useCallback(
     async (id?: string) => {
       if (!selectedLayer || !id) return;
-      console.log("Block has been removed!", id);
+      await useDeleteInfoboxBlock({
+        layerId: selectedLayer.layerId,
+        infoboxBlockId: id,
+      });
     },
-    [selectedLayer],
+    [selectedLayer, useDeleteInfoboxBlock],
   );
 
   // Story
@@ -247,13 +276,15 @@ export default ({
     widgetAlignEditorActivated,
     engineMeta,
     useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
-    isVisualizerReady,
+    isVisualizerReady, // Not being used (as of 2024/04)
     zoomedLayerId,
+    installableInfoboxBlocks,
     handleLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
+    handleInfoboxBlockCreate,
     handleInfoboxBlockMove,
     handleInfoboxBlockRemove,
     handleWidgetUpdate,

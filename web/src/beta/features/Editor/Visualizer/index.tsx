@@ -1,6 +1,6 @@
 import { MutableRefObject } from "react";
 
-import { InteractionModeType } from "@reearth/beta/lib/core/Crust";
+import { type InteractionModeType } from "@reearth/beta/lib/core/Crust";
 import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
 import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import type { SceneProperty } from "@reearth/beta/lib/core/Map/types";
@@ -27,7 +27,7 @@ export type Props = {
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
   selectedStory?: Story;
-  installableBlocks?: InstallableStoryBlock[];
+  installableStoryBlocks?: InstallableStoryBlock[];
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
@@ -44,7 +44,7 @@ const Visualizer: React.FC<Props> = ({
   storyPanelRef,
   showStoryPanel,
   selectedStory,
-  installableBlocks,
+  installableStoryBlocks,
   onStoryBlockMove,
   onCameraChange,
   onSketchTypeChange,
@@ -61,22 +61,23 @@ const Visualizer: React.FC<Props> = ({
     widgetAlignEditorActivated,
     engineMeta,
     useExperimentalSandbox,
-    isVisualizerReady: _isVisualizerReady,
     zoomedLayerId,
+    installableInfoboxBlocks,
+    handleLayerSelect,
+    handleLayerDrop,
     handleStoryPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
-    handlePropertyValueUpdate,
-    handlePropertyItemAdd,
-    handlePropertyItemDelete,
-    handlePropertyItemMove,
-    handleLayerSelect,
-    handleLayerDrop,
+    handleInfoboxBlockCreate,
     handleInfoboxBlockMove,
     handleInfoboxBlockRemove,
     handleWidgetUpdate,
     handleWidgetAlignSystemUpdate,
     selectWidgetArea,
+    handlePropertyValueUpdate,
+    handlePropertyItemAdd,
+    handlePropertyItemDelete,
+    handlePropertyItemMove,
     handleMount,
     zoomToLayer,
   } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, showStoryPanel });
@@ -90,6 +91,7 @@ const Visualizer: React.FC<Props> = ({
         isBuilt={!!isBuilt}
         inEditor={!!inEditor}
         layers={layers}
+        installableInfoboxBlocks={installableInfoboxBlocks}
         widgetAlignSystem={widgets?.alignSystem}
         floatingWidgets={widgets?.floating}
         widgetLayoutConstraint={widgets?.layoutConstraint}
@@ -113,8 +115,9 @@ const Visualizer: React.FC<Props> = ({
         onWidgetLayoutUpdate={handleWidgetUpdate}
         onWidgetAlignmentUpdate={handleWidgetAlignSystemUpdate}
         onWidgetAreaSelect={selectWidgetArea}
-        onBlockMove={handleInfoboxBlockMove}
-        onBlockDelete={handleInfoboxBlockRemove}
+        onInfoboxBlockCreate={handleInfoboxBlockCreate}
+        onInfoboxBlockMove={handleInfoboxBlockMove}
+        onInfoboxBlockDelete={handleInfoboxBlockRemove}
         onZoomToLayer={zoomToLayer}
         onSketchTypeChange={onSketchTypeChange}
         onSketchFeatureCreate={onSketchFeatureCreate}
@@ -123,7 +126,7 @@ const Visualizer: React.FC<Props> = ({
           <StoryPanel
             ref={storyPanelRef}
             selectedStory={story}
-            installableBlocks={installableBlocks}
+            installableBlocks={installableStoryBlocks}
             isEditable={!!inEditor}
             onCurrentPageChange={handleStoryPageChange}
             onBlockCreate={handleStoryBlockCreate}
