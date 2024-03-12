@@ -10,9 +10,9 @@ import Layers from ".";
 
 function LeftPanelLayers() {
   const layers: NLSLayer[] = [
-    { id: "layer1", title: "blah", visible: true, layerType: "simple", tags: [] },
-    { id: "layer2", title: "blehbleh", visible: true, layerType: "simple", tags: [] },
-    { id: "layer3", title: "blah", visible: true, layerType: "Hehehah", tags: [] },
+    { id: "layer1", title: "blah", visible: true, layerType: "simple" },
+    { id: "layer2", title: "blehbleh", visible: true, layerType: "simple" },
+    { id: "layer3", title: "blah", visible: true, layerType: "Hehehah" },
   ];
 
   return (
