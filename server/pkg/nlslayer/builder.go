@@ -35,3 +35,8 @@ func (b *Builder) LayerType(t LayerType) *Builder {
 	b.base.layerType = t
 	return b
 }
+
+func (b *Builder) Infobox(infobox *Infobox) *Builder {
+	b.base.infobox = infobox
+	return b
+}

@@ -408,3 +408,19 @@ models:
     fields:
       scene:
         resolver: true  
+  NLSInfobox:
+    fields:
+      property:
+        resolver: true
+      scene:
+        resolver: true
+  InfoboxBlock:
+    fields:
+      property:
+        resolver: true
+      plugin:
+        resolver: true
+      pluginExtension:
+        resolver: true
+      scene:
+        resolver: true

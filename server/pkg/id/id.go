@@ -23,6 +23,8 @@ type Workspace struct{}
 type User struct{}
 type Widget struct{}
 type Style struct{}
+type Infobox struct{}
+type InfoboxBlock struct{}
 
 func (Asset) Type() string               { return "asset" }
 func (AuthRequest) Type() string         { return "authRequest" }
@@ -45,6 +47,8 @@ func (Workspace) Type() string           { return "workspace" }
 func (User) Type() string                { return "user" }
 func (Widget) Type() string              { return "widget" }
 func (Style) Type() string               { return "style" }
+func (Infobox) Type() string             { return "infobox" }
+func (InfoboxBlock) Type() string        { return "infoboxBlock" }
 
 type AssetID = idx.ID[Asset]
 type AuthRequestID = idx.ID[AuthRequest]
@@ -64,6 +68,8 @@ type WorkspaceID = idx.ID[Workspace]
 type UserID = idx.ID[User]
 type WidgetID = idx.ID[Widget]
 type StyleID = idx.ID[Style]
+type InfoboxID = idx.ID[Infobox]
+type InfoboxBlockID = idx.ID[InfoboxBlock]
 
 type PluginExtensionID = idx.StringID[PluginExtension]
 type PropertySchemaGroupID = idx.StringID[PropertySchemaGroup]
@@ -85,6 +91,8 @@ var NewSceneID = idx.New[Scene]
 var NewTagID = idx.New[Tag]
 var NewWidgetID = idx.New[Widget]
 var NewStyleID = idx.New[Style]
+var NewInfoboxID = idx.New[Infobox]
+var NewInfoboxBlockID = idx.New[InfoboxBlock]
 
 var MustAssetID = idx.Must[Asset]
 var MustAuthRequestID = idx.Must[AuthRequest]
@@ -104,6 +112,8 @@ var MustWorkspaceID = idx.Must[Workspace]
 var MustUserID = idx.Must[User]
 var MustWidgetID = idx.Must[Widget]
 var MustStyleID = idx.Must[Style]
+var MustInfoboxID = idx.Must[Infobox]
+var MustInfoboxBlockID = idx.Must[InfoboxBlock]
 
 var AssetIDFrom = idx.From[Asset]
 var AuthRequestIDFrom = idx.From[AuthRequest]
@@ -123,6 +133,8 @@ var WorkspaceIDFrom = idx.From[Workspace]
 var UserIDFrom = idx.From[User]
 var WidgetIDFrom = idx.From[Widget]
 var StyleIDFrom = idx.From[Style]
+var InfoboxIDFrom = idx.From[Infobox]
+var InfoboxBlockIDFrom = idx.From[InfoboxBlock]
 
 var AssetIDFromRef = idx.FromRef[Asset]
 var AuthRequestIDFromRef = idx.FromRef[AuthRequest]
@@ -142,6 +154,8 @@ var WorkspaceIDFromRef = idx.FromRef[Workspace]
 var UserIDFromRef = idx.FromRef[User]
 var WidgetIDFromRef = idx.FromRef[Widget]
 var StyleIDFromRef = idx.FromRef[Style]
+var InfoboxIDFromRef = idx.FromRef[Infobox]
+var InfoboxBlockIDFromRef = idx.FromRef[InfoboxBlock]
 
 var PluginExtensionIDFromRef = idx.StringIDFromRef[PluginExtension]
 var PropertyFieldIDFromRef = idx.StringIDFromRef[PropertyField]
@@ -165,6 +179,8 @@ type WorkspaceIDList = idx.List[Workspace]
 type UserIDList = idx.List[User]
 type WidgetIDList = idx.List[Widget]
 type StyleIDList = idx.List[Style]
+type InfoboxIDList = idx.List[Infobox]
+type InfoboxBlockIDList = idx.List[InfoboxBlock]
 
 var AssetIDListFrom = idx.ListFrom[Asset]
 var AuthRequestIDListFrom = idx.ListFrom[AuthRequest]
@@ -184,6 +200,8 @@ var WorkspaceIDListFrom = idx.ListFrom[Workspace]
 var UserIDListFrom = idx.ListFrom[User]
 var WidgetIDListFrom = idx.ListFrom[Widget]
 var StyleIDListFrom = idx.ListFrom[Style]
+var InfoboxIDListFrom = idx.ListFrom[Infobox]
+var InfoboxBlockIDListFrom = idx.ListFrom[InfoboxBlock]
 
 type AssetIDSet = idx.Set[Asset]
 type AuthRequestIDSet = idx.Set[AuthRequest]
@@ -203,6 +221,8 @@ type WorkspaceIDSet = idx.Set[Workspace]
 type UserIDSet = idx.Set[User]
 type WidgetIDSet = idx.Set[Widget]
 type StyleIDSet = idx.Set[Style]
+type InfoboxIDSet = idx.Set[Infobox]
+type InfoboxBlockIDSet = idx.Set[InfoboxBlock]
 
 var NewAssetIDSet = idx.NewSet[Asset]
 var NewAuthRequestIDSet = idx.NewSet[AuthRequest]
@@ -222,6 +242,8 @@ var NewWorkspaceIDSet = idx.NewSet[Workspace]
 var NewUserIDSet = idx.NewSet[User]
 var NewWidgetIDSet = idx.NewSet[Widget]
 var NewStyleIDSet = idx.NewSet[Style]
+var NewInfoboxIDSet = idx.NewSet[InfoboxBlock]
+var NewInfoboxBlockIDSet = idx.NewSet[InfoboxBlock]
 
 // Storytelling ids
 
