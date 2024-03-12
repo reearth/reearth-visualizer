@@ -1,5 +1,5 @@
 import { cloneDeep, pick } from "lodash-es";
-// import LRUCache from "lru-cache";
+import LRUCache from "lru-cache";
 
 import type { EvalContext, EvalResult } from "..";
 import {
@@ -16,10 +16,9 @@ import {
 import { ConditionalExpression } from "./conditionalExpression";
 import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
-import { recursiveJSONParse } from "./utils";
-// import { getCacheableProperties } from "./utils";
+import { recursiveJSONParse, getCacheableProperties } from "./utils";
 
-// const EVAL_EXPRESSION_CACHES = new LRUCache({ max: 10000 });
+const EVAL_EXPRESSION_CACHES = new LRUCache({ max: 10000 });
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -28,6 +27,11 @@ export async function evalSimpleLayer(
   const features = layer.data ? await ctx.getAllFeatures(layer.data) : undefined;
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   const timeIntervals = evalTimeInterval(features, layer.data?.time);
+
+  if (!features) {
+    return undefined;
+  }
+
   return {
     layer: evalLayerAppearances(appearances, layer),
     features: features?.map((f, i) => evalSimpleLayerFeature(layer, f, timeIntervals?.[i])),
@@ -142,11 +146,39 @@ function evalExpression(
       if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-        return new ConditionalExpression(styleExpression, parsedFeature, layer.defines).evaluate();
-      } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-        return new Expression(String(styleExpression), parsedFeature, layer.defines).evaluate();
+        const cacheKey = JSON.stringify([
+          styleExpression,
+          getCacheableProperties(styleExpression, parsedFeature),
+          layer.defines,
+        ]);
+
+        if (EVAL_EXPRESSION_CACHES.has(cacheKey)) {
+          return EVAL_EXPRESSION_CACHES.get(cacheKey);
+        }
+
+        const result = new ConditionalExpression(
+          styleExpression,
+          feature,
+          layer.defines,
+        ).evaluate();
+        EVAL_EXPRESSION_CACHES.set(cacheKey, result);
+
+        return result;
       } else if (typeof styleExpression === "string") {
-        return new Expression(styleExpression, parsedFeature, layer.defines).evaluate();
+        const cacheKey = JSON.stringify([
+          styleExpression,
+          getCacheableProperties(styleExpression, parsedFeature),
+          layer.defines,
+        ]);
+
+        if (EVAL_EXPRESSION_CACHES.has(cacheKey)) {
+          return EVAL_EXPRESSION_CACHES.get(cacheKey);
+        }
+
+        const result = new Expression(styleExpression, feature, layer.defines).evaluate();
+        EVAL_EXPRESSION_CACHES.set(cacheKey, result);
+
+        return result;
       }
       return styleExpression;
     }
