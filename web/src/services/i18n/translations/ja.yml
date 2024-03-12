@@ -113,14 +113,8 @@ Properties: プロパティ
 Data: データ
 Feature: フィーチャー
 Styling: スタイリング
-Left: 左
-Right: 右
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
-Position: 一位
-Position of the infobox. Options are left or right: インフォボックスの位置。左または右を選択
-Padding: 余白
-Gap: 間隔
 Format: フォーマット
 Save: 保存
 Published: 一般公開
@@ -251,14 +245,14 @@ Password: パスワード
 Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
+Left: 左
+Right: 右
 Story Panel: ストーリーパネル
 Panel Position: パネルポジション
 Background Color: 背景色
 Something went wrong.: 失敗しました。
 Couldn't find the Re:Earth project you were after.: そのRe:Earthプロジェクトは見つかりませんでした。
 New Field: 新しいフィールド
-Double click here to write.: ダブルクリックで入力
-Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 aria-label-compass: コンパス
 aria-label-adjust-angle: 角度を調節する
 aria-label-zoom-in: ズームイン
@@ -424,6 +418,7 @@ Template: テンプレート
 template: テンプレート
 You are deleting the infobox and all its contents. Are you sure you want to do that?: インフォボックスとその内容を削除します。本当によろしいですか？
 List: リスト
+Padding: 余白
 Gap Spacing: 間隔
 Align Center: 中央に配置
 Enable Editor Mode: ウィジェットの配置を編集
@@ -479,6 +474,8 @@ Workspace name: ワークスペース名
 No Title Workspace: 無題のワークスペース
 This is your personal workspace. Your projects and resources will be managed in this workspace.: ここは個人用のワークスペースです。
 All workspaces: すべてのワークスペース
+Double click here to write.: ダブルクリックで入力
+Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
 Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
 Failed to add one or more assets.: アセットの作成に失敗しました。
