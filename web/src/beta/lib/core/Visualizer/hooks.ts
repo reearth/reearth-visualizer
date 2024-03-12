@@ -144,39 +144,11 @@ export default function useHooks(
   // Infobox
   const infobox: InfoboxType | undefined = useMemo(
     () =>
-      selectedLayer.featureId
+      selectedLayer.layer?.layer?.infobox
         ? {
-            title: "Test",
-            property: {
-              default: {
-                enabled: true,
-                position: "right", // left | right
-                // padding: {
-                //   top: 0,
-                //   bottom: 0,
-                //   left: 0,
-                //   right: 0,
-                // },
-                gap: 12,
-              },
-            },
+            property: selectedLayer.layer?.layer?.infobox?.property,
             blocks: [
-              // {
-              //   id: "plugin-block-test",
-              //   name: "Test block",
-              //   pluginId: "myPlugin",
-              //   extensionId: "testBlock",
-              //   propertyId: "1231l2kj",
-              //   property: {
-              //     default: {
-              //       someField: {
-              //         type: "string",
-              //         value: "Some cool field value",
-              //         title: "Some field",
-              //       },
-              //     },
-              //   },
-              // },
+              ...(selectedLayer.layer?.layer?.infobox?.blocks ?? []),
               {
                 id: "sadfl3333222",
                 name: "Property",
@@ -216,64 +188,6 @@ export default function useHooks(
                           field: "someField2",
                         },
                       ],
-                    },
-                  },
-                  panel: {
-                    padding: {
-                      title: "PADDDING!@#",
-                      type: "spacing",
-                      max: 100,
-                      value: {
-                        // top: 42,
-                        bottom: 2,
-                        left: 2,
-                        right: 2,
-                      },
-                    },
-                  },
-                },
-              },
-              {
-                id: "asdfasdf",
-                name: "Image",
-                pluginId: "reearth",
-                extensionId: "imageInfoboxBlock",
-                propertyId: "sadfl333322211",
-                property: {
-                  default: {
-                    src: {
-                      value: "https://www.w3schools.com/w3images/lights.jpg",
-                      type: "url",
-                      title: "ImageT",
-                    },
-                  },
-                  panel: {
-                    padding: {
-                      title: "PADDDING!@#",
-                      type: "spacing",
-                      max: 100,
-                      value: {
-                        top: 2,
-                        bottom: 2,
-                        left: 2,
-                        right: 2,
-                      },
-                    },
-                  },
-                },
-              },
-              {
-                id: "sadfl3333",
-                name: "Text",
-                pluginId: "reearth",
-                extensionId: "textInfoboxBlock",
-                propertyId: "sadfl333322112",
-                property: {
-                  default: {
-                    src: {
-                      value: "https://www.w3schools.com/w3images/lights.jpg",
-                      type: "text",
-                      title: "Text text text",
                     },
                   },
                   panel: {

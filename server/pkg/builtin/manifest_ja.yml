@@ -1286,3 +1286,21 @@ extensions:
   nextPageStoryBlock:
     name: 次ページボタン
     description: ストーリーテリングの次ページに移動するボタンブロック
+  infobox-beta:
+    name: インフォボックス
+    description: インフォボックスは、レイヤーのフィチャーに紐づけて情報を表示することができます。
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          enabled:
+            title: 有効
+          position:
+            title: 位置
+            choices:
+              left: 左
+              right: 右
+          padding:
+            title: 余白
+          gap:
+            title: 間隔

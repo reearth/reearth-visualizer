@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, memo, useCallback, useMemo, useState } from "react";
+import { Fragment, ReactNode, memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
@@ -24,7 +24,7 @@ import type { Infobox, InfoboxBlockProps } from "./types";
 export type InfoboxPosition = "right" | "left";
 
 export type Props = {
-  infobox: Infobox;
+  infobox?: Infobox;
   isEditable?: boolean;
   inEditor?: boolean;
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
@@ -73,18 +73,26 @@ const Infobox: React.FC<Props> = ({
 }) => {
   const [disableSelection, setDisableSelection] = useState(false);
 
-  const [infoboxBlocks, setInfoboxBlocks] = useState(infobox.blocks ?? []);
+  const [infoboxBlocks, setInfoboxBlocks] = useState(infobox?.blocks ?? []);
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
-  const padding = useMemo(
-    () => infobox.property?.default?.padding,
-    [infobox.property?.default?.padding],
+  const showInfobox = useMemo(
+    () => !!infobox?.property?.default?.enabled,
+    [infobox?.property?.default?.enabled],
   );
-  const gap = useMemo(() => infobox.property?.default?.gap, [infobox.property?.default?.gap]);
+
+  console.log("INFO", infobox);
+  const padding = useMemo(
+    () => infobox?.property?.default?.padding,
+    [infobox?.property?.default?.padding],
+  );
+
+  const gap = useMemo(() => infobox?.property?.default?.gap, [infobox?.property?.default?.gap]);
+
   const position = useMemo(
-    () => infobox.property?.default?.position,
-    [infobox.property?.default?.position],
+    () => infobox?.property?.default?.position,
+    [infobox?.property?.default?.position],
   );
 
   const handleBlockOpen = useCallback(
@@ -133,7 +141,17 @@ const Infobox: React.FC<Props> = ({
     [disableSelection, handleSelectionDisable],
   );
 
-  return (
+  useEffect(() => {
+    if (infobox) {
+      infobox.blocks && infobox.blocks.length > 0 && setInfoboxBlocks(infobox.blocks);
+    } else {
+      infoboxBlocks.length && setInfoboxBlocks([]);
+      selectedBlockId !== undefined && setSelectedBlockId(undefined);
+      openBlocksIndex !== undefined && setOpenBlocksIndex(undefined);
+    }
+  }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex]);
+
+  return showInfobox ? (
     <EditModeProvider value={editModeContext}>
       <Wrapper position={position} padding={padding} gap={gap}>
         {infoboxBlocks && infoboxBlocks.length > 0 && (
@@ -189,7 +207,7 @@ const Infobox: React.FC<Props> = ({
         )}
       </Wrapper>
     </EditModeProvider>
-  );
+  ) : null;
 };
 
 export default memo(Infobox);

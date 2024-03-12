@@ -2626,23 +2626,21 @@ extensions:
         - id: default
           title: Basic
           fields:
-            - id: enableInfobox
+            - id: enabled
               type: bool
               title: Enable Infobox
-              defaultValue: false
-            - id: infoboxPosition
+              defaultValue: true
+            - id: position
               type: string
               title: Position
               defaultValue: right
               choices:
                 - key: right
                   label: Right
-                - key: middle
-                  label: Middle
                 - key: left
                   label: Left
               availableIf:
-                field: enableInfobox
+                field: enabled
                 type: bool
                 value: true
             - id: padding
@@ -2651,12 +2649,21 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 10, bottom: 10, left: 10, right: 10 }
-            - id: infoboxGap
+              defaultValue: { top: 20, bottom: 20, left: 20, right: 20 }
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+            - id: gap
               type: number
-              title: Infobox Gap
+              title: Gap
               min: 0
               max: 40
               suffix: px
-              description: "The gap between the top of the infobox. Min: 0  Max: 40"
+              description: "The gap between infobox blocks. Min: 0  Max: 40"
+              defaultValue: 20
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
             

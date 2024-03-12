@@ -218,21 +218,19 @@ export default function Crust({
         onWidgetAreaSelect={onWidgetAreaSelect}
         renderWidget={renderWidget}
       />
-      {infobox && (
-        <Infobox
-          infobox={infobox}
-          isEditable={isEditable}
-          inEditor={inEditor}
-          renderBlock={renderBlock}
-          onBlockCreate={onBlockCreate}
-          onBlockDelete={onBlockDelete}
-          onBlockMove={onBlockMove}
-          onPropertyItemAdd={async () => console.log("ADD")}
-          onPropertyItemDelete={async () => console.log("DELETE")}
-          onPropertyItemMove={async () => console.log("MOVE")}
-          onPropertyUpdate={async () => console.log("UPDATE")}
-        />
-      )}
+      <Infobox
+        infobox={infobox}
+        isEditable={isEditable}
+        inEditor={inEditor}
+        renderBlock={renderBlock}
+        onBlockCreate={onBlockCreate}
+        onBlockDelete={onBlockDelete}
+        onBlockMove={onBlockMove}
+        onPropertyItemAdd={async () => console.log("ADD")}
+        onPropertyItemDelete={async () => console.log("DELETE")}
+        onPropertyItemMove={async () => console.log("MOVE")}
+        onPropertyUpdate={async () => console.log("UPDATE")}
+      />
     </Plugins>
   );
 }

@@ -7,6 +7,7 @@ export type Infobox<BP = any> = {
 
 export type InfoboxProperty = {
   default?: {
+    enabled?: boolean;
     position?: "right" | "left";
     padding?: Spacing;
     gap?: number;
