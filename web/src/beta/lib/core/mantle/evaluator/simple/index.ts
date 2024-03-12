@@ -1,4 +1,5 @@
 import { cloneDeep, pick } from "lodash-es";
+// import LRUCache from "lru-cache";
 
 import type { EvalContext, EvalResult } from "..";
 import {
@@ -16,6 +17,9 @@ import { ConditionalExpression } from "./conditionalExpression";
 import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
 import { recursiveJSONParse } from "./utils";
+// import { getCacheableProperties } from "./utils";
+
+// const EVAL_EXPRESSION_CACHES = new LRUCache({ max: 10000 });
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
