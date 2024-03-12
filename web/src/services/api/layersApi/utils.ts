@@ -20,7 +20,7 @@ export type NLSLayer = {
   layerType: string;
   config?: any;
   children?: NLSLayer[] | null;
-  infobox?: NLSInfobox; // TODO: define infobox type
+  infobox?: NLSInfobox;
 };
 
 export const getLayers = (rawScene?: GetSceneQuery) => {
