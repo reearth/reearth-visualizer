@@ -107,6 +107,19 @@ export type AddMemberToTeamPayload = {
   team: Team;
 };
 
+export type AddNlsInfoboxBlockInput = {
+  extensionId: Scalars['ID']['input'];
+  index?: InputMaybe<Scalars['Int']['input']>;
+  layerId: Scalars['ID']['input'];
+  pluginId: Scalars['ID']['input'];
+};
+
+export type AddNlsInfoboxBlockPayload = {
+  __typename?: 'AddNLSInfoboxBlockPayload';
+  infoboxBlock: InfoboxBlock;
+  layer: NlsLayer;
+};
+
 export type AddNlsLayerSimpleInput = {
   config?: InputMaybe<Scalars['JSON']['input']>;
   index?: InputMaybe<Scalars['Int']['input']>;
@@ -240,6 +253,15 @@ export type CreateInfoboxInput = {
 export type CreateInfoboxPayload = {
   __typename?: 'CreateInfoboxPayload';
   layer: Layer;
+};
+
+export type CreateNlsInfoboxInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type CreateNlsInfoboxPayload = {
+  __typename?: 'CreateNLSInfoboxPayload';
+  layer: NlsLayer;
 };
 
 export type CreateProjectInput = {
@@ -534,6 +556,20 @@ export type Infobox = {
   sceneId: Scalars['ID']['output'];
 };
 
+export type InfoboxBlock = {
+  __typename?: 'InfoboxBlock';
+  extension?: Maybe<PluginExtension>;
+  extensionId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  layerId: Scalars['ID']['output'];
+  plugin?: Maybe<Plugin>;
+  pluginId: Scalars['ID']['output'];
+  property?: Maybe<Property>;
+  propertyId: Scalars['ID']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+};
+
 export type InfoboxField = {
   __typename?: 'InfoboxField';
   extension?: Maybe<PluginExtension>;
@@ -804,6 +840,19 @@ export type MoveLayerPayload = {
   toParentLayer: LayerGroup;
 };
 
+export type MoveNlsInfoboxBlockInput = {
+  index: Scalars['Int']['input'];
+  infoboxBlockId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
+};
+
+export type MoveNlsInfoboxBlockPayload = {
+  __typename?: 'MoveNLSInfoboxBlockPayload';
+  index: Scalars['Int']['output'];
+  infoboxBlockId: Scalars['ID']['output'];
+  layer: NlsLayer;
+};
+
 export type MovePropertyItemInput = {
   index: Scalars['Int']['input'];
   itemId: Scalars['ID']['input'];
@@ -860,6 +909,7 @@ export type Mutation = {
   addLayerGroup?: Maybe<AddLayerGroupPayload>;
   addLayerItem?: Maybe<AddLayerItemPayload>;
   addMemberToTeam?: Maybe<AddMemberToTeamPayload>;
+  addNLSInfoboxBlock?: Maybe<AddNlsInfoboxBlockPayload>;
   addNLSLayerSimple: AddNlsLayerSimplePayload;
   addPageLayer: StoryPagePayload;
   addPropertyItem?: Maybe<PropertyItemPayload>;
@@ -869,6 +919,7 @@ export type Mutation = {
   attachTagToLayer?: Maybe<AttachTagToLayerPayload>;
   createAsset?: Maybe<CreateAssetPayload>;
   createInfobox?: Maybe<CreateInfoboxPayload>;
+  createNLSInfobox?: Maybe<CreateNlsInfoboxPayload>;
   createProject?: Maybe<ProjectPayload>;
   createScene?: Maybe<CreateScenePayload>;
   createStory: StoryPayload;
@@ -891,6 +942,7 @@ export type Mutation = {
   linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
   moveInfoboxField?: Maybe<MoveInfoboxFieldPayload>;
   moveLayer?: Maybe<MoveLayerPayload>;
+  moveNLSInfoboxBlock?: Maybe<MoveNlsInfoboxBlockPayload>;
   movePropertyItem?: Maybe<PropertyItemPayload>;
   moveStory: MoveStoryPayload;
   moveStoryBlock: MoveStoryBlockPayload;
@@ -905,6 +957,8 @@ export type Mutation = {
   removeLayer?: Maybe<RemoveLayerPayload>;
   removeMemberFromTeam?: Maybe<RemoveMemberFromTeamPayload>;
   removeMyAuth?: Maybe<UpdateMePayload>;
+  removeNLSInfobox?: Maybe<RemoveNlsInfoboxPayload>;
+  removeNLSInfoboxBlock?: Maybe<RemoveNlsInfoboxBlockPayload>;
   removeNLSLayer: RemoveNlsLayerPayload;
   removePageLayer: StoryPagePayload;
   removePropertyField?: Maybe<PropertyFieldPayload>;
@@ -970,6 +1024,11 @@ export type MutationAddMemberToTeamArgs = {
 };
 
 
+export type MutationAddNlsInfoboxBlockArgs = {
+  input: AddNlsInfoboxBlockInput;
+};
+
+
 export type MutationAddNlsLayerSimpleArgs = {
   input: AddNlsLayerSimpleInput;
 };
@@ -1012,6 +1071,11 @@ export type MutationCreateAssetArgs = {
 
 export type MutationCreateInfoboxArgs = {
   input: CreateInfoboxInput;
+};
+
+
+export type MutationCreateNlsInfoboxArgs = {
+  input: CreateNlsInfoboxInput;
 };
 
 
@@ -1125,6 +1189,11 @@ export type MutationMoveLayerArgs = {
 };
 
 
+export type MutationMoveNlsInfoboxBlockArgs = {
+  input: MoveNlsInfoboxBlockInput;
+};
+
+
 export type MutationMovePropertyItemArgs = {
   input: MovePropertyItemInput;
 };
@@ -1192,6 +1261,16 @@ export type MutationRemoveMemberFromTeamArgs = {
 
 export type MutationRemoveMyAuthArgs = {
   input: RemoveMyAuthInput;
+};
+
+
+export type MutationRemoveNlsInfoboxArgs = {
+  input: RemoveNlsInfoboxInput;
+};
+
+
+export type MutationRemoveNlsInfoboxBlockArgs = {
+  input: RemoveNlsInfoboxBlockInput;
 };
 
 
@@ -1354,13 +1433,23 @@ export type MutationUploadPluginArgs = {
   input: UploadPluginInput;
 };
 
+export type NlsInfobox = {
+  __typename?: 'NLSInfobox';
+  blocks: Array<InfoboxBlock>;
+  id: Scalars['ID']['output'];
+  layerId: Scalars['ID']['output'];
+  property?: Maybe<Property>;
+  propertyId: Scalars['ID']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+};
+
 export type NlsLayer = {
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
-  infobox?: Maybe<Infobox>;
+  infobox?: Maybe<NlsInfobox>;
   layerType: Scalars['String']['output'];
   sceneId: Scalars['ID']['output'];
-  tags: Array<LayerTag>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1371,11 +1460,10 @@ export type NlsLayerGroup = NlsLayer & {
   childrenIds: Array<Scalars['ID']['output']>;
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
-  infobox?: Maybe<Infobox>;
+  infobox?: Maybe<NlsInfobox>;
   layerType: Scalars['String']['output'];
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
-  tags: Array<LayerTag>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1384,11 +1472,10 @@ export type NlsLayerSimple = NlsLayer & {
   __typename?: 'NLSLayerSimple';
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
-  infobox?: Maybe<Infobox>;
+  infobox?: Maybe<NlsInfobox>;
   layerType: Scalars['String']['output'];
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
-  tags: Array<LayerTag>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1967,6 +2054,26 @@ export type RemoveMemberFromTeamPayload = {
 
 export type RemoveMyAuthInput = {
   auth: Scalars['String']['input'];
+};
+
+export type RemoveNlsInfoboxBlockInput = {
+  infoboxBlockId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
+};
+
+export type RemoveNlsInfoboxBlockPayload = {
+  __typename?: 'RemoveNLSInfoboxBlockPayload';
+  infoboxBlockId: Scalars['ID']['output'];
+  layer: NlsLayer;
+};
+
+export type RemoveNlsInfoboxInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type RemoveNlsInfoboxPayload = {
+  __typename?: 'RemoveNLSInfoboxPayload';
+  layer: NlsLayer;
 };
 
 export type RemoveNlsLayerInput = {

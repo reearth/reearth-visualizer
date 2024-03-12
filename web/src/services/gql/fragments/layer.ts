@@ -382,44 +382,8 @@ export const nlsLayerSimpleFragment = gql`
     visible
     layerType
     config
-    tags {
-      tagId
-      tag {
-        id
-        label
-      }
-      ... on LayerTagGroup {
-        children {
-          tagId
-          tag {
-            id
-            label
-          }
-        }
-      }
-    }
     infobox {
-      propertyId
-      property {
-        id
-        ...PropertyFragment
-      }
-      fields {
-        id
-        pluginId
-        extensionId
-        propertyId
-        scenePlugin {
-          property {
-            id
-            ...PropertyFragment
-          }
-        }
-        property {
-          id
-          ...PropertyFragment
-        }
-      }
+      id
     }
     ... on NLSLayerGroup {
       children {
