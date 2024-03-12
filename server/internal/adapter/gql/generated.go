@@ -8812,7 +8812,7 @@ input RemoveNLSInfoboxBlockInput {
 }
 
 input DuplicateNLSLayerInput {
-    layerId: ID!
+  layerId: ID!
 }
 
 # Payload
@@ -8854,7 +8854,7 @@ type RemoveNLSInfoboxBlockPayload {
 }
 
 type DuplicateNLSLayerPayload {
-    layer: NLSLayer!
+  layer: NLSLayer!
 }
 
 extend type Mutation {

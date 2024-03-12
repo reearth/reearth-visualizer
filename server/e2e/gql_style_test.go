@@ -113,6 +113,29 @@ func removeStyle(e *httpexpect.Expect, styleId string) (GraphQLRequest, *httpexp
 	return requestBody, res
 }
 
+func duplicateStyle(e *httpexpect.Expect, styleId string) (GraphQLRequest, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "DuplicateStyle",
+		Query: `mutation DuplicateStyle($styleId: ID!) {
+			duplicateStyle(input: {styleId: $styleId}) {
+				styleId
+			}
+		}`,
+		Variables: map[string]any{
+			"styleId": styleId,
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	return requestBody, res
+}
+
 func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *httpexpect.Value) {
 	fetchSceneRequestBody := GraphQLRequest{
 		OperationName: "GetScene",
@@ -167,7 +190,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("styles").Array().
 		Length().Equal(0)
 
-	// Add NLSLayer
+	// Add Style
 	_, _, styleId := addStyle(e, sId, "MyStyle")
 
 	_, res2 := fetchSceneForStyles(e, sId)
@@ -178,7 +201,7 @@ func TestStyleCRUD(t *testing.T) {
 		Value("styles").Array().
 		Length().Equal(1)
 
-	// Update NLSLayer
+	// Update Style
 	_, _ = updateStyleName(e, styleId, "NewName")
 
 	_, res3 := fetchSceneForStyles(e, sId)
@@ -189,12 +212,34 @@ func TestStyleCRUD(t *testing.T) {
 		Value("styles").Array().First().Object().
 		Value("name").Equal("NewName")
 
-	// Remove NLSLayer
-	_, _ = removeStyle(e, styleId)
+	// Duplicate Style
+	_, duplicateRes := duplicateStyle(e, styleId)
+	duplicatedStyleId := duplicateRes.Path("$.data.duplicateStyle.styleId").String().Raw()
 
 	_, res4 := fetchSceneForStyles(e, sId)
 
 	res4.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("styles").Array().
+		Length().Equal(2)
+
+	// Remove Style
+	_, _ = removeStyle(e, styleId)
+
+	_, res5 := fetchSceneForStyles(e, sId)
+
+	res5.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("styles").Array().
+		Length().Equal(1)
+
+	_, _ = removeStyle(e, duplicatedStyleId)
+
+	_, res6 := fetchSceneForStyles(e, sId)
+
+	res6.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
