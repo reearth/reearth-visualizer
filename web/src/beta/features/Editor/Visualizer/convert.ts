@@ -14,10 +14,9 @@ import {
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
 import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
-import type { Tag } from "@reearth/beta/lib/core/mantle/compat/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { NLSInfobox, NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import {
   type Maybe,
@@ -25,7 +24,6 @@ import {
   type WidgetSection as WidgetSectionType,
   type WidgetArea as WidgetAreaType,
   type Scene,
-  EarthLayerFragment,
   PropertyFragmentFragment,
   PropertySchemaGroupFragmentFragment,
   PropertyItemFragmentFragment,
@@ -372,7 +370,6 @@ export function processLayers(
       title: nlsLayer.title,
       visible: nlsLayer.visible,
       infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
-      tags: processLayerTags(nlsLayer.tags ?? []),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
@@ -383,14 +380,14 @@ export function processLayers(
 }
 
 const processInfobox = (
-  orig: EarthLayerFragment["infobox"] | null | undefined,
-  parent: EarthLayerFragment["infobox"] | null | undefined,
+  orig: NLSInfobox | null | undefined,
+  parent: NLSInfobox | null | undefined,
 ): Layer["infobox"] => {
   const used = orig || parent;
   if (!used) return;
   return {
     property: processProperty(parent?.property, orig?.property),
-    blocks: used.fields.map<InfoboxBlock>(f => ({
+    blocks: used.blocks?.map<InfoboxBlock>(f => ({
       id: f.id,
       pluginId: f.pluginId,
       extensionId: f.extensionId,
@@ -399,20 +396,3 @@ const processInfobox = (
     })),
   };
 };
-
-export function processLayerTags(
-  tags: {
-    tagId: string;
-    tag?: Maybe<{ label: string }>;
-    children?: { tagId: string; tag?: Maybe<{ label: string }> }[];
-  }[],
-): Tag[] {
-  return tags.map(t => ({
-    id: t.tagId,
-    label: t.tag?.label ?? "",
-    tags: t.children?.map(tt => ({
-      id: tt.tagId,
-      label: tt.tag?.label ?? "",
-    })),
-  }));
-}

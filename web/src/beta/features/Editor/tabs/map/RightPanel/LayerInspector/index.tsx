@@ -9,7 +9,7 @@ import { SelectedLayer } from "@reearth/services/state";
 import { LayerConfigUpdateProps } from "../../../../useLayers";
 
 import FeatureData from "./FeatureData";
-import Infobox from "./Infobox";
+import Infobox from "./infobox";
 import LayerData from "./LayerData";
 import LayerTab from "./LayerStyle";
 
@@ -84,7 +84,9 @@ const InspectorTabs: React.FC<Props> = ({
       },
       {
         id: "infobox",
-        component: <Infobox />,
+        component: selectedLayer && (
+          <Infobox selectedLayerId={selectedLayer.id} infobox={selectedLayer.infobox} />
+        ),
         icon: "infobox",
       },
     ],
