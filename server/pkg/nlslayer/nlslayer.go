@@ -183,28 +183,24 @@ func (l *layerBase) Duplicate() NLSLayer {
 	if l == nil {
 		return nil
 	}
-	var duplicateedConfig *Config
+	var duplicatedConfig *Config
 	if l.config != nil {
-		duplicateedConfigItem := l.config.Clone()
-		duplicateedConfig = &duplicateedConfigItem
+		duplicatedConfigItem := l.config.Clone()
+		duplicatedConfig = &duplicatedConfigItem
 	}
 
-	duplicateed := &layerBase{
+	duplicated := &layerBase{
 		id:        NewID(),
 		layerType: l.layerType,
 		scene:     l.scene,
 		title:     l.title,
 		visible:   l.visible,
-		config:    duplicateedConfig,
+		config:    duplicatedConfig,
 	}
 
 	if l.infobox != nil {
-		duplicateed.infobox = l.infobox.Clone()
+		duplicated.infobox = l.infobox.Clone()
 	}
 
-	if l.tags != nil {
-		duplicateed.tags = l.tags.Clone()
-	}
-
-	return &NLSLayerSimple{layerBase: *duplicateed}
+	return &NLSLayerSimple{layerBase: *duplicated}
 }
