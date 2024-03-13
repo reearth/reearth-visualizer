@@ -458,6 +458,7 @@ export function commonReearth({
   bringToFront,
   sendToBack,
   forceHorizontalRoll,
+  planeFromPolygonCoordinates,
 }: {
   engineName?: string;
   events: Events<ReearthEventType>;
@@ -523,6 +524,7 @@ export function commonReearth({
   bringToFront: GlobalThis["reearth"]["layers"]["bringToFront"];
   sendToBack: GlobalThis["reearth"]["layers"]["sendToBack"];
   pickManyFromViewport: GlobalThis["reearth"]["scene"]["pickManyFromViewport"];
+  planeFromPolygonCoordinates: GlobalThis["reearth"]["helper"]["planeFromPolygonCoordinates"];
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
@@ -739,6 +741,9 @@ export function commonReearth({
     },
     get sketch() {
       return sketch?.();
+    },
+    helper: {
+      planeFromPolygonCoordinates,
     },
     ...events,
   };

@@ -186,6 +186,9 @@ export const context: Context = {
       query: {},
     },
     sketch: {} as any,
+    helper: {
+      planeFromPolygonCoordinates: act("planeFromPolygonCoordinates"),
+    },
     on: act("on"),
     off: act("off"),
     once: act("once"),
@@ -216,6 +219,7 @@ export const context: Context = {
       });
     },
   },
+
   overrideSceneProperty: act("overrideSceneProperty"),
 };
 

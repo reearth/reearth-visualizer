@@ -195,6 +195,16 @@ export type EngineRef = {
     // TODO: Get condition as expression for plugin
     condition?: (f: PickedFeature) => boolean,
   ) => PickedFeature[] | undefined;
+  planeFromPolygonCoordinates: (coordinates: [lng: number, lat: number][]) =>
+    | {
+        normal: {
+          x: number;
+          y: number;
+          z: number;
+        };
+        distance: number;
+      }[]
+    | undefined;
 } & MouseEventHandles;
 
 export type EngineProps = {
@@ -516,6 +526,8 @@ export type SketchRef = {
   setType: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   setColor: (color: string) => void;
   setDefaultAppearance: (appearance: SketchAppearance) => void;
+  disableShadow: (disable: boolean) => void;
+  enableRelativeHeight: (enable: boolean) => void;
   createDataOnly: (dataOnly: boolean) => void;
   allowRightClickToAbort: (allow: boolean) => void;
   allowAutoResetInteractionMode: (allow: boolean) => void;

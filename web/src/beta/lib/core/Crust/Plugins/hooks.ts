@@ -162,6 +162,8 @@ export default function ({
     () => ({
       setType: (type: SketchType | undefined) => mapRef?.current?.sketch?.setType(type, "plugin"),
       setColor: mapRef?.current?.sketch?.setColor,
+      disableShadow: mapRef?.current?.sketch?.disableShadow,
+      enableRelativeHeight: mapRef?.current?.sketch?.enableRelativeHeight,
       setDefaultAppearance: mapRef?.current?.sketch?.setDefaultAppearance,
       createDataOnly: mapRef?.current?.sketch?.createDataOnly,
       allowRightClickToAbort: mapRef?.current?.sketch?.allowRightClickToAbort,
@@ -522,6 +524,13 @@ export default function ({
     [engineRef],
   );
 
+  const planeFromPolygonCoordinates = useCallback(
+    (coordinates: [lng: number, lat: number][]) => {
+      return engineRef?.planeFromPolygonCoordinates(coordinates);
+    },
+    [engineRef],
+  );
+
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -589,6 +598,7 @@ export default function ({
         bringToFront,
         sendToBack,
         forceHorizontalRoll: onCameraForceHorizontalRollChange,
+        planeFromPolygonCoordinates,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -662,6 +672,7 @@ export default function ({
       sendToBack,
       overrideSceneProperty,
       onCameraForceHorizontalRollChange,
+      planeFromPolygonCoordinates,
       pluginInstances,
       clientStorage,
       timelineManagerRef,

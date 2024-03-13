@@ -89,6 +89,7 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   setCursor: 1,
   bringToFront: 1,
   sendToBack: 1,
+  planeFromPolygonCoordinates: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {
@@ -120,6 +121,8 @@ const sketchRefKeys: FunctionKeys<SketchRef> = {
   setColor: 1,
   setDefaultAppearance: 1,
   createDataOnly: 1,
+  disableShadow: 1,
+  enableRelativeHeight: 1,
   allowRightClickToAbort: 1,
   allowAutoResetInteractionMode: 1,
 };

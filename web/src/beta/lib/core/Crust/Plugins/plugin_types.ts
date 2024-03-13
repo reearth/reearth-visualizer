@@ -113,6 +113,7 @@ export type Reearth = {
   readonly viewport?: Viewport;
   readonly clientStorage: ClientStorage;
   readonly sketch: Sketch;
+  readonly helper: Helper;
   readonly on: <T extends keyof ReearthEventType>(
     type: T,
     callback: (...args: ReearthEventType[T]) => void,
@@ -446,8 +447,23 @@ export type Sketch = {
   readonly setColor?: (color: string) => void;
   readonly setDefaultAppearance?: (appearance: SketchAppearance) => void;
   readonly createDataOnly?: (dataOnly: boolean) => void;
+  readonly disableShadow?: (disable: boolean) => void;
+  readonly enableRelativeHeight?: (enable: boolean) => void;
   readonly allowRightClickToAbort?: (allow: boolean) => void;
   readonly allowAutoResetInteractionMode?: (allow: boolean) => void;
+};
+
+export type Helper = {
+  readonly planeFromPolygonCoordinates?: (coordinates: [lng: number, lat: number][]) =>
+    | {
+        normal: {
+          x: number;
+          y: number;
+          z: number;
+        };
+        distance: number;
+      }[]
+    | undefined;
 };
 
 /** Cesium API: available only when the plugin is a primitive */

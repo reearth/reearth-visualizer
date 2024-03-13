@@ -102,6 +102,14 @@ export type EXPERIMENTAL_clipping = {
   roll?: number;
   direction?: "inside" | "outside";
   disabledSelection?: boolean;
+  // draw clipping
+  draw?: {
+    enabled?: boolean;
+    surfacePoints?: LatLng[];
+    top?: number;
+    bottom?: number;
+    visible?: boolean;
+  };
 };
 
 export type Array = any[];

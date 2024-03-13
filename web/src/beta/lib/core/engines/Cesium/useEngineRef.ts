@@ -920,6 +920,30 @@ export default function useEngineRef(
           condition,
         );
       },
+      planeFromPolygonCoordinates: (coordinates: [lng: number, lat: number][]) => {
+        const up = new Cesium.Cartesian3(0, 0, 1);
+        if (coordinates.length < 2) return [];
+        const planes = [];
+        for (let i = 0; i < coordinates.length - 1; i++) {
+          const p1 = Cesium.Cartesian3.fromDegrees(coordinates[i][0], coordinates[i][1]);
+          const p2 = Cesium.Cartesian3.fromDegrees(coordinates[i + 1][0], coordinates[i + 1][1]);
+          const right = Cesium.Cartesian3.subtract(p2, p1, new Cesium.Cartesian3());
+          const normal = Cesium.Cartesian3.normalize(
+            Cesium.Cartesian3.cross(right, up, new Cesium.Cartesian3()),
+            new Cesium.Cartesian3(),
+          );
+          const plane = Cesium.Plane.fromPointNormal(p1, normal);
+          planes.push({
+            normal: {
+              x: normal.x,
+              y: normal.y,
+              z: normal.z,
+            },
+            distance: plane.distance,
+          });
+        }
+        return planes;
+      },
       onTick: cb => {
         tickEventCallback.current.push(cb);
       },
