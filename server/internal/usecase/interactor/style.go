@@ -142,3 +142,35 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 	tx.Commit()
 	return styleID, nil
 }
+
+func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator *usecase.Operator) (*scene.Style, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	style, err := i.styleRepo.FindByID(ctx, styleID)
+	if err != nil {
+		return nil, err
+	}
+
+	// if err := i.CanWriteScene(s.Scene(), operator); err != nil {
+	// 	return nil, err
+	// }
+
+	duplicatedStyle := style.Duplicate()
+
+	if err := i.styleRepo.Save(ctx, *duplicatedStyle); err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return duplicatedStyle, nil
+}

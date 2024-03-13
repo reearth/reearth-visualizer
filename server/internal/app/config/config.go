@@ -26,6 +26,7 @@ type Config struct {
 	Dev              bool
 	DB               string `default:"mongodb://localhost"`
 	DB_Account       string
+	DB_Users         []appx.NamedURI
 	GraphQL          GraphQLConfig
 	Published        PublishedConfig
 	GCPProject       string `envconfig:"GOOGLE_CLOUD_PROJECT"`

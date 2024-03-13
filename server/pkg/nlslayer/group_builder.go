@@ -1,9 +1,5 @@
 package nlslayer
 
-import (
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
-
 func NLSLayerGroupFromLayer(l NLSLayer) *NLSLayerGroup {
 	li, ok := l.(*NLSLayerGroup)
 	if !ok {
@@ -96,12 +92,7 @@ func (b *NLSLayerGroupBuilder) IsVisible(i bool) *NLSLayerGroupBuilder {
 	return b
 }
 
-func (b *NLSLayerGroupBuilder) Infobox(infobox *pl.Infobox) *NLSLayerGroupBuilder {
+func (b *NLSLayerGroupBuilder) Infobox(infobox *Infobox) *NLSLayerGroupBuilder {
 	b.l.infobox = infobox
-	return b
-}
-
-func (b *NLSLayerGroupBuilder) Tags(tags *pl.TagList) *NLSLayerGroupBuilder {
-	b.l.tags = tags
 	return b
 }

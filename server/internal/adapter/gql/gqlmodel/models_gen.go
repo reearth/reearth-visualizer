@@ -47,8 +47,7 @@ type NLSLayer interface {
 	GetConfig() JSON
 	GetTitle() string
 	GetVisible() bool
-	GetInfobox() *Infobox
-	GetTags() []LayerTag
+	GetInfobox() *NLSInfobox
 }
 
 type Node interface {
@@ -140,6 +139,18 @@ type AddMemberToTeamInput struct {
 
 type AddMemberToTeamPayload struct {
 	Team *Team `json:"team"`
+}
+
+type AddNLSInfoboxBlockInput struct {
+	LayerID     ID   `json:"layerId"`
+	PluginID    ID   `json:"pluginId"`
+	ExtensionID ID   `json:"extensionId"`
+	Index       *int `json:"index,omitempty"`
+}
+
+type AddNLSInfoboxBlockPayload struct {
+	InfoboxBlock *InfoboxBlock `json:"infoboxBlock"`
+	Layer        NLSLayer      `json:"layer"`
 }
 
 type AddNLSLayerSimpleInput struct {
@@ -260,6 +271,14 @@ type CreateInfoboxInput struct {
 
 type CreateInfoboxPayload struct {
 	Layer Layer `json:"layer"`
+}
+
+type CreateNLSInfoboxInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type CreateNLSInfoboxPayload struct {
+	Layer NLSLayer `json:"layer"`
 }
 
 type CreateProjectInput struct {
@@ -484,10 +503,26 @@ type DetachTagItemFromGroupPayload struct {
 	Tag *TagGroup `json:"tag"`
 }
 
+type DuplicateNLSLayerInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type DuplicateNLSLayerPayload struct {
+	Layer NLSLayer `json:"layer"`
+}
+
 type DuplicateStoryPageInput struct {
 	SceneID ID `json:"sceneId"`
 	StoryID ID `json:"storyId"`
 	PageID  ID `json:"pageId"`
+}
+
+type DuplicateStyleInput struct {
+	StyleID ID `json:"styleId"`
+}
+
+type DuplicateStylePayload struct {
+	Style *Style `json:"style"`
 }
 
 type ImportDatasetFromGoogleSheetInput struct {
@@ -530,6 +565,19 @@ type Infobox struct {
 	LinkedDataset   *Dataset        `json:"linkedDataset,omitempty"`
 	Merged          *MergedInfobox  `json:"merged,omitempty"`
 	Scene           *Scene          `json:"scene,omitempty"`
+}
+
+type InfoboxBlock struct {
+	ID          ID               `json:"id"`
+	SceneID     ID               `json:"sceneId"`
+	LayerID     ID               `json:"layerId"`
+	PropertyID  ID               `json:"propertyId"`
+	Property    *Property        `json:"property,omitempty"`
+	PluginID    ID               `json:"pluginId"`
+	Plugin      *Plugin          `json:"plugin,omitempty"`
+	ExtensionID ID               `json:"extensionId"`
+	Extension   *PluginExtension `json:"extension,omitempty"`
+	Scene       *Scene           `json:"scene,omitempty"`
 }
 
 type InfoboxField struct {
@@ -808,6 +856,18 @@ type MoveLayerPayload struct {
 	Index           int         `json:"index"`
 }
 
+type MoveNLSInfoboxBlockInput struct {
+	LayerID        ID  `json:"layerId"`
+	InfoboxBlockID ID  `json:"infoboxBlockId"`
+	Index          int `json:"index"`
+}
+
+type MoveNLSInfoboxBlockPayload struct {
+	InfoboxBlockID ID       `json:"infoboxBlockId"`
+	Layer          NLSLayer `json:"layer"`
+	Index          int      `json:"index"`
+}
+
 type MovePropertyItemInput struct {
 	PropertyID    ID  `json:"propertyId"`
 	SchemaGroupID ID  `json:"schemaGroupId"`
@@ -856,69 +916,57 @@ type MoveStoryPayload struct {
 type Mutation struct {
 }
 
-type NLSLayerGroup struct {
-	ID          ID         `json:"id"`
-	LayerType   string     `json:"layerType"`
-	SceneID     ID         `json:"sceneId"`
-	Children    []NLSLayer `json:"children"`
-	ChildrenIds []ID       `json:"childrenIds"`
-	Config      JSON       `json:"config,omitempty"`
-	Title       string     `json:"title"`
-	Visible     bool       `json:"visible"`
-	Infobox     *Infobox   `json:"infobox,omitempty"`
-	Tags        []LayerTag `json:"tags"`
-	Scene       *Scene     `json:"scene,omitempty"`
+type NLSInfobox struct {
+	ID         ID              `json:"id"`
+	SceneID    ID              `json:"sceneId"`
+	LayerID    ID              `json:"layerId"`
+	PropertyID ID              `json:"propertyId"`
+	Blocks     []*InfoboxBlock `json:"blocks"`
+	Property   *Property       `json:"property,omitempty"`
+	Scene      *Scene          `json:"scene,omitempty"`
 }
 
-func (NLSLayerGroup) IsNLSLayer()               {}
-func (this NLSLayerGroup) GetID() ID            { return this.ID }
-func (this NLSLayerGroup) GetLayerType() string { return this.LayerType }
-func (this NLSLayerGroup) GetSceneID() ID       { return this.SceneID }
-func (this NLSLayerGroup) GetConfig() JSON      { return this.Config }
-func (this NLSLayerGroup) GetTitle() string     { return this.Title }
-func (this NLSLayerGroup) GetVisible() bool     { return this.Visible }
-func (this NLSLayerGroup) GetInfobox() *Infobox { return this.Infobox }
-func (this NLSLayerGroup) GetTags() []LayerTag {
-	if this.Tags == nil {
-		return nil
-	}
-	interfaceSlice := make([]LayerTag, 0, len(this.Tags))
-	for _, concrete := range this.Tags {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
+type NLSLayerGroup struct {
+	ID          ID          `json:"id"`
+	LayerType   string      `json:"layerType"`
+	SceneID     ID          `json:"sceneId"`
+	Children    []NLSLayer  `json:"children"`
+	ChildrenIds []ID        `json:"childrenIds"`
+	Config      JSON        `json:"config,omitempty"`
+	Title       string      `json:"title"`
+	Visible     bool        `json:"visible"`
+	Infobox     *NLSInfobox `json:"infobox,omitempty"`
+	Scene       *Scene      `json:"scene,omitempty"`
 }
+
+func (NLSLayerGroup) IsNLSLayer()                  {}
+func (this NLSLayerGroup) GetID() ID               { return this.ID }
+func (this NLSLayerGroup) GetLayerType() string    { return this.LayerType }
+func (this NLSLayerGroup) GetSceneID() ID          { return this.SceneID }
+func (this NLSLayerGroup) GetConfig() JSON         { return this.Config }
+func (this NLSLayerGroup) GetTitle() string        { return this.Title }
+func (this NLSLayerGroup) GetVisible() bool        { return this.Visible }
+func (this NLSLayerGroup) GetInfobox() *NLSInfobox { return this.Infobox }
 
 type NLSLayerSimple struct {
-	ID        ID         `json:"id"`
-	LayerType string     `json:"layerType"`
-	SceneID   ID         `json:"sceneId"`
-	Config    JSON       `json:"config,omitempty"`
-	Title     string     `json:"title"`
-	Visible   bool       `json:"visible"`
-	Infobox   *Infobox   `json:"infobox,omitempty"`
-	Tags      []LayerTag `json:"tags"`
-	Scene     *Scene     `json:"scene,omitempty"`
+	ID        ID          `json:"id"`
+	LayerType string      `json:"layerType"`
+	SceneID   ID          `json:"sceneId"`
+	Config    JSON        `json:"config,omitempty"`
+	Title     string      `json:"title"`
+	Visible   bool        `json:"visible"`
+	Infobox   *NLSInfobox `json:"infobox,omitempty"`
+	Scene     *Scene      `json:"scene,omitempty"`
 }
 
-func (NLSLayerSimple) IsNLSLayer()               {}
-func (this NLSLayerSimple) GetID() ID            { return this.ID }
-func (this NLSLayerSimple) GetLayerType() string { return this.LayerType }
-func (this NLSLayerSimple) GetSceneID() ID       { return this.SceneID }
-func (this NLSLayerSimple) GetConfig() JSON      { return this.Config }
-func (this NLSLayerSimple) GetTitle() string     { return this.Title }
-func (this NLSLayerSimple) GetVisible() bool     { return this.Visible }
-func (this NLSLayerSimple) GetInfobox() *Infobox { return this.Infobox }
-func (this NLSLayerSimple) GetTags() []LayerTag {
-	if this.Tags == nil {
-		return nil
-	}
-	interfaceSlice := make([]LayerTag, 0, len(this.Tags))
-	for _, concrete := range this.Tags {
-		interfaceSlice = append(interfaceSlice, concrete)
-	}
-	return interfaceSlice
-}
+func (NLSLayerSimple) IsNLSLayer()                  {}
+func (this NLSLayerSimple) GetID() ID               { return this.ID }
+func (this NLSLayerSimple) GetLayerType() string    { return this.LayerType }
+func (this NLSLayerSimple) GetSceneID() ID          { return this.SceneID }
+func (this NLSLayerSimple) GetConfig() JSON         { return this.Config }
+func (this NLSLayerSimple) GetTitle() string        { return this.Title }
+func (this NLSLayerSimple) GetVisible() bool        { return this.Visible }
+func (this NLSLayerSimple) GetInfobox() *NLSInfobox { return this.Infobox }
 
 type PageInfo struct {
 	StartCursor     *usecasex.Cursor `json:"startCursor,omitempty"`
@@ -1260,6 +1308,24 @@ type RemoveMemberFromTeamPayload struct {
 
 type RemoveMyAuthInput struct {
 	Auth string `json:"auth"`
+}
+
+type RemoveNLSInfoboxBlockInput struct {
+	LayerID        ID `json:"layerId"`
+	InfoboxBlockID ID `json:"infoboxBlockId"`
+}
+
+type RemoveNLSInfoboxBlockPayload struct {
+	InfoboxBlockID ID       `json:"infoboxBlockId"`
+	Layer          NLSLayer `json:"layer"`
+}
+
+type RemoveNLSInfoboxInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type RemoveNLSInfoboxPayload struct {
+	Layer NLSLayer `json:"layer"`
 }
 
 type RemoveNLSLayerInput struct {

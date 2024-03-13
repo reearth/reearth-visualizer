@@ -18,15 +18,13 @@ var (
 	nlsLayerIndexes = []string{
 		"scene",
 		"id,scene",
-		"tags.id",
-		"tags.tags.id",
-		"scene,infobox.fields",
+		"scene,infobox.blocks",
 		"group.children",
 		"group.children,scene",
 		"infobox.property",
 		"infobox.property,scene",
-		"infobox.fields.property",
-		"infobox.fields.property,scene",
+		"infobox.blocks.property",
+		"infobox.blocks.property,scene",
 	}
 	nlsLayerUniqueIndexes = []string{"id"}
 )
