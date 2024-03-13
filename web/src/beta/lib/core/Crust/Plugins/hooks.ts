@@ -524,13 +524,6 @@ export default function ({
     [engineRef],
   );
 
-  const planeFromPolygonCoordinates = useCallback(
-    (coordinates: [lng: number, lat: number][]) => {
-      return engineRef?.planeFromPolygonCoordinates(coordinates);
-    },
-    [engineRef],
-  );
-
   const value = useMemo<Context>(
     () => ({
       reearth: commonReearth({
@@ -598,7 +591,6 @@ export default function ({
         bringToFront,
         sendToBack,
         forceHorizontalRoll: onCameraForceHorizontalRollChange,
-        planeFromPolygonCoordinates,
       }),
       overrideSceneProperty,
       pluginInstances,
@@ -672,7 +664,6 @@ export default function ({
       sendToBack,
       overrideSceneProperty,
       onCameraForceHorizontalRollChange,
-      planeFromPolygonCoordinates,
       pluginInstances,
       clientStorage,
       timelineManagerRef,

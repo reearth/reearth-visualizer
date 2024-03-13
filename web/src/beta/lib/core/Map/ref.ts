@@ -89,7 +89,6 @@ const engineRefKeys: FunctionKeys<EngineRef> = {
   setCursor: 1,
   bringToFront: 1,
   sendToBack: 1,
-  planeFromPolygonCoordinates: 1,
 };
 
 const layersRefKeys: FunctionKeys<LayersRef> = {

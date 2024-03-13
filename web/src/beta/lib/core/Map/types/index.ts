@@ -195,16 +195,6 @@ export type EngineRef = {
     // TODO: Get condition as expression for plugin
     condition?: (f: PickedFeature) => boolean,
   ) => PickedFeature[] | undefined;
-  planeFromPolygonCoordinates: (coordinates: [lng: number, lat: number][]) =>
-    | {
-        normal: {
-          x: number;
-          y: number;
-          z: number;
-        };
-        distance: number;
-      }[]
-    | undefined;
 } & MouseEventHandles;
 
 export type EngineProps = {

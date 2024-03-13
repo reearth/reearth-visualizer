@@ -1,5 +1,5 @@
-import { ArcType, Color, ScreenSpaceEventType } from "cesium";
-import React, { forwardRef } from "react";
+import { ArcType, Color, KeyboardEventModifier, ScreenSpaceEventType } from "cesium";
+import React, { forwardRef, useCallback } from "react";
 import {
   Viewer,
   Fog,
@@ -101,6 +101,10 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerVisibility,
   });
 
+  const handleShiftMouseLeftUp = useCallback(() => {
+    console.log("handleShiftMouseLeftUp");
+  }, []);
+
   return (
     <Viewer
       ref={cesium}
@@ -153,6 +157,11 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
         {/* remove default double click event */}
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.LEFT_UP}
+          modifier={KeyboardEventModifier.SHIFT}
+          action={handleShiftMouseLeftUp}
+        />
       </ScreenSpaceEventHandler>
       <ScreenSpaceCameraController
         maximumZoomDistance={
