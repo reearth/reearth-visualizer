@@ -6,12 +6,15 @@ import type { ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import { InfoboxBlock } from "../../../types";
+import useExpressionEval from "../useExpressionEval";
 
 const ImageBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src],
   );
+
+  const evaluatedSrc = useExpressionEval(src);
 
   return (
     <BlockWrapper
@@ -21,7 +24,7 @@ const ImageBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...
       propertyId={block?.propertyId}
       property={block?.property}
       {...props}>
-      {src && <Image src={src} />}
+      {evaluatedSrc && <Image src={evaluatedSrc} />}
     </BlockWrapper>
   );
 };
