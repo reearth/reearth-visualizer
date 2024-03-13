@@ -886,7 +886,10 @@ export default function useEngineRef(
       selectFeatures: (layerId: string, featureId: string[]) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        findFeaturesFromLayer(viewer, layerId, featureId, entity => {
+        findFeaturesFromLayer(viewer, layerId, featureId, (entity, layer) => {
+          if (layer && "onSelectFeature" in layer && typeof layer.onSelectFeature === "function") {
+            layer.onSelectFeature(entity);
+          }
           const tag = getTag(entity) ?? {};
           const updatedTag = { ...tag, isFeatureSelected: true };
           attachTag(entity, updatedTag);
@@ -896,7 +899,14 @@ export default function useEngineRef(
       unselectFeatures: (layerId: string, featureId: string[]) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        findFeaturesFromLayer(viewer, layerId, featureId, entity => {
+        findFeaturesFromLayer(viewer, layerId, featureId, (entity, layer) => {
+          if (
+            layer &&
+            "onUnselectFeature" in layer &&
+            typeof layer.onUnselectFeature === "function"
+          ) {
+            layer.onUnselectFeature(entity);
+          }
           const tag = getTag(entity) ?? {};
           tag.isFeatureSelected = false;
           attachTag(entity, tag);
