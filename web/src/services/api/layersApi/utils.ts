@@ -5,7 +5,6 @@ import { GetSceneQuery } from "../../gql";
 // }
 
 export type NLSInfobox = {
-  id: string;
   sceneId: string;
   layerId: string;
   propertyId?: string;
@@ -35,7 +34,6 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
       config: l.config,
       infobox: l.infobox
         ? {
-            id: l.infobox.id,
             sceneId: l.infobox.sceneId,
             layerId: l.infobox.layerId,
             propertyId: l.infobox.propertyId,

@@ -10,9 +10,12 @@ import { CREATE_NLSINFOBOX } from "@reearth/services/gql/queries/infobox";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 
+import { SceneQueryProps } from "../sceneApi";
 import { MutationReturn } from "../types";
 
 import useBlocks from "./blocks";
+
+export type InfoboxQueryProps = SceneQueryProps;
 
 export default () => {
   const t = useT();
@@ -39,7 +42,6 @@ export default () => {
 
   const {
     useInstallableInfoboxBlocksQuery,
-    useInstalledInfoboxBlocksQuery,
     useCreateInfoboxBlock,
     useDeleteInfoboxBlock,
     useMoveInfoboxBlock,
@@ -49,7 +51,6 @@ export default () => {
     useCreateNLSInfobox,
     // blocks
     useInstallableInfoboxBlocksQuery,
-    useInstalledInfoboxBlocksQuery,
     useCreateInfoboxBlock,
     useDeleteInfoboxBlock,
     useMoveInfoboxBlock,

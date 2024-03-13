@@ -4,7 +4,6 @@ import {
   type WidgetArea,
   type Alignment,
 } from "@reearth/beta/lib/core/Crust";
-import { InfoboxBlock } from "@reearth/beta/lib/core/Crust/Infobox/types";
 import {
   BuiltinWidgets,
   Widget as RawWidget,
@@ -16,7 +15,7 @@ import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAl
 import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
-import { NLSInfobox, NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import {
   type Maybe,
@@ -33,6 +32,8 @@ import {
   ValueType as GQLValueType,
   NlsLayerCommonFragment,
 } from "@reearth/services/gql";
+
+import convertInfobox from "./convert-infobox";
 
 export type P = { [key in string]: any };
 
@@ -346,6 +347,9 @@ export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[],
   parent?: RawNLSLayer | null | undefined,
+  infoboxBlockNames?: {
+    [key: string]: string;
+  },
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
@@ -369,7 +373,7 @@ export function processLayers(
       id: nlsLayer.id,
       title: nlsLayer.title,
       visible: nlsLayer.visible,
-      infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
+      infobox: convertInfobox(nlsLayer.infobox, parent?.infobox, infoboxBlockNames),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
@@ -378,21 +382,3 @@ export function processLayers(
     };
   });
 }
-
-const processInfobox = (
-  orig: NLSInfobox | null | undefined,
-  parent: NLSInfobox | null | undefined,
-): Layer["infobox"] => {
-  const used = orig || parent;
-  if (!used) return;
-  return {
-    property: processProperty(parent?.property, orig?.property),
-    blocks: used.blocks?.map<InfoboxBlock>(f => ({
-      id: f.id,
-      pluginId: f.pluginId,
-      extensionId: f.extensionId,
-      property: processProperty(undefined, f.property),
-      propertyId: f.propertyId, // required by onBlockChange
-    })),
-  };
-};

@@ -2669,7 +2669,7 @@ extensions:
   - id: textInfoboxBetaBlock
     name: Text
     type: block
-    description: Storytelling Text Block
+    description: Infobox Text Block
     schema:
       groups:
         - id: panel
@@ -2682,7 +2682,7 @@ extensions:
               min: 0
               max: 100
         - id: default
-          title: Text
+          title: Text Block
           fields:
             - id: text
               type: string
@@ -2691,7 +2691,7 @@ extensions:
   - id: imageInfoboxBetaBlock
     name: Image
     type: block
-    description: Storytelling Image Block
+    description: Infobox Image Block
     schema:
       groups:
         - id: panel
@@ -2704,7 +2704,7 @@ extensions:
               min: 0
               max: 100
         - id: default
-          title: Image
+          title: Image Block
           fields:
             - id: src
               type: url
@@ -2713,7 +2713,7 @@ extensions:
   - id: propertyInfoboxBetaBlock
     type: block
     name: Property List Block
-    description: Infobox property Block
+    description: Infobox Property List Block
     schema:
       groups:
         - id: panel
@@ -2731,12 +2731,12 @@ extensions:
             - id: display_type
               type: string
               title: Type
-              defaultValue: rootProperties
+              defaultValue: all
               description: Choose how you wish to show properties
               choices:
-                - key: allProperties
+                - key: all
                   label: All Properties
-                - key: rootProperties
+                - key: rootOnly
                   label: Root Properties
                 - key: custom
                   label: Customize

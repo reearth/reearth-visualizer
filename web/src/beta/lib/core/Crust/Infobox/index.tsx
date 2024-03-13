@@ -162,15 +162,15 @@ const Infobox: React.FC<Props> = ({
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
       <Wrapper position={position} padding={padding} gap={gap}>
-        {isEditable && !disableSelection && infoboxBlocks && infoboxBlocks.length < 1 && (
+        {isEditable && !disableSelection && (
           <BlockAddBar
             id="top-bar"
-            openBlocks={openBlocksIndex === 0}
+            openBlocks={openBlocksIndex === -1}
             installableBlocks={installableInfoboxBlocks}
             showAreaHeight={gap}
             parentWidth={INFOBOX_WIDTH}
-            alwaysShow
-            onBlockOpen={() => handleBlockOpen(0)}
+            alwaysShow={infoboxBlocks.length < 1}
+            onBlockOpen={() => handleBlockOpen(-1)}
             onBlockAdd={handleBlockCreate?.(0)}
           />
         )}

@@ -160,7 +160,7 @@ const getInstallableInfoboxBlocks = (rawScene?: GetSceneQuery) => {
             description: e.translatedDescription ?? e.description,
             pluginId: plugin.id,
             extensionId: e.extensionId,
-            icon: e.icon,
+            icon: e.extensionId,
             singleOnly: !!e.singleOnly,
             type: "InfoboxBlock",
           };

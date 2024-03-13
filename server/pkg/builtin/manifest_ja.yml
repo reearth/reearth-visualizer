@@ -1304,3 +1304,51 @@ extensions:
             title: 余白
           gap:
             title: 間隔
+  textInfoboxBetaBlock:
+    name: テキスト
+    description: インフォボックスのテキストブロック
+    propertySchema:
+      default:
+        title: テキスト
+        fields:
+          text:
+            title: コンテンツ
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+  imageInfoboxBetaBlock:
+    name: 画像
+    description: インフォボックスの画像ブロック
+    propertySchema:
+      default:
+        title: 画像ブロック
+        fields:
+          text:
+            title: コンテンツ
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
+  propertyInfoboxBetaBlock:
+    name: プロパティ
+    description: インフォボックスのプロパティブロック
+    propertySchema:
+      default:
+        title: プロパティブロック
+        fields:
+          display_type:
+            title: 表示タイプ
+            choices:
+              all: 全てのプロパティ
+              rootOnly: ルートプロパティ
+              custom: カスタム
+          property_list:
+            title: プロパティリスト
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白

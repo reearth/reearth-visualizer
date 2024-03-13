@@ -77,14 +77,25 @@ export default ({
   // Layers
   const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
 
+  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
+
+  const infoboxBlockNames = useMemo(
+    () =>
+      installableInfoboxBlocks
+        ?.map(ib => ({ [ib.extensionId]: ib.name }))
+        .filter((bn): bn is { [key: string]: string } => !!bn)
+        .reduce((result, obj) => ({ ...result, ...obj }), {}),
+    [installableInfoboxBlocks],
+  );
+
   const layers = useMemo(() => {
-    const processedLayers = processLayers(nlsLayers, layerStyles);
+    const processedLayers = processLayers(nlsLayers, layerStyles, undefined, infoboxBlockNames);
     if (!showStoryPanel) return processedLayers;
     return processedLayers?.map(layer => ({
       ...layer,
       visible: true,
     }));
-  }, [nlsLayers, layerStyles, showStoryPanel]);
+  }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
   const handleLayerSelect = useCallback(
     async (
@@ -143,8 +154,6 @@ export default ({
       ),
     [scene?.plugins],
   );
-
-  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
   const handleInfoboxBlockCreate = useCallback(
     async (pluginId: string, extensionId: string, index?: number) => {
