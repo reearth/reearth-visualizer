@@ -158,7 +158,7 @@ function evalExpression(
 
         const result = new ConditionalExpression(
           styleExpression,
-          feature,
+          parsedFeature,
           layer.defines,
         ).evaluate();
         EVAL_EXPRESSION_CACHES.set(cacheKey, result);
@@ -175,7 +175,7 @@ function evalExpression(
           return EVAL_EXPRESSION_CACHES.get(cacheKey);
         }
 
-        const result = new Expression(styleExpression, feature, layer.defines).evaluate();
+        const result = new Expression(styleExpression, parsedFeature, layer.defines).evaluate();
         EVAL_EXPRESSION_CACHES.set(cacheKey, result);
 
         return result;
