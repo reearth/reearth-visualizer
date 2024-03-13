@@ -1,6 +1,7 @@
 import { type RefObject } from "react";
 
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type { LayerEditEvent, LayerSelectionReason, LayerVisibilityEvent } from "../Map";
@@ -104,6 +105,26 @@ export type Props = {
   ) => Promise<void>;
   onInfoboxBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
   onInfoboxBlockDelete?: (id?: string) => Promise<void>;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
@@ -146,6 +167,10 @@ export default function Crust({
   onInfoboxBlockCreate,
   onInfoboxBlockMove,
   onInfoboxBlockDelete,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
   overrideSceneProperty,
   onLayerEdit,
   onPluginSketchFeatureCreated,
@@ -229,10 +254,10 @@ export default function Crust({
         onBlockCreate={onInfoboxBlockCreate}
         onBlockDelete={onInfoboxBlockDelete}
         onBlockMove={onInfoboxBlockMove}
-        onPropertyItemAdd={async () => console.log("ADD")}
-        onPropertyItemDelete={async () => console.log("DELETE")}
-        onPropertyItemMove={async () => console.log("MOVE")}
-        onPropertyUpdate={async () => console.log("UPDATE")}
+        onPropertyUpdate={onPropertyUpdate}
+        onPropertyItemAdd={onPropertyItemAdd}
+        onPropertyItemDelete={onPropertyItemDelete}
+        onPropertyItemMove={onPropertyItemMove}
       />
     </Plugins>
   );

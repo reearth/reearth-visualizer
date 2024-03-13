@@ -1,6 +1,7 @@
 import { memo, forwardRef, CSSProperties, type Ref, type PropsWithChildren, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import Crust, {
@@ -100,6 +101,26 @@ export type Props = {
   ) => Promise<void>;
   onInfoboxBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
   onInfoboxBlockDelete?: (id?: string) => Promise<void>;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
@@ -149,6 +170,10 @@ const Visualizer = memo(
         onInfoboxBlockCreate,
         onInfoboxBlockMove,
         onInfoboxBlockDelete,
+        onPropertyUpdate,
+        onPropertyItemAdd,
+        onPropertyItemMove,
+        onPropertyItemDelete,
         onZoomToLayer,
         onInteractionModeChange,
         onMount,
@@ -257,6 +282,10 @@ const Visualizer = memo(
                   onInfoboxBlockCreate={onInfoboxBlockCreate}
                   onInfoboxBlockMove={onInfoboxBlockMove}
                   onInfoboxBlockDelete={onInfoboxBlockDelete}
+                  onPropertyUpdate={onPropertyUpdate}
+                  onPropertyItemAdd={onPropertyItemAdd}
+                  onPropertyItemMove={onPropertyItemMove}
+                  onPropertyItemDelete={onPropertyItemDelete}
                   onLayerEdit={onLayerEdit}
                   onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
                   onSketchTypeChange={onSketchTypeChange}
