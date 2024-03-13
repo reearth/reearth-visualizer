@@ -71,6 +71,22 @@ func (r *mutationResolver) UpdateNLSLayer(ctx context.Context, input gqlmodel.Up
 	}, nil
 }
 
+func (r *mutationResolver) DuplicateNLSLayer(ctx context.Context, input gqlmodel.DuplicateNLSLayerInput) (*gqlmodel.DuplicateNLSLayerPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.Duplicate(ctx, lid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.DuplicateNLSLayerPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
 func (r *mutationResolver) CreateNLSInfobox(ctx context.Context, input gqlmodel.CreateNLSInfoboxInput) (*gqlmodel.CreateNLSInfoboxPayload, error) {
 	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
 	if err != nil {
