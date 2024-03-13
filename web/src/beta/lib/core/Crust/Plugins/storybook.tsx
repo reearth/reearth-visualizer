@@ -216,7 +216,6 @@ export const context: Context = {
       });
     },
   },
-
   overrideSceneProperty: act("overrideSceneProperty"),
 };
 

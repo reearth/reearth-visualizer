@@ -109,6 +109,7 @@ export type EXPERIMENTAL_clipping = {
     top?: number;
     bottom?: number;
     visible?: boolean;
+    direction?: "inside" | "outside";
   };
 };
 

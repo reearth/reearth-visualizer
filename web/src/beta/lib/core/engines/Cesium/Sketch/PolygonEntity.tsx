@@ -16,7 +16,6 @@ export interface PolygonEntityProps {
   dynamic?: boolean;
   hierarchy?: PolygonHierarchy;
   color?: Color;
-  enableRelativeHeight?: boolean;
 }
 
 export const PolygonEntity: FC<PolygonEntityProps> = ({
@@ -37,9 +36,6 @@ export const PolygonEntity: FC<PolygonEntityProps> = ({
         hierarchy,
         fill: true,
         material: color?.withAlpha(0.5),
-        outline: true,
-        outlineWidth: 1,
-        outlineColor: color?.withAlpha(1),
         classificationType: ClassificationType.TERRAIN,
       },
     }),

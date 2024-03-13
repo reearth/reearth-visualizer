@@ -85,13 +85,7 @@ const SketchComponent: FC<SketchComponentProps> = memo(
           <PolylineEntity key={index} dynamic positions={positions} color={color} />
         ))}
         {hierarchyArray?.map((hierarchy, index) => (
-          <PolygonEntity
-            key={index}
-            dynamic
-            hierarchy={hierarchy}
-            color={color}
-            enableRelativeHeight={enableRelativeHeight}
-          />
+          <PolygonEntity key={index} dynamic hierarchy={hierarchy} color={color} />
         ))}
         {cartesianGeometryOptions != null && extrudedHeight == null && (
           <SurfaceControlPoints geometryOptions={cartesianGeometryOptions} color={color} />
