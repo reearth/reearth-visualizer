@@ -128,7 +128,7 @@
         "axios": "1.6.0",
         "cesium": "1.105.2",
         "cesium-dnd": "1.1.0",
-        "cesium-mvt-imagery-provider": "1.4.0",
+        "cesium-mvt-imagery-provider": "../../cesium-mvt-imagery-provider/",
         "core-js": "3.33.2",
         "crypto-js": "4.2.0",
         "csv-parse": "5.5.2",
