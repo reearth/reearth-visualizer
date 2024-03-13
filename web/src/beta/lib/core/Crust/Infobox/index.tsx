@@ -31,7 +31,6 @@ export type InstallableInfoboxBlock = InstallableBlock & {
 export type Props = {
   infobox?: Infobox;
   isEditable?: boolean;
-  inEditor?: boolean;
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   renderBlock?: (block: InfoboxBlockProps) => ReactNode;
   onBlockCreate?: (
@@ -66,7 +65,6 @@ export type Props = {
 const Infobox: React.FC<Props> = ({
   infobox,
   isEditable,
-  inEditor,
   installableInfoboxBlocks,
   onBlockCreate,
   onBlockMove,
@@ -157,8 +155,6 @@ const Infobox: React.FC<Props> = ({
     }
   }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex]);
 
-  console.log("INF", infobox);
-
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
       <Wrapper position={position} padding={padding} gap={gap}>
@@ -198,7 +194,7 @@ const Infobox: React.FC<Props> = ({
                   <InfoboxBlockComponent
                     key={b.id}
                     block={b}
-                    isEditable={inEditor}
+                    isEditable={isEditable}
                     isSelected={b.id === selectedBlockId}
                     onClick={() => handleBlockSelect(b.id)}
                     onBlockDoubleClick={() => handleBlockDoubleClick(b.id)}
