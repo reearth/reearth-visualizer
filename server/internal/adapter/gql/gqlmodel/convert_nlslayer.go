@@ -4,6 +4,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 )
 
 func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
@@ -16,10 +17,9 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 		SceneID:   IDFrom(l.Scene()),
 		Title:     l.Title(),
 		Visible:   l.IsVisible(),
-		Infobox:   nil, // Temporarily
+		Infobox:   ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
 		LayerType: string(l.LayerType()),
 		Config:    JSON(*l.Config()),
-		Tags:      ToLayerTagList(l.Tags(), l.Scene()),
 	}
 }
 
@@ -54,8 +54,7 @@ func ToNLSLayerGroup(l *nlslayer.NLSLayerGroup, parent *id.NLSLayerID) *NLSLayer
 		Title:       l.Title(),
 		Visible:     l.IsVisible(),
 		Config:      JSON(*l.Config()),
-		Infobox:     nil, // Temporarily
-		Tags:        ToLayerTagList(l.Tags(), l.Scene()),
+		Infobox:     ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
 		ChildrenIds: util.Map(l.Children().Layers(), IDFrom[id.NLSLayer]),
 	}
 }
@@ -78,4 +77,40 @@ func ToNLSLayers(layers nlslayer.NLSLayerList, parent *id.NLSLayerID) []NLSLayer
 	return util.Map(layers, func(l *nlslayer.NLSLayer) NLSLayer {
 		return ToNLSLayer(*l, parent)
 	})
+}
+
+func ToNLSInfoboxBlock(ibf *nlslayer.InfoboxBlock, parentSceneID id.SceneID) *InfoboxBlock {
+	if ibf == nil {
+		return nil
+	}
+
+	return &InfoboxBlock{
+		ID:          IDFrom(ibf.ID()),
+		SceneID:     IDFrom(parentSceneID),
+		PropertyID:  IDFrom(ibf.Property()),
+		PluginID:    IDFromPluginID(ibf.Plugin()),
+		ExtensionID: ID(ibf.Extension()),
+	}
+}
+
+func ToInfoboxBlocks(bl []*nlslayer.InfoboxBlock, parentSceneID id.SceneID) []*InfoboxBlock {
+	if len(bl) == 0 {
+		return []*InfoboxBlock{}
+	}
+	return lo.Map(bl, func(s *nlslayer.InfoboxBlock, _ int) *InfoboxBlock {
+		return ToNLSInfoboxBlock(s, parentSceneID)
+	})
+}
+
+func ToNLSInfobox(ib *nlslayer.Infobox, parent id.NLSLayerID, parentSceneID id.SceneID) *NLSInfobox {
+	if ib == nil {
+		return nil
+	}
+
+	return &NLSInfobox{
+		SceneID:    IDFrom(parentSceneID),
+		PropertyID: IDFrom(ib.Property()),
+		Blocks:     ToInfoboxBlocks(ib.Blocks(), parentSceneID),
+		LayerID:    IDFrom(parent),
+	}
 }
