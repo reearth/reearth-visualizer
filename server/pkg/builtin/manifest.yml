@@ -2659,4 +2659,84 @@ extensions:
               max: 40
               suffix: px
               description: "The gap between the top of the infobox. Min: 0  Max: 40"
-            
+  - id: textInfoboxBetaBlock
+    name: Text
+    type: block
+    description: Storytelling Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Text
+          fields:
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+  - id: imageInfoboxBetaBlock
+    name: Image
+    type: block
+    description: Storytelling Image Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Image
+          fields:
+            - id: src
+              type: url
+              title: Image
+              ui: image
+  - id: propertyInfoboxBetaBlock
+    type: block
+    name: Property List Block
+    description: Infobox property Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Property block
+          fields:
+            - id: display_type
+              type: string
+              title: Type
+              defaultValue: rootProperties
+              description: Choose how you wish to show properties
+              choices:
+                - key: allProperties
+                  label: All Properties
+                - key: rootProperties
+                  label: Root Properties
+                - key: custom
+                  label: Customize
+            - id: property_list
+              type: array
+              title: Property List
+              availableIf:
+                field: display_type
+                type: string
+                value: custom

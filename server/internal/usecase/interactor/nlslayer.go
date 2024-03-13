@@ -494,3 +494,35 @@ func (i *NLSLayer) RemoveNLSInfoboxBlock(ctx context.Context, inp interfaces.Rem
 	tx.Commit()
 	return inp.InfoboxBlockID, layer, err
 }
+
+func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, lid)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return nil, err
+	}
+
+	duplicatedLayer := layer.Duplicate()
+
+	err = i.nlslayerRepo.Save(ctx, duplicatedLayer)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return duplicatedLayer, nil
+}

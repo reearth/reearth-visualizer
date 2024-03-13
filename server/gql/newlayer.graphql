@@ -104,6 +104,10 @@ input RemoveNLSInfoboxBlockInput {
   infoboxBlockId: ID!
 }
 
+input DuplicateNLSLayerInput {
+  layerId: ID!
+}
+
 # Payload
 
 type AddNLSLayerSimplePayload {
@@ -142,6 +146,10 @@ type RemoveNLSInfoboxBlockPayload {
   layer: NLSLayer!
 }
 
+type DuplicateNLSLayerPayload {
+  layer: NLSLayer!
+}
+
 extend type Mutation {
   addNLSLayerSimple(input: AddNLSLayerSimpleInput!): AddNLSLayerSimplePayload!
   removeNLSLayer(input: RemoveNLSLayerInput!): RemoveNLSLayerPayload!
@@ -155,4 +163,5 @@ extend type Mutation {
   removeNLSInfoboxBlock(
     input: RemoveNLSInfoboxBlockInput!
   ): RemoveNLSInfoboxBlockPayload
+  duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
 }
