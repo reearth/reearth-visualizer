@@ -1810,43 +1810,6 @@ extensions:
               type: string
               title: HTML
               ui: multiline
-  - id: propertyblock
-    type: block
-    name: Property List Block
-    description: Infobox property Block
-    schema:
-      groups:
-        - id: panel
-          title: Panel Setting
-          fields:
-            - id: padding
-              type: spacing
-              title: Padding
-              ui: padding
-              min: 0
-              max: 100
-        - id: default
-          title: Property block
-          fields:
-            - id: display_type
-              type: string
-              title: Type
-              defaultValue: rootProperties
-              description: Choose how you wish to show properties
-              choices:
-                - key: allProperties
-                  label: All Properties
-                - key: rootProperties
-                  label: Root Properties
-                - key: custom
-                  label: Customize
-            - id: property_list
-              type: array
-              title: Property List
-              availableIf:
-                field: display_type
-                type: string
-                value: custom
   - id: menu
     type: widget
     name: Menu (legacy)
@@ -2707,9 +2670,8 @@ extensions:
           title: Image Block
           fields:
             - id: src
-              type: url
+              type: string
               title: Image
-              ui: image
   - id: propertyInfoboxBetaBlock
     type: block
     name: Property List Block
@@ -2728,7 +2690,7 @@ extensions:
         - id: default
           title: Property block
           fields:
-            - id: display_type
+            - id: displayType
               type: string
               title: Type
               defaultValue: all
@@ -2740,10 +2702,10 @@ extensions:
                   label: Root Properties
                 - key: custom
                   label: Customize
-            - id: property_list
+            - id: propertyList
               type: array
               title: Property List
               availableIf:
-                field: display_type
+                field: displayType
                 type: string
                 value: custom
