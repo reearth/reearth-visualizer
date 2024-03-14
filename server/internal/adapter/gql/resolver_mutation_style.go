@@ -63,3 +63,19 @@ func (r *mutationResolver) RemoveStyle(ctx context.Context, input gqlmodel.Remov
 		StyleID: gqlmodel.IDFrom(id),
 	}, nil
 }
+
+func (r *mutationResolver) DuplicateStyle(ctx context.Context, input gqlmodel.DuplicateStyleInput) (*gqlmodel.DuplicateStylePayload, error) {
+	sid, err := gqlmodel.ToID[id.Style](input.StyleID)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := usecases(ctx).Style.DuplicateStyle(ctx, sid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.DuplicateStylePayload{
+		Style: gqlmodel.ToStyle(s),
+	}, nil
+}

@@ -505,10 +505,28 @@ export type DetachTagItemFromGroupPayload = {
   tag: TagGroup;
 };
 
+export type DuplicateNlsLayerInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type DuplicateNlsLayerPayload = {
+  __typename?: 'DuplicateNLSLayerPayload';
+  layer: NlsLayer;
+};
+
 export type DuplicateStoryPageInput = {
   pageId: Scalars['ID']['input'];
   sceneId: Scalars['ID']['input'];
   storyId: Scalars['ID']['input'];
+};
+
+export type DuplicateStyleInput = {
+  styleId: Scalars['ID']['input'];
+};
+
+export type DuplicateStylePayload = {
+  __typename?: 'DuplicateStylePayload';
+  style: Style;
 };
 
 export type ImportDatasetFromGoogleSheetInput = {
@@ -934,7 +952,9 @@ export type Mutation = {
   deleteTeam?: Maybe<DeleteTeamPayload>;
   detachTagFromLayer?: Maybe<DetachTagFromLayerPayload>;
   detachTagItemFromGroup?: Maybe<DetachTagItemFromGroupPayload>;
+  duplicateNLSLayer: DuplicateNlsLayerPayload;
   duplicateStoryPage: StoryPagePayload;
+  duplicateStyle?: Maybe<DuplicateStylePayload>;
   importDataset?: Maybe<ImportDatasetPayload>;
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
   importLayer?: Maybe<ImportLayerPayload>;
@@ -1149,8 +1169,18 @@ export type MutationDetachTagItemFromGroupArgs = {
 };
 
 
+export type MutationDuplicateNlsLayerArgs = {
+  input: DuplicateNlsLayerInput;
+};
+
+
 export type MutationDuplicateStoryPageArgs = {
   input: DuplicateStoryPageInput;
+};
+
+
+export type MutationDuplicateStyleArgs = {
+  input: DuplicateStyleInput;
 };
 
 

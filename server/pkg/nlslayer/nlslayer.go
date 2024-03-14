@@ -14,6 +14,7 @@ type NLSLayer interface {
 	SetInfobox(*Infobox)
 	Rename(string)
 	UpdateConfig(*Config)
+	Duplicate() NLSLayer
 }
 
 func ToNLSLayerGroup(l NLSLayer) *NLSLayerGroup {
@@ -176,4 +177,30 @@ func (l *layerBase) Clone() *layerBase {
 	}
 
 	return cloned
+}
+
+func (l *layerBase) Duplicate() NLSLayer {
+	if l == nil {
+		return nil
+	}
+	var duplicatedConfig *Config
+	if l.config != nil {
+		duplicatedConfigItem := l.config.Clone()
+		duplicatedConfig = &duplicatedConfigItem
+	}
+
+	duplicated := &layerBase{
+		id:        NewID(),
+		layerType: l.layerType,
+		scene:     l.scene,
+		title:     l.title,
+		visible:   l.visible,
+		config:    duplicatedConfig,
+	}
+
+	if l.infobox != nil {
+		duplicated.infobox = l.infobox.Clone()
+	}
+
+	return &NLSLayerSimple{layerBase: *duplicated}
 }

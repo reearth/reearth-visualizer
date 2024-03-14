@@ -32,12 +32,14 @@ import { type CesiumComponentRef, Entity } from "resium";
 import { Data, Layer, LayerSimple, TimeInterval } from "@reearth/beta/lib/core/mantle";
 
 import type {
+  AppearanceTypes,
   ComputedFeature,
   ComputedLayer,
   FeatureComponentProps,
   Geometry,
   SceneProperty,
 } from "../..";
+import { FeatureIndex } from "../FeatureIndex";
 import type { InternalCesium3DTileFeature } from "../types";
 
 export type FeatureProps<P = any> = {
@@ -65,8 +67,10 @@ export type Tag = {
   legacyLocationPropertyKey?: string;
   originalProperties?: any;
   computedFeature?: ComputedFeature;
-  isFeatureSelected?: boolean;
   hideIndicator?: boolean;
+  appearanceType?: keyof AppearanceTypes;
+  featureIndex?: FeatureIndex;
+  isFeatureSelected?: boolean;
 };
 
 export const EntityExt = forwardRef(EntityExtComponent);
@@ -211,8 +215,10 @@ const tagObj: { [k in keyof Tag]: 1 } = {
   unselectable: 1,
   originalProperties: 1,
   computedFeature: 1,
-  isFeatureSelected: 1,
   hideIndicator: 1,
+  appearanceType: 1,
+  featureIndex: 1,
+  isFeatureSelected: 1,
 };
 
 const tagKeys = Object.keys(tagObj) as (keyof Tag)[];

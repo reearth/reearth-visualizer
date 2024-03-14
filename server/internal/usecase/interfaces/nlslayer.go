@@ -56,4 +56,5 @@ type NLSLayer interface {
 	AddNLSInfoboxBlock(context.Context, AddNLSInfoboxBlockParam, *usecase.Operator) (*nlslayer.InfoboxBlock, nlslayer.NLSLayer, error)
 	MoveNLSInfoboxBlock(context.Context, MoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, int, error)
 	RemoveNLSInfoboxBlock(context.Context, RemoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, error)
+	Duplicate(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
 }
