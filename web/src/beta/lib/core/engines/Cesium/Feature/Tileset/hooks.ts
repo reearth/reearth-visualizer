@@ -56,10 +56,14 @@ import {
   getTag,
 } from "../utils";
 
+import { TilesetFeatureIndex } from "./TilesetFeatureIndex";
 import { GoogleMaps } from "./types";
 import { useClippingBox } from "./useClippingBox";
+import { useDrawClipping } from "./useDrawClipping";
 
 import { Property } from ".";
+
+const DEFAULT_FEATURE_COLOR = Color.WHITE;
 
 const useData = (layer: ComputedLayer | undefined) => {
   return useMemo(() => {
@@ -174,6 +178,9 @@ const useFeature = ({
   idProperty,
   layer,
   viewer,
+  featureIndex,
+  selectedFeatureIds,
+  selectedFeatureColorMap,
   evalFeature,
   onComputedFeatureFetch,
 }: {
@@ -184,11 +191,17 @@ const useFeature = ({
   viewer?: Viewer;
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (f: Feature[], cf: ComputedFeature[]) => void;
+  featureIndex: TilesetFeatureIndex;
+  selectedFeatureIds: string[];
+  selectedFeatureColorMap: Map<string, Color>;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
   const cachedFeatureIds = useRef(new Set<string>());
   const layerId = layer?.id || id;
+
+  const selectedFeatureIdsRef = useRef(selectedFeatureIds);
+  selectedFeatureIdsRef.current = selectedFeatureIds;
 
   const attachComputedFeature = useCallback(
     async (feature?: CachedFeature) => {
@@ -198,26 +211,31 @@ const useFeature = ({
         const tag = getTag(raw);
         const properties =
           viewer && !(raw instanceof Model) ? convertCesium3DTileFeatureProperties(raw) : {};
+        const isFeatureSelected = selectedFeatureIdsRef.current.includes(tag?.featureId ?? "");
 
         const computedFeature = evalFeature(layer, { ...feature?.feature, properties });
 
         const style = computedFeature?.["3dtiles"];
 
         COMMON_STYLE_PROPERTIES.forEach(({ name, convert }) => {
+          const val = convertStyle(style?.[name], convert);
+          if (val !== undefined) {
+            raw[name] = val;
+          }
+
           if (name === "color") {
-            if (tag?.isFeatureSelected) {
+            if (isFeatureSelected) {
               raw.color =
                 typeof layer["3dtiles"]?.selectedFeatureColor === "string"
                   ? toColor(layer["3dtiles"]?.selectedFeatureColor) ?? raw.color
                   : raw.color;
-              return;
+            } else if (!val) {
+              raw.color = DEFAULT_FEATURE_COLOR;
             }
 
-            raw.color = Color.WHITE;
-          }
-          const val = convertStyle(style?.[name], convert);
-          if (val !== undefined) {
-            raw[name] = val;
+            if (tag?.featureId) {
+              selectedFeatureColorMap.set(tag.featureId, val ?? DEFAULT_FEATURE_COLOR);
+            }
           }
         });
 
@@ -245,14 +263,13 @@ const useFeature = ({
           layerId,
           featureId: feature.feature.id,
           computedFeature,
-          isFeatureSelected: tag?.isFeatureSelected,
         });
 
         return computedFeature;
       }
       return;
     },
-    [evalFeature, layerId, viewer],
+    [evalFeature, layerId, viewer, selectedFeatureColorMap],
   );
 
   useEffect(
@@ -260,7 +277,7 @@ const useFeature = ({
       tileset.current?.tileLoad.addEventListener(async (t: Cesium3DTile) => {
         if (t.tileset.isDestroyed()) return;
         const features = new Set<Feature>();
-        await lookupFeatures(t.content, async (tileFeature, content) => {
+        await lookupFeatures(t.content, async (tileFeature, content, batchId) => {
           const feature = (() => {
             const normalFeature = makeFeatureFrom3DTile(tileFeature, content, idProperty);
             const feature: CachedFeature = {
@@ -269,6 +286,10 @@ const useFeature = ({
             };
             return feature;
           })();
+
+          if (batchId) {
+            featureIndex.addFeature(content, batchId, feature.feature.id);
+          }
 
           await attachComputedFeature(feature);
           cachedFeaturesRef.current.push(feature);
@@ -287,6 +308,7 @@ const useFeature = ({
       layerId,
       onComputedFeatureFetch,
       idProperty,
+      featureIndex,
     ],
   );
 
@@ -303,9 +325,8 @@ const useFeature = ({
   const skippedComputingAt = useRef<number | null>();
   useEffect(() => {
     skippedComputingAt.current = Date.now();
-  }, [pickedAppearance, layer?.layer._updateStyle]);
+  }, [pickedAppearance]);
 
-  const prevUpdateStyle = useRef(layer?.layer._updateStyle);
   const computeFeatureAsync = useCallback(
     async (f: CachedFeature, startedComputingAt: number) =>
       new Promise(resolve =>
@@ -315,13 +336,13 @@ const useFeature = ({
             return;
           }
 
-          if (pickedAppearance || layer?.layer._updateStyle) {
+          if (pickedAppearance) {
             attachComputedFeature(f);
           }
           resolve(undefined);
         }),
       ),
-    [pickedAppearance, attachComputedFeature, layer?.layer._updateStyle],
+    [pickedAppearance, attachComputedFeature],
   );
 
   const computeFeatures = useCallback(
@@ -345,10 +366,9 @@ const useFeature = ({
       if (!skipped) {
         await Promise.all(tempAsyncProcesses);
       }
-      prevUpdateStyle.current = layer?.layer._updateStyle;
       tempAsyncProcesses.length = 0;
     },
-    [computeFeatureAsync, layer?.layer._updateStyle],
+    [computeFeatureAsync],
   );
 
   const { requestRender } = useContext();
@@ -360,7 +380,7 @@ const useFeature = ({
       requestRender?.();
     };
     compute();
-  }, [computeFeatures, requestRender, layer?.layer._updateStyle]);
+  }, [computeFeatures, requestRender]);
 };
 
 export const useHooks = ({
@@ -388,7 +408,17 @@ export const useHooks = ({
   onLayerFetch?: (value: Partial<Pick<LayerSimple, "properties">>) => void;
 }) => {
   const { viewer } = useCesium();
-  const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping, apiKey } = property ?? {};
+  const tilesetRef = useRef<Cesium3DTilesetType>();
+
+  const {
+    tileset,
+    styleUrl,
+    edgeColor,
+    edgeWidth,
+    experimental_clipping,
+    apiKey,
+    selectedFeatureColor,
+  } = property ?? {};
   const {
     width,
     height,
@@ -404,6 +434,7 @@ export const useHooks = ({
     builtinBoxProps,
     allowEnterGround,
   } = useClippingBox({ clipping: experimental_clipping, boxId });
+
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type, idProperty } = useData(layer);
 
@@ -440,20 +471,54 @@ export const useHooks = ({
         edgeColor: toColor(edgeColor),
       }),
   );
-  const tilesetRef = useRef<Cesium3DTilesetType>();
+
+  const { drawClippingEnabled, drawClippingEdgeProps } = useDrawClipping({
+    ...experimental_clipping?.draw,
+    tilesetRef,
+    viewer,
+    clippingPlanes,
+  });
+  const [featureIndex] = useState(() => new TilesetFeatureIndex());
 
   const ref = useCallback(
     (tileset: CesiumComponentRef<Cesium3DTilesetType> | null) => {
       if (tileset?.cesiumElement) {
-        attachTag(tileset.cesiumElement, { layerId: layer?.id || id });
+        attachTag(tileset.cesiumElement, {
+          layerId: layer?.id || id,
+          featureIndex,
+          appearanceType: "3dtiles",
+        });
       }
       if (layer?.id && tileset?.cesiumElement) {
         (tileset?.cesiumElement as any)[layerIdField] = layer.id;
       }
       tilesetRef.current = tileset?.cesiumElement;
     },
-    [id, layer?.id],
+    [id, layer?.id, featureIndex],
   );
+
+  const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
+  const selectedFeatureColorRef = useRef(selectedFeatureColor);
+  selectedFeatureColorRef.current = selectedFeatureColor;
+  const [selectedFeatureColorMap] = useState(() => new Map<string, Color>());
+
+  useEffect(() => {
+    if (!tilesetRef.current) return;
+    Object.assign(tilesetRef.current, {
+      onSelectFeature: (f: Cesium3DTileFeature) => {
+        const tag = getTag(f);
+        setSelectedFeatureIds(f => (tag?.featureId ? [...f, tag.featureId] : f));
+        if (selectedFeatureColorRef.current) {
+          f.color = toColor(selectedFeatureColorRef.current) ?? f.color;
+        }
+      },
+      onUnselectFeature: (f: Cesium3DTileFeature) => {
+        const tag = getTag(f);
+        setSelectedFeatureIds(f => (tag?.featureId ? f.filter(v => v !== tag.featureId) : f));
+        f.color = selectedFeatureColorMap.get(tag?.featureId ?? "") ?? DEFAULT_FEATURE_COLOR;
+      },
+    });
+  }, [selectedFeatureColorMap]);
 
   useFeature({
     id,
@@ -463,6 +528,9 @@ export const useHooks = ({
     viewer,
     evalFeature,
     onComputedFeatureFetch,
+    featureIndex,
+    selectedFeatureIds,
+    selectedFeatureColorMap,
   });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
@@ -485,6 +553,8 @@ export const useHooks = ({
   );
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
+
     const coords = coordinates
       ? coordinates
       : location
@@ -529,7 +599,6 @@ export const useHooks = ({
       );
 
       const inverseOriginalModelMatrix = Matrix4.inverse(clippingPlanesOriginMatrix, new Matrix4());
-
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
@@ -550,17 +619,21 @@ export const useHooks = ({
     updateTerrainHeight,
     allowEnterGround,
     terrainHeightEstimate,
+    experimental_clipping?.draw,
   ]);
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
     clippingPlanes.enabled = clippingVisible;
-  }, [clippingPlanes, clippingVisible]);
+  }, [clippingPlanes, clippingVisible, experimental_clipping?.draw]);
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
     clippingPlanes.unionClippingRegions = direction === "outside";
-  }, [clippingPlanes, direction]);
+  }, [clippingPlanes, direction, experimental_clipping?.draw]);
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
     clippingPlanes.removeAll();
     planes?.forEach(plane =>
       clippingPlanes.add(
@@ -570,7 +643,7 @@ export const useHooks = ({
         ),
       ),
     );
-  }, [planes, clippingPlanes, clipDirection]);
+  }, [planes, clippingPlanes, clipDirection, experimental_clipping?.draw]);
 
   useEffect(() => {
     if (!styleUrl) {
@@ -658,6 +731,8 @@ export const useHooks = ({
     ref,
     style,
     clippingPlanes,
+    drawClippingEnabled,
+    drawClippingEdgeProps,
     builtinBoxProps,
     imageBasedLighting,
     handleReady,
