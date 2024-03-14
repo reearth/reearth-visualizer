@@ -147,7 +147,6 @@ function evalExpression(
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
         const cacheKey = JSON.stringify([
-          styleExpression,
           getCacheableProperties(styleExpression, parsedFeature),
           layer.defines,
         ]);
