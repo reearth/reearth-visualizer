@@ -74,6 +74,8 @@ export default function useHooks({
   const [type, updateType] = useState<SketchType | undefined>();
   const [from, updateFrom] = useState<"editor" | "plugin">("editor");
   const [color, updateColor] = useState<string>();
+  const [disableShadow, updateDisableShadow] = useState(false);
+  const [enableRelativeHeight, updateEnableRelativeHeight] = useState(false);
   const [disableInteraction, setDisableInteraction] = useState(false);
   const [defaultAppearance, updateDefaultAppearance] = useState<SketchAppearance | undefined>(
     PRESET_APPEARANCE,
@@ -94,6 +96,14 @@ export default function useHooks({
 
   const setColor = useCallback((color: string) => {
     updateColor(color);
+  }, []);
+
+  const setDisableShadow = useCallback((disable: boolean) => {
+    updateDisableShadow(!!disable);
+  }, []);
+
+  const setEnableRelativeHeight = useCallback((enable: boolean) => {
+    updateEnableRelativeHeight(!!enable);
   }, []);
 
   const setDefaultAppearance = useCallback((appearance: SketchAppearance) => {
@@ -590,12 +600,16 @@ export default function useHooks({
       setColor,
       setDefaultAppearance,
       createDataOnly,
+      disableShadow: setDisableShadow,
+      enableRelativeHeight: setEnableRelativeHeight,
       allowRightClickToAbort,
       allowAutoResetInteractionMode,
     }),
     [
       setType,
       setColor,
+      setDisableShadow,
+      setEnableRelativeHeight,
       setDefaultAppearance,
       createDataOnly,
       allowRightClickToAbort,
@@ -608,6 +622,8 @@ export default function useHooks({
     extrudedHeight,
     geometryOptions,
     color,
+    disableShadow,
+    enableRelativeHeight,
   };
 }
 
