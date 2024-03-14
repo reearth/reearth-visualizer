@@ -87,6 +87,12 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 			gqlArray[i] = valueInterfaceToGqlValue(item)
 		}
 		return gqlArray
+	case map[string]interface{}:
+		gqlMap := make(map[string]interface{})
+		for key, val := range v2 {
+			gqlMap[key] = valueInterfaceToGqlValue(val)
+		}
+		return gqlMap
 	}
 	return nil
 }
