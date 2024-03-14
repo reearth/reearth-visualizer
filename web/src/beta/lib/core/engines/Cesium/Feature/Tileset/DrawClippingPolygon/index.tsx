@@ -7,12 +7,29 @@ import { useCustomCompareMemo } from "use-custom-compare";
 
 import { EntityExt, toColor } from "../../utils";
 
+export type ClippingPolygonStyle = {
+  fill?: boolean;
+  fillColor?: string;
+  stroke?: boolean;
+  strokeColor?: string;
+  strokeWidth?: number;
+};
+
 type DrawClippingPolygonProps = {
   coordiantes: Position[];
   top?: number;
   bottom?: number;
   visible?: boolean;
+  style?: ClippingPolygonStyle;
   ready?: boolean;
+};
+
+const DEFAULT_CLIPPING_POLYGON_STYLE = {
+  fill: true,
+  fillColor: "#FFFFFF22",
+  stroke: true,
+  strokeColor: "#FFFFFF",
+  strokeWidth: 1,
 };
 
 export const DrawClippingPolygon: FC<DrawClippingPolygonProps> = ({
@@ -20,6 +37,7 @@ export const DrawClippingPolygon: FC<DrawClippingPolygonProps> = ({
   top = 0,
   bottom = 0,
   visible,
+  style,
   ready,
 }) => {
   const hierarchy = useCustomCompareMemo(
@@ -31,17 +49,25 @@ export const DrawClippingPolygon: FC<DrawClippingPolygonProps> = ({
     isEqual,
   );
 
-  const strokeColor = useMemo(() => toColor("#00bebe"), []);
-  const fillColor = useMemo(() => toColor("#00bebe11"), []);
+  const memoizedStyle = useMemo(
+    () => ({
+      ...DEFAULT_CLIPPING_POLYGON_STYLE,
+      ...style,
+      fillColor: toColor(style?.fillColor ?? DEFAULT_CLIPPING_POLYGON_STYLE.fillColor),
+      strokeColor: toColor(style?.strokeColor ?? DEFAULT_CLIPPING_POLYGON_STYLE.strokeColor),
+    }),
+    [style],
+  );
 
   return (
     <EntityExt hideIndicator>
       <PolygonGraphics
         hierarchy={hierarchy}
-        fill={true}
-        material={fillColor}
-        outline={true}
-        outlineColor={strokeColor}
+        fill={memoizedStyle.fill}
+        material={memoizedStyle.fillColor}
+        outline={memoizedStyle.stroke}
+        outlineColor={memoizedStyle.strokeColor}
+        outlineWidth={memoizedStyle.strokeWidth}
         height={bottom}
         extrudedHeight={top}
         show={visible && ready}

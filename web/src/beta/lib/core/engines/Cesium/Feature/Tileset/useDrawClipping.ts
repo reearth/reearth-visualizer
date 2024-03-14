@@ -16,6 +16,8 @@ import { MutableRefObject, useEffect, useMemo, useState } from "react";
 import { LatLng } from "../../..";
 import { sampleTerrainHeight } from "../../common";
 
+import { ClippingPolygonStyle } from "./DrawClippingPolygon";
+
 type drawClippingProps = {
   enabled?: boolean;
   surfacePoints?: LatLng[];
@@ -23,6 +25,7 @@ type drawClippingProps = {
   top?: number;
   bottom?: number;
   visible?: boolean;
+  style?: ClippingPolygonStyle;
   tilesetRef?: MutableRefObject<Cesium3DTileset | undefined>;
   viewer?: Viewer;
   clippingPlanes: ClippingPlaneCollection;
@@ -35,6 +38,7 @@ export const useDrawClipping = ({
   top,
   bottom,
   visible = true,
+  style,
   tilesetRef,
   viewer,
   clippingPlanes,
@@ -143,9 +147,10 @@ export const useDrawClipping = ({
       top: baseHeight + appliedTop,
       bottom: baseHeight - appliedBottom,
       visible,
+      style,
       ready,
     }),
-    [surfacePoints, baseHeight, appliedTop, appliedBottom, visible, ready],
+    [surfacePoints, baseHeight, appliedTop, appliedBottom, visible, style, ready],
   );
 
   return {

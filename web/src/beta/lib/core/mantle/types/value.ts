@@ -110,6 +110,13 @@ export type EXPERIMENTAL_clipping = {
     bottom?: number;
     visible?: boolean;
     direction?: "inside" | "outside";
+    style?: {
+      fill?: boolean;
+      fillColor?: string;
+      stroke?: boolean;
+      strokeColor?: string;
+      strokeWidth?: number;
+    };
   };
 };
 
