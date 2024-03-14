@@ -59,6 +59,7 @@ import {
 import { TilesetFeatureIndex } from "./TilesetFeatureIndex";
 import { GoogleMaps } from "./types";
 import { useClippingBox } from "./useClippingBox";
+import { useDrawClipping } from "./useDrawClipping";
 
 import { Property } from ".";
 
@@ -407,6 +408,8 @@ export const useHooks = ({
   onLayerFetch?: (value: Partial<Pick<LayerSimple, "properties">>) => void;
 }) => {
   const { viewer } = useCesium();
+  const tilesetRef = useRef<Cesium3DTilesetType>();
+
   const {
     tileset,
     styleUrl,
@@ -431,6 +434,7 @@ export const useHooks = ({
     builtinBoxProps,
     allowEnterGround,
   } = useClippingBox({ clipping: experimental_clipping, boxId });
+
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type, idProperty } = useData(layer);
 
@@ -467,7 +471,13 @@ export const useHooks = ({
         edgeColor: toColor(edgeColor),
       }),
   );
-  const tilesetRef = useRef<Cesium3DTilesetType>();
+
+  const { drawClippingEnabled, drawClippingEdgeProps } = useDrawClipping({
+    ...experimental_clipping?.draw,
+    tilesetRef,
+    viewer,
+    clippingPlanes,
+  });
   const [featureIndex] = useState(() => new TilesetFeatureIndex());
 
   const ref = useCallback(
@@ -543,6 +553,8 @@ export const useHooks = ({
   );
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
+
     const coords = coordinates
       ? coordinates
       : location
@@ -587,7 +599,6 @@ export const useHooks = ({
       );
 
       const inverseOriginalModelMatrix = Matrix4.inverse(clippingPlanesOriginMatrix, new Matrix4());
-
       Matrix4.multiply(inverseOriginalModelMatrix, boxTransform, clippingPlanes.modelMatrix);
     };
 
@@ -608,17 +619,21 @@ export const useHooks = ({
     updateTerrainHeight,
     allowEnterGround,
     terrainHeightEstimate,
+    experimental_clipping?.draw,
   ]);
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
     clippingPlanes.enabled = clippingVisible;
-  }, [clippingPlanes, clippingVisible]);
+  }, [clippingPlanes, clippingVisible, experimental_clipping?.draw]);
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
     clippingPlanes.unionClippingRegions = direction === "outside";
-  }, [clippingPlanes, direction]);
+  }, [clippingPlanes, direction, experimental_clipping?.draw]);
 
   useEffect(() => {
+    if (experimental_clipping?.draw) return;
     clippingPlanes.removeAll();
     planes?.forEach(plane =>
       clippingPlanes.add(
@@ -628,7 +643,7 @@ export const useHooks = ({
         ),
       ),
     );
-  }, [planes, clippingPlanes, clipDirection]);
+  }, [planes, clippingPlanes, clipDirection, experimental_clipping?.draw]);
 
   useEffect(() => {
     if (!styleUrl) {
@@ -716,6 +731,8 @@ export const useHooks = ({
     ref,
     style,
     clippingPlanes,
+    drawClippingEnabled,
+    drawClippingEdgeProps,
     builtinBoxProps,
     imageBasedLighting,
     handleReady,

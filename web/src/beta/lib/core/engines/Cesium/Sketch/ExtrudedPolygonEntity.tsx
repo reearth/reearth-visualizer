@@ -22,6 +22,7 @@ export interface ExtrudedPolygonEntityProps {
   extrudedHeight: number;
   color?: Color;
   disableShadow?: boolean;
+  enableRelativeHeight?: boolean;
 }
 
 export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
@@ -31,6 +32,7 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
   extrudedHeight: extrudedHeightProp,
   color,
   disableShadow = false,
+  enableRelativeHeight = false,
 }) => {
   const hierarchyRef = useRef(hierarchyProp);
   hierarchyRef.current = hierarchyProp;
@@ -53,12 +55,18 @@ export const ExtrudedPolygonEntity: FC<ExtrudedPolygonEntityProps> = ({
         extrudedHeight,
         extrudedHeightReference: HeightReference.RELATIVE_TO_GROUND,
         fill: true,
+        outline: true,
+        outlineWidth: 1,
+        outlineColor: color?.withAlpha(1),
         material: new ColorMaterialProperty(color),
         classificationType: ClassificationType.TERRAIN,
         shadows: disableShadow ? ShadowMode.DISABLED : ShadowMode.ENABLED,
+        ...(enableRelativeHeight
+          ? { height: 0, heightReference: HeightReference.RELATIVE_TO_GROUND }
+          : undefined),
       },
     }),
-    [extrudedHeight, disableShadow, hierarchy, color],
+    [extrudedHeight, disableShadow, hierarchy, color, enableRelativeHeight],
   );
 
   const { requestRender } = useContext();
