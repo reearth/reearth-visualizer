@@ -1,5 +1,4 @@
 import { expect, test, describe } from "vitest";
-import "@vitest/web-worker";
 
 import { evalLayerAppearances, evalSimpleLayer } from ".";
 
@@ -95,9 +94,9 @@ describe("evalSimpleLayer", () => {
 });
 
 describe("Conditional styling", () => {
-  test("conditions with variables from properties, members and Strictly Equals", async () => {
+  test("conditions with variables from properties, members and Strictly Equals", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: "#FF0000",
@@ -131,9 +130,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("conditions with variables from feature, members and Strictly Equals", async () => {
+  test("conditions with variables from feature, members and Strictly Equals", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: "#FF0000",
@@ -167,9 +166,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("conditions with variables, builtIn function and GreaterThan", async () => {
+  test("conditions with variables, builtIn function and GreaterThan", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: {
@@ -207,9 +206,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Conditions with JSONPath, strictly equal and JSONPath result", async () => {
+  test("Conditions with JSONPath, strictly equal and JSONPath result", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: "#FF0000",
@@ -260,9 +259,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Conditions with Color in HexCode", async () => {
+  test("Conditions with Color in HexCode", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointSize: 26,
@@ -296,9 +295,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Conditions with Color in RGBA", async () => {
+  test("Conditions with Color in RGBA", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointSize: 26,
@@ -332,9 +331,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Expression with defines field in the layer", async () => {
+  test("Expression with defines field in the layer", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointSize: 26,
@@ -374,9 +373,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Layers with undefined feature", async () => {
+  test("Layers with undefined feature", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: "#FF0000",
@@ -423,9 +422,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Property has reserved word", async () => {
+  test("Property has reserved word", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: "#FF0000",
@@ -455,9 +454,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Number() input numberString has % in it", async () => {
+  test("Number() input numberString has % in it", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: "#FF0000",
@@ -487,9 +486,9 @@ describe("Conditional styling", () => {
     });
   });
 
-  test("Nested styling at 2nd degree", async () => {
+  test("Nested styling at 2nd degree", () => {
     expect(
-      await evalLayerAppearances(
+      evalLayerAppearances(
         {
           marker: {
             pointColor: "#FF0000",
@@ -535,9 +534,9 @@ describe("Conditional styling", () => {
   });
 });
 
-test("startsWith function", async () => {
+test("startsWith function", () => {
   expect(
-    await evalLayerAppearances(
+    evalLayerAppearances(
       {
         marker: {
           pointColor: "#FF0000",
@@ -567,9 +566,9 @@ test("startsWith function", async () => {
   });
 });
 
-test("Array equality with value", async () => {
+test("Array equality with value", () => {
   expect(
-    await evalLayerAppearances(
+    evalLayerAppearances(
       {
         marker: {
           pointSize: 26,

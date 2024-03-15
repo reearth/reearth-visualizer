@@ -220,7 +220,7 @@ const useFeature = ({
           ? selectedFeatureIdsRef.current.includes(tag?.featureId ?? "")
           : tag?.isFeatureSelected;
 
-        const computedFeature = await evalFeature(layer, { ...feature?.feature, properties });
+        const computedFeature = evalFeature(layer, { ...feature?.feature, properties });
 
         const style = computedFeature?.["3dtiles"];
 

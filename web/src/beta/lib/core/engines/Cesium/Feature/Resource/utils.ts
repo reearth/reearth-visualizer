@@ -119,12 +119,12 @@ const hasAppearance = <
 
 export const makeFeatureId = (e: Entity) => String(e.id);
 
-export const attachStyle = async (
+export const attachStyle = (
   entity: Entity,
   layer: ComputedLayer | undefined,
   evalFeature: EvalFeature,
   currentTime: JulianDate,
-): Promise<[Feature, ComputedFeature] | void> => {
+): [Feature, ComputedFeature] | void => {
   if (!layer) {
     return;
   }
@@ -153,7 +153,7 @@ export const attachStyle = async (
         z: coordinates[2],
       },
     };
-    const computedFeature = await evalFeature(layer.layer, feature);
+    const computedFeature = evalFeature(layer.layer, feature);
     if (!computedFeature) {
       return;
     }
@@ -287,7 +287,7 @@ export const attachStyle = async (
         z: entityPosition?.z ?? 0,
       },
     };
-    const computedFeature = await evalFeature(layer.layer, feature);
+    const computedFeature = evalFeature(layer.layer, feature);
     if (!computedFeature) {
       return;
     }
@@ -337,7 +337,7 @@ export const attachStyle = async (
         z: entityPosition?.z ?? 0,
       },
     };
-    const computedFeature = await evalFeature(layer.layer, feature);
+    const computedFeature = evalFeature(layer.layer, feature);
     if (!computedFeature) {
       return;
     }

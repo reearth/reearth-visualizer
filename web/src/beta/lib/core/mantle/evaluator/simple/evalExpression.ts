@@ -6,12 +6,6 @@ import { ConditionalExpression } from "./conditionalExpression";
 import { Expression } from "./expression";
 import { recursiveJSONParse } from "./utils";
 
-export type ExpressionEvalParams = {
-  expression: unknown;
-  layer: LayerSimple;
-  feature?: Feature;
-};
-
 export function evalExpression(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expressionContainer: any,

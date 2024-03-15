@@ -1,37 +1,36 @@
-export class WorkerQueue<T> {
-  private queue: (() => Promise<T>)[] = [];
-  private maxConcurrentTasks: number;
-  private runningTasks = 0;
-  private onEmpty: () => void;
+import { Pool, spawn, type ModuleThread } from "threads";
 
-  constructor(maxConcurrentTasks = 5, onEmpty: () => void) {
-    this.maxConcurrentTasks = maxConcurrentTasks;
-    this.onEmpty = onEmpty;
+import { type ExpressionWorker } from "./worker";
+import WorkerBlob from "./worker?worker&inline";
+
+type WorkerPool = Pool<ModuleThread<ExpressionWorker>> & {
+  taskQueue: readonly unknown[];
+};
+
+let workerPool: WorkerPool | undefined;
+
+function get(): WorkerPool {
+  if (workerPool == null) {
+    workerPool = Pool(async () => await spawn<ExpressionWorker>(new WorkerBlob()), {
+      size: Math.ceil(navigator.hardwareConcurrency / 2),
+    }) as unknown as WorkerPool;
   }
+  return workerPool;
+}
 
-  private async processQueue(): Promise<void> {
-    if (this.runningTasks >= this.maxConcurrentTasks || this.queue.length === 0) {
-      return;
-    }
+export function queue(...args: Parameters<WorkerPool["queue"]>): ReturnType<WorkerPool["queue"]> {
+  return get().queue(...args);
+}
 
-    this.runningTasks++;
-    const task = this.queue.shift();
-    try {
-      await task?.();
-    } catch (error) {
-      console.error("Error processing task:", error);
-    } finally {
-      this.runningTasks--;
-      this.processQueue();
-    }
+export function canQueue(maxQueuedJobs: number): boolean {
+  return workerPool == null || workerPool.taskQueue.length < maxQueuedJobs;
+}
 
-    if (this.queue.length === 0 && this.runningTasks === 0) {
-      this.onEmpty();
-    }
+export async function destroy(): Promise<void> {
+  if (workerPool == null) {
+    return;
   }
-
-  enqueue(task: () => Promise<T>): void {
-    this.queue.push(task);
-    this.processQueue();
-  }
+  await workerPool.completed();
+  await workerPool.terminate();
+  workerPool = undefined;
 }

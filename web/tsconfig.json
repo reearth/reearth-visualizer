@@ -4,22 +4,30 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Node",
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "pretty": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "strict": true,
     "target": "ESNext",
     "baseUrl": ".",
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@reearth/e2e/*": ["e2e/*"],
-      "@reearth/*": ["src/*"]
+      "@reearth/e2e/*": [
+        "e2e/*"
+      ],
+      "@reearth/*": [
+        "src/*"
+      ],
     },
     "plugins": [
       {
@@ -27,8 +35,13 @@
       }
     ]
   },
-  "exclude": ["src/beta/lib/unsafeBuiltinPlugins"],
-  "include": ["src", "e2e"],
+  "exclude":[
+    "src/beta/lib/unsafeBuiltinPlugins"
+  ],
+  "include": [
+    "src",
+    "e2e",
+  ],
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"

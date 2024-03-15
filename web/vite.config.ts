@@ -28,10 +28,6 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  worker: {
-    format: "es",
-    plugins: () => [tsconfigPaths()],
-  },
   build: {
     target: "esnext",
     assetsDir: "static", // avoid conflicts with backend asset endpoints
@@ -51,7 +47,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    setupFiles: ["src/test/setup.ts", "@vitest/web-worker"],
+    setupFiles: ["src/test/setup.ts"],
     exclude: [...configDefaults.exclude, "e2e/*"],
     coverage: {
       all: true,

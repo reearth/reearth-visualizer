@@ -1,16 +1,28 @@
-import { evalExpression, ExpressionEvalParams } from "./evalExpression";
+import { type TransferDescriptor } from "threads";
+import { expose } from "threads/worker";
 
-export type ExpressionWorker = object & {
-  evaluateExpression: (params: ExpressionEvalParams) => Promise<unknown>;
+import { Feature, LayerSimple } from "../../types";
+
+import { evalExpression } from "./evalExpression";
+
+export type ExpressionEvalParams = {
+  expression: unknown;
+  layer: LayerSimple;
+  feature?: Feature;
 };
 
-self.onmessage = async (event: MessageEvent) => {
-  const { expression, layer, feature }: ExpressionEvalParams = event.data;
+const evaluateExpression = async ({
+  expression,
+  layer,
+  feature,
+}: ExpressionEvalParams): Promise<unknown> => {
+  return await evalExpression(expression, layer, feature);
+};
 
-  try {
-    const result = await evalExpression(expression, layer, feature);
-    (self as any).postMessage(result);
-  } catch (error) {
-    (self as any).postMessage({ error: (error as Error).message });
-  }
+expose({
+  evaluateExpression,
+});
+
+export type ExpressionWorker = object & {
+  evaluateExpression: (params: TransferDescriptor<ExpressionEvalParams>) => Promise<unknown>;
 };

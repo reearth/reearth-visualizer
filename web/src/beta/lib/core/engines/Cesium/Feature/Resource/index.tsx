@@ -78,15 +78,15 @@ export default function Resource({
   const { requestRender, timelineManagerRef } = useContext();
 
   const handleChange = useCallback(
-    async (e: DataSource) => {
+    (e: DataSource) => {
       if (!viewer) return;
       const features: Feature[] = [];
       const computedFeatures: ComputedFeature[] = [];
-      for (const entity of e.entities.values) {
-        const res = await attachStyle(entity, layer, evalFeature, viewer.clock.currentTime);
+      e.entities.values.forEach(e => {
+        const res = attachStyle(e, layer, evalFeature, viewer.clock.currentTime);
         const [feature, computedFeature] = res || [];
 
-        attachTag(entity, {
+        attachTag(e, {
           layerId: layer?.id,
           featureId: feature?.id,
           hideIndicator: computedFeature?.resource?.hideIndicator,
@@ -94,13 +94,13 @@ export default function Resource({
 
         if (feature && !cachedFeatureIds.current.has(feature.id)) {
           features.push(feature);
-          cachedFeatures.current.push({ feature, raw: entity });
+          cachedFeatures.current.push({ feature, raw: e });
           cachedFeatureIds.current.add(feature.id);
         }
         if (computedFeature) {
           computedFeatures.push(computedFeature);
         }
-      }
+      });
 
       // GeoJSON is not delegated data, so we need to skip.
       if (type !== "geojson") {

@@ -1,5 +1,4 @@
-import { pick } from "lodash-es";
-// import { Transfer } from "threads";
+import { cloneDeep, pick } from "lodash-es";
 
 import type { EvalContext, EvalResult } from "..";
 import {
@@ -9,13 +8,14 @@ import {
   Feature,
   LayerAppearanceTypes,
   LayerSimple,
+  ExpressionContainer,
   TimeInterval,
 } from "../../types";
 
-import { ExpressionEvalParams } from "./evalExpression";
+import { ConditionalExpression } from "./conditionalExpression";
+import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
-import Worker from "./worker?worker";
-import { WorkerQueue } from "./workerPool";
+import { recursiveJSONParse } from "./utils";
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -24,41 +24,32 @@ export async function evalSimpleLayer(
   const features = layer.data ? await ctx.getAllFeatures(layer.data) : undefined;
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   const timeIntervals = evalTimeInterval(features, layer.data?.time);
-
-  const evaluatedAppearances = await evalLayerAppearances(appearances, layer);
-  const evaluatedFeatures = features
-    ? await Promise.all(
-        features.map((f, i) => evalSimpleLayerFeature(layer, f, timeIntervals?.[i])),
-      )
-    : undefined;
-
   return {
-    layer: evaluatedAppearances,
-    features: evaluatedFeatures,
+    layer: evalLayerAppearances(appearances, layer),
+    features: features?.map((f, i) => evalSimpleLayerFeature(layer, f, timeIntervals?.[i])),
   };
 }
 
-export const evalSimpleLayerFeature = async (
+export const evalSimpleLayerFeature = (
   layer: LayerSimple,
   feature: Feature,
   interval?: TimeInterval,
-): Promise<ComputedFeature> => {
+): ComputedFeature => {
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
   const nextFeature = evalJsonProperties(layer, feature);
-  const evaluatedAppearances = await evalLayerAppearances(appearances, layer, nextFeature);
   return {
     ...nextFeature,
-    ...evaluatedAppearances,
+    ...evalLayerAppearances(appearances, layer, nextFeature),
     type: "computedFeature",
     interval,
   };
 };
 
-export async function evalLayerAppearances(
+export function evalLayerAppearances(
   appearance: Partial<LayerAppearanceTypes>,
   layer: LayerSimple,
   feature?: Feature,
-): Promise<Partial<AppearanceTypes>> {
+): Partial<AppearanceTypes> {
   if (!feature) {
     if (!layer.id) {
       throw new Error("layer id is required");
@@ -70,92 +61,96 @@ export async function evalLayerAppearances(
     };
   }
 
-  const entries = await Promise.all(
-    Object.entries(appearance).map(async ([k, v]) => {
-      if (v) {
-        const evaluatedValue = await recursiveValEval(v, layer, feature);
-        return [k, evaluatedValue];
-      }
-      return undefined;
-    }),
+  return Object.fromEntries(
+    Object.entries(appearance)
+      .map(([k, v]) => (v ? [k, recursiveValEval(v, layer, feature)] : undefined))
+      .filter((v): v is [keyof LayerAppearanceTypes, LayerAppearanceTypes] => !!v),
   );
-
-  return Object.fromEntries(entries.filter((entry): entry is [string, any] => entry !== undefined));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function recursiveValEval(obj: any, layer: LayerSimple, feature?: Feature): Promise<any> {
-  const entries = await Promise.all(
-    Object.entries(obj).map(async ([k, v]) => {
+function recursiveValEval(obj: any, layer: LayerSimple, feature?: Feature): any {
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => {
       // if v is an object itself and not a null, recurse deeper
       if (hasNonExpressionObject(v)) {
-        return [k, await recursiveValEval(v, layer, feature)];
+        return [k, recursiveValEval(v, layer, feature)];
       }
       // if v is not an object, apply the evalExpression function
-      const evaluated = await evaluateWithWorker({
-        expression: v,
-        layer,
-        feature,
-      });
-      return [k, evaluated];
+      return [k, evalExpression(v, layer, feature)];
     }),
   );
-
-  return Object.fromEntries(entries);
 }
 
 export function clearAllExpressionCaches(
   layer: LayerSimple | undefined,
-  _feature: Feature | undefined,
+  feature: Feature | undefined,
 ) {
   const appearances: Partial<LayerAppearanceTypes> = pick(layer, appearanceKeys);
-  Object.entries(appearances).forEach(([, _v]) => {
-    // recursiveClear(v, layer, feature);
+  Object.entries(appearances).forEach(([, v]) => {
+    recursiveClear(v, layer, feature);
   });
 }
 
-let workerInstance: Worker | null = null;
-
-function terminateWorker() {
-  if (workerInstance !== null) {
-    workerInstance.terminate();
-    workerInstance = null;
-  }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Feature | undefined) {
+  Object.entries(obj).forEach(([, v]) => {
+    // if v is an object itself and not a null, recurse deeper
+    if (hasNonExpressionObject(v)) {
+      recursiveClear(v, layer, feature);
+    } else if (hasExpression(v)) {
+      // if v is not an object, apply the clearExpressionCaches function
+      const styleExpression = v.expression;
+      if (typeof styleExpression === "object" && styleExpression.conditions) {
+        styleExpression.conditions.forEach(([expression1, expression2]) => {
+          clearExpressionCaches(expression1, feature, layer?.defines);
+          clearExpressionCaches(expression2, feature, layer?.defines);
+        });
+      } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+        clearExpressionCaches(String(styleExpression), feature, layer?.defines);
+      } else if (typeof styleExpression === "string") {
+        clearExpressionCaches(styleExpression, feature, layer?.defines);
+      }
+    }
+  });
 }
 
-const evaluationQueue = new WorkerQueue<unknown>(1, terminateWorker);
-const worker = new Worker();
-
-async function evaluateWithWorker(params: ExpressionEvalParams): Promise<unknown> {
-  return new Promise((resolve, reject) => {
-    evaluationQueue.enqueue(() =>
-      new Promise((resolve, reject) => {
-        const listener = (event: MessageEvent) => {
-          if (event.data.error) {
-            reject(event.data.error);
-          } else {
-            resolve(event.data);
-          }
-          worker.removeEventListener("message", listener);
-        };
-
-        worker.addEventListener("message", listener);
-        worker.onerror = error => {
-          reject(error);
-          worker.removeEventListener("message", listener);
-        };
-
-        worker.postMessage(params);
-      })
-        .then(resolve)
-        .catch(reject),
-    );
-  });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function hasExpression(e: any): e is ExpressionContainer {
+  return typeof e === "object" && e && "expression" in e;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasNonExpressionObject(v: any): boolean {
   return typeof v === "object" && v && !("expression" in v) && !Array.isArray(v);
+}
+
+function evalExpression(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  expressionContainer: any,
+  layer: LayerSimple,
+  feature?: Feature,
+): unknown | undefined {
+  try {
+    if (hasExpression(expressionContainer)) {
+      const styleExpression = expressionContainer.expression;
+      const parsedFeature = recursiveJSONParse(cloneDeep(feature));
+      if (typeof styleExpression === "undefined") {
+        return undefined;
+      } else if (typeof styleExpression === "object" && styleExpression.conditions) {
+        return new ConditionalExpression(styleExpression, parsedFeature, layer.defines).evaluate();
+      } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+        return new Expression(String(styleExpression), parsedFeature, layer.defines).evaluate();
+      } else if (typeof styleExpression === "string") {
+        return new Expression(styleExpression, parsedFeature, layer.defines).evaluate();
+      }
+      return styleExpression;
+    }
+    return expressionContainer;
+  } catch (e) {
+    console.error(e);
+    return;
+  }
 }
 
 function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
