@@ -34,8 +34,8 @@ type Project struct {
 	visualizer        visualizer.Visualizer
 	publishmentStatus PublishmentStatus
 	coreSupport       bool
-	enableGA		  bool
-	trackingID		  string
+	enableGA          bool
+	trackingID        string
 }
 
 func (p *Project) ID() ID {

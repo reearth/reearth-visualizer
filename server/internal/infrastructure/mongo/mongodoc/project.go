@@ -31,8 +31,8 @@ type ProjectDocument struct {
 	Visualizer        string
 	PublishmentStatus string
 	CoreSupport       bool
-	EnableGA		  bool
-	TrackingID		  string
+	EnableGA          bool
+	TrackingID        string
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -71,8 +71,8 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
 		CoreSupport:       project.CoreSupport(),
-		EnableGA: *project.EnableGA(),
-		TrackingID: *project.TrackingID(),
+		EnableGA:          *project.EnableGA(),
+		TrackingID:        *project.TrackingID(),
 	}, pid
 }
 
