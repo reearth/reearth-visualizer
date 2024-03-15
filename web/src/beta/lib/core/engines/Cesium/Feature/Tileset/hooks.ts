@@ -81,34 +81,39 @@ const useData = (layer: ComputedLayer | undefined) => {
   }, [layer]);
 };
 
+const makeFeatureId = (
+  tileFeature: InternalCesium3DTileFeature,
+  content: Cesium3DTileContent,
+  idProperty?: string,
+) => {
+  const coordinates = content.tile.boundingSphere.center;
+  const specifiedId =
+    idProperty && !(tileFeature instanceof Model) ? tileFeature.getProperty(idProperty) : undefined;
+  if (specifiedId) {
+    return specifiedId as string;
+  }
+  const featureId = getBuiltinFeatureId(tileFeature);
+  return generateIDWithMD5(
+    `${coordinates.x}-${coordinates.y}-${coordinates.z}-${featureId}-${
+      !(tileFeature instanceof Model)
+        ? JSON.stringify(
+            // Read only root properties.
+            Object.entries(convertCesium3DTileFeatureProperties(tileFeature))
+              .filter((_k, v) => typeof v === "string" || typeof v === "number")
+              .map(([k, v]) => `${k}${v}`),
+          )
+        : ""
+    }`,
+  );
+};
+
 const makeFeatureFrom3DTile = (
   tileFeature: InternalCesium3DTileFeature,
   content: Cesium3DTileContent,
   idProperty?: string,
 ): Omit<Feature, "properties"> => {
   const coordinates = content.tile.boundingSphere.center;
-  const id = (() => {
-    const specifiedId =
-      idProperty && !(tileFeature instanceof Model)
-        ? tileFeature.getProperty(idProperty)
-        : undefined;
-    if (specifiedId) {
-      return specifiedId;
-    }
-    const featureId = getBuiltinFeatureId(tileFeature);
-    return generateIDWithMD5(
-      `${coordinates.x}-${coordinates.y}-${coordinates.z}-${featureId}-${
-        !(tileFeature instanceof Model)
-          ? JSON.stringify(
-              // Read only root properties.
-              Object.entries(convertCesium3DTileFeatureProperties(tileFeature))
-                .filter((_k, v) => typeof v === "string" || typeof v === "number")
-                .map(([k, v]) => `${k}${v}`),
-            )
-          : ""
-      }`,
-    );
-  })();
+  const id = makeFeatureId(tileFeature, content, idProperty);
   return {
     type: "feature",
     id,
@@ -180,9 +185,9 @@ const useFeature = ({
   viewer,
   featureIndex,
   selectedFeatureIds,
-  selectedFeatureColorMap,
   evalFeature,
   onComputedFeatureFetch,
+  shouldUseFeatureIndex,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
@@ -193,7 +198,7 @@ const useFeature = ({
   onComputedFeatureFetch?: (f: Feature[], cf: ComputedFeature[]) => void;
   featureIndex: TilesetFeatureIndex;
   selectedFeatureIds: string[];
-  selectedFeatureColorMap: Map<string, Color>;
+  shouldUseFeatureIndex?: boolean;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
@@ -211,31 +216,29 @@ const useFeature = ({
         const tag = getTag(raw);
         const properties =
           viewer && !(raw instanceof Model) ? convertCesium3DTileFeatureProperties(raw) : {};
-        const isFeatureSelected = selectedFeatureIdsRef.current.includes(tag?.featureId ?? "");
+        const isFeatureSelected = shouldUseFeatureIndex
+          ? selectedFeatureIdsRef.current.includes(tag?.featureId ?? "")
+          : tag?.isFeatureSelected;
 
         const computedFeature = evalFeature(layer, { ...feature?.feature, properties });
 
         const style = computedFeature?.["3dtiles"];
 
         COMMON_STYLE_PROPERTIES.forEach(({ name, convert }) => {
-          const val = convertStyle(style?.[name], convert);
-          if (val !== undefined) {
-            raw[name] = val;
-          }
-
           if (name === "color") {
             if (isFeatureSelected) {
               raw.color =
                 typeof layer["3dtiles"]?.selectedFeatureColor === "string"
                   ? toColor(layer["3dtiles"]?.selectedFeatureColor) ?? raw.color
                   : raw.color;
-            } else if (!val) {
-              raw.color = DEFAULT_FEATURE_COLOR;
+              return;
             }
 
-            if (tag?.featureId) {
-              selectedFeatureColorMap.set(tag.featureId, val ?? DEFAULT_FEATURE_COLOR);
-            }
+            raw.color = DEFAULT_FEATURE_COLOR;
+          }
+          const val = convertStyle(style?.[name], convert);
+          if (val !== undefined) {
+            raw[name] = val;
           }
         });
 
@@ -263,13 +266,14 @@ const useFeature = ({
           layerId,
           featureId: feature.feature.id,
           computedFeature,
+          isFeatureSelected: tag?.isFeatureSelected,
         });
 
         return computedFeature;
       }
       return;
     },
-    [evalFeature, layerId, viewer, selectedFeatureColorMap],
+    [evalFeature, layerId, viewer, shouldUseFeatureIndex],
   );
 
   useEffect(
@@ -312,6 +316,17 @@ const useFeature = ({
     ],
   );
 
+  useEffect(
+    () =>
+      tileset.current?.tileUnload.addEventListener(async (t: Cesium3DTile) => {
+        if (t.tileset.isDestroyed()) return;
+        await lookupFeatures(t.content, async (tileFeature, content) => {
+          featureIndex.deleteFeature(makeFeatureId(tileFeature, content, idProperty));
+        });
+      }),
+    [tileset, idProperty, featureIndex],
+  );
+
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
   }, [layer]);
@@ -320,12 +335,15 @@ const useFeature = ({
   const tileAppearance = useMemo(() => extractSimpleLayer(layer)?.["3dtiles"], [layer]);
   const pickedAppearance = usePick(tileAppearance, TILESET_APPEARANCE_FIELDS);
 
+  const updateStyle = shouldUseFeatureIndex ? 0 : layer?.layer._updateStyle;
+  const prevUpdateStyle = useRef(updateStyle);
+
   // If styles are updated while features are calculating,
   // we stop calculating features, and reassign styles.
   const skippedComputingAt = useRef<number | null>();
   useEffect(() => {
     skippedComputingAt.current = Date.now();
-  }, [pickedAppearance]);
+  }, [pickedAppearance, updateStyle]);
 
   const computeFeatureAsync = useCallback(
     async (f: CachedFeature, startedComputingAt: number) =>
@@ -336,13 +354,13 @@ const useFeature = ({
             return;
           }
 
-          if (pickedAppearance) {
+          if (pickedAppearance || updateStyle) {
             attachComputedFeature(f);
           }
           resolve(undefined);
         }),
       ),
-    [pickedAppearance, attachComputedFeature],
+    [pickedAppearance, attachComputedFeature, updateStyle],
   );
 
   const computeFeatures = useCallback(
@@ -366,9 +384,10 @@ const useFeature = ({
       if (!skipped) {
         await Promise.all(tempAsyncProcesses);
       }
+      prevUpdateStyle.current = updateStyle;
       tempAsyncProcesses.length = 0;
     },
-    [computeFeatureAsync],
+    [computeFeatureAsync, updateStyle],
   );
 
   const { requestRender } = useContext();
@@ -380,7 +399,7 @@ const useFeature = ({
       requestRender?.();
     };
     compute();
-  }, [computeFeatures, requestRender]);
+  }, [computeFeatures, requestRender, updateStyle]);
 };
 
 export const useHooks = ({
@@ -437,6 +456,7 @@ export const useHooks = ({
 
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type, idProperty } = useData(layer);
+  const shouldUseFeatureIndex = !!idProperty;
 
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
@@ -485,7 +505,7 @@ export const useHooks = ({
       if (tileset?.cesiumElement) {
         attachTag(tileset.cesiumElement, {
           layerId: layer?.id || id,
-          featureIndex,
+          featureIndex: shouldUseFeatureIndex ? featureIndex : undefined,
           appearanceType: "3dtiles",
         });
       }
@@ -494,7 +514,7 @@ export const useHooks = ({
       }
       tilesetRef.current = tileset?.cesiumElement;
     },
-    [id, layer?.id, featureIndex],
+    [id, layer?.id, featureIndex, shouldUseFeatureIndex],
   );
 
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
@@ -503,11 +523,14 @@ export const useHooks = ({
   const [selectedFeatureColorMap] = useState(() => new Map<string, Color>());
 
   useEffect(() => {
-    if (!tilesetRef.current) return;
+    if (!tilesetRef.current || !shouldUseFeatureIndex) return;
     Object.assign(tilesetRef.current, {
       onSelectFeature: (f: Cesium3DTileFeature) => {
         const tag = getTag(f);
         setSelectedFeatureIds(f => (tag?.featureId ? [...f, tag.featureId] : f));
+        if (tag?.featureId) {
+          selectedFeatureColorMap.set(tag.featureId, f.color);
+        }
         if (selectedFeatureColorRef.current) {
           f.color = toColor(selectedFeatureColorRef.current) ?? f.color;
         }
@@ -518,7 +541,7 @@ export const useHooks = ({
         f.color = selectedFeatureColorMap.get(tag?.featureId ?? "") ?? DEFAULT_FEATURE_COLOR;
       },
     });
-  }, [selectedFeatureColorMap]);
+  }, [selectedFeatureColorMap, featureIndex, shouldUseFeatureIndex]);
 
   useFeature({
     id,
@@ -530,7 +553,7 @@ export const useHooks = ({
     onComputedFeatureFetch,
     featureIndex,
     selectedFeatureIds,
-    selectedFeatureColorMap,
+    shouldUseFeatureIndex,
   });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
