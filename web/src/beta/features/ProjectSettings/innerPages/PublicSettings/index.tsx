@@ -26,8 +26,8 @@ export type PublicAliasSettingsType = {
 };
 
 export type PublicGASettingsType = {
-  enableGA?: boolean;
-  trackingid?: string;
+  enableGa?: boolean;
+  trackingId?: string;
 };
 
 type Props = {
@@ -42,8 +42,8 @@ type Props = {
     alias: string;
     publishmentStatus: string;
     isArchived: boolean;
-    enableGA: boolean;
-    trackingid: string;
+    enableGa: boolean;
+    trackingId: string;
   };
   stories: Story[];
   currentStory?: Story;

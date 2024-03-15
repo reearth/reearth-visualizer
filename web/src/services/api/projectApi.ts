@@ -10,7 +10,7 @@ import {
   ArchiveProjectMutationVariables,
   UpdateProjectBasicAuthMutationVariables,
   UpdateProjectAliasMutationVariables,
-  UpdateProjectGAMutationVariables,
+  UpdateProjectGaMutationVariables,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -273,7 +273,7 @@ export default () => {
     refetchQueries: ["GetProject"],
   });
   const useUpdateProjectGA = useCallback(
-    async (input: UpdateProjectGAMutationVariables) => {
+    async (input: UpdateProjectGaMutationVariables) => {
       if (!input.projectId) return { status: "error" };
       const { data, errors } = await updateProjectGAMutation({ variables: { ...input } });
 

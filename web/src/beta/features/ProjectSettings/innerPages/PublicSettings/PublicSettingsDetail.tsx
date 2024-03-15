@@ -69,8 +69,8 @@ const PublicSettingsDetail: React.FC<Props> = ({
   }, [localAlias, onUpdateAlias]);
 
   const [localGA, setLocalGA] = useState({
-    enableGA: !!settingsItem.enableGA,
-    trackingid: settingsItem.trackingid,
+    enableGa: !!settingsItem.enableGa,
+    trackingId: settingsItem.trackingId,
   });
   const handleSubmitGA = useCallback(() => {
     if (onUpdateGA) {
@@ -189,16 +189,16 @@ const PublicSettingsDetail: React.FC<Props> = ({
         <SettingsFields>
           <ToggleField
             name={t("Enable Google Analytics")}
-            checked={localGA.enableGA}
-            onChange={enableGA => {
-              setLocalGA(s => ({ ...s, enableGA }));
+            checked={localGA.enableGa}
+            onChange={enableGa => {
+              setLocalGA(s => ({ ...s, enableGa }));
             }}
           />
           <TextInput
             name={t("Tracking ID")}
-            value={settingsItem.trackingid}
-            onChange={(trackingid: string) => {
-              setLocalGA(s => ({ ...s, trackingid }));
+            value={settingsItem.trackingId}
+            onChange={(trackingId: string) => {
+              setLocalGA(s => ({ ...s, trackingId }));
             }}
           />
           <ButtonWrapper>
