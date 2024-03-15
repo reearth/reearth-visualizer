@@ -71,8 +71,8 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
 		CoreSupport:       project.CoreSupport(),
-		EnableGA:          *project.EnableGA(),
-		TrackingID:        *project.TrackingID(),
+		EnableGA:          project.EnableGA(),
+		TrackingID:        project.TrackingID(),
 	}, pid
 }
 

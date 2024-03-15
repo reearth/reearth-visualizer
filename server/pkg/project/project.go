@@ -107,12 +107,12 @@ func (p *Project) CoreSupport() bool {
 	return p.coreSupport
 }
 
-func (p *Project) EnableGA() *bool {
-	return &p.enableGA
+func (p *Project) EnableGA() bool {
+	return p.enableGA
 }
 
-func (p *Project) TrackingID() *string {
-	return &p.trackingID
+func (p *Project) TrackingID() string {
+	return p.trackingID
 }
 
 func (p *Project) PublishmentStatus() PublishmentStatus {

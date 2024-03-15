@@ -21,8 +21,8 @@ type Project implements Node {
   team: Team
   scene: Scene
   coreSupport: Boolean!
-  enableGa: Boolean
-  trackingId: String
+  enableGa: Boolean!
+  trackingId: String!
 }
 
 type ProjectAliasAvailability {

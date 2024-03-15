@@ -1064,8 +1064,8 @@ type Project struct {
 	Team              *Team             `json:"team,omitempty"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	CoreSupport       bool              `json:"coreSupport"`
-	EnableGa          *bool             `json:"enableGa,omitempty"`
-	TrackingID        *string           `json:"trackingId,omitempty"`
+	EnableGa          bool              `json:"enableGa"`
+	TrackingID        string            `json:"trackingId"`
 }
 
 func (Project) IsNode()        {}

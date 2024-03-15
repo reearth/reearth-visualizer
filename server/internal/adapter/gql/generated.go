@@ -9020,8 +9020,8 @@ extend type Mutation {
   team: Team
   scene: Scene
   coreSupport: Boolean!
-  enableGa: Boolean
-  trackingId: String
+  enableGa: Boolean!
+  trackingId: String!
 }
 
 type ProjectAliasAvailability {
@@ -37515,11 +37515,14 @@ func (ec *executionContext) _Project_enableGa(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Project_enableGa(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -37556,11 +37559,14 @@ func (ec *executionContext) _Project_trackingId(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Project_trackingId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -67657,8 +67663,14 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "enableGa":
 			out.Values[i] = ec._Project_enableGa(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "trackingId":
 			out.Values[i] = ec._Project_trackingId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
