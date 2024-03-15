@@ -1,4 +1,4 @@
-import { cloneDeep, pick } from "lodash-es";
+import { pick } from "lodash-es";
 import LRUCache from "lru-cache";
 
 import type { EvalContext, EvalResult } from "..";
@@ -19,6 +19,8 @@ import { evalTimeInterval } from "./interval";
 import { recursiveJSONParse, getCacheableProperties } from "./utils";
 
 const EVAL_EXPRESSION_CACHES = new LRUCache({ max: 10000 });
+
+const memoizeCache = new Map();
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -70,24 +72,30 @@ export function evalLayerAppearances(
   }
 
   return Object.fromEntries(
-    Object.entries(appearance)
-      .map(([k, v]) => (v ? [k, recursiveValEval(v, layer, feature)] : undefined))
-      .filter((v): v is [keyof LayerAppearanceTypes, LayerAppearanceTypes] => !!v),
+    Object.entries(appearance).flatMap(([k, v]) =>
+      v ? [[k, recursiveValEval(v, layer, feature)]] : [],
+    ),
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveValEval(obj: any, layer: LayerSimple, feature?: Feature): any {
-  return Object.fromEntries(
+  const cacheKey = JSON.stringify([obj, layer, feature]);
+  const cachedResult = memoizeCache.get(cacheKey);
+  if (cachedResult !== undefined) {
+    return cachedResult;
+  }
+
+  const result = Object.fromEntries(
     Object.entries(obj).map(([k, v]) => {
-      // if v is an object itself and not a null, recurse deeper
       if (hasNonExpressionObject(v)) {
         return [k, recursiveValEval(v, layer, feature)];
       }
-      // if v is not an object, apply the evalExpression function
       return [k, evalExpression(v, layer, feature)];
     }),
   );
+
+  memoizeCache.set(cacheKey, result);
+  return result;
 }
 
 export function clearAllExpressionCaches(
@@ -100,14 +108,11 @@ export function clearAllExpressionCaches(
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Feature | undefined) {
   Object.entries(obj).forEach(([, v]) => {
-    // if v is an object itself and not a null, recurse deeper
     if (hasNonExpressionObject(v)) {
       recursiveClear(v, layer, feature);
-    } else if (hasExpression(v)) {
-      // if v is not an object, apply the clearExpressionCaches function
+    } else if (isExpressionContainer(v)) {
       const styleExpression = v.expression;
       if (typeof styleExpression === "object" && styleExpression.conditions) {
         styleExpression.conditions.forEach(([expression1, expression2]) => {
@@ -123,26 +128,23 @@ function recursiveClear(obj: any, layer: LayerSimple | undefined, feature: Featu
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function hasExpression(e: any): e is ExpressionContainer {
-  return typeof e === "object" && e && "expression" in e;
+function isExpressionContainer(obj: any): obj is ExpressionContainer {
+  return typeof obj === "object" && obj !== null && "expression" in obj;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasNonExpressionObject(v: any): boolean {
-  return typeof v === "object" && v && !("expression" in v) && !Array.isArray(v);
+  return typeof v === "object" && v !== null && !isExpressionContainer(v) && !Array.isArray(v);
 }
 
 function evalExpression(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expressionContainer: any,
   layer: LayerSimple,
   feature?: Feature,
 ): unknown | undefined {
   try {
-    if (hasExpression(expressionContainer)) {
+    if (isExpressionContainer(expressionContainer)) {
       const styleExpression = expressionContainer.expression;
-      const parsedFeature = recursiveJSONParse(cloneDeep(feature));
+      const parsedFeature = recursiveJSONParse(feature);
       if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
@@ -194,19 +196,17 @@ function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
     return feature;
   }
 
+  const parsedProperties =
+    memoizeCache.get(feature.properties) || recursiveJSONParse(feature.properties);
+  memoizeCache.set(feature.properties, parsedProperties);
+
   const next = {
     ...feature,
-    ...(feature?.properties ? { properties: { ...feature.properties } } : {}),
+    properties: { ...parsedProperties },
   };
+
   keys.forEach(k => {
-    next.properties[k] = (() => {
-      const p = next.properties[k];
-      try {
-        return JSON.parse(p);
-      } catch {
-        return p;
-      }
-    })();
+    next.properties[k] = parsedProperties[k];
   });
 
   return next;
