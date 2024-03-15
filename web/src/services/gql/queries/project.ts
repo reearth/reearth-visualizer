@@ -1,3 +1,5 @@
+import { DocumentNode } from "graphql";
+
 import { gql } from "@reearth/services/gql/__gen__";
 
 export const GET_PROJECT = gql(`
@@ -43,7 +45,7 @@ export const GET_PROJECTS = gql(`
     }
   }
 
-  
+
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`
@@ -117,8 +119,7 @@ export const UPDATE_PROJECT = gql(`
     }
   }
 
-  
-`);
+`) as unknown as DocumentNode;
 
 export const UPDATE_PROJECT_BASIC_AUTH = gql(`
   mutation UpdateProjectBasicAuth(
@@ -157,6 +158,19 @@ export const UPDATE_PROJECT_ALIAS = gql(`
     }
   }
 `);
+
+export const UPDATE_PROJECT_GA = gql(`
+  mutation UpdateProjectGA($projectId: ID!, $enableGA: Boolean, $trackingid: String) {
+    updateProject(input: { projectId: $projectId, enableGA: $enableGA, trackingid: $trackingid }) {
+      project {
+        id
+        name
+        enableGA
+        trackingid
+      }
+    }
+  }
+`) as unknown as DocumentNode;
 
 export const PUBLISH_PROJECT = gql(`
   mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {

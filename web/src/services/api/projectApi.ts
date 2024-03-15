@@ -10,6 +10,7 @@ import {
   ArchiveProjectMutationVariables,
   UpdateProjectBasicAuthMutationVariables,
   UpdateProjectAliasMutationVariables,
+  UpdateProjectGAMutationVariables,
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -21,6 +22,7 @@ import {
   UPDATE_PROJECT,
   UPDATE_PROJECT_ALIAS,
   UPDATE_PROJECT_BASIC_AUTH,
+  UPDATE_PROJECT_GA,
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -267,6 +269,27 @@ export default () => {
     [updateProjectAliasMutation, t, setNotification],
   );
 
+  const [updateProjectGAMutation] = useMutation(UPDATE_PROJECT_GA, {
+    refetchQueries: ["GetProject"],
+  });
+  const useUpdateProjectGA = useCallback(
+    async (input: UpdateProjectGAMutationVariables) => {
+      if (!input.projectId) return { status: "error" };
+      const { data, errors } = await updateProjectGAMutation({ variables: { ...input } });
+
+      if (errors || !data?.updateProject) {
+        console.log("GraphQL: Failed to update project", errors);
+        setNotification({ type: "error", text: t("Failed to update project.") });
+
+        return { status: "error" };
+      }
+
+      setNotification({ type: "success", text: t("Successfully updated project!") });
+      return { data: data?.updateProject?.project, status: "success" };
+    },
+    [updateProjectGAMutation, t, setNotification],
+  );
+
   return {
     publishProjectLoading,
     useProjectQuery,
@@ -278,5 +301,6 @@ export default () => {
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
+    useUpdateProjectGA,
   };
 };

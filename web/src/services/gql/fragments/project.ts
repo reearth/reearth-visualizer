@@ -14,6 +14,8 @@ export const projectFragment = gql`
     publicDescription
     publicImage
     alias
+    enableGA
+    trackingid
     publishmentStatus
     updatedAt
     coreSupport
