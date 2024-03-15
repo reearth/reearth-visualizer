@@ -1,5 +1,6 @@
-import { MVTImageryProvider } from "cesium-mvt-imagery-provider";
 import { useEffect, useMemo, useRef } from "react";
+
+import { MVTImageryProvider } from "@reearth/cesium-mvt-imagery-provider";
 
 import type { PolygonAppearance, PolylineAppearance, MarkerAppearance } from "../../..";
 import { usePick, extractSimpleLayer } from "../utils";
