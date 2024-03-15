@@ -226,6 +226,14 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		return nil, err
 	}
 
+	if p.EnableGA != nil {
+		prj.UpdatePublicTitle(*p.PublicTitle)
+	}
+
+	if p.PublicDescription != nil {
+		prj.UpdatePublicDescription(*p.PublicDescription)
+	}
+
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate && p.Alias != nil && *p.Alias != oldAlias {
 		if err := i.file.MoveBuiltScene(ctx, oldAlias, *p.Alias); err != nil {
 			// ignore ErrNotFound

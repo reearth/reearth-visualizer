@@ -352,6 +352,7 @@ export type SceneProperty = {
     tile_type?: string;
     tile_url?: string;
     tile_zoomLevel?: number[];
+    tile_zoomLevelForURL?: number[];
     tile_opacity?: number;
     heatmap?: boolean;
   }[];
@@ -515,6 +516,8 @@ export type SketchRef = {
   setType: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   setColor: (color: string) => void;
   setDefaultAppearance: (appearance: SketchAppearance) => void;
+  disableShadow: (disable: boolean) => void;
+  enableRelativeHeight: (enable: boolean) => void;
   createDataOnly: (dataOnly: boolean) => void;
   allowRightClickToAbort: (allow: boolean) => void;
   allowAutoResetInteractionMode: (allow: boolean) => void;

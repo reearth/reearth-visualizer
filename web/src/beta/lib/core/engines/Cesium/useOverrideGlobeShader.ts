@@ -155,6 +155,10 @@ const useTerrainHeatmap = ({
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
     globe.material = new VertexTerrainElevationMaterial();
+
+    return () => {
+      globe.material = undefined;
+    };
   }, [cesium, isCustomHeatmapEnabled]);
 
   useEffect(() => {

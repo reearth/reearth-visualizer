@@ -27,6 +27,7 @@ export type SketchComponentProps = RequireExactlyOne<
     extrudedHeight?: number;
     disableShadow?: boolean;
     color?: string;
+    enableRelativeHeight?: boolean;
   },
   "geometry" | "geometryOptions"
 >;
@@ -34,7 +35,14 @@ export type SketchComponentProps = RequireExactlyOne<
 const DEFAULT_SKETCH_COLOR = "#00bebe";
 
 const SketchComponent: FC<SketchComponentProps> = memo(
-  ({ geometry, geometryOptions, extrudedHeight, disableShadow, color: stringColor }) => {
+  ({
+    geometry,
+    geometryOptions,
+    extrudedHeight,
+    disableShadow,
+    color: stringColor,
+    enableRelativeHeight,
+  }) => {
     const cartesianGeometryOptions: GeometryOptions | null = useMemo(
       () =>
         geometryOptions
@@ -98,6 +106,7 @@ const SketchComponent: FC<SketchComponentProps> = memo(
               extrudedHeight={extrudedHeight}
               disableShadow={disableShadow}
               color={color}
+              enableRelativeHeight={enableRelativeHeight}
             />
           ))}
       </>

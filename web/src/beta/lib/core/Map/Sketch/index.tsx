@@ -25,6 +25,7 @@ type SketchComponentProps = RequireExactlyOne<
     geometryOptions?: GeometryOptions | null;
     extrudedHeight?: number;
     disableShadow?: boolean;
+    enableRelativeHeight?: boolean;
     color?: string;
   },
   "geometry" | "geometryOptions"
@@ -66,18 +67,19 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
   },
   ref,
 ) => {
-  const { state, extrudedHeight, geometryOptions, color } = useHooks({
-    ref,
-    layersRef,
-    engineRef,
-    interactionMode,
-    selectedFeature,
-    overrideInteractionMode,
-    onSketchTypeChange,
-    onSketchFeatureCreate,
-    onPluginSketchFeatureCreated,
-    onLayerSelect,
-  });
+  const { state, extrudedHeight, geometryOptions, color, disableShadow, enableRelativeHeight } =
+    useHooks({
+      ref,
+      layersRef,
+      engineRef,
+      interactionMode,
+      selectedFeature,
+      overrideInteractionMode,
+      onSketchTypeChange,
+      onSketchFeatureCreate,
+      onPluginSketchFeatureCreated,
+      onLayerSelect,
+    });
   if (state.matches("idle")) {
     return null;
   }
@@ -85,6 +87,8 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
     <SketchComponent
       geometryOptions={geometryOptions}
       color={color}
+      disableShadow={disableShadow}
+      enableRelativeHeight={enableRelativeHeight}
       {...(state.matches("extruding") && {
         extrudedHeight,
       })}

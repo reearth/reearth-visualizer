@@ -1,6 +1,9 @@
 package layer
 
-import "github.com/samber/lo"
+import (
+	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
+)
 
 type List []*Layer
 
@@ -9,19 +12,13 @@ func ListFrom(l []Layer) []*Layer {
 }
 
 func (ll List) Last() *Layer {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return util.Last[Layer](ll)
 }
 
 func (ll List) IDs() *IDList {
-	if len(ll) == 0 {
+	ids := util.ExtractIDs[ID, Layer](ll)
+	if len(ids) == 0 {
 		return nil
-	}
-	ids := make([]ID, 0, len(ll))
-	for _, l := range ll.Deref() {
-		ids = append(ids, l.ID())
 	}
 	return NewIDList(ids)
 }
@@ -38,29 +35,11 @@ func (ll List) Properties() []PropertyID {
 }
 
 func (ll List) Pick(il *IDList) List {
-	if il == nil {
-		return nil
-	}
-
-	layers := make(List, 0, il.LayerCount())
-	for _, lid := range il.Layers() {
-		if l := ll.Find(lid); l != nil {
-			layers = append(layers, l)
-		}
-	}
-	return layers
+	return util.Pick[ID, Layer](ll, il)
 }
 
 func (ll List) Find(lid ID) *Layer {
-	for _, l := range ll {
-		if l == nil {
-			continue
-		}
-		if (*l).ID() == lid {
-			return l
-		}
-	}
-	return nil
+	return util.Find[ID, Layer](ll, lid)
 }
 
 func (ll List) FindByDataset(ds DatasetID) *Item {
@@ -76,23 +55,11 @@ func (ll List) FindByDataset(ds DatasetID) *Item {
 }
 
 func (ll List) ToLayerItemList() ItemList {
-	res := make(ItemList, 0, len(ll))
-	for _, l := range ll {
-		if li := ItemFromLayerRef(l); li != nil {
-			res = append(res, li)
-		}
-	}
-	return res
+	return util.ToGenericList[Layer, Item](ll, ItemFromLayerRef)
 }
 
 func (ll List) ToLayerGroupList() GroupList {
-	res := make(GroupList, 0, len(ll))
-	for _, l := range ll {
-		if lg := GroupFromLayerRef(l); lg != nil {
-			res = append(res, lg)
-		}
-	}
-	return res
+	return util.ToGenericList[Layer, Group](ll, GroupFromLayerRef)
 }
 
 func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
@@ -109,18 +76,7 @@ func (ll List) SeparateLayerItemAndGroup() (ItemList, GroupList) {
 }
 
 func (ll List) Deref() []Layer {
-	if ll == nil {
-		return nil
-	}
-	res := make([]Layer, 0, len(ll))
-	for _, l := range ll {
-		if l != nil {
-			res = append(res, *l)
-		} else {
-			res = append(res, nil)
-		}
-	}
-	return res
+	return util.Deref[Layer](ll, false)
 }
 
 func (ll List) Loader() Loader {
@@ -128,51 +84,15 @@ func (ll List) Loader() Loader {
 }
 
 func (ll List) Map() Map {
-	m := make(Map, len(ll))
-	m.Add(ll...)
-	return m
+	return util.ListMap[ID, Layer](ll)
 }
 
 func (ll List) Remove(lids ...ID) List {
-	if ll == nil {
-		return nil
-	}
-
-	res := make(List, 0, len(ll))
-
-	for _, l := range ll {
-		if l == nil {
-			continue
-		}
-		hit := false
-		for _, lid := range lids {
-			if (*l).ID() == lid {
-				hit = true
-				break
-			}
-		}
-		if !hit {
-			res = append(res, l)
-		}
-	}
-
-	return res
+	return util.Remove[ID, Layer](ll, lids...)
 }
 
 func (ll List) AddUnique(newList ...*Layer) List {
-	res := append(List{}, ll...)
-
-	for _, l := range newList {
-		if l == nil {
-			continue
-		}
-		if res.Find((*l).ID()) != nil {
-			continue
-		}
-		res = append(res, l)
-	}
-
-	return res
+	return util.AddUnique[ID, Layer](ll, newList)
 }
 
 type ItemList []*Item
@@ -197,10 +117,7 @@ func (ll ItemList) ToLayerList() List {
 }
 
 func (ll ItemList) Last() *Item {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return util.Last[Item](ll)
 }
 
 type GroupList []*Group
@@ -215,10 +132,7 @@ func (ll GroupList) ToLayerList() List {
 }
 
 func (ll GroupList) Last() *Group {
-	if len(ll) == 0 {
-		return nil
-	}
-	return ll[len(ll)-1]
+	return util.Last[Group](ll)
 }
 
 type Map map[ID]*Layer
@@ -228,68 +142,23 @@ func MapFrom(l Layer) Map {
 }
 
 func (m Map) Add(layers ...*Layer) Map {
-	if m == nil {
-		m = map[ID]*Layer{}
-	}
-	for _, l := range layers {
-		if l == nil {
-			continue
-		}
-		l2 := *l
-		if l2 == nil {
-			continue
-		}
-		m[l2.ID()] = l
-	}
-	return m
+	return util.MapAdd[ID, Layer](m, layers...)
 }
 
 func (m Map) List() List {
-	if m == nil {
-		return nil
-	}
-	list := make(List, 0, len(m))
-	for _, l := range m {
-		list = append(list, l)
-	}
-	return list
+	return util.MapList[ID, Layer](m, false)
 }
 
 func (m Map) Clone() Map {
-	if m == nil {
-		return Map{}
-	}
-	m2 := make(Map, len(m))
-	for k, v := range m {
-		m2[k] = v
-	}
-	return m2
+	return util.Clone[ID, Layer](m)
 }
 
 func (m Map) Merge(m2 Map) Map {
-	if m == nil {
-		return m2.Clone()
-	}
-	m3 := m.Clone()
-	if m2 == nil {
-		return m3
-	}
-
-	return m3.Add(m2.List()...)
+	return util.Merge[ID, Layer](m, m2)
 }
 
 func (m Map) Pick(il *IDList) List {
-	if il == nil {
-		return nil
-	}
-
-	layers := make(List, 0, il.LayerCount())
-	for _, lid := range il.Layers() {
-		if l := m[lid]; l != nil {
-			layers = append(layers, l)
-		}
-	}
-	return layers
+	return util.MapPick[ID, Layer](m, il)
 }
 
 func (m Map) Layer(i ID) Layer {
@@ -314,10 +183,7 @@ func (m Map) Group(i ID) *Group {
 }
 
 func (m Map) Keys() []ID {
-	keys := make([]ID, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
+	keys := util.ExtractKeys[ID, Layer](m)
 	sortIDs(keys)
 	return keys
 }

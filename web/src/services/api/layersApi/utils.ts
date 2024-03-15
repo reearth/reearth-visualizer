@@ -8,7 +8,6 @@ export type NLSLayer = {
   config?: any;
   children?: NLSLayer[] | null;
   infobox?: any;
-  tags?: any;
 };
 
 export const getLayers = (rawScene?: GetSceneQuery) => {
@@ -22,7 +21,6 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
       layerType: l.layerType,
       config: l.config,
       infobox: l.infobox,
-      tags: l.tags,
     };
   });
 };

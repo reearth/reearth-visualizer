@@ -57,11 +57,13 @@ export const tiles = {
     new OpenStreetMapImageryProvider({
       url: "https://cyberjapandata.gsi.go.jp/xyz/std/",
     }),
-  url: ({ url, heatmap } = {}) =>
+  url: ({ url, heatmap, tile_zoomLevel } = {}) =>
     url
       ? new UrlTemplateImageryProvider({
           url,
           tileDiscardPolicy: heatmap ? new DiscardEmptyTileImagePolicy() : undefined,
+          minimumLevel: tile_zoomLevel?.[0],
+          maximumLevel: tile_zoomLevel?.[1],
         })
       : null,
 } as {
@@ -69,6 +71,7 @@ export const tiles = {
     url?: string;
     cesiumIonAccessToken?: string;
     heatmap?: boolean;
+    tile_zoomLevel?: number[];
   }) => ImageryProvider | null;
 };
 

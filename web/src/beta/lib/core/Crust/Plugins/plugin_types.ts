@@ -446,6 +446,8 @@ export type Sketch = {
   readonly setColor?: (color: string) => void;
   readonly setDefaultAppearance?: (appearance: SketchAppearance) => void;
   readonly createDataOnly?: (dataOnly: boolean) => void;
+  readonly disableShadow?: (disable: boolean) => void;
+  readonly enableRelativeHeight?: (enable: boolean) => void;
   readonly allowRightClickToAbort?: (allow: boolean) => void;
   readonly allowAutoResetInteractionMode?: (allow: boolean) => void;
 };

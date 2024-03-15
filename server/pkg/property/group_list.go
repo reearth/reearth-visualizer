@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/dataset"
+	"github.com/reearth/reearthx/util"
 )
 
 type GroupList struct {
@@ -275,12 +276,7 @@ func (g *GroupList) Has(i ItemID) bool {
 	if g == nil {
 		return false
 	}
-	for _, gg := range g.groups {
-		if gg.ID() == i {
-			return true
-		}
-	}
-	return false
+	return util.ListHas[ItemID, Group](g.groups, (*Group).ID, i)
 }
 
 func (g *GroupList) Count() int {

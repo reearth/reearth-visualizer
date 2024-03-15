@@ -24,6 +24,7 @@ export type Tile = {
   tile_type?: string;
   tile_opacity?: number;
   tile_zoomLevel?: number[];
+  tile_zoomLevelForURL?: number[];
   heatmap?: boolean;
 };
 
@@ -84,6 +85,7 @@ export function useImageryProviders({
       url?: string;
       cesiumIonAccessToken?: string;
       heatmap?: boolean;
+      tile_zoomLevel?: number[];
     }) => ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
@@ -93,6 +95,7 @@ export function useImageryProviders({
         url: t.tile_url,
         cesiumIonAccessToken: ciat,
         heatmap: t.heatmap,
+        tile_zoomLevel: t.tile_zoomLevelForURL,
       }),
     [presets],
   );

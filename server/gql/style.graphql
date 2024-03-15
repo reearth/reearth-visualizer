@@ -24,6 +24,10 @@ input RemoveStyleInput {
   styleId: ID!
 }
 
+input DuplicateStyleInput {
+  styleId: ID!
+}
+
 # Payload
 
 type AddStylePayload {
@@ -38,10 +42,15 @@ type RemoveStylePayload {
   styleId: ID!
 }
 
+type DuplicateStylePayload {
+  style: Style!
+}
+
 #extend type Query{ }
 
 extend type Mutation {
   addStyle(input: AddStyleInput!): AddStylePayload
   updateStyle(input: UpdateStyleInput!): UpdateStylePayload
   removeStyle(input: RemoveStyleInput!): RemoveStylePayload
+  duplicateStyle(input: DuplicateStyleInput!): DuplicateStylePayload
 }
