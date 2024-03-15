@@ -34,4 +34,13 @@ export class TilesetFeatureIndex extends FeatureIndex<IndexRecord, InternalCesiu
       record.push({ content, batchId });
     }
   }
+
+  deleteFeature(key: string | undefined): void {
+    if (key == null) {
+      return;
+    }
+    if (this.records.has(key)) {
+      this.records.delete(key);
+    }
+  }
 }
