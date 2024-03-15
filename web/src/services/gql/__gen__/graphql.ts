@@ -1678,8 +1678,6 @@ export type Project = Node & {
   trackingId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   visualizer: Visualizer;
-  enableGA: Scalars['Boolean']['input'];
-  trackingid: Scalars['String']['input'];
 };
 
 export type ProjectAliasAvailability = {
@@ -2553,7 +2551,7 @@ export type UpdateProjectInput = {
   publicImage?: InputMaybe<Scalars['String']['input']>;
   publicNoIndex?: InputMaybe<Scalars['Boolean']['input']>;
   publicTitle?: InputMaybe<Scalars['String']['input']>;
-  trackingid?: InputMaybe<Scalars['String']['input']>;
+  trackingId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdatePropertyItemInput = {
