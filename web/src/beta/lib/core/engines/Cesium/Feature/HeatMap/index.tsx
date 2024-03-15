@@ -11,7 +11,8 @@ import { useContext } from "../context";
 import { FeatureComponentConfig, FeatureProps } from "../utils";
 
 import { flareColorMapLUT } from "./constants";
-import { fetchImageAndCreateMeshImageData, MeshImageData } from "./createMeshImageData";
+import type { MeshImageData } from "./createMeshImageData";
+import { createMeshImageDataAsync } from "./createMeshImageDataAsync";
 import { HeatmapMesh, HeatmapMeshHandle } from "./HeatmapMesh";
 
 export type Props = FeatureProps<Property>;
@@ -100,7 +101,7 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
   const reversingImageNeeded = property?.maxValue == null && property?.minValue == null;
   useEffect(() => {
     if (!visible || !valueMap) return;
-    fetchImageAndCreateMeshImageData(valueMap, reversingImageNeeded)
+    createMeshImageDataAsync(valueMap, reversingImageNeeded)
       .then(meshImageData => {
         setMeshImageData(meshImageData);
       })

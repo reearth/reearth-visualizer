@@ -1,3 +1,5 @@
+import { Transfer } from "threads";
+
 import {
   AppearanceTypes,
   ComputedFeature,
@@ -8,7 +10,7 @@ import {
   LayerSimple,
 } from "../types";
 
-import { evalSimpleLayerFeature, evalSimpleLayer } from "./simple";
+import { queue } from "./workerPool";
 
 export { clearAllExpressionCaches } from "./simple";
 
@@ -27,14 +29,39 @@ export async function evalLayer(
   ctx: EvalContext,
 ): Promise<EvalResult | undefined> {
   if (layer.type === "simple") {
-    return evalSimpleLayer(layer, ctx);
+    let result;
+    queue(async task => {
+      result = await task.evaluateSimple(
+        Transfer(
+          {
+            layer,
+            ctx,
+          },
+          [],
+        ),
+      );
+    });
+
+    return result;
   }
   return;
 }
 
 export function evalFeature(layer: Layer, feature: Feature): ComputedFeature | undefined {
   if (layer.type === "simple") {
-    return evalSimpleLayerFeature(layer, feature);
+    let result: ComputedFeature | undefined;
+    queue(async task => {
+      result = await task.evaluateSimpleLayerFeature(
+        Transfer(
+          {
+            layer,
+            feature,
+          },
+          [],
+        ),
+      );
+    });
+    return result;
   }
-  return;
+  return undefined;
 }

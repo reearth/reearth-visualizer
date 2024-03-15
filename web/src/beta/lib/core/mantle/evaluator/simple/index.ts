@@ -1,5 +1,4 @@
-import { pick } from "lodash-es";
-import { Transfer } from "threads";
+import { cloneDeep, pick } from "lodash-es";
 
 import type { EvalContext, EvalResult } from "..";
 import {
@@ -13,9 +12,10 @@ import {
   TimeInterval,
 } from "../../types";
 
-import { clearExpressionCaches } from "./expression";
+import { ConditionalExpression } from "./conditionalExpression";
+import { clearExpressionCaches, Expression } from "./expression";
 import { evalTimeInterval } from "./interval";
-import { queue } from "./workerPool";
+import { recursiveJSONParse } from "./utils";
 
 export async function evalSimpleLayer(
   layer: LayerSimple,
@@ -131,21 +131,26 @@ function evalExpression(
   layer: LayerSimple,
   feature?: Feature,
 ): unknown | undefined {
-  let result;
-  queue(async task => {
-    result = await task.evaluateExpression(
-      Transfer(
-        {
-          expressionContainer,
-          layer,
-          feature,
-        },
-        [],
-      ),
-    );
-  });
-
-  return result;
+  try {
+    if (hasExpression(expressionContainer)) {
+      const styleExpression = expressionContainer.expression;
+      const parsedFeature = recursiveJSONParse(cloneDeep(feature));
+      if (typeof styleExpression === "undefined") {
+        return undefined;
+      } else if (typeof styleExpression === "object" && styleExpression.conditions) {
+        return new ConditionalExpression(styleExpression, parsedFeature, layer.defines).evaluate();
+      } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
+        return new Expression(String(styleExpression), parsedFeature, layer.defines).evaluate();
+      } else if (typeof styleExpression === "string") {
+        return new Expression(styleExpression, parsedFeature, layer.defines).evaluate();
+      }
+      return styleExpression;
+    }
+    return expressionContainer;
+  } catch (e) {
+    console.error(e);
+    return;
+  }
 }
 
 function evalJsonProperties(layer: LayerSimple, feature: Feature): Feature {
