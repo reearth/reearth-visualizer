@@ -34,6 +34,8 @@ type Project struct {
 	visualizer        visualizer.Visualizer
 	publishmentStatus PublishmentStatus
 	coreSupport       bool
+	enableGA          bool
+	trackingID        string
 }
 
 func (p *Project) ID() ID {
@@ -103,6 +105,14 @@ func (p *Project) PublicNoIndex() bool {
 
 func (p *Project) CoreSupport() bool {
 	return p.coreSupport
+}
+
+func (p *Project) EnableGA() bool {
+	return p.enableGA
+}
+
+func (p *Project) TrackingID() string {
+	return p.trackingID
 }
 
 func (p *Project) PublishmentStatus() PublishmentStatus {
@@ -198,6 +208,14 @@ func (p *Project) UpdateVisualizer(visualizer visualizer.Visualizer) {
 
 func (p *Project) UpdatePublishmentStatus(publishmentStatus PublishmentStatus) {
 	p.publishmentStatus = publishmentStatus
+}
+
+func (p *Project) UpdateEnableGA(enableGA bool) {
+	p.enableGA = enableGA
+}
+
+func (p *Project) UpdateTrackingID(trackingID string) {
+	p.trackingID = trackingID
 }
 
 func (p *Project) PublicName() string {
