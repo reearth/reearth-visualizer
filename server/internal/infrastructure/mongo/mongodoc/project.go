@@ -31,6 +31,8 @@ type ProjectDocument struct {
 	Visualizer        string
 	PublishmentStatus string
 	CoreSupport       bool
+	EnableGA		  bool
+	TrackingID		  string
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -69,6 +71,8 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		Visualizer:        string(project.Visualizer()),
 		PublishmentStatus: string(project.PublishmentStatus()),
 		CoreSupport:       project.CoreSupport(),
+		EnableGA: *project.EnableGA(),
+		TrackingID: *project.TrackingID(),
 	}, pid
 }
 
@@ -109,5 +113,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
 		CoreSupport(d.CoreSupport).
+		EnableGA(d.EnableGA).
+		TrackingID(d.TrackingID).
 		Build()
 }

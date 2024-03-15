@@ -1064,6 +1064,8 @@ type Project struct {
 	Team              *Team             `json:"team,omitempty"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	CoreSupport       bool              `json:"coreSupport"`
+	EnableGa          *bool             `json:"enableGa,omitempty"`
+	TrackingID        *string           `json:"trackingId,omitempty"`
 }
 
 func (Project) IsNode()        {}
@@ -1733,6 +1735,8 @@ type UpdateProjectInput struct {
 	PublicNoIndex     *bool    `json:"publicNoIndex,omitempty"`
 	DeleteImageURL    *bool    `json:"deleteImageUrl,omitempty"`
 	DeletePublicImage *bool    `json:"deletePublicImage,omitempty"`
+	EnableGa          *bool    `json:"enableGA,omitempty"`
+	TrackingID        *string  `json:"trackingId,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
