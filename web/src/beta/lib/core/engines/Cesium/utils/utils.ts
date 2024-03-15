@@ -18,12 +18,14 @@ import {
   Primitive,
   GroundPrimitive,
   ImageryLayer,
+  DataSource,
 } from "cesium";
 
 import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox";
 import { ComputedFeature, DefaultInfobox } from "@reearth/beta/lib/core/Map";
 
 import { getTag } from "../Feature";
+import { TilesetFeatureIndex } from "../Feature/Tileset/TilesetFeatureIndex";
 import type { InternalCesium3DTileFeature } from "../types";
 
 export const convertCartesian3ToPosition = (
@@ -94,8 +96,17 @@ export function lookupFeatures(
 const findFeatureFrom3DTile = (
   tile: Cesium3DTile,
   featureId?: string,
+  featureIndex?: TilesetFeatureIndex,
 ): Cesium3DTileFeature | void => {
   let target: InternalCesium3DTileFeature | undefined = undefined;
+
+  if (featureId) {
+    target = featureIndex?.find(featureId)?.[0];
+    if (target && target instanceof Cesium3DTileFeature) {
+      return target;
+    }
+  }
+
   lookupFeatures(tile.content, f => {
     const tag = getTag(f);
     if (tag?.featureId === featureId) {
@@ -103,7 +114,7 @@ const findFeatureFrom3DTile = (
     }
   });
 
-  if (target) {
+  if (target && target instanceof Cesium3DTileFeature) {
     return target;
   }
 
@@ -112,29 +123,6 @@ const findFeatureFrom3DTile = (
     if (t) {
       return t;
     }
-  }
-};
-
-const findFeaturesFrom3DTile = <T = InternalCesium3DTileFeature>(
-  tile: Cesium3DTile,
-  featureId: string[],
-  convert?: (f: InternalCesium3DTileFeature) => T,
-  targets: Set<T> = new Set(),
-) => {
-  lookupFeatures(tile.content, f => {
-    const tag = getTag(f);
-    if (featureId.includes(tag?.featureId ?? "")) {
-      const r = convert?.(f);
-      if (r) {
-        targets.add(r);
-      } else {
-        targets.add(f as T);
-      }
-    }
-  });
-
-  for (const child of tile.children) {
-    findFeaturesFrom3DTile(child, featureId, convert, targets);
   }
 };
 
@@ -214,6 +202,29 @@ export function findEntity(
   return;
 }
 
+const findFeaturesFrom3DTile = <T = InternalCesium3DTileFeature>(
+  tile: Cesium3DTile,
+  featureId: string[],
+  convert?: (f: InternalCesium3DTileFeature) => T,
+  targets: Set<T> = new Set(),
+) => {
+  lookupFeatures(tile.content, f => {
+    const tag = getTag(f);
+    if (featureId.includes(tag?.featureId ?? "")) {
+      const r = convert?.(f);
+      if (r) {
+        targets.add(r);
+      } else {
+        targets.add(f as T);
+      }
+    }
+  });
+
+  for (const child of tile.children) {
+    findFeaturesFrom3DTile(child, featureId, convert, targets);
+  }
+};
+
 const filterEntity = <T = Entity | Cesium3DTileset | InternalCesium3DTileFeature>(
   es: Entity[],
   layerId: string,
@@ -239,7 +250,10 @@ const findEntityFromDatasource = <T = Entity | Cesium3DTileset | InternalCesium3
   viewer: Viewer,
   layerId: string,
   featureId: string[],
-  convert?: (e: Entity | Cesium3DTileset | InternalCesium3DTileFeature) => T,
+  convert?: (
+    e: Entity | Cesium3DTileset | InternalCesium3DTileFeature,
+    layer?: Cesium3DTileset | DataSource,
+  ) => T,
 ) => {
   let datasources: T[] = [];
   for (const ds of [viewer.dataSourceDisplay.dataSources, viewer.dataSources]) {
@@ -258,7 +272,10 @@ const findTile3DFeaturesFromScene = <T = Entity | Cesium3DTileset | InternalCesi
   viewer: Viewer,
   layerId: string,
   featureId: string[],
-  convert?: (e: Entity | Cesium3DTileset | InternalCesium3DTileFeature) => T,
+  convert?: (
+    e: Entity | Cesium3DTileset | InternalCesium3DTileFeature,
+    layer?: Cesium3DTileset | DataSource,
+  ) => T,
 ) => {
   const targets: Set<T> = new Set();
   // Find Cesium3DTileFeature
@@ -271,12 +288,23 @@ const findTile3DFeaturesFromScene = <T = Entity | Cesium3DTileset | InternalCesi
     const tag = getTag(prim);
     if (tag?.layerId !== layerId) continue;
 
+    const featureIndex = tag.featureIndex;
+    if (featureIndex) {
+      const featuresFromCache = featureId
+        .flatMap(id => featureIndex.find(id) as InternalCesium3DTileFeature[])
+        .filter((f): f is InternalCesium3DTileFeature => !!f)
+        .map(f => convert?.(f, prim))
+        .filter((f): f is NonNullable<T> => !!f);
+
+      return featuresFromCache;
+    }
+
     findFeaturesFrom3DTile(prim.root, featureId, convert, targets);
+    if (targets.size) {
+      return Array.from(targets.values()) as NonNullable<T>[];
+    }
   }
 
-  if (targets.size) {
-    return Array.from(targets.values()) as NonNullable<T>[];
-  }
   return [];
 };
 
@@ -284,7 +312,10 @@ export function findFeaturesFromLayer<T = Entity | Cesium3DTileset | InternalCes
   viewer: CesiumViewer,
   layerId: string,
   featureId: string[],
-  convert?: (e: Entity | Cesium3DTileset | InternalCesium3DTileFeature) => T,
+  convert?: (
+    e: Entity | Cesium3DTileset | InternalCesium3DTileFeature,
+    layer?: Cesium3DTileset | DataSource,
+  ) => T,
 ): NonNullable<T>[] {
   const entity = filterEntity(viewer.entities.values, layerId, featureId, convert);
   if (entity.length) return entity as NonNullable<T>[];

@@ -10,6 +10,7 @@ import {
 import Box from "../Box";
 import { type FeatureComponentConfig, type FeatureProps } from "../utils";
 
+import { DrawClippingPolygon } from "./DrawClippingPolygon";
 import { useHooks } from "./hooks";
 
 export type Props = FeatureProps<Property> & {
@@ -39,6 +40,8 @@ function Tileset({
     ref,
     style,
     clippingPlanes,
+    drawClippingEnabled,
+    drawClippingEdgeProps,
     builtinBoxProps,
     imageBasedLighting,
     handleReady,
@@ -55,6 +58,7 @@ function Tileset({
     onComputedFeatureFetch,
     onLayerFetch,
   });
+
   const boxProperty = useMemo(
     () => ({
       ...(layer?.layer?.type === "simple" ? layer?.layer?.box : {}),
@@ -99,6 +103,7 @@ function Tileset({
           onLayerEdit={builtinBoxProps.handleLayerEdit}
         />
       )}
+      {drawClippingEnabled && <DrawClippingPolygon {...drawClippingEdgeProps} />}
     </>
   );
 }

@@ -162,6 +162,8 @@ export default function ({
     () => ({
       setType: (type: SketchType | undefined) => mapRef?.current?.sketch?.setType(type, "plugin"),
       setColor: mapRef?.current?.sketch?.setColor,
+      disableShadow: mapRef?.current?.sketch?.disableShadow,
+      enableRelativeHeight: mapRef?.current?.sketch?.enableRelativeHeight,
       setDefaultAppearance: mapRef?.current?.sketch?.setDefaultAppearance,
       createDataOnly: mapRef?.current?.sketch?.createDataOnly,
       allowRightClickToAbort: mapRef?.current?.sketch?.allowRightClickToAbort,

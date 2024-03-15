@@ -120,6 +120,8 @@ const sketchRefKeys: FunctionKeys<SketchRef> = {
   setColor: 1,
   setDefaultAppearance: 1,
   createDataOnly: 1,
+  disableShadow: 1,
+  enableRelativeHeight: 1,
   allowRightClickToAbort: 1,
   allowAutoResetInteractionMode: 1,
 };
