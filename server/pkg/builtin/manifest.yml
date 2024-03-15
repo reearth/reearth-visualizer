@@ -275,6 +275,19 @@ extensions:
               ui: slider
               min: 0
               max: 10
+        - id: googleAnalytics
+          title: Google Analytics
+          description: Set your Google Analytics tracking ID and analyze how your published project is being viewed.
+          fields:
+            - id: enableGA
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: Enable Google Analytics
+            - id: trackingId
+              type: string
+              title: Tracking ID
+              description: Paste your Google Analytics tracking ID here. This will be embedded in your published project.
   - id: cesium
     name: Cesium
     description: Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.
