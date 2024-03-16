@@ -19,6 +19,7 @@ type FeatureID = id.FeatureID
 var NewID = id.NewNLSLayerID
 var NewInfoboxID = id.NewInfoboxID
 var NewInfoboxBlockID = id.NewInfoboxBlockID
+var NewFeatureID = id.NewFeatureID
 
 var ErrInvalidID = id.ErrInvalidID
 
