@@ -141,3 +141,13 @@ func (b *Builder) PublishmentStatus(publishmentStatus PublishmentStatus) *Builde
 	b.p.publishmentStatus = publishmentStatus
 	return b
 }
+
+func (b *Builder) EnableGA(enableGA bool) *Builder {
+	b.p.enableGA = enableGA
+	return b
+}
+
+func (b *Builder) TrackingID(trackingID string) *Builder {
+	b.p.trackingID = trackingID
+	return b
+}
