@@ -1,6 +1,7 @@
 package mongodoc
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/id"
@@ -18,6 +19,8 @@ type NLSLayerDocument struct {
 	Infobox   *NLSLayerInfoboxDocument
 	Simple    *NLSLayerSimpleDocument
 	Group     *NLSLayerGroupDocument
+	IsSketch  bool
+	Sketch    *NLSLayerSketchInfoDocument
 }
 
 type NLSLayerSimpleDocument struct {
@@ -42,6 +45,50 @@ type NLSLayerInfoboxBlockDocument struct {
 type NLSLayerInfoboxDocument struct {
 	Property string
 	Blocks   []NLSLayerInfoboxBlockDocument
+}
+
+type NLSLayerSketchInfoDocument struct {
+	CustomPropertySchema *json.RawMessage
+	FeatureCollection    *NLSLayerFeatureCollectionDocument
+}
+
+type NLSLayerFeatureCollectionDocument struct {
+	Type     string
+	Features []NLSLayerFeatureDocument
+}
+
+type NLSLayerFeatureDocument struct {
+	ID         string
+	Type       string
+	Geometry   NLSLayerGeometryDocument
+	Properties json.RawMessage
+}
+
+type NLSLayerGeometryDocument interface{}
+
+type NLSLayerPointDocument struct {
+	Type        string
+	Coordinates []float64
+}
+
+type NLSLayerLineString struct {
+	Type        string
+	Coordinates [][]float64
+}
+
+type NLSLayerPolygonDocument struct {
+	Type        string
+	Coordinates [][][]float64
+}
+
+type NLSLayerMultiPolygonDocument struct {
+	Type        string
+	Coordinates [][][][]float64
+}
+
+type NLSLayerGeometryCollectionDocument struct {
+	Type       string
+	Geometries []NLSLayerGeometryDocument
 }
 
 func NewNLSLayerConsumer(scenes []id.SceneID) *NLSLayerConsumer {
@@ -78,6 +125,8 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 		LayerType: string(l.LayerType()),
 		Group:     group,
 		Simple:    simple,
+		IsSketch:  l.IsSketch(),
+		Sketch:    NewNLSLayerSketchInfo(l.Sketch()),
 	}, id
 }
 
@@ -247,4 +296,72 @@ func NewNLSInfobox(ib *nlslayer.Infobox) *NLSLayerInfoboxDocument {
 		Property: ib.Property().String(),
 		Blocks:   blocks,
 	}
+}
+
+func NewNLSLayerSketchInfo(si *nlslayer.SketchInfo) *NLSLayerSketchInfoDocument {
+	if si == nil {
+		return nil
+	}
+	return &NLSLayerSketchInfoDocument{
+		CustomPropertySchema: si.CustomPropertySchema(),
+		FeatureCollection:    NewNLSLayerFeatureCollection(si.FeatureCollection()),
+	}
+}
+
+func NewNLSLayerFeatureCollection(fc *nlslayer.FeatureCollection) *NLSLayerFeatureCollectionDocument {
+	if fc == nil {
+		return nil
+	}
+	features := make([]NLSLayerFeatureDocument, 0, len(fc.Features()))
+	for _, f := range fc.Features() {
+		features = append(features, NewNLSLayerFeature(f))
+	}
+	return &NLSLayerFeatureCollectionDocument{
+		Type:     fc.FeatureCollectionType(),
+		Features: features,
+	}
+}
+
+func NewNLSLayerFeature(f nlslayer.Feature) NLSLayerFeatureDocument {
+	return NLSLayerFeatureDocument{
+		ID:         f.ID().String(),
+		Type:       f.FeatureType(),
+		Geometry:   NewNLSLayerGeometry(f.Geometry()),
+		Properties: f.Properties(),
+	}
+}
+
+func NewNLSLayerGeometry(g nlslayer.Geometry) NLSLayerGeometryDocument {
+	switch g := g.(type) {
+	case *nlslayer.Point:
+		return NLSLayerPointDocument{
+			Type:        g.PointType(),
+			Coordinates: g.Coordinates(),
+		}
+	case *nlslayer.LineString:
+		return NLSLayerLineString{
+			Type:        g.LineStringType(),
+			Coordinates: g.Coordinates(),
+		}
+	case *nlslayer.Polygon:
+		return NLSLayerPolygonDocument{
+			Type:        g.PolygonType(),
+			Coordinates: g.Coordinates(),
+		}
+	case *nlslayer.MultiPolygon:
+		return NLSLayerMultiPolygonDocument{
+			Type:        g.MultiPolygonType(),
+			Coordinates: g.Coordinates(),
+		}
+	case *nlslayer.GeometryCollection:
+		geometries := make([]NLSLayerGeometryDocument, 0, len(g.Geometries()))
+		for _, g := range g.Geometries() {
+			geometries = append(geometries, NewNLSLayerGeometry(g))
+		}
+		return NLSLayerGeometryCollectionDocument{
+			Type:       g.GeometryCollectionType(),
+			Geometries: geometries,
+		}
+	}
+	return nil
 }
