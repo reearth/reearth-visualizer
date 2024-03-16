@@ -202,6 +202,29 @@ export function findEntity(
   return;
 }
 
+const findFeaturesFrom3DTile = <T = InternalCesium3DTileFeature>(
+  tile: Cesium3DTile,
+  featureId: string[],
+  convert?: (f: InternalCesium3DTileFeature) => T,
+  targets: Set<T> = new Set(),
+) => {
+  lookupFeatures(tile.content, f => {
+    const tag = getTag(f);
+    if (featureId.includes(tag?.featureId ?? "")) {
+      const r = convert?.(f);
+      if (r) {
+        targets.add(r);
+      } else {
+        targets.add(f as T);
+      }
+    }
+  });
+
+  for (const child of tile.children) {
+    findFeaturesFrom3DTile(child, featureId, convert, targets);
+  }
+};
+
 const filterEntity = <T = Entity | Cesium3DTileset | InternalCesium3DTileFeature>(
   es: Entity[],
   layerId: string,
@@ -265,17 +288,23 @@ const findTile3DFeaturesFromScene = <T = Entity | Cesium3DTileset | InternalCesi
     const tag = getTag(prim);
     if (tag?.layerId !== layerId) continue;
 
-    const featuresFromCache = featureId
-      .flatMap(id => tag.featureIndex?.find(id) as InternalCesium3DTileFeature[])
-      .filter((f): f is InternalCesium3DTileFeature => !!f)
-      .map(f => convert?.(f, prim)) as NonNullable<T>[];
+    const featureIndex = tag.featureIndex;
+    if (featureIndex) {
+      const featuresFromCache = featureId
+        .flatMap(id => featureIndex.find(id) as InternalCesium3DTileFeature[])
+        .filter((f): f is InternalCesium3DTileFeature => !!f)
+        .map(f => convert?.(f, prim))
+        .filter((f): f is NonNullable<T> => !!f);
 
-    return featuresFromCache;
+      return featuresFromCache;
+    }
+
+    findFeaturesFrom3DTile(prim.root, featureId, convert, targets);
+    if (targets.size) {
+      return Array.from(targets.values()) as NonNullable<T>[];
+    }
   }
 
-  if (targets.size) {
-    return Array.from(targets.values()) as NonNullable<T>[];
-  }
   return [];
 };
 
