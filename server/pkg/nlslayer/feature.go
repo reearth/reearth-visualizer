@@ -7,16 +7,16 @@ import (
 type Feature struct {
 	id          FeatureID
 	featureType string
-	properties  json.RawMessage
 	geometry    Geometry
+	properties  json.RawMessage
 }
 
-func NewFeature(id FeatureID, featureType string, properties json.RawMessage, geometry Geometry) *Feature {
+func NewFeature(featureType string, geometry Geometry, properties json.RawMessage) *Feature {
 	return &Feature{
-		id:          id,
+		id:          NewFeatureID(),
 		featureType: featureType,
-		properties:  properties,
 		geometry:    geometry,
+		properties:  properties,
 	}
 }
 
@@ -34,13 +34,13 @@ func (f *Feature) FeatureType() string {
 	return f.featureType
 }
 
-func (f *Feature) Properties() json.RawMessage {
-	return f.properties
-}
-
 func (f *Feature) Geometry() Geometry {
 	if f == nil {
 		return nil
 	}
 	return f.geometry
+}
+
+func (f *Feature) Properties() json.RawMessage {
+	return f.properties
 }
