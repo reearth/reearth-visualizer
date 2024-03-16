@@ -54,7 +54,7 @@ export const AppRoutes = () => {
     },
     /* Beta routes - end */
     {
-      path: "/",
+      index: true,
       element: <RootPage />,
     },
     {
@@ -75,8 +75,13 @@ export const AppRoutes = () => {
     },
     {
       path: "edit/:sceneId",
-      element: <EarthEditor />,
-      children: [{ path: "preview", element: <Preview /> }],
+      children: [
+        {
+          index: true,
+          element: <EarthEditor />,
+        },
+        { path: "preview", element: <Preview /> },
+      ],
     },
     {
       path: "plugin-editor",
@@ -84,17 +89,20 @@ export const AppRoutes = () => {
     },
     {
       path: "settings",
-      element: <Navigate to="/settings/account" />,
       children: [
+        { index: true, element: <Navigate to="/settings/account" /> },
         { path: "account", element: <AccountSettings /> },
         {
           path: "workspaces",
-          element: <WorkspaceList />,
           children: [
             {
+              index: true,
+              element: <WorkspaceList />,
+            },
+            {
               path: ":workspaceId",
-              element: <WorkspaceSettings />,
               children: [
+                { index: true, element: <WorkspaceSettings /> },
                 { path: "projects", element: <SettingsProjectList /> },
                 { path: "asset", element: <AssetSettings /> },
               ],
@@ -103,8 +111,8 @@ export const AppRoutes = () => {
         },
         {
           path: "projects/:projectId",
-          element: <ProjectSettings />,
           children: [
+            { index: true, element: <ProjectSettings /> },
             { path: "public", element: <PublicSettings /> },
             { path: "dataset", element: <DatasetSettings /> },
             { path: "plugins", element: <PluginSettings /> },
