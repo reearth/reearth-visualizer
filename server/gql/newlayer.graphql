@@ -35,6 +35,8 @@ type NLSLayerGroup implements NLSLayer {
   visible: Boolean!
   infobox: NLSInfobox
   scene: Scene
+  isSketch: Boolean!
+  sketch: SketchInfo
 }
 
 type NLSInfobox {
