@@ -1,23 +1,28 @@
 package nlslayer
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 type Feature struct {
 	id          FeatureID
 	featureType string
 	geometry    Geometry
-	properties  json.RawMessage
+	properties  map[string]any
 }
 
-func NewFeature(featureType string, geometry Geometry, properties json.RawMessage) *Feature {
+func NewFeature(featureType string, geometry Geometry, properties json.RawMessage) (*Feature, error) {
+	var props map[string]any
+	if len(properties) > 0 {
+		if err := json.Unmarshal(properties, &props); err != nil {
+			return nil, err
+		}
+	}
+
 	return &Feature{
 		id:          NewFeatureID(),
 		featureType: featureType,
 		geometry:    geometry,
-		properties:  properties,
-	}
+		properties:  props,
+	}, nil
 }
 
 func (f *Feature) ID() FeatureID {
@@ -41,6 +46,6 @@ func (f *Feature) Geometry() Geometry {
 	return f.geometry
 }
 
-func (f *Feature) Properties() json.RawMessage {
+func (f *Feature) Properties() map[string]any {
 	return f.properties
 }

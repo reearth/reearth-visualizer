@@ -5,18 +5,27 @@ import (
 )
 
 type SketchInfo struct {
-	customPropertySchema *json.RawMessage
+	customPropertySchema *map[string]any
 	featureCollection    *FeatureCollection
 }
 
-func NewSketchInfo(customPropertySchema *json.RawMessage, featureCollection *FeatureCollection) *SketchInfo {
-	return &SketchInfo{
-		customPropertySchema: customPropertySchema,
-		featureCollection:    featureCollection,
+func NewSketchInfo(customPropertySchema *json.RawMessage, featureCollection *FeatureCollection) (*SketchInfo, error) {
+	var schemaPtr *map[string]any
+	if customPropertySchema != nil && len(*customPropertySchema) > 0 {
+		schema := make(map[string]any)
+		if err := json.Unmarshal(*customPropertySchema, &schema); err != nil {
+			return nil, err
+		}
+		schemaPtr = &schema
 	}
+
+	return &SketchInfo{
+		customPropertySchema: schemaPtr,
+		featureCollection:    featureCollection,
+	}, nil
 }
 
-func (s *SketchInfo) CustomPropertySchema() *json.RawMessage {
+func (s *SketchInfo) CustomPropertySchema() *map[string]any {
 	return s.customPropertySchema
 }
 
