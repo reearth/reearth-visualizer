@@ -784,8 +784,8 @@ func (this LayerTagItem) GetTagID() ID { return this.TagID }
 func (this LayerTagItem) GetTag() Tag  { return this.Tag }
 
 type LineString struct {
-	Type        string      `json:"type"`
-	Coordinates [][]float64 `json:"coordinates"`
+	Type                  string      `json:"type"`
+	LineStringCoordinates [][]float64 `json:"lineStringCoordinates"`
 }
 
 func (LineString) IsGeometry() {}
@@ -967,8 +967,8 @@ type MoveStoryPayload struct {
 }
 
 type MultiPolygon struct {
-	Type        string          `json:"type"`
-	Coordinates [][][][]float64 `json:"coordinates"`
+	Type                    string          `json:"type"`
+	MultiPolygonCoordinates [][][][]float64 `json:"multiPolygonCoordinates"`
 }
 
 func (MultiPolygon) IsGeometry() {}
@@ -1098,8 +1098,8 @@ type PluginExtension struct {
 }
 
 type Point struct {
-	Type        string    `json:"type"`
-	Coordinates []float64 `json:"coordinates"`
+	Type             string    `json:"type"`
+	PointCoordinates []float64 `json:"pointCoordinates"`
 }
 
 func (Point) IsGeometry() {}
@@ -1117,8 +1117,8 @@ type Policy struct {
 }
 
 type Polygon struct {
-	Type        string        `json:"type"`
-	Coordinates [][][]float64 `json:"coordinates"`
+	Type               string        `json:"type"`
+	PolygonCoordinates [][][]float64 `json:"polygonCoordinates"`
 }
 
 func (Polygon) IsGeometry() {}
