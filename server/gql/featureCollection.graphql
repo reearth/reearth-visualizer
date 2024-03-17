@@ -1,21 +1,21 @@
 type Point {
     type: String!
-    coordinates: [Float!]!
+    pointCoordinates: [Float!]!
 }
 
 type LineString {
     type: String!
-    coordinates: [[Float!]!]!
+    lineStringCoordinates: [[Float!]!]!
 }
 
 type Polygon {
     type: String!
-    coordinates: [[[Float!]!]!]!
+    polygonCoordinates: [[[Float!]!]!]!
 }
 
 type MultiPolygon {
     type: String!
-    coordinates: [[[[Float!]!]!]!]!
+    multiPolygonCoordinates: [[[[Float!]!]!]!]!
 }
 
 type GeometryCollection {
