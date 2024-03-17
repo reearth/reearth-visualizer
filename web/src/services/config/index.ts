@@ -1,6 +1,7 @@
 import { type Viewer } from "cesium";
 
-import { type CognitoParams, configureCognito } from "./aws";
+import { AuthInfo, getAuthInfo } from "./authInfo";
+import { configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
@@ -11,11 +12,6 @@ export type Config = {
   api: string;
   plugins: string;
   published: string;
-  auth0ClientId?: string;
-  auth0Domain?: string;
-  auth0Audience?: string;
-  authProvider?: string;
-  cognito?: CognitoParams;
   googleApiKey?: string;
   googleClientId?: string;
   sentryDsn?: string;
@@ -48,7 +44,8 @@ export type Config = {
   unsafePluginUrls?: string[];
   extensions?: Extensions;
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
-};
+  multitenant?: Record<string, AuthInfo>;
+} & AuthInfo;
 
 declare global {
   let __APP_VERSION__: string;
@@ -67,8 +64,9 @@ export default async function loadConfig() {
     ...(await (await fetch("/reearth_config.json")).json()),
   };
 
-  if (config?.cognito) {
-    configureCognito(config);
+  const authInfo = getAuthInfo(config);
+  if (authInfo?.cognito) {
+    configureCognito(authInfo.cognito);
   }
 
   if (config?.passwordPolicy) {

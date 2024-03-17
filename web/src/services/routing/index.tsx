@@ -50,6 +50,7 @@ export const AppRoutes = () => {
         {/* Beta routes - end */}
         {/* classic routes - start */}
         <Route index={true} element={<RootPage />} />
+        <Route path="auth/*" element={<RootPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />
         <Route path="password-reset" element={<PasswordResetPage />} />
@@ -81,8 +82,8 @@ export const AppRoutes = () => {
         {...redirects.map(([from, to]) => (
           <Route key={from} path={from} element={<Redirect to={to} />} />
         ))}
-        <Route path="*" element={<NotFound />} />
         {/* classic routes - end */}
+        <Route path="*" element={<NotFound />} />
       </>,
     ),
   );
