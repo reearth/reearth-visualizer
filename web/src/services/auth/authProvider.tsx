@@ -1,7 +1,7 @@
 import { Auth0Provider } from "@auth0/auth0-react";
 import React, { createContext, ReactNode, useState } from "react";
 
-import { getAuthInfo, getSignInCallbackUrl } from "../config/authInfo";
+import { getAuthInfo, getSignInCallbackUrl } from "../config";
 
 import type { AuthHook } from "./authHook";
 import { useAuth0Auth } from "./authOAuth";

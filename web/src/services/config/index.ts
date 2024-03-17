@@ -1,11 +1,13 @@
 import { type Viewer } from "cesium";
 
-import { AuthInfo, getAuthInfo } from "./authInfo";
+import { type AuthInfo, getAuthInfo } from "./authInfo";
 import { configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
 import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
 import { type UnsafeBuiltinPlugin, loadUnsafeBuiltinPlugins } from "./unsafeBuiltinPlugin";
+
+export { getAuthInfo, getSignInCallbackUrl } from "./authInfo";
 
 export type Config = {
   version?: string;
@@ -65,7 +67,7 @@ export default async function loadConfig() {
   };
 
   const authInfo = getAuthInfo(config);
-  if (authInfo?.cognito) {
+  if (authInfo?.cognito && authInfo.authProvider === "cognito") {
     configureCognito(authInfo.cognito);
   }
 
