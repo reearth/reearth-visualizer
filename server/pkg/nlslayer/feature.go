@@ -9,19 +9,21 @@ type Feature struct {
 	properties  map[string]any
 }
 
-func NewFeature(featureType string, geometry Geometry, properties json.RawMessage) (*Feature, error) {
-	var props map[string]any
-	if len(properties) > 0 {
-		if err := json.Unmarshal(properties, &props); err != nil {
-			return nil, err
-		}
-	}
-
+func NewFeature(featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
 	return &Feature{
 		id:          NewFeatureID(),
 		featureType: featureType,
 		geometry:    geometry,
-		properties:  props,
+		properties:  properties,
+	}, nil
+}
+
+func NewFeatureForRepository(id FeatureID, featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
+	return &Feature{
+		id:          id,
+		featureType: featureType,
+		geometry:    geometry,
+		properties:  properties,
 	}, nil
 }
 
@@ -48,4 +50,14 @@ func (f *Feature) Geometry() Geometry {
 
 func (f *Feature) Properties() map[string]any {
 	return f.properties
+}
+
+func UnmarshalProperties(properties json.RawMessage) (map[string]any, error) {
+	var props map[string]any
+	if len(properties) > 0 {
+		if err := json.Unmarshal(properties, &props); err != nil {
+			return nil, err
+		}
+	}
+	return props, nil
 }

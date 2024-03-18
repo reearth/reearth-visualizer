@@ -22,3 +22,10 @@ func (f *FeatureCollection) Features() []Feature {
 	}
 	return append([]Feature{}, f.features...)
 }
+
+func (f *FeatureCollection) AddFeature(feature Feature) {
+	if f == nil {
+		return
+	}
+	f.features = append(f.features, feature)
+}

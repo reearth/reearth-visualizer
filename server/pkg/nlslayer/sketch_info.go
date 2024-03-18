@@ -9,20 +9,11 @@ type SketchInfo struct {
 	featureCollection    *FeatureCollection
 }
 
-func NewSketchInfo(customPropertySchema *json.RawMessage, featureCollection *FeatureCollection) (*SketchInfo, error) {
-	var schemaPtr *map[string]any
-	if customPropertySchema != nil && len(*customPropertySchema) > 0 {
-		schema := make(map[string]any)
-		if err := json.Unmarshal(*customPropertySchema, &schema); err != nil {
-			return nil, err
-		}
-		schemaPtr = &schema
-	}
-
+func NewSketchInfo(customPropertySchema *map[string]any, featureCollection *FeatureCollection) *SketchInfo {
 	return &SketchInfo{
-		customPropertySchema: schemaPtr,
+		customPropertySchema: customPropertySchema,
 		featureCollection:    featureCollection,
-	}, nil
+	}
 }
 
 func (s *SketchInfo) CustomPropertySchema() *map[string]any {
@@ -42,4 +33,17 @@ func (s *SketchInfo) Clone() *SketchInfo {
 		customPropertySchema: s.customPropertySchema,
 		featureCollection:    s.featureCollection,
 	}
+}
+
+func UnmarshalcustomPropertySchema(customPropertySchema *json.RawMessage) (*map[string]any, error) {
+	var schemaPtr *map[string]any
+	if customPropertySchema != nil && len(*customPropertySchema) > 0 {
+		schema := make(map[string]any)
+		if err := json.Unmarshal(*customPropertySchema, &schema); err != nil {
+			return nil, err
+		}
+		schemaPtr = &schema
+	}
+
+	return schemaPtr, nil
 }
