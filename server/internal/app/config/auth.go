@@ -10,12 +10,12 @@ import (
 )
 
 type AuthConfig struct {
-	ISS      string
-	AUD      []string
-	ALG      *string
-	TTL      *int
-	ClientID *string
-	JWKSURI  *string
+	ISS      string   `pp:",omitempty"`
+	AUD      []string `pp:",omitempty"`
+	ALG      *string  `pp:",omitempty"`
+	TTL      *int     `pp:",omitempty"`
+	ClientID *string  `pp:",omitempty"`
+	JWKSURI  *string  `pp:",omitempty"`
 }
 
 func (a AuthConfig) JWTProvider() appx.JWTProvider {
@@ -56,11 +56,11 @@ func (a AuthConfigs) JWTProviders() []appx.JWTProvider {
 }
 
 type Auth0Config struct {
-	Domain       string
-	Audience     string
-	ClientID     string
-	ClientSecret string
-	WebClientID  string
+	Domain       string `pp:",omitempty"`
+	Audience     string `pp:",omitempty"`
+	ClientID     string `pp:",omitempty"`
+	ClientSecret string `pp:",omitempty"`
+	WebClientID  string `pp:",omitempty"`
 }
 
 func (c Auth0Config) AuthConfigForWeb() *AuthConfig {
@@ -106,9 +106,9 @@ func (c Auth0Config) Configs() (res AuthConfigs) {
 }
 
 type CognitoConfig struct {
-	UserPoolID string
-	Region     string
-	ClientID   string
+	UserPoolID string `pp:",omitempty"`
+	Region     string `pp:",omitempty"`
+	ClientID   string `pp:",omitempty"`
 }
 
 func (c CognitoConfig) Configs() AuthConfigs {
