@@ -58,6 +58,10 @@ export const AppRoutes = () => {
       element: <RootPage />,
     },
     {
+      path: "auth/*",
+      element: <RootPage />,
+    },
+    {
       path: "login",
       element: <LoginPage />,
     },
@@ -68,6 +72,10 @@ export const AppRoutes = () => {
     {
       path: "password-reset",
       element: <PasswordResetPage />,
+    },
+    {
+      path: "dashboard",
+      element: <Dashboard />,
     },
     {
       path: "dashboard/:workspaceId",

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGetTeamsQuery } from "@reearth/classic/gql";
@@ -24,9 +24,7 @@ export default () => {
     setCurrentUserId(data?.me?.id);
   }
 
-  const workspaceId = useMemo(() => {
-    return currentWorkspace?.id || data?.me?.myTeam.id;
-  }, [currentWorkspace?.id, data?.me?.myTeam.id]);
+  const workspaceId = currentWorkspace?.id || data?.me?.myTeam?.id;
 
   const verifySignup = useCallback(
     async (token: string) => {
@@ -64,10 +62,10 @@ export default () => {
     } else if (!isAuthenticated && !isLoading) {
       login();
     } else {
-      if (currentWorkspace || !data || !workspaceId) return;
+      if (!data?.me) return;
       setCurrentUserId(data?.me?.id);
-      setCurrentWorkspace(data.me?.myTeam);
-      navigate(`/dashboard/${workspaceId}`);
+      setCurrentWorkspace(data.me?.myTeam ?? undefined);
+      navigate(`/dashboard${workspaceId ? "/" + workspaceId : ""}`);
     }
   }, [
     isAuthenticated,

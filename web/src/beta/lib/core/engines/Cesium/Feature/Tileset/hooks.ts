@@ -184,7 +184,7 @@ const useFeature = ({
   layer,
   viewer,
   featureIndex,
-  selectedFeatureIds,
+  selectedFeatureIdsRef,
   evalFeature,
   onComputedFeatureFetch,
   shouldUseFeatureIndex,
@@ -197,16 +197,13 @@ const useFeature = ({
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (f: Feature[], cf: ComputedFeature[]) => void;
   featureIndex: TilesetFeatureIndex;
-  selectedFeatureIds: string[];
+  selectedFeatureIdsRef: MutableRefObject<string[]>;
   shouldUseFeatureIndex?: boolean;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
   const cachedFeatureIds = useRef(new Set<string>());
   const layerId = layer?.id || id;
-
-  const selectedFeatureIdsRef = useRef(selectedFeatureIds);
-  selectedFeatureIdsRef.current = selectedFeatureIds;
 
   const attachComputedFeature = useCallback(
     async (feature?: CachedFeature) => {
@@ -273,7 +270,7 @@ const useFeature = ({
       }
       return;
     },
-    [evalFeature, layerId, viewer, shouldUseFeatureIndex],
+    [evalFeature, layerId, viewer, shouldUseFeatureIndex, selectedFeatureIdsRef],
   );
 
   const handleTilesetLoad = useCallback(
@@ -455,6 +452,7 @@ export const useHooks = ({
     experimental_clipping,
     apiKey,
     selectedFeatureColor,
+    disableIndexingFeature,
   } = property ?? {};
   const {
     width,
@@ -474,7 +472,7 @@ export const useHooks = ({
 
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type, idProperty } = useData(layer);
-  const shouldUseFeatureIndex = !!idProperty;
+  const shouldUseFeatureIndex = !disableIndexingFeature && !!idProperty;
 
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
@@ -535,7 +533,7 @@ export const useHooks = ({
     [id, layer?.id, featureIndex, shouldUseFeatureIndex],
   );
 
-  const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
+  const selectedFeatureIdsRef = useRef<string[]>([]);
   const selectedFeatureColorRef = useRef(selectedFeatureColor);
   selectedFeatureColorRef.current = selectedFeatureColor;
   const [selectedFeatureColorMap] = useState(() => new Map<string, Color>());
@@ -545,8 +543,8 @@ export const useHooks = ({
     Object.assign(tilesetRef.current, {
       onSelectFeature: (f: Cesium3DTileFeature) => {
         const tag = getTag(f);
-        setSelectedFeatureIds(f => (tag?.featureId ? [...f, tag.featureId] : f));
         if (tag?.featureId) {
+          selectedFeatureIdsRef.current.push(tag.featureId);
           selectedFeatureColorMap.set(tag.featureId, f.color);
         }
         if (selectedFeatureColorRef.current) {
@@ -555,7 +553,11 @@ export const useHooks = ({
       },
       onUnselectFeature: (f: Cesium3DTileFeature) => {
         const tag = getTag(f);
-        setSelectedFeatureIds(f => (tag?.featureId ? f.filter(v => v !== tag.featureId) : f));
+        if (tag?.featureId) {
+          selectedFeatureIdsRef.current = selectedFeatureIdsRef.current.filter(
+            v => v !== tag.featureId,
+          );
+        }
         f.color = selectedFeatureColorMap.get(tag?.featureId ?? "") ?? DEFAULT_FEATURE_COLOR;
       },
     });
@@ -570,7 +572,7 @@ export const useHooks = ({
     evalFeature,
     onComputedFeatureFetch,
     featureIndex,
-    selectedFeatureIds,
+    selectedFeatureIdsRef,
     shouldUseFeatureIndex,
   });
 

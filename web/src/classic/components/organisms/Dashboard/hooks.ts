@@ -54,7 +54,7 @@ export default (workspaceId?: string) => {
 
   const workspaces = data?.me?.teams;
   const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
-  const personal = workspaceId === data?.me?.myTeam.id;
+  const personal = !!workspaceId && workspaceId === data?.me?.myTeam?.id;
   const gqlCache = useApolloClient().cache;
 
   useEffect(() => {
@@ -167,9 +167,15 @@ export default (workspaceId?: string) => {
   }, [projectData?.projects.pageInfo, fetchMore, hasMoreProjects]);
 
   const [createNewProject] = useCreateProjectMutation();
-  const [createScene] = useCreateSceneMutation({ refetchQueries: ["GetProjects"] });
+  const [createScene] = useCreateSceneMutation({
+    refetchQueries: ["GetProjects"],
+  });
   const { useCreateStory } = useStorytellingFetcher();
   const { useCreateStoryPage } = useStorytellingFetcher();
+
+  const handleProjectCreateClick = useCallback((): boolean => {
+    return !!workspaceId;
+  }, [workspaceId]);
 
   const handleProjectCreate = useCallback(
     async (data: {
@@ -288,6 +294,7 @@ export default (workspaceId?: string) => {
     selectedAsset,
     assetModalOpened,
     handleProjectCreate,
+    handleProjectCreateClick,
     handleWorkspaceCreate,
     handleWorkspaceChange,
     handleModalOpen,

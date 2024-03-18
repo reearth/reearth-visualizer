@@ -7,9 +7,12 @@ import { metricsSizes } from "@reearth/classic/theme";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { Workspace as WorkspaceType } from "../WorkspaceList";
-
-export type Workspace = WorkspaceType;
+export type Workspace = {
+  id: string;
+  name: string;
+  personal: boolean;
+  members: { userId: string; user?: { name: string } }[];
+};
 
 export type Props = {
   className?: string;
