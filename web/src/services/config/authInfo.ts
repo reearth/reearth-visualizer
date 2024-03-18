@@ -27,7 +27,8 @@ export function getSignInCallbackUrl() {
 
 export function logInToTenant() {
   const tenantName = getLogginInTenantName();
-  if (tenantName) {
+  const q = new URLSearchParams(window.location.search);
+  if (tenantName && q.get("code")) {
     window.localStorage.setItem(tenantKey, tenantName);
   }
 }

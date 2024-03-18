@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 
-import { logInToTenant } from "@reearth/services/config";
-
 import { useAuth0Auth } from "./auth0Auth";
 import { AuthContext } from "./authProvider";
 
@@ -42,7 +40,6 @@ export function useCleanUrl(): [string | undefined, boolean] {
 
     history.replaceState(null, document.title, url);
 
-    logInToTenant();
     setDone(true);
   }, [isAuthenticated, isLoading]);
 

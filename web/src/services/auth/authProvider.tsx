@@ -1,7 +1,7 @@
 import { Auth0Provider } from "@auth0/auth0-react";
 import React, { createContext, ReactNode, useState } from "react";
 
-import { getAuthInfo, getSignInCallbackUrl } from "../config";
+import { getAuthInfo, getSignInCallbackUrl, logInToTenant } from "@reearth/services/config";
 
 import { useAuth0Auth } from "./auth0Auth";
 import type { AuthHook } from "./authHook";
@@ -20,7 +20,10 @@ const CognitoWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export const AuthProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
-  const [authInfo] = useState(() => getAuthInfo());
+  const [authInfo] = useState(() => {
+    logInToTenant(); // note that it includes side effect
+    return getAuthInfo();
+  });
 
   if (authInfo?.authProvider === "auth0") {
     const domain = authInfo.auth0Domain;
