@@ -527,10 +527,10 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	return duplicatedLayer, nil
 }
 
-func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (nlslayer.Feature, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return
+		return nlslayer.Feature{}, err
 	}
 
 	ctx = tx.Context()
@@ -542,17 +542,17 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 
 	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
-		return nil, err
+		return nlslayer.Feature{}, err
 	}
 
 	geometry, err := nlslayer.UnmarshalGeometry(inp.Geometry)
 	if err != nil {
-		return nil, err
+		return nlslayer.Feature{}, err
 	}
 
 	properties, err := nlslayer.UnmarshalProperties(inp.Properties)
 	if err != nil {
-		return nil, err
+		return nlslayer.Feature{}, err
 	}
 
 	feature, err := nlslayer.NewFeature(
@@ -561,7 +561,7 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		properties,
 	)
 	if err != nil {
-		return nil, err
+		return nlslayer.Feature{}, err
 	}
 
 	if layer.Sketch() == nil {
@@ -575,7 +575,7 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 			featureCollection,
 		)
 		if err != nil {
-			return nil, err
+			return nlslayer.Feature{}, err
 		}
 
 		layer.SetIsSketch(true)
@@ -586,9 +586,9 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 
 	err = i.nlslayerRepo.Save(ctx, layer)
 	if err != nil {
-		return nil, err
+		return nlslayer.Feature{}, err
 	}
 
 	tx.Commit()
-	return layer, nil
+	return *feature, nil
 }
