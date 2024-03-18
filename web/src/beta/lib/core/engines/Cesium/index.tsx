@@ -58,6 +58,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerEdit,
     onMount,
     onLayerVisibility,
+    onLayerLoad,
   },
   ref,
 ) => {
@@ -99,6 +100,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerEdit,
     onMount,
     onLayerVisibility,
+    onLayerLoad,
   });
 
   return (
