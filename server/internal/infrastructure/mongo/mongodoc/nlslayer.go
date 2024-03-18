@@ -87,8 +87,7 @@ type NLSLayerMultiPolygonDocument struct {
 }
 
 type NLSLayerGeometryCollectionDocument struct {
-	Type string
-	// Geometries []NLSLayerGeometryDocument
+	Type       string
 	Geometries []map[string]any
 }
 
@@ -341,39 +340,41 @@ func ToModelNLSLayerGeometry(g map[string]any) (nlslayer.Geometry, error) {
 		return nil, errors.New("geometry type is missing or not a string")
 	}
 
+	rawCoordinates, ok := g["coordinates"]
+	if !ok {
+		return nil, errors.New("coordinates are missing")
+	}
+
+	coordinates, err := convertCoordinates(geometryType, rawCoordinates)
+	if err != nil {
+		return nil, err
+	}
+
 	switch geometryType {
 	case "Point":
-		rawCoordinates, ok := g["coordinates"]
+		coords, ok := coordinates.([]float64)
 		if !ok {
-			return nil, errors.New("coordinates of point are missing")
+			return nil, errors.New("invalid coordinates for Point")
 		}
-		var coordinates []float64
-		for _, rawCoord := range rawCoordinates.(primitive.A) {
-			coord, ok := rawCoord.(float64)
-			if !ok {
-				return nil, errors.New("invalid coordinate format of point")
-			}
-			coordinates = append(coordinates, coord)
-		}
-		return nlslayer.NewPoint(geometryType, coordinates), nil
+		return nlslayer.NewPoint(geometryType, coords), nil
 	case "LineString":
-		coordinates, ok := g["coordinates"].([][]float64)
+		coords, ok := coordinates.([][]float64)
 		if !ok {
-			return nil, errors.New("coordinates of line string are missing")
+			return nil, errors.New("invalid coordinates for LineString")
 		}
-		return nlslayer.NewLineString(geometryType, coordinates), nil
+		return nlslayer.NewLineString(geometryType, coords), nil
 	case "Polygon":
-		coordinates, ok := g["coordinates"].([][][]float64)
+		coords, ok := coordinates.([][][]float64)
 		if !ok {
-			return nil, errors.New("coordinates of polygon are missing")
+			return nil, errors.New("invalid coordinates for Polygon")
 		}
-		return nlslayer.NewPolygon(geometryType, coordinates), nil
+		return nlslayer.NewPolygon(geometryType, coords), nil
 	case "MultiPolygon":
-		coordinates, ok := g["coordinates"].([][][][]float64)
+		coords, ok := coordinates.([][][][]float64)
 		if !ok {
-			return nil, errors.New("coordinates of multi polygon are missing")
+			return nil, errors.New("invalid coordinates for MultiPolygon")
 		}
-		return nlslayer.NewMultiPolygon(geometryType, coordinates), nil
+		return nlslayer.NewMultiPolygon(geometryType, coords), nil
 	case "GeometryCollection":
 		geometries, ok := g["geometries"].([]map[string]any)
 		if !ok {
@@ -390,6 +391,104 @@ func ToModelNLSLayerGeometry(g map[string]any) (nlslayer.Geometry, error) {
 		return nlslayer.NewGeometryCollection(geometryType, geometryList), nil
 	}
 	return nil, errors.New("invalid geometry type")
+}
+
+func convertCoordinates(geometryType string, rawCoordinates interface{}) (interface{}, error) {
+	switch geometryType {
+	case "Point":
+		var coords []float64
+		for _, rawCoord := range rawCoordinates.(primitive.A) {
+			coord, ok := rawCoord.(float64)
+			if !ok {
+				return nil, errors.New("invalid coordinate format")
+			}
+			coords = append(coords, coord)
+		}
+		return coords, nil
+	case "LineString":
+		var coords [][]float64
+		for _, rawCoord := range rawCoordinates.([]primitive.A) {
+			var coord []float64
+			for _, rawCoord2 := range rawCoord {
+				coord2, ok := rawCoord2.(float64)
+				if !ok {
+					return nil, errors.New("invalid coordinate format")
+				}
+				coord = append(coord, coord2)
+			}
+			coords = append(coords, coord)
+		}
+		return coords, nil
+	case "Polygon":
+		var coords [][][]float64
+		rawCoords, ok := rawCoordinates.([]interface{})
+		if !ok {
+			return nil, errors.New("coordinates of polygon are not a slice")
+		}
+		for _, rawCoord := range rawCoords {
+			rawCoordSlice, ok := rawCoord.(primitive.A)
+			if !ok {
+				return nil, errors.New("polygon coordinates are not a slice of slices")
+			}
+			var coord [][]float64
+			for _, rawCoord2 := range rawCoordSlice {
+				rawCoord2Slice, ok := rawCoord2.(primitive.A)
+				if !ok {
+					return nil, errors.New("polygon inner coordinates are not a slice")
+				}
+				var coord2 []float64
+				for _, rawCoord3 := range rawCoord2Slice {
+					coord3, ok := rawCoord3.(float64)
+					if !ok {
+						return nil, errors.New("invalid coordinate format in polygon")
+					}
+					coord2 = append(coord2, coord3)
+				}
+				coord = append(coord, coord2)
+			}
+			coords = append(coords, coord)
+		}
+		return coords, nil
+	case "MultiPolygon":
+		var coords [][][][]float64
+		rawCoords, ok := rawCoordinates.([]interface{})
+		if !ok {
+			return nil, errors.New("coordinates of multi polygon are not a slice")
+		}
+		for _, rawCoord := range rawCoords {
+			rawCoordSlice, ok := rawCoord.(primitive.A)
+			if !ok {
+				return nil, errors.New("multi polygon coordinates are not a slice of slices")
+			}
+			var coord [][][]float64
+			for _, rawCoord2 := range rawCoordSlice {
+				rawCoord2Slice, ok := rawCoord2.(primitive.A)
+				if !ok {
+					return nil, errors.New("multi polygon inner coordinates are not a slice")
+				}
+				var coord2 [][]float64
+				for _, rawCoord3 := range rawCoord2Slice {
+					rawCoord3Slice, ok := rawCoord3.(primitive.A)
+					if !ok {
+						return nil, errors.New("multi polygon inner inner coordinates are not a slice")
+					}
+					var coord3 []float64
+					for _, rawCoord4 := range rawCoord3Slice {
+						coord4, ok := rawCoord4.(float64)
+						if !ok {
+							return nil, errors.New("invalid coordinate format in multi polygon")
+						}
+						coord3 = append(coord3, coord4)
+					}
+					coord2 = append(coord2, coord3)
+				}
+				coord = append(coord, coord2)
+			}
+			coords = append(coords, coord)
+		}
+		return coords, nil
+	}
+	return nil, errors.New("unsupported coordinates type")
 }
 
 func NewNLSInfobox(ib *nlslayer.Infobox) *NLSLayerInfoboxDocument {
@@ -445,38 +544,21 @@ func NewNLSLayerFeature(f nlslayer.Feature) NLSLayerFeatureDocument {
 	}
 }
 
-// func NewNLSLayerGeometry(g nlslayer.Geometry) NLSLayerGeometryDocument {
 func NewNLSLayerGeometry(g nlslayer.Geometry) map[string]any {
 	gMap := make(map[string]any)
 	switch g := g.(type) {
 	case *nlslayer.Point:
 		gMap["type"] = g.PointType()
 		gMap["coordinates"] = g.Coordinates()
-		// return NLSLayerPointDocument{
-		// 	Type:        g.PointType(),
-		// 	Coordinates: g.Coordinates(),
-		// }
 	case *nlslayer.LineString:
 		gMap["type"] = g.LineStringType()
 		gMap["coordinates"] = g.Coordinates()
-		// return NLSLayerLineString{
-		// 	Type:        g.LineStringType(),
-		// 	Coordinates: g.Coordinates(),
-		// }
 	case *nlslayer.Polygon:
 		gMap["type"] = g.PolygonType()
 		gMap["coordinates"] = g.Coordinates()
-		// return NLSLayerPolygonDocument{
-		// 	Type:        g.PolygonType(),
-		// 	Coordinates: g.Coordinates(),
-		// }
 	case *nlslayer.MultiPolygon:
 		gMap["type"] = g.MultiPolygonType()
 		gMap["coordinates"] = g.Coordinates()
-		// return NLSLayerMultiPolygonDocument{
-		// 	Type:        g.MultiPolygonType(),
-		// 	Coordinates: g.Coordinates(),
-		// }
 	case *nlslayer.GeometryCollection:
 		geometries := make([]NLSLayerGeometryDocument, 0, len(g.Geometries()))
 		for _, g := range g.Geometries() {
@@ -484,10 +566,6 @@ func NewNLSLayerGeometry(g nlslayer.Geometry) map[string]any {
 		}
 		gMap["type"] = g.GeometryCollectionType()
 		gMap["geometries"] = geometries
-		// return NLSLayerGeometryCollectionDocument{
-		// 	Type:       g.GeometryCollectionType(),
-		// 	Geometries: geometries,
-		// }
 	}
 	return gMap
 }
