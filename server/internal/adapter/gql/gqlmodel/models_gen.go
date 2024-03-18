@@ -555,7 +555,7 @@ type DuplicateStylePayload struct {
 type Feature struct {
 	Type       string   `json:"type"`
 	Geometry   Geometry `json:"geometry"`
-	ID         *ID      `json:"id,omitempty"`
+	ID         ID       `json:"id"`
 	Properties JSON     `json:"properties,omitempty"`
 }
 

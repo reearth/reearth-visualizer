@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/nlslayer"
 )
 
 func (r *mutationResolver) AddGeoJSONFeature(ctx context.Context, input gqlmodel.AddGeoJSONFeatureInput) (*gqlmodel.Feature, error) {
@@ -41,33 +42,65 @@ func (r *mutationResolver) AddGeoJSONFeature(ctx context.Context, input gqlmodel
 		return nil, err
 	}
 
-	fmt.Println(res)
+	featureGeometry, err := convertGeometry(res.Geometry())
+	if err != nil {
+		return nil, err
+	}
 
 	return &gqlmodel.Feature{
-		Type: "Type",
-		Geometry: gqlmodel.Point{
-			Type:             "Point",
-			PointCoordinates: []float64{102.0, 0.5},
-		},
-		ID:         nil,
-		Properties: nil,
+		ID:         gqlmodel.IDFrom(res.ID()),
+		Type:       res.FeatureType(),
+		Geometry:   featureGeometry,
+		Properties: res.Properties(),
 	}, nil
 }
 
 func (r *mutationResolver) UpdateGeoJSONFeature(ctx context.Context, input gqlmodel.UpdateGeoJSONFeatureInput) (*gqlmodel.Feature, error) {
-	return &gqlmodel.Feature{
-		Type: "Type",
-		Geometry: gqlmodel.Point{
-			Type:             "Point",
-			PointCoordinates: []float64{102.0, 0.5},
-		},
-		ID:         nil,
-		Properties: nil,
-	}, nil
+	return &gqlmodel.Feature{}, nil
 }
 
 func (r *mutationResolver) DeleteGeoJSONFeature(ctx context.Context, input gqlmodel.DeleteGeoJSONFeatureInput) (*gqlmodel.DeleteGeoJSONFeaturePayload, error) {
 	return &gqlmodel.DeleteGeoJSONFeaturePayload{
 		DeletedFeatureID: "",
 	}, nil
+}
+
+func convertGeometry(nlslayerGeom nlslayer.Geometry) (gqlmodel.Geometry, error) {
+	switch geom := nlslayerGeom.(type) {
+	case *nlslayer.Point:
+		return gqlmodel.Point{
+			Type:             geom.Type,
+			PointCoordinates: geom.CoordinatesVal,
+		}, nil
+	case *nlslayer.LineString:
+		return gqlmodel.LineString{
+			Type:                  geom.Type,
+			LineStringCoordinates: geom.CoordinatesVal,
+		}, nil
+	case *nlslayer.Polygon:
+		return gqlmodel.Polygon{
+			Type:               geom.Type,
+			PolygonCoordinates: geom.CoordinatesVal,
+		}, nil
+	case *nlslayer.MultiPolygon:
+		return gqlmodel.MultiPolygon{
+			Type:                    geom.Type,
+			MultiPolygonCoordinates: geom.CoordinatesVal,
+		}, nil
+	case *nlslayer.GeometryCollection:
+		var geometries []gqlmodel.Geometry
+		for _, g := range geom.GeometriesVal {
+			convertedGeom, err := convertGeometry(g)
+			if err != nil {
+				return nil, err
+			}
+			geometries = append(geometries, convertedGeom)
+		}
+		return gqlmodel.GeometryCollection{
+			Type:       geom.Type,
+			Geometries: geometries,
+		}, nil
+	default:
+		return nil, fmt.Errorf("unsupported geometry type: %T", nlslayerGeom)
+	}
 }

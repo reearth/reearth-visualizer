@@ -8729,7 +8729,7 @@ union Geometry = Point | LineString | Polygon | MultiPolygon | GeometryCollectio
 type Feature {
     type: String!
     geometry: Geometry!
-    id: ID
+    id: ID!
     properties: JSON
 }
 
@@ -18973,11 +18973,14 @@ func (ec *executionContext) _Feature_id(ctx context.Context, field graphql.Colle
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.ID)
+	res := resTmp.(gqlmodel.ID)
 	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Feature_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -64854,6 +64857,9 @@ func (ec *executionContext) _Feature(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "id":
 			out.Values[i] = ec._Feature_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "properties":
 			out.Values[i] = ec._Feature_properties(ctx, field, obj)
 		default:
