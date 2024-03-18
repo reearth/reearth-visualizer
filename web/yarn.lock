@@ -5861,7 +5861,7 @@
     lodash-es "4.17.21"
     lru-cache "10.2.0"
     pbf "3.2.1"
-    threads "^1.7.0"
+    threads "1.7.0"
 
 "@remix-run/router@1.14.0":
   version "1.14.0"
@@ -18550,7 +18550,7 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
 
-threads@^1.7.0:
+threads@1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/threads/-/threads-1.7.0.tgz#d9e9627bfc1ef22ada3b733c2e7558bbe78e589c"
   integrity sha512-Mx5NBSHX3sQYR6iI9VYbgHKBLisyB+xROCBGjjWm1O9wb9vfLxdaGtmT/KCjUqMsSNW6nERzCW3T6H43LqjDZQ==

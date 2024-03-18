@@ -12,7 +12,7 @@ export const useMVT = ({
   isVisible,
   property,
   layer,
-}: Pick<Props, "isVisible" | "property" | "layer" | "evalFeature">) => {
+}: Pick<Props, "isVisible" | "property" | "layer">) => {
   const { show = true, minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
