@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 
 export type GeneralGASettingsType = {
-  enableGA?: boolean;
+  enableGa?: boolean;
   trackingId?: string;
 };
 
 const isGa4TrackingId = (trackingId: string) => trackingId.startsWith("G-");
 
-export const useGA = ({ enableGA, trackingId }: GeneralGASettingsType) => {
+export const useGA = ({ enableGa, trackingId }: GeneralGASettingsType) => {
   useEffect(() => {
-    const isEnabled = !!enableGA;
+    const isEnabled = !!enableGa;
 
     if (!isEnabled || !trackingId) return;
 
@@ -20,5 +20,5 @@ export const useGA = ({ enableGA, trackingId }: GeneralGASettingsType) => {
     };
 
     loadGaModule();
-  }, [enableGA, trackingId]);
+  }, [enableGa, trackingId]);
 };
