@@ -1,12 +1,5 @@
 import { lazy } from "react";
-import {
-  Navigate,
-  Route,
-  useParams,
-  createBrowserRouter,
-  RouterProvider,
-  createRoutesFromElements,
-} from "react-router-dom";
+import { Navigate, useParams, createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import RootPage from "@reearth/classic/components/pages/Authentication/RootPage";
 import Dashboard from "@reearth/classic/components/pages/Dashboard";
@@ -40,52 +33,101 @@ const GraphQLPlayground = lazy(() => import("@reearth/beta/pages/GraphQLPlaygrou
 const PluginEditor = lazy(() => import("@reearth/classic/components/pages/PluginEditor"));
 
 export const AppRoutes = () => {
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <>
-        {/* Beta routes - start */}
-        <Route path="scene/:sceneId/:tab" element={<BetaEditor />} />
-        <Route path="settings/project/:projectId/:tab?/:subId?" element={<BetaProjectSettings />} />
-        <Route path="graphql" element={<GraphQLPlayground />} />
-        {/* Beta routes - end */}
-        {/* classic routes - start */}
-        <Route index={true} element={<RootPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignupPage />} />
-        <Route path="password-reset" element={<PasswordResetPage />} />
-        <Route path="dashboard/:workspaceId" element={<Dashboard />} />
-        <Route path="edit/:sceneId">
-          <Route index={true} element={<EarthEditor />} />
-          <Route path="preview" element={<Preview />} />
-        </Route>
-        <Route path="plugin-editor" element={<PluginEditor />} />
-        <Route path="settings">
-          <Route index={true} element={<Navigate to="/settings/account" />} />
-          <Route path="account" element={<AccountSettings />} />
-          <Route path="workspaces">
-            <Route index={true} element={<WorkspaceList />} />
-            <Route path=":workspaceId">
-              <Route index={true} element={<WorkspaceSettings />} />
-              <Route path="projects" element={<SettingsProjectList />} />
-              <Route path="asset" element={<AssetSettings />} />
-            </Route>
-          </Route>
-          <Route path="projects/:projectId">
-            <Route index={true} element={<ProjectSettings />} />
-            <Route path="public" element={<PublicSettings />} />
-            <Route path="dataset" element={<DatasetSettings />} />
-            <Route path="plugins" element={<PluginSettings />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/settings/account" />} />
-        </Route>
-        {...redirects.map(([from, to]) => (
-          <Route key={from} path={from} element={<Redirect to={to} />} />
-        ))}
-        <Route path="*" element={<NotFound />} />
-        {/* classic routes - end */}
-      </>,
-    ),
-  );
+  const redirectRoutes = redirects.map(([from, to]) => ({
+    path: from,
+    element: <Redirect to={to} />,
+  }));
+
+  const router = createBrowserRouter([
+    /* Beta routes - start */
+    {
+      path: "scene/:sceneId/:tab",
+      element: <BetaEditor />,
+    },
+    {
+      path: "settings/project/:projectId/:tab?/:subId?",
+      element: <BetaProjectSettings />,
+    },
+    {
+      path: "graphql",
+      element: <GraphQLPlayground />,
+    },
+    /* Beta routes - end */
+    {
+      index: true,
+      element: <RootPage />,
+    },
+    {
+      path: "login",
+      element: <LoginPage />,
+    },
+    {
+      path: "signup",
+      element: <SignupPage />,
+    },
+    {
+      path: "password-reset",
+      element: <PasswordResetPage />,
+    },
+    {
+      path: "dashboard/:workspaceId",
+      element: <Dashboard />,
+    },
+    {
+      path: "edit/:sceneId",
+      children: [
+        {
+          index: true,
+          element: <EarthEditor />,
+        },
+        { path: "preview", element: <Preview /> },
+      ],
+    },
+    {
+      path: "plugin-editor",
+      element: <PluginEditor />,
+    },
+    {
+      path: "settings",
+      children: [
+        { index: true, element: <Navigate to="/settings/account" /> },
+        { path: "account", element: <AccountSettings /> },
+        {
+          path: "workspaces",
+          children: [
+            {
+              index: true,
+              element: <WorkspaceList />,
+            },
+            {
+              path: ":workspaceId",
+              children: [
+                { index: true, element: <WorkspaceSettings /> },
+                { path: "projects", element: <SettingsProjectList /> },
+                { path: "asset", element: <AssetSettings /> },
+              ],
+            },
+          ],
+        },
+        {
+          path: "projects/:projectId",
+          children: [
+            { index: true, element: <ProjectSettings /> },
+            { path: "public", element: <PublicSettings /> },
+            { path: "dataset", element: <DatasetSettings /> },
+            { path: "plugins", element: <PluginSettings /> },
+          ],
+        },
+        { path: "*", element: <Navigate to="/settings/account" /> },
+      ],
+    },
+    ...redirectRoutes,
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ]);
+
   return <StyledRouter router={router} />;
 };
 

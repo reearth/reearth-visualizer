@@ -9,6 +9,7 @@ import type {
 import type {
   ComputedLayer,
   LayerEditEvent,
+  LayerLoadEvent,
   LayerSelectionReason,
   LayerVisibilityEvent,
 } from "@reearth/beta/lib/core/Map";
@@ -47,6 +48,7 @@ export type Props = PropsWithChildren<{
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
+  onLayerLoad: (cb: (e: LayerLoadEvent) => void) => void;
   onCameraForceHorizontalRollChange: (enable?: boolean) => void;
 }>;
 
