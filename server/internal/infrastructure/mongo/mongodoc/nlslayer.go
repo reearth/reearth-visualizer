@@ -1,12 +1,12 @@
 package mongodoc
 
 import (
-	"encoding/json"
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/exp/slices"
 )
 
@@ -48,7 +48,7 @@ type NLSLayerInfoboxDocument struct {
 }
 
 type NLSLayerSketchInfoDocument struct {
-	CustomPropertySchema *json.RawMessage
+	CustomPropertySchema *map[string]any
 	FeatureCollection    *NLSLayerFeatureCollectionDocument
 }
 
@@ -60,8 +60,8 @@ type NLSLayerFeatureCollectionDocument struct {
 type NLSLayerFeatureDocument struct {
 	ID         string
 	Type       string
-	Geometry   NLSLayerGeometryDocument
-	Properties json.RawMessage
+	Geometry   map[string]any
+	Properties map[string]any
 }
 
 type NLSLayerGeometryDocument interface{}
@@ -87,8 +87,9 @@ type NLSLayerMultiPolygonDocument struct {
 }
 
 type NLSLayerGeometryCollectionDocument struct {
-	Type       string
-	Geometries []NLSLayerGeometryDocument
+	Type string
+	// Geometries []NLSLayerGeometryDocument
+	Geometries []map[string]any
 }
 
 func NewNLSLayerConsumer(scenes []id.SceneID) *NLSLayerConsumer {
@@ -179,6 +180,10 @@ func (d *NLSLayerDocument) ModelSimple() (*nlslayer.NLSLayerSimple, error) {
 	if err2 != nil {
 		return nil, err
 	}
+	sketchInfo, err3 := ToModelNLSLayerSketchInfo(d.Sketch)
+	if err3 != nil {
+		return nil, err
+	}
 
 	return nlslayer.NewNLSLayerSimple().
 		ID(lid).
@@ -189,6 +194,8 @@ func (d *NLSLayerDocument) ModelSimple() (*nlslayer.NLSLayerSimple, error) {
 		Scene(sid).
 		// Simple
 		Config(NewNLSLayerConfig(d.Simple.Config)).
+		IsSketch(d.IsSketch).
+		Sketch(sketchInfo).
 		Build()
 }
 
@@ -204,6 +211,10 @@ func (d *NLSLayerDocument) ModelGroup() (*nlslayer.NLSLayerGroup, error) {
 	ib, err2 := ToModelNLSInfobox(d.Infobox)
 	if err2 != nil {
 		return nil, err2
+	}
+	sketchInfo, err3 := ToModelNLSLayerSketchInfo(d.Sketch)
+	if err3 != nil {
+		return nil, err
 	}
 
 	ids := make([]id.NLSLayerID, 0, len(d.Group.Children))
@@ -226,6 +237,8 @@ func (d *NLSLayerDocument) ModelGroup() (*nlslayer.NLSLayerGroup, error) {
 		Root(d.Group != nil && d.Group.Root).
 		Layers(nlslayer.NewIDList(ids)).
 		Config(NewNLSLayerConfig(d.Simple.Config)).
+		IsSketch(d.IsSketch).
+		Sketch(sketchInfo).
 		Build()
 }
 
@@ -276,6 +289,107 @@ func ToModelNLSInfobox(ib *NLSLayerInfoboxDocument) (*nlslayer.Infobox, error) {
 		blocks = append(blocks, ibf)
 	}
 	return nlslayer.NewInfobox(blocks, pid), nil
+}
+
+func ToModelNLSLayerSketchInfo(si *NLSLayerSketchInfoDocument) (*nlslayer.SketchInfo, error) {
+	if si == nil {
+		return nil, nil
+	}
+
+	features := make([]nlslayer.Feature, 0, len(si.FeatureCollection.Features))
+	for _, f := range si.FeatureCollection.Features {
+		id, err := id.FeatureIDFrom(f.ID)
+		if err != nil {
+			return nil, err
+		}
+		geometry, err := ToModelNLSLayerGeometry(f.Geometry)
+		if err != nil {
+			return nil, err
+		}
+		feature, err := nlslayer.NewFeatureForRepository(
+			id,
+			f.Type,
+			geometry,
+			f.Properties,
+		)
+		if err != nil {
+			return nil, err
+		}
+		features = append(features, *feature)
+	}
+
+	featureCollection := nlslayer.NewFeatureCollection(
+		si.FeatureCollection.Type,
+		features,
+	)
+
+	sketchInfo := nlslayer.NewSketchInfo(
+		si.CustomPropertySchema,
+		featureCollection,
+	)
+
+	return sketchInfo, nil
+}
+
+func ToModelNLSLayerGeometry(g map[string]any) (nlslayer.Geometry, error) {
+	if g == nil {
+		return nil, errors.New("geometry map is nil")
+	}
+
+	geometryType, ok := g["type"].(string)
+	if !ok {
+		return nil, errors.New("geometry type is missing or not a string")
+	}
+
+	switch geometryType {
+	case "Point":
+		rawCoordinates, ok := g["coordinates"]
+		if !ok {
+			return nil, errors.New("coordinates of point are missing")
+		}
+		var coordinates []float64
+		for _, rawCoord := range rawCoordinates.(primitive.A) {
+			coord, ok := rawCoord.(float64)
+			if !ok {
+				return nil, errors.New("invalid coordinate format of point")
+			}
+			coordinates = append(coordinates, coord)
+		}
+		return nlslayer.NewPoint(geometryType, coordinates), nil
+	case "LineString":
+		coordinates, ok := g["coordinates"].([][]float64)
+		if !ok {
+			return nil, errors.New("coordinates of line string are missing")
+		}
+		return nlslayer.NewLineString(geometryType, coordinates), nil
+	case "Polygon":
+		coordinates, ok := g["coordinates"].([][][]float64)
+		if !ok {
+			return nil, errors.New("coordinates of polygon are missing")
+		}
+		return nlslayer.NewPolygon(geometryType, coordinates), nil
+	case "MultiPolygon":
+		coordinates, ok := g["coordinates"].([][][][]float64)
+		if !ok {
+			return nil, errors.New("coordinates of multi polygon are missing")
+		}
+		return nlslayer.NewMultiPolygon(geometryType, coordinates), nil
+	case "GeometryCollection":
+		geometries, ok := g["geometries"].([]map[string]any)
+		if !ok {
+			return nil, errors.New("geometries of geometry collection are missing")
+		}
+		geometryList := make([]nlslayer.Geometry, 0, len(geometries))
+		for _, g := range geometries {
+			geometry, err := ToModelNLSLayerGeometry(g)
+			if err != nil {
+				return nil, err
+			}
+			geometryList = append(geometryList, geometry)
+		}
+		return nlslayer.NewGeometryCollection(geometryType, geometryList), nil
+	}
+	return nil, errors.New("invalid geometry type")
 }
 
 func NewNLSInfobox(ib *nlslayer.Infobox) *NLSLayerInfoboxDocument {
@@ -331,37 +445,49 @@ func NewNLSLayerFeature(f nlslayer.Feature) NLSLayerFeatureDocument {
 	}
 }
 
-func NewNLSLayerGeometry(g nlslayer.Geometry) NLSLayerGeometryDocument {
+// func NewNLSLayerGeometry(g nlslayer.Geometry) NLSLayerGeometryDocument {
+func NewNLSLayerGeometry(g nlslayer.Geometry) map[string]any {
+	gMap := make(map[string]any)
 	switch g := g.(type) {
 	case *nlslayer.Point:
-		return NLSLayerPointDocument{
-			Type:        g.PointType(),
-			Coordinates: g.Coordinates(),
-		}
+		gMap["type"] = g.PointType()
+		gMap["coordinates"] = g.Coordinates()
+		// return NLSLayerPointDocument{
+		// 	Type:        g.PointType(),
+		// 	Coordinates: g.Coordinates(),
+		// }
 	case *nlslayer.LineString:
-		return NLSLayerLineString{
-			Type:        g.LineStringType(),
-			Coordinates: g.Coordinates(),
-		}
+		gMap["type"] = g.LineStringType()
+		gMap["coordinates"] = g.Coordinates()
+		// return NLSLayerLineString{
+		// 	Type:        g.LineStringType(),
+		// 	Coordinates: g.Coordinates(),
+		// }
 	case *nlslayer.Polygon:
-		return NLSLayerPolygonDocument{
-			Type:        g.PolygonType(),
-			Coordinates: g.Coordinates(),
-		}
+		gMap["type"] = g.PolygonType()
+		gMap["coordinates"] = g.Coordinates()
+		// return NLSLayerPolygonDocument{
+		// 	Type:        g.PolygonType(),
+		// 	Coordinates: g.Coordinates(),
+		// }
 	case *nlslayer.MultiPolygon:
-		return NLSLayerMultiPolygonDocument{
-			Type:        g.MultiPolygonType(),
-			Coordinates: g.Coordinates(),
-		}
+		gMap["type"] = g.MultiPolygonType()
+		gMap["coordinates"] = g.Coordinates()
+		// return NLSLayerMultiPolygonDocument{
+		// 	Type:        g.MultiPolygonType(),
+		// 	Coordinates: g.Coordinates(),
+		// }
 	case *nlslayer.GeometryCollection:
 		geometries := make([]NLSLayerGeometryDocument, 0, len(g.Geometries()))
 		for _, g := range g.Geometries() {
 			geometries = append(geometries, NewNLSLayerGeometry(g))
 		}
-		return NLSLayerGeometryCollectionDocument{
-			Type:       g.GeometryCollectionType(),
-			Geometries: geometries,
-		}
+		gMap["type"] = g.GeometryCollectionType()
+		gMap["geometries"] = geometries
+		// return NLSLayerGeometryCollectionDocument{
+		// 	Type:       g.GeometryCollectionType(),
+		// 	Geometries: geometries,
+		// }
 	}
-	return nil
+	return gMap
 }
