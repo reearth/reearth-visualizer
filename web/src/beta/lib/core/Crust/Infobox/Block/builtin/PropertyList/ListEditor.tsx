@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -57,14 +57,13 @@ const ListEditor: React.FC<Props> = ({
   onPropertyUpdate,
 }) => {
   const t = useT();
+  const [currentPropertyList, setCurrentPropertyList] = useState(propertyListField?.value);
 
-  // const [propertyList, setPropertyList] = useState(property?.propertyList?.value);
-
-  // useEffect(()=>{
-  //   if(displayTypeField?.value === "custom" && !propertyList){
-  //     setPropertyList(property?.propertyList?.value)
-  //   }
-  // }, [displayTypeField?.value, property?.propertyList?.value, propertyList])
+  useEffect(() => {
+    if (propertyListField?.value !== currentPropertyList) {
+      setCurrentPropertyList(propertyListField?.value);
+    }
+  }, [propertyListField?.value, currentPropertyList]);
 
   const handlePropertyValueUpdate = useCallback(
     (schemaGroupId?: string, propertyId?: string, fieldId?: string, vt?: any, itemId?: string) => {
@@ -80,6 +79,7 @@ const ListEditor: React.FC<Props> = ({
     async (idx: number) => {
       if (propertyListField) {
         const newValue = propertyListField.value.filter((_, i) => i !== idx);
+        setCurrentPropertyList(newValue);
         await handlePropertyValueUpdate(
           "default",
           propertyId,
@@ -113,14 +113,47 @@ const ListEditor: React.FC<Props> = ({
         <>
           <Text size="footnote">{propertyListField.title}</Text>
           <FieldWrapper>
-            {propertyListField?.value?.map((p, idx) => (
+            {currentPropertyList?.map((p, idx) => (
               <Field key={idx}>
                 <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                   <HandleIcon icon="dndHandle" />
-                  <StyledTextField value={p.key} />
+                  <StyledTextField
+                    value={p.key}
+                    onBlur={() => {
+                      handlePropertyValueUpdate(
+                        "default",
+                        propertyId,
+                        "propertyList",
+                        propertyListField.type,
+                      )(currentPropertyList);
+                    }}
+                    onChange={(newValue?: string) =>
+                      setCurrentPropertyList(list => {
+                        const newList = list || [];
+                        newList[idx].key = newValue ?? "";
+                        return newList;
+                      })
+                    }
+                  />
                 </div>
-                {/* <StyledText size="body">{p.title}</StyledText> */}
-                <StyledTextField value={p.value} />
+                <StyledTextField
+                  value={p.value}
+                  onBlur={() => {
+                    handlePropertyValueUpdate(
+                      "default",
+                      propertyId,
+                      "propertyList",
+                      propertyListField.type,
+                    )(currentPropertyList);
+                  }}
+                  onChange={(newValue?: string) =>
+                    setCurrentPropertyList(list => {
+                      const newList = list || [];
+                      newList[idx].value = newValue ?? "";
+                      return newList;
+                    })
+                  }
+                />
                 <StyledIcon icon="trash" onClick={() => handlePropertyValueRemove(idx)} />
               </Field>
             ))}
@@ -135,7 +168,7 @@ const ListEditor: React.FC<Props> = ({
                 "propertyList",
                 propertyListField.type,
               )([
-                ...(propertyListField.value || []),
+                ...(currentPropertyList || []),
                 {
                   key: `Field ${propertyListField.value.length + 1 || 1}`,
                   value: `Value ${propertyListField.value.length + 1 || 1}`,

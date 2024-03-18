@@ -8,8 +8,9 @@ export type Props = {
   description?: string;
   value?: string;
   placeholder?: string;
-  onChange?: (text: string) => void;
   disabled?: boolean;
+  onChange?: (text: string) => void;
+  onBlur?: () => void;
 };
 
 const TextField: React.FC<Props> = ({
@@ -20,10 +21,17 @@ const TextField: React.FC<Props> = ({
   placeholder,
   disabled,
   onChange,
+  onBlur,
 }) => {
   return (
     <Property className={className} name={name} description={description}>
-      <TextInput value={value} placeholder={placeholder} onChange={onChange} disabled={disabled} />
+      <TextInput
+        value={value}
+        placeholder={placeholder}
+        onChange={onChange}
+        onBlur={onBlur}
+        disabled={disabled}
+      />
     </Property>
   );
 };
