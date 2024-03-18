@@ -184,7 +184,7 @@ const useFeature = ({
   layer,
   viewer,
   featureIndex,
-  selectedFeatureIds,
+  selectedFeatureIdsRef,
   evalFeature,
   onComputedFeatureFetch,
   shouldUseFeatureIndex,
@@ -197,16 +197,13 @@ const useFeature = ({
   evalFeature: EvalFeature;
   onComputedFeatureFetch?: (f: Feature[], cf: ComputedFeature[]) => void;
   featureIndex: TilesetFeatureIndex;
-  selectedFeatureIds: string[];
+  selectedFeatureIdsRef: MutableRefObject<string[]>;
   shouldUseFeatureIndex?: boolean;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
   const cachedFeatureIds = useRef(new Set<string>());
   const layerId = layer?.id || id;
-
-  const selectedFeatureIdsRef = useRef(selectedFeatureIds);
-  selectedFeatureIdsRef.current = selectedFeatureIds;
 
   const attachComputedFeature = useCallback(
     async (feature?: CachedFeature) => {
@@ -273,58 +270,73 @@ const useFeature = ({
       }
       return;
     },
-    [evalFeature, layerId, viewer, shouldUseFeatureIndex],
+    [evalFeature, layerId, viewer, shouldUseFeatureIndex, selectedFeatureIdsRef],
   );
 
-  useEffect(
-    () =>
-      tileset.current?.tileLoad.addEventListener(async (t: Cesium3DTile) => {
-        if (t.tileset.isDestroyed()) return;
-        const features = new Set<Feature>();
-        await lookupFeatures(t.content, async (tileFeature, content, batchId) => {
-          const feature = (() => {
-            const normalFeature = makeFeatureFrom3DTile(tileFeature, content, idProperty);
-            const feature: CachedFeature = {
-              feature: normalFeature,
-              raw: tileFeature,
-            };
-            return feature;
-          })();
+  const handleTilesetLoad = useCallback(
+    async (t: Cesium3DTile) => {
+      if (t.tileset.isDestroyed()) return;
+      const features = new Set<Feature>();
+      await lookupFeatures(t.content, async (tileFeature, content, batchId) => {
+        const feature = (() => {
+          const normalFeature = makeFeatureFrom3DTile(tileFeature, content, idProperty);
+          const feature: CachedFeature = {
+            feature: normalFeature,
+            raw: tileFeature,
+          };
+          return feature;
+        })();
 
-          if (batchId) {
-            featureIndex.addFeature(content, batchId, feature.feature.id);
-          }
+        if (batchId && shouldUseFeatureIndex) {
+          featureIndex.addFeature(content, batchId, feature.feature.id);
+        }
 
-          await attachComputedFeature(feature);
-          cachedFeaturesRef.current.push(feature);
+        await attachComputedFeature(feature);
+        cachedFeaturesRef.current.push(feature);
 
-          cachedFeatureIds.current.add(feature.feature.id);
+        cachedFeatureIds.current.add(feature.feature.id);
 
-          // NOTE: Don't pass a large object like `properties`.
-          features.add(pick(feature.feature, ["id", "type", "range"]));
-        });
-        onComputedFeatureFetch?.(Array.from(features.values()), []);
-      }),
+        // NOTE: Don't pass a large object like `properties`.
+        features.add(pick(feature.feature, ["id", "type", "range"]));
+      });
+      onComputedFeatureFetch?.(Array.from(features.values()), []);
+    },
     [
-      tileset,
       cachedFeaturesRef,
       attachComputedFeature,
-      layerId,
       onComputedFeatureFetch,
       idProperty,
       featureIndex,
+      shouldUseFeatureIndex,
     ],
   );
-
+  const handleTilesetLoadRef = useRef(handleTilesetLoad);
+  handleTilesetLoadRef.current = handleTilesetLoad;
   useEffect(
     () =>
-      tileset.current?.tileUnload.addEventListener(async (t: Cesium3DTile) => {
-        if (t.tileset.isDestroyed()) return;
-        await lookupFeatures(t.content, async (tileFeature, content) => {
-          featureIndex.deleteFeature(makeFeatureId(tileFeature, content, idProperty));
-        });
-      }),
-    [tileset, idProperty, featureIndex],
+      tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) =>
+        handleTilesetLoadRef.current(t),
+      ),
+    [tileset],
+  );
+
+  const handleTilesetUnload = useCallback(
+    async (t: Cesium3DTile) => {
+      if (t.tileset.isDestroyed() || !shouldUseFeatureIndex) return;
+      await lookupFeatures(t.content, async (tileFeature, content) => {
+        featureIndex.deleteFeature(makeFeatureId(tileFeature, content, idProperty));
+      });
+    },
+    [idProperty, featureIndex, shouldUseFeatureIndex],
+  );
+  const handleTilesetUnloadRef = useRef(handleTilesetUnload);
+  handleTilesetUnloadRef.current = handleTilesetUnload;
+  useEffect(
+    () =>
+      tileset.current?.tileUnload.addEventListener((t: Cesium3DTile) =>
+        handleTilesetUnloadRef.current(t),
+      ),
+    [tileset],
   );
 
   useEffect(() => {
@@ -428,6 +440,9 @@ export const useHooks = ({
 }) => {
   const { viewer } = useCesium();
   const tilesetRef = useRef<Cesium3DTilesetType>();
+  const { onLayerLoad } = useContext();
+  const layerIdRef = useRef(layer?.id);
+  layerIdRef.current = layer?.id;
 
   const {
     tileset,
@@ -437,6 +452,7 @@ export const useHooks = ({
     experimental_clipping,
     apiKey,
     selectedFeatureColor,
+    disableIndexingFeature,
   } = property ?? {};
   const {
     width,
@@ -456,7 +472,7 @@ export const useHooks = ({
 
   const [style, setStyle] = useState<Cesium3DTileStyle>();
   const { url, type, idProperty } = useData(layer);
-  const shouldUseFeatureIndex = !!idProperty;
+  const shouldUseFeatureIndex = !disableIndexingFeature && !!idProperty;
 
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
@@ -517,7 +533,7 @@ export const useHooks = ({
     [id, layer?.id, featureIndex, shouldUseFeatureIndex],
   );
 
-  const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
+  const selectedFeatureIdsRef = useRef<string[]>([]);
   const selectedFeatureColorRef = useRef(selectedFeatureColor);
   selectedFeatureColorRef.current = selectedFeatureColor;
   const [selectedFeatureColorMap] = useState(() => new Map<string, Color>());
@@ -527,8 +543,8 @@ export const useHooks = ({
     Object.assign(tilesetRef.current, {
       onSelectFeature: (f: Cesium3DTileFeature) => {
         const tag = getTag(f);
-        setSelectedFeatureIds(f => (tag?.featureId ? [...f, tag.featureId] : f));
         if (tag?.featureId) {
+          selectedFeatureIdsRef.current.push(tag.featureId);
           selectedFeatureColorMap.set(tag.featureId, f.color);
         }
         if (selectedFeatureColorRef.current) {
@@ -537,7 +553,11 @@ export const useHooks = ({
       },
       onUnselectFeature: (f: Cesium3DTileFeature) => {
         const tag = getTag(f);
-        setSelectedFeatureIds(f => (tag?.featureId ? f.filter(v => v !== tag.featureId) : f));
+        if (tag?.featureId) {
+          selectedFeatureIdsRef.current = selectedFeatureIdsRef.current.filter(
+            v => v !== tag.featureId,
+          );
+        }
         f.color = selectedFeatureColorMap.get(tag?.featureId ?? "") ?? DEFAULT_FEATURE_COLOR;
       },
     });
@@ -552,7 +572,7 @@ export const useHooks = ({
     evalFeature,
     onComputedFeatureFetch,
     featureIndex,
-    selectedFeatureIds,
+    selectedFeatureIdsRef,
     shouldUseFeatureIndex,
   });
 
@@ -745,8 +765,9 @@ export const useHooks = ({
   const handleReady = useCallback(
     (tileset: Cesium3DTileset) => {
       onLayerFetch?.({ properties: tileset.properties });
+      onLayerLoad?.({ layerId: layerIdRef.current });
     },
-    [onLayerFetch],
+    [onLayerFetch, onLayerLoad],
   );
 
   return {

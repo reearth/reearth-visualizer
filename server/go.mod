@@ -18,6 +18,7 @@ require (
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/joho/godotenv v1.4.0
 	github.com/jonas-p/go-shp v0.1.1
+	github.com/k0kubun/pp/v3 v3.2.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kennygrant/sanitize v1.2.4
 	github.com/labstack/echo/v4 v4.11.4

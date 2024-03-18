@@ -237,6 +237,7 @@ export type EngineProps = {
   onLayerEdit?: (e: LayerEditEvent) => void;
   onMount?: () => void;
   onLayerVisibility?: (e: LayerVisibilityEvent) => void;
+  onLayerLoad?: (e: LayerLoadEvent) => void;
 };
 
 export type LayerEditEvent = {
@@ -251,6 +252,10 @@ export type LayerEditEvent = {
 };
 
 export type LayerVisibilityEvent = {
+  layerId: string | undefined;
+};
+
+export type LayerLoadEvent = {
   layerId: string | undefined;
 };
 

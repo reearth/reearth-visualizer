@@ -3,6 +3,7 @@ package gqlmodel
 import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/util"
+	"github.com/samber/lo"
 )
 
 func ToUser(u *user.User) *User {
@@ -14,6 +15,7 @@ func ToUser(u *user.User) *User {
 		ID:    IDFrom(u.ID()),
 		Name:  u.Name(),
 		Email: u.Email(),
+		Host:  lo.EmptyableToPtr(u.Host()),
 	}
 }
 

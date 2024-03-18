@@ -29,6 +29,7 @@ const Dashboard: React.FC<Props> = ({ workspaceId }) => {
     selectedAsset,
     assetModalOpened,
     handleProjectCreate,
+    handleProjectCreateClick,
     handleWorkspaceCreate,
     handleWorkspaceChange,
     handleModalOpen,
@@ -63,6 +64,7 @@ const Dashboard: React.FC<Props> = ({ workspaceId }) => {
         selectedAsset={selectedAsset}
         onWorkspaceCreate={handleWorkspaceCreate}
         onProjectCreate={handleProjectCreate}
+        onProjectCreateClick={handleProjectCreateClick}
         onAssetSelect={handleAssetSelect}
         toggleAssetModal={handleAssetModalToggle}
         assetModal={

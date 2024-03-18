@@ -1,12 +1,12 @@
 package config
 
 import (
-	"fmt"
 	"net/url"
 	"os"
 	"strings"
 
 	"github.com/joho/godotenv"
+	"github.com/k0kubun/pp/v3"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
@@ -16,55 +16,59 @@ import (
 
 const configPrefix = "reearth"
 
+func init() {
+	pp.Default.SetColoringEnabled(false)
+}
+
 type Mailer mailer.Mailer
 type Config struct {
 	mailer.Config
-	Port             string `default:"8080" envconfig:"PORT"`
-	ServerHost       string
-	Host             string `default:"http://localhost:8080"`
-	Host_Web         string
-	Dev              bool
-	DB               string `default:"mongodb://localhost"`
-	DB_Account       string
-	DB_Users         []appx.NamedURI
-	GraphQL          GraphQLConfig
-	Published        PublishedConfig
-	GCPProject       string `envconfig:"GOOGLE_CLOUD_PROJECT"`
-	Profiler         string
-	Tracer           string
-	TracerSample     float64
-	Marketplace      MarketplaceConfig
-	AssetBaseURL     string `default:"http://localhost:8080/assets"`
-	Origins          []string
-	Policy           PolicyConfig
-	Web_Disabled     bool
-	Web_App_Disabled bool
-	Web              map[string]string
-	Web_Config       JSON
-	Web_Title        string
-	Web_FaviconURL   string
-	SignupSecret     string
-	SignupDisabled   bool
-	HTTPSREDIRECT    bool
+	Port             string            `default:"8080" envconfig:"PORT"`
+	ServerHost       string            `pp:",omitempty"`
+	Host             string            `default:"http://localhost:8080"`
+	Host_Web         string            `pp:",omitempty"`
+	Dev              bool              `pp:",omitempty"`
+	DB               string            `default:"mongodb://localhost"`
+	DB_Account       string            `pp:",omitempty"`
+	DB_Users         []appx.NamedURI   `pp:",omitempty"`
+	GraphQL          GraphQLConfig     `pp:",omitempty"`
+	Published        PublishedConfig   `pp:",omitempty"`
+	GCPProject       string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
+	Profiler         string            `pp:",omitempty"`
+	Tracer           string            `pp:",omitempty"`
+	TracerSample     float64           `pp:",omitempty"`
+	Marketplace      MarketplaceConfig `pp:",omitempty"`
+	AssetBaseURL     string            `default:"http://localhost:8080/assets"`
+	Origins          []string          `pp:",omitempty"`
+	Policy           PolicyConfig      `pp:",omitempty"`
+	Web_Disabled     bool              `pp:",omitempty"`
+	Web_App_Disabled bool              `pp:",omitempty"`
+	Web              map[string]string `pp:",omitempty"`
+	Web_Config       JSON              `pp:",omitempty"`
+	Web_Title        string            `pp:",omitempty"`
+	Web_FaviconURL   string            `pp:",omitempty"`
+	SignupSecret     string            `pp:",omitempty"`
+	SignupDisabled   bool              `pp:",omitempty"`
+	HTTPSREDIRECT    bool              `pp:",omitempty"`
 
 	// storage
-	GCS GCSConfig
-	S3  S3Config
+	GCS GCSConfig `pp:",omitempty"`
+	S3  S3Config  `pp:",omitempty"`
 
 	// auth
-	Auth          AuthConfigs
-	Auth0         Auth0Config
-	Cognito       CognitoConfig
-	AuthSrv       AuthSrvConfig
-	Auth_ISS      string
-	Auth_AUD      string
-	Auth_ALG      *string
-	Auth_TTL      *int
-	Auth_ClientID *string
-	Auth_JWKSURI  *string
+	Auth          AuthConfigs   `pp:",omitempty"`
+	Auth0         Auth0Config   `pp:",omitempty"`
+	Cognito       CognitoConfig `pp:",omitempty"`
+	AuthSrv       AuthSrvConfig `pp:",omitempty"`
+	Auth_ISS      string        `pp:",omitempty"`
+	Auth_AUD      string        `pp:",omitempty"`
+	Auth_ALG      *string       `pp:",omitempty"`
+	Auth_TTL      *int          `pp:",omitempty"`
+	Auth_ClientID *string       `pp:",omitempty"`
+	Auth_JWKSURI  *string       `pp:",omitempty"`
 
 	// system extensions
-	Ext_Plugin []string
+	Ext_Plugin []string `pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
@@ -109,9 +113,9 @@ func ReadConfig(debug bool) (*Config, error) {
 	return &c, err
 }
 
-func (c Config) Print() string {
-	s := fmt.Sprintf("%+v", c)
-	for _, secret := range []string{c.DB, c.Auth0.ClientSecret} {
+func (c *Config) Print() string {
+	s := pp.Sprint(c)
+	for _, secret := range c.secrets() {
 		if secret == "" {
 			continue
 		}
@@ -120,7 +124,15 @@ func (c Config) Print() string {
 	return s
 }
 
-func (c Config) HostURL() *url.URL {
+func (c *Config) secrets() []string {
+	s := []string{c.DB, c.Auth0.ClientSecret}
+	for _, ac := range c.DB_Users {
+		s = append(s, ac.URI)
+	}
+	return s
+}
+
+func (c *Config) HostURL() *url.URL {
 	u, err := url.Parse(c.Host)
 	if err != nil {
 		u = nil
@@ -128,7 +140,7 @@ func (c Config) HostURL() *url.URL {
 	return u
 }
 
-func (c Config) HostWebURL() *url.URL {
+func (c *Config) HostWebURL() *url.URL {
 	u, err := url.Parse(c.Host_Web)
 	if err != nil {
 		u = nil
@@ -136,11 +148,11 @@ func (c Config) HostWebURL() *url.URL {
 	return u
 }
 
-func (c Config) AuthConfigs() []AuthProvider {
+func (c *Config) AuthConfigs() []AuthProvider {
 	return []AuthProvider{c.Auth0, c.Cognito}
 }
 
-func (c Config) Auths() (res AuthConfigs) {
+func (c *Config) Auths() (res AuthConfigs) {
 	res = lo.FlatMap(c.AuthConfigs(), func(c AuthProvider, _ int) []AuthConfig { return c.Configs() })
 	if c.Auth_ISS != "" {
 		var aud []string
@@ -162,11 +174,11 @@ func (c Config) Auths() (res AuthConfigs) {
 	return append(res, c.Auth...)
 }
 
-func (c Config) JWTProviders() (res []appx.JWTProvider) {
+func (c *Config) JWTProviders() (res []appx.JWTProvider) {
 	return c.Auths().JWTProviders()
 }
 
-func (c Config) AuthForWeb() *AuthConfig {
+func (c *Config) AuthForWeb() *AuthConfig {
 	if ac := c.Auth0.AuthConfigForWeb(); ac != nil {
 		return ac
 	}
@@ -189,7 +201,7 @@ func (c Config) AuthForWeb() *AuthConfig {
 	return nil
 }
 
-func (c Config) WebConfig() map[string]any {
+func (c *Config) WebConfig() map[string]any {
 	w := make(map[string]any)
 	for k, v := range c.Web {
 		w[k] = v
