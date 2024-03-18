@@ -152,8 +152,9 @@ const Infobox: React.FC<Props> = ({
       infoboxBlocks.length && setInfoboxBlocks([]);
       selectedBlockId !== undefined && setSelectedBlockId(undefined);
       openBlocksIndex !== undefined && setOpenBlocksIndex(undefined);
+      disableSelection !== undefined && setDisableSelection(false);
     }
-  }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex]);
+  }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex, disableSelection]);
 
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>

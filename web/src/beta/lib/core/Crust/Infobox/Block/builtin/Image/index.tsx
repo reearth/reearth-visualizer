@@ -24,7 +24,7 @@ const ImageBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...
       propertyId={block?.propertyId}
       property={block?.property}
       {...props}>
-      {evaluatedSrc && <Image src={evaluatedSrc} />}
+      {evaluatedSrc && !props.isEditable ? <Image src={evaluatedSrc} /> : null}
     </BlockWrapper>
   );
 };
