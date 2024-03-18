@@ -19,6 +19,7 @@ import type {
   WrappedRef,
   Feature,
   LayerVisibilityEvent,
+  LayerLoadEvent,
 } from "@reearth/beta/lib/core/Map";
 
 import { SketchAppearance, SketchEventProps, SketchType } from "../../Map/Sketch/types";
@@ -282,6 +283,7 @@ export type ReearthEventType = {
   sketchfeaturecreated: [props: SketchEventProps];
   sketchtypechange: [props: SketchType | undefined];
   layerVisibility: [e: LayerVisibilityEvent];
+  layerload: [e: LayerLoadEvent];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
