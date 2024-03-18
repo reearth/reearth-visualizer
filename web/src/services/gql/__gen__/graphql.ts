@@ -745,7 +745,7 @@ export type Me = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lang: Scalars['Lang']['output'];
-  myTeam: Team;
+  myTeam?: Maybe<Team>;
   myTeamId: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   teams: Array<Team>;
@@ -1660,6 +1660,7 @@ export type Project = Node & {
   coreSupport: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
+  enableGa: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
   imageUrl?: Maybe<Scalars['URL']['output']>;
   isArchived: Scalars['Boolean']['output'];
@@ -1674,6 +1675,7 @@ export type Project = Node & {
   scene?: Maybe<Scene>;
   team?: Maybe<Team>;
   teamId: Scalars['ID']['output'];
+  trackingId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   visualizer: Visualizer;
 };
@@ -2540,6 +2542,7 @@ export type UpdateProjectInput = {
   deleteImageUrl?: InputMaybe<Scalars['Boolean']['input']>;
   deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  enableGA?: InputMaybe<Scalars['Boolean']['input']>;
   imageUrl?: InputMaybe<Scalars['URL']['input']>;
   isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -2548,6 +2551,7 @@ export type UpdateProjectInput = {
   publicImage?: InputMaybe<Scalars['String']['input']>;
   publicNoIndex?: InputMaybe<Scalars['Boolean']['input']>;
   publicTitle?: InputMaybe<Scalars['String']['input']>;
+  trackingId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdatePropertyItemInput = {
@@ -2700,6 +2704,7 @@ export type UploadPluginPayload = {
 export type User = Node & {
   __typename?: 'User';
   email: Scalars['String']['output'];
+  host?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
 };
@@ -3343,7 +3348,7 @@ export type GetUserBySearchQuery = { __typename?: 'Query', searchUser?: { __type
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, policyId?: string | null, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }, teams: Array<{ __typename?: 'Team', id: string, name: string, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }> } | null };
+export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, auths: Array<string>, myTeam?: { __typename?: 'Team', id: string, name: string, policyId?: string | null, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } | null, teams: Array<{ __typename?: 'Team', id: string, name: string, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }> } | null };
 
 export type UpdateMeMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']['input']>;
@@ -3355,7 +3360,7 @@ export type UpdateMeMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMeMutation = { __typename?: 'Mutation', updateMe?: { __typename?: 'UpdateMePayload', me: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, myTeam: { __typename?: 'Team', id: string, name: string } } } | null };
+export type UpdateMeMutation = { __typename?: 'Mutation', updateMe?: { __typename?: 'UpdateMePayload', me: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, myTeam?: { __typename?: 'Team', id: string, name: string } | null } } | null };
 
 export type DeleteMeMutationVariables = Exact<{
   userId: Scalars['ID']['input'];

@@ -26,8 +26,9 @@ export interface Props {
     imageUrl: string;
     projectType: ProjectType;
   }) => Promise<void>;
-  toggleAssetModal?: () => void;
+  onProjectCreateClick?: () => boolean;
   onAssetSelect?: (asset?: string) => void;
+  toggleAssetModal?: () => void;
 }
 
 const QuickStart: React.FC<Props> = ({
@@ -36,8 +37,9 @@ const QuickStart: React.FC<Props> = ({
   selectedAsset,
   onWorkspaceCreate,
   onProjectCreate,
-  toggleAssetModal,
+  onProjectCreateClick,
   onAssetSelect,
+  toggleAssetModal,
 }) => {
   const documentationUrl = window.REEARTH_CONFIG?.documentationUrl;
   const t = useT();
@@ -53,13 +55,15 @@ const QuickStart: React.FC<Props> = ({
   } = useMeQuery();
 
   const handleCreateProjectClick = useCallback(() => {
+    if (onProjectCreateClick && !onProjectCreateClick()) return;
+
     if (
       window.REEARTH_CONFIG?.developerMode ||
       window.REEARTH_CONFIG?.earlyAccessAdmins?.includes(email)
     )
       setPrjTypeSelectOpen(true);
     else setPrjCreateOpen(true);
-  }, [email]);
+  }, [email, onProjectCreateClick]);
 
   const handleProjModalClose = useCallback(() => {
     setPrjCreateOpen(false);
@@ -67,9 +71,11 @@ const QuickStart: React.FC<Props> = ({
   }, [onAssetSelect]);
 
   const handlePrjTypeSelectModalClose = useCallback(() => {
+    if (onProjectCreateClick && !onProjectCreateClick()) return;
+
     setPrjTypeSelectOpen(false);
     setPrjCreateOpen(true);
-  }, []);
+  }, [onProjectCreateClick]);
 
   const handleProjectTypeSelect = (type: ProjectType) => {
     setPrjectType(type);

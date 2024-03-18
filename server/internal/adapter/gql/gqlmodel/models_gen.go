@@ -756,7 +756,7 @@ type Me struct {
 	MyTeamID ID           `json:"myTeamId"`
 	Auths    []string     `json:"auths"`
 	Teams    []*Team      `json:"teams"`
-	MyTeam   *Team        `json:"myTeam"`
+	MyTeam   *Team        `json:"myTeam,omitempty"`
 }
 
 type MergedInfobox struct {
@@ -1880,9 +1880,10 @@ type UploadPluginPayload struct {
 }
 
 type User struct {
-	ID    ID     `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID    ID      `json:"id"`
+	Name  string  `json:"name"`
+	Email string  `json:"email"`
+	Host  *string `json:"host,omitempty"`
 }
 
 func (User) IsNode()        {}
