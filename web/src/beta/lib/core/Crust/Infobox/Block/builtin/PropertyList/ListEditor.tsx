@@ -61,7 +61,10 @@ const ListEditor: React.FC<Props> = ({ propertyId, property, onPropertyUpdate })
   //   }
   // }, [selectField?.value, property?.propertyList?.value, propertyList])
 
-  const propertyList = useMemo(() => property?.propertyList, [property?.propertyList]);
+  const propertyList = useMemo(
+    () => selectField?.value === "custom" && property?.propertyList,
+    [property?.propertyList, selectField?.value],
+  );
 
   const handlePropertyValueUpdate = useCallback(
     (schemaGroupId?: string, propertyId?: string, fieldId?: string, vt?: any, itemId?: string) => {

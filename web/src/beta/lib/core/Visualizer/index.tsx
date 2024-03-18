@@ -221,6 +221,7 @@ const Visualizer = memo(
           rootLayerId,
           isEditable,
           camera: initialCamera,
+          layers,
           interactionMode: initialInteractionMode,
           sceneProperty,
           zoomedLayerId,
