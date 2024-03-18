@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -10,13 +10,15 @@ import { styled } from "@reearth/services/theme";
 
 type Property = {
   displayType?: {
+    type?: "string";
     title?: string;
     value?: string;
-    choices?: { key: string; label: string }[];
+    choices?: { key: string; title: string }[];
   };
   propertyList?: {
+    type?: "array";
     title?: string;
-    value: { key: string; title: string; field: string }[];
+    value: { key: string; value: string }[];
   };
 };
 
@@ -46,14 +48,44 @@ type Props = {
   ) => Promise<void>;
 };
 
-const ListEditor: React.FC<Props> = ({ propertyId, property }) => {
+const ListEditor: React.FC<Props> = ({ propertyId, property, onPropertyUpdate }) => {
   const t = useT();
-  //   console.log("PID", propertyId, property);
+
   const selectField = useMemo(() => property?.displayType, [property?.displayType]);
 
-  const propertyList = useMemo(
-    () => (selectField?.value === "custom" ? property?.propertyList : undefined),
-    [property?.propertyList, selectField?.value],
+  // const [propertyList, setPropertyList] = useState(property?.propertyList?.value);
+
+  // useEffect(()=>{
+  //   if(selectField?.value === "custom" && !propertyList){
+  //     setPropertyList(property?.propertyList?.value)
+  //   }
+  // }, [selectField?.value, property?.propertyList?.value, propertyList])
+
+  const propertyList = useMemo(() => property?.propertyList, [property?.propertyList]);
+
+  const handlePropertyValueUpdate = useCallback(
+    (schemaGroupId?: string, propertyId?: string, fieldId?: string, vt?: any, itemId?: string) => {
+      return async (v?: any) => {
+        if (!schemaGroupId || !propertyId || !fieldId || !vt) return;
+        await onPropertyUpdate?.(propertyId, schemaGroupId, fieldId, itemId, vt, v);
+      };
+    },
+    [onPropertyUpdate],
+  );
+
+  const handlePropertyValueRemove = useCallback(
+    async (idx: number) => {
+      if (propertyList) {
+        const newValue = propertyList.value.filter((_, i) => i !== idx);
+        await handlePropertyValueUpdate(
+          "default",
+          propertyId,
+          "propertyList",
+          propertyList.type,
+        )(newValue);
+      }
+    },
+    [propertyId, propertyList, handlePropertyValueUpdate],
   );
 
   return (
@@ -61,26 +93,50 @@ const ListEditor: React.FC<Props> = ({ propertyId, property }) => {
       <SelectField
         name={selectField?.title}
         value={selectField?.value}
-        options={selectField?.choices}
-        onChange={() => console.log("TRYING TO CHANGE", propertyId)}
+        options={selectField?.choices?.map(({ key, title }: { key: string; title: string }) => ({
+          key,
+          label: title,
+        }))}
+        onChange={handlePropertyValueUpdate(
+          "default",
+          propertyId,
+          "displayType",
+          selectField?.type,
+        )}
       />
       {propertyList && (
         <>
           <Text size="footnote">{propertyList.title}</Text>
           <FieldWrapper>
-            {propertyList?.value?.map(p => (
-              <Field key={p.key}>
-                <HandleIcon icon="dndHandle" />
-                <StyledText size="body">{p.title}</StyledText>
-                <StyledTextField value={p.field} />
-                <Icon icon="trash" onClick={() => console.log("Remove field")} />
+            {propertyList?.value?.map((p, idx) => (
+              <Field key={idx}>
+                <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                  <HandleIcon icon="dndHandle" />
+                  <StyledTextField value={p.key} />
+                </div>
+                {/* <StyledText size="body">{p.title}</StyledText> */}
+                <StyledTextField value={p.value} />
+                <StyledIcon icon="trash" onClick={() => handlePropertyValueRemove(idx)} />
               </Field>
             ))}
           </FieldWrapper>
           <StyledButton
             icon="plus"
             size="small"
-            onClick={() => console.log("Add new field", propertyId)}>
+            onClick={() =>
+              handlePropertyValueUpdate(
+                "default",
+                propertyId,
+                "propertyList",
+                propertyList.type,
+              )([
+                ...(propertyList.value || []),
+                {
+                  key: `Field ${propertyList.value.length + 1 || 1}`,
+                  value: `Value ${propertyList.value.length + 1 || 1}`,
+                },
+              ])
+            }>
             {t("New Field")}
           </StyledButton>
         </>
@@ -131,15 +187,19 @@ const HandleIcon = styled(Icon)`
   }
 `;
 
-const StyledText = styled(Text)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 1;
-`;
+// const StyledText = styled(Text)`
+//   white-space: nowrap;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   flex: 1;
+// `;
 
 const StyledTextField = styled(TextField)`
-  width: 113px;
+  width: 100px;
+`;
+
+const StyledIcon = styled(Icon)`
+  cursor: pointer;
 `;
 
 const StyledButton = styled(Button)`
