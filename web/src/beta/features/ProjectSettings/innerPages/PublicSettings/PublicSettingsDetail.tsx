@@ -10,6 +10,7 @@ import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icon
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { useGA } from "../../../PublishedVisualizer/googleAnalytics/useGA";
 import { SettingsFields, ButtonWrapper } from "../common";
 
 import {
@@ -68,17 +69,21 @@ const PublicSettingsDetail: React.FC<Props> = ({
     });
   }, [localAlias, onUpdateAlias]);
 
-  const [localGA, setLocalGA] = useState({
-    enableGa: !!settingsItem.enableGa,
+  const [localGA, setLocalGA] = useState<PublicGASettingsType>({
+    enableGa: settingsItem.enableGa,
     trackingId: settingsItem.trackingId,
   });
+
   const handleSubmitGA = useCallback(() => {
     if (onUpdateGA) {
       onUpdateGA({
-        ...localGA,
+        enableGa: localGA.enableGa,
+        trackingId: localGA.trackingId,
       });
     }
   }, [localGA, onUpdateGA]);
+
+  useGA(localGA);
 
   return (
     <>
@@ -189,8 +194,8 @@ const PublicSettingsDetail: React.FC<Props> = ({
         <SettingsFields>
           <ToggleField
             name={t("Enable Google Analytics")}
-            checked={localGA.enableGa}
-            onChange={enableGa => {
+            checked={localGA.enableGa ?? false}
+            onChange={(enableGa: boolean) => {
               setLocalGA(s => ({ ...s, enableGa }));
             }}
           />
