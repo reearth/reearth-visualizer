@@ -7,7 +7,7 @@ import { type Extensions, loadExtensions } from "./extensions";
 import { type PasswordPolicy, convertPasswordPolicy } from "./passwordPolicy";
 import { type UnsafeBuiltinPlugin, loadUnsafeBuiltinPlugins } from "./unsafeBuiltinPlugin";
 
-export { getAuthInfo, getSignInCallbackUrl } from "./authInfo";
+export { getAuthInfo, getSignInCallbackUrl, logInToTenant, logOutFromTenant } from "./authInfo";
 
 export type Config = {
   version?: string;
@@ -46,7 +46,7 @@ export type Config = {
   unsafePluginUrls?: string[];
   extensions?: Extensions;
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
-  multitenant?: Record<string, AuthInfo>;
+  multiTenant?: Record<string, AuthInfo>;
 } & AuthInfo;
 
 declare global {

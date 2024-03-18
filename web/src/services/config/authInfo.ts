@@ -2,6 +2,8 @@ import { type CognitoParams } from "./aws";
 
 import { config } from ".";
 
+const tenantKey = "reearth_tennant";
+
 export type AuthInfo = {
   auth0ClientId?: string;
   auth0Domain?: string;
@@ -14,7 +16,27 @@ export function getAuthInfo(conf = config()): AuthInfo | undefined {
   return getMultitenantAuthInfo(conf) || defaultAuthInfo(conf);
 }
 
-export function defaultAuthInfo(conf = config()): AuthInfo | undefined {
+export function getSignInCallbackUrl() {
+  const tenantName = getTenantName();
+  if (tenantName) {
+    // multi-tenant
+    return `${window.location.origin}/auth/${tenantName}`;
+  }
+  return window.location.origin;
+}
+
+export function logInToTenant() {
+  const tenantName = getLogginInTenantName();
+  if (tenantName) {
+    window.localStorage.setItem(tenantKey, tenantName);
+  }
+}
+
+export function logOutFromTenant() {
+  window.localStorage.removeItem(tenantKey);
+}
+
+function defaultAuthInfo(conf = config()): AuthInfo | undefined {
   if (!conf) return;
   return {
     auth0Audience: conf.auth0Audience,
@@ -25,11 +47,11 @@ export function defaultAuthInfo(conf = config()): AuthInfo | undefined {
   };
 }
 
-export function getMultitenantAuthInfo(conf = config()): AuthInfo | undefined {
-  if (!conf?.multitenant) return;
+function getMultitenantAuthInfo(conf = config()): AuthInfo | undefined {
+  if (!conf?.multiTenant) return;
   const name = getTenantName();
   if (name) {
-    const tenant = conf.multitenant[name];
+    const tenant = conf.multiTenant[name];
     if (tenant && !tenant.authProvider) {
       tenant.authProvider = "auth0";
     }
@@ -38,21 +60,20 @@ export function getMultitenantAuthInfo(conf = config()): AuthInfo | undefined {
   return;
 }
 
-export function getTenantName(): string | undefined {
-  const path = window.location.pathname;
-  if (path.startsWith("/auth/")) {
-    // e.g. /auth/tennant-name?code=xxx&state=xxx
-    const name = path.split("/")[2];
-    return name;
+function getTenantName(): string | null {
+  const loggingInTenantName = getLogginInTenantName();
+  if (loggingInTenantName) {
+    return loggingInTenantName;
   }
-  return;
+  return window.localStorage.getItem(tenantKey);
 }
 
-export function getSignInCallbackUrl() {
-  const tenantName = getTenantName();
-  if (tenantName) {
-    // multi-tenant
-    return `${window.location.origin}/auth/${tenantName}`;
+function getLogginInTenantName(): string | null {
+  const path = window.location.pathname;
+  // /auth/<tennant-name>
+  if (path.startsWith("/auth/")) {
+    const name = path.split("/")[2];
+    return name || null;
   }
-  return window.location.origin;
+  return null;
 }

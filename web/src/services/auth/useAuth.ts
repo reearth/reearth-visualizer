@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 
-import { useAuth0Auth } from "./authOAuth";
+import { logInToTenant } from "@reearth/services/config";
+
+import { useAuth0Auth } from "./auth0Auth";
 import { AuthContext } from "./authProvider";
 
 export const errorKey = "reeartherror";
@@ -39,6 +41,8 @@ export function useCleanUrl(): [string | undefined, boolean] {
     const url = `${window.location.pathname}${queries ? "?" : ""}${queries}`;
 
     history.replaceState(null, document.title, url);
+
+    logInToTenant();
     setDone(true);
   }, [isAuthenticated, isLoading]);
 

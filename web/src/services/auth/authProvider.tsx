@@ -3,8 +3,8 @@ import React, { createContext, ReactNode, useState } from "react";
 
 import { getAuthInfo, getSignInCallbackUrl } from "../config";
 
+import { useAuth0Auth } from "./auth0Auth";
 import type { AuthHook } from "./authHook";
-import { useAuth0Auth } from "./authOAuth";
 import { useCognitoAuth } from "./cognitoAuth";
 
 export const AuthContext = createContext<AuthHook | null>(null);
@@ -27,7 +27,6 @@ export const AuthProvider: React.FC<{ children?: ReactNode }> = ({ children }) =
     const clientId = authInfo.auth0ClientId;
     const audience = authInfo.auth0Audience;
 
-    console.log("auth0", authInfo);
     return domain && clientId ? (
       <Auth0Provider
         domain={domain}

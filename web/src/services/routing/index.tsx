@@ -54,6 +54,7 @@ export const AppRoutes = () => {
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />
         <Route path="password-reset" element={<PasswordResetPage />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="dashboard/:workspaceId" element={<Dashboard />} />
         <Route path="edit/:sceneId">
           <Route index={true} element={<EarthEditor />} />
