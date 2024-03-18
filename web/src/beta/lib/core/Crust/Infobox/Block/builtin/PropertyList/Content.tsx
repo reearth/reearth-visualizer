@@ -1,9 +1,8 @@
-import { memo, useContext } from "react";
+import { memo, useContext, useMemo } from "react";
 import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
-import Text from "@reearth/beta/components/Text";
 import { BlockContext } from "@reearth/beta/lib/core/shared/components/BlockWrapper";
 import Template from "@reearth/beta/lib/core/StoryPanel/Block/Template";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
@@ -11,8 +10,9 @@ import { styled } from "@reearth/services/theme";
 
 import { InfoboxBlock } from "../../../types";
 
-import ListEditor from "./ListEditor";
-// import { ComputedFeature } from "@reearth/beta/lib/core/mantle";
+import CustomField from "./CustomField";
+import ListEditor, { DisplayTypeField, PropertyListField } from "./ListEditor";
+import ListItem from "./ListItem";
 
 type Props = {
   block?: InfoboxBlock;
@@ -43,47 +43,54 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
   const context = useContext(BlockContext);
   const visualizer = useVisualizer();
 
-  const properties = filterChildObjectsToEnd(
-    visualizer.current?.layers.selectedFeature()?.properties,
-  );
+  const displayTypeField: DisplayTypeField = block?.property?.default?.displayType;
+
+  const propertyListField: PropertyListField =
+    displayTypeField?.value === "custom" && block?.property?.default?.propertyList;
+
+  const properties = useMemo(() => {
+    if (displayTypeField.value === "custom") {
+      return propertyListField.value;
+    } else if (displayTypeField.value === "rootOnly") {
+      return filterTypeFrom(visualizer.current?.layers.selectedFeature()?.properties, "object");
+    } else {
+      return filterChildObjectsToEnd(visualizer.current?.layers.selectedFeature()?.properties);
+    }
+  }, [displayTypeField.value, propertyListField.value, visualizer]);
 
   return (
     <Wrapper>
       {!isEditable ? (
-        properties?.map((field, idx) => {
-          const [key, value]: [string, any] = Object.entries(field)[0];
-          if (value && typeof value === "object") {
-            return (
-              <ObjectWrapper key={key}>
-                <JsonView
-                  src={value}
-                  theme="a11y"
-                  collapsed={!!isEditable}
-                  style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
-                />
-              </ObjectWrapper>
-            );
-          }
-          return (
-            <PropertyWrapper key={idx} isEven={isEven(idx)}>
-              <TextWrapper>
-                <StyledText size="body" customColor otherProperties={{ userSelect: "auto" }}>
-                  {key}
-                </StyledText>
-              </TextWrapper>
-              <TextWrapper>
-                <StyledText size="body" customColor otherProperties={{ userSelect: "auto" }}>
-                  {value}
-                </StyledText>
-              </TextWrapper>
-            </PropertyWrapper>
-          );
-        })
+        displayTypeField.value === "custom" ? (
+          properties.map((f, idx) => <CustomField key={f.key} index={idx} field={f} />)
+        ) : (
+          properties?.map((field, idx) => {
+            const [key, value]: [string, any] = Object.entries(field)[0];
+            if (value && typeof value === "object") {
+              return (
+                <ObjectWrapper key={key}>
+                  <JsonView
+                    src={value}
+                    theme="a11y"
+                    collapsed={!!isEditable}
+                    style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
+                  />
+                </ObjectWrapper>
+              );
+            }
+            return <ListItem key={idx} index={idx} keyValue={key} value={value} />;
+          })
+        )
       ) : (
         <Template icon={block?.extensionId} height={120} />
       )}
       {context?.editMode && (
-        <ListEditor propertyId={block?.propertyId} property={block?.property?.default} {...props} />
+        <ListEditor
+          propertyId={block?.propertyId}
+          displayTypeField={displayTypeField}
+          propertyListField={propertyListField}
+          {...props}
+        />
       )}
     </Wrapper>
   );
@@ -95,31 +102,9 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const PropertyWrapper = styled.div<{ isEven?: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  background: ${({ isEven }) => isEven && "#F4F4F4"};
-  padding: 8px 16px;
-  box-sizing: border-box;
-  width: 100%;
-`;
-
-const TextWrapper = styled.div`
-  flex: 1;
-`;
-
 const ObjectWrapper = styled.div`
   margin-top: 8px;
 `;
-
-const StyledText = styled(Text)`
-  color: ${({ theme }) => theme.content.weaker};
-`;
-
-function isEven(number: number) {
-  return !!(number % 2 === 0);
-}
 
 function filterChildObjectsToEnd(inputObject?: any): any[] {
   if (!inputObject) return [];
@@ -137,6 +122,21 @@ function filterChildObjectsToEnd(inputObject?: any): any[] {
   childObjects.forEach(([key, value]) => {
     arrayResult.push({ [key]: value });
   });
+
+  return arrayResult;
+}
+
+function filterTypeFrom(inputObject?: any, type?: string): any[] {
+  if (!type) return inputObject;
+  if (!inputObject) return [];
+
+  const arrayResult: any[] = [];
+
+  for (const key in inputObject) {
+    if (typeof inputObject[key] !== type) {
+      arrayResult.push({ [key]: inputObject[key] });
+    }
+  }
 
   return arrayResult;
 }

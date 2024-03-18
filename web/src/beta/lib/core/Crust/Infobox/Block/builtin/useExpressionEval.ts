@@ -11,14 +11,15 @@ export default (value?: unknown | undefined) => {
 
   const visualizer = useVisualizer();
 
+  // We want the useEffect to be called on each render to make sure evaluatedResult is up to date
+  // eslint-disable-next-line
   useEffect(() => {
     if (!isReady) {
       setIsReady(true);
       return;
     }
-
     const selectedFeature = visualizer.current?.layers.selectedFeature();
-    if (selectedFeature && !evaluatedResult) {
+    if (selectedFeature) {
       const simpleFeature: Feature = {
         id: selectedFeature.id,
         type: "feature",
@@ -36,10 +37,12 @@ export default (value?: unknown | undefined) => {
         simpleFeature,
       );
       if ((es && typeof es === "string") || typeof es === "number" || typeof es === "boolean") {
-        setEvaluatedResult(es.toString());
+        if (es.toString() !== evaluatedResult) {
+          setEvaluatedResult(es.toString());
+        }
       }
     }
-  }, [isReady, visualizer, evaluatedResult, value]);
+  });
 
   return evaluatedResult;
 };

@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import Text from "@reearth/beta/components/Text";
 import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/lib/core/shared/types";
@@ -10,10 +8,7 @@ import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
 const TextBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...props }) => {
-  const src = useMemo(
-    () => block?.property?.default?.text?.value as ValueTypes["string"],
-    [block?.property?.default?.text],
-  );
+  const src = block?.property?.default?.text?.value as ValueTypes["string"];
 
   const evaluatedSrc = useExpressionEval(src);
 

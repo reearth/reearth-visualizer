@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import SelectField from "@reearth/beta/components/fields/SelectField";
@@ -8,23 +8,25 @@ import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-type Property = {
-  displayType?: {
-    type?: "string";
-    title?: string;
-    value?: string;
-    choices?: { key: string; title: string }[];
-  };
-  propertyList?: {
-    type?: "array";
-    title?: string;
-    value: { key: string; value: string }[];
-  };
+export type DisplayTypeField = {
+  type?: "string";
+  title?: string;
+  value?: string;
+  choices?: { key: string; title: string }[];
+};
+
+export type PropertyListItem = { key: string; value: string };
+
+export type PropertyListField = {
+  type?: "array";
+  title?: string;
+  value: PropertyListItem[];
 };
 
 type Props = {
   propertyId?: string;
-  property?: Property;
+  displayTypeField?: DisplayTypeField;
+  propertyListField?: PropertyListField;
   isEditable?: boolean;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -48,23 +50,21 @@ type Props = {
   ) => Promise<void>;
 };
 
-const ListEditor: React.FC<Props> = ({ propertyId, property, onPropertyUpdate }) => {
+const ListEditor: React.FC<Props> = ({
+  propertyId,
+  displayTypeField,
+  propertyListField,
+  onPropertyUpdate,
+}) => {
   const t = useT();
-
-  const selectField = useMemo(() => property?.displayType, [property?.displayType]);
 
   // const [propertyList, setPropertyList] = useState(property?.propertyList?.value);
 
   // useEffect(()=>{
-  //   if(selectField?.value === "custom" && !propertyList){
+  //   if(displayTypeField?.value === "custom" && !propertyList){
   //     setPropertyList(property?.propertyList?.value)
   //   }
-  // }, [selectField?.value, property?.propertyList?.value, propertyList])
-
-  const propertyList = useMemo(
-    () => selectField?.value === "custom" && property?.propertyList,
-    [property?.propertyList, selectField?.value],
-  );
+  // }, [displayTypeField?.value, property?.propertyList?.value, propertyList])
 
   const handlePropertyValueUpdate = useCallback(
     (schemaGroupId?: string, propertyId?: string, fieldId?: string, vt?: any, itemId?: string) => {
@@ -78,40 +78,42 @@ const ListEditor: React.FC<Props> = ({ propertyId, property, onPropertyUpdate })
 
   const handlePropertyValueRemove = useCallback(
     async (idx: number) => {
-      if (propertyList) {
-        const newValue = propertyList.value.filter((_, i) => i !== idx);
+      if (propertyListField) {
+        const newValue = propertyListField.value.filter((_, i) => i !== idx);
         await handlePropertyValueUpdate(
           "default",
           propertyId,
           "propertyList",
-          propertyList.type,
+          propertyListField.type,
         )(newValue);
       }
     },
-    [propertyId, propertyList, handlePropertyValueUpdate],
+    [propertyId, propertyListField, handlePropertyValueUpdate],
   );
 
   return (
     <Wrapper>
       <SelectField
-        name={selectField?.title}
-        value={selectField?.value}
-        options={selectField?.choices?.map(({ key, title }: { key: string; title: string }) => ({
-          key,
-          label: title,
-        }))}
+        name={displayTypeField?.title}
+        value={displayTypeField?.value}
+        options={displayTypeField?.choices?.map(
+          ({ key, title }: { key: string; title: string }) => ({
+            key,
+            label: title,
+          }),
+        )}
         onChange={handlePropertyValueUpdate(
           "default",
           propertyId,
           "displayType",
-          selectField?.type,
+          displayTypeField?.type,
         )}
       />
-      {propertyList && (
+      {propertyListField && (
         <>
-          <Text size="footnote">{propertyList.title}</Text>
+          <Text size="footnote">{propertyListField.title}</Text>
           <FieldWrapper>
-            {propertyList?.value?.map((p, idx) => (
+            {propertyListField?.value?.map((p, idx) => (
               <Field key={idx}>
                 <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                   <HandleIcon icon="dndHandle" />
@@ -131,12 +133,12 @@ const ListEditor: React.FC<Props> = ({ propertyId, property, onPropertyUpdate })
                 "default",
                 propertyId,
                 "propertyList",
-                propertyList.type,
+                propertyListField.type,
               )([
-                ...(propertyList.value || []),
+                ...(propertyListField.value || []),
                 {
-                  key: `Field ${propertyList.value.length + 1 || 1}`,
-                  value: `Value ${propertyList.value.length + 1 || 1}`,
+                  key: `Field ${propertyListField.value.length + 1 || 1}`,
+                  value: `Value ${propertyListField.value.length + 1 || 1}`,
                 },
               ])
             }>
