@@ -659,6 +659,7 @@ export default ({
 
         if (pickRay) {
           const l = await scene.imageryLayers.pickImageryLayerFeatures(pickRay, scene);
+          console.log("l: ", l);
           if (l && !!l.length) {
             l.map(f => {
               const appearanceType = f.data?.appearanceType;
