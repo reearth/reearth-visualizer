@@ -173,6 +173,10 @@ export default (workspaceId?: string) => {
   const { useCreateStory } = useStorytellingFetcher();
   const { useCreateStoryPage } = useStorytellingFetcher();
 
+  const handleProjectCreateClick = useCallback((): boolean => {
+    return !!workspaceId;
+  }, [workspaceId]);
+
   const handleProjectCreate = useCallback(
     async (data: {
       name: string;
@@ -290,6 +294,7 @@ export default (workspaceId?: string) => {
     selectedAsset,
     assetModalOpened,
     handleProjectCreate,
+    handleProjectCreateClick,
     handleWorkspaceCreate,
     handleWorkspaceChange,
     handleModalOpen,

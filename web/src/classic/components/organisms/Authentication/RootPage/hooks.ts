@@ -62,10 +62,10 @@ export default () => {
     } else if (!isAuthenticated && !isLoading) {
       login();
     } else {
-      if (currentWorkspace || !data || !workspaceId) return;
+      if (!data?.me) return;
       setCurrentUserId(data?.me?.id);
       setCurrentWorkspace(data.me?.myTeam ?? undefined);
-      navigate(`/dashboard/${workspaceId || ""}`);
+      navigate(`/dashboard${workspaceId ? "/" + workspaceId : ""}`);
     }
   }, [
     isAuthenticated,
