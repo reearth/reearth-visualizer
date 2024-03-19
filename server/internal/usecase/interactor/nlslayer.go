@@ -527,10 +527,55 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	return duplicatedLayer, nil
 }
 
-func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (nlslayer.Feature, error) {
+func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCustomPropertiesInput, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return nlslayer.Feature{}, err
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	customPropertySchema, err := nlslayer.UnmarshalcustomPropertySchema(&inp.Schema)
+	if err != nil {
+		return nil, err
+	}
+
+	if layer.Sketch() == nil {
+
+		sketchInfo := nlslayer.NewSketchInfo(
+			customPropertySchema,
+			nil,
+		)
+
+		layer.SetIsSketch(true)
+		layer.SetSketch(sketchInfo)
+	} else {
+		layer.Sketch().SetCustomPropertySchema(customPropertySchema)
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (_ nlslayer.Feature, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
 	}
 
 	ctx = tx.Context()
@@ -574,9 +619,6 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 			nil,
 			featureCollection,
 		)
-		if err != nil {
-			return nlslayer.Feature{}, err
-		}
 
 		layer.SetIsSketch(true)
 		layer.SetSketch(sketchInfo)
@@ -593,10 +635,10 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 	return *feature, nil
 }
 
-func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.UpdateNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (nlslayer.Feature, error) {
+func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.UpdateNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (_ nlslayer.Feature, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return nlslayer.Feature{}, err
+		return
 	}
 
 	ctx = tx.Context()
@@ -639,10 +681,10 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 	return updatedFeature, nil
 }
 
-func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.DeleteNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (id.FeatureID, error) {
+func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.DeleteNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (_ id.FeatureID, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return id.FeatureID{}, err
+		return
 	}
 
 	ctx = tx.Context()
