@@ -216,6 +216,57 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 						}
 					}
 				}
+				isSketch
+				sketch {
+					customPropertySchema
+					featureCollection {
+						type
+						features {
+							id
+							type
+							properties
+							geometry {
+								... on Point {
+									type
+									pointCoordinates
+								}
+								... on LineString {
+									type
+									lineStringCoordinates
+								}
+								... on Polygon {
+									type
+									polygonCoordinates
+								}
+								... on MultiPolygon {
+									type
+									multiPolygonCoordinates
+								}
+								... on GeometryCollection {
+									type
+									geometries {
+										... on Point {
+											type
+											pointCoordinates
+										}
+										... on LineString {
+											type
+											lineStringCoordinates
+										}
+										... on Polygon {
+											type
+											polygonCoordinates
+										}
+										... on MultiPolygon {
+											type
+											multiPolygonCoordinates
+										}
+									}
+								}
+							}
+						}
+					}
+		 	  }
 		 	  }
 			  __typename
 			}
