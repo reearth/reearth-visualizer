@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, MouseEvent } from "react";
+import { useCallback, useMemo, useState, MouseEvent, useEffect } from "react";
 
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
@@ -27,6 +27,13 @@ export default ({
 
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+
+  // Close settings when block becomes not editable
+  useEffect(() => {
+    if (!isEditable && editMode) {
+      setEditMode(false);
+    }
+  }, [isEditable, editMode]);
 
   const disableSelection = useMemo(
     () => editModeContext?.disableSelection,
