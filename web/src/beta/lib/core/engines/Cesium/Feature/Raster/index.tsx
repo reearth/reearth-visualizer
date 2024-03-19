@@ -9,11 +9,11 @@ import { useTMS } from "./tms";
 import type { Props } from "./types";
 import { useWMS } from "./wms";
 
-function Raster({ isVisible, layer, property, evalFeature }: Props) {
+function Raster({ isVisible, layer, property }: Props) {
   useWMS({ isVisible, layer, property });
   useTiles({ isVisible, layer, property });
   useTMS({ isVisible, layer, property });
-  useMVT({ isVisible, layer, property, evalFeature });
+  useMVT({ isVisible, layer, property });
 
   return null;
 }
