@@ -12,6 +12,8 @@ type LayerSimple struct {
 	Index     *int
 	Title     string
 	Visible   *bool
+	IsSketch  *bool
+	Sketch    *nlslayer.SketchInfo
 }
 
 func (i LayerSimple) Initialize() (*nlslayer.NLSLayerSimple, error) {
@@ -26,6 +28,10 @@ func (i LayerSimple) Initialize() (*nlslayer.NLSLayerSimple, error) {
 		builder.IsVisible(*i.Visible)
 	} else {
 		builder.IsVisible(true)
+	}
+
+	if i.IsSketch != nil {
+		builder.IsSketch(*i.IsSketch)
 	}
 
 	var layerSimple *nlslayer.NLSLayerSimple
