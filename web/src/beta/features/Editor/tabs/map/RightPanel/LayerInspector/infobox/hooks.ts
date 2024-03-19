@@ -13,18 +13,14 @@ export default ({ layerId, property }: { layerId: string; property?: any }) => {
     [property],
   );
 
-  const handleInfoboxEnableChange = useCallback(async () => {
+  const handleInfoboxCreate = useCallback(async () => {
     if (!property) {
-      const resp = await useCreateNLSInfobox({ layerId });
-      console.log("NEW INFOBOX", resp);
-    } else {
-      //   const resp = await useUpdatePropertyValue({ propertyId });
-      console.log("NEED TO UPDATE");
+      await useCreateNLSInfobox({ layerId });
     }
   }, [layerId, property, useCreateNLSInfobox]);
 
   return {
     visibleItems,
-    handleInfoboxEnableChange,
+    handleInfoboxCreate,
   };
 };

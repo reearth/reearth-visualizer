@@ -14,13 +14,10 @@ type Props = {
 const Infobox: React.FC<Props> = ({ selectedLayerId, infobox }) => {
   const t = useT();
 
-  const { visibleItems, handleInfoboxEnableChange } = useHooks({
+  const { visibleItems, handleInfoboxCreate } = useHooks({
     layerId: selectedLayerId,
     property: infobox?.property,
   });
-
-  console.log("PROP", infobox?.property);
-  console.log("PROC", visibleItems);
 
   return (
     <Wrapper>
@@ -33,7 +30,7 @@ const Infobox: React.FC<Props> = ({ selectedLayerId, infobox }) => {
           name={t("Enable Infobox")}
           description={t("Show infobox when the user clicks on a layer")}
           checked={false}
-          onChange={handleInfoboxEnableChange}
+          onChange={handleInfoboxCreate}
         />
       )}
     </Wrapper>
