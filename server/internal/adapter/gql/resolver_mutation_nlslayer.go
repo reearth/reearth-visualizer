@@ -2,6 +2,7 @@ package gql
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -189,5 +190,27 @@ func (r *mutationResolver) RemoveNLSInfoboxBlock(ctx context.Context, input gqlm
 }
 
 func (r *mutationResolver) AddCustomProperties(ctx context.Context, input gqlmodel.AddCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
-	return &gqlmodel.UpdateNLSLayerPayload{}, nil
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	var schema json.RawMessage
+	schemaBytes, err := json.Marshal(input.Schema)
+	if err != nil {
+		return nil, err
+	}
+	schema = json.RawMessage(schemaBytes)
+
+	layer, err := usecases(ctx).NLSLayer.AddCustomProperties(ctx, interfaces.AddCustomPropertiesInput{
+		LayerID: lid,
+		Schema:  schema,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.UpdateNLSLayerPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
 }
