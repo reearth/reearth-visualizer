@@ -141,6 +141,7 @@
     "fast-xml-parser": "4.3.2",
     "formik": "2.4.5",
     "framer-motion": "10.18.0",
+    "github-markdown-css": "5.4.0",
     "graphiql": "2.4.4",
     "graphql": "16.6.0",
     "i18next": "22.4.15",

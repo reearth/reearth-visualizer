@@ -13042,6 +13042,11 @@ giget@^1.0.0:
     pathe "^1.1.0"
     tar "^6.1.13"
 
+github-markdown-css@5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/github-markdown-css/-/github-markdown-css-5.4.0.tgz#4ef2093852d4fa977a2edbeaf752475c858de7d1"
+  integrity sha512-eJhoFp9fiZ290h0vWrU5MmW0A2eeB81Lv/3ZkdtKrylJvtWi71ezGrxCcw1P2fVr82s3NvBX66SoDCN1pWLadw==
+
 github-slugger@^1.0.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/github-slugger/-/github-slugger-1.5.0.tgz#17891bbc73232051474d68bd867a34625c955f7d"
