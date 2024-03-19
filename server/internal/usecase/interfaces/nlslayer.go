@@ -44,6 +44,11 @@ type RemoveNLSInfoboxBlockParam struct {
 	InfoboxBlockID id.InfoboxBlockID
 }
 
+type AddCustomPropertiesInput struct {
+	LayerID id.NLSLayerID
+	Schema  json.RawMessage
+}
+
 type AddNLSLayerGeoJSONFeatureParams struct {
 	LayerID    id.NLSLayerID
 	Type       string
@@ -77,6 +82,7 @@ type NLSLayer interface {
 	MoveNLSInfoboxBlock(context.Context, MoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, int, error)
 	RemoveNLSInfoboxBlock(context.Context, RemoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, error)
 	Duplicate(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
+	AddCustomProperties(context.Context, AddCustomPropertiesInput, *usecase.Operator) (nlslayer.NLSLayer, error)
 	AddGeoJSONFeature(context.Context, AddNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	UpdateGeoJSONFeature(context.Context, UpdateNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	DeleteGeoJSONFeature(context.Context, DeleteNLSLayerGeoJSONFeatureParams, *usecase.Operator) (id.FeatureID, error)
