@@ -3,7 +3,7 @@ package config
 import "encoding/json"
 
 type JSON struct {
-	Data any
+	Data any `pp:",omitempty"`
 }
 
 func (j *JSON) Decode(value string) error {

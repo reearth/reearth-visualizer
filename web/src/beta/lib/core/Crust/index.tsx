@@ -3,7 +3,12 @@ import { type ReactNode, type RefObject } from "react";
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
-import type { LayerEditEvent, LayerSelectionReason, LayerVisibilityEvent } from "../Map";
+import type {
+  LayerEditEvent,
+  LayerLoadEvent,
+  LayerSelectionReason,
+  LayerVisibilityEvent,
+} from "../Map";
 import { SketchEventCallback, SketchType } from "../Map/Sketch/types";
 import type { TimelineManagerRef } from "../Map/useTimelineManager";
 import type { Viewport } from "../Visualizer";
@@ -126,6 +131,7 @@ export type Props = {
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
+  onLayerLoad: (cb: (e: LayerLoadEvent) => void) => void;
   onCameraForceHorizontalRollChange: (enable?: boolean) => void;
 };
 
@@ -176,6 +182,7 @@ export default function Crust({
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
+  onLayerLoad,
   onCameraForceHorizontalRollChange,
 }: Props): JSX.Element | null {
   const {
@@ -221,6 +228,7 @@ export default function Crust({
       onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       onSketchTypeChange={onSketchTypeChange}
       onLayerVisibility={onLayerVisibility}
+      onLayerLoad={onLayerLoad}
       onCameraForceHorizontalRollChange={onCameraForceHorizontalRollChange}>
       <ModalContainer
         shownPluginModalInfo={shownPluginModalInfo}

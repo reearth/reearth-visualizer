@@ -213,6 +213,8 @@ const Visualizer = memo(
         handleSketchTypeChange,
         onLayerVisibility,
         handleLayerVisibility,
+        onLayerLoad,
+        handleLayerLoad,
       } = useHooks(
         {
           rootLayerId,
@@ -293,6 +295,7 @@ const Visualizer = memo(
                   onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
                   onSketchTypeChange={onSketchTypeChange}
                   onLayerVisibility={onLayerVisibility}
+                  onLayerLoad={onLayerLoad}
                   onCameraForceHorizontalRollChange={handleCameraForceHorizontalRollChange}
                 />
                 <Map
@@ -331,6 +334,7 @@ const Visualizer = memo(
                   onSketchTypeChange={handleSketchTypeChange}
                   onMount={onMount}
                   onLayerVisibility={handleLayerVisibility}
+                  onLayerLoad={handleLayerLoad}
                 />
               </Filled>
               {storyPanelPosition === "right" && storyPanel}

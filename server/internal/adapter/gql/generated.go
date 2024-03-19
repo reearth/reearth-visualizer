@@ -775,6 +775,7 @@ type ComplexityRoot struct {
 		CoreSupport       func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Description       func(childComplexity int) int
+		EnableGa          func(childComplexity int) int
 		ID                func(childComplexity int) int
 		ImageURL          func(childComplexity int) int
 		IsArchived        func(childComplexity int) int
@@ -789,6 +790,7 @@ type ComplexityRoot struct {
 		Scene             func(childComplexity int) int
 		Team              func(childComplexity int) int
 		TeamID            func(childComplexity int) int
+		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		Visualizer        func(childComplexity int) int
 	}
@@ -1280,6 +1282,7 @@ type ComplexityRoot struct {
 
 	User struct {
 		Email func(childComplexity int) int
+		Host  func(childComplexity int) int
 		ID    func(childComplexity int) int
 		Name  func(childComplexity int) int
 	}
@@ -5367,6 +5370,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.Description(childComplexity), true
 
+	case "Project.enableGa":
+		if e.complexity.Project.EnableGa == nil {
+			break
+		}
+
+		return e.complexity.Project.EnableGa(childComplexity), true
+
 	case "Project.id":
 		if e.complexity.Project.ID == nil {
 			break
@@ -5464,6 +5474,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.TeamID(childComplexity), true
+
+	case "Project.trackingId":
+		if e.complexity.Project.TrackingID == nil {
+			break
+		}
+
+		return e.complexity.Project.TrackingID(childComplexity), true
 
 	case "Project.updatedAt":
 		if e.complexity.Project.UpdatedAt == nil {
@@ -7621,6 +7638,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Email(childComplexity), true
 
+	case "User.host":
+		if e.complexity.User.Host == nil {
+			break
+		}
+
+		return e.complexity.User.Host(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -9004,6 +9028,8 @@ extend type Mutation {
   team: Team
   scene: Scene
   coreSupport: Boolean!
+  enableGa: Boolean!
+  trackingId: String!
 }
 
 type ProjectAliasAvailability {
@@ -9050,6 +9076,8 @@ input UpdateProjectInput {
   publicNoIndex: Boolean
   deleteImageUrl: Boolean
   deletePublicImage: Boolean
+  enableGA: Boolean
+  trackingId: String
 }
 
 input PublishProjectInput {
@@ -9896,6 +9924,7 @@ extend type Mutation {
   id: ID!
   name: String!
   email: String!
+  host: String
 }
 
 type Me {
@@ -9907,7 +9936,7 @@ type Me {
   myTeamId: ID!
   auths: [String!]!
   teams: [Team!]!
-  myTeam: Team!
+  myTeam: Team
 }
 
 enum Theme {
@@ -9945,7 +9974,6 @@ input DeleteMeInput {
 
 # Payload
 
-
 type UpdateMePayload {
   me: Me!
 }
@@ -9959,7 +9987,7 @@ type DeleteMePayload {
   userId: ID!
 }
 
-extend type Query{
+extend type Query {
   me: Me
   searchUser(nameOrEmail: String!): User
 }
@@ -9969,7 +9997,8 @@ extend type Mutation {
   updateMe(input: UpdateMeInput!): UpdateMePayload
   removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
   deleteMe(input: DeleteMeInput!): DeleteMePayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystem {
   inner: WidgetZone
   outer: WidgetZone
@@ -23658,14 +23687,11 @@ func (ec *executionContext) _Me_myTeam(ctx context.Context, field graphql.Collec
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*gqlmodel.Team)
 	fc.Result = res
-	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Me_myTeam(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -37474,6 +37500,94 @@ func (ec *executionContext) fieldContext_Project_coreSupport(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_enableGa(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_enableGa(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableGa, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_enableGa(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_trackingId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_trackingId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TrackingID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_trackingId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectAliasAvailability) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
 	if err != nil {
@@ -37695,6 +37809,10 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(ctx context.Con
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Project_coreSupport(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Project_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Project_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -37924,6 +38042,10 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Project_coreSupport(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Project_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Project_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -38014,6 +38136,10 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(ctx context.Cont
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Project_coreSupport(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Project_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Project_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -43199,6 +43325,8 @@ func (ec *executionContext) fieldContext_Query_searchUser(ctx context.Context, f
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "host":
+				return ec.fieldContext_User_host(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -45265,6 +45393,10 @@ func (ec *executionContext) fieldContext_Scene_project(ctx context.Context, fiel
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Project_coreSupport(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Project_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Project_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -46597,6 +46729,8 @@ func (ec *executionContext) fieldContext_SignupPayload_user(ctx context.Context,
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "host":
+				return ec.fieldContext_User_host(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -51117,6 +51251,8 @@ func (ec *executionContext) fieldContext_TeamMember_user(ctx context.Context, fi
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "host":
+				return ec.fieldContext_User_host(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -53012,6 +53148,47 @@ func (ec *executionContext) _User_email(ctx context.Context, field graphql.Colle
 }
 
 func (ec *executionContext) fieldContext_User_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_host(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_host(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Host, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_host(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -59205,7 +59382,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGA", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -59317,6 +59494,20 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.DeletePublicImage = data
+		case "enableGA":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableGA"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EnableGa = data
+		case "trackingId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trackingId"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TrackingID = data
 		}
 	}
 
@@ -64598,9 +64789,6 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 					}
 				}()
 				res = ec._Me_myTeam(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
 				return res
 			}
 
@@ -67520,6 +67708,16 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "coreSupport":
 			out.Values[i] = ec._Project_coreSupport(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "enableGa":
+			out.Values[i] = ec._Project_enableGa(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "trackingId":
+			out.Values[i] = ec._Project_trackingId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -72995,6 +73193,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "host":
+			out.Values[i] = ec._User_host(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -76828,10 +77028,6 @@ func (ec *executionContext) marshalNTagItem2ᚖgithubᚗcomᚋreearthᚋreearth�
 		return graphql.Null
 	}
 	return ec._TagItem(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNTeam2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Team) graphql.Marshaler {
-	return ec._Team(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNTeam2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeamᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Team) graphql.Marshaler {

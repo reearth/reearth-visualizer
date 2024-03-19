@@ -245,7 +245,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 		Bucket:        aws.String(f.bucketName),
 		CacheControl:  &f.cacheControl,
 		Key:           aws.String(filename),
-		ContentLength: body.Size(),
+		ContentLength: lo.ToPtr(body.Size()),
 	})
 	if err != nil {
 		log.Errorfc(ctx, "s3: upload err: %v", err)
@@ -261,7 +261,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 		return 0, gateway.ErrFailedToUploadFile
 	}
 
-	return result.ContentLength, nil
+	return lo.FromPtr(result.ContentLength), nil
 }
 
 func (f *fileRepo) copy(ctx context.Context, from, dest string) error {

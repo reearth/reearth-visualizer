@@ -38,6 +38,7 @@ export type SelectedReearthEventType = Pick<
   | "sketchfeaturecreated"
   | "sketchtypechange"
   | "layerVisibility"
+  | "layerload"
 >;
 
 export default function ({
@@ -63,6 +64,7 @@ export default function ({
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
+  onLayerLoad,
   onCameraForceHorizontalRollChange,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
@@ -758,6 +760,9 @@ export default function ({
     onLayerVisibility(e => {
       emit("layerVisibility", e);
     });
+    onLayerLoad(e => {
+      emit("layerload", e);
+    });
   }, [
     emit,
     onMouseEvent,
@@ -767,6 +772,7 @@ export default function ({
     onPluginSketchFeatureCreated,
     onSketchTypeChange,
     onLayerVisibility,
+    onLayerLoad,
   ]);
 
   // expose plugin API for developers

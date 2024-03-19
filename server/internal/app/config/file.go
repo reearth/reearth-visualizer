@@ -1,8 +1,8 @@
 package config
 
 type GCSConfig struct {
-	BucketName              string
-	PublicationCacheControl string
+	BucketName              string `pp:",omitempty"`
+	PublicationCacheControl string `pp:",omitempty"`
 }
 
 func (g GCSConfig) IsConfigured() bool {

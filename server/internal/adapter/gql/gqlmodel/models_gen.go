@@ -756,7 +756,7 @@ type Me struct {
 	MyTeamID ID           `json:"myTeamId"`
 	Auths    []string     `json:"auths"`
 	Teams    []*Team      `json:"teams"`
-	MyTeam   *Team        `json:"myTeam"`
+	MyTeam   *Team        `json:"myTeam,omitempty"`
 }
 
 type MergedInfobox struct {
@@ -1064,6 +1064,8 @@ type Project struct {
 	Team              *Team             `json:"team,omitempty"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	CoreSupport       bool              `json:"coreSupport"`
+	EnableGa          bool              `json:"enableGa"`
+	TrackingID        string            `json:"trackingId"`
 }
 
 func (Project) IsNode()        {}
@@ -1733,6 +1735,8 @@ type UpdateProjectInput struct {
 	PublicNoIndex     *bool    `json:"publicNoIndex,omitempty"`
 	DeleteImageURL    *bool    `json:"deleteImageUrl,omitempty"`
 	DeletePublicImage *bool    `json:"deletePublicImage,omitempty"`
+	EnableGa          *bool    `json:"enableGA,omitempty"`
+	TrackingID        *string  `json:"trackingId,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
@@ -1876,9 +1880,10 @@ type UploadPluginPayload struct {
 }
 
 type User struct {
-	ID    ID     `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID    ID      `json:"id"`
+	Name  string  `json:"name"`
+	Email string  `json:"email"`
+	Host  *string `json:"host,omitempty"`
 }
 
 func (User) IsNode()        {}
