@@ -56,12 +56,75 @@ func (r *mutationResolver) AddGeoJSONFeature(ctx context.Context, input gqlmodel
 }
 
 func (r *mutationResolver) UpdateGeoJSONFeature(ctx context.Context, input gqlmodel.UpdateGeoJSONFeatureInput) (*gqlmodel.Feature, error) {
-	return &gqlmodel.Feature{}, nil
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	fid, err := gqlmodel.ToID[id.Feature](input.FeatureID)
+	if err != nil {
+		return nil, err
+	}
+
+	var geometry json.RawMessage
+	var properties json.RawMessage
+
+	geometryBytes, err := json.Marshal(input.Geometry)
+	if err != nil {
+		return nil, err
+	}
+	geometry = json.RawMessage(geometryBytes)
+
+	propertiesBytes, err := json.Marshal(input.Properties)
+	if err != nil {
+		return nil, err
+	}
+	properties = json.RawMessage(propertiesBytes)
+
+	res, err := usecases(ctx).NLSLayer.UpdateGeoJSONFeature(ctx, interfaces.UpdateNLSLayerGeoJSONFeatureParams{
+		LayerID:    lid,
+		FeatureID:  fid,
+		Geometry:   geometry,
+		Properties: properties,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	featureGeometry, err := convertGeometry(res.Geometry())
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.Feature{
+		ID:         gqlmodel.IDFrom(res.ID()),
+		Type:       res.FeatureType(),
+		Geometry:   featureGeometry,
+		Properties: res.Properties(),
+	}, nil
 }
 
 func (r *mutationResolver) DeleteGeoJSONFeature(ctx context.Context, input gqlmodel.DeleteGeoJSONFeatureInput) (*gqlmodel.DeleteGeoJSONFeaturePayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	fid, err := gqlmodel.ToID[id.Feature](input.FeatureID)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := usecases(ctx).NLSLayer.DeleteGeoJSONFeature(ctx, interfaces.DeleteNLSLayerGeoJSONFeatureParams{
+		LayerID:   lid,
+		FeatureID: fid,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
 	return &gqlmodel.DeleteGeoJSONFeaturePayload{
-		DeletedFeatureID: "",
+		DeletedFeatureID: gqlmodel.IDFrom(id),
 	}, nil
 }
 
