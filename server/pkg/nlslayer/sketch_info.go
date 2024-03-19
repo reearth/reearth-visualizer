@@ -24,6 +24,10 @@ func (s *SketchInfo) FeatureCollection() *FeatureCollection {
 	return s.featureCollection
 }
 
+func (s *SketchInfo) SetCustomPropertySchema(schema *map[string]any) {
+	s.customPropertySchema = schema
+}
+
 func (s *SketchInfo) Clone() *SketchInfo {
 	if s == nil {
 		return nil
