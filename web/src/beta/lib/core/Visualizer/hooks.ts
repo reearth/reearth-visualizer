@@ -149,7 +149,6 @@ export default function useHooks(
   const infobox: InfoboxType | undefined = useMemo(() => {
     if (!selectedLayer.layer?.layer.infobox) return undefined;
     const selected = layers?.find(l => l.id === selectedLayer.layerId);
-    console.log("SEL INFO: ", selected);
     return {
       property: selected?.infobox?.property,
       blocks: [...(selected?.infobox?.blocks ?? [])],

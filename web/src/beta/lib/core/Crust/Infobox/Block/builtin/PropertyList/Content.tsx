@@ -62,7 +62,7 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
     <Wrapper>
       {!isEditable ? (
         displayTypeField.value === "custom" ? (
-          properties.map((f, idx) => <CustomField key={f.key} index={idx} field={f} />)
+          properties?.map((f, idx) => <CustomField key={f.key} index={idx} field={f} />)
         ) : (
           properties?.map((field, idx) => {
             const [key, value]: [string, any] = Object.entries(field)[0];
