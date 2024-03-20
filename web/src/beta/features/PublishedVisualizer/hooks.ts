@@ -236,7 +236,7 @@ export default (alias?: string) => {
   );
 
   // GA
-  useGA(sceneProperty);
+  useGA({ enableGa: data?.enableGa, trackingId: data?.trackingId });
 
   return {
     sceneProperty,
