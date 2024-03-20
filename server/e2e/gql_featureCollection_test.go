@@ -377,8 +377,8 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("type").Equal("MultiPolygon")
 
 	geometry5 := map[string]any{
-		"type":        "GeometryCollection",
-		"coordinates": []map[string]any{geometry1, geometry2, geometry3, geometry4},
+		"type":       "GeometryCollection",
+		"geometries": []map[string]any{geometry1, geometry2, geometry3, geometry4},
 	}
 	properties5 := map[string]any{
 		"id":             "propertiesId5",
