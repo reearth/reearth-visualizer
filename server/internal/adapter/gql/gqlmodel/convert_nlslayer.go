@@ -127,6 +127,13 @@ func ToNLSLayerSketchInfo(si *nlslayer.SketchInfo) *SketchInfo {
 		customPropertySchema = JSON(*si.CustomPropertySchema())
 	}
 
+	if si.FeatureCollection() == nil {
+		return &SketchInfo{
+			CustomPropertySchema: customPropertySchema,
+			FeatureCollection:    nil,
+		}
+	}
+
 	var features []*Feature
 	for _, f := range si.FeatureCollection().Features() {
 		feature := &Feature{

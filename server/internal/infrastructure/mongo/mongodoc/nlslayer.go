@@ -295,6 +295,14 @@ func ToModelNLSLayerSketchInfo(si *NLSLayerSketchInfoDocument) (*nlslayer.Sketch
 		return nil, nil
 	}
 
+	if si.FeatureCollection == nil {
+		sketchInfo := nlslayer.NewSketchInfo(
+			si.CustomPropertySchema,
+			nil,
+		)
+		return sketchInfo, nil
+	}
+
 	features := make([]nlslayer.Feature, 0, len(si.FeatureCollection.Features))
 	for _, f := range si.FeatureCollection.Features {
 		id, err := id.FeatureIDFrom(f.ID)
