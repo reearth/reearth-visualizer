@@ -116,107 +116,118 @@ func NewGeometryFromMap(data map[string]any) (Geometry, error) {
 		return nil, errors.New("geometry type not found")
 	}
 
-	coordinates, ok := data["coordinates"].([]interface{})
-	if !ok {
-		return nil, errors.New("coordinates not found")
-	}
-
-	switch geometryType {
-	case "Point":
-		var coords []float64
-		for _, rawCoord := range coordinates {
-			coord, ok := rawCoord.(float64)
-			if !ok {
-				return nil, errors.New("invalid coordinate format in Point")
-			}
-			coords = append(coords, coord)
+	if geometryType == "Point" || geometryType == "LineString" || geometryType == "Polygon" || geometryType == "MultiPolygon" {
+		coordinates, ok := data["coordinates"].([]interface{})
+		if !ok {
+			return nil, errors.New("coordinates not found")
 		}
-		return NewPoint(geometryType, coords), nil
 
-	case "LineString":
-		var coords [][]float64
-		for _, rawCoord := range coordinates {
-			coord, ok := rawCoord.([]interface{})
-			if !ok {
-				return nil, errors.New("invalid coordinate format in LineString")
+		switch geometryType {
+		case "Point":
+			var coords []float64
+			for _, rawCoord := range coordinates {
+				coord, ok := rawCoord.(float64)
+				if !ok {
+					return nil, errors.New("invalid coordinate format in Point")
+				}
+				coords = append(coords, coord)
 			}
-			var lineCoords []float64
-			for _, rawLineCoord := range coord {
-				lineCoord, ok := rawLineCoord.(float64)
+			return NewPoint(geometryType, coords), nil
+
+		case "LineString":
+			var coords [][]float64
+			for _, rawCoord := range coordinates {
+				coord, ok := rawCoord.([]interface{})
 				if !ok {
 					return nil, errors.New("invalid coordinate format in LineString")
 				}
-				lineCoords = append(lineCoords, lineCoord)
+				var lineCoords []float64
+				for _, rawLineCoord := range coord {
+					lineCoord, ok := rawLineCoord.(float64)
+					if !ok {
+						return nil, errors.New("invalid coordinate format in LineString")
+					}
+					lineCoords = append(lineCoords, lineCoord)
+				}
+				coords = append(coords, lineCoords)
 			}
-			coords = append(coords, lineCoords)
-		}
-		return NewLineString(geometryType, coords), nil
+			return NewLineString(geometryType, coords), nil
 
-	case "Polygon":
-		var coords [][][]float64
-		for _, rawCoord := range coordinates {
-			coord, ok := rawCoord.([]interface{})
-			if !ok {
-				return nil, errors.New("invalid coordinate format in Polygon")
-			}
-			var polyCoords [][]float64
-			for _, rawPolyCoord := range coord {
-				polyCoord, ok := rawPolyCoord.([]interface{})
+		case "Polygon":
+			var coords [][][]float64
+			for _, rawCoord := range coordinates {
+				coord, ok := rawCoord.([]interface{})
 				if !ok {
 					return nil, errors.New("invalid coordinate format in Polygon")
 				}
-				var ringCoords []float64
-				for _, rawRingCoord := range polyCoord {
-					ringCoord, ok := rawRingCoord.(float64)
-					if !ok {
-						return nil, errors.New("invalid coordinate format in Polygon")
-					}
-					ringCoords = append(ringCoords, ringCoord)
-				}
-				polyCoords = append(polyCoords, ringCoords)
-			}
-			coords = append(coords, polyCoords)
-		}
-		return NewPolygon(geometryType, coords), nil
-
-	case "MultiPolygon":
-		var coords [][][][]float64
-		for _, rawCoord := range coordinates {
-			coord, ok := rawCoord.([]interface{})
-			if !ok {
-				return nil, errors.New("invalid coordinate format in MultiPolygon")
-			}
-			var multiPolyCoords [][][]float64
-			for _, rawMultiPolyCoord := range coord {
-				multiPolyCoord, ok := rawMultiPolyCoord.([]interface{})
-				if !ok {
-					return nil, errors.New("invalid coordinate format in MultiPolygon")
-				}
 				var polyCoords [][]float64
-				for _, rawPolyCoord := range multiPolyCoord {
+				for _, rawPolyCoord := range coord {
 					polyCoord, ok := rawPolyCoord.([]interface{})
 					if !ok {
-						return nil, errors.New("invalid coordinate format in MultiPolygon")
+						return nil, errors.New("invalid coordinate format in Polygon")
 					}
 					var ringCoords []float64
 					for _, rawRingCoord := range polyCoord {
 						ringCoord, ok := rawRingCoord.(float64)
 						if !ok {
-							return nil, errors.New("invalid coordinate format in MultiPolygon")
+							return nil, errors.New("invalid coordinate format in Polygon")
 						}
 						ringCoords = append(ringCoords, ringCoord)
 					}
 					polyCoords = append(polyCoords, ringCoords)
 				}
-				multiPolyCoords = append(multiPolyCoords, polyCoords)
+				coords = append(coords, polyCoords)
 			}
-			coords = append(coords, multiPolyCoords)
-		}
-		return NewMultiPolygon(geometryType, coords), nil
+			return NewPolygon(geometryType, coords), nil
 
-	case "GeometryCollection":
-		var geometries []Geometry
-		for _, rawGeometry := range coordinates {
+		case "MultiPolygon":
+			var coords [][][][]float64
+			for _, rawCoord := range coordinates {
+				coord, ok := rawCoord.([]interface{})
+				if !ok {
+					return nil, errors.New("invalid coordinate format in MultiPolygon")
+				}
+				var multiPolyCoords [][][]float64
+				for _, rawMultiPolyCoord := range coord {
+					multiPolyCoord, ok := rawMultiPolyCoord.([]interface{})
+					if !ok {
+						return nil, errors.New("invalid coordinate format in MultiPolygon")
+					}
+					var polyCoords [][]float64
+					for _, rawPolyCoord := range multiPolyCoord {
+						polyCoord, ok := rawPolyCoord.([]interface{})
+						if !ok {
+							return nil, errors.New("invalid coordinate format in MultiPolygon")
+						}
+						var ringCoords []float64
+						for _, rawRingCoord := range polyCoord {
+							ringCoord, ok := rawRingCoord.(float64)
+							if !ok {
+								return nil, errors.New("invalid coordinate format in MultiPolygon")
+							}
+							ringCoords = append(ringCoords, ringCoord)
+						}
+						polyCoords = append(polyCoords, ringCoords)
+					}
+					multiPolyCoords = append(multiPolyCoords, polyCoords)
+				}
+				coords = append(coords, multiPolyCoords)
+			}
+			return NewMultiPolygon(geometryType, coords), nil
+
+		default:
+			return nil, errors.New("unsupported geometry type")
+		}
+	}
+
+	if geometryType == "GeometryCollection" {
+		geometries, ok := data["geometries"].([]interface{})
+		if !ok {
+			return nil, errors.New("geometries not found")
+		}
+
+		var geometryList []Geometry
+		for _, rawGeometry := range geometries {
 			geometry, ok := rawGeometry.(map[string]any)
 			if !ok {
 				return nil, errors.New("invalid geometry format in GeometryCollection")
@@ -225,11 +236,10 @@ func NewGeometryFromMap(data map[string]any) (Geometry, error) {
 			if err != nil {
 				return nil, err
 			}
-			geometries = append(geometries, geom)
+			geometryList = append(geometryList, geom)
 		}
-		return NewGeometryCollection(geometryType, geometries), nil
-
-	default:
-		return nil, fmt.Errorf("unsupported geometry type: %s", geometryType)
+		return NewGeometryCollection(geometryType, geometryList), nil
 	}
+
+	return nil, fmt.Errorf("unsupported geometry type: %s", geometryType)
 }
