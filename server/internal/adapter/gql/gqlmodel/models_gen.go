@@ -1737,6 +1737,7 @@ type UpdateProjectInput struct {
 	DeletePublicImage *bool    `json:"deletePublicImage,omitempty"`
 	EnableGa          *bool    `json:"enableGa,omitempty"`
 	TrackingID        *string  `json:"trackingId,omitempty"`
+	SceneID           *ID      `json:"sceneId,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
