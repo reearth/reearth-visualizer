@@ -1,20 +1,24 @@
 import { useEffect } from "react";
 
-import type { SceneProperty } from "@reearth/beta/lib/core/Map";
+export type GeneralGASettingsType = {
+  enableGa?: boolean;
+  trackingId?: string;
+};
 
 const isGa4TrackingId = (trackingId: string) => trackingId.startsWith("G-");
-export const useGA = (sceneProperty: SceneProperty) => {
-  const { enableGA, trackingId } = sceneProperty?.googleAnalytics || {};
 
+export const useGA = ({ enableGa, trackingId }: GeneralGASettingsType) => {
   useEffect(() => {
-    if (!enableGA || !trackingId) return;
+    const isEnabled = !!enableGa;
+
+    if (!isEnabled || !trackingId) return;
 
     const loadGaModule = async () => {
-      const ga = isGa4TrackingId(trackingId) ? await import("./ga4") : await import("./ga");
-      ga.initialize(trackingId);
-      ga.pageview(window.location.pathname);
+      const gaModule = isGa4TrackingId(trackingId) ? await import("./ga4") : await import("./ga");
+      gaModule.initialize(trackingId);
+      gaModule.pageview(window.location.pathname);
     };
 
     loadGaModule();
-  }, [enableGA, trackingId]);
+  }, [enableGa, trackingId]);
 };

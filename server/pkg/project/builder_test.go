@@ -300,6 +300,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 		workspace          WorkspaceID
 		visualizer         visualizer.Visualizer
 		publishmentStatus  PublishmentStatus
+		trackingId         string
+		enableGa           bool
 	}
 
 	tests := []struct {
@@ -326,6 +328,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 				workspace:         tid,
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
+				trackingId:        "dfdfdfd",
+				enableGa:          true,
 			},
 			expected: &Project{
 				id:                pid,
@@ -343,6 +347,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 				workspace:         tid,
 				visualizer:        visualizer.VisualizerCesium,
 				publishmentStatus: "ppp",
+				trackingId:        "dfdfdfd",
+				enableGa:          true,
 			},
 		},
 		{
@@ -392,6 +398,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 					Visualizer(tt.args.visualizer).
 					UpdatedAt(tt.args.updatedAt).
 					Description(tt.args.description).
+					EnableGA(tt.args.enableGa).
+					TrackingID(tt.args.trackingId).
 					MustBuild()
 			}
 

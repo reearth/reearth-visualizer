@@ -223,6 +223,14 @@ func TestProject_UpdateAlias(t *testing.T) {
 	}
 }
 
+func TestProject_UpdateGAConfig(t *testing.T) {
+	p := &Project{}
+	p.UpdateEnableGA(true)
+	p.UpdateTrackingID("xxx")
+	assert.Equal(t, "xxx", p.TrackingID())
+	assert.Equal(t, true, p.EnableGA())
+}
+
 func TestProject_UpdatePublicImage(t *testing.T) {
 	p := &Project{}
 	p.UpdatePublicImage("xxx")

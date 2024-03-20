@@ -20,6 +20,9 @@ import type {
   Feature,
   LayerVisibilityEvent,
   LayerLoadEvent,
+  LayerSelectWithRectStart,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectEnd,
 } from "@reearth/beta/lib/core/Map";
 
 import { SketchAppearance, SketchEventProps, SketchType } from "../../Map/Sketch/types";
@@ -284,6 +287,9 @@ export type ReearthEventType = {
   sketchtypechange: [props: SketchType | undefined];
   layerVisibility: [e: LayerVisibilityEvent];
   layerload: [e: LayerLoadEvent];
+  layerSelectWithRectStart: [e: LayerSelectWithRectStart];
+  layerSelectWithRectMove: [e: LayerSelectWithRectMove];
+  layerSelectWithRectEnd: [e: LayerSelectWithRectEnd];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */

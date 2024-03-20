@@ -142,12 +142,17 @@ func (b *Builder) PublishmentStatus(publishmentStatus PublishmentStatus) *Builde
 	return b
 }
 
-func (b *Builder) EnableGA(enableGA bool) *Builder {
-	b.p.enableGA = enableGA
+func (b *Builder) EnableGA(enableGa bool) *Builder {
+	b.p.enableGa = enableGa
 	return b
 }
 
-func (b *Builder) TrackingID(trackingID string) *Builder {
-	b.p.trackingID = trackingID
+func (b *Builder) TrackingID(trackingId string) *Builder {
+	b.p.trackingId = trackingId
+	return b
+}
+
+func (b *Builder) Scene(sceneId SceneID) *Builder {
+	b.p.sceneId = sceneId
 	return b
 }
