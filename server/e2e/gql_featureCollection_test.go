@@ -425,6 +425,57 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("geometries").Array().
 		Length().Equal(4)
 
+	geometry6 := map[string]any{
+		"type":        "LineString",
+		"coordinates": [][]float64{{5, 6}, {7, 8}},
+	}
+	properties6 := map[string]any{
+		"id":             "propertiesId1",
+		"type":           "marker",
+		"extrudedHeight": 10,
+		"positions":      []float64{16, 17, 18},
+	}
+	_, _, fid6 := updateGeoJSONFeature(e, layerId, fid1, geometry6, properties6)
+
+	_, res8 := fetchSceneForNewLayers(e, sId)
+	res8.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("featureCollection").Object().
+		Value("features").Array().
+		Length().Equal(5)
+
+	res8.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("featureCollection").Object().
+		Value("features").Array().First().Object().
+		Value("id").Equal(fid6)
+
+	res8.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("featureCollection").Object().
+		Value("features").Array().First().Object().
+		Value("geometry").Object().
+		Value("type").Equal("LineString")
+
+	res8.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("featureCollection").Object().
+		Value("features").Array().First().Object().
+		Value("properties").Object().
+		Value("extrudedHeight").Equal(10)
+
 	fmt.Println(fid1)
 	fmt.Println(fid2)
 	fmt.Println(fid3)
