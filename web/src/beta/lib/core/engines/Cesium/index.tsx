@@ -56,9 +56,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
-    onLayerSelectWithDragStart,
-    onLayerSelectWithDragMove,
-    onLayerSelectWithDragEnd,
+    onLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
     onMount,
     onLayerVisibility,
     onLayerLoad,
@@ -75,7 +75,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     cesiumIonAccessToken,
     context,
     light,
-    layerSelectWithDragEventHandlers,
+    layerSelectWithRectEventHandlers,
     handleMount,
     handleUnmount,
     handleUpdate,
@@ -102,9 +102,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
-    onLayerSelectWithDragStart,
-    onLayerSelectWithDragMove,
-    onLayerSelectWithDragEnd,
+    onLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
     onMount,
     onLayerVisibility,
     onLayerLoad,
@@ -164,34 +164,34 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
       </ScreenSpaceEventHandler>
 
-      {/* For LayerSelectWithDrag event */}
+      {/* For LayerSelectWithRect event */}
       <ScreenSpaceEventHandler>
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.LEFT_DOWN}
-          action={layerSelectWithDragEventHandlers.start.handler}
+          action={layerSelectWithRectEventHandlers.start.handler}
         />
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.LEFT_DOWN}
           modifier={KeyboardEventModifier.SHIFT}
-          action={layerSelectWithDragEventHandlers.start.shift}
+          action={layerSelectWithRectEventHandlers.start.shift}
         />
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.MOUSE_MOVE}
-          action={layerSelectWithDragEventHandlers.move.handler}
+          action={layerSelectWithRectEventHandlers.move.handler}
         />
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.MOUSE_MOVE}
           modifier={KeyboardEventModifier.SHIFT}
-          action={layerSelectWithDragEventHandlers.move.shift}
+          action={layerSelectWithRectEventHandlers.move.shift}
         />
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.LEFT_UP}
-          action={layerSelectWithDragEventHandlers.end.handler}
+          action={layerSelectWithRectEventHandlers.end.handler}
         />
         <ScreenSpaceEvent
           type={ScreenSpaceEventType.LEFT_UP}
           modifier={KeyboardEventModifier.SHIFT}
-          action={layerSelectWithDragEventHandlers.end.shift}
+          action={layerSelectWithRectEventHandlers.end.shift}
         />
       </ScreenSpaceEventHandler>
       <ScreenSpaceCameraController

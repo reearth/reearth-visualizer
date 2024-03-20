@@ -238,9 +238,9 @@ export type EngineProps = {
   onMount?: () => void;
   onLayerVisibility?: (e: LayerVisibilityEvent) => void;
   onLayerLoad?: (e: LayerLoadEvent) => void;
-  onLayerSelectWithDragStart?: (e: LayerSelectWithDragStart) => void;
-  onLayerSelectWithDragMove?: (e: LayerSelectWithDragMove) => void;
-  onLayerSelectWithDragEnd?: (e: LayerSelectWithDragEnd) => void;
+  onLayerSelectWithRectStart?: (e: LayerSelectWithRectStart) => void;
+  onLayerSelectWithRectMove?: (e: LayerSelectWithRectMove) => void;
+  onLayerSelectWithRectEnd?: (e: LayerSelectWithRectEnd) => void;
 };
 
 export type LayerEditEvent = {
@@ -254,15 +254,15 @@ export type LayerEditEvent = {
   rotate?: { heading: number; pitch: number; roll: number };
 };
 
-export type LayerSelectWithDrag = MouseEventProps & { pressedKey?: "shift" };
-export type LayerSelectWithDragStart = LayerSelectWithDrag;
-export type LayerSelectWithDragMove = LayerSelectWithDrag & {
+export type LayerSelectWithRect = MouseEventProps & { pressedKey?: "shift" };
+export type LayerSelectWithRectStart = LayerSelectWithRect;
+export type LayerSelectWithRectMove = LayerSelectWithRect & {
   startX?: number;
   startY?: number;
   width?: number;
   height?: number;
 };
-export type LayerSelectWithDragEnd = LayerSelectWithDrag & {
+export type LayerSelectWithRectEnd = LayerSelectWithRect & {
   features: PickedFeature[] | undefined;
   isClick: boolean;
 };

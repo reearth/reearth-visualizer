@@ -5,33 +5,33 @@ import { CesiumComponentRef, CesiumMovementEvent } from "resium";
 import { EngineRef } from "../..";
 import { INTERACTION_MODES } from "../../../Crust";
 import {
-  LayerSelectWithDrag,
-  LayerSelectWithDragEnd,
-  LayerSelectWithDragMove,
-  LayerSelectWithDragStart,
+  LayerSelectWithRect,
+  LayerSelectWithRectEnd,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectStart,
 } from "../../../Map";
 import { makeMouseEventProps } from "../utils/mouse";
 
-export const useLayerSelectWithDrag = ({
+export const useLayerSelectWithRect = ({
   cesium,
   engineAPI,
   featureFlags,
-  onLayerSelectWithDragStart,
-  onLayerSelectWithDragMove,
-  onLayerSelectWithDragEnd,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
 }: {
   cesium: RefObject<CesiumComponentRef<Viewer>>;
   engineAPI: EngineRef;
   featureFlags: number;
-  onLayerSelectWithDragStart?: (e: LayerSelectWithDragStart) => void;
-  onLayerSelectWithDragMove?: (e: LayerSelectWithDragMove) => void;
-  onLayerSelectWithDragEnd?: (e: LayerSelectWithDragEnd) => void;
+  onLayerSelectWithRectStart?: (e: LayerSelectWithRectStart) => void;
+  onLayerSelectWithRectMove?: (e: LayerSelectWithRectMove) => void;
+  onLayerSelectWithRectEnd?: (e: LayerSelectWithRectEnd) => void;
 }) => {
   const startPositionRef = useRef<[x: number, y: number]>([0, 0]);
   const isDragMovingRef = useRef(false);
   const isDragStartingRef = useRef(false);
-  const handleLayerSelectWithDragStart = useCallback(
-    (e: CesiumMovementEvent, pressedKey?: LayerSelectWithDrag["pressedKey"]) => {
+  const handleLayerSelectWithRectStart = useCallback(
+    (e: CesiumMovementEvent, pressedKey?: LayerSelectWithRect["pressedKey"]) => {
       if (isDragMovingRef.current || isDragStartingRef.current) return;
       if (featureFlags !== INTERACTION_MODES.selection) return;
       if (!cesium.current?.cesiumElement || cesium.current.cesiumElement.isDestroyed()) return;
@@ -39,16 +39,16 @@ export const useLayerSelectWithDrag = ({
       startPositionRef.current = [mouseProps.x ?? 0, mouseProps.y ?? 0];
       isDragStartingRef.current = true;
       isDragMovingRef.current = false;
-      onLayerSelectWithDragStart?.({ ...mouseProps, pressedKey });
+      onLayerSelectWithRectStart?.({ ...mouseProps, pressedKey });
     },
-    [onLayerSelectWithDragStart, cesium, featureFlags],
+    [onLayerSelectWithRectStart, cesium, featureFlags],
   );
-  const handleLayerSelectWithDragMove = useCallback(
+  const handleLayerSelectWithRectMove = useCallback(
     (
       e: CesiumMovementEvent,
-      pressedKey?: LayerSelectWithDrag["pressedKey"],
+      pressedKey?: LayerSelectWithRect["pressedKey"],
       ignoreEvent?: boolean,
-    ): LayerSelectWithDragMove | undefined => {
+    ): LayerSelectWithRectMove | undefined => {
       if (!isDragStartingRef.current) return;
       if (!cesium.current?.cesiumElement || cesium.current.cesiumElement.isDestroyed()) return;
 
@@ -81,17 +81,17 @@ export const useLayerSelectWithDrag = ({
         height: y2 - y1,
       };
 
-      onLayerSelectWithDragMove?.(props);
+      onLayerSelectWithRectMove?.(props);
 
       return props;
     },
-    [onLayerSelectWithDragMove, cesium],
+    [onLayerSelectWithRectMove, cesium],
   );
-  const handleLayerSelectWithDragEnd = useCallback(
-    (e: CesiumMovementEvent, pressedKey?: LayerSelectWithDrag["pressedKey"]) => {
+  const handleLayerSelectWithRectEnd = useCallback(
+    (e: CesiumMovementEvent, pressedKey?: LayerSelectWithRect["pressedKey"]) => {
       if (!isDragStartingRef.current) return;
       if (!cesium.current?.cesiumElement || cesium.current.cesiumElement.isDestroyed()) return;
-      const mouseProps = handleLayerSelectWithDragMove(e, pressedKey, true);
+      const mouseProps = handleLayerSelectWithRectMove(e, pressedKey, true);
 
       const { startX = 0, startY = 0, x = 0, y = 0, width = 0, height = 0 } = mouseProps ?? {};
       const [centerX, centerY] = [startX + width / 2, startY + height / 2];
@@ -99,7 +99,7 @@ export const useLayerSelectWithDrag = ({
       const features = isDragMovingRef.current
         ? engineAPI.pickManyFromViewport([centerX, centerY], width, height)
         : engineAPI.pickManyFromViewport([x, y], 1, 1);
-      onLayerSelectWithDragEnd?.({
+      onLayerSelectWithRectEnd?.({
         ...mouseProps,
         pressedKey,
         features: features ?? [],
@@ -109,7 +109,7 @@ export const useLayerSelectWithDrag = ({
       isDragMovingRef.current = false;
       isDragStartingRef.current = false;
     },
-    [onLayerSelectWithDragEnd, cesium, engineAPI, handleLayerSelectWithDragMove],
+    [onLayerSelectWithRectEnd, cesium, engineAPI, handleLayerSelectWithRectMove],
   );
 
   const eventHandlers = useMemo(() => {
@@ -117,22 +117,22 @@ export const useLayerSelectWithDrag = ({
       [K in "start" | "move" | "end"]: {
         handler: (
           e: CesiumMovementEvent,
-          pressedKey?: LayerSelectWithDrag["pressedKey"],
+          pressedKey?: LayerSelectWithRect["pressedKey"],
         ) => unknown;
-        keys: NonNullable<LayerSelectWithDrag["pressedKey"]>[];
+        keys: NonNullable<LayerSelectWithRect["pressedKey"]>[];
       };
     };
     const events: Events = {
       start: {
-        handler: handleLayerSelectWithDragStart,
+        handler: handleLayerSelectWithRectStart,
         keys: ["shift"],
       },
       move: {
-        handler: handleLayerSelectWithDragMove,
+        handler: handleLayerSelectWithRectMove,
         keys: ["shift"],
       },
       end: {
-        handler: handleLayerSelectWithDragEnd,
+        handler: handleLayerSelectWithRectEnd,
         keys: ["shift"],
       },
     };
@@ -151,7 +151,7 @@ export const useLayerSelectWithDrag = ({
         ) => ReturnType<Events[K]["handler"]>;
       };
     };
-  }, [handleLayerSelectWithDragEnd, handleLayerSelectWithDragMove, handleLayerSelectWithDragStart]);
+  }, [handleLayerSelectWithRectEnd, handleLayerSelectWithRectMove, handleLayerSelectWithRectStart]);
 
   return eventHandlers;
 };

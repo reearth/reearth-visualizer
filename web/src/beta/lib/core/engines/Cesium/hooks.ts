@@ -28,9 +28,9 @@ import { useCustomCompareCallback } from "use-custom-compare";
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 import {
   LayerLoadEvent,
-  LayerSelectWithDragEnd,
-  LayerSelectWithDragMove,
-  LayerSelectWithDragStart,
+  LayerSelectWithRectEnd,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectStart,
   LayersRef,
   RequestingRenderMode,
 } from "@reearth/beta/lib/core/Map";
@@ -54,7 +54,7 @@ import { useCameraLimiter } from "./cameraLimiter";
 import { getCamera, isDraggable, isSelectable } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import { arrayToCartecian3 } from "./helpers/sphericalHaromic";
-import { useLayerSelectWithDrag } from "./hooks/useLayerSelectWithDrag";
+import { useLayerSelectWithRect } from "./hooks/useLayerSelectWithRect";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
@@ -92,9 +92,9 @@ export default ({
   onLayerDrag,
   onLayerDrop,
   onLayerEdit,
-  onLayerSelectWithDragStart,
-  onLayerSelectWithDragMove,
-  onLayerSelectWithDragEnd,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
   onMount,
   onLayerVisibility,
   onLayerLoad,
@@ -130,9 +130,9 @@ export default ({
     position: LatLng | undefined,
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
-  onLayerSelectWithDragStart?: (e: LayerSelectWithDragStart) => void;
-  onLayerSelectWithDragMove?: (e: LayerSelectWithDragMove) => void;
-  onLayerSelectWithDragEnd?: (e: LayerSelectWithDragEnd) => void;
+  onLayerSelectWithRectStart?: (e: LayerSelectWithRectStart) => void;
+  onLayerSelectWithRectMove?: (e: LayerSelectWithRectMove) => void;
+  onLayerSelectWithRectEnd?: (e: LayerSelectWithRectEnd) => void;
   onMount?: () => void;
   onLayerVisibility?: (e: LayerVisibilityEvent) => void;
   onLayerLoad?: (e: LayerLoadEvent) => void;
@@ -147,12 +147,12 @@ export default ({
   // expose ref
   const engineAPI = useEngineRef(ref, cesium);
 
-  const layerSelectWithDragEventHandlers = useLayerSelectWithDrag({
+  const layerSelectWithRectEventHandlers = useLayerSelectWithRect({
     cesium,
     engineAPI,
-    onLayerSelectWithDragStart,
-    onLayerSelectWithDragMove,
-    onLayerSelectWithDragEnd,
+    onLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
     featureFlags,
   });
 
@@ -980,7 +980,7 @@ export default ({
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
-    layerSelectWithDragEventHandlers,
+    layerSelectWithRectEventHandlers,
   };
 };
 

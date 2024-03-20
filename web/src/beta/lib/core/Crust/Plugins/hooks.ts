@@ -39,9 +39,9 @@ export type SelectedReearthEventType = Pick<
   | "sketchtypechange"
   | "layerVisibility"
   | "layerload"
-  | "layerSelectWithDragStart"
-  | "layerSelectWithDragMove"
-  | "layerSelectWithDragEnd"
+  | "layerSelectWithRectStart"
+  | "layerSelectWithRectMove"
+  | "layerSelectWithRectEnd"
 >;
 
 export default function ({
@@ -64,9 +64,9 @@ export default function ({
   useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
-  onLayerSelectWithDragStart,
-  onLayerSelectWithDragMove,
-  onLayerSelectWithDragEnd,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
@@ -769,14 +769,14 @@ export default function ({
     onLayerLoad(e => {
       emit("layerload", e);
     });
-    onLayerSelectWithDragStart(e => {
-      emit("layerSelectWithDragStart", e);
+    onLayerSelectWithRectStart(e => {
+      emit("layerSelectWithRectStart", e);
     });
-    onLayerSelectWithDragMove(e => {
-      emit("layerSelectWithDragMove", e);
+    onLayerSelectWithRectMove(e => {
+      emit("layerSelectWithRectMove", e);
     });
-    onLayerSelectWithDragEnd(e => {
-      emit("layerSelectWithDragEnd", e);
+    onLayerSelectWithRectEnd(e => {
+      emit("layerSelectWithRectEnd", e);
     });
   }, [
     emit,
@@ -788,9 +788,9 @@ export default function ({
     onSketchTypeChange,
     onLayerVisibility,
     onLayerLoad,
-    onLayerSelectWithDragStart,
-    onLayerSelectWithDragMove,
-    onLayerSelectWithDragEnd,
+    onLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
   ]);
 
   // expose plugin API for developers

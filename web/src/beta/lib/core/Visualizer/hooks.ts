@@ -20,9 +20,9 @@ import type {
   CursorType,
   LayerVisibilityEvent,
   LayerLoadEvent,
-  LayerSelectWithDragStart,
-  LayerSelectWithDragMove,
-  LayerSelectWithDragEnd,
+  LayerSelectWithRectStart,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectEnd,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
@@ -305,26 +305,26 @@ export default function useHooks(
   }, []);
 
   // multiple feature selection
-  const onLayerSelectWithDragStartRef = useRef<(e: LayerSelectWithDragStart) => void>();
-  const onLayerSelectWithDragStart = useCallback((cb: (e: LayerSelectWithDragStart) => void) => {
-    onLayerSelectWithDragStartRef.current = cb;
+  const onLayerSelectWithRectStartRef = useRef<(e: LayerSelectWithRectStart) => void>();
+  const onLayerSelectWithRectStart = useCallback((cb: (e: LayerSelectWithRectStart) => void) => {
+    onLayerSelectWithRectStartRef.current = cb;
   }, []);
-  const handleLayerSelectWithDragStart = useCallback((e: LayerSelectWithDragStart) => {
-    onLayerSelectWithDragStartRef.current?.(e);
+  const handleLayerSelectWithRectStart = useCallback((e: LayerSelectWithRectStart) => {
+    onLayerSelectWithRectStartRef.current?.(e);
   }, []);
-  const onLayerSelectWithDragMoveRef = useRef<(e: LayerSelectWithDragMove) => void>();
-  const onLayerSelectWithDragMove = useCallback((cb: (e: LayerSelectWithDragMove) => void) => {
-    onLayerSelectWithDragMoveRef.current = cb;
+  const onLayerSelectWithRectMoveRef = useRef<(e: LayerSelectWithRectMove) => void>();
+  const onLayerSelectWithRectMove = useCallback((cb: (e: LayerSelectWithRectMove) => void) => {
+    onLayerSelectWithRectMoveRef.current = cb;
   }, []);
-  const handleLayerSelectWithDragMove = useCallback((e: LayerSelectWithDragMove) => {
-    onLayerSelectWithDragMoveRef.current?.(e);
+  const handleLayerSelectWithRectMove = useCallback((e: LayerSelectWithRectMove) => {
+    onLayerSelectWithRectMoveRef.current?.(e);
   }, []);
-  const onLayerSelectWithDragEndRef = useRef<(e: LayerSelectWithDragEnd) => void>();
-  const onLayerSelectWithDragEnd = useCallback((cb: (e: LayerSelectWithDragEnd) => void) => {
-    onLayerSelectWithDragEndRef.current = cb;
+  const onLayerSelectWithRectEndRef = useRef<(e: LayerSelectWithRectEnd) => void>();
+  const onLayerSelectWithRectEnd = useCallback((cb: (e: LayerSelectWithRectEnd) => void) => {
+    onLayerSelectWithRectEndRef.current = cb;
   }, []);
-  const handleLayerSelectWithDragEnd = useCallback((e: LayerSelectWithDragEnd) => {
-    onLayerSelectWithDragEndRef.current?.(e);
+  const handleLayerSelectWithRectEnd = useCallback((e: LayerSelectWithRectEnd) => {
+    onLayerSelectWithRectEndRef.current?.(e);
   }, []);
 
   // plugin sketch feature events
@@ -424,12 +424,12 @@ export default function useHooks(
     handleLayerVisibility,
     onLayerLoad,
     handleLayerLoad,
-    onLayerSelectWithDragStart,
-    handleLayerSelectWithDragStart,
-    onLayerSelectWithDragMove,
-    handleLayerSelectWithDragMove,
-    onLayerSelectWithDragEnd,
-    handleLayerSelectWithDragEnd,
+    onLayerSelectWithRectStart,
+    handleLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    handleLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
+    handleLayerSelectWithRectEnd,
   };
 }
 
