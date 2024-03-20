@@ -770,7 +770,7 @@ export type LayerTagItem = LayerTag & {
 
 export type LineString = {
   __typename?: 'LineString';
-  lineStringCoordinates: Array<Array<Scalars['Float']['output']>>;
+  coordinates: Array<Array<Scalars['Float']['output']>>;
   type: Scalars['String']['output'];
 };
 
@@ -971,7 +971,7 @@ export type MoveStoryPayload = {
 
 export type MultiPolygon = {
   __typename?: 'MultiPolygon';
-  multiPolygonCoordinates: Array<Array<Array<Array<Scalars['Float']['output']>>>>;
+  coordinates: Array<Array<Array<Array<Scalars['Float']['output']>>>>;
   type: Scalars['String']['output'];
 };
 
@@ -1723,7 +1723,7 @@ export enum PluginExtensionType {
 
 export type Point = {
   __typename?: 'Point';
-  pointCoordinates: Array<Scalars['Float']['output']>;
+  coordinates: Array<Scalars['Float']['output']>;
   type: Scalars['String']['output'];
 };
 
@@ -1742,7 +1742,7 @@ export type Policy = {
 
 export type Polygon = {
   __typename?: 'Polygon';
-  polygonCoordinates: Array<Array<Array<Scalars['Float']['output']>>>;
+  coordinates: Array<Array<Array<Scalars['Float']['output']>>>;
   type: Scalars['String']['output'];
 };
 
