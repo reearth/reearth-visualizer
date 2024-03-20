@@ -12,6 +12,8 @@ export type PublishedData = {
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
   story?: Story;
+  enableGa?: boolean;
+  trackingId?: string;
 };
 
 export type Story = {

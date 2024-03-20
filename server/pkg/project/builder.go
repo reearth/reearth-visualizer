@@ -151,3 +151,8 @@ func (b *Builder) TrackingID(trackingId string) *Builder {
 	b.p.trackingId = trackingId
 	return b
 }
+
+func (b *Builder) Scene(sceneId SceneID) *Builder {
+	b.p.sceneId = sceneId
+	return b
+}

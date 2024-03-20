@@ -2552,6 +2552,7 @@ export type UpdateProjectInput = {
   publicImage?: InputMaybe<Scalars['String']['input']>;
   publicNoIndex?: InputMaybe<Scalars['Boolean']['input']>;
   publicTitle?: InputMaybe<Scalars['String']['input']>;
+  sceneId?: InputMaybe<Scalars['ID']['input']>;
   trackingId?: InputMaybe<Scalars['String']['input']>;
 };
 
