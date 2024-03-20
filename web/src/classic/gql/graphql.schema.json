@@ -6820,7 +6820,7 @@
         "description": null,
         "fields": [
           {
-            "name": "lineStringCoordinates",
+            "name": "coordinates",
             "description": null,
             "args": [],
             "type": {
@@ -8859,7 +8859,7 @@
         "description": null,
         "fields": [
           {
-            "name": "multiPolygonCoordinates",
+            "name": "coordinates",
             "description": null,
             "args": [],
             "type": {
@@ -13426,7 +13426,7 @@
         "description": null,
         "fields": [
           {
-            "name": "pointCoordinates",
+            "name": "coordinates",
             "description": null,
             "args": [],
             "type": {
@@ -13604,7 +13604,7 @@
         "description": null,
         "fields": [
           {
-            "name": "polygonCoordinates",
+            "name": "coordinates",
             "description": null,
             "args": [],
             "type": {
