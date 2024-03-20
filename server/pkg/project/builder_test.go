@@ -300,7 +300,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		workspace          WorkspaceID
 		visualizer         visualizer.Visualizer
 		publishmentStatus  PublishmentStatus
-		trackingId		   string
+		trackingId         string
 		enableGa           bool
 	}
 
