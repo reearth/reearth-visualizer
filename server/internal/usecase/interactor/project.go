@@ -222,12 +222,12 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdatePublicNoIndex(*p.PublicNoIndex)
 	}
 
-	if err := i.projectRepo.Save(ctx, prj); err != nil {
-		return nil, err
+	if p.EnableGa != nil {
+		prj.UpdateEnableGA(*p.EnableGa)
 	}
 
-	if p.EnableGA != nil {
-		prj.UpdatePublicTitle(*p.PublicTitle)
+	if p.TrackingID != nil {
+		prj.UpdateTrackingID(*p.TrackingID)
 	}
 
 	if p.PublicDescription != nil {
@@ -241,6 +241,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 				return nil, err
 			}
 		}
+	}
+
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, err
 	}
 
 	tx.Commit()

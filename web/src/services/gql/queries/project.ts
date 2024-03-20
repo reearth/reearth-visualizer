@@ -43,7 +43,7 @@ export const GET_PROJECTS = gql(`
     }
   }
 
-  
+
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`
@@ -96,6 +96,8 @@ export const UPDATE_PROJECT = gql(`
     $publicImage: String
     $deleteImageUrl: Boolean
     $deletePublicImage: Boolean
+    $enableGa: Boolean
+    $trackingId: String
   ) {
     updateProject(
       input: {
@@ -108,6 +110,8 @@ export const UPDATE_PROJECT = gql(`
         publicImage: $publicImage
         deleteImageUrl: $deleteImageUrl
         deletePublicImage: $deletePublicImage
+        enableGa: $enableGa
+        trackingId: $trackingId
       }
     ) {
       project {
@@ -117,7 +121,6 @@ export const UPDATE_PROJECT = gql(`
     }
   }
 
-  
 `);
 
 export const UPDATE_PROJECT_BASIC_AUTH = gql(`
