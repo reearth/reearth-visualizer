@@ -1,4 +1,4 @@
-import { ArcType, Color, ScreenSpaceEventType } from "cesium";
+import { ArcType, Color, KeyboardEventModifier, ScreenSpaceEventType } from "cesium";
 import React, { forwardRef } from "react";
 import {
   Viewer,
@@ -56,6 +56,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onLayerSelectWithDragStart,
+    onLayerSelectWithDragMove,
+    onLayerSelectWithDragEnd,
     onMount,
     onLayerVisibility,
     onLayerLoad,
@@ -72,6 +75,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     cesiumIonAccessToken,
     context,
     light,
+    layerSelectWithDragEventHandlers,
     handleMount,
     handleUnmount,
     handleUpdate,
@@ -98,6 +102,9 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
     onLayerDrag,
     onLayerDrop,
     onLayerEdit,
+    onLayerSelectWithDragStart,
+    onLayerSelectWithDragMove,
+    onLayerSelectWithDragEnd,
     onMount,
     onLayerVisibility,
     onLayerLoad,
@@ -155,6 +162,37 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_CLICK} />
         {/* remove default double click event */}
         <ScreenSpaceEvent type={ScreenSpaceEventType.LEFT_DOUBLE_CLICK} />
+      </ScreenSpaceEventHandler>
+
+      {/* For LayerSelectWithDrag event */}
+      <ScreenSpaceEventHandler>
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.LEFT_DOWN}
+          action={layerSelectWithDragEventHandlers.start.handler}
+        />
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.LEFT_DOWN}
+          modifier={KeyboardEventModifier.SHIFT}
+          action={layerSelectWithDragEventHandlers.start.shift}
+        />
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.MOUSE_MOVE}
+          action={layerSelectWithDragEventHandlers.move.handler}
+        />
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.MOUSE_MOVE}
+          modifier={KeyboardEventModifier.SHIFT}
+          action={layerSelectWithDragEventHandlers.move.shift}
+        />
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.LEFT_UP}
+          action={layerSelectWithDragEventHandlers.end.handler}
+        />
+        <ScreenSpaceEvent
+          type={ScreenSpaceEventType.LEFT_UP}
+          modifier={KeyboardEventModifier.SHIFT}
+          action={layerSelectWithDragEventHandlers.end.shift}
+        />
       </ScreenSpaceEventHandler>
       <ScreenSpaceCameraController
         maximumZoomDistance={

@@ -11,6 +11,9 @@ import type {
   LayerEditEvent,
   LayerLoadEvent,
   LayerSelectionReason,
+  LayerSelectWithDragEnd,
+  LayerSelectWithDragMove,
+  LayerSelectWithDragStart,
   LayerVisibilityEvent,
 } from "@reearth/beta/lib/core/Map";
 import type { Viewport } from "@reearth/beta/lib/core/Visualizer";
@@ -45,6 +48,9 @@ export type Props = PropsWithChildren<{
   interactionMode: InteractionModeType;
   overrideInteractionMode: (mode: InteractionModeType) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
+  onLayerSelectWithDragStart: (cb: (e: LayerSelectWithDragStart) => void) => void;
+  onLayerSelectWithDragMove: (cb: (e: LayerSelectWithDragMove) => void) => void;
+  onLayerSelectWithDragEnd: (cb: (e: LayerSelectWithDragEnd) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;

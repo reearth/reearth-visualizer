@@ -39,6 +39,9 @@ export type SelectedReearthEventType = Pick<
   | "sketchtypechange"
   | "layerVisibility"
   | "layerload"
+  | "layerSelectWithDragStart"
+  | "layerSelectWithDragMove"
+  | "layerSelectWithDragEnd"
 >;
 
 export default function ({
@@ -61,6 +64,9 @@ export default function ({
   useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
+  onLayerSelectWithDragStart,
+  onLayerSelectWithDragMove,
+  onLayerSelectWithDragEnd,
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
@@ -763,6 +769,15 @@ export default function ({
     onLayerLoad(e => {
       emit("layerload", e);
     });
+    onLayerSelectWithDragStart(e => {
+      emit("layerSelectWithDragStart", e);
+    });
+    onLayerSelectWithDragMove(e => {
+      emit("layerSelectWithDragMove", e);
+    });
+    onLayerSelectWithDragEnd(e => {
+      emit("layerSelectWithDragEnd", e);
+    });
   }, [
     emit,
     onMouseEvent,
@@ -773,6 +788,9 @@ export default function ({
     onSketchTypeChange,
     onLayerVisibility,
     onLayerLoad,
+    onLayerSelectWithDragStart,
+    onLayerSelectWithDragMove,
+    onLayerSelectWithDragEnd,
   ]);
 
   // expose plugin API for developers
