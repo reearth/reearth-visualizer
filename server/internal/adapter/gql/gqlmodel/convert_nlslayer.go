@@ -156,6 +156,20 @@ func ToNLSLayerSketchInfo(si *nlslayer.SketchInfo) *SketchInfo {
 	}
 }
 
+func ToGoJsonRef(p JSON) *map[string]any {
+	if p == nil {
+		return nil
+	}
+
+	co := make(map[string]any)
+
+	for key, value := range p {
+		co[key] = value
+	}
+
+	return &co
+}
+
 func convertGeometry(g nlslayer.Geometry) Geometry {
 	switch g := g.(type) {
 	case *nlslayer.Point:

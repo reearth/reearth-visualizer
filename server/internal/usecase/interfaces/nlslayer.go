@@ -52,14 +52,14 @@ type AddNLSLayerGeoJSONFeatureParams struct {
 	LayerID    id.NLSLayerID
 	Type       string
 	Geometry   map[string]any
-	Properties map[string]any
+	Properties *map[string]any
 }
 
 type UpdateNLSLayerGeoJSONFeatureParams struct {
 	LayerID    id.NLSLayerID
 	FeatureID  id.FeatureID
-	Geometry   map[string]any
-	Properties map[string]any
+	Geometry   *map[string]any
+	Properties *map[string]any
 }
 
 type DeleteNLSLayerGeoJSONFeatureParams struct {

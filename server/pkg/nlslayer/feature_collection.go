@@ -46,6 +46,34 @@ func (fc *FeatureCollection) UpdateFeature(id FeatureID, geometry Geometry, prop
 	return Feature{}, errors.New("feature not found")
 }
 
+func (fc *FeatureCollection) UpdateFeatureGeometry(id FeatureID, geometry Geometry) (Feature, error) {
+	for i, f := range fc.features {
+		if f.ID() == id {
+			updatedFeature, err := NewFeature(id, f.FeatureType(), geometry, f.Properties())
+			if err != nil {
+				return Feature{}, err
+			}
+			fc.features[i] = *updatedFeature
+			return *updatedFeature, nil
+		}
+	}
+	return Feature{}, errors.New("feature not found")
+}
+
+func (fc *FeatureCollection) UpdateFeatureProperty(id FeatureID, properties map[string]any) (Feature, error) {
+	for i, f := range fc.features {
+		if f.ID() == id {
+			updatedFeature, err := NewFeature(id, f.FeatureType(), f.Geometry(), properties)
+			if err != nil {
+				return Feature{}, err
+			}
+			fc.features[i] = *updatedFeature
+			return *updatedFeature, nil
+		}
+	}
+	return Feature{}, errors.New("feature not found")
+}
+
 func (fc *FeatureCollection) RemoveFeature(id FeatureID) error {
 	if fc == nil {
 		return errors.New("feature collection is nil")

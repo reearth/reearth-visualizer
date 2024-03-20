@@ -592,10 +592,18 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 	feature, err := nlslayer.NewFeatureWithNewId(
 		inp.Type,
 		geometry,
-		inp.Properties,
+		*inp.Properties,
 	)
 	if err != nil {
 		return nlslayer.Feature{}, err
+	}
+
+	if (inp.Properties != nil) {
+		feat, err := layer.Sketch().FeatureCollection().UpdateFeatureProperty(feature.ID(), *inp.Properties)
+		if err != nil {
+			return nlslayer.Feature{}, err
+		}
+		feature = &feat
 	}
 
 	if layer.Sketch() == nil {
@@ -646,14 +654,25 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 		return nlslayer.Feature{}, interfaces.ErrFeatureNotFound
 	}
 
-	geometry, err := nlslayer.NewGeometryFromMap(inp.Geometry)
-	if err != nil {
-		return nlslayer.Feature{}, err
+	var updatedFeature nlslayer.Feature
+	var errUp error
+
+	if (inp.Geometry != nil) {
+		geometry, err := nlslayer.NewGeometryFromMap(*inp.Geometry)
+		if err != nil {
+			return nlslayer.Feature{}, err
+		}
+		updatedFeature, errUp = layer.Sketch().FeatureCollection().UpdateFeatureGeometry(inp.FeatureID, geometry)
+		if errUp != nil {
+			return nlslayer.Feature{}, errUp
+		}
 	}
 
-	updatedFeature, err := layer.Sketch().FeatureCollection().UpdateFeature(inp.FeatureID, geometry, inp.Properties)
-	if err != nil {
-		return nlslayer.Feature{}, err
+	if (inp.Properties != nil) {
+		updatedFeature, errUp = layer.Sketch().FeatureCollection().UpdateFeatureProperty(inp.FeatureID, *inp.Properties)
+		if errUp != nil {
+			return nlslayer.Feature{}, errUp
+		}
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layer)

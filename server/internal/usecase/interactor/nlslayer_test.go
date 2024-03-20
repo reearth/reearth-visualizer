@@ -62,7 +62,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 		"type":        "Point",
 		"coordinates": []interface{}{1.0, 2.0},
 	}
-	properties := map[string]any{
+	properties := &map[string]any{
 		"key": "value",
 	}
 	feature, err := il.AddGeoJSONFeature(
@@ -91,7 +91,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	assert.Equal(t, 1, len(featureCollection.Features()))
 	addedFeature := featureCollection.Features()[0]
 	assert.Equal(t, featureType, addedFeature.FeatureType())
-	assert.Equal(t, properties, addedFeature.Properties())
+	assert.Equal(t, *properties, addedFeature.Properties())
 
 	pointGeometry, ok := addedFeature.Geometry().(*nlslayer.Point)
 	assert.True(t, ok)
@@ -133,14 +133,14 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	l.SetSketch(sletchInfo)
 	_ = db.NLSLayer.Save(ctx, l)
 
-	newGeometry := map[string]any{
+	newGeometry := &map[string]any{
 		"type": "LineString",
 		"coordinates": []interface{}{
 			[]interface{}{1.0, 2.0},
 			[]interface{}{3.0, 4.0},
 		},
 	}
-	newProperties := map[string]any{"newKey": "newValue"}
+	newProperties := &map[string]any{"newKey": "newValue"}
 
 	updatedFeature, err := il.UpdateGeoJSONFeature(
 		ctx,
@@ -166,7 +166,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	assert.NotNil(t, featureCollection)
 	assert.Equal(t, 1, len(featureCollection.Features()))
 	addedFeature := featureCollection.Features()[0]
-	assert.Equal(t, newProperties, addedFeature.Properties())
+	assert.Equal(t, *newProperties, addedFeature.Properties())
 
 	lineStringGeometry, ok := addedFeature.Geometry().(*nlslayer.LineString)
 	assert.True(t, ok)

@@ -20,7 +20,7 @@ func (r *mutationResolver) AddGeoJSONFeature(ctx context.Context, input gqlmodel
 		LayerID:    lid,
 		Type:       input.Type,
 		Geometry:   input.Geometry,
-		Properties: input.Properties,
+		Properties: gqlmodel.ToGoJsonRef(input.Properties),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -53,8 +53,8 @@ func (r *mutationResolver) UpdateGeoJSONFeature(ctx context.Context, input gqlmo
 	res, err := usecases(ctx).NLSLayer.UpdateGeoJSONFeature(ctx, interfaces.UpdateNLSLayerGeoJSONFeatureParams{
 		LayerID:    lid,
 		FeatureID:  fid,
-		Geometry:   input.Geometry,
-		Properties: input.Properties,
+		Geometry:   gqlmodel.ToGoJsonRef(input.Geometry),
+		Properties: gqlmodel.ToGoJsonRef(input.Properties),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
