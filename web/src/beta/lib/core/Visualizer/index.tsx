@@ -215,6 +215,12 @@ const Visualizer = memo(
         handleLayerVisibility,
         onLayerLoad,
         handleLayerLoad,
+        onLayerSelectWithRectStart,
+        handleLayerSelectWithRectStart,
+        onLayerSelectWithRectMove,
+        handleLayerSelectWithRectMove,
+        onLayerSelectWithRectEnd,
+        handleLayerSelectWithRectEnd,
       } = useHooks(
         {
           rootLayerId,
@@ -296,6 +302,9 @@ const Visualizer = memo(
                   onSketchTypeChange={onSketchTypeChange}
                   onLayerVisibility={onLayerVisibility}
                   onLayerLoad={onLayerLoad}
+                  onLayerSelectWithRectStart={onLayerSelectWithRectStart}
+                  onLayerSelectWithRectMove={onLayerSelectWithRectMove}
+                  onLayerSelectWithRectEnd={onLayerSelectWithRectEnd}
                   onCameraForceHorizontalRollChange={handleCameraForceHorizontalRollChange}
                 />
                 <Map
@@ -335,6 +344,9 @@ const Visualizer = memo(
                   onMount={onMount}
                   onLayerVisibility={handleLayerVisibility}
                   onLayerLoad={handleLayerLoad}
+                  onLayerSelectWithRectStart={handleLayerSelectWithRectStart}
+                  onLayerSelectWithRectMove={handleLayerSelectWithRectMove}
+                  onLayerSelectWithRectEnd={handleLayerSelectWithRectEnd}
                 />
               </Filled>
               {storyPanelPosition === "right" && storyPanel}

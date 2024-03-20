@@ -27,6 +27,7 @@ import { pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CesiumComponentRef, useCesium } from "resium";
 
+import { useRefValue } from "@reearth/beta/lib/core/hooks";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 
 import type {
@@ -204,6 +205,7 @@ const useFeature = ({
   const cachedCalculatedLayerRef = useRef(layer);
   const cachedFeatureIds = useRef(new Set<string>());
   const layerId = layer?.id || id;
+  const layerIdRef = useRefValue(layerId);
 
   const attachComputedFeature = useCallback(
     async (feature?: CachedFeature) => {
@@ -287,7 +289,13 @@ const useFeature = ({
           return feature;
         })();
 
-        if (batchId && shouldUseFeatureIndex) {
+        // Attach tag temporally to select the feature correctly.
+        attachTag(feature.raw, {
+          layerId: layerIdRef.current,
+          featureId: feature.feature.id,
+        });
+
+        if (batchId != null && shouldUseFeatureIndex) {
           featureIndex.addFeature(content, batchId, feature.feature.id);
         }
 
@@ -308,6 +316,7 @@ const useFeature = ({
       idProperty,
       featureIndex,
       shouldUseFeatureIndex,
+      layerIdRef,
     ],
   );
   const handleTilesetLoadRef = useRef(handleTilesetLoad);

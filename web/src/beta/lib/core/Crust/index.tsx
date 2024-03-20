@@ -7,6 +7,9 @@ import type {
   LayerEditEvent,
   LayerLoadEvent,
   LayerSelectionReason,
+  LayerSelectWithRectEnd,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectStart,
   LayerVisibilityEvent,
 } from "../Map";
 import { SketchEventCallback, SketchType } from "../Map/Sketch/types";
@@ -128,6 +131,9 @@ export type Props = {
   renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
+  onLayerSelectWithRectStart: (cb: (e: LayerSelectWithRectStart) => void) => void;
+  onLayerSelectWithRectMove: (cb: (e: LayerSelectWithRectMove) => void) => void;
+  onLayerSelectWithRectEnd: (cb: (e: LayerSelectWithRectEnd) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
@@ -179,6 +185,9 @@ export default function Crust({
   renderInfoboxInsertionPopup,
   overrideSceneProperty,
   onLayerEdit,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
@@ -225,6 +234,9 @@ export default function Crust({
       overrideSceneProperty={overrideSceneProperty}
       timelineManagerRef={timelineManagerRef}
       onLayerEdit={onLayerEdit}
+      onLayerSelectWithRectStart={onLayerSelectWithRectStart}
+      onLayerSelectWithRectMove={onLayerSelectWithRectMove}
+      onLayerSelectWithRectEnd={onLayerSelectWithRectEnd}
       onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       onSketchTypeChange={onSketchTypeChange}
       onLayerVisibility={onLayerVisibility}
