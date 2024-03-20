@@ -551,7 +551,7 @@ func NewNLSLayerGeometry(g nlslayer.Geometry) map[string]any {
 		gMap["type"] = g.MultiPolygonType()
 		gMap["coordinates"] = g.Coordinates()
 	case *nlslayer.GeometryCollection:
-		geometries := make([]NLSLayerGeometryDocument, 0, len(g.Geometries()))
+		geometries := make([]map[string]any, 0, len(g.Geometries()))
 		for _, g := range g.Geometries() {
 			geometries = append(geometries, NewNLSLayerGeometry(g))
 		}
