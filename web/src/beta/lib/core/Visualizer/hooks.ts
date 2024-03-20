@@ -20,6 +20,9 @@ import type {
   CursorType,
   LayerVisibilityEvent,
   LayerLoadEvent,
+  LayerSelectWithRectStart,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectEnd,
 } from "../Map";
 import { useOverriddenProperty } from "../Map";
 import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
@@ -301,6 +304,29 @@ export default function useHooks(
     onLayerLoadRef.current?.(e);
   }, []);
 
+  // multiple feature selection
+  const onLayerSelectWithRectStartRef = useRef<(e: LayerSelectWithRectStart) => void>();
+  const onLayerSelectWithRectStart = useCallback((cb: (e: LayerSelectWithRectStart) => void) => {
+    onLayerSelectWithRectStartRef.current = cb;
+  }, []);
+  const handleLayerSelectWithRectStart = useCallback((e: LayerSelectWithRectStart) => {
+    onLayerSelectWithRectStartRef.current?.(e);
+  }, []);
+  const onLayerSelectWithRectMoveRef = useRef<(e: LayerSelectWithRectMove) => void>();
+  const onLayerSelectWithRectMove = useCallback((cb: (e: LayerSelectWithRectMove) => void) => {
+    onLayerSelectWithRectMoveRef.current = cb;
+  }, []);
+  const handleLayerSelectWithRectMove = useCallback((e: LayerSelectWithRectMove) => {
+    onLayerSelectWithRectMoveRef.current?.(e);
+  }, []);
+  const onLayerSelectWithRectEndRef = useRef<(e: LayerSelectWithRectEnd) => void>();
+  const onLayerSelectWithRectEnd = useCallback((cb: (e: LayerSelectWithRectEnd) => void) => {
+    onLayerSelectWithRectEndRef.current = cb;
+  }, []);
+  const handleLayerSelectWithRectEnd = useCallback((e: LayerSelectWithRectEnd) => {
+    onLayerSelectWithRectEndRef.current?.(e);
+  }, []);
+
   // plugin sketch feature events
   const onPluginSketchFeatureCreatedCallbacksRef = useRef<SketchEventCallback[]>([]);
   const onPluginSketchFeatureCreated = useCallback((cb: SketchEventCallback) => {
@@ -398,6 +424,12 @@ export default function useHooks(
     handleLayerVisibility,
     onLayerLoad,
     handleLayerLoad,
+    onLayerSelectWithRectStart,
+    handleLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    handleLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
+    handleLayerSelectWithRectEnd,
   };
 }
 
