@@ -7,7 +7,7 @@ type Feature struct {
 	properties  map[string]any
 }
 
-func NewFeature(featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
+func NewFeatureWithNewId(featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
 	return &Feature{
 		id:          NewFeatureID(),
 		featureType: featureType,
@@ -16,7 +16,7 @@ func NewFeature(featureType string, geometry Geometry, properties map[string]any
 	}, nil
 }
 
-func NewFeatureForRepository(id FeatureID, featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
+func NewFeature(id FeatureID, featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
 	return &Feature{
 		id:          id,
 		featureType: featureType,

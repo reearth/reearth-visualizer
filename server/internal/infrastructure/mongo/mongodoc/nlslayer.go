@@ -313,7 +313,7 @@ func ToModelNLSLayerSketchInfo(si *NLSLayerSketchInfoDocument) (*nlslayer.Sketch
 		if err != nil {
 			return nil, err
 		}
-		feature, err := nlslayer.NewFeatureForRepository(
+		feature, err := nlslayer.NewFeature(
 			id,
 			f.Type,
 			geometry,

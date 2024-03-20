@@ -6,6 +6,45 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNewPoint(t *testing.T) {
+	p := NewPoint("Point", []float64{1, 2})
+
+	assert.Equal(t, "Point", p.PointType())
+	assert.Equal(t, []float64{1, 2}, p.Coordinates())
+}
+
+func TestNewLineString(t *testing.T) {
+	l := NewLineString("LineString", [][]float64{{1, 2}, {3, 4}})
+
+	assert.Equal(t, "LineString", l.LineStringType())
+	assert.Equal(t, [][]float64{{1, 2}, {3, 4}}, l.Coordinates())
+}
+
+func TestNewPolygon(t *testing.T) {
+	p := NewPolygon("Polygon", [][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}})
+
+	assert.Equal(t, "Polygon", p.PolygonType())
+	assert.Equal(t, [][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}, p.Coordinates())
+}
+
+func TestNewMultiPolygon(t *testing.T) {
+	m := NewMultiPolygon("MultiPolygon", [][][][]float64{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}})
+
+	assert.Equal(t, "MultiPolygon", m.MultiPolygonType())
+	assert.Equal(t, [][][][]float64{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}}, m.Coordinates())
+}
+
+func TestNewGeometryCollection(t *testing.T) {
+	p := NewPoint("Point", []float64{1, 2})
+	l := NewLineString("LineString", [][]float64{{1, 2}, {3, 4}})
+	po := NewPolygon("Polygon", [][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}})
+	m := NewMultiPolygon("MultiPolygon", [][][][]float64{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}})
+	gc := NewGeometryCollection("GeometryCollection", []Geometry{p, l, po, m})
+
+	assert.Equal(t, "GeometryCollection", gc.GeometryCollectionType())
+	assert.Equal(t, []Geometry{p, l, po, m}, gc.Geometries())
+}
+
 func TestNewGeometryFromMap(t *testing.T) {
 	tests := []struct {
 		name    string

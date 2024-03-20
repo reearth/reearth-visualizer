@@ -35,7 +35,7 @@ func (fc *FeatureCollection) AddFeature(feature Feature) {
 func (fc *FeatureCollection) UpdateFeature(id FeatureID, geometry Geometry, properties map[string]any) (Feature, error) {
 	for i, f := range fc.features {
 		if f.ID() == id {
-			updatedFeature, err := NewFeatureForRepository(id, f.FeatureType(), geometry, properties)
+			updatedFeature, err := NewFeature(id, f.FeatureType(), geometry, properties)
 			if err != nil {
 				return Feature{}, err
 			}

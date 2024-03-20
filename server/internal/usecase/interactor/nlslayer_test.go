@@ -111,7 +111,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	_ = db.NLSLayer.Save(ctx, l)
 
 	featureID := nlslayer.NewFeatureID()
-	feature, err := nlslayer.NewFeatureForRepository(
+	feature, err := nlslayer.NewFeature(
 		featureID,
 		"Feature",
 		map[string]any{
@@ -186,7 +186,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	_ = db.NLSLayer.Save(ctx, l)
 
 	featureID := nlslayer.NewFeatureID()
-	feature, err := nlslayer.NewFeatureForRepository(
+	feature, err := nlslayer.NewFeature(
 		featureID,
 		"Feature",
 		map[string]any{

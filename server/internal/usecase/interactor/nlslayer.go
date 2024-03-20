@@ -589,7 +589,7 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
-	feature, err := nlslayer.NewFeature(
+	feature, err := nlslayer.NewFeatureWithNewId(
 		inp.Type,
 		geometry,
 		inp.Properties,
