@@ -8,6 +8,84 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func TestToModelNLSLayerSketchInfo(t *testing.T) {
+	fid := nlslayer.NewFeatureID()
+	f, err := nlslayer.NewFeature(
+		fid,
+		"Feature",
+		nlslayer.NewPoint("Point", []float64{1.0, 2.0}),
+		map[string]any{"key1": "value1"},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fc := nlslayer.NewFeatureCollection("FeatureCollection", []nlslayer.Feature{*f})
+
+	schema := map[string]any{"key1": "value1"}
+	si := nlslayer.NewSketchInfo(
+		&schema,
+		fc,
+	)
+
+	tests := []struct {
+		name    string
+		args    *NLSLayerSketchInfoDocument
+		want    *nlslayer.SketchInfo
+		wantErr bool
+	}{
+		{
+			name: "New point",
+			args: &NLSLayerSketchInfoDocument{
+				CustomPropertySchema: &map[string]any{"key1": "value1"},
+				FeatureCollection: &NLSLayerFeatureCollectionDocument{
+					Type: "FeatureCollection",
+					Features: []NLSLayerFeatureDocument{
+						{
+							ID:   fid.String(),
+							Type: "Feature",
+							Geometry: map[string]any{
+								"type":        "Point",
+								"coordinates": primitive.A{1.0, 2.0},
+							},
+							Properties: map[string]any{"key1": "value1"},
+						},
+					},
+				},
+			},
+			want:    si,
+			wantErr: false,
+		},
+		{
+			name:    "args is nil",
+			args:    nil,
+			want:    nil,
+			wantErr: false,
+		},
+		{
+			name: "FeatureCollection is nil",
+			args: &NLSLayerSketchInfoDocument{
+				CustomPropertySchema: &map[string]any{"key1": "value1"},
+				FeatureCollection:    nil,
+			},
+			want:    nlslayer.NewSketchInfo(&schema, nil),
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := ToModelNLSLayerSketchInfo(tt.args)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("actualValue() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestToModelNLSLayerGeometry(t *testing.T) {
 	tests := []struct {
 		name    string
