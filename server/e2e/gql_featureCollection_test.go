@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -18,51 +17,51 @@ func addGeoJSONFeature(
 	requestBody := GraphQLRequest{
 		OperationName: "AddGeoJSONFeature",
 		Query: `mutation AddGeoJSONFeature($input: AddGeoJSONFeatureInput!) {
-												addGeoJSONFeature(input: $input) {
-													id
-													type
-													properties
-													geometry {
-														... on Point {
-															type
-															pointCoordinates
-														}
-														... on LineString {
-															type
-															lineStringCoordinates
-														}
-														... on Polygon {
-															type
-															polygonCoordinates
-														}
-														... on MultiPolygon {
-															type
-															multiPolygonCoordinates
-														}
-														... on GeometryCollection {
-															type
-															geometries {
-																... on Point {
-																	type
-																	pointCoordinates
-																}
-																... on LineString {
-																	type
-																	lineStringCoordinates
-																}
-																... on Polygon {
-																	type
-																	polygonCoordinates
-																}
-																... on MultiPolygon {
-																	type
-																	multiPolygonCoordinates
-																}
-															}
-														}
-													}
-												}
-										}`,
+							addGeoJSONFeature(input: $input) {
+								id
+								type
+								properties
+								geometry {
+									... on Point {
+										type
+										pointCoordinates
+									}
+									... on LineString {
+										type
+										lineStringCoordinates
+									}
+									... on Polygon {
+										type
+										polygonCoordinates
+									}
+									... on MultiPolygon {
+										type
+										multiPolygonCoordinates
+									}
+									... on GeometryCollection {
+										type
+										geometries {
+											... on Point {
+												type
+												pointCoordinates
+											}
+											... on LineString {
+												type
+												lineStringCoordinates
+											}
+											... on Polygon {
+												type
+												polygonCoordinates
+											}
+											... on MultiPolygon {
+												type
+												multiPolygonCoordinates
+											}
+										}
+									}
+								}
+							}
+						}`,
 		Variables: map[string]interface{}{
 			"input": map[string]interface{}{
 				"layerId":    layerId,
@@ -96,51 +95,51 @@ func updateGeoJSONFeature(
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateGeoJSONFeature",
 		Query: `mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {
-												updateGeoJSONFeature(input: $input) {
-													id
-													type
-													properties
-													geometry {
-														... on Point {
-															type
-															pointCoordinates
-														}
-														... on LineString {
-															type
-															lineStringCoordinates
-														}
-														... on Polygon {
-															type
-															polygonCoordinates
-														}
-														... on MultiPolygon {
-															type
-															multiPolygonCoordinates
-														}
-														... on GeometryCollection {
-															type
-															geometries {
-																... on Point {
-																	type
-																	pointCoordinates
-																}
-																... on LineString {
-																	type
-																	lineStringCoordinates
-																}
-																... on Polygon {
-																	type
-																	polygonCoordinates
-																}
-																... on MultiPolygon {
-																	type
-																	multiPolygonCoordinates
-																}
-															}
-														}
-													}
-												}
-										}`,
+							updateGeoJSONFeature(input: $input) {
+								id
+								type
+								properties
+								geometry {
+									... on Point {
+										type
+										pointCoordinates
+									}
+									... on LineString {
+										type
+										lineStringCoordinates
+									}
+									... on Polygon {
+										type
+										polygonCoordinates
+									}
+									... on MultiPolygon {
+										type
+										multiPolygonCoordinates
+									}
+									... on GeometryCollection {
+										type
+										geometries {
+											... on Point {
+												type
+												pointCoordinates
+											}
+											... on LineString {
+												type
+												lineStringCoordinates
+											}
+											... on Polygon {
+												type
+												polygonCoordinates
+											}
+											... on MultiPolygon {
+												type
+												multiPolygonCoordinates
+											}
+										}
+									}
+								}
+							}
+						}`,
 		Variables: map[string]interface{}{
 			"input": map[string]interface{}{
 				"layerId":    layerId,
@@ -164,29 +163,23 @@ func updateGeoJSONFeature(
 	return requestBody, res, fId
 }
 
-func deleteGeoJSONFeatureInput(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+func deleteGeoJSONFeature(
+	e *httpexpect.Expect,
+	layerId string,
+	featureId string,
+) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
-		// OperationName: "DeleteGeoJSONFeature",
-		// Query: `mutation DeleteGeoJSONFeatureInput($input: DeleteGeoJSONFeatureInput!) {
-		// 					deleteGeoJSONFeature(input: $input) {
-		// 						deletedFeatureId
-		// 					}
-		// 				}`,
-		// Variables: map[string]interface{}{
-		// 	"input": map[string]interface{}{
-		// 		"featureId": "featureId",
-		// 		"layerId":   layerId,
-		// 	},
-		// },
 		OperationName: "DeleteGeoJSONFeature",
-		Query: `mutation DeleteGeoJSONFeature($featureId: ID!, $layerId: ID!) {
-			deleteGeoJSONFeature(input: {featureId: $featureId, layerId: $layerId}) {
-				deletedFeatureId
-			}
-		}`,
-		Variables: map[string]any{
-			"featureId": "featureId",
-			"layerId":   layerId,
+		Query: `mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!) {
+							deleteGeoJSONFeature(input: $input) {
+								deletedFeatureId
+							}
+						}`,
+		Variables: map[string]interface{}{
+			"input": map[string]interface{}{
+				"layerId":   layerId,
+				"featureId": featureId,
+			},
 		},
 	}
 
@@ -199,7 +192,8 @@ func deleteGeoJSONFeatureInput(e *httpexpect.Expect, layerId string) (GraphQLReq
 		Status(http.StatusOK).
 		JSON()
 
-	return requestBody, res
+	fId := res.Path("$.data.deleteGeoJSONFeature.deletedFeatureId").Raw().(string)
+	return requestBody, res, fId
 }
 
 func TestFeatureCollectionCRUD(t *testing.T) {
@@ -476,9 +470,39 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("properties").Object().
 		Value("extrudedHeight").Equal(10)
 
-	fmt.Println(fid1)
-	fmt.Println(fid2)
-	fmt.Println(fid3)
-	fmt.Println(fid4)
-	fmt.Println(fid5)
+	deleteGeoJSONFeature(e, layerId, fid6)
+
+	_, res9 := fetchSceneForNewLayers(e, sId)
+	res9.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("featureCollection").Object().
+		Value("features").Array().
+		Length().Equal(4)
+
+	res9.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("featureCollection").Object().
+		Value("features").Array().First().Object().
+		Value("id").Equal(fid2)
+
+	deleteGeoJSONFeature(e, layerId, fid2)
+	deleteGeoJSONFeature(e, layerId, fid3)
+	deleteGeoJSONFeature(e, layerId, fid4)
+	deleteGeoJSONFeature(e, layerId, fid5)
+
+	_, res10 := fetchSceneForNewLayers(e, sId)
+	res10.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("featureCollection").Object().
+		Value("features").Array().
+		Length().Equal(0)
 }
