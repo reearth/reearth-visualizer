@@ -71,6 +71,7 @@ input UpdateProjectInput {
   deletePublicImage: Boolean
   enableGa: Boolean
   trackingId: String
+  sceneId: ID
 }
 
 input PublishProjectInput {

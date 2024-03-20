@@ -260,6 +260,14 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		return nil, err
 	}
 
+	prj, err := i.projectRepo.FindByScene(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+
+	enableGa := prj.EnableGA()
+	trackingId := prj.TrackingID()
+
 	//
 	// Commenting this out till the point we make a decision on this: @pyshx
 	//
@@ -351,7 +359,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
-			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true)
+			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true, enableGa, trackingId)
 		}()
 
 		// Save

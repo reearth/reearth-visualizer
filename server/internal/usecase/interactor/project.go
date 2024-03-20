@@ -230,6 +230,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdateTrackingID(*p.TrackingID)
 	}
 
+	if p.SceneID != nil {
+		prj.UpdateSceneID(*p.SceneID)
+	}
+
 	if p.PublicDescription != nil {
 		prj.UpdatePublicDescription(*p.PublicDescription)
 	}
@@ -282,6 +286,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 	coreSupport := prj.CoreSupport()
+	enableGa := prj.EnableGA()
+	trackingId := prj.TrackingID()
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
@@ -394,7 +400,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				repo.TagLoaderFrom(i.tagRepo),
 				repo.TagSceneLoaderFrom(i.tagRepo, scenes),
 				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
-			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport)
+			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport, enableGa, trackingId)
 		}()
 
 		// Save
