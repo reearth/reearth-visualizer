@@ -10,15 +10,25 @@ import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icon
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
+import { useGA } from "../../../PublishedVisualizer/googleAnalytics/useGA";
 import { SettingsFields, ButtonWrapper } from "../common";
 
-import { PublicAliasSettingsType, PublicBasicAuthSettingsType, PublicSettingsType } from ".";
+import {
+  PublicAliasSettingsType,
+  PublicBasicAuthSettingsType,
+  PublicSettingsType,
+  PublicGASettingsType,
+} from ".";
 
 type Props = {
-  settingsItem: PublicSettingsType & PublicBasicAuthSettingsType & PublicAliasSettingsType;
+  settingsItem: PublicSettingsType &
+    PublicBasicAuthSettingsType &
+    PublicAliasSettingsType &
+    PublicGASettingsType;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateAlias: (settings: PublicAliasSettingsType) => void;
+  onUpdateGA?: (settings: PublicGASettingsType) => void;
 };
 
 const PublicSettingsDetail: React.FC<Props> = ({
@@ -26,6 +36,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
   onUpdate,
   onUpdateBasicAuth,
   onUpdateAlias,
+  onUpdateGA,
 }) => {
   const t = useT();
 
@@ -57,6 +68,22 @@ const PublicSettingsDetail: React.FC<Props> = ({
       alias: localAlias,
     });
   }, [localAlias, onUpdateAlias]);
+
+  const [localGA, setLocalGA] = useState<PublicGASettingsType>({
+    enableGa: settingsItem.enableGa,
+    trackingId: settingsItem.trackingId,
+  });
+
+  const handleSubmitGA = useCallback(() => {
+    if (onUpdateGA) {
+      onUpdateGA({
+        enableGa: localGA.enableGa,
+        trackingId: localGA.trackingId,
+      });
+    }
+  }, [localGA, onUpdateGA]);
+
+  useGA(localGA);
 
   return (
     <>
@@ -159,6 +186,33 @@ const PublicSettingsDetail: React.FC<Props> = ({
               margin="0"
               buttonType="primary"
               onClick={handleSubmitAlias}
+            />
+          </ButtonWrapper>
+        </SettingsFields>
+      </Collapse>
+      <Collapse title={t("Google Analytics")}>
+        <SettingsFields>
+          <ToggleField
+            name={t("Enable Google Analytics")}
+            checked={localGA.enableGa ?? false}
+            onChange={(enableGa: boolean) => {
+              setLocalGA(s => ({ ...s, enableGa }));
+            }}
+          />
+          <TextInput
+            name={t("Tracking ID")}
+            value={settingsItem.trackingId}
+            onChange={(trackingId: string) => {
+              setLocalGA(s => ({ ...s, trackingId }));
+            }}
+          />
+          <ButtonWrapper>
+            <Button
+              text={t("Submit")}
+              size="medium"
+              margin="0"
+              buttonType="primary"
+              onClick={handleSubmitGA}
             />
           </ButtonWrapper>
         </SettingsFields>

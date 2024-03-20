@@ -238,6 +238,9 @@ export type EngineProps = {
   onMount?: () => void;
   onLayerVisibility?: (e: LayerVisibilityEvent) => void;
   onLayerLoad?: (e: LayerLoadEvent) => void;
+  onLayerSelectWithRectStart?: (e: LayerSelectWithRectStart) => void;
+  onLayerSelectWithRectMove?: (e: LayerSelectWithRectMove) => void;
+  onLayerSelectWithRectEnd?: (e: LayerSelectWithRectEnd) => void;
 };
 
 export type LayerEditEvent = {
@@ -249,6 +252,19 @@ export type LayerEditEvent = {
     location: LatLngHeight;
   };
   rotate?: { heading: number; pitch: number; roll: number };
+};
+
+export type LayerSelectWithRect = MouseEventProps & { pressedKey?: "shift" };
+export type LayerSelectWithRectStart = LayerSelectWithRect;
+export type LayerSelectWithRectMove = LayerSelectWithRect & {
+  startX?: number;
+  startY?: number;
+  width?: number;
+  height?: number;
+};
+export type LayerSelectWithRectEnd = LayerSelectWithRect & {
+  features: PickedFeature[] | undefined;
+  isClick: boolean;
 };
 
 export type LayerVisibilityEvent = {

@@ -40,8 +40,9 @@ type UpdateProjectParam struct {
 	PublicNoIndex     *bool
 	DeletePublicImage bool
 	DeleteImageURL    bool
-	EnableGA          *bool
+	EnableGa          *bool
 	TrackingID        *string
+	SceneID           *id.SceneID
 }
 
 type PublishProjectParam struct {
