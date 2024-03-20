@@ -267,24 +267,6 @@ export default () => {
     [updateProjectAliasMutation, t, setNotification],
   );
 
-  const useUpdateProjectGA = useCallback(
-    async (input: UpdateProjectInput) => {
-      if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectMutation({ variables: { ...input } });
-
-      if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to update project", errors);
-        setNotification({ type: "error", text: t("Failed to update project.") });
-
-        return { status: "error" };
-      }
-
-      setNotification({ type: "success", text: t("Successfully updated project!") });
-      return { data: data?.updateProject?.project, status: "success" };
-    },
-    [updateProjectMutation, t, setNotification],
-  );
-
   return {
     publishProjectLoading,
     useProjectQuery,
@@ -296,6 +278,5 @@ export default () => {
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
-    useUpdateProjectGA,
   };
 };

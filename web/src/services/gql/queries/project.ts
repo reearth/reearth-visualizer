@@ -96,6 +96,8 @@ export const UPDATE_PROJECT = gql(`
     $publicImage: String
     $deleteImageUrl: Boolean
     $deletePublicImage: Boolean
+    $enableGa: Boolean
+    $trackingId: String
   ) {
     updateProject(
       input: {
@@ -108,6 +110,8 @@ export const UPDATE_PROJECT = gql(`
         publicImage: $publicImage
         deleteImageUrl: $deleteImageUrl
         deletePublicImage: $deletePublicImage
+        enableGa: $enableGa
+        trackingId: $trackingId
       }
     ) {
       project {
@@ -152,19 +156,6 @@ export const UPDATE_PROJECT_ALIAS = gql(`
         id
         name
         alias
-      }
-    }
-  }
-`);
-
-export const UPDATE_PROJECT_GA = gql(`
-  mutation UpdateProjectGA($projectId: ID!, $enableGA: Boolean, $trackingId: String) {
-    updateProject(input: { projectId: $projectId, enableGA: $enableGA, trackingId: $trackingId }) {
-      project {
-        id
-        name
-        enableGa
-        trackingId
       }
     }
   }

@@ -33,7 +33,6 @@ export default ({ projectId, tab }: Props) => {
     useDeleteProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectAlias,
-    useUpdateProjectGA,
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
 
@@ -86,9 +85,9 @@ export default ({ projectId, tab }: Props) => {
   const handleUpdateProjectGA = useCallback(
     async (settings: PublicGASettingsType) => {
       if (!projectId) return;
-      await useUpdateProjectGA({ projectId, ...settings });
+      await useUpdateProject({ projectId, ...settings });
     },
-    [projectId, useUpdateProjectGA],
+    [projectId, useUpdateProject],
   );
   const { useStoriesQuery } = useStorytellingAPI();
   const { stories = [] } = useStoriesQuery({ sceneId: scene?.id });

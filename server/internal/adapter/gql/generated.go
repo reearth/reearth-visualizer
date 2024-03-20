@@ -9076,7 +9076,7 @@ input UpdateProjectInput {
   publicNoIndex: Boolean
   deleteImageUrl: Boolean
   deletePublicImage: Boolean
-  enableGA: Boolean
+  enableGa: Boolean
   trackingId: String
 }
 
@@ -59382,7 +59382,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGA", "trackingId"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -59494,8 +59494,8 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.DeletePublicImage = data
-		case "enableGA":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableGA"))
+		case "enableGa":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enableGa"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err

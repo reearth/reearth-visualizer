@@ -20746,7 +20746,7 @@
             "deprecationReason": null
           },
           {
-            "name": "enableGA",
+            "name": "enableGa",
             "description": null,
             "type": {
               "kind": "SCALAR",

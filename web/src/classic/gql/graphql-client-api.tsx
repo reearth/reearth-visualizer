@@ -2543,7 +2543,7 @@ export type UpdateProjectInput = {
   deleteImageUrl?: InputMaybe<Scalars['Boolean']['input']>;
   deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
-  enableGA?: InputMaybe<Scalars['Boolean']['input']>;
+  enableGa?: InputMaybe<Scalars['Boolean']['input']>;
   imageUrl?: InputMaybe<Scalars['URL']['input']>;
   isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
