@@ -407,9 +407,9 @@ func convertCoordinates(geometryType string, rawCoordinates interface{}) (interf
 		return coords, nil
 	case "LineString":
 		var coords [][]float64
-		for _, rawCoord := range rawCoordinates.([]primitive.A) {
+		for _, rawCoord := range rawCoordinates.(primitive.A) {
 			var coord []float64
-			for _, rawCoord2 := range rawCoord {
+			for _, rawCoord2 := range rawCoord.(primitive.A) {
 				coord2, ok := rawCoord2.(float64)
 				if !ok {
 					return nil, errors.New("invalid coordinate format")
@@ -420,73 +420,46 @@ func convertCoordinates(geometryType string, rawCoordinates interface{}) (interf
 		}
 		return coords, nil
 	case "Polygon":
-		var coords [][][]float64
-		rawCoords, ok := rawCoordinates.([]interface{})
-		if !ok {
-			return nil, errors.New("coordinates of polygon are not a slice")
-		}
-		for _, rawCoord := range rawCoords {
-			rawCoordSlice, ok := rawCoord.(primitive.A)
-			if !ok {
-				return nil, errors.New("polygon coordinates are not a slice of slices")
-			}
-			var coord [][]float64
-			for _, rawCoord2 := range rawCoordSlice {
-				rawCoord2Slice, ok := rawCoord2.(primitive.A)
-				if !ok {
-					return nil, errors.New("polygon inner coordinates are not a slice")
-				}
-				var coord2 []float64
-				for _, rawCoord3 := range rawCoord2Slice {
-					coord3, ok := rawCoord3.(float64)
+		var polygons [][][]float64
+		for _, rawPolygon := range rawCoordinates.(primitive.A) {
+			var polygon [][]float64
+			for _, rawRing := range rawPolygon.(primitive.A) {
+				var ring []float64
+				for _, rawCoord := range rawRing.(primitive.A) {
+					coord, ok := rawCoord.(float64)
 					if !ok {
 						return nil, errors.New("invalid coordinate format in polygon")
 					}
-					coord2 = append(coord2, coord3)
+					ring = append(ring, coord)
 				}
-				coord = append(coord, coord2)
+				polygon = append(polygon, ring)
 			}
-			coords = append(coords, coord)
+			polygons = append(polygons, polygon)
 		}
-		return coords, nil
+		return polygons, nil
+
 	case "MultiPolygon":
-		var coords [][][][]float64
-		rawCoords, ok := rawCoordinates.([]interface{})
-		if !ok {
-			return nil, errors.New("coordinates of multi polygon are not a slice")
-		}
-		for _, rawCoord := range rawCoords {
-			rawCoordSlice, ok := rawCoord.(primitive.A)
-			if !ok {
-				return nil, errors.New("multi polygon coordinates are not a slice of slices")
-			}
-			var coord [][][]float64
-			for _, rawCoord2 := range rawCoordSlice {
-				rawCoord2Slice, ok := rawCoord2.(primitive.A)
-				if !ok {
-					return nil, errors.New("multi polygon inner coordinates are not a slice")
-				}
-				var coord2 [][]float64
-				for _, rawCoord3 := range rawCoord2Slice {
-					rawCoord3Slice, ok := rawCoord3.(primitive.A)
-					if !ok {
-						return nil, errors.New("multi polygon inner inner coordinates are not a slice")
-					}
-					var coord3 []float64
-					for _, rawCoord4 := range rawCoord3Slice {
-						coord4, ok := rawCoord4.(float64)
+		var multiPolygons [][][][]float64
+		for _, rawMultiPolygon := range rawCoordinates.(primitive.A) {
+			var multiPolygon [][][]float64
+			for _, rawPolygon := range rawMultiPolygon.(primitive.A) {
+				var polygon [][]float64
+				for _, rawRing := range rawPolygon.(primitive.A) {
+					var ring []float64
+					for _, rawCoord := range rawRing.(primitive.A) {
+						coord, ok := rawCoord.(float64)
 						if !ok {
-							return nil, errors.New("invalid coordinate format in multi polygon")
+							return nil, errors.New("invalid coordinate format in multi-polygon")
 						}
-						coord3 = append(coord3, coord4)
+						ring = append(ring, coord)
 					}
-					coord2 = append(coord2, coord3)
+					polygon = append(polygon, ring)
 				}
-				coord = append(coord, coord2)
+				multiPolygon = append(multiPolygon, polygon)
 			}
-			coords = append(coords, coord)
+			multiPolygons = append(multiPolygons, multiPolygon)
 		}
-		return coords, nil
+		return multiPolygons, nil
 	}
 	return nil, errors.New("unsupported coordinates type")
 }
