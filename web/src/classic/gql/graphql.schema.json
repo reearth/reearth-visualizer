@@ -20858,6 +20858,18 @@
             "deprecationReason": null
           },
           {
+            "name": "sceneId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "trackingId",
             "description": null,
             "type": {
