@@ -42,7 +42,6 @@ type UpdateProjectParam struct {
 	DeleteImageURL    bool
 	EnableGa          *bool
 	TrackingID        *string
-	SceneID           *id.SceneID
 }
 
 type PublishProjectParam struct {

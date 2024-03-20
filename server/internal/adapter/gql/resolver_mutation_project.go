@@ -67,7 +67,6 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		DeleteImageURL:    deleteImageURL,
 		EnableGa:          input.EnableGa,
 		TrackingID:        input.TrackingID,
-		SceneID:           gqlmodel.ToIDRef[id.Scene](input.SceneID),
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

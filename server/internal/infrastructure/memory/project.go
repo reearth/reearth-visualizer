@@ -106,18 +106,6 @@ func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Proje
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Project) FindByScene(_ context.Context, sId id.SceneID) (*project.Project, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	for _, d := range r.data {
-		if d.Scene() == sId && r.f.CanRead(d.Workspace()) {
-			return d, nil
-		}
-	}
-	return nil, rerror.ErrNotFound
-}
-
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()

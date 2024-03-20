@@ -36,7 +36,6 @@ type Project struct {
 	coreSupport       bool
 	enableGa          bool
 	trackingId        string
-	sceneId           SceneID
 }
 
 func (p *Project) ID() ID {
@@ -114,10 +113,6 @@ func (p *Project) EnableGA() bool {
 
 func (p *Project) TrackingID() string {
 	return p.trackingId
-}
-
-func (p *Project) Scene() SceneID {
-	return p.sceneId
 }
 
 func (p *Project) PublishmentStatus() PublishmentStatus {
@@ -221,10 +216,6 @@ func (p *Project) UpdateEnableGA(enableGa bool) {
 
 func (p *Project) UpdateTrackingID(trackingId string) {
 	p.trackingId = trackingId
-}
-
-func (p *Project) UpdateSceneID(sceneId SceneID) {
-	p.sceneId = sceneId
 }
 
 func (p *Project) PublicName() string {

@@ -24,11 +24,9 @@ type sceneJSON struct {
 	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
 	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
 	CoreSupport       bool                    `json:"coreSupport"`
-	EnableGA          bool                    `json:"enableGa"`
-	TrackingID        string                  `json:"trackingId"`
 }
 
-func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
+func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*layerJSON, p []*property.Property, coreSupport bool) (*sceneJSON, error) {
 	tags, err := b.tags(ctx)
 	if err != nil {
 		return nil, err
@@ -46,8 +44,6 @@ func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, l []*lay
 		Tags:              tags,
 		WidgetAlignSystem: buildWidgetAlignSystem(b.scene.Widgets().Alignment()),
 		CoreSupport:       coreSupport,
-		EnableGA:          enableGa,
-		TrackingID:        trackingId,
 	}, nil
 }
 

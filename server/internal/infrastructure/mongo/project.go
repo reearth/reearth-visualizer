@@ -23,7 +23,6 @@ var (
 type Project struct {
 	client *mongox.ClientCollection
 	f      repo.WorkspaceFilter
-	s      repo.SceneFilter
 }
 
 func NewProject(client *mongox.Client) *Project {
@@ -46,15 +45,6 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
 	return r.findOne(ctx, bson.M{
 		"id": id.String(),
-	}, true)
-}
-
-func (r *Project) FindByScene(ctx context.Context, id id.SceneID) (*project.Project, error) {
-	if !r.s.CanRead(id) {
-		return nil, nil
-	}
-	return r.findOne(ctx, bson.M{
-		"scene": id.String(),
 	}, true)
 }
 
