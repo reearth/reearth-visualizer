@@ -2,7 +2,6 @@ package interfaces
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -46,21 +45,21 @@ type RemoveNLSInfoboxBlockParam struct {
 
 type AddCustomPropertiesInput struct {
 	LayerID id.NLSLayerID
-	Schema  json.RawMessage
+	Schema  map[string]any
 }
 
 type AddNLSLayerGeoJSONFeatureParams struct {
 	LayerID    id.NLSLayerID
 	Type       string
-	Geometry   json.RawMessage
-	Properties json.RawMessage
+	Geometry   map[string]any
+	Properties map[string]any
 }
 
 type UpdateNLSLayerGeoJSONFeatureParams struct {
 	LayerID    id.NLSLayerID
 	FeatureID  id.FeatureID
-	Geometry   json.RawMessage
-	Properties json.RawMessage
+	Geometry   map[string]any
+	Properties map[string]any
 }
 
 type DeleteNLSLayerGeoJSONFeatureParams struct {

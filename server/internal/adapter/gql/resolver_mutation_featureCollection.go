@@ -2,7 +2,6 @@ package gql
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -17,26 +16,11 @@ func (r *mutationResolver) AddGeoJSONFeature(ctx context.Context, input gqlmodel
 		return nil, err
 	}
 
-	var geometry json.RawMessage
-	var properties json.RawMessage
-
-	geometryBytes, err := json.Marshal(input.Geometry)
-	if err != nil {
-		return nil, err
-	}
-	geometry = json.RawMessage(geometryBytes)
-
-	propertiesBytes, err := json.Marshal(input.Properties)
-	if err != nil {
-		return nil, err
-	}
-	properties = json.RawMessage(propertiesBytes)
-
 	res, err := usecases(ctx).NLSLayer.AddGeoJSONFeature(ctx, interfaces.AddNLSLayerGeoJSONFeatureParams{
 		LayerID:    lid,
 		Type:       input.Type,
-		Geometry:   geometry,
-		Properties: properties,
+		Geometry:   input.Geometry,
+		Properties: input.Properties,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -66,26 +50,11 @@ func (r *mutationResolver) UpdateGeoJSONFeature(ctx context.Context, input gqlmo
 		return nil, err
 	}
 
-	var geometry json.RawMessage
-	var properties json.RawMessage
-
-	geometryBytes, err := json.Marshal(input.Geometry)
-	if err != nil {
-		return nil, err
-	}
-	geometry = json.RawMessage(geometryBytes)
-
-	propertiesBytes, err := json.Marshal(input.Properties)
-	if err != nil {
-		return nil, err
-	}
-	properties = json.RawMessage(propertiesBytes)
-
 	res, err := usecases(ctx).NLSLayer.UpdateGeoJSONFeature(ctx, interfaces.UpdateNLSLayerGeoJSONFeatureParams{
 		LayerID:    lid,
 		FeatureID:  fid,
-		Geometry:   geometry,
-		Properties: properties,
+		Geometry:   input.Geometry,
+		Properties: input.Properties,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -132,27 +101,27 @@ func convertGeometry(nlslayerGeom nlslayer.Geometry) (gqlmodel.Geometry, error) 
 	switch geom := nlslayerGeom.(type) {
 	case *nlslayer.Point:
 		return gqlmodel.Point{
-			Type:             geom.Type,
-			PointCoordinates: geom.CoordinatesVal,
+			Type:             geom.PointType(),
+			PointCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.LineString:
 		return gqlmodel.LineString{
-			Type:                  geom.Type,
-			LineStringCoordinates: geom.CoordinatesVal,
+			Type:                  geom.LineStringType(),
+			LineStringCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.Polygon:
 		return gqlmodel.Polygon{
-			Type:               geom.Type,
-			PolygonCoordinates: geom.CoordinatesVal,
+			Type:               geom.PolygonType(),
+			PolygonCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.MultiPolygon:
 		return gqlmodel.MultiPolygon{
-			Type:                    geom.Type,
-			MultiPolygonCoordinates: geom.CoordinatesVal,
+			Type:                    geom.MultiPolygonType(),
+			MultiPolygonCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.GeometryCollection:
 		var geometries []gqlmodel.Geometry
-		for _, g := range geom.GeometriesVal {
+		for _, g := range geom.Geometries() {
 			convertedGeom, err := convertGeometry(g)
 			if err != nil {
 				return nil, err
@@ -160,7 +129,7 @@ func convertGeometry(nlslayerGeom nlslayer.Geometry) (gqlmodel.Geometry, error) 
 			geometries = append(geometries, convertedGeom)
 		}
 		return gqlmodel.GeometryCollection{
-			Type:       geom.Type,
+			Type:       geom.GeometryCollectionType(),
 			Geometries: geometries,
 		}, nil
 	default:

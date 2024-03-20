@@ -1,7 +1,5 @@
 package nlslayer
 
-import "encoding/json"
-
 type Feature struct {
 	id          FeatureID
 	featureType string
@@ -50,14 +48,4 @@ func (f *Feature) Geometry() Geometry {
 
 func (f *Feature) Properties() map[string]any {
 	return f.properties
-}
-
-func UnmarshalProperties(properties json.RawMessage) (map[string]any, error) {
-	var props map[string]any
-	if len(properties) > 0 {
-		if err := json.Unmarshal(properties, &props); err != nil {
-			return nil, err
-		}
-	}
-	return props, nil
 }

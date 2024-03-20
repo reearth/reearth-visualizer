@@ -545,22 +545,16 @@ func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCu
 		return nil, err
 	}
 
-	customPropertySchema, err := nlslayer.UnmarshalcustomPropertySchema(&inp.Schema)
-	if err != nil {
-		return nil, err
-	}
-
 	if layer.Sketch() == nil {
-
 		sketchInfo := nlslayer.NewSketchInfo(
-			customPropertySchema,
+			&inp.Schema,
 			nil,
 		)
 
 		layer.SetIsSketch(true)
 		layer.SetSketch(sketchInfo)
 	} else {
-		layer.Sketch().SetCustomPropertySchema(customPropertySchema)
+		layer.Sketch().SetCustomPropertySchema(&inp.Schema)
 	}
 
 	err = i.nlslayerRepo.Save(ctx, layer)
@@ -590,12 +584,7 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		return nlslayer.Feature{}, err
 	}
 
-	geometry, err := nlslayer.UnmarshalGeometry(inp.Geometry)
-	if err != nil {
-		return nlslayer.Feature{}, err
-	}
-
-	properties, err := nlslayer.UnmarshalProperties(inp.Properties)
+	geometry, err := nlslayer.NewGeometryFromMap(inp.Geometry)
 	if err != nil {
 		return nlslayer.Feature{}, err
 	}
@@ -603,7 +592,7 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 	feature, err := nlslayer.NewFeature(
 		inp.Type,
 		geometry,
-		properties,
+		inp.Properties,
 	)
 	if err != nil {
 		return nlslayer.Feature{}, err
@@ -657,17 +646,12 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 		return nlslayer.Feature{}, interfaces.ErrFeatureNotFound
 	}
 
-	geometry, err := nlslayer.UnmarshalGeometry(inp.Geometry)
+	geometry, err := nlslayer.NewGeometryFromMap(inp.Geometry)
 	if err != nil {
 		return nlslayer.Feature{}, err
 	}
 
-	properties, err := nlslayer.UnmarshalProperties(inp.Properties)
-	if err != nil {
-		return nlslayer.Feature{}, err
-	}
-
-	updatedFeature, err := layer.Sketch().FeatureCollection().UpdateFeature(inp.FeatureID, geometry, properties)
+	updatedFeature, err := layer.Sketch().FeatureCollection().UpdateFeature(inp.FeatureID, geometry, inp.Properties)
 	if err != nil {
 		return nlslayer.Feature{}, err
 	}

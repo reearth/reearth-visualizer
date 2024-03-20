@@ -2,7 +2,6 @@ package gql
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -195,16 +194,9 @@ func (r *mutationResolver) AddCustomProperties(ctx context.Context, input gqlmod
 		return nil, err
 	}
 
-	var schema json.RawMessage
-	schemaBytes, err := json.Marshal(input.Schema)
-	if err != nil {
-		return nil, err
-	}
-	schema = json.RawMessage(schemaBytes)
-
 	layer, err := usecases(ctx).NLSLayer.AddCustomProperties(ctx, interfaces.AddCustomPropertiesInput{
 		LayerID: lid,
-		Schema:  schema,
+		Schema:  input.Schema,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
