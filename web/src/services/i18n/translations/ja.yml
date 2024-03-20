@@ -238,12 +238,14 @@ Public Info: 公開詳細設定
 Title: ページタイトル
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効化
-Enable Google Analytics: 有効
 Username: ユーザー名
 Password: パスワード
 Site Setting: サイト設定
 Site name: サイト名
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクト公開ページのサイト名を変更します。アルファベットとハイフン(-)のみ利用可能です。
+Google Analytics: ''
+Enable Google Analytics: 有効
+Tracking ID: ''
 Left: 左
 Right: 右
 Story Panel: ストーリーパネル
