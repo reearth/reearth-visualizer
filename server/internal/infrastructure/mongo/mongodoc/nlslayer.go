@@ -340,49 +340,59 @@ func ToModelNLSLayerGeometry(g map[string]any) (nlslayer.Geometry, error) {
 		return nil, errors.New("geometry type is missing or not a string")
 	}
 
-	rawCoordinates, ok := g["coordinates"]
-	if !ok {
-		return nil, errors.New("coordinates are missing")
+	if geometryType == "Point" || geometryType == "LineString" || geometryType == "Polygon" || geometryType == "MultiPolygon" {
+		rawCoordinates, ok := g["coordinates"]
+		if !ok {
+			return nil, errors.New("coordinates are missing")
+		}
+
+		coordinates, err := convertCoordinates(geometryType, rawCoordinates)
+		if err != nil {
+			return nil, err
+		}
+
+		switch geometryType {
+		case "Point":
+			coords, ok := coordinates.([]float64)
+			if !ok {
+				return nil, errors.New("invalid coordinates for Point")
+			}
+			return nlslayer.NewPoint(geometryType, coords), nil
+		case "LineString":
+			coords, ok := coordinates.([][]float64)
+			if !ok {
+				return nil, errors.New("invalid coordinates for LineString")
+			}
+			return nlslayer.NewLineString(geometryType, coords), nil
+		case "Polygon":
+			coords, ok := coordinates.([][][]float64)
+			if !ok {
+				return nil, errors.New("invalid coordinates for Polygon")
+			}
+			return nlslayer.NewPolygon(geometryType, coords), nil
+		case "MultiPolygon":
+			coords, ok := coordinates.([][][][]float64)
+			if !ok {
+				return nil, errors.New("invalid coordinates for MultiPolygon")
+			}
+			return nlslayer.NewMultiPolygon(geometryType, coords), nil
+		default:
+			return nil, errors.New("invalid geometry type")
+		}
 	}
 
-	coordinates, err := convertCoordinates(geometryType, rawCoordinates)
-	if err != nil {
-		return nil, err
-	}
-
-	switch geometryType {
-	case "Point":
-		coords, ok := coordinates.([]float64)
-		if !ok {
-			return nil, errors.New("invalid coordinates for Point")
-		}
-		return nlslayer.NewPoint(geometryType, coords), nil
-	case "LineString":
-		coords, ok := coordinates.([][]float64)
-		if !ok {
-			return nil, errors.New("invalid coordinates for LineString")
-		}
-		return nlslayer.NewLineString(geometryType, coords), nil
-	case "Polygon":
-		coords, ok := coordinates.([][][]float64)
-		if !ok {
-			return nil, errors.New("invalid coordinates for Polygon")
-		}
-		return nlslayer.NewPolygon(geometryType, coords), nil
-	case "MultiPolygon":
-		coords, ok := coordinates.([][][][]float64)
-		if !ok {
-			return nil, errors.New("invalid coordinates for MultiPolygon")
-		}
-		return nlslayer.NewMultiPolygon(geometryType, coords), nil
-	case "GeometryCollection":
-		geometries, ok := g["geometries"].([]map[string]any)
+	if geometryType == "GeometryCollection" {
+		geometries, ok := g["geometries"].(primitive.A)
 		if !ok {
 			return nil, errors.New("geometries of geometry collection are missing")
 		}
 		geometryList := make([]nlslayer.Geometry, 0, len(geometries))
-		for _, g := range geometries {
-			geometry, err := ToModelNLSLayerGeometry(g)
+		for _, geom := range geometries {
+			geomMap, ok := geom.(map[string]any)
+			if !ok {
+				return nil, errors.New("invalid geometry format in geometry collection")
+			}
+			geometry, err := ToModelNLSLayerGeometry(geomMap)
 			if err != nil {
 				return nil, err
 			}
@@ -390,7 +400,8 @@ func ToModelNLSLayerGeometry(g map[string]any) (nlslayer.Geometry, error) {
 		}
 		return nlslayer.NewGeometryCollection(geometryType, geometryList), nil
 	}
-	return nil, errors.New("invalid geometry type")
+
+	return nil, errors.New("unsupported geometry type")
 }
 
 func convertCoordinates(geometryType string, rawCoordinates interface{}) (interface{}, error) {
@@ -437,7 +448,6 @@ func convertCoordinates(geometryType string, rawCoordinates interface{}) (interf
 			polygons = append(polygons, polygon)
 		}
 		return polygons, nil
-
 	case "MultiPolygon":
 		var multiPolygons [][][][]float64
 		for _, rawMultiPolygon := range rawCoordinates.(primitive.A) {
