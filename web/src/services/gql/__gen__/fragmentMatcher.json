@@ -1,5 +1,12 @@
 {
   "possibleTypes": {
+    "Geometry": [
+      "GeometryCollection",
+      "LineString",
+      "MultiPolygon",
+      "Point",
+      "Polygon"
+    ],
     "Layer": [
       "LayerGroup",
       "LayerItem"

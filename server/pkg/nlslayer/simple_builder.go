@@ -86,3 +86,13 @@ func (b *NLSLayerSimpleBuilder) Config(c *Config) *NLSLayerSimpleBuilder {
 	b.l.config = c
 	return b
 }
+
+func (b *NLSLayerSimpleBuilder) IsSketch(i bool) *NLSLayerSimpleBuilder {
+	b.l.isSketch = i
+	return b
+}
+
+func (b *NLSLayerSimpleBuilder) Sketch(sketch *SketchInfo) *NLSLayerSimpleBuilder {
+	b.l.sketch = sketch
+	return b
+}

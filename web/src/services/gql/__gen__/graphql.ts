@@ -37,6 +37,11 @@ export type AddClusterPayload = {
   scene: Scene;
 };
 
+export type AddCustomPropertySchemaInput = {
+  layerId: Scalars['ID']['input'];
+  schema?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type AddDatasetSchemaInput = {
   name: Scalars['String']['input'];
   representativefield?: InputMaybe<Scalars['ID']['input']>;
@@ -46,6 +51,13 @@ export type AddDatasetSchemaInput = {
 export type AddDatasetSchemaPayload = {
   __typename?: 'AddDatasetSchemaPayload';
   datasetSchema?: Maybe<DatasetSchema>;
+};
+
+export type AddGeoJsonFeatureInput = {
+  geometry: Scalars['JSON']['input'];
+  layerId: Scalars['ID']['input'];
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  type: Scalars['String']['input'];
 };
 
 export type AddInfoboxFieldInput = {
@@ -435,6 +447,16 @@ export type DatasetSchemaField = Node & {
   type: ValueType;
 };
 
+export type DeleteGeoJsonFeatureInput = {
+  featureId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
+};
+
+export type DeleteGeoJsonFeaturePayload = {
+  __typename?: 'DeleteGeoJSONFeaturePayload';
+  deletedFeatureId: Scalars['ID']['output'];
+};
+
 export type DeleteMeInput = {
   userId: Scalars['ID']['input'];
 };
@@ -526,6 +548,28 @@ export type DuplicateStyleInput = {
 export type DuplicateStylePayload = {
   __typename?: 'DuplicateStylePayload';
   style: Style;
+};
+
+export type Feature = {
+  __typename?: 'Feature';
+  geometry: Geometry;
+  id: Scalars['ID']['output'];
+  properties?: Maybe<Scalars['JSON']['output']>;
+  type: Scalars['String']['output'];
+};
+
+export type FeatureCollection = {
+  __typename?: 'FeatureCollection';
+  features: Array<Feature>;
+  type: Scalars['String']['output'];
+};
+
+export type Geometry = GeometryCollection | LineString | MultiPolygon | Point | Polygon;
+
+export type GeometryCollection = {
+  __typename?: 'GeometryCollection';
+  geometries: Array<Geometry>;
+  type: Scalars['String']['output'];
 };
 
 export type ImportDatasetFromGoogleSheetInput = {
@@ -723,6 +767,12 @@ export type LayerTagItem = LayerTag & {
   tagId: Scalars['ID']['output'];
 };
 
+export type LineString = {
+  __typename?: 'LineString';
+  lineStringCoordinates: Array<Array<Scalars['Float']['output']>>;
+  type: Scalars['String']['output'];
+};
+
 export type LinkDatasetToPropertyValueInput = {
   datasetIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   datasetSchemaFieldIds: Array<Scalars['ID']['input']>;
@@ -918,10 +968,18 @@ export type MoveStoryPayload = {
   storyId: Scalars['ID']['output'];
 };
 
+export type MultiPolygon = {
+  __typename?: 'MultiPolygon';
+  multiPolygonCoordinates: Array<Array<Array<Array<Scalars['Float']['output']>>>>;
+  type: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addCluster?: Maybe<AddClusterPayload>;
+  addCustomProperties: UpdateNlsLayerPayload;
   addDatasetSchema?: Maybe<AddDatasetSchemaPayload>;
+  addGeoJSONFeature: Feature;
   addInfoboxField?: Maybe<AddInfoboxFieldPayload>;
   addLayerGroup?: Maybe<AddLayerGroupPayload>;
   addLayerItem?: Maybe<AddLayerItemPayload>;
@@ -945,6 +1003,7 @@ export type Mutation = {
   createTagGroup?: Maybe<CreateTagGroupPayload>;
   createTagItem?: Maybe<CreateTagItemPayload>;
   createTeam?: Maybe<CreateTeamPayload>;
+  deleteGeoJSONFeature: DeleteGeoJsonFeaturePayload;
   deleteMe?: Maybe<DeleteMePayload>;
   deleteProject?: Maybe<DeleteProjectPayload>;
   deleteStory: DeleteStoryPayload;
@@ -993,6 +1052,7 @@ export type Mutation = {
   unlinkPropertyValue?: Maybe<PropertyFieldPayload>;
   updateCluster?: Maybe<UpdateClusterPayload>;
   updateDatasetSchema?: Maybe<UpdateDatasetSchemaPayload>;
+  updateGeoJSONFeature: Feature;
   updateLayer?: Maybe<UpdateLayerPayload>;
   updateMe?: Maybe<UpdateMePayload>;
   updateMemberOfTeam?: Maybe<UpdateMemberOfTeamPayload>;
@@ -1018,8 +1078,18 @@ export type MutationAddClusterArgs = {
 };
 
 
+export type MutationAddCustomPropertiesArgs = {
+  input: AddCustomPropertySchemaInput;
+};
+
+
 export type MutationAddDatasetSchemaArgs = {
   input: AddDatasetSchemaInput;
+};
+
+
+export type MutationAddGeoJsonFeatureArgs = {
+  input: AddGeoJsonFeatureInput;
 };
 
 
@@ -1135,6 +1205,11 @@ export type MutationCreateTagItemArgs = {
 
 export type MutationCreateTeamArgs = {
   input: CreateTeamInput;
+};
+
+
+export type MutationDeleteGeoJsonFeatureArgs = {
+  input: DeleteGeoJsonFeatureInput;
 };
 
 
@@ -1378,6 +1453,11 @@ export type MutationUpdateDatasetSchemaArgs = {
 };
 
 
+export type MutationUpdateGeoJsonFeatureArgs = {
+  input: UpdateGeoJsonFeatureInput;
+};
+
+
 export type MutationUpdateLayerArgs = {
   input: UpdateLayerInput;
 };
@@ -1477,8 +1557,10 @@ export type NlsLayer = {
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
   infobox?: Maybe<NlsInfobox>;
+  isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
   sceneId: Scalars['ID']['output'];
+  sketch?: Maybe<SketchInfo>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1490,9 +1572,11 @@ export type NlsLayerGroup = NlsLayer & {
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
   infobox?: Maybe<NlsInfobox>;
+  isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
+  sketch?: Maybe<SketchInfo>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1502,9 +1586,11 @@ export type NlsLayerSimple = NlsLayer & {
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
   infobox?: Maybe<NlsInfobox>;
+  isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
+  sketch?: Maybe<SketchInfo>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1634,6 +1720,12 @@ export enum PluginExtensionType {
   Widget = 'WIDGET'
 }
 
+export type Point = {
+  __typename?: 'Point';
+  pointCoordinates: Array<Scalars['Float']['output']>;
+  type: Scalars['String']['output'];
+};
+
 export type Policy = {
   __typename?: 'Policy';
   assetStorageSize?: Maybe<Scalars['FileSize']['output']>;
@@ -1645,6 +1737,12 @@ export type Policy = {
   name: Scalars['String']['output'];
   projectCount?: Maybe<Scalars['Int']['output']>;
   publishedProjectCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type Polygon = {
+  __typename?: 'Polygon';
+  polygonCoordinates: Array<Array<Array<Scalars['Float']['output']>>>;
+  type: Scalars['String']['output'];
 };
 
 export enum Position {
@@ -2247,6 +2345,12 @@ export type SignupPayload = {
   user: User;
 };
 
+export type SketchInfo = {
+  __typename?: 'SketchInfo';
+  customPropertySchema?: Maybe<Scalars['JSON']['output']>;
+  featureCollection?: Maybe<FeatureCollection>;
+};
+
 export type Spacing = {
   __typename?: 'Spacing';
   bottom: Scalars['Float']['output'];
@@ -2484,6 +2588,13 @@ export type UpdateDatasetSchemaInput = {
 export type UpdateDatasetSchemaPayload = {
   __typename?: 'UpdateDatasetSchemaPayload';
   datasetSchema?: Maybe<DatasetSchema>;
+};
+
+export type UpdateGeoJsonFeatureInput = {
+  featureId: Scalars['ID']['input'];
+  geometry?: InputMaybe<Scalars['JSON']['input']>;
+  layerId: Scalars['ID']['input'];
+  properties?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateLayerInput = {

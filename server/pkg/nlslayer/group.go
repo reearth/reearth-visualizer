@@ -114,3 +114,38 @@ func (l *NLSLayerGroup) Clone() Cloner {
 		root:      l.root,
 	}
 }
+
+func (l *NLSLayerGroup) IsSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.layerBase.isSketch
+}
+
+func (l *NLSLayerGroup) SetIsSketch(isSketch bool) {
+	if l == nil {
+		return
+	}
+	l.layerBase.isSketch = isSketch
+}
+
+func (l *NLSLayerGroup) HasSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.layerBase.sketch != nil
+}
+
+func (l *NLSLayerGroup) Sketch() *SketchInfo {
+	if l == nil {
+		return nil
+	}
+	return l.layerBase.sketch
+}
+
+func (l *NLSLayerGroup) SetSketch(sketch *SketchInfo) {
+	if l == nil {
+		return
+	}
+	l.layerBase.sketch = sketch
+}

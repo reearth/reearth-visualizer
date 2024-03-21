@@ -96,3 +96,13 @@ func (b *NLSLayerGroupBuilder) Infobox(infobox *Infobox) *NLSLayerGroupBuilder {
 	b.l.infobox = infobox
 	return b
 }
+
+func (b *NLSLayerGroupBuilder) IsSketch(i bool) *NLSLayerGroupBuilder {
+	b.l.isSketch = i
+	return b
+}
+
+func (b *NLSLayerGroupBuilder) Sketch(sketch *SketchInfo) *NLSLayerGroupBuilder {
+	b.l.sketch = sketch
+	return b
+}
