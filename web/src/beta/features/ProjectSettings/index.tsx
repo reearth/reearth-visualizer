@@ -49,6 +49,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     handleDeleteProject,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
+    handleUpdateProjectGA,
     handleUpdateStory,
     handleUpdateStoryBasicAuth,
     handleUpdateStoryAlias,
@@ -111,6 +112,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
               onUpdateProject={handleUpdateProject}
               onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}
               onUpdateProjectAlias={handleUpdateProjectAlias}
+              onUpdateProjectGA={handleUpdateProjectGA}
             />
           )}
           {tab === "plugins" && (
