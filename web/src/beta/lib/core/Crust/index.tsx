@@ -1,4 +1,4 @@
-import { type RefObject } from "react";
+import { useMemo, type RefObject } from "react";
 
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
@@ -211,6 +211,16 @@ export default function Crust({
     selectedLayerId,
     timelineManagerRef,
   });
+  const featuredInfobox = useMemo(
+    () =>
+      selectedLayerId?.featureId
+        ? {
+            ...infobox,
+            featureId: selectedLayerId.featureId,
+          }
+        : undefined,
+    [infobox, selectedLayerId?.featureId],
+  );
 
   return (
     <Plugins
@@ -266,7 +276,7 @@ export default function Crust({
         renderWidget={renderWidget}
       />
       <Infobox
-        infobox={infobox}
+        infobox={featuredInfobox}
         installableInfoboxBlocks={installableInfoboxBlocks}
         isEditable={!!inEditor}
         renderBlock={renderBlock}

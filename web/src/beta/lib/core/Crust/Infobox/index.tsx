@@ -1,4 +1,13 @@
-import { Fragment, ReactNode, memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Fragment,
+  ReactNode,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
@@ -74,6 +83,7 @@ const Infobox: React.FC<Props> = ({
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [disableSelection, setDisableSelection] = useState(false);
 
   const [infoboxBlocks, setInfoboxBlocks] = useState(infobox?.blocks ?? []);
@@ -114,9 +124,9 @@ const Infobox: React.FC<Props> = ({
   );
 
   const handleBlockCreate = useCallback(
-    (index: number) => (extensionId?: string | undefined, pluginId?: string | undefined) => {
+    (index: number) => async (extensionId?: string | undefined, pluginId?: string | undefined) => {
       if (!extensionId || !pluginId) return;
-      onBlockCreate?.(pluginId, extensionId, index);
+      await onBlockCreate?.(pluginId, extensionId, index);
     },
     [onBlockCreate],
   );
@@ -156,9 +166,19 @@ const Infobox: React.FC<Props> = ({
     }
   }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex, disableSelection]);
 
+  useEffect(() => {
+    if (wrapperRef.current) {
+      wrapperRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [infobox?.featureId]);
+
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
-      <Wrapper position={position?.value} padding={padding?.value} gap={gap?.value}>
+      <Wrapper
+        ref={wrapperRef}
+        position={position?.value}
+        padding={padding?.value}
+        gap={gap?.value}>
         {isEditable && !disableSelection && (
           <BlockAddBar
             id="top-bar"

@@ -1,6 +1,7 @@
 import type { Layer, Spacing } from "@reearth/beta/lib/core/mantle";
 
 export type Infobox<BP = any> = {
+  featureId?: string;
   property?: InfoboxProperty;
   blocks?: InfoboxBlock<BP>[];
 };
