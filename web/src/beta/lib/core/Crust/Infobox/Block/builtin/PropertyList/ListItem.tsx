@@ -31,6 +31,7 @@ const PropertyWrapper = styled.div<{ isEven?: boolean }>`
   background: ${({ isEven }) => isEven && "#F4F4F4"};
   padding: 8px 16px;
   box-sizing: border-box;
+  word-break: break-word;
   width: 100%;
 `;
 
