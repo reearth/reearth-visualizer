@@ -2,6 +2,7 @@ import JsonView from "react18-json-view";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
+import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
 import { Geometry } from "@reearth/beta/lib/core/engines";
 import { useT } from "@reearth/services/i18n";
@@ -13,9 +14,10 @@ type Props = {
     geometry: Geometry | undefined;
     properties: any;
   };
+  isSketchLayer: boolean;
 };
 
-const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
+const FeatureData: React.FC<Props> = ({ selectedFeature, isSketchLayer }) => {
   const t = useT();
 
   return (
@@ -26,14 +28,24 @@ const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
           {selectedFeature?.id}
         </Text>
       </ValueWrapper>
-      <Text size="body">{t("Geometry")}</Text>
-      <ValueWrapper>
-        <JsonView src={selectedFeature?.geometry} theme="a11y" dark />
-      </ValueWrapper>
-      <Text size="body">{t("Properties")}</Text>
-      <ValueWrapper>
-        <JsonView src={selectedFeature?.properties} theme="a11y" dark />
-      </ValueWrapper>
+      <StyledSidePanelSectionField title={t("Geometry")} border="1">
+        <ValueWrapper>
+          <JsonView src={selectedFeature?.geometry} theme="a11y" dark />
+        </ValueWrapper>
+      </StyledSidePanelSectionField>
+      {isSketchLayer ? (
+        <StyledSidePanelSectionField title={t("Custom Properties")} border="1">
+          <ValueWrapper>
+            <JsonView src={selectedFeature?.properties} theme="a11y" dark />
+          </ValueWrapper>
+        </StyledSidePanelSectionField>
+      ) : (
+        <StyledSidePanelSectionField title={t("Properties")} border="1">
+          <ValueWrapper>
+            <JsonView src={selectedFeature?.properties} theme="a11y" dark />
+          </ValueWrapper>
+        </StyledSidePanelSectionField>
+      )}
     </Wrapper>
   );
 };
@@ -50,5 +62,8 @@ const Wrapper = styled.div`
 const ValueWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
-  padding: 4px 8px;
+`;
+
+const StyledSidePanelSectionField = styled(SidePanelSectionField)`
+  background: ${({ theme }) => theme.outline.weaker};
 `;
