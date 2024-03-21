@@ -15,6 +15,11 @@ type NLSLayer interface {
 	Rename(string)
 	UpdateConfig(*Config)
 	Duplicate() NLSLayer
+	IsSketch() bool
+	SetIsSketch(bool)
+	HasSketch() bool
+	Sketch() *SketchInfo
+	SetSketch(*SketchInfo)
 }
 
 func ToNLSLayerGroup(l NLSLayer) *NLSLayerGroup {
@@ -61,6 +66,8 @@ type layerBase struct {
 	visible   bool
 	infobox   *Infobox
 	config    *Config
+	isSketch  bool
+	sketch    *SketchInfo
 }
 
 func (l *layerBase) ID() ID {
@@ -170,10 +177,15 @@ func (l *layerBase) Clone() *layerBase {
 		title:     l.title,
 		visible:   l.visible,
 		config:    clonedConfig,
+		isSketch:  l.isSketch,
 	}
 
 	if l.infobox != nil {
 		cloned.infobox = l.infobox.Clone()
+	}
+
+	if l.sketch != nil {
+		cloned.sketch = l.sketch.Clone()
 	}
 
 	return cloned
@@ -196,11 +208,51 @@ func (l *layerBase) Duplicate() NLSLayer {
 		title:     l.title,
 		visible:   l.visible,
 		config:    duplicatedConfig,
+		isSketch:  l.isSketch,
 	}
 
 	if l.infobox != nil {
 		duplicated.infobox = l.infobox.Clone()
 	}
 
+	if l.sketch != nil {
+		duplicated.sketch = l.sketch.Clone()
+	}
+
 	return &NLSLayerSimple{layerBase: *duplicated}
+}
+
+func (l *layerBase) IsSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.isSketch
+}
+
+func (l *layerBase) SetIsSketch(isSketch bool) {
+	if l == nil {
+		return
+	}
+	l.isSketch = isSketch
+}
+
+func (l *layerBase) HasSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.sketch != nil
+}
+
+func (l *layerBase) Sketch() *SketchInfo {
+	if l == nil {
+		return nil
+	}
+	return l.sketch
+}
+
+func (l *layerBase) SetSketchInfo(sketch *SketchInfo) {
+	if l == nil {
+		return
+	}
+	l.sketch = sketch
 }
