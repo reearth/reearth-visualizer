@@ -4,8 +4,9 @@ import { Feature } from "@reearth/beta/lib/core/mantle";
 import { evalExpression } from "@reearth/beta/lib/core/mantle/evaluator/simple";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
-export default (value?: unknown | undefined) => {
+export default (value: unknown | undefined) => {
   const [isReady, setIsReady] = useState(false);
+  const [currentValue, setCurrentValue] = useState<unknown | undefined>(value);
 
   const [evaluatedResult, setEvaluatedResult] = useState<string | undefined>(undefined);
 
@@ -16,6 +17,11 @@ export default (value?: unknown | undefined) => {
   useEffect(() => {
     if (!isReady) {
       setIsReady(true);
+      return;
+    }
+    if (currentValue !== value) {
+      setCurrentValue(value);
+      setEvaluatedResult(undefined);
       return;
     }
     const selectedFeature = visualizer.current?.layers.selectedFeature();
@@ -31,7 +37,7 @@ export default (value?: unknown | undefined) => {
       };
       const es = evalExpression(
         {
-          expression: value,
+          expression: currentValue,
         },
         undefined,
         simpleFeature,

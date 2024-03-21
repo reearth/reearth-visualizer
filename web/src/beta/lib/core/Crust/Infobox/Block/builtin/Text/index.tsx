@@ -20,7 +20,7 @@ const TextBlock: React.FC<BlockProps<InfoboxBlock>> = ({ block, isSelected, ...p
       propertyId={block?.propertyId}
       property={block?.property}
       {...props}>
-      {evaluatedSrc && !props.isEditable ? (
+      {evaluatedSrc !== undefined ? (
         <StyledText size="body" customColor>
           {evaluatedSrc}
         </StyledText>
