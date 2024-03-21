@@ -83,6 +83,20 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, err
 	}
 
+	if inp.Schema != nil {
+		featureCollection := nlslayer.NewFeatureCollection(
+			"FeatureCollection",
+			[]nlslayer.Feature{},
+		)
+		sketchInfo := nlslayer.NewSketchInfo(
+			inp.Schema,
+			featureCollection,
+		)
+
+		layerSimple.SetIsSketch(true)
+		layerSimple.SetSketch(sketchInfo)
+	}
+
 	err = i.nlslayerRepo.Save(ctx, layerSimple)
 	if err != nil {
 		return nil, err
@@ -546,9 +560,13 @@ func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCu
 	}
 
 	if layer.Sketch() == nil {
+		featureCollection := nlslayer.NewFeatureCollection(
+			"FeatureCollection",
+			[]nlslayer.Feature{},
+		)
 		sketchInfo := nlslayer.NewSketchInfo(
 			&inp.Schema,
-			nil,
+			featureCollection,
 		)
 
 		layer.SetIsSketch(true)

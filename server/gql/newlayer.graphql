@@ -76,6 +76,7 @@ input AddNLSLayerSimpleInput {
   config: JSON
   index: Int
   visible: Boolean
+  schema: JSON
 }
 
 input RemoveNLSLayerInput {

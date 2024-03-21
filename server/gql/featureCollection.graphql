@@ -26,7 +26,7 @@ type GeometryCollection {
 union Geometry = Point | LineString | Polygon | MultiPolygon | GeometryCollection
 
 type Feature {
-    type: String!
+    type: String! 
     geometry: Geometry!
     id: ID!
     properties: JSON

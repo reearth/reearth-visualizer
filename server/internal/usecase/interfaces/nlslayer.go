@@ -16,6 +16,7 @@ type AddNLSLayerSimpleInput struct {
 	LayerType     nlslayer.LayerType
 	Config        *nlslayer.Config
 	Visible       *bool
+	Schema        *map[string]any
 }
 
 type UpdateNLSLayerInput struct {
