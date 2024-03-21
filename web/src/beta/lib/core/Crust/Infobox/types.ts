@@ -7,10 +7,10 @@ export type Infobox<BP = any> = {
 
 export type InfoboxProperty = {
   default?: {
-    enabled?: boolean;
-    position?: "right" | "left";
-    padding?: Spacing;
-    gap?: number;
+    enabled?: PropertyItem<boolean>;
+    position?: PropertyItem<"right" | "left">;
+    padding?: PropertyItem<Spacing>;
+    gap?: PropertyItem<number>;
   };
   // for compat
   defaultContent?: "description" | "attributes";
@@ -29,4 +29,15 @@ export type InfoboxBlockProps<P = any> = {
   block?: InfoboxBlock<P>;
   layer?: Layer;
   onClick?: () => void;
+};
+
+export type PropertyItem<T> = {
+  type: string;
+  ui?: string;
+  title?: string;
+  description?: string;
+  value?: T;
+  min?: number;
+  max?: number;
+  choices?: { [key: string]: string }[];
 };

@@ -158,13 +158,13 @@ const Infobox: React.FC<Props> = ({
 
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
-      <Wrapper position={position} padding={padding} gap={gap}>
+      <Wrapper position={position?.value} padding={padding?.value} gap={gap?.value}>
         {isEditable && !disableSelection && (
           <BlockAddBar
             id="top-bar"
             openBlocks={openBlocksIndex === -1}
             installableBlocks={installableInfoboxBlocks}
-            showAreaHeight={gap}
+            showAreaHeight={gap?.value}
             parentWidth={INFOBOX_WIDTH}
             alwaysShow={infoboxBlocks.length < 1}
             onBlockOpen={() => handleBlockOpen(-1)}
@@ -174,7 +174,7 @@ const Infobox: React.FC<Props> = ({
         {infoboxBlocks && infoboxBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey={INFOBOX_UNIQUE_KEY}
-            gap={gap}
+            gap={gap?.value}
             items={infoboxBlocks}
             getId={item => item.id}
             onItemDrop={async (item, index) => {
@@ -211,7 +211,7 @@ const Infobox: React.FC<Props> = ({
                       id={b.id + "below-bar"}
                       openBlocks={openBlocksIndex === idx}
                       installableBlocks={installableInfoboxBlocks}
-                      showAreaHeight={gap}
+                      showAreaHeight={gap?.value}
                       parentWidth={INFOBOX_WIDTH}
                       onBlockOpen={() => handleBlockOpen(idx)}
                       onBlockAdd={handleBlockCreate?.(idx + 1)}

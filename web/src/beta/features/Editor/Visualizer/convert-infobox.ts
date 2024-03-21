@@ -2,7 +2,6 @@ import { InfoboxBlock } from "@reearth/beta/lib/core/Crust/Infobox/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { NLSInfobox } from "@reearth/services/api/layersApi/utils";
 
-import { processProperty } from "./convert";
 import { processProperty as processNewProperty } from "./processNewProperty";
 
 export default (
@@ -15,7 +14,7 @@ export default (
   const used = orig || parent;
   if (!used) return;
   return {
-    property: processProperty(parent?.property, orig?.property),
+    property: processNewProperty(parent?.property, orig?.property),
     blocks: used.blocks?.map<InfoboxBlock>(b => ({
       id: b.id,
       name: blockNames?.[b.extensionId] ?? "Infobox Block",
