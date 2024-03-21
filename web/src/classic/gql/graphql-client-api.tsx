@@ -137,6 +137,7 @@ export type AddNlsLayerSimpleInput = {
   index?: InputMaybe<Scalars['Int']['input']>;
   layerType: Scalars['String']['input'];
   sceneId: Scalars['ID']['input'];
+  schema?: InputMaybe<Scalars['JSON']['input']>;
   title: Scalars['String']['input'];
   visible?: InputMaybe<Scalars['Boolean']['input']>;
 };
