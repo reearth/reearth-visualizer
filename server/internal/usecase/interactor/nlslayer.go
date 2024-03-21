@@ -84,9 +84,13 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	}
 
 	if inp.Schema != nil {
+		featureCollection := nlslayer.NewFeatureCollection(
+			"FeatureCollection",
+			[]nlslayer.Feature{},
+		)
 		sketchInfo := nlslayer.NewSketchInfo(
 			inp.Schema,
-			nil,
+			featureCollection,
 		)
 
 		layerSimple.SetIsSketch(true)
@@ -556,9 +560,13 @@ func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCu
 	}
 
 	if layer.Sketch() == nil {
+		featureCollection := nlslayer.NewFeatureCollection(
+			"FeatureCollection",
+			[]nlslayer.Feature{},
+		)
 		sketchInfo := nlslayer.NewSketchInfo(
 			&inp.Schema,
-			nil,
+			featureCollection,
 		)
 
 		layer.SetIsSketch(true)
