@@ -8,6 +8,9 @@ import type {
   LayerEditEvent,
   LayerLoadEvent,
   LayerSelectionReason,
+  LayerSelectWithRectEnd,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectStart,
   LayerVisibilityEvent,
 } from "../Map";
 import { SketchEventCallback, SketchType } from "../Map/Sketch/types";
@@ -132,6 +135,9 @@ export type Props = {
   ) => Promise<void>;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
+  onLayerSelectWithRectStart: (cb: (e: LayerSelectWithRectStart) => void) => void;
+  onLayerSelectWithRectMove: (cb: (e: LayerSelectWithRectMove) => void) => void;
+  onLayerSelectWithRectEnd: (cb: (e: LayerSelectWithRectEnd) => void) => void;
   onPluginSketchFeatureCreated: (cb: SketchEventCallback) => void;
   onSketchTypeChange: (cb: (type: SketchType | undefined) => void) => void;
   onLayerVisibility: (cb: (e: LayerVisibilityEvent) => void) => void;
@@ -179,6 +185,9 @@ export default function Crust({
   onPropertyItemDelete,
   overrideSceneProperty,
   onLayerEdit,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
@@ -224,11 +233,14 @@ export default function Crust({
       useExperimentalSandbox={useExperimentalSandbox}
       overrideInteractionMode={overrideInteractionMode}
       overrideSceneProperty={overrideSceneProperty}
-      onSketchTypeChange={onSketchTypeChange}
-      onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       onLayerEdit={onLayerEdit}
+      onLayerSelectWithRectStart={onLayerSelectWithRectStart}
+      onLayerSelectWithRectMove={onLayerSelectWithRectMove}
+      onLayerSelectWithRectEnd={onLayerSelectWithRectEnd}
+      onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
       onLayerVisibility={onLayerVisibility}
       onLayerLoad={onLayerLoad}
+      onSketchTypeChange={onSketchTypeChange}
       onCameraForceHorizontalRollChange={onCameraForceHorizontalRollChange}>
       <ModalContainer
         ref={pluginModalContainerRef}

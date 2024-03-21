@@ -33,6 +33,7 @@ type ProjectDocument struct {
 	CoreSupport       bool
 	EnableGA          bool
 	TrackingID        string
+	// Scene             string
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -73,6 +74,7 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		CoreSupport:       project.CoreSupport(),
 		EnableGA:          project.EnableGA(),
 		TrackingID:        project.TrackingID(),
+		// Scene:             project.Scene().String(),
 	}, pid
 }
 
@@ -85,6 +87,11 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// scene, err := id.SceneIDFrom(d.Scene)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	var imageURL *url.URL
 	if d.ImageURL != "" {
@@ -115,5 +122,6 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		CoreSupport(d.CoreSupport).
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
+		// Scene(scene).
 		Build()
 }

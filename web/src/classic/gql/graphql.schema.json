@@ -20746,7 +20746,7 @@
             "deprecationReason": null
           },
           {
-            "name": "enableGA",
+            "name": "enableGa",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -20851,6 +20851,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sceneId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null,

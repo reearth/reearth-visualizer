@@ -266,6 +266,9 @@ Site name: Site name
 You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: >-
   You are about to change the site name for your project. Only alphanumeric
   characters and hyphens are allows.
+Google Analytics: ''
+Enable Google Analytics: ''
+Tracking ID: ''
 Left: Left
 Right: Right
 Story Panel: Story Panel
