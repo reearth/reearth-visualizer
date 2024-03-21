@@ -64,7 +64,7 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpe
 			"schema": map[string]any{
 				"id":             "schemaId1",
 				"type":           "marker",
-				"extrudedHeight": 0,
+				"extrudedHeight": 1,
 				"positions":      []float64{1, 2, 3},
 			},
 		},
@@ -336,7 +336,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("newLayers").Array().First().Object().
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
-		Value("extrudedHeight").Equal(0)
+		Value("extrudedHeight").Equal(1)
 
 	// Update NLSLayer
 	_, _ = updateNLSLayer(e, layerId)
@@ -785,7 +785,9 @@ func TestCustomProperties(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().First().Object().
-		Value("sketch").Equal(nil)
+		Value("sketch").Object().
+		Value("customPropertySchema").Object().
+		Value("extrudedHeight").Equal(1)
 
 	schema1 := map[string]any{
 		"id":             "schemaId1",
