@@ -32,7 +32,7 @@ export type InfoboxBlockProps<P = any> = {
 };
 
 export type PropertyItem<T> = {
-  type: string;
+  type?: string;
   ui?: string;
   title?: string;
   description?: string;

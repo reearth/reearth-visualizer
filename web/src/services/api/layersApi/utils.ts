@@ -1,9 +1,5 @@
 import { GetSceneQuery } from "../../gql";
 
-// export type NLSInfoboxBlock = {
-
-// }
-
 export type NLSInfobox = {
   sceneId: string;
   layerId: string;

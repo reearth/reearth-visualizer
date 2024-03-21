@@ -5,7 +5,7 @@ import { Infobox } from "../../Crust/Infobox/types";
 import { convertLayer, getCompat } from "./backward";
 import type { Tag } from "./types";
 
-const infobox: Infobox = { blocks: [], property: { default: { position: "left" } } };
+const infobox: Infobox = { blocks: [], property: { default: { position: { value: "left" } } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];
 
 test("group", () => {
