@@ -672,8 +672,8 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
 
-	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textblock", nil)
-	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyblock", nil)
+	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textInfoboxBetaBlock", nil)
+	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyInfoboxBetaBlock", nil)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
@@ -685,7 +685,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
 
-	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageblock", lo.ToPtr(1))
+	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageInfoboxBetaBlock", lo.ToPtr(1))
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
