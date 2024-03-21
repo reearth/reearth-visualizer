@@ -83,6 +83,16 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, err
 	}
 
+	if inp.Schema != nil {
+		sketchInfo := nlslayer.NewSketchInfo(
+			inp.Schema,
+			nil,
+		)
+
+		layerSimple.SetIsSketch(true)
+		layerSimple.SetSketch(sketchInfo)
+	}
+
 	err = i.nlslayerRepo.Save(ctx, layerSimple)
 	if err != nil {
 		return nil, err

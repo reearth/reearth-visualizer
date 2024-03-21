@@ -178,6 +178,7 @@ type AddNLSLayerSimpleInput struct {
 	Config    JSON   `json:"config,omitempty"`
 	Index     *int   `json:"index,omitempty"`
 	Visible   *bool  `json:"visible,omitempty"`
+	Schema    JSON   `json:"schema,omitempty"`
 }
 
 type AddNLSLayerSimplePayload struct {
