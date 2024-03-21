@@ -96,3 +96,38 @@ func (l *NLSLayerSimple) Clone() Cloner {
 		layerBase: *clonedBase,
 	}
 }
+
+func (l *NLSLayerSimple) IsSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.layerBase.isSketch
+}
+
+func (l *NLSLayerSimple) SetIsSketch(isSketch bool) {
+	if l == nil {
+		return
+	}
+	l.layerBase.isSketch = isSketch
+}
+
+func (l *NLSLayerSimple) HasSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.layerBase.sketch != nil
+}
+
+func (l *NLSLayerSimple) Sketch() *SketchInfo {
+	if l == nil {
+		return nil
+	}
+	return l.layerBase.sketch
+}
+
+func (l *NLSLayerSimple) SetSketch(sketch *SketchInfo) {
+	if l == nil {
+		return
+	}
+	l.layerBase.sketch = sketch
+}

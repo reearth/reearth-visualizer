@@ -526,3 +526,191 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	tx.Commit()
 	return duplicatedLayer, nil
 }
+
+func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCustomPropertiesInput, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	if layer.Sketch() == nil {
+		sketchInfo := nlslayer.NewSketchInfo(
+			&inp.Schema,
+			nil,
+		)
+
+		layer.SetIsSketch(true)
+		layer.SetSketch(sketchInfo)
+	} else {
+		layer.Sketch().SetCustomPropertySchema(&inp.Schema)
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (_ nlslayer.Feature, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
+	geometry, err := nlslayer.NewGeometryFromMap(inp.Geometry)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
+	feature, err := nlslayer.NewFeatureWithNewId(
+		inp.Type,
+		geometry,
+	)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
+	if inp.Properties != nil {
+		feature.UpdateProperties(inp.Properties)
+	}
+
+	if layer.Sketch() == nil {
+		featureCollection := nlslayer.NewFeatureCollection(
+			"FeatureCollection",
+			[]nlslayer.Feature{*feature},
+		)
+
+		sketchInfo := nlslayer.NewSketchInfo(
+			nil,
+			featureCollection,
+		)
+
+		layer.SetIsSketch(true)
+		layer.SetSketch(sketchInfo)
+	} else {
+		layer.Sketch().FeatureCollection().AddFeature(*feature)
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
+	tx.Commit()
+	return *feature, nil
+}
+
+func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.UpdateNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (_ nlslayer.Feature, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
+	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil || layer.Sketch().FeatureCollection().Features() == nil || len(layer.Sketch().FeatureCollection().Features()) == 0 {
+		return nlslayer.Feature{}, interfaces.ErrFeatureNotFound
+	}
+
+	var updatedFeature nlslayer.Feature
+	var errUp error
+
+	if inp.Geometry != nil {
+		geometry, err := nlslayer.NewGeometryFromMap(*inp.Geometry)
+		if err != nil {
+			return nlslayer.Feature{}, err
+		}
+		updatedFeature, errUp = layer.Sketch().FeatureCollection().UpdateFeatureGeometry(inp.FeatureID, geometry)
+		if errUp != nil {
+			return nlslayer.Feature{}, errUp
+		}
+	}
+
+	if inp.Properties != nil {
+		updatedFeature, errUp = layer.Sketch().FeatureCollection().UpdateFeatureProperty(inp.FeatureID, *inp.Properties)
+		if errUp != nil {
+			return nlslayer.Feature{}, errUp
+		}
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
+	tx.Commit()
+	return updatedFeature, nil
+}
+
+func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.DeleteNLSLayerGeoJSONFeatureParams, operator *usecase.Operator) (_ id.FeatureID, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	if err != nil {
+		return id.FeatureID{}, err
+	}
+
+	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil || layer.Sketch().FeatureCollection().Features() == nil || len(layer.Sketch().FeatureCollection().Features()) == 0 {
+		return id.FeatureID{}, interfaces.ErrFeatureNotFound
+	}
+
+	err = layer.Sketch().FeatureCollection().RemoveFeature(inp.FeatureID)
+	if err != nil {
+		return id.FeatureID{}, err
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return id.FeatureID{}, err
+	}
+
+	tx.Commit()
+	return inp.FeatureID, nil
+}

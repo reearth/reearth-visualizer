@@ -20,6 +20,8 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 		Infobox:   ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
 		LayerType: string(l.LayerType()),
 		Config:    JSON(*l.Config()),
+		IsSketch:  l.IsSketch(),
+		Sketch:    ToNLSLayerSketchInfo(l.Sketch()),
 	}
 }
 
@@ -113,4 +115,92 @@ func ToNLSInfobox(ib *nlslayer.Infobox, parent id.NLSLayerID, parentSceneID id.S
 		Blocks:     ToInfoboxBlocks(ib.Blocks(), parentSceneID),
 		LayerID:    IDFrom(parent),
 	}
+}
+
+func ToNLSLayerSketchInfo(si *nlslayer.SketchInfo) *SketchInfo {
+	if si == nil {
+		return nil
+	}
+
+	var customPropertySchema JSON
+	if si.CustomPropertySchema() != nil {
+		customPropertySchema = JSON(*si.CustomPropertySchema())
+	}
+
+	if si.FeatureCollection() == nil {
+		return &SketchInfo{
+			CustomPropertySchema: customPropertySchema,
+			FeatureCollection:    nil,
+		}
+	}
+
+	var features []*Feature
+	for _, f := range si.FeatureCollection().Features() {
+		feature := &Feature{
+			ID:         IDFrom(f.ID()),
+			Type:       f.FeatureType(),
+			Geometry:   convertGeometry(f.Geometry()),
+			Properties: *ToGoJsonRef(*f.Properties()),
+		}
+		features = append(features, feature)
+	}
+
+	featureCollection := &FeatureCollection{
+		Type:     si.FeatureCollection().FeatureCollectionType(),
+		Features: features,
+	}
+
+	return &SketchInfo{
+		CustomPropertySchema: customPropertySchema,
+		FeatureCollection:    featureCollection,
+	}
+}
+
+func ToGoJsonRef(p JSON) *map[string]any {
+	if p == nil {
+		return nil
+	}
+
+	co := make(map[string]any)
+
+	for key, value := range p {
+		co[key] = value
+	}
+
+	return &co
+}
+
+func convertGeometry(g nlslayer.Geometry) Geometry {
+	switch g := g.(type) {
+	case *nlslayer.Point:
+		return Point{
+			Type:             g.PointType(),
+			PointCoordinates: g.Coordinates(),
+		}
+	case *nlslayer.LineString:
+		return LineString{
+			Type:                  g.LineStringType(),
+			LineStringCoordinates: g.Coordinates(),
+		}
+	case *nlslayer.Polygon:
+		return Polygon{
+			Type:               g.PolygonType(),
+			PolygonCoordinates: g.Coordinates(),
+		}
+	case *nlslayer.MultiPolygon:
+		return MultiPolygon{
+			Type:                    g.MultiPolygonType(),
+			MultiPolygonCoordinates: g.Coordinates(),
+		}
+	case *nlslayer.GeometryCollection:
+		geometries := make([]Geometry, 0, len(g.Geometries()))
+		for _, g := range g.Geometries() {
+			geometries = append(geometries, convertGeometry(g))
+		}
+		return GeometryCollection{
+			Type:       g.GeometryCollectionType(),
+			Geometries: geometries,
+		}
+	}
+	return nil
 }

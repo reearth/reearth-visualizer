@@ -187,3 +187,22 @@ func (r *mutationResolver) RemoveNLSInfoboxBlock(ctx context.Context, input gqlm
 		Layer:          gqlmodel.ToNLSLayer(layer, nil),
 	}, nil
 }
+
+func (r *mutationResolver) AddCustomProperties(ctx context.Context, input gqlmodel.AddCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.AddCustomProperties(ctx, interfaces.AddCustomPropertiesInput{
+		LayerID: lid,
+		Schema:  input.Schema,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.UpdateNLSLayerPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
