@@ -8727,7 +8727,7 @@ type GeometryCollection {
 union Geometry = Point | LineString | Polygon | MultiPolygon | GeometryCollection
 
 type Feature {
-    type: String!
+    type: String! 
     geometry: Geometry!
     id: ID!
     properties: JSON
@@ -9145,6 +9145,7 @@ input AddNLSLayerSimpleInput {
   config: JSON
   index: Int
   visible: Boolean
+  schema: JSON
 }
 
 input RemoveNLSLayerInput {
@@ -58364,7 +58365,7 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"layerType", "title", "sceneId", "config", "index", "visible"}
+	fieldsInOrder := [...]string{"layerType", "title", "sceneId", "config", "index", "visible", "schema"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -58413,6 +58414,13 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 				return it, err
 			}
 			it.Visible = data
+		case "schema":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schema"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Schema = data
 		}
 	}
 

@@ -12,13 +12,16 @@ import (
 func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "AddNLSLayerSimple",
-		Query: `mutation AddNLSLayerSimple($layerType: String!, $sceneId: ID!, $config: JSON, $index: Int, $title: String!) {
-            addNLSLayerSimple(input: { layerType: $layerType, sceneId: $sceneId, config: $config, index: $index, title: $title}) {
+		Query: `mutation AddNLSLayerSimple($layerType: String!, $sceneId: ID!, $config: JSON, $index: Int, $title: String!, $schema: JSON) {
+            addNLSLayerSimple(input: { layerType: $layerType, sceneId: $sceneId, config: $config, index: $index, title: $title, schema: $schema}) {
                 layers {
                     id
 					sceneId
 					layerType
 					config
+					sketch {
+						customPropertySchema
+					}
                 }
             }
         }`,
@@ -58,6 +61,12 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string) (GraphQLRequest, *httpe
 				"events": "sampleEvents",
 			},
 			"index": 0,
+			"schema": map[string]any{
+				"id":             "schemaId1",
+				"type":           "marker",
+				"extrudedHeight": 1,
+				"positions":      []float64{1, 2, 3},
+			},
 		},
 	}
 
@@ -320,6 +329,14 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().Equal(1)
+
+	res2.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("customPropertySchema").Object().
+		Value("extrudedHeight").Equal(1)
 
 	// Update NLSLayer
 	_, _ = updateNLSLayer(e, layerId)
@@ -768,7 +785,9 @@ func TestCustomProperties(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().First().Object().
-		Value("sketch").Equal(nil)
+		Value("sketch").Object().
+		Value("customPropertySchema").Object().
+		Value("extrudedHeight").Equal(1)
 
 	schema1 := map[string]any{
 		"id":             "schemaId1",
