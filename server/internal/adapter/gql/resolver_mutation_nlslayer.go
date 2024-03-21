@@ -22,6 +22,7 @@ func (r *mutationResolver) AddNLSLayerSimple(ctx context.Context, input gqlmodel
 		LayerType: gqlmodel.ToNLSLayerType(input.LayerType),
 		Config:    gqlmodel.ToNLSConfig(input.Config),
 		Visible:   input.Visible,
+		Schema:    gqlmodel.ToGoJsonRef(input.Schema),
 	}
 
 	layer, err := usecases(ctx).NLSLayer.AddLayerSimple(ctx, inp, getOperator(ctx))
