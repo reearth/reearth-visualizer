@@ -140,7 +140,7 @@ func ToNLSLayerSketchInfo(si *nlslayer.SketchInfo) *SketchInfo {
 			ID:         IDFrom(f.ID()),
 			Type:       f.FeatureType(),
 			Geometry:   convertGeometry(f.Geometry()),
-			Properties: f.Properties(),
+			Properties: *ToGoJsonRef(*f.Properties()),
 		}
 		features = append(features, feature)
 	}

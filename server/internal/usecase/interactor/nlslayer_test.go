@@ -91,7 +91,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	assert.Equal(t, 1, len(featureCollection.Features()))
 	addedFeature := featureCollection.Features()[0]
 	assert.Equal(t, featureType, addedFeature.FeatureType())
-	assert.Equal(t, *properties, addedFeature.Properties())
+	assert.Equal(t, properties, addedFeature.Properties())
 
 	pointGeometry, ok := addedFeature.Geometry().(*nlslayer.Point)
 	assert.True(t, ok)
@@ -111,6 +111,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	_ = db.NLSLayer.Save(ctx, l)
 
 	featureID := nlslayer.NewFeatureID()
+	property := &map[string]any{"key": "value"}
 	feature, err := nlslayer.NewFeature(
 		featureID,
 		"Feature",
@@ -118,9 +119,9 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 			"type":        "Point",
 			"coordinates": []interface{}{1.0, 2.0},
 		},
-		map[string]any{"key": "value"},
 	)
 	assert.NoError(t, err)
+	feature.UpdateProperties(property)
 
 	sletchInfo := nlslayer.NewSketchInfo(
 		nil,
@@ -141,7 +142,6 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 		},
 	}
 	newProperties := &map[string]any{"newKey": "newValue"}
-
 	updatedFeature, err := il.UpdateGeoJSONFeature(
 		ctx,
 		interfaces.UpdateNLSLayerGeoJSONFeatureParams{
@@ -166,7 +166,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	assert.NotNil(t, featureCollection)
 	assert.Equal(t, 1, len(featureCollection.Features()))
 	addedFeature := featureCollection.Features()[0]
-	assert.Equal(t, *newProperties, addedFeature.Properties())
+	assert.Equal(t, newProperties, addedFeature.Properties())
 
 	lineStringGeometry, ok := addedFeature.Geometry().(*nlslayer.LineString)
 	assert.True(t, ok)
@@ -186,6 +186,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	_ = db.NLSLayer.Save(ctx, l)
 
 	featureID := nlslayer.NewFeatureID()
+	property := &map[string]any{"key": "value"}
 	feature, err := nlslayer.NewFeature(
 		featureID,
 		"Feature",
@@ -193,9 +194,9 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 			"type":        "Point",
 			"coordinates": []interface{}{1.0, 2.0},
 		},
-		map[string]any{"key": "value"},
 	)
 	assert.NoError(t, err)
+	feature.UpdateProperties(property)
 
 	sletchInfo := nlslayer.NewSketchInfo(
 		nil,

@@ -10,15 +10,16 @@ import (
 
 func TestToModelNLSLayerSketchInfo(t *testing.T) {
 	fid := nlslayer.NewFeatureID()
+	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
 		"Feature",
 		nlslayer.NewPoint("Point", []float64{1.0, 2.0}),
-		map[string]any{"key1": "value1"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	f.UpdateProperties(&property)
 	fc := nlslayer.NewFeatureCollection("FeatureCollection", []nlslayer.Feature{*f})
 
 	schema := map[string]any{"key1": "value1"}
@@ -233,15 +234,16 @@ func TestToModelNLSLayerGeometry(t *testing.T) {
 
 func TestNewNLSLayerSketchInfo(t *testing.T) {
 	fid := nlslayer.NewFeatureID()
+	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
 		"Feature",
-		nlslayer.NewPoint("Point", []float64{1, 2}),
-		map[string]any{"key1": "value1"},
+		nlslayer.NewPoint("Point", []float64{1.0, 2.0}),
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	f.UpdateProperties(&property)
 	fc := nlslayer.NewFeatureCollection("FeatureCollection", []nlslayer.Feature{*f})
 	schema := map[string]any{"key1": "value1"}
 	si := nlslayer.NewSketchInfo(
@@ -261,7 +263,7 @@ func TestNewNLSLayerSketchInfo(t *testing.T) {
 						"type":        "Point",
 						"coordinates": []float64{1, 2},
 					},
-					Properties: f.Properties(),
+					Properties: *f.Properties(),
 				},
 			},
 		},
@@ -272,15 +274,16 @@ func TestNewNLSLayerSketchInfo(t *testing.T) {
 
 func TestNewNLSLayerFeatureCollection(t *testing.T) {
 	fid := nlslayer.NewFeatureID()
+	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
 		"Feature",
-		nlslayer.NewPoint("Point", []float64{1, 2}),
-		map[string]any{"key1": "value1"},
+		nlslayer.NewPoint("Point", []float64{1.0, 2.0}),
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	f.UpdateProperties(&property)
 	fc := nlslayer.NewFeatureCollection("FeatureCollection", []nlslayer.Feature{*f})
 
 	expected := &NLSLayerFeatureCollectionDocument{
@@ -293,7 +296,7 @@ func TestNewNLSLayerFeatureCollection(t *testing.T) {
 					"type":        "Point",
 					"coordinates": []float64{1, 2},
 				},
-				Properties: f.Properties(),
+				Properties: *f.Properties(),
 			},
 		},
 	}
@@ -303,15 +306,16 @@ func TestNewNLSLayerFeatureCollection(t *testing.T) {
 
 func TestNewNLSLayerFeature(t *testing.T) {
 	fid := nlslayer.NewFeatureID()
+	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
 		"Feature",
-		nlslayer.NewPoint("Point", []float64{1, 2}),
-		map[string]any{"key1": "value1"},
+		nlslayer.NewPoint("Point", []float64{1.0, 2.0}),
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	f.UpdateProperties(&property)
 
 	expected := NLSLayerFeatureDocument{
 		ID:   fid.String(),
@@ -320,7 +324,7 @@ func TestNewNLSLayerFeature(t *testing.T) {
 			"type":        "Point",
 			"coordinates": []float64{1, 2},
 		},
-		Properties: f.Properties(),
+		Properties: *f.Properties(),
 	}
 
 	assert.Equal(t, expected, NewNLSLayerFeature(*f))

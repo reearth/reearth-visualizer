@@ -13,13 +13,13 @@ func TestNewFeatureWithNewId(t *testing.T) {
 	f, err := NewFeatureWithNewId(
 		featureType,
 		point,
-		properties,
 	)
+	f.UpdateProperties(&properties)
 
 	assert.NoError(t, err)
 	assert.Equal(t, featureType, f.FeatureType())
 	assert.Equal(t, point, f.Geometry())
-	assert.Equal(t, properties, f.Properties())
+	assert.Equal(t, properties, *f.Properties())
 }
 
 func TestNewFeature(t *testing.T) {
@@ -31,12 +31,12 @@ func TestNewFeature(t *testing.T) {
 		id,
 		featureType,
 		point,
-		properties,
 	)
+	f.UpdateProperties(&properties)
 
 	assert.NoError(t, err)
 	assert.Equal(t, id, f.ID())
 	assert.Equal(t, featureType, f.FeatureType())
 	assert.Equal(t, point, f.Geometry())
-	assert.Equal(t, properties, f.Properties())
+	assert.Equal(t, properties, *f.Properties())
 }

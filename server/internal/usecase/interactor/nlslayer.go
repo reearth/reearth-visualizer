@@ -592,18 +592,13 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 	feature, err := nlslayer.NewFeatureWithNewId(
 		inp.Type,
 		geometry,
-		*inp.Properties,
 	)
 	if err != nil {
 		return nlslayer.Feature{}, err
 	}
 
 	if inp.Properties != nil {
-		feat, err := layer.Sketch().FeatureCollection().UpdateFeatureProperty(feature.ID(), *inp.Properties)
-		if err != nil {
-			return nlslayer.Feature{}, err
-		}
-		feature = &feat
+		feature.UpdateProperties(inp.Properties)
 	}
 
 	if layer.Sketch() == nil {

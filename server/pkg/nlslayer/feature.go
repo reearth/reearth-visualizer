@@ -4,24 +4,22 @@ type Feature struct {
 	id          FeatureID
 	featureType string
 	geometry    Geometry
-	properties  map[string]any
+	properties  *map[string]any
 }
 
-func NewFeatureWithNewId(featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
+func NewFeatureWithNewId(featureType string, geometry Geometry) (*Feature, error) {
 	return &Feature{
 		id:          NewFeatureID(),
 		featureType: featureType,
 		geometry:    geometry,
-		properties:  properties,
 	}, nil
 }
 
-func NewFeature(id FeatureID, featureType string, geometry Geometry, properties map[string]any) (*Feature, error) {
+func NewFeature(id FeatureID, featureType string, geometry Geometry) (*Feature, error) {
 	return &Feature{
 		id:          id,
 		featureType: featureType,
 		geometry:    geometry,
-		properties:  properties,
 	}, nil
 }
 
@@ -46,6 +44,23 @@ func (f *Feature) Geometry() Geometry {
 	return f.geometry
 }
 
-func (f *Feature) Properties() map[string]any {
+func (f *Feature) Properties() *map[string]any {
 	return f.properties
+}
+
+func (f *Feature) UpdateGeometry(newGeometry Geometry) {
+	f.geometry = newGeometry
+}
+
+func (f *Feature) UpdateProperties(newProperty *map[string]any) {
+	if f == nil || newProperty == nil {
+		return
+	}
+
+	clonedProperties := make(map[string]any)
+	for key, value := range *newProperty {
+		clonedProperties[key] = value
+	}
+
+	f.properties = &clonedProperties
 }

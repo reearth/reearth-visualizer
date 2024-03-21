@@ -11,38 +11,38 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 	feature1, err := nlslayer.NewFeatureWithNewId(
 		"Feature",
 		nlslayer.NewPoint("Point", []float64{1, 2}),
-		map[string]any{"key1": "value1"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	feature1.UpdateProperties(&map[string]any{"key1": "value1"})
 
 	feature2, err := nlslayer.NewFeatureWithNewId(
 		"Feature",
 		nlslayer.NewLineString("LineString", [][]float64{{1, 2}, {3, 4}}),
-		map[string]any{"key2": "value2"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	feature2.UpdateProperties(&map[string]any{"key2": "value2"})
 
 	feature3, err := nlslayer.NewFeatureWithNewId(
 		"Feature",
 		nlslayer.NewPolygon("Polygon", [][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
-		map[string]any{"key3": "value3"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	feature3.UpdateProperties(&map[string]any{"key3": "value3"})
 
 	feature4, err := nlslayer.NewFeatureWithNewId(
 		"Feature",
 		nlslayer.NewMultiPolygon("MultiPolygon", [][][][]float64{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}}),
-		map[string]any{"key4": "value4"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	feature4.UpdateProperties(&map[string]any{"key4": "value4"})
 
 	feature5, err := nlslayer.NewFeatureWithNewId(
 		"Feature",
@@ -50,11 +50,11 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 			"GeometryCollection",
 			[]nlslayer.Geometry{feature1.Geometry(), feature2.Geometry(), feature3.Geometry(), feature4.Geometry()},
 		),
-		map[string]any{"key5": "value5"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	feature5.UpdateProperties(&map[string]any{"key5": "value5"})
 
 	features := []nlslayer.Feature{*feature1, *feature2, *feature3, *feature4, *feature5}
 	featureCollection := nlslayer.NewFeatureCollection("FeatureCollection", features)
@@ -69,7 +69,7 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 					Type:             feature1.Geometry().(*nlslayer.Point).PointType(),
 					PointCoordinates: feature1.Geometry().(*nlslayer.Point).Coordinates(),
 				},
-				Properties: feature1.Properties(),
+				Properties: *feature1.Properties(),
 			},
 			{
 				ID:   IDFrom(feature2.ID()),
@@ -78,7 +78,7 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 					Type:                  feature2.Geometry().(*nlslayer.LineString).LineStringType(),
 					LineStringCoordinates: feature2.Geometry().(*nlslayer.LineString).Coordinates(),
 				},
-				Properties: feature2.Properties(),
+				Properties: *feature2.Properties(),
 			},
 			{
 				ID:   IDFrom(feature3.ID()),
@@ -87,7 +87,7 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 					Type:               feature3.Geometry().(*nlslayer.Polygon).PolygonType(),
 					PolygonCoordinates: feature3.Geometry().(*nlslayer.Polygon).Coordinates(),
 				},
-				Properties: feature3.Properties(),
+				Properties: *feature3.Properties(),
 			},
 			{
 				ID:   IDFrom(feature4.ID()),
@@ -96,7 +96,7 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 					Type:                    feature4.Geometry().(*nlslayer.MultiPolygon).MultiPolygonType(),
 					MultiPolygonCoordinates: feature4.Geometry().(*nlslayer.MultiPolygon).Coordinates(),
 				},
-				Properties: feature4.Properties(),
+				Properties: *feature4.Properties(),
 			},
 			{
 				ID:   IDFrom(feature5.ID()),
@@ -122,7 +122,7 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 						},
 					},
 				},
-				Properties: feature5.Properties(),
+				Properties: *feature5.Properties(),
 			},
 		},
 	}

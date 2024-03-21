@@ -317,11 +317,11 @@ func ToModelNLSLayerSketchInfo(si *NLSLayerSketchInfoDocument) (*nlslayer.Sketch
 			id,
 			f.Type,
 			geometry,
-			f.Properties,
 		)
 		if err != nil {
 			return nil, err
 		}
+		feature.UpdateProperties(&f.Properties)
 		features = append(features, *feature)
 	}
 
@@ -531,7 +531,7 @@ func NewNLSLayerFeature(f nlslayer.Feature) NLSLayerFeatureDocument {
 		ID:         f.ID().String(),
 		Type:       f.FeatureType(),
 		Geometry:   NewNLSLayerGeometry(f.Geometry()),
-		Properties: f.Properties(),
+		Properties: *f.Properties(),
 	}
 }
 

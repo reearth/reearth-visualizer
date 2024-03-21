@@ -1,6 +1,8 @@
 package nlslayer
 
-import "errors"
+import (
+	"errors"
+)
 
 type FeatureCollection struct {
 	featureCollectionType string
@@ -35,10 +37,11 @@ func (fc *FeatureCollection) AddFeature(feature Feature) {
 func (fc *FeatureCollection) UpdateFeature(id FeatureID, geometry Geometry, properties map[string]any) (Feature, error) {
 	for i, f := range fc.features {
 		if f.ID() == id {
-			updatedFeature, err := NewFeature(id, f.FeatureType(), geometry, properties)
+			updatedFeature, err := NewFeature(id, f.FeatureType(), geometry)
 			if err != nil {
 				return Feature{}, err
 			}
+			updatedFeature.UpdateProperties(&properties)
 			fc.features[i] = *updatedFeature
 			return *updatedFeature, nil
 		}
@@ -49,12 +52,9 @@ func (fc *FeatureCollection) UpdateFeature(id FeatureID, geometry Geometry, prop
 func (fc *FeatureCollection) UpdateFeatureGeometry(id FeatureID, geometry Geometry) (Feature, error) {
 	for i, f := range fc.features {
 		if f.ID() == id {
-			updatedFeature, err := NewFeature(id, f.FeatureType(), geometry, f.Properties())
-			if err != nil {
-				return Feature{}, err
-			}
-			fc.features[i] = *updatedFeature
-			return *updatedFeature, nil
+			f.UpdateGeometry(geometry)
+			fc.features[i] = f
+			return f, nil
 		}
 	}
 	return Feature{}, errors.New("feature not found")
@@ -63,12 +63,9 @@ func (fc *FeatureCollection) UpdateFeatureGeometry(id FeatureID, geometry Geomet
 func (fc *FeatureCollection) UpdateFeatureProperty(id FeatureID, properties map[string]any) (Feature, error) {
 	for i, f := range fc.features {
 		if f.ID() == id {
-			updatedFeature, err := NewFeature(id, f.FeatureType(), f.Geometry(), properties)
-			if err != nil {
-				return Feature{}, err
-			}
-			fc.features[i] = *updatedFeature
-			return *updatedFeature, nil
+			f.UpdateProperties(&properties)
+			fc.features[i] = f
+			return f, nil
 		}
 	}
 	return Feature{}, errors.New("feature not found")

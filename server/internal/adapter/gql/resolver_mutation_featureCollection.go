@@ -35,7 +35,7 @@ func (r *mutationResolver) AddGeoJSONFeature(ctx context.Context, input gqlmodel
 		ID:         gqlmodel.IDFrom(res.ID()),
 		Type:       res.FeatureType(),
 		Geometry:   featureGeometry,
-		Properties: res.Properties(),
+		Properties: gqlmodel.JSON(*res.Properties()),
 	}, nil
 }
 
@@ -69,7 +69,7 @@ func (r *mutationResolver) UpdateGeoJSONFeature(ctx context.Context, input gqlmo
 		ID:         gqlmodel.IDFrom(res.ID()),
 		Type:       res.FeatureType(),
 		Geometry:   featureGeometry,
-		Properties: res.Properties(),
+		Properties: gqlmodel.JSON(*res.Properties()),
 	}, nil
 }
 

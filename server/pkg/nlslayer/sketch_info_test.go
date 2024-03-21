@@ -8,12 +8,16 @@ import (
 
 func TestNewSketchInfon(t *testing.T) {
 	fid := NewFeatureID()
+	property := map[string]any{"key1": "value1"}
 	f, err := NewFeature(
 		fid,
 		"Feature",
 		NewPoint("Point", []float64{1, 2}),
-		map[string]any{"key1": "value1"},
 	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.UpdateProperties(&property)
 	fc := NewFeatureCollection("FeatureCollection", []Feature{*f})
 
 	schema := map[string]any{"key1": "value1"}
@@ -29,15 +33,16 @@ func TestNewSketchInfon(t *testing.T) {
 
 func TestSketchInfoClone(t *testing.T) {
 	fid := NewFeatureID()
+	property := map[string]any{"key1": "value1"}
 	f, err := NewFeature(
 		fid,
 		"Feature",
 		NewPoint("Point", []float64{1, 2}),
-		map[string]any{"key1": "value1"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
+	f.UpdateProperties(&property)
 	fc := NewFeatureCollection("FeatureCollection", []Feature{*f})
 
 	schema := map[string]any{"key1": "value1"}
