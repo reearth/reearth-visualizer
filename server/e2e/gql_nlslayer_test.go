@@ -216,6 +216,57 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 						}
 					}
 				}
+				isSketch
+				sketch {
+					customPropertySchema
+					featureCollection {
+						type
+						features {
+							id
+							type
+							properties
+							geometry {
+								... on Point {
+									type
+									pointCoordinates
+								}
+								... on LineString {
+									type
+									lineStringCoordinates
+								}
+								... on Polygon {
+									type
+									polygonCoordinates
+								}
+								... on MultiPolygon {
+									type
+									multiPolygonCoordinates
+								}
+								... on GeometryCollection {
+									type
+									geometries {
+										... on Point {
+											type
+											pointCoordinates
+										}
+										... on LineString {
+											type
+											lineStringCoordinates
+										}
+										... on Polygon {
+											type
+											polygonCoordinates
+										}
+										... on MultiPolygon {
+											type
+											multiPolygonCoordinates
+										}
+									}
+								}
+							}
+						}
+					}
+		 	  }
 		 	  }
 			  __typename
 			}
@@ -621,8 +672,8 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
 
-	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textblock", nil)
-	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyblock", nil)
+	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textInfoboxBetaBlock", nil)
+	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyInfoboxBetaBlock", nil)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
@@ -634,7 +685,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks[:].id").Equal([]string{blockID2, blockID1})
 
-	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageblock", lo.ToPtr(1))
+	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageInfoboxBetaBlock", lo.ToPtr(1))
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
@@ -647,4 +698,115 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+}
+
+func addCustomProperties(
+	e *httpexpect.Expect,
+	layerId string,
+	schema map[string]any,
+) (GraphQLRequest, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "AddCustomProperties",
+		Query: `mutation AddCustomProperties($input: AddCustomPropertySchemaInput!) {
+							addCustomProperties(input: $input) {
+								layer {
+									id
+									sketch {
+										customPropertySchema
+									}
+								}
+							}
+						}`,
+		Variables: map[string]interface{}{
+			"input": map[string]interface{}{
+				"layerId": layerId,
+				"schema":  schema,
+			},
+		},
+	}
+
+	res := e.POST("/api/graphql").
+		WithHeader("Origin", "https://example.com").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithHeader("Content-Type", "application/json").
+		WithJSON(requestBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	return requestBody, res
+}
+
+func TestCustomProperties(t *testing.T) {
+	e := StartServer(t, &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+	}, true, baseSeeder)
+
+	pId := createProject(e)
+	_, _, sId := createScene(e, pId)
+
+	_, res := fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(0)
+
+	_, _, layerId := addNLSLayerSimple(e, sId)
+
+	_, res2 := fetchSceneForNewLayers(e, sId)
+	res2.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().Equal(1)
+
+	res2.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Equal(nil)
+
+	schema1 := map[string]any{
+		"id":             "schemaId1",
+		"type":           "marker",
+		"extrudedHeight": 0,
+		"positions":      []float64{1, 2, 3},
+	}
+	addCustomProperties(e, layerId, schema1)
+
+	_, res3 := fetchSceneForNewLayers(e, sId)
+	res3.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("isSketch").Boolean().True()
+
+	res3.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("customPropertySchema").Object().
+		Value("extrudedHeight").Equal(0)
+
+	schema2 := map[string]any{
+		"id":             "schemaId1",
+		"type":           "marker",
+		"extrudedHeight": 10,
+		"positions":      []float64{4, 5, 6},
+	}
+	addCustomProperties(e, layerId, schema2)
+
+	_, res4 := fetchSceneForNewLayers(e, sId)
+	res4.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().First().Object().
+		Value("sketch").Object().
+		Value("customPropertySchema").Object().
+		Value("extrudedHeight").Equal(10)
 }

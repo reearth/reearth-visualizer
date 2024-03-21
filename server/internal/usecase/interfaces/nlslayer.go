@@ -43,6 +43,30 @@ type RemoveNLSInfoboxBlockParam struct {
 	InfoboxBlockID id.InfoboxBlockID
 }
 
+type AddCustomPropertiesInput struct {
+	LayerID id.NLSLayerID
+	Schema  map[string]any
+}
+
+type AddNLSLayerGeoJSONFeatureParams struct {
+	LayerID    id.NLSLayerID
+	Type       string
+	Geometry   map[string]any
+	Properties *map[string]any
+}
+
+type UpdateNLSLayerGeoJSONFeatureParams struct {
+	LayerID    id.NLSLayerID
+	FeatureID  id.FeatureID
+	Geometry   *map[string]any
+	Properties *map[string]any
+}
+
+type DeleteNLSLayerGeoJSONFeatureParams struct {
+	LayerID   id.NLSLayerID
+	FeatureID id.FeatureID
+}
+
 type NLSLayer interface {
 	Fetch(context.Context, id.NLSLayerIDList, *usecase.Operator) (nlslayer.NLSLayerList, error)
 	FetchByScene(context.Context, id.SceneID, *usecase.Operator) (nlslayer.NLSLayerList, error)
@@ -57,4 +81,8 @@ type NLSLayer interface {
 	MoveNLSInfoboxBlock(context.Context, MoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, int, error)
 	RemoveNLSInfoboxBlock(context.Context, RemoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, error)
 	Duplicate(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
+	AddCustomProperties(context.Context, AddCustomPropertiesInput, *usecase.Operator) (nlslayer.NLSLayer, error)
+	AddGeoJSONFeature(context.Context, AddNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
+	UpdateGeoJSONFeature(context.Context, UpdateNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
+	DeleteGeoJSONFeature(context.Context, DeleteNLSLayerGeoJSONFeatureParams, *usecase.Operator) (id.FeatureID, error)
 }

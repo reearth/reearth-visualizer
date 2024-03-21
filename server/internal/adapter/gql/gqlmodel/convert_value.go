@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/reearth/reearth/server/pkg/value"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func valueInterfaceToGqlValue(v interface{}) interface{} {
@@ -28,6 +29,8 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 		return v2
 	case *url.URL:
 		return v2.String()
+	case primitive.M:
+		return v2
 	case value.LatLng:
 		return LatLng{
 			Lat: v2.Lat,
@@ -81,7 +84,7 @@ func valueInterfaceToGqlValue(v interface{}) interface{} {
 			North: v2.North,
 			South: v2.South,
 		}
-	case []any:
+	case []interface{}:
 		gqlArray := make([]any, len(v2))
 		for i, item := range v2 {
 			gqlArray[i] = valueInterfaceToGqlValue(item)
