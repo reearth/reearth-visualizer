@@ -27,7 +27,9 @@ union Geometry = Point | LineString | Polygon | MultiPolygon | GeometryCollectio
 
 type Feature {
     type: String! 
-    geometry: Geometry!
+    geometry: ƒ
+    
+    !
     id: ID!
     properties: JSON
 }

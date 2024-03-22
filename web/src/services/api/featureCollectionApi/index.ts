@@ -34,7 +34,7 @@ export default () => {
         return { status: "error", errors };
       }
       setNotification({ type: "success", text: t("Successfully added a new layer") });
-
+      console.log("input", input);
       return { data, status: "success" };
     },
     [addGeoJsonFeatureMutation, setNotification, t],

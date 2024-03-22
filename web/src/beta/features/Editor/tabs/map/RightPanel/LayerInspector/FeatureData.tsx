@@ -14,7 +14,7 @@ type Props = {
     geometry: Geometry | undefined;
     properties: any;
   };
-  isSketchLayer: boolean;
+  isSketchLayer?: boolean;
 };
 
 const FeatureData: React.FC<Props> = ({ selectedFeature, isSketchLayer }) => {

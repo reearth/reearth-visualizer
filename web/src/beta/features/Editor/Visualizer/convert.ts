@@ -361,19 +361,56 @@ export function processLayers(
     return DEFAULT_LAYER_STYLE;
   };
 
+  const handleCoordinate = (coordinates: any) => {
+    switch (coordinates.type) {
+      case "Polygon":
+        return coordinates.polygonCoordinates;
+      case "MultiPolygon":
+        return coordinates.multiPolygonCoordinates;
+      case "LineString":
+        return coordinates.lineStringCoordinates;
+      case "Point":
+        return coordinates.pointCoordinates;
+      case "GeometryCollection":
+        return coordinates.geometries;
+      default:
+        return coordinates;
+    }
+  };
+
   return newLayers?.map(nlsLayer => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+    const result = nlsLayer.isSketch && {
+      ...nlsLayer.config.data,
+      value: {
+        type: "FeatureCollection",
+        features: nlsLayer.sketch.featureCollection.features.map(feature => {
+          const cleanFeatures = {
+            ...feature,
+            geometry: {
+              ...feature.geometry,
+              coordinates: handleCoordinate(feature.geometry),
+            },
+          };
+
+          return cleanFeatures;
+        }),
+      },
+    };
+
     return {
       type: "simple",
       id: nlsLayer.id,
       title: nlsLayer.title,
       visible: nlsLayer.visible,
       infobox: undefined,
+      sketch: nlsLayer.sketch,
+      isSketch: nlsLayer.isSketch,
       // infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
-      data: nlsLayer.config?.data,
+      data: nlsLayer.isSketch ? result : nlsLayer.config?.data,
       ...layerStyle,
     };
   });

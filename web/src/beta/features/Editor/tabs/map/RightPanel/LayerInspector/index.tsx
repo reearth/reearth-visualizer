@@ -65,10 +65,7 @@ const InspectorTabs: React.FC<Props> = ({
         id: "featureData",
         name: t("Feature"),
         component: selectedFeature && (
-          <FeatureData
-            selectedFeature={selectedFeature}
-            isSketchLayer={selectedLayer?.config?.data?.isSketchLayer}
-          />
+          <FeatureData selectedFeature={selectedFeature} isSketchLayer={selectedLayer?.isSketch} />
         ),
         icon: "location",
       },

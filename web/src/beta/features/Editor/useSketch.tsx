@@ -2,6 +2,7 @@ import { MutableRefObject, useCallback, useEffect, useRef, useState } from "reac
 
 import { MapRef } from "@reearth/beta/lib/core/Crust/types";
 import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
+import { useFeatureCollectionFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 import { Tab } from "../Navbar";
@@ -16,13 +17,14 @@ type Props = {
   handleLayerConfigUpdate: (inp: LayerConfigUpdateProps) => Promise<void>;
 };
 
-export default ({
-  tab,
-  nlsLayers,
-  selectedLayer,
-  visualizerRef,
-  handleLayerConfigUpdate,
-}: Props) => {
+export type FeatureProps = {
+  geometry: any;
+  layerId: string;
+  properties?: any;
+  type: string;
+};
+
+export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {
   const [sketchType, setSketchType] = useState<SketchType | undefined>(undefined);
 
   const pendingSketchSelectionRef = useRef<{ layerId: string; featureId: string } | undefined>(
@@ -37,37 +39,38 @@ export default ({
     [visualizerRef],
   );
 
+  const { useAddGeoJsonFeature } = useFeatureCollectionFetcher();
+
+  const handleSketchLayerAdd = useCallback(
+    async (inp: FeatureProps) => {
+      if (!selectedLayer?.id) return;
+      await useAddGeoJsonFeature({
+        layerId: inp.layerId,
+        geometry: inp.geometry,
+        type: inp.type,
+        properties: inp.properties,
+      });
+    },
+    [selectedLayer, useAddGeoJsonFeature],
+  );
   const handleSketchFeatureCreate = useCallback(
     async (feature: SketchFeature | null) => {
       // TODO: create a new layer if there is no selected sketch layer
-      if (!feature || !selectedLayer?.id || !selectedLayer.config?.data?.isSketchLayer) return;
+      if (!feature || !selectedLayer?.id || !selectedLayer.isSketch) return;
       // TODO: support custom properties
       const customProperties = {};
-      await handleLayerConfigUpdate({
-        layerId: selectedLayer.id,
-        config: {
-          data: {
-            ...selectedLayer.config?.data,
-            value: {
-              type: "FeatureCollection",
-              features: [
-                ...(selectedLayer.config?.data?.value?.features ?? []),
-                {
-                  ...feature,
-                  id: feature.properties.id,
-                  properties: { ...feature.properties, ...customProperties },
-                },
-              ],
-            },
-          },
-        },
+      await handleSketchLayerAdd({
+        type: feature.type,
+        layerId: selectedLayer?.id,
+        properties: { ...feature.properties, ...customProperties },
+        geometry: feature.geometry,
       });
       pendingSketchSelectionRef.current = {
         layerId: selectedLayer.id,
         featureId: feature.properties.id,
       };
     },
-    [selectedLayer, handleLayerConfigUpdate],
+    [selectedLayer?.id, selectedLayer?.isSketch, handleSketchLayerAdd],
   );
 
   useEffect(() => {

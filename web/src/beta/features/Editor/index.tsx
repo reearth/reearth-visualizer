@@ -79,6 +79,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     isVisualizerReady,
     visualizerRef,
   });
+
   const { scene, selectedSceneSetting, sceneSettings, handleSceneSettingSelect } = useScene({
     sceneId,
   });
@@ -189,7 +190,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedProjectType,
     showWidgetEditor,
     sketchType,
-    isSketchLayerSelected: !!selectedLayer?.config?.data?.isSketchLayer,
+    isSketchLayerSelected: !!selectedLayer?.isSketch,
     handleSketchTypeChange,
     handleProjectTypeChange,
     handleDeviceChange,
