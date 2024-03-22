@@ -48,6 +48,13 @@ export default ({
     [editModeContext],
   );
 
+  useEffect(
+    () => () => {
+      editModeContext?.onSelectionDisable?.(false);
+    },
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
   const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
 
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
