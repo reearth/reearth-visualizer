@@ -1713,6 +1713,7 @@ export enum PluginExtensionType {
   Block = 'BLOCK',
   Cluster = 'Cluster',
   Infobox = 'INFOBOX',
+  InfoboxBlock = 'InfoboxBlock',
   Primitive = 'PRIMITIVE',
   Story = 'Story',
   StoryBlock = 'StoryBlock',

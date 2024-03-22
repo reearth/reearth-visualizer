@@ -387,7 +387,7 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 	if err != nil {
 		return nil, nil, err
 	}
-	if extension.Type() != plugin.ExtensionTypeBlock {
+	if extension.Type() != plugin.ExtensionTypeInfoboxBlock {
 		return nil, nil, interfaces.ErrExtensionTypeMustBeBlock
 	}
 	property, err := property.New().NewID().Schema(extension.Schema()).Scene(l.Scene()).Build()

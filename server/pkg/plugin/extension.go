@@ -16,6 +16,7 @@ var (
 	ExtensionTypeBlock           ExtensionType = "block"
 	ExtensionTypeVisualizer      ExtensionType = "visualizer"
 	ExtensionTypeInfobox         ExtensionType = "infobox"
+	ExtensionTypeInfoboxBlock    ExtensionType = "infoboxBlock"
 	ExtensionTypeCluster         ExtensionType = "cluster"
 
 	ExtensionTypeStory      ExtensionType = "story"
