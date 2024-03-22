@@ -53,6 +53,8 @@ func ToPluginExtensionType(t plugin.ExtensionType) PluginExtensionType {
 		return PluginExtensionTypeVisualizer
 	case plugin.ExtensionTypeInfobox:
 		return PluginExtensionTypeInfobox
+	case plugin.ExtensionTypeInfoboxBlock:
+		return PluginExtensionTypeInfoboxBlock
 	case plugin.ExtensionTypeCluster:
 		return PluginExtensionTypeCluster
 	case plugin.ExtensionTypeStory:
