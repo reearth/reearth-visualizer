@@ -19,6 +19,7 @@ export type LayerAddProps = {
   sceneId: string;
   title: string;
   visible?: boolean;
+  schema?: any;
 };
 
 export type LayerNameUpdateProps = {
@@ -91,6 +92,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
         layerType: inp.layerType,
         title: t(inp.title),
         index: inp.index,
+        schema: inp.schema,
       });
     },
     [t, useAddNLSLayerSimple],

@@ -385,6 +385,16 @@ export const nlsLayerSimpleFragment = gql`
     infobox {
       id
     }
+    isSketch
+    sketch {
+      customPropertySchema
+      featureCollection {
+        type
+        features {
+          ...FeatureFragment
+        }
+      }
+    }
     ... on NLSLayerGroup {
       children {
         id

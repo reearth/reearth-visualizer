@@ -46,7 +46,7 @@ export const dataTypes: SketchLayerDataType[] = [
 const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
-  const [propertyList, setPropertyList] = useState<{ [x: string]: string }[]>([]);
+  const [propertyList, setPropertyList] = useState<{}[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
 
@@ -55,20 +55,22 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
   }, []);
 
   const handleSubmit = () => {
+    const schemaJSON = Object.assign({}, ...propertyList);
     onSubmit?.({
       layerType: "simple",
       sceneId: sceneId || "",
       title: layerName,
       visible: true,
+      schema: {
+        customProperties: schemaJSON,
+      },
       config: {
         properties: {
           name: layerName,
           layerStyle: layerStyle,
-          customProperties: propertyList,
         },
         data: {
           type: "geojson",
-          isSketchLayer: true,
         },
       },
     });

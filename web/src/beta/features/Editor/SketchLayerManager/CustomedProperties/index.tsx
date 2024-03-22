@@ -30,7 +30,6 @@ const CustomedProperties: React.FC<SketchProps> = ({ propertyList = [], setPrope
 
   const handleAddToPropertyToList = useCallback(() => {
     const newData = { [propertyName]: dataType };
-
     setPropertyList?.([...propertyList, newData]);
     setPropertyName("");
     setDataType("");
