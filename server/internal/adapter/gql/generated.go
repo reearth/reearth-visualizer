@@ -9281,6 +9281,7 @@ enum PluginExtensionType {
   Story
   StoryPage
   StoryBlock
+  InfoboxBlock
 }
 
 type PluginExtension {
