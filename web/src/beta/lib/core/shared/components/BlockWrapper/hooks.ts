@@ -50,9 +50,12 @@ export default ({
 
   useEffect(
     () => () => {
-      editModeContext?.onSelectionDisable?.(false);
+      // This is necessary to prevent the selection from being permanently disabled when the block is unmounted
+      if (editMode && disableSelection) {
+        editModeContext?.onSelectionDisable?.(false);
+      }
     },
-    [], // eslint-disable-line react-hooks/exhaustive-deps
+    [editMode, disableSelection], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
