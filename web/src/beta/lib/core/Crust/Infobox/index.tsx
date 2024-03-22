@@ -1,21 +1,9 @@
-import {
-  Fragment,
-  ReactNode,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Fragment, ReactNode, memo } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 import BlockAddBar from "@reearth/beta/lib/core/shared/components/BlockAddBar";
-import {
-  EditModeContext,
-  EditModeProvider,
-} from "@reearth/beta/lib/core/shared/contexts/editModeContext";
+import { EditModeProvider } from "@reearth/beta/lib/core/shared/contexts/editModeContext";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
@@ -29,6 +17,7 @@ import {
   PADDING_DEFAULT_VALUE,
   POSITION_DEFAULT_VALUE,
 } from "./constants";
+import useHooks from "./hooks";
 import type { Infobox, InfoboxBlockProps } from "./types";
 
 export type InfoboxPosition = "right" | "left";
@@ -83,108 +72,36 @@ const Infobox: React.FC<Props> = ({
   onPropertyItemMove,
   onPropertyItemDelete,
 }) => {
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const [disableSelection, setDisableSelection] = useState(false);
-
-  const [infoboxBlocks, setInfoboxBlocks] = useState(infobox?.blocks ?? []);
-  const [selectedBlockId, setSelectedBlockId] = useState<string>();
-  const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
-
-  const showInfobox = useMemo(
-    () => (infobox ? infobox?.property?.default?.enabled ?? true : false),
-    [infobox],
-  );
-
-  const padding = useMemo(
-    () => infobox?.property?.default?.padding,
-    [infobox?.property?.default?.padding],
-  );
-
-  const gap = useMemo(() => infobox?.property?.default?.gap, [infobox?.property?.default?.gap]);
-
-  const position = useMemo(
-    () => infobox?.property?.default?.position,
-    [infobox?.property?.default?.position],
-  );
-
-  const handleBlockOpen = useCallback(
-    (index: number) => {
-      if (openBlocksIndex === index) {
-        setOpenBlocksIndex(undefined);
-      } else {
-        setOpenBlocksIndex(index);
-      }
-    },
-    [openBlocksIndex],
-  );
-
-  const handleSelectionDisable = useCallback(
-    (disabled?: boolean) => setDisableSelection(!!disabled),
-    [],
-  );
-
-  const handleBlockCreate = useCallback(
-    (index: number) => async (extensionId?: string | undefined, pluginId?: string | undefined) => {
-      if (!extensionId || !pluginId) return;
-      await onBlockCreate?.(pluginId, extensionId, index);
-    },
-    [onBlockCreate],
-  );
-
-  const handleBlockSelect = useCallback(
-    (blockId?: string) => {
-      if (!isEditable || blockId === selectedBlockId || disableSelection) return;
-      setSelectedBlockId(blockId);
-    },
-    [selectedBlockId, isEditable, disableSelection],
-  );
-
-  const handleBlockDoubleClick = useCallback(
-    (blockId?: string) => {
-      if (disableSelection) return;
-      setSelectedBlockId(blockId);
-    },
-    [disableSelection],
-  );
-
-  const editModeContext: EditModeContext = useMemo(
-    () => ({
-      disableSelection,
-      onSelectionDisable: handleSelectionDisable,
-    }),
-    [disableSelection, handleSelectionDisable],
-  );
-
-  useEffect(() => {
-    if (infobox) {
-      infobox.blocks && infobox.blocks.length > 0 && setInfoboxBlocks(infobox.blocks);
-    } else {
-      infoboxBlocks.length && setInfoboxBlocks([]);
-      selectedBlockId !== undefined && setSelectedBlockId(undefined);
-      openBlocksIndex !== undefined && setOpenBlocksIndex(undefined);
-      disableSelection !== undefined && setDisableSelection(false);
-    }
-  }, [infobox, infoboxBlocks, selectedBlockId, openBlocksIndex, disableSelection]);
-
-  useEffect(() => {
-    if (wrapperRef.current) {
-      wrapperRef.current.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [infobox?.featureId]);
+  const {
+    wrapperRef,
+    disableSelection,
+    infoboxBlocks,
+    selectedBlockId,
+    openBlocksIndex,
+    showInfobox,
+    paddingField,
+    gapField,
+    positionField,
+    editModeContext,
+    setInfoboxBlocks,
+    handleBlockOpen,
+    handleBlockCreate,
+    handleBlockSelect,
+    handleBlockDoubleClick,
+  } = useHooks({
+    infobox,
+    isEditable,
+    onBlockCreate,
+  });
 
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
-      <Wrapper
-        ref={wrapperRef}
-        position={position?.value}
-        padding={padding?.value}
-        gap={gap?.value}>
+      <Wrapper ref={wrapperRef} position={positionField?.value} padding={paddingField?.value}>
         {isEditable && !disableSelection && (
           <BlockAddBar
             id="top-bar"
             openBlocks={openBlocksIndex === -1}
             installableBlocks={installableInfoboxBlocks}
-            showAreaHeight={gap?.value}
             parentWidth={INFOBOX_WIDTH}
             alwaysShow={infoboxBlocks.length < 1}
             onBlockOpen={() => handleBlockOpen(-1)}
@@ -194,7 +111,7 @@ const Infobox: React.FC<Props> = ({
         {infoboxBlocks && infoboxBlocks.length > 0 && (
           <DragAndDropList
             uniqueKey={INFOBOX_UNIQUE_KEY}
-            gap={gap?.value}
+            gap={gapField?.value ?? GAP_DEFAULT_VALUE}
             items={infoboxBlocks}
             getId={item => item.id}
             onItemDrop={async (item, index) => {
@@ -231,7 +148,7 @@ const Infobox: React.FC<Props> = ({
                       id={b.id + "below-bar"}
                       openBlocks={openBlocksIndex === idx}
                       installableBlocks={installableInfoboxBlocks}
-                      showAreaHeight={gap?.value}
+                      showAreaHeight={gapField?.value}
                       parentWidth={INFOBOX_WIDTH}
                       onBlockOpen={() => handleBlockOpen(idx)}
                       onBlockAdd={handleBlockCreate?.(idx + 1)}
@@ -252,11 +169,9 @@ export default memo(Infobox);
 const Wrapper = styled.div<{
   position?: InfoboxPosition;
   padding?: Spacing;
-  gap?: number;
 }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ gap }) => gap ?? GAP_DEFAULT_VALUE}px;
   position: absolute;
   top: 37px;
   ${({ position }) => `${position ?? POSITION_DEFAULT_VALUE}: 13px`};

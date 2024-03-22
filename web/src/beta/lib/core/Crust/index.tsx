@@ -213,7 +213,7 @@ export default function Crust({
   });
   const featuredInfobox = useMemo(
     () =>
-      selectedLayerId?.featureId
+      selectedLayerId?.featureId && infobox
         ? {
             ...infobox,
             featureId: selectedLayerId.featureId,
