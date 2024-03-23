@@ -1,6 +1,7 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 
 import { MapRef } from "@reearth/beta/lib/core/Crust/types";
+import { Geometry } from "@reearth/beta/lib/core/mantle";
 import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import { useFeatureCollectionFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -18,10 +19,10 @@ type Props = {
 };
 
 export type FeatureProps = {
-  geometry: any;
+  geometry: Geometry;
   layerId: string;
-  properties?: any;
   type: string;
+  properties?: any;
 };
 
 export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {

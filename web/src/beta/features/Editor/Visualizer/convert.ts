@@ -12,7 +12,7 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/lib/core/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
-import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
+import { LayerAppearanceTypes, Feature } from "@reearth/beta/lib/core/mantle";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -361,31 +361,31 @@ export function processLayers(
     return DEFAULT_LAYER_STYLE;
   };
 
-  const handleCoordinate = (coordinates: any) => {
-    switch (coordinates.type) {
+  const handleCoordinate = (geomery: any) => {
+    switch (geomery.type) {
       case "Polygon":
-        return coordinates.polygonCoordinates;
+        return geomery.polygonCoordinates;
       case "MultiPolygon":
-        return coordinates.multiPolygonCoordinates;
+        return geomery.multiPolygonCoordinates;
       case "LineString":
-        return coordinates.lineStringCoordinates;
+        return geomery.lineStringCoordinates;
       case "Point":
-        return coordinates.pointCoordinates;
+        return geomery.pointCoordinates;
       case "GeometryCollection":
-        return coordinates.geometries;
+        return geomery.geometries;
       default:
-        return coordinates;
+        return geomery;
     }
   };
 
   return newLayers?.map(nlsLayer => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
-    const result = nlsLayer.isSketch && {
+    const sketchLayerData = nlsLayer.isSketch && {
       ...nlsLayer.config.data,
       value: {
         type: "FeatureCollection",
-        features: nlsLayer.sketch.featureCollection.features.map(feature => {
-          const cleanFeatures = {
+        features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
+          const cleanedFeatures = {
             ...feature,
             geometry: {
               ...feature.geometry,
@@ -393,7 +393,7 @@ export function processLayers(
             },
           };
 
-          return cleanFeatures;
+          return cleanedFeatures;
         }),
       },
     };
@@ -410,7 +410,7 @@ export function processLayers(
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
-      data: nlsLayer.isSketch ? result : nlsLayer.config?.data,
+      data: nlsLayer.isSketch ? sketchLayerData : nlsLayer.config?.data,
       ...layerStyle,
     };
   });

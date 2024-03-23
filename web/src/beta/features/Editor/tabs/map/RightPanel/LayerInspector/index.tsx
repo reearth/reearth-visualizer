@@ -39,6 +39,7 @@ const InspectorTabs: React.FC<Props> = ({
     [layers, selectedLayerId],
   );
 
+  console.log("selectedLayer", selectedLayer);
   const selectedFeature = useMemo(() => {
     if (!selectedLayerId?.feature?.id) return;
     const { id, geometry, properties } =
@@ -65,7 +66,11 @@ const InspectorTabs: React.FC<Props> = ({
         id: "featureData",
         name: t("Feature"),
         component: selectedFeature && (
-          <FeatureData selectedFeature={selectedFeature} isSketchLayer={selectedLayer?.isSketch} />
+          <FeatureData
+            selectedFeature={selectedFeature}
+            isSketchLayer={selectedLayer?.isSketch}
+            customProperties={selectedLayer?.sketch?.customPropertySchema.customProperties}
+          />
         ),
         icon: "location",
       },
