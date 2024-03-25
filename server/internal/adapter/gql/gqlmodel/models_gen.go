@@ -14,6 +14,10 @@ import (
 	"golang.org/x/text/language"
 )
 
+type Geometry interface {
+	IsGeometry()
+}
+
 type Layer interface {
 	IsLayer()
 	GetID() ID
@@ -48,6 +52,8 @@ type NLSLayer interface {
 	GetTitle() string
 	GetVisible() bool
 	GetInfobox() *NLSInfobox
+	GetIsSketch() bool
+	GetSketch() *SketchInfo
 }
 
 type Node interface {
@@ -77,6 +83,11 @@ type AddClusterPayload struct {
 	Cluster *Cluster `json:"cluster"`
 }
 
+type AddCustomPropertySchemaInput struct {
+	LayerID ID   `json:"layerId"`
+	Schema  JSON `json:"schema,omitempty"`
+}
+
 type AddDatasetSchemaInput struct {
 	SceneID             ID     `json:"sceneId"`
 	Name                string `json:"name"`
@@ -85,6 +96,13 @@ type AddDatasetSchemaInput struct {
 
 type AddDatasetSchemaPayload struct {
 	DatasetSchema *DatasetSchema `json:"datasetSchema,omitempty"`
+}
+
+type AddGeoJSONFeatureInput struct {
+	Type       string `json:"type"`
+	Geometry   JSON   `json:"geometry"`
+	Properties JSON   `json:"properties,omitempty"`
+	LayerID    ID     `json:"layerId"`
 }
 
 type AddInfoboxFieldInput struct {
@@ -160,6 +178,7 @@ type AddNLSLayerSimpleInput struct {
 	Config    JSON   `json:"config,omitempty"`
 	Index     *int   `json:"index,omitempty"`
 	Visible   *bool  `json:"visible,omitempty"`
+	Schema    JSON   `json:"schema,omitempty"`
 }
 
 type AddNLSLayerSimplePayload struct {
@@ -441,6 +460,15 @@ type DatasetSchemaField struct {
 func (DatasetSchemaField) IsNode()        {}
 func (this DatasetSchemaField) GetID() ID { return this.ID }
 
+type DeleteGeoJSONFeatureInput struct {
+	FeatureID ID `json:"featureId"`
+	LayerID   ID `json:"layerId"`
+}
+
+type DeleteGeoJSONFeaturePayload struct {
+	DeletedFeatureID ID `json:"deletedFeatureId"`
+}
+
 type DeleteMeInput struct {
 	UserID ID `json:"userId"`
 }
@@ -524,6 +552,25 @@ type DuplicateStyleInput struct {
 type DuplicateStylePayload struct {
 	Style *Style `json:"style"`
 }
+
+type Feature struct {
+	Type       string   `json:"type"`
+	Geometry   Geometry `json:"geometry"`
+	ID         ID       `json:"id"`
+	Properties JSON     `json:"properties,omitempty"`
+}
+
+type FeatureCollection struct {
+	Type     string     `json:"type"`
+	Features []*Feature `json:"features"`
+}
+
+type GeometryCollection struct {
+	Type       string     `json:"type"`
+	Geometries []Geometry `json:"geometries"`
+}
+
+func (GeometryCollection) IsGeometry() {}
 
 type ImportDatasetFromGoogleSheetInput struct {
 	AccessToken     string `json:"accessToken"`
@@ -737,6 +784,13 @@ func (LayerTagItem) IsLayerTag()       {}
 func (this LayerTagItem) GetTagID() ID { return this.TagID }
 func (this LayerTagItem) GetTag() Tag  { return this.Tag }
 
+type LineString struct {
+	Type                  string      `json:"type"`
+	LineStringCoordinates [][]float64 `json:"lineStringCoordinates"`
+}
+
+func (LineString) IsGeometry() {}
+
 type LinkDatasetToPropertyValueInput struct {
 	PropertyID            ID   `json:"propertyId"`
 	SchemaGroupID         *ID  `json:"schemaGroupId,omitempty"`
@@ -913,6 +967,13 @@ type MoveStoryPayload struct {
 	Stories []*Story `json:"stories"`
 }
 
+type MultiPolygon struct {
+	Type                    string          `json:"type"`
+	MultiPolygonCoordinates [][][][]float64 `json:"multiPolygonCoordinates"`
+}
+
+func (MultiPolygon) IsGeometry() {}
+
 type Mutation struct {
 }
 
@@ -937,6 +998,8 @@ type NLSLayerGroup struct {
 	Visible     bool        `json:"visible"`
 	Infobox     *NLSInfobox `json:"infobox,omitempty"`
 	Scene       *Scene      `json:"scene,omitempty"`
+	IsSketch    bool        `json:"isSketch"`
+	Sketch      *SketchInfo `json:"sketch,omitempty"`
 }
 
 func (NLSLayerGroup) IsNLSLayer()                  {}
@@ -947,6 +1010,8 @@ func (this NLSLayerGroup) GetConfig() JSON         { return this.Config }
 func (this NLSLayerGroup) GetTitle() string        { return this.Title }
 func (this NLSLayerGroup) GetVisible() bool        { return this.Visible }
 func (this NLSLayerGroup) GetInfobox() *NLSInfobox { return this.Infobox }
+func (this NLSLayerGroup) GetIsSketch() bool       { return this.IsSketch }
+func (this NLSLayerGroup) GetSketch() *SketchInfo  { return this.Sketch }
 
 type NLSLayerSimple struct {
 	ID        ID          `json:"id"`
@@ -957,6 +1022,8 @@ type NLSLayerSimple struct {
 	Visible   bool        `json:"visible"`
 	Infobox   *NLSInfobox `json:"infobox,omitempty"`
 	Scene     *Scene      `json:"scene,omitempty"`
+	IsSketch  bool        `json:"isSketch"`
+	Sketch    *SketchInfo `json:"sketch,omitempty"`
 }
 
 func (NLSLayerSimple) IsNLSLayer()                  {}
@@ -967,6 +1034,8 @@ func (this NLSLayerSimple) GetConfig() JSON         { return this.Config }
 func (this NLSLayerSimple) GetTitle() string        { return this.Title }
 func (this NLSLayerSimple) GetVisible() bool        { return this.Visible }
 func (this NLSLayerSimple) GetInfobox() *NLSInfobox { return this.Infobox }
+func (this NLSLayerSimple) GetIsSketch() bool       { return this.IsSketch }
+func (this NLSLayerSimple) GetSketch() *SketchInfo  { return this.Sketch }
 
 type PageInfo struct {
 	StartCursor     *usecasex.Cursor `json:"startCursor,omitempty"`
@@ -1029,6 +1098,13 @@ type PluginExtension struct {
 	TranslatedDescription    string              `json:"translatedDescription"`
 }
 
+type Point struct {
+	Type             string    `json:"type"`
+	PointCoordinates []float64 `json:"pointCoordinates"`
+}
+
+func (Point) IsGeometry() {}
+
 type Policy struct {
 	ID                    ID     `json:"id"`
 	Name                  string `json:"name"`
@@ -1040,6 +1116,13 @@ type Policy struct {
 	DatasetSchemaCount    *int   `json:"datasetSchemaCount,omitempty"`
 	DatasetCount          *int   `json:"datasetCount,omitempty"`
 }
+
+type Polygon struct {
+	Type               string        `json:"type"`
+	PolygonCoordinates [][][]float64 `json:"polygonCoordinates"`
+}
+
+func (Polygon) IsGeometry() {}
 
 type Project struct {
 	ID                ID                `json:"id"`
@@ -1449,6 +1532,11 @@ type SignupPayload struct {
 	Team *Team `json:"team"`
 }
 
+type SketchInfo struct {
+	CustomPropertySchema JSON               `json:"customPropertySchema,omitempty"`
+	FeatureCollection    *FeatureCollection `json:"featureCollection,omitempty"`
+}
+
 type Spacing struct {
 	Top    float64 `json:"top"`
 	Bottom float64 `json:"bottom"`
@@ -1673,6 +1761,13 @@ type UpdateDatasetSchemaInput struct {
 
 type UpdateDatasetSchemaPayload struct {
 	DatasetSchema *DatasetSchema `json:"datasetSchema,omitempty"`
+}
+
+type UpdateGeoJSONFeatureInput struct {
+	FeatureID  ID   `json:"featureId"`
+	Geometry   JSON `json:"geometry,omitempty"`
+	Properties JSON `json:"properties,omitempty"`
+	LayerID    ID   `json:"layerId"`
 }
 
 type UpdateLayerInput struct {
@@ -2151,15 +2246,16 @@ func (e NodeType) MarshalGQL(w io.Writer) {
 type PluginExtensionType string
 
 const (
-	PluginExtensionTypePrimitive  PluginExtensionType = "PRIMITIVE"
-	PluginExtensionTypeWidget     PluginExtensionType = "WIDGET"
-	PluginExtensionTypeBlock      PluginExtensionType = "BLOCK"
-	PluginExtensionTypeVisualizer PluginExtensionType = "VISUALIZER"
-	PluginExtensionTypeInfobox    PluginExtensionType = "INFOBOX"
-	PluginExtensionTypeCluster    PluginExtensionType = "Cluster"
-	PluginExtensionTypeStory      PluginExtensionType = "Story"
-	PluginExtensionTypeStoryPage  PluginExtensionType = "StoryPage"
-	PluginExtensionTypeStoryBlock PluginExtensionType = "StoryBlock"
+	PluginExtensionTypePrimitive    PluginExtensionType = "PRIMITIVE"
+	PluginExtensionTypeWidget       PluginExtensionType = "WIDGET"
+	PluginExtensionTypeBlock        PluginExtensionType = "BLOCK"
+	PluginExtensionTypeVisualizer   PluginExtensionType = "VISUALIZER"
+	PluginExtensionTypeInfobox      PluginExtensionType = "INFOBOX"
+	PluginExtensionTypeCluster      PluginExtensionType = "Cluster"
+	PluginExtensionTypeStory        PluginExtensionType = "Story"
+	PluginExtensionTypeStoryPage    PluginExtensionType = "StoryPage"
+	PluginExtensionTypeStoryBlock   PluginExtensionType = "StoryBlock"
+	PluginExtensionTypeInfoboxBlock PluginExtensionType = "InfoboxBlock"
 )
 
 var AllPluginExtensionType = []PluginExtensionType{
@@ -2172,11 +2268,12 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypeStory,
 	PluginExtensionTypeStoryPage,
 	PluginExtensionTypeStoryBlock,
+	PluginExtensionTypeInfoboxBlock,
 }
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock, PluginExtensionTypeInfoboxBlock:
 		return true
 	}
 	return false

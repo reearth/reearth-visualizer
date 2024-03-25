@@ -297,6 +297,10 @@ type ComplexityRoot struct {
 		Type     func(childComplexity int) int
 	}
 
+	DeleteGeoJSONFeaturePayload struct {
+		DeletedFeatureID func(childComplexity int) int
+	}
+
 	DeleteMePayload struct {
 		UserID func(childComplexity int) int
 	}
@@ -332,6 +336,23 @@ type ComplexityRoot struct {
 
 	DuplicateStylePayload struct {
 		Style func(childComplexity int) int
+	}
+
+	Feature struct {
+		Geometry   func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Properties func(childComplexity int) int
+		Type       func(childComplexity int) int
+	}
+
+	FeatureCollection struct {
+		Features func(childComplexity int) int
+		Type     func(childComplexity int) int
+	}
+
+	GeometryCollection struct {
+		Geometries func(childComplexity int) int
+		Type       func(childComplexity int) int
 	}
 
 	ImportDatasetPayload struct {
@@ -461,6 +482,11 @@ type ComplexityRoot struct {
 		TagID func(childComplexity int) int
 	}
 
+	LineString struct {
+		LineStringCoordinates func(childComplexity int) int
+		Type                  func(childComplexity int) int
+	}
+
 	Me struct {
 		Auths    func(childComplexity int) int
 		Email    func(childComplexity int) int
@@ -583,9 +609,16 @@ type ComplexityRoot struct {
 		StoryID func(childComplexity int) int
 	}
 
+	MultiPolygon struct {
+		MultiPolygonCoordinates func(childComplexity int) int
+		Type                    func(childComplexity int) int
+	}
+
 	Mutation struct {
 		AddCluster                   func(childComplexity int, input gqlmodel.AddClusterInput) int
+		AddCustomProperties          func(childComplexity int, input gqlmodel.AddCustomPropertySchemaInput) int
 		AddDatasetSchema             func(childComplexity int, input gqlmodel.AddDatasetSchemaInput) int
+		AddGeoJSONFeature            func(childComplexity int, input gqlmodel.AddGeoJSONFeatureInput) int
 		AddInfoboxField              func(childComplexity int, input gqlmodel.AddInfoboxFieldInput) int
 		AddLayerGroup                func(childComplexity int, input gqlmodel.AddLayerGroupInput) int
 		AddLayerItem                 func(childComplexity int, input gqlmodel.AddLayerItemInput) int
@@ -609,6 +642,7 @@ type ComplexityRoot struct {
 		CreateTagGroup               func(childComplexity int, input gqlmodel.CreateTagGroupInput) int
 		CreateTagItem                func(childComplexity int, input gqlmodel.CreateTagItemInput) int
 		CreateTeam                   func(childComplexity int, input gqlmodel.CreateTeamInput) int
+		DeleteGeoJSONFeature         func(childComplexity int, input gqlmodel.DeleteGeoJSONFeatureInput) int
 		DeleteMe                     func(childComplexity int, input gqlmodel.DeleteMeInput) int
 		DeleteProject                func(childComplexity int, input gqlmodel.DeleteProjectInput) int
 		DeleteStory                  func(childComplexity int, input gqlmodel.DeleteStoryInput) int
@@ -657,6 +691,7 @@ type ComplexityRoot struct {
 		UnlinkPropertyValue          func(childComplexity int, input gqlmodel.UnlinkPropertyValueInput) int
 		UpdateCluster                func(childComplexity int, input gqlmodel.UpdateClusterInput) int
 		UpdateDatasetSchema          func(childComplexity int, input gqlmodel.UpdateDatasetSchemaInput) int
+		UpdateGeoJSONFeature         func(childComplexity int, input gqlmodel.UpdateGeoJSONFeatureInput) int
 		UpdateLayer                  func(childComplexity int, input gqlmodel.UpdateLayerInput) int
 		UpdateMe                     func(childComplexity int, input gqlmodel.UpdateMeInput) int
 		UpdateMemberOfTeam           func(childComplexity int, input gqlmodel.UpdateMemberOfTeamInput) int
@@ -692,9 +727,11 @@ type ComplexityRoot struct {
 		Config      func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Infobox     func(childComplexity int) int
+		IsSketch    func(childComplexity int) int
 		LayerType   func(childComplexity int) int
 		Scene       func(childComplexity int) int
 		SceneID     func(childComplexity int) int
+		Sketch      func(childComplexity int) int
 		Title       func(childComplexity int) int
 		Visible     func(childComplexity int) int
 	}
@@ -703,9 +740,11 @@ type ComplexityRoot struct {
 		Config    func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Infobox   func(childComplexity int) int
+		IsSketch  func(childComplexity int) int
 		LayerType func(childComplexity int) int
 		Scene     func(childComplexity int) int
 		SceneID   func(childComplexity int) int
+		Sketch    func(childComplexity int) int
 		Title     func(childComplexity int) int
 		Visible   func(childComplexity int) int
 	}
@@ -756,6 +795,11 @@ type ComplexityRoot struct {
 		WidgetLayout             func(childComplexity int) int
 	}
 
+	Point struct {
+		PointCoordinates func(childComplexity int) int
+		Type             func(childComplexity int) int
+	}
+
 	Policy struct {
 		AssetStorageSize      func(childComplexity int) int
 		DatasetCount          func(childComplexity int) int
@@ -766,6 +810,11 @@ type ComplexityRoot struct {
 		Name                  func(childComplexity int) int
 		ProjectCount          func(childComplexity int) int
 		PublishedProjectCount func(childComplexity int) int
+	}
+
+	Polygon struct {
+		PolygonCoordinates func(childComplexity int) int
+		Type               func(childComplexity int) int
 	}
 
 	Project struct {
@@ -1075,6 +1124,11 @@ type ComplexityRoot struct {
 	SignupPayload struct {
 		Team func(childComplexity int) int
 		User func(childComplexity int) int
+	}
+
+	SketchInfo struct {
+		CustomPropertySchema func(childComplexity int) int
+		FeatureCollection    func(childComplexity int) int
 	}
 
 	Spacing struct {
@@ -1466,6 +1520,9 @@ type MutationResolver interface {
 	ImportDataset(ctx context.Context, input gqlmodel.ImportDatasetInput) (*gqlmodel.ImportDatasetPayload, error)
 	ImportDatasetFromGoogleSheet(ctx context.Context, input gqlmodel.ImportDatasetFromGoogleSheetInput) (*gqlmodel.ImportDatasetPayload, error)
 	AddDatasetSchema(ctx context.Context, input gqlmodel.AddDatasetSchemaInput) (*gqlmodel.AddDatasetSchemaPayload, error)
+	AddGeoJSONFeature(ctx context.Context, input gqlmodel.AddGeoJSONFeatureInput) (*gqlmodel.Feature, error)
+	UpdateGeoJSONFeature(ctx context.Context, input gqlmodel.UpdateGeoJSONFeatureInput) (*gqlmodel.Feature, error)
+	DeleteGeoJSONFeature(ctx context.Context, input gqlmodel.DeleteGeoJSONFeatureInput) (*gqlmodel.DeleteGeoJSONFeaturePayload, error)
 	AddLayerItem(ctx context.Context, input gqlmodel.AddLayerItemInput) (*gqlmodel.AddLayerItemPayload, error)
 	AddLayerGroup(ctx context.Context, input gqlmodel.AddLayerGroupInput) (*gqlmodel.AddLayerGroupPayload, error)
 	RemoveLayer(ctx context.Context, input gqlmodel.RemoveLayerInput) (*gqlmodel.RemoveLayerPayload, error)
@@ -1488,6 +1545,7 @@ type MutationResolver interface {
 	MoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.MoveNLSInfoboxBlockInput) (*gqlmodel.MoveNLSInfoboxBlockPayload, error)
 	RemoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.RemoveNLSInfoboxBlockInput) (*gqlmodel.RemoveNLSInfoboxBlockPayload, error)
 	DuplicateNLSLayer(ctx context.Context, input gqlmodel.DuplicateNLSLayerInput) (*gqlmodel.DuplicateNLSLayerPayload, error)
+	AddCustomProperties(ctx context.Context, input gqlmodel.AddCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error)
 	InstallPlugin(ctx context.Context, input gqlmodel.InstallPluginInput) (*gqlmodel.InstallPluginPayload, error)
 	UninstallPlugin(ctx context.Context, input gqlmodel.UninstallPluginInput) (*gqlmodel.UninstallPluginPayload, error)
 	UploadPlugin(ctx context.Context, input gqlmodel.UploadPluginInput) (*gqlmodel.UploadPluginPayload, error)
@@ -2433,6 +2491,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DatasetSchemaField.Type(childComplexity), true
 
+	case "DeleteGeoJSONFeaturePayload.deletedFeatureId":
+		if e.complexity.DeleteGeoJSONFeaturePayload.DeletedFeatureID == nil {
+			break
+		}
+
+		return e.complexity.DeleteGeoJSONFeaturePayload.DeletedFeatureID(childComplexity), true
+
 	case "DeleteMePayload.userId":
 		if e.complexity.DeleteMePayload.UserID == nil {
 			break
@@ -2502,6 +2567,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DuplicateStylePayload.Style(childComplexity), true
+
+	case "Feature.geometry":
+		if e.complexity.Feature.Geometry == nil {
+			break
+		}
+
+		return e.complexity.Feature.Geometry(childComplexity), true
+
+	case "Feature.id":
+		if e.complexity.Feature.ID == nil {
+			break
+		}
+
+		return e.complexity.Feature.ID(childComplexity), true
+
+	case "Feature.properties":
+		if e.complexity.Feature.Properties == nil {
+			break
+		}
+
+		return e.complexity.Feature.Properties(childComplexity), true
+
+	case "Feature.type":
+		if e.complexity.Feature.Type == nil {
+			break
+		}
+
+		return e.complexity.Feature.Type(childComplexity), true
+
+	case "FeatureCollection.features":
+		if e.complexity.FeatureCollection.Features == nil {
+			break
+		}
+
+		return e.complexity.FeatureCollection.Features(childComplexity), true
+
+	case "FeatureCollection.type":
+		if e.complexity.FeatureCollection.Type == nil {
+			break
+		}
+
+		return e.complexity.FeatureCollection.Type(childComplexity), true
+
+	case "GeometryCollection.geometries":
+		if e.complexity.GeometryCollection.Geometries == nil {
+			break
+		}
+
+		return e.complexity.GeometryCollection.Geometries(childComplexity), true
+
+	case "GeometryCollection.type":
+		if e.complexity.GeometryCollection.Type == nil {
+			break
+		}
+
+		return e.complexity.GeometryCollection.Type(childComplexity), true
 
 	case "ImportDatasetPayload.datasetSchema":
 		if e.complexity.ImportDatasetPayload.DatasetSchema == nil {
@@ -3140,6 +3261,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LayerTagItem.TagID(childComplexity), true
 
+	case "LineString.lineStringCoordinates":
+		if e.complexity.LineString.LineStringCoordinates == nil {
+			break
+		}
+
+		return e.complexity.LineString.LineStringCoordinates(childComplexity), true
+
+	case "LineString.type":
+		if e.complexity.LineString.Type == nil {
+			break
+		}
+
+		return e.complexity.LineString.Type(childComplexity), true
+
 	case "Me.auths":
 		if e.complexity.Me.Auths == nil {
 			break
@@ -3721,6 +3856,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MoveStoryPayload.StoryID(childComplexity), true
 
+	case "MultiPolygon.multiPolygonCoordinates":
+		if e.complexity.MultiPolygon.MultiPolygonCoordinates == nil {
+			break
+		}
+
+		return e.complexity.MultiPolygon.MultiPolygonCoordinates(childComplexity), true
+
+	case "MultiPolygon.type":
+		if e.complexity.MultiPolygon.Type == nil {
+			break
+		}
+
+		return e.complexity.MultiPolygon.Type(childComplexity), true
+
 	case "Mutation.addCluster":
 		if e.complexity.Mutation.AddCluster == nil {
 			break
@@ -3733,6 +3882,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddCluster(childComplexity, args["input"].(gqlmodel.AddClusterInput)), true
 
+	case "Mutation.addCustomProperties":
+		if e.complexity.Mutation.AddCustomProperties == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addCustomProperties_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddCustomProperties(childComplexity, args["input"].(gqlmodel.AddCustomPropertySchemaInput)), true
+
 	case "Mutation.addDatasetSchema":
 		if e.complexity.Mutation.AddDatasetSchema == nil {
 			break
@@ -3744,6 +3905,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddDatasetSchema(childComplexity, args["input"].(gqlmodel.AddDatasetSchemaInput)), true
+
+	case "Mutation.addGeoJSONFeature":
+		if e.complexity.Mutation.AddGeoJSONFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addGeoJSONFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddGeoJSONFeature(childComplexity, args["input"].(gqlmodel.AddGeoJSONFeatureInput)), true
 
 	case "Mutation.addInfoboxField":
 		if e.complexity.Mutation.AddInfoboxField == nil {
@@ -4020,6 +4193,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateTeam(childComplexity, args["input"].(gqlmodel.CreateTeamInput)), true
+
+	case "Mutation.deleteGeoJSONFeature":
+		if e.complexity.Mutation.DeleteGeoJSONFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteGeoJSONFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteGeoJSONFeature(childComplexity, args["input"].(gqlmodel.DeleteGeoJSONFeatureInput)), true
 
 	case "Mutation.deleteMe":
 		if e.complexity.Mutation.DeleteMe == nil {
@@ -4597,6 +4782,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateDatasetSchema(childComplexity, args["input"].(gqlmodel.UpdateDatasetSchemaInput)), true
 
+	case "Mutation.updateGeoJSONFeature":
+		if e.complexity.Mutation.UpdateGeoJSONFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGeoJSONFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGeoJSONFeature(childComplexity, args["input"].(gqlmodel.UpdateGeoJSONFeatureInput)), true
+
 	case "Mutation.updateLayer":
 		if e.complexity.Mutation.UpdateLayer == nil {
 			break
@@ -4885,6 +5082,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerGroup.Infobox(childComplexity), true
 
+	case "NLSLayerGroup.isSketch":
+		if e.complexity.NLSLayerGroup.IsSketch == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerGroup.IsSketch(childComplexity), true
+
 	case "NLSLayerGroup.layerType":
 		if e.complexity.NLSLayerGroup.LayerType == nil {
 			break
@@ -4905,6 +5109,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerGroup.SceneID(childComplexity), true
+
+	case "NLSLayerGroup.sketch":
+		if e.complexity.NLSLayerGroup.Sketch == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerGroup.Sketch(childComplexity), true
 
 	case "NLSLayerGroup.title":
 		if e.complexity.NLSLayerGroup.Title == nil {
@@ -4941,6 +5152,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerSimple.Infobox(childComplexity), true
 
+	case "NLSLayerSimple.isSketch":
+		if e.complexity.NLSLayerSimple.IsSketch == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerSimple.IsSketch(childComplexity), true
+
 	case "NLSLayerSimple.layerType":
 		if e.complexity.NLSLayerSimple.LayerType == nil {
 			break
@@ -4961,6 +5179,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerSimple.SceneID(childComplexity), true
+
+	case "NLSLayerSimple.sketch":
+		if e.complexity.NLSLayerSimple.Sketch == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerSimple.Sketch(childComplexity), true
 
 	case "NLSLayerSimple.title":
 		if e.complexity.NLSLayerSimple.Title == nil {
@@ -5265,6 +5490,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PluginExtension.WidgetLayout(childComplexity), true
 
+	case "Point.pointCoordinates":
+		if e.complexity.Point.PointCoordinates == nil {
+			break
+		}
+
+		return e.complexity.Point.PointCoordinates(childComplexity), true
+
+	case "Point.type":
+		if e.complexity.Point.Type == nil {
+			break
+		}
+
+		return e.complexity.Point.Type(childComplexity), true
+
 	case "Policy.assetStorageSize":
 		if e.complexity.Policy.AssetStorageSize == nil {
 			break
@@ -5327,6 +5566,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Policy.PublishedProjectCount(childComplexity), true
+
+	case "Polygon.polygonCoordinates":
+		if e.complexity.Polygon.PolygonCoordinates == nil {
+			break
+		}
+
+		return e.complexity.Polygon.PolygonCoordinates(childComplexity), true
+
+	case "Polygon.type":
+		if e.complexity.Polygon.Type == nil {
+			break
+		}
+
+		return e.complexity.Polygon.Type(childComplexity), true
 
 	case "Project.alias":
 		if e.complexity.Project.Alias == nil {
@@ -6788,6 +7041,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SignupPayload.User(childComplexity), true
 
+	case "SketchInfo.customPropertySchema":
+		if e.complexity.SketchInfo.CustomPropertySchema == nil {
+			break
+		}
+
+		return e.complexity.SketchInfo.CustomPropertySchema(childComplexity), true
+
+	case "SketchInfo.featureCollection":
+		if e.complexity.SketchInfo.FeatureCollection == nil {
+			break
+		}
+
+		return e.complexity.SketchInfo.FeatureCollection(childComplexity), true
+
 	case "Spacing.bottom":
 		if e.complexity.Spacing.Bottom == nil {
 			break
@@ -7857,7 +8124,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAddClusterInput,
+		ec.unmarshalInputAddCustomPropertySchemaInput,
 		ec.unmarshalInputAddDatasetSchemaInput,
+		ec.unmarshalInputAddGeoJSONFeatureInput,
 		ec.unmarshalInputAddInfoboxFieldInput,
 		ec.unmarshalInputAddLayerGroupInput,
 		ec.unmarshalInputAddLayerItemInput,
@@ -7880,6 +8149,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateTagGroupInput,
 		ec.unmarshalInputCreateTagItemInput,
 		ec.unmarshalInputCreateTeamInput,
+		ec.unmarshalInputDeleteGeoJSONFeatureInput,
 		ec.unmarshalInputDeleteMeInput,
 		ec.unmarshalInputDeleteProjectInput,
 		ec.unmarshalInputDeleteStoryInput,
@@ -7929,6 +8199,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUnlinkPropertyValueInput,
 		ec.unmarshalInputUpdateClusterInput,
 		ec.unmarshalInputUpdateDatasetSchemaInput,
+		ec.unmarshalInputUpdateGeoJSONFeatureInput,
 		ec.unmarshalInputUpdateLayerInput,
 		ec.unmarshalInputUpdateMeInput,
 		ec.unmarshalInputUpdateMemberOfTeamInput,
@@ -8428,6 +8699,73 @@ extend type Mutation {
   addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
 }
 `, BuiltIn: false},
+	{Name: "../../../gql/featureCollection.graphql", Input: `type Point {
+    type: String!
+    pointCoordinates: [Float!]!
+}
+
+type LineString {
+    type: String!
+    lineStringCoordinates: [[Float!]!]!
+}
+
+type Polygon {
+    type: String!
+    polygonCoordinates: [[[Float!]!]!]!
+}
+
+type MultiPolygon {
+    type: String!
+    multiPolygonCoordinates: [[[[Float!]!]!]!]!
+}
+
+type GeometryCollection {
+    type: String!
+    geometries: [Geometry!]!
+}
+
+union Geometry = Point | LineString | Polygon | MultiPolygon | GeometryCollection
+
+type Feature {
+    type: String! 
+    geometry: Geometry!
+    id: ID!
+    properties: JSON
+}
+
+type FeatureCollection {
+    type: String!
+    features: [Feature!]!
+}
+
+input AddGeoJSONFeatureInput {
+    type: String!
+    geometry: JSON!
+    properties: JSON
+    layerId: ID!
+}
+
+input UpdateGeoJSONFeatureInput {
+    featureId: ID!
+    geometry: JSON
+    properties: JSON
+    layerId: ID!
+}
+
+input DeleteGeoJSONFeatureInput {
+    featureId: ID!
+    layerId: ID!
+}
+
+type DeleteGeoJSONFeaturePayload {
+    deletedFeatureId: ID!
+}
+
+extend type Mutation {
+    addGeoJSONFeature(input: AddGeoJSONFeatureInput!): Feature!
+    updateGeoJSONFeature(input: UpdateGeoJSONFeatureInput!): Feature!
+    deleteGeoJSONFeature(input: DeleteGeoJSONFeatureInput!): DeleteGeoJSONFeaturePayload!
+}`, BuiltIn: false},
 	{Name: "../../../gql/layer.graphql", Input: `interface Layer {
   id: ID!
   sceneId: ID!
@@ -8738,6 +9076,8 @@ interface NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  isSketch: Boolean!
+  sketch: SketchInfo
 }
 
 type NLSLayerSimple implements NLSLayer {
@@ -8749,6 +9089,8 @@ type NLSLayerSimple implements NLSLayer {
   visible: Boolean!
   infobox: NLSInfobox
   scene: Scene
+  isSketch: Boolean!
+  sketch: SketchInfo
 }
 
 type NLSLayerGroup implements NLSLayer {
@@ -8762,6 +9104,8 @@ type NLSLayerGroup implements NLSLayer {
   visible: Boolean!
   infobox: NLSInfobox
   scene: Scene
+  isSketch: Boolean!
+  sketch: SketchInfo
 }
 
 type NLSInfobox {
@@ -8787,6 +9131,11 @@ type InfoboxBlock {
   scene: Scene
 }
 
+type SketchInfo {
+	customPropertySchema: JSON
+	featureCollection: FeatureCollection
+}
+
 # InputType
 
 input AddNLSLayerSimpleInput {
@@ -8796,6 +9145,7 @@ input AddNLSLayerSimpleInput {
   config: JSON
   index: Int
   visible: Boolean
+  schema: JSON
 }
 
 input RemoveNLSLayerInput {
@@ -8837,6 +9187,11 @@ input RemoveNLSInfoboxBlockInput {
 
 input DuplicateNLSLayerInput {
   layerId: ID!
+}
+
+input AddCustomPropertySchemaInput {
+  layerId: ID!
+  schema: JSON
 }
 
 # Payload
@@ -8895,6 +9250,7 @@ extend type Mutation {
     input: RemoveNLSInfoboxBlockInput!
   ): RemoveNLSInfoboxBlockPayload
   duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
+  addCustomProperties(input: AddCustomPropertySchemaInput!): UpdateNLSLayerPayload!
 }`, BuiltIn: false},
 	{Name: "../../../gql/plugin.graphql", Input: `type Plugin {
   id: ID!
@@ -8925,6 +9281,7 @@ enum PluginExtensionType {
   Story
   StoryPage
   StoryBlock
+  InfoboxBlock
 }
 
 type PluginExtension {
@@ -10321,6 +10678,21 @@ func (ec *executionContext) field_Mutation_addCluster_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addCustomProperties_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.AddCustomPropertySchemaInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddCustomPropertySchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddCustomPropertySchemaInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addDatasetSchema_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -10328,6 +10700,21 @@ func (ec *executionContext) field_Mutation_addDatasetSchema_args(ctx context.Con
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNAddDatasetSchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDatasetSchemaInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addGeoJSONFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.AddGeoJSONFeatureInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNAddGeoJSONFeatureInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddGeoJSONFeatureInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -10673,6 +11060,21 @@ func (ec *executionContext) field_Mutation_createTeam_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCreateTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTeamInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteGeoJSONFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.DeleteGeoJSONFeatureInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNDeleteGeoJSONFeatureInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteGeoJSONFeatureInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -11393,6 +11795,21 @@ func (ec *executionContext) field_Mutation_updateDatasetSchema_args(ctx context.
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateDatasetSchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateDatasetSchemaInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGeoJSONFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.UpdateGeoJSONFeatureInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateGeoJSONFeatureInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateGeoJSONFeatureInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -13352,6 +13769,10 @@ func (ec *executionContext) fieldContext_AddNLSLayerSimplePayload_layers(ctx con
 				return ec.fieldContext_NLSLayerSimple_infobox(ctx, field)
 			case "scene":
 				return ec.fieldContext_NLSLayerSimple_scene(ctx, field)
+			case "isSketch":
+				return ec.fieldContext_NLSLayerSimple_isSketch(ctx, field)
+			case "sketch":
+				return ec.fieldContext_NLSLayerSimple_sketch(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type NLSLayerSimple", field.Name)
 		},
@@ -17889,6 +18310,50 @@ func (ec *executionContext) fieldContext_DatasetSchemaField_ref(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _DeleteGeoJSONFeaturePayload_deletedFeatureId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteGeoJSONFeaturePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteGeoJSONFeaturePayload_deletedFeatureId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedFeatureID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteGeoJSONFeaturePayload_deletedFeatureId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteGeoJSONFeaturePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DeleteMePayload_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteMePayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_DeleteMePayload_userId(ctx, field)
 	if err != nil {
@@ -18396,6 +18861,365 @@ func (ec *executionContext) fieldContext_DuplicateStylePayload_style(ctx context
 				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Feature_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Feature) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Feature_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Feature_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Feature",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Feature_geometry(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Feature) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Feature_geometry(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Geometry, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.Geometry)
+	fc.Result = res
+	return ec.marshalNGeometry2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐGeometry(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Feature_geometry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Feature",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Geometry does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Feature_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Feature) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Feature_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Feature_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Feature",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Feature_properties(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Feature) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Feature_properties(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Properties, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.JSON)
+	fc.Result = res
+	return ec.marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Feature_properties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Feature",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FeatureCollection_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FeatureCollection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FeatureCollection_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FeatureCollection_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FeatureCollection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FeatureCollection_features(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.FeatureCollection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FeatureCollection_features(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Features, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.Feature)
+	fc.Result = res
+	return ec.marshalNFeature2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeatureᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FeatureCollection_features(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FeatureCollection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "type":
+				return ec.fieldContext_Feature_type(ctx, field)
+			case "geometry":
+				return ec.fieldContext_Feature_geometry(ctx, field)
+			case "id":
+				return ec.fieldContext_Feature_id(ctx, field)
+			case "properties":
+				return ec.fieldContext_Feature_properties(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Feature", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GeometryCollection_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.GeometryCollection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GeometryCollection_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GeometryCollection_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GeometryCollection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GeometryCollection_geometries(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.GeometryCollection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GeometryCollection_geometries(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Geometries, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]gqlmodel.Geometry)
+	fc.Result = res
+	return ec.marshalNGeometry2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐGeometryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GeometryCollection_geometries(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GeometryCollection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Geometry does not have child fields")
 		},
 	}
 	return fc, nil
@@ -23297,6 +24121,94 @@ func (ec *executionContext) fieldContext_LayerTagItem_tag(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _LineString_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.LineString) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LineString_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LineString_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LineString",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LineString_lineStringCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.LineString) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LineString_lineStringCoordinates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LineStringCoordinates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([][]float64)
+	fc.Result = res
+	return ec.marshalNFloat2ᚕᚕfloat64ᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LineString_lineStringCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LineString",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Me_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Me_id(ctx, field)
 	if err != nil {
@@ -27800,6 +28712,94 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _MultiPolygon_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MultiPolygon) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MultiPolygon_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MultiPolygon_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MultiPolygon",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MultiPolygon_multiPolygonCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MultiPolygon) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MultiPolygon_multiPolygonCoordinates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MultiPolygonCoordinates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([][][][]float64)
+	fc.Result = res
+	return ec.marshalNFloat2ᚕᚕᚕᚕfloat64ᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MultiPolygon_multiPolygonCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MultiPolygon",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createAsset(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createAsset(ctx, field)
 	if err != nil {
@@ -28422,6 +29422,195 @@ func (ec *executionContext) fieldContext_Mutation_addDatasetSchema(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_addDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addGeoJSONFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addGeoJSONFeature(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddGeoJSONFeature(rctx, fc.Args["input"].(gqlmodel.AddGeoJSONFeatureInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Feature)
+	fc.Result = res
+	return ec.marshalNFeature2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeature(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addGeoJSONFeature(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "type":
+				return ec.fieldContext_Feature_type(ctx, field)
+			case "geometry":
+				return ec.fieldContext_Feature_geometry(ctx, field)
+			case "id":
+				return ec.fieldContext_Feature_id(ctx, field)
+			case "properties":
+				return ec.fieldContext_Feature_properties(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Feature", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addGeoJSONFeature_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateGeoJSONFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateGeoJSONFeature(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateGeoJSONFeature(rctx, fc.Args["input"].(gqlmodel.UpdateGeoJSONFeatureInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Feature)
+	fc.Result = res
+	return ec.marshalNFeature2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeature(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateGeoJSONFeature(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "type":
+				return ec.fieldContext_Feature_type(ctx, field)
+			case "geometry":
+				return ec.fieldContext_Feature_geometry(ctx, field)
+			case "id":
+				return ec.fieldContext_Feature_id(ctx, field)
+			case "properties":
+				return ec.fieldContext_Feature_properties(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Feature", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateGeoJSONFeature_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteGeoJSONFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteGeoJSONFeature(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteGeoJSONFeature(rctx, fc.Args["input"].(gqlmodel.DeleteGeoJSONFeatureInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DeleteGeoJSONFeaturePayload)
+	fc.Result = res
+	return ec.marshalNDeleteGeoJSONFeaturePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteGeoJSONFeaturePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteGeoJSONFeature(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedFeatureId":
+				return ec.fieldContext_DeleteGeoJSONFeaturePayload_deletedFeatureId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeleteGeoJSONFeaturePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteGeoJSONFeature_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -29700,6 +30889,65 @@ func (ec *executionContext) fieldContext_Mutation_duplicateNLSLayer(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_duplicateNLSLayer_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addCustomProperties(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addCustomProperties(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddCustomProperties(rctx, fc.Args["input"].(gqlmodel.AddCustomPropertySchemaInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UpdateNLSLayerPayload)
+	fc.Result = res
+	return ec.marshalNUpdateNLSLayerPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addCustomProperties(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "layer":
+				return ec.fieldContext_UpdateNLSLayerPayload_layer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateNLSLayerPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addCustomProperties_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -33892,6 +35140,97 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _NLSLayerGroup_isSketch(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerGroup_isSketch(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsSketch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerGroup_isSketch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSLayerGroup_sketch(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerGroup_sketch(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sketch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SketchInfo)
+	fc.Result = res
+	return ec.marshalOSketchInfo2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSketchInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerGroup_sketch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "customPropertySchema":
+				return ec.fieldContext_SketchInfo_customPropertySchema(ctx, field)
+			case "featureCollection":
+				return ec.fieldContext_SketchInfo_featureCollection(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SketchInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NLSLayerSimple_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NLSLayerSimple_id(ctx, field)
 	if err != nil {
@@ -34290,6 +35629,97 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(ctx context.Contex
 				return ec.fieldContext_Scene_clusters(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSLayerSimple_isSketch(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerSimple_isSketch(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsSketch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerSimple_isSketch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerSimple",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSLayerSimple_sketch(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerSimple_sketch(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sketch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SketchInfo)
+	fc.Result = res
+	return ec.marshalOSketchInfo2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSketchInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerSimple_sketch(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerSimple",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "customPropertySchema":
+				return ec.fieldContext_SketchInfo_customPropertySchema(ctx, field)
+			case "featureCollection":
+				return ec.fieldContext_SketchInfo_featureCollection(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SketchInfo", field.Name)
 		},
 	}
 	return fc, nil
@@ -36108,6 +37538,94 @@ func (ec *executionContext) fieldContext_PluginExtension_translatedDescription(c
 	return fc, nil
 }
 
+func (ec *executionContext) _Point_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Point) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Point_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Point_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Point",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Point_pointCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Point) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Point_pointCoordinates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PointCoordinates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]float64)
+	fc.Result = res
+	return ec.marshalNFloat2ᚕfloat64ᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Point_pointCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Point",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Policy_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Policy_id(ctx, field)
 	if err != nil {
@@ -36478,6 +37996,94 @@ func (ec *executionContext) fieldContext_Policy_datasetCount(ctx context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Polygon_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Polygon_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Polygon_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Polygon",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Polygon_polygonCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Polygon_polygonCoordinates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PolygonCoordinates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([][][]float64)
+	fc.Result = res
+	return ec.marshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Polygon_polygonCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Polygon",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -46801,6 +48407,94 @@ func (ec *executionContext) fieldContext_SignupPayload_team(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _SketchInfo_customPropertySchema(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SketchInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SketchInfo_customPropertySchema(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CustomPropertySchema, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.JSON)
+	fc.Result = res
+	return ec.marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SketchInfo_customPropertySchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SketchInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SketchInfo_featureCollection(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SketchInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SketchInfo_featureCollection(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FeatureCollection, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.FeatureCollection)
+	fc.Result = res
+	return ec.marshalOFeatureCollection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeatureCollection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SketchInfo_featureCollection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SketchInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "type":
+				return ec.fieldContext_FeatureCollection_type(ctx, field)
+			case "features":
+				return ec.fieldContext_FeatureCollection_features(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FeatureCollection", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Spacing_top(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Spacing) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Spacing_top(ctx, field)
 	if err != nil {
@@ -56267,6 +57961,40 @@ func (ec *executionContext) unmarshalInputAddClusterInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddCustomPropertySchemaInput(ctx context.Context, obj interface{}) (gqlmodel.AddCustomPropertySchemaInput, error) {
+	var it gqlmodel.AddCustomPropertySchemaInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"layerId", "schema"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
+		case "schema":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schema"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Schema = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddDatasetSchemaInput(ctx context.Context, obj interface{}) (gqlmodel.AddDatasetSchemaInput, error) {
 	var it gqlmodel.AddDatasetSchemaInput
 	asMap := map[string]interface{}{}
@@ -56302,6 +58030,54 @@ func (ec *executionContext) unmarshalInputAddDatasetSchemaInput(ctx context.Cont
 				return it, err
 			}
 			it.Representativefield = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddGeoJSONFeatureInput(ctx context.Context, obj interface{}) (gqlmodel.AddGeoJSONFeatureInput, error) {
+	var it gqlmodel.AddGeoJSONFeatureInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"type", "geometry", "properties", "layerId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "geometry":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geometry"))
+			data, err := ec.unmarshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Geometry = data
+		case "properties":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Properties = data
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
 		}
 	}
 
@@ -56590,7 +58366,7 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"layerType", "title", "sceneId", "config", "index", "visible"}
+	fieldsInOrder := [...]string{"layerType", "title", "sceneId", "config", "index", "visible", "schema"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -56639,6 +58415,13 @@ func (ec *executionContext) unmarshalInputAddNLSLayerSimpleInput(ctx context.Con
 				return it, err
 			}
 			it.Visible = data
+		case "schema":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schema"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Schema = data
 		}
 	}
 
@@ -57330,6 +59113,40 @@ func (ec *executionContext) unmarshalInputCreateTeamInput(ctx context.Context, o
 				return it, err
 			}
 			it.Name = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDeleteGeoJSONFeatureInput(ctx context.Context, obj interface{}) (gqlmodel.DeleteGeoJSONFeatureInput, error) {
+	var it gqlmodel.DeleteGeoJSONFeatureInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"featureId", "layerId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "featureId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featureId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FeatureID = data
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
 		}
 	}
 
@@ -59184,6 +61001,54 @@ func (ec *executionContext) unmarshalInputUpdateDatasetSchemaInput(ctx context.C
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateGeoJSONFeatureInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateGeoJSONFeatureInput, error) {
+	var it gqlmodel.UpdateGeoJSONFeatureInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"featureId", "geometry", "properties", "layerId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "featureId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featureId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FeatureID = data
+		case "geometry":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geometry"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Geometry = data
+		case "properties":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("properties"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Properties = data
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateLayerInput(ctx context.Context, obj interface{}) (gqlmodel.UpdateLayerInput, error) {
 	var it gqlmodel.UpdateLayerInput
 	asMap := map[string]interface{}{}
@@ -60357,6 +62222,50 @@ func (ec *executionContext) unmarshalInputWidgetLocationInput(ctx context.Contex
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
+
+func (ec *executionContext) _Geometry(ctx context.Context, sel ast.SelectionSet, obj gqlmodel.Geometry) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case gqlmodel.Point:
+		return ec._Point(ctx, sel, &obj)
+	case *gqlmodel.Point:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Point(ctx, sel, obj)
+	case gqlmodel.LineString:
+		return ec._LineString(ctx, sel, &obj)
+	case *gqlmodel.LineString:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._LineString(ctx, sel, obj)
+	case gqlmodel.Polygon:
+		return ec._Polygon(ctx, sel, &obj)
+	case *gqlmodel.Polygon:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Polygon(ctx, sel, obj)
+	case gqlmodel.MultiPolygon:
+		return ec._MultiPolygon(ctx, sel, &obj)
+	case *gqlmodel.MultiPolygon:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._MultiPolygon(ctx, sel, obj)
+	case gqlmodel.GeometryCollection:
+		return ec._GeometryCollection(ctx, sel, &obj)
+	case *gqlmodel.GeometryCollection:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._GeometryCollection(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
 
 func (ec *executionContext) _Layer(ctx context.Context, sel ast.SelectionSet, obj gqlmodel.Layer) graphql.Marshaler {
 	switch obj := (obj).(type) {
@@ -62539,6 +64448,45 @@ func (ec *executionContext) _DatasetSchemaField(ctx context.Context, sel ast.Sel
 	return out
 }
 
+var deleteGeoJSONFeaturePayloadImplementors = []string{"DeleteGeoJSONFeaturePayload"}
+
+func (ec *executionContext) _DeleteGeoJSONFeaturePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteGeoJSONFeaturePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteGeoJSONFeaturePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteGeoJSONFeaturePayload")
+		case "deletedFeatureId":
+			out.Values[i] = ec._DeleteGeoJSONFeaturePayload_deletedFeatureId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var deleteMePayloadImplementors = []string{"DeleteMePayload"}
 
 func (ec *executionContext) _DeleteMePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteMePayload) graphql.Marshaler {
@@ -62869,6 +64817,145 @@ func (ec *executionContext) _DuplicateStylePayload(ctx context.Context, sel ast.
 			out.Values[i] = graphql.MarshalString("DuplicateStylePayload")
 		case "style":
 			out.Values[i] = ec._DuplicateStylePayload_style(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var featureImplementors = []string{"Feature"}
+
+func (ec *executionContext) _Feature(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Feature) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, featureImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Feature")
+		case "type":
+			out.Values[i] = ec._Feature_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "geometry":
+			out.Values[i] = ec._Feature_geometry(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "id":
+			out.Values[i] = ec._Feature_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "properties":
+			out.Values[i] = ec._Feature_properties(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var featureCollectionImplementors = []string{"FeatureCollection"}
+
+func (ec *executionContext) _FeatureCollection(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.FeatureCollection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, featureCollectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FeatureCollection")
+		case "type":
+			out.Values[i] = ec._FeatureCollection_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "features":
+			out.Values[i] = ec._FeatureCollection_features(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var geometryCollectionImplementors = []string{"GeometryCollection", "Geometry"}
+
+func (ec *executionContext) _GeometryCollection(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.GeometryCollection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, geometryCollectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GeometryCollection")
+		case "type":
+			out.Values[i] = ec._GeometryCollection_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "geometries":
+			out.Values[i] = ec._GeometryCollection_geometries(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -64705,6 +66792,50 @@ func (ec *executionContext) _LayerTagItem(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var lineStringImplementors = []string{"LineString", "Geometry"}
+
+func (ec *executionContext) _LineString(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.LineString) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, lineStringImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LineString")
+		case "type":
+			out.Values[i] = ec._LineString_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lineStringCoordinates":
+			out.Values[i] = ec._LineString_lineStringCoordinates(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var meImplementors = []string{"Me"}
 
 func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Me) graphql.Marshaler {
@@ -66189,6 +68320,50 @@ func (ec *executionContext) _MoveStoryPayload(ctx context.Context, sel ast.Selec
 	return out
 }
 
+var multiPolygonImplementors = []string{"MultiPolygon", "Geometry"}
+
+func (ec *executionContext) _MultiPolygon(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.MultiPolygon) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, multiPolygonImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MultiPolygon")
+		case "type":
+			out.Values[i] = ec._MultiPolygon_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "multiPolygonCoordinates":
+			out.Values[i] = ec._MultiPolygon_multiPolygonCoordinates(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -66252,6 +68427,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_addDatasetSchema(ctx, field)
 			})
+		case "addGeoJSONFeature":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addGeoJSONFeature(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateGeoJSONFeature":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateGeoJSONFeature(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteGeoJSONFeature":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteGeoJSONFeature(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "addLayerItem":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_addLayerItem(ctx, field)
@@ -66348,6 +68544,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "duplicateNLSLayer":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_duplicateNLSLayer(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "addCustomProperties":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addCustomProperties(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -66856,6 +69059,13 @@ func (ec *executionContext) _NLSLayerGroup(ctx context.Context, sel ast.Selectio
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "isSketch":
+			out.Values[i] = ec._NLSLayerGroup_isSketch(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "sketch":
+			out.Values[i] = ec._NLSLayerGroup_sketch(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -66952,6 +69162,13 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "isSketch":
+			out.Values[i] = ec._NLSLayerSimple_isSketch(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "sketch":
+			out.Values[i] = ec._NLSLayerSimple_sketch(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -67490,6 +69707,50 @@ func (ec *executionContext) _PluginExtension(ctx context.Context, sel ast.Select
 	return out
 }
 
+var pointImplementors = []string{"Point", "Geometry"}
+
+func (ec *executionContext) _Point(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Point) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pointImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Point")
+		case "type":
+			out.Values[i] = ec._Point_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "pointCoordinates":
+			out.Values[i] = ec._Point_pointCoordinates(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var policyImplementors = []string{"Policy"}
 
 func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Policy) graphql.Marshaler {
@@ -67525,6 +69786,50 @@ func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Policy_datasetSchemaCount(ctx, field, obj)
 		case "datasetCount":
 			out.Values[i] = ec._Policy_datasetCount(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var polygonImplementors = []string{"Polygon", "Geometry"}
+
+func (ec *executionContext) _Polygon(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Polygon) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, polygonImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Polygon")
+		case "type":
+			out.Values[i] = ec._Polygon_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "polygonCoordinates":
+			out.Values[i] = ec._Polygon_polygonCoordinates(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -71091,6 +73396,44 @@ func (ec *executionContext) _SignupPayload(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var sketchInfoImplementors = []string{"SketchInfo"}
+
+func (ec *executionContext) _SketchInfo(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SketchInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sketchInfoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SketchInfo")
+		case "customPropertySchema":
+			out.Values[i] = ec._SketchInfo_customPropertySchema(ctx, field, obj)
+		case "featureCollection":
+			out.Values[i] = ec._SketchInfo_featureCollection(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var spacingImplementors = []string{"Spacing"}
 
 func (ec *executionContext) _Spacing(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Spacing) graphql.Marshaler {
@@ -73928,8 +76271,18 @@ func (ec *executionContext) unmarshalNAddClusterInput2githubᚗcomᚋreearthᚋr
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddCustomPropertySchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddCustomPropertySchemaInput(ctx context.Context, v interface{}) (gqlmodel.AddCustomPropertySchemaInput, error) {
+	res, err := ec.unmarshalInputAddCustomPropertySchemaInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddDatasetSchemaInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddDatasetSchemaInput(ctx context.Context, v interface{}) (gqlmodel.AddDatasetSchemaInput, error) {
 	res, err := ec.unmarshalInputAddDatasetSchemaInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddGeoJSONFeatureInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddGeoJSONFeatureInput(ctx context.Context, v interface{}) (gqlmodel.AddGeoJSONFeatureInput, error) {
+	res, err := ec.unmarshalInputAddGeoJSONFeatureInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -74714,6 +77067,25 @@ func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, se
 	return res
 }
 
+func (ec *executionContext) unmarshalNDeleteGeoJSONFeatureInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteGeoJSONFeatureInput(ctx context.Context, v interface{}) (gqlmodel.DeleteGeoJSONFeatureInput, error) {
+	res, err := ec.unmarshalInputDeleteGeoJSONFeatureInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDeleteGeoJSONFeaturePayload2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteGeoJSONFeaturePayload(ctx context.Context, sel ast.SelectionSet, v gqlmodel.DeleteGeoJSONFeaturePayload) graphql.Marshaler {
+	return ec._DeleteGeoJSONFeaturePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteGeoJSONFeaturePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteGeoJSONFeaturePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DeleteGeoJSONFeaturePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteGeoJSONFeaturePayload(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNDeleteMeInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteMeInput(ctx context.Context, v interface{}) (gqlmodel.DeleteMeInput, error) {
 	res, err := ec.unmarshalInputDeleteMeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -74806,6 +77178,64 @@ func (ec *executionContext) unmarshalNDuplicateStyleInput2githubᚗcomᚋreearth
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNFeature2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeature(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Feature) graphql.Marshaler {
+	return ec._Feature(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFeature2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeatureᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Feature) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNFeature2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeature(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNFeature2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeature(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Feature) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Feature(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNFileSize2int64(ctx context.Context, v interface{}) (int64, error) {
 	res, err := graphql.UnmarshalInt64(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -74834,6 +77264,188 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 		}
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) unmarshalNFloat2ᚕfloat64ᚄ(ctx context.Context, v interface{}) ([]float64, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]float64, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFloat2float64(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNFloat2ᚕfloat64ᚄ(ctx context.Context, sel ast.SelectionSet, v []float64) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNFloat2float64(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalNFloat2ᚕᚕfloat64ᚄ(ctx context.Context, v interface{}) ([][]float64, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([][]float64, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFloat2ᚕfloat64ᚄ(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNFloat2ᚕᚕfloat64ᚄ(ctx context.Context, sel ast.SelectionSet, v [][]float64) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNFloat2ᚕfloat64ᚄ(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx context.Context, v interface{}) ([][][]float64, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([][][]float64, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFloat2ᚕᚕfloat64ᚄ(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx context.Context, sel ast.SelectionSet, v [][][]float64) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNFloat2ᚕᚕfloat64ᚄ(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalNFloat2ᚕᚕᚕᚕfloat64ᚄ(ctx context.Context, v interface{}) ([][][][]float64, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([][][][]float64, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNFloat2ᚕᚕᚕᚕfloat64ᚄ(ctx context.Context, sel ast.SelectionSet, v [][][][]float64) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNGeometry2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐGeometry(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Geometry) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Geometry(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGeometry2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐGeometryᚄ(ctx context.Context, sel ast.SelectionSet, v []gqlmodel.Geometry) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGeometry2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐGeometry(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx context.Context, v interface{}) (gqlmodel.ID, error) {
@@ -77176,6 +79788,11 @@ func (ec *executionContext) unmarshalNUpdateDatasetSchemaInput2githubᚗcomᚋre
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateGeoJSONFeatureInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateGeoJSONFeatureInput(ctx context.Context, v interface{}) (gqlmodel.UpdateGeoJSONFeatureInput, error) {
+	res, err := ec.unmarshalInputUpdateGeoJSONFeatureInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdateLayerInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateLayerInput(ctx context.Context, v interface{}) (gqlmodel.UpdateLayerInput, error) {
 	res, err := ec.unmarshalInputUpdateLayerInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -77943,6 +80560,13 @@ func (ec *executionContext) marshalODuplicateStylePayload2ᚖgithubᚗcomᚋreea
 	return ec._DuplicateStylePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOFeatureCollection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐFeatureCollection(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.FeatureCollection) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._FeatureCollection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOFileSize2ᚖint64(ctx context.Context, v interface{}) (*int64, error) {
 	if v == nil {
 		return nil, nil
@@ -78600,6 +81224,13 @@ func (ec *executionContext) marshalOSignupPayload2ᚖgithubᚗcomᚋreearthᚋre
 		return graphql.Null
 	}
 	return ec._SignupPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOSketchInfo2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSketchInfo(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SketchInfo) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SketchInfo(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

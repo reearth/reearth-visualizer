@@ -62,7 +62,7 @@ export const HeatmapMesh = memo(
       ref,
     ) => {
       const { scene } = useCesium();
-      const groundPrimitives = scene?.primitives;
+      const groundPrimitives = scene?.groundPrimitives;
       const primitiveRef = useRef<GroundPrimitive>();
 
       const material = useConstant(() =>

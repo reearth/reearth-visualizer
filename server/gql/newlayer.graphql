@@ -7,6 +7,8 @@ interface NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  isSketch: Boolean!
+  sketch: SketchInfo
 }
 
 type NLSLayerSimple implements NLSLayer {
@@ -18,6 +20,8 @@ type NLSLayerSimple implements NLSLayer {
   visible: Boolean!
   infobox: NLSInfobox
   scene: Scene
+  isSketch: Boolean!
+  sketch: SketchInfo
 }
 
 type NLSLayerGroup implements NLSLayer {
@@ -31,6 +35,8 @@ type NLSLayerGroup implements NLSLayer {
   visible: Boolean!
   infobox: NLSInfobox
   scene: Scene
+  isSketch: Boolean!
+  sketch: SketchInfo
 }
 
 type NLSInfobox {
@@ -56,6 +62,11 @@ type InfoboxBlock {
   scene: Scene
 }
 
+type SketchInfo {
+	customPropertySchema: JSON
+	featureCollection: FeatureCollection
+}
+
 # InputType
 
 input AddNLSLayerSimpleInput {
@@ -65,6 +76,7 @@ input AddNLSLayerSimpleInput {
   config: JSON
   index: Int
   visible: Boolean
+  schema: JSON
 }
 
 input RemoveNLSLayerInput {
@@ -106,6 +118,11 @@ input RemoveNLSInfoboxBlockInput {
 
 input DuplicateNLSLayerInput {
   layerId: ID!
+}
+
+input AddCustomPropertySchemaInput {
+  layerId: ID!
+  schema: JSON
 }
 
 # Payload
@@ -164,4 +181,5 @@ extend type Mutation {
     input: RemoveNLSInfoboxBlockInput!
   ): RemoveNLSInfoboxBlockPayload
   duplicateNLSLayer(input: DuplicateNLSLayerInput!): DuplicateNLSLayerPayload!
+  addCustomProperties(input: AddCustomPropertySchemaInput!): UpdateNLSLayerPayload!
 }

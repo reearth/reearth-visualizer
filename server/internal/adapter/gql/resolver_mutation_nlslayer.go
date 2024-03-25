@@ -22,6 +22,7 @@ func (r *mutationResolver) AddNLSLayerSimple(ctx context.Context, input gqlmodel
 		LayerType: gqlmodel.ToNLSLayerType(input.LayerType),
 		Config:    gqlmodel.ToNLSConfig(input.Config),
 		Visible:   input.Visible,
+		Schema:    gqlmodel.ToGoJsonRef(input.Schema),
 	}
 
 	layer, err := usecases(ctx).NLSLayer.AddLayerSimple(ctx, inp, getOperator(ctx))
@@ -185,5 +186,24 @@ func (r *mutationResolver) RemoveNLSInfoboxBlock(ctx context.Context, input gqlm
 	return &gqlmodel.RemoveNLSInfoboxBlockPayload{
 		InfoboxBlockID: gqlmodel.IDFrom(infoboxBlock),
 		Layer:          gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) AddCustomProperties(ctx context.Context, input gqlmodel.AddCustomPropertySchemaInput) (*gqlmodel.UpdateNLSLayerPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.AddCustomProperties(ctx, interfaces.AddCustomPropertiesInput{
+		LayerID: lid,
+		Schema:  input.Schema,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.UpdateNLSLayerPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
 	}, nil
 }

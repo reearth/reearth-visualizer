@@ -1810,43 +1810,6 @@ extensions:
               type: string
               title: HTML
               ui: multiline
-  - id: propertyblock
-    type: block
-    name: Property List Block
-    description: Infobox property Block
-    schema:
-      groups:
-        - id: panel
-          title: Panel Setting
-          fields:
-            - id: padding
-              type: spacing
-              title: Padding
-              ui: padding
-              min: 0
-              max: 100
-        - id: default
-          title: Property block
-          fields:
-            - id: display_type
-              type: string
-              title: Type
-              defaultValue: rootProperties
-              description: Choose how you wish to show properties
-              choices:
-                - key: allProperties
-                  label: All Properties
-                - key: rootProperties
-                  label: Root Properties
-                - key: custom
-                  label: Customize
-            - id: property_list
-              type: array
-              title: Property List
-              availableIf:
-                field: display_type
-                type: string
-                value: custom
   - id: menu
     type: widget
     name: Menu (legacy)
@@ -2626,23 +2589,21 @@ extensions:
         - id: default
           title: Basic
           fields:
-            - id: enableInfobox
+            - id: enabled
               type: bool
               title: Enable Infobox
-              defaultValue: false
-            - id: infoboxPosition
+              defaultValue: true
+            - id: position
               type: string
               title: Position
               defaultValue: right
               choices:
                 - key: right
                   label: Right
-                - key: middle
-                  label: Middle
                 - key: left
                   label: Left
               availableIf:
-                field: enableInfobox
+                field: enabled
                 type: bool
                 value: true
             - id: padding
@@ -2651,18 +2612,27 @@ extensions:
               ui: padding
               min: 0
               max: 100
-              defaultValue: { top: 10, bottom: 10, left: 10, right: 10 }
-            - id: infoboxGap
+              defaultValue: { top: 20, bottom: 20, left: 20, right: 20 }
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+            - id: gap
               type: number
-              title: Infobox Gap
+              title: Gap
               min: 0
               max: 40
               suffix: px
-              description: "The gap between the top of the infobox. Min: 0  Max: 40"
+              description: "The gap between infobox blocks. Min: 0  Max: 40"
+              defaultValue: 20
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
   - id: textInfoboxBetaBlock
     name: Text
-    type: block
-    description: Storytelling Text Block
+    type: infoboxBlock
+    description: Infobox Text Block
     schema:
       groups:
         - id: panel
@@ -2675,7 +2645,7 @@ extensions:
               min: 0
               max: 100
         - id: default
-          title: Text
+          title: Text Block
           fields:
             - id: text
               type: string
@@ -2683,8 +2653,8 @@ extensions:
               ui: multiline
   - id: imageInfoboxBetaBlock
     name: Image
-    type: block
-    description: Storytelling Image Block
+    type: infoboxBlock
+    description: Infobox Image Block
     schema:
       groups:
         - id: panel
@@ -2697,16 +2667,15 @@ extensions:
               min: 0
               max: 100
         - id: default
-          title: Image
+          title: Image Block
           fields:
             - id: src
-              type: url
+              type: string
               title: Image
-              ui: image
   - id: propertyInfoboxBetaBlock
-    type: block
+    type: infoboxBlock
     name: Property List Block
-    description: Infobox property Block
+    description: Infobox Property List Block
     schema:
       groups:
         - id: panel
@@ -2721,22 +2690,22 @@ extensions:
         - id: default
           title: Property block
           fields:
-            - id: display_type
+            - id: displayType
               type: string
               title: Type
-              defaultValue: rootProperties
+              defaultValue: all
               description: Choose how you wish to show properties
               choices:
-                - key: allProperties
+                - key: all
                   label: All Properties
-                - key: rootProperties
+                - key: rootOnly
                   label: Root Properties
                 - key: custom
                   label: Customize
-            - id: property_list
+            - id: propertyList
               type: array
               title: Property List
               availableIf:
-                field: display_type
+                field: displayType
                 type: string
                 value: custom
