@@ -2631,7 +2631,7 @@ extensions:
                 value: true
   - id: textInfoboxBetaBlock
     name: Text
-    type: block
+    type: infoboxBlock
     description: Infobox Text Block
     schema:
       groups:
@@ -2653,7 +2653,7 @@ extensions:
               ui: multiline
   - id: imageInfoboxBetaBlock
     name: Image
-    type: block
+    type: infoboxBlock
     description: Infobox Image Block
     schema:
       groups:
@@ -2673,7 +2673,7 @@ extensions:
               type: string
               title: Image
   - id: propertyInfoboxBetaBlock
-    type: block
+    type: infoboxBlock
     name: Property List Block
     description: Infobox Property List Block
     schema:

@@ -2246,15 +2246,16 @@ func (e NodeType) MarshalGQL(w io.Writer) {
 type PluginExtensionType string
 
 const (
-	PluginExtensionTypePrimitive  PluginExtensionType = "PRIMITIVE"
-	PluginExtensionTypeWidget     PluginExtensionType = "WIDGET"
-	PluginExtensionTypeBlock      PluginExtensionType = "BLOCK"
-	PluginExtensionTypeVisualizer PluginExtensionType = "VISUALIZER"
-	PluginExtensionTypeInfobox    PluginExtensionType = "INFOBOX"
-	PluginExtensionTypeCluster    PluginExtensionType = "Cluster"
-	PluginExtensionTypeStory      PluginExtensionType = "Story"
-	PluginExtensionTypeStoryPage  PluginExtensionType = "StoryPage"
-	PluginExtensionTypeStoryBlock PluginExtensionType = "StoryBlock"
+	PluginExtensionTypePrimitive    PluginExtensionType = "PRIMITIVE"
+	PluginExtensionTypeWidget       PluginExtensionType = "WIDGET"
+	PluginExtensionTypeBlock        PluginExtensionType = "BLOCK"
+	PluginExtensionTypeVisualizer   PluginExtensionType = "VISUALIZER"
+	PluginExtensionTypeInfobox      PluginExtensionType = "INFOBOX"
+	PluginExtensionTypeCluster      PluginExtensionType = "Cluster"
+	PluginExtensionTypeStory        PluginExtensionType = "Story"
+	PluginExtensionTypeStoryPage    PluginExtensionType = "StoryPage"
+	PluginExtensionTypeStoryBlock   PluginExtensionType = "StoryBlock"
+	PluginExtensionTypeInfoboxBlock PluginExtensionType = "InfoboxBlock"
 )
 
 var AllPluginExtensionType = []PluginExtensionType{
@@ -2267,11 +2268,12 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypeStory,
 	PluginExtensionTypeStoryPage,
 	PluginExtensionTypeStoryBlock,
+	PluginExtensionTypeInfoboxBlock,
 }
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeCluster, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock, PluginExtensionTypeInfoboxBlock:
 		return true
 	}
 	return false
