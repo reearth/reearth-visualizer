@@ -10,7 +10,7 @@ import { styled } from "@reearth/services/theme";
 
 import { InfoboxBlock } from "../../../types";
 
-import CustomField from "./CustomField";
+import CustomFields from "./CustomFields";
 import ListEditor, { DisplayTypeField, PropertyListField } from "./ListEditor";
 import ListItem from "./ListItem";
 
@@ -60,9 +60,13 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
 
   return (
     <Wrapper>
-      {!isEditable ? (
+      {!context?.editMode ? (
         displayTypeField.value === "custom" ? (
-          properties?.map((f, idx) => <CustomField key={f.key} index={idx} field={f} />)
+          properties ? (
+            <CustomFields properties={properties} extensionId={block?.extensionId} />
+          ) : (
+            <Template icon={block?.extensionId} height={120} />
+          )
         ) : (
           properties?.map((field, idx) => {
             const [key, value]: [string, any] = Object.entries(field)[0];

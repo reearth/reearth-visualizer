@@ -1,7 +1,7 @@
 import { isEqual } from "lodash-es";
 import { useCallback, useEffect, useState } from "react";
 
-import { DisplayTypeField, PropertyListField, PropertyListItem } from ".";
+import type { DisplayTypeField, PropertyListField } from ".";
 
 export type ListItem = {
   id: string;
@@ -28,7 +28,7 @@ export default ({
   ) => Promise<void>;
 }) => {
   const [currentPropertyList, setCurrentPropertyList] = useState<ListItem[]>(
-    generateListWithId(propertyListField?.value ?? []),
+    propertyListField?.value ?? [],
   );
 
   const displayOptions = displayTypeField?.choices?.map(
@@ -39,8 +39,8 @@ export default ({
   );
 
   useEffect(() => {
-    if (!isEqual(generateListWithId(propertyListField?.value ?? []), currentPropertyList)) {
-      setCurrentPropertyList(generateListWithId(propertyListField?.value ?? []));
+    if (!isEqual(propertyListField?.value, currentPropertyList)) {
+      setCurrentPropertyList(propertyListField?.value ?? []);
     }
   }, [propertyListField?.value, currentPropertyList]);
 
@@ -100,11 +100,9 @@ export default ({
   const handleItemAdd = useCallback(() => {
     if (!propertyListField) return;
     const newList = [
-      ...(currentPropertyList?.map(li => ({
-        key: li.key,
-        value: li.value,
-      })) || []),
+      ...currentPropertyList,
       {
+        id: generateUniqueId(),
         key: `Field ${(currentPropertyList ?? []).length + 1 || 1}`,
         value: `Value ${(currentPropertyList ?? []).length + 1 || 1}`,
       },
@@ -129,14 +127,7 @@ export default ({
       newList.splice(index, 0, item);
 
       if (newList.length < 1 || !currentPropertyList) return;
-      await onPropertyUpdate?.(
-        propertyId,
-        "default",
-        "propertyList",
-        undefined,
-        "array",
-        newList.map(li => ({ key: li.key, value: li.value })),
-      );
+      await onPropertyUpdate?.(propertyId, "default", "propertyList", undefined, "array", newList);
     },
     [currentPropertyList, onPropertyUpdate, propertyId],
   );
@@ -154,14 +145,6 @@ export default ({
   };
 };
 
-function generateItemId(key: string, index: number) {
-  return `${key}-${index}`;
-}
-
-function generateListWithId(list: PropertyListItem[]) {
-  if (list.length < 1) return [];
-  return list.map((li, i) => ({
-    id: generateItemId(li.key, i),
-    ...li,
-  }));
+function generateUniqueId() {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }

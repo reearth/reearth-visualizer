@@ -15,7 +15,7 @@ export type DisplayTypeField = {
   choices?: { key: string; title: string }[];
 };
 
-export type PropertyListItem = { key: string; value: string };
+export type PropertyListItem = { id: string; key: string; value: string };
 
 export type PropertyListField = {
   type?: "array";
