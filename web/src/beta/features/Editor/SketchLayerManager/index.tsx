@@ -12,9 +12,11 @@ import CustomedProperties from "./CustomedProperties";
 import General from "./General";
 import { SketchLayerDataType } from "./types";
 
-export type Property = { [x: string]: string };
+export interface Property {
+  [key: string]: string;
+}
 
-export type SketchProps = {
+export interface SketchProps {
   sceneId?: string;
   layerStyles?: LayerStyle[];
   propertyList?: Property[];
@@ -25,13 +27,13 @@ export type SketchProps = {
   onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
   setPropertyList?: (prev: Property[]) => void;
-};
+}
 
-type TabObject = {
+interface TabObject {
   id: string;
-  name?: string | undefined;
-  component?: JSX.Element | undefined;
-};
+  name?: string;
+  component?: JSX.Element;
+}
 
 export const dataTypes: SketchLayerDataType[] = [
   "Text",
@@ -46,7 +48,7 @@ export const dataTypes: SketchLayerDataType[] = [
 const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
-  const [propertyList, setPropertyList] = useState<{}[]>([]);
+  const [propertyList, setPropertyList] = useState<Property[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
 
@@ -55,15 +57,19 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
   }, []);
 
   const handleSubmit = () => {
-    const schemaJSON = Object.assign({}, ...propertyList);
+    const schemaJSON = propertyList.reduce((acc, property, index) => {
+      const [key] = Object.keys(property);
+      const value = `${property[key]}_${index + 1}`;
+      acc[key] = value;
+      return acc;
+    }, {});
+
     onSubmit?.({
       layerType: "simple",
       sceneId: sceneId || "",
       title: layerName,
       visible: true,
-      schema: {
-        customProperties: schemaJSON,
-      },
+      schema: schemaJSON,
       config: {
         properties: {
           name: layerName,

@@ -45,17 +45,27 @@ const FeatureData: React.FC<Props> = ({
   const t = useT();
 
   const [field, setField] = useState<FieldProp[]>([]);
+
   useEffect(() => {
     if (!customProperties) return;
-    const fieldArray = Object.entries(customProperties).map(([title, type]) => ({
+    const entries = Object.entries<string>(customProperties);
+    const sortedValues = entries
+      .map(([key, value]) => ({ key, value }))
+      .sort((a, b) => {
+        const aIndex = parseInt(a.value.split("_")[1]);
+        const bIndex = parseInt(b.value.split("_")[1]);
+        return aIndex - bIndex;
+      });
+
+    const fieldArray = sortedValues.map(({ key, value }) => ({
       id: uuidv4(),
-      type: type as string,
-      title,
+      type: value.replace(/_\d+$/, ""),
+      title: key,
       value: undefined,
     }));
 
     setField(fieldArray);
-  }, [customProperties]);
+  }, [customProperties, selectedFeature?.properties]);
 
   const handleSubmit = useCallback(
     (p: any) => {
@@ -70,6 +80,7 @@ const FeatureData: React.FC<Props> = ({
     [featureId, layerId, onGeoJsonFeatureUpdate, selectedFeature],
   );
 
+  console.log("selectedFeature", selectedFeature);
   return (
     <Wrapper>
       <Text size="body">{t("ID")}</Text>

@@ -18,7 +18,6 @@ type Props = {
     properties: any;
   };
   setField?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
-  setValue?: (v: any) => {};
   onSubmit?: (inp: any) => void;
 };
 
@@ -36,21 +35,56 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
           return prevField;
         });
       });
-      onSubmit?.({
-        ...selectedFeature?.properties,
-        [`data-type-${field.type.toLowerCase()}`]: value,
-      });
+      let updatedProperty = {};
+
+      switch (field.type) {
+        case "Text":
+          updatedProperty = { title: value };
+          break;
+        case "TextArea":
+          updatedProperty = { content: value };
+          break;
+        case "Asset":
+          updatedProperty = { image: value };
+          break;
+        case "URL":
+          updatedProperty = { video: value };
+          break;
+        case "Boolean":
+          updatedProperty = { checked: value };
+          break;
+        case "Int":
+        case "Float":
+          updatedProperty = { number: value };
+          break;
+        default:
+          break;
+      }
+
+      if (Object.keys(updatedProperty).length) {
+        const updatedProperties = {
+          ...selectedFeature?.properties,
+          ...updatedProperty,
+        };
+        onSubmit?.(updatedProperties);
+      }
     },
     [field.id, field.type, onSubmit, selectedFeature?.properties, setField],
   );
 
   return field?.type === "Text" ? (
-    <TextField key={field?.id} name={field?.title} value={field?.value} onChange={handleChange} />
+    <TextField
+      key={field?.id}
+      name={field?.title}
+      value={selectedFeature?.properties.title ? selectedFeature?.properties.title : field.value}
+      onChange={handleChange}
+    />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
       name={field?.title}
-      value={field?.value}
-      description={field?.description}
+      value={
+        selectedFeature?.properties.content ? selectedFeature?.properties.content : field.value
+      }
       onChange={handleChange}
     />
   ) : field?.type === "Asset" ? (
@@ -58,8 +92,7 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
       name={field?.title}
       entityType="image"
       fileType={"asset"}
-      value={field?.value}
-      description={field?.description}
+      value={selectedFeature?.properties.image ? selectedFeature?.properties.image : field.value}
       onChange={handleChange}
     />
   ) : field?.type === "URL" ? (
@@ -67,22 +100,27 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
       name={field?.title}
       entityType="file"
       fileType={"URL"}
-      value={field?.value}
-      description={field?.description}
-      onChange={() => {}}
+      value={selectedFeature?.properties.video ? selectedFeature?.properties.video : field.value}
+      onChange={handleChange}
     />
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
       name={field?.title}
-      value={field?.value}
-      description={field?.description}
+      value={selectedFeature?.properties.number ? selectedFeature?.properties.number : field.value}
       min={field?.min}
       max={field?.max}
-      onChange={() => {}}
+      onChange={handleChange}
     />
   ) : field?.type === "Boolean" ? (
-    <ToggleField key={field?.id} name={field?.title} checked={!!field?.value} onChange={() => {}} />
+    <ToggleField
+      key={field?.id}
+      name={field?.title}
+      checked={
+        selectedFeature?.properties.checked ? selectedFeature?.properties.checked : field.value
+      }
+      onChange={handleChange}
+    />
   ) : (
-    <div>{t("Unsupported field type")}</div>
+    <div>{t("Unsupported custom field")}</div>
   );
 };

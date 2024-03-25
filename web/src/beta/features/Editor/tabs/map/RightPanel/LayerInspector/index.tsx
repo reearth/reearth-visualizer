@@ -89,7 +89,7 @@ const InspectorTabs: React.FC<Props> = ({
           <FeatureData
             selectedFeature={selectedFeature}
             isSketchLayer={selectedLayer?.isSketch}
-            customProperties={selectedLayer?.sketch?.customPropertySchema.customProperties}
+            customProperties={selectedLayer?.sketch?.customPropertySchema}
             layerId={selectedLayerId.layerId}
             featureId={sketchLayerFeatureId}
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
