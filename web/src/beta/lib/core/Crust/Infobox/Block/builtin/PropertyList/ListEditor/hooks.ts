@@ -57,42 +57,38 @@ export default ({
   const handlePropertyValueRemove = useCallback(
     async (idx: number) => {
       if (propertyListField) {
-        const newValue =
-          propertyListField.value
-            ?.filter((_, i) => i !== idx)
-            .map(li => ({ key: li.key, value: li.value })) ?? [];
+        const newValue = propertyListField.value?.filter((_, i) => i !== idx);
         await handlePropertyValueUpdate("propertyList", propertyListField.type)(newValue);
       }
     },
     [propertyListField, handlePropertyValueUpdate],
   );
 
-  const handleKeyChange = useCallback(
-    (idx: number) => (newValue?: string) => {
-      const newList = [...currentPropertyList];
-      newList[idx].value = newValue ?? "";
-      setCurrentPropertyList(newList);
-    },
-    [currentPropertyList],
+  const handlePropertyListUpdate = useCallback(
+    (newList: ListItem[]) => handlePropertyValueUpdate("propertyList", "array")(newList),
+    [handlePropertyValueUpdate],
   );
 
-  const handleValueChange = useCallback(
-    (idx: number) => (newValue?: string) => {
+  const handleKeyChange = useCallback(
+    (idx: number) => (newKeyValue?: string) => {
       const newList = [...currentPropertyList];
-      newList[idx].value = newValue ?? "";
+      newList[idx].key = newKeyValue ?? "";
       setCurrentPropertyList(newList);
+      handlePropertyListUpdate(newList);
     },
-    [currentPropertyList],
+    [currentPropertyList, handlePropertyListUpdate],
   );
+
+  const handleValueChange = (idx: number) => (newValue?: string) => {
+    const newList = [...currentPropertyList];
+    newList[idx].value = newValue ?? "";
+    setCurrentPropertyList(newList);
+    handlePropertyListUpdate(newList);
+  };
 
   const handleDisplayTypeUpdate = useCallback(
     (value?: string) => handlePropertyValueUpdate("displayType", "string")(value),
     [handlePropertyValueUpdate],
-  );
-
-  const handlePropertyListUpdate = useCallback(
-    () => handlePropertyValueUpdate("propertyList", "array")(currentPropertyList),
-    [currentPropertyList, handlePropertyValueUpdate],
   );
 
   const handleItemAdd = useCallback(() => {
@@ -136,7 +132,6 @@ export default ({
     handleKeyChange,
     handleValueChange,
     handleDisplayTypeUpdate,
-    handlePropertyListUpdate,
     handleItemAdd,
     handleItemDrop,
     handlePropertyValueRemove,

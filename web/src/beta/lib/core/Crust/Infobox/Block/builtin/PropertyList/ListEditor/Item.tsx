@@ -5,28 +5,19 @@ import { styled } from "@reearth/services/theme";
 import { PropertyListItem } from ".";
 
 type Props = {
-  id?: string;
   item: PropertyListItem;
-  onBlur: () => void;
   onChangeKey: (newValue?: string) => void;
   onChangeValue: (newValue?: string) => void;
   onItemRemove: () => void;
 };
 
-const EditorItem: React.FC<Props> = ({
-  id,
-  item,
-  onBlur,
-  onChangeKey,
-  onChangeValue,
-  onItemRemove,
-}) => (
-  <Field key={id}>
+const EditorItem: React.FC<Props> = ({ item, onChangeKey, onChangeValue, onItemRemove }) => (
+  <Field>
     <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
       <HandleIcon icon="dndHandle" />
-      <StyledTextField value={item.key} onBlur={onBlur} onChange={onChangeKey} />
+      <StyledTextField value={item.key} onChange={onChangeKey} />
     </div>
-    <StyledTextField value={item.value} onBlur={onBlur} onChange={onChangeValue} />
+    <StyledTextField value={item.value} onChange={onChangeValue} />
     <StyledIcon icon="trash" onClick={onItemRemove} />
   </Field>
 );

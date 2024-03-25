@@ -64,7 +64,6 @@ const ListEditor: React.FC<Props> = ({
     handleKeyChange,
     handleValueChange,
     handleDisplayTypeUpdate,
-    handlePropertyListUpdate,
     handleItemAdd,
     handleItemDrop,
     handlePropertyValueRemove,
@@ -93,9 +92,7 @@ const ListEditor: React.FC<Props> = ({
                 return (
                   <EditorItem
                     key={item.id}
-                    id={item.id}
                     item={item}
-                    onBlur={handlePropertyListUpdate}
                     onChangeKey={handleKeyChange(idx)}
                     onChangeValue={handleValueChange(idx)}
                     onItemRemove={() => handlePropertyValueRemove(idx)}
