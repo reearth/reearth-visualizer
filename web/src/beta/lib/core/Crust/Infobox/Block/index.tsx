@@ -2,8 +2,9 @@ import { useCallback, type ComponentType, type ReactNode, memo } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import type { CommonBlockProps, BlockProps } from "@reearth/beta/lib/core/shared/types";
-import { styled } from "@reearth/services/theme";
+// import { styled } from "@reearth/services/theme";
 
+import BlockWrapper from "../../../shared/components/BlockWrapper";
 import { InfoboxBlock } from "../types";
 
 import builtin, { isBuiltinInfoboxBlock } from "./builtin";
@@ -27,19 +28,10 @@ const InfoboxBlockComponent = ({ renderBlock, onRemove, ...props }: Props): JSX.
   return Builtin ? (
     <Builtin {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
-    <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
+    <BlockWrapper {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
-    </Wrapper>
+    </BlockWrapper>
   ) : null;
 };
 
 export default memo(InfoboxBlockComponent);
-
-const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
-  border: 1px solid
-    ${({ selected, editable, theme }) => (editable && selected ? theme.select.main : "transparent")};
-
-  :hover {
-    ${({ editable, theme }) => editable && `border-color: ${theme.outline.main}`};
-  }
-`;

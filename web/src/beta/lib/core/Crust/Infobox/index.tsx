@@ -64,6 +64,7 @@ const Infobox: React.FC<Props> = ({
   infobox,
   isEditable,
   installableInfoboxBlocks,
+  renderBlock,
   onBlockCreate,
   onBlockMove,
   onBlockDelete,
@@ -133,6 +134,7 @@ const Infobox: React.FC<Props> = ({
                     key={b.id}
                     block={b}
                     isEditable={isEditable}
+                    renderBlock={renderBlock}
                     isSelected={b.id === selectedBlockId}
                     onClick={() => handleBlockSelect(b.id)}
                     onBlockDoubleClick={() => handleBlockDoubleClick(b.id)}

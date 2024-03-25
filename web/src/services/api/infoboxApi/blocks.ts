@@ -151,8 +151,9 @@ const getInstallableInfoboxBlocks = (rawScene?: GetSceneQuery) => {
       return plugin?.extensions
         .filter(
           e =>
-            e.type === PluginExtensionType.Block &&
-            AVAILABLE_INFOBOX_BLOCK_IDS.includes(`reearth/${e.extensionId}`),
+            e.type === PluginExtensionType.InfoboxBlock &&
+            (AVAILABLE_INFOBOX_BLOCK_IDS.includes(`reearth/${e.extensionId}`) ||
+              plugin.id !== "reearth"),
         )
         .map((e): InstallableInfoboxBlock => {
           return {
