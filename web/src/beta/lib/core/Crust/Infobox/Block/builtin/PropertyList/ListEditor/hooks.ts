@@ -80,7 +80,7 @@ export default ({
   const handleValueChange = useCallback(
     (idx: number) => (newValue?: string) =>
       setCurrentPropertyList(list => {
-        const newList = list || [];
+        const newList = [...(list ?? [])];
         newList[idx].value = newValue ?? "";
         return newList;
       }),

@@ -92,6 +92,7 @@ const ListEditor: React.FC<Props> = ({
                 if (!currentPropertyList) return null;
                 return (
                   <EditorItem
+                    key={item.id}
                     id={item.id}
                     item={item}
                     onBlur={handlePropertyListUpdate}
