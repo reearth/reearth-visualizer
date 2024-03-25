@@ -11,7 +11,7 @@ import makeContour from "./shaders/makeContour.glsl?raw";
 import sampleBicubic from "./shaders/sampleBicubic.glsl?raw";
 
 export type HeatmapMeshMaterialOptions = {
-  image: string | HTMLCanvasElement;
+  image: string | HTMLCanvasElement | OffscreenCanvas;
   width: number;
   height: number;
   minValue?: number;
@@ -57,12 +57,26 @@ export function createHeatmapMeshMaterial({
     imageOffset.y = (cropRectangle.south - rectangle.south) / rectangle.height;
   }
 
+  let textureImage: HTMLImageElement | ImageBitmap;
+
+  if (typeof image === "string") {
+    textureImage = new Image();
+    textureImage.src = image;
+  } else if (image instanceof HTMLCanvasElement) {
+    textureImage = new Image();
+    textureImage.src = image.toDataURL();
+  } else if (image instanceof OffscreenCanvas) {
+    textureImage = image.transferToImageBitmap();
+  } else {
+    throw new Error("Unsupported image type");
+  }
+
   return new Material({
     fabric: {
       type: "HeatmapMesh",
       uniforms: {
         colorMap: createColorMapImage(colorMapLUT),
-        image,
+        image: textureImage,
         imageScale,
         imageOffset,
         width,

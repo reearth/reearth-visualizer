@@ -1,7 +1,7 @@
 import { quantile } from "d3";
 
 export type MeshImageData = {
-  image: HTMLCanvasElement;
+  image: HTMLCanvasElement | OffscreenCanvas;
   width: number;
   height: number;
   maxValue?: number;
@@ -10,10 +10,10 @@ export type MeshImageData = {
 };
 
 export async function fetchImageAndCreateMeshImageData(
+  canvas: HTMLCanvasElement,
   url: string,
   reversingImageNeeded?: boolean,
 ): Promise<MeshImageData> {
-  const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   if (!ctx) {
     return Promise.reject("Failed to create canvas context");
@@ -57,6 +57,47 @@ export async function fetchImageAndCreateMeshImageData(
         .catch(reject);
     }
   });
+}
+
+export async function fetchImageAndCreateMeshImageDataWorker(
+  canvas: OffscreenCanvas,
+  url: string,
+  reversingImageNeeded?: boolean,
+): Promise<MeshImageData> {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    return Promise.reject("Failed to create canvas context");
+  }
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const imageBitmap = await createImageBitmap(blob);
+
+    canvas.width = imageBitmap.width;
+    canvas.height = imageBitmap.height;
+    ctx.drawImage(imageBitmap, 0, 0);
+
+    const imageData = ctx.getImageData(0, 0, imageBitmap.width, imageBitmap.height).data;
+    const { minValue, maxValue, outlierThreshold } = reversingImageNeeded
+      ? reverseMeshDataAndComputeValues(imageData, imageBitmap.width, imageBitmap.height)
+      : { minValue: 0, maxValue: 100, outlierThreshold: 100 };
+
+    return {
+      image: canvas,
+      width: imageBitmap.width,
+      height: imageBitmap.height,
+      minValue,
+      maxValue,
+      outlierThreshold,
+    };
+  } catch (error) {
+    console.error("Error fetching and creating mesh image data:", error);
+    throw new Error("Failed to fetch and create mesh image data");
+  }
 }
 
 function computeOutlierThreshold(values: number[]): number {

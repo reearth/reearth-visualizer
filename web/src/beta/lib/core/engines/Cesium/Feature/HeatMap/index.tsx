@@ -11,7 +11,8 @@ import { useContext } from "../context";
 import { FeatureComponentConfig, FeatureProps } from "../utils";
 
 import { flareColorMapLUT } from "./constants";
-import { fetchImageAndCreateMeshImageData, MeshImageData } from "./createMeshImageData";
+import { type MeshImageData } from "./createMeshImageData";
+import { createMeshDataAsync } from "./createMeshImageDataAsync";
 import { HeatmapMesh, HeatmapMeshHandle } from "./HeatmapMesh";
 
 export type Props = FeatureProps<Property>;
@@ -98,14 +99,23 @@ export default memo(function HeatMap({ property, isVisible, layer, feature }: Pr
 
   const [meshImageData, setMeshImageData] = useState<MeshImageData>();
   const reversingImageNeeded = property?.maxValue == null && property?.minValue == null;
+
+  const canvas = document.createElement("canvas");
   useEffect(() => {
     if (!visible || !valueMap) return;
-    fetchImageAndCreateMeshImageData(valueMap, reversingImageNeeded)
+    const params = {
+      canvas,
+      url: valueMap,
+      reversingImageNeeded: reversingImageNeeded,
+    };
+    createMeshDataAsync(params)
       .then(meshImageData => {
         setMeshImageData(meshImageData);
       })
       .catch(() => {});
-  }, [reversingImageNeeded, valueMap, visible]);
+  }, [canvas, reversingImageNeeded, valueMap, visible]);
+
+  console.log("meshImageData: ", meshImageData);
 
   const hasBounds = !!bounds;
 
