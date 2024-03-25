@@ -68,25 +68,21 @@ export default ({
   );
 
   const handleKeyChange = useCallback(
-    (idx: number) => (newValue?: string) =>
-      setCurrentPropertyList(list => {
-        const newList = list || [];
-        newList[idx].key = newValue ?? "";
-        console.log("new: 2", newList);
-        return newList;
-      }),
-    [],
+    (idx: number) => (newValue?: string) => {
+      const newList = [...currentPropertyList];
+      newList[idx].value = newValue ?? "";
+      setCurrentPropertyList(newList);
+    },
+    [currentPropertyList],
   );
 
   const handleValueChange = useCallback(
-    (idx: number) => (newValue?: string) =>
-      setCurrentPropertyList(list => {
-        const newList = [...(list ?? [])];
-        newList[idx].value = newValue ?? "";
-        console.log("new: 1", newList);
-        return newList;
-      }),
-    [],
+    (idx: number) => (newValue?: string) => {
+      const newList = [...currentPropertyList];
+      newList[idx].value = newValue ?? "";
+      setCurrentPropertyList(newList);
+    },
+    [currentPropertyList],
   );
 
   const handleDisplayTypeUpdate = useCallback(
