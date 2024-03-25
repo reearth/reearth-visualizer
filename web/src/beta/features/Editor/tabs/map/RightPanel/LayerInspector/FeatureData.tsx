@@ -8,6 +8,7 @@ import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionFiel
 import Text from "@reearth/beta/components/Text";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/useSketch";
 import { Geometry } from "@reearth/beta/lib/core/engines";
+import { Feature } from "@reearth/beta/lib/core/mantle";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -22,7 +23,7 @@ type Props = {
   isSketchLayer?: boolean;
   customProperties?: any;
   layerId?: string;
-  featureId?: string;
+  sketchLayerFeature?: Feature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
@@ -39,7 +40,7 @@ const FeatureData: React.FC<Props> = ({
   isSketchLayer,
   customProperties,
   layerId,
-  featureId,
+  sketchLayerFeature,
   onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
@@ -72,15 +73,14 @@ const FeatureData: React.FC<Props> = ({
       if (!selectedFeature) return;
       onGeoJsonFeatureUpdate?.({
         layerId: layerId ?? "",
-        featureId: featureId ?? "",
+        featureId: sketchLayerFeature?.id ?? "",
         geometry: selectedFeature.geometry,
         properties: p,
       });
     },
-    [featureId, layerId, onGeoJsonFeatureUpdate, selectedFeature],
+    [layerId, onGeoJsonFeatureUpdate, selectedFeature, sketchLayerFeature?.id],
   );
 
-  console.log("selectedFeature", selectedFeature);
   return (
     <Wrapper>
       <Text size="body">{t("ID")}</Text>
@@ -105,7 +105,7 @@ const FeatureData: React.FC<Props> = ({
             <FieldComponent
               field={f}
               key={f.id}
-              selectedFeature={selectedFeature}
+              selectedFeature={sketchLayerFeature}
               setField={setField}
               onSubmit={handleSubmit}
             />

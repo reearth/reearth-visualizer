@@ -5,18 +5,14 @@ import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
 import TextField from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import URLField from "@reearth/beta/components/fields/URLField";
-import { Geometry } from "@reearth/beta/lib/core/engines";
+import { Feature } from "@reearth/beta/lib/core/engines";
 import { useT } from "@reearth/services/i18n";
 
 import { FieldProp, ValueProp } from "./FeatureData";
 
 type Props = {
   field: any;
-  selectedFeature?: {
-    id: string;
-    geometry: Geometry | undefined;
-    properties: any;
-  };
+  selectedFeature?: Feature;
   setField?: (v: FieldProp[] | ((prevFields: FieldProp[]) => FieldProp[])) => void;
   onSubmit?: (inp: any) => void;
 };

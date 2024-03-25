@@ -57,7 +57,7 @@ const InspectorTabs: React.FC<Props> = ({
     };
   }, [selectedLayerId, selectedLayer?.config?.data?.type]);
 
-  const sketchLayerFeatureId = useMemo(() => {
+  const sketchLayerFeature = useMemo(() => {
     if (!selectedLayer?.sketch) return;
 
     const { sketch } = selectedLayer;
@@ -67,11 +67,7 @@ const InspectorTabs: React.FC<Props> = ({
 
     const selectedFeatureId = selectedFeature.properties.id;
 
-    const filtedFeature = features.find(
-      (feature: Feature) => feature.properties.id === selectedFeatureId,
-    );
-
-    return filtedFeature ? filtedFeature.id : null;
+    return features.find((feature: Feature) => feature.properties.id === selectedFeatureId);
   }, [selectedLayer, selectedFeature]);
 
   const tabs: TabObject[] = useMemo(
@@ -91,7 +87,7 @@ const InspectorTabs: React.FC<Props> = ({
             isSketchLayer={selectedLayer?.isSketch}
             customProperties={selectedLayer?.sketch?.customPropertySchema}
             layerId={selectedLayerId.layerId}
-            featureId={sketchLayerFeatureId}
+            sketchLayerFeature={sketchLayerFeature}
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
           />
         ),
@@ -124,7 +120,7 @@ const InspectorTabs: React.FC<Props> = ({
       selectedLayer,
       selectedFeature,
       selectedLayerId.layerId,
-      sketchLayerFeatureId,
+      sketchLayerFeature,
       onGeoJsonFeatureUpdate,
       layerStyles,
       layers,
