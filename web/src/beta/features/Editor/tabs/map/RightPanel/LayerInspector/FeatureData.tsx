@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 import JsonView from "react18-json-view";
@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
+import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/useSketch";
 import { Geometry } from "@reearth/beta/lib/core/engines";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -20,22 +21,32 @@ type Props = {
   };
   isSketchLayer?: boolean;
   customProperties?: any;
+  layerId?: string;
+  featureId?: string;
+  onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
-type FieldProp = {
+export type ValueProp = string | number | boolean | undefined;
+export type FieldProp = {
   id: string;
   type: string;
   title: string;
-  value?: string | number | boolean | undefined;
+  value?: ValueProp;
 };
 
-const FeatureData: React.FC<Props> = ({ selectedFeature, isSketchLayer, customProperties }) => {
+const FeatureData: React.FC<Props> = ({
+  selectedFeature,
+  isSketchLayer,
+  customProperties,
+  layerId,
+  featureId,
+  onGeoJsonFeatureUpdate,
+}) => {
   const t = useT();
 
   const [field, setField] = useState<FieldProp[]>([]);
   useEffect(() => {
     if (!customProperties) return;
-
     const fieldArray = Object.entries(customProperties).map(([title, type]) => ({
       id: uuidv4(),
       type: type as string,
@@ -45,6 +56,19 @@ const FeatureData: React.FC<Props> = ({ selectedFeature, isSketchLayer, customPr
 
     setField(fieldArray);
   }, [customProperties]);
+
+  const handleSubmit = useCallback(
+    (p: any) => {
+      if (!selectedFeature) return;
+      onGeoJsonFeatureUpdate?.({
+        layerId: layerId ?? "",
+        featureId: featureId ?? "",
+        geometry: selectedFeature.geometry,
+        properties: p,
+      });
+    },
+    [featureId, layerId, onGeoJsonFeatureUpdate, selectedFeature],
+  );
 
   return (
     <Wrapper>
@@ -67,7 +91,13 @@ const FeatureData: React.FC<Props> = ({ selectedFeature, isSketchLayer, customPr
       {isSketchLayer && (
         <StyledSidePanelSectionField title={t("Custom Properties")} border="1">
           {field.map(f => (
-            <FieldComponent field={f} key={f.id} />
+            <FieldComponent
+              field={f}
+              key={f.id}
+              selectedFeature={selectedFeature}
+              setField={setField}
+              onSubmit={handleSubmit}
+            />
           ))}
         </StyledSidePanelSectionField>
       )}

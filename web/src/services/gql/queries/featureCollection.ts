@@ -9,3 +9,13 @@ export const ADD_GEOJSON_FEATURE = gql(`
     }
   }
 `);
+
+export const UPDATE_GEOJSON_FEATURE = gql(`
+  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {
+    updateGeoJSONFeature(input: $input) {
+      id
+		  type
+		  properties
+    }
+  }
+`);

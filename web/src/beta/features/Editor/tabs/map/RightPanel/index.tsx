@@ -4,6 +4,7 @@ import SceneSettings from "@reearth/beta/features/Editor/Settings";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import type { LayerConfigUpdateProps } from "@reearth/beta/features/Editor/useLayers";
 import type { LayerStyleValueUpdateProps } from "@reearth/beta/features/Editor/useLayerStyles";
+import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/useSketch";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -28,6 +29,7 @@ type Props = {
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
+  onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
 const MapRightPanel: React.FC<Props> = ({
@@ -42,6 +44,7 @@ const MapRightPanel: React.FC<Props> = ({
   onFlyTo,
   onLayerStyleValueUpdate,
   onLayerConfigUpdate,
+  onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
 
@@ -73,6 +76,7 @@ const MapRightPanel: React.FC<Props> = ({
                   sceneId={sceneId}
                   selectedLayerId={selectedLayerId}
                   onLayerConfigUpdate={onLayerConfigUpdate}
+                  onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
                 />
               )}
               {selectedLayerStyleId && (

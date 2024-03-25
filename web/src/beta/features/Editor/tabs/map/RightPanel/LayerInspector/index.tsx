@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
 
 import TabMenu, { TabObject } from "@reearth/beta/components/TabMenu";
+import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/useSketch";
+import { Feature } from "@reearth/beta/lib/core/mantle";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n"; // If needed
@@ -18,6 +20,7 @@ type Props = {
   selectedLayerId: SelectedLayer;
   sceneId?: string;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
+  onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
 const InspectorTabs: React.FC<Props> = ({
@@ -26,6 +29,7 @@ const InspectorTabs: React.FC<Props> = ({
   selectedLayerId,
   sceneId,
   onLayerConfigUpdate,
+  onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("layerData");
@@ -39,7 +43,6 @@ const InspectorTabs: React.FC<Props> = ({
     [layers, selectedLayerId],
   );
 
-  console.log("selectedLayer", selectedLayer);
   const selectedFeature = useMemo(() => {
     if (!selectedLayerId?.feature?.id) return;
     const { id, geometry, properties } =
@@ -53,6 +56,23 @@ const InspectorTabs: React.FC<Props> = ({
       properties,
     };
   }, [selectedLayerId, selectedLayer?.config?.data?.type]);
+
+  const sketchLayerFeatureId = useMemo(() => {
+    if (!selectedLayer?.sketch) return;
+
+    const { sketch } = selectedLayer;
+    const features = sketch.featureCollection.features;
+
+    if (!selectedFeature?.properties?.id) return;
+
+    const selectedFeatureId = selectedFeature.properties.id;
+
+    const filtedFeature = features.find(
+      (feature: Feature) => feature.properties.id === selectedFeatureId,
+    );
+
+    return filtedFeature ? filtedFeature.id : null;
+  }, [selectedLayer, selectedFeature]);
 
   const tabs: TabObject[] = useMemo(
     () => [
@@ -70,6 +90,9 @@ const InspectorTabs: React.FC<Props> = ({
             selectedFeature={selectedFeature}
             isSketchLayer={selectedLayer?.isSketch}
             customProperties={selectedLayer?.sketch?.customPropertySchema.customProperties}
+            layerId={selectedLayerId.layerId}
+            featureId={sketchLayerFeatureId}
+            onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
           />
         ),
         icon: "location",
@@ -96,7 +119,18 @@ const InspectorTabs: React.FC<Props> = ({
       //   icon: "infobox",
       // },
     ],
-    [sceneId, selectedLayer, selectedFeature, layerStyles, layers, t, onLayerConfigUpdate],
+    [
+      t,
+      selectedLayer,
+      selectedFeature,
+      selectedLayerId.layerId,
+      sketchLayerFeatureId,
+      onGeoJsonFeatureUpdate,
+      layerStyles,
+      layers,
+      sceneId,
+      onLayerConfigUpdate,
+    ],
   );
 
   return <TabMenu tabs={tabs} selectedTab={selectedTab} onSelectedTabChange={handleTabChange} />;

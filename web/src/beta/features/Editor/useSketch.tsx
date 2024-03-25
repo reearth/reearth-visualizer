@@ -19,9 +19,16 @@ type Props = {
 };
 
 export type FeatureProps = {
-  geometry: Geometry;
   layerId: string;
   type: string;
+  geometry?: Geometry;
+  properties?: any;
+};
+
+export type GeoJsonFeatureUpdateProps = {
+  featureId: string;
+  geometry: Geometry | undefined;
+  layerId: string;
   properties?: any;
 };
 
@@ -40,7 +47,7 @@ export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {
     [visualizerRef],
   );
 
-  const { useAddGeoJsonFeature } = useFeatureCollectionFetcher();
+  const { useAddGeoJsonFeature, useUpdateGeoJSONFeature } = useFeatureCollectionFetcher();
 
   const handleSketchLayerAdd = useCallback(
     async (inp: FeatureProps) => {
@@ -54,6 +61,7 @@ export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {
     },
     [selectedLayer, useAddGeoJsonFeature],
   );
+
   const handleSketchFeatureCreate = useCallback(
     async (feature: SketchFeature | null) => {
       // TODO: create a new layer if there is no selected sketch layer
@@ -93,9 +101,22 @@ export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {
     setSketchType(undefined);
   }, [tab]);
 
+  const handleGeoJsonFeatureUpdate = useCallback(
+    async (inp: GeoJsonFeatureUpdateProps) => {
+      await useUpdateGeoJSONFeature({
+        layerId: inp.layerId,
+        featureId: inp.featureId,
+        geometry: inp.geometry,
+        properties: inp.properties,
+      });
+    },
+    [useUpdateGeoJSONFeature],
+  );
+
   return {
     sketchType,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
+    handleGeoJsonFeatureUpdate,
   };
 };

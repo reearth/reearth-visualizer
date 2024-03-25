@@ -31,6 +31,7 @@ const documents = {
     "\n  mutation CreateAsset($teamId: ID!, $file: Upload!) {\n    createAsset(input: { teamId: $teamId, file: $file }) {\n      asset {\n        id\n        teamId\n        name\n        size\n        url\n        contentType\n      }\n    }\n  }\n": types.CreateAssetDocument,
     "\n  mutation RemoveAsset($assetId: ID!) {\n    removeAsset(input: { assetId: $assetId }) {\n      assetId\n    }\n  }\n": types.RemoveAssetDocument,
     "\n  mutation AddGeoJSONFeature($input: AddGeoJSONFeatureInput!) {\n    addGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n": types.AddGeoJsonFeatureDocument,
+    "\n  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {\n    updateGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n": types.UpdateGeoJsonFeatureDocument,
     "\n  mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {\n    addNLSLayerSimple(input: $input) {\n      layers {\n        id\n      }\n    }\n  }\n": types.AddNlsLayerSimpleDocument,
     "\n  mutation UpdateNLSLayer($input: UpdateNLSLayerInput!) {\n    updateNLSLayer(input: $input) {\n      layer {\n        id\n      }\n    }\n  }\n": types.UpdateNlsLayerDocument,
     "\n  mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {\n    removeNLSLayer(input: $input) {\n      layerId\n    }\n  }\n": types.RemoveNlsLayerDocument,
@@ -165,6 +166,10 @@ export function gql(source: "\n  mutation RemoveAsset($assetId: ID!) {\n    remo
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation AddGeoJSONFeature($input: AddGeoJSONFeatureInput!) {\n    addGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n"): (typeof documents)["\n  mutation AddGeoJSONFeature($input: AddGeoJSONFeatureInput!) {\n    addGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {\n    updateGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {\n    updateGeoJSONFeature(input: $input) {\n      id\n\t\t  type\n\t\t  properties\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
