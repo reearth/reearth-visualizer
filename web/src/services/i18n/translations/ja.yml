@@ -107,7 +107,7 @@ Outline: アウトライン
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: ''
 Inspector: インスペクター
-Unsupported field type: サポートされていないフィールドタイプです
+Unsupported custom field: ''
 ID: ID
 Geometry: ジオメトリ
 Properties: プロパティ
@@ -264,6 +264,7 @@ aria-label-Go-to-the-home-position: 元の位置に戻る
 aria-label-zoom-out: ズームアウト
 Spacing settings: 余白設定
 Block: ブロック
+Unsupported field type: サポートされていないフィールドタイプです
 New Camera: 新しいカメラ
 New Camera Button: 新しいカメラボタン
 Buttons List: ボタン一覧

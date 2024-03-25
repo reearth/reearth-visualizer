@@ -109,7 +109,7 @@ Outline: Outline
 Add Layer from Resource: Add Layer from Resource
 Add Sketch Layer: ''
 Inspector: Inspector
-Unsupported field type: Unsupported field type
+Unsupported custom field: Unsupported custom field
 ID: ID
 Geometry: Geometry
 Properties: Properties
@@ -285,6 +285,7 @@ aria-label-Go-to-the-home-position: Go to the home position
 aria-label-zoom-out: zoom out
 Spacing settings: Spacing settings
 Block: Block
+Unsupported field type: Unsupported field type
 New Camera: New Camera
 New Camera Button: New Camera Button
 Buttons List: Buttons List
