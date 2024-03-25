@@ -39,8 +39,8 @@ export default ({
   );
 
   useEffect(() => {
-    if (!isEqual(propertyListField?.value, currentPropertyList)) {
-      setCurrentPropertyList(propertyListField?.value ?? []);
+    if (propertyListField?.value && !isEqual(propertyListField.value, currentPropertyList)) {
+      setCurrentPropertyList(propertyListField?.value);
     }
   }, [propertyListField?.value, currentPropertyList]);
 
@@ -72,6 +72,7 @@ export default ({
       setCurrentPropertyList(list => {
         const newList = list || [];
         newList[idx].key = newValue ?? "";
+        console.log("new: 2", newList);
         return newList;
       }),
     [],
@@ -82,6 +83,7 @@ export default ({
       setCurrentPropertyList(list => {
         const newList = [...(list ?? [])];
         newList[idx].value = newValue ?? "";
+        console.log("new: 1", newList);
         return newList;
       }),
     [],
