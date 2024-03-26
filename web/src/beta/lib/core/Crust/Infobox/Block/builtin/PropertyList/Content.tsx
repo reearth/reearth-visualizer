@@ -1,5 +1,4 @@
-import { memo, useContext, useMemo } from "react";
-import JsonView from "react18-json-view";
+import { memo, useContext } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
@@ -11,8 +10,8 @@ import { styled } from "@reearth/services/theme";
 import { InfoboxBlock } from "../../../types";
 
 import CustomFields from "./CustomFields";
+import DefaultFields from "./DefaultFields";
 import ListEditor, { DisplayTypeField, PropertyListField } from "./ListEditor";
-import ListItem from "./ListItem";
 
 type Props = {
   block?: InfoboxBlock;
@@ -48,7 +47,8 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
   const propertyListField: PropertyListField =
     displayTypeField?.value === "custom" && block?.property?.default?.propertyList;
 
-  const properties = useMemo(() => {
+  // properties needs to be re-rendered each time to have correct values from the viz ref
+  const properties = () => {
     if (displayTypeField.value === "custom") {
       return propertyListField.value;
     } else if (displayTypeField.value === "rootOnly") {
@@ -56,34 +56,19 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
     } else {
       return filterChildObjectsToEnd(visualizer.current?.layers.selectedFeature()?.properties);
     }
-  }, [displayTypeField.value, propertyListField.value, visualizer]);
+  };
 
   return (
     <Wrapper>
       {!context?.editMode ? (
         displayTypeField.value === "custom" ? (
           properties ? (
-            <CustomFields properties={properties} extensionId={block?.extensionId} />
+            <CustomFields properties={properties()} extensionId={block?.extensionId} />
           ) : (
             <Template icon={block?.extensionId} height={120} />
           )
         ) : (
-          properties?.map((field, idx) => {
-            const [key, value]: [string, any] = Object.entries(field)[0];
-            if (value && typeof value === "object") {
-              return (
-                <ObjectWrapper key={key}>
-                  <JsonView
-                    src={value}
-                    theme="a11y"
-                    collapsed={!!isEditable}
-                    style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
-                  />
-                </ObjectWrapper>
-              );
-            }
-            return <ListItem key={idx} index={idx} keyValue={key} value={value} />;
-          })
+          <DefaultFields properties={properties()} isEditable={isEditable} />
         )
       ) : (
         <Template icon={block?.extensionId} height={120} />
@@ -104,10 +89,6 @@ export default memo(Content);
 
 const Wrapper = styled.div`
   width: 100%;
-`;
-
-const ObjectWrapper = styled.div`
-  margin-top: 8px;
 `;
 
 function filterChildObjectsToEnd(inputObject?: any): any[] {
