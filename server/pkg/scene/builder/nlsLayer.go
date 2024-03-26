@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/pkg/nlslayer"
-	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/samber/lo"
 )
 
 type nlsLayerJSON struct {
@@ -20,9 +20,17 @@ type nlsLayerJSON struct {
 type configJSON map[string]any
 
 type nlsInfoboxJSON struct {
-	ID       string       `json:"id"`
-	Property propertyJSON `json:"property"`
-	Blocks   []*blockJSON `json:"blocks"`
+	ID       string                `json:"id"`
+	Property propertyJSON          `json:"property"`
+	Blocks   []nlsInfoboxBlockJSON `json:"blocks"`
+}
+
+type nlsInfoboxBlockJSON struct {
+	ID          string                  `json:"id"`
+	Property    propertyJSON            `json:"property"`
+	Plugins     map[string]propertyJSON `json:"plugins"`
+	ExtensionId string                  `json:"extensionId"`
+	PluginId    string                  `json:"pluginId"`
 }
 
 func (b *Builder) nlsLayersJSON(ctx context.Context) ([]*nlsLayerJSON, error) {
@@ -77,29 +85,21 @@ func (b *Builder) nlsInfoboxJSON(ctx context.Context, infobox *nlslayer.Infobox)
 
 	p, _ := b.ploader(ctx, infobox.Property())
 
-	var blocks []*blockJSON
-	for _, block := range infobox.Blocks() {
-		if block == nil {
-			continue
-		}
-		blockJSON := b.infoboxBlockJSON(ctx, block, p)
-		if blockJSON != nil {
-			blocks = append(blocks, blockJSON)
-		}
-	}
-
 	return &nlsInfoboxJSON{
 		ID:       infobox.Id().String(),
 		Property: b.property(ctx, findProperty(p, infobox.Property())),
-		Blocks:   blocks,
+		Blocks: lo.FilterMap(infobox.Blocks(), func(block *nlslayer.InfoboxBlock, _ int) (nlsInfoboxBlockJSON, bool) {
+			if block == nil {
+				return nlsInfoboxBlockJSON{}, false
+			}
+			return b.nlsInfoboxBlockJSON(ctx, *block), true
+		}),
 	}
 }
 
-func (b *Builder) infoboxBlockJSON(ctx context.Context, block *nlslayer.InfoboxBlock, p []*property.Property) *blockJSON {
-	if block == nil {
-		return nil
-	}
-	return &blockJSON{
+func (b *Builder) nlsInfoboxBlockJSON(ctx context.Context, block nlslayer.InfoboxBlock) nlsInfoboxBlockJSON {
+	p, _ := b.ploader(ctx, block.Property())
+	return nlsInfoboxBlockJSON{
 		ID:          block.ID().String(),
 		Property:    b.property(ctx, findProperty(p, block.Property())),
 		Plugins:     nil,
