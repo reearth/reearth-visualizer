@@ -11,7 +11,7 @@ import {
   useGet,
 } from "@reearth/beta/lib/core/Map";
 
-import type { Block } from "../../Infobox";
+import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
 import type { Widget, WidgetLocationOptions } from "../../Widgets";
 import { exposed } from "../api";

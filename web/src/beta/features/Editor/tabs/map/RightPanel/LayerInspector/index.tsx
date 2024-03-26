@@ -9,6 +9,7 @@ import { SelectedLayer } from "@reearth/services/state";
 import { LayerConfigUpdateProps } from "../../../../useLayers";
 
 import FeatureData from "./FeatureData";
+import Infobox from "./infobox";
 import LayerData from "./LayerData";
 import LayerTab from "./LayerStyle";
 
@@ -65,7 +66,7 @@ const InspectorTabs: React.FC<Props> = ({
         id: "featureData",
         name: t("Feature"),
         component: selectedFeature && <FeatureData selectedFeature={selectedFeature} />,
-        icon: "location",
+        icon: "marker",
       },
       {
         id: "layerStyleSelector",
@@ -81,13 +82,13 @@ const InspectorTabs: React.FC<Props> = ({
         ),
         icon: "layerStyle",
       },
-      // TODO: new beta infobox implementation
-      // {
-      //   id: "infobox",
-      //   name: t("Infobox"),
-      //   component: <div>TODO</div>,
-      //   icon: "infobox",
-      // },
+      {
+        id: "infobox",
+        component: selectedLayer && (
+          <Infobox selectedLayerId={selectedLayer.id} infobox={selectedLayer.infobox} />
+        ),
+        icon: "infobox",
+      },
     ],
     [sceneId, selectedLayer, selectedFeature, layerStyles, layers, t, onLayerConfigUpdate],
   );

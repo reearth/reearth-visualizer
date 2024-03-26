@@ -115,6 +115,8 @@ Properties: Properties
 Data: Data
 Feature: Feature
 Styling: Styling
+Enable Infobox: Enable Infobox
+Show infobox when the user clicks on a layer: Show infobox when the user clicks on a layer
 Format: Format
 Save: Save
 Published: Published
@@ -274,8 +276,7 @@ Panel Position: Panel Position
 Background Color: Background Color
 Something went wrong.: Something went wrong.
 Couldn't find the Re:Earth project you were after.: Couldn't find the Re:Earth project you were after.
-Double click here to write.: Double click here to write.
-Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
+New Field: New Field
 aria-label-compass: compass
 aria-label-adjust-angle: adjust angle
 aria-label-zoom-in: zoom in
@@ -455,7 +456,7 @@ You are deleting the infobox and all its contents. Are you sure you want to do t
   You are deleting the infobox and all its contents. Are you sure you want to do
   that?
 List: List
-Padding: ''
+Padding: Padding
 Gap Spacing: Gap Spacing
 Align Center: ''
 Enable Editor Mode: Enable Editor Mode
@@ -519,6 +520,8 @@ This is your personal workspace. Your projects and resources will be managed in 
   This is your personal workspace. Your projects and resources will be managed
   in this workspace.
 All workspaces: All workspaces
+Double click here to write.: Double click here to write.
+Move mouse here and click "+" to add content: Move mouse here and click "+" to add content
 Your account has been successfully verified! Feel free to login now.: Your account has been successfully verified! Feel free to login now.
 Could not verify your signup. Please start the process over.: Could not verify your signup. Please start the process over.
 Failed to add one or more assets.: Failed to add one or more assets.

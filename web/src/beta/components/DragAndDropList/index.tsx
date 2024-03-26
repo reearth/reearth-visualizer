@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useDragDropManager } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";

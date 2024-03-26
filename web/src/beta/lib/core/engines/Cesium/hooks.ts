@@ -475,7 +475,7 @@ export default ({
                 content: getEntityContent(
                   entity,
                   cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
-                  tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                  tag?.layerId ? layer?.infobox?.property?.defaultContent : undefined,
                 ),
               },
             }
@@ -597,7 +597,7 @@ export default ({
                   content: getEntityContent(
                     target.id,
                     viewer.clock.currentTime ?? new JulianDate(),
-                    tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                    tag?.layerId ? layer?.infobox?.property?.defaultContent : undefined,
                   ),
                 },
               }
@@ -709,7 +709,7 @@ export default ({
               const content = getEntityContent(
                 f.data.feature ?? f,
                 viewer.clock.currentTime ?? new JulianDate(),
-                tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                tag?.layerId ? layer?.infobox?.property?.defaultContent : undefined,
               );
               onLayerSelect?.(
                 f.data.layerId,

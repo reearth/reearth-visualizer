@@ -105,7 +105,7 @@ Unknown scene setting: 不明なシーン設定
 Scene: シーン
 Outline: アウトライン
 Add Layer from Resource: リソースからレイヤーを追加
-Add Sketch Layer: ''
+Add Sketch Layer: スケッチレイヤーを追加
 Inspector: インスペクター
 ID: ID
 Geometry: ジオメトリ
@@ -113,6 +113,8 @@ Properties: プロパティ
 Data: データ
 Feature: フィーチャー
 Styling: スタイリング
+Enable Infobox: インフォボックスを有効化
+Show infobox when the user clicks on a layer: フェーチャーをクリックした際にインフォボックスを表示
 Format: フォーマット
 Save: 保存
 Published: 一般公開
@@ -253,8 +255,7 @@ Panel Position: パネルポジション
 Background Color: 背景色
 Something went wrong.: 失敗しました。
 Couldn't find the Re:Earth project you were after.: そのRe:Earthプロジェクトは見つかりませんでした。
-Double click here to write.: ダブルクリックで入力
-Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
+New Field: 新しいフィールド
 aria-label-compass: コンパス
 aria-label-adjust-angle: 角度を調節する
 aria-label-zoom-in: ズームイン
@@ -476,6 +477,8 @@ Workspace name: ワークスペース名
 No Title Workspace: 無題のワークスペース
 This is your personal workspace. Your projects and resources will be managed in this workspace.: ここは個人用のワークスペースです。
 All workspaces: すべてのワークスペース
+Double click here to write.: ダブルクリックで入力
+Move mouse here and click "+" to add content: マウスをここへ、“+”をクリックしコンテンツを追加
 Your account has been successfully verified! Feel free to login now.: メールアドレスが認証されました。ログインが可能です。
 Could not verify your signup. Please start the process over.: メールアドレスが認証できませんでした。もう一度最初からやり直してください。
 Failed to add one or more assets.: アセットの作成に失敗しました。

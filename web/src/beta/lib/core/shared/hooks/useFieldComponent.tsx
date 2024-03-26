@@ -2,8 +2,10 @@ import { useCallback } from "react";
 
 import CameraField from "@reearth/beta/components/fields/CameraField";
 import ColorField from "@reearth/beta/components/fields/ColorField";
+import DateTimeField from "@reearth/beta/components/fields/DateTimeField";
 import LocationField from "@reearth/beta/components/fields/LocationField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
+import RangeField from "@reearth/beta/components/fields/RangeField";
 import SelectField from "@reearth/beta/components/fields/SelectField";
 import SliderField from "@reearth/beta/components/fields/SliderField";
 import SpacingInput from "@reearth/beta/components/fields/SpacingInput";
@@ -121,7 +123,14 @@ export const FieldComponent = ({
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : field?.type === "string" ? (
-    field?.ui === "color" ? (
+    field?.ui === "datetime" ? (
+      <DateTimeField
+        name={field?.title}
+        description={field?.description}
+        value={field?.value}
+        onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+      />
+    ) : field?.ui === "color" ? (
       <ColorField
         name={field?.title}
         description={field?.description}
@@ -154,6 +163,16 @@ export const FieldComponent = ({
       name={field?.title}
       value={field?.value}
       description={field?.description}
+      onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
+    />
+  ) : field?.type === "array" && field?.ui === "range" ? (
+    <RangeField
+      name={field?.title}
+      value={field?.value}
+      description={field?.description}
+      min={field?.min}
+      max={field?.max}
+      defaultValue={field?.defaultValue}
       onChange={handlePropertyValueUpdate(groupId, propertyId, fieldId, field?.type)}
     />
   ) : (

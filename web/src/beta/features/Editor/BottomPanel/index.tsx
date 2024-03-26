@@ -32,6 +32,7 @@ const Wrapper = styled.div`
   height: 100%;
   border-left: 1px solid ${({ theme }) => theme.outline.weakest};
   border-right: 1px solid ${({ theme }) => theme.outline.weakest};
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const TitleWrapper = styled.div`

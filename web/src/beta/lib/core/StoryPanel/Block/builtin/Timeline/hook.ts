@@ -12,7 +12,6 @@ import {
   TickEventCallback,
   TimelineCommitter,
 } from "@reearth/beta/lib/core/Map/useTimelineManager";
-import { Range } from "@reearth/beta/lib/core/StoryPanel/Block/types";
 import {
   calculatePaddingValue,
   convertPositionToTime,
@@ -27,6 +26,12 @@ import { getNewDate } from "../../../../shared/hooks/useTimelineBlock";
 import { PaddingProp } from "./Editor";
 
 import { TimelineValues } from ".";
+
+export type Range = {
+  start: number;
+  mid: number;
+  end: number;
+};
 
 type TimelineProps = {
   currentTime: number;

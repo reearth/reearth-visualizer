@@ -1,14 +1,7 @@
-import {
-  memo,
-  forwardRef,
-  CSSProperties,
-  type ReactNode,
-  type Ref,
-  type PropsWithChildren,
-  useMemo,
-} from "react";
+import { memo, forwardRef, CSSProperties, type Ref, type PropsWithChildren, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
 import Crust, {
@@ -22,10 +15,9 @@ import Crust, {
   BuiltinWidgets,
   InteractionModeType,
 } from "../Crust";
+import { InstallableInfoboxBlock } from "../Crust/Infobox";
 import { ComputedFeature, Tag } from "../mantle";
 import Map, {
-  type ValueTypes,
-  type ValueType,
   type SceneProperty,
   type Layer,
   type LayerSelectionReason,
@@ -70,6 +62,7 @@ export type Props = {
   floatingWidgets?: InternalWidget[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
+  installableInfoboxBlocks?: InstallableInfoboxBlock[];
   clusters?: Cluster[]; // TODO: remove completely from beta core
   camera?: Camera;
   storyPanelPosition?: Position;
@@ -79,7 +72,6 @@ export type Props = {
   small?: boolean;
   ready?: boolean;
   tags?: Tag[]; // TODO: remove completely from beta core
-  selectedBlockId?: string;
   useExperimentalSandbox?: boolean;
   selectedWidgetArea?: WidgetAreaType;
   hiddenLayers?: string[];
@@ -102,24 +94,38 @@ export type Props = {
   ) => void;
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
-  onInfoboxMaskClick?: () => void;
-  onBlockSelect?: (id?: string) => void;
-  onBlockChange?: <T extends ValueType>(
-    blockId: string,
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-  ) => void;
-  onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
-  onBlockDelete?: (id: string) => void;
-  onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
+  onInfoboxBlockCreate?: (
+    pluginId: string,
+    extensionId: string,
+    index?: number | undefined,
+  ) => Promise<void>;
+  onInfoboxBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onInfoboxBlockDelete?: (id?: string) => Promise<void>;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
   onZoomToLayer?: (layerId: string | undefined) => void;
   onMount?: () => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   onInteractionModeChange?: (mode: InteractionModeType) => void;
-  renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
 } & ExternalPluginProps;
 
 const Visualizer = memo(
@@ -133,6 +139,7 @@ const Visualizer = memo(
         inEditor,
         sceneProperty,
         layers,
+        installableInfoboxBlocks,
         clusters,
         widgetAlignSystem,
         widgetAlignSystemEditing,
@@ -142,7 +149,6 @@ const Visualizer = memo(
         small,
         ready,
         tags,
-        selectedBlockId,
         selectedWidgetArea,
         hiddenLayers,
         camera: initialCamera,
@@ -161,18 +167,18 @@ const Visualizer = memo(
         onWidgetLayoutUpdate,
         onWidgetAlignmentUpdate,
         onWidgetAreaSelect,
-        onInfoboxMaskClick,
-        onBlockSelect,
-        onBlockChange,
-        onBlockMove,
-        onBlockDelete,
-        onBlockInsert,
+        onInfoboxBlockCreate,
+        onInfoboxBlockMove,
+        onInfoboxBlockDelete,
+        onPropertyUpdate,
+        onPropertyItemAdd,
+        onPropertyItemMove,
+        onPropertyItemDelete,
         onZoomToLayer,
         onInteractionModeChange,
         onMount,
         onSketchTypeChange: onSketchTypeChangeProp,
         onSketchFeatureCreate,
-        renderInfoboxInsertionPopup,
       },
       ref: Ref<MapRef | null>,
     ) => {
@@ -180,7 +186,6 @@ const Visualizer = memo(
         mapRef,
         wrapperRef,
         selectedLayer,
-        selectedBlock,
         selectedFeature,
         selectedComputedFeature,
         viewport,
@@ -190,23 +195,21 @@ const Visualizer = memo(
         isMobile,
         overriddenSceneProperty,
         isDroppable,
-        isLayerDragging,
         infobox,
+        isLayerDragging,
         shouldRender,
         timelineManagerRef,
+        overrideSceneProperty,
         cursor,
         cameraForceHorizontalRoll,
         handleCameraForceHorizontalRollChange,
         handleLayerSelect,
-        handleBlockSelect,
-        handleCameraChange,
-        handleInteractionModeChange,
         handleLayerDrag,
         handleLayerDrop,
-        overrideSceneProperty,
         handleLayerEdit,
         onLayerEdit,
-        handleInfoboxClose,
+        handleCameraChange,
+        handleInteractionModeChange,
         onPluginSketchFeatureCreated,
         handlePluginSketchFeatureCreated,
         onSketchTypeChange,
@@ -226,13 +229,12 @@ const Visualizer = memo(
           rootLayerId,
           isEditable,
           camera: initialCamera,
+          layers,
           interactionMode: initialInteractionMode,
-          selectedBlockId,
           sceneProperty,
           zoomedLayerId,
           ownBuiltinWidgets,
           onLayerSelect,
-          onBlockSelect,
           onCameraChange,
           onZoomToLayer,
           onLayerDrop,
@@ -259,11 +261,12 @@ const Visualizer = memo(
                   tags={tags}
                   viewport={viewport}
                   isBuilt={isBuilt}
-                  isEditable={isEditable && infobox?.isEditable}
+                  isEditable={isEditable}
                   inEditor={inEditor}
                   sceneProperty={overriddenSceneProperty}
                   overrideSceneProperty={overrideSceneProperty}
-                  blocks={infobox?.blocks}
+                  infobox={infobox}
+                  installableInfoboxBlocks={installableInfoboxBlocks}
                   camera={camera}
                   interactionMode={interactionMode}
                   overrideInteractionMode={handleInteractionModeChange}
@@ -273,10 +276,6 @@ const Visualizer = memo(
                   selectedFeature={selectedFeature}
                   selectedComputedFeature={selectedComputedFeature}
                   selectedReason={selectedLayer.reason}
-                  infoboxProperty={infobox?.property}
-                  infoboxTitle={infobox?.title}
-                  infoboxVisible={!!infobox}
-                  selectedBlockId={selectedBlock}
                   selectedLayerId={selectedLayerIdForCrust}
                   widgetAlignSystem={widgetAlignSystem}
                   widgetAlignSystemEditing={widgetAlignSystemEditing}
@@ -289,14 +288,13 @@ const Visualizer = memo(
                   onWidgetLayoutUpdate={onWidgetLayoutUpdate}
                   onWidgetAlignmentUpdate={onWidgetAlignmentUpdate}
                   onWidgetAreaSelect={onWidgetAreaSelect}
-                  onInfoboxMaskClick={onInfoboxMaskClick}
-                  onInfoboxClose={handleInfoboxClose}
-                  onBlockSelect={handleBlockSelect}
-                  onBlockChange={onBlockChange}
-                  onBlockMove={onBlockMove}
-                  onBlockDelete={onBlockDelete}
-                  onBlockInsert={onBlockInsert}
-                  renderInfoboxInsertionPopup={renderInfoboxInsertionPopup}
+                  onInfoboxBlockCreate={onInfoboxBlockCreate}
+                  onInfoboxBlockMove={onInfoboxBlockMove}
+                  onInfoboxBlockDelete={onInfoboxBlockDelete}
+                  onPropertyUpdate={onPropertyUpdate}
+                  onPropertyItemAdd={onPropertyItemAdd}
+                  onPropertyItemMove={onPropertyItemMove}
+                  onPropertyItemDelete={onPropertyItemDelete}
                   onLayerEdit={onLayerEdit}
                   onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
                   onSketchTypeChange={onSketchTypeChange}

@@ -46,7 +46,7 @@ const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange, menuAlignm
             <Text size="body">{selectedTabItem.name}</Text>
           </Header>
         )}
-        {selectedTabItem ? selectedTabItem.component : null}
+        <Content>{selectedTabItem ? selectedTabItem.component : null}</Content>
       </MainArea>
     </Wrapper>
   );
@@ -60,14 +60,14 @@ const Wrapper = styled.div<{ menuAlignment?: menuAlignment }>`
   flex-flow: column nowrap;
   position: relative;
   background: ${({ theme }) => theme.bg[1]};
-  border-radius: 4px;
+  height: 100%;
 `;
 
 const Tabs = styled.div<{ menuAlignment?: menuAlignment }>`
-  padding-top: 4px;
-  background: ${({ theme }) => theme.bg[0]};
   display: flex;
   flex-flow: ${({ menuAlignment }) => (menuAlignment === "top" ? "row" : "column")} nowrap;
+  padding-top: 4px;
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const TabIconWrapper = styled.div<{ selected: boolean; menuAlignment?: menuAlignment }>`
@@ -87,12 +87,14 @@ const TabHeader = styled(Text)`
 `;
 
 const Header = styled.div`
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  padding: 12px;
   border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
 `;
 
 const MainArea = styled.div`
   display: block;
+`;
+
+const Content = styled.div`
   padding: 12px;
 `;
