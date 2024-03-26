@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo, type MutableRefObject } from "react";
 
-import type { Block } from "../Infobox";
+import type { InfoboxBlock as Block } from "../Infobox/types";
 import type { WidgetAlignSystem } from "../Widgets";
 import type { InternalWidget, WidgetSection, WidgetZone } from "../Widgets/WidgetAlignSystem";
 

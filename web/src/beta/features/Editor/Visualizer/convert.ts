@@ -33,6 +33,8 @@ import {
   NlsLayerCommonFragment,
 } from "@reearth/services/gql";
 
+import convertInfobox from "./convert-infobox";
+
 export type P = { [key in string]: any };
 
 export type DatasetMap = Record<string, Datasets>;
@@ -344,7 +346,10 @@ export type RawNLSLayer = NlsLayerCommonFragment & {
 export function processLayers(
   newLayers?: NLSLayer[],
   layerStyles?: LayerStyle[],
-  _parent?: RawNLSLayer | null | undefined,
+  parent?: RawNLSLayer | null | undefined,
+  infoboxBlockNames?: {
+    [key: string]: string;
+  },
 ): Layer[] | undefined {
   const getLayerStyleValue = (id?: string) => {
     const layerStyleValue: Partial<LayerAppearanceTypes> = layerStyles?.find(
@@ -368,8 +373,7 @@ export function processLayers(
       id: nlsLayer.id,
       title: nlsLayer.title,
       visible: nlsLayer.visible,
-      infobox: undefined,
-      // infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
+      infobox: convertInfobox(nlsLayer.infobox, parent?.infobox, infoboxBlockNames),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
@@ -378,21 +382,3 @@ export function processLayers(
     };
   });
 }
-
-// const processInfobox = (
-//   orig: EarthLayerFragment["infobox"] | null | undefined,
-//   parent: EarthLayerFragment["infobox"] | null | undefined,
-// ): Layer["infobox"] => {
-//   const used = orig || parent;
-//   if (!used) return;
-//   return {
-//     property: processProperty(parent?.property, orig?.property),
-//     blocks: used.fields.map<Block>(f => ({
-//       id: f.id,
-//       pluginId: f.pluginId,
-//       extensionId: f.extensionId,
-//       property: processProperty(undefined, f.property),
-//       propertyId: f.propertyId, // required by onBlockChange
-//     })),
-//   };
-// };
