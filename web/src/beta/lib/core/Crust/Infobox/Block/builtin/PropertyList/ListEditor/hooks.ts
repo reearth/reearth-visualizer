@@ -71,7 +71,7 @@ export default ({
 
   const handleKeyChange = useCallback(
     (idx: number) => (newKeyValue?: string) => {
-      const newList = [...currentPropertyList];
+      const newList = currentPropertyList.map(i => ({ ...i } as ListItem));
       newList[idx].key = newKeyValue ?? "";
       setCurrentPropertyList(newList);
       handlePropertyListUpdate(newList);
@@ -79,12 +79,15 @@ export default ({
     [currentPropertyList, handlePropertyListUpdate],
   );
 
-  const handleValueChange = (idx: number) => (newValue?: string) => {
-    const newList = [...currentPropertyList];
-    newList[idx].value = newValue ?? "";
-    setCurrentPropertyList(newList);
-    handlePropertyListUpdate(newList);
-  };
+  const handleValueChange = useCallback(
+    (idx: number) => (newValue?: string) => {
+      const newList = currentPropertyList.map(i => ({ ...i } as ListItem));
+      newList[idx].value = newValue ?? "";
+      setCurrentPropertyList(newList);
+      handlePropertyListUpdate(newList);
+    },
+    [currentPropertyList, handlePropertyListUpdate],
+  );
 
   const handleDisplayTypeUpdate = useCallback(
     (value?: string) => handlePropertyValueUpdate("displayType", "string")(value),
