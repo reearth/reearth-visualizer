@@ -93,8 +93,8 @@ const ListEditor: React.FC<Props> = ({
                   <EditorItem
                     key={item.id}
                     item={item}
-                    onChangeKey={handleKeyChange(idx)}
-                    onChangeValue={handleValueChange(idx)}
+                    onKeyChange={handleKeyChange(idx)}
+                    onValueChange={handleValueChange(idx)}
                     onItemRemove={() => handlePropertyValueRemove(idx)}
                   />
                 );

@@ -1,3 +1,5 @@
+import { useCallback, useState } from "react";
+
 import TextField from "@reearth/beta/components/fields/TextField";
 import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
@@ -6,21 +8,42 @@ import { PropertyListItem } from ".";
 
 type Props = {
   item: PropertyListItem;
-  onChangeKey: (newValue?: string) => void;
-  onChangeValue: (newValue?: string) => void;
+  onKeyChange: (newValue?: string) => void;
+  onValueChange: (newValue?: string) => void;
   onItemRemove: () => void;
 };
 
-const EditorItem: React.FC<Props> = ({ item, onChangeKey, onChangeValue, onItemRemove }) => (
-  <Field>
-    <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-      <HandleIcon icon="dndHandle" />
-      <StyledTextField value={item.key} onChange={onChangeKey} />
-    </div>
-    <StyledTextField value={item.value} onChange={onChangeValue} />
-    <StyledIcon icon="trash" onClick={onItemRemove} />
-  </Field>
-);
+const EditorItem: React.FC<Props> = ({ item, onKeyChange, onValueChange, onItemRemove }) => {
+  const [currentKeyValue, setCurrentKeyValue] = useState<string>(item.key);
+  const [currentValue, setCurrentValue] = useState<string>(item.value);
+
+  const handleKeyChange = useCallback(
+    (newValue: string) => {
+      setCurrentKeyValue(newValue);
+      onKeyChange(newValue);
+    },
+    [onKeyChange],
+  );
+
+  const handleValueChange = useCallback(
+    (newValue: string) => {
+      setCurrentValue(newValue);
+      onValueChange(newValue);
+    },
+    [onValueChange],
+  );
+
+  return (
+    <Field>
+      <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+        <HandleIcon icon="dndHandle" />
+        <StyledTextField value={currentKeyValue} onChange={handleKeyChange} />
+      </div>
+      <StyledTextField value={currentValue} onChange={handleValueChange} />
+      <StyledIcon icon="trash" onClick={onItemRemove} />
+    </Field>
+  );
+};
 
 export default EditorItem;
 
