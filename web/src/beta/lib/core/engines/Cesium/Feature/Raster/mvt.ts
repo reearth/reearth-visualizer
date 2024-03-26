@@ -17,9 +17,6 @@ export const useMVT = ({
   const { type, url, layers } = useData(layer);
 
   const currentLayer = extractSimpleLayer(layer) || undefined;
-
-  console.log("property: ", property);
-
   const imageryProvider = useMemo(() => {
     if (!isVisible || !show || !url || !layers || type !== "mvt") return;
     return new MVTImageryProvider({
