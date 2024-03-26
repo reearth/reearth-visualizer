@@ -62,9 +62,16 @@ export type NLSLayer = {
   };
   isSketch?: boolean;
   sketch?: any;
+  nlsInfobox?: any;
 };
 
-export type Block = {
+export type NLSInfobox = {
+  id: string;
+  blocks: NLSInfoboxBlock[];
+  property: any;
+};
+
+export type NLSInfoboxBlock = {
   id: string;
   pluginId: string;
   extensionId: string;

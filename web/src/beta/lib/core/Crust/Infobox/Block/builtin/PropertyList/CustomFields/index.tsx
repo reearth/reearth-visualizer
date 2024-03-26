@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-
 import Template from "@reearth/beta/lib/core/StoryPanel/Block/Template";
 
 import { PropertyListItem } from "../ListEditor";
@@ -16,13 +14,13 @@ const CustomFields: React.FC<Props> = ({ extensionId, properties }) => {
   const evaluatedProperties = useEvaluateProperties(properties);
 
   return (
-    <Fragment>
+    <>
       {evaluatedProperties && evaluatedProperties.length > 0 ? (
         evaluatedProperties.map(ep => <ListItem key={ep.id} keyValue={ep.key} value={ep.value} />)
       ) : (
         <Template icon={extensionId} height={120} />
       )}
-    </Fragment>
+    </>
   );
 };
 

@@ -236,7 +236,6 @@ export default function useHooks({
             : pluginSketchLayerFeatureAdd(selectedLayer, feature);
 
         if (layerId && featureId) {
-          console.log("callled");
           requestAnimationFrame(() => {
             onLayerSelect?.(
               layerId,
