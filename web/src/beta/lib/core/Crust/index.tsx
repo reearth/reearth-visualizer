@@ -1,6 +1,7 @@
-import { type ReactNode, type RefObject } from "react";
+import { useMemo, type RefObject } from "react";
 
 import type { SelectedFeatureInfo, Tag } from "@reearth/beta/lib/core/mantle";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 
 import type { ComputedFeature, ComputedLayer, Feature } from "../mantle";
 import type {
@@ -18,17 +19,11 @@ import type { Viewport } from "../Visualizer";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
-import Infobox, { Block, InfoboxProperty } from "./Infobox";
+import Infobox, { InstallableInfoboxBlock } from "./Infobox";
+import { Infobox as InfoboxType } from "./Infobox/types";
 import Plugins, { type ExternalPluginProps, ModalContainer, PopupContainer } from "./Plugins";
 import { usePublishTheme } from "./theme";
-import type {
-  ValueTypes,
-  ValueType,
-  MapRef,
-  SceneProperty,
-  Camera,
-  InteractionModeType,
-} from "./types";
+import type { MapRef, SceneProperty, Camera, InteractionModeType } from "./types";
 import Widgets, {
   type WidgetAlignSystem as WidgetAlignSystemType,
   type Alignment,
@@ -40,7 +35,7 @@ import Widgets, {
 
 export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 
-export type { Block } from "./Infobox";
+export type { InfoboxBlock as Block } from "./Infobox/types";
 
 export type { ExternalPluginProps } from "./Plugins";
 export { INTERACTION_MODES } from "./interactionMode";
@@ -90,14 +85,10 @@ export type Props = {
   widgetAlignSystemEditing?: boolean;
   widgetLayoutConstraint?: { [w: string]: WidgetLayoutConstraint };
   floatingWidgets?: InternalWidget[];
-  // infobox
-  infoboxProperty?: InfoboxProperty;
-  blocks?: Block[];
-  infoboxTitle?: string;
-  selectedBlockId?: string;
-  showInfoboxTitle?: boolean;
   selectedWidgetArea?: WidgetAreaType;
-  infoboxVisible?: boolean;
+  // infobox
+  infobox?: InfoboxType;
+  installableInfoboxBlocks?: InstallableInfoboxBlock[];
   // plugin
   externalPlugin: ExternalPluginProps;
   useExperimentalSandbox?: boolean;
@@ -115,20 +106,33 @@ export type Props = {
   onWidgetAlignmentUpdate?: (location: Location, align: Alignment) => void;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // infobox events
-  onInfoboxMaskClick?: () => void;
-  onInfoboxClose?: () => void;
-  onBlockSelect?: (id?: string) => void;
-  onBlockChange?: <T extends ValueType>(
-    blockId: string,
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-  ) => void;
-  onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
-  onBlockDelete?: (id: string) => void;
-  onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
-  renderInfoboxInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
+  onInfoboxBlockCreate?: (
+    pluginId: string,
+    extensionId: string,
+    index?: number | undefined,
+  ) => Promise<void>;
+  onInfoboxBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onInfoboxBlockDelete?: (id?: string) => Promise<void>;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
   overrideSceneProperty: (pluginId: string, property: SceneProperty) => void;
   onLayerEdit: (cb: (e: LayerEditEvent) => void) => void;
   onLayerSelectWithRectStart: (cb: (e: LayerSelectWithRectStart) => void) => void;
@@ -162,11 +166,8 @@ export default function Crust({
   widgetAlignSystemEditing,
   widgetLayoutConstraint,
   floatingWidgets,
-  blocks,
-  infoboxProperty,
-  infoboxTitle,
-  infoboxVisible,
-  selectedBlockId,
+  infobox,
+  installableInfoboxBlocks,
   selectedWidgetArea,
   externalPlugin,
   useExperimentalSandbox,
@@ -175,14 +176,13 @@ export default function Crust({
   onWidgetLayoutUpdate,
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
-  onInfoboxMaskClick,
-  onInfoboxClose,
-  onBlockSelect,
-  onBlockChange,
-  onBlockMove,
-  onBlockDelete,
-  onBlockInsert,
-  renderInfoboxInsertionPopup,
+  onInfoboxBlockCreate,
+  onInfoboxBlockMove,
+  onInfoboxBlockDelete,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
   overrideSceneProperty,
   onLayerEdit,
   onLayerSelectWithRectStart,
@@ -195,13 +195,13 @@ export default function Crust({
   onCameraForceHorizontalRollChange,
 }: Props): JSX.Element | null {
   const {
-    renderBlock,
-    renderWidget,
     shownPluginModalInfo,
     shownPluginPopupInfo,
-    onPluginModalShow,
     pluginModalContainerRef,
     pluginPopupContainerRef,
+    renderWidget,
+    renderBlock,
+    onPluginModalShow,
   } = useHooks({ mapRef, ...externalPlugin });
   const theme = usePublishTheme(sceneProperty?.theme);
   const widgetContext = useWidgetContext({
@@ -211,6 +211,16 @@ export default function Crust({
     selectedLayerId,
     timelineManagerRef,
   });
+  const featuredInfobox = useMemo(
+    () =>
+      selectedLayerId?.featureId && infobox
+        ? {
+            ...infobox,
+            featureId: selectedLayerId.featureId,
+          }
+        : undefined,
+    [infobox, selectedLayerId?.featureId],
+  );
 
   return (
     <Plugins
@@ -229,23 +239,23 @@ export default function Crust({
       floatingWidgets={floatingWidgets}
       camera={camera}
       interactionMode={interactionMode}
-      overrideInteractionMode={overrideInteractionMode}
-      useExperimentalSandbox={useExperimentalSandbox}
-      overrideSceneProperty={overrideSceneProperty}
       timelineManagerRef={timelineManagerRef}
+      useExperimentalSandbox={useExperimentalSandbox}
+      overrideInteractionMode={overrideInteractionMode}
+      overrideSceneProperty={overrideSceneProperty}
       onLayerEdit={onLayerEdit}
       onLayerSelectWithRectStart={onLayerSelectWithRectStart}
       onLayerSelectWithRectMove={onLayerSelectWithRectMove}
       onLayerSelectWithRectEnd={onLayerSelectWithRectEnd}
       onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
-      onSketchTypeChange={onSketchTypeChange}
       onLayerVisibility={onLayerVisibility}
       onLayerLoad={onLayerLoad}
+      onSketchTypeChange={onSketchTypeChange}
       onCameraForceHorizontalRollChange={onCameraForceHorizontalRollChange}>
       <ModalContainer
+        ref={pluginModalContainerRef}
         shownPluginModalInfo={shownPluginModalInfo}
         onPluginModalShow={onPluginModalShow}
-        ref={pluginModalContainerRef}
       />
       <PopupContainer shownPluginPopupInfo={shownPluginPopupInfo} ref={pluginPopupContainerRef} />
       <Widgets
@@ -266,25 +276,17 @@ export default function Crust({
         renderWidget={renderWidget}
       />
       <Infobox
-        isBuilt={isBuilt}
-        isEditable={isEditable}
-        blocks={blocks}
-        infoboxKey={selectedLayerId?.layerId}
-        property={infoboxProperty}
-        title={infoboxTitle}
-        visible={infoboxVisible}
-        selectedBlockId={selectedBlockId}
-        theme={theme}
-        layer={selectedComputedLayer?.layer}
-        onMaskClick={onInfoboxMaskClick}
-        onBlockSelect={onBlockSelect}
-        onBlockChange={onBlockChange}
-        onBlockDelete={onBlockDelete}
-        onBlockMove={onBlockMove}
-        onBlockInsert={onBlockInsert}
+        infobox={featuredInfobox}
+        installableInfoboxBlocks={installableInfoboxBlocks}
+        isEditable={!!inEditor}
         renderBlock={renderBlock}
-        renderInsertionPopup={renderInfoboxInsertionPopup}
-        onClose={onInfoboxClose}
+        onBlockCreate={onInfoboxBlockCreate}
+        onBlockDelete={onInfoboxBlockDelete}
+        onBlockMove={onInfoboxBlockMove}
+        onPropertyUpdate={onPropertyUpdate}
+        onPropertyItemAdd={onPropertyItemAdd}
+        onPropertyItemDelete={onPropertyItemDelete}
+        onPropertyItemMove={onPropertyItemMove}
       />
     </Plugins>
   );

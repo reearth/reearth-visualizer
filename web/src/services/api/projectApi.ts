@@ -94,11 +94,10 @@ export default () => {
 
           return { status: "error" };
         } else if (sceneResults?.createScene?.scene.id) {
-          const { data, errors: storyPageErrors } = await useCreateStoryPage({
+          const { errors: storyPageErrors } = await useCreateStoryPage({
             sceneId: sceneResults.createScene.scene.id,
             storyId: sceneResults.createScene.scene.stories[0].id,
           });
-          console.log("DDD", data);
           if (storyPageErrors) {
             setNotification({
               type: "error",

@@ -3,11 +3,12 @@ import { useCallback, useMemo } from "react";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
 import BlockWrapper from "../../../../shared/components/BlockWrapper";
-import { CommonProps as BlockProps } from "../../types";
+import { CommonBlockProps as BlockProps } from "../../../../shared/types";
+import { StoryBlock } from "../../../types";
 
 import MdEditor from "./Editor";
 
-export type Props = BlockProps;
+export type Props = BlockProps<StoryBlock>;
 
 const MdBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
   const text = useMemo(

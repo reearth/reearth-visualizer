@@ -55,6 +55,7 @@ const MapRightPanel: React.FC<Props> = ({
   return (
     <SidePanelCommon
       location="right"
+      padding={!selectedLayerId ? 8 : undefined}
       contents={[
         {
           id: "map",

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useEditModeContext } from "../../shared/contexts/editModeContext";
 import { DEFAULT_STORY_PAGE_GAP, DEFAULT_STORY_PAGE_PADDING } from "../constants";
-import { usePanelContext } from "../context";
 import { StoryPage } from "../types";
 import { calculatePaddingValue } from "../utils";
 
@@ -20,14 +20,14 @@ export default ({
     index?: number | undefined,
   ) => Promise<void> | undefined;
 }) => {
-  const storyPanelContext = usePanelContext();
+  const editModeContext = useEditModeContext();
 
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
   const [storyBlocks, setStoryBlocks] = useState(page?.blocks ?? []);
 
   const disableSelection = useMemo(
-    () => storyPanelContext?.disableSelection,
-    [storyPanelContext?.disableSelection],
+    () => editModeContext?.disableSelection,
+    [editModeContext?.disableSelection],
   );
 
   useEffect(() => page?.blocks && setStoryBlocks(page.blocks), [page?.blocks]);

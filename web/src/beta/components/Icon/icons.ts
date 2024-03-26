@@ -4,13 +4,11 @@
 // Primitives
 import PrimPhotoOverlay from "./Icons/primPhotoIcon.svg?react";
 
-// Infobox Blocks
+// Infobox
 import Infobox from "./Icons/infoboxIcon.svg?react";
-import InfoHTML from "./Icons/infoboxHTMLIcon.svg?react";
-import InfoLocation from "./Icons/infoboxLocationIcon.svg?react";
-import InfoTable from "./Icons/infoboxTableIcon.svg?react";
-import InfoText from "./Icons/infoboxTextIcon.svg?react";
-import InfoVideo from "./Icons/infoboxVideoIcon.svg?react";
+import InfoboxImageBlock from "./Icons/imageInfoboxBlock.svg?react";
+import TextBlock from "./Icons/textBlock.svg?react";
+import InfoboxPropertyBlock from "./Icons/propertyInfoboxBlock.svg?react";
 
 // Arrow
 import ArrowUpDown from "./Icons/arrowUpDown.svg?react";
@@ -82,7 +80,6 @@ import Copy from "./Icons/copy.svg?react";
 import GearSix from "./Icons/gearSix.svg?react";
 import PencilSimple from "./Icons/pencilSimple.svg?react";
 import Trash from "./Icons/trash.svg?react";
-import TextStoryBlock from "./Icons/textStoryBlock.svg?react";
 import Edit from "./Icons/storyBlockEdit.svg?react";
 import Exit from "./Icons/exit.svg?react";
 import Settings from "./Icons/settings.svg?react";
@@ -143,13 +140,6 @@ export default {
   addLayer: AddLayerIcon,
   zoomToLayer: ZoomToLayer,
   file: File,
-  dl: InfoTable,
-  infobox: Infobox,
-  text: InfoText,
-  html: InfoHTML,
-  video: InfoVideo,
-  clock: Clock,
-  location: InfoLocation,
   photooverlay: PrimPhotoOverlay,
   arrowUpDown: ArrowUpDown,
   arrowRight: ArrowRight,
@@ -199,7 +189,12 @@ export default {
   exit: Exit,
   settings: Settings,
   padding: Padding,
-  textStoryBlock: TextStoryBlock,
+  infobox: Infobox,
+  imageInfoboxBetaBlock: InfoboxImageBlock,
+  textInfoboxBetaBlock: TextBlock,
+  propertyInfoboxBetaBlock: InfoboxPropertyBlock,
+  clock: Clock,
+  textStoryBlock: TextBlock,
   titleStoryBlock: TitleStoryBlock,
   videoStoryBlock: VideoStoryBlock,
   imageStoryBlock: ImageStoryBlock,
