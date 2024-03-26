@@ -3330,30 +3330,6 @@
     topojson-client "^3.1.0"
     urijs "^1.19.7"
 
-"@cesium/engine@^2.4.1":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/@cesium/engine/-/engine-2.4.1.tgz#b9b0395edebff581dbc55b7b9e1929f673dee058"
-  integrity sha512-8f0hBzhPUSimYLZ+cmQ0rSudm+8zYD3sBMvJcPSVt0wDpLT7tvBt9swC2v5qC2gOwGOeyFnJhXKes3ICE6SaDA==
-  dependencies:
-    "@tweenjs/tween.js" "^18.6.4"
-    "@zip.js/zip.js" "2.4.x"
-    autolinker "^4.0.0"
-    bitmap-sdf "^1.0.3"
-    dompurify "^3.0.2"
-    earcut "^2.2.4"
-    grapheme-splitter "^1.0.4"
-    jsep "^1.3.8"
-    kdbush "^4.0.1"
-    ktx-parse "^0.5.0"
-    lerc "^2.0.0"
-    mersenne-twister "^1.1.0"
-    meshoptimizer "^0.19.0"
-    pako "^2.0.4"
-    protobufjs "^7.1.0"
-    rbush "^3.0.1"
-    topojson-client "^3.1.0"
-    urijs "^1.19.7"
-
 "@cesium/widgets@2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@cesium/widgets/-/widgets-2.3.0.tgz#eb82d8e43424c1faa62cf001afbf42e0b0926143"
@@ -5873,10 +5849,11 @@
   resolved "https://registry.yarnpkg.com/@react-leaflet/core/-/core-2.1.0.tgz#383acd31259d7c9ae8fb1b02d5e18fe613c2a13d"
   integrity sha512-Qk7Pfu8BSarKGqILj4x7bCSZ1pjuAPZ+qmRwH5S7mDS91VSbVVsJSrW4qA+GPrro8t69gFYVMWb1Zc4yFmPiVg==
 
-"@reearth/cesium-mvt-imagery-provider@../../reearth-cesium-mvt-imagery-provider/":
-  version "1.5.0-alpha.2"
+"@reearth/cesium-mvt-imagery-provider@1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@reearth/cesium-mvt-imagery-provider/-/cesium-mvt-imagery-provider-1.5.0.tgz#297bf978edff9c97b991d7a438277c6302edf3dd"
+  integrity sha512-4wf6RknTYoLORJhkKLZ9HEgSnlMH7YcmSmXZGeTaMbbLwgjvaIph7o7sSBawHXkm7uTxkrxZViIV+Ol66jcL1A==
   dependencies:
-    "@cesium/engine" "^2.4.1"
     "@mapbox/vector-tile" "1.3.1"
     "@turf/turf" "6.5.0"
     "@types/jsonpath-plus" "5.0.5"
@@ -5886,7 +5863,6 @@
     lodash-es "4.17.21"
     lru-cache "10.2.0"
     pbf "3.2.1"
-    protomaps "^1.23.1"
     threads "1.7.0"
 
 "@remix-run/router@1.14.0":
@@ -15141,11 +15117,6 @@ meshoptimizer@^0.18.1:
   version "0.18.1"
   resolved "https://registry.yarnpkg.com/meshoptimizer/-/meshoptimizer-0.18.1.tgz#cdb90907f30a7b5b1190facd3b7ee6b7087797d8"
   integrity sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==
-
-meshoptimizer@^0.19.0:
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/meshoptimizer/-/meshoptimizer-0.19.0.tgz#1669e6d788ad3ffd238a65184e478355642ca979"
-  integrity sha512-58qz5Qc/6Geu8Ib3bBWERE5R7pM5ErrJVo16fAtu6ryxVaE3VAtM/u2vurDxaq8AGZ3yWxuM/DnylTga5a4XCQ==
 
 methods@~1.1.2:
   version "1.1.2"

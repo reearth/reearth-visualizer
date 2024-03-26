@@ -1,4 +1,3 @@
-import { Math as CesiumMath, Rectangle } from "cesium";
 import { useMemo } from "react";
 
 import { MVTImageryProvider } from "@reearth/cesium-mvt-imagery-provider";
@@ -14,7 +13,7 @@ export const useMVT = ({
   property,
   layer,
 }: Pick<Props, "isVisible" | "property" | "layer">) => {
-  const { show = true, minimumLevel, maximumLevel, bounds, credit } = property ?? {};
+  const { show = true, minimumLevel, maximumLevel, credit } = property ?? {};
   const { type, url, layers } = useData(layer);
 
   const currentLayer = extractSimpleLayer(layer) || undefined;
@@ -23,9 +22,6 @@ export const useMVT = ({
 
   const imageryProvider = useMemo(() => {
     if (!isVisible || !show || !url || !layers || type !== "mvt") return;
-    const boundsTemp =
-      bounds?.split(",").map((value: string) => CesiumMath.toRadians(+value)) || [];
-    const rectangle = new Rectangle(...boundsTemp);
     return new MVTImageryProvider({
       minimumLevel,
       maximumLevel,
@@ -34,20 +30,8 @@ export const useMVT = ({
       layerName: layers,
       layer: currentLayer,
       worker: true,
-      rectangle,
     });
-  }, [
-    isVisible,
-    show,
-    url,
-    layers,
-    type,
-    bounds,
-    minimumLevel,
-    maximumLevel,
-    credit,
-    currentLayer,
-  ]);
+  }, [isVisible, show, url, layers, type, minimumLevel, maximumLevel, credit, currentLayer]);
 
   useImageryProvider(imageryProvider, layer?.id, property);
 };
