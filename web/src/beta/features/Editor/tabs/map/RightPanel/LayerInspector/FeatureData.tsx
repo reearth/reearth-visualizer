@@ -128,8 +128,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 10px;
   word-break: break-all;
-  height: auto;
-  overflow-x: auto;
 `;
 
 const ValueWrapper = styled.div`

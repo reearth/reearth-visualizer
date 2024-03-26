@@ -93,6 +93,8 @@ const Header = styled.div`
 
 const MainArea = styled.div`
   display: block;
+  height: auto;
+  overflow-y: auto;
 `;
 
 const Content = styled.div`
