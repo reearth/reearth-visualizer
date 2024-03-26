@@ -8,6 +8,8 @@ export default (value: unknown | undefined) => {
   const [isReady, setIsReady] = useState(false);
   const [currentValue, setCurrentValue] = useState<unknown | undefined>(value);
 
+  const [lastFeatureSelected, setLastFeatureSelected] = useState<string | undefined>(undefined);
+
   const [evaluatedResult, setEvaluatedResult] = useState<string | undefined>(undefined);
 
   const visualizer = useVisualizer();
@@ -25,7 +27,10 @@ export default (value: unknown | undefined) => {
       return;
     }
     const selectedFeature = visualizer.current?.layers.selectedFeature();
-    if (selectedFeature) {
+    if (selectedFeature && selectedFeature.id !== lastFeatureSelected) {
+      setLastFeatureSelected(selectedFeature.id);
+      setEvaluatedResult(undefined);
+    } else if (selectedFeature) {
       const simpleFeature: Feature = {
         id: selectedFeature.id,
         type: "feature",
