@@ -24,11 +24,14 @@ export default ({
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
   const [openBlocksIndex, setOpenBlocksIndex] = useState<number>();
 
+  // Will only be undefined when infobox is first created, so default to true
   const showInfobox = useMemo(
     () =>
-      infobox?.property?.default?.enabled?.value === undefined
-        ? false
-        : !!infobox.property.default.enabled.value,
+      infobox
+        ? infobox?.property?.default?.enabled?.value === undefined
+          ? true
+          : !!infobox.property.default.enabled.value
+        : false,
     [infobox],
   );
 
