@@ -33,6 +33,10 @@ func NewInfobox(Blocks []*InfoboxBlock, p PropertyID) *Infobox {
 	return &infobox
 }
 
+func (i *Infobox) Id() InfoboxID {
+	return i.id
+}
+
 func (i *Infobox) Property() PropertyID {
 	return i.property
 }
