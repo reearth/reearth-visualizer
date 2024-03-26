@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 
-import type { Block } from "../../Infobox";
+import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
 import type { Widget, WidgetLocationOptions } from "../../Widgets";
 import P, { type Props as PluginProps } from "../PluginFrame";

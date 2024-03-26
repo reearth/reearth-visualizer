@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState, MouseEvent } from "react";
+import { useCallback, useMemo, useState, MouseEvent, useEffect } from "react";
 
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 
-import { usePanelContext } from "../../../StoryPanel/context";
 import { calculatePaddingValue } from "../../../StoryPanel/utils";
+import { useEditModeContext } from "../../contexts/editModeContext";
 
 export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };
 
@@ -23,21 +23,39 @@ export default ({
   onClick: (() => void) | undefined;
   onBlockDoubleClick: (() => void) | undefined;
 }) => {
-  const storyPanelContext = usePanelContext();
+  const editModeContext = useEditModeContext();
+
   const [editMode, setEditMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
+  // Close settings when block becomes not editable
+  useEffect(() => {
+    if (!isEditable && editMode) {
+      setEditMode(false);
+    }
+  }, [isEditable, editMode]);
+
   const disableSelection = useMemo(
-    () => storyPanelContext?.disableSelection,
-    [storyPanelContext?.disableSelection],
+    () => editModeContext?.disableSelection,
+    [editModeContext?.disableSelection],
   );
 
   const handleEditModeToggle = useCallback(
     (enable: boolean) => {
-      storyPanelContext?.onSelectionDisable?.(enable);
+      editModeContext?.onSelectionDisable?.(enable);
       setEditMode?.(enable);
     },
-    [storyPanelContext],
+    [editModeContext],
+  );
+
+  useEffect(
+    () => () => {
+      // This is necessary to prevent the selection from being permanently disabled when the block is unmounted
+      if (editMode && disableSelection) {
+        editModeContext?.onSelectionDisable?.(false);
+      }
+    },
+    [editMode, disableSelection], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const handleSettingsToggle = useCallback(() => setShowSettings?.(s => !s), []);
@@ -45,11 +63,11 @@ export default ({
   const title = useMemo(() => name ?? property?.title, [name, property?.title]);
 
   const handleBlockDoubleClick = useCallback(() => {
-    if (isEditable && !storyPanelContext.disableSelection) {
+    if (isEditable && !editModeContext.disableSelection) {
       onBlockDoubleClick?.();
       handleEditModeToggle(true);
     }
-  }, [isEditable, storyPanelContext, onBlockDoubleClick, handleEditModeToggle]);
+  }, [isEditable, editModeContext, onBlockDoubleClick, handleEditModeToggle]);
 
   const [handleSingleClick, handleDoubleClick] = useDoubleClick(
     () => onClick?.(),

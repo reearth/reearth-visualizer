@@ -39,6 +39,7 @@ const StoryRightPanel: React.FC<Props> = ({
   return (
     <SidePanelCommon
       location="right"
+      padding={8}
       contents={[
         {
           id: "story",

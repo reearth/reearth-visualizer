@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { useEditModeContext } from "../../shared/contexts/editModeContext";
 import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
-import { usePanelContext } from "../context";
 
 export type { StoryPage } from "../hooks";
 export { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
@@ -18,14 +18,14 @@ export default ({
   ) => Promise<void>;
   onBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
 }) => {
-  const storyPanelContext = usePanelContext();
+  const editModeContext = useEditModeContext();
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   const [pageGap, setPageGap] = useState<number>();
 
   const disableSelection = useMemo(
-    () => storyPanelContext?.disableSelection,
-    [storyPanelContext?.disableSelection],
+    () => editModeContext?.disableSelection,
+    [editModeContext?.disableSelection],
   );
 
   const handleBlockCreate = useCallback(

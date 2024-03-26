@@ -153,7 +153,7 @@ const ProviderWrapper = styled.div<{ multiSelect: boolean }>`
   flex-direction: column;
   gap: 6px;
   border-radius: 4px;
-  padding: 4px;
+  width: 100%;
 `;
 
 const InputWrapper = styled.div<{ disabled: boolean }>`

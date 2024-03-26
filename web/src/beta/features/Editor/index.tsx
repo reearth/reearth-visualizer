@@ -79,6 +79,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     isVisualizerReady,
     visualizerRef,
   });
+
   const { scene, selectedSceneSetting, sceneSettings, handleSceneSettingSelect } = useScene({
     sceneId,
   });
@@ -230,7 +231,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   sceneId={sceneId}
                   showStoryPanel={selectedProjectType === "story"}
                   selectedStory={selectedStory}
-                  installableBlocks={installableStoryBlocks}
+                  installableStoryBlocks={installableStoryBlocks}
                   currentCamera={currentCamera}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
@@ -297,7 +298,6 @@ const MainSection = styled.div`
   display: flex;
   flex-grow: 1;
   height: 0;
-  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const Center = styled.div`
@@ -318,7 +318,9 @@ const VisualizerWrapper = styled.div<{
 }>`
   flex: 1;
   min-height: 0;
-  border-radius: 4px;
+  padding: 2px;
   width: ${({ visualizerWidth }) =>
-    typeof visualizerWidth === "number" ? `${visualizerWidth}px` : visualizerWidth};
+    typeof visualizerWidth === "number"
+      ? `calc(${visualizerWidth} - 4px)`
+      : `calc(${visualizerWidth} - 4px)`};
 `;

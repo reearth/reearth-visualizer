@@ -10,10 +10,8 @@ import {
 import { Story } from "@reearth/beta/lib/core/StoryPanel";
 import { config } from "@reearth/services/config";
 
-import { processLayers } from "../Editor/Visualizer/convert";
-
 import { processProperty } from "./convert";
-import { processStoryProperty } from "./convert-story";
+import { processLayers, processNewProperty } from "./convert-new-property";
 import { useGA } from "./googleAnalytics/useGA";
 import type {
   PublishedData,
@@ -158,13 +156,13 @@ export default (alias?: string) => {
               id: p.id,
               swipeable: p.swipeable,
               layerIds: p.layers,
-              property: processStoryProperty(p.property),
+              property: processNewProperty(p.property),
               blocks: p.blocks.map(b => {
                 return {
                   id: b.id,
                   pluginId: b.pluginId,
                   extensionId: b.extensionId,
-                  property: processStoryProperty(b.property),
+                  property: processNewProperty(b.property),
                 };
               }),
             };
@@ -181,6 +179,7 @@ export default (alias?: string) => {
         config: l.config,
         layerType: l.layerType,
         visible: !!l.isVisible,
+        infobox: l.nlsInfobox,
       })) ?? [],
       data?.layerStyles,
     );

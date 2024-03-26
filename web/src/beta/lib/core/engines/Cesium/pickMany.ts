@@ -221,6 +221,8 @@ function pickManyFromViewport(
   windowWidth: number,
   windowHeight: number,
 ): object[] {
+  const showGroundPrimitives = scene.groundPrimitives.show;
+  scene.groundPrimitives.show = false;
   invariant(windowWidth > 0 && windowHeight > 0);
   assertType<PrivateScene>(scene);
   const context = scene.context;
@@ -271,6 +273,8 @@ function pickManyFromViewport(
   // Use our pickFramebufferEnd instead of PickFramebuffer.pick().
   const objects = pickFramebufferEnd.apply(view.pickFramebuffer, [rectangleScratch]);
   context.endFrame();
+
+  scene.groundPrimitives.show = showGroundPrimitives;
 
   return objects;
 }

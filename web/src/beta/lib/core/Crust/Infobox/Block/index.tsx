@@ -1,60 +1,37 @@
-import type { ComponentType, ReactNode } from "react";
+import { useCallback, type ComponentType, type ReactNode, memo } from "react";
 
 import type { Layer } from "@reearth/beta/lib/core/mantle";
-import { styled } from "@reearth/services/theme";
+import type { CommonBlockProps, BlockProps } from "@reearth/beta/lib/core/shared/types";
+// import { styled } from "@reearth/services/theme";
 
-import { Theme, ValueType, ValueTypes } from "../../types";
-import type { Block, BlockProps, InfoboxProperty } from "../types";
+import BlockWrapper from "../../../shared/components/BlockWrapper";
+import { InfoboxBlock } from "../types";
 
-import builtin, { isBuiltinBlock } from "./builtin";
+import builtin, { isBuiltinInfoboxBlock } from "./builtin";
 
-export type { InfoboxProperty, Typography, LatLng } from "../types";
-
-export type Props<BP = any> = {
-  renderBlock?: (block: BlockProps) => ReactNode;
+export type Props = {
+  renderBlock?: (block: BlockProps<InfoboxBlock>) => ReactNode;
   layer?: Layer;
-} & CommonProps<BP>;
+  pageId?: string;
+} & CommonBlockProps<InfoboxBlock>;
 
-export type CommonProps<BP = any> = {
-  isEditable?: boolean;
-  isBuilt?: boolean;
-  isSelected?: boolean;
-  block?: Block<BP>;
-  infoboxProperty?: InfoboxProperty;
-  theme?: Theme;
-  onClick?: () => void;
-  onChange?: <T extends ValueType>(
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-  ) => void;
-};
+export type Component = ComponentType<CommonBlockProps<InfoboxBlock>>;
 
-export type Component<BP = any> = ComponentType<CommonProps<BP>>;
-
-export default function BlockComponent<P = any>({
-  renderBlock,
-  ...props
-}: Props<P>): JSX.Element | null {
+const InfoboxBlockComponent = ({ renderBlock, onRemove, ...props }: Props): JSX.Element | null => {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
-  const Builtin = isBuiltinBlock(builtinBlockId) ? builtin()[builtinBlockId] : undefined;
+  const Builtin = isBuiltinInfoboxBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
+  const handleRemove = useCallback(
+    () => props.block?.id && onRemove?.(props.block.id),
+    [props.block?.id, onRemove],
+  );
 
   return Builtin ? (
-    <Builtin {...props} />
+    <Builtin {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
-    <Wrapper editable={props?.isEditable} onClick={props?.onClick} selected={props?.isSelected}>
+    <BlockWrapper {...props} minHeight={120} onRemove={onRemove ? handleRemove : undefined}>
       {renderBlock?.({ block: props.block, layer: props.layer, onClick: props.onClick })}
-    </Wrapper>
+    </BlockWrapper>
   ) : null;
-}
+};
 
-const Wrapper = styled.div<{ editable?: boolean; selected?: boolean }>`
-  border: 1px solid
-    ${({ selected, editable, theme }) => (editable && selected ? theme.select.main : "transparent")};
-  border-radius: 6px;
-
-  &:hover {
-    border-color: ${({ editable, theme }) => (editable ? theme.outline.main : null)};
-  }
-`;
+export default memo(InfoboxBlockComponent);

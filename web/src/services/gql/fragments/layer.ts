@@ -378,12 +378,29 @@ export const layerFragment = gql`
 export const nlsLayerSimpleFragment = gql`
   fragment NLSLayerCommon on NLSLayer {
     id
+    layerType
+    sceneId
+    config
     title
     visible
-    layerType
-    config
     infobox {
-      id
+      sceneId
+      layerId
+      propertyId
+      property {
+        id
+        ...PropertyFragment
+      }
+      blocks {
+        id
+        pluginId
+        extensionId
+        propertyId
+        property {
+          id
+          ...PropertyFragment
+        }
+      }
     }
     ... on NLSLayerGroup {
       children {

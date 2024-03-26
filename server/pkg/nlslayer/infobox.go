@@ -8,10 +8,12 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
+type BlockList []*InfoboxBlock
+
 type Infobox struct {
 	id       InfoboxID
 	property PropertyID
-	blocks   []*InfoboxBlock
+	blocks   BlockList
 	// for checking duplication
 	ids map[InfoboxBlockID]struct{}
 }
@@ -33,6 +35,10 @@ func NewInfobox(Blocks []*InfoboxBlock, p PropertyID) *Infobox {
 	return &infobox
 }
 
+func (i *Infobox) Id() InfoboxID {
+	return i.id
+}
+
 func (i *Infobox) Property() PropertyID {
 	return i.property
 }
@@ -45,14 +51,17 @@ func (i *Infobox) PropertyRef() *PropertyID {
 	return &pid
 }
 
-func (i *Infobox) Blocks() []*InfoboxBlock {
-	if i == nil {
+func (i *Infobox) Blocks() BlockList {
+	if i.blocks == nil {
 		return nil
 	}
-	return append([]*InfoboxBlock{}, i.blocks...)
+	return append(BlockList{}, i.blocks...)
 }
 
 func (i *Infobox) Block(Block InfoboxBlockID) *InfoboxBlock {
+	if i == nil {
+		return nil
+	}
 	for _, f := range i.blocks {
 		if f.ID() == Block {
 			return f

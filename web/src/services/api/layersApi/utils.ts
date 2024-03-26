@@ -1,5 +1,13 @@
 import { GetSceneQuery } from "../../gql";
 
+export type NLSInfobox = {
+  sceneId: string;
+  layerId: string;
+  propertyId?: string;
+  property?: any;
+  blocks?: any[];
+};
+
 export type NLSLayer = {
   id: string;
   title: string;
@@ -7,7 +15,7 @@ export type NLSLayer = {
   layerType: string;
   config?: any;
   children?: NLSLayer[] | null;
-  infobox?: any;
+  infobox?: NLSInfobox;
 };
 
 export const getLayers = (rawScene?: GetSceneQuery) => {
@@ -20,7 +28,15 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
       visible: l.visible,
       layerType: l.layerType,
       config: l.config,
-      infobox: l.infobox,
+      infobox: l.infobox
+        ? {
+            sceneId: l.infobox.sceneId,
+            layerId: l.infobox.layerId,
+            propertyId: l.infobox.propertyId,
+            property: l.infobox.property,
+            blocks: l.infobox.blocks,
+          }
+        : undefined,
     };
   });
 };

@@ -48,7 +48,7 @@ type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  onBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onBlockMove?: (id: string, targetIndex: number, blockId: string) => void;
   onBlockDoubleClick?: (blockId?: string) => void;
   onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
   onPropertyItemMove?: (

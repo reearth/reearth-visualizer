@@ -68,7 +68,6 @@ const Wrapper = styled.div<{
   clamp?: Clamp;
 }>`
   display: flex;
-  width: 100%;
   min-height: 36px;
   align-items: center;
   color: ${({ theme }) => theme.content.main};
