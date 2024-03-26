@@ -4,11 +4,12 @@ import RichText from "@reearth/beta/lib/lexical/RichTextEditor";
 import { ValueTypes } from "@reearth/beta/utils/value";
 
 import BlockWrapper from "../../../../shared/components/BlockWrapper";
-import { CommonProps as BlockProps } from "../../types";
+import { CommonBlockProps as BlockProps } from "../../../../shared/types";
+import { StoryBlock } from "../../../types";
 
 import TextBlockEditor from "./Editor";
 
-export type Props = BlockProps;
+export type Props = BlockProps<StoryBlock>;
 
 // Text block is very special, it will not edit values with field components
 // from the common editor panel, but manage it by itself directly.

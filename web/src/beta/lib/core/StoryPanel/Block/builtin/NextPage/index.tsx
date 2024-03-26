@@ -2,12 +2,13 @@ import { useCallback } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
-import type { CommonProps as BlockProps } from "@reearth/beta/lib/core/StoryPanel/Block/types";
+import type { CommonBlockProps as BlockProps } from "@reearth/beta/lib/core/shared/types";
 import { styled } from "@reearth/services/theme";
 
 import { usePanelContext } from "../../../context";
+import { StoryBlock } from "../../../types";
 
-const NextPage: React.FC<BlockProps> = ({ block, pageId, isSelected, ...props }) => {
+const NextPage: React.FC<BlockProps<StoryBlock>> = ({ block, pageId, isSelected, ...props }) => {
   const { pageIds, onJumpToPage } = usePanelContext();
 
   const handlePageChange = useCallback(() => {

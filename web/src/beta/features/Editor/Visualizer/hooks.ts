@@ -1,13 +1,8 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
-import type {
-  LatLng,
-  ValueTypes,
-  ComputedLayer,
-  ComputedFeature,
-} from "@reearth/beta/lib/core/mantle";
-import type { Layer, LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/beta/lib/core/mantle";
+import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -15,12 +10,10 @@ import {
   useStorytellingFetcher,
   usePropertyFetcher,
   useLayerStylesFetcher,
+  useInfoboxFetcher,
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import {
-  useSceneMode,
-  useIsCapturing,
-  useSelectedBlock,
   useWidgetAlignEditorActivated,
   useSelectedWidgetArea,
   useIsVisualizerReady,
@@ -33,7 +26,6 @@ import {
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
-import type { BlockType } from "./type";
 
 export default ({
   sceneId,
@@ -53,15 +45,18 @@ export default ({
   const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
   const { useUpdatePropertyValue, useAddPropertyItem, useMovePropertyItem, useRemovePropertyItem } =
     usePropertyFetcher();
+  const {
+    useInstallableInfoboxBlocksQuery,
+    useCreateInfoboxBlock,
+    useDeleteInfoboxBlock,
+    useMoveInfoboxBlock,
+  } = useInfoboxFetcher();
 
   const { nlsLayers } = useGetLayersQuery({ sceneId });
   const { layerStyles } = useGetLayerStylesQuery({ sceneId });
 
   const { scene } = useSceneQuery({ sceneId });
 
-  const [sceneMode, setSceneMode] = useSceneMode();
-  const [isCapturing, onIsCapturingChange] = useIsCapturing();
-  const [selectedBlock, selectBlock] = useSelectedBlock();
   const [_, selectSelectedStoryPageId] = useSelectedStoryPageId();
   const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
   const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
@@ -79,23 +74,30 @@ export default ({
   // TODO: Fix to use exact type through GQL typing
   const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
 
-  useEffect(() => {
-    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
-  }, [sceneProperty, setSceneMode]);
-
   // Layers
   const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
 
+  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
+
+  const infoboxBlockNames = useMemo(
+    () =>
+      installableInfoboxBlocks
+        ?.map(ib => ({ [ib.extensionId]: ib.name }))
+        .filter((bn): bn is { [key: string]: string } => !!bn)
+        .reduce((result, obj) => ({ ...result, ...obj }), {}),
+    [installableInfoboxBlocks],
+  );
+
   const layers = useMemo(() => {
-    const processedLayers = processLayers(nlsLayers, layerStyles);
+    const processedLayers = processLayers(nlsLayers, layerStyles, undefined, infoboxBlockNames);
     if (!showStoryPanel) return processedLayers;
     return processedLayers?.map(layer => ({
       ...layer,
       visible: true,
     }));
-  }, [nlsLayers, layerStyles, showStoryPanel]);
+  }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
-  const selectLayer = useCallback(
+  const handleLayerSelect = useCallback(
     async (
       id?: string,
       layer?: () => Promise<ComputedLayer | undefined>,
@@ -115,7 +117,7 @@ export default ({
     [selectedLayer, setSelectedLayer, setSelectedLayerStyle, setSelectedSceneSetting],
   );
 
-  const handleDropLayer = useCallback(
+  const handleLayerDrop = useCallback(
     async (_propertyId: string, propertyKey: string, _position?: LatLng) => {
       // propertyKey will be "default.location" for example
       const [_schemaGroupId, _fieldId] = propertyKey.split(".", 2);
@@ -126,14 +128,14 @@ export default ({
   // Widgets
   const widgets = convertWidgets(scene);
 
-  const onWidgetUpdate = useCallback(
+  const handleWidgetUpdate = useCallback(
     async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
       await useUpdateWidget(id, update, sceneId);
     },
     [sceneId, useUpdateWidget],
   );
 
-  const onWidgetAlignSystemUpdate = useCallback(
+  const handleWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
       await useUpdateWidgetAlignSystem(
         { zone: location.zone, section: location.section, area: location.area, align },
@@ -153,54 +155,46 @@ export default ({
     [scene?.plugins],
   );
 
-  // Infobox - NOTE: this is from classic. TBD but will change significantly
-  const onBlockChange = useCallback(
-    async <T extends keyof ValueTypes>(
-      blockId: string,
-      _schemaGroupId: string,
-      _fid: string,
-      _v: ValueTypes[T],
-      vt: T,
-      selectedLayer?: Layer,
-    ) => {
-      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
-        ?.propertyId as string | undefined;
-      if (!propertyId) return;
-
-      console.log("Block has been changed!");
-    },
-    [],
-  );
-
-  const onBlockMove = useCallback(
-    async (_id: string, _fromIndex: number, _toIndex: number) => {
+  const handleInfoboxBlockCreate = useCallback(
+    async (pluginId: string, extensionId: string, index?: number) => {
       if (!selectedLayer) return;
-      console.log("Block has been moved!");
+      await useCreateInfoboxBlock({
+        layerId: selectedLayer.layerId,
+        pluginId,
+        extensionId,
+        index,
+      });
     },
-    [selectedLayer],
+    [selectedLayer, useCreateInfoboxBlock],
   );
 
-  const onBlockRemove = useCallback(
-    async (_id: string) => {
+  const handleInfoboxBlockMove = useCallback(
+    async (id: string, targetIndex: number) => {
       if (!selectedLayer) return;
-      console.log("Block has been removed!");
+      await useMoveInfoboxBlock({
+        layerId: selectedLayer.layerId,
+        infoboxBlockId: id,
+        index: targetIndex,
+      });
     },
-    [selectedLayer],
+    [selectedLayer, useMoveInfoboxBlock],
   );
 
-  // block selector
-  const blocks: BlockType[] = useMemo(() => [], []);
-  const onBlockInsert = (bi: number, _i: number, _p?: "top" | "bottom") => {
-    const b = blocks?.[bi];
-    if (b?.pluginId && b?.extensionId && selectedLayer) {
-      console.log("Block has been inserted!");
-    }
-  };
+  const handleInfoboxBlockRemove = useCallback(
+    async (id?: string) => {
+      if (!selectedLayer || !id) return;
+      await useDeleteInfoboxBlock({
+        layerId: selectedLayer.layerId,
+        infoboxBlockId: id,
+      });
+    },
+    [selectedLayer, useDeleteInfoboxBlock],
+  );
 
   // Story
   const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
 
-  const handleCurrentPageChange = useCallback(
+  const handleStoryPageChange = useCallback(
     (pageId?: string) => selectSelectedStoryPageId(pageId),
     [selectSelectedStoryPageId],
   );
@@ -281,41 +275,34 @@ export default ({
   }, [isBuilt, title]);
 
   return {
-    sceneId,
     rootLayerId,
-    selectedBlockId: selectedBlock,
     sceneProperty,
     pluginProperty,
-    widgets,
     layers,
+    widgets,
     story,
-    blocks,
-    isCapturing,
-    sceneMode,
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
     useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
-    isVisualizerReady,
-    selectWidgetArea: setSelectedWidgetArea,
+    isVisualizerReady, // Not being used (as of 2024/04)
     zoomedLayerId,
-    handleCurrentPageChange,
+    installableInfoboxBlocks,
+    handleLayerSelect,
+    handleLayerDrop,
+    handleStoryPageChange,
     handleStoryBlockCreate,
     handleStoryBlockDelete,
+    handleInfoboxBlockCreate,
+    handleInfoboxBlockMove,
+    handleInfoboxBlockRemove,
+    handleWidgetUpdate,
+    handleWidgetAlignSystemUpdate,
+    selectWidgetArea: setSelectedWidgetArea,
     handlePropertyValueUpdate,
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
-    selectLayer,
-    selectBlock,
-    onBlockChange,
-    onBlockMove,
-    onBlockRemove,
-    onBlockInsert,
-    onWidgetUpdate,
-    onWidgetAlignSystemUpdate,
-    onIsCapturingChange,
-    handleDropLayer,
     handleMount,
     zoomToLayer,
   };

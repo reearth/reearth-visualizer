@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import { styled } from "@reearth/services/theme";
 
@@ -11,93 +10,90 @@ type Props = {
   onSketchTypeChange: (type: SketchType | undefined) => void;
 };
 const Toolbar: React.FC<Props> = ({ enable, sketchType, onSketchTypeChange }) => {
+  const sketchTools = useMemo(
+    () => [
+      {
+        icon: "marker",
+        selected: enable && sketchType === "marker",
+        onClick: () => onSketchTypeChange("marker"),
+      },
+      {
+        icon: "polyline",
+        selected: enable && sketchType === "polyline",
+        onClick: () => onSketchTypeChange("polyline"),
+      },
+      {
+        icon: "circleOutline",
+        selected: enable && sketchType === "circle",
+        onClick: () => onSketchTypeChange("circle"),
+      },
+      {
+        icon: "squareOutline",
+        selected: enable && sketchType === "rectangle",
+        onClick: () => onSketchTypeChange("rectangle"),
+      },
+      {
+        icon: "polygon",
+        selected: enable && sketchType === "polygon",
+        onClick: () => onSketchTypeChange("polygon"),
+      },
+      {
+        icon: "cylinder",
+        selected: enable && sketchType === "extrudedCircle",
+        onClick: () => onSketchTypeChange("extrudedCircle"),
+      },
+      {
+        icon: "box",
+        selected: enable && sketchType === "extrudedRectangle",
+        onClick: () => onSketchTypeChange("extrudedRectangle"),
+      },
+      {
+        icon: "polygonExtruded",
+        selected: enable && sketchType === "extrudedPolygon",
+        onClick: () => onSketchTypeChange("extrudedPolygon"),
+      },
+    ],
+    [enable, sketchType, onSketchTypeChange],
+  );
+
   useEffect(() => {
     if (!enable) onSketchTypeChange(undefined);
   }, [enable, onSketchTypeChange]);
 
   return (
-    <StyledSecondaryNav>
-      <ButtonGroup>
+    <Wrapper>
+      {sketchTools.map(({ icon, selected, onClick }) => (
         <ToolButton
-          icon="marker"
+          key={icon}
+          icon={icon}
           disabled={!enable}
-          selected={enable && sketchType === "marker"}
-          onClick={() => onSketchTypeChange("marker")}
+          selected={selected}
+          onClick={onClick}
         />
-        <ToolButton
-          icon="polyline"
-          disabled={!enable}
-          selected={enable && sketchType === "polyline"}
-          onClick={() => onSketchTypeChange("polyline")}
-        />
-        <ToolButton
-          icon="circleOutline"
-          disabled={!enable}
-          selected={enable && sketchType === "circle"}
-          onClick={() => onSketchTypeChange("circle")}
-        />
-        <ToolButton
-          icon="squareOutline"
-          disabled={!enable}
-          selected={enable && sketchType === "rectangle"}
-          onClick={() => onSketchTypeChange("rectangle")}
-        />
-        <ToolButton
-          icon="polygon"
-          disabled={!enable}
-          selected={enable && sketchType === "polygon"}
-          onClick={() => onSketchTypeChange("polygon")}
-        />
-        <ToolButton
-          icon="cylinder"
-          disabled={!enable}
-          selected={enable && sketchType === "extrudedCircle"}
-          onClick={() => onSketchTypeChange("extrudedCircle")}
-        />
-        <ToolButton
-          icon="box"
-          disabled={!enable}
-          selected={enable && sketchType === "extrudedRectangle"}
-          onClick={() => onSketchTypeChange("extrudedRectangle")}
-        />
-        <ToolButton
-          icon="polygonExtruded"
-          disabled={!enable}
-          selected={enable && sketchType === "extrudedPolygon"}
-          onClick={() => onSketchTypeChange("extrudedPolygon")}
-        />
-      </ButtonGroup>
-    </StyledSecondaryNav>
+      ))}
+    </Wrapper>
   );
 };
 
 export default Toolbar;
 
-const StyledSecondaryNav = styled(SecondaryNav)`
+const Wrapper = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 4px;
-  padding-right: 4px;
-  padding-left: 4px;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  height: 36px;
+  height: 32px;
   gap: 8px;
-  padding: 4px;
-  border-left: 2px solid ${({ theme }) => theme.outline.weaker};
-
-  &:first-of-type {
-    border-left: none;
-  }
+  padding-left: 4px;
+  padding-right: 4px;
+  margin: 2px 1px 1px 1px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.bg[0]};
 `;
 
 const ToolButton = styled(Button)<{ selected?: boolean }>`
-  padding: 10px;
+  height: 24px;
+  width: 24px;
+  padding: 0;
   border: none;
   box-shadow: none;
   background-color: ${({ theme, selected }) => (selected ? theme.select.main : "none")};

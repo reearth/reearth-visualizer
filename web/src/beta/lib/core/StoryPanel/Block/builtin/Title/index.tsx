@@ -7,11 +7,10 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import BlockWrapper from "../../../../shared/components/BlockWrapper";
-import { CommonProps as BlockProps } from "../../types";
+import { CommonBlockProps as BlockProps } from "../../../../shared/types";
+import { StoryBlock } from "../../../types";
 
-export type Props = BlockProps;
-
-const TitleBlock: React.FC<Props> = ({ block, isSelected, ...props }) => {
+const TitleBlock: React.FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props }) => {
   const t = useT();
 
   const property = useMemo(() => block?.property, [block?.property]);

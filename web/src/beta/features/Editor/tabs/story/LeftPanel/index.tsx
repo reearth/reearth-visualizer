@@ -37,6 +37,7 @@ const StoryLeftPanel: React.FC<Props> = ({
   return (
     <SidePanelCommon
       location="left"
+      padding={8}
       contents={[
         // you can use this when get multiple story feature
         // {

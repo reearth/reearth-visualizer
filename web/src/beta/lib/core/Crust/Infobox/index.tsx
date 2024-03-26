@@ -1,180 +1,191 @@
-import React, { type ReactNode } from "react";
+import { Fragment, ReactNode, memo } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
-import Text from "@reearth/beta/components/Text";
-import type { Layer } from "@reearth/beta/lib/core/mantle";
-import { useT } from "@reearth/services/i18n";
-import { styled, useTheme } from "@reearth/services/theme";
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
+import { Spacing } from "@reearth/beta/lib/core/mantle";
+import BlockAddBar from "@reearth/beta/lib/core/shared/components/BlockAddBar";
+import { EditModeProvider } from "@reearth/beta/lib/core/shared/contexts/editModeContext";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { styled } from "@reearth/services/theme";
 
-import AdditionButton from "./AdditionButton";
-import BlockComponent from "./Block";
-import Field from "./Field";
-import Frame from "./Frame";
+import { InstallableBlock } from "../../shared/types";
+
+import InfoboxBlockComponent from "./Block";
+import {
+  GAP_DEFAULT_VALUE,
+  INFOBOX_UNIQUE_KEY,
+  INFOBOX_WIDTH,
+  PADDING_DEFAULT_VALUE,
+  POSITION_DEFAULT_VALUE,
+} from "./constants";
 import useHooks from "./hooks";
-import type { ValueTypes, ValueType, Block, InfoboxProperty, Theme, BlockProps } from "./types";
+import type { Infobox, InfoboxBlockProps } from "./types";
 
-export type { InfoboxProperty, Block, LatLng, BlockProps } from "./types";
+export type InfoboxPosition = "right" | "left";
+
+export type InstallableInfoboxBlock = InstallableBlock & {
+  type?: "InfoboxBlock";
+};
 
 export type Props = {
-  className?: string;
-  infoboxKey?: string;
-  property?: InfoboxProperty;
-  blocks?: Block[];
-  title?: string;
+  infobox?: Infobox;
   isEditable?: boolean;
-  isBuilt?: boolean;
-  selectedBlockId?: string;
-  visible?: boolean;
-  theme?: Theme;
-  layer?: Layer;
-  onMaskClick?: () => void;
-  onBlockSelect?: (id?: string) => void;
-  onBlockChange?: <T extends ValueType>(
-    blockId: string,
-    schemaItemId: string,
-    fieldId: string,
-    value: ValueTypes[T],
-    type: T,
-    layer?: Layer,
-  ) => void;
-  onBlockMove?: (id: string, fromIndex: number, toIndex: number) => void;
-  onBlockDelete?: (id: string) => void;
-  onBlockInsert?: (bi: number, i: number, pos?: "top" | "bottom") => void;
-  renderBlock?: (block: BlockProps) => ReactNode;
-  renderInsertionPopup?: (onSelect: (bi: number) => void, onClose: () => void) => ReactNode;
-  onClose?: () => void;
+  installableInfoboxBlocks?: InstallableInfoboxBlock[];
+  renderBlock?: (block: InfoboxBlockProps) => ReactNode;
+  onBlockCreate?: (
+    pluginId: string,
+    extensionId: string,
+    index?: number | undefined,
+  ) => Promise<void>;
+  onBlockMove?: (id: string, targetIndex: number, layerId?: string) => Promise<void>;
+  onBlockDelete?: (id?: string) => Promise<void>;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
 };
 
 const Infobox: React.FC<Props> = ({
-  className,
-  infoboxKey,
-  property,
-  blocks,
-  title,
+  infobox,
   isEditable,
-  isBuilt,
-  selectedBlockId,
-  visible,
-  theme: infoboxTheme,
-  onMaskClick,
-  onBlockSelect,
-  onBlockChange,
+  installableInfoboxBlocks,
+  renderBlock,
+  onBlockCreate,
   onBlockMove,
-  onBlockInsert,
-  renderInsertionPopup,
-  onClose,
-  ...props
+  onBlockDelete,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
 }) => {
   const {
-    insertionPopUpPosition,
-    isReadyToRender,
-    onInsertionButtonClick,
-    onInsertionPopUpClose,
-    handleBlockInsert,
-    setNotReadyToRender,
-    setReadyToRender,
-  } = useHooks(onBlockInsert);
-  const theme = useTheme();
-  const t = useT();
+    wrapperRef,
+    disableSelection,
+    infoboxBlocks,
+    selectedBlockId,
+    openBlocksIndex,
+    showInfobox,
+    paddingField,
+    gapField,
+    positionField,
+    editModeContext,
+    setInfoboxBlocks,
+    handleBlockOpen,
+    handleBlockCreate,
+    handleBlockSelect,
+    handleBlockDoubleClick,
+  } = useHooks({
+    infobox,
+    isEditable,
+    onBlockCreate,
+  });
 
-  return (
-    <Frame
-      className={className}
-      infoboxKey={infoboxKey}
-      title={property?.title || title}
-      size={property?.size}
-      height={property?.height}
-      heightType={property?.heightType}
-      position={property?.position}
-      outlineColor={property?.outlineColor}
-      useMask={!!property?.useMask}
-      outlineWidth={property?.outlineWidth}
-      visible={visible}
-      unselectOnClose={property?.unselectOnClose}
-      noContent={!blocks?.length}
-      theme={infoboxTheme}
-      backgroundColor={property?.bgcolor}
-      typography={property?.typography}
-      paddingTop={property?.infoboxPaddingTop}
-      paddingBottom={property?.infoboxPaddingBottom}
-      paddingRight={property?.infoboxPaddingRight}
-      paddingLeft={property?.infoboxPaddingLeft}
-      showTitle={property?.showTitle}
-      onMaskClick={onMaskClick}
-      onClick={() => selectedBlockId && onBlockSelect?.(undefined)}
-      onEnter={setNotReadyToRender}
-      onEntered={setReadyToRender}
-      onExit={setNotReadyToRender}
-      onClose={onClose}>
-      {blocks?.map((b, i) => (
-        <Field
-          key={b.id}
-          id={b.id}
-          index={i}
-          isEditable={isEditable}
-          isBuilt={isBuilt}
-          isSelected={selectedBlockId === b.id}
-          dragDisabled={blocks.length < 2}
-          renderInsertionPopUp={
-            isReadyToRender &&
-            insertionPopUpPosition?.[0] === i &&
-            renderInsertionPopup?.(handleBlockInsert, onInsertionPopUpClose)
-          }
-          insertionPopUpPosition={insertionPopUpPosition?.[1]}
-          onMove={onBlockMove}
-          onInsert={p => onInsertionButtonClick?.(i, p)}>
-          <BlockComponent
-            block={b}
-            isSelected={!!isEditable && !isBuilt && selectedBlockId === b.id}
-            isEditable={isEditable}
-            isBuilt={isBuilt}
-            infoboxProperty={property}
-            theme={infoboxTheme}
-            onChange={(...args) => onBlockChange?.(b.id, ...args, props.layer)}
-            onClick={() => {
-              if (b.id && selectedBlockId !== b.id) {
-                onBlockSelect?.(b.id);
-              }
-            }}
-            {...props}
+  return showInfobox ? (
+    <EditModeProvider value={editModeContext}>
+      <Wrapper ref={wrapperRef} position={positionField?.value} padding={paddingField?.value}>
+        {isEditable && !disableSelection && (
+          <BlockAddBar
+            id="top-bar"
+            openBlocks={openBlocksIndex === -1}
+            installableBlocks={installableInfoboxBlocks}
+            parentWidth={INFOBOX_WIDTH}
+            alwaysShow={infoboxBlocks.length < 1}
+            onBlockOpen={() => handleBlockOpen(-1)}
+            onBlockAdd={handleBlockCreate?.(0)}
           />
-        </Field>
-      ))}
-      {isEditable && (blocks?.length ?? 0) === 0 && (
-        <>
-          <AdditionButton onClick={() => onInsertionButtonClick?.(0)}>
-            {isReadyToRender &&
-              insertionPopUpPosition &&
-              renderInsertionPopup?.(handleBlockInsert, onInsertionPopUpClose)}
-          </AdditionButton>
-          <NoContentInfo>
-            <InnerWrapper size="footnote" color={theme.content.weak}>
-              <StyledIcon icon="arrowLong" />
-              <span>{t(`Move mouse here and click "+" to add content`)}</span>
-            </InnerWrapper>
-          </NoContentInfo>
-        </>
-      )}
-    </Frame>
-  );
+        )}
+        {infoboxBlocks && infoboxBlocks.length > 0 && (
+          <DragAndDropList
+            uniqueKey={INFOBOX_UNIQUE_KEY}
+            gap={gapField?.value ?? GAP_DEFAULT_VALUE}
+            items={infoboxBlocks}
+            getId={item => item.id}
+            onItemDrop={async (item, index) => {
+              setInfoboxBlocks(old => {
+                const items = [...old];
+                items.splice(
+                  old.findIndex(o => o.id === item.id),
+                  1,
+                );
+                items.splice(index, 0, item);
+                return items;
+              });
+              await onBlockMove?.(item.id, index);
+            }}
+            renderItem={(b, idx) => {
+              return (
+                <Fragment key={idx}>
+                  <InfoboxBlockComponent
+                    key={b.id}
+                    block={b}
+                    isEditable={isEditable}
+                    renderBlock={renderBlock}
+                    isSelected={b.id === selectedBlockId}
+                    onClick={() => handleBlockSelect(b.id)}
+                    onBlockDoubleClick={() => handleBlockDoubleClick(b.id)}
+                    onClickAway={handleBlockSelect}
+                    onRemove={onBlockDelete}
+                    onPropertyUpdate={onPropertyUpdate}
+                    onPropertyItemAdd={onPropertyItemAdd}
+                    onPropertyItemMove={onPropertyItemMove}
+                    onPropertyItemDelete={onPropertyItemDelete}
+                  />
+                  {isEditable && !disableSelection && (
+                    <BlockAddBar
+                      id={b.id + "below-bar"}
+                      openBlocks={openBlocksIndex === idx}
+                      installableBlocks={installableInfoboxBlocks}
+                      showAreaHeight={gapField?.value}
+                      parentWidth={INFOBOX_WIDTH}
+                      onBlockOpen={() => handleBlockOpen(idx)}
+                      onBlockAdd={handleBlockCreate?.(idx + 1)}
+                    />
+                  )}
+                </Fragment>
+              );
+            }}
+          />
+        )}
+      </Wrapper>
+    </EditModeProvider>
+  ) : null;
 };
 
-const NoContentInfo = styled.div`
-  display: flex;
-  justify-content: center;
-  color: ${props => props.theme.content.weak};
-  text-align: left;
-`;
+export default memo(Infobox);
 
-const StyledIcon = styled(Icon)`
-  margin: 0 auto 15px auto;
-  height: 66px;
-`;
-
-const InnerWrapper = styled(Text)`
+const Wrapper = styled.div<{
+  position?: InfoboxPosition;
+  padding?: Spacing;
+}>`
   display: flex;
   flex-direction: column;
-  width: 184px;
+  position: absolute;
+  top: 37px;
+  ${({ position }) => `${position ?? POSITION_DEFAULT_VALUE}: 13px`};
+  height: 515px;
+  width: ${INFOBOX_WIDTH}px;
+  background: #ffffff;
+  border-radius: 6px;
+  z-index: ${({ theme }) => theme.zIndexes.visualizer.infobox};
+  box-sizing: border-box;
+  overflow: auto;
+  padding-top: ${({ padding }) => padding?.top ?? PADDING_DEFAULT_VALUE}px;
+  padding-bottom: ${({ padding }) => padding?.bottom ?? PADDING_DEFAULT_VALUE}px;
+  padding-left: ${({ padding }) => padding?.left ?? PADDING_DEFAULT_VALUE}px;
+  padding-right: ${({ padding }) => padding?.right ?? PADDING_DEFAULT_VALUE}px;
 `;
-
-export default Infobox;

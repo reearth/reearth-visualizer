@@ -87,7 +87,7 @@ Default.args = {
     { id: "tab1", name: "My infobox", icon: "infobox", component: <SampleComponent /> },
     {
       id: "tab2",
-      icon: "dl",
+      icon: "marker",
       component: <Text size="body">Tab 2. Can be any react component</Text>,
     },
   ],

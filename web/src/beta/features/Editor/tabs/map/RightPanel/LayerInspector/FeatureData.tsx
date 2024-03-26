@@ -28,7 +28,12 @@ const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
       </ValueWrapper>
       <Text size="body">{t("Geometry")}</Text>
       <ValueWrapper>
-        <JsonView src={selectedFeature?.geometry} theme="a11y" dark />
+        <JsonView
+          src={selectedFeature?.geometry}
+          theme="a11y"
+          dark
+          style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
+        />
       </ValueWrapper>
       <Text size="body">{t("Properties")}</Text>
       <ValueWrapper>

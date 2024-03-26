@@ -1,11 +1,11 @@
 import { useCallback, useContext, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
+import { useBlockContext } from "@reearth/beta/lib/core/shared/contexts/blockContext";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import { BlockContext } from "../../../../shared/components/BlockWrapper";
-import { usePanelContext } from "../../../context";
 
 import LayerEditor, { type LayerBlock as LayerBlockType } from "./Editor";
 
@@ -49,7 +49,7 @@ const Content: React.FC<Props> = ({
 
   const context = useContext(BlockContext);
 
-  const storyPanelContext = usePanelContext();
+  const blockContext = useBlockContext();
 
   const handleClick = useCallback(
     (itemId: string) => {
@@ -61,16 +61,16 @@ const Content: React.FC<Props> = ({
 
       if (!item?.showLayers?.value) return;
 
-      storyPanelContext?.onLayerOverride?.(item.id, item.showLayers.value);
+      blockContext?.onLayerOverride?.(item.id, item.showLayers.value);
     },
-    [isEditable, layerButtons, storyPanelContext],
+    [isEditable, layerButtons, blockContext],
   );
 
   return (
     <Wrapper>
       <ButtonWrapper>
         {layerButtons.map(({ title, color, bgColor, id }) => {
-          const userSelected = id === storyPanelContext.layerOverride?.extensionId;
+          const userSelected = id === blockContext.layerOverride?.extensionId;
           const buttonText = title?.value ?? t("New Layers Button");
           return (
             <StyledButton

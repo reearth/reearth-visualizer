@@ -1,12 +1,13 @@
 import { useEffect, useMemo } from "react";
 
 import BlockWrapper from "../../../../shared/components/BlockWrapper";
-import type { CommonProps as BlockProps } from "../../types";
+import type { CommonBlockProps as BlockProps } from "../../../../shared/types";
+import { StoryBlock } from "../../../types";
 
 import Content from "./Content";
 import { type CameraBlock as CameraBlockType } from "./Editor";
 
-export type Props = BlockProps;
+export type Props = BlockProps<StoryBlock>;
 
 const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
   const cameraButtons = useMemo(

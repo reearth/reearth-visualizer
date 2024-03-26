@@ -19,7 +19,7 @@ import { DATA_CACHE_KEYS } from "@reearth/beta/lib/core/mantle/atoms/data";
 import { objectFromGetter } from "@reearth/beta/utils/object";
 
 import { computeAtom, convertLegacyLayer, SelectedFeatureInfo } from "../../mantle";
-import type { Atom, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
+import type { Atom, ComputedFeature, ComputedLayer, Layer, NaiveLayer } from "../../mantle";
 import { FORCE_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../hooks";
 import { EngineRef, RequestingRenderMode } from "../types";
 import { useGet } from "../utils";
@@ -85,6 +85,7 @@ export type Ref = {
     info?: SelectedFeatureInfo,
   ) => void;
   selectedLayer: () => LazyLayer | undefined;
+  selectedFeature: () => ComputedFeature | undefined;
   overriddenLayers: () => OverriddenLayer[];
 };
 
@@ -403,7 +404,7 @@ export default function useHooks({
     [override],
   );
 
-  const { select, selectFeature, selectFeatures, selectedLayer } = useSelection({
+  const { select, selectFeature, selectFeatures, selectedLayer, selectedFeature } = useSelection({
     initialSelectedLayer,
     getLazyLayer: findById,
     onLayerSelect,
@@ -563,6 +564,7 @@ export default function useHooks({
       selectFeature,
       selectFeatures,
       selectedLayer,
+      selectedFeature,
       overriddenLayers: overriddenLayersGetter,
     }),
     [
@@ -586,6 +588,7 @@ export default function useHooks({
       selectFeature,
       selectFeatures,
       selectedLayer,
+      selectedFeature,
       overriddenLayersGetter,
     ],
   );
@@ -698,7 +701,7 @@ function compat(layer: unknown): Layer | undefined {
 
 type SelectedLayer = [
   { layerId?: string; featureId?: string; reason?: LayerSelectionReason } | undefined,
-  SelectedFeatureInfo | undefined,
+  ComputedFeature | undefined,
 ];
 function useSelection({
   initialSelectedLayer,
@@ -725,7 +728,7 @@ function useSelection({
   engineRef?: RefObject<EngineRef>;
   updateStyle: (layerId: string) => void;
 }) {
-  const [selectedLayer, _selectedFeatureInfo]: SelectedLayer = useMemo(
+  const [selectedLayer, selectedComputedFeature]: SelectedLayer = useMemo(
     () => [
       initialSelectedLayer
         ? {
@@ -734,14 +737,25 @@ function useSelection({
             reason: initialSelectedLayer?.reason,
           }
         : undefined,
-      undefined, // If needed, need to pass from source
+      initialSelectedLayer?.layerId && initialSelectedLayer.featureId
+        ? engineRef?.current?.findComputedFeatureById(
+            initialSelectedLayer.layerId,
+            initialSelectedLayer.featureId,
+          )
+        : undefined,
     ],
-    [initialSelectedLayer],
+    [initialSelectedLayer, engineRef],
   );
 
-  const selectedLayerForRef = useCallback(() => {
-    return selectedLayer?.layerId ? getLazyLayer(selectedLayer.layerId) : undefined;
-  }, [getLazyLayer, selectedLayer?.layerId]);
+  const selectedLayerForRef = useCallback(
+    () => (selectedLayer?.layerId ? getLazyLayer(selectedLayer.layerId) : undefined),
+    [getLazyLayer, selectedLayer?.layerId],
+  );
+
+  const selectedFeatureForRef = useCallback(
+    () => selectedComputedFeature,
+    [selectedComputedFeature],
+  );
 
   const select = useCallback(
     (layerId?: unknown, options?: LayerSelectionReason, info?: SelectedFeatureInfo) => {
@@ -934,6 +948,7 @@ function useSelection({
 
   return {
     selectedLayer: selectedLayerForRef,
+    selectedFeature: selectedFeatureForRef,
     select,
     selectFeature,
     selectFeatures,

@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 
 import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
-import type { CommonProps as BlockProps } from "@reearth/beta/lib/core/StoryPanel/Block/types";
+import type { CommonBlockProps as BlockProps } from "@reearth/beta/lib/core/shared/types";
+
+import { StoryBlock } from "../../../types";
 
 import TimelineEditor from "./Editor";
 
@@ -11,7 +13,7 @@ export type TimelineValues = {
   endTime: string;
 };
 
-const TimelineBlock: React.FC<BlockProps> = ({ block, isSelected, ...props }) => {
+const TimelineBlock: React.FC<BlockProps<StoryBlock>> = ({ block, isSelected, ...props }) => {
   const timeline = useMemo(() => {
     return {
       timelineValues: block?.property?.default?.timelineSetting?.value,

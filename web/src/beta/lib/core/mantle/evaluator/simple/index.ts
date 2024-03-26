@@ -125,10 +125,10 @@ function hasNonExpressionObject(v: any): boolean {
   return typeof v === "object" && v && !("expression" in v) && !Array.isArray(v);
 }
 
-function evalExpression(
+export function evalExpression(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expressionContainer: any,
-  layer: LayerSimple,
+  layer?: LayerSimple,
   feature?: Feature,
 ): unknown | undefined {
   try {
@@ -138,11 +138,11 @@ function evalExpression(
       if (typeof styleExpression === "undefined") {
         return undefined;
       } else if (typeof styleExpression === "object" && styleExpression.conditions) {
-        return new ConditionalExpression(styleExpression, parsedFeature, layer.defines).evaluate();
+        return new ConditionalExpression(styleExpression, parsedFeature, layer?.defines).evaluate();
       } else if (typeof styleExpression === "boolean" || typeof styleExpression === "number") {
-        return new Expression(String(styleExpression), parsedFeature, layer.defines).evaluate();
+        return new Expression(String(styleExpression), parsedFeature, layer?.defines).evaluate();
       } else if (typeof styleExpression === "string") {
-        return new Expression(styleExpression, parsedFeature, layer.defines).evaluate();
+        return new Expression(styleExpression, parsedFeature, layer?.defines).evaluate();
       }
       return styleExpression;
     }

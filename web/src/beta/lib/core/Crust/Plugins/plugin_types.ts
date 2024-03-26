@@ -33,7 +33,7 @@ import {
   LookAtDestination,
   ScreenSpaceCameraControllerOptions,
 } from "../../types";
-import { Block } from "../Infobox";
+import { InfoboxBlock as Block } from "../Infobox/types";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 
@@ -305,7 +305,7 @@ export type PluginExtensionInstance = {
   readonly pluginId: string;
   readonly name: string;
   readonly extensionId: string;
-  readonly extensionType: "widget" | "block";
+  readonly extensionType: "widget" | "block" | "infoboxBlock" | "storyBlock";
   readonly runTimes: number | undefined; // Count number of plugin is run
 };
 
