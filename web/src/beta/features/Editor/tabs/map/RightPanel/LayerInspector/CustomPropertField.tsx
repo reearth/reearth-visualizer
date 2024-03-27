@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
@@ -19,6 +19,13 @@ type Props = {
 
 export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: Props) => {
   const t = useT();
+
+  const currentSelectedFeature = useRef(selectedFeature);
+
+  useEffect(() => {
+    currentSelectedFeature.current = selectedFeature;
+  }, [selectedFeature]);
+
   const handleChange = useCallback(
     (value: ValueProp) => {
       setField?.(prevFields => {
@@ -31,15 +38,15 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
         });
       });
 
-      if (selectedFeature?.properties) {
-        const updatedProperties = {
-          ...selectedFeature.properties,
-          [field.title]: value,
-        };
+      const updatedProperties = {
+        ...currentSelectedFeature.current?.properties,
+        [field.title]: value,
+      };
+      if (Object.keys(updatedProperties).length) {
         onSubmit?.(updatedProperties);
       }
     },
-    [field.id, field.title, selectedFeature?.properties, setField, onSubmit],
+    [field.id, field.title, setField, onSubmit],
   );
 
   const getDynamicValue = useCallback(
