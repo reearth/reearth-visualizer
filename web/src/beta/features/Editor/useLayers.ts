@@ -52,17 +52,13 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   const handleLayerSelect = useCallback(
     (layerId?: string) => {
       if (!isVisualizerReady) return;
+      layerId ? setSelectedLayerId({ layerId }) : setSelectedLayerId(undefined);
 
-      if (layerId && layerId !== selectedLayerId?.layerId) {
-        setSelectedLayerId({ layerId });
-      } else {
-        setSelectedLayerId(undefined);
-      }
       // lib/core doesn't support selecting a layer without auto-selecting a feature, so
       // Either way, we want to deselect from core as we are either deselecting, or changing to a new layer
       visualizerRef?.current?.layers.select(undefined);
     },
-    [selectedLayerId?.layerId, isVisualizerReady, visualizerRef, setSelectedLayerId],
+    [isVisualizerReady, visualizerRef, setSelectedLayerId],
   );
 
   const handleLayerDelete = useCallback(

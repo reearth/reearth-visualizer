@@ -37,8 +37,7 @@ export default function ({ sceneId }: LayerStyleProps) {
   );
 
   const handleLayerStyleSelect = useCallback(
-    (layerId: string) =>
-      setSelectedLayerStyleId(prevId => (prevId === layerId ? undefined : layerId)),
+    (layerId: string) => setSelectedLayerStyleId(layerId ? layerId : undefined),
     [setSelectedLayerStyleId],
   );
 
