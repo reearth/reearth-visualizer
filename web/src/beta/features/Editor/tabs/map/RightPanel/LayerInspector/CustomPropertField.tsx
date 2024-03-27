@@ -19,7 +19,6 @@ type Props = {
 
 export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: Props) => {
   const t = useT();
-
   const handleChange = useCallback(
     (value: ValueProp) => {
       setField?.(prevFields => {
@@ -31,56 +30,37 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
           return prevField;
         });
       });
-      let updatedProperty = {};
 
-      switch (field.type) {
-        case "Text":
-          updatedProperty = { title: value };
-          break;
-        case "TextArea":
-          updatedProperty = { content: value };
-          break;
-        case "Asset":
-          updatedProperty = { image: value };
-          break;
-        case "URL":
-          updatedProperty = { video: value };
-          break;
-        case "Boolean":
-          updatedProperty = { checked: value };
-          break;
-        case "Int":
-        case "Float":
-          updatedProperty = { number: value };
-          break;
-        default:
-          break;
-      }
-
-      if (Object.keys(updatedProperty).length) {
+      if (selectedFeature?.properties) {
         const updatedProperties = {
-          ...selectedFeature?.properties,
-          ...updatedProperty,
+          ...selectedFeature.properties,
+          [field.title]: value,
         };
         onSubmit?.(updatedProperties);
       }
     },
-    [field.id, field.type, onSubmit, selectedFeature?.properties, setField],
+    [field.id, field.title, selectedFeature?.properties, setField, onSubmit],
   );
 
+  const getDynamicValue = useCallback(
+    (selectedFeature: Feature | undefined, fieldTitle: string, fieldValue: any) => {
+      return selectedFeature?.properties && fieldTitle in selectedFeature.properties
+        ? selectedFeature.properties[fieldTitle]
+        : fieldValue;
+    },
+    [],
+  );
   return field?.type === "Text" ? (
     <TextField
       key={field?.id}
       name={field?.title}
-      value={selectedFeature?.properties.title ? selectedFeature?.properties.title : field.value}
+      value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
       name={field?.title}
-      value={
-        selectedFeature?.properties.content ? selectedFeature?.properties.content : field.value
-      }
+      value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : field?.type === "Asset" ? (
@@ -88,7 +68,7 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
       name={field?.title}
       entityType="image"
       fileType={"asset"}
-      value={selectedFeature?.properties.image ? selectedFeature?.properties.image : field.value}
+      value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : field?.type === "URL" ? (
@@ -96,24 +76,20 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
       name={field?.title}
       entityType="file"
       fileType={"URL"}
-      value={selectedFeature?.properties.video ? selectedFeature?.properties.video : field.value}
+      value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
       name={field?.title}
-      value={selectedFeature?.properties.number ? selectedFeature?.properties.number : field.value}
-      min={field?.min}
-      max={field?.max}
+      value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : field?.type === "Boolean" ? (
     <ToggleField
       key={field?.id}
       name={field?.title}
-      checked={
-        selectedFeature?.properties.checked ? selectedFeature?.properties.checked : field.value
-      }
+      checked={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : (
