@@ -34,6 +34,14 @@ const config: StorybookConfig = {
             find: "crypto",
             replacement: "crypto-js",
           },
+          {
+            find: "@reearth/cesium-mvt-imagery-provider",
+            replacement: resolve(
+              __dirname,
+              "..",
+              "node_modules/@reearth/cesium-mvt-imagery-provider",
+            ),
+          },
           // quickjs-emscripten
           {
             find: "@reearth",

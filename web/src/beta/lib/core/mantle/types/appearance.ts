@@ -254,6 +254,7 @@ export type RasterAppearance = {
   credit?: string;
   alpha?: number;
   hideIndicator?: boolean;
+  bounds?: string;
 };
 
 export type BoxAppearance = {
