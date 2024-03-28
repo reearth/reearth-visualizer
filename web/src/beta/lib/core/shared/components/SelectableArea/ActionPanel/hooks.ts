@@ -30,7 +30,7 @@ export default ({
   onSettingsToggle,
 }: Props) => {
   const t = useT();
-  const dndItemContextRef = useDnDItemContext();
+  const dndCustomHandleRef = useDnDItemContext();
 
   const handleRemove = useCallback(() => {
     onRemove?.();
@@ -86,7 +86,7 @@ export default ({
   }, [title, icon, isSelected, editMode, contentSettings, t, onEditModeToggle, onSettingsToggle]);
 
   return {
-    dndItemContextRef,
+    dndCustomHandleRef,
     settingsTitle,
     popoverContent,
     actionItems,

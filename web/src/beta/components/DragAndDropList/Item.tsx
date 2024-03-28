@@ -1,7 +1,7 @@
 import type { Identifier } from "dnd-core";
 import type { FC, ReactNode } from "react";
 import { memo, useRef, createContext, useContext } from "react";
-import { useDrag, useDrop } from "react-dnd";
+import { ConnectDragSource, useDrag, useDrop } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
 
@@ -22,7 +22,7 @@ type Props = {
   children: ReactNode;
 };
 
-const ItemContext = createContext<React.RefObject<HTMLDivElement> | null>(null);
+const ItemContext = createContext<ConnectDragSource | null>(null);
 
 export const useItemContext = () => useContext(ItemContext);
 
@@ -36,7 +36,6 @@ const Item: FC<Props> = ({
   onItemDropOnItem,
   onItemDropOutside,
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
@@ -98,10 +97,10 @@ const Item: FC<Props> = ({
     },
   });
 
-  drag(ref);
   drop(contentRef);
+
   return shouldUseCustomHandler ? (
-    <ItemContext.Provider value={ref}>
+    <ItemContext.Provider value={drag}>
       <SItem
         customHandler={shouldUseCustomHandler}
         ref={preview}
@@ -111,7 +110,7 @@ const Item: FC<Props> = ({
       </SItem>
     </ItemContext.Provider>
   ) : (
-    <SItem ref={ref} data-handler-id={handlerId} isDragging={isDragging}>
+    <SItem ref={drag} data-handler-id={handlerId} isDragging={isDragging}>
       <div ref={contentRef}>{children}</div>
     </SItem>
   );

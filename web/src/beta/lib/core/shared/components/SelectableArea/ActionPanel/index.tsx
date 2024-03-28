@@ -59,7 +59,7 @@ const ActionPanel: React.FC<Props> = ({
   onRemove,
   ...actionProps
 }) => {
-  const { dndItemContextRef, settingsTitle, popoverContent, actionItems } = useHooks({
+  const { dndCustomHandleRef, settingsTitle, popoverContent, actionItems } = useHooks({
     title,
     icon,
     isSelected,
@@ -73,7 +73,7 @@ const ActionPanel: React.FC<Props> = ({
 
   return (
     <ActionPanelUI
-      ref={dndItemContextRef}
+      ref={dndCustomHandleRef}
       dndEnabled={dndEnabled}
       isSelected={isSelected}
       actionItems={actionItems}
