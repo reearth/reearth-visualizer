@@ -237,38 +237,38 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 							geometry {
 								... on Point {
 									type
-									pointCoordinates
+									coordinates
 								}
 								... on LineString {
 									type
-									lineStringCoordinates
+									coordinates
 								}
 								... on Polygon {
 									type
-									polygonCoordinates
+									coordinates
 								}
 								... on MultiPolygon {
 									type
-									multiPolygonCoordinates
+									coordinates
 								}
 								... on GeometryCollection {
 									type
 									geometries {
 										... on Point {
 											type
-											pointCoordinates
+											coordinates
 										}
 										... on LineString {
 											type
-											lineStringCoordinates
+											coordinates
 										}
 										... on Polygon {
 											type
-											polygonCoordinates
+											coordinates
 										}
 										... on MultiPolygon {
 											type
-											multiPolygonCoordinates
+											coordinates
 										}
 									}
 								}

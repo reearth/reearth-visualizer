@@ -66,8 +66,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 				ID:   IDFrom(feature1.ID()),
 				Type: feature1.FeatureType(),
 				Geometry: Point{
-					Type:             feature1.Geometry().(*nlslayer.Point).PointType(),
-					PointCoordinates: feature1.Geometry().(*nlslayer.Point).Coordinates(),
+					Type:        feature1.Geometry().(*nlslayer.Point).PointType(),
+					Coordinates: feature1.Geometry().(*nlslayer.Point).Coordinates(),
 				},
 				Properties: *feature1.Properties(),
 			},
@@ -75,8 +75,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 				ID:   IDFrom(feature2.ID()),
 				Type: feature2.FeatureType(),
 				Geometry: LineString{
-					Type:                  feature2.Geometry().(*nlslayer.LineString).LineStringType(),
-					LineStringCoordinates: feature2.Geometry().(*nlslayer.LineString).Coordinates(),
+					Type:        feature2.Geometry().(*nlslayer.LineString).LineStringType(),
+					Coordinates: feature2.Geometry().(*nlslayer.LineString).Coordinates(),
 				},
 				Properties: *feature2.Properties(),
 			},
@@ -84,8 +84,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 				ID:   IDFrom(feature3.ID()),
 				Type: feature3.FeatureType(),
 				Geometry: Polygon{
-					Type:               feature3.Geometry().(*nlslayer.Polygon).PolygonType(),
-					PolygonCoordinates: feature3.Geometry().(*nlslayer.Polygon).Coordinates(),
+					Type:        feature3.Geometry().(*nlslayer.Polygon).PolygonType(),
+					Coordinates: feature3.Geometry().(*nlslayer.Polygon).Coordinates(),
 				},
 				Properties: *feature3.Properties(),
 			},
@@ -93,8 +93,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 				ID:   IDFrom(feature4.ID()),
 				Type: feature4.FeatureType(),
 				Geometry: MultiPolygon{
-					Type:                    feature4.Geometry().(*nlslayer.MultiPolygon).MultiPolygonType(),
-					MultiPolygonCoordinates: feature4.Geometry().(*nlslayer.MultiPolygon).Coordinates(),
+					Type:        feature4.Geometry().(*nlslayer.MultiPolygon).MultiPolygonType(),
+					Coordinates: feature4.Geometry().(*nlslayer.MultiPolygon).Coordinates(),
 				},
 				Properties: *feature4.Properties(),
 			},
@@ -105,20 +105,20 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 					Type: feature5.Geometry().(*nlslayer.GeometryCollection).GeometryCollectionType(),
 					Geometries: []Geometry{
 						Point{
-							Type:             feature1.Geometry().(*nlslayer.Point).PointType(),
-							PointCoordinates: feature1.Geometry().(*nlslayer.Point).Coordinates(),
+							Type:        feature1.Geometry().(*nlslayer.Point).PointType(),
+							Coordinates: feature1.Geometry().(*nlslayer.Point).Coordinates(),
 						},
 						LineString{
-							Type:                  feature2.Geometry().(*nlslayer.LineString).LineStringType(),
-							LineStringCoordinates: feature2.Geometry().(*nlslayer.LineString).Coordinates(),
+							Type:        feature2.Geometry().(*nlslayer.LineString).LineStringType(),
+							Coordinates: feature2.Geometry().(*nlslayer.LineString).Coordinates(),
 						},
 						Polygon{
-							Type:               feature3.Geometry().(*nlslayer.Polygon).PolygonType(),
-							PolygonCoordinates: feature3.Geometry().(*nlslayer.Polygon).Coordinates(),
+							Type:        feature3.Geometry().(*nlslayer.Polygon).PolygonType(),
+							Coordinates: feature3.Geometry().(*nlslayer.Polygon).Coordinates(),
 						},
 						MultiPolygon{
-							Type:                    feature4.Geometry().(*nlslayer.MultiPolygon).MultiPolygonType(),
-							MultiPolygonCoordinates: feature4.Geometry().(*nlslayer.MultiPolygon).Coordinates(),
+							Type:        feature4.Geometry().(*nlslayer.MultiPolygon).MultiPolygonType(),
+							Coordinates: feature4.Geometry().(*nlslayer.MultiPolygon).Coordinates(),
 						},
 					},
 				},

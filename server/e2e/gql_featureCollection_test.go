@@ -24,38 +24,38 @@ func addGeoJSONFeature(
 								geometry {
 									... on Point {
 										type
-										pointCoordinates
+										coordinates
 									}
 									... on LineString {
 										type
-										lineStringCoordinates
+										coordinates
 									}
 									... on Polygon {
 										type
-										polygonCoordinates
+										coordinates
 									}
 									... on MultiPolygon {
 										type
-										multiPolygonCoordinates
+										coordinates
 									}
 									... on GeometryCollection {
 										type
 										geometries {
 											... on Point {
 												type
-												pointCoordinates
+												coordinates
 											}
 											... on LineString {
 												type
-												lineStringCoordinates
+												coordinates
 											}
 											... on Polygon {
 												type
-												polygonCoordinates
+												coordinates
 											}
 											... on MultiPolygon {
 												type
-												multiPolygonCoordinates
+												coordinates
 											}
 										}
 									}
@@ -102,42 +102,41 @@ func updateGeoJSONFeature(
 								geometry {
 									... on Point {
 										type
-										pointCoordinates
+										coordinates
 									}
 									... on LineString {
 										type
-										lineStringCoordinates
+										coordinates
 									}
 									... on Polygon {
 										type
-										polygonCoordinates
+										coordinates
 									}
 									... on MultiPolygon {
 										type
-										multiPolygonCoordinates
+										coordinates
 									}
 									... on GeometryCollection {
 										type
 										geometries {
 											... on Point {
 												type
-												pointCoordinates
+												coordinates
 											}
 											... on LineString {
 												type
-												lineStringCoordinates
+												coordinates
 											}
 											... on Polygon {
 												type
-												polygonCoordinates
+												coordinates
 											}
 											... on MultiPolygon {
 												type
-												multiPolygonCoordinates
+												coordinates
 											}
 										}
 									}
-								}
 							}
 						}`,
 		Variables: map[string]interface{}{

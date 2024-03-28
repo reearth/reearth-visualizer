@@ -174,23 +174,23 @@ func convertGeometry(g nlslayer.Geometry) Geometry {
 	switch g := g.(type) {
 	case *nlslayer.Point:
 		return Point{
-			Type:             g.PointType(),
-			PointCoordinates: g.Coordinates(),
+			Type:        g.PointType(),
+			Coordinates: g.Coordinates(),
 		}
 	case *nlslayer.LineString:
 		return LineString{
-			Type:                  g.LineStringType(),
-			LineStringCoordinates: g.Coordinates(),
+			Type:        g.LineStringType(),
+			Coordinates: g.Coordinates(),
 		}
 	case *nlslayer.Polygon:
 		return Polygon{
-			Type:               g.PolygonType(),
-			PolygonCoordinates: g.Coordinates(),
+			Type:        g.PolygonType(),
+			Coordinates: g.Coordinates(),
 		}
 	case *nlslayer.MultiPolygon:
 		return MultiPolygon{
-			Type:                    g.MultiPolygonType(),
-			MultiPolygonCoordinates: g.Coordinates(),
+			Type:        g.MultiPolygonType(),
+			Coordinates: g.Coordinates(),
 		}
 	case *nlslayer.GeometryCollection:
 		geometries := make([]Geometry, 0, len(g.Geometries()))
