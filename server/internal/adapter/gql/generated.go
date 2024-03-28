@@ -483,8 +483,8 @@ type ComplexityRoot struct {
 	}
 
 	LineString struct {
-		Coordinates func(childComplexity int) int
-		Type        func(childComplexity int) int
+		LineStringCoordinates func(childComplexity int) int
+		Type                  func(childComplexity int) int
 	}
 
 	Me struct {
@@ -610,8 +610,8 @@ type ComplexityRoot struct {
 	}
 
 	MultiPolygon struct {
-		Coordinates func(childComplexity int) int
-		Type        func(childComplexity int) int
+		MultiPolygonCoordinates func(childComplexity int) int
+		Type                    func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -796,8 +796,8 @@ type ComplexityRoot struct {
 	}
 
 	Point struct {
-		Coordinates func(childComplexity int) int
-		Type        func(childComplexity int) int
+		PointCoordinates func(childComplexity int) int
+		Type             func(childComplexity int) int
 	}
 
 	Policy struct {
@@ -813,8 +813,8 @@ type ComplexityRoot struct {
 	}
 
 	Polygon struct {
-		Coordinates func(childComplexity int) int
-		Type        func(childComplexity int) int
+		PolygonCoordinates func(childComplexity int) int
+		Type               func(childComplexity int) int
 	}
 
 	Project struct {
@@ -3261,12 +3261,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LayerTagItem.TagID(childComplexity), true
 
-	case "LineString.coordinates":
-		if e.complexity.LineString.Coordinates == nil {
+	case "LineString.lineStringCoordinates":
+		if e.complexity.LineString.LineStringCoordinates == nil {
 			break
 		}
 
-		return e.complexity.LineString.Coordinates(childComplexity), true
+		return e.complexity.LineString.LineStringCoordinates(childComplexity), true
 
 	case "LineString.type":
 		if e.complexity.LineString.Type == nil {
@@ -3856,12 +3856,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MoveStoryPayload.StoryID(childComplexity), true
 
-	case "MultiPolygon.coordinates":
-		if e.complexity.MultiPolygon.Coordinates == nil {
+	case "MultiPolygon.multiPolygonCoordinates":
+		if e.complexity.MultiPolygon.MultiPolygonCoordinates == nil {
 			break
 		}
 
-		return e.complexity.MultiPolygon.Coordinates(childComplexity), true
+		return e.complexity.MultiPolygon.MultiPolygonCoordinates(childComplexity), true
 
 	case "MultiPolygon.type":
 		if e.complexity.MultiPolygon.Type == nil {
@@ -5490,12 +5490,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PluginExtension.WidgetLayout(childComplexity), true
 
-	case "Point.coordinates":
-		if e.complexity.Point.Coordinates == nil {
+	case "Point.pointCoordinates":
+		if e.complexity.Point.PointCoordinates == nil {
 			break
 		}
 
-		return e.complexity.Point.Coordinates(childComplexity), true
+		return e.complexity.Point.PointCoordinates(childComplexity), true
 
 	case "Point.type":
 		if e.complexity.Point.Type == nil {
@@ -5567,12 +5567,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Policy.PublishedProjectCount(childComplexity), true
 
-	case "Polygon.coordinates":
-		if e.complexity.Polygon.Coordinates == nil {
+	case "Polygon.polygonCoordinates":
+		if e.complexity.Polygon.PolygonCoordinates == nil {
 			break
 		}
 
-		return e.complexity.Polygon.Coordinates(childComplexity), true
+		return e.complexity.Polygon.PolygonCoordinates(childComplexity), true
 
 	case "Polygon.type":
 		if e.complexity.Polygon.Type == nil {
@@ -8701,22 +8701,22 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "../../../gql/featureCollection.graphql", Input: `type Point {
     type: String!
-    coordinates: [Float!]!
+    pointCoordinates: [Float!]!
 }
 
 type LineString {
     type: String!
-    coordinates: [[Float!]!]!
+    lineStringCoordinates: [[Float!]!]!
 }
 
 type Polygon {
     type: String!
-    coordinates: [[[Float!]!]!]!
+    polygonCoordinates: [[[Float!]!]!]!
 }
 
 type MultiPolygon {
     type: String!
-    coordinates: [[[[Float!]!]!]!]!
+    multiPolygonCoordinates: [[[[Float!]!]!]!]!
 }
 
 type GeometryCollection {
@@ -24165,8 +24165,8 @@ func (ec *executionContext) fieldContext_LineString_type(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _LineString_coordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.LineString) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LineString_coordinates(ctx, field)
+func (ec *executionContext) _LineString_lineStringCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.LineString) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LineString_lineStringCoordinates(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -24179,7 +24179,7 @@ func (ec *executionContext) _LineString_coordinates(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Coordinates, nil
+		return obj.LineStringCoordinates, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24196,7 +24196,7 @@ func (ec *executionContext) _LineString_coordinates(ctx context.Context, field g
 	return ec.marshalNFloat2ᚕᚕfloat64ᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_LineString_coordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_LineString_lineStringCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "LineString",
 		Field:      field,
@@ -28756,8 +28756,8 @@ func (ec *executionContext) fieldContext_MultiPolygon_type(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _MultiPolygon_coordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MultiPolygon) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_MultiPolygon_coordinates(ctx, field)
+func (ec *executionContext) _MultiPolygon_multiPolygonCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.MultiPolygon) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MultiPolygon_multiPolygonCoordinates(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -28770,7 +28770,7 @@ func (ec *executionContext) _MultiPolygon_coordinates(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Coordinates, nil
+		return obj.MultiPolygonCoordinates, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28787,7 +28787,7 @@ func (ec *executionContext) _MultiPolygon_coordinates(ctx context.Context, field
 	return ec.marshalNFloat2ᚕᚕᚕᚕfloat64ᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_MultiPolygon_coordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MultiPolygon_multiPolygonCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MultiPolygon",
 		Field:      field,
@@ -37582,8 +37582,8 @@ func (ec *executionContext) fieldContext_Point_type(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Point_coordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Point) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Point_coordinates(ctx, field)
+func (ec *executionContext) _Point_pointCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Point) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Point_pointCoordinates(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -37596,7 +37596,7 @@ func (ec *executionContext) _Point_coordinates(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Coordinates, nil
+		return obj.PointCoordinates, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -37613,7 +37613,7 @@ func (ec *executionContext) _Point_coordinates(ctx context.Context, field graphq
 	return ec.marshalNFloat2ᚕfloat64ᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Point_coordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Point_pointCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Point",
 		Field:      field,
@@ -38045,8 +38045,8 @@ func (ec *executionContext) fieldContext_Polygon_type(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Polygon_coordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Polygon_coordinates(ctx, field)
+func (ec *executionContext) _Polygon_polygonCoordinates(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Polygon_polygonCoordinates(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38059,7 +38059,7 @@ func (ec *executionContext) _Polygon_coordinates(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Coordinates, nil
+		return obj.PolygonCoordinates, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38076,7 +38076,7 @@ func (ec *executionContext) _Polygon_coordinates(ctx context.Context, field grap
 	return ec.marshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Polygon_coordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Polygon_polygonCoordinates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Polygon",
 		Field:      field,
@@ -66808,8 +66808,8 @@ func (ec *executionContext) _LineString(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "coordinates":
-			out.Values[i] = ec._LineString_coordinates(ctx, field, obj)
+		case "lineStringCoordinates":
+			out.Values[i] = ec._LineString_lineStringCoordinates(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -68336,8 +68336,8 @@ func (ec *executionContext) _MultiPolygon(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "coordinates":
-			out.Values[i] = ec._MultiPolygon_coordinates(ctx, field, obj)
+		case "multiPolygonCoordinates":
+			out.Values[i] = ec._MultiPolygon_multiPolygonCoordinates(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -69723,8 +69723,8 @@ func (ec *executionContext) _Point(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "coordinates":
-			out.Values[i] = ec._Point_coordinates(ctx, field, obj)
+		case "pointCoordinates":
+			out.Values[i] = ec._Point_pointCoordinates(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -69825,8 +69825,8 @@ func (ec *executionContext) _Polygon(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "coordinates":
-			out.Values[i] = ec._Polygon_coordinates(ctx, field, obj)
+		case "polygonCoordinates":
+			out.Values[i] = ec._Polygon_polygonCoordinates(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -101,23 +101,23 @@ func convertGeometry(nlslayerGeom nlslayer.Geometry) (gqlmodel.Geometry, error) 
 	switch geom := nlslayerGeom.(type) {
 	case *nlslayer.Point:
 		return gqlmodel.Point{
-			Type:        geom.PointType(),
-			Coordinates: geom.Coordinates(),
+			Type:             geom.PointType(),
+			PointCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.LineString:
 		return gqlmodel.LineString{
-			Type:        geom.LineStringType(),
-			Coordinates: geom.Coordinates(),
+			Type:                  geom.LineStringType(),
+			LineStringCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.Polygon:
 		return gqlmodel.Polygon{
-			Type:        geom.PolygonType(),
-			Coordinates: geom.Coordinates(),
+			Type:               geom.PolygonType(),
+			PolygonCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.MultiPolygon:
 		return gqlmodel.MultiPolygon{
-			Type:        geom.MultiPolygonType(),
-			Coordinates: geom.Coordinates(),
+			Type:                    geom.MultiPolygonType(),
+			MultiPolygonCoordinates: geom.Coordinates(),
 		}, nil
 	case *nlslayer.GeometryCollection:
 		var geometries []gqlmodel.Geometry
