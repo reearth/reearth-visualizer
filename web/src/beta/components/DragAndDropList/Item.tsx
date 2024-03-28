@@ -1,7 +1,7 @@
 import type { Identifier } from "dnd-core";
 import type { FC, ReactNode } from "react";
 import { memo, useRef, createContext, useContext } from "react";
-import { ConnectDragSource, useDrag, useDrop } from "react-dnd";
+import { ConnectDragPreview, ConnectDragSource, useDrag, useDrop } from "react-dnd";
 
 import { styled } from "@reearth/services/theme";
 
@@ -22,7 +22,10 @@ type Props = {
   children: ReactNode;
 };
 
-const ItemContext = createContext<ConnectDragSource | null>(null);
+const ItemContext = createContext<{
+  customDragSource: ConnectDragSource;
+  customDragPreview: ConnectDragPreview;
+} | null>(null);
 
 export const useItemContext = () => useContext(ItemContext);
 
@@ -100,10 +103,9 @@ const Item: FC<Props> = ({
   drop(contentRef);
 
   return shouldUseCustomHandler ? (
-    <ItemContext.Provider value={drag}>
+    <ItemContext.Provider value={{ customDragSource: drag, customDragPreview: preview }}>
       <SItem
         customHandler={shouldUseCustomHandler}
-        ref={preview}
         data-handler-id={handlerId}
         isDragging={isDragging}>
         <div ref={contentRef}>{children}</div>

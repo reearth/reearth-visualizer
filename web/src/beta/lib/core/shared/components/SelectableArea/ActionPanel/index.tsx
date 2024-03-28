@@ -59,7 +59,7 @@ const ActionPanel: React.FC<Props> = ({
   onRemove,
   ...actionProps
 }) => {
-  const { dndCustomHandleRef, settingsTitle, popoverContent, actionItems } = useHooks({
+  const { customDragSource, settingsTitle, popoverContent, actionItems } = useHooks({
     title,
     icon,
     isSelected,
@@ -73,7 +73,7 @@ const ActionPanel: React.FC<Props> = ({
 
   return (
     <ActionPanelUI
-      ref={dndCustomHandleRef}
+      ref={customDragSource}
       dndEnabled={dndEnabled}
       isSelected={isSelected}
       actionItems={actionItems}
