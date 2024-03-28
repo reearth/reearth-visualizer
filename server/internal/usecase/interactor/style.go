@@ -3,13 +3,16 @@ package interactor
 import (
 	"context"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 type Style struct {
@@ -18,14 +21,16 @@ type Style struct {
 	styleRepo     repo.Style
 	sceneLockRepo repo.SceneLock
 	transaction   usecasex.Transaction
+	redis         gateway.RedisGateway
 }
 
-func NewStyle(r *repo.Container) interfaces.Style {
+func NewStyle(r *repo.Container, redis gateway.RedisGateway) interfaces.Style {
 	return &Style{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		styleRepo:       r.Style,
 		sceneLockRepo:   r.SceneLock,
 		transaction:     r.Transaction,
+		redis:           redis,
 	}
 }
 
@@ -87,9 +92,34 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 		}
 	}()
 
-	style, err := i.styleRepo.FindByID(ctx, param.StyleID)
-	if err != nil {
-		return nil, err
+	var style *scene.Style
+	cacheKey := scene.StyleCacheKey(param.StyleID)
+	val, redisGetErr := i.redis.GetValue(ctx, cacheKey)
+	if redisGetErr != nil && redisGetErr != redis.Nil {
+		return nil, redisGetErr
+	}
+
+	if redisGetErr == redis.Nil || val == "" {
+		style, err = i.styleRepo.FindByID(ctx, param.StyleID)
+		if err != nil {
+			return nil, err
+		}
+		if style == nil {
+			return nil, nil
+		}
+		msgpackData, err := msgpack.Marshal(&style)
+		if err != nil {
+			return nil, err
+		}
+		err = i.redis.SetValue(ctx, cacheKey, msgpackData)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := msgpack.Unmarshal([]byte(val), &style)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if param.Name != nil {
