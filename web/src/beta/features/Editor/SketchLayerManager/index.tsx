@@ -59,6 +59,8 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
   const handleSubmit = () => {
     const schemaJSON = propertyList.reduce((acc, property, index) => {
       const [key] = Object.keys(property);
+
+      // Appending index + 1 to the value for sorting later
       const value = `${property[key]}_${index + 1}`;
       acc[key] = value;
       return acc;

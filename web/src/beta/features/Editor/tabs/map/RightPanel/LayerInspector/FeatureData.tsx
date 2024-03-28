@@ -61,7 +61,7 @@ const FeatureData: React.FC<Props> = ({
     const fieldArray = sortedValues.map(({ key, value }) => ({
       id: uuidv4(),
       type: value.replace(/_\d+$/, ""),
-      title: key.toLowerCase(),
+      title: key,
       value: undefined,
     }));
 

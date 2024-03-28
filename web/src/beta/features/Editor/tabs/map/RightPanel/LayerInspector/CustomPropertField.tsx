@@ -66,12 +66,14 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     />
   ) : field?.type === "TextArea" ? (
     <TextAreaField
+      key={field?.id}
       name={field?.title}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
     />
   ) : field?.type === "Asset" ? (
     <URLField
+      key={field?.id}
       name={field?.title}
       entityType="image"
       fileType={"asset"}
@@ -80,6 +82,7 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     />
   ) : field?.type === "URL" ? (
     <URLField
+      key={field?.id}
       name={field?.title}
       entityType="file"
       fileType={"URL"}
@@ -88,6 +91,7 @@ export const FieldComponent = ({ field, selectedFeature, setField, onSubmit }: P
     />
   ) : field?.type === "Float" || field.type === "Int" ? (
     <NumberField
+      key={field?.id}
       name={field?.title}
       value={getDynamicValue(selectedFeature, field.title, field.value)}
       onChange={handleChange}
