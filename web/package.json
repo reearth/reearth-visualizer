@@ -113,7 +113,7 @@
         "@mapbox/vector-tile": "1.3.1",
         "@monaco-editor/react": "4.6.0",
         "@popperjs/core": "2.11.8",
-        "@reearth/cesium-mvt-imagery-provider": "^1.5.1",
+        "@reearth/cesium-mvt-imagery-provider": "1.5.3",
         "@rot1024/use-transition": "1.0.0",
         "@sentry/browser": "7.77.0",
         "@seznam/compose-react-refs": "1.0.6",
