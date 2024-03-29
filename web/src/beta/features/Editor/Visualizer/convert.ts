@@ -33,6 +33,8 @@ import {
   NlsLayerCommonFragment,
 } from "@reearth/services/gql";
 
+import { handleCoordinate } from "../utils";
+
 import convertInfobox from "./convert-infobox";
 
 export type P = { [key in string]: any };
@@ -364,23 +366,6 @@ export function processLayers(
     }
 
     return DEFAULT_LAYER_STYLE;
-  };
-
-  const handleCoordinate = (geomery: any) => {
-    switch (geomery.type) {
-      case "Polygon":
-        return geomery.polygonCoordinates;
-      case "MultiPolygon":
-        return geomery.multiPolygonCoordinates;
-      case "LineString":
-        return geomery.lineStringCoordinates;
-      case "Point":
-        return geomery.pointCoordinates;
-      case "GeometryCollection":
-        return geomery.geometries;
-      default:
-        return geomery;
-    }
   };
 
   return newLayers?.map(nlsLayer => {

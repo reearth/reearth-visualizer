@@ -216,3 +216,20 @@ export const generateTitle = (url: string, layerName?: string): string => {
   }
   return generateRandomString(5);
 };
+
+export const handleCoordinate = (geomery: any) => {
+  switch (geomery.type) {
+    case "Polygon":
+      return geomery.polygonCoordinates;
+    case "MultiPolygon":
+      return geomery.multiPolygonCoordinates;
+    case "LineString":
+      return geomery.lineStringCoordinates;
+    case "Point":
+      return geomery.pointCoordinates;
+    case "GeometryCollection":
+      return geomery.geometries;
+    default:
+      return geomery;
+  }
+};
