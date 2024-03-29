@@ -82,16 +82,19 @@ func StartServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Containe
 		t.Fatalf("server failed to listen: %v", err)
 	}
 
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     cfg.RedisHost,
-		Password: "",
-		DB:       0,
-	})
-	_, err = redisClient.Ping(ctx).Result()
-	if err != nil {
-		t.Fatalf("Failed to connect to miniredis: %+v\n", err)
+	var redisAdapter *infraRedis.RedisAdapter
+	if cfg.RedisHost != "" {
+		redisClient := redis.NewClient(&redis.Options{
+			Addr:     cfg.RedisHost,
+			Password: "",
+			DB:       0,
+		})
+		_, err = redisClient.Ping(ctx).Result()
+		if err != nil {
+			t.Fatalf("Failed to connect to Redis: %+v\n", err)
+		}
+		redisAdapter = infraRedis.NewRedisAdapter(redisClient)
 	}
-	redisAdapter := infraRedis.NewRedisAdapter(redisClient)
 
 	srv := app.NewServer(ctx, &app.ServerConfig{
 		Config:       cfg,
