@@ -1,9 +1,11 @@
 import { expect, test } from "vitest";
 
-import { convertLegacyCluster, convertLegacyLayer } from "./forward";
-import type { Infobox, LegacyCluster, Tag } from "./types";
+import { Infobox } from "../../Crust/Infobox/types";
 
-const infobox: Infobox = { blocks: [], property: { default: { bgcolor: "red" } } };
+import { convertLegacyCluster, convertLegacyLayer } from "./forward";
+import type { LegacyCluster, Tag } from "./types";
+
+const infobox: Infobox = { blocks: [], property: { default: { position: { value: "left" } } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];
 
 test("group", () => {

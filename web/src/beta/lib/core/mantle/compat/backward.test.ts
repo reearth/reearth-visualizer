@@ -1,9 +1,11 @@
 import { expect, test } from "vitest";
 
-import { convertLayer, getCompat } from "./backward";
-import type { Infobox, Tag } from "./types";
+import { Infobox } from "../../Crust/Infobox/types";
 
-const infobox: Infobox = { blocks: [], property: { default: { bgcolor: "red" } } };
+import { convertLayer, getCompat } from "./backward";
+import type { Tag } from "./types";
+
+const infobox: Infobox = { blocks: [], property: { default: { position: { value: "left" } } } };
 const tags: Tag[] = [{ id: "x", label: "x" }];
 
 test("group", () => {

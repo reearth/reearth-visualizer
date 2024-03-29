@@ -11,6 +11,7 @@ import {
   PublicBasicAuthSettingsType,
   PublicSettingsType,
   PublicAliasSettingsType,
+  PublicGASettingsType,
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
@@ -79,6 +80,14 @@ export default ({ projectId, tab }: Props) => {
       await useUpdateProjectAlias({ projectId, ...settings });
     },
     [projectId, useUpdateProjectAlias],
+  );
+
+  const handleUpdateProjectGA = useCallback(
+    async (settings: PublicGASettingsType) => {
+      if (!projectId) return;
+      await useUpdateProject({ projectId, ...settings });
+    },
+    [projectId, useUpdateProject],
   );
   const { useStoriesQuery } = useStorytellingAPI();
   const { stories = [] } = useStoriesQuery({ sceneId: scene?.id });
@@ -162,6 +171,7 @@ export default ({ projectId, tab }: Props) => {
     handleDeleteProject,
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
+    handleUpdateProjectGA,
     handleUpdateStory,
     handleUpdateStoryBasicAuth,
     handleUpdateStoryAlias,

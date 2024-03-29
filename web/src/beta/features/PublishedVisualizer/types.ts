@@ -12,6 +12,8 @@ export type PublishedData = {
   widgets?: Widget[];
   widgetAlignSystem?: WidgetAlignSystem;
   story?: Story;
+  enableGa?: boolean;
+  trackingId?: string;
 };
 
 export type Story = {
@@ -58,9 +60,16 @@ export type NLSLayer = {
       value?: any;
     };
   };
+  nlsInfobox?: any;
 };
 
-export type Block = {
+export type NLSInfobox = {
+  id: string;
+  blocks: NLSInfoboxBlock[];
+  property: any;
+};
+
+export type NLSInfoboxBlock = {
   id: string;
   pluginId: string;
   extensionId: string;

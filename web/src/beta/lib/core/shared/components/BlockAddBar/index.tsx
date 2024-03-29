@@ -3,12 +3,13 @@ import { useCallback, useEffect, useMemo } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent, { MenuItem } from "@reearth/beta/components/PopoverMenuContent";
-import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { styled } from "@reearth/services/theme";
+
+import { InstallableBlock } from "../../types";
 
 type Props = {
   id?: string;
-  installableBlocks?: InstallableStoryBlock[];
+  installableBlocks?: InstallableBlock[];
   openBlocks: boolean;
   alwaysShow?: boolean;
   showAreaHeight?: number;

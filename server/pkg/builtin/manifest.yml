@@ -2580,3 +2580,132 @@ extensions:
     name: Next Page Button
     type: storyBlock
     description: Down button that will skip to next page.
+  - id: infobox-beta
+    name: Infobox Beta
+    type: infobox
+    description: Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.
+    schema:
+      groups:
+        - id: default
+          title: Basic
+          fields:
+            - id: enabled
+              type: bool
+              title: Enable Infobox
+              defaultValue: true
+            - id: position
+              type: string
+              title: Position
+              defaultValue: right
+              choices:
+                - key: right
+                  label: Right
+                - key: left
+                  label: Left
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+              defaultValue: { top: 20, bottom: 20, left: 20, right: 20 }
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+            - id: gap
+              type: number
+              title: Gap
+              min: 0
+              max: 40
+              suffix: px
+              description: "The gap between infobox blocks. Min: 0  Max: 40"
+              defaultValue: 20
+              availableIf:
+                field: enabled
+                type: bool
+                value: true
+  - id: textInfoboxBetaBlock
+    name: Text
+    type: infoboxBlock
+    description: Infobox Text Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Text Block
+          fields:
+            - id: text
+              type: string
+              title: Content
+              ui: multiline
+  - id: imageInfoboxBetaBlock
+    name: Image
+    type: infoboxBlock
+    description: Infobox Image Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Image Block
+          fields:
+            - id: src
+              type: string
+              title: Image
+  - id: propertyInfoboxBetaBlock
+    type: infoboxBlock
+    name: Property List Block
+    description: Infobox Property List Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Property block
+          fields:
+            - id: displayType
+              type: string
+              title: Type
+              defaultValue: all
+              description: Choose how you wish to show properties
+              choices:
+                - key: all
+                  label: All Properties
+                - key: rootOnly
+                  label: Root Properties
+                - key: custom
+                  label: Customize
+            - id: propertyList
+              type: array
+              title: Property List
+              availableIf:
+                field: displayType
+                type: string
+                value: custom

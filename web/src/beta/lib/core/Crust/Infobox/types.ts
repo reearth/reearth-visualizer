@@ -1,39 +1,44 @@
-import type { Layer } from "@reearth/beta/lib/core/mantle";
+import type { Layer, Spacing } from "@reearth/beta/lib/core/mantle";
 
-import type { Typography } from "../types";
-
-export type { LatLng, Typography, ValueTypes, ValueType, Theme } from "../types";
-
-export type InfoboxProperty = {
-  showTitle?: boolean;
-  title?: string;
-  height?: number;
-  heightType?: "auto" | "manual";
-  infoboxPaddingTop?: number;
-  infoboxPaddingBottom?: number;
-  infoboxPaddingLeft?: number;
-  infoboxPaddingRight?: number;
-  size?: "small" | "medium" | "large";
-  position?: "right" | "middle" | "left";
-  typography?: Typography;
-  bgcolor?: string;
-  outlineColor?: string;
-  outlineWidth?: number;
-  useMask?: boolean;
-  defaultContent?: "description" | "attributes";
-  unselectOnClose?: boolean;
+export type Infobox<BP = any> = {
+  featureId?: string;
+  property?: InfoboxProperty;
+  blocks?: InfoboxBlock<BP>[];
 };
 
-export type Block<P = any> = {
+export type InfoboxProperty = {
+  default?: {
+    enabled?: PropertyItem<boolean>;
+    position?: PropertyItem<"right" | "left">;
+    padding?: PropertyItem<Spacing>;
+    gap?: PropertyItem<number>;
+  };
+  // for compat
+  defaultContent?: "description" | "attributes";
+};
+
+export type InfoboxBlock<P = any> = {
   id: string;
+  name?: string;
   pluginId?: string;
   extensionId?: string;
   property?: P;
   propertyId?: string;
 };
 
-export type BlockProps<P = any> = {
-  block?: Block<P>;
+export type InfoboxBlockProps<P = any> = {
+  block?: InfoboxBlock<P>;
   layer?: Layer;
   onClick?: () => void;
+};
+
+export type PropertyItem<T> = {
+  type?: string;
+  ui?: string;
+  title?: string;
+  description?: string;
+  value?: T;
+  min?: number;
+  max?: number;
+  choices?: { [key: string]: string }[];
 };

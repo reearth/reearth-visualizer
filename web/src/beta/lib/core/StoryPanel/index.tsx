@@ -3,21 +3,19 @@ import { forwardRef, memo, Ref, useMemo } from "react";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
+import { BlockProvider } from "../shared/contexts/blockContext";
+import { EditModeProvider } from "../shared/contexts/editModeContext";
+import { InstallableBlock } from "../shared/types";
+
 import { STORY_PANEL_WIDTH } from "./constants";
-import { PanelProvider } from "./context";
+import { PanelProvider, StoryPanelContext } from "./context";
 import useHooks, { type StoryPanelRef, type Story } from "./hooks";
 import PageIndicator from "./PageIndicator";
 import StoryContent from "./PanelContent";
 
 export type { Story, StoryPage, StoryPanelRef } from "./hooks";
 
-export type InstallableStoryBlock = {
-  name: string;
-  description?: string;
-  pluginId: string;
-  extensionId: string;
-  icon?: string;
-  singleOnly?: boolean;
+export type InstallableStoryBlock = InstallableBlock & {
   type?: "StoryBlock";
 };
 
@@ -100,13 +98,9 @@ export const StoryPanel = memo(
         ref,
       );
 
-      const panelContext = useMemo(
+      const panelContext: StoryPanelContext = useMemo(
         () => ({
-          layerOverride,
           pageIds: selectedStory?.pages.map(p => p.id),
-          disableSelection,
-          onSelectionDisable: handleSelectionDisable,
-          onLayerOverride: handleLayerOverride,
           onJumpToPage: (pageIndex: number) => {
             const pageId = selectedStory?.pages[pageIndex].id;
             if (!pageId) return;
@@ -117,51 +111,63 @@ export const StoryPanel = memo(
             element.scrollIntoView({ behavior: "instant" } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
           },
         }),
-        [
-          layerOverride,
-          selectedStory?.pages,
+        [selectedStory?.pages, setCurrentPageId, setLayerOverride],
+      );
+
+      const editModeContext = useMemo(
+        () => ({
           disableSelection,
-          handleSelectionDisable,
-          setCurrentPageId,
-          setLayerOverride,
-          handleLayerOverride,
-        ],
+          onSelectionDisable: handleSelectionDisable,
+        }),
+        [disableSelection, handleSelectionDisable],
+      );
+
+      const blockContext = useMemo(
+        () => ({
+          layerOverride,
+          onLayerOverride: handleLayerOverride,
+        }),
+        [layerOverride, handleLayerOverride],
       );
 
       return (
         <PanelProvider value={panelContext}>
-          <PanelWrapper bgColor={selectedStory?.bgColor}>
-            {!!pageInfo && (
-              <PageIndicator
-                currentPage={pageInfo.currentPage}
-                pageTitles={pageInfo.pageTitles}
-                maxPage={pageInfo.maxPage}
-                onPageChange={pageInfo.onPageChange}
-              />
-            )}
-            <StoryContent
-              pages={selectedStory?.pages}
-              selectedPageId={selectedPageId}
-              selectedStoryBlockId={selectedBlockId}
-              installableStoryBlocks={installableBlocks}
-              showPageSettings={showPageSettings}
-              showingIndicator={!!pageInfo}
-              isAutoScrolling={isAutoScrolling}
-              isEditable={isEditable}
-              onPageSettingsToggle={handlePageSettingsToggle}
-              onPageSelect={handlePageSelect}
-              onCurrentPageChange={handleCurrentPageChange}
-              onBlockCreate={onBlockCreate}
-              onBlockMove={onBlockMove}
-              onBlockDelete={onBlockDelete}
-              onBlockSelect={handleBlockSelect}
-              onBlockDoubleClick={handleBlockDoubleClick}
-              onPropertyUpdate={onPropertyUpdate}
-              onPropertyItemAdd={onPropertyItemAdd}
-              onPropertyItemMove={onPropertyItemMove}
-              onPropertyItemDelete={onPropertyItemDelete}
-            />
-          </PanelWrapper>
+          <EditModeProvider value={editModeContext}>
+            <BlockProvider value={blockContext}>
+              <PanelWrapper bgColor={selectedStory?.bgColor}>
+                {!!pageInfo && (
+                  <PageIndicator
+                    currentPage={pageInfo.currentPage}
+                    pageTitles={pageInfo.pageTitles}
+                    maxPage={pageInfo.maxPage}
+                    onPageChange={pageInfo.onPageChange}
+                  />
+                )}
+                <StoryContent
+                  pages={selectedStory?.pages}
+                  selectedPageId={selectedPageId}
+                  selectedStoryBlockId={selectedBlockId}
+                  installableStoryBlocks={installableBlocks}
+                  showPageSettings={showPageSettings}
+                  showingIndicator={!!pageInfo}
+                  isAutoScrolling={isAutoScrolling}
+                  isEditable={isEditable}
+                  onPageSettingsToggle={handlePageSettingsToggle}
+                  onPageSelect={handlePageSelect}
+                  onCurrentPageChange={handleCurrentPageChange}
+                  onBlockCreate={onBlockCreate}
+                  onBlockMove={onBlockMove}
+                  onBlockDelete={onBlockDelete}
+                  onBlockSelect={handleBlockSelect}
+                  onBlockDoubleClick={handleBlockDoubleClick}
+                  onPropertyUpdate={onPropertyUpdate}
+                  onPropertyItemAdd={onPropertyItemAdd}
+                  onPropertyItemMove={onPropertyItemMove}
+                  onPropertyItemDelete={onPropertyItemDelete}
+                />
+              </PanelWrapper>
+            </BlockProvider>
+          </EditModeProvider>
         </PanelProvider>
       );
     },

@@ -15,9 +15,10 @@ export type SidePanelContent = {
 type Props = {
   location: "left" | "right";
   contents: SidePanelContent[];
+  padding?: number;
 };
 
-const Panel: React.FC<Props> = ({ location, contents }) => {
+const Panel: React.FC<Props> = ({ location, contents, padding }) => {
   return (
     <Wrapper location={location}>
       {contents.map(
@@ -27,7 +28,7 @@ const Panel: React.FC<Props> = ({ location, contents }) => {
               <Card>
                 <Title size="body">{content.title}</Title>
                 {content.actions && <ActionArea>{content.actions}</ActionArea>}
-                <Content hasActions={!!content.actions}>{content.children}</Content>
+                <Content padding={padding}>{content.children}</Content>
               </Card>
             </Section>
           ),
@@ -43,9 +44,9 @@ const Wrapper = styled.div<{ location: "left" | "right" }>`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
   gap: 4px;
-  background: ${({ theme }) => theme.bg[1]};
+  box-sizing: border-box;
+  padding: 2px 1px;
 `;
 
 const Section = styled.div<{ maxHeight?: CSSProperties["maxHeight"] }>`
@@ -63,16 +64,19 @@ const Card = styled.div`
 `;
 
 const Title = styled(Text)`
-  background: ${({ theme }) => theme.bg[1]};
-  padding: 8px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  background: ${({ theme }) => theme.bg[2]};
+  padding: 4px 12px;
 `;
 
 const ActionArea = styled.div`
   padding: 8px;
 `;
 
-const Content = styled.div<{ hasActions?: boolean }>`
-  padding: ${({ hasActions }) => (hasActions ? "0" : "8px")};
+const Content = styled.div<{ padding?: number }>`
+  ${({ padding }) => padding && `padding: ${padding}px;`}
+
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   overflow-y: auto;

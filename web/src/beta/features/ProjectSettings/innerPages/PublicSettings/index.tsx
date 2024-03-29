@@ -25,6 +25,11 @@ export type PublicAliasSettingsType = {
   alias: string;
 };
 
+export type PublicGASettingsType = {
+  enableGa?: boolean;
+  trackingId?: string;
+};
+
 type Props = {
   project: {
     id: string;
@@ -37,6 +42,8 @@ type Props = {
     alias: string;
     publishmentStatus: string;
     isArchived: boolean;
+    enableGa: boolean;
+    trackingId: string;
   };
   stories: Story[];
   currentStory?: Story;
@@ -46,6 +53,7 @@ type Props = {
   onUpdateProject: (settings: PublicSettingsType) => void;
   onUpdateProjectBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateProjectAlias: (settings: PublicAliasSettingsType) => void;
+  onUpdateProjectGA: (settings: PublicGASettingsType) => void;
 };
 
 const PublicSettings: React.FC<Props> = ({
@@ -58,6 +66,7 @@ const PublicSettings: React.FC<Props> = ({
   onUpdateProject,
   onUpdateProjectBasicAuth,
   onUpdateProjectAlias,
+  onUpdateProjectGA,
 }) => {
   const t = useT();
   const [selectedTab, selectTab] = useState(currentStory ? currentStory.id : "map");
@@ -113,6 +122,7 @@ const PublicSettings: React.FC<Props> = ({
             onUpdate={onUpdateProject}
             onUpdateBasicAuth={onUpdateProjectBasicAuth}
             onUpdateAlias={onUpdateProjectAlias}
+            onUpdateGA={onUpdateProjectGA}
           />
         )}
       </SettingsWrapper>

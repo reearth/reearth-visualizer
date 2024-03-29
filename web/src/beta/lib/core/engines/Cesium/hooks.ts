@@ -26,7 +26,14 @@ import type { CesiumComponentRef, CesiumMovementEvent, RootEventTarget } from "r
 import { useCustomCompareCallback } from "use-custom-compare";
 
 import { ComputedFeature, DataType, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import { LayersRef, RequestingRenderMode } from "@reearth/beta/lib/core/Map";
+import {
+  LayerLoadEvent,
+  LayerSelectWithRectEnd,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectStart,
+  LayersRef,
+  RequestingRenderMode,
+} from "@reearth/beta/lib/core/Map";
 import { e2eAccessToken, setE2ECesiumViewer } from "@reearth/services/config";
 
 import type {
@@ -35,7 +42,6 @@ import type {
   LayerSelectionReason,
   EngineRef,
   SceneProperty,
-  MouseEventProps,
   MouseEvents,
   LayerEditEvent,
   LayerVisibilityEvent,
@@ -45,12 +51,14 @@ import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "..
 import { TimelineManagerRef } from "../../Map/useTimelineManager";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
+import { getCamera, isDraggable, isSelectable } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import { arrayToCartecian3 } from "./helpers/sphericalHaromic";
+import { useLayerSelectWithRect } from "./hooks/useLayerSelectWithRect";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
 import { useOverrideGlobeShader } from "./useOverrideGlobeShader";
+import { makeMouseEventProps } from "./utils/mouse";
 import { convertCartesian3ToPosition, findEntity, getEntityContent } from "./utils/utils";
 
 interface CustomGlobeSurface {
@@ -84,8 +92,12 @@ export default ({
   onLayerDrag,
   onLayerDrop,
   onLayerEdit,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
   onMount,
   onLayerVisibility,
+  onLayerLoad,
 }: {
   ref: React.ForwardedRef<EngineRef>;
   property?: SceneProperty;
@@ -118,8 +130,12 @@ export default ({
     position: LatLng | undefined,
   ) => void;
   onLayerEdit?: (e: LayerEditEvent) => void;
+  onLayerSelectWithRectStart?: (e: LayerSelectWithRectStart) => void;
+  onLayerSelectWithRectMove?: (e: LayerSelectWithRectMove) => void;
+  onLayerSelectWithRectEnd?: (e: LayerSelectWithRectEnd) => void;
   onMount?: () => void;
   onLayerVisibility?: (e: LayerVisibilityEvent) => void;
+  onLayerLoad?: (e: LayerLoadEvent) => void;
 }) => {
   const cesium = useRef<CesiumComponentRef<CesiumViewer>>(null);
   const cesiumIonDefaultAccessToken =
@@ -130,6 +146,15 @@ export default ({
 
   // expose ref
   const engineAPI = useEngineRef(ref, cesium);
+
+  const layerSelectWithRectEventHandlers = useLayerSelectWithRect({
+    cesium,
+    engineAPI,
+    onLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
+    featureFlags,
+  });
 
   const backgroundColor = useMemo(
     () =>
@@ -450,7 +475,7 @@ export default ({
                 content: getEntityContent(
                   entity,
                   cesium.current?.cesiumElement?.clock.currentTime ?? new JulianDate(),
-                  tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                  tag?.layerId ? layer?.infobox?.property?.defaultContent : undefined,
                 ),
               },
             }
@@ -485,14 +510,8 @@ export default ({
       if (engineAPI.mouseEventCallbacks[type]?.length > 0) {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
-        const position = e.position || e.startPosition;
-        const props: MouseEventProps = {
-          x: position?.x,
-          y: position?.y,
-          ...(position
-            ? getLocationFromScreen(viewer.scene, position.x, position.y, true) ?? {}
-            : {}),
-        };
+        const props = makeMouseEventProps(viewer, e);
+        if (!props) return;
         const layerId = getLayerId(target);
         if (layerId) props.layerId = layerId;
         engineAPI.mouseEventCallbacks[type].forEach(cb => cb(props));
@@ -578,7 +597,7 @@ export default ({
                   content: getEntityContent(
                     target.id,
                     viewer.clock.currentTime ?? new JulianDate(),
-                    tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                    tag?.layerId ? layer?.infobox?.property?.defaultContent : undefined,
                   ),
                 },
               }
@@ -690,7 +709,7 @@ export default ({
               const content = getEntityContent(
                 f.data.feature ?? f,
                 viewer.clock.currentTime ?? new JulianDate(),
-                tag?.layerId ? layer?.infobox?.property?.default?.defaultContent : undefined,
+                tag?.layerId ? layer?.infobox?.property?.defaultContent : undefined,
               );
               onLayerSelect?.(
                 f.data.layerId,
@@ -809,13 +828,14 @@ export default ({
       getCamera: engineAPI.getCamera,
       onLayerEdit,
       onLayerVisibility,
+      onLayerLoad,
       requestRender: engineAPI.requestRender,
       getSurfaceDistance: engineAPI.getSurfaceDistance,
       toXYZ: engineAPI.toXYZ,
       toWindowPosition: engineAPI.toWindowPosition,
       isPositionVisible: engineAPI.isPositionVisible,
     }),
-    [selectionReason, engineAPI, onLayerEdit, onLayerVisibility, timelineManagerRef],
+    [selectionReason, engineAPI, onLayerEdit, onLayerVisibility, onLayerLoad, timelineManagerRef],
   );
 
   useEffect(() => {
@@ -959,6 +979,7 @@ export default ({
     handleClick,
     handleCameraChange,
     handleCameraMoveEnd,
+    layerSelectWithRectEventHandlers,
   };
 };
 

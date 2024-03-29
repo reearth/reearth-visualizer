@@ -94,6 +94,8 @@ func TestToProject(t *testing.T) {
 				Team:              nil,
 				Scene:             nil,
 				CoreSupport:       false,
+				EnableGa:          false,
+				TrackingID:        "",
 			},
 		},
 	}

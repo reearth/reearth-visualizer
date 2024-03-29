@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Role as RoleUnion } from "@reearth/classic/components/molecules/Settings/Workspace/MemberListItem";
@@ -13,12 +13,18 @@ import {
   Role,
   useRemoveMemberFromTeamMutation,
 } from "@reearth/classic/gql";
-import { Team } from "@reearth/classic/gql/graphql-client-api";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, useProject, useNotification } from "@reearth/services/state";
 
 type Params = {
   workspaceId: string;
+};
+
+type Workspace = {
+  id: string;
+  name: string;
+  personal: boolean;
+  members: { userId: string; user?: { name: string } }[];
 };
 
 export default (params: Params) => {
@@ -38,8 +44,23 @@ export default (params: Params) => {
   const openModal = useCallback(() => setModalShown(true), []);
 
   const { data, loading, refetch } = useGetTeamsQuery();
-  const me = { id: data?.me?.id, myTeam: data?.me?.myTeam.id };
-  const workspaces = data?.me?.teams as Team[];
+  const me = { id: data?.me?.id, myTeam: data?.me?.myTeam?.id };
+  const workspaces: Workspace[] = useMemo(
+    () =>
+      data?.me?.teams.map(
+        (team): Workspace => ({
+          id: team.id,
+          name: team.name,
+          personal: team.personal,
+          members:
+            team.members?.map(m => ({
+              userId: m.user?.id ?? "",
+              user: { name: m.user?.name ?? "" },
+            })) ?? [],
+        }),
+      ) ?? [],
+    [data?.me?.teams],
+  );
 
   const handleModalClose = useCallback(
     (r?: boolean) => {
@@ -135,7 +156,7 @@ export default (params: Params) => {
         type: "info",
         text: t("Workspace was successfully deleted."),
       });
-      setWorkspace(workspaces[0]);
+      setWorkspace(workspaces?.[0]);
     }
   }, [workspaceId, deleteTeamMutation, setNotification, t, setWorkspace, workspaces]);
 
@@ -225,7 +246,7 @@ export default (params: Params) => {
   );
 
   const selectWorkspace = useCallback(
-    (workspace: Team) => {
+    (workspace: Workspace) => {
       if (workspace.id) {
         setWorkspace(workspace);
 

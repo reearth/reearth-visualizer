@@ -38,6 +38,10 @@ export type SelectedReearthEventType = Pick<
   | "sketchfeaturecreated"
   | "sketchtypechange"
   | "layerVisibility"
+  | "layerload"
+  | "layerSelectWithRectStart"
+  | "layerSelectWithRectMove"
+  | "layerSelectWithRectEnd"
 >;
 
 export default function ({
@@ -60,9 +64,13 @@ export default function ({
   useExperimentalSandbox,
   overrideSceneProperty,
   onLayerEdit,
+  onLayerSelectWithRectStart,
+  onLayerSelectWithRectMove,
+  onLayerSelectWithRectEnd,
   onPluginSketchFeatureCreated,
   onSketchTypeChange,
   onLayerVisibility,
+  onLayerLoad,
   onCameraForceHorizontalRollChange,
 }: Props) {
   const [ev, emit] = useMemo(() => events<SelectedReearthEventType>(), []);
@@ -162,6 +170,8 @@ export default function ({
     () => ({
       setType: (type: SketchType | undefined) => mapRef?.current?.sketch?.setType(type, "plugin"),
       setColor: mapRef?.current?.sketch?.setColor,
+      disableShadow: mapRef?.current?.sketch?.disableShadow,
+      enableRelativeHeight: mapRef?.current?.sketch?.enableRelativeHeight,
       setDefaultAppearance: mapRef?.current?.sketch?.setDefaultAppearance,
       createDataOnly: mapRef?.current?.sketch?.createDataOnly,
       allowRightClickToAbort: mapRef?.current?.sketch?.allowRightClickToAbort,
@@ -756,6 +766,18 @@ export default function ({
     onLayerVisibility(e => {
       emit("layerVisibility", e);
     });
+    onLayerLoad(e => {
+      emit("layerload", e);
+    });
+    onLayerSelectWithRectStart(e => {
+      emit("layerSelectWithRectStart", e);
+    });
+    onLayerSelectWithRectMove(e => {
+      emit("layerSelectWithRectMove", e);
+    });
+    onLayerSelectWithRectEnd(e => {
+      emit("layerSelectWithRectEnd", e);
+    });
   }, [
     emit,
     onMouseEvent,
@@ -765,6 +787,10 @@ export default function ({
     onPluginSketchFeatureCreated,
     onSketchTypeChange,
     onLayerVisibility,
+    onLayerLoad,
+    onLayerSelectWithRectStart,
+    onLayerSelectWithRectMove,
+    onLayerSelectWithRectEnd,
   ]);
 
   // expose plugin API for developers

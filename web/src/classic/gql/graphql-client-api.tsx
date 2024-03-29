@@ -38,6 +38,11 @@ export type AddClusterPayload = {
   scene: Scene;
 };
 
+export type AddCustomPropertySchemaInput = {
+  layerId: Scalars['ID']['input'];
+  schema?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type AddDatasetSchemaInput = {
   name: Scalars['String']['input'];
   representativefield?: InputMaybe<Scalars['ID']['input']>;
@@ -47,6 +52,13 @@ export type AddDatasetSchemaInput = {
 export type AddDatasetSchemaPayload = {
   __typename?: 'AddDatasetSchemaPayload';
   datasetSchema?: Maybe<DatasetSchema>;
+};
+
+export type AddGeoJsonFeatureInput = {
+  geometry: Scalars['JSON']['input'];
+  layerId: Scalars['ID']['input'];
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+  type: Scalars['String']['input'];
 };
 
 export type AddInfoboxFieldInput = {
@@ -107,11 +119,25 @@ export type AddMemberToTeamPayload = {
   team: Team;
 };
 
+export type AddNlsInfoboxBlockInput = {
+  extensionId: Scalars['ID']['input'];
+  index?: InputMaybe<Scalars['Int']['input']>;
+  layerId: Scalars['ID']['input'];
+  pluginId: Scalars['ID']['input'];
+};
+
+export type AddNlsInfoboxBlockPayload = {
+  __typename?: 'AddNLSInfoboxBlockPayload';
+  infoboxBlock: InfoboxBlock;
+  layer: NlsLayer;
+};
+
 export type AddNlsLayerSimpleInput = {
   config?: InputMaybe<Scalars['JSON']['input']>;
   index?: InputMaybe<Scalars['Int']['input']>;
   layerType: Scalars['String']['input'];
   sceneId: Scalars['ID']['input'];
+  schema?: InputMaybe<Scalars['JSON']['input']>;
   title: Scalars['String']['input'];
   visible?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -240,6 +266,15 @@ export type CreateInfoboxInput = {
 export type CreateInfoboxPayload = {
   __typename?: 'CreateInfoboxPayload';
   layer: Layer;
+};
+
+export type CreateNlsInfoboxInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type CreateNlsInfoboxPayload = {
+  __typename?: 'CreateNLSInfoboxPayload';
+  layer: NlsLayer;
 };
 
 export type CreateProjectInput = {
@@ -414,6 +449,16 @@ export type DatasetSchemaField = Node & {
   type: ValueType;
 };
 
+export type DeleteGeoJsonFeatureInput = {
+  featureId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
+};
+
+export type DeleteGeoJsonFeaturePayload = {
+  __typename?: 'DeleteGeoJSONFeaturePayload';
+  deletedFeatureId: Scalars['ID']['output'];
+};
+
 export type DeleteMeInput = {
   userId: Scalars['ID']['input'];
 };
@@ -483,10 +528,50 @@ export type DetachTagItemFromGroupPayload = {
   tag: TagGroup;
 };
 
+export type DuplicateNlsLayerInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type DuplicateNlsLayerPayload = {
+  __typename?: 'DuplicateNLSLayerPayload';
+  layer: NlsLayer;
+};
+
 export type DuplicateStoryPageInput = {
   pageId: Scalars['ID']['input'];
   sceneId: Scalars['ID']['input'];
   storyId: Scalars['ID']['input'];
+};
+
+export type DuplicateStyleInput = {
+  styleId: Scalars['ID']['input'];
+};
+
+export type DuplicateStylePayload = {
+  __typename?: 'DuplicateStylePayload';
+  style: Style;
+};
+
+export type Feature = {
+  __typename?: 'Feature';
+  geometry: Geometry;
+  id: Scalars['ID']['output'];
+  properties?: Maybe<Scalars['JSON']['output']>;
+  type: Scalars['String']['output'];
+};
+
+export type FeatureCollection = {
+  __typename?: 'FeatureCollection';
+  features: Array<Feature>;
+  type: Scalars['String']['output'];
+};
+
+export type Geometry = GeometryCollection | LineString | MultiPolygon | Point | Polygon;
+
+export type GeometryCollection = {
+  __typename?: 'GeometryCollection';
+  geometries: Array<Geometry>;
+  type: Scalars['String']['output'];
 };
 
 export type ImportDatasetFromGoogleSheetInput = {
@@ -528,6 +613,20 @@ export type Infobox = {
   linkedDataset?: Maybe<Dataset>;
   linkedDatasetId?: Maybe<Scalars['ID']['output']>;
   merged?: Maybe<MergedInfobox>;
+  property?: Maybe<Property>;
+  propertyId: Scalars['ID']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+};
+
+export type InfoboxBlock = {
+  __typename?: 'InfoboxBlock';
+  extension?: Maybe<PluginExtension>;
+  extensionId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  layerId: Scalars['ID']['output'];
+  plugin?: Maybe<Plugin>;
+  pluginId: Scalars['ID']['output'];
   property?: Maybe<Property>;
   propertyId: Scalars['ID']['output'];
   scene?: Maybe<Scene>;
@@ -670,6 +769,12 @@ export type LayerTagItem = LayerTag & {
   tagId: Scalars['ID']['output'];
 };
 
+export type LineString = {
+  __typename?: 'LineString';
+  lineStringCoordinates: Array<Array<Scalars['Float']['output']>>;
+  type: Scalars['String']['output'];
+};
+
 export type LinkDatasetToPropertyValueInput = {
   datasetIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   datasetSchemaFieldIds: Array<Scalars['ID']['input']>;
@@ -692,7 +797,7 @@ export type Me = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lang: Scalars['Lang']['output'];
-  myTeam: Team;
+  myTeam?: Maybe<Team>;
   myTeamId: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   teams: Array<Team>;
@@ -804,6 +909,19 @@ export type MoveLayerPayload = {
   toParentLayer: LayerGroup;
 };
 
+export type MoveNlsInfoboxBlockInput = {
+  index: Scalars['Int']['input'];
+  infoboxBlockId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
+};
+
+export type MoveNlsInfoboxBlockPayload = {
+  __typename?: 'MoveNLSInfoboxBlockPayload';
+  index: Scalars['Int']['output'];
+  infoboxBlockId: Scalars['ID']['output'];
+  layer: NlsLayer;
+};
+
 export type MovePropertyItemInput = {
   index: Scalars['Int']['input'];
   itemId: Scalars['ID']['input'];
@@ -852,14 +970,23 @@ export type MoveStoryPayload = {
   storyId: Scalars['ID']['output'];
 };
 
+export type MultiPolygon = {
+  __typename?: 'MultiPolygon';
+  multiPolygonCoordinates: Array<Array<Array<Array<Scalars['Float']['output']>>>>;
+  type: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addCluster?: Maybe<AddClusterPayload>;
+  addCustomProperties: UpdateNlsLayerPayload;
   addDatasetSchema?: Maybe<AddDatasetSchemaPayload>;
+  addGeoJSONFeature: Feature;
   addInfoboxField?: Maybe<AddInfoboxFieldPayload>;
   addLayerGroup?: Maybe<AddLayerGroupPayload>;
   addLayerItem?: Maybe<AddLayerItemPayload>;
   addMemberToTeam?: Maybe<AddMemberToTeamPayload>;
+  addNLSInfoboxBlock?: Maybe<AddNlsInfoboxBlockPayload>;
   addNLSLayerSimple: AddNlsLayerSimplePayload;
   addPageLayer: StoryPagePayload;
   addPropertyItem?: Maybe<PropertyItemPayload>;
@@ -869,6 +996,7 @@ export type Mutation = {
   attachTagToLayer?: Maybe<AttachTagToLayerPayload>;
   createAsset?: Maybe<CreateAssetPayload>;
   createInfobox?: Maybe<CreateInfoboxPayload>;
+  createNLSInfobox?: Maybe<CreateNlsInfoboxPayload>;
   createProject?: Maybe<ProjectPayload>;
   createScene?: Maybe<CreateScenePayload>;
   createStory: StoryPayload;
@@ -877,13 +1005,16 @@ export type Mutation = {
   createTagGroup?: Maybe<CreateTagGroupPayload>;
   createTagItem?: Maybe<CreateTagItemPayload>;
   createTeam?: Maybe<CreateTeamPayload>;
+  deleteGeoJSONFeature: DeleteGeoJsonFeaturePayload;
   deleteMe?: Maybe<DeleteMePayload>;
   deleteProject?: Maybe<DeleteProjectPayload>;
   deleteStory: DeleteStoryPayload;
   deleteTeam?: Maybe<DeleteTeamPayload>;
   detachTagFromLayer?: Maybe<DetachTagFromLayerPayload>;
   detachTagItemFromGroup?: Maybe<DetachTagItemFromGroupPayload>;
+  duplicateNLSLayer: DuplicateNlsLayerPayload;
   duplicateStoryPage: StoryPagePayload;
+  duplicateStyle?: Maybe<DuplicateStylePayload>;
   importDataset?: Maybe<ImportDatasetPayload>;
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
   importLayer?: Maybe<ImportLayerPayload>;
@@ -891,6 +1022,7 @@ export type Mutation = {
   linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
   moveInfoboxField?: Maybe<MoveInfoboxFieldPayload>;
   moveLayer?: Maybe<MoveLayerPayload>;
+  moveNLSInfoboxBlock?: Maybe<MoveNlsInfoboxBlockPayload>;
   movePropertyItem?: Maybe<PropertyItemPayload>;
   moveStory: MoveStoryPayload;
   moveStoryBlock: MoveStoryBlockPayload;
@@ -905,6 +1037,8 @@ export type Mutation = {
   removeLayer?: Maybe<RemoveLayerPayload>;
   removeMemberFromTeam?: Maybe<RemoveMemberFromTeamPayload>;
   removeMyAuth?: Maybe<UpdateMePayload>;
+  removeNLSInfobox?: Maybe<RemoveNlsInfoboxPayload>;
+  removeNLSInfoboxBlock?: Maybe<RemoveNlsInfoboxBlockPayload>;
   removeNLSLayer: RemoveNlsLayerPayload;
   removePageLayer: StoryPagePayload;
   removePropertyField?: Maybe<PropertyFieldPayload>;
@@ -920,6 +1054,7 @@ export type Mutation = {
   unlinkPropertyValue?: Maybe<PropertyFieldPayload>;
   updateCluster?: Maybe<UpdateClusterPayload>;
   updateDatasetSchema?: Maybe<UpdateDatasetSchemaPayload>;
+  updateGeoJSONFeature: Feature;
   updateLayer?: Maybe<UpdateLayerPayload>;
   updateMe?: Maybe<UpdateMePayload>;
   updateMemberOfTeam?: Maybe<UpdateMemberOfTeamPayload>;
@@ -945,8 +1080,18 @@ export type MutationAddClusterArgs = {
 };
 
 
+export type MutationAddCustomPropertiesArgs = {
+  input: AddCustomPropertySchemaInput;
+};
+
+
 export type MutationAddDatasetSchemaArgs = {
   input: AddDatasetSchemaInput;
+};
+
+
+export type MutationAddGeoJsonFeatureArgs = {
+  input: AddGeoJsonFeatureInput;
 };
 
 
@@ -967,6 +1112,11 @@ export type MutationAddLayerItemArgs = {
 
 export type MutationAddMemberToTeamArgs = {
   input: AddMemberToTeamInput;
+};
+
+
+export type MutationAddNlsInfoboxBlockArgs = {
+  input: AddNlsInfoboxBlockInput;
 };
 
 
@@ -1015,6 +1165,11 @@ export type MutationCreateInfoboxArgs = {
 };
 
 
+export type MutationCreateNlsInfoboxArgs = {
+  input: CreateNlsInfoboxInput;
+};
+
+
 export type MutationCreateProjectArgs = {
   input: CreateProjectInput;
 };
@@ -1055,6 +1210,11 @@ export type MutationCreateTeamArgs = {
 };
 
 
+export type MutationDeleteGeoJsonFeatureArgs = {
+  input: DeleteGeoJsonFeatureInput;
+};
+
+
 export type MutationDeleteMeArgs = {
   input: DeleteMeInput;
 };
@@ -1085,8 +1245,18 @@ export type MutationDetachTagItemFromGroupArgs = {
 };
 
 
+export type MutationDuplicateNlsLayerArgs = {
+  input: DuplicateNlsLayerInput;
+};
+
+
 export type MutationDuplicateStoryPageArgs = {
   input: DuplicateStoryPageInput;
+};
+
+
+export type MutationDuplicateStyleArgs = {
+  input: DuplicateStyleInput;
 };
 
 
@@ -1122,6 +1292,11 @@ export type MutationMoveInfoboxFieldArgs = {
 
 export type MutationMoveLayerArgs = {
   input: MoveLayerInput;
+};
+
+
+export type MutationMoveNlsInfoboxBlockArgs = {
+  input: MoveNlsInfoboxBlockInput;
 };
 
 
@@ -1192,6 +1367,16 @@ export type MutationRemoveMemberFromTeamArgs = {
 
 export type MutationRemoveMyAuthArgs = {
   input: RemoveMyAuthInput;
+};
+
+
+export type MutationRemoveNlsInfoboxArgs = {
+  input: RemoveNlsInfoboxInput;
+};
+
+
+export type MutationRemoveNlsInfoboxBlockArgs = {
+  input: RemoveNlsInfoboxBlockInput;
 };
 
 
@@ -1267,6 +1452,11 @@ export type MutationUpdateClusterArgs = {
 
 export type MutationUpdateDatasetSchemaArgs = {
   input: UpdateDatasetSchemaInput;
+};
+
+
+export type MutationUpdateGeoJsonFeatureArgs = {
+  input: UpdateGeoJsonFeatureInput;
 };
 
 
@@ -1354,13 +1544,25 @@ export type MutationUploadPluginArgs = {
   input: UploadPluginInput;
 };
 
+export type NlsInfobox = {
+  __typename?: 'NLSInfobox';
+  blocks: Array<InfoboxBlock>;
+  id: Scalars['ID']['output'];
+  layerId: Scalars['ID']['output'];
+  property?: Maybe<Property>;
+  propertyId: Scalars['ID']['output'];
+  scene?: Maybe<Scene>;
+  sceneId: Scalars['ID']['output'];
+};
+
 export type NlsLayer = {
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
-  infobox?: Maybe<Infobox>;
+  infobox?: Maybe<NlsInfobox>;
+  isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
   sceneId: Scalars['ID']['output'];
-  tags: Array<LayerTag>;
+  sketch?: Maybe<SketchInfo>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1371,11 +1573,12 @@ export type NlsLayerGroup = NlsLayer & {
   childrenIds: Array<Scalars['ID']['output']>;
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
-  infobox?: Maybe<Infobox>;
+  infobox?: Maybe<NlsInfobox>;
+  isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
-  tags: Array<LayerTag>;
+  sketch?: Maybe<SketchInfo>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1384,11 +1587,12 @@ export type NlsLayerSimple = NlsLayer & {
   __typename?: 'NLSLayerSimple';
   config?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
-  infobox?: Maybe<Infobox>;
+  infobox?: Maybe<NlsInfobox>;
+  isSketch: Scalars['Boolean']['output'];
   layerType: Scalars['String']['output'];
   scene?: Maybe<Scene>;
   sceneId: Scalars['ID']['output'];
-  tags: Array<LayerTag>;
+  sketch?: Maybe<SketchInfo>;
   title: Scalars['String']['output'];
   visible: Scalars['Boolean']['output'];
 };
@@ -1510,6 +1714,7 @@ export enum PluginExtensionType {
   Block = 'BLOCK',
   Cluster = 'Cluster',
   Infobox = 'INFOBOX',
+  InfoboxBlock = 'InfoboxBlock',
   Primitive = 'PRIMITIVE',
   Story = 'Story',
   StoryBlock = 'StoryBlock',
@@ -1517,6 +1722,12 @@ export enum PluginExtensionType {
   Visualizer = 'VISUALIZER',
   Widget = 'WIDGET'
 }
+
+export type Point = {
+  __typename?: 'Point';
+  pointCoordinates: Array<Scalars['Float']['output']>;
+  type: Scalars['String']['output'];
+};
 
 export type Policy = {
   __typename?: 'Policy';
@@ -1529,6 +1740,12 @@ export type Policy = {
   name: Scalars['String']['output'];
   projectCount?: Maybe<Scalars['Int']['output']>;
   publishedProjectCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type Polygon = {
+  __typename?: 'Polygon';
+  polygonCoordinates: Array<Array<Array<Scalars['Float']['output']>>>;
+  type: Scalars['String']['output'];
 };
 
 export enum Position {
@@ -1544,6 +1761,7 @@ export type Project = Node & {
   coreSupport: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
+  enableGa: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
   imageUrl?: Maybe<Scalars['URL']['output']>;
   isArchived: Scalars['Boolean']['output'];
@@ -1558,6 +1776,7 @@ export type Project = Node & {
   scene?: Maybe<Scene>;
   team?: Maybe<Team>;
   teamId: Scalars['ID']['output'];
+  trackingId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   visualizer: Visualizer;
 };
@@ -1969,6 +2188,26 @@ export type RemoveMyAuthInput = {
   auth: Scalars['String']['input'];
 };
 
+export type RemoveNlsInfoboxBlockInput = {
+  infoboxBlockId: Scalars['ID']['input'];
+  layerId: Scalars['ID']['input'];
+};
+
+export type RemoveNlsInfoboxBlockPayload = {
+  __typename?: 'RemoveNLSInfoboxBlockPayload';
+  infoboxBlockId: Scalars['ID']['output'];
+  layer: NlsLayer;
+};
+
+export type RemoveNlsInfoboxInput = {
+  layerId: Scalars['ID']['input'];
+};
+
+export type RemoveNlsInfoboxPayload = {
+  __typename?: 'RemoveNLSInfoboxPayload';
+  layer: NlsLayer;
+};
+
 export type RemoveNlsLayerInput = {
   layerId: Scalars['ID']['input'];
 };
@@ -2107,6 +2346,12 @@ export type SignupPayload = {
   __typename?: 'SignupPayload';
   team: Team;
   user: User;
+};
+
+export type SketchInfo = {
+  __typename?: 'SketchInfo';
+  customPropertySchema?: Maybe<Scalars['JSON']['output']>;
+  featureCollection?: Maybe<FeatureCollection>;
 };
 
 export type Spacing = {
@@ -2348,6 +2593,13 @@ export type UpdateDatasetSchemaPayload = {
   datasetSchema?: Maybe<DatasetSchema>;
 };
 
+export type UpdateGeoJsonFeatureInput = {
+  featureId: Scalars['ID']['input'];
+  geometry?: InputMaybe<Scalars['JSON']['input']>;
+  layerId: Scalars['ID']['input'];
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type UpdateLayerInput = {
   layerId: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
@@ -2404,6 +2656,7 @@ export type UpdateProjectInput = {
   deleteImageUrl?: InputMaybe<Scalars['Boolean']['input']>;
   deletePublicImage?: InputMaybe<Scalars['Boolean']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  enableGa?: InputMaybe<Scalars['Boolean']['input']>;
   imageUrl?: InputMaybe<Scalars['URL']['input']>;
   isBasicAuthActive?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -2412,6 +2665,8 @@ export type UpdateProjectInput = {
   publicImage?: InputMaybe<Scalars['String']['input']>;
   publicNoIndex?: InputMaybe<Scalars['Boolean']['input']>;
   publicTitle?: InputMaybe<Scalars['String']['input']>;
+  sceneId?: InputMaybe<Scalars['ID']['input']>;
+  trackingId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdatePropertyItemInput = {
@@ -2564,6 +2819,7 @@ export type UploadPluginPayload = {
 export type User = Node & {
   __typename?: 'User';
   email: Scalars['String']['output'];
+  host?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
 };
@@ -3538,12 +3794,12 @@ export type GetUserBySearchQuery = { __typename?: 'Query', searchUser?: { __type
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string, policyId?: string | null, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> }, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }, teams: Array<{ __typename?: 'Team', id: string, name: string, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> } }> } | null };
+export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, auths: Array<string>, myTeam?: { __typename?: 'Team', id: string, name: string, policyId?: string | null, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> }, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } | null, teams: Array<{ __typename?: 'Team', id: string, name: string, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null, projects: { __typename?: 'ProjectConnection', nodes: Array<{ __typename?: 'Project', id: string, publishmentStatus: PublishmentStatus, isArchived: boolean, name: string, imageUrl?: string | null, description: string, visualizer: Visualizer, scene?: { __typename?: 'Scene', id: string } | null } | null> } }> } | null };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProfileQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, auths: Array<string>, myTeam: { __typename?: 'Team', id: string, name: string } } | null };
+export type GetProfileQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, auths: Array<string>, myTeam?: { __typename?: 'Team', id: string, name: string } | null } | null };
 
 export type GetLanguageQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3565,7 +3821,7 @@ export type UpdateMeMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMeMutation = { __typename?: 'Mutation', updateMe?: { __typename?: 'UpdateMePayload', me: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, myTeam: { __typename?: 'Team', id: string, name: string } } } | null };
+export type UpdateMeMutation = { __typename?: 'Mutation', updateMe?: { __typename?: 'UpdateMePayload', me: { __typename?: 'Me', id: string, name: string, email: string, lang: string, theme: Theme, myTeam?: { __typename?: 'Team', id: string, name: string } | null } } | null };
 
 export type DeleteMeMutationVariables = Exact<{
   userId: Scalars['ID']['input'];
@@ -3638,7 +3894,7 @@ export type TeamFragment = { __typename?: 'Team', id: string, name: string, pers
 export type GetTeamsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTeamsQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, myTeam: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }, teams: Array<{ __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }> } | null };
+export type GetTeamsQuery = { __typename?: 'Query', me?: { __typename?: 'Me', id: string, name: string, myTeam?: { __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null } | null, teams: Array<{ __typename?: 'Team', id: string, name: string, personal: boolean, policyId?: string | null, members: Array<{ __typename?: 'TeamMember', userId: string, role: Role, user?: { __typename?: 'User', id: string, name: string, email: string } | null }>, policy?: { __typename?: 'Policy', id: string, name: string, projectCount?: number | null, memberCount?: number | null, publishedProjectCount?: number | null, layerCount?: number | null, assetStorageSize?: number | null, datasetSchemaCount?: number | null, datasetCount?: number | null } | null }> } | null };
 
 export type CreateTeamMutationVariables = Exact<{
   name: Scalars['String']['input'];

@@ -21,6 +21,8 @@ type Project implements Node {
   team: Team
   scene: Scene
   coreSupport: Boolean!
+  enableGa: Boolean!
+  trackingId: String!
 }
 
 type ProjectAliasAvailability {
@@ -67,6 +69,9 @@ input UpdateProjectInput {
   publicNoIndex: Boolean
   deleteImageUrl: Boolean
   deletePublicImage: Boolean
+  enableGa: Boolean
+  trackingId: String
+  sceneId: ID
 }
 
 input PublishProjectInput {

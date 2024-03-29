@@ -3,16 +3,18 @@ import { useCallback, type ComponentType, type ReactNode } from "react";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import { styled } from "@reearth/services/theme";
 
+import type { CommonBlockProps, BlockProps } from "../../shared/types";
+import { StoryBlock } from "../types";
+
 import builtin, { isBuiltinStoryBlock } from "./builtin";
-import type { CommonProps, BlockProps } from "./types";
 
 export type Props = {
-  renderBlock?: (block: BlockProps) => ReactNode;
+  renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
   layer?: Layer;
   pageId?: string;
-} & CommonProps;
+} & CommonBlockProps<StoryBlock>;
 
-export type Component = ComponentType<CommonProps>;
+export type Component = ComponentType<CommonBlockProps<StoryBlock>>;
 
 export default function StoryBlockComponent({
   renderBlock,
@@ -21,7 +23,10 @@ export default function StoryBlockComponent({
 }: Props): JSX.Element | null {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
   const Builtin = isBuiltinStoryBlock(builtinBlockId) ? builtin[builtinBlockId] : undefined;
-  const handleRemove = useCallback(() => onRemove?.(props.block?.id), [props.block?.id, onRemove]);
+  const handleRemove = useCallback(
+    () => props.block?.id && onRemove?.(props.block.id),
+    [props.block?.id, onRemove],
+  );
 
   return Builtin ? (
     <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />

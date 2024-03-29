@@ -1,3 +1,5 @@
+import { Infobox } from "../../Crust/Infobox/types";
+
 export type LegacyLayer<P = any, IBP = any> = {
   id: string;
   type?: string;
@@ -17,41 +19,6 @@ export type Tag = {
   id: string;
   label: string;
   tags?: Tag[];
-};
-
-export type Infobox<BP = any> = {
-  property?: InfoboxProperty;
-  blocks?: Block<BP>[];
-};
-
-export type InfoboxProperty = {
-  default?: {
-    showTitle?: boolean;
-    title?: string;
-    height?: number;
-    heightType?: "auto" | "manual";
-    infoboxPaddingTop?: number;
-    infoboxPaddingBottom?: number;
-    infoboxPaddingLeft?: number;
-    infoboxPaddingRight?: number;
-    size?: "small" | "medium" | "large";
-    position?: "right" | "middle" | "left";
-    typography?: Typography;
-    bgcolor?: string;
-    outlineColor?: string;
-    outlineWidth?: number;
-    useMask?: boolean;
-    defaultContent?: "description" | "attributes";
-    unselectOnClose?: boolean;
-  };
-};
-
-export type Block<P = any> = {
-  id: string;
-  pluginId?: string;
-  extensionId?: string;
-  property?: P;
-  propertyId?: string;
 };
 
 export type Rect = {

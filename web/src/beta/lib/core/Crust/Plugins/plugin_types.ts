@@ -19,6 +19,10 @@ import type {
   WrappedRef,
   Feature,
   LayerVisibilityEvent,
+  LayerLoadEvent,
+  LayerSelectWithRectStart,
+  LayerSelectWithRectMove,
+  LayerSelectWithRectEnd,
 } from "@reearth/beta/lib/core/Map";
 
 import { SketchAppearance, SketchEventProps, SketchType } from "../../Map/Sketch/types";
@@ -29,7 +33,7 @@ import {
   LookAtDestination,
   ScreenSpaceCameraControllerOptions,
 } from "../../types";
-import { Block } from "../Infobox";
+import { InfoboxBlock as Block } from "../Infobox/types";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
 
@@ -282,6 +286,10 @@ export type ReearthEventType = {
   sketchfeaturecreated: [props: SketchEventProps];
   sketchtypechange: [props: SketchType | undefined];
   layerVisibility: [e: LayerVisibilityEvent];
+  layerload: [e: LayerLoadEvent];
+  layerSelectWithRectStart: [e: LayerSelectWithRectStart];
+  layerSelectWithRectMove: [e: LayerSelectWithRectMove];
+  layerSelectWithRectEnd: [e: LayerSelectWithRectEnd];
 };
 
 /** Access to the metadata of this plugin and extension currently executed. */
@@ -297,7 +305,7 @@ export type PluginExtensionInstance = {
   readonly pluginId: string;
   readonly name: string;
   readonly extensionId: string;
-  readonly extensionType: "widget" | "block";
+  readonly extensionType: "widget" | "block" | "infoboxBlock" | "storyBlock";
   readonly runTimes: number | undefined; // Count number of plugin is run
 };
 
@@ -446,6 +454,8 @@ export type Sketch = {
   readonly setColor?: (color: string) => void;
   readonly setDefaultAppearance?: (appearance: SketchAppearance) => void;
   readonly createDataOnly?: (dataOnly: boolean) => void;
+  readonly disableShadow?: (disable: boolean) => void;
+  readonly enableRelativeHeight?: (enable: boolean) => void;
   readonly allowRightClickToAbort?: (allow: boolean) => void;
   readonly allowAutoResetInteractionMode?: (allow: boolean) => void;
 };

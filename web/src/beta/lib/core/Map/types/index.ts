@@ -237,6 +237,10 @@ export type EngineProps = {
   onLayerEdit?: (e: LayerEditEvent) => void;
   onMount?: () => void;
   onLayerVisibility?: (e: LayerVisibilityEvent) => void;
+  onLayerLoad?: (e: LayerLoadEvent) => void;
+  onLayerSelectWithRectStart?: (e: LayerSelectWithRectStart) => void;
+  onLayerSelectWithRectMove?: (e: LayerSelectWithRectMove) => void;
+  onLayerSelectWithRectEnd?: (e: LayerSelectWithRectEnd) => void;
 };
 
 export type LayerEditEvent = {
@@ -250,7 +254,24 @@ export type LayerEditEvent = {
   rotate?: { heading: number; pitch: number; roll: number };
 };
 
+export type LayerSelectWithRect = MouseEventProps & { pressedKey?: "shift" };
+export type LayerSelectWithRectStart = LayerSelectWithRect;
+export type LayerSelectWithRectMove = LayerSelectWithRect & {
+  startX?: number;
+  startY?: number;
+  width?: number;
+  height?: number;
+};
+export type LayerSelectWithRectEnd = LayerSelectWithRect & {
+  features: PickedFeature[] | undefined;
+  isClick: boolean;
+};
+
 export type LayerVisibilityEvent = {
+  layerId: string | undefined;
+};
+
+export type LayerLoadEvent = {
   layerId: string | undefined;
 };
 
@@ -352,6 +373,7 @@ export type SceneProperty = {
     tile_type?: string;
     tile_url?: string;
     tile_zoomLevel?: number[];
+    tile_zoomLevelForURL?: number[];
     tile_opacity?: number;
     heatmap?: boolean;
   }[];
@@ -515,6 +537,8 @@ export type SketchRef = {
   setType: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   setColor: (color: string) => void;
   setDefaultAppearance: (appearance: SketchAppearance) => void;
+  disableShadow: (disable: boolean) => void;
+  enableRelativeHeight: (enable: boolean) => void;
   createDataOnly: (dataOnly: boolean) => void;
   allowRightClickToAbort: (allow: boolean) => void;
   allowAutoResetInteractionMode: (allow: boolean) => void;

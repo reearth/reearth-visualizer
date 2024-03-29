@@ -1,9 +1,5 @@
 package nlslayer
 
-import (
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
-
 func NLSLayerSimpleFromLayer(l NLSLayer) *NLSLayerSimple {
 	li, ok := l.(*NLSLayerSimple)
 	if !ok {
@@ -81,17 +77,22 @@ func (b *NLSLayerSimpleBuilder) IsVisible(i bool) *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Infobox(infobox *pl.Infobox) *NLSLayerSimpleBuilder {
+func (b *NLSLayerSimpleBuilder) Infobox(infobox *Infobox) *NLSLayerSimpleBuilder {
 	b.l.infobox = infobox
-	return b
-}
-
-func (b *NLSLayerSimpleBuilder) Tags(tags *pl.TagList) *NLSLayerSimpleBuilder {
-	b.l.tags = tags
 	return b
 }
 
 func (b *NLSLayerSimpleBuilder) Config(c *Config) *NLSLayerSimpleBuilder {
 	b.l.config = c
+	return b
+}
+
+func (b *NLSLayerSimpleBuilder) IsSketch(i bool) *NLSLayerSimpleBuilder {
+	b.l.isSketch = i
+	return b
+}
+
+func (b *NLSLayerSimpleBuilder) Sketch(sketch *SketchInfo) *NLSLayerSimpleBuilder {
+	b.l.sketch = sketch
 	return b
 }

@@ -76,6 +76,8 @@ function parseLiteral(ast: any): Node | Error {
   } else if (type === "string") {
     if (ast.value.indexOf("${") >= 0) {
       return new Node(ExpressionNodeType.VARIABLE_IN_STRING, ast.value);
+    } else if (ast.value.indexOf("$reearth_") >= 0) {
+      return new Node(ExpressionNodeType.LITERAL_STRING, restoreReservedWord(ast.value));
     }
     // } else if (rgbaMatcher.exec(ast.value) || rrggbbaaMatcher.exec(ast.value)) {
     //   const val = new Node(ExpressionNodeType.LITERAL_STRING, replaceBackslashes(ast.value));

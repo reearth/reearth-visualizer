@@ -198,6 +198,7 @@ export type Cesium3DTilesAppearance = {
   edgeWidth?: number;
   edgeColor?: string;
   selectedFeatureColor?: string; // This doesn't support expression
+  disableIndexingFeature?: boolean;
   tileset?: string;
   apiKey?: string;
   experimental_clipping?: EXPERIMENTAL_clipping;
@@ -243,6 +244,7 @@ export type ResourceAppearance = {
   stroke?: string;
   strokeWidth?: number;
   fill?: string;
+  hideIndicator?: boolean;
 };
 
 export type RasterAppearance = {
@@ -252,6 +254,7 @@ export type RasterAppearance = {
   credit?: string;
   alpha?: number;
   hideIndicator?: boolean;
+  bounds?: string;
 };
 
 export type BoxAppearance = {

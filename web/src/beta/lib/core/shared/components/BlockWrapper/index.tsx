@@ -1,4 +1,4 @@
-import { ReactNode, createContext } from "react";
+import { ReactNode, createContext, memo } from "react";
 
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
@@ -28,6 +28,7 @@ type Props = {
   property?: any;
   dndEnabled?: boolean;
   settingsEnabled?: boolean;
+  minHeight?: number;
   onClick?: () => void;
   onClickAway?: () => void;
   onRemove?: () => void;
@@ -64,6 +65,7 @@ const BlockWrapper: React.FC<Props> = ({
   property,
   dndEnabled = true,
   settingsEnabled = true,
+  minHeight,
   onClick,
   onBlockDoubleClick,
   onClickAway,
@@ -125,7 +127,7 @@ const BlockWrapper: React.FC<Props> = ({
           padding={generalBlockSettings?.padding?.value}
           isEditable={isEditable}
           disableSelection={disableSelection}>
-          {children ?? (isEditable && <Template icon={icon} />)}
+          {children ?? (isEditable && <Template icon={icon} height={minHeight} />)}
           {!editMode && isEditable && <Overlay disableSelection={disableSelection} />}
         </Block>
         {editMode && groupId && propertyId && settingsEnabled && (
@@ -153,7 +155,7 @@ const BlockWrapper: React.FC<Props> = ({
   );
 };
 
-export default BlockWrapper;
+export default memo(BlockWrapper);
 
 const Block = styled.div<{ padding?: Spacing; isEditable?: boolean; disableSelection?: boolean }>`
   display: flex;

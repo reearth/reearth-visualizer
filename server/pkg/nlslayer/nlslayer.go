@@ -1,9 +1,5 @@
 package nlslayer
 
-import (
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
-
 type NLSLayer interface {
 	Cloner
 	ID() ID
@@ -14,11 +10,16 @@ type NLSLayer interface {
 	IsVisible() bool
 	SetVisible(bool)
 	HasInfobox() bool
-	Infobox() *pl.Infobox
-	SetInfobox(*pl.Infobox)
-	Tags() *pl.TagList
+	Infobox() *Infobox
+	SetInfobox(*Infobox)
 	Rename(string)
 	UpdateConfig(*Config)
+	Duplicate() NLSLayer
+	IsSketch() bool
+	SetIsSketch(bool)
+	HasSketch() bool
+	Sketch() *SketchInfo
+	SetSketch(*SketchInfo)
 }
 
 func ToNLSLayerGroup(l NLSLayer) *NLSLayerGroup {
@@ -63,9 +64,10 @@ type layerBase struct {
 	scene     SceneID
 	title     string
 	visible   bool
-	infobox   *pl.Infobox
-	tags      *pl.TagList
+	infobox   *Infobox
 	config    *Config
+	isSketch  bool
+	sketch    *SketchInfo
 }
 
 func (l *layerBase) ID() ID {
@@ -115,7 +117,7 @@ func (l *layerBase) HasInfobox() bool {
 	return l.infobox != nil
 }
 
-func (l *layerBase) Infobox() *pl.Infobox {
+func (l *layerBase) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
@@ -129,7 +131,7 @@ func (l *layerBase) SetVisible(visible bool) {
 	l.visible = visible
 }
 
-func (l *layerBase) SetInfobox(infobox *pl.Infobox) {
+func (l *layerBase) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
@@ -175,15 +177,82 @@ func (l *layerBase) Clone() *layerBase {
 		title:     l.title,
 		visible:   l.visible,
 		config:    clonedConfig,
+		isSketch:  l.isSketch,
 	}
 
 	if l.infobox != nil {
 		cloned.infobox = l.infobox.Clone()
 	}
 
-	if l.tags != nil {
-		cloned.tags = l.tags.Clone()
+	if l.sketch != nil {
+		cloned.sketch = l.sketch.Clone()
 	}
 
 	return cloned
+}
+
+func (l *layerBase) Duplicate() NLSLayer {
+	if l == nil {
+		return nil
+	}
+	var duplicatedConfig *Config
+	if l.config != nil {
+		duplicatedConfigItem := l.config.Clone()
+		duplicatedConfig = &duplicatedConfigItem
+	}
+
+	duplicated := &layerBase{
+		id:        NewID(),
+		layerType: l.layerType,
+		scene:     l.scene,
+		title:     l.title,
+		visible:   l.visible,
+		config:    duplicatedConfig,
+		isSketch:  l.isSketch,
+	}
+
+	if l.infobox != nil {
+		duplicated.infobox = l.infobox.Clone()
+	}
+
+	if l.sketch != nil {
+		duplicated.sketch = l.sketch.Clone()
+	}
+
+	return &NLSLayerSimple{layerBase: *duplicated}
+}
+
+func (l *layerBase) IsSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.isSketch
+}
+
+func (l *layerBase) SetIsSketch(isSketch bool) {
+	if l == nil {
+		return
+	}
+	l.isSketch = isSketch
+}
+
+func (l *layerBase) HasSketch() bool {
+	if l == nil {
+		return false
+	}
+	return l.sketch != nil
+}
+
+func (l *layerBase) Sketch() *SketchInfo {
+	if l == nil {
+		return nil
+	}
+	return l.sketch
+}
+
+func (l *layerBase) SetSketchInfo(sketch *SketchInfo) {
+	if l == nil {
+		return
+	}
+	l.sketch = sketch
 }

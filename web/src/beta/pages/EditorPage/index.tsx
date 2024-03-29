@@ -1,3 +1,4 @@
+import { Provider as StateProvider } from "jotai";
 import { useParams } from "react-router-dom";
 
 import NotFound from "@reearth/beta/components/NotFound";
@@ -13,10 +14,12 @@ const EditorPage: React.FC<Props> = () => {
   return !sceneId || !tab || !isTab(tab) ? (
     <NotFound />
   ) : (
-    <Page
-      sceneId={sceneId}
-      renderItem={props => <Editor tab={tab} sceneId={sceneId} {...props} />}
-    />
+    <StateProvider>
+      <Page
+        sceneId={sceneId}
+        renderItem={props => <Editor tab={tab} sceneId={sceneId} {...props} />}
+      />
+    </StateProvider>
   );
 };
 
