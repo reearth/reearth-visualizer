@@ -16,6 +16,7 @@ import { configDefaults } from "vitest/config";
 import pkg from "./package.json";
 
 const NO_MINIFY = !!process.env.NO_MINIFY;
+const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
@@ -93,12 +94,13 @@ function config(): Plugin {
       const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
         ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
         : {};
-      const reqForRemoteCesiumIonToken = envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL
-        ? await fetch(envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL)
+      const remoteCesiumIonTokenResponseText = envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL
+        ? await (await fetch(envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL)).text()
         : undefined;
-      const remoteCesiumIonToken = reqForRemoteCesiumIonToken?.ok
-        ? await reqForRemoteCesiumIonToken.text()
-        : "";
+      const remoteCesiumIonToken =
+        remoteCesiumIonTokenResponseText?.length === DEFAULT_CESIUM_ION_TOKEN_LENGTH
+          ? remoteCesiumIonTokenResponseText
+          : "";
       const configRes = JSON.stringify(
         {
           ...remoteReearthConfig,
