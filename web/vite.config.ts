@@ -93,11 +93,18 @@ function config(): Plugin {
       const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
         ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
         : {};
+      const reqForRemoteCesiumIonToken = envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL
+        ? await fetch(envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL)
+        : undefined;
+      const remoteCesiumIonToken = reqForRemoteCesiumIonToken?.ok
+        ? await reqForRemoteCesiumIonToken.text()
+        : "";
       const configRes = JSON.stringify(
         {
           ...remoteReearthConfig,
           api: "http://localhost:8080/api",
           published: "/published.html?alias={}",
+          ...(remoteCesiumIonToken ? { cesiumIonAccessToken: remoteCesiumIonToken } : {}),
           // If Cesium version becomes outdated, you can set the Ion token as an environment variables here.
           // ex: `CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
           // ref: https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Core/Ion.js#L6-L7
