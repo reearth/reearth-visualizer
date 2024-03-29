@@ -1,5 +1,6 @@
 import { MouseEvent, ReactNode } from "react";
 
+import { useItemContext as useDnDItemContext } from "@reearth/beta/components/DragAndDropList/Item";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
@@ -83,6 +84,7 @@ const SelectableArea: React.FC<Props> = ({
     onEditModeToggle,
     onClickAway,
   });
+  const { customDragPreview } = useDnDItemContext() ?? {};
 
   return !isEditable ? (
     <>{children}</>
@@ -94,7 +96,7 @@ const SelectableArea: React.FC<Props> = ({
         hideHoverUI={hideHoverUI}
         onMouseOver={handleHoverChange(true)}
         onMouseOut={handleHoverChange(false)}>
-        <div onClick={onClick} onDoubleClick={onDoubleClick}>
+        <div ref={customDragPreview} onClick={onClick} onDoubleClick={onDoubleClick}>
           {children}
         </div>
         {(isSelected || (!hideHoverUI && isHovered)) && (
