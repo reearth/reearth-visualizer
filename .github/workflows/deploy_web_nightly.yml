@@ -26,4 +26,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: tar -xvf reearth-web_nightly.tar.gz
       - name: rsync
-        run: gsutil -m -h "Cache-Control:no-store" rsync -x "^reearth_config\\.json$|^cesium_ion_token\\.txt$" -dr reearth-web/ $GCS_DEST
+        run: gsutil -m -h "Cache-Control:no-store" rsync -x "^reearth_config\\.json$" -dr reearth-web/ $GCS_DEST
