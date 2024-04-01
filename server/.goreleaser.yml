@@ -32,3 +32,5 @@ changelog:
   skip: true
 release:
   disable: true
+snapshot:
+  name_template: "{{ .Tag }}-SNAPSHOT-{{ .ShortCommit }}"
