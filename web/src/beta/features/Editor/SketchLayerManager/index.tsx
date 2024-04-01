@@ -12,21 +12,21 @@ import CustomedProperties from "./CustomedProperties";
 import General from "./General";
 import { SketchLayerDataType } from "./types";
 
-export interface Property {
+export type Property = {
   [key: string]: string;
-}
+};
 
 export interface SketchProps {
   sceneId?: string;
   layerStyles?: LayerStyle[];
-  propertyList?: Property[];
+  customPropertyList?: Property[];
   layerName?: string;
   layerStyle?: string;
   setLayerName?: (value: string) => void;
   setLayerStyle?: (value: string) => void;
   onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
-  setPropertyList?: (prev: Property[]) => void;
+  setCustomPropertyList?: (prev: Property[]) => void;
 }
 
 interface TabObject {
@@ -48,7 +48,7 @@ export const dataTypes: SketchLayerDataType[] = [
 const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
-  const [propertyList, setPropertyList] = useState<Property[]>([]);
+  const [customPropertyList, setCustomPropertyList] = useState<Property[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
 
@@ -57,7 +57,7 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
   }, []);
 
   const handleSubmit = () => {
-    const schemaJSON = propertyList.reduce((acc, property, index) => {
+    const schemaJSON = customPropertyList.reduce((acc, property, index) => {
       const [key] = Object.keys(property);
 
       // Appending index + 1 to the value for sorting later
@@ -101,14 +101,17 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
         ),
       },
       {
-        id: "customized Properties",
-        name: t("Customized Properties"),
+        id: "customProperties",
+        name: t("Custom Properties"),
         component: (
-          <CustomedProperties propertyList={propertyList} setPropertyList={setPropertyList} />
+          <CustomedProperties
+            customPropertyList={customPropertyList}
+            setCustomPropertyList={setCustomPropertyList}
+          />
         ),
       },
     ],
-    [layerName, layerStyle, layerStyles, propertyList, t],
+    [customPropertyList, layerName, layerStyle, layerStyles, t],
   );
 
   return (

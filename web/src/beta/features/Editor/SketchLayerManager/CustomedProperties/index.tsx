@@ -1,106 +1,70 @@
-import { useCallback, useState } from "react";
-
 import Button from "@reearth/beta/components/Button";
+import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import {
   ColJustifyBetween,
-  AssetWrapper,
-  InputGroup,
-  Input,
   SubmitWrapper,
-  InputWrapper,
   AddButtonWrapper,
-  SelectWrapper,
-  PropertyList,
   PropertyListHeader,
-  StyledText,
-  DataTypeContent,
-  PropertyContent,
-  DataTypeText,
-  DeleteDataType,
-  PropertyContentWrapper,
+  TitledText,
 } from "@reearth/beta/features/Editor/utils";
 import { useT } from "@reearth/services/i18n";
+import { useTheme } from "@reearth/services/theme";
 
-import { SketchProps, dataTypes } from "..";
+import { SketchProps } from "..";
 
-const CustomedProperties: React.FC<SketchProps> = ({ propertyList = [], setPropertyList }) => {
+import useHooks, { PropertyProps } from "./hooks";
+import EditorProperty from "./PropertyEditor";
+
+const CustomedProperties: React.FC<SketchProps> = ({
+  customPropertyList,
+  setCustomPropertyList,
+}) => {
   const t = useT();
-  const [propertyName, setPropertyName] = useState<string>("");
-  const [dataType, setDataType] = useState<string>("");
+  const theme = useTheme();
 
-  const handleAddToPropertyToList = useCallback(() => {
-    const newData = { [propertyName]: dataType };
-    setPropertyList?.([...propertyList, newData]);
-    setPropertyName("");
-    setDataType("");
-  }, [dataType, propertyName, propertyList, setPropertyList]);
-
-  const handleDeletePropertyToList = useCallback(
-    (idx: number) => {
-      const updatedPropertiesList = [...propertyList];
-      updatedPropertiesList.splice(idx, 1);
-      setPropertyList?.(updatedPropertiesList);
-    },
-    [propertyList, setPropertyList],
-  );
+  const {
+    currentProperties,
+    handleRemovePropertyToList,
+    handlePropertyDrop,
+    handlePropertyAdd,
+    handleKeyChange,
+    handleValueChange,
+  } = useHooks({
+    customPropertyList,
+    setCustomPropertyList,
+  });
 
   return (
     <ColJustifyBetween>
-      <AssetWrapper>
-        <InputWrapper>
-          <InputGroup label={t("Name")} description={t("Property name you want to add.")}>
-            <Input
-              type="text"
-              placeholder={t("Input Text")}
-              value={propertyName}
-              onChange={e => setPropertyName(e.target.value)}
+      <PropertyListHeader>
+        <TitledText size="footnote" color={theme.content.weaker}>
+          {t("Name")}
+        </TitledText>
+        <TitledText size="footnote" color={theme.content.weaker}>
+          {t("Type")}
+        </TitledText>
+      </PropertyListHeader>
+      {currentProperties && currentProperties?.length > 0 && (
+        <DragAndDropList<PropertyProps>
+          uniqueKey="custom-property"
+          gap={5}
+          items={(currentProperties as PropertyProps[]) || []}
+          getId={item => item.id}
+          onItemDrop={handlePropertyDrop}
+          renderItem={(property, idx) => (
+            <EditorProperty
+              key={property.id}
+              property={property}
+              onKeyChange={handleKeyChange(idx)}
+              onValueChange={handleValueChange(idx)}
+              onRemoveItem={() => handleRemovePropertyToList(idx)}
             />
-          </InputGroup>
-          <SelectWrapper
-            value={dataType}
-            name={t("Data Type")}
-            description={t("Type of data you want to add.")}
-            options={dataTypes.map(v => ({ key: v, label: v }))}
-            attachToRoot
-            onChange={setDataType}
-          />
-        </InputWrapper>
-        <AddButtonWrapper>
-          <Button
-            text={t("Add to proprety list")}
-            buttonType="primary"
-            size="medium"
-            disabled={!propertyName}
-            onClick={handleAddToPropertyToList}
-          />
-        </AddButtonWrapper>
-      </AssetWrapper>
-
-      <PropertyList>
-        <PropertyListHeader>
-          <StyledText size="footnote">{t("Name")}</StyledText>
-          <StyledText size="footnote">{t("Data Types")}</StyledText>
-        </PropertyListHeader>
-        <PropertyContentWrapper>
-          {propertyList?.length > 0 &&
-            propertyList?.map((item, i) => {
-              return (
-                <PropertyContent key={i}>
-                  <StyledText size="footnote">{Object.keys(item)[0]}</StyledText>
-                  <DataTypeContent>
-                    <DataTypeText size="footnote">{Object.values(item)[0]}</DataTypeText>{" "}
-                    <DeleteDataType
-                      icon="bin"
-                      size={16}
-                      onClick={() => handleDeletePropertyToList(i)}
-                    />
-                  </DataTypeContent>
-                </PropertyContent>
-              );
-            })}
-        </PropertyContentWrapper>
-      </PropertyList>
-
+          )}
+        />
+      )}
+      <AddButtonWrapper>
+        <Button icon="plus" text={t("New Property")} size="small" onClick={handlePropertyAdd} />
+      </AddButtonWrapper>
       <SubmitWrapper />
     </ColJustifyBetween>
   );

@@ -137,8 +137,6 @@ export const InputWrapper = styled.div`
 
 export const AddButtonWrapper = styled.div`
   width: 100%;
-  display: flex;
-  justify-content: flex-end;
 `;
 export const SelectWrapper = styled(SelectField)`
   display: block;
@@ -146,59 +144,55 @@ export const SelectWrapper = styled(SelectField)`
   width: 100%;
 `;
 
-export const PropertyList = styled.div`
-  display: block;
-  margin-top: 24px;
-  border-radius: 4px;
-  border: ${({ theme }) => `1px solid ${theme.outline.weak}`};
-`;
-
 export const PropertyListHeader = styled.div`
   display: flex;
-  background: ${({ theme }) => theme.bg[2]};
-  & > :first-child {
-    border-right: ${({ theme }) => `1px solid ${theme.outline.weak}`};
-  }
+  justify-content: center;
 `;
 
 export const StyledText = styled(Text)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 40%;
-  padding: 8px 10px;
+  padding: 8px 2px;
+  cursor: pointer;
+  width: 100%;
 `;
 
-export const PropertyContentWrapper = styled.div`
-  display: block;
-  margin-bottom: 100px;
+export const TitledText = styled(Text)`
+  padding: 8px 0px;
+  width: 44%;
 `;
 
-export const PropertyContent = styled.div`
-  display: flex;
-  border-bottom: ${({ theme }) => `1px solid ${theme.outline.weak}`};
-
-  & > :first-child {
-    border-right: ${({ theme }) => `1px solid ${theme.outline.weak}`};
-  }
-`;
-
-export const DataTypeContent = styled.div`
-  display: flex;
-  width: 55%;
-  justify-content: space-between;
-  & > :first-child {
-    border-right: ${({ theme }) => `1px solid ${theme.outline.weak}`};
-  }
-`;
-
-export const DataTypeText = styled(Text)`
-  width: 85%;
-  padding: 8px 10px;
-`;
-export const DeleteDataType = styled(Icon)`
+export const DeleteButton = styled(Icon)`
   cursor: pointer;
   outline: none;
-  padding-top: 12px;
+  margin-right: 6px;
+`;
+
+export const PropertyFieldContanier = styled.div`
+  display: flex;
+  align: center;
+  width: 100%;
+  background: ${({ theme }) => theme.bg[2]};
+  color: ${({ theme }) => theme.content.main};
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  gap: 8px;
+`;
+
+export const PropertyField = styled.div`
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  width: 50%;
+  gap: 4px;
+`;
+
+export const HandleIcon = styled(Icon)`
+  color: ${({ theme }) => theme.content.weak};
+  cursor: move;
+  padding-left: 4px;
+  &:hover {
+    color: ${({ theme }) => theme.content.main};
+  }
 `;
 
 export const generateTitle = (url: string, layerName?: string): string => {
