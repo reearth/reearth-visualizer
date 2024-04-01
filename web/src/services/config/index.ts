@@ -58,6 +58,8 @@ declare global {
   }
 }
 
+const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
+
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
@@ -98,12 +100,12 @@ async function loadCesiumIonToken(): Promise<string> {
   // updating config JSON by CI/CD sometimes can break the config file, so separate files
   try {
     const res = await fetch("/cesium_ion_token.txt");
-    const token = await res.text();
-    return token.trim();
+    const token = (await res.text()).trim();
+    return token.length === DEFAULT_CESIUM_ION_TOKEN_LENGTH ? token : "";
   } catch (e) {
     // ignore
+    return "";
   }
-  return "";
 }
 
 export function config(): Config | undefined {
