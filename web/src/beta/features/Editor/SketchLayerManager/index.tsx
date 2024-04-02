@@ -16,10 +16,17 @@ export type Property = {
   [key: string]: string;
 };
 
+export type PropertyProps = {
+  id: string;
+  key: string;
+  value: string;
+};
+
 export interface SketchProps {
   sceneId?: string;
   layerStyles?: LayerStyle[];
   customPropertyList?: Property[];
+  currentProperties?: PropertyProps[];
   layerName?: string;
   layerStyle?: string;
   setLayerName?: (value: string) => void;
@@ -27,6 +34,7 @@ export interface SketchProps {
   onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
   setCustomPropertyList?: (prev: Property[]) => void;
+  setCurrentProperties?: (prev: PropertyProps[]) => void;
 }
 
 interface TabObject {
@@ -49,6 +57,7 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
   const [customPropertyList, setCustomPropertyList] = useState<Property[]>([]);
+  const [currentProperties, setCurrentProperties] = useState<PropertyProps[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
 
@@ -106,12 +115,14 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
         component: (
           <CustomedProperties
             customPropertyList={customPropertyList}
+            currentProperties={currentProperties}
             setCustomPropertyList={setCustomPropertyList}
+            setCurrentProperties={setCurrentProperties}
           />
         ),
       },
     ],
-    [customPropertyList, layerName, layerStyle, layerStyles, t],
+    [currentProperties, customPropertyList, layerName, layerStyle, layerStyles, t],
   );
 
   return (

@@ -1,41 +1,42 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { Property } from "..";
+import { Property, PropertyProps } from "..";
 
-export type PropertyProps = {
-  id: string;
-  key: string;
-  value: string;
-};
 export default function useHooks({
   customPropertyList,
+  currentProperties,
+  setCurrentProperties,
   setCustomPropertyList,
 }: {
   customPropertyList?: Property[];
+  currentProperties?: PropertyProps[];
   setCustomPropertyList?: (inp: Property[]) => void;
+  setCurrentProperties?: (prev: PropertyProps[]) => void;
 }) {
-  const [currentProperties, setCurrentProperties] = useState<PropertyProps[]>([]);
-
   const handleValueChange = useCallback(
     (idx: number) => (newValue?: string) => {
-      const newList = currentProperties.map(i => ({ ...i } as PropertyProps));
+      if (!currentProperties) return;
+      const newList = currentProperties?.map(i => ({ ...i } as PropertyProps));
       newList[idx].value = newValue ?? "";
-      setCurrentProperties(newList);
+      setCurrentProperties?.(newList);
     },
-    [currentProperties],
+    [currentProperties, setCurrentProperties],
   );
 
   const handleKeyChange = useCallback(
     (idx: number) => (newKeyValue?: string) => {
+      if (!currentProperties) return;
+
       const newList = currentProperties.map(i => ({ ...i } as PropertyProps));
       newList[idx].key = newKeyValue ?? "";
-      setCurrentProperties(newList);
+      setCurrentProperties?.(newList);
     },
-    [currentProperties],
+    [currentProperties, setCurrentProperties],
   );
 
   const handlePropertyAdd = useCallback(() => {
+    if (!currentProperties) return;
     const newList = [
       ...currentProperties,
       {
@@ -44,17 +45,17 @@ export default function useHooks({
         value: "",
       },
     ];
-    setCurrentProperties(newList);
-  }, [currentProperties]);
+    setCurrentProperties?.(newList);
+  }, [currentProperties, setCurrentProperties]);
 
   const handleRemovePropertyToList = useCallback(
     (idx: number) => {
-      if (!customPropertyList) return;
+      if (!customPropertyList || !currentProperties) return;
       const updatedPropertiesList = [...currentProperties];
       updatedPropertiesList.splice(idx, 1);
       setCurrentProperties?.(updatedPropertiesList);
     },
-    [customPropertyList, currentProperties],
+    [customPropertyList, currentProperties, setCurrentProperties],
   );
 
   const handlePropertyDrop: (item: PropertyProps, targetIndex: number) => void = useCallback(
@@ -70,11 +71,12 @@ export default function useHooks({
       if (newList.length < 1 || !currentProperties) return;
       setCurrentProperties?.(newList);
     },
-    [currentProperties],
+    [currentProperties, setCurrentProperties],
   );
 
   useEffect(() => {
     if (setCustomPropertyList) {
+      if (!currentProperties) return;
       const filteredList = currentProperties.filter(item => item.key !== "" && item.value !== "");
       const propertyList = filteredList.map(item => ({ [item.key]: item.value }));
       setCustomPropertyList(propertyList);

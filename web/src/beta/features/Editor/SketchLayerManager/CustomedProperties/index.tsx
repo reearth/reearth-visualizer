@@ -9,20 +9,21 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 
-import { SketchProps } from "..";
+import { PropertyProps, SketchProps } from "..";
 
-import useHooks, { PropertyProps } from "./hooks";
+import useHooks from "./hooks";
 import PropertyItem from "./PropertyItem";
 
 const CustomedProperties: React.FC<SketchProps> = ({
   customPropertyList,
+  currentProperties,
+  setCurrentProperties,
   setCustomPropertyList,
 }) => {
   const t = useT();
   const theme = useTheme();
 
   const {
-    currentProperties,
     handleRemovePropertyToList,
     handlePropertyDrop,
     handlePropertyAdd,
@@ -30,6 +31,8 @@ const CustomedProperties: React.FC<SketchProps> = ({
     handleValueChange,
   } = useHooks({
     customPropertyList,
+    currentProperties,
+    setCurrentProperties,
     setCustomPropertyList,
   });
 
