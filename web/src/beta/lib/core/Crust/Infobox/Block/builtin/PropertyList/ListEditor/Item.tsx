@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import TextField from "@reearth/beta/components/fields/TextField";
+import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import Icon from "@reearth/beta/components/Icon";
 import { styled } from "@reearth/services/theme";
 
@@ -35,10 +35,8 @@ const EditorItem: React.FC<Props> = ({ item, onKeyChange, onValueChange, onItemR
 
   return (
     <Field>
-      <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-        <HandleIcon icon="dndHandle" />
-        <StyledTextField value={currentKeyValue} onChange={handleKeyChange} />
-      </div>
+      <HandleIcon icon="dndHandle" />
+      <StyledTextField value={currentKeyValue} onChange={handleKeyChange} />
       <StyledTextField value={currentValue} onChange={handleValueChange} />
       <StyledIcon icon="trash" onClick={onItemRemove} />
     </Field>
@@ -69,8 +67,8 @@ const HandleIcon = styled(Icon)`
   }
 `;
 
-const StyledTextField = styled(TextField)`
-  width: 110px;
+const StyledTextField = styled(TextInput)`
+  width: 100%;
 `;
 
 const StyledIcon = styled(Icon)`
