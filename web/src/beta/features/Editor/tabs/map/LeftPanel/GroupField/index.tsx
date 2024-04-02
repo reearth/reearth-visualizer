@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import ListItem from "@reearth/beta/components/ListItem";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
@@ -19,6 +19,7 @@ type GroupSectionFieldProps = {
   layers: NLSLayer[];
   selectedLayerId?: string;
   selectedSceneSetting?: string;
+  clickAway: boolean;
   onLayerDelete: (id: string) => void;
   onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   onLayerSelect: (id: string) => void;
@@ -34,6 +35,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
   layers,
   selectedLayerId,
   selectedSceneSetting,
+  clickAway,
   onLayerDelete,
   onLayerNameUpdate,
   onLayerSelect,
@@ -64,8 +66,23 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
     [t],
   );
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node) && clickAway) {
+        onLayerSelect("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [clickAway, onLayerSelect]);
+
   return (
-    <>
+    <div ref={ref}>
       <StyledSidePanelSectionField title={t("Scene")} startCollapsed gap={0} storageKey="scene">
         {[...new Set(scene?.property?.schema?.groups.map(({ collection }) => collection))].map(
           (collection, index) =>
@@ -92,7 +109,7 @@ const GroupSectionField: React.FC<GroupSectionFieldProps> = ({
           onFlyTo={onFlyTo}
         />
       </StyledSidePanelSectionField>
-    </>
+    </div>
   );
 };
 

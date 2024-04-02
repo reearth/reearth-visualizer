@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/LeftPanel/GroupField";
 import { FlyTo } from "@reearth/beta/lib/core/types";
@@ -37,9 +39,24 @@ const MapSidePanel: React.FC<Props> = ({
   onFlyTo,
 }) => {
   const t = useT();
+  const [clickAway, setClickAway] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickAway = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setClickAway(false);
+      } else setClickAway(true);
+    };
+    document.addEventListener("mousedown", handleClickAway);
+    return () => {
+      document.removeEventListener("mousedown", handleClickAway);
+    };
+  }, [onLayerSelect]);
 
   return (
     <SidePanelCommon
+      ref={ref}
       location="left"
       contents={[
         {
@@ -59,6 +76,7 @@ const MapSidePanel: React.FC<Props> = ({
               onSketchLayerManagerOpen={onSketchLayerManagerOpen}
               onLayerVisibilityUpate={onLayerVisibilityUpate}
               onFlyTo={onFlyTo}
+              clickAway={clickAway}
             />
           ),
         },

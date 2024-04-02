@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode } from "react";
+import React, { CSSProperties, ReactNode, forwardRef } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
@@ -18,9 +18,12 @@ type Props = {
   padding?: number;
 };
 
-const Panel: React.FC<Props> = ({ location, contents, padding }) => {
+const Panel: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
+  { location, contents, padding },
+  ref,
+) => {
   return (
-    <Wrapper location={location}>
+    <Wrapper location={location} ref={ref}>
       {contents.map(
         content =>
           !content.hide && (
@@ -37,7 +40,7 @@ const Panel: React.FC<Props> = ({ location, contents, padding }) => {
   );
 };
 
-export default Panel;
+export default forwardRef(Panel);
 
 const Wrapper = styled.div<{ location: "left" | "right" }>`
   display: flex;

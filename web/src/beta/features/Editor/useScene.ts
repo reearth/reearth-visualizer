@@ -18,7 +18,7 @@ export default function ({ sceneId }: SceneProps) {
     [scene?.property, selectedSceneSetting],
   );
   const handleSceneSettingSelect = useCallback(
-    (collection?: string) => setSelectedSceneSetting(!collection ? undefined : collection),
+    (collection?: string) => setSelectedSceneSetting(collection),
     [setSelectedSceneSetting],
   );
 
