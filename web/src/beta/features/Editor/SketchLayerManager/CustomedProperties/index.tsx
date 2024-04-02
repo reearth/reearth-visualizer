@@ -2,7 +2,6 @@ import Button from "@reearth/beta/components/Button";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import {
   ColJustifyBetween,
-  SubmitWrapper,
   AddButtonWrapper,
   PropertyListHeader,
   TitledText,
@@ -13,7 +12,7 @@ import { useTheme } from "@reearth/services/theme";
 import { SketchProps } from "..";
 
 import useHooks, { PropertyProps } from "./hooks";
-import EditorProperty from "./PropertyEditor";
+import PropertyItem from "./PropertyItem";
 
 const CustomedProperties: React.FC<SketchProps> = ({
   customPropertyList,
@@ -47,17 +46,17 @@ const CustomedProperties: React.FC<SketchProps> = ({
       {currentProperties && currentProperties?.length > 0 && (
         <DragAndDropList<PropertyProps>
           uniqueKey="custom-property"
-          gap={5}
+          gap={8}
           items={(currentProperties as PropertyProps[]) || []}
           getId={item => item.id}
           onItemDrop={handlePropertyDrop}
           renderItem={(property, idx) => (
-            <EditorProperty
+            <PropertyItem
               key={property.id}
               property={property}
               onKeyChange={handleKeyChange(idx)}
               onValueChange={handleValueChange(idx)}
-              onRemoveItem={() => handleRemovePropertyToList(idx)}
+              onRemovePropertyItem={() => handleRemovePropertyToList(idx)}
             />
           )}
         />
@@ -65,7 +64,6 @@ const CustomedProperties: React.FC<SketchProps> = ({
       <AddButtonWrapper>
         <Button icon="plus" text={t("New Property")} size="small" onClick={handlePropertyAdd} />
       </AddButtonWrapper>
-      <SubmitWrapper />
     </ColJustifyBetween>
   );
 };

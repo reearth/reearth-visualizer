@@ -133,7 +133,7 @@ const InspectorTabs: React.FC<Props> = ({
   return (
     <TabMenu
       tabs={tabs}
-      isScroll={true}
+      scrollable={true}
       selectedTab={selectedTab}
       onSelectedTabChange={handleTabChange}
     />

@@ -137,6 +137,7 @@ export const InputWrapper = styled.div`
 
 export const AddButtonWrapper = styled.div`
   width: 100%;
+  margin-top: 8px;
 `;
 export const SelectWrapper = styled(SelectField)`
   display: block;
@@ -168,13 +169,12 @@ export const DeleteButton = styled(Icon)`
 
 export const PropertyFieldContanier = styled.div`
   display: flex;
-  align: center;
+  align-items: center;
   width: 100%;
   background: ${({ theme }) => theme.bg[2]};
   color: ${({ theme }) => theme.content.main};
   border-radius: 4px;
   box-sizing: border-box;
-  margin-bottom: 8px;
   gap: 8px;
 `;
 

@@ -18,7 +18,7 @@ export type TabObject = {
 export type Props = {
   tabs: TabObject[];
   selectedTab: string;
-  isScroll?: boolean;
+  scrollable?: boolean;
   onSelectedTabChange: (tab: string) => void;
   menuAlignment?: menuAlignment;
 };
@@ -26,7 +26,7 @@ export type Props = {
 const TabMenu: FC<Props> = ({
   tabs,
   selectedTab,
-  isScroll,
+  scrollable,
   onSelectedTabChange,
   menuAlignment,
 }) => {
@@ -47,7 +47,7 @@ const TabMenu: FC<Props> = ({
           </TabIconWrapper>
         ))}
       </Tabs>
-      <MainArea isScroll={isScroll}>
+      <MainArea scrollable={scrollable}>
         {selectedTabItem?.name && !menuAlignment && (
           <Header>
             <Text size="body">{selectedTabItem.name}</Text>
@@ -98,10 +98,10 @@ const Header = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
 `;
 
-const MainArea = styled.div<{ isScroll?: boolean }>`
+const MainArea = styled.div<{ scrollable?: boolean }>`
   display: block;
   height: auto;
-  overflow-y: ${({ isScroll }) => (isScroll ? "auto" : "unset")};
+  overflow-y: ${({ scrollable }) => (scrollable ? "auto" : "unset")};
 `;
 
 const Content = styled.div`

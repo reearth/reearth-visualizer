@@ -395,7 +395,6 @@ export function processLayers(
       visible: nlsLayer.visible,
       sketch: nlsLayer.sketch,
       isSketch: nlsLayer.isSketch,
-      // infobox: nlsLayer.infobox ? processInfobox(nlsLayer.infobox, parent?.infobox) : undefined,
       infobox: convertInfobox(nlsLayer.infobox, parent?.infobox, infoboxBlockNames),
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,

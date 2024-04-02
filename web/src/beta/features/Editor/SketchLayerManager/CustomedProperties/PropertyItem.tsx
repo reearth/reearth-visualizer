@@ -19,14 +19,14 @@ type Props = {
   property: PropertyProps;
   onKeyChange: (newValue?: string) => void;
   onValueChange: (newValue?: string) => void;
-  onRemoveItem: () => void;
+  onRemovePropertyItem: () => void;
 };
 
-const EditorProperty: React.FC<Props> = ({
+const PropertyItem: React.FC<Props> = ({
   property,
   onKeyChange,
   onValueChange,
-  onRemoveItem,
+  onRemovePropertyItem,
 }) => {
   const [propertyName, setPropertyName] = useState<string>(property.key);
   const [dataType, setDataType] = useState<string>(property.value);
@@ -92,13 +92,13 @@ const EditorProperty: React.FC<Props> = ({
           </StyledText>
         )}
 
-        <DeleteButton icon="trash" size={16} onClick={onRemoveItem} />
+        <DeleteButton icon="trash" size={16} onClick={onRemovePropertyItem} />
       </PropertyField>
     </PropertyFieldContanier>
   );
 };
 
-export default EditorProperty;
+export default PropertyItem;
 
 const StyledSelect = styled(SelectWrapper)`
   margin-top: 0;
