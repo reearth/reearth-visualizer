@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
+	"github.com/uptrace/uptrace-go/uptrace"
 	"golang.org/x/net/http2"
 )
 
@@ -58,6 +59,18 @@ func Start(debug bool, version string) {
 		log.Fatalf("Failed to connect to Redis: %+v\n", err)
 	}
 	redisAdapter := infraRedis.NewRedisAdapter(redisClient)
+
+	// Init uptrace
+	uptrace.ConfigureOpentelemetry(
+		uptrace.WithDSN(conf.UptraceDSN),
+		uptrace.WithServiceName("reearth"),
+		uptrace.WithServiceVersion("1.0.0"),
+	)
+	defer func() {
+		if err := uptrace.Shutdown(ctx); err != nil {
+			log.Fatalf("failed to shutdown uptrace: %v", err)
+		}
+	}()
 
 	// Start web server
 	NewServer(ctx, &ServerConfig{

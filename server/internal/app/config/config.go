@@ -74,6 +74,9 @@ type Config struct {
 	RedisHost     string `envconfig:"REDIS_HOST" default:"localhost:6379"`
 	RedisPassword string `envconfig:"REDIS_PASSWORD" default:""`
 	RedisDB       int    `envconfig:"REDIS_DB" default:"0"`
+
+	// uptrace
+	UptraceDSN string `envconfig:"UPTRACE_DSN" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
