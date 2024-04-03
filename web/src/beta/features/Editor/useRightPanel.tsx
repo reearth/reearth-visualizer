@@ -14,6 +14,7 @@ import StorySidePanel from "./tabs/story/RightPanel";
 import WidgetSidePanel from "./tabs/widgets/RightPanel";
 import { LayerConfigUpdateProps } from "./useLayers";
 import { LayerStyleValueUpdateProps } from "./useLayerStyles";
+import { GeoJsonFeatureUpdateProps } from "./useSketch";
 
 type Props = {
   layerStyles: LayerStyle[];
@@ -30,6 +31,7 @@ type Props = {
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   onPageUpdate?: (id: string, layers: string[]) => void;
+  onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
 export default ({
@@ -47,6 +49,7 @@ export default ({
   onFlyTo,
   onLayerStyleValueUpdate,
   onLayerConfigUpdate,
+  onGeoJsonFeatureUpdate,
 }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -64,6 +67,7 @@ export default ({
             onFlyTo={onFlyTo}
             onLayerStyleValueUpdate={onLayerStyleValueUpdate}
             onLayerConfigUpdate={onLayerConfigUpdate}
+            onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
           />
         );
       case "story":
@@ -87,19 +91,20 @@ export default ({
         return undefined;
     }
   }, [
-    scene,
     tab,
+    scene,
     layerStyles,
     nlsLayers,
     sceneId,
+    sceneSettings,
     currentCamera,
     selectedLayerStyleId,
     selectedSceneSetting,
-    sceneSettings,
-    currentPage,
     onFlyTo,
     onLayerStyleValueUpdate,
     onLayerConfigUpdate,
+    onGeoJsonFeatureUpdate,
+    currentPage,
     onPageUpdate,
   ]);
 

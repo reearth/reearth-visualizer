@@ -1,10 +1,12 @@
 import { mapValues } from "lodash-es";
 
 import { InfoboxBlock } from "@reearth/beta/lib/core/Crust/Infobox/types";
-import { Layer, LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
+import { Feature, Layer, LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import { DEFAULT_LAYER_STYLE } from "@reearth/beta/utils/value";
 import { NLSInfobox, NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+
+import { handleCoordinate } from "../Editor/utils";
 
 export const processNewProperty = (p: any): any => {
   if (typeof p !== "object") return p;
@@ -63,6 +65,23 @@ export function processLayers(
 
   return newLayers?.map(nlsLayer => {
     const layerStyle = getLayerStyleValue(nlsLayer.config?.layerStyleId);
+    const sketchLayerData = nlsLayer.isSketch && {
+      ...nlsLayer.config.data,
+      value: {
+        type: "FeatureCollection",
+        features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
+          const cleanedFeatures = {
+            ...feature,
+            geometry: {
+              ...feature.geometry,
+              coordinates: handleCoordinate(feature.geometry),
+            },
+          };
+
+          return cleanedFeatures;
+        }),
+      },
+    };
     return {
       type: "simple",
       id: nlsLayer.id,
@@ -72,7 +91,7 @@ export function processLayers(
       properties: nlsLayer.config?.properties,
       defines: nlsLayer.config?.defines,
       events: nlsLayer.config?.events,
-      data: nlsLayer.config?.data,
+      data: nlsLayer.isSketch ? sketchLayerData : nlsLayer.config?.data,
       ...layerStyle,
     };
   });

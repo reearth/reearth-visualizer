@@ -82,17 +82,14 @@ Layer: Layer
 Layers: Layers
 All Layers: All Layers
 Name: Name
-Property name you want to add.: Property name you want to add
-Data Type: Data Type
-Type of data you want to add.: Type of data you want to add.
-Add to proprety list: Add to proprety list
-Data Types: Data Types
+Type: Type
+New Property: New Property
 Layer Name: Layer Name
 Layer name you want to add.: Layer name you want to add.
 Layer Style: Layer Style
 Layer style you want to add.: Layer style you want to add.
 General: General
-Customized Properties: Customized Properties
+Custom Properties: Custom Properties
 New Sketch Layer: New Sketch Layer
 Create: Create
 Style_: Style_
@@ -109,6 +106,7 @@ Outline: Outline
 Add Layer from Resource: Add Layer from Resource
 Add Sketch Layer: ''
 Inspector: Inspector
+Unsupported custom field: Unsupported custom field
 ID: ID
 Geometry: Geometry
 Properties: Properties
@@ -584,6 +582,12 @@ Failed to add layer.: ''
 Successfully added a new layer: ''
 Failed to update the layer.: ''
 Successfully updated a the layer!: ''
+Failed to create block.: Failed to create block.
+Successfullly created a block!: Successfullly created a block!
+Failed to delete block.: Failed to delete block.
+Block was successfully deleted.: Block was successfully deleted.
+Failed to move block.: Failed to move block.
+Block was successfully moved.: Block was successfully moved.
 Failed to remove the layer.: ''
 Successfully removed a the layer!: ''
 Failed to add layerStyle.: ''
@@ -601,12 +605,6 @@ Successfully updated project!: ''
 Successfully archive project!: ''
 Successfully delete project!: ''
 Failed to update property.: Failed to update property.
-Failed to create block.: Failed to create block.
-Successfullly created a block!: Successfullly created a block!
-Failed to delete block.: Failed to delete block.
-Block was successfully deleted.: Block was successfully deleted.
-Failed to move block.: Failed to move block.
-Block was successfully moved.: Block was successfully moved.
 Failed to create story.: Failed to create story.
 Successfully created a story!: ''
 Failed to update story.: ''

@@ -80,17 +80,14 @@ Layer: レイヤー
 Layers: レイヤー
 All Layers: 全てのレイヤー
 Name: 名前
-Property name you want to add.: ''
-Data Type: ''
-Type of data you want to add.: ''
-Add to proprety list: ''
-Data Types: ''
+Type: ''
+New Property: ''
 Layer Name: ''
 Layer name you want to add.: ''
 Layer Style: レイヤースタイル
 Layer style you want to add.: ''
 General: ''
-Customized Properties: ''
+Custom Properties: ''
 New Sketch Layer: ''
 Create: 作成
 Style_: スタイル_
@@ -107,6 +104,7 @@ Outline: アウトライン
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
 Inspector: インスペクター
+Unsupported custom field: ''
 ID: ID
 Geometry: ジオメトリ
 Properties: プロパティ
@@ -541,6 +539,12 @@ Failed to add layer.: レイヤーの追加に失敗しました。
 Successfully added a new layer: 新しいレイヤーの追加に成功しました。
 Failed to update the layer.: レイヤーのアップデートに失敗しました。
 Successfully updated a the layer!: レイヤーのアップデートに成功しました！
+Failed to create block.: ブロックの作成に失敗しました。
+Successfullly created a block!: ブロックの作成に成功しました！
+Failed to delete block.: ブロックの削除に失敗しました。
+Block was successfully deleted.: ブロックの削除に成功しました。
+Failed to move block.: ブロックの移動に失敗しました。
+Block was successfully moved.: ブロックの移動に成功しました。
 Failed to remove the layer.: レイヤーの削除に失敗しました。
 Successfully removed a the layer!: レイヤーの削除に成功しました！
 Failed to add layerStyle.: レイヤースタイルの追加に失敗しました。
@@ -558,12 +562,6 @@ Successfully updated project!: プロジェクトのアップデートに成功�
 Successfully archive project!: プロジェクトのアーカイブに成功しました！
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
-Failed to create block.: ブロックの作成に失敗しました。
-Successfullly created a block!: ブロックの作成に成功しました！
-Failed to delete block.: ブロックの削除に失敗しました。
-Block was successfully deleted.: ブロックの削除に成功しました。
-Failed to move block.: ブロックの移動に失敗しました。
-Block was successfully moved.: ブロックの移動に成功しました。
 Failed to create story.: ストーリーの作成に失敗しました。
 Successfully created a story!: ストーリーの作成に成功しました！
 Failed to update story.: ストーリーのアップデートに失敗しました。
