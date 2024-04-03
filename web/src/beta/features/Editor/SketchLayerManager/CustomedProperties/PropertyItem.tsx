@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import { styled } from "@reearth/services/theme";
 
-import { dataTypes } from "..";
+import { PropertyProps, dataTypes } from "..";
 import {
   DeleteButton,
   HandleIcon,
@@ -12,8 +12,6 @@ import {
   SelectWrapper,
   StyledText,
 } from "../../utils";
-
-import { PropertyProps } from "./hooks";
 
 type Props = {
   property: PropertyProps;
