@@ -50,7 +50,11 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
   return (
     <>
       {tiles
-        ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
+        ?.map(({ id, ...tile }) => ({
+          ...tile,
+          id,
+          provider: providers[id]?.[2],
+        }))
         .map(({ id, tile_opacity: opacity, tile_zoomLevel, provider, heatmap }, i) =>
           provider ? (
             <ImageryLayer
@@ -86,7 +90,7 @@ export function useImageryProviders({
       cesiumIonAccessToken?: string;
       heatmap?: boolean;
       tile_zoomLevel?: number[];
-    }) => ImageryProvider | null;
+    }) => Promise<ImageryProvider> | ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
@@ -134,7 +138,14 @@ export function useImageryProviders({
             prevProvider,
             tile,
           }):
-            | [string, [string | undefined, string | undefined, ImageryProvider | null | undefined]]
+            | [
+                string,
+                [
+                  string | undefined,
+                  string | undefined,
+                  Promise<ImageryProvider> | ImageryProvider | null | undefined,
+                ],
+              ]
             | null =>
             !tile
               ? null

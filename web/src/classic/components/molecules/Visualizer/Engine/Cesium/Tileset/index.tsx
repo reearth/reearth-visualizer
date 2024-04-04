@@ -70,6 +70,7 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
   } = experimental_clipping || {};
   const { allowEnterGround } = sceneProperty?.default || {};
   const [style, setStyle] = useState<Cesium3DTileStyle>();
+  const [isTilesetReady, setIsTilesetReady] = useState(false);
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
     if (
@@ -134,11 +135,9 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
 
   useEffect(() => {
     const prepareClippingPlanes = async () => {
-      if (!tilesetRef.current) {
+      if (!tilesetRef.current || !isTilesetReady) {
         return;
       }
-
-      await tilesetRef.current?.readyPromise;
 
       const clippingPlanesOriginMatrix = Transforms.eastNorthUpToFixedFrame(
         tilesetRef.current.boundingSphere.center.clone(),
@@ -192,6 +191,7 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
     updateTerrainHeight,
     allowEnterGround,
     terrainHeightEstimate,
+    isTilesetReady,
   ]);
 
   useEffect(() => {
@@ -232,13 +232,23 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
       : null;
   }, [isVisible, sourceType, tileset, meta, googleMapResource]);
 
+  const handleOnReady = useCallback(
+    (t: Cesium3DTilesetType) => {
+      if (_debugFlight) {
+        viewer?.flyTo(t);
+      }
+      setIsTilesetReady(true);
+    },
+    [viewer],
+  );
+
   return !isVisible || (!tileset && !sourceType) || !tilesetUrl ? null : (
     <Cesium3DTileset
       ref={ref}
       url={tilesetUrl}
       style={style}
       shadows={shadowMode(shadows)}
-      onReady={_debugFlight ? t => viewer?.zoomTo(t) : undefined}
+      onReady={handleOnReady}
       clippingPlanes={clippingPlanes}
     />
   );

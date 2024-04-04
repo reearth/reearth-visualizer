@@ -140,11 +140,13 @@ const useFeature = ({
   tileset,
   layer,
   evalFeature,
+  isReady,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
   layer?: ComputedLayer;
   evalFeature: EvalFeature;
+  isReady: boolean;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
@@ -223,7 +225,7 @@ const useFeature = ({
         await attachComputedFeature(feature);
       });
     });
-  }, [tileset, cachedFeaturesRef, attachComputedFeature, layerId]);
+  }, [tileset, cachedFeaturesRef, attachComputedFeature, layerId, isReady]);
 
   useEffect(() => {
     cachedCalculatedLayerRef.current = layer;
@@ -318,6 +320,7 @@ export const useHooks = ({
 }) => {
   const { viewer } = useCesium();
   const { tileset, styleUrl, edgeColor, edgeWidth, experimental_clipping, apiKey } = property ?? {};
+  const [isTilesetReady, setIsTilesetReady] = useState(false);
   const {
     width,
     height,
@@ -389,6 +392,7 @@ export const useHooks = ({
     tileset: tilesetRef,
     layer,
     evalFeature,
+    isReady: isTilesetReady,
   });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
@@ -419,14 +423,7 @@ export const useHooks = ({
     const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
 
     const prepareClippingPlanes = async () => {
-      if (!tilesetRef.current) {
-        return;
-      }
-
-      try {
-        await tilesetRef.current?.readyPromise;
-      } catch (e) {
-        console.error("Could not load 3D tiles: ", e);
+      if (!tilesetRef.current || !isTilesetReady) {
         return;
       }
 
@@ -476,6 +473,7 @@ export const useHooks = ({
     updateTerrainHeight,
     allowEnterGround,
     terrainHeightEstimate,
+    isTilesetReady,
   ]);
 
   useEffect(() => {
@@ -536,11 +534,16 @@ export const useHooks = ({
       : null;
   }, [isVisible, tileset, url, type, meta, googleMapResource]);
 
+  const handleReady = useCallback(() => {
+    setIsTilesetReady(true);
+  }, []);
+
   return {
     tilesetUrl,
     ref,
     style,
     clippingPlanes,
     builtinBoxProps,
+    handleReady,
   };
 };

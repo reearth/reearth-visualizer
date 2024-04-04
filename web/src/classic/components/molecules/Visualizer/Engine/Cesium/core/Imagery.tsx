@@ -73,7 +73,7 @@ export function useImageryProviders({
     [key: string]: (opts?: {
       url?: string;
       cesiumIonAccessToken?: string;
-    }) => ImageryProvider | null;
+    }) => Promise<ImageryProvider> | ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
@@ -116,7 +116,14 @@ export function useImageryProviders({
             prevProvider,
             tile,
           }):
-            | [string, [string | undefined, string | undefined, ImageryProvider | null | undefined]]
+            | [
+                string,
+                [
+                  string | undefined,
+                  string | undefined,
+                  Promise<ImageryProvider> | ImageryProvider | null | undefined,
+                ],
+              ]
             | null =>
             !tile
               ? null
