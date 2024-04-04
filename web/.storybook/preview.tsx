@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ApolloProvider,
   ApolloClient,
@@ -8,8 +7,7 @@ import {
 } from "@apollo/client";
 import { ThemeProvider } from "@emotion/react";
 import { withThemeFromJSXProvider } from "@storybook/addon-styling";
-import type { Preview } from "@storybook/react";
-import React from "react";
+import type { Preview, ReactRenderer } from "@storybook/react";
 
 import classicDarkTheme from "../src/classic/theme/reearthTheme/darkTheme"; // temp classic imports
 import classicLightTheme from "../src/classic/theme/reearthTheme/lightTheme"; // temp classic imports
@@ -45,8 +43,9 @@ const preview: Preview = {
       theme,
     },
   },
+
   decorators: [
-    withThemeFromJSXProvider({
+    withThemeFromJSXProvider<ReactRenderer>({
       themes: {
         light: {
           classic: classicLightTheme,
