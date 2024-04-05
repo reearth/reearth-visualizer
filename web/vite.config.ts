@@ -21,6 +21,7 @@ const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
   plugins: [svgr(), react(), yaml(), cesium(), serverHeaders(), config(), tsconfigPaths()],
+  // https://github.com/storybookjs/storybook/issues/25256
   assetsInclude: ["/sb-preview/runtime.js"],
   define: {
     "process.env.QTS_DEBUG": "false", // quickjs-emscripten

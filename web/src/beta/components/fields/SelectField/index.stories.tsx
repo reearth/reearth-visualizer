@@ -68,7 +68,7 @@ export const MultiSelect: Story = (args: MultiSelectProps) => {
           name="Multi Select"
           description="You can select multiple options"
           onChange={handleChange}
-          multiSelect={true}
+          multiSelect
         />
       </div>
       <div>
@@ -78,7 +78,7 @@ export const MultiSelect: Story = (args: MultiSelectProps) => {
           description="Props are controlled by the field above"
           disabled={true}
           onChange={handleChange}
-          multiSelect={true}
+          multiSelect
         />
       </div>
     </Wrapper>
