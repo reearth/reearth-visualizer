@@ -8,7 +8,7 @@ import {
 } from "@apollo/client";
 import { ThemeProvider } from "@emotion/react";
 import { withThemeFromJSXProvider } from "@storybook/addon-styling";
-import type { Preview } from "@storybook/react";
+import type { Preview, ReactRenderer } from "@storybook/react";
 import React from "react";
 
 import classicDarkTheme from "../src/classic/theme/reearthTheme/darkTheme"; // temp classic imports
@@ -46,7 +46,7 @@ const preview: Preview = {
     },
   },
   decorators: [
-    withThemeFromJSXProvider({
+    withThemeFromJSXProvider<ReactRenderer>({
       themes: {
         light: {
           classic: classicLightTheme,
