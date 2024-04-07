@@ -1,0 +1,12 @@
+name: Update Cesium Ion token
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 2 * *'
+jobs:
+  upload:
+    uses: ./.github/workflows/_upload_cesium_token_txt.yml
+    with:
+      gcs_dst: gs://test.reearth.dev
+    secrets:
+      credentials_json: ${{ secrets.GCP_SA_KEY }}
