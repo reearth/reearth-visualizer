@@ -1,8 +1,10 @@
-name: Update Cesium Ion token
+name: Update Cesium Ion token Nightly
+
+# Every 2nd day of the month at 02:00 JST.
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 2 * *'
+    - cron: '0 17 1 * *'
 jobs:
   upload:
     uses: ./.github/workflows/_upload_cesium_token_txt.yml
