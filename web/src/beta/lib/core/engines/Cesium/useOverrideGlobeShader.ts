@@ -218,7 +218,6 @@ export const useOverrideGlobeShader = ({
     globe.vertexShadowDarkness = globeShadowDarkness ?? globe.vertexShadowDarkness;
   }, [cesium, globeShadowDarkness, hasVertexNormals]);
 
-  const originalGlobeFS = useRef<string>();
   const needUpdateGlobeRef = useRef(false);
 
   const handleGlobeShader = useCallback(() => {
@@ -239,19 +238,13 @@ export const useOverrideGlobeShader = ({
 
     const baseFragmentShaderSource = surfaceShaderSet.baseFragmentShaderSource;
 
-    const GlobeFS =
-      originalGlobeFS.current ??
-      baseFragmentShaderSource?.sources[baseFragmentShaderSource.sources.length - 1];
+    const GlobeFS = baseFragmentShaderSource?.sources[baseFragmentShaderSource.sources.length - 1];
 
     if (!GlobeFS || !baseFragmentShaderSource) {
       if (import.meta.env.DEV) {
         throw new Error("GlobeFS could not find.");
       }
       return;
-    }
-
-    if (!originalGlobeFS.current) {
-      originalGlobeFS.current = GlobeFS;
     }
 
     const matchers: StringMatcher[] = [];
