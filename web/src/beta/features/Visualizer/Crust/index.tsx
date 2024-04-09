@@ -117,7 +117,6 @@ export default function Crust({
   sceneProperty,
   camera,
   selectedFeatureInfo,
-
   externalPlugin,
   useExperimentalSandbox,
 

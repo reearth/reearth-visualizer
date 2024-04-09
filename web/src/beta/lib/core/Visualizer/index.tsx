@@ -192,8 +192,8 @@ const CoreVisualizer = memo(
                 onLayerSelectWithRectMove={handleLayerSelectWithRectMove}
                 onLayerSelectWithRectEnd={handleLayerSelectWithRectEnd}
               />
+              <coreContext.Provider value={coreContextValue}>{children}</coreContext.Provider>
             </Filled>
-            <coreContext.Provider value={coreContextValue}>{children}</coreContext.Provider>
           </VisualizerProvider>
         </ErrorBoundary>
       );

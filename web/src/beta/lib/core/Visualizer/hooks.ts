@@ -1,19 +1,16 @@
 import { clone } from "lodash-es";
 import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-// import { useWindowSize } from "react-use";
 
 // TODO: Move these utils
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
 import type { BuiltinWidgets, InteractionModeType } from "../../../features/Visualizer/Crust";
-// import { Infobox as InfoboxType } from "../../../features/Editor/Visualizer/Crust/Infobox/types";
 import { INTERACTION_MODES } from "../../../features/Visualizer/Crust/interactionMode";
 import { getBuiltinWidgetOptions } from "../../../features/Visualizer/Crust/Widgets/Widget";
 import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
-  // Layer,
   Camera,
   ComputedLayer,
   SceneProperty,
@@ -30,8 +27,6 @@ import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch
 import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
-
-// const viewportMobileMaxWidth = 768;
 
 export default function useHooks(
   {
@@ -56,7 +51,6 @@ export default function useHooks(
     rootLayerId?: string;
     sceneProperty?: SceneProperty;
     zoomedLayerId?: string;
-    // layers?: Layer[];
     ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
     onLayerSelect?: (
       layerId: string | undefined,
@@ -148,16 +142,6 @@ export default function useHooks(
     [selectedLayer, onLayerSelect],
   );
 
-  // Infobox
-  // const infobox: InfoboxType | undefined = useMemo(() => {
-  //   if (!selectedLayer.layer?.layer.infobox) return undefined;
-  //   const selected = layers?.find(l => l.id === selectedLayer.layerId);
-  //   return {
-  //     property: selected?.infobox?.property,
-  //     blocks: [...(selected?.infobox?.blocks ?? [])],
-  //   };
-  // }, [selectedLayer, layers]);
-
   const timelineManagerRef: TimelineManagerRef = useRef();
 
   // scene
@@ -248,10 +232,6 @@ export default function useHooks(
 
   // feature flags
   const featureFlags = INTERACTION_MODES[interactionMode];
-
-  // mobile
-  // const { width } = useWindowSize();
-  // const isMobile = width < viewportMobileMaxWidth;
 
   // layer edit
   const onLayerEditRef = useRef<(e: LayerEditEvent) => void>();
@@ -403,46 +383,30 @@ export default function useHooks(
   return {
     mapRef,
     wrapperRef,
-    // selectedLayer,
     selectedFeature,
-    // selectedComputedFeature,
-    // viewport,
     camera,
-    // interactionMode,
     featureFlags,
-    // isMobile,
     overriddenSceneProperty,
     isDroppable,
-    // infobox,
     isLayerDragging,
     shouldRender,
     timelineManagerRef,
     cursor,
     cameraForceHorizontalRoll,
-    //
     coreContextValue,
     overrideSceneProperty,
-    // handleCameraForceHorizontalRollChange,
     handleLayerSelect,
     handleLayerDrag,
     handleLayerDrop,
     handleLayerEdit,
-    // onLayerEdit,
     handleCameraChange: changeCamera,
     handleInteractionModeChange: changeInteractionMode,
-    // onSketchPluginFeatureCreate,
     handleSketchPluginFeatureCreate,
-    // onSketchTypeChange,
     handleSketchTypeChange,
-    // onLayerVisibility,
     handleLayerVisibility,
-    // onLayerLoad,
     handleLayerLoad,
-    // onLayerSelectWithRectStart,
     handleLayerSelectWithRectStart,
-    // onLayerSelectWithRectMove,
     handleLayerSelectWithRectMove,
-    // onLayerSelectWithRectEnd,
     handleLayerSelectWithRectEnd,
   };
 }
