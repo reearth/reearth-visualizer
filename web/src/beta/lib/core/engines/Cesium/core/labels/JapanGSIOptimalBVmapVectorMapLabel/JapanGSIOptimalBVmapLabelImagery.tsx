@@ -285,7 +285,7 @@ export const JapanGSIOptimalBVmapLabelImagery: FC<JapanGSIOptimalBVmapLabelImage
             disableDepthTestDistance: Infinity,
             ...styleOptions,
           };
-          return [feature, labelCollection.add(options)];
+          return [feature, labelCollection.add(options as Label)];
         })
         .filter(isNotNullish);
 

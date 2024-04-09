@@ -5,7 +5,7 @@
 
 import { ShaderSource } from "@cesium/engine";
 import { Viewer, Globe, Material, Cartesian3 } from "cesium";
-import { RefObject, useEffect, useMemo } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { CesiumComponentRef } from "resium";
 
 import { TerrainProperty } from "..";
@@ -218,12 +218,14 @@ export const useOverrideGlobeShader = ({
     globe.vertexShadowDarkness = globeShadowDarkness ?? globe.vertexShadowDarkness;
   }, [cesium, globeShadowDarkness, hasVertexNormals]);
 
-  // This need to be invoked before Globe is updated.
-  useEffect(() => {
+  const needUpdateGlobeRef = useRef(false);
+
+  const handleGlobeShader = useCallback(() => {
     // NOTE: Support the spherical harmonic coefficient only when the terrain normal is enabled.
     // Because it's difficult to control the shader for the entire globe.
     // ref: https://github.com/CesiumGS/cesium/blob/af4e2bebbef25259f049b05822adf2958fce11ff/packages/engine/Source/Shaders/GlobeFS.glsl#L408
-    if (!cesium.current?.cesiumElement || (!isIBLEnabled && !isCustomHeatmapEnabled)) return;
+    if (!cesium.current?.cesiumElement || !needUpdateGlobeRef.current) return;
+
     const globe = cesium.current.cesiumElement.scene.globe as PrivateCesiumGlobe;
 
     const surfaceShaderSet = globe._surfaceShaderSet;
@@ -238,7 +240,7 @@ export const useOverrideGlobeShader = ({
 
     const GlobeFS = baseFragmentShaderSource?.sources[baseFragmentShaderSource.sources.length - 1];
 
-    if (!GlobeFS) {
+    if (!GlobeFS || !baseFragmentShaderSource) {
       if (import.meta.env.DEV) {
         throw new Error("GlobeFS could not find.");
       }
@@ -247,7 +249,7 @@ export const useOverrideGlobeShader = ({
 
     const matchers: StringMatcher[] = [];
     const shaders: string[] = [];
-    if (isIBLEnabled) {
+    if (isIBLEnabled && globe.enableLighting && globe.terrainProvider.hasVertexNormals) {
       matchers.push(shaderForIBL);
       shaders.push(IBLFS);
     }
@@ -261,6 +263,8 @@ export const useOverrideGlobeShader = ({
 
     // This means there is no overridden shader.
     if (!matchers.length) return;
+
+    needUpdateGlobeRef.current = false;
 
     if (!globe?._surface?._tileProvider) {
       if (import.meta.env.DEV) {
@@ -285,20 +289,34 @@ export const useOverrideGlobeShader = ({
       ],
       defines: baseFragmentShaderSource.defines,
     });
+  }, [
+    cesium,
+    isCustomHeatmapEnabled,
+    isIBLEnabled,
+    shaderForIBL,
+    shaderForTerrainHeatmap,
+    uniformMapForIBL,
+  ]);
+
+  // This need to be invoked before Globe is updated.
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement) return;
+    return cesium.current.cesiumElement.scene.postRender.addEventListener(handleGlobeShader);
+  }, [cesium, handleGlobeShader]);
+
+  useEffect(() => {
+    if (!cesium.current?.cesiumElement || (!isIBLEnabled && !isCustomHeatmapEnabled)) return;
+    const scene = cesium.current.cesiumElement.scene;
+    const globe = scene.globe;
+
+    needUpdateGlobeRef.current = true;
+    scene.requestRender();
+
     return () => {
       if (!globe.isDestroyed()) {
         // Reset customized shader to default
         makeGlobeShadersDirty(globe);
       }
     };
-  }, [
-    uniformMapForIBL,
-    enableLighting,
-    cesium,
-    hasVertexNormals,
-    isCustomHeatmapEnabled,
-    isIBLEnabled,
-    shaderForIBL,
-    shaderForTerrainHeatmap,
-  ]);
+  }, [cesium, isCustomHeatmapEnabled, isIBLEnabled]);
 };
