@@ -19,11 +19,11 @@ export default (
   {
     selectedStory,
     isEditable,
-    handleStoryPageChange,
+    onStoryPageChange,
   }: {
     selectedStory?: Story;
     isEditable?: boolean;
-    handleStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
+    onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   },
   ref: Ref<StoryPanelRef>,
 ) => {
@@ -113,7 +113,7 @@ export default (
       const newPage = getPage(pageId, selectedStory?.pages);
       if (!newPage) return;
 
-      handleStoryPageChange?.(newPage.id);
+      onStoryPageChange?.(newPage.id);
       setCurrentPageId(newPage.id);
       setLayerOverride(undefined);
 
@@ -138,7 +138,7 @@ export default (
 
       visualizer.current?.engine.flyTo({ ...destination }, { duration });
     },
-    [currentPageId, selectedStory?.pages, handleStoryPageChange, handlePageTime, visualizer],
+    [currentPageId, selectedStory?.pages, onStoryPageChange, handlePageTime, visualizer],
   );
 
   const pageInfo = useMemo(() => {
@@ -211,8 +211,8 @@ export default (
 
   // Reset parent of core's current page on StoryPanel unmount
   useEffect(() => {
-    return () => handleStoryPageChange?.();
-  }, [handleStoryPageChange]);
+    return () => onStoryPageChange?.();
+  }, [onStoryPageChange]);
 
   return {
     pageInfo,

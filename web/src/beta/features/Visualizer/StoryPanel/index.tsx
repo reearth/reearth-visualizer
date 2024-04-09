@@ -20,8 +20,21 @@ export type InstallableStoryBlock = InstallableBlock & {
   type?: "StoryBlock";
 };
 
-type PropertyProps = {
-  handlePropertyValueUpdate?: (
+export type StoryPanelProps = {
+  storyWrapperRef?: RefObject<HTMLDivElement>;
+  selectedStory?: Story;
+  isEditable?: boolean;
+  installableStoryBlocks?: InstallableStoryBlock[];
+  onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
+  onStoryBlockCreate?: (
+    pageId?: string | undefined,
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void>;
+  onStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  onStoryBlockDelete?: (pageId?: string | undefined, blockId?: string | undefined) => Promise<void>;
+  onPropertyValueUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
@@ -29,38 +42,19 @@ type PropertyProps = {
     vt?: ValueType,
     v?: ValueTypes[ValueType],
   ) => Promise<void>;
-  handlePropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
-  handlePropertyItemMove?: (
+  onPropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  onPropertyItemMove?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
     index?: number,
   ) => Promise<void>;
-  handlePropertyItemDelete?: (
+  onPropertyItemDelete?: (
     propertyId?: string,
     schemaGroupId?: string,
     itemId?: string,
   ) => Promise<void>;
 };
-
-export type StoryPanelProps = {
-  storyWrapperRef?: RefObject<HTMLDivElement>;
-  selectedStory?: Story;
-  isEditable?: boolean;
-  installableStoryBlocks?: InstallableStoryBlock[];
-  handleStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
-  handleStoryBlockCreate?: (
-    pageId?: string | undefined,
-    extensionId?: string | undefined,
-    pluginId?: string | undefined,
-    index?: number | undefined,
-  ) => Promise<void>;
-  handleStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
-  handleStoryBlockDelete?: (
-    pageId?: string | undefined,
-    blockId?: string | undefined,
-  ) => Promise<void>;
-} & PropertyProps;
 
 export const StoryPanel = memo(
   forwardRef<any, StoryPanelProps>(
@@ -70,14 +64,14 @@ export const StoryPanel = memo(
         selectedStory,
         isEditable,
         installableStoryBlocks,
-        handleStoryPageChange,
-        handleStoryBlockCreate,
-        handleStoryBlockMove,
-        handleStoryBlockDelete,
-        handlePropertyValueUpdate,
-        handlePropertyItemAdd,
-        handlePropertyItemMove,
-        handlePropertyItemDelete,
+        onStoryPageChange,
+        onStoryBlockCreate,
+        onStoryBlockMove,
+        onStoryBlockDelete,
+        onPropertyValueUpdate,
+        onPropertyItemAdd,
+        onPropertyItemMove,
+        onPropertyItemDelete,
       },
       ref: Ref<StoryPanelRef>,
     ) => {
@@ -102,7 +96,7 @@ export const StoryPanel = memo(
         {
           selectedStory,
           isEditable,
-          handleStoryPageChange,
+          onStoryPageChange,
         },
         ref,
       );
@@ -166,15 +160,15 @@ export const StoryPanel = memo(
                       onPageSettingsToggle={handlePageSettingsToggle}
                       onPageSelect={handlePageSelect}
                       onCurrentPageChange={handleCurrentPageChange}
-                      onBlockCreate={handleStoryBlockCreate}
-                      onBlockMove={handleStoryBlockMove}
-                      onBlockDelete={handleStoryBlockDelete}
+                      onBlockCreate={onStoryBlockCreate}
+                      onBlockMove={onStoryBlockMove}
+                      onBlockDelete={onStoryBlockDelete}
                       onBlockSelect={handleBlockSelect}
                       onBlockDoubleClick={handleBlockDoubleClick}
-                      onPropertyUpdate={handlePropertyValueUpdate}
-                      onPropertyItemAdd={handlePropertyItemAdd}
-                      onPropertyItemMove={handlePropertyItemMove}
-                      onPropertyItemDelete={handlePropertyItemDelete}
+                      onPropertyUpdate={onPropertyValueUpdate}
+                      onPropertyItemAdd={onPropertyItemAdd}
+                      onPropertyItemMove={onPropertyItemMove}
+                      onPropertyItemDelete={onPropertyItemDelete}
                     />
                   </PanelWrapper>
                 </BlockProvider>

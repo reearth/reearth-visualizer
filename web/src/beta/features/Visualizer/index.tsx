@@ -5,7 +5,7 @@ import { LayerSelectionReason } from "@reearth/beta/lib/core/engines";
 import { ComputedFeature, ComputedLayer, Layer } from "@reearth/beta/lib/core/mantle";
 import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import CoreVisualizer, { EngineType } from "@reearth/beta/lib/core/Visualizer";
-import { Camera, LatLng } from "@reearth/beta/utils/value";
+import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 
@@ -14,7 +14,7 @@ import { InstallableInfoboxBlock } from "./Crust/Infobox";
 import { InteractionModeType, MapRef, SceneProperty } from "./Crust/types";
 import { Alignment, Widget, WidgetAlignSystem, WidgetLayoutConstraint } from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
-import StoryPanel, { StoryPanelProps, StoryPanelRef } from "./StoryPanel";
+import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Position, Story } from "./StoryPanel/types";
 import useInfobox from "./useInfobox";
 
@@ -88,7 +88,40 @@ type VisualizerProps = {
 } & {
   showStoryPanel?: boolean;
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
-} & Omit<StoryPanelProps, "isEditable">;
+  installableStoryBlocks?: InstallableStoryBlock[];
+  handleStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
+  handleStoryBlockCreate?: (
+    pageId?: string | undefined,
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined,
+  ) => Promise<void>;
+  handleStoryBlockMove?: (id: string, targetId: number, blockId: string) => void;
+  handleStoryBlockDelete?: (
+    pageId?: string | undefined,
+    blockId?: string | undefined,
+  ) => Promise<void>;
+  handlePropertyValueUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType],
+  ) => Promise<void>;
+  handlePropertyItemAdd?: (propertyId?: string, schemaGroupId?: string) => Promise<void>;
+  handlePropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number,
+  ) => Promise<void>;
+  handlePropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+  ) => Promise<void>;
+};
 
 const Visualizer: FC<VisualizerProps> = ({
   engine,
@@ -173,14 +206,14 @@ const Visualizer: FC<VisualizerProps> = ({
             selectedStory={story}
             installableStoryBlocks={installableStoryBlocks}
             isEditable={!!inEditor}
-            handleStoryPageChange={handleStoryPageChange}
-            handleStoryBlockCreate={handleStoryBlockCreate}
-            handleStoryBlockDelete={handleStoryBlockDelete}
-            handleStoryBlockMove={handleStoryBlockMove}
-            handlePropertyValueUpdate={handlePropertyValueUpdate}
-            handlePropertyItemAdd={handlePropertyItemAdd}
-            handlePropertyItemMove={handlePropertyItemMove}
-            handlePropertyItemDelete={handlePropertyItemDelete}
+            onStoryPageChange={handleStoryPageChange}
+            onStoryBlockCreate={handleStoryBlockCreate}
+            onStoryBlockDelete={handleStoryBlockDelete}
+            onStoryBlockMove={handleStoryBlockMove}
+            onPropertyValueUpdate={handlePropertyValueUpdate}
+            onPropertyItemAdd={handlePropertyItemAdd}
+            onPropertyItemMove={handlePropertyItemMove}
+            onPropertyItemDelete={handlePropertyItemDelete}
           />
         )}
         <Crust
