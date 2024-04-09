@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import type { BlockProps } from "../../../lib/core/shared/types";
+import type { BlockProps } from "../shared/types";
 
 import {
   Plugin,

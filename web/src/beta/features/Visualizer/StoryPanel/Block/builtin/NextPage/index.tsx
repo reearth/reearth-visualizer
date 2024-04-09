@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
-import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
-import type { CommonBlockProps as BlockProps } from "@reearth/beta/lib/core/shared/types";
+import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
+import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 import { styled } from "@reearth/services/theme";
 
 import { usePanelContext } from "../../../context";

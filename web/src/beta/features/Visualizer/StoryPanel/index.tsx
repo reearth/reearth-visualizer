@@ -4,9 +4,9 @@ import { createPortal } from "react-dom";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import { BlockProvider } from "../../../lib/core/shared/contexts/blockContext";
-import { EditModeProvider } from "../../../lib/core/shared/contexts/editModeContext";
-import { InstallableBlock } from "../../../lib/core/shared/types";
+import { BlockProvider } from "../shared/contexts/blockContext";
+import { EditModeProvider } from "../shared/contexts/editModeContext";
+import { InstallableBlock } from "../shared/types";
 
 import { STORY_PANEL_WIDTH } from "./constants";
 import { PanelProvider, StoryPanelContext } from "./context";

@@ -2,8 +2,8 @@ import { memo, useContext } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
+import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import Template from "@reearth/beta/features/Visualizer/StoryPanel/Block/Template";
-import { BlockContext } from "@reearth/beta/lib/core/shared/components/BlockWrapper";
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 import { styled } from "@reearth/services/theme";
 

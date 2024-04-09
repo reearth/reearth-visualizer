@@ -2,15 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 
-import { TimelineValues } from "../../../../features/Visualizer/StoryPanel/Block/builtin/Timeline";
+import { TickEventCallback, TimelineCommitter } from "../../../../lib/core/Map/useTimelineManager";
+import { TimelineValues } from "../../StoryPanel/Block/builtin/Timeline";
 import {
   convertOptionToSeconds,
   formatDateToSting,
   formatISO8601,
   formatTimezone,
   getTimeZone,
-} from "../../../../features/Visualizer/StoryPanel/utils";
-import { TickEventCallback, TimelineCommitter } from "../../Map/useTimelineManager";
+} from "../../StoryPanel/utils";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
 

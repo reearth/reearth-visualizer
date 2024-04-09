@@ -1,13 +1,13 @@
 import { Fragment, ReactNode, memo } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
+import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
+import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
-import BlockAddBar from "@reearth/beta/lib/core/shared/components/BlockAddBar";
-import { EditModeProvider } from "@reearth/beta/lib/core/shared/contexts/editModeContext";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import { InstallableBlock } from "../../../../lib/core/shared/types";
+import { InstallableBlock } from "../../shared/types";
 
 import InfoboxBlockComponent from "./Block";
 import {

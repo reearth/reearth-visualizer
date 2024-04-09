@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState, MouseEvent, useEffect } from "react";
 import { Spacing } from "@reearth/beta/lib/core/mantle";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
 
-import { calculatePaddingValue } from "../../../../../features/Visualizer/StoryPanel/utils";
+import { calculatePaddingValue } from "../../../StoryPanel/utils";
 import { useEditModeContext } from "../../contexts/editModeContext";
 
 export const DEFAULT_BLOCK_PADDING: Spacing = { top: 0, bottom: 0, left: 0, right: 0 };

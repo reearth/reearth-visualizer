@@ -20,8 +20,8 @@ import {
   TimelineCommitter,
 } from "@reearth/beta/lib/core/Map/useTimelineManager";
 
-import { DEFAULT_BLOCK_PADDING } from "../../../../../../lib/core/shared/components/BlockWrapper/hooks";
-import { getNewDate } from "../../../../../../lib/core/shared/hooks/useTimelineBlock";
+import { DEFAULT_BLOCK_PADDING } from "../../../../shared/components/BlockWrapper/hooks";
+import { getNewDate } from "../../../../shared/hooks/useTimelineBlock";
 
 import { PaddingProp } from "./Editor";
 

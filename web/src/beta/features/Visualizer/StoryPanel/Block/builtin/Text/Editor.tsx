@@ -3,7 +3,7 @@ import { useMemo, useContext, useCallback } from "react";
 
 import RichTextEditor from "@reearth/beta/lib/lexical/RichTextEditor";
 
-import { BlockContext } from "../../../../../../lib/core/shared/components/BlockWrapper";
+import { BlockContext } from "../../../../shared/components/BlockWrapper";
 
 export type Props = {
   text?: string;

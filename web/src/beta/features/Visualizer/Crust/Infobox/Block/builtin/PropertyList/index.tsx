@@ -1,7 +1,7 @@
 import { memo } from "react";
 
-import BlockWrapper from "@reearth/beta/lib/core/shared/components/BlockWrapper";
-import type { CommonBlockProps as BlockProps } from "@reearth/beta/lib/core/shared/types";
+import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
+import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
 
 import { InfoboxBlock } from "../../../types";
 

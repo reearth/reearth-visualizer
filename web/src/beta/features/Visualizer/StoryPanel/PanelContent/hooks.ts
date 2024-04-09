@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-import { useEditModeContext } from "../../../../lib/core/shared/contexts/editModeContext";
+import { useEditModeContext } from "../../shared/contexts/editModeContext";
 import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 
 export type { StoryPage } from "../hooks";

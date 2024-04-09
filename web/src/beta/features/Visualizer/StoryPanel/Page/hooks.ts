@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useEditModeContext } from "../../../../lib/core/shared/contexts/editModeContext";
+import { useEditModeContext } from "../../shared/contexts/editModeContext";
 import { DEFAULT_STORY_PAGE_GAP, DEFAULT_STORY_PAGE_PADDING } from "../constants";
 import { StoryPage } from "../types";
 import { calculatePaddingValue } from "../utils";

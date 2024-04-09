@@ -3,7 +3,7 @@ import { useCallback, type ComponentType, type ReactNode } from "react";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import { styled } from "@reearth/services/theme";
 
-import type { CommonBlockProps, BlockProps } from "../../../../lib/core/shared/types";
+import type { CommonBlockProps, BlockProps } from "../../shared/types";
 import { StoryBlock } from "../types";
 
 import builtin, { isBuiltinStoryBlock } from "./builtin";

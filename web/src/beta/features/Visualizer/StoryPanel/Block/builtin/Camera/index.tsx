@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 
-import BlockWrapper from "../../../../../../lib/core/shared/components/BlockWrapper";
-import type { CommonBlockProps as BlockProps } from "../../../../../../lib/core/shared/types";
+import BlockWrapper from "../../../../shared/components/BlockWrapper";
+import type { CommonBlockProps as BlockProps } from "../../../../shared/types";
 import { StoryBlock } from "../../../types";
 
 import Content from "./Content";

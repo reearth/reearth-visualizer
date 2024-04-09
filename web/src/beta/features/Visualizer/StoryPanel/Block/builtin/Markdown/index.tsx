@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 
 import { ValueTypes } from "@reearth/beta/utils/value";
 
-import BlockWrapper from "../../../../../../lib/core/shared/components/BlockWrapper";
-import { CommonBlockProps as BlockProps } from "../../../../../../lib/core/shared/types";
+import BlockWrapper from "../../../../shared/components/BlockWrapper";
+import { CommonBlockProps as BlockProps } from "../../../../shared/types";
 import { StoryBlock } from "../../../types";
 
 import MdEditor from "./Editor";

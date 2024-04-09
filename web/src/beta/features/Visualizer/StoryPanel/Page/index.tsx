@@ -6,10 +6,10 @@ import type { InstallableStoryBlock } from "@reearth/services/api/storytellingAp
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import BlockAddBar from "../../../../lib/core/shared/components/BlockAddBar";
-import ContentWrapper from "../../../../lib/core/shared/components/ContentWrapper";
-import SelectableArea from "../../../../lib/core/shared/components/SelectableArea";
-import { useElementOnScreen } from "../../../../lib/core/shared/hooks/useElementOnScreen";
+import BlockAddBar from "../../shared/components/BlockAddBar";
+import ContentWrapper from "../../shared/components/ContentWrapper";
+import SelectableArea from "../../shared/components/SelectableArea";
+import { useElementOnScreen } from "../../shared/hooks/useElementOnScreen";
 import StoryBlock from "../Block";
 import {
   STORY_PANEL_CONTENT_ELEMENT_ID,
