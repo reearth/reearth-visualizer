@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/alicebob/miniredis/v2"
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
 )
@@ -175,11 +176,18 @@ func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *htt
 }
 
 func TestStyleCRUD(t *testing.T) {
+	mr, err := miniredis.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer mr.Close()
+
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
+		RedisHost: mr.Addr(),
 	}, true, baseSeeder)
 
 	pId := createProject(e)
@@ -216,13 +224,24 @@ func TestStyleCRUD(t *testing.T) {
 		Value("styles").Array().First().Object().
 		Value("name").Equal("NewName")
 
-	// Duplicate Style
-	_, duplicateRes := duplicateStyle(e, styleId)
-	duplicatedStyleId := duplicateRes.Path("$.data.duplicateStyle.style.id").Raw().(string)
+	// Update Style With Using Redis
+	_, _ = updateStyleName(e, styleId, "NewNameWithUsingRedis")
 
 	_, res4 := fetchSceneForStyles(e, sId)
 
 	res4.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("styles").Array().First().Object().
+		Value("name").Equal("NewNameWithUsingRedis")
+
+	// Duplicate Style
+	_, duplicateRes := duplicateStyle(e, styleId)
+	duplicatedStyleId := duplicateRes.Path("$.data.duplicateStyle.style.id").Raw().(string)
+
+	_, res5 := fetchSceneForStyles(e, sId)
+
+	res5.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
@@ -231,9 +250,9 @@ func TestStyleCRUD(t *testing.T) {
 	// Remove Style
 	_, _ = removeStyle(e, styleId)
 
-	_, res5 := fetchSceneForStyles(e, sId)
+	_, res6 := fetchSceneForStyles(e, sId)
 
-	res5.Object().
+	res6.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
@@ -241,9 +260,9 @@ func TestStyleCRUD(t *testing.T) {
 
 	_, _ = removeStyle(e, duplicatedStyleId)
 
-	_, res6 := fetchSceneForStyles(e, sId)
+	_, res7 := fetchSceneForStyles(e, sId)
 
-	res6.Object().
+	res7.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("styles").Array().
