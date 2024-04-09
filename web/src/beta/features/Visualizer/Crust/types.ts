@@ -9,4 +9,4 @@ export type {
   SceneProperty,
 } from "../../../lib/core/Map";
 export type { Theme } from "./theme";
-export type { InteractionModeType } from "./interactionMode";
+export type { InteractionModeType } from "../../../lib/core/Visualizer/interactionMode";

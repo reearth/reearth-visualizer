@@ -1,11 +1,9 @@
 import { memo, forwardRef, CSSProperties, type Ref, type PropsWithChildren } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { styled } from "@reearth/services/theme";
-
-import { BuiltinWidgets, InteractionModeType } from "../../../features/Visualizer/Crust";
 import { ComputedFeature } from "../mantle";
 import Map, {
+  Ref as MapRef,
   type SceneProperty,
   type Layer,
   type LayerSelectionReason,
@@ -14,7 +12,6 @@ import Map, {
   type Cluster,
   type ComputedLayer,
 } from "../Map";
-import { Ref as MapRef } from "../Map";
 import { SketchFeature, SketchType } from "../Map/Sketch/types";
 
 import { VisualizerProvider } from "./context";
@@ -23,15 +20,8 @@ import DropHolder from "./DropHolder";
 import { engines, type EngineType } from "./engines";
 import Err from "./Error";
 import useHooks from "./hooks";
+import type { InteractionModeType } from "./interactionMode";
 
-export type {
-  Alignment,
-  Location,
-  ValueTypes,
-  ValueType,
-  WidgetAlignSystem,
-  WidgetLayoutConstraint,
-} from "../../../features/Visualizer/Crust";
 export type { EngineType } from "./engines";
 export type { Viewport } from "./useViewport";
 
@@ -42,12 +32,12 @@ export type CoreVisualizerProps = {
   isBuilt?: boolean;
   isEditable?: boolean;
   rootLayerId?: string;
-  ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   sceneProperty?: SceneProperty;
   layers?: Layer[];
   clusters?: Cluster[]; // TODO: remove completely from beta core
   camera?: Camera;
   interactionMode?: InteractionModeType;
+  shouldRender?: boolean;
   meta?: Record<string, unknown>;
   style?: CSSProperties;
   small?: boolean;
@@ -80,12 +70,12 @@ const CoreVisualizer = memo(
         sceneProperty,
         layers,
         clusters,
-        ownBuiltinWidgets,
         small,
         ready,
         hiddenLayers,
         camera: initialCamera,
         interactionMode,
+        shouldRender,
         meta,
         style,
         zoomedLayerId,
@@ -110,11 +100,11 @@ const CoreVisualizer = memo(
         overriddenSceneProperty,
         isDroppable,
         isLayerDragging,
-        shouldRender,
         timelineManagerRef,
         cursor,
         cameraForceHorizontalRoll,
         coreContextValue,
+        containerStyle,
         handleLayerSelect,
         handleLayerDrag,
         handleLayerDrop,
@@ -136,7 +126,6 @@ const CoreVisualizer = memo(
           interactionMode,
           sceneProperty,
           zoomedLayerId,
-          ownBuiltinWidgets,
           onLayerSelect,
           onCameraChange,
           onZoomToLayer,
@@ -150,7 +139,7 @@ const CoreVisualizer = memo(
       return (
         <ErrorBoundary FallbackComponent={Err}>
           <VisualizerProvider mapRef={mapRef}>
-            <Filled ref={wrapperRef}>
+            <div ref={wrapperRef} style={containerStyle}>
               {isDroppable && <DropHolder />}
               <Map
                 ref={mapRef}
@@ -193,7 +182,7 @@ const CoreVisualizer = memo(
                 onLayerSelectWithRectEnd={handleLayerSelectWithRectEnd}
               />
               <coreContext.Provider value={coreContextValue}>{children}</coreContext.Provider>
-            </Filled>
+            </div>
           </VisualizerProvider>
         </ErrorBoundary>
       );
@@ -202,10 +191,3 @@ const CoreVisualizer = memo(
 );
 
 export default CoreVisualizer;
-
-const Filled = styled.div`
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-`;

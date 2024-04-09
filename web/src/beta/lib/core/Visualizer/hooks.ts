@@ -4,9 +4,6 @@ import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useS
 // TODO: Move these utils
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
-import type { BuiltinWidgets, InteractionModeType } from "../../../features/Visualizer/Crust";
-import { INTERACTION_MODES } from "../../../features/Visualizer/Crust/interactionMode";
-import { getBuiltinWidgetOptions } from "../../../features/Visualizer/Crust/Widgets/Widget";
 import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
   Ref as MapRef,
@@ -26,6 +23,8 @@ import { useOverriddenProperty } from "../Map";
 import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
 import { TimelineManagerRef } from "../Map/useTimelineManager";
 
+import type { InteractionModeType } from "./interactionMode";
+import { INTERACTION_MODES } from "./interactionMode";
 import useViewport from "./useViewport";
 
 export default function useHooks(
@@ -36,8 +35,6 @@ export default function useHooks(
     isEditable,
     rootLayerId,
     zoomedLayerId,
-    // layers,
-    ownBuiltinWidgets,
     onLayerSelect,
     onCameraChange,
     onInteractionModeChange,
@@ -51,7 +48,6 @@ export default function useHooks(
     rootLayerId?: string;
     sceneProperty?: SceneProperty;
     zoomedLayerId?: string;
-    ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
     onLayerSelect?: (
       layerId: string | undefined,
       layer: (() => Promise<ComputedLayer | undefined>) | undefined,
@@ -333,14 +329,6 @@ export default function useHooks(
     [onLayerDrop, mapRef],
   );
 
-  // shouldRender
-  const shouldRender = useMemo(() => {
-    const shouldWidgetAnimate = ownBuiltinWidgets?.some(
-      id => !!getBuiltinWidgetOptions(id).animation,
-    );
-    return shouldWidgetAnimate;
-  }, [ownBuiltinWidgets]);
-
   const coreContextValue = useMemo(
     () => ({
       interactionMode,
@@ -380,6 +368,16 @@ export default function useHooks(
     ],
   );
 
+  const containerStyle = useMemo(
+    () => ({
+      position: "relative" as const,
+      width: "100%",
+      height: "100%",
+      overflow: "hidden",
+    }),
+    [],
+  );
+
   return {
     mapRef,
     wrapperRef,
@@ -389,11 +387,11 @@ export default function useHooks(
     overriddenSceneProperty,
     isDroppable,
     isLayerDragging,
-    shouldRender,
     timelineManagerRef,
     cursor,
     cameraForceHorizontalRoll,
     coreContextValue,
+    containerStyle,
     overrideSceneProperty,
     handleLayerSelect,
     handleLayerDrag,

@@ -14,6 +14,7 @@ import { InstallableInfoboxBlock } from "./Crust/Infobox";
 import { InteractionModeType, MapRef, SceneProperty } from "./Crust/types";
 import { Alignment, Widget, WidgetAlignSystem, WidgetLayoutConstraint } from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
+import useHooks from "./hooks";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Position, Story } from "./StoryPanel/types";
 import useInfobox from "./useInfobox";
@@ -172,6 +173,9 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyItemMove,
   handlePropertyItemDelete,
 }) => {
+  const { shouldRender } = useHooks({
+    ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
+  });
   const { infobox } = useInfobox({ layers });
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -184,7 +188,6 @@ const Visualizer: FC<VisualizerProps> = ({
         isBuilt={!!isBuilt}
         isEditable={!isBuilt}
         layers={layers}
-        ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
         zoomedLayerId={zoomedLayerId}
         rootLayerId={rootLayerId}
         sceneProperty={sceneProperty as SceneProperty}
@@ -192,6 +195,7 @@ const Visualizer: FC<VisualizerProps> = ({
         meta={engineMeta}
         camera={currentCamera}
         interactionMode={interactionMode}
+        shouldRender={shouldRender}
         onCameraChange={onCameraChange}
         onLayerSelect={handleLayerSelect}
         onLayerDrop={handleLayerDrop}

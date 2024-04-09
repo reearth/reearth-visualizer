@@ -3,8 +3,11 @@ import { useRef } from "react";
 
 import { engine } from "../../../lib/core/engines/Cesium";
 import Map, { Engine } from "../../../lib/core/Map";
+import {
+  InteractionModeType,
+  INTERACTION_MODES,
+} from "../../../lib/core/Visualizer/interactionMode";
 
-import { InteractionModeType, INTERACTION_MODES } from "./interactionMode";
 import { MapRef } from "./types";
 
 import Component, { Props } from ".";

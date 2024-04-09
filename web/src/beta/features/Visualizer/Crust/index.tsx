@@ -25,8 +25,8 @@ export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 export type { InfoboxBlock as Block } from "./Infobox/types";
 
 export type { ExternalPluginProps } from "./Plugins";
-export { INTERACTION_MODES } from "./interactionMode";
-export { FEATURE_FLAGS } from "./featureFlags";
+export { INTERACTION_MODES } from "../../../lib/core/Visualizer/interactionMode";
+export { FEATURE_FLAGS } from "../../../lib/core/Visualizer/featureFlags";
 
 export type {
   Context,
