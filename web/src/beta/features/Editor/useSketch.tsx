@@ -1,6 +1,6 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 
-import { MapRef } from "@reearth/beta/lib/core/Crust/types";
+import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
 import { Geometry } from "@reearth/beta/lib/core/mantle";
 import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import { useFeatureCollectionFetcher } from "@reearth/services/api";

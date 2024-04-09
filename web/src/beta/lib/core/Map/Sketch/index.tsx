@@ -4,7 +4,7 @@ import { type LineString, type MultiPolygon, type Polygon } from "geojson";
 import { ComponentType, ForwardRefRenderFunction, RefObject, forwardRef } from "react";
 import { RequireExactlyOne } from "type-fest";
 
-import { InteractionModeType } from "../../Crust";
+import { InteractionModeType } from "../../../../features/Visualizer/Crust";
 import { ComputedLayer, SelectedFeatureInfo } from "../../mantle";
 import { Position3d } from "../../types";
 import { EngineRef, Feature, LayerSelectionReason, LayersRef, SketchRef } from "../types";
@@ -48,7 +48,7 @@ export type SketchProps = {
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onSketchTypeChange?: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
-  onPluginSketchFeatureCreated?: (props: SketchEventProps) => void;
+  onSketchPluginFeatureCreate?: (props: SketchEventProps) => void;
   onLayerSelect?: OnLayerSelectType;
 };
 
@@ -62,7 +62,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
     overrideInteractionMode,
     onSketchTypeChange,
     onSketchFeatureCreate,
-    onPluginSketchFeatureCreated,
+    onSketchPluginFeatureCreate,
     onLayerSelect,
   },
   ref,
@@ -77,7 +77,7 @@ const Sketch: ForwardRefRenderFunction<SketchRef, SketchProps> = (
       overrideInteractionMode,
       onSketchTypeChange,
       onSketchFeatureCreate,
-      onPluginSketchFeatureCreated,
+      onSketchPluginFeatureCreate,
       onLayerSelect,
     });
   if (state.matches("idle")) {

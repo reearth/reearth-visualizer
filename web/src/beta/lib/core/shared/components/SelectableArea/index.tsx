@@ -4,7 +4,7 @@ import { useItemContext as useDnDItemContext } from "@reearth/beta/components/Dr
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { styled } from "@reearth/services/theme";
 
-import ClickAwayListener from "../../../StoryPanel/ClickAwayListener";
+import ClickAwayListener from "../../../../../features/Visualizer/StoryPanel/ClickAwayListener";
 
 import ActionPanel, { type ActionPosition } from "./ActionPanel";
 import useHooks from "./hooks";
@@ -24,6 +24,7 @@ type Props = {
   isEditable?: boolean;
   hideHoverUI?: boolean;
   overrideGroupId?: string;
+  domId?: string;
   onEditModeToggle?: (enable: boolean) => void;
   onSettingsToggle?: () => void;
   onClick?: (e: MouseEvent<Element>) => void;
@@ -67,6 +68,7 @@ const SelectableArea: React.FC<Props> = ({
   hideHoverUI,
   contentSettings,
   overrideGroupId,
+  domId,
   onEditModeToggle,
   onSettingsToggle,
   onRemove,
@@ -87,10 +89,11 @@ const SelectableArea: React.FC<Props> = ({
   const { customDragPreview } = useDnDItemContext() ?? {};
 
   return !isEditable ? (
-    <>{children}</>
+    <div id={domId}>{children}</div>
   ) : (
     <ClickAwayListener enabled={isSelected} onClickAway={handleClickAway}>
       <Wrapper
+        id={domId}
         isSelected={isSelected}
         noBorder={noBorder}
         hideHoverUI={hideHoverUI}

@@ -3,7 +3,7 @@ import { ReactNode, createContext, memo } from "react";
 import { stopClickPropagation } from "@reearth/beta/utils/events";
 import { styled } from "@reearth/services/theme";
 
-import Template from "../../../StoryPanel/Block/Template";
+import Template from "../../../../../features/Visualizer/StoryPanel/Block/Template";
 import { FieldComponent } from "../../hooks/useFieldComponent";
 import SelectableArea from "../SelectableArea";
 

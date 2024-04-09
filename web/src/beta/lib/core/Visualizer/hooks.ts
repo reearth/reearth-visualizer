@@ -1,19 +1,19 @@
 import { clone } from "lodash-es";
 import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { useWindowSize } from "react-use";
+// import { useWindowSize } from "react-use";
 
 // TODO: Move these utils
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
-import type { BuiltinWidgets, InteractionModeType } from "../Crust";
-import { Infobox as InfoboxType } from "../Crust/Infobox/types";
-import { INTERACTION_MODES } from "../Crust/interactionMode";
-import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
+import type { BuiltinWidgets, InteractionModeType } from "../../../features/Visualizer/Crust";
+// import { Infobox as InfoboxType } from "../../../features/Editor/Visualizer/Crust/Infobox/types";
+import { INTERACTION_MODES } from "../../../features/Visualizer/Crust/interactionMode";
+import { getBuiltinWidgetOptions } from "../../../features/Visualizer/Crust/Widgets/Widget";
 import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
-  Layer,
+  // Layer,
   Camera,
   ComputedLayer,
   SceneProperty,
@@ -31,7 +31,7 @@ import { TimelineManagerRef } from "../Map/useTimelineManager";
 
 import useViewport from "./useViewport";
 
-const viewportMobileMaxWidth = 768;
+// const viewportMobileMaxWidth = 768;
 
 export default function useHooks(
   {
@@ -41,7 +41,7 @@ export default function useHooks(
     isEditable,
     rootLayerId,
     zoomedLayerId,
-    layers,
+    // layers,
     ownBuiltinWidgets,
     onLayerSelect,
     onCameraChange,
@@ -56,7 +56,7 @@ export default function useHooks(
     rootLayerId?: string;
     sceneProperty?: SceneProperty;
     zoomedLayerId?: string;
-    layers?: Layer[];
+    // layers?: Layer[];
     ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
     onLayerSelect?: (
       layerId: string | undefined,
@@ -149,14 +149,14 @@ export default function useHooks(
   );
 
   // Infobox
-  const infobox: InfoboxType | undefined = useMemo(() => {
-    if (!selectedLayer.layer?.layer.infobox) return undefined;
-    const selected = layers?.find(l => l.id === selectedLayer.layerId);
-    return {
-      property: selected?.infobox?.property,
-      blocks: [...(selected?.infobox?.blocks ?? [])],
-    };
-  }, [selectedLayer, layers]);
+  // const infobox: InfoboxType | undefined = useMemo(() => {
+  //   if (!selectedLayer.layer?.layer.infobox) return undefined;
+  //   const selected = layers?.find(l => l.id === selectedLayer.layerId);
+  //   return {
+  //     property: selected?.infobox?.property,
+  //     blocks: [...(selected?.infobox?.blocks ?? [])],
+  //   };
+  // }, [selectedLayer, layers]);
 
   const timelineManagerRef: TimelineManagerRef = useRef();
 
@@ -250,8 +250,8 @@ export default function useHooks(
   const featureFlags = INTERACTION_MODES[interactionMode];
 
   // mobile
-  const { width } = useWindowSize();
-  const isMobile = width < viewportMobileMaxWidth;
+  // const { width } = useWindowSize();
+  // const isMobile = width < viewportMobileMaxWidth;
 
   // layer edit
   const onLayerEditRef = useRef<(e: LayerEditEvent) => void>();
@@ -304,12 +304,12 @@ export default function useHooks(
   }, []);
 
   // plugin sketch feature events
-  const onPluginSketchFeatureCreatedCallbacksRef = useRef<SketchEventCallback[]>([]);
-  const onPluginSketchFeatureCreated = useCallback((cb: SketchEventCallback) => {
-    onPluginSketchFeatureCreatedCallbacksRef.current.push(cb);
+  const onSketchPluginFeatureCreateCallbacksRef = useRef<SketchEventCallback[]>([]);
+  const onSketchPluginFeatureCreate = useCallback((cb: SketchEventCallback) => {
+    onSketchPluginFeatureCreateCallbacksRef.current.push(cb);
   }, []);
-  const handlePluginSketchFeatureCreated = useCallback((props: SketchEventProps) => {
-    onPluginSketchFeatureCreatedCallbacksRef.current.forEach(fn => fn(props));
+  const handleSketchPluginFeatureCreate = useCallback((props: SketchEventProps) => {
+    onSketchPluginFeatureCreateCallbacksRef.current.forEach(fn => fn(props));
   }, []);
 
   const onSketchTypeChangeCallbacksRef = useRef<((type: SketchType | undefined) => void)[]>([]);
@@ -361,47 +361,88 @@ export default function useHooks(
     return shouldWidgetAnimate;
   }, [ownBuiltinWidgets]);
 
+  const coreContextValue = useMemo(
+    () => ({
+      interactionMode,
+      selectedLayer,
+      selectedComputedFeature,
+      viewport,
+      overriddenSceneProperty,
+      overrideSceneProperty,
+      handleCameraForceHorizontalRollChange,
+      handleInteractionModeChange: changeInteractionMode,
+      onSketchPluginFeatureCreate,
+      onSketchTypeChange,
+      onLayerVisibility,
+      onLayerLoad,
+      onLayerEdit,
+      onLayerSelectWithRectStart,
+      onLayerSelectWithRectMove,
+      onLayerSelectWithRectEnd,
+    }),
+    [
+      interactionMode,
+      selectedLayer,
+      selectedComputedFeature,
+      viewport,
+      overriddenSceneProperty,
+      overrideSceneProperty,
+      changeInteractionMode,
+      handleCameraForceHorizontalRollChange,
+      onLayerEdit,
+      onSketchPluginFeatureCreate,
+      onSketchTypeChange,
+      onLayerVisibility,
+      onLayerLoad,
+      onLayerSelectWithRectStart,
+      onLayerSelectWithRectMove,
+      onLayerSelectWithRectEnd,
+    ],
+  );
+
   return {
     mapRef,
     wrapperRef,
-    selectedLayer,
+    // selectedLayer,
     selectedFeature,
-    selectedComputedFeature,
-    viewport,
+    // selectedComputedFeature,
+    // viewport,
     camera,
-    interactionMode,
+    // interactionMode,
     featureFlags,
-    isMobile,
+    // isMobile,
     overriddenSceneProperty,
     isDroppable,
-    infobox,
+    // infobox,
     isLayerDragging,
     shouldRender,
     timelineManagerRef,
     cursor,
     cameraForceHorizontalRoll,
+    //
+    coreContextValue,
     overrideSceneProperty,
-    handleCameraForceHorizontalRollChange,
+    // handleCameraForceHorizontalRollChange,
     handleLayerSelect,
     handleLayerDrag,
     handleLayerDrop,
     handleLayerEdit,
-    onLayerEdit,
+    // onLayerEdit,
     handleCameraChange: changeCamera,
     handleInteractionModeChange: changeInteractionMode,
-    onPluginSketchFeatureCreated,
-    handlePluginSketchFeatureCreated,
-    onSketchTypeChange,
+    // onSketchPluginFeatureCreate,
+    handleSketchPluginFeatureCreate,
+    // onSketchTypeChange,
     handleSketchTypeChange,
-    onLayerVisibility,
+    // onLayerVisibility,
     handleLayerVisibility,
-    onLayerLoad,
+    // onLayerLoad,
     handleLayerLoad,
-    onLayerSelectWithRectStart,
+    // onLayerSelectWithRectStart,
     handleLayerSelectWithRectStart,
-    onLayerSelectWithRectMove,
+    // onLayerSelectWithRectMove,
     handleLayerSelectWithRectMove,
-    onLayerSelectWithRectEnd,
+    // onLayerSelectWithRectEnd,
     handleLayerSelectWithRectEnd,
   };
 }

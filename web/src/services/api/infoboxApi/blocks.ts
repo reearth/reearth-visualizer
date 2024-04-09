@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useCallback, useMemo } from "react";
 
-import { AVAILABLE_INFOBOX_BLOCK_IDS } from "@reearth/beta/lib/core/Crust/Infobox/constants";
+import { AVAILABLE_INFOBOX_BLOCK_IDS } from "@reearth/beta/features/Visualizer/Crust/Infobox/constants";
 import {
   AddNlsInfoboxBlockInput,
   AddNlsInfoboxBlockMutation,

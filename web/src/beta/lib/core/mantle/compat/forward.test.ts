@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { Infobox } from "../../Crust/Infobox/types";
+import { Infobox } from "../../../../features/Visualizer/Crust/Infobox/types";
 
 import { convertLegacyCluster, convertLegacyLayer } from "./forward";
 import type { LegacyCluster, Tag } from "./types";

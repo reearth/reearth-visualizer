@@ -1,4 +1,4 @@
-import { Theme } from "@reearth/beta/lib/core/Crust/types";
+import { Theme } from "@reearth/beta/features/Visualizer/Crust/types";
 import type { Layer } from "@reearth/beta/lib/core/mantle";
 import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
