@@ -29,6 +29,7 @@ export default function Published({ alias }: Props) {
       story={story}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
+      showStoryPanel={!!story}
     />
   );
 }
