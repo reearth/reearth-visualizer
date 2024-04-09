@@ -1,6 +1,6 @@
 import { useMemo, type RefObject, useContext } from "react";
 
-import type { SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
+import type { Layer, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 import coreContext from "@reearth/beta/lib/core/Visualizer/coreContext";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 
@@ -51,6 +51,7 @@ export type Props = {
   inEditor?: boolean;
   isBuilt?: boolean;
   mapRef?: RefObject<MapRef>;
+  layers?: Layer[];
   sceneProperty?: SceneProperty;
   camera?: Camera;
   selectedFeatureInfo?: SelectedFeatureInfo;
@@ -119,6 +120,7 @@ export default function Crust({
   selectedFeatureInfo,
   externalPlugin,
   useExperimentalSandbox,
+  layers,
 
   // Widget
   widgetAlignSystem,
@@ -130,7 +132,6 @@ export default function Crust({
   onWidgetAlignmentUpdate,
   onWidgetAreaSelect,
   // Infobox
-  infobox,
   installableInfoboxBlocks,
   onInfoboxBlockCreate,
   onInfoboxBlockMove,
@@ -185,16 +186,21 @@ export default function Crust({
     timelineManagerRef: mapRef?.current?.timeline,
   });
 
-  const featuredInfobox = useMemo(
-    () =>
-      selectedLayerId?.featureId && infobox
-        ? {
-            ...infobox,
-            featureId: selectedLayerId.featureId,
-          }
-        : undefined,
-    [infobox, selectedLayerId?.featureId],
-  );
+  const featuredInfobox = useMemo(() => {
+    const selected = layers?.find(l => l.id === selectedLayer?.layerId);
+    const infobox = selectedLayer?.layer?.layer.infobox
+      ? {
+          property: selected?.infobox?.property,
+          blocks: [...(selected?.infobox?.blocks ?? [])],
+        }
+      : undefined;
+    return selectedLayerId?.featureId && infobox
+      ? {
+          ...infobox,
+          featureId: selectedLayerId.featureId,
+        }
+      : undefined;
+  }, [layers, selectedLayer, selectedLayerId?.featureId]);
 
   return (
     <Plugins

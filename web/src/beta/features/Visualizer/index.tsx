@@ -17,7 +17,6 @@ import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Position, Story } from "./StoryPanel/types";
-import useInfobox from "./useInfobox";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -176,7 +175,6 @@ const Visualizer: FC<VisualizerProps> = ({
   const { shouldRender } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
   });
-  const { infobox } = useInfobox({ layers });
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -227,6 +225,7 @@ const Visualizer: FC<VisualizerProps> = ({
           inEditor={inEditor}
           camera={currentCamera}
           mapRef={visualizerRef}
+          layers={layers}
           useExperimentalSandbox={useExperimentalSandbox}
           // Plugin
           externalPlugin={{ pluginBaseUrl: config()?.plugins, pluginProperty }}
@@ -240,7 +239,6 @@ const Visualizer: FC<VisualizerProps> = ({
           onWidgetAlignmentUpdate={handleWidgetAlignSystemUpdate}
           onWidgetAreaSelect={selectWidgetArea}
           // Infobox
-          infobox={infobox}
           installableInfoboxBlocks={installableInfoboxBlocks}
           onInfoboxBlockCreate={handleInfoboxBlockCreate}
           onInfoboxBlockMove={handleInfoboxBlockMove}
