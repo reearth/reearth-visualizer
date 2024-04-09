@@ -147,6 +147,19 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPropertyUpdate: handlePropertyValueUpdate,
   });
 
+  const {
+    sketchType,
+    handleSketchTypeChange,
+    handleSketchFeatureCreate,
+    handleGeoJsonFeatureUpdate,
+  } = useSketch({
+    tab,
+    nlsLayers,
+    selectedLayer,
+    visualizerRef,
+    handleLayerConfigUpdate,
+  });
+
   const { rightPanel } = useRightPanel({
     scene,
     layerStyles,
@@ -162,6 +175,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
+    onGeoJsonFeatureUpdate: handleGeoJsonFeatureUpdate,
   });
 
   const { bottomPanel } = useBottomPanel({
@@ -174,14 +188,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerStyleSelect: handleLayerStyleSelected,
   });
 
-  const { sketchType, handleSketchTypeChange, handleSketchFeatureCreate } = useSketch({
-    tab,
-    nlsLayers,
-    selectedLayer,
-    visualizerRef,
-    handleLayerConfigUpdate,
-  });
-
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     sceneId,
@@ -190,7 +196,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedProjectType,
     showWidgetEditor,
     sketchType,
-    isSketchLayerSelected: !!selectedLayer?.config?.data?.isSketchLayer,
+    isSketchLayerSelected: !!selectedLayer?.isSketch,
     handleSketchTypeChange,
     handleProjectTypeChange,
     handleDeviceChange,

@@ -18,11 +18,18 @@ export type TabObject = {
 export type Props = {
   tabs: TabObject[];
   selectedTab: string;
+  scrollable?: boolean;
   onSelectedTabChange: (tab: string) => void;
   menuAlignment?: menuAlignment;
 };
 
-const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange, menuAlignment }) => {
+const TabMenu: FC<Props> = ({
+  tabs,
+  selectedTab,
+  scrollable,
+  onSelectedTabChange,
+  menuAlignment,
+}) => {
   const selectedTabItem = useMemo(() => {
     return tabs.find(({ id }) => id === selectedTab);
   }, [selectedTab, tabs]);
@@ -40,7 +47,7 @@ const TabMenu: FC<Props> = ({ tabs, selectedTab, onSelectedTabChange, menuAlignm
           </TabIconWrapper>
         ))}
       </Tabs>
-      <MainArea>
+      <MainArea scrollable={scrollable}>
         {selectedTabItem?.name && !menuAlignment && (
           <Header>
             <Text size="body">{selectedTabItem.name}</Text>
@@ -91,8 +98,10 @@ const Header = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.outline.weak};
 `;
 
-const MainArea = styled.div`
+const MainArea = styled.div<{ scrollable?: boolean }>`
   display: block;
+  height: auto;
+  overflow-y: ${({ scrollable }) => (scrollable ? "auto" : "unset")};
 `;
 
 const Content = styled.div`

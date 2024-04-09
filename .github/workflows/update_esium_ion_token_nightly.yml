@@ -1,0 +1,14 @@
+name: Update Cesium Ion token Nightly
+
+# Every 2nd day of the month at 02:00 JST.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 17 1 * *'
+jobs:
+  upload:
+    uses: ./.github/workflows/_upload_cesium_token_txt.yml
+    with:
+      gcs_dst: gs://test.reearth.dev
+    secrets:
+      credentials_json: ${{ secrets.GCP_SA_KEY }}
