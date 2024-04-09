@@ -60,6 +60,8 @@ export type NLSLayer = {
       value?: any;
     };
   };
+  isSketch?: boolean;
+  sketch?: any;
   nlsInfobox?: any;
 };
 

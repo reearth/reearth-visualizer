@@ -11,4 +11,5 @@ __screenshots__
 /test-results
 /.env*
 /reearth-config.json
+/cesium_ion_token.txt
 .idea/*

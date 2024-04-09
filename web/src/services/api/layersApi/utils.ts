@@ -15,6 +15,8 @@ export type NLSLayer = {
   layerType: string;
   config?: any;
   children?: NLSLayer[] | null;
+  sketch?: any;
+  isSketch?: boolean;
   infobox?: NLSInfobox;
 };
 
@@ -28,6 +30,8 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
       visible: l.visible,
       layerType: l.layerType,
       config: l.config,
+      isSketch: l.isSketch,
+      sketch: l.sketch,
       infobox: l.infobox
         ? {
             sceneId: l.infobox.sceneId,

@@ -12,7 +12,8 @@ const SidePanelSectionField: React.FC<{
   gap?: number;
   children?: ReactNode;
   storageKey?: string;
-}> = ({ className, title, startCollapsed, gap, children, storageKey }) => {
+  border?: string;
+}> = ({ className, title, startCollapsed, gap, children, storageKey, border }) => {
   const theme = useTheme();
   const [opened, setOpened] = useState<boolean>(() => {
     const storedValue = localStorage.getItem(storageKey || "");
@@ -33,7 +34,12 @@ const SidePanelSectionField: React.FC<{
           <ArrowIcon icon="arrowToggle" size={12} color={theme.content.main} opened={opened} />
         </Header>
       )}
-      {opened && children && <Content gap={gap}>{children}</Content>}
+
+      {opened && children && (
+        <Content gap={gap} border={border}>
+          {children}
+        </Content>
+      )}
     </Field>
   );
 };
@@ -57,11 +63,12 @@ const ArrowIcon = styled(Icon)<{ opened?: boolean }>`
   transition: all 0.2s;
 `;
 
-const Content = styled.div<{ gap?: number }>`
+const Content = styled.div<{ gap?: number; border?: string }>`
   padding: 8px;
   display: flex;
   flex-direction: column;
   gap: ${({ gap }) => (gap ?? 16) + "px"} 16px;
+  border-top: ${({ border, theme }) => (border ? `1px solid  ${theme.outline.weak}` : "none")};
 `;
 
 export default SidePanelSectionField;

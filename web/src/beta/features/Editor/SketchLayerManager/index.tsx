@@ -12,26 +12,36 @@ import CustomedProperties from "./CustomedProperties";
 import General from "./General";
 import { SketchLayerDataType } from "./types";
 
-export type Property = { [x: string]: string };
+export type Property = {
+  [key: string]: string;
+};
 
-export type SketchProps = {
+export type PropertyProps = {
+  id: string;
+  key: string;
+  value: string;
+};
+
+export interface SketchProps {
   sceneId?: string;
   layerStyles?: LayerStyle[];
-  propertyList?: Property[];
+  customPropertyList?: Property[];
+  currentProperties?: PropertyProps[];
   layerName?: string;
   layerStyle?: string;
   setLayerName?: (value: string) => void;
   setLayerStyle?: (value: string) => void;
   onClose?: () => void;
   onSubmit?: (layerAddInp: LayerAddProps) => void;
-  setPropertyList?: (prev: Property[]) => void;
-};
+  setCustomPropertyList?: (prev: Property[]) => void;
+  setCurrentProperties?: (prev: PropertyProps[]) => void;
+}
 
-type TabObject = {
+interface TabObject {
   id: string;
-  name?: string | undefined;
-  component?: JSX.Element | undefined;
-};
+  name?: string;
+  component?: JSX.Element;
+}
 
 export const dataTypes: SketchLayerDataType[] = [
   "Text",
@@ -46,7 +56,8 @@ export const dataTypes: SketchLayerDataType[] = [
 const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClose, onSubmit }) => {
   const t = useT();
   const [selectedTab, setSelectedTab] = useState("general");
-  const [propertyList, setPropertyList] = useState<{ [x: string]: string }[]>([]);
+  const [customPropertyList, setCustomPropertyList] = useState<Property[]>([]);
+  const [currentProperties, setCurrentProperties] = useState<PropertyProps[]>([]);
   const [layerName, setLayerName] = useState("");
   const [layerStyle, setLayerStyle] = useState("");
 
@@ -55,20 +66,28 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
   }, []);
 
   const handleSubmit = () => {
+    const schemaJSON = customPropertyList.reduce((acc, property, index) => {
+      const [key] = Object.keys(property);
+
+      // Appending index + 1 to the value for sorting later
+      const value = `${property[key]}_${index + 1}`;
+      acc[key] = value;
+      return acc;
+    }, {});
+
     onSubmit?.({
       layerType: "simple",
       sceneId: sceneId || "",
       title: layerName,
       visible: true,
+      schema: schemaJSON,
       config: {
         properties: {
           name: layerName,
           layerStyle: layerStyle,
-          customProperties: propertyList,
         },
         data: {
           type: "geojson",
-          isSketchLayer: true,
         },
       },
     });
@@ -91,14 +110,19 @@ const SketchLayerManager: React.FC<SketchProps> = ({ sceneId, layerStyles, onClo
         ),
       },
       {
-        id: "customized Properties",
-        name: t("Customized Properties"),
+        id: "customProperties",
+        name: t("Custom Properties"),
         component: (
-          <CustomedProperties propertyList={propertyList} setPropertyList={setPropertyList} />
+          <CustomedProperties
+            customPropertyList={customPropertyList}
+            currentProperties={currentProperties}
+            setCustomPropertyList={setCustomPropertyList}
+            setCurrentProperties={setCurrentProperties}
+          />
         ),
       },
     ],
-    [layerName, layerStyle, layerStyles, propertyList, t],
+    [currentProperties, customPropertyList, layerName, layerStyle, layerStyles, t],
   );
 
   return (

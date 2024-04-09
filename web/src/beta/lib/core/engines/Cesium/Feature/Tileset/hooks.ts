@@ -189,6 +189,7 @@ const useFeature = ({
   evalFeature,
   onComputedFeatureFetch,
   shouldUseFeatureIndex,
+  isTilesetReady,
 }: {
   id?: string;
   tileset: MutableRefObject<Cesium3DTileset | undefined>;
@@ -200,6 +201,7 @@ const useFeature = ({
   featureIndex: TilesetFeatureIndex;
   selectedFeatureIdsRef: MutableRefObject<string[]>;
   shouldUseFeatureIndex?: boolean;
+  isTilesetReady: boolean;
 }) => {
   const cachedFeaturesRef = useRef<CachedFeature[]>([]);
   const cachedCalculatedLayerRef = useRef(layer);
@@ -326,7 +328,7 @@ const useFeature = ({
       tileset.current?.tileLoad.addEventListener((t: Cesium3DTile) =>
         handleTilesetLoadRef.current(t),
       ),
-    [tileset],
+    [tileset, isTilesetReady],
   );
 
   const handleTilesetUnload = useCallback(
@@ -345,7 +347,7 @@ const useFeature = ({
       tileset.current?.tileUnload.addEventListener((t: Cesium3DTile) =>
         handleTilesetUnloadRef.current(t),
       ),
-    [tileset],
+    [tileset, isTilesetReady],
   );
 
   useEffect(() => {
@@ -483,6 +485,8 @@ export const useHooks = ({
   const { url, type, idProperty } = useData(layer);
   const shouldUseFeatureIndex = !disableIndexingFeature && !!idProperty;
 
+  const [isTilesetReady, setIsTilesetReady] = useState(false);
+
   const prevPlanes = useRef(_planes);
   const planes = useMemo(() => {
     if (
@@ -522,6 +526,7 @@ export const useHooks = ({
     tilesetRef,
     viewer,
     clippingPlanes,
+    isTilesetReady,
   });
   const [featureIndex] = useState(() => new TilesetFeatureIndex());
 
@@ -548,7 +553,7 @@ export const useHooks = ({
   const [selectedFeatureColorMap] = useState(() => new Map<string, Color>());
 
   useEffect(() => {
-    if (!tilesetRef.current || !shouldUseFeatureIndex) return;
+    if (!tilesetRef.current || !shouldUseFeatureIndex || !isTilesetReady) return;
     Object.assign(tilesetRef.current, {
       onSelectFeature: (f: Cesium3DTileFeature) => {
         const tag = getTag(f);
@@ -570,7 +575,7 @@ export const useHooks = ({
         f.color = selectedFeatureColorMap.get(tag?.featureId ?? "") ?? DEFAULT_FEATURE_COLOR;
       },
     });
-  }, [selectedFeatureColorMap, featureIndex, shouldUseFeatureIndex]);
+  }, [selectedFeatureColorMap, featureIndex, shouldUseFeatureIndex, isTilesetReady]);
 
   useFeature({
     id,
@@ -583,6 +588,7 @@ export const useHooks = ({
     featureIndex,
     selectedFeatureIdsRef,
     shouldUseFeatureIndex,
+    isTilesetReady,
   });
 
   const [terrainHeightEstimate, setTerrainHeightEstimate] = useState(0);
@@ -615,14 +621,7 @@ export const useHooks = ({
     const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
 
     const prepareClippingPlanes = async () => {
-      if (!tilesetRef.current) {
-        return;
-      }
-
-      try {
-        await tilesetRef.current?.readyPromise;
-      } catch (e) {
-        console.error("Could not load 3D tiles: ", e);
+      if (!tilesetRef.current || !isTilesetReady) {
         return;
       }
 
@@ -672,6 +671,7 @@ export const useHooks = ({
     allowEnterGround,
     terrainHeightEstimate,
     experimental_clipping?.draw,
+    isTilesetReady,
   ]);
 
   useEffect(() => {
@@ -773,6 +773,7 @@ export const useHooks = ({
 
   const handleReady = useCallback(
     (tileset: Cesium3DTileset) => {
+      setIsTilesetReady(true);
       onLayerFetch?.({ properties: tileset.properties });
       onLayerLoad?.({ layerId: layerIdRef.current });
     },

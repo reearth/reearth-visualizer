@@ -402,6 +402,16 @@ export const nlsLayerSimpleFragment = gql`
         }
       }
     }
+    isSketch
+    sketch {
+      customPropertySchema
+      featureCollection {
+        type
+        features {
+          ...FeatureFragment
+        }
+      }
+    }
     ... on NLSLayerGroup {
       children {
         id

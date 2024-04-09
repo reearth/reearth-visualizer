@@ -15,6 +15,7 @@ import { MutableRefObject, useEffect, useMemo, useState } from "react";
 
 import { LatLng } from "../../..";
 import { sampleTerrainHeight } from "../../common";
+import { useContext } from "../context";
 
 import { ClippingPolygonStyle } from "./DrawClippingPolygon";
 
@@ -29,6 +30,7 @@ type drawClippingProps = {
   tilesetRef?: MutableRefObject<Cesium3DTileset | undefined>;
   viewer?: Viewer;
   clippingPlanes: ClippingPlaneCollection;
+  isTilesetReady: boolean;
 };
 
 export const useDrawClipping = ({
@@ -42,26 +44,22 @@ export const useDrawClipping = ({
   tilesetRef,
   viewer,
   clippingPlanes,
+  isTilesetReady,
 }: drawClippingProps) => {
   const [baseHeight, setBaseHeight] = useState(0);
   const appliedTop = useMemo(() => top ?? 100, [top]);
   const appliedBottom = useMemo(() => bottom ?? 10, [bottom]);
   const [ready, setReady] = useState(false);
+  const { requestRender } = useContext();
 
   useEffect(() => {
     const updateClippingPlanes = async () => {
-      if (!tilesetRef?.current) return;
-
-      try {
-        await tilesetRef.current.readyPromise;
-      } catch (e) {
-        console.error("Could not load 3D tiles: ", e);
-        return;
-      }
+      if (!tilesetRef?.current || !isTilesetReady) return;
 
       if (!enabled || !surfacePoints || surfacePoints?.length < 2) {
         clippingPlanes.removeAll();
         setBaseHeight(0);
+        requestRender?.();
         return;
       }
 
@@ -135,6 +133,8 @@ export const useDrawClipping = ({
     enabled,
     direction,
     viewer,
+    isTilesetReady,
+    requestRender,
   ]);
 
   useEffect(() => {

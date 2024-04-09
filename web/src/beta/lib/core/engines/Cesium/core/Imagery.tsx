@@ -5,7 +5,7 @@ import {
   TextureMinificationFilter,
 } from "cesium";
 import { isEqual } from "lodash-es";
-import { useCallback, useMemo, useRef, useLayoutEffect } from "react";
+import { useCallback, useMemo, useRef, useLayoutEffect, useState } from "react";
 import { ImageryLayer } from "resium";
 
 import { tiles as tilePresets } from "./presets";
@@ -42,19 +42,23 @@ export default function ImageryLayers({ tiles, cesiumIonAccessToken }: Props) {
 
   // force rerendering all layers when any provider is updated
   // since Resium does not sort layers according to ImageryLayer component order
-  const counter = useRef(0);
+  const [counter, setCounter] = useState(0);
   useLayoutEffect(() => {
-    if (updated) counter.current++;
+    if (updated) setCounter(c => c + 1);
   }, [providers, updated]);
 
   return (
     <>
       {tiles
-        ?.map(({ id, ...tile }) => ({ ...tile, id, provider: providers[id]?.[2] }))
+        ?.map(({ id, ...tile }) => ({
+          ...tile,
+          id,
+          provider: providers[id]?.[2],
+        }))
         .map(({ id, tile_opacity: opacity, tile_zoomLevel, provider, heatmap }, i) =>
           provider ? (
             <ImageryLayer
-              key={`${id}_${i}_${counter.current}`}
+              key={`${id}_${i}_${counter}`}
               imageryProvider={provider}
               minimumTerrainLevel={tile_zoomLevel?.[0]}
               maximumTerrainLevel={tile_zoomLevel?.[1]}
@@ -86,7 +90,7 @@ export function useImageryProviders({
       cesiumIonAccessToken?: string;
       heatmap?: boolean;
       tile_zoomLevel?: number[];
-    }) => ImageryProvider | null;
+    }) => Promise<ImageryProvider> | ImageryProvider | null;
   };
 }): { providers: Providers; updated: boolean } {
   const newTile = useCallback(
@@ -134,7 +138,14 @@ export function useImageryProviders({
             prevProvider,
             tile,
           }):
-            | [string, [string | undefined, string | undefined, ImageryProvider | null | undefined]]
+            | [
+                string,
+                [
+                  string | undefined,
+                  string | undefined,
+                  Promise<ImageryProvider> | ImageryProvider | null | undefined,
+                ],
+              ]
             | null =>
             !tile
               ? null
