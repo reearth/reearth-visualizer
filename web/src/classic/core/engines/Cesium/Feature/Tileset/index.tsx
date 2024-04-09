@@ -25,7 +25,7 @@ function Tileset({
 }: Props): JSX.Element | null {
   const { shadows, colorBlendMode } = property ?? {};
   const boxId = `${layer?.id}_box`;
-  const { tilesetUrl, ref, style, clippingPlanes, builtinBoxProps } = useHooks({
+  const { tilesetUrl, ref, style, clippingPlanes, builtinBoxProps, handleReady } = useHooks({
     id,
     boxId,
     isVisible,
@@ -53,6 +53,7 @@ function Tileset({
         shadows={shadowMode(shadows)}
         clippingPlanes={clippingPlanes}
         colorBlendMode={colorBlendModeFor3DTile(colorBlendMode)}
+        onReady={handleReady}
       />
       {builtinBoxProps && (
         <Box

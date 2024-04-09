@@ -93,7 +93,7 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
       timeline
       // NOTE: We need to update cesium ion token dynamically.
       // To replace old imagery provider, we need to remove old imagery provider.
-      imageryProvider={false}
+      baseLayer={false}
       fullscreenButton={false}
       homeButton={false}
       geocoder={false}
@@ -179,6 +179,8 @@ const Cesium: React.ForwardRefRenderFunction<EngineRef, EngineProps> = (
         backgroundColor={backgroundColor}
         useWebVR={!!property?.default?.vr || undefined}
         light={light}
+        verticalExaggerationRelativeHeight={property?.terrain?.terrainExaggerationRelativeHeight}
+        verticalExaggeration={property?.terrain?.terrainExaggeration}
       />
       <SkyBox show={property?.default?.skybox ?? true} />
       <Fog
