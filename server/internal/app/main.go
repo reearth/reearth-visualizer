@@ -7,13 +7,16 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/app/config"
+	infraRedis "github.com/reearth/reearth/server/internal/infrastructure/redis"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
+	"github.com/uptrace/uptrace-go/uptrace"
 	"golang.org/x/net/http2"
 )
 
@@ -45,6 +48,30 @@ func Start(debug bool, version string) {
 	// Init repositories
 	repos, gateways, acRepos, acGateways := initReposAndGateways(ctx, conf, debug)
 
+	// Redis
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     conf.RedisHost,
+		Password: conf.RedisPassword,
+		DB:       conf.RedisDB,
+	})
+	_, err := redisClient.Ping(ctx).Result()
+	if err != nil {
+		log.Fatalf("Failed to connect to Redis: %+v\n", err)
+	}
+	redisAdapter := infraRedis.NewRedisAdapter(redisClient)
+
+	// Init uptrace
+	uptrace.ConfigureOpentelemetry(
+		uptrace.WithDSN(conf.UptraceDSN),
+		uptrace.WithServiceName("reearth"),
+		uptrace.WithServiceVersion("1.0.0"),
+	)
+	defer func() {
+		if err := uptrace.Shutdown(ctx); err != nil {
+			log.Fatalf("failed to shutdown uptrace: %v", err)
+		}
+	}()
+
 	// Start web server
 	NewServer(ctx, &ServerConfig{
 		Config:          conf,
@@ -53,6 +80,7 @@ func Start(debug bool, version string) {
 		AccountRepos:    acRepos,
 		Gateways:        gateways,
 		AccountGateways: acGateways,
+		RedisAdapter:    redisAdapter,
 	}).Run()
 }
 
@@ -68,6 +96,7 @@ type ServerConfig struct {
 	AccountRepos    *accountrepo.Container
 	Gateways        *gateway.Container
 	AccountGateways *accountgateway.Container
+	RedisAdapter    *infraRedis.RedisAdapter
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
