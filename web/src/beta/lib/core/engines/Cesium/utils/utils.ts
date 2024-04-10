@@ -21,7 +21,7 @@ import {
   DataSource,
 } from "cesium";
 
-import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox/types";
+import { InfoboxProperty } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
 import { ComputedFeature, DefaultInfobox } from "@reearth/beta/lib/core/Map";
 
 import { getTag } from "../Feature";

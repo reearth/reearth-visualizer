@@ -1,4 +1,4 @@
-import { InfoboxBlock } from "@reearth/beta/lib/core/Crust/Infobox/types";
+import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { NLSInfobox } from "@reearth/services/api/layersApi/utils";
 

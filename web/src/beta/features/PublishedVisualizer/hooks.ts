@@ -6,8 +6,8 @@ import {
   WidgetAlignment,
   BuiltinWidgets,
   isBuiltinWidget,
-} from "@reearth/beta/lib/core/Crust";
-import { Story } from "@reearth/beta/lib/core/StoryPanel";
+} from "@reearth/beta/features/Visualizer/Crust";
+import { Story } from "@reearth/beta/features/Visualizer/StoryPanel";
 import { config } from "@reearth/services/config";
 
 import { processProperty } from "./convert";
@@ -38,7 +38,7 @@ export default (alias?: string) => {
 
   const widgets = useMemo<
     | {
-        floatingWidgets: InternalWidget[];
+        floating: InternalWidget[];
         alignSystem: WidgetAlignSystem | undefined;
         ownBuiltinWidgets: (keyof BuiltinWidgets)[];
       }
@@ -126,7 +126,7 @@ export default (alias?: string) => {
     }, []);
 
     return {
-      floatingWidgets,
+      floating: floatingWidgets,
       alignSystem: data.widgetAlignSystem
         ? {
             outer: widgetZone(data.widgetAlignSystem.outer),

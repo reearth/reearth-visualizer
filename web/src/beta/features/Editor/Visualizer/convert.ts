@@ -3,15 +3,15 @@ import {
   type WidgetSection,
   type WidgetArea,
   type Alignment,
-} from "@reearth/beta/lib/core/Crust";
+} from "@reearth/beta/features/Visualizer/Crust";
 import {
   BuiltinWidgets,
   Widget as RawWidget,
   WidgetAlignSystem,
   WidgetLayoutConstraint,
   isBuiltinWidget,
-} from "@reearth/beta/lib/core/Crust/Widgets";
-import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
+} from "@reearth/beta/features/Visualizer/Crust/Widgets";
+import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
 import { LayerAppearanceTypes, Feature } from "@reearth/beta/lib/core/mantle";
 import type { Layer } from "@reearth/beta/lib/core/Map";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";

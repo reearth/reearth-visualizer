@@ -1,19 +1,13 @@
 import { clone } from "lodash-es";
 import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { useWindowSize } from "react-use";
 
 // TODO: Move these utils
 import { type DropOptions, useDrop } from "@reearth/beta/utils/use-dnd";
 
-import type { BuiltinWidgets, InteractionModeType } from "../Crust";
-import { Infobox as InfoboxType } from "../Crust/Infobox/types";
-import { INTERACTION_MODES } from "../Crust/interactionMode";
-import { getBuiltinWidgetOptions } from "../Crust/Widgets/Widget";
 import type { ComputedFeature, Feature, LatLng, SelectedFeatureInfo } from "../mantle";
 import type {
   Ref as MapRef,
   LayerSelectionReason,
-  Layer,
   Camera,
   ComputedLayer,
   SceneProperty,
@@ -29,9 +23,9 @@ import { useOverriddenProperty } from "../Map";
 import { SketchEventCallback, SketchEventProps, SketchType } from "../Map/Sketch/types";
 import { TimelineManagerRef } from "../Map/useTimelineManager";
 
+import type { InteractionModeType } from "./interactionMode";
+import { INTERACTION_MODES } from "./interactionMode";
 import useViewport from "./useViewport";
-
-const viewportMobileMaxWidth = 768;
 
 export default function useHooks(
   {
@@ -41,8 +35,6 @@ export default function useHooks(
     isEditable,
     rootLayerId,
     zoomedLayerId,
-    layers,
-    ownBuiltinWidgets,
     onLayerSelect,
     onCameraChange,
     onInteractionModeChange,
@@ -56,8 +48,6 @@ export default function useHooks(
     rootLayerId?: string;
     sceneProperty?: SceneProperty;
     zoomedLayerId?: string;
-    layers?: Layer[];
-    ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
     onLayerSelect?: (
       layerId: string | undefined,
       layer: (() => Promise<ComputedLayer | undefined>) | undefined,
@@ -147,16 +137,6 @@ export default function useHooks(
     },
     [selectedLayer, onLayerSelect],
   );
-
-  // Infobox
-  const infobox: InfoboxType | undefined = useMemo(() => {
-    if (!selectedLayer.layer?.layer.infobox) return undefined;
-    const selected = layers?.find(l => l.id === selectedLayer.layerId);
-    return {
-      property: selected?.infobox?.property,
-      blocks: [...(selected?.infobox?.blocks ?? [])],
-    };
-  }, [selectedLayer, layers]);
 
   const timelineManagerRef: TimelineManagerRef = useRef();
 
@@ -249,10 +229,6 @@ export default function useHooks(
   // feature flags
   const featureFlags = INTERACTION_MODES[interactionMode];
 
-  // mobile
-  const { width } = useWindowSize();
-  const isMobile = width < viewportMobileMaxWidth;
-
   // layer edit
   const onLayerEditRef = useRef<(e: LayerEditEvent) => void>();
   const onLayerEdit = useCallback((cb: (e: LayerEditEvent) => void) => {
@@ -304,12 +280,12 @@ export default function useHooks(
   }, []);
 
   // plugin sketch feature events
-  const onPluginSketchFeatureCreatedCallbacksRef = useRef<SketchEventCallback[]>([]);
-  const onPluginSketchFeatureCreated = useCallback((cb: SketchEventCallback) => {
-    onPluginSketchFeatureCreatedCallbacksRef.current.push(cb);
+  const onSketchPluginFeatureCreateCallbacksRef = useRef<SketchEventCallback[]>([]);
+  const onSketchPluginFeatureCreate = useCallback((cb: SketchEventCallback) => {
+    onSketchPluginFeatureCreateCallbacksRef.current.push(cb);
   }, []);
-  const handlePluginSketchFeatureCreated = useCallback((props: SketchEventProps) => {
-    onPluginSketchFeatureCreatedCallbacksRef.current.forEach(fn => fn(props));
+  const handleSketchPluginFeatureCreate = useCallback((props: SketchEventProps) => {
+    onSketchPluginFeatureCreateCallbacksRef.current.forEach(fn => fn(props));
   }, []);
 
   const onSketchTypeChangeCallbacksRef = useRef<((type: SketchType | undefined) => void)[]>([]);
@@ -353,55 +329,82 @@ export default function useHooks(
     [onLayerDrop, mapRef],
   );
 
-  // shouldRender
-  const shouldRender = useMemo(() => {
-    const shouldWidgetAnimate = ownBuiltinWidgets?.some(
-      id => !!getBuiltinWidgetOptions(id).animation,
-    );
-    return shouldWidgetAnimate;
-  }, [ownBuiltinWidgets]);
+  const coreContextValue = useMemo(
+    () => ({
+      interactionMode,
+      selectedLayer,
+      selectedComputedFeature,
+      viewport,
+      overriddenSceneProperty,
+      overrideSceneProperty,
+      handleCameraForceHorizontalRollChange,
+      handleInteractionModeChange: changeInteractionMode,
+      onSketchPluginFeatureCreate,
+      onSketchTypeChange,
+      onLayerVisibility,
+      onLayerLoad,
+      onLayerEdit,
+      onLayerSelectWithRectStart,
+      onLayerSelectWithRectMove,
+      onLayerSelectWithRectEnd,
+    }),
+    [
+      interactionMode,
+      selectedLayer,
+      selectedComputedFeature,
+      viewport,
+      overriddenSceneProperty,
+      overrideSceneProperty,
+      changeInteractionMode,
+      handleCameraForceHorizontalRollChange,
+      onLayerEdit,
+      onSketchPluginFeatureCreate,
+      onSketchTypeChange,
+      onLayerVisibility,
+      onLayerLoad,
+      onLayerSelectWithRectStart,
+      onLayerSelectWithRectMove,
+      onLayerSelectWithRectEnd,
+    ],
+  );
+
+  const containerStyle = useMemo(
+    () => ({
+      position: "relative" as const,
+      width: "100%",
+      height: "100%",
+      overflow: "hidden",
+    }),
+    [],
+  );
 
   return {
     mapRef,
     wrapperRef,
-    selectedLayer,
     selectedFeature,
-    selectedComputedFeature,
-    viewport,
     camera,
-    interactionMode,
     featureFlags,
-    isMobile,
     overriddenSceneProperty,
     isDroppable,
-    infobox,
     isLayerDragging,
-    shouldRender,
     timelineManagerRef,
     cursor,
     cameraForceHorizontalRoll,
+    coreContextValue,
+    containerStyle,
     overrideSceneProperty,
-    handleCameraForceHorizontalRollChange,
     handleLayerSelect,
     handleLayerDrag,
     handleLayerDrop,
     handleLayerEdit,
-    onLayerEdit,
     handleCameraChange: changeCamera,
     handleInteractionModeChange: changeInteractionMode,
-    onPluginSketchFeatureCreated,
-    handlePluginSketchFeatureCreated,
-    onSketchTypeChange,
+    handleSketchPluginFeatureCreate,
     handleSketchTypeChange,
-    onLayerVisibility,
     handleLayerVisibility,
-    onLayerLoad,
     handleLayerLoad,
-    onLayerSelectWithRectStart,
     handleLayerSelectWithRectStart,
-    onLayerSelectWithRectMove,
     handleLayerSelectWithRectMove,
-    onLayerSelectWithRectEnd,
     handleLayerSelectWithRectEnd,
   };
 }

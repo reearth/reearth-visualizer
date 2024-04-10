@@ -1,4 +1,4 @@
-import { Infobox } from "../../Crust/Infobox/types";
+import { Infobox } from "../../../../features/Visualizer/Crust/Infobox/types";
 
 export type LegacyLayer<P = any, IBP = any> = {
   id: string;

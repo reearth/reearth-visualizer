@@ -1,6 +1,6 @@
 import { MutableRefObject, useCallback, useMemo } from "react";
 
-import { MapRef } from "@reearth/beta/lib/core/Crust/types";
+import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";

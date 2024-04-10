@@ -3,7 +3,7 @@ import { RefObject, useCallback, useMemo, useRef } from "react";
 import { CesiumComponentRef, CesiumMovementEvent } from "resium";
 
 import { EngineRef } from "../..";
-import { INTERACTION_MODES } from "../../../Crust";
+import { INTERACTION_MODES } from "../../../../../features/Visualizer/Crust";
 import {
   LayerSelectWithRect,
   LayerSelectWithRectEnd,

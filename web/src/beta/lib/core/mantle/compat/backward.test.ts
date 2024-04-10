@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { Infobox } from "../../Crust/Infobox/types";
+import { Infobox } from "../../../../features/Visualizer/Crust/Infobox/types";
 
 import { convertLayer, getCompat } from "./backward";
 import type { Tag } from "./types";
