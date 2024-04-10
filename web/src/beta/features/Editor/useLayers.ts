@@ -1,6 +1,6 @@
 import { MutableRefObject, useCallback, useMemo } from "react";
 
-import { MapRef } from "@reearth/beta/lib/core/Crust/types";
+import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
 import { LayerSimple } from "@reearth/beta/lib/core/Map";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
@@ -19,6 +19,7 @@ export type LayerAddProps = {
   sceneId: string;
   title: string;
   visible?: boolean;
+  schema?: any;
 };
 
 export type LayerNameUpdateProps = {
@@ -91,6 +92,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
         layerType: inp.layerType,
         title: t(inp.title),
         index: inp.index,
+        schema: inp.schema,
       });
     },
     [t, useAddNLSLayerSimple],

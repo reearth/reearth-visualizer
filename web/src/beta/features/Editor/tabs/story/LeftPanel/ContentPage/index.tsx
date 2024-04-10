@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import Action from "@reearth/beta/features/Editor/tabs/story/LeftPanel/Action";
 import PageItemWrapper from "@reearth/beta/features/Editor/tabs/story/LeftPanel/PageItemWrapper";
-import { getFieldValue } from "@reearth/beta/lib/core/StoryPanel/utils";
+import { getFieldValue } from "@reearth/beta/features/Visualizer/StoryPanel/utils";
 import { isEmptyString } from "@reearth/beta/utils/util";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";

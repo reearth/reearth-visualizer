@@ -16,12 +16,22 @@ const Page = styled.div`
   background-color: ${({ color }) => color};
 `;
 
+interface DefaultProps {
+  pos: number;
+  setPos: React.Dispatch<React.SetStateAction<number>>;
+}
+
 export default {
   component: Slide,
+  decorators: [
+    Story => {
+      const [pos, setPos] = useState(0);
+      return <Story pos={pos} setPos={setPos} />;
+    },
+  ],
 } as Meta;
 
-export const Default = () => {
-  const [pos, setPos] = useState(0);
+export const Default = ({ pos, setPos }: DefaultProps) => {
   return (
     <Wrapper>
       <Slide pos={pos}>

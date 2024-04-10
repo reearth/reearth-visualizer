@@ -14,7 +14,7 @@ import {
 import invariant from "tiny-invariant";
 import { v4 as uuidv4 } from "uuid";
 
-import { InteractionModeType } from "../../Crust";
+import { InteractionModeType } from "../../../../features/Visualizer/Crust";
 import { LayerSimple, LazyLayer } from "../Layers";
 import {
   Feature,
@@ -51,7 +51,7 @@ type Props = {
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onSketchTypeChange?: (type: SketchType | undefined, from?: "editor" | "plugin") => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
-  onPluginSketchFeatureCreated?: (props: SketchEventProps) => void;
+  onSketchPluginFeatureCreate?: (props: SketchEventProps) => void;
   onLayerSelect?: OnLayerSelectType;
 };
 
@@ -67,7 +67,7 @@ export default function useHooks({
   overrideInteractionMode,
   onSketchTypeChange,
   onSketchFeatureCreate,
-  onPluginSketchFeatureCreated,
+  onSketchPluginFeatureCreate,
   onLayerSelect,
 }: Props) {
   const [state, send] = useMachine(sketchMachine);
@@ -253,10 +253,10 @@ export default function useHooks({
               undefined,
             );
           });
-          onPluginSketchFeatureCreated?.({ layerId, featureId, feature });
+          onSketchPluginFeatureCreate?.({ layerId, featureId, feature });
         }
       } else {
-        onPluginSketchFeatureCreated?.({ feature });
+        onSketchPluginFeatureCreate?.({ feature });
       }
     },
     [
@@ -265,7 +265,7 @@ export default function useHooks({
       pluginSketchLayerCreate,
       pluginSketchLayerFeatureAdd,
       onSketchFeatureCreate,
-      onPluginSketchFeatureCreated,
+      onSketchPluginFeatureCreate,
       onLayerSelect,
     ],
   );

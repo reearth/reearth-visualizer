@@ -21,7 +21,7 @@ import {
   DataSource,
 } from "cesium";
 
-import { InfoboxProperty } from "@reearth/beta/lib/core/Crust/Infobox/types";
+import { InfoboxProperty } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
 import { ComputedFeature, DefaultInfobox } from "@reearth/beta/lib/core/Map";
 
 import { getTag } from "../Feature";
@@ -180,7 +180,7 @@ export function findEntity(
       continue;
     }
 
-    if (!prim.ready) continue;
+    if (prim.isDestroyed()) continue;
 
     // Skip to search 3dtiles features if `withoutTileFeature` is `true`.
     if (!withoutTileFeature && prim instanceof Cesium3DTileset) {
@@ -281,7 +281,7 @@ const findTile3DFeaturesFromScene = <T = Entity | Cesium3DTileset | InternalCesi
   // Find Cesium3DTileFeature
   for (let i = 0; i < viewer.scene.primitives.length; i++) {
     const prim = viewer.scene.primitives.get(i);
-    if (!(prim instanceof Cesium3DTileset) || !prim.ready) {
+    if (!(prim instanceof Cesium3DTileset) || prim.isDestroyed()) {
       continue;
     }
 

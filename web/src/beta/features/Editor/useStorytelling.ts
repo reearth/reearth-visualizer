@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from "react";
 
-import { StoryPanelRef } from "@reearth/beta/lib/core/StoryPanel";
+import { StoryPanelRef } from "@reearth/beta/features/Visualizer/StoryPanel";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";

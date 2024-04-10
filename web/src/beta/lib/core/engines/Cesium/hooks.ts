@@ -46,7 +46,7 @@ import type {
   LayerEditEvent,
   LayerVisibilityEvent,
 } from "..";
-import { FEATURE_FLAGS } from "../../Crust";
+import { FEATURE_FLAGS } from "../../../../features/Visualizer/Crust";
 import { FORCE_REQUEST_RENDER, NO_REQUEST_RENDER, REQUEST_RENDER_ONCE } from "../../Map/hooks";
 import { TimelineManagerRef } from "../../Map/useTimelineManager";
 

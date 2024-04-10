@@ -1,11 +1,12 @@
 import LRUCache from "lru-cache";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { ComputedFeature, DataType, guessType } from "@reearth/beta/lib/core/mantle";
 
 import type { AppearanceTypes, FeatureComponentProps, ComputedLayer } from "../..";
 
 import Box, { config as boxConfig } from "./Box";
+import { useContext } from "./context";
 import Ellipse, { config as ellipseConfig } from "./Ellipse";
 import Ellipsoid, { config as ellipsoidConfig } from "./Ellipsoid";
 import Frustum, { config as frustumConfig } from "./Frustum";
@@ -111,6 +112,17 @@ export default function Feature({
   const useTransition = !!layer?.transition?.useTransition;
   const cacheable = !data?.updateInterval && !useTransition;
   const urlMD5 = useMemo(() => (data?.url ? generateIDWithMD5(data.url) : ""), [data?.url]);
+
+  const { requestRender } = useContext();
+  // TODO: Find a way to wait updating the entity
+  useEffect(() => {
+    setTimeout(() => {
+      requestRender?.();
+    }, 300);
+  });
+
+  // Need to invoke requestRender when it's unmounted
+  useEffect(() => () => requestRender?.(), [requestRender]);
 
   const renderComponent = (k: keyof AppearanceTypes, f?: ComputedFeature): JSX.Element | null => {
     if (!isRenderableAppearance(k)) return null;

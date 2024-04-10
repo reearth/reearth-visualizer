@@ -1,6 +1,6 @@
 import { forwardRef, useMemo, type Ref } from "react";
 
-import { INTERACTION_MODES } from "../Crust";
+import { INTERACTION_MODES } from "../../../features/Visualizer/Crust";
 
 import useHooks, { MapRef } from "./hooks";
 import Layers, { type Props as LayersProps } from "./Layers";
@@ -59,7 +59,7 @@ function Map(
     overrideInteractionMode,
     onSketchTypeChange,
     onSketchFeatureCreate,
-    onPluginSketchFeatureCreated,
+    onSketchPluginFeatureCreate,
     featureFlags = INTERACTION_MODES.default,
     ...props
   }: Props,
@@ -135,7 +135,7 @@ function Map(
         overrideInteractionMode={overrideInteractionMode}
         onSketchTypeChange={onSketchTypeChange}
         onSketchFeatureCreate={onSketchFeatureCreate}
-        onPluginSketchFeatureCreated={onPluginSketchFeatureCreated}
+        onSketchPluginFeatureCreate={onSketchPluginFeatureCreate}
       />
     </Engine>
   ) : null;

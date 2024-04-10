@@ -1,11 +1,18 @@
-import JsonView from "react18-json-view";
+import { useCallback, useEffect, useState } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
+import JsonView from "react18-json-view";
+import { v4 as uuidv4 } from "uuid";
 
+import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
+import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/useSketch";
 import { Geometry } from "@reearth/beta/lib/core/engines";
+import { Feature } from "@reearth/beta/lib/core/mantle";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+
+import { FieldComponent } from "./CustomPropertField";
 
 type Props = {
   selectedFeature?: {
@@ -13,10 +20,66 @@ type Props = {
     geometry: Geometry | undefined;
     properties: any;
   };
+  isSketchLayer?: boolean;
+  customProperties?: any;
+  layerId?: string;
+  sketchLayerFeature?: Feature;
+  onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
-const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
+export type ValueProp = string | number | boolean | undefined;
+export type FieldProp = {
+  id: string;
+  type: string;
+  title: string;
+  value?: ValueProp;
+};
+
+const FeatureData: React.FC<Props> = ({
+  selectedFeature,
+  isSketchLayer,
+  customProperties,
+  layerId,
+  sketchLayerFeature,
+  onGeoJsonFeatureUpdate,
+}) => {
   const t = useT();
+
+  const [field, setField] = useState<FieldProp[]>([]);
+
+  useEffect(() => {
+    if (!customProperties) return;
+    const entries = Object.entries<string>(customProperties);
+    const sortedValues = entries
+      .map(([key, value]) => ({ key, value }))
+      .sort((a, b) => {
+        const aIndex = parseInt(a.value.split("_")[1]);
+        const bIndex = parseInt(b.value.split("_")[1]);
+        return aIndex - bIndex;
+      });
+
+    const fieldArray = sortedValues.map(({ key, value }) => ({
+      id: uuidv4(),
+      type: value.replace(/_\d+$/, ""),
+      title: key,
+      value: undefined,
+    }));
+
+    setField(fieldArray);
+  }, [customProperties, selectedFeature?.properties]);
+
+  const handleSubmit = useCallback(
+    (p: any) => {
+      if (!selectedFeature) return;
+      onGeoJsonFeatureUpdate?.({
+        layerId: layerId ?? "",
+        featureId: sketchLayerFeature?.id ?? "",
+        geometry: selectedFeature.geometry,
+        properties: p,
+      });
+    },
+    [layerId, onGeoJsonFeatureUpdate, selectedFeature, sketchLayerFeature?.id],
+  );
 
   return (
     <Wrapper>
@@ -26,19 +89,34 @@ const FeatureData: React.FC<Props> = ({ selectedFeature }) => {
           {selectedFeature?.id}
         </Text>
       </ValueWrapper>
-      <Text size="body">{t("Geometry")}</Text>
-      <ValueWrapper>
-        <JsonView
-          src={selectedFeature?.geometry}
-          theme="a11y"
-          dark
-          style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
-        />
-      </ValueWrapper>
-      <Text size="body">{t("Properties")}</Text>
-      <ValueWrapper>
-        <JsonView src={selectedFeature?.properties} theme="a11y" dark />
-      </ValueWrapper>
+      <StyledSidePanelSectionField title={t("Geometry")} border="1">
+        <ValueWrapper>
+          <JsonView
+            src={selectedFeature?.geometry}
+            theme="a11y"
+            dark
+            style={{ wordWrap: "break-word", minWidth: 0, lineHeight: "1.5em" }}
+          />
+        </ValueWrapper>
+      </StyledSidePanelSectionField>
+      <StyledSidePanelSectionField title={t("Properties")} border="1">
+        <ValueWrapper>
+          <JsonView src={selectedFeature?.properties} theme="a11y" dark />
+        </ValueWrapper>
+      </StyledSidePanelSectionField>
+      {isSketchLayer && (
+        <StyledSidePanelSectionField title={t("Custom Properties")} border="1">
+          {field.map(f => (
+            <FieldComponent
+              field={f}
+              key={f.id}
+              selectedFeature={sketchLayerFeature}
+              setField={setField}
+              onSubmit={handleSubmit}
+            />
+          ))}
+        </StyledSidePanelSectionField>
+      )}
     </Wrapper>
   );
 };
@@ -56,4 +134,8 @@ const ValueWrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   padding: 4px 8px;
+`;
+
+const StyledSidePanelSectionField = styled(SidePanelSectionField)`
+  background: ${({ theme }) => theme.outline.weaker};
 `;

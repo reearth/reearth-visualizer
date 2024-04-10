@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useCallback } from "react";
 
-import type { Alignment, Location } from "@reearth/beta/lib/core/Crust";
+import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
 import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/beta/lib/core/mantle";
 import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
 import {

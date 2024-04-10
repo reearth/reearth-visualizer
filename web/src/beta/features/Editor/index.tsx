@@ -6,7 +6,7 @@ import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
 import useRightPanel from "@reearth/beta/features/Editor/useRightPanel";
 import useSecondaryNavbar from "@reearth/beta/features/Editor/useSecondaryNavbar";
 import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
-import Visualizer from "@reearth/beta/features/Editor/Visualizer";
+import EditorVisualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { metrics, styled } from "@reearth/services/theme";
@@ -147,6 +147,19 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPropertyUpdate: handlePropertyValueUpdate,
   });
 
+  const {
+    sketchType,
+    handleSketchTypeChange,
+    handleSketchFeatureCreate,
+    handleGeoJsonFeatureUpdate,
+  } = useSketch({
+    tab,
+    nlsLayers,
+    selectedLayer,
+    visualizerRef,
+    handleLayerConfigUpdate,
+  });
+
   const { rightPanel } = useRightPanel({
     scene,
     layerStyles,
@@ -162,6 +175,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
+    onGeoJsonFeatureUpdate: handleGeoJsonFeatureUpdate,
   });
 
   const { bottomPanel } = useBottomPanel({
@@ -174,14 +188,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     onLayerStyleSelect: handleLayerStyleSelected,
   });
 
-  const { sketchType, handleSketchTypeChange, handleSketchFeatureCreate } = useSketch({
-    tab,
-    nlsLayers,
-    selectedLayer,
-    visualizerRef,
-    handleLayerConfigUpdate,
-  });
-
   const { secondaryNavbar } = useSecondaryNavbar({
     tab,
     sceneId,
@@ -190,7 +196,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedProjectType,
     showWidgetEditor,
     sketchType,
-    isSketchLayerSelected: !!selectedLayer?.config?.data?.isSketchLayer,
+    isSketchLayerSelected: !!selectedLayer?.isSketch,
     handleSketchTypeChange,
     handleProjectTypeChange,
     handleDeviceChange,
@@ -224,7 +230,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 tab={tab}
                 hasNav={!!secondaryNavbar}
                 visualizerWidth={visualizerWidth}>
-                <Visualizer
+                <EditorVisualizer
                   inEditor={tab !== "publish"}
                   visualizerRef={visualizerRef}
                   storyPanelRef={storyPanelRef}
