@@ -49,9 +49,9 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
 
   // properties needs to be re-rendered each time to have correct values from the viz ref
   const properties = () => {
-    if (displayTypeField.value === "custom") {
+    if (displayTypeField?.value === "custom") {
       return propertyListField.value;
-    } else if (displayTypeField.value === "rootOnly") {
+    } else if (displayTypeField?.value === "rootOnly") {
       return filterTypeFrom(visualizer.current?.layers.selectedFeature()?.properties, "object");
     } else {
       return filterChildObjectsToEnd(visualizer.current?.layers.selectedFeature()?.properties);
@@ -61,7 +61,7 @@ const Content: React.FC<Props> = ({ block, isEditable, ...props }) => {
   return (
     <Wrapper>
       {!context?.editMode ? (
-        displayTypeField.value === "custom" ? (
+        displayTypeField?.value === "custom" ? (
           properties ? (
             <CustomFields properties={properties()} extensionId={block?.extensionId} />
           ) : (
