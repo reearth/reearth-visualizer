@@ -378,7 +378,7 @@ export function processLayers(
           const cleanedFeatures = {
             ...feature,
             geometry: {
-              ...feature.geometry,
+              type: feature.geometry?.type,
               coordinates: handleCoordinate(feature.geometry),
             },
           };

@@ -58,10 +58,11 @@ export type NLSLayer = {
       type: DataType;
       url?: string;
       value?: any;
+      property?: any;
     };
   };
   isSketch?: boolean;
-  sketch?: any;
+  sketchInfo?: any;
   nlsInfobox?: any;
 };
 

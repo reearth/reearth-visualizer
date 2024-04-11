@@ -6,8 +6,6 @@ import { DEFAULT_LAYER_STYLE } from "@reearth/beta/utils/value";
 import { NLSInfobox, NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
-import { handleCoordinate } from "../Editor/utils";
-
 export const processNewProperty = (p: any): any => {
   if (typeof p !== "object") return p;
   return mapValues(p, g => {
@@ -70,18 +68,14 @@ export function processLayers(
       value: {
         type: "FeatureCollection",
         features: nlsLayer.sketch.featureCollection.features.map((feature: Feature) => {
-          const cleanedFeatures = {
+          return {
             ...feature,
-            geometry: {
-              ...feature.geometry,
-              coordinates: handleCoordinate(feature.geometry),
-            },
+            geometry: Array.isArray(feature.geometry) && feature.geometry[0],
           };
-
-          return cleanedFeatures;
         }),
       },
     };
+
     return {
       type: "simple",
       id: nlsLayer.id,
