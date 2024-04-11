@@ -74,6 +74,12 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 	}
 
 	tx.Commit()
+
+	err = i.setStyleToCache(ctx, style.ID(), style)
+	if err != nil {
+		return nil, err
+	}
+
 	return style, nil
 }
 
@@ -97,18 +103,16 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 	}()
 
 	var style *scene.Style
-	cacheKey := scene.StyleCacheKey(param.StyleID)
-
 	_, redisSpan := tr.Start(ctx, "Style.UpdateStyle.RedisGetValue")
-	val, redisGetErr := i.redis.GetValue(ctx, cacheKey)
-	if redisGetErr != nil && redisGetErr != redis.Nil {
-		redisSpan.RecordError(redisGetErr)
+	style, err = i.getStyleFromCache(ctx, param.StyleID)
+	if err != nil {
+		redisSpan.RecordError(err)
 		redisSpan.End()
-		return nil, redisGetErr
+		return nil, err
 	}
 	redisSpan.End()
 
-	if redisGetErr == redis.Nil || val == "" {
+	if style == nil {
 		_, dbSpan := tr.Start(ctx, "Style.UpdateStyle.DBFindById")
 		style, err = i.styleRepo.FindByID(ctx, param.StyleID)
 		if err != nil {
@@ -120,29 +124,6 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 
 		if style == nil {
 			return nil, nil
-		}
-
-		_, dbSpan = tr.Start(ctx, "Style.UpdateStyle.MsgpackMarshal")
-		msgpackData, err := msgpack.Marshal(&style)
-		if err != nil {
-			dbSpan.RecordError(err)
-			dbSpan.End()
-			return nil, err
-		}
-		dbSpan.End()
-
-		_, dbSpan = tr.Start(ctx, "Style.UpdateStyle.RedisSetValue")
-		err = i.redis.SetValue(ctx, cacheKey, msgpackData)
-		if err != nil {
-			dbSpan.RecordError(err)
-			dbSpan.End()
-			return nil, err
-		}
-		dbSpan.End()
-	} else {
-		err := msgpack.Unmarshal([]byte(val), &style)
-		if err != nil {
-			return nil, err
 		}
 	}
 
@@ -159,6 +140,15 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 	}
 
 	tx.Commit()
+
+	_, dbSpan := tr.Start(ctx, "Style.UpdateStyle.RedisSetValue")
+	err = i.setStyleToCache(ctx, style.ID(), style)
+	if err != nil {
+		dbSpan.RecordError(err)
+		dbSpan.End()
+		return nil, err
+	}
+
 	return style, nil
 }
 
@@ -175,16 +165,24 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 		}
 	}()
 
-	s, err := i.styleRepo.FindByID(ctx, styleID)
+	var style *scene.Style
+	style, err = i.getStyleFromCache(ctx, styleID)
 	if err != nil {
 		return styleID, err
+	}
+
+	if style == nil {
+		style, err = i.styleRepo.FindByID(ctx, styleID)
+		if err != nil {
+			return styleID, err
+		}
 	}
 
 	// if err := i.CanWriteScene(s.Scene(), operator); err != nil {
 	// 	return styleID, err
 	// }
 
-	if err := i.CheckSceneLock(ctx, s.Scene()); err != nil {
+	if err := i.CheckSceneLock(ctx, style.Scene()); err != nil {
 		return styleID, err
 	}
 
@@ -194,6 +192,12 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 	}
 
 	tx.Commit()
+
+	err = i.removeStyleFromCache(ctx, styleID)
+	if err != nil {
+		return styleID, err
+	}
+
 	return styleID, nil
 }
 
@@ -210,9 +214,17 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 		}
 	}()
 
-	style, err := i.styleRepo.FindByID(ctx, styleID)
+	var style *scene.Style
+	style, err = i.getStyleFromCache(ctx, styleID)
 	if err != nil {
 		return nil, err
+	}
+
+	if style == nil {
+		style, err = i.styleRepo.FindByID(ctx, styleID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// if err := i.CanWriteScene(s.Scene(), operator); err != nil {
@@ -226,5 +238,45 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	}
 
 	tx.Commit()
+
+	err = i.setStyleToCache(ctx, duplicatedStyle.ID(), duplicatedStyle)
+	if err != nil {
+		return nil, err
+	}
+
 	return duplicatedStyle, nil
+}
+
+func (i *Style) getStyleFromCache(ctx context.Context, styleID scene.StyleID) (*scene.Style, error) {
+	cacheKey := scene.StyleCacheKey(styleID)
+	val, err := i.redis.GetValue(ctx, cacheKey)
+	if err != nil {
+		if err == redis.Nil {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	var style *scene.Style
+	if err := msgpack.Unmarshal([]byte(val), &style); err != nil {
+		return nil, err
+	}
+
+	return style, nil
+}
+
+func (i *Style) setStyleToCache(ctx context.Context, styleID scene.StyleID, style *scene.Style) error {
+	cacheKey := scene.StyleCacheKey(styleID)
+	data, err := msgpack.Marshal(style)
+	if err != nil {
+		return err
+	}
+
+	return i.redis.SetValue(ctx, cacheKey, data)
+}
+
+func (i *Style) removeStyleFromCache(ctx context.Context, styleID scene.StyleID) error {
+	cacheKey := scene.StyleCacheKey(styleID)
+	return i.redis.RemoveValue(ctx, cacheKey)
 }
