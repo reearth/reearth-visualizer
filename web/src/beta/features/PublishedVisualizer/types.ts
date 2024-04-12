@@ -1,4 +1,10 @@
-import type { DataType, SceneProperty } from "@reearth/beta/lib/core/Map/types";
+import { TimeInterval } from "@reearth/beta/lib/core/mantle";
+import type {
+  DataRange,
+  DataType,
+  Geometry,
+  SceneProperty,
+} from "@reearth/beta/lib/core/Map/types";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 export type PublishedData = {
@@ -123,3 +129,15 @@ export type WidgetArea = {
 export type WidgetAlignment = "start" | "centered" | "end";
 
 export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+
+export type Feature = {
+  id: string;
+  geometry?: Geometry[];
+  interval?: TimeInterval;
+  properties?: any;
+  // Map engine specific information.
+  metaData?: {
+    description?: string;
+  };
+  range?: DataRange;
+};

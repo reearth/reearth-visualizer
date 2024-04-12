@@ -126,7 +126,7 @@ export type TimeInterval = [start: Date, end?: Date];
 export type CommonFeature<T extends "feature" | "computedFeature"> = {
   type: T;
   id: string;
-  geometry?: Geometry | Geometry[];
+  geometry?: Geometry;
   interval?: TimeInterval;
   properties?: any;
   // Map engine specific information.
