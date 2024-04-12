@@ -180,6 +180,8 @@ export default (alias?: string) => {
         layerType: l.layerType,
         visible: !!l.isVisible,
         infobox: l.nlsInfobox,
+        isSketch: l.isSketch,
+        sketch: l.sketchInfo,
       })) ?? [],
       data?.layerStyles,
     );
