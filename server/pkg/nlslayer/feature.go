@@ -1,25 +1,25 @@
 package nlslayer
 
 type Feature struct {
-	id          FeatureID
-	featureType string
-	geometry    Geometry
-	properties  *map[string]any
+	IDField          FeatureID       `msgpack:"IDField"`
+	FeatureTypeField string          `msgpack:"FeatureTypeField"`
+	GeometryField    Geometry        `msgpack:"GeometryField"`
+	PropertiesField  *map[string]any `msgpack:"PropertiesField"`
 }
 
 func NewFeatureWithNewId(featureType string, geometry Geometry) (*Feature, error) {
 	return &Feature{
-		id:          NewFeatureID(),
-		featureType: featureType,
-		geometry:    geometry,
+		IDField:          NewFeatureID(),
+		FeatureTypeField: featureType,
+		GeometryField:    geometry,
 	}, nil
 }
 
 func NewFeature(id FeatureID, featureType string, geometry Geometry) (*Feature, error) {
 	return &Feature{
-		id:          id,
-		featureType: featureType,
-		geometry:    geometry,
+		IDField:          id,
+		FeatureTypeField: featureType,
+		GeometryField:    geometry,
 	}, nil
 }
 
@@ -27,29 +27,29 @@ func (f *Feature) ID() FeatureID {
 	if f == nil {
 		return FeatureID{}
 	}
-	return f.id
+	return f.IDField
 }
 
 func (f *Feature) FeatureType() string {
 	if f == nil {
 		return ""
 	}
-	return f.featureType
+	return f.FeatureTypeField
 }
 
 func (f *Feature) Geometry() Geometry {
 	if f == nil {
 		return nil
 	}
-	return f.geometry
+	return f.GeometryField
 }
 
 func (f *Feature) Properties() *map[string]any {
-	return f.properties
+	return f.PropertiesField
 }
 
 func (f *Feature) UpdateGeometry(newGeometry Geometry) {
-	f.geometry = newGeometry
+	f.GeometryField = newGeometry
 }
 
 func (f *Feature) UpdateProperties(newProperty *map[string]any) {
@@ -62,5 +62,5 @@ func (f *Feature) UpdateProperties(newProperty *map[string]any) {
 		clonedProperties[key] = value
 	}
 
-	f.properties = &clonedProperties
+	f.PropertiesField = &clonedProperties
 }
