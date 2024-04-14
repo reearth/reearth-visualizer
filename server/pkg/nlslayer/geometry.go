@@ -8,106 +8,106 @@ import (
 type Geometry interface{}
 
 type Point struct {
-	pointType   string
-	coordinates []float64
+	PointTypeField   string    `msgpack:"PointTypeField"`
+	CoordinatesField []float64 `msgpack:"CoordinatesField"`
 }
 
 type LineString struct {
-	lineStringType string
-	coordinates    [][]float64
+	LineStringTypeField string      `msgpack:"LineStringTypeField"`
+	CoordinatesField    [][]float64 `msgpack:"CoordinatesField"`
 }
 
 type Polygon struct {
-	polygonType string
-	coordinates [][][]float64
+	PolygonTypeField string        `msgpack:"PolygonTypeField"`
+	CoordinatesField [][][]float64 `msgpack:"CoordinatesField"`
 }
 
 type MultiPolygon struct {
-	multiPolygonType string
-	coordinates      [][][][]float64
+	MultiPolygonTypeField string          `msgpack:"MultiPolygonTypeField"`
+	CoordinatesField      [][][][]float64 `msgpack:"CoordinatesField"`
 }
 
 type GeometryCollection struct {
-	geometryCollectionType string
-	geometries             []Geometry
+	GeometryCollectionTypeField string     `msgpack:"GeometryCollectionTypeField"`
+	GeometriesField             []Geometry `msgpack:"GeometriesField"`
 }
 
 func NewPoint(pointType string, coordinates []float64) *Point {
 	return &Point{
-		pointType:   pointType,
-		coordinates: coordinates,
+		PointTypeField:   pointType,
+		CoordinatesField: coordinates,
 	}
 }
 
 func (p *Point) PointType() string {
-	return p.pointType
+	return p.PointTypeField
 }
 
 func (p *Point) Coordinates() []float64 {
-	return append([]float64{}, p.coordinates...)
+	return append([]float64{}, p.CoordinatesField...)
 }
 
 func NewLineString(lineStringType string, coordinates [][]float64) *LineString {
 	return &LineString{
-		lineStringType: lineStringType,
-		coordinates:    coordinates,
+		LineStringTypeField: lineStringType,
+		CoordinatesField:    coordinates,
 	}
 }
 
 func (l *LineString) LineStringType() string {
-	return l.lineStringType
+	return l.LineStringTypeField
 }
 
 func (l *LineString) Coordinates() [][]float64 {
-	return append([][]float64{}, l.coordinates...)
+	return append([][]float64{}, l.CoordinatesField...)
 }
 
 func NewPolygon(polygonType string, coordinates [][][]float64) *Polygon {
 	return &Polygon{
-		polygonType: polygonType,
-		coordinates: coordinates,
+		PolygonTypeField: polygonType,
+		CoordinatesField: coordinates,
 	}
 }
 
 func (p *Polygon) PolygonType() string {
-	return p.polygonType
+	return p.PolygonTypeField
 }
 
 func (p *Polygon) Coordinates() [][][]float64 {
-	return append([][][]float64{}, p.coordinates...)
+	return append([][][]float64{}, p.CoordinatesField...)
 }
 
 func NewMultiPolygon(multiPolygonType string, coordinates [][][][]float64) *MultiPolygon {
 	return &MultiPolygon{
-		multiPolygonType: multiPolygonType,
-		coordinates:      coordinates,
+		MultiPolygonTypeField: multiPolygonType,
+		CoordinatesField:      coordinates,
 	}
 }
 
 func (m *MultiPolygon) MultiPolygonType() string {
-	return m.multiPolygonType
+	return m.MultiPolygonTypeField
 }
 
 func (m *MultiPolygon) Coordinates() [][][][]float64 {
-	return append([][][][]float64{}, m.coordinates...)
+	return append([][][][]float64{}, m.CoordinatesField...)
 }
 
 func NewGeometryCollection(geometryCollectionType string, geometries []Geometry) *GeometryCollection {
 	return &GeometryCollection{
-		geometryCollectionType: geometryCollectionType,
-		geometries:             geometries,
+		GeometryCollectionTypeField: geometryCollectionType,
+		GeometriesField:             geometries,
 	}
 }
 
 func (g *GeometryCollection) GeometryCollectionType() string {
-	return g.geometryCollectionType
+	return g.GeometryCollectionTypeField
 }
 
 func (g *GeometryCollection) Geometries() []Geometry {
 	if g == nil {
 		return nil
 	}
-	return append([]Geometry{}, g.geometries...)
+	return append([]Geometry{}, g.GeometriesField...)
 }
 
 func NewGeometryFromMap(data map[string]any) (Geometry, error) {

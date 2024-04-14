@@ -1,27 +1,27 @@
 package nlslayer
 
 type SketchInfo struct {
-	customPropertySchema *map[string]any
-	featureCollection    *FeatureCollection
+	CustomPropertySchemaField *map[string]any    `msgpack:"CustomPropertySchemaField"`
+	FeatureCollectionField    *FeatureCollection `msgpack:"FeatureCollectionField"`
 }
 
 func NewSketchInfo(customPropertySchema *map[string]any, featureCollection *FeatureCollection) *SketchInfo {
 	return &SketchInfo{
-		customPropertySchema: customPropertySchema,
-		featureCollection:    featureCollection,
+		CustomPropertySchemaField: customPropertySchema,
+		FeatureCollectionField:    featureCollection,
 	}
 }
 
 func (s *SketchInfo) CustomPropertySchema() *map[string]any {
-	return s.customPropertySchema
+	return s.CustomPropertySchemaField
 }
 
 func (s *SketchInfo) FeatureCollection() *FeatureCollection {
-	return s.featureCollection
+	return s.FeatureCollectionField
 }
 
 func (s *SketchInfo) SetCustomPropertySchema(schema *map[string]any) {
-	s.customPropertySchema = schema
+	s.CustomPropertySchemaField = schema
 }
 
 func (s *SketchInfo) Clone() *SketchInfo {
@@ -30,7 +30,7 @@ func (s *SketchInfo) Clone() *SketchInfo {
 	}
 
 	return &SketchInfo{
-		customPropertySchema: s.customPropertySchema,
-		featureCollection:    s.featureCollection,
+		CustomPropertySchemaField: s.CustomPropertySchemaField,
+		FeatureCollectionField:    s.FeatureCollectionField,
 	}
 }
