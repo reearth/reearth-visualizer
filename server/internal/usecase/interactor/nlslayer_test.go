@@ -20,7 +20,7 @@ func TestAddCustomProperties(t *testing.T) {
 	db := memory.New()
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -52,7 +52,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -105,7 +105,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -180,7 +180,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(id.NewProjectID()).RootLayer(id.NewLayerID()).Build()
 	_ = db.Scene.Save(ctx, scene)
-	il := NewNLSLayer(db)
+	il := NewNLSLayer(db, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
