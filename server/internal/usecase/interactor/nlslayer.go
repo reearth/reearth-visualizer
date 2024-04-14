@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
@@ -15,6 +17,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 type NLSLayer struct {
@@ -25,9 +28,10 @@ type NLSLayer struct {
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
 	transaction   usecasex.Transaction
+	redis         gateway.RedisGateway
 }
 
-func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
+func NewNLSLayer(r *repo.Container, redis gateway.RedisGateway) interfaces.NLSLayer {
 	return &NLSLayer{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		nlslayerRepo:    r.NLSLayer,
@@ -35,6 +39,7 @@ func NewNLSLayer(r *repo.Container) interfaces.NLSLayer {
 		propertyRepo:    r.Property,
 		pluginRepo:      r.Plugin,
 		transaction:     r.Transaction,
+		redis:           redis,
 	}
 }
 
@@ -102,6 +107,11 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, err
 	}
 
+	err = i.setNLSLayerToCache(ctx, layerSimple.ID(), layerSimple)
+	if err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return layerSimple, nil
 }
@@ -139,15 +149,24 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 		}
 	}()
 
-	l, err := i.nlslayerRepo.FindByID(ctx, lid)
+	var layer nlslayer.NLSLayer
+	layer, err = i.getNLSLayerFromCache(ctx, lid)
 	if err != nil {
 		return lid, nil, err
 	}
-	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
+
+	if layer == nil {
+		layer, err = i.nlslayerRepo.FindByID(ctx, lid)
+		if err != nil {
+			return lid, nil, err
+		}
+	}
+
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return lid, nil, err
 	}
 
-	if err := i.CheckSceneLock(ctx, l.Scene()); err != nil {
+	if err := i.CheckSceneLock(ctx, layer.Scene()); err != nil {
 		return lid, nil, err
 	}
 
@@ -156,7 +175,7 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 		return lid, nil, err
 	}
 	if parentLayer != nil {
-		if l.Scene() != parentLayer.Scene() {
+		if layer.Scene() != parentLayer.Scene() {
 			return lid, nil, errors.New("invalid layer")
 		}
 	}
@@ -171,17 +190,25 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 			return lid, nil, err
 		}
 	}
-	layers, err := i.fetchAllChildren(ctx, l)
+	layers, err := i.fetchAllChildren(ctx, layer)
 	if err != nil {
 		return lid, nil, err
 	}
-	layers = append(layers, l.ID())
+	layers = append(layers, layer.ID())
 	err = i.nlslayerRepo.RemoveAll(ctx, layers)
 	if err != nil {
 		return lid, nil, err
 	}
 
 	tx.Commit()
+
+	for _, l := range layers {
+		err = i.removeNLSLayerFromCache(ctx, l)
+		if err != nil {
+			return l, nil, err
+		}
+	}
+
 	return lid, parentLayer, nil
 }
 
@@ -198,10 +225,19 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 		}
 	}()
 
-	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	var layer nlslayer.NLSLayer
+	layer, err = i.getNLSLayerFromCache(ctx, inp.LayerID)
 	if err != nil {
 		return nil, err
 	}
+
+	if layer == nil {
+		layer, err = i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nil, err
 	}
@@ -224,6 +260,12 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 	}
 
 	tx.Commit()
+
+	err = i.setNLSLayerToCache(ctx, layer.ID(), layer)
+	if err != nil {
+		return nil, err
+	}
+
 	return layer, nil
 }
 
@@ -731,4 +773,38 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 
 	tx.Commit()
 	return inp.FeatureID, nil
+}
+
+func (i *NLSLayer) getNLSLayerFromCache(ctx context.Context, lid id.NLSLayerID) (nlslayer.NLSLayer, error) {
+	cacheKey := nlslayer.NLSLayerCacheKey(lid)
+	val, err := i.redis.GetValue(ctx, cacheKey)
+	if err != nil {
+		if err == redis.Nil {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	var l *nlslayer.NLSLayerSimple
+	if err := msgpack.Unmarshal([]byte(val), &l); err != nil {
+		return nil, err
+	}
+
+	return l, nil
+}
+
+func (i *NLSLayer) setNLSLayerToCache(ctx context.Context, lid id.NLSLayerID, layer nlslayer.NLSLayer) error {
+	cacheKey := nlslayer.NLSLayerCacheKey(lid)
+	data, err := msgpack.Marshal(layer)
+	if err != nil {
+		return err
+	}
+
+	return i.redis.SetValue(ctx, cacheKey, data)
+}
+
+func (i *NLSLayer) removeNLSLayerFromCache(ctx context.Context, lid id.NLSLayerID) error {
+	cacheKey := nlslayer.NLSLayerCacheKey(lid)
+	return i.redis.RemoveValue(ctx, cacheKey)
 }
