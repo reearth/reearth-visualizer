@@ -59,8 +59,8 @@ func TestNewGeometryFromMap(t *testing.T) {
 				"coordinates": []interface{}{1.0, 2.0},
 			},
 			want: &Point{
-				pointType:   "Point",
-				coordinates: []float64{1.0, 2.0},
+				PointTypeField:   "Point",
+				CoordinatesField: []float64{1.0, 2.0},
 			},
 			wantErr: false,
 		},
@@ -74,8 +74,8 @@ func TestNewGeometryFromMap(t *testing.T) {
 				},
 			},
 			want: &LineString{
-				lineStringType: "LineString",
-				coordinates: [][]float64{
+				LineStringTypeField: "LineString",
+				CoordinatesField: [][]float64{
 					{1.0, 2.0},
 					{3.0, 4.0},
 				},
@@ -96,8 +96,8 @@ func TestNewGeometryFromMap(t *testing.T) {
 				},
 			},
 			want: &Polygon{
-				polygonType: "Polygon",
-				coordinates: [][][]float64{{
+				PolygonTypeField: "Polygon",
+				CoordinatesField: [][][]float64{{
 					{1.0, 2.0},
 					{3.0, 4.0},
 					{5.0, 6.0},
@@ -122,8 +122,8 @@ func TestNewGeometryFromMap(t *testing.T) {
 				},
 			},
 			want: &MultiPolygon{
-				multiPolygonType: "MultiPolygon",
-				coordinates: [][][][]float64{{{
+				MultiPolygonTypeField: "MultiPolygon",
+				CoordinatesField: [][][][]float64{{{
 					{1.0, 2.0},
 					{3.0, 4.0},
 					{5.0, 6.0},
@@ -175,22 +175,22 @@ func TestNewGeometryFromMap(t *testing.T) {
 				},
 			},
 			want: &GeometryCollection{
-				geometryCollectionType: "GeometryCollection",
-				geometries: []Geometry{
+				GeometryCollectionTypeField: "GeometryCollection",
+				GeometriesField: []Geometry{
 					&Point{
-						pointType:   "Point",
-						coordinates: []float64{1.0, 2.0},
+						PointTypeField:   "Point",
+						CoordinatesField: []float64{1.0, 2.0},
 					},
 					&LineString{
-						lineStringType: "LineString",
-						coordinates: [][]float64{
+						LineStringTypeField: "LineString",
+						CoordinatesField: [][]float64{
 							{1.0, 2.0},
 							{3.0, 4.0},
 						},
 					},
 					&Polygon{
-						polygonType: "Polygon",
-						coordinates: [][][]float64{{
+						PolygonTypeField: "Polygon",
+						CoordinatesField: [][][]float64{{
 							{1.0, 2.0},
 							{3.0, 4.0},
 							{5.0, 6.0},
@@ -198,8 +198,8 @@ func TestNewGeometryFromMap(t *testing.T) {
 						}},
 					},
 					&MultiPolygon{
-						multiPolygonType: "MultiPolygon",
-						coordinates: [][][][]float64{{{
+						MultiPolygonTypeField: "MultiPolygon",
+						CoordinatesField: [][][][]float64{{{
 							{1.0, 2.0},
 							{3.0, 4.0},
 							{5.0, 6.0},
