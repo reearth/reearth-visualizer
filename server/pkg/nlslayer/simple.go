@@ -5,26 +5,26 @@ import (
 )
 
 type NLSLayerSimple struct {
-	layerBase
+	LayerBase
 }
 
 func (l *NLSLayerSimple) ID() ID {
-	return l.layerBase.ID()
+	return l.LayerBase.ID()
 }
 
 func (l *NLSLayerSimple) IDRef() *ID {
 	if l == nil {
 		return nil
 	}
-	return l.layerBase.IDRef()
+	return l.LayerBase.IDRef()
 }
 
 func (l *NLSLayerSimple) LayerType() LayerType {
-	return l.layerBase.LayerType()
+	return l.LayerBase.LayerType()
 }
 
 func (l *NLSLayerSimple) Scene() SceneID {
-	return l.layerBase.SceneField
+	return l.LayerBase.SceneField
 }
 
 func (l *NLSLayerSimple) LinkedDataset() *pl.DatasetID {
@@ -32,42 +32,42 @@ func (l *NLSLayerSimple) LinkedDataset() *pl.DatasetID {
 }
 
 func (l *NLSLayerSimple) Title() string {
-	return l.layerBase.Title()
+	return l.LayerBase.Title()
 }
 
 func (l *NLSLayerSimple) IsVisible() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.VisibleField
+	return l.LayerBase.VisibleField
 }
 
 func (l *NLSLayerSimple) HasInfobox() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.InfoboxField != nil
+	return l.LayerBase.InfoboxField != nil
 }
 
 func (l *NLSLayerSimple) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
-	return l.layerBase.InfoboxField
+	return l.LayerBase.InfoboxField
 }
 
 func (l *NLSLayerSimple) SetVisible(visible bool) {
 	if l == nil {
 		return
 	}
-	l.layerBase.VisibleField = visible
+	l.LayerBase.VisibleField = visible
 }
 
 func (l *NLSLayerSimple) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
-	l.layerBase.InfoboxField = infobox
+	l.LayerBase.InfoboxField = infobox
 }
 
 func (l *NLSLayerSimple) LayerRef() *NLSLayer {
@@ -90,10 +90,10 @@ func (l *NLSLayerSimple) Clone() Cloner {
 		return nil
 	}
 
-	clonedBase := l.layerBase.Clone()
+	clonedBase := l.LayerBase.Clone()
 
 	return &NLSLayerSimple{
-		layerBase: *clonedBase,
+		LayerBase: *clonedBase,
 	}
 }
 
@@ -101,33 +101,33 @@ func (l *NLSLayerSimple) IsSketch() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.IsSketchField
+	return l.LayerBase.IsSketchField
 }
 
 func (l *NLSLayerSimple) SetIsSketch(isSketch bool) {
 	if l == nil {
 		return
 	}
-	l.layerBase.IsSketchField = isSketch
+	l.LayerBase.IsSketchField = isSketch
 }
 
 func (l *NLSLayerSimple) HasSketch() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.SketchField != nil
+	return l.LayerBase.SketchField != nil
 }
 
 func (l *NLSLayerSimple) Sketch() *SketchInfo {
 	if l == nil {
 		return nil
 	}
-	return l.layerBase.SketchField
+	return l.LayerBase.SketchField
 }
 
 func (l *NLSLayerSimple) SetSketch(sketch *SketchInfo) {
 	if l == nil {
 		return
 	}
-	l.layerBase.SketchField = sketch
+	l.LayerBase.SketchField = sketch
 }

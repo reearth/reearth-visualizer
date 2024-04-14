@@ -24,7 +24,7 @@ type NLSLayerGroupBuilder struct {
 }
 
 func NewNLSLayerGroup() *NLSLayerGroupBuilder {
-	return &NLSLayerGroupBuilder{l: &NLSLayerGroup{layerBase: layerBase{}}}
+	return &NLSLayerGroupBuilder{l: &NLSLayerGroup{LayerBase: LayerBase{}}}
 }
 
 func (b *NLSLayerGroupBuilder) Build() (*NLSLayerGroup, error) {
@@ -42,8 +42,8 @@ func (b *NLSLayerGroupBuilder) MustBuild() *NLSLayerGroup {
 	return group
 }
 
-func (b *NLSLayerGroupBuilder) base(layer layerBase) *NLSLayerGroupBuilder {
-	b.l.layerBase = layer
+func (b *NLSLayerGroupBuilder) base(layer LayerBase) *NLSLayerGroupBuilder {
+	b.l.LayerBase = layer
 	return b
 }
 

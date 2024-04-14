@@ -24,7 +24,7 @@ type NLSLayerSimpleBuilder struct {
 }
 
 func NewNLSLayerSimple() *NLSLayerSimpleBuilder {
-	return &NLSLayerSimpleBuilder{l: &NLSLayerSimple{layerBase: layerBase{}}}
+	return &NLSLayerSimpleBuilder{l: &NLSLayerSimple{LayerBase: LayerBase{}}}
 }
 
 func (b *NLSLayerSimpleBuilder) Build() (*NLSLayerSimple, error) {
@@ -42,8 +42,8 @@ func (b *NLSLayerSimpleBuilder) MustBuild() *NLSLayerSimple {
 	return Simple
 }
 
-func (b *NLSLayerSimpleBuilder) base(layer layerBase) *NLSLayerSimpleBuilder {
-	b.l.layerBase = layer
+func (b *NLSLayerSimpleBuilder) base(layer LayerBase) *NLSLayerSimpleBuilder {
+	b.l.LayerBase = layer
 	return b
 }
 
