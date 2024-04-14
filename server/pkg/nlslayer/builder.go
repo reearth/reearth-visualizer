@@ -1,11 +1,11 @@
 package nlslayer
 
 type Builder struct {
-	base layerBase
+	base LayerBase
 }
 
 func New() *Builder {
-	return &Builder{base: layerBase{}}
+	return &Builder{base: LayerBase{}}
 }
 
 func (b *Builder) Group() *NLSLayerGroupBuilder {

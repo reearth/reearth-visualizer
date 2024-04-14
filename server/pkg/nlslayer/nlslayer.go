@@ -60,7 +60,7 @@ func ToLayerSimpleRef(l *NLSLayer) *NLSLayerSimple {
 	return nil
 }
 
-type layerBase struct {
+type LayerBase struct {
 	IDField        ID          `msgpack:"IDField"`
 	LayerTypeField LayerType   `msgpack:"LayerTypeField"`
 	SceneField     SceneID     `msgpack:"SceneField"`
@@ -72,82 +72,82 @@ type layerBase struct {
 	SketchField    *SketchInfo `msgpack:"SketchField"`
 }
 
-func (l *layerBase) ID() ID {
+func (l *LayerBase) ID() ID {
 	return l.IDField
 }
 
-func (l *layerBase) IDRef() *ID {
+func (l *LayerBase) IDRef() *ID {
 	if l == nil {
 		return nil
 	}
 	return l.IDField.Ref()
 }
 
-func (l *layerBase) LayerType() LayerType {
+func (l *LayerBase) LayerType() LayerType {
 	if l == nil {
 		return ""
 	}
 	return l.LayerTypeField
 }
 
-func (l *layerBase) Scene() SceneID {
+func (l *LayerBase) Scene() SceneID {
 	return l.SceneField
 }
 
-func (l *layerBase) Config() *Config {
+func (l *LayerBase) Config() *Config {
 	return l.ConfigField
 }
 
-func (l *layerBase) Title() string {
+func (l *LayerBase) Title() string {
 	if l == nil {
 		return ""
 	}
 	return l.TitleField
 }
 
-func (l *layerBase) IsVisible() bool {
+func (l *LayerBase) IsVisible() bool {
 	if l == nil {
 		return false
 	}
 	return l.VisibleField
 }
 
-func (l *layerBase) HasInfobox() bool {
+func (l *LayerBase) HasInfobox() bool {
 	if l == nil {
 		return false
 	}
 	return l.InfoboxField != nil
 }
 
-func (l *layerBase) Infobox() *Infobox {
+func (l *LayerBase) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
 	return l.InfoboxField
 }
 
-func (l *layerBase) SetVisible(visible bool) {
+func (l *LayerBase) SetVisible(visible bool) {
 	if l == nil {
 		return
 	}
 	l.VisibleField = visible
 }
 
-func (l *layerBase) SetInfobox(infobox *Infobox) {
+func (l *LayerBase) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
 	l.InfoboxField = infobox
 }
 
-func (l *layerBase) Rename(name string) {
+func (l *LayerBase) Rename(name string) {
 	if l == nil {
 		return
 	}
 	l.TitleField = name
 }
 
-func (l *layerBase) UpdateConfig(newConfig *Config) {
+func (l *LayerBase) UpdateConfig(newConfig *Config) {
 	if l == nil || newConfig == nil {
 		return
 	}
@@ -162,7 +162,7 @@ func (l *layerBase) UpdateConfig(newConfig *Config) {
 	}
 }
 
-func (l *layerBase) Clone() *layerBase {
+func (l *LayerBase) Clone() *LayerBase {
 	if l == nil {
 		return nil
 	}
@@ -172,7 +172,7 @@ func (l *layerBase) Clone() *layerBase {
 		clonedConfig = &clonedConfigItem
 	}
 
-	cloned := &layerBase{
+	cloned := &LayerBase{
 		IDField:        l.IDField,
 		LayerTypeField: l.LayerTypeField,
 		SceneField:     l.SceneField,
@@ -193,7 +193,7 @@ func (l *layerBase) Clone() *layerBase {
 	return cloned
 }
 
-func (l *layerBase) Duplicate() NLSLayer {
+func (l *LayerBase) Duplicate() NLSLayer {
 	if l == nil {
 		return nil
 	}
@@ -203,7 +203,7 @@ func (l *layerBase) Duplicate() NLSLayer {
 		duplicatedConfig = &duplicatedConfigItem
 	}
 
-	duplicated := &layerBase{
+	duplicated := &LayerBase{
 		IDField:        NewID(),
 		LayerTypeField: l.LayerTypeField,
 		SceneField:     l.SceneField,
@@ -221,38 +221,38 @@ func (l *layerBase) Duplicate() NLSLayer {
 		duplicated.SketchField = l.SketchField.Clone()
 	}
 
-	return &NLSLayerSimple{layerBase: *duplicated}
+	return &NLSLayerSimple{LayerBase: *duplicated}
 }
 
-func (l *layerBase) IsSketch() bool {
+func (l *LayerBase) IsSketch() bool {
 	if l == nil {
 		return false
 	}
 	return l.IsSketchField
 }
 
-func (l *layerBase) SetIsSketch(isSketch bool) {
+func (l *LayerBase) SetIsSketch(isSketch bool) {
 	if l == nil {
 		return
 	}
 	l.IsSketchField = isSketch
 }
 
-func (l *layerBase) HasSketch() bool {
+func (l *LayerBase) HasSketch() bool {
 	if l == nil {
 		return false
 	}
 	return l.SketchField != nil
 }
 
-func (l *layerBase) Sketch() *SketchInfo {
+func (l *LayerBase) Sketch() *SketchInfo {
 	if l == nil {
 		return nil
 	}
 	return l.SketchField
 }
 
-func (l *layerBase) SetSketchInfo(sketch *SketchInfo) {
+func (l *LayerBase) SetSketchInfo(sketch *SketchInfo) {
 	if l == nil {
 		return
 	}
