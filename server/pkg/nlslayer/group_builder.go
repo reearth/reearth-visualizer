@@ -28,7 +28,7 @@ func NewNLSLayerGroup() *NLSLayerGroupBuilder {
 }
 
 func (b *NLSLayerGroupBuilder) Build() (*NLSLayerGroup, error) {
-	if b.l.id.IsNil() {
+	if b.l.IDField.IsNil() {
 		return nil, ErrInvalidID
 	}
 	return b.l, nil
@@ -48,22 +48,22 @@ func (b *NLSLayerGroupBuilder) base(layer layerBase) *NLSLayerGroupBuilder {
 }
 
 func (b *NLSLayerGroupBuilder) ID(id ID) *NLSLayerGroupBuilder {
-	b.l.id = id
+	b.l.IDField = id
 	return b
 }
 
 func (b *NLSLayerGroupBuilder) NewID() *NLSLayerGroupBuilder {
-	b.l.id = NewID()
+	b.l.IDField = NewID()
 	return b
 }
 
 func (b *NLSLayerGroupBuilder) LayerType(t LayerType) *NLSLayerGroupBuilder {
-	b.l.layerType = t
+	b.l.LayerTypeField = t
 	return b
 }
 
 func (b *NLSLayerGroupBuilder) Scene(s SceneID) *NLSLayerGroupBuilder {
-	b.l.scene = s
+	b.l.SceneField = s
 	return b
 }
 
@@ -73,12 +73,12 @@ func (b *NLSLayerGroupBuilder) Layers(ll *IDList) *NLSLayerGroupBuilder {
 }
 
 func (b *NLSLayerGroupBuilder) Config(c *Config) *NLSLayerGroupBuilder {
-	b.l.config = c
+	b.l.ConfigField = c
 	return b
 }
 
 func (b *NLSLayerGroupBuilder) Title(t string) *NLSLayerGroupBuilder {
-	b.l.title = t
+	b.l.TitleField = t
 	return b
 }
 
@@ -88,21 +88,21 @@ func (b *NLSLayerGroupBuilder) Root(r bool) *NLSLayerGroupBuilder {
 }
 
 func (b *NLSLayerGroupBuilder) IsVisible(i bool) *NLSLayerGroupBuilder {
-	b.l.visible = i
+	b.l.VisibleField = i
 	return b
 }
 
 func (b *NLSLayerGroupBuilder) Infobox(infobox *Infobox) *NLSLayerGroupBuilder {
-	b.l.infobox = infobox
+	b.l.InfoboxField = infobox
 	return b
 }
 
 func (b *NLSLayerGroupBuilder) IsSketch(i bool) *NLSLayerGroupBuilder {
-	b.l.isSketch = i
+	b.l.IsSketchField = i
 	return b
 }
 
 func (b *NLSLayerGroupBuilder) Sketch(sketch *SketchInfo) *NLSLayerGroupBuilder {
-	b.l.sketch = sketch
+	b.l.SketchField = sketch
 	return b
 }
