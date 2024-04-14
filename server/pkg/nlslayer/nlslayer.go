@@ -1,5 +1,7 @@
 package nlslayer
 
+import "fmt"
+
 type NLSLayer interface {
 	Cloner
 	ID() ID
@@ -59,90 +61,90 @@ func ToLayerSimpleRef(l *NLSLayer) *NLSLayerSimple {
 }
 
 type layerBase struct {
-	id        ID
-	layerType LayerType
-	scene     SceneID
-	title     string
-	visible   bool
-	infobox   *Infobox
-	config    *Config
-	isSketch  bool
-	sketch    *SketchInfo
+	IDField        ID          `msgpack:"IDField"`
+	LayerTypeField LayerType   `msgpack:"LayerTypeField"`
+	SceneField     SceneID     `msgpack:"SceneField"`
+	TitleField     string      `msgpack:"TitleField"`
+	VisibleField   bool        `msgpack:"VisibleField"`
+	InfoboxField   *Infobox    `msgpack:"InfoboxField"`
+	ConfigField    *Config     `msgpack:"ConfigField"`
+	IsSketchField  bool        `msgpack:"IsSketchField"`
+	SketchField    *SketchInfo `msgpack:"SketchField"`
 }
 
 func (l *layerBase) ID() ID {
-	return l.id
+	return l.IDField
 }
 
 func (l *layerBase) IDRef() *ID {
 	if l == nil {
 		return nil
 	}
-	return l.id.Ref()
+	return l.IDField.Ref()
 }
 
 func (l *layerBase) LayerType() LayerType {
 	if l == nil {
 		return ""
 	}
-	return l.layerType
+	return l.LayerTypeField
 }
 
 func (l *layerBase) Scene() SceneID {
-	return l.scene
+	return l.SceneField
 }
 
 func (l *layerBase) Config() *Config {
-	return l.config
+	return l.ConfigField
 }
 
 func (l *layerBase) Title() string {
 	if l == nil {
 		return ""
 	}
-	return l.title
+	return l.TitleField
 }
 
 func (l *layerBase) IsVisible() bool {
 	if l == nil {
 		return false
 	}
-	return l.visible
+	return l.VisibleField
 }
 
 func (l *layerBase) HasInfobox() bool {
 	if l == nil {
 		return false
 	}
-	return l.infobox != nil
+	return l.InfoboxField != nil
 }
 
 func (l *layerBase) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
-	return l.infobox
+	return l.InfoboxField
 }
 
 func (l *layerBase) SetVisible(visible bool) {
 	if l == nil {
 		return
 	}
-	l.visible = visible
+	l.VisibleField = visible
 }
 
 func (l *layerBase) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
-	l.infobox = infobox
+	l.InfoboxField = infobox
 }
 
 func (l *layerBase) Rename(name string) {
 	if l == nil {
 		return
 	}
-	l.title = name
+	l.TitleField = name
 }
 
 func (l *layerBase) UpdateConfig(newConfig *Config) {
@@ -150,13 +152,13 @@ func (l *layerBase) UpdateConfig(newConfig *Config) {
 		return
 	}
 
-	if l.config == nil {
-		l.config = newConfig
+	if l.ConfigField == nil {
+		l.ConfigField = newConfig
 		return
 	}
 
 	for key, value := range *newConfig {
-		(*l.config)[key] = value
+		(*l.ConfigField)[key] = value
 	}
 }
 
@@ -165,27 +167,27 @@ func (l *layerBase) Clone() *layerBase {
 		return nil
 	}
 	var clonedConfig *Config
-	if l.config != nil {
-		clonedConfigItem := l.config.Clone()
+	if l.ConfigField != nil {
+		clonedConfigItem := l.ConfigField.Clone()
 		clonedConfig = &clonedConfigItem
 	}
 
 	cloned := &layerBase{
-		id:        l.id,
-		layerType: l.layerType,
-		scene:     l.scene,
-		title:     l.title,
-		visible:   l.visible,
-		config:    clonedConfig,
-		isSketch:  l.isSketch,
+		IDField:        l.IDField,
+		LayerTypeField: l.LayerTypeField,
+		SceneField:     l.SceneField,
+		TitleField:     l.TitleField,
+		VisibleField:   l.VisibleField,
+		ConfigField:    clonedConfig,
+		IsSketchField:  l.IsSketchField,
 	}
 
-	if l.infobox != nil {
-		cloned.infobox = l.infobox.Clone()
+	if l.InfoboxField != nil {
+		cloned.InfoboxField = l.InfoboxField.Clone()
 	}
 
-	if l.sketch != nil {
-		cloned.sketch = l.sketch.Clone()
+	if l.SketchField != nil {
+		cloned.SketchField = l.SketchField.Clone()
 	}
 
 	return cloned
@@ -196,27 +198,27 @@ func (l *layerBase) Duplicate() NLSLayer {
 		return nil
 	}
 	var duplicatedConfig *Config
-	if l.config != nil {
-		duplicatedConfigItem := l.config.Clone()
+	if l.ConfigField != nil {
+		duplicatedConfigItem := l.ConfigField.Clone()
 		duplicatedConfig = &duplicatedConfigItem
 	}
 
 	duplicated := &layerBase{
-		id:        NewID(),
-		layerType: l.layerType,
-		scene:     l.scene,
-		title:     l.title,
-		visible:   l.visible,
-		config:    duplicatedConfig,
-		isSketch:  l.isSketch,
+		IDField:        NewID(),
+		LayerTypeField: l.LayerTypeField,
+		SceneField:     l.SceneField,
+		TitleField:     l.TitleField,
+		VisibleField:   l.VisibleField,
+		ConfigField:    duplicatedConfig,
+		IsSketchField:  l.IsSketchField,
 	}
 
-	if l.infobox != nil {
-		duplicated.infobox = l.infobox.Clone()
+	if l.InfoboxField != nil {
+		duplicated.InfoboxField = l.InfoboxField.Clone()
 	}
 
-	if l.sketch != nil {
-		duplicated.sketch = l.sketch.Clone()
+	if l.SketchField != nil {
+		duplicated.SketchField = l.SketchField.Clone()
 	}
 
 	return &NLSLayerSimple{layerBase: *duplicated}
@@ -226,33 +228,37 @@ func (l *layerBase) IsSketch() bool {
 	if l == nil {
 		return false
 	}
-	return l.isSketch
+	return l.IsSketchField
 }
 
 func (l *layerBase) SetIsSketch(isSketch bool) {
 	if l == nil {
 		return
 	}
-	l.isSketch = isSketch
+	l.IsSketchField = isSketch
 }
 
 func (l *layerBase) HasSketch() bool {
 	if l == nil {
 		return false
 	}
-	return l.sketch != nil
+	return l.SketchField != nil
 }
 
 func (l *layerBase) Sketch() *SketchInfo {
 	if l == nil {
 		return nil
 	}
-	return l.sketch
+	return l.SketchField
 }
 
 func (l *layerBase) SetSketchInfo(sketch *SketchInfo) {
 	if l == nil {
 		return
 	}
-	l.sketch = sketch
+	l.SketchField = sketch
+}
+
+func NLSLayerCacheKey(id ID) string {
+	return fmt.Sprintf("NLSLayer:%s", id)
 }
