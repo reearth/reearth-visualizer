@@ -102,6 +102,10 @@ func (l *NLSLayerGroup) Clone() Cloner {
 	}
 
 	clonedBase := l.LayerBase.Clone()
+	clonedBaseTyped, ok := clonedBase.(*LayerBase)
+	if !ok {
+		return nil
+	}
 
 	var clonedChildren *IDList
 	if l.children != nil {
@@ -109,7 +113,7 @@ func (l *NLSLayerGroup) Clone() Cloner {
 	}
 
 	return &NLSLayerGroup{
-		LayerBase: *clonedBase,
+		LayerBase: *clonedBaseTyped,
 		children:  clonedChildren,
 		root:      l.root,
 	}

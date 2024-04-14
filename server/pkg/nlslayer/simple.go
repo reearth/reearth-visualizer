@@ -91,9 +91,13 @@ func (l *NLSLayerSimple) Clone() Cloner {
 	}
 
 	clonedBase := l.LayerBase.Clone()
+	clonedBaseTyped, ok := clonedBase.(*LayerBase)
+	if !ok {
+		return nil
+	}
 
 	return &NLSLayerSimple{
-		LayerBase: *clonedBase,
+		LayerBase: *clonedBaseTyped,
 	}
 }
 

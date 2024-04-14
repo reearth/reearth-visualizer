@@ -162,7 +162,7 @@ func (l *LayerBase) UpdateConfig(newConfig *Config) {
 	}
 }
 
-func (l *LayerBase) Clone() *LayerBase {
+func (l *LayerBase) Clone() Cloner {
 	if l == nil {
 		return nil
 	}
@@ -250,6 +250,13 @@ func (l *LayerBase) Sketch() *SketchInfo {
 		return nil
 	}
 	return l.SketchField
+}
+
+func (l *LayerBase) SetSketch(sketch *SketchInfo) {
+	if l == nil {
+		return
+	}
+	l.SketchField = sketch
 }
 
 func (l *LayerBase) SetSketchInfo(sketch *SketchInfo) {
