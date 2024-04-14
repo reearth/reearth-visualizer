@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/alicebob/miniredis/v2"
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/samber/lo"
@@ -300,11 +301,18 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 }
 
 func TestNLSLayerCRUD(t *testing.T) {
+	mr, err := miniredis.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer mr.Close()
+
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
+		RedisHost: mr.Addr(),
 	}, true, baseSeeder)
 
 	pId := createProject(e)
@@ -653,12 +661,18 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 }
 
 func TestInfoboxBlocksCRUD(t *testing.T) {
+	mr, err := miniredis.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer mr.Close()
 
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
+		RedisHost: mr.Addr(),
 	}, true, baseSeeder)
 
 	pId := createProject(e)
@@ -755,11 +769,18 @@ func addCustomProperties(
 }
 
 func TestCustomProperties(t *testing.T) {
+	mr, err := miniredis.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer mr.Close()
+
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
+		RedisHost: mr.Addr(),
 	}, true, baseSeeder)
 
 	pId := createProject(e)
