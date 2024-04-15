@@ -564,10 +564,19 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 		}
 	}()
 
-	layer, err := i.nlslayerRepo.FindByID(ctx, lid)
+	var layer nlslayer.NLSLayer
+	layer, err = i.getNLSLayerFromCache(ctx, lid)
 	if err != nil {
 		return nil, err
 	}
+
+	if layer == nil {
+		layer, err = i.nlslayerRepo.FindByID(ctx, lid)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nil, err
 	}
@@ -580,6 +589,12 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	}
 
 	tx.Commit()
+
+	err = i.setNLSLayerToCache(ctx, duplicatedLayer.ID(), duplicatedLayer)
+	if err != nil {
+		return nil, err
+	}
+
 	return duplicatedLayer, nil
 }
 
