@@ -8171,6 +8171,7 @@ input AddLayerItemInput {
   name: String
   lat: Float
   lng: Float
+  height: Float
 }
 
 input AddLayerGroupInput {
@@ -53915,7 +53916,7 @@ func (ec *executionContext) unmarshalInputAddLayerItemInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"parentLayerId", "pluginId", "extensionId", "index", "name", "lat", "lng"}
+	fieldsInOrder := [...]string{"parentLayerId", "pluginId", "extensionId", "index", "name", "lat", "lng", "height"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -53975,6 +53976,14 @@ func (ec *executionContext) unmarshalInputAddLayerItemInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lng"))
 			it.Lng, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "height":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("height"))
+			it.Height, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}

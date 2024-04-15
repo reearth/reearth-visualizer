@@ -30,6 +30,7 @@ import {
   IntersectionTests,
   Matrix4,
   SceneMode,
+  defined
 } from "cesium";
 import { useCallback, MutableRefObject } from "react";
 
@@ -164,12 +165,20 @@ export const getLocationFromScreen = (
   const camera = scene.camera;
   const ellipsoid = scene.globe.ellipsoid;
   let cartesian;
-  if (withTerrain) {
-    const ray = camera.getPickRay(new Cartesian2(x, y));
-    if (ray) {
-      cartesian = scene.globe.pick(ray, scene);
+  const pickedObject = scene.pick(new Cartesian2(x, y));
+  
+  if (defined(pickedObject)) {
+    
+    if (scene.pickPositionSupported) {
+      cartesian = scene.pickPosition(new Cartesian2(x, y));
     }
-  }
+    if (!cartesian) {
+      const ray = camera.getPickRay(new Cartesian2(x, y));
+      if (ray) {
+        cartesian = scene.globe.pick(ray, scene);
+      }
+    }
+  } 
   if (!cartesian) {
     cartesian = camera?.pickEllipsoid(new Cartesian2(x, y), ellipsoid);
   }

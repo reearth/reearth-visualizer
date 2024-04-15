@@ -16,7 +16,7 @@ var pluginManifestJSON []byte
 var pluginManifestJSON_ja []byte
 
 var pluginTranslationList = manifest.TranslationMap{
-	"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja),
+	// "ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja),
 }
 var pluginManifest = manifest.MustParseSystemFromBytes(pluginManifestJSON, nil, pluginTranslationList.TranslatedRef())
 

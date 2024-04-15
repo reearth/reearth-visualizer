@@ -103,7 +103,7 @@ const LayerItem = ({
           ]}
         />
       }>
-      <>
+      <ContentWrapper>
         {isEditing ? (
           <StyledTextInput
             value={newValue}
@@ -113,25 +113,34 @@ const LayerItem = ({
             onBlur={handleEditExit}
           />
         ) : (
-          <TitleText size="footnote" onDoubleClick={handleDoubleClick}>
-            {layerTitle}
-          </TitleText>
+          <LayerTitle onDoubleClick={handleDoubleClick}>{layerTitle}</LayerTitle>
         )}
         <HideLayer onClick={handleUpdateVisibility}>
           <Text size="footnote">{value}</Text>
         </HideLayer>
-      </>
+      </ContentWrapper>
     </ListItem>
   );
 };
 
 export default LayerItem;
 
-const TitleText = styled(Text)`
-  flex: 1;
-  word-break: break-all;
-  text-align: left;
-  padding-right: 10px;
+const LayerTitle = styled.div`
+  overflow: hidden;
+  color: ${({ theme }) => theme.content.main};
+  text-overflow: ellipsis;
+  font-family: Noto Sans;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 const HideLayer = styled.div`

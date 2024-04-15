@@ -94,6 +94,7 @@ type AddLayerItemInput struct {
 	Name          *string  `json:"name"`
 	Lat           *float64 `json:"lat"`
 	Lng           *float64 `json:"lng"`
+	Height        *float64 `json:"height"`
 }
 
 type AddLayerItemPayload struct {

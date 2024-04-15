@@ -194,7 +194,13 @@ function convertLegacyLayerItem(l: LegacyLayer): LayerSimple | undefined {
       data = {
         type: "osm-buildings",
       };
-    } else if (l.property?.default?.tileset) {
+    }
+    else if (l.property?.default?.sourceType === "google-photorealistic") {
+      data = {
+        type: "google-photorealistic",
+      };
+    }
+     else if (l.property?.default?.tileset) {
       data = {
         type: "3dtiles",
         url: l.property.default.tileset,

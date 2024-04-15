@@ -25,7 +25,7 @@ function Tileset({
 }: Props): JSX.Element | null {
   const { shadows, colorBlendMode } = property ?? {};
   const boxId = `${layer?.id}_box`;
-  const { tilesetUrl, ref, style, clippingPlanes, builtinBoxProps } = useHooks({
+  const { tilesetUrl, ref, style, clippingPlanes, builtinBoxProps, googleMapResource } = useHooks({
     id,
     boxId,
     isVisible,
@@ -35,6 +35,7 @@ function Tileset({
     meta,
     evalFeature,
   });
+
   const boxProperty = useMemo(
     () => ({
       ...(layer?.layer?.type === "simple" ? layer?.layer?.box : {}),
@@ -42,8 +43,30 @@ function Tileset({
     }),
     [layer?.layer, builtinBoxProps?.property],
   );
+  
   const boxLayer = useMemo(() => ({ ...layer, id: boxId }), [layer, boxId]);
-
+  if (googleMapResource) {
+    
+    return (
+      <>
+        <Cesium3DTileset ref={ref} url={googleMapResource.url} />
+        {builtinBoxProps && (
+          <Box
+            {...props}
+            id={boxId}
+            sceneProperty={sceneProperty}
+            property={boxProperty as any}
+            geometry={builtinBoxProps.geometry}
+            feature={feature}
+            layer={boxLayer as ComputedLayer}
+            isVisible={builtinBoxProps.visible}
+            evalFeature={evalFeature}
+            onLayerEdit={builtinBoxProps.handleLayerEdit}
+          />
+        )}
+      </>
+    );
+  }
   return !isVisible || !tilesetUrl ? null : (
     <>
       <Cesium3DTileset

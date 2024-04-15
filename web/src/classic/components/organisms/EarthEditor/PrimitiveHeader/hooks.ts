@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 
-import { useGetPrimitivesQuery, useAddLayerItemFromPrimitiveMutation } from "@reearth/classic/gql";
+import {
+  useGetPrimitivesQuery,
+  useAddLayerItemFromPrimitiveMutation,
+  useUpdatePropertyValueMutation,
+} from "@reearth/classic/gql";
+import { valueTypeToGQL, valueToGQL } from "@reearth/classic/util/value";
 import { useLang } from "@reearth/services/i18n";
 import { useSceneId, useSelected } from "@reearth/services/state";
 
@@ -18,6 +23,7 @@ export default () => {
   });
 
   const [addLayerItemFromPrimitiveMutation] = useAddLayerItemFromPrimitiveMutation();
+  const [updatePropertyValue] = useUpdatePropertyValueMutation();
 
   const primitives = useMemo(
     () =>
@@ -44,8 +50,9 @@ export default () => {
           onDrop: async (
             layerId?: string,
             index?: number,
-            location?: { lat: number; lng: number },
+            location?: { lat: number; lng: number; height: number },
           ) => {
+
             if (!sceneId || !layerId) return;
             const { data } = await addLayerItemFromPrimitiveMutation({
               variables: {
@@ -56,9 +63,9 @@ export default () => {
                 index,
                 ...(location
                   ? {
-                      lat: location.lat,
-                      lng: location.lng,
-                    }
+                    lat: location.lat,
+                    lng: location.lng,
+                  }
                   : {}),
                 lang: lang,
               },
@@ -66,12 +73,33 @@ export default () => {
             });
 
             const selectedLayer = data?.addLayerItem?.layer.id;
+
             if (selectedLayer) {
+
+              const propertyId: any = data?.addLayerItem?.layer?.property?.id;
+              const itemId = undefined
+              const schemaGroupId = "default";
+              const fieldId = "height";
+              const vt = "number"
+              const gvt: any = valueTypeToGQL(vt);
+              if (location?.height && location.height > 0) {
+                updatePropertyValue({
+                  variables: {
+                    propertyId,
+                    itemId,
+                    schemaGroupId,
+                    fieldId,
+                    value: valueToGQL(location.height + 0.5, vt),
+                    type: gvt,
+                    lang: lang,
+                  },
+                });
+              }
               select({ type: "layer", layerId: selectedLayer });
             }
           },
         })),
-    [addLayerItemFromPrimitiveMutation, data?.node, sceneId, select, lang],
+    [updatePropertyValue, addLayerItemFromPrimitiveMutation, data?.node, sceneId, select, lang],
   );
 
   return {

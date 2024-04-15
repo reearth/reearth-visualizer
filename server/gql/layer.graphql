@@ -161,6 +161,7 @@ input AddLayerItemInput {
   name: String
   lat: Float
   lng: Float
+  height: Float
 }
 
 input AddLayerGroupInput {

@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
+	"github.com/reearth/reearthx/log"
 )
 
 func (r *mutationResolver) AddLayerItem(ctx context.Context, input gqlmodel.AddLayerItemInput) (*gqlmodel.AddLayerItemPayload, error) {
@@ -20,7 +21,7 @@ func (r *mutationResolver) AddLayerItem(ctx context.Context, input gqlmodel.AddL
 	// if err != nil {
 	// 	return nil, err
 	// }
-
+	log.Infof("input Height --------------------------------------- %+v\n", input)
 	layer, parent, err := usecases(ctx).Layer.AddItem(ctx, interfaces.AddLayerItemInput{
 		ParentLayerID: lid,
 		// layers are no longer extendable with plugins

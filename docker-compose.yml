@@ -1,9 +1,22 @@
 version: '3'
 services:
   reearth:
-    image: reearth/reearth:latest
+    build:
+      context: ./server
     environment:
       REEARTH_DB: mongodb://reearth-mongo
+      REEARTH_DEV: true
+      REEARTH_AUTHSRV_DEV: true
+      REEARTH_AUTHSRV_DISABLED: false
+      REEARTH_AUTHSRV_KEY: abcdefghijklmnopqrstuvwxyz
+      # REEARTH_AUTH0_AUDIENCE: http://localhost:8080
+      # REEARTH_AUTH0_CLIENTID: q4eUnCyAmi1vAurr61GAAxLu2vTZu4vN
+      # REEARTH_AUTH0_CLIENTSECRET: mQzsarJ5ipdxbN0RiLf2lDHZB1gs3dkNlQZ31DUfjitAo6iakddvvrTkkwbvZeow
+      # REEARTH_AUTH0_WEBCLIENTID: mo0t7hmPHA2QkF92ON1ToJz6oUd5mFG5
+      REEARTH_HOST_WEB: http://localhost:3000
+      REEARTH_AUTHSRV_UIDOMAIN: http://localhost:3000
+      # REEARTH_AUTHSRV_DISABLED: true
+      # REEARTH_DEV: true
     ports:
       - 8080:8080
     # env_file:

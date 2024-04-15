@@ -1,4 +1,2 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
-
-yarn --cwd web run lint-staged

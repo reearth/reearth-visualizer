@@ -1544,12 +1544,14 @@ extensions:
               type: string
               title: Source type
               description: Choose between an external 3D tileset or the OSM building 3d tileset.
-              defaultValue: url
+              defaultValue: osm
               choices:
-                - key: url
-                  label: URL
+                - key: google-photorealistic
+                  label: GoogleTiles
                 - key: osm
                   label: OSM Buildings
+                - key: url
+                  label: URL
             - id: tileset
               type: url
               title: Tileset URL
@@ -1558,6 +1560,14 @@ extensions:
                 field: sourceType
                 type: string
                 value: url
+            - id: apiKey
+              type: string
+              title: api key
+              description: api key
+              availableIf:
+                field: sourceType
+                type: string
+                value: google-photorealistic
             - id: styleUrl
               type: url
               title: Styling URL
