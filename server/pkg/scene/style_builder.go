@@ -9,7 +9,7 @@ func NewStyle() *StyleBuilder {
 }
 
 func (b *StyleBuilder) Build() (*Style, error) {
-	if b.s.IDField.IsNil() {
+	if b.s.id.IsNil() {
 		return nil, ErrInvalidID
 	}
 	return b.s, nil
@@ -24,26 +24,26 @@ func (b *StyleBuilder) MustBuild() *Style {
 }
 
 func (b *StyleBuilder) ID(id StyleID) *StyleBuilder {
-	b.s.IDField = id
+	b.s.id = id
 	return b
 }
 
 func (b *StyleBuilder) NewID() *StyleBuilder {
-	b.s.IDField = NewStyleID()
+	b.s.id = NewStyleID()
 	return b
 }
 
 func (b *StyleBuilder) Scene(scene ID) *StyleBuilder {
-	b.s.SceneField = scene
+	b.s.scene = scene
 	return b
 }
 
 func (b *StyleBuilder) Value(sv *StyleValue) *StyleBuilder {
-	b.s.ValueField = sv
+	b.s.value = sv
 	return b
 }
 
 func (b *StyleBuilder) Name(n string) *StyleBuilder {
-	b.s.NameField = n
+	b.s.name = n
 	return b
 }
