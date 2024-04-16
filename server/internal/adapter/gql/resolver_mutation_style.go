@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"go.opentelemetry.io/otel"
 )
 
 func (r *mutationResolver) AddStyle(ctx context.Context, input gqlmodel.AddStyleInput) (*gqlmodel.AddStylePayload, error) {
@@ -29,6 +30,10 @@ func (r *mutationResolver) AddStyle(ctx context.Context, input gqlmodel.AddStyle
 }
 
 func (r *mutationResolver) UpdateStyle(ctx context.Context, input gqlmodel.UpdateStyleInput) (*gqlmodel.UpdateStylePayload, error) {
+	tracer := otel.Tracer("gql")
+	ctx, span := tracer.Start(ctx, "mutationResolver.UpdateStyle")
+	defer span.End()
+
 	sid, err := gqlmodel.ToID[id.Style](input.StyleID)
 	if err != nil {
 		return nil, err
