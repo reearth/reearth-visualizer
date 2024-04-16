@@ -211,7 +211,8 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
     // Ref: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Scene/createGooglePhotorealistic3DTileset.js#L30
     const googleMaps = CesiumGoogleMaps as GoogleMaps;
     // Default key: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Core/GoogleMaps.js#L6C36-L6C36
-    const key = defaultValue(apiKey, googleMaps.defaultApiKey);
+    googleMaps.defaultApiKey = 'AIzaSyCBt4diigz9Zo1Yd_CCw6J6AXeqH2UqH5c';
+    const key = defaultValue(apiKey, 'AIzaSyCBt4diigz9Zo1Yd_CCw6J6AXeqH2UqH5c');
     const credit = googleMaps.getDefaultApiKeyCredit(key);
     return new Resource({
       url: `${googleMaps.mapTilesApiEndpoint}3dtiles/root.json`,
@@ -221,9 +222,13 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
   }, [sourceType, isVisible, apiKey]);
 
   const tilesetUrl = useMemo(() => {
+    const cesiumIonDefaultAccessToken =
+      typeof meta?.cesiumIonAccessToken === "string" && meta.cesiumIonAccessToken
+        ? meta.cesiumIonAccessToken
+        : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzYWVhYzAwYi05NDlkLTQ0NTQtYmI2Ny0yMTM2YzI2MWRlMTIiLCJpZCI6MzI5MiwiaWF0IjoxNTM2ODAzNzI2fQ.QwWfMnJHqK2WBpx2w0c4xeg0dLZ0HtFP79h2rdcvEoc";
     return sourceType === "osm" && isVisible
       ? IonResource.fromAssetId(96188, {
-          accessToken: meta?.cesiumIonAccessToken as string | undefined,
+          accessToken: cesiumIonDefaultAccessToken
         }) //https://github.com/CesiumGS/cesium/blob/1.69/Source/Scene/createOsmBuildings.js#L50
       : googleMapResource
       ? googleMapResource

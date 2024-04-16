@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState, MouseEvent } from "react";
 import { useClickAway, useMedia } from "react-use";
 
 import Flex from "@reearth/classic/components/atoms/Flex";
@@ -72,6 +72,10 @@ const InfoBox: React.FC<Props> = ({
   onExit,
   onExited,
 }) => {
+  const isPreviewPage = useMemo(() => {
+    const regex = /\/preview$/;
+    return regex.test(window.location.href);
+  }, [window.location.href]); 
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
   const isSmallWindow = useMedia("(max-width: 624px)");
   const ref = useRef<HTMLDivElement>(null);
@@ -79,6 +83,7 @@ const InfoBox: React.FC<Props> = ({
   const [open, setOpen] = useState(true);
   const [showMask, setShowMask] = useState<boolean | undefined>(false);
   useClickAway(ref, () => onClickAway?.());
+  const [width, setWidth] = useState<number>(346);
 
   const handleOpen = useCallback(() => {
     if (open || (noContent && isSmallWindow)) return;
@@ -88,6 +93,10 @@ const InfoBox: React.FC<Props> = ({
   const handleClose = useCallback(() => {
     setOpen(false);
   }, []);
+
+  const handleToggle = useCallback(() =>{
+    !open ? handleOpen() : handleClose();
+  },[open]);
 
   useEffect(() => {
     if (!ref2.current) return;
@@ -112,6 +121,24 @@ const InfoBox: React.FC<Props> = ({
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
 
+  const handler = (mouseDownEvent: MouseEvent) => {
+    if(!mouseDownEvent) return;
+    const startSize = width;
+    const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
+    
+    function onMouseMove(mouseMoveEvent: any){
+      setWidth(currentSize => startSize + startPosition.x - mouseMoveEvent.pageX);
+    }
+    function onMouseUp() {
+      document.body.removeEventListener("mousemove", onMouseMove);
+      // uncomment the following line if not using `{ once: true }`
+      // document.body.removeEventListener("mouseup", onMouseUp);
+    }
+    
+    document.body.addEventListener("mousemove", onMouseMove);
+    document.body.addEventListener("mouseup", onMouseUp, { once: true });
+  };
+
   return (
     <>
       <Mask activate={showMask && useMask} onClick={onMaskClick} />
@@ -127,14 +154,21 @@ const InfoBox: React.FC<Props> = ({
         onExited={onExited}
         position={position}
         size={size}
+        width={width}
         height={height}
         heightType={heightType}
         outlineColor={outlineColor ? outlineColor : publishedTheme.mainText}
         outlineWidth={outlineWidth}
-        floated>
+        floated
+        isPreviewPage={isPreviewPage}>
+        <div className="draghandle" onMouseDown={handler} >
+          <button className="toggle-infoBox-btn" onClick={handleToggle}>
+            <Icon icon={ open ? "arrowRight" : "arrowLeft"} />
+          </button>
+        </div>
         <Wrapper ref={ref} open={open}>
           <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
-            {!open && (
+            {/* {!open && (
               <IconWrapper align="center" justify="space-around">
                 <StyledIcon
                   color={publishedTheme.mainIcon}
@@ -144,7 +178,7 @@ const InfoBox: React.FC<Props> = ({
                 />
                 <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
               </IconWrapper>
-            )}
+            )} */}
             {open && (
               <Text size="m" weight="bold" customColor>
                 <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
@@ -188,6 +222,7 @@ const Mask = styled.div<{ activate?: boolean }>`
 
 const StyledFloatedPanel = styled(FloatedPanel)<{
   floated?: boolean;
+  isPreviewPage?: boolean;
   open?: boolean;
   position?: "right" | "middle" | "left";
   size?: "small" | "medium" | "large";
@@ -195,8 +230,9 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   heightType?: "auto" | "manual";
   outlineColor?: string;
   outlineWidth?: number;
+  width?: number;
 }>`
-  top: 15%;
+  top: 10px;
   ${({ open, position }) =>
     open
       ? position === "middle"
@@ -206,12 +242,12 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   margin-right: auto;`
         : position === "left"
         ? "left: 30px"
-        : `right: 30px`
+        : `right: 10px`
       : "right: -6px"};
-  ${({ heightType, height, open }) =>
-    heightType === "auto" ? "max-height: 70%" : height && open ? `height: ${height}px` : ""};
-  width: ${({ size, open }) =>
-    open ? (size === "large" ? "624px" : size === "medium" ? "540px" : "346px") : "80px"};
+  ${({ heightType, height, open, isPreviewPage }) =>
+    heightType === "auto" ? `height: calc(100vh - ${isPreviewPage ? '20' : '113'}px)` : height && open ? `height: ${height}px` : `height: calc(100vh - ${isPreviewPage ? '20' : '113'}px)`};
+  width: ${({ size, open, width }) =>
+    open ? (size === "large" ? "624px" : size === "medium" ? "540px" : `${width}px`) : "0px"};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   ${({ outlineWidth, outlineColor, open }) =>
     outlineWidth && open ? `border: ${outlineWidth}px ${outlineColor} solid` : ""};
@@ -220,7 +256,7 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   flex-direction: column;
   align-items: stretch;
   z-index: ${({ theme }) => theme.classic.zIndexes.propertyFieldPopup};
-  transition: all 0.6s;
+  // transition: all 0.6s;
 
   @media (max-width: 624px) {
     right: ${({ open }) => (open ? "16px" : "-8px")};
@@ -229,6 +265,30 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
     width: ${({ open }) => (open ? "calc(100% - 33px)" : "70px")};
     ${({ open }) => !open && "height: 40px;"}
     max-height: 60vh;
+  }
+
+  .draghandle{
+    position: absolute;
+    //background: white;
+    cursor: ew-resize;
+    width: 4px;
+    height: 100%;
+    //opacity: 0;
+
+    .toggle-infoBox-btn{
+      position: absolute;
+      top: 50%;
+      left: ${({ open }) => (open ? "-15px" : "-22px")};
+      background: #fbf9f9 !important;
+      border-radius: 92px 0px 0px 92px;
+      padding: 0px;
+      width: 15px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #b6b6b6;
+    }
   }
 `;
 

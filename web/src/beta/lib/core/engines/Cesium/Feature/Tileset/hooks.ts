@@ -22,6 +22,7 @@ import {
   Cesium3DTileContent,
   Color,
   Viewer,
+  createOsmBuildingsAsync
 } from "cesium";
 import { pick } from "lodash-es";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -477,8 +478,8 @@ export const useHooks = ({
     const coords = coordinates
       ? coordinates
       : location
-      ? [location.lng, location.lat, location.height ?? 0]
-      : undefined;
+        ? [location.lng, location.lat, location.height ?? 0]
+        : undefined;
     const position = Cartesian3.fromDegrees(coords?.[0] || 0, coords?.[1] || 0, coords?.[2] || 0);
 
     const prepareClippingPlanes = async () => {
@@ -574,29 +575,39 @@ export const useHooks = ({
   }, [styleUrl]);
 
   const googleMapResource = useMemo(() => {
+    
     if (type !== "google-photorealistic" || !isVisible) return;
     // Ref: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Scene/createGooglePhotorealistic3DTileset.js#L30
     const googleMaps = CesiumGoogleMaps as GoogleMaps;
     // Default key: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Core/GoogleMaps.js#L6C36-L6C36
+    googleMaps.defaultApiKey = 'AIzaSyCBt4diigz9Zo1Yd_CCw6J6AXeqH2UqH5c';
     const key = defaultValue(apiKey, googleMaps.defaultApiKey);
     const credit = googleMaps.getDefaultApiKeyCredit(key);
-    return new Resource({
+    const resource = new Resource({
       url: `${googleMaps.mapTilesApiEndpoint}3dtiles/root.json`,
       queryParameters: { key },
       credits: credit ? [credit] : undefined,
     } as Resource.ConstructorOptions);
+    return resource
   }, [apiKey, type, isVisible]);
 
   const tilesetUrl = useMemo(() => {
-    return type === "osm-buildings" && isVisible
-      ? IonResource.fromAssetId(96188, {
-          accessToken: meta?.cesiumIonAccessToken as string | undefined,
-        }) // https://github.com/CesiumGS/cesium/blob/main/packages/engine/Source/Scene/createOsmBuildings.js#L53
-      : googleMapResource
-      ? googleMapResource
-      : type === "3dtiles" && isVisible
-      ? url ?? tileset
-      : null;
+    
+    if (type === "osm-buildings" && isVisible) {
+      const cesiumIonDefaultAccessToken = typeof meta?.cesiumIonAccessToken === "string" && meta.cesiumIonAccessToken
+      ? meta.cesiumIonAccessToken
+      : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzYWVhYzAwYi05NDlkLTQ0NTQtYmI2Ny0yMTM2YzI2MWRlMTIiLCJpZCI6MzI5MiwiaWF0IjoxNTM2ODAzNzI2fQ.QwWfMnJHqK2WBpx2w0c4xeg0dLZ0HtFP79h2rdcvEoc';
+      
+      return IonResource.fromAssetId(96188, {
+        accessToken: cesiumIonDefaultAccessToken,
+      });
+    } else if (googleMapResource) {
+      return googleMapResource;
+    } else if (type === "3dtiles" && isVisible) {
+      return url ?? tileset;
+    } else {
+      return null;
+    }
   }, [isVisible, tileset, url, type, meta, googleMapResource]);
 
   const imageBasedLighting = useMemo(() => {
@@ -615,7 +626,7 @@ export const useHooks = ({
       property?.imageBasedLightIntensity ?? sceneProperty?.light?.imageBasedLightIntensity;
     const sphericalHarmonicCoefficients = arrayToCartecian3(
       property?.sphericalHarmonicCoefficients ??
-        sceneProperty?.light?.sphericalHarmonicCoefficients,
+      sceneProperty?.light?.sphericalHarmonicCoefficients,
       imageBasedLightIntensity,
     );
 
