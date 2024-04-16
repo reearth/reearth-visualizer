@@ -1,51 +1,49 @@
 package scene
 
-import "fmt"
-
 type Style struct {
-	IDField    StyleID     `msgpack:"IDField"`
-	NameField  string      `msgpack:"NameField"`
-	ValueField *StyleValue `msgpack:"ValueField"`
-	SceneField ID          `msgpack:"SceneField"`
+	id    StyleID
+	name  string
+	value *StyleValue
+	scene ID
 }
 
 func (s *Style) ID() StyleID {
 	if s == nil {
 		return StyleID{}
 	}
-	return s.IDField
+	return s.id
 }
 
 func (s *Style) Name() string {
 	if s == nil {
 		return ""
 	}
-	return s.NameField
+	return s.name
 }
 
 func (s *Style) Value() *StyleValue {
 	if s == nil {
 		return nil
 	}
-	return s.ValueField
+	return s.value
 }
 
 func (s *Style) Rename(name string) {
 	if s == nil {
 		return
 	}
-	s.NameField = name
+	s.name = name
 }
 
 func (s *Style) UpdateValue(sv *StyleValue) {
 	if s == nil {
 		return
 	}
-	s.ValueField = sv
+	s.value = sv
 }
 
 func (l *Style) Scene() ID {
-	return l.SceneField
+	return l.scene
 }
 
 func (s *Style) Duplicate() *Style {
@@ -53,9 +51,5 @@ func (s *Style) Duplicate() *Style {
 		return nil
 	}
 
-	return NewStyle().NewID().Name(s.NameField).Value(s.ValueField).Scene(s.SceneField).MustBuild()
-}
-
-func StyleCacheKey(id StyleID) string {
-	return fmt.Sprintf("style:%s", id)
+	return NewStyle().NewID().Name(s.name).Value(s.value).Scene(s.scene).MustBuild()
 }
