@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/url"
 
+	infraRedis "github.com/reearth/reearth/server/internal/infrastructure/redis"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -28,7 +29,7 @@ type ContainerConfig struct {
 
 func NewContainer(r *repo.Container, g *gateway.Container,
 	ar *accountrepo.Container, ag *accountgateway.Container,
-	config ContainerConfig) interfaces.Container {
+	redisAdapter *infraRedis.RedisAdapter, config ContainerConfig) interfaces.Container {
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
 		published = NewPublishedWithURL(r.Project, r.Storytelling, g.File, config.PublishedIndexURL)
@@ -41,7 +42,7 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 		Dataset:      NewDataset(r, g),
 		Layer:        NewLayer(r),
 		NLSLayer:     NewNLSLayer(r, g),
-		Style:        NewStyle(r),
+		Style:        NewStyle(r, redisAdapter),
 		Plugin:       NewPlugin(r, g),
 		Policy:       NewPolicy(r),
 		Project:      NewProject(r, g),

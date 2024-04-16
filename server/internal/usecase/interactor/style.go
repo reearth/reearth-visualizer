@@ -3,7 +3,9 @@ package interactor
 import (
 	"context"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -12,6 +14,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/sceneops"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/vmihailenco/msgpack/v5"
+	"go.opentelemetry.io/otel"
 )
 
 type Style struct {
@@ -22,9 +26,10 @@ type Style struct {
 	sceneRepo     repo.Scene
 	sceneLockRepo repo.SceneLock
 	transaction   usecasex.Transaction
+	redis         gateway.RedisGateway
 }
 
-func NewStyle(r *repo.Container) interfaces.Style {
+func NewStyle(r *repo.Container, redis gateway.RedisGateway) interfaces.Style {
 	return &Style{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		styleRepo:       r.Style,
@@ -32,6 +37,7 @@ func NewStyle(r *repo.Container) interfaces.Style {
 		sceneRepo:       r.Scene,
 		sceneLockRepo:   r.SceneLock,
 		transaction:     r.Transaction,
+		redis:           redis,
 	}
 }
 
@@ -83,24 +89,72 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 }
 
 func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInput, operator *usecase.Operator) (*scene.Style, error) {
+	tr := otel.Tracer("interactor")
+	_, span := tr.Start(ctx, "Style.UpdateStyle")
+	defer span.End()
 
 	tx, err := i.transaction.Begin(ctx)
-
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
 	ctx = tx.Context()
-
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			span.RecordError(err2)
 			err = err2
 		}
 	}()
 
-	style, err := i.styleRepo.FindByID(ctx, param.StyleID)
-	if err != nil {
-		return nil, err
+	var style *scene.Style
+	cacheKey := scene.StyleCacheKey(param.StyleID)
+
+	_, redisSpan := tr.Start(ctx, "Style.UpdateStyle.RedisGetValue")
+	val, redisGetErr := i.redis.GetValue(ctx, cacheKey)
+	if redisGetErr != nil && redisGetErr != redis.Nil {
+		redisSpan.RecordError(redisGetErr)
+		redisSpan.End()
+		return nil, redisGetErr
+	}
+	redisSpan.End()
+
+	if redisGetErr == redis.Nil || val == "" {
+		_, dbSpan := tr.Start(ctx, "Style.UpdateStyle.DBFindById")
+		style, err = i.styleRepo.FindByID(ctx, param.StyleID)
+		if err != nil {
+			dbSpan.RecordError(err)
+			dbSpan.End()
+			return nil, err
+		}
+		dbSpan.End()
+
+		if style == nil {
+			return nil, nil
+		}
+
+		_, dbSpan = tr.Start(ctx, "Style.UpdateStyle.MsgpackMarshal")
+		msgpackData, err := msgpack.Marshal(&style)
+		if err != nil {
+			dbSpan.RecordError(err)
+			dbSpan.End()
+			return nil, err
+		}
+		dbSpan.End()
+
+		_, dbSpan = tr.Start(ctx, "Style.UpdateStyle.RedisSetValue")
+		err = i.redis.SetValue(ctx, cacheKey, msgpackData)
+		if err != nil {
+			dbSpan.RecordError(err)
+			dbSpan.End()
+			return nil, err
+		}
+		dbSpan.End()
+	} else {
+		err := msgpack.Unmarshal([]byte(val), &style)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if param.Name != nil {
