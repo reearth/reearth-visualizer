@@ -47,6 +47,12 @@ export type Props = {
   onExited?: () => void;
 };
 
+const infoBoxWidth = {
+  large: 624,
+  medium: 540,
+  small: 346
+};
+
 const InfoBox: React.FC<Props> = ({
   className,
   infoboxKey,
@@ -73,7 +79,7 @@ const InfoBox: React.FC<Props> = ({
   onExited,
 }) => {
   const isPreviewPage = useMemo(() => {
-    const regex = /\/preview$/;
+    const regex = /\/published\.html\b|\/preview$/;
     return regex.test(window.location.href);
   }, [window.location.href]); 
   const publishedTheme = usePublishTheme(sceneProperty?.theme);
@@ -83,7 +89,7 @@ const InfoBox: React.FC<Props> = ({
   const [open, setOpen] = useState(true);
   const [showMask, setShowMask] = useState<boolean | undefined>(false);
   useClickAway(ref, () => onClickAway?.());
-  const [width, setWidth] = useState<number>(346);
+  const [width, setWidth] = useState<number>(infoBoxWidth[size || 'small']);
 
   const handleOpen = useCallback(() => {
     if (open || (noContent && isSmallWindow)) return;
@@ -120,24 +126,34 @@ const InfoBox: React.FC<Props> = ({
     `,
     [publishedTheme, styles?.bgcolor, styles?.typography],
   );
+  
+  useEffect(() => {
+    setWidth(infoBoxWidth[size || 'small']);
+  }, [size]);
 
-  const handler = (mouseDownEvent: MouseEvent) => {
-    if(!mouseDownEvent) return;
+  const handler = useCallback((mouseDownEvent: MouseEvent) => {
+    if (!mouseDownEvent) return;
+    mouseDownEvent.stopPropagation();
+    mouseDownEvent.preventDefault();
     const startSize = width;
     const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
-    
-    function onMouseMove(mouseMoveEvent: any){
-      setWidth(currentSize => startSize + startPosition.x - mouseMoveEvent.pageX);
+
+    function onMouseMove(mouseMoveEvent: any) {
+      if(position === 'left'){
+        setWidth((currentSize) => startSize - startPosition.x + mouseMoveEvent.pageX);
+      }else{
+        setWidth(currentSize => startSize + startPosition.x - mouseMoveEvent.pageX);
+      }
     }
     function onMouseUp() {
       document.body.removeEventListener("mousemove", onMouseMove);
       // uncomment the following line if not using `{ once: true }`
       // document.body.removeEventListener("mouseup", onMouseUp);
     }
-    
+
     document.body.addEventListener("mousemove", onMouseMove);
     document.body.addEventListener("mouseup", onMouseUp, { once: true });
-  };
+  }, [position, width]);
 
   return (
     <>
@@ -161,14 +177,14 @@ const InfoBox: React.FC<Props> = ({
         outlineWidth={outlineWidth}
         floated
         isPreviewPage={isPreviewPage}>
-        <div className="draghandle" onMouseDown={handler} >
+        {!isSmallWindow && position !== 'middle' && <div className="draghandle" onMouseDown={handler} >
           <button className="toggle-infoBox-btn" onClick={handleToggle}>
             <Icon icon={ open ? "arrowRight" : "arrowLeft"} />
           </button>
-        </div>
+        </div>}
         <Wrapper ref={ref} open={open}>
           <TitleFlex flex="0 0 auto" direction="column" onClick={handleOpen}>
-            {/* {!open && (
+            {(isSmallWindow || position === 'middle') && !open && (
               <IconWrapper align="center" justify="space-around">
                 <StyledIcon
                   color={publishedTheme.mainIcon}
@@ -178,7 +194,7 @@ const InfoBox: React.FC<Props> = ({
                 />
                 <StyledIcon color={publishedTheme.mainIcon} icon="infobox" size={24} open={open} />
               </IconWrapper>
-            )} */}
+            )}
             {open && (
               <Text size="m" weight="bold" customColor>
                 <TitleText show={showTitle ?? true}>{title || " "}</TitleText>
@@ -232,7 +248,7 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   outlineWidth?: number;
   width?: number;
 }>`
-  top: 10px;
+  top: ${({position}) => position === "middle" ? "15%" : "10px"};
   ${({ open, position }) =>
     open
       ? position === "middle"
@@ -241,16 +257,24 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
   margin-left: auto;
   margin-right: auto;`
         : position === "left"
-        ? "left: 30px"
+        ? "left: 10px"
         : `right: 10px`
+      : position === "left"
+      ? "left: -6px"
       : "right: -6px"};
-  ${({ heightType, height, open, isPreviewPage }) =>
-    heightType === "auto" ? `height: calc(100vh - ${isPreviewPage ? '20' : '113'}px)` : height && open ? `height: ${height}px` : `height: calc(100vh - ${isPreviewPage ? '20' : '113'}px)`};
-  width: ${({ size, open, width }) =>
-    open ? (size === "large" ? "624px" : size === "medium" ? "540px" : `${width}px`) : "0px"};
+  ${({ heightType, height, open, isPreviewPage, position }) =>
+    heightType === "auto"
+      ? position ==='middle'? "max-height: 70%" : `height: calc(100vh - ${isPreviewPage ? "20" : "113"}px)`
+      : height && open
+      ? `height: ${height}px`
+      : position ==='middle'? '' : `height: calc(100vh - ${isPreviewPage ? "20" : "113"}px)`};
+  width: ${({ open, width, position }) =>
+    open ? `${width}px` : position === "middle" ? "80px" : "0px"};
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   ${({ outlineWidth, outlineColor, open }) =>
-    outlineWidth && open ? `border: ${outlineWidth}px ${outlineColor} solid` : ""};
+    outlineWidth && open
+      ? `border: ${outlineWidth}px ${outlineColor} solid`
+      : ""};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -267,15 +291,24 @@ const StyledFloatedPanel = styled(FloatedPanel)<{
     max-height: 60vh;
   }
 
-  .draghandle{
+  .draghandle {
     position: absolute;
-    //background: white;
-    cursor: ew-resize;
+    cursor: col-resize;
     width: 4px;
     height: 100%;
-    //opacity: 0;
 
-    .toggle-infoBox-btn{
+    ${({ open, position }) =>
+      open
+        ? position === "middle"
+          ? "display: none;"
+          : position === "left"
+          ? "right: 0; transform: scaleX(-1);"
+          : "left: 0;"
+        : position === "left"
+        ? "transform: scaleX(-1);"
+        : ""}
+
+    .toggle-infoBox-btn {
       position: absolute;
       top: 50%;
       left: ${({ open }) => (open ? "-15px" : "-22px")};

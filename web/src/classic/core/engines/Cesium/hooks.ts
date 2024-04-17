@@ -35,7 +35,7 @@ import type {
 } from "..";
 
 import { useCameraLimiter } from "./cameraLimiter";
-import { getCamera, getLocationFromScreen, isDraggable, isSelectable } from "./common";
+import { getCamera, isDraggable, isSelectable, getLocationFromScreen } from "./common";
 import { getTag, type Context as FeatureContext } from "./Feature";
 import { InternalCesium3DTileFeature } from "./types";
 import useEngineRef from "./useEngineRef";
@@ -86,7 +86,7 @@ export default ({
   const cesiumIonDefaultAccessToken =
     typeof meta?.cesiumIonAccessToken === "string" && meta.cesiumIonAccessToken
       ? meta.cesiumIonAccessToken
-      : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzYWVhYzAwYi05NDlkLTQ0NTQtYmI2Ny0yMTM2YzI2MWRlMTIiLCJpZCI6MzI5MiwiaWF0IjoxNTM2ODAzNzI2fQ.QwWfMnJHqK2WBpx2w0c4xeg0dLZ0HtFP79h2rdcvEoc';
+      : Ion.defaultAccessToken;
   const cesiumIonAccessToken = property?.default?.ion || cesiumIonDefaultAccessToken;
 
   // expose ref
