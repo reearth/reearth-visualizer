@@ -148,16 +148,18 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 	}()
 
 	var layer nlslayer.NLSLayer
-	layer, err = getFromCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(lid))
+	layerSimple, err := getFromCache[*nlslayer.NLSLayerSimple](ctx, i.redis, nlslayer.NLSLayerCacheKey(lid))
 	if err != nil {
 		return lid, nil, err
 	}
 
-	if layer == nil {
+	if layerSimple == nil {
 		layer, err = i.nlslayerRepo.FindByID(ctx, lid)
 		if err != nil {
 			return lid, nil, err
 		}
+	} else {
+		layer = layerSimple
 	}
 
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
@@ -224,16 +226,18 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 	}()
 
 	var layer nlslayer.NLSLayer
-	layer, err = getFromCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(inp.LayerID))
+	layerSimple, err := getFromCache[*nlslayer.NLSLayerSimple](ctx, i.redis, nlslayer.NLSLayerCacheKey(inp.LayerID))
 	if err != nil {
 		return nil, err
 	}
 
-	if layer == nil {
+	if layerSimple == nil {
 		layer, err = i.nlslayerRepo.FindByID(ctx, inp.LayerID)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		layer = layerSimple
 	}
 
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
@@ -563,16 +567,18 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	}()
 
 	var layer nlslayer.NLSLayer
-	layer, err = getFromCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(lid))
+	layerSimple, err := getFromCache[*nlslayer.NLSLayerSimple](ctx, i.redis, nlslayer.NLSLayerCacheKey(lid))
 	if err != nil {
 		return nil, err
 	}
 
-	if layer == nil {
+	if layerSimple == nil {
 		layer, err = i.nlslayerRepo.FindByID(ctx, lid)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		layer = layerSimple
 	}
 
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
