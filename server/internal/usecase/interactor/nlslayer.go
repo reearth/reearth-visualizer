@@ -105,12 +105,13 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, err
 	}
 
+	tx.Commit()
+
 	err = setToCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(layerSimple.ID()), layerSimple)
 	if err != nil {
 		return nil, err
 	}
 
-	tx.Commit()
 	return layerSimple, nil
 }
 
