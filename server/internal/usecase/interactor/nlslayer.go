@@ -616,9 +616,19 @@ func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCu
 		}
 	}()
 
-	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	var layer nlslayer.NLSLayer
+	layerSimple, err := getFromCache[*nlslayer.NLSLayerSimple](ctx, i.redis, nlslayer.NLSLayerCacheKey(inp.LayerID))
 	if err != nil {
 		return nil, err
+	}
+
+	if layerSimple == nil {
+		layer, err = i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		layer = layerSimple
 	}
 
 	if layer.Sketch() == nil {
@@ -643,6 +653,12 @@ func (i *NLSLayer) AddCustomProperties(ctx context.Context, inp interfaces.AddCu
 	}
 
 	tx.Commit()
+
+	err = setToCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(layer.ID()), layer)
+	if err != nil {
+		return nil, err
+	}
+
 	return layer, nil
 }
 
@@ -659,9 +675,19 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 		}
 	}()
 
-	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	var layer nlslayer.NLSLayer
+	layerSimple, err := getFromCache[*nlslayer.NLSLayerSimple](ctx, i.redis, nlslayer.NLSLayerCacheKey(inp.LayerID))
 	if err != nil {
 		return nlslayer.Feature{}, err
+	}
+
+	if layerSimple == nil {
+		layer, err = i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+		if err != nil {
+			return nlslayer.Feature{}, err
+		}
+	} else {
+		layer = layerSimple
 	}
 
 	geometry, err := nlslayer.NewGeometryFromMap(inp.Geometry)
@@ -704,6 +730,12 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 	}
 
 	tx.Commit()
+
+	err = setToCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(layer.ID()), layer)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
 	return *feature, nil
 }
 
@@ -720,9 +752,19 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 		}
 	}()
 
-	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	var layer nlslayer.NLSLayer
+	layerSimple, err := getFromCache[*nlslayer.NLSLayerSimple](ctx, i.redis, nlslayer.NLSLayerCacheKey(inp.LayerID))
 	if err != nil {
 		return nlslayer.Feature{}, err
+	}
+
+	if layerSimple == nil {
+		layer, err = i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+		if err != nil {
+			return nlslayer.Feature{}, err
+		}
+	} else {
+		layer = layerSimple
 	}
 
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil || layer.Sketch().FeatureCollection().Features() == nil || len(layer.Sketch().FeatureCollection().Features()) == 0 {
@@ -756,6 +798,12 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 	}
 
 	tx.Commit()
+
+	err = setToCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(layer.ID()), layer)
+	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
 	return updatedFeature, nil
 }
 
@@ -772,9 +820,19 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 		}
 	}()
 
-	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+	var layer nlslayer.NLSLayer
+	layerSimple, err := getFromCache[*nlslayer.NLSLayerSimple](ctx, i.redis, nlslayer.NLSLayerCacheKey(inp.LayerID))
 	if err != nil {
 		return id.FeatureID{}, err
+	}
+
+	if layerSimple == nil {
+		layer, err = i.nlslayerRepo.FindByID(ctx, inp.LayerID)
+		if err != nil {
+			return id.FeatureID{}, err
+		}
+	} else {
+		layer = layerSimple
 	}
 
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil || layer.Sketch().FeatureCollection().Features() == nil || len(layer.Sketch().FeatureCollection().Features()) == 0 {
@@ -792,5 +850,11 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 	}
 
 	tx.Commit()
+
+	err = deleteFromCache(ctx, i.redis, nlslayer.NLSLayerCacheKey(layer.ID()))
+	if err != nil {
+		return id.FeatureID{}, err
+	}
+
 	return inp.FeatureID, nil
 }

@@ -2,6 +2,7 @@ package mongodoc
 
 import (
 	"errors"
+	"log"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
@@ -536,6 +537,10 @@ func NewNLSLayerFeature(f nlslayer.Feature) NLSLayerFeatureDocument {
 }
 
 func NewNLSLayerGeometry(g nlslayer.Geometry) map[string]any {
+	if gMapFromRedis, ok := g.(map[string]any); ok {
+		return NewNLSLayerGeometryFromRedisMap(gMapFromRedis)
+	}
+
 	gMap := make(map[string]any)
 	switch g := g.(type) {
 	case *nlslayer.Point:
@@ -558,5 +563,63 @@ func NewNLSLayerGeometry(g nlslayer.Geometry) map[string]any {
 		gMap["type"] = g.GeometryCollectionType()
 		gMap["geometries"] = geometries
 	}
+	return gMap
+}
+
+func NewNLSLayerGeometryFromRedisMap(redisMap map[string]any) map[string]any {
+	typeFields := []string{
+		"PointTypeField",
+		"LineStringTypeField",
+		"PolygonTypeField",
+		"MultiPolygonTypeField",
+		"GeometryCollectionTypeField",
+	}
+
+	var geometryType string
+	for _, field := range typeFields {
+		if typeVal, ok := redisMap[field]; ok {
+			geometryType = typeVal.(string)
+			break
+		}
+	}
+
+	if geometryType == "" {
+		log.Println("geometry type is missing")
+		return nil
+	}
+
+	gMap := make(map[string]any)
+	gMap["type"] = geometryType
+
+	if geometryType == "GeometryCollection" {
+		rawGeometries, ok := redisMap["GeometriesField"].([]any)
+		if !ok {
+			log.Println("invalid geometry collection data format")
+			return nil
+		}
+
+		gmapSlice := make([]map[string]any, 0, len(rawGeometries))
+		for _, rawGeometry := range rawGeometries {
+			geometry, ok := rawGeometry.(map[string]any)
+			if !ok {
+				log.Println("invalid geometry data format in collection")
+				continue
+			}
+
+			transformedGeometry := NewNLSLayerGeometryFromRedisMap(geometry)
+			if transformedGeometry != nil {
+				gmapSlice = append(gmapSlice, transformedGeometry)
+			}
+		}
+		gMap["geometries"] = gmapSlice
+	} else {
+		coords, ok := redisMap["CoordinatesField"]
+		if !ok {
+			log.Println("coordinates field is missing")
+			return nil
+		}
+		gMap["coordinates"] = coords
+	}
+
 	return gMap
 }

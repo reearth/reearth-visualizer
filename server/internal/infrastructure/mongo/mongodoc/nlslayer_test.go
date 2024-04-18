@@ -406,6 +406,95 @@ func TestNewNLSLayerGeometry(t *testing.T) {
 			args: nlslayer.Geometry(nil),
 			want: map[string]any{},
 		},
+		{
+			name: "New point from redis map",
+			args: map[string]any{
+				"PointTypeField":   "Point",
+				"CoordinatesField": []any{1, 2},
+			},
+			want: map[string]any{
+				"type":        "Point",
+				"coordinates": []any{1, 2},
+			},
+		},
+		{
+			name: "New line string from redis map",
+			args: map[string]any{
+				"LineStringTypeField": "LineString",
+				"CoordinatesField":    [][]any{{1, 2}, {3, 4}},
+			},
+			want: map[string]any{
+				"type":        "LineString",
+				"coordinates": [][]any{{1, 2}, {3, 4}},
+			},
+		},
+		{
+			name: "New polygon from redis map",
+			args: map[string]any{
+				"PolygonTypeField": "Polygon",
+				"CoordinatesField": [][][]any{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}},
+			},
+			want: map[string]any{
+				"type":        "Polygon",
+				"coordinates": [][][]any{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}},
+			},
+		},
+		{
+			name: "New multi polygon from redis map",
+			args: map[string]any{
+				"MultiPolygonTypeField": "MultiPolygon",
+				"CoordinatesField":      [][][][]any{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}},
+			},
+			want: map[string]any{
+				"type":        "MultiPolygon",
+				"coordinates": [][][][]any{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}},
+			},
+		},
+		{
+			name: "New geometry collection from redis map",
+			args: map[string]any{
+				"GeometryCollectionTypeField": "GeometryCollection",
+				"GeometriesField": []any{
+					map[string]any{
+						"PointTypeField":   "Point",
+						"CoordinatesField": []any{1, 2},
+					},
+					map[string]any{
+						"LineStringTypeField": "LineString",
+						"CoordinatesField":    [][]any{{1, 2}, {3, 4}},
+					},
+					map[string]any{
+						"PolygonTypeField": "Polygon",
+						"CoordinatesField": [][][]any{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}},
+					},
+					map[string]any{
+						"MultiPolygonTypeField": "MultiPolygon",
+						"CoordinatesField":      [][][][]any{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}},
+					},
+				},
+			},
+			want: map[string]any{
+				"type": "GeometryCollection",
+				"geometries": []map[string]any{
+					{
+						"type":        "Point",
+						"coordinates": []any{1, 2},
+					},
+					{
+						"type":        "LineString",
+						"coordinates": [][]any{{1, 2}, {3, 4}},
+					},
+					{
+						"type":        "Polygon",
+						"coordinates": [][][]any{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}},
+					},
+					{
+						"type":        "MultiPolygon",
+						"coordinates": [][][][]any{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}},
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
