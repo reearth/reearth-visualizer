@@ -86,7 +86,7 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 
 	tx.Commit()
 
-	err = i.setStyleToCache(ctx, style.ID(), style)
+	err = setToCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(style.ID()), style)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 
 	var style *scene.Style
 	_, redisSpan := tr.Start(ctx, "Style.UpdateStyle.RedisGetValue")
-	style, err = i.getStyleFromCache(ctx, param.StyleID)
+	style, err = getFromCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(param.StyleID))
 	if err != nil {
 		redisSpan.RecordError(err)
 		redisSpan.End()
@@ -158,7 +158,7 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 	tx.Commit()
 
 	_, dbSpan := tr.Start(ctx, "Style.UpdateStyle.RedisSetValue")
-	err = i.setStyleToCache(ctx, style.ID(), style)
+	err = setToCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(style.ID()), style)
 	if err != nil {
 		dbSpan.RecordError(err)
 		dbSpan.End()
@@ -182,7 +182,7 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 	}()
 
 	var style *scene.Style
-	style, err = i.getStyleFromCache(ctx, styleID)
+	style, err = getFromCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(styleID))
 	if err != nil {
 		return styleID, err
 	}
@@ -214,7 +214,7 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 
 	tx.Commit()
 
-	err = i.removeStyleFromCache(ctx, styleID)
+	err = deleteFromCache(ctx, i.redis, scene.StyleCacheKey(styleID))
 	if err != nil {
 		return styleID, err
 	}
@@ -236,7 +236,7 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	}()
 
 	var style *scene.Style
-	style, err = i.getStyleFromCache(ctx, styleID)
+	style, err = getFromCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(styleID))
 	if err != nil {
 		return nil, err
 	}
@@ -265,7 +265,7 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 
 	tx.Commit()
 
-	err = i.setStyleToCache(ctx, duplicatedStyle.ID(), duplicatedStyle)
+	err = setToCache[*scene.Style](ctx, i.redis, scene.StyleCacheKey(styleID), duplicatedStyle)
 	if err != nil {
 		return nil, err
 	}
