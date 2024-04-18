@@ -4,8 +4,8 @@ import { FC, MutableRefObject, SetStateAction, useRef } from "react";
 import { LayerSelectionReason } from "@reearth/beta/lib/core/engines";
 import { ComputedFeature, ComputedLayer, Layer } from "@reearth/beta/lib/core/mantle";
 import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
-import CoreVisualizer, { EngineType } from "@reearth/beta/lib/core/Visualizer";
 import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { Visualizer as CoreVisualizer, type EngineType } from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 
@@ -134,7 +134,7 @@ const Visualizer: FC<VisualizerProps> = ({
   sceneProperty,
   pluginProperty,
   story,
-  rootLayerId,
+  // rootLayerId,
   zoomedLayerId,
   useExperimentalSandbox,
   visualizerRef,
@@ -187,7 +187,7 @@ const Visualizer: FC<VisualizerProps> = ({
         isEditable={!isBuilt}
         layers={layers}
         zoomedLayerId={zoomedLayerId}
-        rootLayerId={rootLayerId}
+        // rootLayerId={rootLayerId}
         sceneProperty={sceneProperty as SceneProperty}
         ready={ready}
         meta={engineMeta}
