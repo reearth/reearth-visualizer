@@ -1,8 +1,14 @@
-import type { Tag } from "@reearth/beta/lib/core/mantle/compat";
-import { Events, Layer, LayersRef, NaiveLayer, LazyLayer } from "@reearth/beta/lib/core/Map";
 import { merge } from "@reearth/beta/utils/object";
+import type {
+  Tag,
+  Events,
+  Layer,
+  LayersRef,
+  NaiveLayer,
+  LazyLayer,
+  TimelineManagerRef,
+} from "@reearth/core";
 
-import { TimelineManagerRef } from "../../../../lib/core/Map/useTimelineManager";
 import type { InfoboxBlock as Block } from "../Infobox/types";
 import type { MapRef } from "../types";
 import type { Widget, WidgetLocationOptions } from "../Widgets";

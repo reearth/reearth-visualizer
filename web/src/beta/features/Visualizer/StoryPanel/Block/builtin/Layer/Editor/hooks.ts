@@ -1,7 +1,7 @@
 import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
 
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
+import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
 import type { Field } from "../../../../types";

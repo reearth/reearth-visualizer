@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, MouseEvent, useEffect } from "react";
 
-import { Spacing } from "@reearth/beta/lib/core/mantle";
 import useDoubleClick from "@reearth/beta/utils/use-double-click";
+import { Spacing } from "@reearth/core";
 
 import { calculatePaddingValue } from "../../../StoryPanel/utils";
 import { useEditModeContext } from "../../contexts/editModeContext";

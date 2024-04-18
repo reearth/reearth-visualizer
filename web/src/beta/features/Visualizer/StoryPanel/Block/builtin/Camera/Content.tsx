@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
+import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

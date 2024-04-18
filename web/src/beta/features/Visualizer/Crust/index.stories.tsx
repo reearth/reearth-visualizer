@@ -1,12 +1,7 @@
 import { Meta, Story } from "@storybook/react";
 import { useRef } from "react";
 
-import { engine } from "../../../lib/core/engines/Cesium";
-import Map, { Engine } from "../../../lib/core/Map";
-import {
-  InteractionModeType,
-  INTERACTION_MODES,
-} from "../../../lib/core/Visualizer/interactionMode";
+import { Map, engines, Engine, InteractionModeType, INTERACTION_MODES } from "@reearth/core";
 
 import { MapRef } from "./types";
 
@@ -23,7 +18,7 @@ const Template: Story<Props & { engine: Engine; interactionMode: InteractionMode
     <>
       <Map
         engine="a"
-        engines={{ a: engine }}
+        engines={{ a: engines.cesium }}
         ref={ref}
         featureFlags={INTERACTION_MODES[args.interactionMode]}
       />
@@ -35,5 +30,5 @@ const Template: Story<Props & { engine: Engine; interactionMode: InteractionMode
 export const Cesium = Template.bind({});
 
 Cesium.args = {
-  engine: engine,
+  engine: engines.cesium,
 };

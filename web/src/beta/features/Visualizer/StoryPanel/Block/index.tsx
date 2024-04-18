@@ -1,6 +1,6 @@
 import { useCallback, type ComponentType, type ReactNode } from "react";
 
-import type { Layer } from "@reearth/beta/lib/core/mantle";
+import type { Layer } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
 import type { CommonBlockProps, BlockProps } from "../../shared/types";

@@ -1,8 +1,7 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
-import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/beta/lib/core/mantle";
-import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { LayerSelectionReason, LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,

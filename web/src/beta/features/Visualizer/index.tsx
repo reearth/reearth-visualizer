@@ -1,11 +1,17 @@
 import styled from "@emotion/styled";
 import { FC, MutableRefObject, SetStateAction, useRef } from "react";
 
-import { LayerSelectionReason } from "@reearth/beta/lib/core/engines";
-import { ComputedFeature, ComputedLayer, Layer } from "@reearth/beta/lib/core/mantle";
-import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import { Visualizer as CoreVisualizer, type EngineType } from "@reearth/core";
+import {
+  type SketchFeature,
+  type SketchType,
+  type ComputedFeature,
+  type ComputedLayer,
+  type Layer,
+  type LayerSelectionReason,
+  type EngineType,
+  CoreVisualizer,
+} from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 

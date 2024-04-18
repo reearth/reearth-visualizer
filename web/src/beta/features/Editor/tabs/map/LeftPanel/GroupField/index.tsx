@@ -6,7 +6,7 @@ import type {
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
 } from "@reearth/beta/features/Editor/useLayers";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
+import type { FlyTo } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Scene, ScenePropertyCollection } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";

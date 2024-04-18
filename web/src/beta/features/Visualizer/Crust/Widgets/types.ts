@@ -1,5 +1,5 @@
 export type { Camera, Theme, Clock } from "../types";
-export type { FlyToDestination, LookAtDestination } from "../../../../lib/core/types";
+export type { FlyToDestination, LookAtDestination } from "@reearth/core";
 
 export type InternalWidget<P = any> = Omit<Widget<P>, "layout" | "extended"> & {
   extended?: boolean;

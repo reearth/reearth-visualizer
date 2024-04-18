@@ -1,8 +1,8 @@
 import { mapValues } from "lodash-es";
 
 import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
-import { Layer, LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
 import { DEFAULT_LAYER_STYLE } from "@reearth/beta/utils/value";
+import { Layer, LayerAppearanceTypes } from "@reearth/core";
 import { NLSInfobox, NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 

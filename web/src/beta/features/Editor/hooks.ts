@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices";
-import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { FlyTo, MapRef } from "@reearth/core";
 import { usePropertyFetcher } from "@reearth/services/api";
 import {
   useWidgetAlignEditorActivated,

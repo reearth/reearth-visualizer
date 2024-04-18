@@ -1,6 +1,6 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import GroupSectionField from "@reearth/beta/features/Editor/tabs/map/LeftPanel/GroupField";
-import { FlyTo } from "@reearth/beta/lib/core/types";
+import { FlyTo } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import type { Scene } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";

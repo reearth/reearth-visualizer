@@ -1,8 +1,8 @@
 import { ReactNode, useMemo } from "react";
 
 import type { Tab } from "@reearth/beta/features/Navbar";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { FlyTo } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";

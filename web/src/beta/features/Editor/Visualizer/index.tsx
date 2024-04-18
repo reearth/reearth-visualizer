@@ -6,9 +6,9 @@ import {
   StoryPanelRef,
   type InstallableStoryBlock,
 } from "@reearth/beta/features/Visualizer/StoryPanel";
-import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import { SketchFeature, SketchType } from "@reearth/core";
+import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
 import useHooks from "./hooks";

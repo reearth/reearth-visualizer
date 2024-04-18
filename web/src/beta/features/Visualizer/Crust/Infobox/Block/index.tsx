@@ -1,7 +1,7 @@
 import { useCallback, type ComponentType, type ReactNode, memo } from "react";
 
 import type { CommonBlockProps, BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
-import type { Layer } from "@reearth/beta/lib/core/mantle";
+import type { Layer } from "@reearth/core";
 // import { styled } from "@reearth/services/theme";
 
 import BlockWrapper from "../../../shared/components/BlockWrapper";

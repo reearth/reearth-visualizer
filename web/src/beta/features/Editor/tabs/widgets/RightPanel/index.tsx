@@ -1,7 +1,7 @@
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import Settings from "@reearth/beta/features/Editor/SidePanel/Settings";
-import { FlyTo } from "@reearth/beta/lib/core/types";
 import { Camera } from "@reearth/beta/utils/value";
+import { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
 import ContainerSettings from "./ContainerSettings";

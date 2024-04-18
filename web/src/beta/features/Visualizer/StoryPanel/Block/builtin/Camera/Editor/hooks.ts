@@ -1,9 +1,9 @@
 import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
 
-import type { Camera } from "@reearth/beta/lib/core/engines";
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
 import { ValueTypes } from "@reearth/beta/utils/value";
+import type { Camera } from "@reearth/core";
+import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { useCurrentCamera } from "@reearth/services/state";
 

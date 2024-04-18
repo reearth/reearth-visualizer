@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { LayerAppearanceTypes } from "@reearth/beta/lib/core/mantle";
+import { LayerAppearanceTypes } from "@reearth/core";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useSelectedLayerStyle } from "@reearth/services/state";

@@ -1,7 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import type { ReactNode } from "react";
 
-import { Layer } from "../../../../lib/core/mantle";
+import { Layer } from "@reearth/core";
 
 import { PluginProvider } from "./context";
 import type { Context } from "./types";
