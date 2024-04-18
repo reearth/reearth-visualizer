@@ -780,19 +780,23 @@ func addCustomProperties(
 	return requestBody, res
 }
 
-func TestCustomProperties(t *testing.T) {
-	mr, err := miniredis.Run()
-	if err != nil {
-		t.Fatal(err)
+func customProperties(t *testing.T, isUseRedis bool) {
+	redisAddress := ""
+	if isUseRedis {
+		mr, err := miniredis.Run()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer mr.Close()
+		redisAddress = mr.Addr()
 	}
-	defer mr.Close()
 
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-		RedisHost: mr.Addr(),
+		RedisHost: redisAddress,
 	}, true, baseSeeder)
 
 	pId := createProject(e)
@@ -861,4 +865,12 @@ func TestCustomProperties(t *testing.T) {
 		Value("sketch").Object().
 		Value("customPropertySchema").Object().
 		Value("extrudedHeight").Equal(10)
+}
+
+func TestCustomProperties(t *testing.T) {
+	customProperties(t, false)
+}
+
+func TestCustomPropertiesWithRedis(t *testing.T) {
+	customProperties(t, true)
 }
