@@ -300,19 +300,23 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 	return fetchSceneRequestBody, res
 }
 
-func TestNLSLayerCRUD(t *testing.T) {
-	mr, err := miniredis.Run()
-	if err != nil {
-		t.Fatal(err)
+func nlsLayerCRUD(t *testing.T, isUseRedis bool) {
+	redisAddress := ""
+	if isUseRedis {
+		mr, err := miniredis.Run()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer mr.Close()
+		redisAddress = mr.Addr()
 	}
-	defer mr.Close()
 
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-		RedisHost: mr.Addr(),
+		RedisHost: redisAddress,
 	}, true, baseSeeder)
 
 	pId := createProject(e)
@@ -425,6 +429,14 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().Equal(0)
+}
+
+func TestNLSLayerCRUD(t *testing.T) {
+	nlsLayerCRUD(t, false)
+}
+
+func TestNLSLayerCRUDWithRedis(t *testing.T) {
+	nlsLayerCRUD(t, true)
 }
 
 func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string) {
