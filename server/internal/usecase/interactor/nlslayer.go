@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -17,7 +16,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
-	"github.com/vmihailenco/msgpack/v5"
 )
 
 type NLSLayer struct {
@@ -107,7 +105,7 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		return nil, err
 	}
 
-	err = i.setNLSLayerToCache(ctx, layerSimple.ID(), layerSimple)
+	err = setToCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(layerSimple.ID()), layerSimple)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +148,7 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 	}()
 
 	var layer nlslayer.NLSLayer
-	layer, err = i.getNLSLayerFromCache(ctx, lid)
+	layer, err = getFromCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(lid))
 	if err != nil {
 		return lid, nil, err
 	}
@@ -203,7 +201,7 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 	tx.Commit()
 
 	for _, l := range layers {
-		err = i.removeNLSLayerFromCache(ctx, l)
+		err = deleteFromCache(ctx, i.redis, nlslayer.NLSLayerCacheKey(l))
 		if err != nil {
 			return l, nil, err
 		}
@@ -226,7 +224,7 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 	}()
 
 	var layer nlslayer.NLSLayer
-	layer, err = i.getNLSLayerFromCache(ctx, inp.LayerID)
+	layer, err = getFromCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(inp.LayerID))
 	if err != nil {
 		return nil, err
 	}
@@ -261,7 +259,7 @@ func (i *NLSLayer) Update(ctx context.Context, inp interfaces.UpdateNLSLayerInpu
 
 	tx.Commit()
 
-	err = i.setNLSLayerToCache(ctx, layer.ID(), layer)
+	err = setToCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(layer.ID()), layer)
 	if err != nil {
 		return nil, err
 	}
@@ -565,7 +563,7 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 	}()
 
 	var layer nlslayer.NLSLayer
-	layer, err = i.getNLSLayerFromCache(ctx, lid)
+	layer, err = getFromCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(lid))
 	if err != nil {
 		return nil, err
 	}
@@ -590,7 +588,7 @@ func (i *NLSLayer) Duplicate(ctx context.Context, lid id.NLSLayerID, operator *u
 
 	tx.Commit()
 
-	err = i.setNLSLayerToCache(ctx, duplicatedLayer.ID(), duplicatedLayer)
+	err = setToCache[nlslayer.NLSLayer](ctx, i.redis, nlslayer.NLSLayerCacheKey(duplicatedLayer.ID()), duplicatedLayer)
 	if err != nil {
 		return nil, err
 	}
@@ -788,38 +786,4 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 
 	tx.Commit()
 	return inp.FeatureID, nil
-}
-
-func (i *NLSLayer) getNLSLayerFromCache(ctx context.Context, lid id.NLSLayerID) (nlslayer.NLSLayer, error) {
-	cacheKey := nlslayer.NLSLayerCacheKey(lid)
-	val, err := i.redis.GetValue(ctx, cacheKey)
-	if err != nil {
-		if err == redis.Nil {
-			return nil, nil
-		}
-
-		return nil, err
-	}
-
-	var l *nlslayer.NLSLayerSimple
-	if err := msgpack.Unmarshal([]byte(val), &l); err != nil {
-		return nil, err
-	}
-
-	return l, nil
-}
-
-func (i *NLSLayer) setNLSLayerToCache(ctx context.Context, lid id.NLSLayerID, layer nlslayer.NLSLayer) error {
-	cacheKey := nlslayer.NLSLayerCacheKey(lid)
-	data, err := msgpack.Marshal(layer)
-	if err != nil {
-		return err
-	}
-
-	return i.redis.SetValue(ctx, cacheKey, data)
-}
-
-func (i *NLSLayer) removeNLSLayerFromCache(ctx context.Context, lid id.NLSLayerID) error {
-	cacheKey := nlslayer.NLSLayerCacheKey(lid)
-	return i.redis.RemoveValue(ctx, cacheKey)
 }
