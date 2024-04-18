@@ -175,19 +175,23 @@ func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *htt
 	return fetchSceneRequestBody, res
 }
 
-func TestStyleCRUD(t *testing.T) {
-	mr, err := miniredis.Run()
-	if err != nil {
-		t.Fatal(err)
+func styleCRUD(t *testing.T, isUseRedis bool) {
+	redisAddress := ""
+	if isUseRedis {
+		mr, err := miniredis.Run()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer mr.Close()
+		redisAddress = mr.Addr()
 	}
-	defer mr.Close()
 
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-		RedisHost: mr.Addr(),
+		RedisHost: redisAddress,
 	}, true, baseSeeder)
 
 	pId := createProject(e, "test")
@@ -256,4 +260,12 @@ func TestStyleCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("styles").Array().
 		Length().Equal(0)
+}
+
+func TestStyleCRUD(t *testing.T) {
+	styleCRUD(t, false)
+}
+
+func TestStyleCRUDWithRedis(t *testing.T) {
+	styleCRUD(t, true)
 }
