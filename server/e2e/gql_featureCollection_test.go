@@ -197,19 +197,23 @@ func deleteGeoJSONFeature(
 	return requestBody, res, fId
 }
 
-func TestFeatureCollectionCRUD(t *testing.T) {
-	mr, err := miniredis.Run()
-	if err != nil {
-		t.Fatal(err)
+func featureCollectionCRUD(t *testing.T, isUseRedis bool) {
+	redisAddress := ""
+	if isUseRedis {
+		mr, err := miniredis.Run()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer mr.Close()
+		redisAddress = mr.Addr()
 	}
-	defer mr.Close()
 
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-		RedisHost: mr.Addr(),
+		RedisHost: redisAddress,
 	}, true, baseSeeder)
 
 	pId := createProject(e)
@@ -513,4 +517,12 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("featureCollection").Object().
 		Value("features").Array().
 		Length().Equal(0)
+}
+
+func TestFeatureCollectionCRUD(t *testing.T) {
+	featureCollectionCRUD(t, false)
+}
+
+func TestFeatureCollectionCRUDWithRedis(t *testing.T) {
+	featureCollectionCRUD(t, true)
 }
