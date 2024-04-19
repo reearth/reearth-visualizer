@@ -52,7 +52,6 @@ type VisualizerProps = {
       }
     | undefined;
   story?: Story;
-  rootLayerId?: string;
   zoomedLayerId?: string;
   useExperimentalSandbox?: boolean;
   visualizerRef?: MutableRefObject<MapRef | null>;
@@ -140,7 +139,6 @@ const Visualizer: FC<VisualizerProps> = ({
   sceneProperty,
   pluginProperty,
   story,
-  // rootLayerId,
   zoomedLayerId,
   useExperimentalSandbox,
   visualizerRef,
@@ -193,7 +191,6 @@ const Visualizer: FC<VisualizerProps> = ({
         isEditable={!isBuilt}
         layers={layers}
         zoomedLayerId={zoomedLayerId}
-        // rootLayerId={rootLayerId}
         sceneProperty={sceneProperty as SceneProperty}
         ready={ready}
         meta={engineMeta}

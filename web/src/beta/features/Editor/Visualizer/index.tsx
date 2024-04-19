@@ -48,7 +48,6 @@ const EditorVisualizer: React.FC<Props> = ({
   onSketchFeatureCreate,
 }) => {
   const {
-    rootLayerId,
     sceneProperty,
     pluginProperty,
     layers,
@@ -92,7 +91,6 @@ const EditorVisualizer: React.FC<Props> = ({
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
       // editor
-      rootLayerId={rootLayerId}
       zoomedLayerId={zoomedLayerId}
       useExperimentalSandbox={useExperimentalSandbox}
       visualizerRef={visualizerRef}

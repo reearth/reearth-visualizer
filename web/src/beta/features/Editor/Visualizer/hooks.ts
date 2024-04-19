@@ -73,9 +73,6 @@ export default ({
   // TODO: Fix to use exact type through GQL typing
   const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
 
-  // Layers
-  const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
-
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
   const infoboxBlockNames = useMemo(
@@ -274,7 +271,6 @@ export default ({
   }, [isBuilt, title]);
 
   return {
-    rootLayerId,
     sceneProperty,
     pluginProperty,
     layers,
