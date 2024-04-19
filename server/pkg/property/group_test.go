@@ -471,7 +471,7 @@ func TestGroup_RepresentativeFieldValue(t *testing.T) {
 				Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 				Value:  ValueTypeString.ValueFrom("abc"),
 			},
-			Expected: &Field{field: "aa", v: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)}},
+			Expected: &Field{FieldField: "aa", ValueField: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)}},
 		},
 	}
 

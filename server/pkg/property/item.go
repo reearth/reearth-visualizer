@@ -28,8 +28,8 @@ type Item interface {
 }
 
 type itemBase struct {
-	ID          ItemID
-	SchemaGroup SchemaGroupID
+	ID          ItemID        `msgpack:"ID"`
+	SchemaGroup SchemaGroupID `msgpack:"SchemaGroup"`
 }
 
 func ToGroup(i Item) *Group {
@@ -53,9 +53,9 @@ func InitItemFrom(psg *SchemaGroup) Item {
 }
 
 type GroupAndField struct {
-	ParentGroup *GroupList
-	Group       *Group
-	Field       *Field
+	ParentGroup *GroupList `msgpack:"ParentGroup"`
+	Group       *Group     `msgpack:"Group"`
+	Field       *Field     `msgpack:"Field"`
 }
 
 func (f GroupAndField) SchemaFieldPointer() SchemaFieldPointer {

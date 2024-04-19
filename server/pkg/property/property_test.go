@@ -692,7 +692,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 		{
 			name: "found",
 			target: &Property{
-				items: []Item{
+				ItemsField: []Item{
 					&GroupList{
 						itemBase: itemBase{
 							ID:          pgid1,
@@ -740,7 +740,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 		{
 			name: "list only",
 			target: &Property{
-				items: []Item{
+				ItemsField: []Item{
 					&GroupList{
 						itemBase: itemBase{
 							ID:          pgid1,
@@ -816,14 +816,14 @@ func TestProperty_AddItem(t *testing.T) {
 		},
 		{
 			name:      "schema group duplicated",
-			target:    &Property{items: []Item{&Group{itemBase: itemBase{SchemaGroup: "a"}}}},
+			target:    &Property{ItemsField: []Item{&Group{itemBase: itemBase{SchemaGroup: "a"}}}},
 			args:      args{i: &Group{itemBase: itemBase{SchemaGroup: "a"}}},
 			want:      false,
 			wantItems: []Item{&Group{itemBase: itemBase{SchemaGroup: "a"}}},
 		},
 		{
 			name:      "id duplicated",
-			target:    &Property{items: []Item{&Group{itemBase: itemBase{ID: iid}}}},
+			target:    &Property{ItemsField: []Item{&Group{itemBase: itemBase{ID: iid}}}},
 			args:      args{i: &Group{itemBase: itemBase{ID: iid}}},
 			want:      false,
 			wantItems: []Item{&Group{itemBase: itemBase{ID: iid}}},
@@ -843,7 +843,7 @@ func TestProperty_AddItem(t *testing.T) {
 			t.Parallel()
 			assert.Equal(t, tt.want, tt.target.AddItem(tt.args.i))
 			if tt.target != nil {
-				assert.Equal(t, tt.wantItems, tt.target.items)
+				assert.Equal(t, tt.wantItems, tt.target.ItemsField)
 			}
 		})
 	}

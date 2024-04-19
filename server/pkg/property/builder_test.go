@@ -121,18 +121,18 @@ func TestBuilder_Build(t *testing.T) {
 						},
 						fields: []*Field{
 							{
-								field: propertySchemaField1ID,
-								v:     OptionalValueFrom(ValueTypeString.ValueFrom("xxx")),
+								FieldField: propertySchemaField1ID,
+								ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("xxx")),
 							},
 						},
 					},
 				},
 			},
 			Expected: &Property{
-				id:     pid,
-				scene:  sid,
-				schema: scid,
-				items: []Item{
+				IDField:     pid,
+				SceneField:  sid,
+				SchemaField: scid,
+				ItemsField: []Item{
 					&Group{
 						itemBase: itemBase{
 							ID:          iid,
@@ -140,8 +140,8 @@ func TestBuilder_Build(t *testing.T) {
 						},
 						fields: []*Field{
 							{
-								field: propertySchemaField1ID,
-								v:     OptionalValueFrom(ValueTypeString.ValueFrom("xxx")),
+								FieldField: propertySchemaField1ID,
+								ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("xxx")),
 							},
 						},
 					},

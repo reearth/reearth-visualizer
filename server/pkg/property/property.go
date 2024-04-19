@@ -9,29 +9,29 @@ import (
 )
 
 type Property struct {
-	id     ID
-	scene  SceneID
-	schema SchemaID
-	items  []Item
+	IDField     ID       `msgpack:"IDField"`
+	SceneField  SceneID  `msgpack:"SceneField"`
+	SchemaField SchemaID `msgpack:"SchemaField"`
+	ItemsField  []Item   `msgpack:"ItemsField"`
 }
 
 func (p *Property) ID() ID {
-	return p.id
+	return p.IDField
 }
 
 func (p *Property) IDRef() *ID {
 	if p == nil {
 		return nil
 	}
-	return p.id.Ref()
+	return p.IDField.Ref()
 }
 
 func (p *Property) Scene() SceneID {
-	return p.scene
+	return p.SceneField
 }
 
 func (p *Property) Schema() SchemaID {
-	return p.schema
+	return p.SchemaField
 }
 
 func (p *Property) Field(ptr *Pointer) (*Field, *GroupList, *Group) {
@@ -52,7 +52,7 @@ func (p *Property) Items() []Item {
 	if p == nil {
 		return nil
 	}
-	return append([]Item{}, p.items...)
+	return append([]Item{}, p.ItemsField...)
 }
 
 func (p *Property) Item(ptr *Pointer) Item {
@@ -60,7 +60,7 @@ func (p *Property) Item(ptr *Pointer) Item {
 		return nil
 	}
 
-	for _, i := range p.items {
+	for _, i := range p.ItemsField {
 		if ptr.TestItem(i.SchemaGroup(), i.ID()) {
 			return i
 		}
@@ -74,7 +74,7 @@ func (p *Property) GroupAndList(ptr *Pointer) (*Group, *GroupList) {
 		return nil, nil
 	}
 
-	for _, i := range p.items {
+	for _, i := range p.ItemsField {
 		if ptr.TestSchemaGroup(i.SchemaGroup()) {
 			if gl := ToGroupList(i); gl != nil {
 				return gl.GroupByPointer(ptr), gl
@@ -92,7 +92,7 @@ func (p *Property) ItemBySchema(id SchemaGroupID) Item {
 	if p == nil {
 		return nil
 	}
-	for _, f := range p.items {
+	for _, f := range p.ItemsField {
 		if f.SchemaGroup() == id {
 			return f
 		}
@@ -131,7 +131,7 @@ func (p *Property) ListItem(ptr *Pointer) (*Group, *GroupList) {
 			return item.Group(i), item
 		}
 	} else if iid, ok := ptr.Item(); ok {
-		for _, item := range p.items {
+		for _, item := range p.ItemsField {
 			litem := ToGroupList(item)
 			if g := litem.Group(iid); g != nil {
 				return g, litem
@@ -149,7 +149,7 @@ func (p *Property) HasLinkedField() bool {
 	if p == nil {
 		return false
 	}
-	for _, f := range p.items {
+	for _, f := range p.ItemsField {
 		if f.HasLinkedField() {
 			return true
 		}
@@ -162,25 +162,25 @@ func (p *Property) Clone() *Property {
 		return nil
 	}
 
-	items := make([]Item, 0, len(p.items))
-	for _, i := range p.items {
+	items := make([]Item, 0, len(p.ItemsField))
+	for _, i := range p.ItemsField {
 		items = append(items, i.CloneItem())
 	}
 
 	return &Property{
-		id:     p.id,
-		schema: p.schema,
-		scene:  p.scene,
-		items:  items,
+		IDField:     p.IDField,
+		SchemaField: p.SchemaField,
+		SceneField:  p.SceneField,
+		ItemsField:  items,
 	}
 }
 
 func (p *Property) Fields(ptr *Pointer) []*Field {
-	if p == nil || len(p.items) == 0 {
+	if p == nil || len(p.ItemsField) == 0 {
 		return nil
 	}
 	res := []*Field{}
-	for _, g := range p.items {
+	for _, g := range p.ItemsField {
 		res = append(res, g.Fields(ptr)...)
 	}
 	return res
@@ -190,7 +190,7 @@ func (p *Property) RemoveFields(ptr *Pointer) (res bool) {
 	if p == nil {
 		return
 	}
-	for _, g := range p.items {
+	for _, g := range p.ItemsField {
 		if g.RemoveFields(ptr) {
 			res = true
 		}
@@ -203,7 +203,7 @@ func (p *Property) FieldsByLinkedDataset(s DatasetSchemaID, i DatasetID) []*Fiel
 		return nil
 	}
 	res := []*Field{}
-	for _, g := range p.items {
+	for _, g := range p.ItemsField {
 		res = append(res, g.FieldsByLinkedDataset(s, i)...)
 	}
 	return res
@@ -213,7 +213,7 @@ func (p *Property) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
 	if p == nil {
 		return false
 	}
-	for _, g := range p.items {
+	for _, g := range p.ItemsField {
 		if g.IsDatasetLinked(s, i) {
 			return true
 		}
@@ -227,7 +227,7 @@ func (p *Property) Datasets() []DatasetID {
 	}
 	res := []DatasetID{}
 
-	for _, f := range p.items {
+	for _, f := range p.ItemsField {
 		res = append(res, f.Datasets()...)
 	}
 
@@ -238,7 +238,7 @@ func (p *Property) AddItem(i Item) bool {
 	if p == nil || p.ItemBySchema(i.SchemaGroup()) != nil || p.Item(PointItem(i.ID())) != nil {
 		return false
 	}
-	p.items = append(p.items, i)
+	p.ItemsField = append(p.ItemsField, i)
 	return true
 }
 
@@ -247,10 +247,10 @@ func (p *Property) RemoveItem(ptr *Pointer) {
 		return
 	}
 
-	for i := 0; i < len(p.items); i++ {
-		item := p.items[i]
+	for i := 0; i < len(p.ItemsField); i++ {
+		item := p.ItemsField[i]
 		if ptr.TestItem(item.SchemaGroup(), item.ID()) {
-			p.items = append(p.items[:i], p.items[i+1:]...)
+			p.ItemsField = append(p.ItemsField[:i], p.ItemsField[i+1:]...)
 			return
 		}
 	}
@@ -278,7 +278,7 @@ func (p *Property) Prune() (res bool) {
 	if p == nil {
 		return
 	}
-	for _, i := range p.items {
+	for _, i := range p.ItemsField {
 		if i.Prune() {
 			res = true
 		}
@@ -518,9 +518,9 @@ func (p *Property) MigrateSchema(ctx context.Context, newSchema *Schema, dl data
 	if p == nil || dl == nil {
 		return
 	}
-	p.schema = newSchema.ID()
+	p.SchemaField = newSchema.ID()
 
-	for _, f := range p.items {
+	for _, f := range p.ItemsField {
 		f.MigrateSchema(ctx, newSchema, dl)
 	}
 
@@ -531,7 +531,7 @@ func (p *Property) MigrateDataset(q DatasetMigrationParam) {
 	if p == nil {
 		return
 	}
-	for _, f := range p.items {
+	for _, f := range p.ItemsField {
 		f.MigrateDataset(q)
 	}
 	p.Prune()
@@ -544,11 +544,11 @@ func (p *Property) ValidateSchema(ps *Schema) error {
 	if ps == nil {
 		return errors.New("invalid schema")
 	}
-	if p.schema != ps.ID() {
+	if p.SchemaField != ps.ID() {
 		return errors.New("invalid schema id")
 	}
 
-	for _, i := range p.items {
+	for _, i := range p.ItemsField {
 		sg := i.SchemaGroup()
 		if err := i.ValidateSchema(ps.Groups().Group(sg)); err != nil {
 			return fmt.Errorf("%s (%s): %w", p.ID(), sg, err)
@@ -590,11 +590,11 @@ func (p *Property) MoveFields(from, to *Pointer) (res bool) {
 }
 
 func (p *Property) GroupAndFields(ptr *Pointer) []GroupAndField {
-	if p == nil || len(p.items) == 0 {
+	if p == nil || len(p.ItemsField) == 0 {
 		return nil
 	}
 	res := []GroupAndField{}
-	for _, i := range p.items {
+	for _, i := range p.ItemsField {
 		if ptr == nil || ptr.TestSchemaGroup(i.SchemaGroup()) {
 			res = append(res, i.GroupAndFields(ptr)...)
 		}
@@ -617,8 +617,8 @@ func (p *Property) GuessSchema() *Schema {
 		return nil
 	}
 
-	groups := make([]*SchemaGroup, 0, len(p.items))
-	for _, i := range p.items {
+	groups := make([]*SchemaGroup, 0, len(p.ItemsField))
+	for _, i := range p.ItemsField {
 		if g := i.GuessSchema(); g != nil {
 			groups = append(groups, g)
 		}
@@ -631,13 +631,17 @@ func (p *Property) GuessSchema() *Schema {
 }
 
 func (p *Property) updateSchema(s SchemaID) bool {
-	if p == nil || s.IsNil() || p.schema.Equal(s) {
+	if p == nil || s.IsNil() || p.SchemaField.Equal(s) {
 		return false
 	}
-	p.schema = s.Clone()
+	p.SchemaField = s.Clone()
 	return true
 }
 
 func (p *Property) SetSchema(schema SchemaID) {
-	p.schema = schema.Clone()
+	p.SchemaField = schema.Clone()
+}
+
+func PropertyCacheKey(id ID) string {
+	return fmt.Sprintf("Property:%s", id)
 }

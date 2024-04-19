@@ -15,9 +15,9 @@ var (
 )
 
 type Field struct {
-	field FieldID
-	links *Links
-	v     *OptionalValue
+	FieldField FieldID        `msgpack:"FieldField"`
+	LinksField *Links         `msgpack:"LinksField"`
+	ValueField *OptionalValue `msgpack:"ValueField"`
 }
 
 func (p *Field) Clone() *Field {
@@ -25,49 +25,49 @@ func (p *Field) Clone() *Field {
 		return nil
 	}
 	return &Field{
-		field: p.field,
-		links: p.links.Clone(),
-		v:     p.v.Clone(),
+		FieldField: p.FieldField,
+		LinksField: p.LinksField.Clone(),
+		ValueField: p.ValueField.Clone(),
 	}
 }
 
 func (p *Field) Field() FieldID {
-	return p.field
+	return p.FieldField
 }
 
 func (p *Field) FieldRef() *FieldID {
 	if p == nil {
 		return nil
 	}
-	return p.field.Ref()
+	return p.FieldField.Ref()
 }
 
 func (p *Field) Links() *Links {
 	if p == nil {
 		return nil
 	}
-	return p.links
+	return p.LinksField
 }
 
 func (p *Field) Type() ValueType {
 	if p == nil {
 		return ValueTypeUnknown
 	}
-	return p.v.Type()
+	return p.ValueField.Type()
 }
 
 func (p *Field) Value() *Value {
 	if p == nil {
 		return nil
 	}
-	return p.v.Value()
+	return p.ValueField.Value()
 }
 
 func (p *Field) TypeAndValue() *OptionalValue {
 	if p == nil {
 		return nil
 	}
-	return p.v
+	return p.ValueField
 }
 
 func (p *Field) ActualValue(ds *dataset.Dataset) *ValueAndDatasetValue {
@@ -76,8 +76,8 @@ func (p *Field) ActualValue(ds *dataset.Dataset) *ValueAndDatasetValue {
 	}
 
 	var dv *dataset.Value
-	if p.links != nil {
-		if l := p.links.Last(); l != nil {
+	if p.LinksField != nil {
+		if l := p.LinksField.Last(); l != nil {
 			d := l.Dataset()
 			if d != nil && ds.ID() == *d && l.DatasetSchemaField() != nil {
 				dv = ds.Field(*l.DatasetSchemaField()).Value()
@@ -115,10 +115,10 @@ func (p *Field) Update(value *Value, field *SchemaField) error {
 	if p == nil {
 		return nil
 	}
-	if field == nil || p.field != field.ID() || !field.Validate(p.v) {
+	if field == nil || p.FieldField != field.ID() || !field.Validate(p.ValueField) {
 		return ErrInvalidPropertyValue
 	}
-	p.v.SetValue(value)
+	p.ValueField.SetValue(value)
 	return nil
 }
 
@@ -126,14 +126,14 @@ func (p *Field) UpdateUnsafe(value *Value) {
 	if p == nil {
 		return
 	}
-	p.v.SetValue(value)
+	p.ValueField.SetValue(value)
 }
 
 func (p *Field) Cast(t ValueType) bool {
 	if p == nil || t == ValueTypeUnknown || p.Type() == ValueTypeUnknown || p.Type() == t {
 		return false
 	}
-	p.v = p.v.Cast(t)
+	p.ValueField = p.ValueField.Cast(t)
 	p.Unlink()
 	return true
 }
@@ -142,7 +142,7 @@ func (p *Field) Link(links *Links) {
 	if p == nil {
 		return
 	}
-	p.links = links.Clone()
+	p.LinksField = links.Clone()
 }
 
 func (p *Field) Unlink() {
@@ -153,7 +153,7 @@ func (p *Field) UpdateField(field FieldID) {
 	if p == nil {
 		return
 	}
-	p.field = field
+	p.FieldField = field
 }
 
 func (p *Field) IsEmpty() bool {
@@ -172,7 +172,7 @@ func (p *Field) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset
 	invalid := schemaField == nil
 
 	// if value is not compatible for type, value will be cleared
-	if !schemaField.Validate(p.v) {
+	if !schemaField.Validate(p.ValueField) {
 		p.UpdateUnsafe(nil)
 	}
 

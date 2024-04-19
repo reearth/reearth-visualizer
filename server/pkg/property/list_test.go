@@ -24,7 +24,7 @@ func TestList_IDs(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			target: List{&Property{id: p1}, &Property{id: p2}, &Property{id: p1}},
+			target: List{&Property{IDField: p1}, &Property{IDField: p2}, &Property{IDField: p1}},
 			want:   []ID{p1, p2},
 		},
 	}
@@ -49,7 +49,7 @@ func TestList_Schemas(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			target: List{&Property{schema: ps1}, &Property{schema: ps2}, &Property{schema: ps1}},
+			target: List{&Property{SchemaField: ps1}, &Property{SchemaField: ps2}, &Property{SchemaField: ps1}},
 			want:   []SchemaID{ps1, ps2},
 		},
 	}
@@ -74,10 +74,10 @@ func TestList_Map(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			target: List{&Property{id: p1}, &Property{id: p2}, &Property{id: p1}},
+			target: List{&Property{IDField: p1}, &Property{IDField: p2}, &Property{IDField: p1}},
 			want: Map{
-				p1: &Property{id: p1},
-				p2: &Property{id: p2},
+				p1: &Property{IDField: p1},
+				p2: &Property{IDField: p2},
 			},
 		},
 	}

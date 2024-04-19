@@ -46,9 +46,9 @@ func TestFieldBuilder_Build(t *testing.T) {
 				Value: OptionalValueFrom(ValueTypeString.ValueFrom("vvv")),
 			},
 			Expected: &Field{
-				field: "A",
-				links: NewLinks([]*Link{l}),
-				v:     OptionalValueFrom(ValueTypeString.ValueFrom("vvv")),
+				FieldField: "A",
+				LinksField: NewLinks([]*Link{l}),
+				ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("vvv")),
 			},
 		},
 	}
@@ -91,9 +91,9 @@ func TestFieldBuilder_MustBuild(t *testing.T) {
 				Value: OptionalValueFrom(ValueTypeString.ValueFrom("vvv")),
 			},
 			Expected: &Field{
-				field: "A",
-				links: NewLinks([]*Link{l}),
-				v:     OptionalValueFrom(ValueTypeString.ValueFrom("vvv")),
+				FieldField: "A",
+				LinksField: NewLinks([]*Link{l}),
+				ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("vvv")),
 			},
 		},
 	}
