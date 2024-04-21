@@ -571,6 +571,11 @@ export default ({
 
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
+      if (!target || typeof target === "undefined" || !("id" in target && target.id)) {
+        viewer.selectedEntity = undefined;
+        onLayerSelect?.();
+        return;
+      }
 
       const entity =
         findEntity(viewer, undefined, selectedLayerId?.featureId) ||
