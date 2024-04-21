@@ -930,7 +930,7 @@ export default ({
         : "hidden";
     }
     viewer.forceResize();
-  }, [property]);
+  }, [property, cesium.current?.cesiumElement]);
 
   const globe = cesium.current?.cesiumElement?.scene.globe;
 
