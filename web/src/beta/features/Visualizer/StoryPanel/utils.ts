@@ -1,7 +1,6 @@
 import { ValueTypes, ValueType } from "@reearth/beta/utils/value";
+import type { Spacing } from "@reearth/core";
 import type { Item } from "@reearth/services/api/propertyApi/utils";
-
-import type { Spacing } from "../../../lib/core/mantle";
 
 export const getFieldValue = (items: Item[], fieldId: string, fieldGroup?: string) => {
   const d = items.find(i => i.schemaGroup === (fieldGroup ?? "default")) ?? items[0];

@@ -4,7 +4,7 @@ import Toolbar from "@reearth/beta/features/Editor/tabs/map/Toolbar";
 import PublishNav, { type ProjectType } from "@reearth/beta/features/Editor/tabs/publish/Nav";
 import WidgetNav, { type Device } from "@reearth/beta/features/Editor/tabs/widgets/Nav";
 import { Tab } from "@reearth/beta/features/Navbar";
-import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
+import { SketchType } from "@reearth/core";
 
 type Props = {
   tab: Tab;

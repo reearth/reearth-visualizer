@@ -15,10 +15,7 @@ import {
   formatDateForTimeline,
   formatRangeDateAndTime,
 } from "@reearth/beta/features/Visualizer/StoryPanel/utils";
-import {
-  TickEventCallback,
-  TimelineCommitter,
-} from "@reearth/beta/lib/core/Map/useTimelineManager";
+import { TickEventCallback, TimelineCommitter } from "@reearth/core";
 
 import { DEFAULT_BLOCK_PADDING } from "../../../../shared/components/BlockWrapper/hooks";
 import { getNewDate } from "../../../../shared/hooks/useTimelineBlock";

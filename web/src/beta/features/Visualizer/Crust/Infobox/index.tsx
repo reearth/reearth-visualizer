@@ -3,8 +3,8 @@ import { Fragment, ReactNode, memo } from "react";
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
 import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
-import { Spacing } from "@reearth/beta/lib/core/mantle";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
 import { InstallableBlock } from "../../shared/types";

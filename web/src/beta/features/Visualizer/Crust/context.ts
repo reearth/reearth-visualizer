@@ -1,6 +1,6 @@
 import { RefObject, useMemo } from "react";
 
-import { TimelineManagerRef, TimelineCommitter } from "../../../lib/core/Map/useTimelineManager";
+import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
 
 import { Camera, MapRef, SceneProperty } from "./types";
 import { Context as WidgetContext } from "./Widgets";

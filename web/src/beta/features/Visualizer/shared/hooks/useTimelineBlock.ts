@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
+import { useVisualizer, TickEventCallback, TimelineCommitter } from "@reearth/core";
 
-import { TickEventCallback, TimelineCommitter } from "../../../../lib/core/Map/useTimelineManager";
 import { TimelineValues } from "../../StoryPanel/Block/builtin/Timeline";
 import {
   convertOptionToSeconds,

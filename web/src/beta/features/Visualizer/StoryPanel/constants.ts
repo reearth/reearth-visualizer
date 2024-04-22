@@ -1,4 +1,4 @@
-import { Spacing } from "../../../lib/core/mantle";
+import { Spacing } from "@reearth/core";
 
 // Story Panel
 export const STORY_PANEL_WIDTH = 442;

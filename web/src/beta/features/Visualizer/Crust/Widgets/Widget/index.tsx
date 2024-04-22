@@ -1,11 +1,7 @@
 import { ComponentType, ReactNode, useMemo } from "react";
 
-import type { TickEvent } from "@reearth/beta/lib/core/Map";
-
-import {
-  TimelineManagerRef,
-  TimelineCommitter,
-} from "../../../../../lib/core/Map/useTimelineManager";
+import type { TickEvent } from "@reearth/core";
+import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
 
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {

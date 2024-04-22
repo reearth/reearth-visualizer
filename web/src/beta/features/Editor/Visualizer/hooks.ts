@@ -1,8 +1,7 @@
 import { useMemo, useEffect, useCallback } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
-import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/beta/lib/core/mantle";
-import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { LayerSelectionReason, LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -73,9 +72,6 @@ export default ({
   // Scene property
   // TODO: Fix to use exact type through GQL typing
   const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
-
-  // Layers
-  const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
@@ -275,7 +271,6 @@ export default ({
   }, [isBuilt, title]);
 
   return {
-    rootLayerId,
     sceneProperty,
     pluginProperty,
     layers,

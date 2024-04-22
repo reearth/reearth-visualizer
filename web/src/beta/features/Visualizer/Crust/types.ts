@@ -5,8 +5,8 @@ export type {
   Clock,
   ValueTypes,
   ValueType,
-  Ref as MapRef,
+  MapRef,
   SceneProperty,
-} from "../../../lib/core/Map";
+  InteractionModeType,
+} from "@reearth/core";
 export type { Theme } from "./theme";
-export type { InteractionModeType } from "../../../lib/core/Visualizer/interactionMode";

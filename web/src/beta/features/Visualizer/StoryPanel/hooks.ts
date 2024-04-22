@@ -1,8 +1,8 @@
 import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 import type { Story, StoryPage } from "@reearth/beta/features/Visualizer/StoryPanel/types";
+import { useVisualizer } from "@reearth/core";
 
-import { useVisualizer } from "../../../lib/core/Visualizer";
 import { MapRef } from "../Crust/types";
 
 import { DEFAULT_STORY_PAGE_DURATION, STORY_PANEL_CONTENT_ELEMENT_ID } from "./constants";

@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 
 import Button from "@reearth/beta/components/Button";
-import { SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
+import { SketchType } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
 type Props = {

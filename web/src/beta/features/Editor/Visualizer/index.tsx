@@ -6,9 +6,9 @@ import {
   StoryPanelRef,
   type InstallableStoryBlock,
 } from "@reearth/beta/features/Visualizer/StoryPanel";
-import type { MapRef } from "@reearth/beta/lib/core/Map/ref";
-import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import { SketchFeature, SketchType } from "@reearth/core";
+import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 
 import useHooks from "./hooks";
@@ -48,7 +48,6 @@ const EditorVisualizer: React.FC<Props> = ({
   onSketchFeatureCreate,
 }) => {
   const {
-    rootLayerId,
     sceneProperty,
     pluginProperty,
     layers,
@@ -92,7 +91,6 @@ const EditorVisualizer: React.FC<Props> = ({
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
       // editor
-      rootLayerId={rootLayerId}
       zoomedLayerId={zoomedLayerId}
       useExperimentalSandbox={useExperimentalSandbox}
       visualizerRef={visualizerRef}

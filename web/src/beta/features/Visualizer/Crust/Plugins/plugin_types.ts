@@ -1,14 +1,4 @@
 import type {
-  ComputedLayer,
-  ComputedFeature,
-  LatLngHeight,
-  Rect,
-  CameraPosition,
-  Tag,
-  NaiveLayer,
-  LayerSimple,
-} from "@reearth/beta/lib/core/mantle";
-import type {
   LayerEditEvent,
   LayersRef,
   LayerSelectionReason,
@@ -23,20 +13,26 @@ import type {
   LayerSelectWithRectStart,
   LayerSelectWithRectMove,
   LayerSelectWithRectEnd,
-} from "@reearth/beta/lib/core/Map";
-
+  ComputedLayer,
+  ComputedFeature,
+  LatLngHeight,
+  Rect,
+  CameraPosition,
+  Tag,
+  NaiveLayer,
+  LayerSimple,
+} from "@reearth/core";
 import {
   SketchAppearance,
   SketchEventProps,
   SketchType,
-} from "../../../../lib/core/Map/Sketch/types";
-import { TimelineCommitter } from "../../../../lib/core/Map/useTimelineManager";
-import {
+  TimelineCommitter,
   CameraOptions,
   FlyToDestination,
   LookAtDestination,
   ScreenSpaceCameraControllerOptions,
-} from "../../../../lib/core/types";
+} from "@reearth/core";
+
 import { InfoboxBlock as Block } from "../Infobox/types";
 import { InteractionModeType } from "../types";
 import { Widget } from "../Widgets";
