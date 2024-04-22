@@ -372,6 +372,11 @@ export default ({
       mouseEventHandles.click?.(e, target);
       const viewer = cesium.current?.cesiumElement;
       if (!viewer || viewer.isDestroyed()) return;
+      if (!target || typeof target === "undefined" || !("id" in target && target.id)) {
+        viewer.selectedEntity = undefined;
+        onLayerSelect?.();
+        return;
+      }
 
       if (target && "id" in target && target.id instanceof Entity && isSelectable(target.id)) {
         const tag = getTag(target.id);
