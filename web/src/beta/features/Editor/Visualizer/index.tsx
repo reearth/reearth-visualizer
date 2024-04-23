@@ -56,7 +56,6 @@ const EditorVisualizer: React.FC<Props> = ({
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox,
     zoomedLayerId,
     installableInfoboxBlocks,
     handleLayerSelect,
@@ -92,7 +91,6 @@ const EditorVisualizer: React.FC<Props> = ({
       pluginProperty={pluginProperty}
       // editor
       zoomedLayerId={zoomedLayerId}
-      useExperimentalSandbox={useExperimentalSandbox}
       visualizerRef={visualizerRef}
       currentCamera={currentCamera}
       interactionMode={interactionMode}
