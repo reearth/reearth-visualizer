@@ -1,3 +1,4 @@
+import { Provider as StateProvider } from "jotai";
 import { Suspense } from "react";
 
 import Loading from "@reearth/beta/components/Loading";
@@ -16,11 +17,13 @@ export default function App() {
       <GqlProvider>
         <ThemeProvider>
           <I18nProvider>
-            <Suspense fallback={<Loading animationSize={80} animationColor="#3B3CD0" />}>
-              <NotificationBanner />
-              <GlobalModal />
-              <AppRoutes />
-            </Suspense>
+            <StateProvider>
+              <Suspense fallback={<Loading animationSize={80} animationColor="#3B3CD0" />}>
+                <NotificationBanner />
+                <GlobalModal />
+                <AppRoutes />
+              </Suspense>
+            </StateProvider>
           </I18nProvider>
         </ThemeProvider>
       </GqlProvider>
