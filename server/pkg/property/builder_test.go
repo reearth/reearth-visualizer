@@ -119,7 +119,7 @@ func TestBuilder_Build(t *testing.T) {
 							ID:          iid,
 							SchemaGroup: propertySchemaGroup1ID,
 						},
-						fields: []*Field{
+						FieldsField: []*Field{
 							{
 								FieldField: propertySchemaField1ID,
 								ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("xxx")),
@@ -138,7 +138,7 @@ func TestBuilder_Build(t *testing.T) {
 							ID:          iid,
 							SchemaGroup: propertySchemaGroup1ID,
 						},
-						fields: []*Field{
+						FieldsField: []*Field{
 							{
 								FieldField: propertySchemaField1ID,
 								ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("xxx")),

@@ -101,6 +101,6 @@ func (v *Value) ValueCoordinates() (vv Coordinates, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.v.(Coordinates)
+	vv, ok = v.VField.(Coordinates)
 	return
 }

@@ -70,6 +70,6 @@ func (b *GroupBuilder) Fields(fields []*Field) *GroupBuilder {
 		ids[f.Field()] = struct{}{}
 		newFields = append(newFields, f)
 	}
-	b.p.fields = newFields
+	b.p.FieldsField = newFields
 	return b
 }

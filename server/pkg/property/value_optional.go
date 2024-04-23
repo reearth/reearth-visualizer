@@ -3,7 +3,7 @@ package property
 import "github.com/reearth/reearth/server/pkg/value"
 
 type OptionalValue struct {
-	ov value.Optional
+	OptionalValueField value.Optional `msgpack:"OptionalValueField"`
 }
 
 func NewOptionalValue(t ValueType, v *Value) *OptionalValue {
@@ -15,7 +15,7 @@ func NewOptionalValue(t ValueType, v *Value) *OptionalValue {
 	if ov == nil {
 		return nil
 	}
-	return &OptionalValue{ov: *ov}
+	return &OptionalValue{OptionalValueField: *ov}
 }
 
 func OptionalValueFrom(v *Value) *OptionalValue {
@@ -27,7 +27,7 @@ func OptionalValueFrom(v *Value) *OptionalValue {
 		return nil
 	}
 	return &OptionalValue{
-		ov: *ov,
+		OptionalValueField: *ov,
 	}
 }
 
@@ -35,14 +35,14 @@ func (ov *OptionalValue) Type() ValueType {
 	if ov == nil {
 		return ValueTypeUnknown
 	}
-	return ValueType(ov.ov.Type())
+	return ValueType(ov.OptionalValueField.Type())
 }
 
 func (ov *OptionalValue) Value() *Value {
 	if ov == nil {
 		return nil
 	}
-	vv := ov.ov.Value()
+	vv := ov.OptionalValueField.Value()
 	if vv == nil {
 		return nil
 	}
@@ -57,12 +57,12 @@ func (ov *OptionalValue) Clone() *OptionalValue {
 	if ov == nil {
 		return nil
 	}
-	nov := ov.ov.Clone()
+	nov := ov.OptionalValueField.Clone()
 	if nov == nil {
 		return nil
 	}
 	return &OptionalValue{
-		ov: *nov,
+		OptionalValueField: *nov,
 	}
 }
 
@@ -71,9 +71,9 @@ func (ov *OptionalValue) SetValue(v *Value) {
 		return
 	}
 	if v == nil {
-		ov.ov.SetValue(nil)
+		ov.OptionalValueField.SetValue(nil)
 	} else {
-		ov.ov.SetValue(&v.v)
+		ov.OptionalValueField.SetValue(&v.v)
 	}
 }
 
@@ -81,9 +81,9 @@ func (ov *OptionalValue) Cast(t ValueType) *OptionalValue {
 	if ov == nil {
 		return nil
 	}
-	vv := ov.ov.Cast(value.Type(t), types)
+	vv := ov.OptionalValueField.Cast(value.Type(t), types)
 	if vv == nil {
 		return nil
 	}
-	return &OptionalValue{ov: *vv}
+	return &OptionalValue{OptionalValueField: *vv}
 }

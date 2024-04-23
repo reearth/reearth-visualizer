@@ -56,6 +56,6 @@ func (v *Value) ValueArray() (vv []any, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.v.([]any)
+	vv, ok = v.VField.([]any)
 	return
 }

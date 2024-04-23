@@ -24,14 +24,14 @@ func TestNewNilableValue(t *testing.T) {
 				t: ValueTypeString,
 				v: ValueTypeString.ValueFrom("foo"),
 			},
-			want: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types))},
+			want: &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types))},
 		},
 		{
 			name: "nil value",
 			args: args{
 				t: ValueTypeString,
 			},
-			want: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
+			want: &OptionalValue{OptionalValueField: *value.NewOptional(value.TypeString, nil)},
 		},
 		{
 			name: "invalid value",
@@ -75,7 +75,7 @@ func TestOptionalValueFrom(t *testing.T) {
 			args: args{
 				v: ValueTypeString.ValueFrom("foo"),
 			},
-			want: &OptionalValue{ov: *value.NewOptional(value.TypeString, value.TypeString.ValueFrom("foo", types))},
+			want: &OptionalValue{OptionalValueField: *value.NewOptional(value.TypeString, value.TypeString.ValueFrom("foo", types))},
 		},
 		{
 			name: "empty value",
@@ -108,7 +108,7 @@ func TestOptionalValue_Type(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{ov: *value.NewOptional(value.TypeBool, nil)},
+			value: &OptionalValue{OptionalValueField: *value.NewOptional(value.TypeBool, nil)},
 			want:  ValueTypeBool,
 		},
 		{
@@ -140,7 +140,7 @@ func TestOptionalValue_Value(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foobar", types))},
+			value: &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeString.ValueFrom("foobar", types))},
 			want:  ValueTypeString.ValueFrom("foobar"),
 		},
 		{
@@ -177,7 +177,7 @@ func TestOptionalValue_TypeAndValue(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foobar", types))},
+			value: &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeString.ValueFrom("foobar", types))},
 			wantt: ValueTypeString,
 			wantv: ValueTypeString.ValueFrom("foobar"),
 		},
@@ -222,17 +222,17 @@ func TestOptionalValue_SetValue(t *testing.T) {
 	}{
 		{
 			name:  "set",
-			value: &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types))},
+			value: &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types))},
 			args:  args{v: ValueTypeString.ValueFrom("foobar")},
 		},
 		{
 			name:  "set to nil",
-			value: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
+			value: &OptionalValue{OptionalValueField: *value.NewOptional(value.TypeString, nil)},
 			args:  args{v: ValueTypeString.ValueFrom("foobar")},
 		},
 		{
 			name:    "invalid value",
-			value:   &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
+			value:   &OptionalValue{OptionalValueField: *value.NewOptional(value.TypeString, nil)},
 			args:    args{v: ValueTypeNumber.ValueFrom(1)},
 			invalid: true,
 		},
@@ -282,7 +282,7 @@ func TestOptionalValue_Clone(t *testing.T) {
 		{
 			name: "ok",
 			target: &OptionalValue{
-				ov: *value.NewOptional(value.TypeString, value.TypeString.ValueFrom("foo", types)),
+				OptionalValueField: *value.NewOptional(value.TypeString, value.TypeString.ValueFrom("foo", types)),
 			},
 		},
 		{
@@ -321,21 +321,21 @@ func TestOptionalValue_Cast(t *testing.T) {
 	}{
 		{
 			name:   "diff type",
-			target: &OptionalValue{ov: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
+			target: &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
 			args:   args{t: ValueTypeString},
-			want:   &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("1.1", types))},
+			want:   &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeString.ValueFrom("1.1", types))},
 		},
 		{
 			name:   "same type",
-			target: &OptionalValue{ov: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
+			target: &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
 			args:   args{t: ValueTypeNumber},
-			want:   &OptionalValue{ov: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
+			want:   &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeNumber.ValueFrom(1.1, types))},
 		},
 		{
 			name:   "to sting",
-			target: &OptionalValue{ov: *value.OptionalFrom(value.TypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}, types))},
+			target: &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}, types))},
 			args:   args{t: ValueTypeString},
-			want:   &OptionalValue{ov: *value.OptionalFrom(value.TypeString.ValueFrom("2.000000, 1.000000", types))},
+			want:   &OptionalValue{OptionalValueField: *value.OptionalFrom(value.TypeString.ValueFrom("2.000000, 1.000000", types))},
 		},
 		{
 			name:   "empty",

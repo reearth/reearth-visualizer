@@ -52,6 +52,6 @@ func (v *Value) ValueBool() (vv bool, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.v.(bool)
+	vv, ok = v.VField.(bool)
 	return
 }

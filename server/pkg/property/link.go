@@ -7,13 +7,13 @@ import (
 )
 
 type Links struct {
-	links []*Link
+	LinksField []*Link `msgpack:"LinksField"`
 }
 
 type Link struct {
-	dataset *DatasetID
-	schema  *DatasetSchemaID
-	field   *DatasetFieldID
+	DatasetField *DatasetID       `msgpack:"DatasetField"`
+	SchemaField  *DatasetSchemaID `msgpack:"SchemaField"`
+	FieldField   *DatasetFieldID  `msgpack:"FieldField"`
 }
 
 func NewLinks(links []*Link) *Links {
@@ -25,7 +25,7 @@ func NewLinks(links []*Link) *Links {
 		links2 = append(links2, l.Clone())
 	}
 	return &Links{
-		links: links2,
+		LinksField: links2,
 	}
 }
 
@@ -34,37 +34,37 @@ func (l *Links) Clone() *Links {
 		return nil
 	}
 	return &Links{
-		links: append([]*Link{}, l.links...),
+		LinksField: append([]*Link{}, l.LinksField...),
 	}
 }
 
 func (l *Links) IsLinked() bool {
-	return l != nil && l.links != nil && len(l.links) > 0
+	return l != nil && l.LinksField != nil && len(l.LinksField) > 0
 }
 
 func (l *Links) IsLinkedFully() bool {
-	return l != nil && l.links != nil && len(l.links) > 0 && len(l.DatasetIDs()) == len(l.links)
+	return l != nil && l.LinksField != nil && len(l.LinksField) > 0 && len(l.DatasetIDs()) == len(l.LinksField)
 }
 
 func (l *Links) Len() int {
-	if l == nil || l.links == nil {
+	if l == nil || l.LinksField == nil {
 		return 0
 	}
-	return len(l.links)
+	return len(l.LinksField)
 }
 
 func (l *Links) First() *Link {
-	if l == nil || l.links == nil || len(l.links) == 0 {
+	if l == nil || l.LinksField == nil || len(l.LinksField) == 0 {
 		return nil
 	}
-	return l.links[0]
+	return l.LinksField[0]
 }
 
 func (l *Links) Last() *Link {
-	if l == nil || l.links == nil || len(l.links) == 0 {
+	if l == nil || l.LinksField == nil || len(l.LinksField) == 0 {
 		return nil
 	}
-	return l.links[len(l.links)-1]
+	return l.LinksField[len(l.LinksField)-1]
 }
 
 func (l *Links) LastValue(ds *dataset.Dataset) *dataset.Value {
@@ -72,7 +72,7 @@ func (l *Links) LastValue(ds *dataset.Dataset) *dataset.Value {
 }
 
 func (l *Links) Validate(dsm dataset.SchemaMap, dm dataset.Map) bool {
-	if l == nil || l.links == nil {
+	if l == nil || l.LinksField == nil {
 		return false
 	}
 	firstDatasetSchema := l.First().DatasetSchema()
@@ -80,19 +80,19 @@ func (l *Links) Validate(dsm dataset.SchemaMap, dm dataset.Map) bool {
 		return false
 	}
 	fields := l.DatasetSchemaFieldIDs()
-	if fields == nil || len(fields) != len(l.links) {
+	if fields == nil || len(fields) != len(l.LinksField) {
 		return false
 	}
 	firstDataset := l.First().Dataset()
 
 	res, resf := dsm.GraphSearchByFields(*firstDatasetSchema, fields...)
-	if len(res) != len(l.links) || resf == nil {
+	if len(res) != len(l.LinksField) || resf == nil {
 		return false
 	}
 
 	if firstDataset != nil {
 		res2, resf2 := dm.GraphSearchByFields(*firstDataset, fields...)
-		return len(res2) == len(l.links) && resf2 != nil
+		return len(res2) == len(l.LinksField) && resf2 != nil
 	}
 
 	return true
@@ -103,47 +103,47 @@ func (l *Links) Replace(
 	dm map[DatasetID]DatasetID,
 	fm map[DatasetFieldID]DatasetFieldID,
 ) {
-	if l == nil || l.links == nil {
+	if l == nil || l.LinksField == nil {
 		return
 	}
 
-	links := make([]*Link, 0, len(l.links))
+	links := make([]*Link, 0, len(l.LinksField))
 
-	for _, link := range l.links {
+	for _, link := range l.LinksField {
 		nl := &Link{}
 
-		if link.schema != nil {
-			if nds, ok := dsm[*link.schema]; ok {
+		if link.SchemaField != nil {
+			if nds, ok := dsm[*link.SchemaField]; ok {
 				nid := nds
-				nl.schema = &nid
+				nl.SchemaField = &nid
 			} else {
 				// Datasetは全てIDが再割り当てされるため、リンクが途切れていることになる
 				// よってリンク自体が無効になる
-				l.links = nil
+				l.LinksField = nil
 				return
 			}
 		}
 
-		if link.dataset != nil {
-			if nds, ok := dm[*link.dataset]; ok {
+		if link.DatasetField != nil {
+			if nds, ok := dm[*link.DatasetField]; ok {
 				nid := nds
-				nl.dataset = &nid
+				nl.DatasetField = &nid
 			} else {
 				// Datasetは全てIDが再割り当てされるため、リンクが途切れていることになる
 				// よってリンク自体が無効になる
-				l.links = nil
+				l.LinksField = nil
 				return
 			}
 		}
 
-		if link.field != nil {
-			if nf, ok := fm[*link.field]; ok {
+		if link.FieldField != nil {
+			if nf, ok := fm[*link.FieldField]; ok {
 				nid := nf
-				nl.field = &nid
+				nl.FieldField = &nid
 			} else {
 				// Datasetは全てIDが再割り当てされるため、リンクが途切れていることになる
 				// よってリンク自体が無効になる
-				l.links = nil
+				l.LinksField = nil
 				return
 			}
 		}
@@ -151,15 +151,15 @@ func (l *Links) Replace(
 		links = append(links, nl)
 	}
 
-	l.links = links
+	l.LinksField = links
 }
 
 func (l *Links) Links() []*Link {
-	if l == nil || l.links == nil || len(l.links) == 0 {
+	if l == nil || l.LinksField == nil || len(l.LinksField) == 0 {
 		return nil
 	}
-	links2 := make([]*Link, 0, len(l.links))
-	for _, l := range l.links {
+	links2 := make([]*Link, 0, len(l.LinksField))
+	for _, l := range l.LinksField {
 		links2 = append(links2, l.Clone())
 	}
 	return links2
@@ -169,10 +169,10 @@ func (l *Links) DatasetIDs() []DatasetID {
 	if l == nil {
 		return nil
 	}
-	datasets := make([]DatasetID, 0, len(l.links))
-	for _, i := range l.links {
-		if i.dataset != nil {
-			datasets = append(datasets, *i.dataset)
+	datasets := make([]DatasetID, 0, len(l.LinksField))
+	for _, i := range l.LinksField {
+		if i.DatasetField != nil {
+			datasets = append(datasets, *i.DatasetField)
 		} else {
 			return datasets
 		}
@@ -184,10 +184,10 @@ func (l *Links) DatasetSchemaIDs() []DatasetSchemaID {
 	if l == nil {
 		return nil
 	}
-	schemas := make([]DatasetSchemaID, 0, len(l.links))
-	for _, i := range l.links {
-		if i.schema != nil {
-			schemas = append(schemas, *i.schema)
+	schemas := make([]DatasetSchemaID, 0, len(l.LinksField))
+	for _, i := range l.LinksField {
+		if i.SchemaField != nil {
+			schemas = append(schemas, *i.SchemaField)
 		} else {
 			return schemas
 		}
@@ -216,10 +216,10 @@ func (l *Links) DatasetSchemaFieldIDs() []DatasetFieldID {
 	if l == nil {
 		return nil
 	}
-	fields := make([]DatasetFieldID, 0, len(l.links))
-	for _, i := range l.links {
-		if i.field != nil {
-			fields = append(fields, *i.field)
+	fields := make([]DatasetFieldID, 0, len(l.LinksField))
+	for _, i := range l.LinksField {
+		if i.FieldField != nil {
+			fields = append(fields, *i.FieldField)
 		} else {
 			return fields
 		}
@@ -231,8 +231,8 @@ func (l *Links) HasDataset(did DatasetID) bool {
 	if l == nil {
 		return false
 	}
-	for _, l2 := range l.links {
-		if l2 != nil && l2.dataset != nil && *l2.dataset == did {
+	for _, l2 := range l.LinksField {
+		if l2 != nil && l2.DatasetField != nil && *l2.DatasetField == did {
 			return true
 		}
 	}
@@ -243,8 +243,8 @@ func (l *Links) HasDatasetSchema(dsid DatasetSchemaID) bool {
 	if l == nil {
 		return false
 	}
-	for _, l2 := range l.links {
-		if l2 != nil && l2.schema != nil && *l2.schema == dsid {
+	for _, l2 := range l.LinksField {
+		if l2 != nil && l2.SchemaField != nil && *l2.SchemaField == dsid {
 			return true
 		}
 	}
@@ -255,8 +255,8 @@ func (l *Links) HasDatasetSchemaAndDataset(dsid DatasetSchemaID, did DatasetID) 
 	if l == nil {
 		return false
 	}
-	for _, l2 := range l.links {
-		if l2 != nil && (l2.schema != nil && *l2.schema == dsid || l2.dataset != nil && *l2.dataset == did) {
+	for _, l2 := range l.LinksField {
+		if l2 != nil && (l2.SchemaField != nil && *l2.SchemaField == dsid || l2.DatasetField != nil && *l2.DatasetField == did) {
 			return true
 		}
 	}
@@ -268,9 +268,9 @@ func NewLink(d DatasetID, ds DatasetSchemaID, f DatasetFieldID) *Link {
 	schema := ds
 	field := f
 	return &Link{
-		dataset: &dataset,
-		schema:  &schema,
-		field:   &field,
+		DatasetField: &dataset,
+		SchemaField:  &schema,
+		FieldField:   &field,
 	}
 }
 
@@ -278,8 +278,8 @@ func NewLinkFieldOnly(ds DatasetSchemaID, f DatasetFieldID) *Link {
 	schema := ds
 	field := f
 	return &Link{
-		schema: &schema,
-		field:  &field,
+		SchemaField: &schema,
+		FieldField:  &field,
 	}
 }
 
@@ -287,28 +287,28 @@ func (l *Link) Dataset() *DatasetID {
 	if l == nil {
 		return nil
 	}
-	return l.dataset.CloneRef()
+	return l.DatasetField.CloneRef()
 }
 
 func (l *Link) DatasetSchema() *DatasetSchemaID {
 	if l == nil {
 		return nil
 	}
-	return l.schema.CloneRef()
+	return l.SchemaField.CloneRef()
 }
 
 func (l *Link) DatasetSchemaField() *DatasetFieldID {
 	if l == nil {
 		return nil
 	}
-	return l.field.CloneRef()
+	return l.FieldField.CloneRef()
 }
 
 func (l *Link) Value(ds *dataset.Dataset) *dataset.Value {
-	if l == nil || ds == nil || l.dataset == nil || l.field == nil || ds.ID() != *l.dataset {
+	if l == nil || ds == nil || l.DatasetField == nil || l.FieldField == nil || ds.ID() != *l.DatasetField {
 		return nil
 	}
-	f := ds.Field(*l.field)
+	f := ds.Field(*l.FieldField)
 	if f == nil {
 		return nil
 	}
@@ -316,24 +316,24 @@ func (l *Link) Value(ds *dataset.Dataset) *dataset.Value {
 }
 
 func (l *Link) Validate(dss *dataset.Schema, ds *dataset.Dataset) bool {
-	if l == nil || l.field == nil || l.schema == nil || dss == nil {
+	if l == nil || l.FieldField == nil || l.SchemaField == nil || dss == nil {
 		return false
 	}
 
 	// DS
-	if dss.ID() != *l.schema {
+	if dss.ID() != *l.SchemaField {
 		return false
 	}
-	if f := dss.Field(*l.field); f == nil {
+	if f := dss.Field(*l.FieldField); f == nil {
 		return false
 	}
 
 	// D
-	if l.dataset != nil {
-		if ds == nil || ds.ID() != *l.dataset || ds.Schema() != dss.ID() {
+	if l.DatasetField != nil {
+		if ds == nil || ds.ID() != *l.DatasetField || ds.Schema() != dss.ID() {
 			return false
 		}
-		if f := ds.Field(*l.field); f == nil {
+		if f := ds.Field(*l.FieldField); f == nil {
 			return false
 		}
 	}
@@ -342,7 +342,7 @@ func (l *Link) Validate(dss *dataset.Schema, ds *dataset.Dataset) bool {
 }
 
 func (l *Links) IsEmpty() bool {
-	return l == nil || l.links == nil || len(l.links) == 0
+	return l == nil || l.LinksField == nil || len(l.LinksField) == 0
 }
 
 func (l *Link) Clone() *Link {
@@ -350,9 +350,9 @@ func (l *Link) Clone() *Link {
 		return nil
 	}
 	return &Link{
-		dataset: l.Dataset(),
-		schema:  l.DatasetSchema(),
-		field:   l.DatasetSchemaField(),
+		DatasetField: l.Dataset(),
+		SchemaField:  l.DatasetSchema(),
+		FieldField:   l.DatasetSchemaField(),
 	}
 }
 
@@ -365,14 +365,14 @@ func (l *Link) ApplyDataset(ds *DatasetID) *Link {
 		return l.Clone()
 	}
 	return &Link{
-		dataset: ds.CloneRef(),
-		schema:  l.DatasetSchema(),
-		field:   l.DatasetSchemaField(),
+		DatasetField: ds.CloneRef(),
+		SchemaField:  l.DatasetSchema(),
+		FieldField:   l.DatasetSchemaField(),
 	}
 }
 
 func (l *Links) ApplyDataset(ds *DatasetID) *Links {
-	if l == nil || l.links == nil || len(l.links) == 0 {
+	if l == nil || l.LinksField == nil || len(l.LinksField) == 0 {
 		return nil
 	}
 
@@ -383,7 +383,7 @@ func (l *Links) ApplyDataset(ds *DatasetID) *Links {
 		return links
 	}
 
-	links.links[0] = first.ApplyDataset(ds)
+	links.LinksField[0] = first.ApplyDataset(ds)
 	return links
 }
 

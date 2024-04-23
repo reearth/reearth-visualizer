@@ -269,20 +269,20 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          testGroup1.ID(),
 							SchemaGroup: testGroup1.SchemaGroup(),
 						},
-						fields: []*Field{}, // deleted
+						FieldsField: []*Field{}, // deleted
 					},
 					&GroupList{
 						itemBase: itemBase{
 							ID:          testGroupList1.ID(),
 							SchemaGroup: testGroupList1.SchemaGroup(),
 						},
-						groups: []*Group{
+						GroupsField: []*Group{
 							{
 								itemBase: itemBase{
 									ID:          testGroup2.ID(),
 									SchemaGroup: testGroup2.SchemaGroup(),
 								},
-								fields: []*Field{
+								FieldsField: []*Field{
 									{FieldField: testField2.Field(), ValueField: NewOptionalValue(ValueTypeString, nil)}, // type changed
 								},
 							},
@@ -314,7 +314,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          testGroup1.ID(),
 							SchemaGroup: testGroup1.SchemaGroup(),
 						},
-						fields: []*Field{}, // deleted
+						FieldsField: []*Field{}, // deleted
 					},
 					testGroupList1,
 					&Group{
@@ -322,7 +322,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          itemID,
 							SchemaGroup: "x",
 						},
-						fields: []*Field{testField1},
+						FieldsField: []*Field{testField1},
 					},
 				},
 			},
@@ -353,7 +353,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          testGroup1.ID(),
 							SchemaGroup: testGroup1.SchemaGroup(),
 						},
-						fields: []*Field{}, // deleted
+						FieldsField: []*Field{}, // deleted
 					},
 					testGroupList1,
 					&Group{
@@ -361,7 +361,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          itemID,
 							SchemaGroup: "x",
 						},
-						fields: []*Field{
+						FieldsField: []*Field{
 							{FieldField: testField1.Field(), ValueField: NewOptionalValue(ValueTypeNumber, nil)},
 						},
 					},
@@ -391,7 +391,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          testGroup1.ID(),
 							SchemaGroup: testGroup1.SchemaGroup(),
 						},
-						fields: []*Field{}, // deleted
+						FieldsField: []*Field{}, // deleted
 					},
 					testGroupList1,
 				},
@@ -421,7 +421,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          testGroup1.ID(),
 							SchemaGroup: testGroup1.SchemaGroup(),
 						},
-						fields: []*Field{}, // deleted
+						FieldsField: []*Field{}, // deleted
 					},
 					testGroupList1,
 				},
@@ -451,13 +451,13 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							ID:          testGroupList1.ID(),
 							SchemaGroup: testGroupList1.SchemaGroup(),
 						},
-						groups: []*Group{
+						GroupsField: []*Group{
 							{
 								itemBase: itemBase{
 									ID:          testGroup2.ID(),
 									SchemaGroup: testGroup2.SchemaGroup(),
 								},
-								fields: []*Field{}, // deleted
+								FieldsField: []*Field{}, // deleted
 							},
 						},
 					},

@@ -17,7 +17,7 @@ func TestValueType_None(t *testing.T) {
 		{
 			name: "default",
 			tr:   ValueTypeString,
-			want: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)},
+			want: &OptionalValue{OptionalValueField: *value.NewOptional(value.TypeString, nil)},
 		},
 		{
 			name: "unknown",
@@ -111,7 +111,7 @@ func TestValue_Some(t *testing.T) {
 				v: *value.TypeString.ValueFrom("foo", types),
 			},
 			want: &OptionalValue{
-				ov: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types)),
+				OptionalValueField: *value.OptionalFrom(value.TypeString.ValueFrom("foo", types)),
 			},
 		},
 		{

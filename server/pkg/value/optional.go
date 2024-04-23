@@ -1,8 +1,8 @@
 package value
 
 type Optional struct {
-	t Type
-	v *Value
+	TField Type   `msgpack:"FieldField"`
+	VField *Value `msgpack:"ValueField"`
 }
 
 func NewOptional(t Type, v *Value) *Optional {
@@ -10,8 +10,8 @@ func NewOptional(t Type, v *Value) *Optional {
 		return nil
 	}
 	return &Optional{
-		t: t,
-		v: v,
+		TField: t,
+		VField: v,
 	}
 }
 
@@ -20,8 +20,8 @@ func OptionalFrom(v *Value) *Optional {
 		return nil
 	}
 	return &Optional{
-		t: v.Type(),
-		v: v,
+		TField: v.Type(),
+		VField: v,
 	}
 }
 
@@ -29,14 +29,14 @@ func (ov *Optional) Type() Type {
 	if ov == nil {
 		return TypeUnknown
 	}
-	return ov.t
+	return ov.TField
 }
 
 func (ov *Optional) Value() *Value {
-	if ov == nil || ov.t == TypeUnknown || ov.v == nil {
+	if ov == nil || ov.TField == TypeUnknown || ov.VField == nil {
 		return nil
 	}
-	return ov.v.Clone()
+	return ov.VField.Clone()
 }
 
 func (ov *Optional) TypeAndValue() (Type, *Value) {
@@ -44,10 +44,10 @@ func (ov *Optional) TypeAndValue() (Type, *Value) {
 }
 
 func (ov *Optional) SetValue(v *Value) {
-	if ov == nil || ov.t == TypeUnknown || (v != nil && ov.t != v.Type()) {
+	if ov == nil || ov.TField == TypeUnknown || (v != nil && ov.TField != v.Type()) {
 		return
 	}
-	ov.v = v.Clone()
+	ov.VField = v.Clone()
 }
 
 func (ov *Optional) Clone() *Optional {
@@ -55,20 +55,20 @@ func (ov *Optional) Clone() *Optional {
 		return nil
 	}
 	return &Optional{
-		t: ov.t,
-		v: ov.v.Clone(),
+		TField: ov.TField,
+		VField: ov.VField.Clone(),
 	}
 }
 
 // Cast tries to convert the value to the new type and generates a new Optional.
 func (ov *Optional) Cast(t Type, p TypePropertyMap) *Optional {
-	if ov == nil || ov.t == TypeUnknown {
+	if ov == nil || ov.TField == TypeUnknown {
 		return nil
 	}
-	if ov.v == nil {
+	if ov.VField == nil {
 		return NewOptional(t, nil)
 	}
 
-	nv := ov.v.Cast(t, p)
+	nv := ov.VField.Cast(t, p)
 	return NewOptional(t, nv)
 }

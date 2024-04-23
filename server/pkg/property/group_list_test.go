@@ -53,7 +53,7 @@ func TestGroupList_HasLinkedField(t *testing.T) {
 	dssid := NewDatasetSchemaID()
 	f := FieldFrom(sf).
 		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
+		Links(&Links{LinksField: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
@@ -96,7 +96,7 @@ func TestGroupList_Datasets(t *testing.T) {
 	dssid := NewDatasetSchemaID()
 	f := FieldFrom(sf).
 		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
+		Links(&Links{LinksField: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
@@ -138,7 +138,7 @@ func TestGroupList_FieldsByLinkedDataset(t *testing.T) {
 	dssid := NewDatasetSchemaID()
 	f := FieldFrom(sf).
 		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
+		Links(&Links{LinksField: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
@@ -180,7 +180,7 @@ func TestGroupList_IsEmpty(t *testing.T) {
 	dssid := NewDatasetSchemaID()
 	f := FieldFrom(sf).
 		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
+		Links(&Links{LinksField: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 
@@ -1022,12 +1022,12 @@ func TestGroupList_GuessSchema(t *testing.T) {
 				itemBase: itemBase{
 					SchemaGroup: "aa",
 				},
-				groups: []*Group{
+				GroupsField: []*Group{
 					{
 						itemBase: itemBase{
 							SchemaGroup: "aa",
 						},
-						fields: []*Field{
+						FieldsField: []*Field{
 							{FieldField: "a", ValueField: NewOptionalValue(ValueTypeLatLng, nil)},
 						},
 					},
@@ -1035,7 +1035,7 @@ func TestGroupList_GuessSchema(t *testing.T) {
 						itemBase: itemBase{
 							SchemaGroup: "aa",
 						},
-						fields: []*Field{
+						FieldsField: []*Field{
 							{FieldField: "b", ValueField: NewOptionalValue(ValueTypeString, nil)},
 						},
 					},

@@ -54,6 +54,6 @@ func (v *Value) ValueString() (vv string, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.v.(string)
+	vv, ok = v.VField.(string)
 	return
 }

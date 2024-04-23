@@ -34,7 +34,7 @@ func TestGroupListBuilder_Build(t *testing.T) {
 					ID:          pid,
 					SchemaGroup: "x",
 				},
-				groups: groups,
+				GroupsField: groups,
 			},
 		},
 		{
@@ -103,7 +103,7 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 					ID:          pid,
 					SchemaGroup: "x",
 				},
-				groups: groups,
+				GroupsField: groups,
 			},
 		},
 		{

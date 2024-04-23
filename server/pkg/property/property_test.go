@@ -698,7 +698,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 							ID:          pgid1,
 							SchemaGroup: SchemaGroupID("aaaa"),
 						},
-						groups: []*Group{
+						GroupsField: []*Group{
 							{
 								itemBase: itemBase{
 									ID:          pgid2,
@@ -727,7 +727,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 					ID:          pgid1,
 					SchemaGroup: SchemaGroupID("aaaa"),
 				},
-				groups: []*Group{
+				GroupsField: []*Group{
 					{
 						itemBase: itemBase{
 							ID:          pgid2,
@@ -746,7 +746,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 							ID:          pgid1,
 							SchemaGroup: SchemaGroupID("aaaa"),
 						},
-						groups: []*Group{
+						GroupsField: []*Group{
 							{
 								itemBase: itemBase{
 									ID:          pgid2,
@@ -770,7 +770,7 @@ func TestProperty_GroupAndList(t *testing.T) {
 					ID:          pgid1,
 					SchemaGroup: SchemaGroupID("aaaa"),
 				},
-				groups: []*Group{
+				GroupsField: []*Group{
 					{
 						itemBase: itemBase{
 							ID:          pgid2,
