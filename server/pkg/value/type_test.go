@@ -59,12 +59,12 @@ func TestType_None(t *testing.T) {
 		{
 			name: "default",
 			tr:   TypeString,
-			want: &Optional{TField: TypeString},
+			want: &Optional{t: TypeString},
 		},
 		{
 			name: "custom",
 			tr:   Type("foo"),
-			want: &Optional{TField: Type("foo")},
+			want: &Optional{t: Type("foo")},
 		},
 		{
 			name: "unknown",
@@ -104,7 +104,7 @@ func TestType_ValueFrom(t *testing.T) {
 			args: args{
 				i: "hoge",
 			},
-			want: &Value{TField: TypeString, VField: "hoge"},
+			want: &Value{t: TypeString, v: "hoge"},
 		},
 		{
 			name: "custom type",
@@ -113,7 +113,7 @@ func TestType_ValueFrom(t *testing.T) {
 				i: "hoge",
 				p: tpm,
 			},
-			want: &Value{PField: tpm, TField: Type("foo"), VField: "hogea"},
+			want: &Value{p: tpm, t: Type("foo"), v: "hogea"},
 		},
 		{
 			name: "nil",

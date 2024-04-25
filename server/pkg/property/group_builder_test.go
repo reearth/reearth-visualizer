@@ -40,7 +40,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 					ID:          iid,
 					SchemaGroup: "a",
 				},
-				FieldsField: []*Field{f},
+				fields: []*Field{f},
 			},
 		},
 	}
@@ -97,7 +97,7 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 					ID:          iid,
 					SchemaGroup: "a",
 				},
-				FieldsField: []*Field{f},
+				fields: []*Field{f},
 			},
 		},
 	}

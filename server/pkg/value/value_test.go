@@ -24,8 +24,8 @@ func TestValue_IsEmpty(t *testing.T) {
 		{
 			name: "non-empty",
 			value: &Value{
-				TField: Type("hoge"),
-				VField: "foo",
+				t: Type("hoge"),
+				v: "foo",
 			},
 			want: false,
 		},
@@ -54,25 +54,25 @@ func TestValue_Clone(t *testing.T) {
 		{
 			name: "ok",
 			value: &Value{
-				TField: TypeString,
-				VField: "foo",
+				t: TypeString,
+				v: "foo",
 			},
 			want: &Value{
-				TField: TypeString,
-				VField: "foo",
+				t: TypeString,
+				v: "foo",
 			},
 		},
 		{
 			name: "custom type property",
 			value: &Value{
-				TField: Type("hoge"),
-				VField: "foo",
-				PField: tpm,
+				t: Type("hoge"),
+				v: "foo",
+				p: tpm,
 			},
 			want: &Value{
-				TField: Type("hoge"),
-				VField: "fooa",
-				PField: tpm,
+				t: Type("hoge"),
+				v: "fooa",
+				p: tpm,
 			},
 		},
 		{
@@ -110,30 +110,30 @@ func TestValue_Some(t *testing.T) {
 		{
 			name: "ok",
 			value: &Value{
-				TField: TypeString,
-				VField: "foo",
+				t: TypeString,
+				v: "foo",
 			},
 			want: &Optional{
-				TField: TypeString,
-				VField: &Value{
-					TField: TypeString,
-					VField: "foo",
+				t: TypeString,
+				v: &Value{
+					t: TypeString,
+					v: "foo",
 				},
 			},
 		},
 		{
 			name: "custom type property",
 			value: &Value{
-				TField: Type("hoge"),
-				VField: "fooa",
-				PField: tpm,
+				t: Type("hoge"),
+				v: "fooa",
+				p: tpm,
 			},
 			want: &Optional{
-				TField: Type("hoge"),
-				VField: &Value{
-					TField: Type("hoge"),
-					VField: "fooa",
-					PField: tpm,
+				t: Type("hoge"),
+				v: &Value{
+					t: Type("hoge"),
+					v: "fooa",
+					p: tpm,
 				},
 			},
 		},
@@ -168,7 +168,7 @@ func TestValue_Value(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &Value{TField: TypeURL, VField: u},
+			value: &Value{t: TypeURL, v: u},
 			want:  u,
 		},
 		{
@@ -201,7 +201,7 @@ func TestValue_Type(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &Value{TField: TypeString},
+			value: &Value{t: TypeString},
 			want:  TypeString,
 		},
 		{
@@ -238,17 +238,17 @@ func TestValue_TypeProperty(t *testing.T) {
 		{
 			name: "default type",
 			value: &Value{
-				VField: "string",
-				TField: TypeString,
+				v: "string",
+				t: TypeString,
 			},
 			want: defaultTypes[TypeString],
 		},
 		{
 			name: "custom type",
 			value: &Value{
-				VField: "string",
-				TField: Type("hoge"),
-				PField: tpm,
+				v: "string",
+				t: Type("hoge"),
+				p: tpm,
 			},
 			want: tp,
 		},
@@ -290,20 +290,20 @@ func TestValue_Interface(t *testing.T) {
 	}{
 		{
 			name:  "string",
-			value: &Value{TField: TypeString, VField: "hoge"},
+			value: &Value{t: TypeString, v: "hoge"},
 			want:  "hoge",
 		},
 		{
 			name:  "latlng",
-			value: &Value{TField: TypeLatLng, VField: LatLng{Lat: 1, Lng: 2}},
+			value: &Value{t: TypeLatLng, v: LatLng{Lat: 1, Lng: 2}},
 			want:  LatLng{Lat: 1, Lng: 2},
 		},
 		{
 			name: "custom",
 			value: &Value{
-				PField: tpm,
-				TField: Type("foo"),
-				VField: "foo",
+				p: tpm,
+				t: Type("foo"),
+				v: "foo",
 			},
 			want: "foobar",
 		},
@@ -342,25 +342,25 @@ func TestValue_Cast(t *testing.T) {
 	}{
 		{
 			name:   "diff type",
-			target: &Value{TField: TypeNumber, VField: 1.1},
+			target: &Value{t: TypeNumber, v: 1.1},
 			args:   args{t: TypeString},
-			want:   &Value{TField: TypeString, VField: "1.1"},
+			want:   &Value{t: TypeString, v: "1.1"},
 		},
 		{
 			name:   "same type",
-			target: &Value{TField: TypeNumber, VField: 1.1},
+			target: &Value{t: TypeNumber, v: 1.1},
 			args:   args{t: TypeNumber},
-			want:   &Value{TField: TypeNumber, VField: 1.1},
+			want:   &Value{t: TypeNumber, v: 1.1},
 		},
 		{
 			name:   "to string",
-			target: &Value{TField: TypeLatLng, VField: LatLng{Lat: 1, Lng: 2}},
+			target: &Value{t: TypeLatLng, v: LatLng{Lat: 1, Lng: 2}},
 			args:   args{t: TypeString},
-			want:   &Value{TField: TypeString, VField: "2.000000, 1.000000"},
+			want:   &Value{t: TypeString, v: "2.000000, 1.000000"},
 		},
 		{
 			name:   "invalid value",
-			target: &Value{TField: TypeNumber},
+			target: &Value{t: TypeNumber},
 			args:   args{t: TypeString},
 			want:   nil,
 		},

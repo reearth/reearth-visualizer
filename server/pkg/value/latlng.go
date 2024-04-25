@@ -91,6 +91,6 @@ func (v *Value) ValueLatLng() (vv LatLng, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.VField.(LatLng)
+	vv, ok = v.v.(LatLng)
 	return
 }

@@ -11,7 +11,7 @@ import (
 
 type GroupList struct {
 	itemBase
-	GroupsField []*Group `msgpack:"GroupsField"`
+	groups []*Group
 }
 
 // List implements Item interface
@@ -52,7 +52,7 @@ func (g *GroupList) HasLinkedField() bool {
 	if g == nil {
 		return false
 	}
-	for _, f := range g.GroupsField {
+	for _, f := range g.groups {
 		if f.HasLinkedField() {
 			return true
 		}
@@ -66,7 +66,7 @@ func (g *GroupList) Datasets() []DatasetID {
 	}
 	res := []DatasetID{}
 
-	for _, f := range g.GroupsField {
+	for _, f := range g.groups {
 		res = append(res, f.Datasets()...)
 	}
 
@@ -78,7 +78,7 @@ func (g *GroupList) FieldsByLinkedDataset(s DatasetSchemaID, i DatasetID) []*Fie
 		return nil
 	}
 	res := []*Field{}
-	for _, g := range g.GroupsField {
+	for _, g := range g.groups {
 		res = append(res, g.FieldsByLinkedDataset(s, i)...)
 	}
 	return res
@@ -88,7 +88,7 @@ func (g *GroupList) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
 	if g == nil {
 		return false
 	}
-	for _, d := range g.GroupsField {
+	for _, d := range g.groups {
 		if d.IsDatasetLinked(s, i) {
 			return true
 		}
@@ -97,14 +97,14 @@ func (g *GroupList) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
 }
 
 func (g *GroupList) IsEmpty() bool {
-	return g != nil && (g.GroupsField == nil || len(g.GroupsField) == 0)
+	return g != nil && (g.groups == nil || len(g.groups) == 0)
 }
 
 func (g *GroupList) Prune() (res bool) {
 	if g == nil {
 		return
 	}
-	for _, f := range g.GroupsField {
+	for _, f := range g.groups {
 		if f.Prune() {
 			res = true
 		}
@@ -117,7 +117,7 @@ func (g *GroupList) MigrateSchema(ctx context.Context, newSchema *Schema, dl dat
 		return
 	}
 
-	for _, f := range g.GroupsField {
+	for _, f := range g.groups {
 		f.MigrateSchema(ctx, newSchema, dl)
 	}
 
@@ -129,7 +129,7 @@ func (g *GroupList) Groups() []*Group {
 	if g == nil {
 		return nil
 	}
-	return append([]*Group{}, g.GroupsField...)
+	return append([]*Group{}, g.groups...)
 }
 
 // Group returns a group whose id is specified
@@ -137,7 +137,7 @@ func (g *GroupList) Group(gid ItemID) *Group {
 	if g == nil {
 		return nil
 	}
-	for _, g := range g.GroupsField {
+	for _, g := range g.groups {
 		if g.ID() == gid {
 			return g
 		}
@@ -160,13 +160,13 @@ func (p *GroupList) Clone() *GroupList {
 	if p == nil {
 		return nil
 	}
-	groups := make([]*Group, 0, len(p.GroupsField))
-	for _, g := range p.GroupsField {
+	groups := make([]*Group, 0, len(p.groups))
+	for _, g := range p.groups {
 		groups = append(groups, g.Clone())
 	}
 	return &GroupList{
-		GroupsField: groups,
-		itemBase:    p.itemBase,
+		groups:   groups,
+		itemBase: p.itemBase,
 	}
 }
 
@@ -175,7 +175,7 @@ func (p *GroupList) CloneItem() Item {
 }
 
 func (g *GroupList) Fields(ptr *Pointer) []*Field {
-	if g == nil || len(g.GroupsField) == 0 || (ptr != nil && !ptr.TestSchemaGroup(g.SchemaGroup())) {
+	if g == nil || len(g.groups) == 0 || (ptr != nil && !ptr.TestSchemaGroup(g.SchemaGroup())) {
 		return nil
 	}
 
@@ -188,7 +188,7 @@ func (g *GroupList) Fields(ptr *Pointer) []*Field {
 	}
 
 	var fields []*Field
-	for _, g := range g.GroupsField {
+	for _, g := range g.groups {
 		if f := g.Fields(ptr); len(f) > 0 {
 			fields = append(fields, f...)
 		}
@@ -210,7 +210,7 @@ func (g *GroupList) RemoveFields(ptr *Pointer) (res bool) {
 	}
 
 	if fid, ok := ptr.Field(); ok {
-		for _, g := range g.GroupsField {
+		for _, g := range g.groups {
 			if g.RemoveField(fid) {
 				res = true
 			}
@@ -221,11 +221,11 @@ func (g *GroupList) RemoveFields(ptr *Pointer) (res bool) {
 }
 
 func (p *GroupList) GroupAndFields(ptr *Pointer) []GroupAndField {
-	if p == nil || len(p.GroupsField) == 0 {
+	if p == nil || len(p.groups) == 0 {
 		return nil
 	}
 	res := []GroupAndField{}
-	for _, g := range p.GroupsField {
+	for _, g := range p.groups {
 		if ptr == nil || ptr.TestItem(g.SchemaGroup(), g.ID()) {
 			for _, r := range g.GroupAndFields(ptr) {
 				res = append(res, GroupAndField{
@@ -247,7 +247,7 @@ func (g *GroupList) GuessSchema() *SchemaGroup {
 	fieldm := map[FieldID]struct{}{}
 	fields := []*SchemaField{}
 
-	for _, g := range g.GroupsField {
+	for _, g := range g.groups {
 		if gsg := g.GuessSchema(); gsg != nil {
 			for _, f := range gsg.Fields() {
 				if _, ok := fieldm[f.ID()]; ok {
@@ -266,24 +266,24 @@ func (g *GroupList) GuessSchema() *SchemaGroup {
 
 // GroupAt returns a group whose index is specified
 func (g *GroupList) GroupAt(i int) *Group {
-	if g == nil || i < 0 || i > len(g.GroupsField)-1 {
+	if g == nil || i < 0 || i > len(g.groups)-1 {
 		return nil
 	}
-	return g.GroupsField[i]
+	return g.groups[i]
 }
 
 func (g *GroupList) Has(i ItemID) bool {
 	if g == nil {
 		return false
 	}
-	return util.ListHas[ItemID, Group](g.GroupsField, (*Group).ID, i)
+	return util.ListHas[ItemID, Group](g.groups, (*Group).ID, i)
 }
 
 func (g *GroupList) Count() int {
 	if g == nil {
 		return 0
 	}
-	return len(g.GroupsField)
+	return len(g.groups)
 }
 
 func (g *GroupList) Add(gg *Group, index int) {
@@ -291,11 +291,11 @@ func (g *GroupList) Add(gg *Group, index int) {
 		return
 	}
 
-	le := len(g.GroupsField)
+	le := len(g.groups)
 	if index < 0 || le <= index {
-		g.GroupsField = append(g.GroupsField, gg)
+		g.groups = append(g.groups, gg)
 	} else {
-		g.GroupsField = append(g.GroupsField[:index], append([]*Group{gg}, g.GroupsField[index:]...)...)
+		g.groups = append(g.groups[:index], append([]*Group{gg}, g.groups[index:]...)...)
 	}
 }
 
@@ -304,7 +304,7 @@ func (g *GroupList) AddOrMove(gg *Group, index int) {
 		return
 	}
 
-	le := len(g.GroupsField)
+	le := len(g.groups)
 	if index < 0 || le <= index {
 		index = le
 	}
@@ -314,7 +314,7 @@ func (g *GroupList) AddOrMove(gg *Group, index int) {
 		g.Move(gid, index)
 		return
 	}
-	g.GroupsField = append(g.GroupsField[:index], append([]*Group{gg}, g.GroupsField[index:]...)...)
+	g.groups = append(g.groups[:index], append([]*Group{gg}, g.groups[index:]...)...)
 }
 
 func (g *GroupList) Move(id ItemID, toIndex int) {
@@ -322,7 +322,7 @@ func (g *GroupList) Move(id ItemID, toIndex int) {
 		return
 	}
 
-	for fromIndex, gg := range g.GroupsField {
+	for fromIndex, gg := range g.groups {
 		if gg.ID() == id {
 			g.MoveAt(fromIndex, toIndex)
 			return
@@ -335,7 +335,7 @@ func (g *GroupList) MoveAt(fromIndex int, toIndex int) {
 		return
 	}
 
-	le := len(g.GroupsField)
+	le := len(g.groups)
 	if fromIndex < 0 || le <= fromIndex {
 		return
 	}
@@ -346,12 +346,12 @@ func (g *GroupList) MoveAt(fromIndex int, toIndex int) {
 		return
 	}
 
-	f := g.GroupsField[fromIndex]
-	g.GroupsField = append(g.GroupsField[:fromIndex], g.GroupsField[fromIndex+1:]...)
+	f := g.groups[fromIndex]
+	g.groups = append(g.groups[:fromIndex], g.groups[fromIndex+1:]...)
 	newSlice := make([]*Group, toIndex+1)
-	copy(newSlice, g.GroupsField[:toIndex])
+	copy(newSlice, g.groups[:toIndex])
 	newSlice[toIndex] = f
-	g.GroupsField = append(newSlice, g.GroupsField[toIndex:]...)
+	g.groups = append(newSlice, g.groups[toIndex:]...)
 }
 
 func (g *GroupList) Remove(id ItemID) bool {
@@ -359,7 +359,7 @@ func (g *GroupList) Remove(id ItemID) bool {
 		return false
 	}
 
-	for index, gg := range g.GroupsField {
+	for index, gg := range g.groups {
 		if gg.ID() == id {
 			g.RemoveAt(index)
 			return true
@@ -374,7 +374,7 @@ func (g *GroupList) RemoveAt(index int) {
 		return
 	}
 
-	le := len(g.GroupsField)
+	le := len(g.groups)
 	if index < 0 || le <= index {
 		return
 	}
@@ -382,9 +382,9 @@ func (g *GroupList) RemoveAt(index int) {
 	if index == le {
 		groups = []*Group{}
 	} else {
-		groups = g.GroupsField[index+1:]
+		groups = g.groups[index+1:]
 	}
-	g.GroupsField = append(g.GroupsField[:index], groups...)
+	g.groups = append(g.groups[:index], groups...)
 }
 
 func (g *GroupList) Empty() {
@@ -392,7 +392,7 @@ func (g *GroupList) Empty() {
 		return
 	}
 
-	g.GroupsField = []*Group{}
+	g.groups = []*Group{}
 }
 
 func (g *GroupList) GetOrCreateField(ps *Schema, ptr *Pointer) (*Field, bool) {
@@ -443,7 +443,7 @@ func (g *GroupList) MigrateDataset(q DatasetMigrationParam) {
 	if g == nil {
 		return
 	}
-	for _, f := range g.GroupsField {
+	for _, f := range g.groups {
 		f.MigrateDataset(q)
 	}
 }
@@ -459,7 +459,7 @@ func (p *GroupList) ValidateSchema(ps *SchemaGroup) error {
 		return errors.New("invalid schema group id")
 	}
 
-	for _, i := range p.GroupsField {
+	for _, i := range p.groups {
 		if err := i.ValidateSchema(ps); err != nil {
 			return fmt.Errorf("%s: %w", i.ID(), err)
 		}

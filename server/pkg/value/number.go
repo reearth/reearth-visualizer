@@ -146,6 +146,6 @@ func (v *Value) ValueNumber() (vv float64, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.VField.(float64)
+	vv, ok = v.v.(float64)
 	return
 }

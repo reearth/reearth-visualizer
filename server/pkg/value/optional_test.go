@@ -23,22 +23,22 @@ func TestNewOptional(t *testing.T) {
 				t: TypeString,
 				v: TypeString.ValueFrom("foo", nil),
 			},
-			want: &Optional{TField: TypeString, VField: TypeString.ValueFrom("foo", nil)},
+			want: &Optional{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
 		},
 		{
 			name: "custom type",
 			args: args{
 				t: Type("foo"),
-				v: &Value{TField: Type("foo")},
+				v: &Value{t: Type("foo")},
 			},
-			want: &Optional{TField: Type("foo"), VField: &Value{TField: Type("foo")}},
+			want: &Optional{t: Type("foo"), v: &Value{t: Type("foo")}},
 		},
 		{
 			name: "nil value",
 			args: args{
 				t: Type("foo"),
 			},
-			want: &Optional{TField: Type("foo"), VField: nil},
+			want: &Optional{t: Type("foo"), v: nil},
 		},
 		{
 			name: "invalid value",
@@ -82,19 +82,19 @@ func TestOptionalFrom(t *testing.T) {
 			args: args{
 				v: TypeString.ValueFrom("foo", nil),
 			},
-			want: &Optional{TField: TypeString, VField: TypeString.ValueFrom("foo", nil)},
+			want: &Optional{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
 		},
 		{
 			name: "custom type",
 			args: args{
-				v: &Value{TField: Type("foo")},
+				v: &Value{t: Type("foo")},
 			},
-			want: &Optional{TField: Type("foo"), VField: &Value{TField: Type("foo")}},
+			want: &Optional{t: Type("foo"), v: &Value{t: Type("foo")}},
 		},
 		{
 			name: "invalid value",
 			args: args{
-				v: &Value{VField: "string"},
+				v: &Value{v: "string"},
 			},
 			want: nil,
 		},
@@ -122,7 +122,7 @@ func TestOptional_Type(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &Optional{TField: Type("foo")},
+			value: &Optional{t: Type("foo")},
 			want:  Type("foo"),
 		},
 		{
@@ -154,8 +154,8 @@ func TestOptional_Value(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &Optional{TField: TypeString, VField: &Value{TField: TypeString, VField: "foobar"}},
-			want:  &Value{TField: TypeString, VField: "foobar"},
+			value: &Optional{t: TypeString, v: &Value{t: TypeString, v: "foobar"}},
+			want:  &Value{t: TypeString, v: "foobar"},
 		},
 		{
 			name:  "empty",
@@ -191,9 +191,9 @@ func TestOptional_TypeAndValue(t *testing.T) {
 	}{
 		{
 			name:  "ok",
-			value: &Optional{TField: TypeString, VField: &Value{TField: TypeString, VField: "foobar"}},
+			value: &Optional{t: TypeString, v: &Value{t: TypeString, v: "foobar"}},
 			wantt: TypeString,
-			wantv: &Value{TField: TypeString, VField: "foobar"},
+			wantv: &Value{t: TypeString, v: "foobar"},
 		},
 		{
 			name:  "empty",
@@ -237,43 +237,43 @@ func TestOptional_SetValue(t *testing.T) {
 		{
 			name: "set",
 			value: &Optional{
-				TField: TypeString,
-				VField: &Value{TField: TypeString, VField: "foobar"},
+				t: TypeString,
+				v: &Value{t: TypeString, v: "foobar"},
 			},
-			args: args{v: &Value{TField: TypeString, VField: "bar"}},
+			args: args{v: &Value{t: TypeString, v: "bar"}},
 		},
 		{
 			name: "set to nil",
 			value: &Optional{
-				TField: TypeString,
+				t: TypeString,
 			},
-			args: args{v: &Value{TField: TypeString, VField: "bar"}},
+			args: args{v: &Value{t: TypeString, v: "bar"}},
 		},
 		{
 			name: "invalid value",
 			value: &Optional{
-				TField: TypeNumber,
-				VField: &Value{TField: TypeNumber, VField: 1},
+				t: TypeNumber,
+				v: &Value{t: TypeNumber, v: 1},
 			},
-			args:    args{v: &Value{TField: TypeString, VField: "bar"}},
+			args:    args{v: &Value{t: TypeString, v: "bar"}},
 			invalid: true,
 		},
 		{
 			name: "nil value",
 			value: &Optional{
-				TField: TypeNumber,
-				VField: &Value{TField: TypeNumber, VField: 1},
+				t: TypeNumber,
+				v: &Value{t: TypeNumber, v: 1},
 			},
 		},
 		{
 			name:    "empty",
 			value:   &Optional{},
-			args:    args{v: &Value{TField: TypeString, VField: "bar"}},
+			args:    args{v: &Value{t: TypeString, v: "bar"}},
 			invalid: true,
 		},
 		{
 			name: "nil",
-			args: args{v: &Value{TField: TypeString, VField: "bar"}},
+			args: args{v: &Value{t: TypeString, v: "bar"}},
 		},
 	}
 
@@ -283,18 +283,18 @@ func TestOptional_SetValue(t *testing.T) {
 			t.Parallel()
 			var v *Value
 			if tt.value != nil {
-				v = tt.value.VField
+				v = tt.value.v
 			}
 
 			tt.value.SetValue(tt.args.v)
 
 			if tt.value != nil {
 				if tt.invalid {
-					assert.Same(t, v, tt.value.VField)
+					assert.Same(t, v, tt.value.v)
 				} else {
-					assert.Equal(t, tt.args.v, tt.value.VField)
+					assert.Equal(t, tt.args.v, tt.value.v)
 					if tt.args.v != nil {
-						assert.NotSame(t, tt.args.v, tt.value.VField)
+						assert.NotSame(t, tt.args.v, tt.value.v)
 					}
 				}
 			}
@@ -309,7 +309,7 @@ func TestOptional_Clone(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			target: &Optional{TField: TypeString, VField: TypeString.ValueFrom("foo", nil)},
+			target: &Optional{t: TypeString, v: TypeString.ValueFrom("foo", nil)},
 		},
 		{
 			name:   "empty",
@@ -348,27 +348,27 @@ func TestOptional_Cast(t *testing.T) {
 	}{
 		{
 			name:   "diff type",
-			target: &Optional{TField: TypeNumber, VField: TypeNumber.ValueFrom(1.1, nil)},
+			target: &Optional{t: TypeNumber, v: TypeNumber.ValueFrom(1.1, nil)},
 			args:   args{t: TypeString},
-			want:   &Optional{TField: TypeString, VField: TypeString.ValueFrom("1.1", nil)},
+			want:   &Optional{t: TypeString, v: TypeString.ValueFrom("1.1", nil)},
 		},
 		{
 			name:   "same type",
-			target: &Optional{TField: TypeNumber, VField: TypeNumber.ValueFrom(1.1, nil)},
+			target: &Optional{t: TypeNumber, v: TypeNumber.ValueFrom(1.1, nil)},
 			args:   args{t: TypeNumber},
-			want:   &Optional{TField: TypeNumber, VField: TypeNumber.ValueFrom(1.1, nil)},
+			want:   &Optional{t: TypeNumber, v: TypeNumber.ValueFrom(1.1, nil)},
 		},
 		{
 			name:   "nil value",
-			target: &Optional{TField: TypeNumber},
+			target: &Optional{t: TypeNumber},
 			args:   args{t: TypeString},
-			want:   &Optional{TField: TypeString},
+			want:   &Optional{t: TypeString},
 		},
 		{
 			name:   "to string",
-			target: &Optional{TField: TypeLatLng, VField: TypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}, nil)},
+			target: &Optional{t: TypeLatLng, v: TypeLatLng.ValueFrom(LatLng{Lat: 1, Lng: 2}, nil)},
 			args:   args{t: TypeString},
-			want:   &Optional{TField: TypeString, VField: TypeString.ValueFrom("2.000000, 1.000000", nil)},
+			want:   &Optional{t: TypeString, v: TypeString.ValueFrom("2.000000, 1.000000", nil)},
 		},
 		{
 			name:   "empty",

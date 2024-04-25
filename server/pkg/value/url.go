@@ -63,6 +63,6 @@ func (v *Value) ValueURL() (vv *url.URL, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.VField.(*url.URL)
+	vv, ok = v.v.(*url.URL)
 	return
 }

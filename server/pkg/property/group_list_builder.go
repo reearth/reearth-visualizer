@@ -29,7 +29,7 @@ func (b *GroupListBuilder) Build() (*GroupList, error) {
 	if b.p.itemBase.SchemaGroup == "" {
 		return nil, ErrInvalidID
 	}
-	for _, g := range b.p.GroupsField {
+	for _, g := range b.p.groups {
 		if g.SchemaGroup() != b.p.SchemaGroup() {
 			return nil, ErrInvalidGroupInGroupList
 		}
@@ -78,6 +78,6 @@ func (b *GroupListBuilder) Groups(groups []*Group) *GroupListBuilder {
 		ids[g.ID()] = struct{}{}
 		newGroups = append(newGroups, g)
 	}
-	b.p.GroupsField = newGroups
+	b.p.groups = newGroups
 	return b
 }

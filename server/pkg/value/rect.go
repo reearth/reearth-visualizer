@@ -72,6 +72,6 @@ func (v *Value) ValueRect() (vv Rect, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.VField.(Rect)
+	vv, ok = v.v.(Rect)
 	return
 }

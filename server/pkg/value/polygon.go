@@ -78,6 +78,6 @@ func (v *Value) ValuePolygon() (vv Polygon, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.VField.(Polygon)
+	vv, ok = v.v.(Polygon)
 	return
 }

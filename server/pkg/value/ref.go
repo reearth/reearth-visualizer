@@ -49,6 +49,6 @@ func (v *Value) ValueRef() (vv string, ok bool) {
 	if v == nil {
 		return
 	}
-	vv, ok = v.VField.(string)
+	vv, ok = v.v.(string)
 	return
 }

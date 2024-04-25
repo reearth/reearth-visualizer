@@ -45,14 +45,14 @@ func (t Type) ValueFrom(i interface{}, p TypePropertyMap) *Value {
 	if p != nil {
 		if vt, ok := p[t]; ok && vt != nil {
 			if v, ok2 := vt.I2V(i); ok2 {
-				return &Value{PField: p, VField: v, TField: t}
+				return &Value{p: p, v: v, t: t}
 			}
 		}
 	}
 
 	if vt, ok := defaultTypes[t]; ok && vt != nil {
 		if v, ok2 := vt.I2V(i); ok2 {
-			return &Value{PField: p, VField: v, TField: t}
+			return &Value{p: p, v: v, t: t}
 		}
 	}
 
