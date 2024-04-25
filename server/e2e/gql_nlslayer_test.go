@@ -672,19 +672,23 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 	return requestBody, res, res.Path("$.data.moveNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
 
-func TestInfoboxBlocksCRUD(t *testing.T) {
-	mr, err := miniredis.Run()
-	if err != nil {
-		t.Fatal(err)
+func infoboxBlocksCRUD(t *testing.T, isUseRedis bool) {
+	redisAddress := ""
+	if isUseRedis {
+		mr, err := miniredis.Run()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer mr.Close()
+		redisAddress = mr.Addr()
 	}
-	defer mr.Close()
 
 	e := StartServer(t, &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},
-		RedisHost: mr.Addr(),
+		RedisHost: redisAddress,
 	}, true, baseSeeder)
 
 	pId := createProject(e)
@@ -741,6 +745,14 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks").Equal([]any{})
+}
+
+func TestInfoboxBlocksCRUD(t *testing.T) {
+	infoboxBlocksCRUD(t, false)
+}
+
+func TestInfoboxBlocksCRUDWithRedis(t *testing.T) {
+	infoboxBlocksCRUD(t, true)
 }
 
 func addCustomProperties(
