@@ -3,7 +3,9 @@ package interactor
 import (
 	"context"
 	"errors"
+	"log"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -11,6 +13,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 type Property struct {
@@ -24,9 +27,10 @@ type Property struct {
 	assetRepo          repo.Asset
 	file               gateway.File
 	transaction        usecasex.Transaction
+	redis              gateway.RedisGateway
 }
 
-func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {
+func NewProperty(r *repo.Container, gr *gateway.Container, redis gateway.RedisGateway) interfaces.Property {
 	return &Property{
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		propertyRepo:       r.Property,
@@ -37,6 +41,7 @@ func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {
 		assetRepo:          r.Asset,
 		transaction:        r.Transaction,
 		file:               gr.File,
+		redis:              redis,
 	}
 }
 
@@ -88,10 +93,20 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 		}
 	}()
 
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
+	propertyCache, err := getPropertyFromCache(ctx, i.redis, property.PropertyCacheKey(inp.PropertyID))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
+
+	if propertyCache == nil {
+		p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
+		if err != nil {
+			return nil, nil, nil, nil, err
+		}
+	} else {
+		p = propertyCache
+	}
+
 	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -116,6 +131,12 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 	}
 
 	tx.Commit()
+
+	err = setToCache[*property.Property](ctx, i.redis, property.PropertyCacheKey(p.ID()), p)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+
 	return p, pgl, pg, field, nil
 }
 
@@ -431,4 +452,57 @@ func (i *Property) UpdateItems(ctx context.Context, inp interfaces.UpdatePropert
 	}
 
 	return p, nil
+}
+
+type PropertyForRedis struct {
+	ID     string         `msgpack:"id"`
+	Scene  string         `msgpack:"scene"`
+	Schema string         `msgpack:"schema"`
+	Items  []ItemForRedis `msgpack:"items"`
+}
+
+type ItemForRedis struct {
+	ID          string          `msgpack:"ID"`
+	SchemaGroup string          `msgpack:"SchemaGroup"`
+	Fields      []FieldForRedis `msgpack:"fields"`
+}
+
+type FieldForRedis struct {
+	Field string        `msgpack:"field"`
+	Links interface{}   `msgpack:"links"`
+	V     ValueForRedis `msgpack:"v"`
+}
+
+type ValueForRedis struct {
+	Ov OptionalValueForRedis `msgpack:"ov"`
+}
+
+type OptionalValueForRedis struct {
+	Field string                 `msgpack:"Field"`
+	Value map[string]interface{} `msgpack:"Value"`
+}
+
+func getPropertyFromCache(ctx context.Context, redisClient any, cacheKey string) (*property.Property, error) {
+	redisAdapter, ok := checkRedisClient(redisClient)
+	if !ok {
+		return nil, errors.New("invalid redis client")
+	}
+
+	val, err := redisAdapter.GetValue(ctx, cacheKey)
+	if err != nil {
+		if err == redis.Nil {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	var p PropertyForRedis
+	if err := msgpack.Unmarshal([]byte(val), &p); err != nil {
+		return nil, err
+	}
+
+	log.Printf("p: %+v", p)
+
+	var propertyDomain property.Property
+	return &propertyDomain, nil
 }
