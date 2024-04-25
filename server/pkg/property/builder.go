@@ -9,13 +9,13 @@ func New() *Builder {
 }
 
 func (b *Builder) Build() (*Property, error) {
-	if b.p.IDField.IsNil() {
+	if b.p.id.IsNil() {
 		return nil, ErrInvalidID
 	}
-	if b.p.SceneField.IsNil() {
+	if b.p.scene.IsNil() {
 		return nil, ErrInvalidSceneID
 	}
-	if b.p.SchemaField.IsNil() {
+	if b.p.schema.IsNil() {
 		return nil, ErrInvalidPropertySchemaID
 	}
 	return b.p, nil
@@ -30,28 +30,28 @@ func (b *Builder) MustBuild() *Property {
 }
 
 func (b *Builder) ID(id ID) *Builder {
-	b.p.IDField = id
+	b.p.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.p.IDField = NewID()
+	b.p.id = NewID()
 	return b
 }
 
 func (b *Builder) Scene(s SceneID) *Builder {
-	b.p.SceneField = s
+	b.p.scene = s
 	return b
 }
 
 func (b *Builder) Schema(schema SchemaID) *Builder {
-	b.p.SchemaField = schema
+	b.p.schema = schema
 	return b
 }
 
 func (b *Builder) Items(items []Item) *Builder {
 	if len(items) == 0 {
-		b.p.ItemsField = nil
+		b.p.items = nil
 		return b
 	}
 
@@ -68,6 +68,6 @@ func (b *Builder) Items(items []Item) *Builder {
 		newItems = append(newItems, f)
 	}
 
-	b.p.ItemsField = newItems
+	b.p.items = newItems
 	return b
 }

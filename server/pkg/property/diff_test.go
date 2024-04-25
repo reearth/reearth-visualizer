@@ -260,10 +260,10 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
-				IDField:     testProperty1.ID(),
-				SceneField:  testProperty1.Scene(),
-				SchemaField: newSchemaID,
-				ItemsField: []Item{
+				id:     testProperty1.ID(),
+				scene:  testProperty1.Scene(),
+				schema: newSchemaID,
+				items: []Item{
 					&Group{
 						itemBase: itemBase{
 							ID:          testGroup1.ID(),
@@ -283,7 +283,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 									SchemaGroup: testGroup2.SchemaGroup(),
 								},
 								fields: []*Field{
-									{FieldField: testField2.Field(), ValueField: NewOptionalValue(ValueTypeString, nil)}, // type changed
+									{field: testField2.Field(), v: NewOptionalValue(ValueTypeString, nil)}, // type changed
 								},
 							},
 						},
@@ -305,10 +305,10 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
-				IDField:     testProperty1.ID(),
-				SceneField:  testProperty1.Scene(),
-				SchemaField: newSchemaID,
-				ItemsField: []Item{
+				id:     testProperty1.ID(),
+				scene:  testProperty1.Scene(),
+				schema: newSchemaID,
+				items: []Item{
 					&Group{
 						itemBase: itemBase{
 							ID:          testGroup1.ID(),
@@ -344,10 +344,10 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
-				IDField:     testProperty1.ID(),
-				SceneField:  testProperty1.Scene(),
-				SchemaField: newSchemaID,
-				ItemsField: []Item{
+				id:     testProperty1.ID(),
+				scene:  testProperty1.Scene(),
+				schema: newSchemaID,
+				items: []Item{
 					&Group{
 						itemBase: itemBase{
 							ID:          testGroup1.ID(),
@@ -362,7 +362,7 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 							SchemaGroup: "x",
 						},
 						fields: []*Field{
-							{FieldField: testField1.Field(), ValueField: NewOptionalValue(ValueTypeNumber, nil)},
+							{field: testField1.Field(), v: NewOptionalValue(ValueTypeNumber, nil)},
 						},
 					},
 				},
@@ -382,10 +382,10 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
-				IDField:     testProperty1.ID(),
-				SceneField:  testProperty1.Scene(),
-				SchemaField: newSchemaID,
-				ItemsField: []Item{
+				id:     testProperty1.ID(),
+				scene:  testProperty1.Scene(),
+				schema: newSchemaID,
+				items: []Item{
 					&Group{
 						itemBase: itemBase{
 							ID:          testGroup1.ID(),
@@ -412,10 +412,10 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
-				IDField:     testProperty1.ID(),
-				SceneField:  testProperty1.Scene(),
-				SchemaField: newSchemaID,
-				ItemsField: []Item{
+				id:     testProperty1.ID(),
+				scene:  testProperty1.Scene(),
+				schema: newSchemaID,
+				items: []Item{
 					&Group{
 						itemBase: itemBase{
 							ID:          testGroup1.ID(),
@@ -441,10 +441,10 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 			args: testProperty1.Clone(),
 			want: true,
 			wantProperty: &Property{
-				IDField:     testProperty1.ID(),
-				SceneField:  testProperty1.Scene(),
-				SchemaField: newSchemaID,
-				ItemsField: []Item{
+				id:     testProperty1.ID(),
+				scene:  testProperty1.Scene(),
+				schema: newSchemaID,
+				items: []Item{
 					testGroup1,
 					&GroupList{
 						itemBase: itemBase{

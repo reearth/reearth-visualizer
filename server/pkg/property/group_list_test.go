@@ -1028,7 +1028,7 @@ func TestGroupList_GuessSchema(t *testing.T) {
 							SchemaGroup: "aa",
 						},
 						fields: []*Field{
-							{FieldField: "a", ValueField: NewOptionalValue(ValueTypeLatLng, nil)},
+							{field: "a", v: NewOptionalValue(ValueTypeLatLng, nil)},
 						},
 					},
 					{
@@ -1036,7 +1036,7 @@ func TestGroupList_GuessSchema(t *testing.T) {
 							SchemaGroup: "aa",
 						},
 						fields: []*Field{
-							{FieldField: "b", ValueField: NewOptionalValue(ValueTypeString, nil)},
+							{field: "b", v: NewOptionalValue(ValueTypeString, nil)},
 						},
 					},
 				},

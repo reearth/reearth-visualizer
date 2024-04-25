@@ -220,7 +220,7 @@ func TestField_Link(t *testing.T) {
 			t.Parallel()
 			tt.target.Link(tt.args)
 			if tt.target != nil {
-				assert.Equal(t, tt.args, tt.target.LinksField)
+				assert.Equal(t, tt.args, tt.target.links)
 			}
 		})
 	}
@@ -253,27 +253,27 @@ func TestField_Cast(t *testing.T) {
 		{
 			name: "ok",
 			target: &Field{
-				FieldField: FieldID("foobar"),
-				ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("-123")),
-				LinksField: dgp.Clone(),
+				field: FieldID("foobar"),
+				v:     OptionalValueFrom(ValueTypeString.ValueFrom("-123")),
+				links: dgp.Clone(),
 			},
 			args: args{t: ValueTypeNumber},
 			want: &Field{
-				FieldField: FieldID("foobar"),
-				ValueField: OptionalValueFrom(ValueTypeNumber.ValueFrom(-123)),
+				field: FieldID("foobar"),
+				v:     OptionalValueFrom(ValueTypeNumber.ValueFrom(-123)),
 			},
 		},
 		{
 			name: "failed",
 			target: &Field{
-				FieldField: FieldID("foobar"),
-				ValueField: OptionalValueFrom(ValueTypeString.ValueFrom("foo")),
-				LinksField: dgp.Clone(),
+				field: FieldID("foobar"),
+				v:     OptionalValueFrom(ValueTypeString.ValueFrom("foo")),
+				links: dgp.Clone(),
 			},
 			args: args{t: ValueTypeLatLng},
 			want: &Field{
-				FieldField: FieldID("foobar"),
-				ValueField: NewOptionalValue(ValueTypeLatLng, nil),
+				field: FieldID("foobar"),
+				v:     NewOptionalValue(ValueTypeLatLng, nil),
 			},
 		},
 		{
@@ -308,7 +308,7 @@ func TestField_GuessSchema(t *testing.T) {
 	}{
 		{
 			name:   "ok",
-			target: &Field{FieldField: "a", ValueField: NewOptionalValue(ValueTypeLatLng, nil)},
+			target: &Field{field: "a", v: NewOptionalValue(ValueTypeLatLng, nil)},
 			want:   &SchemaField{id: "a", propertyType: ValueTypeLatLng},
 		},
 		{
