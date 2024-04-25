@@ -641,3 +641,7 @@ func (p *Property) updateSchema(s SchemaID) bool {
 func (p *Property) SetSchema(schema SchemaID) {
 	p.schema = schema.Clone()
 }
+
+func PropertyCacheKey(id ID) string {
+	return fmt.Sprintf("Property:%s", id)
+}
