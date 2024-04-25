@@ -279,7 +279,6 @@ export default ({
     selectedWidgetArea,
     widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
     isVisualizerReady, // Not being used (as of 2024/04)
     zoomedLayerId,
     installableInfoboxBlocks,
