@@ -140,7 +140,7 @@ const Visualizer: FC<VisualizerProps> = ({
   pluginProperty,
   story,
   zoomedLayerId,
-  useExperimentalSandbox,
+  useExperimentalSandbox = true,
   visualizerRef,
   currentCamera,
   interactionMode,
