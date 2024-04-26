@@ -3,7 +3,7 @@ import { ReactNode, useMemo } from "react";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
 import { styled } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 
 export type Type = "primary" | "secondary" | "danger";
 
@@ -121,8 +121,8 @@ const StyledButton = styled.button<ButtonProps>`
   }
   padding: ${({ size }) =>
     size === "medium"
-      ? `${metricsSizes["s"]}px ${metricsSizes["l"]}px`
-      : `${metricsSizes["xs"]}px ${metricsSizes["s"]}px`};
+      ? `${spacingSizes["small"]}px ${spacingSizes["large"]}px`
+      : `${spacingSizes["smallest"]}px ${spacingSizes["small"]}px`};
   margin: ${({ margin }) => margin};
   user-select: none;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
