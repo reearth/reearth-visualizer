@@ -9,7 +9,8 @@ import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import EditorVisualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { metrics, styled } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
+import { spacing } from "@reearth/services/theme/reearthTheme/common/spacing";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
@@ -217,8 +218,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             <Resizable
               direction="vertical"
               gutter="end"
-              initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}
+              initialSize={spacing.propertyMenuWidth}
+              minSize={spacing.propertyMenuMinWidth}
               localStorageKey={`${tab}LeftPanel`}>
               {leftPanel}
             </Resizable>
@@ -249,9 +250,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 <Resizable
                   direction="horizontal"
                   gutter="start"
-                  initialSize={metrics.bottomPanelMinHeight}
-                  minSize={metrics.bottomPanelMinHeight}
-                  maxSize={metrics.bottomPanelMaxHeight}
+                  initialSize={spacing.bottomPanelMinHeight}
+                  minSize={spacing.bottomPanelMinHeight}
+                  maxSize={spacing.bottomPanelMaxHeight}
                   localStorageKey="bottomPanel">
                   {bottomPanel}
                 </Resizable>
@@ -262,8 +263,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             <Resizable
               direction="vertical"
               gutter="start"
-              initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}
+              initialSize={spacing.propertyMenuWidth}
+              minSize={spacing.propertyMenuMinWidth}
               localStorageKey={`${tab}RightPanel`}>
               {rightPanel}
             </Resizable>
