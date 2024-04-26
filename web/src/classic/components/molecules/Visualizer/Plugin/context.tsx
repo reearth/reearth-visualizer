@@ -35,6 +35,7 @@ import type {
   ViewportSize,
   LatLngHeight,
   WidgetLocationOptions,
+  AutoOrbitProps,
 } from "./types";
 
 export type EngineContext = {
@@ -66,7 +67,13 @@ export type Props = {
   selectLayer: (id?: string, options?: { reason?: string }) => void;
   overrideLayerProperty: (id: string, property: any) => void;
   overrideSceneProperty: (id: string, property: any) => void;
-  flyTo: (dest: FlyToDestination) => void;
+  flyTo: (dest: AutoOrbitProps) => void;
+  autoOrbit: (
+    dest: AutoOrbitProps
+  ) =>
+    | { stopOrbit: () => void; handleToggleOrbit: () => void }
+    | undefined
+    | void;
   lookAt: (dest: LookAtDestination) => void;
   zoomIn: (amount: number) => void;
   zoomOut: (amount: number) => void;
@@ -135,6 +142,7 @@ export function Provider({
   layersInViewport,
   flyTo,
   lookAt,
+  autoOrbit,
   zoomIn,
   zoomOut,
   rotateRight,
@@ -214,6 +222,7 @@ export function Provider({
         layersInViewport,
         flyTo,
         lookAt,
+        autoOrbit,
         zoomIn,
         zoomOut,
         cameraViewport,
@@ -266,6 +275,7 @@ export function Provider({
       layersInViewport,
       flyTo,
       lookAt,
+      autoOrbit,
       zoomIn,
       zoomOut,
       cameraViewport,

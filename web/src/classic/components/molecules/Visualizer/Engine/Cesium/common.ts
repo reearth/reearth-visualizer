@@ -214,6 +214,7 @@ export const flyTo = (
     duration?: number;
     easing?: (time: number) => number;
   },
+  complete?: () => void,
 ) => {
   if (!cesiumCamera || !camera) return () => {};
 
@@ -241,6 +242,7 @@ export const flyTo = (
       },
       duration: options?.duration ?? 0,
       easingFunction: options?.easing,
+      complete
     });
   }
 
@@ -273,6 +275,7 @@ export const lookAt = (
     duration?: number;
     easing?: (time: number) => number;
   },
+  complete?: () => void,
 ) => {
   if (!cesiumCamera || !camera) return () => {};
 
@@ -295,6 +298,7 @@ export const lookAt = (
       offset: new HeadingPitchRange(camera.heading, camera.pitch, camera.range),
       duration: options?.duration,
       easingFunction: options?.easing,
+      complete,
     });
   }
 
@@ -727,3 +731,231 @@ export async function sampleTerrainHeightFromCartesian(scene: Scene, translation
   }
   return await sampleTerrainHeight(scene, lng, lat);
 }
+
+const halfHeight = 0.55;
+const flyHeight = 0.1;
+const pitchHeight = CesiumMath.toRadians(-30);
+const motionHeight = CesiumMath.toRadians(10);
+class AutoOrbit {
+  viewer: Viewer;
+  center: Cartesian3;
+  range: number;
+  headingOffset: number;
+  animationFrameHandle: number;
+  orbitStartTime: number;
+  firstFlightHappened: boolean;
+  mapControlsState: any;
+  duration?: number = 5;
+  autoOrbitActive?: boolean = false;
+  easing?: (time: number) => number;
+  cancelAnimation: () => void;
+  locationOrbit: () => void;
+  locationOrbitTick: () => void;
+  raycastOrbit: () => void;
+  handleLocationChange: () => void;
+  handleToggleSwitchClick: () => void;
+
+  constructor(
+    viewer: Viewer,
+    center: Cartesian3,
+    range: number,
+    headingOffset: number,
+    duration: number = 5,
+    easing?: (time: number) => number,
+    autoOrbitActive?: boolean,
+  ) {
+    this.viewer = viewer;
+    this.center = center;
+    this.range = range;
+    this.duration = duration;
+    this.easing = easing;
+    this.headingOffset = headingOffset;
+    this.autoOrbitActive = autoOrbitActive || false;
+    this.animationFrameHandle = -1;
+    this.orbitStartTime = 0;
+    this.firstFlightHappened = false;
+    this.mapControlsState = {};
+    this.cancelAnimation = () => {
+      cancelAnimationFrame(this.animationFrameHandle);
+      this.mapControlsState.autoRotateActive = false;
+    };
+    this.locationOrbit = () => {
+      this.mapControlsState.autoRotateActive = true;
+      this.orbitStartTime = performance.now();
+      this.locationOrbitTick();
+    };
+    this.locationOrbitTick = () => {
+      const { center, range, headingOffset } = this;
+      const timeElapsed =
+        ((performance.now() - this.orbitStartTime) * flyHeight) / 1000;
+      const heading = timeElapsed + headingOffset;
+      const pitch = pitchHeight + motionHeight * Math.sin(timeElapsed);
+      const height = range + halfHeight * range * -Math.sin(timeElapsed);
+      this.viewer.camera.flyToBoundingSphere(new BoundingSphere(center, 0), {
+        offset: new HeadingPitchRange(heading, pitch, height),
+        duration: 0,
+        easingFunction: this.easing,
+      });
+      this.animationFrameHandle = requestAnimationFrame(this.locationOrbitTick);
+    };
+    this.raycastOrbit = () => {
+      if (!this.viewer) return;
+      const position = this.viewer.scene?.pickPosition(
+        new Cartesian2(
+          Math.round(this.viewer.container?.clientWidth / 2),
+          Math.round(this.viewer.container?.clientHeight / 2)
+        )
+      );
+      if (!defined(position)) {
+        return;
+      }
+
+      this.mapControlsState.autoRotateActive = true;
+      this.orbitStartTime = performance.now();
+      const pitch = this.viewer.camera.pitch;
+      const heading = this.viewer.camera.heading;
+      const distance = Cartesian3.distance(
+        position,
+        this.viewer.camera.position
+      );
+      const animate = () => {
+        const timeElapsed =
+          ((performance.now() - this.orbitStartTime) * flyHeight) / 1000;
+        let newHeading = heading + timeElapsed;
+        let newPitch = pitch + motionHeight * Math.sin(timeElapsed);
+        let newRange =
+          distance + halfHeight * distance * -Math.sin(timeElapsed) + 800;
+        this.viewer.camera.flyToBoundingSphere(
+          new BoundingSphere(position, 0),
+          {
+            offset: new HeadingPitchRange(newHeading, newPitch, newRange),
+            duration: 0,
+            easingFunction: this.easing,
+          }
+        );
+        this.animationFrameHandle = requestAnimationFrame(animate);
+      };
+      animate();
+    };
+    this.handleLocationChange = () => {
+      this.cancelAnimation();
+      this.flyToCurrentLocation();
+    };
+    this.handleToggleSwitchClick = () => {
+      if (!this.mapControlsState.autoRotateActive) {
+        this.raycastOrbit();
+      } else {
+        this.cancelAnimation();
+      }
+    };
+  }
+  async initialize() {}
+  public start() {
+    this.flyToCurrentLocation();
+    //this.mapControlsState.showMapControls = false;
+    //this.mapControlsState.autoRotateActive = false;
+    //this.removeAnimationCancelEventListener();
+    //this.addAnimationCancelEventListener();
+    //this.mapControlsState.showMapControls = true;
+    //this.locationOrbit();
+    //if(!this.firstFlightHappened) {this.firstFlightHappened = true;}
+  }
+  public stop() {
+    this.cancelAnimation();
+    this.removeAnimationCancelEventListener();
+  }
+
+  public flyToCurrentLocation() {
+    const { center, range, headingOffset } = this;
+    this.mapControlsState.showMapControls = false;
+    this.mapControlsState.autoRotateActive = false;
+    this.removeAnimationCancelEventListener();
+    this.viewer.camera.flyToBoundingSphere(new BoundingSphere(center, 0), {
+      offset: new HeadingPitchRange(headingOffset, pitchHeight, range),
+      complete: () => {
+        if(this.autoOrbitActive){
+          this.addAnimationCancelEventListener();
+          this.mapControlsState.showMapControls = true;
+          this.locationOrbit();
+        }
+      },
+      duration: this.firstFlightHappened ? 5 : this.duration, // default duration: 5
+      easingFunction: this.easing,
+    });
+    if (!this.firstFlightHappened) {
+      this.firstFlightHappened = true;
+    }
+  }
+  public addAnimationCancelEventListener() {
+    this.viewer.container.addEventListener("pointerdown", this.cancelAnimation);
+    this.viewer.container.addEventListener("wheel", this.cancelAnimation);
+  }
+  public removeAnimationCancelEventListener() {
+    this.viewer.container.removeEventListener(
+      "pointerdown",
+      this.cancelAnimation
+    );
+    this.viewer.container.removeEventListener("wheel", this.cancelAnimation);
+  }
+}
+
+export const autoOrbit = (
+  viewer?: Viewer | undefined,
+  camera?: {
+    /** degrees */
+    lat?: number;
+    /** degrees */
+    lng?: number;
+    /** meters */
+    height?: number;
+    /** radians */
+    heading?: number;
+    /** radians */
+    pitch?: number;
+    /** radians */
+    range?: number;
+    /** Field of view expressed in radians */
+    fov?: number;
+  },
+  options?: {
+    /** Seconds */
+    duration?: number;
+    easing?: (time: number) => number;
+  } & {autoOrbit?: boolean}
+):
+  | {
+      stopOrbit: () => void;
+      handleToggleOrbit: () => void;
+    }
+  | undefined
+  | void => {
+  if (!viewer || viewer.isDestroyed() || !viewer.camera || !viewer.scene || !camera)
+    return;
+
+  const position =
+    typeof camera.lat === "number" &&
+    typeof camera.lng === "number" &&
+    typeof camera.height === "number"
+      ? Cartesian3.fromDegrees(camera.lng, camera.lat, camera.height)
+      : undefined;
+  if (!defined(position) || !position) return;
+
+  const autoOrbitInstance = new AutoOrbit(
+    viewer,
+    position,
+    camera.range || 800,
+    camera.heading || 0,
+    options?.duration,
+    options?.easing,
+    options?.autoOrbit,
+  );
+  autoOrbitInstance.start();
+  return {
+    stopOrbit: () => {
+      autoOrbitInstance.stop();
+    },
+    handleToggleOrbit: () => {
+      autoOrbitInstance.handleToggleSwitchClick();
+    },
+  };
+};

@@ -9,6 +9,8 @@ import { AuthenticatedPage } from "@reearth/services/auth";
 import { useSceneId } from "@reearth/services/state";
 import { PublishedAppProvider as ThemeProvider } from "@reearth/services/theme";
 
+import useHooks from "./hooks";
+
 export type Props = {
   path?: string;
 };
@@ -16,6 +18,7 @@ export type Props = {
 const PreviewPage: React.FC<Props> = () => {
   const { sceneId } = useParams();
   const [sceneId2, setSceneId] = useSceneId();
+  const { loading, loaded } = useHooks(sceneId);
   const core = useCore("earth_editor");
 
   useEffect(() => {

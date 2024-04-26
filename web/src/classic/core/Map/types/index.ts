@@ -63,8 +63,15 @@ export type EngineRef = {
   getCamera: () => Camera | undefined;
   getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
   sampleTerrainHeight: (lng: number, lat: number) => Promise<number | undefined>;
-  flyTo: FlyTo;
-  lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  flyTo: FlyTo; 
+  lookAt: (destination: LookAtDestination, options?: CameraOptions, complete?: () => void) => void;
+  autoOrbit: (
+    destination: LookAtDestination,
+    options?: CameraOptions & {autoOrbit?: boolean},
+  ) =>
+    | { stopOrbit: () => void; handleToggleOrbit: () => void }
+    | undefined
+    | void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
   zoomOut: (amount: number, options?: CameraOptions) => void;

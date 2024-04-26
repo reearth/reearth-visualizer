@@ -2191,6 +2191,115 @@ extensions:
             - id: layerCamera
               title: Camera position
               type: camera
+  - id: layer
+    type: widget
+    name: Layer
+    description: This feature make user to create a layer and set the layer's properties.
+    singleOnly: true
+    widgetLayout:
+      extendable:
+        horizontally: true
+      defaultLocation:
+        zone: outer
+        section: left
+        area: middle
+    schema:
+      groups:
+        - id: default
+          title: Layer
+          fields:
+            - id: size
+              type: string
+              title: Width
+              defaultValue: small
+              choices:
+                - key: small
+                  label: Small
+                - key: medium
+                  label: Medium
+                - key: large
+                  label: Large
+            - id: heightType
+              type: string
+              title: Height type
+              defaultValue: auto
+              choices:
+                - key: auto
+                  label: Auto
+                - key: manual
+                  label: Manual
+            - id: height
+              type: number
+              title: Height
+              min: 284
+              max: 2048
+              suffix: px
+              description: "This sets the drawer height. Min: 284  Max: 2048"
+              availableIf:
+                field: heightType
+                type: string
+                value: manual
+            - id: infoboxPaddingTop
+              type: number
+              title: Top padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the top of the infobox and the title. Min: 0  Max: 40"
+            - id: infoboxPaddingBottom
+              type: number
+              title: Bottom padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the bottom of the infobox and the last block. Min: 0  Max: 40"
+            - id: infoboxPaddingLeft
+              type: number
+              title: Left padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the left side of the infobox and the title and blocks. Min: 0  Max: 40"
+            - id: infoboxPaddingRight
+              type: number
+              title: Right padding
+              min: 0
+              max: 40
+              suffix: px
+              description: "The space between the right side of the infobox and the title and blocks. Min: 0  Max: 40"
+            - id: bgcolor
+              type: string
+              title: Background color
+              ui: color
+            - id: outlineWidth
+              type: number
+              title: Outline width
+              suffix: px
+              max: 20
+            - id: outlineColor
+              type: string
+              title: Outline color
+              ui: color
+        - id: camera
+          title: Camera
+          fields:
+            - id: duration
+              title: Duration
+              type: number
+              suffix: s
+              defaultValue: 3
+            - id: range
+              title: Range
+              type: number
+              suffix: m
+              defaultValue: 50000
+            - id: camera
+              title: Camera pose
+              type: camera
+              ui: camera_pose
+            - id: autoOrbit
+              title: Auto orbit
+              type: bool
   - id: cluster
     name: Cluster
     type: cluster

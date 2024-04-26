@@ -520,6 +520,7 @@ function useProviderProps(
     | "zoomIn"
     | "zoomOut"
     | "orbit"
+    | "autoOrbit"
     | "rotateRight"
     | "layers"
     | "layersInViewport"
@@ -564,15 +565,22 @@ function useProviderProps(
   );
 
   const flyTo = useCallback(
-    (dest: FlyToDestination, options?: CameraOptions) => {
-      engineRef.current?.flyTo(dest, options);
+    (dest: FlyToDestination, options?: CameraOptions, complete?: () => void) => {
+      engineRef.current?.flyTo(dest, options, complete);
     },
     [engineRef],
   );
 
   const lookAt = useCallback(
+    (dest: LookAtDestination, options?: CameraOptions, complete?: () => void) => {
+      engineRef.current?.lookAt(dest, options, complete);
+    },
+    [engineRef],
+  );
+
+  const autoOrbit = useCallback(
     (dest: LookAtDestination, options?: CameraOptions) => {
-      engineRef.current?.lookAt(dest, options);
+      return engineRef.current?.autoOrbit(dest, options);
     },
     [engineRef],
   );
@@ -736,6 +744,7 @@ function useProviderProps(
     zoomIn,
     zoomOut,
     orbit,
+    autoOrbit,
     rotateRight,
     layers,
     layersInViewport,

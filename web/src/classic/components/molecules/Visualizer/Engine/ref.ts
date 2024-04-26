@@ -56,15 +56,37 @@ export type EngineRef = {
   requestRender: () => void;
   getViewport: () => Rect | undefined;
   getCamera: () => Camera | undefined;
-  getLocationFromScreen: (x: number, y: number, withTerrain?: boolean) => LatLngHeight | undefined;
-  flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
-  lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  getLocationFromScreen: (
+    x: number,
+    y: number,
+    withTerrain?: boolean
+  ) => LatLngHeight | undefined;
+  flyTo: (
+    destination: FlyToDestination,
+    options?: CameraOptions,
+    complete?: () => void
+  ) => void;
+  lookAt: (
+    destination: LookAtDestination,
+    options?: CameraOptions,
+    complete?: () => void
+  ) => void;
   lookAtLayer: (layerId: string) => void;
   zoomIn: (amount: number, options?: CameraOptions) => void;
   zoomOut: (amount: number, options?: CameraOptions) => void;
   orbit: (radian: number) => void;
+  autoOrbit: (
+    destination: LookAtDestination,
+    options?: CameraOptions & {autoOrbit?: boolean},
+  ) =>
+    | { stopOrbit: () => void; handleToggleOrbit: () => void }
+    | undefined
+    | void;
   rotateRight: (radian: number) => void;
-  changeSceneMode: (sceneMode: SceneMode | undefined, duration?: number) => void;
+  changeSceneMode: (
+    sceneMode: SceneMode | undefined,
+    duration?: number
+  ) => void;
   getClock: () => Clock | undefined;
   captureScreen: (type?: string, encoderOptions?: number) => string | undefined;
   enableScreenSpaceCameraController: (enabled: boolean) => void;
@@ -77,7 +99,11 @@ export type EngineRef = {
   moveLeft: (amount: number) => void;
   moveRight: (amount: number) => void;
   moveOverTerrain: (offset?: number) => void;
-  flyToGround: (destination: FlyToDestination, options?: CameraOptions, offset?: number) => void;
+  flyToGround: (
+    destination: FlyToDestination,
+    options?: CameraOptions,
+    offset?: number
+  ) => void;
   isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
   builtinPrimitives?: Record<string, Component>;
   pluginApi?: any;

@@ -406,9 +406,9 @@ export type Camera = {
   readonly zoomIn: (amount: number, options?: CameraOptions) => void;
   readonly zoomOut: (amount: number, options?: CameraOptions) => void;
   /** Moves the camera position to the specified destination. */
-  readonly flyTo: (destination: FlyToDestination, options?: CameraOptions) => void;
+  readonly flyTo: (destination: FlyToDestination, options?: CameraOptions, complete?: () => void) => void;
   /** Moves the camera position to look at the specified destination. */
-  readonly lookAt: (destination: LookAtDestination, options?: CameraOptions) => void;
+  readonly lookAt: (destination: LookAtDestination, options?: CameraOptions, complete?: () => void) => void;
   /** Rotate the camera around the center of earth. */
   readonly rotateRight: (radian: number) => void;
   /** Move the angle of camera around the center of earth. */
@@ -428,6 +428,13 @@ export type Camera = {
     options?: CameraOptions,
     offset?: number,
   ) => void;
+  readonly autoOrbit: (
+    destination: LookAtDestination,
+    options?: CameraOptions & {autoOrbit?: boolean},
+  ) =>
+    | { stopOrbit: () => void; handleToggleOrbit: () => void }
+    | undefined
+    | void;
 };
 
 /** Represents the camera position and state */
@@ -479,6 +486,7 @@ export type FlyToDestination = {
   fov?: number;
 };
 
+export type AutoOrbitProps = FlyToDestination & {autoOrbit?: boolean};
 /**
  * Undefined fields are assumed to be the same as the current camera position.
  */

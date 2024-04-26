@@ -27,6 +27,7 @@ import {
   getCenterCamera,
   zoom,
   lookAtWithoutAnimation,
+  autoOrbit,
 } from "./common";
 
 export default function useEngineRef(
@@ -68,17 +69,18 @@ export default function useEngineRef(
         if (!viewer || viewer.isDestroyed()) return;
         return getLocationFromScreen(viewer.scene, x, y, withTerrain);
       },
-      flyTo: (camera, options) => {
+      flyTo: (camera, options, complete) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         cancelCameraFlight.current?.();
         cancelCameraFlight.current = flyTo(
           viewer.scene?.camera,
           { ...getCamera(viewer), ...camera },
-          options,
+          options, 
+          complete,
         );
       },
-      lookAt: (camera, options) => {
+      lookAt: (camera, options, complete) => {
         const viewer = cesium.current?.cesiumElement;
         if (!viewer || viewer.isDestroyed()) return;
         if (options?.withoutAnimation) {
@@ -89,6 +91,7 @@ export default function useEngineRef(
           viewer.scene?.camera,
           { ...getCamera(viewer), ...camera },
           options,
+          complete,
         );
       },
       lookAtLayer: layerId => {
@@ -171,6 +174,11 @@ export default function useEngineRef(
           camera.look(camera.right, y);
         }
         camera.lookAtTransform(oldTransform);
+      },
+      autoOrbit: (camera, options) =>{
+        const viewer = cesium.current?.cesiumElement;
+        if (!viewer || viewer.isDestroyed()) return;
+        return autoOrbit(viewer, camera, options);
       },
       rotateRight: radian => {
         const viewer = cesium.current?.cesiumElement;

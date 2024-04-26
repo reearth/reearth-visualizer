@@ -4,8 +4,9 @@ import { Item, convert } from "../propertyApi/utils";
 export const BUTTON_BUILTIN_WIDGET_ID = "reearth/button";
 export const NAVIGATOR_BUILTIN_WIDGET_ID = "reearth/navigator";
 // export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
+export const LAYER_BUILTIN_WIDGET_ID = "reearth/layer";
 
-export const AVAILABLE_WIDGET_IDS = [BUTTON_BUILTIN_WIDGET_ID, NAVIGATOR_BUILTIN_WIDGET_ID];
+export const AVAILABLE_WIDGET_IDS = [BUTTON_BUILTIN_WIDGET_ID, NAVIGATOR_BUILTIN_WIDGET_ID, LAYER_BUILTIN_WIDGET_ID];
 
 export type InstallableWidget = {
   pluginId: string;
