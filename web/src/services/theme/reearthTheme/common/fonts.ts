@@ -9,9 +9,10 @@ const fontSizes = {
   h3: 24,
   h4: 20,
   h5: 16,
-  body: 14,
-  footnote: 12,
+  body: 12,
+  footnote: 11,
   xFootnote: 10,
+  property: 12,
 };
 
 export type FontSize = keyof typeof fontSizes;
@@ -22,8 +23,9 @@ const lineHeights = {
   h3: 32,
   h4: 28,
   h5: 24,
-  body: 22,
-  footnote: 20,
+  body: 18,
+  footnote: 16,
+  property: 20,
   xFootnote: 20,
 };
 
@@ -44,6 +46,14 @@ const uniqueTraits = {
 };
 
 export type UniqueTraits = keyof typeof uniqueTraits;
+
+// H1 components
+export const H1Bold = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.h1}px;
+  font-weight: ${fontWeights.bold};
+  line-height: ${lineHeights.h1}px;
+`;
 
 // H1 components
 export const H1Medium = styled.p`
@@ -68,12 +78,12 @@ export const H2Medium = styled.p`
   line-height: ${lineHeights.h2}px;
 `;
 
-export const H2Regular = styled.p`
-  font-family: ${fontFamilies};
-  font-size: ${fontSizes.h2}px;
-  font-weight: ${fontWeights.regular};
-  line-height: ${lineHeights.h2}px;
-`;
+// export const H2Regular = styled.p`
+//   font-family: ${fontFamilies};
+//   font-size: ${fontSizes.h2}px;
+//   font-weight: ${fontWeights.regular};
+//   line-height: ${lineHeights.h2}px;
+// `;
 
 // H3 components
 export const H3Bold = styled.p`
@@ -202,6 +212,13 @@ export const XFootnoteRegular = styled.p`
   line-height: ${lineHeights.xFootnote}px;
 `;
 
+export const PropertyRegular = styled.p`
+  font-family: ${fontFamilies};
+  font-size: ${fontSizes.property}px;
+  font-weight: ${fontWeights.regular};
+  line-height: ${lineHeights.property}px;
+`;
+
 type Typography = {
   [key in FontSize]: {
     [key in FontWeight | UniqueTraits]?: React.FC<any>;
@@ -215,7 +232,6 @@ export const typography: Typography = {
   h2: {
     bold: H2Bold,
     medium: H2Medium,
-    regular: H2Regular,
   },
   h3: {
     bold: H3Bold,
@@ -245,6 +261,9 @@ export const typography: Typography = {
   },
   xFootnote: {
     regular: XFootnoteRegular,
+  },
+  property: {
+    regular: PropertyRegular,
   },
 };
 

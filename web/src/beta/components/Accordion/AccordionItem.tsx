@@ -52,15 +52,15 @@ const AccordionItem: React.FC<Props> = ({ className, id, heading, content, bg })
 };
 
 const Wrapper = styled.div<{ bg?: string }>`
-  margin: ${({ theme }) => theme.metrics["2xl"]}px 0;
+  margin: ${({ theme }) => theme.spacing.super}px 0;
   background-color: ${({ bg }) => bg};
-  border-radius: ${({ theme }) => theme.metrics["l"]}px;
+  border-radius: ${({ theme }) => theme.spacing.large}px;
 `;
 
 const AccordionItemStateWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: ${({ theme }) => theme.metrics["xl"]}px;
+  padding: ${({ theme }) => theme.spacing.largest}px;
 `;
 
 const StyledIcon = styled(Icon)<{ open: boolean }>`
