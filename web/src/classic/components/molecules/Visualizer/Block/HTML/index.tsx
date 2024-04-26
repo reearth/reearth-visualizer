@@ -90,13 +90,14 @@ const HTMLBlock: React.FC<Props> = ({
   const [frameRef, setFrameRef] = useState<HTMLIFrameElement | null>(null);
   const [height, setHeight] = useState(15);
   const initializeIframe = useCallback(() => {
+    
     const frameDocument = frameRef?.contentDocument;
     const frameWindow = frameRef?.contentWindow;
     if (!frameWindow || !frameDocument) {
       return;
     }
 
-    if (!frameDocument.body.innerHTML.length) {
+    if (!frameDocument?.body?.innerHTML?.length) {
       // `document.write()` is not recommended API by HTML spec,
       // but we need to use this API to make it work correctly on Safari.
       // If Safari supports `onLoad` event with `srcDoc`, we can remove this line.
@@ -104,7 +105,9 @@ const HTMLBlock: React.FC<Props> = ({
     }
 
     // Initialize styles
-    frameWindow.document.documentElement.style.margin = "0";
+    if (frameWindow.document.documentElement){
+      frameWindow.document.documentElement.style.margin = "0";
+    }
 
     // Check if a style element has already been appended to the head
     let style: HTMLElement | null = frameWindow.document.querySelector(
@@ -114,7 +117,9 @@ const HTMLBlock: React.FC<Props> = ({
       // Create a new style element if it doesn't exist
       style = frameWindow.document.createElement("style");
       style.dataset.id = "reearth-iframe-style";
-      frameWindow.document.head.append(style);
+      if(frameWindow.document.head){
+        frameWindow.document.head.append(style);
+      }
     }
     // Update the content of the existing or new style element
     style.textContent = `body { color:${themeColor ?? getComputedStyle(frameRef).color}; 
@@ -124,26 +129,35 @@ const HTMLBlock: React.FC<Props> = ({
     const handleFrameClick = () => handleClick();
 
     if (isEditable) {
-      frameWindow.document.body.style.cursor = "pointer";
+      if(frameWindow.document.body){
+        frameWindow.document.body.style.cursor = "pointer";
+      }
       frameWindow.document.addEventListener("dblclick", startEditing);
       frameWindow.document.addEventListener("click", handleFrameClick);
     }
 
-    const resize = () => {
+    // const resize = () => {
+    //   if(!frameWindow.document.documentElement) return
+    //   setHeight(frameWindow.document.documentElement.scrollHeight);
+    // };
+
+    // // Resize
+    // const resizeObserver = new ResizeObserver(() => {
+    //   resize();
+    // });
+    // if(frameWindow.document.body){
+    //   resizeObserver.observe(frameWindow.document.body);
+    // }
+
+    if(frameWindow.document.documentElement){
       setHeight(frameWindow.document.documentElement.scrollHeight);
-    };
+    }
 
-    // Resize
-    const resizeObserver = new ResizeObserver(() => {
-      resize();
-    });
-    resizeObserver.observe(frameWindow.document.body);
-
-    return () => {
-      frameWindow.document.removeEventListener("dblclick", startEditing);
-      frameWindow.document.removeEventListener("click", handleFrameClick);
-      resizeObserver.disconnect();
-    };
+    // return () => {
+    //   frameWindow.document.removeEventListener("dblclick", startEditing);
+    //   frameWindow.document.removeEventListener("click", handleFrameClick);
+    //   //resizeObserver.disconnect();
+    // };
   }, [frameRef, themeColor, isEditable, html, handleClick, startEditing]);
 
   useLayoutEffect(() => initializeIframe(), [initializeIframe]);
@@ -181,7 +195,7 @@ const HTMLBlock: React.FC<Props> = ({
               key={html}
               ref={setFrameRef}
               frameBorder="0"
-              scrolling="no"
+              //scrolling="no"
               $height={height}
               allowFullScreen
               sandbox="allow-same-origin allow-popups allow-forms"
