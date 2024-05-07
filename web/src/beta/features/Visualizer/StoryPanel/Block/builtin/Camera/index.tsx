@@ -9,7 +9,13 @@ import { type CameraBlock as CameraBlockType } from "./Editor";
 
 export type Props = BlockProps<StoryBlock>;
 
-const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ...props }) => {
+const CameraBlock: React.FC<Props> = ({
+  block,
+  isSelected,
+  currentCamera,
+  onPropertyItemAdd,
+  ...props
+}) => {
   const cameraButtons = useMemo(
     () => (block?.property?.default ?? []) as CameraBlockType[],
     [block?.property?.default],
@@ -34,6 +40,7 @@ const CameraBlock: React.FC<Props> = ({ block, isSelected, onPropertyItemAdd, ..
       onPropertyItemAdd={onPropertyItemAdd}
       {...props}>
       <Content
+        currentCamera={currentCamera}
         cameraButtons={cameraButtons}
         propertyId={block?.propertyId}
         isEditable={props.isEditable}

@@ -1,13 +1,22 @@
-import { useCallback, useMemo } from "react";
+import { SetStateAction, useCallback, useMemo } from "react";
 
+import { SelectedWidget } from "@reearth/beta/features/Editor/hooks";
 import { useWidgetsFetcher } from "@reearth/services/api";
-import {
-  useSelectedWidget,
-  useSelectedWidgetArea,
-  type WidgetAreaState,
-} from "@reearth/services/state";
+import { type WidgetAreaState } from "@reearth/services/state";
 
-export default ({ sceneId }: { sceneId?: string }) => {
+export default ({
+  sceneId,
+  selectedWidget,
+  selectedWidgetArea,
+  setSelectedWidget,
+  setSelectedWidgetArea,
+}: {
+  sceneId?: string;
+  selectedWidget: SelectedWidget | undefined;
+  selectedWidgetArea: WidgetAreaState | undefined;
+  setSelectedWidget: (value: SelectedWidget | undefined) => void;
+  setSelectedWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
+}) => {
   const {
     useInstallableWidgetsQuery,
     useInstalledWidgetsQuery,
@@ -17,9 +26,6 @@ export default ({ sceneId }: { sceneId?: string }) => {
   } = useWidgetsFetcher();
   const { installableWidgets } = useInstallableWidgetsQuery({ sceneId });
   const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
-
-  const [selectedWidget, setSelectedWidget] = useSelectedWidget();
-  const [selectedWidgetArea, setSelectedWidgetArea] = useSelectedWidgetArea();
 
   const propertyItems = useMemo(
     () => installedWidgets?.find(w => w.id === selectedWidget?.id)?.property.items,
