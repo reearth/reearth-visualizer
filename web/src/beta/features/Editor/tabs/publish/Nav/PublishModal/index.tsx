@@ -175,7 +175,7 @@ const PublishModal: React.FC<Props> = ({
                 {t("Copy")}
               </Text>
             </UrlWrapper>
-            <Text size="xFootnote">
+            <Text size="footnote">
               {t("* Please use this code if you want to embed your project into a webpage")}
             </Text>
           </div>

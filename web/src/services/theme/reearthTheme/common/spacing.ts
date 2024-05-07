@@ -1,10 +1,3 @@
-export const spacing = {
-  propertyMenuWidth: 308,
-  propertyMenuMinWidth: 200,
-  bottomPanelMinHeight: 136,
-  bottomPanelMaxHeight: 232,
-};
-
 const spacingSizes = {
   micro: 2,
   smallest: 4,

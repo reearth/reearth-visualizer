@@ -11,8 +11,6 @@ const fontSizes = {
   h5: 16,
   body: 12,
   footnote: 11,
-  xFootnote: 10,
-  property: 12,
 };
 
 export type FontSize = keyof typeof fontSizes;
@@ -25,8 +23,6 @@ const lineHeights = {
   h5: 24,
   body: 18,
   footnote: 16,
-  property: 20,
-  xFootnote: 20,
 };
 
 export type LineHeight = keyof typeof lineHeights;
@@ -56,10 +52,10 @@ export const H1Bold = styled.p`
 `;
 
 // H1 components
-export const H1Medium = styled.p`
+export const H1Regular = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h1}px;
-  font-weight: ${fontWeights.medium};
+  font-weight: ${fontWeights.regular};
   line-height: ${lineHeights.h1}px;
 `;
 
@@ -71,32 +67,18 @@ export const H2Bold = styled.p`
   line-height: ${lineHeights.h2}px;
 `;
 
-export const H2Medium = styled.p`
+export const H2Regular = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h2}px;
-  font-weight: ${fontWeights.medium};
+  font-weight: ${fontWeights.regular};
   line-height: ${lineHeights.h2}px;
 `;
-
-// export const H2Regular = styled.p`
-//   font-family: ${fontFamilies};
-//   font-size: ${fontSizes.h2}px;
-//   font-weight: ${fontWeights.regular};
-//   line-height: ${lineHeights.h2}px;
-// `;
 
 // H3 components
 export const H3Bold = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h3}px;
   font-weight: ${fontWeights.bold};
-  line-height: ${lineHeights.h3}px;
-`;
-
-export const H3Medium = styled.p`
-  font-family: ${fontFamilies};
-  font-size: ${fontSizes.h3}px;
-  font-weight: ${fontWeights.medium};
   line-height: ${lineHeights.h3}px;
 `;
 
@@ -115,13 +97,6 @@ export const H4Bold = styled.p`
   line-height: ${lineHeights.h4}px;
 `;
 
-export const H4Medium = styled.p`
-  font-family: ${fontFamilies};
-  font-size: ${fontSizes.h4}px;
-  font-weight: ${fontWeights.medium};
-  line-height: ${lineHeights.h4}px;
-`;
-
 export const H4Regular = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h4}px;
@@ -134,13 +109,6 @@ export const H5Bold = styled.p`
   font-family: ${fontFamilies};
   font-size: ${fontSizes.h5}px;
   font-weight: ${fontWeights.bold};
-  line-height: ${lineHeights.h5}px;
-`;
-
-export const H5Medium = styled.p`
-  font-family: ${fontFamilies};
-  font-size: ${fontSizes.h5}px;
-  font-weight: ${fontWeights.medium};
   line-height: ${lineHeights.h5}px;
 `;
 
@@ -205,20 +173,6 @@ export const FootnoteRegular = styled.p`
   line-height: ${lineHeights.footnote}px;
 `;
 
-export const XFootnoteRegular = styled.p`
-  font-family: ${fontFamilies};
-  font-size: ${fontSizes.xFootnote}px;
-  font-weight: ${fontWeights.regular};
-  line-height: ${lineHeights.xFootnote}px;
-`;
-
-export const PropertyRegular = styled.p`
-  font-family: ${fontFamilies};
-  font-size: ${fontSizes.property}px;
-  font-weight: ${fontWeights.regular};
-  line-height: ${lineHeights.property}px;
-`;
-
 type Typography = {
   [key in FontSize]: {
     [key in FontWeight | UniqueTraits]?: React.FC<any>;
@@ -227,26 +181,24 @@ type Typography = {
 
 export const typography: Typography = {
   h1: {
-    medium: H1Medium,
+    bold: H1Bold,
+    regular: H1Regular,
   },
   h2: {
     bold: H2Bold,
-    medium: H2Medium,
+    regular: H2Regular,
   },
   h3: {
     bold: H3Bold,
-    medium: H3Medium,
     regular: H3Regular,
   },
   h4: {
     bold: H4Bold,
-    medium: H4Medium,
     regular: H4Regular,
   },
   h5: {
     bold: H5Bold,
-    medium: H5Medium,
-    regular: H5Medium,
+    regular: H5Regular,
   },
   body: {
     bold: BodyBold,
@@ -258,12 +210,6 @@ export const typography: Typography = {
   },
   footnote: {
     regular: FootnoteRegular,
-  },
-  xFootnote: {
-    regular: XFootnoteRegular,
-  },
-  property: {
-    regular: PropertyRegular,
   },
 };
 
