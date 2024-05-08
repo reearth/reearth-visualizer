@@ -31,8 +31,8 @@ const StyledButton = styled.div`
   width: 100%;
   color: ${({ theme }) => theme.content.main};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: ${({ theme }) => theme.metrics.l}px;
-  padding: ${({ theme }) => theme.metrics.m}px;
+  border-radius: ${({ theme }) => theme.spacing.large}px;
+  padding: ${({ theme }) => theme.spacing.normal}px;
   cursor: pointer;
   transition: color 0.3s;
   z-index: 1;
@@ -57,7 +57,7 @@ const StyledButton = styled.div`
 `;
 
 const StyledIcon = styled(Icon)`
-  margin-right: ${({ theme }) => theme.metrics.l}px;
+  margin-right: ${({ theme }) => theme.spacing.large}px;
 `;
 
 export default MarketplacePublish;

@@ -1,7 +1,7 @@
-import { metricsSizes } from "@reearth/services/theme";
+import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 
 export const EPOCH_SEC = 1000;
-export const PADDING_HORIZONTAL = metricsSizes["m"];
+export const PADDING_HORIZONTAL = spacingSizes["normal"];
 export const BORDER_WIDTH = 1;
 export const MAX_ZOOM_RATIO = 3;
 export const STRONG_SCALE_WIDTH = 2;

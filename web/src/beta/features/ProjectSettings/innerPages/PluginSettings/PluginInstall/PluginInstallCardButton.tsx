@@ -28,7 +28,7 @@ const StyledButton = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => theme.bg[1]};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: ${({ theme }) => theme.metrics.l}px;
+  border-radius: ${({ theme }) => theme.spacing.large}px;
   color: ${({ theme }) => theme.content.main};
   cursor: pointer;
   padding: 0 20px 20px;

@@ -4,7 +4,8 @@ import { usePopper } from "react-popper";
 import Flex from "@reearth/beta/components/Flex";
 import Icon from "@reearth/beta/components/Icon";
 import Text from "@reearth/beta/components/Text";
-import { styled, metricsSizes, mask } from "@reearth/services/theme";
+import { styled, mask } from "@reearth/services/theme";
+import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 
 import type { Camera, FlyToDestination, Theme } from "../../types";
 
@@ -169,7 +170,7 @@ export default function MenuButton({
 }
 
 const Wrapper = styled.div<{ button?: Button; publishedTheme?: Theme }>`
-  border-radius: ${metricsSizes["xs"]}px;
+  border-radius: ${spacingSizes["smallest"]}px;
   &,
   > div {
     background-color: ${({ button, publishedTheme }) => button?.buttonBgcolor || publishedTheme};
@@ -178,7 +179,7 @@ const Wrapper = styled.div<{ button?: Button; publishedTheme?: Theme }>`
 
 const Button = styled.div<{ button?: Button; publishedTheme?: Theme }>`
   display: flex;
-  border-radius: ${metricsSizes["xs"]}px;
+  border-radius: ${spacingSizes["smallest"]}px;
   min-width: 35px;
   height: 35px;
   padding: 0 10px;

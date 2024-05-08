@@ -17,7 +17,7 @@ const Property: React.FC<Props> = ({ name, description, children, className }) =
       {name && <Text size="footnote">{name}</Text>}
       {children}
       {description && (
-        <Description size="xFootnote" customColor>
+        <Description size="footnote" customColor>
           {description}
         </Description>
       )}

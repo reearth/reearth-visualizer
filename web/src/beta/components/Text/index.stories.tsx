@@ -19,8 +19,7 @@ export const Regular: Story = {
       <Text size="h4">H4 Regular</Text>
       <Text size="h5">H5 Regular</Text>
       <Text size="body">Body Regular</Text>
-      <Text size="footnote">Footnote Regular</Text>
-      <Text size="xFootnote">XFootnote Regular</Text>
+      <Text size="footnote">Footnote Regular</Text>={" "}
     </div>
   ),
 };
@@ -49,9 +48,6 @@ export const Medium: Story = {
       <Text size="footnote" weight="medium">
         Footnote Medium
       </Text>
-      <Text size="xFootnote" weight="medium">
-        XFootnote Medium
-      </Text>
     </div>
   ),
 };
@@ -79,9 +75,6 @@ export const Bold: Story = {
       </Text>
       <Text size="footnote" weight="bold">
         Footnote Bold
-      </Text>
-      <Text size="xFootnote" weight="bold">
-        XFootnote Bold
       </Text>
     </div>
   ),

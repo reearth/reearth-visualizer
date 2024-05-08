@@ -65,7 +65,7 @@ const SliderStyled = styled.div<{ disabled: boolean }>`
 
   .rc-slider-rail {
     background-color: ${({ theme }) => theme.outline.weaker};
-    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+    box-shadow: ${({ theme }) => theme.shadow.input};
   }
 
   .rc-slider-tooltip-arrow {
@@ -79,7 +79,7 @@ const SliderStyled = styled.div<{ disabled: boolean }>`
   .rc-slider-tooltip-inner {
     background-color: ${({ theme }) => theme.bg[2]};
     color: ${({ theme }) => theme.content.main};
-    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: ${({ theme }) => theme.shadow.button};
   }
 `;
 
