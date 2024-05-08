@@ -27,7 +27,7 @@ export type CommonBlockProps<T = any> = {
   isSelected?: boolean;
   block?: T;
   theme?: Theme;
-  currentCamera?: Camera;
+  currentCamera?: Camera | undefined;
   padding?: {
     bottom: number;
     top: number;

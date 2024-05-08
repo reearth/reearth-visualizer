@@ -4,22 +4,25 @@ import { devices } from "@reearth/beta/features/Editor/tabs/widgets/Nav/Devices"
 import type { Camera } from "@reearth/beta/utils/value";
 import type { FlyTo, MapRef } from "@reearth/core";
 import { usePropertyFetcher } from "@reearth/services/api";
-import {
-  useWidgetAlignEditorActivated,
-  useIsVisualizerReady,
-  useCurrentCamera,
-} from "@reearth/services/state";
+import { WidgetAreaState } from "@reearth/services/state";
 
 import type { Tab } from "../Navbar";
 
 import type { ProjectType } from "./tabs/publish/Nav";
 import type { Device } from "./tabs/widgets/Nav";
 
+export type SelectedWidget = {
+  id: string;
+  pluginId: string;
+  extensionId: string;
+  propertyId: string;
+};
+
 export default ({ tab }: { sceneId: string; tab: Tab }) => {
   const visualizerRef = useRef<MapRef | null>(null);
 
-  const [isVisualizerReady] = useIsVisualizerReady();
-  const [currentCamera, setCurrentCamera] = useCurrentCamera();
+  const [isVisualizerReady, setIsVisualizerReady] = useState<boolean>(false);
+  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
 
   const [selectedDevice, setDevice] = useState<Device>("desktop");
   const [selectedProjectType, setSelectedProjectType] = useState<ProjectType>(
@@ -28,6 +31,11 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   const [showDataSourceManager, setShowDataSourceManager] = useState(false);
   const [showSketchLayerManager, setSketchLayerManager] = useState(false);
+  const [showWidgetEditor, setWidgetEditor] = useState<boolean | undefined>(undefined);
+  const [selectedWidget, setSelectedWidget] = useState<SelectedWidget | undefined>(undefined);
+  const [selectedWidgetArea, setSelectedWidgetArea] = useState<WidgetAreaState | undefined>(
+    undefined,
+  );
 
   const handleDataSourceManagerCloser = useCallback(() => setShowDataSourceManager(false), []);
 
@@ -37,8 +45,6 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
 
   const handleSketchLayerManagerOpener = useCallback(() => setSketchLayerManager(true), []);
   const { useUpdatePropertyValue } = usePropertyFetcher();
-
-  const [showWidgetEditor, setWidgetEditor] = useWidgetAlignEditorActivated();
 
   useEffect(() => {
     switch (tab) {
@@ -106,6 +112,12 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     },
     [useUpdatePropertyValue],
   );
+
+  const handleIsVisualizerUpdate = useCallback(
+    (value: boolean) => setIsVisualizerReady(value),
+    [setIsVisualizerReady],
+  );
+
   return {
     visualizerRef,
     isVisualizerReady,
@@ -116,6 +128,8 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     showDataSourceManager,
     currentCamera,
     showSketchLayerManager,
+    selectedWidget,
+    selectedWidgetArea,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
     handleDeviceChange,
@@ -126,5 +140,8 @@ export default ({ tab }: { sceneId: string; tab: Tab }) => {
     handlePropertyValueUpdate,
     handleSketchLayerManagerCloser,
     handleSketchLayerManagerOpener,
+    handleIsVisualizerUpdate,
+    selectWidgetArea: setSelectedWidgetArea,
+    setSelectedWidget,
   };
 };

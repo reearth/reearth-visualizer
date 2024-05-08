@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { SetStateAction, useEffect } from "react";
 
 import Text from "@reearth/beta/components/Text";
 import Toggle from "@reearth/beta/components/Toggle";
 import SecondaryNav from "@reearth/beta/features/Editor/SecondaryNav";
 import { useT } from "@reearth/services/i18n";
-import { useSelectedWidgetArea } from "@reearth/services/state";
+import { WidgetAreaState } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 import Devices, { type Device } from "./Devices";
@@ -18,6 +18,7 @@ type Props = {
   selectedDevice?: Device;
   onShowWidgetEditor: () => void;
   onDeviceChange: (device: Device) => void;
+  setSelectedWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
 
 const Nav: React.FC<Props> = ({
@@ -25,9 +26,9 @@ const Nav: React.FC<Props> = ({
   selectedDevice = "desktop",
   onShowWidgetEditor,
   onDeviceChange,
+  setSelectedWidgetArea,
 }) => {
   const t = useT();
-  const [, setSelectedWidgetArea] = useSelectedWidgetArea();
 
   useEffect(() => {
     if (!showWidgetEditor) {

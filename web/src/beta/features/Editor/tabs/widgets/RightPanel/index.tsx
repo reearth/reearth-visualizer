@@ -1,8 +1,12 @@
+import { SetStateAction } from "react";
+
+import { SelectedWidget } from "@reearth/beta/features/Editor/hooks";
 import SidePanelCommon from "@reearth/beta/features/Editor/SidePanel";
 import Settings from "@reearth/beta/features/Editor/SidePanel/Settings";
 import { Camera } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
+import { WidgetAreaState } from "@reearth/services/state";
 
 import ContainerSettings from "./ContainerSettings";
 import useHooks from "./hooks";
@@ -11,15 +15,25 @@ import Manager, { ActionArea } from "./Manager";
 type Props = {
   sceneId?: string;
   currentCamera?: Camera;
+  selectedWidget: SelectedWidget | undefined;
+  selectedWidgetArea: WidgetAreaState | undefined;
   onFlyTo?: FlyTo;
+  setSelectedWidget: (value: SelectedWidget | undefined) => void;
+  setSelectedWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
 
-const SidePanel: React.FC<Props> = ({ sceneId, currentCamera, onFlyTo }) => {
+const SidePanel: React.FC<Props> = ({
+  sceneId,
+  currentCamera,
+  selectedWidget,
+  selectedWidgetArea,
+  onFlyTo,
+  setSelectedWidget,
+  setSelectedWidgetArea,
+}) => {
   const t = useT();
 
   const {
-    selectedWidget,
-    selectedWidgetArea,
     propertyItems,
     installedWidgets,
     installableWidgets,
@@ -27,7 +41,13 @@ const SidePanel: React.FC<Props> = ({ sceneId, currentCamera, onFlyTo }) => {
     handleWidgetRemove,
     handleWidgetSelection,
     handleWidgetAreaStateChange,
-  } = useHooks({ sceneId });
+  } = useHooks({
+    sceneId,
+    selectedWidget,
+    selectedWidgetArea,
+    setSelectedWidget,
+    setSelectedWidgetArea,
+  });
 
   return (
     <SidePanelCommon
