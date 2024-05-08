@@ -7,6 +7,7 @@ export type TextInputProps = {
   placeholder?: string;
   size?: "normal" | "small";
   disabled?: boolean;
+  actions?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
 };
@@ -16,6 +17,7 @@ export const TextInput: FC<TextInputProps> = ({
   placeholder,
   size = "normal",
   disabled,
+  actions,
   onChange,
   onBlur,
 }) => {
@@ -48,7 +50,13 @@ export const TextInput: FC<TextInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
       />
-      {/* TODO: support optional actions */}
+      {actions && (
+        <ActionsWrapper>
+          {actions?.map((Action, i) => (
+            <Action key={i} />
+          ))}
+        </ActionsWrapper>
+      )}
     </Wrapper>
   );
 };
@@ -59,6 +67,8 @@ const Wrapper = styled("div")<{ size: "normal" | "small" }>(({ size, theme }) =>
   background: theme.bg[1],
   transition: "all 0.3s", // TODO: use theme value
   display: "flex",
+  gap: theme.spacing.smallest,
+  alignItems: "center",
   padding:
     size === "small"
       ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
@@ -76,7 +86,15 @@ const StyledInput = styled("input")(({ theme, disabled }) => ({
   opacity: disabled ? 0.6 : 1, // TODO: use theme value
   pointerEvents: disabled ? "none" : "inherit",
   colorScheme: "dark", // TODO: use theme value
-  ":focus": {
-    borderColor: theme.outline.main,
-  },
+  // TODO: implement active style on wrapper
+  // ":focus": {
+  //   borderColor: theme.outline.main,
+  // },
+}));
+
+const ActionsWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
+  flexShrink: 0,
 }));
