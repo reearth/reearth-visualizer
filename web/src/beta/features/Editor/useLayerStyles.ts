@@ -1,9 +1,8 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { LayerAppearanceTypes } from "@reearth/core";
 import { useLayerStylesFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { useSelectedLayerStyle } from "@reearth/services/state";
 
 type LayerStyleProps = {
   sceneId: string;
@@ -28,7 +27,7 @@ export default function ({ sceneId }: LayerStyleProps) {
   const t = useT();
   const { useAddLayerStyle, useGetLayerStylesQuery, useRemoveLayerStyle, useUpdateLayerStyle } =
     useLayerStylesFetcher();
-  const [selectedLayerStyleId, setSelectedLayerStyleId] = useSelectedLayerStyle();
+  const [selectedLayerStyleId, setSelectedLayerStyleId] = useState<string | undefined>(undefined);
   const { layerStyles = [] } = useGetLayerStylesQuery({ sceneId });
 
   const selectedLayerStyle = useMemo(

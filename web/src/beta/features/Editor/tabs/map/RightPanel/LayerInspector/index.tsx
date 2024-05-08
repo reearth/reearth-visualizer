@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useState } from "react";
 
 import TabMenu, { TabObject } from "@reearth/beta/components/TabMenu";
+import { SelectedLayer } from "@reearth/beta/features/Editor/useLayers";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/useSketch";
 import { Feature } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n"; // If needed
-import { SelectedLayer } from "@reearth/services/state";
 
 import { LayerConfigUpdateProps } from "../../../../useLayers";
 
