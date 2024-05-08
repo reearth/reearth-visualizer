@@ -79,7 +79,7 @@ const PropertyList: React.FC<Props> = ({
           getId={getId}
           renderItem={({ id, title }) => (
             <Item onClick={() => onSelect(id)} selected={selected === id}>
-              <StyledText size="xFootnote">{title}</StyledText>
+              <StyledText size="footnote">{title}</StyledText>
             </Item>
           )}
           gap={0}

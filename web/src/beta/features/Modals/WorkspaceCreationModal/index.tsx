@@ -104,7 +104,7 @@ const StyledInput = styled.input`
   font-size: ${fonts.sizes.body}px;
   cursor: text;
   padding: 4px 8px;
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+  box-shadow: ${({ theme }) => theme.shadow.input};
 `;
 
 export default WorkspaceCreationModal;

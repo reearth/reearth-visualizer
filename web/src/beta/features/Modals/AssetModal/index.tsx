@@ -156,7 +156,7 @@ const ChooseAssetModal: React.FC<Props> = ({
       }>
       <ControlWarpper>
         <SortWrapper>
-          <Text size="xFootnote">{t("Sort By")}</Text>
+          <Text size="footnote">{t("Sort By")}</Text>
           <SelectField
             value={selectedSortOption}
             options={sortOptions.map(option => ({

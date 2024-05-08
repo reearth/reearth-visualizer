@@ -194,12 +194,12 @@ const ToolBox = styled.ul`
   display: flex;
   align-items: center;
   margin: ${({ theme }) =>
-    `${theme.metrics.s}px ${theme.metrics.s}px ${theme.metrics.s}px ${theme.metrics.l}px`};
+    `${theme.spacing.small}px ${theme.spacing.small}px ${theme.spacing.small}px ${theme.spacing.large}px`};
   list-style: none;
   padding: 0;
 
   @media (max-width: 768px) {
-    margin-left: ${({ theme }) => `${theme.metrics.s}px`};
+    margin-left: ${({ theme }) => `${theme.spacing.small}px`};
   }
 `;
 
@@ -215,12 +215,12 @@ const PlayButton = styled.button<{ isRight?: boolean; isPlaying?: boolean } & St
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.s}px` : 0)};
+  margin-left: ${({ isRight, theme }) => (isRight ? `${theme.spacing.small}px` : 0)};
   background: ${({ isPlaying, publishedTheme, theme }) =>
     isPlaying ? publishedTheme?.select || theme.select.main : "transparent"};
 
   @media (max-width: 768px) {
-    margin-left: ${({ isRight, theme }) => (isRight ? `${theme.metrics.xs}px` : 0)};
+    margin-left: ${({ isRight, theme }) => (isRight ? `${theme.spacing.smallest}px` : 0)};
   }
 `;
 
@@ -228,7 +228,7 @@ const InputRangeLabel = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: ${({ theme }) => theme.metrics["2xs"]}px;
+  margin-left: ${({ theme }) => theme.spacing.super}px;
 `;
 
 const InputRangeLabelText = styled(Text)<StyledColorProps>`
@@ -236,7 +236,7 @@ const InputRangeLabelText = styled(Text)<StyledColorProps>`
   /* space for preventing layout shift by increasing speed label. */
   width: 37px;
   text-align: right;
-  margin-right: ${({ theme }) => theme.metrics.s}px;
+  margin-right: ${({ theme }) => theme.spacing.small}px;
 `;
 
 const InputRange = styled.input<StyledColorProps>`
@@ -261,8 +261,8 @@ const InputRange = styled.input<StyledColorProps>`
 const CurrentTimeWrapper = styled.div`
   border: ${({ theme }) => `1px solid ${theme.bg[3]}`};
   border-radius: 4px;
-  padding: ${({ theme }) => `0 ${theme.metrics.s}px`};
-  margin: ${({ theme }) => `${theme.metrics.xs}px 0`};
+  padding: ${({ theme }) => `0 ${theme.spacing.small}px`};
+  margin: ${({ theme }) => `${theme.spacing.smallest}px 0`};
   flex-shrink: 0;
   width: 70px;
 
@@ -308,7 +308,7 @@ const ScaleBox = styled.div<StyledColorProps & { shouldScroll: boolean }>`
     background-color: ${({ publishedTheme }) => publishedTheme?.mainIcon};
   }
   margin: ${({ theme }) =>
-    `${theme.metrics.xs}px ${theme.metrics.s}px ${theme.metrics.xs}px ${theme.metrics.xs}px`};
+    `${theme.spacing.smallest}px ${theme.spacing.small}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px`};
 
   @media (max-width: 768px) {
     margin-left: 0;

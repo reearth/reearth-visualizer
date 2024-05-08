@@ -32,7 +32,7 @@ const Wrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
   background: ${({ theme }) => theme.bg[1]};
-  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: ${({ theme }) => theme.shadow.popup};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
