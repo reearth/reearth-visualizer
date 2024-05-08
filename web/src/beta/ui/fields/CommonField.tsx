@@ -15,9 +15,9 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
 }) => {
   return (
     <Wrapper>
-      {title && <Typography size="footnote">{title}</Typography>}
+      {title && <Typography size="body">{title}</Typography>}
       {children}
-      {description && <Description size="xFootnote">{description}</Description>}
+      {description && <Description size="footnote">{description}</Description>}
     </Wrapper>
   );
 };

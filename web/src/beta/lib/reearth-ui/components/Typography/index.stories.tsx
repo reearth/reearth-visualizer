@@ -20,7 +20,6 @@ export const Regular: Story = {
       <Typography size="h5">H5 Regular</Typography>
       <Typography size="body">Body Regular</Typography>
       <Typography size="footnote">Footnote Regular</Typography>
-      <Typography size="xFootnote">XFootnote Regular</Typography>
     </div>
   ),
 };
@@ -49,9 +48,6 @@ export const Medium: Story = {
       <Typography size="footnote" weight="medium">
         Footnote Medium
       </Typography>
-      <Typography size="xFootnote" weight="medium">
-        XFootnote Medium
-      </Typography>
     </div>
   ),
 };
@@ -79,9 +75,6 @@ export const Bold: Story = {
       </Typography>
       <Typography size="footnote" weight="bold">
         Footnote Bold
-      </Typography>
-      <Typography size="xFootnote" weight="bold">
-        XFootnote Bold
       </Typography>
     </div>
   ),
