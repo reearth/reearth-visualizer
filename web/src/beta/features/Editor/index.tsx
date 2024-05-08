@@ -10,7 +10,6 @@ import EditorVisualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import { styled } from "@reearth/services/theme";
-import { spacing } from "@reearth/services/theme/reearthTheme/common/spacing";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
@@ -25,6 +24,13 @@ type Props = {
   tab: Tab;
   projectId?: string;
   workspaceId?: string;
+};
+
+const spacing = {
+  propertyMenuWidth: 308,
+  propertyMenuMinWidth: 200,
+  bottomPanelMinHeight: 136,
+  bottomPanelMaxHeight: 232,
 };
 
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
