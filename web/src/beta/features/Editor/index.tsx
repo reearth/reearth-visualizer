@@ -44,6 +44,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     showDataSourceManager,
     currentCamera,
     showSketchLayerManager,
+    selectedWidget,
+    selectedWidgetArea,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
     handleSketchLayerManagerCloser,
@@ -54,6 +56,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleFlyTo,
     handleCameraUpdate,
     handlePropertyValueUpdate,
+    handleIsVisualizerUpdate,
+    setSelectedWidget,
+    selectWidgetArea,
   } = useHooks({ sceneId, tab });
 
   const {
@@ -68,6 +73,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handlePageMove,
     handleStoryBlockMove: onStoryBlockMove,
     handlePageUpdate,
+    setSelectedStoryPageId,
   } = useStorytelling({
     sceneId,
   });
@@ -75,12 +81,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     nlsLayers,
     selectedLayer,
+    selectedLayerId,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
+    setSelectedLayerId,
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -178,11 +186,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedSceneSetting: selectedSceneSetting,
     sceneSettings: sceneSettings,
+    selectedLayerId: selectedLayerId,
+    selectedWidget: selectedWidget,
+    selectedWidgetArea: selectedWidgetArea,
     onFlyTo: handleFlyTo,
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
     onGeoJsonFeatureUpdate: handleGeoJsonFeatureUpdate,
+    setSelectedWidget: setSelectedWidget,
+    setSelectedWidgetArea: selectWidgetArea,
   });
 
   const { bottomPanel } = useBottomPanel({
@@ -208,6 +221,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleProjectTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
+    selectWidgetArea: selectWidgetArea,
   });
 
   return (
@@ -239,6 +253,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 visualizerWidth={visualizerWidth}>
                 <EditorVisualizer
                   inEditor={tab !== "publish"}
+                  selectedLayer={selectedLayerId}
                   visualizerRef={visualizerRef}
                   storyPanelRef={storyPanelRef}
                   sceneId={sceneId}
@@ -246,10 +261,18 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   selectedStory={selectedStory}
                   installableStoryBlocks={installableStoryBlocks}
                   currentCamera={currentCamera}
+                  widgetAlignEditorActivated={showWidgetEditor}
+                  selectedWidgetArea={selectedWidgetArea}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
                   onSketchTypeChange={handleSketchTypeChange}
                   onSketchFeatureCreate={handleSketchFeatureCreate}
+                  setIsVisualizerReady={handleIsVisualizerUpdate}
+                  setSelectedLayer={setSelectedLayerId}
+                  setSelectedLayerStyle={setSelectedLayerStyleId}
+                  setSelectedSceneSetting={handleSceneSettingSelect}
+                  setSelectedStoryPageId={setSelectedStoryPageId}
+                  selectWidgetArea={selectWidgetArea}
                 />
               </VisualizerWrapper>
               {bottomPanel && (

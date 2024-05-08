@@ -1,8 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 
 import { useSceneFetcher } from "@reearth/services/api";
 import { convert } from "@reearth/services/api/propertyApi/utils";
-import { useSelectedSceneSetting } from "@reearth/services/state";
 
 type SceneProps = {
   sceneId?: string;
@@ -10,7 +9,7 @@ type SceneProps = {
 
 export default function ({ sceneId }: SceneProps) {
   const { useSceneQuery } = useSceneFetcher();
-  const [selectedSceneSetting, setSelectedSceneSetting] = useSelectedSceneSetting();
+  const [selectedSceneSetting, setSelectedSceneSetting] = useState<string | undefined>(undefined);
 
   const { scene } = useSceneQuery({ sceneId });
   const sceneSettings = useMemo(

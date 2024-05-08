@@ -15,6 +15,7 @@ export type Props = {
   items: CameraBlock[];
   selected: string;
   propertyId?: string;
+  currentCamera: Camera | undefined;
   setSelected: (id: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -42,6 +43,7 @@ const CameraBlockEditor: React.FC<Props> = ({
   items,
   propertyId,
   selected,
+  currentCamera,
   setSelected,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -50,7 +52,6 @@ const CameraBlockEditor: React.FC<Props> = ({
 }) => {
   const t = useT();
   const {
-    currentCamera,
     editorProperties,
     debounceOnUpdate,
     listItems,
