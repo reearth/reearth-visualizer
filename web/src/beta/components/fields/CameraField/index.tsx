@@ -140,7 +140,7 @@ const Input = styled.div<{ positionSet?: boolean }>`
   border: 1px solid ${({ theme }) => theme.outline.weak};
   color: ${({ theme }) => theme.content.main};
   background: ${({ theme }) => theme.bg[1]};
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+  box-shadow: ${({ theme }) => theme.shadow.input};
 
   color: ${({ theme, positionSet }) => (positionSet ? theme.content.main : theme.content.weak)};
 `;

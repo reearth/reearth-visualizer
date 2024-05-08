@@ -16,7 +16,7 @@ const SettingsButtons: React.FC<Props> = ({ title, icon, onBlock, onEdit, onSett
   return (
     <Wrapper>
       <StyledMainIcon size={16} onClick={onBlock} icon={icon} />
-      <StyledText size={"xFootnote"} color={theme.content.withBackground} onClick={onBlock}>
+      <StyledText size={"footnote"} color={theme.content.withBackground} onClick={onBlock}>
         {title}
       </StyledText>
       <StyledSubIcon size={12} icon={"editIcon"} onClick={onEdit} />

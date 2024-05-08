@@ -1,4 +1,6 @@
-import { MetricsSizesType, metricsSizes } from "./metrics";
+import iconSizes, { IconsSizeType } from "./icons";
+import radiusSizes, { RadiusSizesType } from "./radius";
+import shadow, { ShadowType } from "./shadow";
 import spacingSizes, { SpacingSizesType } from "./spacing";
 import zIndexes, { ZIndex } from "./zIndex";
 
@@ -6,14 +8,18 @@ export { default as GlobalStyles } from "./globalStyles";
 
 export type Common = {
   zIndexes: ZIndex;
-  metrics: MetricsSizesType;
   spacing: SpacingSizesType;
+  icon: IconsSizeType;
+  radius: RadiusSizesType;
+  shadow: ShadowType;
 };
 
 const common: Common = {
   zIndexes,
-  metrics: metricsSizes,
   spacing: spacingSizes,
+  icon: iconSizes,
+  radius: radiusSizes,
+  shadow,
 };
 
 export default common;

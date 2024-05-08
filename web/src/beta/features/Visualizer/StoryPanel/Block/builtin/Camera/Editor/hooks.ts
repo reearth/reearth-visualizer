@@ -5,7 +5,6 @@ import { ValueTypes } from "@reearth/beta/utils/value";
 import type { Camera } from "@reearth/core";
 import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
-import { useCurrentCamera } from "@reearth/services/state";
 
 import type { Field } from "../../../../types";
 
@@ -52,7 +51,6 @@ export default ({
   ) => Promise<void>;
 }) => {
   const visualizer = useVisualizer();
-  const [currentCamera] = useCurrentCamera();
   const t = useT();
 
   const handleFlyTo = useMemo(() => visualizer.current?.engine.flyTo, [visualizer]);
@@ -113,7 +111,6 @@ export default ({
   );
 
   return {
-    currentCamera,
     editorProperties,
     debounceOnUpdate,
     listItems,

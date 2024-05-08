@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject, SetStateAction, useCallback } from "react";
 
 import Visualizer from "@reearth/beta/features/Visualizer";
 import { type InteractionModeType } from "@reearth/beta/features/Visualizer/Crust";
@@ -10,6 +10,9 @@ import type { Camera } from "@reearth/beta/utils/value";
 import { SketchFeature, SketchType } from "@reearth/core";
 import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
+import { WidgetAreaState } from "@reearth/services/state";
+
+import type { SelectedLayer } from "../useLayers";
 
 import useHooks from "./hooks";
 
@@ -25,10 +28,19 @@ export type Props = {
   showStoryPanel?: boolean;
   selectedStory?: Story;
   installableStoryBlocks?: InstallableStoryBlock[];
+  widgetAlignEditorActivated: boolean | undefined;
+  selectedLayer: SelectedLayer | undefined;
+  selectedWidgetArea: WidgetAreaState | undefined;
   onStoryBlockMove: (id: string, targetId: number, blockId: string) => void;
   onCameraChange: (camera: Camera) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
+  setIsVisualizerReady: (value: boolean) => void;
+  setSelectedLayer: (value: SelectedLayer | undefined) => void;
+  setSelectedLayerStyle: (value: string | undefined) => void;
+  setSelectedSceneSetting: (value: string | undefined) => void;
+  setSelectedStoryPageId: (value: string | undefined) => void;
+  selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
 
 const EditorVisualizer: React.FC<Props> = ({
@@ -42,10 +54,19 @@ const EditorVisualizer: React.FC<Props> = ({
   showStoryPanel,
   selectedStory,
   installableStoryBlocks,
+  selectedLayer,
+  widgetAlignEditorActivated,
+  selectedWidgetArea,
   onStoryBlockMove: handleStoryBlockMove,
   onCameraChange,
   onSketchTypeChange,
   onSketchFeatureCreate,
+  setIsVisualizerReady,
+  setSelectedLayer,
+  setSelectedLayerStyle,
+  setSelectedSceneSetting,
+  setSelectedStoryPageId,
+  selectWidgetArea,
 }) => {
   const {
     sceneProperty,
@@ -53,10 +74,7 @@ const EditorVisualizer: React.FC<Props> = ({
     layers,
     widgets,
     story,
-    selectedWidgetArea,
-    widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox,
     zoomedLayerId,
     installableInfoboxBlocks,
     handleLayerSelect,
@@ -69,14 +87,24 @@ const EditorVisualizer: React.FC<Props> = ({
     handleInfoboxBlockRemove,
     handleWidgetUpdate,
     handleWidgetAlignSystemUpdate,
-    selectWidgetArea,
     handlePropertyValueUpdate,
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
-    handleMount,
     zoomToLayer,
-  } = useHooks({ sceneId, isBuilt, storyId: selectedStory?.id, showStoryPanel });
+  } = useHooks({
+    sceneId,
+    isBuilt,
+    storyId: selectedStory?.id,
+    showStoryPanel,
+    selectedLayer,
+    setSelectedLayer,
+    setSelectedLayerStyle,
+    setSelectedSceneSetting,
+    setSelectedStoryPageId,
+  });
+
+  const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
 
   return (
     <Visualizer
@@ -92,7 +120,6 @@ const EditorVisualizer: React.FC<Props> = ({
       pluginProperty={pluginProperty}
       // editor
       zoomedLayerId={zoomedLayerId}
-      useExperimentalSandbox={useExperimentalSandbox}
       visualizerRef={visualizerRef}
       currentCamera={currentCamera}
       interactionMode={interactionMode}

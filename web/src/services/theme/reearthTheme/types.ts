@@ -16,6 +16,7 @@ export type Theme = Common & {
   };
   select: {
     weaker: string;
+    weak: string;
     main: string;
     strong: string;
   };
@@ -32,6 +33,7 @@ export type Theme = Common & {
   primary: {
     main: string;
     weak: string;
+    weakest: string;
     strong: string;
   };
   content: {

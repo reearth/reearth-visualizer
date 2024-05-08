@@ -1,10 +1,9 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 
 import { StoryPanelRef } from "@reearth/beta/features/Visualizer/StoryPanel";
 import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { useT } from "@reearth/services/i18n";
-import { useSelectedStoryPageId } from "@reearth/services/state";
 
 type Props = {
   sceneId: string;
@@ -19,7 +18,7 @@ export default function ({ sceneId }: Props) {
   const t = useT();
 
   const storyPanelRef = useRef<StoryPanelRef | null>(null);
-  const [selectedStoryPageId] = useSelectedStoryPageId();
+  const [selectedStoryPageId, setSelectedStoryPageId] = useState<string | undefined>(undefined);
 
   const {
     useStoriesQuery,
@@ -141,5 +140,6 @@ export default function ({ sceneId }: Props) {
     handlePageMove,
     handleStoryBlockMove,
     handlePageUpdate,
+    setSelectedStoryPageId,
   };
 }
