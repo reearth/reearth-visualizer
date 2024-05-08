@@ -1,5 +1,6 @@
 import iconSizes, { IconsSizeType } from "./icons";
 import radiusSizes, { RadiusSizesType } from "./radius";
+import shadow, { ShadowType } from "./shadow";
 import spacingSizes, { SpacingSizesType } from "./spacing";
 import zIndexes, { ZIndex } from "./zIndex";
 
@@ -10,6 +11,7 @@ export type Common = {
   spacing: SpacingSizesType;
   icon: IconsSizeType;
   radius: RadiusSizesType;
+  shadow: ShadowType;
 };
 
 const common: Common = {
@@ -17,6 +19,7 @@ const common: Common = {
   spacing: spacingSizes,
   icon: iconSizes,
   radius: radiusSizes,
+  shadow,
 };
 
 export default common;

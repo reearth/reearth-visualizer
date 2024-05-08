@@ -130,7 +130,7 @@ const StyledButton = styled.button<ButtonProps>`
   align-items: center;
   display: flex;
   align-items: center;
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: ${({ theme }) => theme.shadow.button};
   transition-property: color, background;
   transition-duration: 0.4s;
 `;

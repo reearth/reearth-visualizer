@@ -164,7 +164,7 @@ const InputWrapper = styled.div<{ inactive: boolean; expandWithContent?: boolean
   border-radius: 4px;
   padding: ${spacingSizes.smallest}px ${spacingSizes.small}px;
   gap: 12px;
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+  box-shadow: ${({ theme }) => theme.shadow.input};
   color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
   ${({ expandWithContent }) => expandWithContent && "min-width: min-content;"}
 
