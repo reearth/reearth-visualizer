@@ -27,26 +27,8 @@ export const Regular: Story = {
 export const Medium: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Typography size="h1" weight="medium">
-        H1 Medium
-      </Typography>
-      <Typography size="h2" weight="medium">
-        H2 Medium
-      </Typography>
-      <Typography size="h3" weight="medium">
-        H3 Medium
-      </Typography>
-      <Typography size="h4" weight="medium">
-        H4 Medium
-      </Typography>
-      <Typography size="h5" weight="medium">
-        H5 Medium
-      </Typography>
       <Typography size="body" weight="medium">
         Body Medium
-      </Typography>
-      <Typography size="footnote" weight="medium">
-        Footnote Medium
       </Typography>
     </div>
   ),

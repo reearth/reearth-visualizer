@@ -104,9 +104,8 @@ const StyledInput = styled("input")<{ disabled?: boolean; readOnly?: boolean }>(
     outline: "none",
     border: "none",
     background: "none",
-    color: theme.content.main,
+    color: disabled ? theme.content.weaker : theme.content.main,
     flex: 1,
-    opacity: disabled ? 0.6 : 1,
     cursor: disabled ? "not-allowed" : "auto",
     colorScheme: theme.colorSchema,
     ...(readOnly && { pointerEvents: "none", userSelect: "none" }),
@@ -125,4 +124,6 @@ const ActionsWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.smallest,
   flexShrink: 0,
+  padding: theme.spacing.micro,
+  color: theme.content.weak,
 }));

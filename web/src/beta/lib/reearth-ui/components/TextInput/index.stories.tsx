@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { Meta, StoryObj } from "@storybook/react";
 import { FC } from "react";
 
@@ -59,14 +58,7 @@ export const withReadonlyAppearance: Story = {
   },
 };
 // TODO: use IconButton instead of MockButton
-const MockButton: FC = () => (
-  <Button>
-    <Icon icon="settings" size={20} />
-  </Button>
-);
-const Button = styled.div`
-  border-radius: "4px";
-`;
+const MockButton: FC = () => <Icon icon="settings" size={20} />;
 
 export const WithActions: Story = {
   args: {
