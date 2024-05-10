@@ -10,6 +10,21 @@ type Value struct {
 	t Type
 }
 
+func NewValue(
+	p TypePropertyMap,
+	v interface{},
+	t Type,
+) *Value {
+	if t == TypeUnknown {
+		return nil
+	}
+	return &Value{
+		p: p,
+		v: v,
+		t: t,
+	}
+}
+
 func (v *Value) IsEmpty() bool {
 	return v == nil || v.t == TypeUnknown || v.v == nil
 }

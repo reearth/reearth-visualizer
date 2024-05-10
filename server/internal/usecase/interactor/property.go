@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -132,7 +133,7 @@ func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropert
 
 	tx.Commit()
 
-	err = setToCache[*property.Property](ctx, i.redis, property.PropertyCacheKey(p.ID()), p)
+	err = setPropertyToCache(ctx, i.redis, property.PropertyCacheKey(p.ID()), p)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -455,31 +456,43 @@ func (i *Property) UpdateItems(ctx context.Context, inp interfaces.UpdatePropert
 }
 
 type PropertyForRedis struct {
-	ID     string         `msgpack:"id"`
-	Scene  string         `msgpack:"scene"`
-	Schema string         `msgpack:"schema"`
-	Items  []ItemForRedis `msgpack:"items"`
+	ID     string          `msgpack:"ID"`
+	Scene  string          `msgpack:"Scene"`
+	Schema string          `msgpack:"Schema"`
+	Items  []GroupForRedis `msgpack:"Items"`
 }
 
-type ItemForRedis struct {
-	ID          string          `msgpack:"ID"`
-	SchemaGroup string          `msgpack:"SchemaGroup"`
-	Fields      []FieldForRedis `msgpack:"fields"`
+type GroupForRedis struct {
+	ID          string           `msgpack:"ID"`
+	SchemaGroup string           `msgpack:"SchemaGroup"`
+	Fields      []*FieldForRedis `msgpack:"Fields"`
 }
 
 type FieldForRedis struct {
-	Field string        `msgpack:"field"`
-	Links interface{}   `msgpack:"links"`
-	V     ValueForRedis `msgpack:"v"`
+	Field string                 `msgpack:"Field"`
+	Links *LinksForRedis         `msgpack:"Links,omitempty"`
+	V     *OptionalValueForRedis `msgpack:"V,omitempty"`
 }
 
-type ValueForRedis struct {
-	Ov OptionalValueForRedis `msgpack:"ov"`
+type LinksForRedis struct {
+	Links []*LinkForRedis `msgpack:"Links"`
+}
+
+type LinkForRedis struct {
+	Dataset *string `msgpack:"Dataset,omitempty"`
+	Schema  *string `msgpack:"Schema,omitempty"`
+	Field   *string `msgpack:"Field,omitempty"`
 }
 
 type OptionalValueForRedis struct {
-	Field string                 `msgpack:"Field"`
-	Value map[string]interface{} `msgpack:"Value"`
+	Type  string         `msgpack:"Type"`
+	Value *ValueForRedis `msgpack:"Value,omitempty"`
+}
+
+type ValueForRedis struct {
+	P map[string]interface{} `msgpack:"P"`
+	V interface{}            `msgpack:"V"`
+	T string                 `msgpack:"T"`
 }
 
 func getPropertyFromCache(ctx context.Context, redisClient any, cacheKey string) (*property.Property, error) {
@@ -503,6 +516,125 @@ func getPropertyFromCache(ctx context.Context, redisClient any, cacheKey string)
 
 	log.Printf("p: %+v", p)
 
-	var propertyDomain property.Property
-	return &propertyDomain, nil
+	propertyDomain, err := convertPropertyFromRedis(p)
+	if err != nil {
+		return nil, err
+	}
+
+	return propertyDomain, nil
+}
+
+func setPropertyToCache(ctx context.Context, redisClient any, cacheKey string, data *property.Property) error {
+	redisAdapter, ok := checkRedisClient(redisClient)
+	if !ok {
+		return nil
+	}
+
+	propertyForRedis := convertPropertyToRedis(data)
+
+	serializedData, err := msgpack.Marshal(propertyForRedis)
+	if err != nil {
+		return err
+	}
+
+	return redisAdapter.SetValue(ctx, cacheKey, serializedData)
+}
+
+func convertPropertyToRedis(p *property.Property) PropertyForRedis {
+	ptr := &property.Pointer{}
+	fields := p.Items()[0].Fields(ptr)
+
+	fieldsForRedis := make([]*FieldForRedis, 0, len(fields))
+	for _, field := range fields {
+		valueForRedis := ValueForRedis{
+			P: map[string]interface{}{},
+			V: field.TypeAndValue().Value().Value(),
+			T: string(field.TypeAndValue().Value().Type()),
+		}
+
+		optionalValueForRedis := OptionalValueForRedis{
+			Type:  string(field.TypeAndValue().Type()),
+			Value: &valueForRedis,
+		}
+
+		fieldForRedis := FieldForRedis{
+			Field: field.Field().String(),
+			Links: nil,
+			V:     &optionalValueForRedis,
+		}
+
+		fieldsForRedis = append(fieldsForRedis, &fieldForRedis)
+	}
+
+	groupForRedis := GroupForRedis{
+		ID:          p.Items()[0].ID().String(),
+		SchemaGroup: p.Items()[0].SchemaGroup().String(),
+		Fields:      fieldsForRedis,
+	}
+
+	propertyForRedis := PropertyForRedis{
+		ID:     p.ID().String(),
+		Scene:  p.Scene().String(),
+		Schema: p.Schema().String(),
+		Items:  []GroupForRedis{groupForRedis},
+	}
+
+	return propertyForRedis
+}
+
+func convertPropertyFromRedis(p PropertyForRedis) (*property.Property, error) {
+
+	fieldsDomain := make([]*property.Field, 0, len(p.Items[0].Fields))
+	for _, field := range p.Items[0].Fields {
+		valueDomain := value.NewValue(
+			nil,
+			field.V.Value.V,
+			value.Type(field.V.Value.T),
+		)
+
+		var v *property.Value
+		switch field.V.Type {
+		case "string":
+			v = property.ValueTypeString.ValueFrom(valueDomain)
+		case "spacing":
+			v = property.ValueTypeSpacing.ValueFrom(valueDomain)
+		case "number":
+			v = property.ValueTypeNumber.ValueFrom(valueDomain)
+		}
+
+		optionalValueDomain := property.NewOptionalValue(
+			property.ValueType(field.V.Type),
+			// property.ValueTypeString.ValueFrom(valueDomain),
+			// property.ValueType(field.V.Type).ValueFrom(valueDomain),
+			v,
+		)
+
+		optionalValueDomain2 := property.OptionalValueFrom(
+			v,
+		)
+
+		log.Printf("optionalValueDomain2: %+v", optionalValueDomain2)
+
+		fieldDomain := property.NewField(property.FieldID(field.Field)).
+			Value(optionalValueDomain).
+			Links(nil).
+			MustBuild()
+
+		fieldsDomain = append(fieldsDomain, fieldDomain)
+	}
+
+	groupDomain := property.NewGroup().
+		ID(property.MustItemID(p.Items[0].ID)).
+		SchemaGroup(property.SchemaGroupID(p.Items[0].SchemaGroup)).
+		Fields(fieldsDomain).
+		MustBuild()
+
+	propertyDomain := property.New().
+		ID(property.MustID(p.ID)).
+		Scene(property.MustSceneID(p.Scene)).
+		Schema(property.MustSchemaID(p.Schema)).
+		Items([]property.Item{groupDomain}).
+		MustBuild()
+
+	return propertyDomain, nil
 }
