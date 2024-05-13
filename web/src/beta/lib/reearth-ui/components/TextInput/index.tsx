@@ -7,6 +7,7 @@ export type TextInputProps = {
   placeholder?: string;
   size?: "normal" | "small";
   disabled?: boolean;
+  isEditable?: boolean;
   appearance?: "readonly" | "present";
   actions?: FC[];
   onChange?: (text: string) => void;
@@ -20,6 +21,7 @@ export const TextInput: FC<TextInputProps> = ({
   disabled,
   appearance,
   actions,
+  isEditable,
   onChange,
   onBlur,
 }) => {
@@ -30,27 +32,27 @@ export const TextInput: FC<TextInputProps> = ({
     setCurrentValue(value ?? "");
   }, [value]);
 
-  const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const newValue = e.currentTarget.value;
-      setCurrentValue(newValue ?? "");
-      onChange?.(newValue);
-    },
-    [onChange],
-  );
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const newValue = e.currentTarget.value;
+    if (newValue === undefined) return;
+    setCurrentValue(newValue ?? "");
+  }, []);
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
     onChange?.(currentValue);
     onBlur?.(currentValue);
-  }, [currentValue, onChange, onBlur]);
+  }, [onChange, currentValue, onBlur]);
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);
   }, []);
 
   return (
-    <Wrapper size={size} appearance={appearance} status={isFocused ? "active" : "default"}>
+    <Wrapper
+      size={size}
+      appearance={appearance}
+      status={isFocused || isEditable ? "active" : "default"}>
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
@@ -58,7 +60,7 @@ export const TextInput: FC<TextInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        readOnly={appearance === "readonly"}
+        readOnly={appearance === "readonly" || (appearance === "present" && !isEditable)}
       />
       {actions && (
         <ActionsWrapper>
@@ -78,10 +80,12 @@ const Wrapper = styled("div")<{
 }>(({ size, theme, appearance, status }) => {
   const borderStyle =
     appearance === "present"
-      ? "none"
-      : status === "default"
-      ? `1px solid ${theme.outline.weak}`
-      : `1px solid ${theme.select.main}`;
+      ? status === "default"
+        ? "none"
+        : `1px solid ${theme.select.main}`
+      : status === "active"
+      ? `1px solid ${theme.select.main}`
+      : `1px solid ${theme.outline.weak}`;
 
   return {
     border: borderStyle,
@@ -96,6 +100,7 @@ const Wrapper = styled("div")<{
       size === "small"
         ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+    boxShadow: theme.shadow.input,
   };
 });
 
