@@ -16,7 +16,7 @@ import {
   TextArea,
   generateTitle,
 } from "@reearth/beta/features/Editor/utils";
-import { DataType } from "@reearth/beta/lib/core/Map";
+import { DataType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
 import { DataProps, DataSourceOptType, SourceType } from "..";

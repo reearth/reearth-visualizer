@@ -9,7 +9,7 @@ import useStorytelling from "@reearth/beta/features/Editor/useStorytelling";
 import EditorVisualizer from "@reearth/beta/features/Editor/Visualizer";
 import Navbar, { type Tab } from "@reearth/beta/features/Navbar";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
-import { metrics, styled } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import DataSourceManager from "./DataSourceManager";
 import useHooks from "./hooks";
@@ -26,6 +26,13 @@ type Props = {
   workspaceId?: string;
 };
 
+const spacing = {
+  propertyMenuWidth: 308,
+  propertyMenuMinWidth: 200,
+  bottomPanelMinHeight: 136,
+  bottomPanelMaxHeight: 232,
+};
+
 const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     visualizerRef,
@@ -37,6 +44,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     showDataSourceManager,
     currentCamera,
     showSketchLayerManager,
+    selectedWidget,
+    selectedWidgetArea,
     handleDataSourceManagerCloser,
     handleDataSourceManagerOpener,
     handleSketchLayerManagerCloser,
@@ -47,6 +56,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleFlyTo,
     handleCameraUpdate,
     handlePropertyValueUpdate,
+    handleIsVisualizerUpdate,
+    setSelectedWidget,
+    selectWidgetArea,
   } = useHooks({ sceneId, tab });
 
   const {
@@ -61,6 +73,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handlePageMove,
     handleStoryBlockMove: onStoryBlockMove,
     handlePageUpdate,
+    setSelectedStoryPageId,
   } = useStorytelling({
     sceneId,
   });
@@ -68,12 +81,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     nlsLayers,
     selectedLayer,
+    selectedLayerId,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
+    setSelectedLayerId,
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -171,11 +186,16 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedSceneSetting: selectedSceneSetting,
     sceneSettings: sceneSettings,
+    selectedLayerId: selectedLayerId,
+    selectedWidget: selectedWidget,
+    selectedWidgetArea: selectedWidgetArea,
     onFlyTo: handleFlyTo,
     onPageUpdate: handlePageUpdate,
     onLayerStyleValueUpdate: handleLayerStyleValueUpdate,
     onLayerConfigUpdate: handleLayerConfigUpdate,
     onGeoJsonFeatureUpdate: handleGeoJsonFeatureUpdate,
+    setSelectedWidget: setSelectedWidget,
+    setSelectedWidgetArea: selectWidgetArea,
   });
 
   const { bottomPanel } = useBottomPanel({
@@ -201,6 +221,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleProjectTypeChange,
     handleDeviceChange,
     handleWidgetEditorToggle,
+    selectWidgetArea: selectWidgetArea,
   });
 
   return (
@@ -217,8 +238,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             <Resizable
               direction="vertical"
               gutter="end"
-              initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}
+              initialSize={spacing.propertyMenuWidth}
+              minSize={spacing.propertyMenuMinWidth}
               localStorageKey={`${tab}LeftPanel`}>
               {leftPanel}
             </Resizable>
@@ -232,6 +253,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 visualizerWidth={visualizerWidth}>
                 <EditorVisualizer
                   inEditor={tab !== "publish"}
+                  selectedLayer={selectedLayerId}
                   visualizerRef={visualizerRef}
                   storyPanelRef={storyPanelRef}
                   sceneId={sceneId}
@@ -239,19 +261,27 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   selectedStory={selectedStory}
                   installableStoryBlocks={installableStoryBlocks}
                   currentCamera={currentCamera}
+                  widgetAlignEditorActivated={showWidgetEditor}
+                  selectedWidgetArea={selectedWidgetArea}
                   onStoryBlockMove={onStoryBlockMove}
                   onCameraChange={handleCameraUpdate}
                   onSketchTypeChange={handleSketchTypeChange}
                   onSketchFeatureCreate={handleSketchFeatureCreate}
+                  setIsVisualizerReady={handleIsVisualizerUpdate}
+                  setSelectedLayer={setSelectedLayerId}
+                  setSelectedLayerStyle={setSelectedLayerStyleId}
+                  setSelectedSceneSetting={handleSceneSettingSelect}
+                  setSelectedStoryPageId={setSelectedStoryPageId}
+                  selectWidgetArea={selectWidgetArea}
                 />
               </VisualizerWrapper>
               {bottomPanel && (
                 <Resizable
                   direction="horizontal"
                   gutter="start"
-                  initialSize={metrics.bottomPanelMinHeight}
-                  minSize={metrics.bottomPanelMinHeight}
-                  maxSize={metrics.bottomPanelMaxHeight}
+                  initialSize={spacing.bottomPanelMinHeight}
+                  minSize={spacing.bottomPanelMinHeight}
+                  maxSize={spacing.bottomPanelMaxHeight}
                   localStorageKey="bottomPanel">
                   {bottomPanel}
                 </Resizable>
@@ -262,8 +292,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             <Resizable
               direction="vertical"
               gutter="start"
-              initialSize={metrics.propertyMenuWidth}
-              minSize={metrics.propertyMenuMinWidth}
+              initialSize={spacing.propertyMenuWidth}
+              minSize={spacing.propertyMenuMinWidth}
               localStorageKey={`${tab}RightPanel`}>
               {rightPanel}
             </Resizable>

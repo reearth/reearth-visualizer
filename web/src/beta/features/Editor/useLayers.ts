@@ -1,10 +1,10 @@
-import { MutableRefObject, useCallback, useMemo } from "react";
+import { MutableRefObject, useCallback, useMemo, useState } from "react";
 
 import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
-import { LayerSimple } from "@reearth/beta/lib/core/Map";
+import type { ComputedFeature, ComputedLayer, LayerSelectionReason } from "@reearth/core";
+import { LayerSimple } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { useSelectedLayer } from "@reearth/services/state";
 
 type LayerProps = {
   sceneId: string;
@@ -37,13 +37,20 @@ export type LayerVisibilityUpdateProps = {
   visible: boolean;
 };
 
+export type SelectedLayer = {
+  layerId: string;
+  layer?: ComputedLayer;
+  feature?: ComputedFeature;
+  layerSelectionReason?: LayerSelectionReason;
+};
+
 export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerProps) {
   const t = useT();
   const { useGetLayersQuery, useAddNLSLayerSimple, useRemoveNLSLayer, useUpdateNLSLayer } =
     useLayersFetcher();
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
 
-  const [selectedLayerId, setSelectedLayerId] = useSelectedLayer();
+  const [selectedLayerId, setSelectedLayerId] = useState<SelectedLayer | undefined>();
 
   const selectedLayer = useMemo(
     () => nlsLayers.find(l => l.id === selectedLayerId?.layerId) || undefined,
@@ -130,11 +137,13 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   return {
     nlsLayers,
     selectedLayer,
+    selectedLayerId,
     handleLayerSelect,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
+    setSelectedLayerId,
   };
 }

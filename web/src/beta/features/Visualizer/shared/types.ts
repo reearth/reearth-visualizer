@@ -1,8 +1,7 @@
 import { Theme } from "@reearth/beta/features/Visualizer/Crust/types";
-import type { Layer } from "@reearth/beta/lib/core/mantle";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { Layer, FlyTo } from "@reearth/core";
 
 export type InstallableBlock = {
   name: string;
@@ -28,7 +27,7 @@ export type CommonBlockProps<T = any> = {
   isSelected?: boolean;
   block?: T;
   theme?: Theme;
-  currentCamera?: Camera;
+  currentCamera?: Camera | undefined;
   padding?: {
     bottom: number;
     top: number;

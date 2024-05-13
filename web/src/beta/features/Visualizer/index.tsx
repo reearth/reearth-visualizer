@@ -1,11 +1,17 @@
 import styled from "@emotion/styled";
 import { FC, MutableRefObject, SetStateAction, useRef } from "react";
 
-import { LayerSelectionReason } from "@reearth/beta/lib/core/engines";
-import { ComputedFeature, ComputedLayer, Layer } from "@reearth/beta/lib/core/mantle";
-import { SketchFeature, SketchType } from "@reearth/beta/lib/core/Map/Sketch/types";
-import CoreVisualizer, { EngineType } from "@reearth/beta/lib/core/Visualizer";
 import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import {
+  type SketchFeature,
+  type SketchType,
+  type ComputedFeature,
+  type ComputedLayer,
+  type Layer,
+  type LayerSelectionReason,
+  type EngineType,
+  CoreVisualizer,
+} from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 
@@ -46,7 +52,6 @@ type VisualizerProps = {
       }
     | undefined;
   story?: Story;
-  rootLayerId?: string;
   zoomedLayerId?: string;
   useExperimentalSandbox?: boolean;
   visualizerRef?: MutableRefObject<MapRef | null>;
@@ -134,9 +139,8 @@ const Visualizer: FC<VisualizerProps> = ({
   sceneProperty,
   pluginProperty,
   story,
-  rootLayerId,
   zoomedLayerId,
-  useExperimentalSandbox,
+  useExperimentalSandbox = true,
   visualizerRef,
   currentCamera,
   interactionMode,
@@ -187,7 +191,6 @@ const Visualizer: FC<VisualizerProps> = ({
         isEditable={!isBuilt}
         layers={layers}
         zoomedLayerId={zoomedLayerId}
-        rootLayerId={rootLayerId}
         sceneProperty={sceneProperty as SceneProperty}
         ready={ready}
         meta={engineMeta}

@@ -1,7 +1,10 @@
 import type { PropsWithChildren, RefObject } from "react";
 
-import type { Camera, ComputedFeature, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
 import type {
+  Camera,
+  ComputedFeature,
+  SelectedFeatureInfo,
+  Viewport,
   ComputedLayer,
   LayerEditEvent,
   LayerLoadEvent,
@@ -10,11 +13,9 @@ import type {
   LayerSelectWithRectMove,
   LayerSelectWithRectStart,
   LayerVisibilityEvent,
-} from "@reearth/beta/lib/core/Map";
-import type { Viewport } from "@reearth/beta/lib/core/Visualizer";
+} from "@reearth/core";
+import { SketchEventCallback, SketchType, TimelineManagerRef } from "@reearth/core";
 
-import { SketchEventCallback, SketchType } from "../../../../lib/core/Map/Sketch/types";
-import { TimelineManagerRef } from "../../../../lib/core/Map/useTimelineManager";
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
 

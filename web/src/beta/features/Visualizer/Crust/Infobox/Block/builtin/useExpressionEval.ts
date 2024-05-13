@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Feature } from "@reearth/beta/lib/core/mantle";
-import { evalExpression } from "@reearth/beta/lib/core/mantle/evaluator/simple";
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
+import { useVisualizer, evalExpression, Feature } from "@reearth/core";
 
 export default (value: unknown | undefined) => {
   const [isReady, setIsReady] = useState(false);

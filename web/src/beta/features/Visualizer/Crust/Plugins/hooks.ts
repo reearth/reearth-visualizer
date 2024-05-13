@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import type { CameraPosition, ComputedFeature, NaiveLayer } from "@reearth/beta/lib/core/mantle";
 import {
   events,
   useGet,
@@ -8,17 +7,17 @@ import {
   type MouseEvents,
   type LayerSelectionReason,
   type TickEventCallback,
-} from "@reearth/beta/lib/core/Map";
-
-import { SketchType } from "../../../../lib/core/Map/Sketch/types";
-import { TimelineCommitter } from "../../../../lib/core/Map/useTimelineManager";
-import {
-  CameraOptions,
-  FlyTo,
-  FlyToDestination,
-  LookAtDestination,
-  ScreenSpaceCameraControllerOptions,
-} from "../../../../lib/core/types";
+  type CameraPosition,
+  type ComputedFeature,
+  type NaiveLayer,
+  type SketchType,
+  type CameraOptions,
+  type FlyTo,
+  type FlyToDestination,
+  type LookAtDestination,
+  type ScreenSpaceCameraControllerOptions,
+  type TimelineCommitter,
+} from "@reearth/core";
 
 import { commonReearth } from "./api";
 import { InteractionMode, ReearthEventType, Viewport, ViewportSize } from "./plugin_types";

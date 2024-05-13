@@ -3,7 +3,7 @@ import ColorField from "@reearth/beta/components/fields/ColorField";
 import ListField from "@reearth/beta/components/fields/ListField";
 import NumberField from "@reearth/beta/components/fields/NumberField";
 import TextField from "@reearth/beta/components/fields/TextField";
-import { Camera } from "@reearth/beta/lib/core/engines";
+import { Camera } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -15,6 +15,7 @@ export type Props = {
   items: CameraBlock[];
   selected: string;
   propertyId?: string;
+  currentCamera: Camera | undefined;
   setSelected: (id: string) => void;
   onPropertyUpdate?: (
     propertyId?: string,
@@ -42,6 +43,7 @@ const CameraBlockEditor: React.FC<Props> = ({
   items,
   propertyId,
   selected,
+  currentCamera,
   setSelected,
   onPropertyUpdate,
   onPropertyItemAdd,
@@ -50,7 +52,6 @@ const CameraBlockEditor: React.FC<Props> = ({
 }) => {
   const t = useT();
   const {
-    currentCamera,
     editorProperties,
     debounceOnUpdate,
     listItems,

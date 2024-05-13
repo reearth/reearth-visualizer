@@ -1,10 +1,4 @@
-import { TimeInterval } from "@reearth/beta/lib/core/mantle";
-import type {
-  DataRange,
-  DataType,
-  Geometry,
-  SceneProperty,
-} from "@reearth/beta/lib/core/Map/types";
+import type { DataRange, DataType, Geometry, SceneProperty, TimeInterval } from "@reearth/core";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 export type PublishedData = {

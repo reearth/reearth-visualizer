@@ -22,5 +22,5 @@ const PluginAccordionItemBody: React.FC<Props> = ({ children }) => {
 export default PluginAccordionItemBody;
 
 const Wrapper = styled.div`
-  padding: ${({ theme }) => theme.metrics["2xl"]}px;
+  padding: ${({ theme }) => theme.spacing.super}px;
 `;

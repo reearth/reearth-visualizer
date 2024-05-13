@@ -21,15 +21,21 @@ const lightTheme: Theme = {
     main: gray[90],
     strong: gray[100],
   },
-  select: { weaker: rgba(brandBlue.main, 0.2), main: brandBlue.main, strong: brandBlue.light },
+  select: {
+    weaker: rgba(brandBlue.main, 0.2),
+    weak: white,
+    main: brandBlue.main,
+    strong: brandBlue.light,
+  },
   item: { default: "#FFFFFF", hover: gray[90] },
   outline: {
     weakest: rgba("#000000", 0.25),
-    weaker: gray[30],
+    weaker: coolGray[30],
     weak: gray[50],
     main: gray[50],
   },
   primary: {
+    weakest: white,
     weak: blue[70],
     main: blue[60],
     strong: white,

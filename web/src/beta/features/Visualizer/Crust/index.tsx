@@ -1,8 +1,8 @@
 import { useMemo, type RefObject, useContext } from "react";
 
-import type { Layer, SelectedFeatureInfo } from "@reearth/beta/lib/core/mantle";
-import coreContext from "@reearth/beta/lib/core/Visualizer/coreContext";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { Layer, SelectedFeatureInfo } from "@reearth/core";
+import { coreContext } from "@reearth/core";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
@@ -25,8 +25,7 @@ export type { ValueTypes, ValueType, InteractionModeType } from "./types";
 export type { InfoboxBlock as Block } from "./Infobox/types";
 
 export type { ExternalPluginProps } from "./Plugins";
-export { INTERACTION_MODES } from "../../../lib/core/Visualizer/interactionMode";
-export { FEATURE_FLAGS } from "../../../lib/core/Visualizer/featureFlags";
+// export { INTERACTION_MODES, FEATURE_FLAGS } from "@reearth/core";
 
 export type {
   Context,

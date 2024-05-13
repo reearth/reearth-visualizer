@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { CameraPosition, NaiveLayer } from "@reearth/classic/core/mantle";
 import {
   type MouseEventHandles,
@@ -13,6 +12,7 @@ import {
   LayerSelectionReason,
   TickEventCallback,
 } from "@reearth/classic/core/Map";
+import type { FlyTo } from "@reearth/core";
 
 import { CommonReearth, commonReearth } from "./api";
 import { ReearthEventType, Viewport, ViewportSize } from "./plugin_types";

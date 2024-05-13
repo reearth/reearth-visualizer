@@ -1,8 +1,7 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
-import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/beta/lib/core/mantle";
-import type { LayerSelectionReason } from "@reearth/beta/lib/core/Map";
+import type { LayerSelectionReason, LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -13,16 +12,8 @@ import {
   useInfoboxFetcher,
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
-import {
-  useWidgetAlignEditorActivated,
-  useSelectedWidgetArea,
-  useIsVisualizerReady,
-  useZoomedLayerId,
-  useSelectedLayer,
-  useSelectedStoryPageId,
-  useSelectedLayerStyle,
-  useSelectedSceneSetting,
-} from "@reearth/services/state";
+
+import type { SelectedLayer } from "../useLayers";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
@@ -32,11 +23,21 @@ export default ({
   storyId,
   isBuilt,
   showStoryPanel,
+  selectedLayer,
+  setSelectedLayer,
+  setSelectedLayerStyle,
+  setSelectedSceneSetting,
+  setSelectedStoryPageId,
 }: {
   sceneId?: string;
   storyId?: string;
   isBuilt?: boolean;
   showStoryPanel?: boolean;
+  selectedLayer?: SelectedLayer | undefined;
+  setSelectedLayer: (value: SelectedLayer | undefined) => void;
+  setSelectedLayerStyle: (value: string | undefined) => void;
+  setSelectedSceneSetting: (value: string | undefined) => void;
+  setSelectedStoryPageId: (value: string | undefined) => void;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
@@ -57,25 +58,11 @@ export default ({
 
   const { scene } = useSceneQuery({ sceneId });
 
-  const [_, selectSelectedStoryPageId] = useSelectedStoryPageId();
-  const [widgetAlignEditorActivated] = useWidgetAlignEditorActivated();
-  const [zoomedLayerId, zoomToLayer] = useZoomedLayerId();
-
-  const [selectedLayer, setSelectedLayer] = useSelectedLayer();
-  const [, setSelectedLayerStyle] = useSelectedLayerStyle();
-  const [, setSelectedSceneSetting] = useSelectedSceneSetting();
-
-  const [selectedWidgetArea, setSelectedWidgetArea] = useSelectedWidgetArea();
-  const [isVisualizerReady, setIsVisualizerReady] = useIsVisualizerReady();
-
-  const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
+  const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
 
   // Scene property
   // TODO: Fix to use exact type through GQL typing
   const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
-
-  // Layers
-  const rootLayerId = useMemo(() => scene?.rootLayerId, [scene?.rootLayerId]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
@@ -195,8 +182,8 @@ export default ({
   const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
 
   const handleStoryPageChange = useCallback(
-    (pageId?: string) => selectSelectedStoryPageId(pageId),
-    [selectSelectedStoryPageId],
+    (pageId?: string) => setSelectedStoryPageId(pageId),
+    [setSelectedStoryPageId],
   );
 
   const handleStoryBlockCreate = useCallback(
@@ -275,17 +262,12 @@ export default ({
   }, [isBuilt, title]);
 
   return {
-    rootLayerId,
     sceneProperty,
     pluginProperty,
     layers,
     widgets,
     story,
-    selectedWidgetArea,
-    widgetAlignEditorActivated,
     engineMeta,
-    useExperimentalSandbox: false, // TODO: test and use new sandbox in beta solely, removing old way too.
-    isVisualizerReady, // Not being used (as of 2024/04)
     zoomedLayerId,
     installableInfoboxBlocks,
     handleLayerSelect,
@@ -298,12 +280,10 @@ export default ({
     handleInfoboxBlockRemove,
     handleWidgetUpdate,
     handleWidgetAlignSystemUpdate,
-    selectWidgetArea: setSelectedWidgetArea,
     handlePropertyValueUpdate,
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
-    handleMount,
     zoomToLayer,
   };
 };

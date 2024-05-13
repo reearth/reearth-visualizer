@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import { FlyTo } from "@reearth/beta/lib/core/types";
 import { LatLng } from "@reearth/beta/utils/value";
+import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
 
 import CameraField from "../../CameraField";

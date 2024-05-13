@@ -4,7 +4,7 @@ import "react18-json-view/src/dark.css";
 
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import Template from "@reearth/beta/features/Visualizer/StoryPanel/Block/Template";
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
+import { useVisualizer } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
 import { InfoboxBlock } from "../../../types";

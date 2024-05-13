@@ -1,4 +1,4 @@
-import type { Layer, Spacing } from "@reearth/beta/lib/core/mantle";
+import type { Layer, Spacing } from "@reearth/core";
 
 export type Infobox<BP = any> = {
   featureId?: string;

@@ -1,9 +1,8 @@
 import { Color } from "cesium";
 
+import { LayerAppearanceTypes } from "@reearth/core";
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
-
-import { LayerAppearanceTypes } from "../lib/core/mantle";
 
 export type LatLng = {
   lat: number;

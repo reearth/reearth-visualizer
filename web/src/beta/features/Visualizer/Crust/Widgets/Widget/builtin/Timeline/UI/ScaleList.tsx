@@ -49,7 +49,7 @@ const ScaleListInner: React.FC<ScaleListInnerProps> = memo(function ScaleListPre
 
           return (
             <LabeledScale key={idx}>
-              <ScaleLabel size="xFootnote" customColor publishedTheme={publishedTheme}>
+              <ScaleLabel size="footnote" customColor publishedTheme={publishedTheme}>
                 {label}
               </ScaleLabel>
               <Scale

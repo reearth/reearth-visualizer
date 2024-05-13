@@ -7,7 +7,7 @@ import type {
   RefObject,
 } from "react";
 
-import { FlyTo } from "@reearth/beta/lib/core/types";
+import { FlyTo } from "@reearth/core";
 
 import type {
   LatLngHeight,

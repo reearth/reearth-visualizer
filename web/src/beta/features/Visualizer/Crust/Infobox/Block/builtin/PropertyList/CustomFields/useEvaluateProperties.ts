@@ -1,9 +1,7 @@
 import { isEqual } from "lodash-es";
 import { useEffect, useState } from "react";
 
-import { Feature } from "@reearth/beta/lib/core/mantle";
-import { evalExpression } from "@reearth/beta/lib/core/mantle/evaluator/simple";
-import { useVisualizer } from "@reearth/beta/lib/core/Visualizer";
+import { evalExpression, useVisualizer, Feature } from "@reearth/core";
 
 import { PropertyListItem } from "../ListEditor";
 

@@ -1,18 +1,20 @@
-import { ReactNode, useMemo } from "react";
+import { ReactNode, SetStateAction, useMemo } from "react";
 
 import type { Tab } from "@reearth/beta/features/Navbar";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { FlyTo } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import type { Scene } from "@reearth/services/api/sceneApi";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
+import { WidgetAreaState } from "@reearth/services/state";
 
+import { SelectedWidget } from "./hooks";
 import MapSidePanel from "./tabs/map/RightPanel";
 import StorySidePanel from "./tabs/story/RightPanel";
 import WidgetSidePanel from "./tabs/widgets/RightPanel";
-import { LayerConfigUpdateProps } from "./useLayers";
+import { LayerConfigUpdateProps, SelectedLayer } from "./useLayers";
 import { LayerStyleValueUpdateProps } from "./useLayerStyles";
 import { GeoJsonFeatureUpdateProps } from "./useSketch";
 
@@ -27,11 +29,16 @@ type Props = {
   currentCamera?: Camera;
   selectedLayerStyleId?: string;
   selectedSceneSetting?: string;
+  selectedLayerId: SelectedLayer | undefined;
+  selectedWidget: SelectedWidget | undefined;
+  selectedWidgetArea: WidgetAreaState | undefined;
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   onPageUpdate?: (id: string, layers: string[]) => void;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
+  setSelectedWidget: (value: SelectedWidget | undefined) => void;
+  setSelectedWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
 
 export default ({
@@ -45,11 +52,16 @@ export default ({
   selectedSceneSetting,
   sceneSettings,
   currentCamera,
+  selectedLayerId,
+  selectedWidget,
+  selectedWidgetArea,
   onPageUpdate,
   onFlyTo,
   onLayerStyleValueUpdate,
   onLayerConfigUpdate,
   onGeoJsonFeatureUpdate,
+  setSelectedWidget,
+  setSelectedWidgetArea,
 }: Props) => {
   const rightPanel = useMemo<ReactNode | undefined>(() => {
     switch (tab) {
@@ -64,6 +76,7 @@ export default ({
             currentCamera={currentCamera}
             selectedLayerStyleId={selectedLayerStyleId}
             selectedSceneSetting={selectedSceneSetting}
+            selectedLayerId={selectedLayerId}
             onFlyTo={onFlyTo}
             onLayerStyleValueUpdate={onLayerStyleValueUpdate}
             onLayerConfigUpdate={onLayerConfigUpdate}
@@ -83,7 +96,15 @@ export default ({
         );
       case "widgets":
         return (
-          <WidgetSidePanel sceneId={sceneId} currentCamera={currentCamera} onFlyTo={onFlyTo} />
+          <WidgetSidePanel
+            sceneId={sceneId}
+            currentCamera={currentCamera}
+            selectedWidget={selectedWidget}
+            selectedWidgetArea={selectedWidgetArea}
+            onFlyTo={onFlyTo}
+            setSelectedWidget={setSelectedWidget}
+            setSelectedWidgetArea={setSelectedWidgetArea}
+          />
         );
 
       case "publish":
@@ -100,12 +121,17 @@ export default ({
     currentCamera,
     selectedLayerStyleId,
     selectedSceneSetting,
+    selectedLayerId,
+    selectedWidget,
+    selectedWidgetArea,
     onFlyTo,
     onLayerStyleValueUpdate,
     onLayerConfigUpdate,
     onGeoJsonFeatureUpdate,
     currentPage,
     onPageUpdate,
+    setSelectedWidget,
+    setSelectedWidgetArea,
   ]);
 
   return {
