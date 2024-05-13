@@ -12,6 +12,21 @@ type Story = StoryObj<typeof TextArea>;
 export const Default: Story = {
   args: {
     value: "Write down your content",
+    rows: 3,
+  },
+};
+
+export const withFourRows: Story = {
+  args: {
+    placeholder: "Write down your content",
+    rows: 4,
+  },
+};
+
+export const withFiveRows: Story = {
+  args: {
+    placeholder: "Write down your content",
+    rows: 5,
   },
 };
 
@@ -21,17 +36,25 @@ export const WithPlaceholder: Story = {
   },
 };
 
-export const withDefaultHeight: Story = {
+export const withDisable: Story = {
   args: {
-    filled: "default",
-    value:
-      "Write down your contentLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.",
+    disabled: true,
+    value: "Text Input",
   },
 };
+
+export const withCounterSize: Story = {
+  args: {
+    counter: true,
+    value:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.",
+  },
+};
+
 export const withAutoSize: Story = {
   args: {
-    filled: "autoSize",
+    resizable: "autoSize",
     value:
-      "Write down your contentLorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.",
   },
 };

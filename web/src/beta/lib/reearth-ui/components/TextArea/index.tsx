@@ -5,7 +5,10 @@ import { fonts, styled } from "@reearth/services/theme";
 export type TextAreaProps = {
   value?: string;
   placeholder?: string;
-  filled?: "default" | "autoSize";
+  resizable?: "autoSize" | "default";
+  disabled?: boolean;
+  rows?: number;
+  counter?: boolean;
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
 };
@@ -13,7 +16,10 @@ export type TextAreaProps = {
 export const TextArea: FC<TextAreaProps> = ({
   value,
   placeholder,
-  filled = "default",
+  resizable,
+  rows,
+  disabled,
+  counter,
   onChange,
   onBlur,
 }) => {
@@ -23,21 +29,24 @@ export const TextArea: FC<TextAreaProps> = ({
 
   useEffect(() => {
     setCurrentValue(value ?? "");
-    if (filled === "autoSize" && textareaRef.current) {
+    if (resizable === "autoSize" && textareaRef.current) {
       adjustHeight();
     }
-  }, [value, filled]);
+  }, [value, resizable]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
-      const newValue = e.currentTarget.value;
+      let newValue = e.currentTarget.value;
+      if (newValue.length > 200 && counter) {
+        newValue = newValue.substring(0, 200);
+      }
       setCurrentValue(newValue);
       onChange?.(newValue);
-      if (filled === "autoSize" && textareaRef.current) {
+      if (resizable === "autoSize" && textareaRef.current) {
         adjustHeight();
       }
     },
-    [onChange, filled],
+    [counter, onChange, resizable],
   );
 
   const handleBlur = useCallback(() => {
@@ -57,22 +66,31 @@ export const TextArea: FC<TextAreaProps> = ({
   };
 
   return (
-    <Wrapper status={isFocused ? "active" : "default"}>
-      <StyledTextArea
-        filled={filled}
-        ref={textareaRef}
-        rows={filled === "default" ? 3 : undefined}
-        value={currentValue}
-        placeholder={placeholder}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onFocus={handleFocus}
-      />
+    <Wrapper>
+      <TextAreaWrapper status={isFocused ? "active" : "default"}>
+        <StyledTextArea
+          resizable={resizable}
+          ref={textareaRef}
+          rows={rows ? rows : 3}
+          value={currentValue}
+          disabled={disabled}
+          placeholder={placeholder}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+        />
+      </TextAreaWrapper>
+      {counter && <CharacterCount>{currentValue.length} / 200</CharacterCount>}
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")<{
+const Wrapper = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+}));
+
+const TextAreaWrapper = styled("div")<{
   status: "default" | "active";
 }>(({ theme, status }) => ({
   border:
@@ -80,21 +98,32 @@ const Wrapper = styled("div")<{
   borderRadius: theme.radius.small,
   background: theme.bg[1],
   display: "flex",
+  boxShadow: theme.shadow.input,
 }));
 
-const StyledTextArea = styled.textarea<{ filled: "default" | "autoSize" }>(({ theme, filled }) => ({
-  outline: "none",
-  border: "none",
-  background: "none",
-  resize: "none",
-  overflow: filled === "autoSize" ? "hidden" : "auto",
-  color: theme.content.main,
-  flex: 1,
-  colorScheme: theme.colorSchema,
-  "::placeholder": {
-    color: theme.content.weak,
-  },
+const StyledTextArea = styled.textarea<{ resizable?: "default" | "autoSize"; disabled?: boolean }>(
+  ({ theme, resizable, disabled }) => ({
+    outline: "none",
+    border: "none",
+    background: "none",
+    resize: resizable === "autoSize" ? "vertical" : "none",
+    overflow: resizable === "autoSize" ? "hidden" : "auto",
+    color: disabled ? theme.content.weaker : theme.content.main,
+    flex: 1,
+    cursor: disabled ? "not-allowed" : "auto",
+    colorScheme: theme.colorSchema,
+    "::placeholder": {
+      color: theme.content.weak,
+    },
+    fontSize: fonts.sizes.body,
+    lineHeight: `${fonts.lineHeights.body}px`,
+    padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  }),
+);
+
+const CharacterCount = styled.span(({ theme }) => ({
+  alignSelf: "flex-end",
   fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  color: theme.content.weak,
+  marginLeft: theme.spacing.small,
 }));
