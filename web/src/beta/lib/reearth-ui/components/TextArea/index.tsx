@@ -5,10 +5,11 @@ import { fonts, styled } from "@reearth/services/theme";
 export type TextAreaProps = {
   value?: string;
   placeholder?: string;
-  resizable?: "autoSize" | "default";
+  resizable?: "none" | "height";
   disabled?: boolean;
   rows?: number;
   counter?: boolean;
+  maxLength?: number;
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
 };
@@ -20,6 +21,7 @@ export const TextArea: FC<TextAreaProps> = ({
   rows,
   disabled,
   counter,
+  maxLength,
   onChange,
   onBlur,
 }) => {
@@ -29,41 +31,25 @@ export const TextArea: FC<TextAreaProps> = ({
 
   useEffect(() => {
     setCurrentValue(value ?? "");
-    if (resizable === "autoSize" && textareaRef.current) {
-      adjustHeight();
-    }
   }, [value, resizable]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
-      let newValue = e.currentTarget.value;
-      if (newValue.length > 200 && counter) {
-        newValue = newValue.substring(0, 200);
-      }
+      const newValue = e.currentTarget.value;
       setCurrentValue(newValue);
       onChange?.(newValue);
-      if (resizable === "autoSize" && textareaRef.current) {
-        adjustHeight();
-      }
     },
-    [counter, onChange, resizable],
+    [onChange],
   );
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    onChange?.(currentValue);
     onBlur?.(currentValue);
-  }, [currentValue, onChange, onBlur]);
+  }, [currentValue, onBlur]);
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);
   }, []);
-
-  const adjustHeight = () => {
-    if (!textareaRef.current) return;
-    textareaRef.current.style.height = "auto";
-    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-  };
 
   return (
     <Wrapper>
@@ -78,9 +64,16 @@ export const TextArea: FC<TextAreaProps> = ({
           onChange={handleChange}
           onBlur={handleBlur}
           onFocus={handleFocus}
+          maxLength={maxLength}
         />
       </TextAreaWrapper>
-      {counter && <CharacterCount>{currentValue.length} / 200</CharacterCount>}
+      {counter && maxLength ? (
+        <CharacterCount>
+          {currentValue.length} / {maxLength}
+        </CharacterCount>
+      ) : (
+        counter && <CharacterCount>{currentValue.length}</CharacterCount>
+      )}
     </Wrapper>
   );
 };
@@ -101,13 +94,13 @@ const TextAreaWrapper = styled("div")<{
   boxShadow: theme.shadow.input,
 }));
 
-const StyledTextArea = styled.textarea<{ resizable?: "default" | "autoSize"; disabled?: boolean }>(
+const StyledTextArea = styled.textarea<{ resizable?: "none" | "height"; disabled?: boolean }>(
   ({ theme, resizable, disabled }) => ({
     outline: "none",
     border: "none",
     background: "none",
-    resize: resizable === "autoSize" ? "vertical" : "none",
-    overflow: resizable === "autoSize" ? "hidden" : "auto",
+    resize: resizable === "height" ? "vertical" : "none",
+    overflow: resizable === "height" ? "hidden" : "auto",
     color: disabled ? theme.content.weaker : theme.content.main,
     flex: 1,
     cursor: disabled ? "not-allowed" : "auto",

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { TextArea } from "@reearth/beta/lib/reearth-ui/components/TextArea";
 import { LatLng } from "@reearth/beta/utils/value";
 import { FlyTo } from "@reearth/core";
 import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
@@ -169,6 +170,7 @@ const PropertyField: React.FC<Props> = ({
       ) : (
         <p key={schema.id}>{schema.name} field</p>
       )}
+      <TextArea placeholder="write down" counter maxLength={300} />
     </>
   );
 };

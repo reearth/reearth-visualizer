@@ -46,14 +46,22 @@ export const withDisable: Story = {
 export const withCounterSize: Story = {
   args: {
     counter: true,
+    value: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  },
+};
+
+export const withMaxLength: Story = {
+  args: {
+    counter: true,
+    maxLength: 300,
     value:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.",
   },
 };
 
-export const withAutoSize: Story = {
+export const withHeight: Story = {
   args: {
-    resizable: "autoSize",
+    resizable: "height",
     value:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.",
   },

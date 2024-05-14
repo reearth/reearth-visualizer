@@ -7,7 +7,6 @@ export type TextInputProps = {
   placeholder?: string;
   size?: "normal" | "small";
   disabled?: boolean;
-  isEditable?: boolean;
   appearance?: "readonly" | "present";
   actions?: FC[];
   onChange?: (text: string) => void;
@@ -21,38 +20,39 @@ export const TextInput: FC<TextInputProps> = ({
   disabled,
   appearance,
   actions,
-  isEditable,
   onChange,
   onBlur,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
+  const readOnly = appearance === "readonly" || (appearance === "present" && !disabled);
 
   useEffect(() => {
     setCurrentValue(value ?? "");
   }, [value]);
 
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const newValue = e.currentTarget.value;
-    if (newValue === undefined) return;
-    setCurrentValue(newValue ?? "");
-  }, []);
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newValue = e.currentTarget.value;
+      if (newValue === undefined) return;
+      setCurrentValue(newValue ?? "");
+      onChange?.(currentValue);
+    },
+    [currentValue, onChange],
+  );
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    onChange?.(currentValue);
     onBlur?.(currentValue);
-  }, [onChange, currentValue, onBlur]);
+  }, [currentValue, onBlur]);
 
   const handleFocus = useCallback(() => {
+    if (readOnly) return;
     setIsFocused(true);
-  }, []);
+  }, [readOnly]);
 
   return (
-    <Wrapper
-      size={size}
-      appearance={appearance}
-      status={isFocused || isEditable ? "active" : "default"}>
+    <Wrapper size={size} appearance={appearance} status={isFocused ? "active" : "default"}>
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
@@ -60,7 +60,8 @@ export const TextInput: FC<TextInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        readOnly={appearance === "readonly" || (appearance === "present" && !isEditable)}
+        appearance={appearance}
+        readOnly={readOnly}
       />
       {actions && (
         <ActionsWrapper>
@@ -91,11 +92,9 @@ const Wrapper = styled("div")<{
     border: borderStyle,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
-    transition: "all 0.3s",
     display: "flex",
     gap: theme.spacing.smallest,
     alignItems: "center",
-    cursor: appearance === "readonly" ? "not-allowed" : "auto",
     padding:
       size === "small"
         ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
@@ -104,25 +103,25 @@ const Wrapper = styled("div")<{
   };
 });
 
-const StyledInput = styled("input")<{ disabled?: boolean; readOnly?: boolean }>(
-  ({ theme, disabled, readOnly }) => ({
-    outline: "none",
-    border: "none",
-    background: "none",
-    color: disabled ? theme.content.weaker : theme.content.main,
-    flex: 1,
-    cursor: disabled ? "not-allowed" : "auto",
-    colorScheme: theme.colorSchema,
-    ...(readOnly && { pointerEvents: "none", userSelect: "none" }),
-    "::placeholder": {
-      color: theme.content.weak,
-    },
-    fontSize: fonts.sizes.body,
-    lineHeight: `${fonts.lineHeights.body}px`,
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-  }),
-);
+const StyledInput = styled("input")<{
+  disabled?: boolean;
+  appearance?: "readonly" | "present";
+}>(({ theme, disabled, appearance }) => ({
+  outline: "none",
+  border: "none",
+  background: "none",
+  color: disabled ? theme.content.weaker : theme.content.main,
+  flex: 1,
+  cursor: appearance === "readonly" ? "not-allowed" : disabled ? "not-allowed" : "auto",
+  colorScheme: theme.colorSchema,
+  "::placeholder": {
+    color: theme.content.weak,
+  },
+  fontSize: fonts.sizes.body,
+  lineHeight: `${fonts.lineHeights.body}px`,
+  textOverflow: "ellipsis",
+  overflow: "hidden",
+}));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",

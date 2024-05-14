@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import Button from "@reearth/beta/components/Button";
 import Property from "@reearth/beta/components/fields";
+import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import { FILE_FORMATS, IMAGE_FORMATS } from "@reearth/beta/features/Assets/constants";
 import { AcceptedFileFormat } from "@reearth/beta/features/Assets/types";
 import AssetModal from "@reearth/beta/features/Modals/AssetModal";
@@ -11,8 +12,6 @@ import { checkIfFileType } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { useNotification, useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-
-import TextInput from "../common/TextInput";
 
 export type Props = {
   value?: string;
