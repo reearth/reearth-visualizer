@@ -13,8 +13,7 @@ groups:
   - name: reviewers
     reviewers: 1
     usernames:
-      - iby
-      - nina992
-      - jashanbhullar
+      - airslice
       - mkumbobeaty
       - pyshx
+      - ed0424
