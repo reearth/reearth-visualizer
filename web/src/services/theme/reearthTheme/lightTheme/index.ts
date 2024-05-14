@@ -47,6 +47,7 @@ const lightTheme: Theme = {
   },
   dangerous: {
     main: red[60],
+    weak: red[70],
   },
   warning: { main: yellow[30] },
   placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(brandBlue.main, 0.2) },
