@@ -42,8 +42,8 @@ export const Button: FC<ButtonProps> = ({
       onMouseUp={() => setIsActive(false)}
       onClick={handleButtonClick}>
       {/* TODD: Use Icon Component based on icon */}
-      {iconButton && icon}
-      {title}
+      {icon}
+      {!iconButton && title}
     </StyledButton>
   );
 };
@@ -55,7 +55,7 @@ const StyledButton = styled("button")<{
   active: boolean;
   disabled: boolean;
   iconButton: boolean;
-}>(({ disabled, appearance, size, hover, active, theme }) => ({
+}>(({ disabled, appearance, size, hover, active, iconButton, theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -76,7 +76,11 @@ const StyledButton = styled("button")<{
         }`,
   padding:
     size === "small"
-      ? `${theme.spacing.smallest}px ${theme.spacing.small}px`
+      ? iconButton
+        ? `${theme.spacing.micro}px`
+        : `${theme.spacing.smallest}px ${theme.spacing.small}px`
+      : iconButton
+      ? `${theme.spacing.small}px`
       : `${theme.spacing.small}px ${theme.spacing.large}px`,
   borderRadius: size === "small" ? `${theme.spacing.smallest}px` : "6px",
   color: disabled
