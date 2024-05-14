@@ -82,7 +82,7 @@ const Wrapper = styled("div")<{
   const borderStyle =
     appearance === "present"
       ? status === "default"
-        ? "none"
+        ? `1px solid transparent`
         : `1px solid ${theme.select.main}`
       : status === "active"
       ? `1px solid ${theme.select.main}`

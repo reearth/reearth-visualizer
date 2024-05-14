@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState, ChangeEvent, useRef } from "react";
+import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -27,7 +27,6 @@ export const TextArea: FC<TextAreaProps> = ({
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setCurrentValue(value ?? "");
@@ -56,7 +55,6 @@ export const TextArea: FC<TextAreaProps> = ({
       <TextAreaWrapper status={isFocused ? "active" : "default"}>
         <StyledTextArea
           resizable={resizable}
-          ref={textareaRef}
           rows={rows ? rows : 3}
           value={currentValue}
           disabled={disabled}
@@ -100,7 +98,7 @@ const StyledTextArea = styled.textarea<{ resizable?: "none" | "height"; disabled
     border: "none",
     background: "none",
     resize: resizable === "height" ? "vertical" : "none",
-    overflow: resizable === "height" ? "hidden" : "auto",
+    overflow: resizable === "height" ? "scroll" : "auto",
     color: disabled ? theme.content.weaker : theme.content.main,
     flex: 1,
     cursor: disabled ? "not-allowed" : "auto",
