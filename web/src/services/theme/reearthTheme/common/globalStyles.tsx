@@ -33,6 +33,7 @@ export const styles = css`
     outline: none;
     border: none;
     cursor: pointer;
+    font-family: ${fontFamilies};
   }
 
   textarea {
