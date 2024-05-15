@@ -1,12 +1,13 @@
-import { FC, useCallback, useEffect, useState, type ChangeEvent } from "react";
+import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
-import { styled } from "@reearth/services/theme";
+import { fonts, styled } from "@reearth/services/theme";
 
 export type TextInputProps = {
   value?: string;
   placeholder?: string;
   size?: "normal" | "small";
   disabled?: boolean;
+  appearance?: "readonly" | "present";
   actions?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
@@ -17,11 +18,13 @@ export const TextInput: FC<TextInputProps> = ({
   placeholder,
   size = "normal",
   disabled,
+  appearance,
   actions,
   onChange,
   onBlur,
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     setCurrentValue(value ?? "");
@@ -31,28 +34,34 @@ export const TextInput: FC<TextInputProps> = ({
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const newValue = e.currentTarget.value;
       setCurrentValue(newValue ?? "");
-      onChange?.(newValue);
+      onChange?.(currentValue);
     },
-    [onChange],
+    [currentValue, onChange],
   );
 
   const handleBlur = useCallback(() => {
-    onChange?.(currentValue);
+    setIsFocused(false);
     onBlur?.(currentValue);
-  }, [currentValue, onChange, onBlur]);
+  }, [currentValue, onBlur]);
+
+  const handleFocus = useCallback(() => {
+    setIsFocused(true);
+  }, []);
 
   return (
-    <Wrapper size={size}>
+    <Wrapper size={size} appearance={appearance} status={isFocused ? "active" : "default"}>
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
         disabled={disabled}
         onChange={handleChange}
         onBlur={handleBlur}
+        onFocus={handleFocus}
+        appearance={appearance}
       />
       {actions && (
         <ActionsWrapper>
-          {actions?.map((Action, i) => (
+          {actions.map((Action, i) => (
             <Action key={i} />
           ))}
         </ActionsWrapper>
@@ -61,35 +70,56 @@ export const TextInput: FC<TextInputProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{ size: "normal" | "small" }>(({ size, theme }) => ({
-  border: `1px solid ${theme.outline.weak}`,
-  borderRadius: "4px", // TODO: use theme value
-  background: theme.bg[1],
-  transition: "all 0.3s", // TODO: use theme value
-  display: "flex",
-  gap: theme.spacing.smallest,
-  alignItems: "center",
-  padding:
-    size === "small"
-      ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
-      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-}));
+const Wrapper = styled("div")<{
+  size: "normal" | "small";
+  appearance?: "readonly" | "present";
+  status: "default" | "active";
+}>(({ size, theme, appearance, status }) => {
+  const borderStyle =
+    appearance === "present"
+      ? status === "default"
+        ? `1px solid transparent`
+        : `1px solid ${theme.select.main}`
+      : status === "active"
+      ? `1px solid ${theme.select.main}`
+      : `1px solid ${theme.outline.weak}`;
 
-const StyledInput = styled("input")(({ theme, disabled }) => ({
+  return {
+    border: borderStyle,
+    borderRadius: theme.radius.small,
+    background: theme.bg[1],
+    display: "flex",
+    gap: theme.spacing.smallest,
+    alignItems: "center",
+    padding:
+      size === "small"
+        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+        : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+    boxShadow: theme.shadow.input,
+  };
+});
+
+const StyledInput = styled("input")<{
+  disabled?: boolean;
+  appearance?: "readonly" | "present";
+}>(({ theme, disabled, appearance }) => ({
   outline: "none",
   border: "none",
   background: "none",
-  color: theme.content.main,
-  // ...theme.typography.body, TODO: update theme
-  // padding: "4px 8px", // TODO: use theme value
   flex: 1,
-  opacity: disabled ? 0.6 : 1, // TODO: use theme value
-  pointerEvents: disabled ? "none" : "inherit",
-  colorScheme: "dark", // TODO: use theme value
-  // TODO: implement active style on wrapper
-  // ":focus": {
-  //   borderColor: theme.outline.main,
-  // },
+  color:
+    disabled && appearance !== "present" && appearance !== "readonly"
+      ? theme.content.weaker
+      : theme.content.main,
+  cursor: disabled || appearance === "readonly" ? "not-allowed" : "auto",
+  colorScheme: theme.colorSchema,
+  fontSize: fonts.sizes.body,
+  lineHeight: `${fonts.lineHeights.body}px`,
+  textOverflow: "ellipsis",
+  overflow: "hidden",
+  "::placeholder": {
+    color: theme.content.weak,
+  },
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
@@ -97,4 +127,6 @@ const ActionsWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.smallest,
   flexShrink: 0,
+  padding: theme.spacing.micro,
+  color: theme.content.weak,
 }));
