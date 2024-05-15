@@ -39,7 +39,7 @@ export const Typography: FC<TypographyProps> = ({
         ? themeTypographyBySize[trait]
         : weight in themeTypographyBySize
         ? themeTypographyBySize[weight]
-        : themeTypographyBySize[size === "h1" ? "medium" : "regular"],
+        : themeTypographyBySize[size === "h1" ? "bold" : "regular"],
     [trait, size, weight, themeTypographyBySize],
   );
 
