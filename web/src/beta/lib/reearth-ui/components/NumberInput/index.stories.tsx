@@ -15,28 +15,38 @@ export const Default: Story = {
   },
 };
 
-export const WithSmallSize: Story = {
+export const SizeSmall: Story = {
   args: {
     placeholder: "Type number in here.",
     size: "small",
+    value: 2,
   },
 };
 
-export const WithPlaceholder: Story = {
+export const Placeholder: Story = {
   args: {
     placeholder: "Type number in here.",
   },
 };
 
-export const WithApperancReadOnly: Story = {
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    value: 4,
+  },
+};
+
+export const UsecaseReadonly: Story = {
   args: {
     value: 20,
+    disabled: true,
     appearance: "readonly",
   },
 };
 
-export const WithUnit: Story = {
+export const UsecaseUnit: Story = {
   args: {
     unit: "m",
+    value: 10,
   },
 };

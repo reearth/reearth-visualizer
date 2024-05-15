@@ -50,9 +50,16 @@ export const NumberInput: FC<NumberInputProps> = ({
   );
 
   const handleFocus = useCallback(() => {
-    if (appearance === "readonly") return;
     setIsFocused(true);
-  }, [appearance]);
+  }, []);
+
+  // This function prevent defaut browser clear input on these keys pressed
+  // https://stackoverflow.com/questions/49869624/numeric-value-gets-clear-in-we-press-letter-e-in-input-type-number
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "e" || e.key === "+" || e.key === "-") {
+      e.preventDefault();
+    }
+  }, []);
 
   return (
     <Wrapper size={size} status={isFocused ? "active" : "default"}>
@@ -66,7 +73,7 @@ export const NumberInput: FC<NumberInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        readOnly={appearance === "readonly"}
+        onKeyDown={handleKeyDown}
       />
       {unit && <UnitWrapper> {unit}</UnitWrapper>}
     </Wrapper>
@@ -87,7 +94,7 @@ const Wrapper = styled("div")<{
     alignItems: "center",
     padding:
       size === "small"
-        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+        ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
   };
@@ -100,15 +107,16 @@ const StyledInput = styled("input")<{
   outline: "none",
   border: "none",
   background: "none",
-  color: disabled ? theme.content.weaker : theme.content.main,
+  color: disabled && appearance !== "readonly" ? theme.content.weaker : theme.content.main,
   flex: 1,
   cursor: disabled || appearance === "readonly" ? "not-allowed" : "auto",
+  fontSize: fonts.sizes.body,
+  lineHeight: `${fonts.lineHeights.body}px`,
+  textOverflow: "ellipsis",
+  overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,
   },
-  fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
-
   "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
     "-webkit-appearance": "none",
   },
@@ -119,4 +127,6 @@ const StyledInput = styled("input")<{
 
 const UnitWrapper = styled("div")(({ theme }) => ({
   color: theme.content.weak,
+  fontSize: fonts.sizes.body,
+  lineHeight: `${fonts.lineHeights.body}px`,
 }));
