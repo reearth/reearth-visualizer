@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -9,38 +9,31 @@ export type ButtonProps = {
   iconButton?: boolean;
   icon?: string; // TODO: Icon Name, Use Icon Component
   title?: string;
+  extendWidth?: boolean;
+  minWidth?: number;
   onClick?: () => void;
 };
 
 export const Button: FC<ButtonProps> = ({
   appearance = "secondary",
-  icon = "",
-  disabled = false,
+  icon,
+  disabled,
   size = "normal",
-  iconButton = false,
-  title = "",
+  iconButton,
+  title,
+  extendWidth,
+  minWidth,
   onClick,
 }) => {
-  const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
-  const [isActive, setIsActive] = useState<boolean>(false);
-
-  const handleButtonClick = useCallback(() => {
-    if (onClick) onClick();
-  }, [onClick]);
-
   return (
     <StyledButton
       disabled={disabled}
       appearance={appearance}
       size={size}
-      hover={isMouseOver}
-      active={isActive}
       iconButton={iconButton}
-      onMouseOver={() => setIsMouseOver(true)}
-      onMouseLeave={() => setIsMouseOver(false)}
-      onMouseDown={() => setIsActive(true)}
-      onMouseUp={() => setIsActive(false)}
-      onClick={handleButtonClick}>
+      extendWidth={extendWidth}
+      minWidth={minWidth}
+      onClick={onClick}>
       {/* TODD: Use Icon Component based on icon */}
       {icon}
       {!iconButton && title}
@@ -51,28 +44,24 @@ export const Button: FC<ButtonProps> = ({
 const StyledButton = styled("button")<{
   size: "normal" | "small";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
-  hover: boolean;
-  active: boolean;
-  disabled: boolean;
-  iconButton: boolean;
-}>(({ disabled, appearance, size, hover, active, iconButton, theme }) => ({
+  iconButton?: boolean;
+  extendWidth?: boolean;
+  minWidth?: number;
+}>(({ appearance, size, iconButton, extendWidth, minWidth, theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-  gap: `${theme.spacing.small}`,
+  justifyContent: "center",
+  gap: `${theme.spacing.small}px`,
   border:
     appearance === "simple"
       ? "none"
-      : disabled
-      ? `1px solid ${theme.content.weaker}`
       : `1px solid ${
-          active || hover
-            ? "transparent"
-            : appearance === "secondary"
-            ? theme.outline.weak
+          appearance === "secondary"
+            ? `${theme.outline.weak}`
             : appearance === "primary"
-            ? theme.primary.main
-            : theme.dangerous.main
+            ? `${theme.primary.main}`
+            : `${theme.dangerous.main}`
         }`,
   padding:
     size === "small"
@@ -82,21 +71,30 @@ const StyledButton = styled("button")<{
       : iconButton
       ? `${theme.spacing.small}px`
       : `${theme.spacing.small}px ${theme.spacing.large}px`,
-  borderRadius: size === "small" ? `${theme.spacing.smallest}px` : "6px",
-  color: disabled
-    ? `${theme.content.weaker}`
-    : hover
-    ? `${theme.content.withBackground}`
-    : appearance === "primary"
-    ? `${theme.primary.main}`
-    : appearance === "dangerous"
-    ? `${theme.dangerous.main}`
-    : `${theme.content.main}`,
-  backgroundColor:
-    appearance !== "simple"
-      ? disabled
-        ? `${theme.bg[1]}`
-        : `${!hover ? theme.bg[1] : theme[appearance][`${active ? "main" : "weak"}`]}`
-      : "transparent",
-  width: "fit-content",
+  borderRadius: size === "small" ? `${theme.radius.small}px` : `${theme.radius.normal}px`,
+  color:
+    appearance === "primary"
+      ? `${theme.primary.main}`
+      : appearance === "dangerous"
+      ? `${theme.dangerous.main}`
+      : `${theme.content.main}`,
+  backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
+  width: !extendWidth ? "fit-content" : "",
+  minWidth: minWidth ? `${minWidth}px` : "",
+  ["&:hover"]: {
+    borderColor: "transparent",
+    color: `${theme.content.withBackground}`,
+    backgroundColor: appearance === "simple" ? "transparent" : `${theme[appearance].weak}`,
+  },
+  ["&:active"]: {
+    borderColor: "transparent",
+    color: `${theme.content.withBackground}`,
+    backgroundColor: appearance === "simple" ? "transparent" : `${theme[appearance].main}`,
+  },
+  ["&:disabled"]: {
+    cursor: "not-allowed",
+    borderColor: "transparent",
+    color: `${theme.content.weaker}`,
+    backgroundColor: `${theme.bg[1]}`,
+  },
 }));
