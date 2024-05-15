@@ -95,6 +95,6 @@ const StyledButton = styled("button")<{
     cursor: "not-allowed",
     borderColor: "transparent",
     color: `${theme.content.weaker}`,
-    backgroundColor: `${theme.bg[1]}`,
+    backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
   },
 }));
