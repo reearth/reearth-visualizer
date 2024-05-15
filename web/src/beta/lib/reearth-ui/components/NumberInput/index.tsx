@@ -32,22 +32,17 @@ export const NumberInput: FC<NumberInputProps> = ({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.currentTarget.value;
-      const parsedValue = parseFloat(newValue);
+      const parsedValue = parseFloat(e.currentTarget.value);
       setCurrentValue(parsedValue);
       onChange?.(parsedValue);
     },
     [onChange],
   );
 
-  const handleBlur = useCallback(
-    (e: React.SyntheticEvent<HTMLInputElement>) => {
-      const newValue = parseFloat(e.currentTarget.value) ?? value;
-      setIsFocused(false);
-      onBlur?.(newValue);
-    },
-    [value, onBlur],
-  );
+  const handleBlur = useCallback(() => {
+    setIsFocused(false);
+    onBlur?.(currentValue);
+  }, [onBlur, currentValue]);
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);
