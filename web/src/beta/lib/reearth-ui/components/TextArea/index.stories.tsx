@@ -16,41 +16,34 @@ export const Default: Story = {
   },
 };
 
-export const withFourRows: Story = {
-  args: {
-    placeholder: "Write down your content",
-    rows: 4,
-  },
-};
-
-export const withFiveRows: Story = {
+export const Rows: Story = {
   args: {
     placeholder: "Write down your content",
     rows: 5,
   },
 };
 
-export const WithPlaceholder: Story = {
+export const Placeholder: Story = {
   args: {
     placeholder: "Write down your content",
   },
 };
 
-export const withDisable: Story = {
+export const Disabled: Story = {
   args: {
     disabled: true,
     value: "Text Input",
   },
 };
 
-export const withCounterSize: Story = {
+export const Counter: Story = {
   args: {
     counter: true,
     value: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   },
 };
 
-export const withMaxLength: Story = {
+export const MaxLength: Story = {
   args: {
     counter: true,
     maxLength: 300,
@@ -59,7 +52,7 @@ export const withMaxLength: Story = {
   },
 };
 
-export const withHeight: Story = {
+export const HeightResizeable: Story = {
   args: {
     resizable: "height",
     value:

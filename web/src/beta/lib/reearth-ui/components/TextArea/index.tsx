@@ -18,7 +18,7 @@ export const TextArea: FC<TextAreaProps> = ({
   value,
   placeholder,
   resizable,
-  rows,
+  rows = 3,
   disabled,
   counter,
   maxLength,
@@ -55,7 +55,7 @@ export const TextArea: FC<TextAreaProps> = ({
       <TextAreaWrapper status={isFocused ? "active" : "default"}>
         <StyledTextArea
           resizable={resizable}
-          rows={rows ? rows : 3}
+          rows={rows}
           value={currentValue}
           disabled={disabled}
           placeholder={placeholder}
@@ -103,12 +103,15 @@ const StyledTextArea = styled.textarea<{ resizable?: "none" | "height"; disabled
     flex: 1,
     cursor: disabled ? "not-allowed" : "auto",
     colorScheme: theme.colorSchema,
-    "::placeholder": {
-      color: theme.content.weak,
-    },
     fontSize: fonts.sizes.body,
     lineHeight: `${fonts.lineHeights.body}px`,
     padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+    minHeight: fonts.lineHeights.body * 2 + theme.spacing.smallest * 2,
+    overflowX: "hidden",
+    boxSizing: "border-box",
+    "::placeholder": {
+      color: theme.content.weak,
+    },
   }),
 );
 

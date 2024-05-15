@@ -25,7 +25,6 @@ export const TextInput: FC<TextInputProps> = ({
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
-  const readOnly = appearance === "readonly" || (appearance === "present" && !disabled);
 
   useEffect(() => {
     setCurrentValue(value ?? "");
@@ -34,7 +33,6 @@ export const TextInput: FC<TextInputProps> = ({
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const newValue = e.currentTarget.value;
-      if (newValue === undefined) return;
       setCurrentValue(newValue ?? "");
       onChange?.(currentValue);
     },
@@ -47,9 +45,8 @@ export const TextInput: FC<TextInputProps> = ({
   }, [currentValue, onBlur]);
 
   const handleFocus = useCallback(() => {
-    if (readOnly) return;
     setIsFocused(true);
-  }, [readOnly]);
+  }, []);
 
   return (
     <Wrapper size={size} appearance={appearance} status={isFocused ? "active" : "default"}>
@@ -61,7 +58,6 @@ export const TextInput: FC<TextInputProps> = ({
         onBlur={handleBlur}
         onFocus={handleFocus}
         appearance={appearance}
-        readOnly={readOnly}
       />
       {actions && (
         <ActionsWrapper>
@@ -110,17 +106,20 @@ const StyledInput = styled("input")<{
   outline: "none",
   border: "none",
   background: "none",
-  color: disabled ? theme.content.weaker : theme.content.main,
   flex: 1,
-  cursor: appearance === "readonly" ? "not-allowed" : disabled ? "not-allowed" : "auto",
+  color:
+    disabled && appearance !== "present" && appearance !== "readonly"
+      ? theme.content.weaker
+      : theme.content.main,
+  cursor: disabled || appearance === "readonly" ? "not-allowed" : "auto",
   colorScheme: theme.colorSchema,
-  "::placeholder": {
-    color: theme.content.weak,
-  },
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
   textOverflow: "ellipsis",
   overflow: "hidden",
+  "::placeholder": {
+    color: theme.content.weak,
+  },
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({

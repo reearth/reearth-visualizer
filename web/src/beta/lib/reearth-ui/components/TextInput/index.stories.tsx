@@ -18,50 +18,47 @@ export const Default: Story = {
   },
 };
 
-export const WithPlaceholder: Story = {
+export const Placeholder: Story = {
   args: {
     placeholder: "Type in here.",
   },
 };
 
-export const withDisable: Story = {
+export const Disabled: Story = {
   args: {
     disabled: true,
     value: "Text Input",
   },
 };
 
-export const withNormalSize: Story = {
-  args: {
-    size: "normal",
-    value: "Text Input",
-  },
-};
-export const withSmallSize: Story = {
+export const SizeSmall: Story = {
   args: {
     size: "small",
     value: "Text Input",
   },
 };
 
-export const withPresentAppearance: Story = {
+export const UsecasePresent: Story = {
   args: {
     appearance: "present",
+    disabled: true,
     value: "Text Input",
   },
 };
 
-export const withReadonlyAppearance: Story = {
+export const UsecaseReadonly: Story = {
   args: {
     appearance: "readonly",
+    disabled: true,
     value: "Text Input",
   },
 };
 // TODO: use IconButton instead of MockButton
-const MockButton: FC = () => <Icon icon="settings" size={20} />;
+const MockButton: FC = () => <Icon icon="settings" size={12} />;
 
-export const WithActions: Story = {
+export const Actions: Story = {
   args: {
     actions: [MockButton],
+    value: "Text Input",
   },
 };
