@@ -10,11 +10,12 @@ import "github.com/reearth/reearthx/usecasex/migration"
 // If the migration takes too long, the deployment may fail in a serverless environment.
 // Set the batch size to as large a value as possible without using up the RAM of the deployment destination.
 var migrations = migration.Migrations[DBClient]{
-	201217132559: AddSceneWidgetId,
-	201217193948: AddSceneDefaultTile,
-	210310145844: RemovePreviewToken,
-	210730175108: AddSceneAlignSystem,
-	220214180713: SplitSchemaOfProperties,
-	220309174648: AddSceneFieldToPropertySchema,
-	221028204300: MoveTerrainProperties,
+  201217132559: AddSceneWidgetId,
+  201217193948: AddSceneDefaultTile,
+  210310145844: RemovePreviewToken,
+  210730175108: AddSceneAlignSystem,
+  220214180713: SplitSchemaOfProperties,
+  220309174648: AddSceneFieldToPropertySchema,
+  221028204300: MoveTerrainProperties,
+  240515221450: CopySceneId,
 }

@@ -33,7 +33,7 @@ type ProjectDocument struct {
 	CoreSupport       bool
 	EnableGA          bool
 	TrackingID        string
-	// Scene             string
+	Scene             string
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
