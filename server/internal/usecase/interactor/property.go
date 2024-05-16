@@ -498,7 +498,7 @@ type ValueForRedis struct {
 func getPropertyFromCache(ctx context.Context, redisClient any, cacheKey string) (*property.Property, error) {
 	redisAdapter, ok := checkRedisClient(redisClient)
 	if !ok {
-		return nil, errors.New("invalid redis client")
+		return nil, nil
 	}
 
 	val, err := redisAdapter.GetValue(ctx, cacheKey)
