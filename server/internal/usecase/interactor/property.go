@@ -592,28 +592,10 @@ func convertPropertyFromRedis(p PropertyForRedis) (*property.Property, error) {
 			value.Type(field.V.Value.T),
 		)
 
-		var v *property.Value
-		switch field.V.Type {
-		case "string":
-			v = property.ValueTypeString.ValueFrom(valueDomain)
-		case "spacing":
-			v = property.ValueTypeSpacing.ValueFrom(valueDomain)
-		case "number":
-			v = property.ValueTypeNumber.ValueFrom(valueDomain)
-		}
-
 		optionalValueDomain := property.NewOptionalValue(
 			property.ValueType(field.V.Type),
-			// property.ValueTypeString.ValueFrom(valueDomain),
-			// property.ValueType(field.V.Type).ValueFrom(valueDomain),
-			v,
+			property.NewValue(valueDomain),
 		)
-
-		optionalValueDomain2 := property.OptionalValueFrom(
-			v,
-		)
-
-		log.Printf("optionalValueDomain2: %+v", optionalValueDomain2)
 
 		fieldDomain := property.NewField(property.FieldID(field.Field)).
 			Value(optionalValueDomain).
