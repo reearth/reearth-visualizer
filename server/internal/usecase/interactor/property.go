@@ -594,10 +594,11 @@ func convertPropertyFromRedis(p PropertyForRedis) (*property.Property, error) {
 			property.NewValue(valueDomain),
 		)
 
-		fieldDomain := property.NewField(property.FieldID(field.Field)).
-			Value(optionalValueDomain).
-			Links(nil).
-			MustBuild()
+		fieldDomain := property.NewFieldDomain(
+			property.FieldID(field.Field),
+			nil,
+			optionalValueDomain,
+		)
 
 		fieldsDomain = append(fieldsDomain, fieldDomain)
 	}

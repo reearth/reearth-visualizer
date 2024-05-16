@@ -20,6 +20,14 @@ type Field struct {
 	v     *OptionalValue
 }
 
+func NewFieldDomain(field FieldID, links *Links, v *OptionalValue) *Field {
+	return &Field{
+		field: field,
+		links: links,
+		v:     v,
+	}
+}
+
 func (p *Field) Clone() *Field {
 	if p == nil {
 		return nil
