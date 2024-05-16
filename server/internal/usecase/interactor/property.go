@@ -3,7 +3,6 @@ package interactor
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -513,8 +512,6 @@ func getPropertyFromCache(ctx context.Context, redisClient any, cacheKey string)
 	if err := msgpack.Unmarshal([]byte(val), &p); err != nil {
 		return nil, err
 	}
-
-	log.Printf("p: %+v", p)
 
 	propertyDomain, err := convertPropertyFromRedis(p)
 	if err != nil {
