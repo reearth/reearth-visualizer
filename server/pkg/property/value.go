@@ -255,3 +255,7 @@ func ValueFromStringOrNumber(s string) *Value {
 
 	return ValueTypeString.ValueFrom(s)
 }
+
+func DefaultTypes() value.TypePropertyMap {
+	return types
+}

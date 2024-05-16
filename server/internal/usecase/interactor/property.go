@@ -583,9 +583,23 @@ func convertPropertyFromRedis(p PropertyForRedis) (*property.Property, error) {
 
 	fieldsDomain := make([]*property.Field, 0, len(p.Items[0].Fields))
 	for _, field := range p.Items[0].Fields {
+
+		var v interface{}
+		if field.Field == "padding" {
+			m := field.V.Value.V.(map[string]interface{})
+			v = property.Spacing{
+				Top:    m["Top"].(float64),
+				Bottom: m["Bottom"].(float64),
+				Left:   m["Left"].(float64),
+				Right:  m["Right"].(float64),
+			}
+		} else {
+			v = field.V.Value.V
+		}
+
 		valueDomain := value.New(
-			nil,
-			field.V.Value.V,
+			property.DefaultTypes(),
+			v,
 			value.Type(field.V.Value.T),
 		)
 
