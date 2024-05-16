@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import {
   events,
@@ -724,7 +724,7 @@ export default function ({
   );
 
   useEffect(() => {
-    const eventHandles: {
+    const mouseEventHandles: {
       [index in keyof MouseEvents]: keyof MouseEventHandles;
     } = {
       click: "onClick",
@@ -742,11 +742,13 @@ export default function ({
       mouseleave: "onMouseLeave",
       wheel: "onWheel",
     };
-    (Object.keys(eventHandles) as (keyof MouseEvents)[]).forEach((event: keyof MouseEvents) => {
-      onMouseEvent(eventHandles[event], (props: MouseEvent) => {
-        emit(event, props);
-      });
-    });
+    (Object.keys(mouseEventHandles) as (keyof MouseEvents)[]).forEach(
+      (event: keyof MouseEvents) => {
+        onMouseEvent(mouseEventHandles[event], (props: MouseEvent) => {
+          emit(event, props);
+        });
+      },
+    );
     onLayerEdit?.(e => {
       emit("layeredit", e);
     });
@@ -755,12 +757,6 @@ export default function ({
     });
     onTimelineCommitEvent(e => {
       emit("timelinecommit", e);
-    });
-    onSketchPluginFeatureCreate?.(e => {
-      emit("sketchfeaturecreated", e);
-    });
-    onSketchTypeChange?.(e => {
-      emit("sketchtypechange", e);
     });
     onLayerVisibility?.(e => {
       emit("layerVisibility", e);
@@ -783,14 +779,34 @@ export default function ({
     onLayerEdit,
     onTickEvent,
     onTimelineCommitEvent,
-    onSketchPluginFeatureCreate,
-    onSketchTypeChange,
     onLayerVisibility,
     onLayerLoad,
     onLayerSelectWithRectStart,
     onLayerSelectWithRectMove,
     onLayerSelectWithRectEnd,
   ]);
+
+  // bind sketch plugin feature create event
+  const sketchPluginFeatureCreateEventBinded = useRef(false);
+  useEffect(() => {
+    if (!sketchPluginFeatureCreateEventBinded.current && onSketchPluginFeatureCreate) {
+      onSketchPluginFeatureCreate?.(e => {
+        emit("sketchfeaturecreated", e);
+      });
+      sketchPluginFeatureCreateEventBinded.current = true;
+    }
+  }, [emit, onSketchPluginFeatureCreate]);
+
+  // bind sketch type change event
+  const sketchTypeChangeEventBinded = useRef(false);
+  useEffect(() => {
+    if (!sketchTypeChangeEventBinded.current && onSketchTypeChange) {
+      onSketchTypeChange?.(e => {
+        emit("sketchtypechange", e);
+      });
+      sketchTypeChangeEventBinded.current = true;
+    }
+  }, [emit, onSketchTypeChange]);
 
   // expose plugin API for developers
   useEffect(() => {
