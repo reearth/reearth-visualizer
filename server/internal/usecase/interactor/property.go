@@ -586,7 +586,7 @@ func convertPropertyFromRedis(p PropertyForRedis) (*property.Property, error) {
 
 	fieldsDomain := make([]*property.Field, 0, len(p.Items[0].Fields))
 	for _, field := range p.Items[0].Fields {
-		valueDomain := value.NewValue(
+		valueDomain := value.New(
 			nil,
 			field.V.Value.V,
 			value.Type(field.V.Value.T),

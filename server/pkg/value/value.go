@@ -10,7 +10,7 @@ type Value struct {
 	t Type
 }
 
-func NewValue(
+func New(
 	p TypePropertyMap,
 	v interface{},
 	t Type,
