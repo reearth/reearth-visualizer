@@ -53,9 +53,6 @@ export const NumberInput: FC<NumberInputProps> = ({
   return (
     <Wrapper size={size} status={isFocused ? "active" : "default"}>
       <StyledInput
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
         value={currentValue}
         disabled={disabled}
         placeholder={placeholder}
