@@ -33,9 +33,10 @@ export const NumberInput: FC<NumberInputProps> = ({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
-      const numericValue = currentValue.replace(/\D/g, ""); // Remove non-numeric characters
-      setCurrentValue(numericValue);
-      onChange?.(parseFloat(numericValue));
+      if (/^-?\d*\.?\d*$/.test(currentValue)) {
+        setCurrentValue(currentValue);
+        onChange?.(parseFloat(currentValue));
+      }
     },
     [onChange],
   );
