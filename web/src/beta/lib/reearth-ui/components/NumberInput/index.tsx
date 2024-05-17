@@ -9,8 +9,8 @@ export type NumberInputProps = {
   placeholder?: string;
   appearance?: "readonly";
   unit?: string;
-  onChange?: (value?: number) => void;
-  onBlur?: (value?: number) => void;
+  onChange?: (value?: number | string) => void;
+  onBlur?: (value?: number | string) => void;
 };
 
 export const NumberInput: FC<NumberInputProps> = ({
@@ -23,7 +23,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   onChange,
   onBlur,
 }) => {
-  const [currentValue, setCurrentValue] = useState<number | undefined>(value);
+  const [currentValue, setCurrentValue] = useState<number | string | undefined>(value);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
@@ -32,9 +32,10 @@ export const NumberInput: FC<NumberInputProps> = ({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const parsedValue = parseFloat(e.currentTarget.value);
-      setCurrentValue(parsedValue);
-      onChange?.(parsedValue);
+      const currentValue = e.currentTarget.value;
+      const numericValue = currentValue.replace(/\D/g, ""); // Remove non-numeric characters
+      setCurrentValue(numericValue);
+      onChange?.(parseFloat(numericValue));
     },
     [onChange],
   );
@@ -48,19 +49,12 @@ export const NumberInput: FC<NumberInputProps> = ({
     setIsFocused(true);
   }, []);
 
-  // This function prevent defaut browser clear input on these keys pressed
-  // https://stackoverflow.com/questions/49869624/numeric-value-gets-clear-in-we-press-letter-e-in-input-type-number
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "e" || e.key === "+" || e.key === "-") {
-      e.preventDefault();
-    }
-  }, []);
-
   return (
     <Wrapper size={size} status={isFocused ? "active" : "default"}>
       <StyledInput
-        type="number"
-        step="any"
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
         value={currentValue}
         disabled={disabled}
         placeholder={placeholder}
@@ -68,7 +62,6 @@ export const NumberInput: FC<NumberInputProps> = ({
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        onKeyDown={handleKeyDown}
       />
       {unit && <UnitWrapper> {unit}</UnitWrapper>}
     </Wrapper>
@@ -111,12 +104,6 @@ const StyledInput = styled("input")<{
   overflow: "hidden",
   "::placeholder": {
     color: theme.content.weak,
-  },
-  "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button": {
-    "-webkit-appearance": "none",
-  },
-  "&[type='number']": {
-    "-moz-appearance": "textfield",
   },
 }));
 
