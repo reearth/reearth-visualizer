@@ -43,8 +43,40 @@ export const Uncontrolled: Story = {
   args: {
     children: (
       <>
-        <Popup.Trigger title="UnControled">
-          <div style={{ background: "gray" }}>Trigger</div>
+        <Popup.Trigger title="Default Button" />
+        <Popup.Content style={{ background: "gray" }}>
+          <div>
+            If you do not pass both open and onOpenChange, automatically managed open state by this
+            component.
+          </div>
+        </Popup.Content>
+      </>
+    ),
+    open: undefined,
+    onOpenChange: undefined,
+    placement: "bottom",
+    offset: {
+      mainAxis: 20,
+      crossAxis: 300,
+      alignmentAxis: 0,
+    },
+    modal: true,
+  },
+};
+
+export const customTrigger: Story = {
+  render: args => {
+    return (
+      <div style={{ maxWidth: "200px", margin: "0 auto" }}>
+        <Popup.Provider {...args} />
+      </div>
+    );
+  },
+  args: {
+    children: (
+      <>
+        <Popup.Trigger asChild>
+          <div style={{ cursor: "pointer" }}>Trigger me</div>
         </Popup.Trigger>
         <Popup.Content style={{ background: "gray" }}>
           <div>
