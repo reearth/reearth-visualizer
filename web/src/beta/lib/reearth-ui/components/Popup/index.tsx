@@ -89,6 +89,7 @@ export const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerP
 );
 
 type ContentProps = {
+  children: ReactNode;
   title?: string;
   onClick?: () => void;
 };
