@@ -11,7 +11,7 @@ export default {
 
 type Story = StoryObj<typeof Popup.Provider>;
 
-const MockedChildren: FC = () => (
+const MockChild: FC = () => (
   <Container>
     <Title>Title</Title>
     <Content>
@@ -66,7 +66,7 @@ const DefaultOpenComponent: FC<Popup.PopupOptionsProps> = args => {
           </TriggerWrapper>
         </Popup.Trigger>
         <Popup.Content>
-          <MockedChildren />
+          <MockChild />
         </Popup.Content>
       </Popup.Provider>
     </PopupWrapper>
@@ -93,7 +93,7 @@ export const Trigger: Story = {
       <>
         <Popup.Trigger title="Trigger Me" style={{ display: "inline-block", margin: "auto" }} />
         <Popup.Content>
-          <MockedChildren />
+          <MockChild />
         </Popup.Content>
       </>
     ),
