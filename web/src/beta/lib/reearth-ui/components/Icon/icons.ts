@@ -93,7 +93,7 @@ import Star from "./Icons/Star.svg?react";
 import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
 import Table from "./Icons/Table.svg?react";
-import TagSimple from "./Icons/TagSimple.svg?react";
+import Tag from "./Icons/Tag.svg?react";
 import Terrian from "./Icons/Terrian.svg?react";
 import Text from "./Icons/Text.svg?react";
 import TextAlignCenter from "./Icons/TextAlignCenter.svg?react";
@@ -208,7 +208,7 @@ export default {
   squareFilled: SquareFilled,
   swiper: Swiper,
   table: Table,
-  tagSimple: TagSimple,
+  tag: Tag,
   terrian: Terrian,
   text: Text,
   textAlignCenter: TextAlignCenter,
