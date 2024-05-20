@@ -1,12 +1,13 @@
-import A_Z from "./Icons/A-Z.svg?react";
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
 import Article from "./Icons/Article.svg?react";
+import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
 import BracketsCurly from "./Icons/BracketsCurly.svg?react";
 import Buildings from "./Icons/Buildings.svg?react";
 import CalendarBlank from "./Icons/CalendarBlank.svg?react";
 import Camera from "./Icons/Camera.svg?react";
+import CameraFilled from "./Icons/CameraFilled.svg?react";
 import Capture from "./Icons/Capture.svg?react";
 import CaretDoubleDown from "./Icons/CaretDoubleDown.svg?react";
 import CaretDoubleLeft from "./Icons/CaretDoubleLeft.svg?react";
@@ -21,6 +22,7 @@ import CirclesThreePlus from "./Icons/CirclesThreePlus.svg?react";
 import Clock from "./Icons/Clock.svg?react";
 import ClockAfternoon from "./Icons/ClockAfternoon.svg?react";
 import ClockClockwise from "./Icons/ClockClockwise.svg?react";
+import ClockFilled from "./Icons/ClockFilled.svg?react";
 import Close from "./Icons/Close.svg?react";
 import Copy from "./Icons/Copy.svg?react";
 import Cube from "./Icons/Cube.svg?react";
@@ -32,42 +34,36 @@ import Desktop from "./Icons/Desktop.svg?react";
 import DeviceMobile from "./Icons/DeviceMobile.svg?react";
 import DotsSixVertical from "./Icons/DotsSixVertical.svg?react";
 import DotsThreeVertical from "./Icons/DotsThreeVertical.svg?react";
-import EditMode from "./Icons/Edit-Mode.svg?react";
-import Edit from "./Icons/Edit.svg?react";
+import EditMode from "./Icons/EditMode.svg?react";
 import Editor from "./Icons/Editor.svg?react";
 import Exit from "./Icons/Exit.svg?react";
+import ExitFilled from "./Icons/ExitFilled.svg?react";
 import Extrude from "./Icons/Extrude.svg?react";
 import Eye from "./Icons/Eye.svg?react";
 import EyeSlash from "./Icons/EyeSlash.svg?react";
 import File from "./Icons/File.svg?react";
+import FileFilled from "./Icons/FileFilled.svg?react";
 import FileHtml from "./Icons/FileHtml.svg?react";
 import FileMD from "./Icons/FileMD.svg?react";
-import FillCamera from "./Icons/Fill_Camera.svg?react";
-import FillExit from "./Icons/Fill_Exit.svg?react";
-import FillFile from "./Icons/Fill_File.svg?react";
-import FillFileMD from "./Icons/Fill_FileMD.svg?react";
-import FillImage from "./Icons/Fill_Image.svg?react";
-import FillLayer from "./Icons/Fill_Layer.svg?react";
-import FillListDashes from "./Icons/Fill_ListDashes.svg?react";
-import FillPen from "./Icons/Fill_Pen.svg?react";
-import FillSetting from "./Icons/Fill_Setting.svg?react";
-import FillTime from "./Icons/Fill_Time.svg?react";
-import FillVideo from "./Icons/Fill_Video.svg?react";
+import FileMDFilled from "./Icons/FileMDFilled.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
 import FolderSimplePlus from "./Icons/FolderSimplePlus.svg?react";
 import GlobeSimple from "./Icons/GlobeSimple.svg?react";
 import Grid from "./Icons/Grid.svg?react";
 import Hand from "./Icons/Hand.svg?react";
-import If from "./Icons/if.svg?react";
+import If from "./Icons/If.svg?react";
 import Image from "./Icons/Image.svg?react";
+import ImageFilled from "./Icons/ImageFilled.svg?react";
 import ImageSquare from "./Icons/ImageSquare.svg?react";
 import LToS from "./Icons/L-S.svg?react";
+import LayerFilled from "./Icons/LayerFilled.svg?react";
 import Layers from "./Icons/Layers.svg?react";
 import LineHeight from "./Icons/lineHight.svg?react";
 import LineSegments from "./Icons/LineSegments.svg?react";
 import LinkSimple from "./Icons/LinkSimple.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
+import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass.svg?react";
 import MapPin from "./Icons/MapPin.svg?react";
 import MapTrifold from "./Icons/MapTrifold.svg?react";
@@ -77,6 +73,7 @@ import Padding from "./Icons/Padding.svg?react";
 import Page from "./Icons/Page.svg?react";
 import Palette from "./Icons/Palette.svg?react";
 import Paperclip from "./Icons/Paperclip.svg?react";
+import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
 import Play from "./Icons/Play.svg?react";
@@ -88,10 +85,12 @@ import Polyline from "./Icons/Polyline.svg?react";
 import PuzzlePiece from "./Icons/PuzzlePiece.svg?react";
 import Return from "./Icons/Return.svg?react";
 import Rows from "./Icons/Rows.svg?react";
-import SToL from "./Icons/S-L.svg?react";
+import Setting from "./Icons/Setting.svg?react";
+import SettingFilled from "./Icons/SettingFilled.svg?react";
 import Square from "./Icons/Square.svg?react";
-import Square2 from "./Icons/Square2.svg?react";
+import SquareFilled from "./Icons/SquareFilled.svg?react";
 import Star from "./Icons/Star.svg?react";
+import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
 import Table from "./Icons/Table.svg?react";
 import TagSimple from "./Icons/TagSimple.svg?react";
@@ -110,20 +109,20 @@ import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
 import Trash from "./Icons/Trash.svg?react";
 import Triangle from "./Icons/Triangle.svg?react";
 import UploadSimple from "./Icons/UploadSimple.svg?react";
+import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
-import X from "./Icons/X.svg?react";
 import ZToA from "./Icons/Z-A.svg?react";
 
 export default {
   addStyle: AddStyle,
   appearance: Appearance,
   article: Article,
-  aToZ: A_Z,
   book: Book,
   bracketsCurly: BracketsCurly,
   buildings: Buildings,
   calendarBlank: CalendarBlank,
   camera: Camera,
+  cameraFilled: CameraFilled,
   capture: Capture,
   caretDoubleDown: CaretDoubleDown,
   caretDoubleLeft: CaretDoubleLeft,
@@ -136,6 +135,7 @@ export default {
   circle: Circle,
   circlesThreePlus: CirclesThreePlus,
   clock: Clock,
+  clockFilled: ClockFilled,
   clockAfternoon: ClockAfternoon,
   clockClockwise: ClockClockwise,
   close: Close,
@@ -149,27 +149,18 @@ export default {
   deviceMobile: DeviceMobile,
   dotsSixVertical: DotsSixVertical,
   dotsThreeVertical: DotsThreeVertical,
-  edit: Edit,
   editMode: EditMode,
   editor: Editor,
   exit: Exit,
+  exitFilled: ExitFilled,
   extrude: Extrude,
   eye: Eye,
   eyeSlash: EyeSlash,
   file: File,
+  fileFilled: FileFilled,
   fileHtml: FileHtml,
   fileMD: FileMD,
-  fillCamera: FillCamera,
-  fillExit: FillExit,
-  fillFile: FillFile,
-  fillFileMD: FillFileMD,
-  fillImage: FillImage,
-  fillLayer: FillLayer,
-  fillListDashes: FillListDashes,
-  fillPen: FillPen,
-  fillSetting: FillSetting,
-  fillTime: FillTime,
-  fillVideo: FillVideo,
+  fileMDFilled: FileMDFilled,
   floppyDisk: FloppyDisk,
   folderSimple: FolderSimple,
   folderSimplePlus: FolderSimplePlus,
@@ -178,13 +169,15 @@ export default {
   hand: Hand,
   if: If,
   image: Image,
+  imageFilled: ImageFilled,
   imageSquare: ImageSquare,
   layers: Layers,
+  layerFilled: LayerFilled,
   lineHeight: LineHeight,
   lineSegments: LineSegments,
   linkSimple: LinkSimple,
   listDashes: ListDashes,
-  lToS: LToS,
+  listDashesFilled: ListDashesFilled,
   magnifyingGlass: MagnifyingGlass,
   mapPin: MapPin,
   mapTrifold: MapTrifold,
@@ -194,6 +187,7 @@ export default {
   page: Page,
   palette: Palette,
   paperclip: Paperclip,
+  pencilFilled: PencilFilled,
   pencilLine: PencilLilne,
   pencilSimple: PencilSimple,
   play: Play,
@@ -205,10 +199,13 @@ export default {
   puzzlePiece: PuzzlePiece,
   return: Return,
   rows: Rows,
+  setting: Setting,
+  settingFilled: SettingFilled,
   sToL: SToL,
+  lToS: LToS,
   star: Star,
   square: Square,
-  square2: Square2,
+  squareFilled: SquareFilled,
   swiper: Swiper,
   table: Table,
   tagSimple: TagSimple,
@@ -227,7 +224,8 @@ export default {
   trash: Trash,
   triangle: Triangle,
   uploadSimple: UploadSimple,
+  videoFilled: VideoFilled,
   warning: Warning,
-  x: X,
+  aToZ: AToZ,
   zToA: ZToA,
 };

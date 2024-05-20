@@ -4,10 +4,10 @@ import { styled, useTheme } from "@reearth/services/theme";
 
 import Icons from "./icons";
 
-export type Icons = keyof typeof Icons;
+export type IconName = keyof typeof Icons;
 
 export type IconProps = {
-  icon: Icons;
+  icon: IconName;
   size?: "large" | "normal" | "small";
   color?: string;
 };
@@ -15,7 +15,7 @@ export type IconProps = {
 export const Icon: React.FC<IconProps> = ({ icon, size = "normal", color }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
-    const SvgComponent = Icons[icon as Icons];
+    const SvgComponent = Icons[icon as IconName];
     if (!SvgComponent) return null;
     return styled(SvgComponent)<{
       color?: string;

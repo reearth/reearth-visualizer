@@ -2,14 +2,14 @@ import { FC } from "react";
 
 import { styled } from "@reearth/services/theme";
 
-import { Icons, Icon } from "../Icon";
+import { IconName, Icon } from "../Icon";
 
 export type ButtonProps = {
   appearance?: "primary" | "secondary" | "dangerous" | "simple";
   disabled?: boolean;
   size?: "normal" | "small";
   iconButton?: boolean;
-  icon?: Icons; // TODO: Icon Name, Use Icon Component
+  icon?: IconName;
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
@@ -36,7 +36,6 @@ export const Button: FC<ButtonProps> = ({
       extendWidth={extendWidth}
       minWidth={minWidth}
       onClick={onClick}>
-      {/* TODD: Use Icon Component based on icon */}
       {icon && <Icon icon={icon} />}
       {!iconButton && title}
     </StyledButton>

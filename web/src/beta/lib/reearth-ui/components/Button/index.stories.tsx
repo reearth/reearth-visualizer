@@ -18,7 +18,7 @@ export const Default: Story = {
       <Button title="Secondary Disabled" disabled={true} />
       <Button
         title="Secondary Icon Button"
-        icon="fillSetting"
+        icon="settingFilled"
         onClick={action("secondary-icon-button-click")}
       />
       <Button
@@ -31,10 +31,10 @@ export const Default: Story = {
         minWidth={300}
         onClick={action("secondary-min-width-click")}
       />
-      <Button iconButton={true} icon="fillSetting" onClick={action("secondary-icon-click")} />
+      <Button iconButton={true} icon="settingFilled" onClick={action("secondary-icon-click")} />
       <Button
         iconButton={true}
-        icon="fillSetting"
+        icon="settingFilled"
         size="small"
         onClick={action("secondary-icon-small-click")}
       />
@@ -61,7 +61,7 @@ export const Primary: Story = {
       <Button
         title="Primary Icon Button"
         appearance="primary"
-        icon="fillSetting"
+        icon="settingFilled"
         onClick={action("primary-icon-button-click")}
       />
       <Button
@@ -79,13 +79,13 @@ export const Primary: Story = {
       <Button
         appearance="primary"
         iconButton={true}
-        icon="fillSetting"
+        icon="settingFilled"
         onClick={action("primary-icon-click")}
       />
       <Button
         appearance="primary"
         iconButton={true}
-        icon="fillSetting"
+        icon="settingFilled"
         size="small"
         onClick={action("primary-icon-small-click")}
       />
@@ -112,7 +112,7 @@ export const Dangerous: Story = {
       <Button
         title="Dangerous Icon Button"
         appearance="dangerous"
-        icon="fillSetting"
+        icon="settingFilled"
         onClick={action("dangerous-icon-button-click")}
       />
       <Button
@@ -130,13 +130,13 @@ export const Dangerous: Story = {
       <Button
         appearance="dangerous"
         iconButton={true}
-        icon="fillSetting"
+        icon="settingFilled"
         onClick={action("dangerous-icon-click")}
       />
       <Button
         appearance="dangerous"
         iconButton={true}
-        icon="fillSetting"
+        icon="settingFilled"
         size="small"
         onClick={action("dangerous-icon-small-click")}
       />
@@ -163,7 +163,7 @@ export const Simple: Story = {
       <Button
         title="Simple Icon Button"
         appearance="simple"
-        icon="fillSetting"
+        icon="settingFilled"
         onClick={action("simple-icon-button-click")}
       />
       <Button
@@ -181,13 +181,13 @@ export const Simple: Story = {
       <Button
         appearance="simple"
         iconButton={true}
-        icon="fillSetting"
+        icon="settingFilled"
         onClick={action("simple-icon-click")}
       />
       <Button
         appearance="simple"
         iconButton={true}
-        icon="fillSetting"
+        icon="settingFilled"
         size="small"
         onClick={action("simple-icon-small-click")}
       />
