@@ -93,7 +93,7 @@ const Wrapper = styled("div")<{
     alignItems: "center",
     padding:
       size === "small"
-        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+        ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
   };
