@@ -91,7 +91,26 @@ export const Trigger: Story = {
   args: {
     children: (
       <>
-        <Popup.Trigger title="Trigger Me" style={{ display: "inline-block", margin: "auto" }} />
+        <Popup.Trigger title="Trigger Me" style={{ display: "inline-block" }} />
+        <Popup.Content>
+          <MockChild />
+        </Popup.Content>
+      </>
+    ),
+    open: undefined,
+    onOpenChange: undefined,
+    placement: "bottom",
+  },
+};
+
+export const Flip: Story = {
+  render: args => {
+    return <Popup.Provider {...args} />;
+  },
+  args: {
+    children: (
+      <>
+        <Popup.Trigger title="Trigger Me" style={{ display: "inline-block", margin: "20px " }} />
         <Popup.Content>
           <MockChild />
         </Popup.Content>
