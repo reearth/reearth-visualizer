@@ -6,7 +6,7 @@ import { fetchGeoRSS } from "./georss";
 import { fetchGMLData } from "./gml";
 import { fetchGPXfile } from "./gpx";
 import { fetchGTFS } from "./gtfs";
-import { fetchShapefile } from "./shapefile";
+import { fetchShapefile } from "./shapefile/shapefile";
 import { FetchOptions } from "./utils";
 
 export type DataFetcher = (
