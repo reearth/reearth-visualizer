@@ -75,7 +75,7 @@ const ListField: React.FC<Props> = ({
           getId={getId}
           renderItem={({ id, value }) => (
             <Item onClick={() => onSelect(id)} selected={selected === id}>
-              <StyledText size="xFootnote">{value}</StyledText>
+              <StyledText size="footnote">{value}</StyledText>
             </Item>
           )}
           gap={0}

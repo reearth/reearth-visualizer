@@ -1,4 +1,4 @@
-import type { DataType, SceneProperty } from "@reearth/beta/lib/core/Map/types";
+import type { DataRange, DataType, Geometry, SceneProperty, TimeInterval } from "@reearth/core";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 export type PublishedData = {
@@ -58,10 +58,11 @@ export type NLSLayer = {
       type: DataType;
       url?: string;
       value?: any;
+      property?: any;
     };
   };
   isSketch?: boolean;
-  sketch?: any;
+  sketchInfo?: any;
   nlsInfobox?: any;
 };
 
@@ -122,3 +123,15 @@ export type WidgetArea = {
 export type WidgetAlignment = "start" | "centered" | "end";
 
 export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
+
+export type Feature = {
+  id: string;
+  geometry?: Geometry[];
+  interval?: TimeInterval;
+  properties?: any;
+  // Map engine specific information.
+  metaData?: {
+    description?: string;
+  };
+  range?: DataRange;
+};

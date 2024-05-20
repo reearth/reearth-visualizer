@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import { type SelectedWidget } from "@reearth/beta/features/Editor/hooks";
 import { type InstalledWidget } from "@reearth/services/api/widgetsApi/utils";
-import { type SelectedWidget } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 
 export { default as ActionArea } from "./Action";

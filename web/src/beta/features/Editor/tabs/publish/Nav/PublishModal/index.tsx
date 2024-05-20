@@ -6,7 +6,8 @@ import Icon from "@reearth/beta/components/Icon";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
-import { styled, metricsSizes, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
+import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 
 import useHooks, { type PublishStatus } from "./hooks";
 
@@ -174,7 +175,7 @@ const PublishModal: React.FC<Props> = ({
                 {t("Copy")}
               </Text>
             </UrlWrapper>
-            <Text size="xFootnote">
+            <Text size="footnote">
               {t("* Please use this code if you want to embed your project into a webpage")}
             </Text>
           </div>
@@ -242,7 +243,7 @@ const Section = styled.div<{ disabled?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: ${`${metricsSizes["m"]}px`};
+  margin-bottom: ${`${spacingSizes["normal"]}px`};
   opacity: ${({ disabled }) => disabled && "0.6"};
   cursor: ${({ disabled }) => disabled && "not-allowed"};
 `;

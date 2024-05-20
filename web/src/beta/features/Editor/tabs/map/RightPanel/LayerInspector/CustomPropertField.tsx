@@ -5,7 +5,7 @@ import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
 import TextField from "@reearth/beta/components/fields/TextField";
 import ToggleField from "@reearth/beta/components/fields/ToggleField";
 import URLField from "@reearth/beta/components/fields/URLField";
-import { Feature } from "@reearth/beta/lib/core/engines";
+import { Feature } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 
 import { FieldProp, ValueProp } from "./FeatureData";

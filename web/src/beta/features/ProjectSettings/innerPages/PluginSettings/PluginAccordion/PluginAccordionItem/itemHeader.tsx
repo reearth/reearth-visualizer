@@ -91,7 +91,7 @@ const TitleWrapper = styled(Flex)`
 
 const ThumbnailWrapper = styled.div`
   border-radius: 8px;
-  margin: ${({ theme }) => theme.metrics.m};
+  margin: ${({ theme }) => theme.spacing.normal};
 `;
 
 const Thumbnail = styled.img`

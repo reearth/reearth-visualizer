@@ -40,10 +40,9 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --clean ${{ env.SNAPSHOT }}
+          args: release --rm-dist ${{ github.event.inputs.new_tag == 'blank' && '--snapshot' || '' }}
           workdir: server
         env:
-          SNAPSHOT: ${{ github.event.inputs.new_tag != 'blank' && '--snapshot' || '' }}
           GORELEASER_CURRENT_TAG: ${{ github.event.inputs.new_tag == 'blank' && '0.0.0' || github.event.inputs.new_tag }}
       - name: Rename artifacts
         if: ${{ github.event.inputs.name != 'blank' }}

@@ -5,8 +5,8 @@ import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import Text from "@reearth/beta/components/Text";
 // import Slider from "@reearth/beta/components/Slider";
-import type { FlyTo } from "@reearth/beta/lib/core/types";
 import type { Camera } from "@reearth/beta/utils/value";
+import type { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -140,7 +140,7 @@ const Input = styled.div<{ positionSet?: boolean }>`
   border: 1px solid ${({ theme }) => theme.outline.weak};
   color: ${({ theme }) => theme.content.main};
   background: ${({ theme }) => theme.bg[1]};
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+  box-shadow: ${({ theme }) => theme.shadow.input};
 
   color: ${({ theme, positionSet }) => (positionSet ? theme.content.main : theme.content.weak)};
 `;

@@ -4,7 +4,7 @@ import Text from "@reearth/beta/components/Text";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
-import { metricsSizes } from "@reearth/services/theme/reearthTheme/common/metrics";
+import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
 
 export type Props = {
   className?: string;
@@ -47,7 +47,7 @@ const NumberInput: React.FC<Props> = ({
   useEffect(() => {
     // Calculate and set the minimum width for the input field
     if (inputRef.current && expandWithContent) {
-      const minWidth = Math.max(metricsSizes.xs, inputRef.current.value.length * 10);
+      const minWidth = Math.max(spacingSizes.smallest, inputRef.current.value.length * 10);
       inputRef.current.style.width = `${minWidth}px`;
     }
   }, [expandWithContent]);
@@ -86,7 +86,7 @@ const NumberInput: React.FC<Props> = ({
       setInnerValue(undefined);
     }
     e.currentTarget.value = parsedValue.toString();
-    const minWidth = Math.max(metricsSizes.xs, newValue.length * 10);
+    const minWidth = Math.max(spacingSizes.smallest, newValue.length * 10);
     e.currentTarget.style.width = `${minWidth}px`;
   }, []);
 
@@ -162,9 +162,9 @@ const InputWrapper = styled.div<{ inactive: boolean; expandWithContent?: boolean
   background: ${({ theme }) => theme.bg[1]};
   border: 1px solid ${({ theme }) => theme.outline.weak};
   border-radius: 4px;
-  padding: ${metricsSizes.xs}px ${metricsSizes.s}px;
+  padding: ${spacingSizes.smallest}px ${spacingSizes.small}px;
   gap: 12px;
-  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.25) inset;
+  box-shadow: ${({ theme }) => theme.shadow.input};
   color: ${({ inactive, theme }) => (inactive ? theme.content.weak : theme.content.main)};
   ${({ expandWithContent }) => expandWithContent && "min-width: min-content;"}
 

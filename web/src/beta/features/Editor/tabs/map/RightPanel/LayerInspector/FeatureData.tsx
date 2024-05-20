@@ -7,8 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import SidePanelSectionField from "@reearth/beta/components/SidePanelSectionField";
 import Text from "@reearth/beta/components/Text";
 import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/useSketch";
-import { Geometry } from "@reearth/beta/lib/core/engines";
-import { Feature } from "@reearth/beta/lib/core/mantle";
+import { Geometry, Feature } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 

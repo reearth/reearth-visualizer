@@ -1,7 +1,5 @@
 import NotFound from "@reearth/beta/components/NotFound";
-import StoryPanel from "@reearth/beta/lib/core/StoryPanel";
-import Visualizer from "@reearth/beta/lib/core/Visualizer";
-import { config } from "@reearth/services/config";
+import Visualizer from "@reearth/beta/features/Visualizer";
 import { useT } from "@reearth/services/i18n";
 
 import useHooks from "./hooks";
@@ -23,18 +21,15 @@ export default function Published({ alias }: Props) {
   ) : (
     <Visualizer
       engine="cesium"
+      engineMeta={engineMeta}
       isBuilt
+      ready={ready}
       layers={layers}
-      floatingWidgets={widgets?.floatingWidgets}
-      widgetAlignSystem={widgets?.alignSystem}
-      ownBuiltinWidgets={widgets?.ownBuiltinWidgets}
+      widgets={widgets}
+      story={story}
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
-      ready={ready}
-      storyPanelPosition={story?.position}
-      pluginBaseUrl={config()?.plugins}
-      meta={engineMeta}>
-      {story && <StoryPanel selectedStory={story} />}
-    </Visualizer>
+      showStoryPanel={!!story}
+    />
   );
 }

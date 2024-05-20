@@ -16,6 +16,7 @@ export type Theme = Common & {
   };
   select: {
     weaker: string;
+    weak: string;
     main: string;
     strong: string;
   };
@@ -32,6 +33,7 @@ export type Theme = Common & {
   primary: {
     main: string;
     weak: string;
+    weakest: string;
     strong: string;
   };
   content: {
@@ -48,6 +50,7 @@ export type Theme = Common & {
   };
   dangerous: {
     main: string;
+    weak: string;
   };
   warning: {
     main: string;
@@ -56,4 +59,5 @@ export type Theme = Common & {
     main_1: string;
     main_2: string;
   };
+  colorSchema: string;
 };

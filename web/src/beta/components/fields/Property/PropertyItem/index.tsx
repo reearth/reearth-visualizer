@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
-import { FlyTo } from "@reearth/beta/lib/core/types";
 import { Camera, ValueType, ValueTypes, zeroValues } from "@reearth/beta/utils/value";
+import { FlyTo } from "@reearth/core";
 import { Group, GroupListItem, Item } from "@reearth/services/api/propertyApi/utils";
 import { useT } from "@reearth/services/i18n";
 

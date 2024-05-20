@@ -3,18 +3,18 @@ import {
   type WidgetSection,
   type WidgetArea,
   type Alignment,
-} from "@reearth/beta/lib/core/Crust";
+} from "@reearth/beta/features/Visualizer/Crust";
 import {
   BuiltinWidgets,
   Widget as RawWidget,
   WidgetAlignSystem,
   WidgetLayoutConstraint,
   isBuiltinWidget,
-} from "@reearth/beta/lib/core/Crust/Widgets";
-import { WidgetAreaPadding } from "@reearth/beta/lib/core/Crust/Widgets/WidgetAlignSystem/types";
-import { LayerAppearanceTypes, Feature } from "@reearth/beta/lib/core/mantle";
-import type { Layer } from "@reearth/beta/lib/core/Map";
+} from "@reearth/beta/features/Visualizer/Crust/Widgets";
+import { WidgetAreaPadding } from "@reearth/beta/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
 import { DEFAULT_LAYER_STYLE, valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { LayerAppearanceTypes, Feature } from "@reearth/core";
+import type { Layer } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import {
@@ -378,7 +378,7 @@ export function processLayers(
           const cleanedFeatures = {
             ...feature,
             geometry: {
-              ...feature.geometry,
+              type: feature.geometry?.type,
               coordinates: handleCoordinate(feature.geometry),
             },
           };

@@ -1,13 +1,9 @@
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import type {
-  ComputedFeature,
-  ComputedLayer,
-  LayerSelectionReason,
-} from "@reearth/beta/lib/core/Map";
 import type { Camera } from "@reearth/beta/utils/value";
 import { Clock } from "@reearth/classic/components/molecules/Visualizer/Plugin/types";
+import type { LayerSelectionReason } from "@reearth/core";
 import { ProjectType } from "@reearth/types";
 
 export { default as useSetError, useError } from "./gqlErrorHandling";
@@ -26,22 +22,6 @@ export type WidgetAreaState = {
 export type WidgetAlignment = "start" | "centered" | "end";
 
 export type WidgetAreaPadding = { top: number; bottom: number; left: number; right: number };
-
-export type SelectedWidget = {
-  id: string;
-  pluginId: string;
-  extensionId: string;
-  propertyId: string;
-};
-
-export type SelectedLayer = {
-  layerId: string;
-  layer?: ComputedLayer;
-  feature?: ComputedFeature;
-  layerSelectionReason?: LayerSelectionReason;
-};
-
-export type SelectedStoryPageId = string;
 
 export type NotificationType = "error" | "warning" | "info" | "success";
 
@@ -75,30 +55,9 @@ export type Workspace = {
   policy?: Policy | null;
 };
 
-// Visualizer
-const isVisualizerReady = atom<boolean>(false);
-export const useIsVisualizerReady = () => useAtom(isVisualizerReady);
-const currentCamera = atom<Camera | undefined>(undefined);
-export const useCurrentCamera = () => useAtom(currentCamera);
-
 const widgetAlignEditor = atom<boolean | undefined>(undefined);
 export const useWidgetAlignEditorActivated = () => useAtom(widgetAlignEditor);
 
-// Selected - map tab
-const selectedLayer = atom<SelectedLayer | undefined>(undefined);
-export const useSelectedLayer = () => useAtom(selectedLayer);
-const selectedLayerStyle = atom<string | undefined>(undefined);
-export const useSelectedLayerStyle = () => useAtom(selectedLayerStyle);
-const selectedSceneSetting = atom<string | undefined>(undefined);
-export const useSelectedSceneSetting = () => useAtom(selectedSceneSetting);
-
-// Selected - story tab
-const selectedStoryPageId = atom<SelectedStoryPageId | undefined>(undefined);
-export const useSelectedStoryPageId = () => useAtom(selectedStoryPageId);
-
-// Selected - widget tab
-const selectedWidget = atom<SelectedWidget | undefined>(undefined);
-export const useSelectedWidget = () => useAtom(selectedWidget);
 const selectedWidgetArea = atom<WidgetAreaState | undefined>(undefined);
 export const useSelectedWidgetArea = () => useAtom(selectedWidgetArea);
 

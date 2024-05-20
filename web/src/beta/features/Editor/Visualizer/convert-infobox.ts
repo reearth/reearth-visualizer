@@ -1,5 +1,5 @@
-import { InfoboxBlock } from "@reearth/beta/lib/core/Crust/Infobox/types";
-import type { Layer } from "@reearth/beta/lib/core/Map";
+import { InfoboxBlock } from "@reearth/beta/features/Visualizer/Crust/Infobox/types";
+import type { Layer } from "@reearth/core";
 import { NLSInfobox } from "@reearth/services/api/layersApi/utils";
 
 import { processProperty as processNewProperty } from "./processNewProperty";

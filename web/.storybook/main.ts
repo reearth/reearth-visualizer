@@ -42,6 +42,10 @@ const config: StorybookConfig = {
               "node_modules/@reearth/cesium-mvt-imagery-provider",
             ),
           },
+          {
+            find: "@reearth/core",
+            replacement: resolve(__dirname, "..", "node_modules/@reearth/core"),
+          },
           // quickjs-emscripten
           {
             find: "@reearth",
