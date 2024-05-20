@@ -19,7 +19,7 @@ const usePopover = ({
   offset: offsetProps,
   shift: shiftProps,
   onOpenChange: setControlledOpen,
-}: PopupOptionsProps = {}) => {
+}: PopupOptionsProps) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
