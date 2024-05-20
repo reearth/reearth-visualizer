@@ -1,29 +1,21 @@
 import {
-  Placement,
-  OffsetOptions,
-  ShiftOptions,
   useMergeRefs,
   FloatingPortal,
   FloatingFocusManager,
+  Placement,
+  OffsetOptions,
+  ShiftOptions,
 } from "@floating-ui/react";
-import {
-  HTMLProps,
-  ReactNode,
-  cloneElement,
-  createContext,
-  forwardRef,
-  isValidElement,
-  useContext,
-} from "react";
+import { forwardRef, isValidElement, cloneElement, type HTMLProps, type ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 import { Button } from "@reearth/beta/lib/reearth-ui/components/Button";
-import { fonts, styled } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
-import usePopover from "./hook";
+import usePopover from "./hooks";
 
 export type PopupOptionsProps = {
   placement?: Placement;
-  modal?: boolean;
   open?: boolean;
   offset?: OffsetOptions;
   shift?: ShiftOptions;
@@ -44,16 +36,15 @@ export const usePopoverContext = () => {
   return context;
 };
 
-export const Provider = ({
+export function Provider({
   children,
-  modal = false,
   ...restOptions
 }: {
   children: ReactNode;
-} & PopupOptionsProps) => {
-  const popover = usePopover({ modal, ...restOptions });
+} & PopupOptionsProps) {
+  const popover = usePopover({ ...restOptions });
   return <PopoverContext.Provider value={popover}>{children}</PopoverContext.Provider>;
-};
+}
 
 export type TriggerProps = {
   children?: ReactNode;
@@ -82,86 +73,40 @@ export const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerP
 
     return (
       <TriggerWrapper ref={ref} {...context.getReferenceProps(props)}>
-        <Button title={title} onClick={() => setOpen(open)} />
+        <Button title={title} onClick={() => setOpen?.(open)} />
       </TriggerWrapper>
     );
   },
 );
 
-type ContentProps = {
-  children: ReactNode;
-  title?: string;
-  onClick?: () => void;
-};
+export const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function Content(
+  { style, ...props },
+  propRef,
+) {
+  const { context: floatingContext, ...context } = usePopoverContext();
+  const ref = useMergeRefs([context.refs.setFloating, propRef]);
+  if (!floatingContext.open) return null;
 
-export const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement> & ContentProps>(
-  function PopoverContent({ children, title, onClick, style, ...props }, propRef) {
-    const { context: floatingContext, ...context } = usePopoverContext();
-    const ref = useMergeRefs([context.refs.setFloating, propRef]);
-
-    if (!floatingContext.open) return null;
-
-    return (
-      <FloatingPortal>
-        <FloatingFocusManager context={floatingContext} modal={context.modal}>
-          <ContentWrapper
-            ref={ref}
-            style={{ ...context.floatingStyles, ...style }}
-            {...context.getFloatingProps(props)}>
-            {title ? (
-              <ContentWithHeader>
-                <HeaderWrapper>
-                  {/* TODD: Use Text Component */}
-                  <Title>{title}</Title>
-                  {/* TODD: Use Icon Component based on icon */}
-                  <CloseIcon onClick={onClick}>Icon</CloseIcon>
-                </HeaderWrapper>
-                {children}
-              </ContentWithHeader>
-            ) : (
-              children
-            )}
-          </ContentWrapper>
-        </FloatingFocusManager>
-      </FloatingPortal>
-    );
-  },
-);
-
+  return (
+    <FloatingPortal>
+      <FloatingFocusManager context={floatingContext}>
+        <ContentWrapper
+          ref={ref}
+          style={{
+            ...context.floatingStyles,
+            ...style,
+          }}
+          {...context.getFloatingProps(props)}>
+          {props.children}
+        </ContentWrapper>
+      </FloatingFocusManager>
+    </FloatingPortal>
+  );
+});
 const TriggerWrapper = styled("div")(() => ({
   display: "flex",
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
   zIndex: theme.zIndexes.editor.popover,
-}));
-
-const ContentWithHeader = styled("div")(({ theme }) => ({
-  width: "286px",
-  border: `1px solid ${theme.outline.weak}`,
-  borderRadius: theme.radius.small,
-  background: theme.bg[1],
-  boxShadow: theme.shadow.popup,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-}));
-
-const HeaderWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: theme.spacing.normal,
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-  borderBottom: `1px solid ${theme.outline.weak}`,
-}));
-
-const CloseIcon = styled("div")(() => ({
-  marginLeft: "auto",
-  cursor: "pointer",
-}));
-
-const Title = styled("div")(() => ({
-  fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
 }));

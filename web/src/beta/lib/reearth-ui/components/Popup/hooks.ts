@@ -6,16 +6,15 @@ import {
   shift,
   useClick,
   useDismiss,
-  useRole,
   useInteractions,
 } from "@floating-ui/react";
 import { useMemo, useState } from "react";
 
 import { PopupOptionsProps } from ".";
 
+const defaultPadding = 4;
 const usePopover = ({
   placement = "bottom",
-  modal,
   open: controlledOpen,
   offset: offsetProps,
   shift: shiftProps,
@@ -23,8 +22,10 @@ const usePopover = ({
 }: PopupOptionsProps = {}) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
-  const open = controlledOpen ?? uncontrolledOpen;
-  const setOpen = setControlledOpen ?? setUncontrolledOpen;
+  const isControlled = controlledOpen !== undefined;
+
+  const open = isControlled ? controlledOpen : uncontrolledOpen;
+  const setOpen = isControlled ? setControlledOpen : setUncontrolledOpen;
 
   const data = useFloating({
     placement,
@@ -32,13 +33,13 @@ const usePopover = ({
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(offsetProps ?? 4),
+      offset(offsetProps ?? defaultPadding),
       flip({
         crossAxis: placement.includes("-"),
         fallbackAxisSideDirection: "start",
-        padding: 4,
+        padding: defaultPadding,
       }),
-      shift(shiftProps ?? { padding: 4 }),
+      shift(shiftProps ?? { padding: defaultPadding }),
     ],
   });
 
@@ -48,9 +49,8 @@ const usePopover = ({
     enabled: controlledOpen == null,
   });
   const dismiss = useDismiss(context);
-  const role = useRole(context);
 
-  const interactions = useInteractions([click, dismiss, role]);
+  const interactions = useInteractions([click, dismiss]);
 
   return useMemo(
     () => ({
@@ -58,9 +58,8 @@ const usePopover = ({
       setOpen,
       ...interactions,
       ...data,
-      modal,
     }),
-    [open, setOpen, interactions, data, modal],
+    [open, setOpen, interactions, data],
   );
 };
 
