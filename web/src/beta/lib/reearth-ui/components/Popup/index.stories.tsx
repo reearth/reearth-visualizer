@@ -86,7 +86,7 @@ export const CustomTrigger: Story = {
   },
 };
 
-export const MultleTrigger: Story = {
+export const MultipleTrigger: Story = {
   render: args => {
     return (
       <Wrapper>
