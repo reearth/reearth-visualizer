@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FC, useState } from "react";
+import { FC } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -60,7 +60,7 @@ export const BasicTrigger: Story = {
     return <Popup {...args} />;
   },
   args: {
-    title: "Trigger Me",
+    title: "Click me",
     children: <MockChild />,
     open: undefined,
     onOpenChange: undefined,
@@ -68,26 +68,17 @@ export const BasicTrigger: Story = {
   },
 };
 
-const CustomTrigger: FC<PopupProps> = args => {
-  const [open, setOpen] = useState(false);
-  const handleToggle = () => {
-    setOpen(!open);
-  };
-
-  return (
+export const CustomTrigger: Story = {
+  render: args => (
     <Popup
       {...args}
       trigger={
-        <div onClick={handleToggle}>
-          <Button title="Trigger Me" appearance="primary" />
+        <div>
+          <Button title="Trigger me" appearance="primary" />
         </div>
       }
     />
-  );
-};
-
-export const CustomTriggerComponent: Story = {
-  render: args => <CustomTrigger {...args} />,
+  ),
   args: {
     asChild: true,
     placement: "bottom",
@@ -99,8 +90,8 @@ export const MultleTrigger: Story = {
   render: args => {
     return (
       <Wrapper>
-        <Popup title="Button1" {...args} />
-        <Popup title="Button2" {...args} />
+        <Popup title="Click me" {...args} />
+        <Popup title="Trigger me" {...args} />
       </Wrapper>
     );
   },
@@ -121,7 +112,7 @@ export const Placement: Story = {
     );
   },
   args: {
-    title: "Trigger Me",
+    title: "Placement",
     children: <MockChild />,
     open: undefined,
     onOpenChange: undefined,
