@@ -62,7 +62,7 @@ export async function parseZip(
         const parsed = JSON.parse(await zip.files[name].async("text"));
         parsed.fileName = name.slice(0, lastDotIdx);
         return parsed;
-      } else if (whiteList.indexOf(name.slice(lastDotIdx + 1)) > -1) {
+      } else if (whiteList && whiteList.indexOf(name.slice(lastDotIdx + 1)) > -1) {
         const parsed = zip.files[name];
         parsed.name = name;
         return parsed;
