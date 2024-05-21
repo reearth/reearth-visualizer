@@ -14,14 +14,6 @@ import { styled } from "@reearth/services/theme";
 
 import usePopover from "./hooks";
 
-export type PopupOptionsProps = {
-  placement?: Placement;
-  open?: boolean;
-  offset?: OffsetOptions;
-  shift?: ShiftOptions;
-  onOpenChange?: (open: boolean) => void;
-};
-
 type ContextType = ReturnType<typeof usePopover> | null;
 
 export const PopoverContext = createContext<ContextType>(null);
@@ -92,16 +84,6 @@ const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function C
     </FloatingPortal>
   );
 });
-const TriggerWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  gap: theme.spacing.small,
-  alignItems: "center",
-  width: "fit-content",
-}));
-
-const ContentWrapper = styled("div")(({ theme }) => ({
-  zIndex: theme.zIndexes.editor.popover,
-}));
 
 export type PopupProps = {
   children?: ReactNode;
@@ -127,3 +109,11 @@ export const Popup = ({ children, trigger, asChild, title, ...restOptions }: Pop
     </PopoverContext.Provider>
   );
 };
+
+const TriggerWrapper = styled("div")(() => ({
+  width: "fit-content",
+}));
+
+const ContentWrapper = styled("div")(({ theme }) => ({
+  zIndex: theme.zIndexes.editor.popover,
+}));
