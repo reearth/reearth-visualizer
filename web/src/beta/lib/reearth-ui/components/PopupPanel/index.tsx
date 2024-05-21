@@ -3,70 +3,85 @@ import { FC, ReactNode } from "react";
 import { Button } from "@reearth/beta/lib/reearth-ui/components/Button";
 import { fonts, styled } from "@reearth/services/theme";
 
+import { Icon } from "../Icon";
+
 export type PopupPanelProps = {
   title?: string;
   children: ReactNode;
-  onClose?: () => void;
+  onCancel?: () => void;
   onApply?: () => void;
 };
 
-export const PopupPanel: FC<PopupPanelProps> = ({ title, children, onClose, onApply }) => {
+export const PopupPanel: FC<PopupPanelProps> = ({ title, children, onCancel, onApply }) => {
   return (
     <Wrapper>
-      <Header>
+      <HeaderWrapper>
         <Title>{title}</Title>
-        {/* TODD: Use Icon Component based on icon */}
-        <CloseIcon onClick={onClose}>Icon</CloseIcon>
-      </Header>
-      {children}
-      <Footer>
-        <StyledButton size="small" title="Cancel" onClick={onClose} />
-        <StyledButton size="small" title="Apply" appearance="primary" onClick={onApply} />
-      </Footer>
+        <IconWrapper onClick={onCancel}>
+          <Icon icon="close" size="small" />
+        </IconWrapper>
+      </HeaderWrapper>
+      <Content>{children}</Content>
+      <ActionWrapper>
+        <Button minWidth={131} size="small" title="Cancel" onClick={onCancel} />
+        <Button minWidth={131} size="small" title="Apply" appearance="primary" onClick={onApply} />
+      </ActionWrapper>
     </Wrapper>
   );
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
   width: "286px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
   boxShadow: theme.shadow.popup,
+}));
+
+const HeaderWrapper = styled("div")(({ theme }) => ({
   display: "flex",
-  flexDirection: "column",
   justifyContent: "space-between",
-  fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
+  alignItems: "center",
+  alignSelf: "stretch",
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  borderBottom: `1px solid ${theme.outline.weak}`,
   color: theme.content.main,
 }));
 
-const Header = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  gap: theme.spacing.normal,
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-  borderBottom: `1px solid ${theme.outline.weak}`,
-}));
-
-const CloseIcon = styled("div")(() => ({
+const IconWrapper = styled("div")(() => ({
   cursor: "pointer",
-}));
-
-const Title = styled("div")(() => ({}));
-
-const Footer = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  padding: `${theme.spacing.small}px`,
-  borderTop: `1px solid ${theme.outline.weak}`,
-  gap: theme.spacing.small,
 }));
 
-const StyledButton = styled(Button)(() => ({
-  minWidth: "135px",
-  padding: 0,
-  margin: 0,
+const Title = styled("div")(() => ({
+  flex: "1 0 0",
+  fontSize: fonts.sizes.body,
+  lineHeight: `${fonts.lineHeights.body}px`,
+}));
+
+const Content = styled("div")(({ theme }) => ({
+  padding: theme.spacing.small,
+  fontSize: fonts.sizes.body,
+  lineHeight: `${fonts.lineHeights.body}px`,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: theme.spacing.normal,
+  alignSelf: "stretch",
+}));
+
+const ActionWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start",
+  alignSelf: "stretch",
+  padding: theme.spacing.small,
+  borderTop: `1px solid ${theme.outline.weak}`,
+  gap: theme.spacing.small,
 }));

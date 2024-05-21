@@ -12,7 +12,14 @@ type Story = StoryObj<typeof PopupPanel>;
 
 export const Default: Story = {
   args: {
-    title: "Title Two",
-    children: <div style={{ padding: "4px 8px" }}> Content</div>,
+    title: "Panel Title",
+    children: (
+      <div style={{ color: "#e0e0e0" }}>
+        <p>Panel content </p>
+        <p>Panel content</p>
+        <p>Panel content</p>
+        <p>Panel content</p>
+      </div>
+    ),
   },
 };
