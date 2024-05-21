@@ -1,16 +1,21 @@
-import type { GeometryObject, Feature as GeoJSONFeature, MultiPoint, Polygon } from "geojson";
+import type {
+  GeometryObject,
+  Feature as GeoJSONFeature,
+  MultiPoint,
+  Polygon,
+  MultiLineString,
+} from "geojson";
 import proj4 from "proj4";
 
 export function parseShp(
   buffer: Buffer,
-  trans?: proj4.Converter,
+  trans?: proj4.Converter | false,
 ): GeoJSONFeature<GeometryObject>[] {
   const headers = parseHeader(buffer);
   const parseFunc = getParseFunction(headers.shpCode, trans);
   const rows = getRows(buffer, headers, parseFunc);
   return rows;
 }
-
 function parseHeader(buffer: Buffer): {
   length: number;
   version: number;
@@ -31,7 +36,9 @@ function parseHeader(buffer: Buffer): {
   };
 }
 
-function makeParseCoord(trans?: proj4.Converter): (data: Buffer, offset: number) => number[] {
+function makeParseCoord(
+  trans?: proj4.Converter | false,
+): (data: Buffer, offset: number) => number[] {
   if (trans) {
     return (data: Buffer, offset: number) => {
       const x = data.readDoubleLE(offset);
@@ -48,7 +55,7 @@ function makeParseCoord(trans?: proj4.Converter): (data: Buffer, offset: number)
 
 function getParseFunction(
   shpCode: number,
-  trans?: proj4.Converter,
+  trans?: proj4.Converter | false,
 ): (data: Buffer) => GeoJSONFeature<GeometryObject> | null {
   const num = shpCode > 20 ? shpCode - 20 : shpCode;
   const shpFuncObj: { [key: number]: keyof typeof parseFunctions } = {
@@ -59,7 +66,6 @@ function getParseFunction(
     11: "parseZPoint",
     13: "parseZPolyline",
     15: "parseZPolygon",
-    18: "parseZMultiPoint",
   };
   const funcName = shpFuncObj[num];
   if (!funcName) {
@@ -71,7 +77,6 @@ function getParseFunction(
     case "parsePoint":
     case "parseZPoint":
     case "parseMultiPoint":
-    case "parseZMultiPoint":
     case "parsePolyline":
     case "parseZPolyline":
     case "parsePolygon":
@@ -262,7 +267,7 @@ const parseFunctions = {
   parseMultiPoint(
     data: Buffer,
     parseCoord: ReturnType<typeof makeParseCoord>,
-  ): GeoJSONFeature<GeometryObject> {
+  ): GeoJSONFeature<MultiPoint> {
     const num = data.readInt32LE(32);
     if (num === 0) {
       return {
@@ -276,7 +281,8 @@ const parseFunctions = {
     }
     const bounds = [parseCoord(data, 0), parseCoord(data, 16)];
     const pointOffset = 36;
-    const coordinates = parseFunctions.parsePointArray(data, pointOffset, num, parseCoord);
+    const feature = parseFunctions.parsePointArray(data, pointOffset, num, parseCoord);
+    const coordinates = (feature.geometry as MultiPoint).coordinates;
     return {
       type: "Feature",
       geometry: {
@@ -288,32 +294,16 @@ const parseFunctions = {
     };
   },
 
-  parseZMultiPoint(
-    data: Buffer,
-    parseCoord: ReturnType<typeof makeParseCoord>,
-  ): GeoJSONFeature<GeometryObject> {
-    const feature = parseFunctions.parseMultiPoint(data, parseCoord);
-    const num = (feature.geometry as any).coordinates.length;
-    const zOffset = 52 + (num << 4);
-    (feature.geometry as any).coordinates = parseFunctions.parseZPointArray(
-      data,
-      zOffset,
-      num,
-      (feature.geometry as any).coordinates,
-    );
-    return feature;
-  },
-
   parsePolyline(
     data: Buffer,
     parseCoord: ReturnType<typeof makeParseCoord>,
-  ): GeoJSONFeature<GeometryObject> {
+  ): GeoJSONFeature<MultiLineString> {
     const numParts = data.readInt32LE(32);
     if (numParts === 0) {
       return {
         type: "Feature",
         geometry: {
-          type: "LineString",
+          type: "MultiLineString",
           coordinates: [],
         },
         properties: {},
@@ -323,7 +313,7 @@ const parseFunctions = {
     const num = data.readInt32LE(36);
     const partOffset = 40;
     const pointOffset = 40 + (numParts << 2);
-    const parts = parseFunctions.parseArrayGroup(
+    const feature = parseFunctions.parseArrayGroup(
       data,
       pointOffset,
       partOffset,
@@ -331,11 +321,12 @@ const parseFunctions = {
       num,
       parseCoord,
     );
+    const coordinates = (feature.geometry as Polygon).coordinates;
     return {
       type: "Feature",
       geometry: {
         type: "MultiLineString",
-        coordinates: parts,
+        coordinates,
       },
       properties: {},
       bbox: [bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]],
@@ -417,14 +408,12 @@ function handleRings(rings: number[][][]): number[][][][] {
   return clockwiseRings.map(({ ring, children }) => [ring, ...children]);
 }
 
-function isClockwise(ring: number[][]): {
-  ring: number[][];
-  bbox: number[];
-  clockwise: boolean;
-} {
+function isClockwise(ring: number[][]): { ring: number[][]; bbox: number[]; clockwise: boolean } {
   const [firstPoint, ...otherPoints] = ring;
-  const [minX, minY] = firstPoint;
-  const [maxX, maxY] = firstPoint;
+  let minX = firstPoint[0];
+  let minY = firstPoint[1];
+  let maxX = firstPoint[0];
+  let maxY = firstPoint[1];
 
   let signedArea = 0;
   let previousPoint = firstPoint;
