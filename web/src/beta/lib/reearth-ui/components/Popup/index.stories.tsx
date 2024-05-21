@@ -1,15 +1,18 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { FC, useState } from "react";
 
-import { Button } from "@reearth/beta/lib/reearth-ui/components/Button";
-import * as Popup from "@reearth/beta/lib/reearth-ui/components/Popup";
 import { fonts, styled } from "@reearth/services/theme";
 
-export default {
-  component: Popup.Provider,
-} as Meta;
+import { Button } from "../Button";
 
-type Story = StoryObj<typeof Popup.Provider>;
+import { Popup, PopupProps } from ".";
+
+const meta: Meta<PopupProps> = {
+  component: Popup,
+};
+
+export default meta;
+type Story = StoryObj<typeof Popup>;
 
 const MockChild: FC = () => (
   <Container>
@@ -35,89 +38,93 @@ const Title = styled("div")(() => ({
   lineHeight: `${fonts.lineHeights.h5}px`,
 }));
 
-const Content = styled("div")(() => ({
-  fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
-}));
-
 const PopupWrapper = styled("div")(() => ({
   maxWidth: "200px",
   margin: "140px auto",
 }));
 
-const TriggerWrapper = styled("div")(() => ({
-  display: "inline-block",
-  margin: "auto",
+const Content = styled("div")(() => ({
+  fontSize: fonts.sizes.body,
+  lineHeight: `${fonts.lineHeights.body}px`,
 }));
 
-const DefaultOpenComponent: FC<Popup.PopupOptionsProps> = args => {
-  const [open, setOpen] = useState(true);
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  alignItems: "center",
+  width: "fit-content",
+}));
 
+export const BasicTrigger: Story = {
+  render: args => {
+    return <Popup {...args} />;
+  },
+  args: {
+    title: "Trigger Me",
+    children: <MockChild />,
+    open: undefined,
+    onOpenChange: undefined,
+    placement: "bottom",
+  },
+};
+
+const CustomTrigger: FC<PopupProps> = args => {
+  const [open, setOpen] = useState(false);
   const handleToggle = () => {
     setOpen(!open);
   };
 
   return (
-    <PopupWrapper>
-      <Popup.Provider {...args} open={open} onOpenChange={setOpen}>
-        <Popup.Trigger asChild>
-          <TriggerWrapper onClick={handleToggle}>
-            <Button title="Trigger Me" appearance="primary" />
-          </TriggerWrapper>
-        </Popup.Trigger>
-        <Popup.Content>
-          <MockChild />
-        </Popup.Content>
-      </Popup.Provider>
-    </PopupWrapper>
+    <Popup
+      {...args}
+      trigger={
+        <div onClick={handleToggle}>
+          <Button title="Trigger Me" appearance="primary" />
+        </div>
+      }
+    />
   );
 };
 
-export const DefaultOpen: Story = {
-  render: args => <DefaultOpenComponent {...args} />,
+export const CustomTriggerComponent: Story = {
+  render: args => <CustomTrigger {...args} />,
   args: {
-    placement: "top",
+    asChild: true,
+    placement: "bottom",
+    children: <MockChild />,
   },
 };
 
-export const Trigger: Story = {
+export const MultleTrigger: Story = {
+  render: args => {
+    return (
+      <Wrapper>
+        <Popup title="Button1" {...args} />
+        <Popup title="Button2" {...args} />
+      </Wrapper>
+    );
+  },
+  args: {
+    children: <MockChild />,
+    open: undefined,
+    onOpenChange: undefined,
+    placement: "bottom",
+  },
+};
+
+export const Placement: Story = {
   render: args => {
     return (
       <PopupWrapper>
-        <Popup.Provider {...args} />
+        <Popup {...args} />
       </PopupWrapper>
     );
   },
   args: {
-    children: (
-      <>
-        <Popup.Trigger title="Trigger Me" style={{ display: "inline-block" }} />
-        <Popup.Content>
-          <MockChild />
-        </Popup.Content>
-      </>
-    ),
+    title: "Trigger Me",
+    children: <MockChild />,
     open: undefined,
     onOpenChange: undefined,
-    placement: "bottom",
-  },
-};
-
-export const Flip: Story = {
-  render: args => {
-    return <Popup.Provider {...args} />;
-  },
-  args: {
-    children: (
-      <>
-        <Popup.Trigger title="Trigger Me" style={{ display: "inline-block", margin: "20px " }} />
-        <Popup.Content>
-          <MockChild />
-        </Popup.Content>
-      </>
-    ),
-    open: undefined,
-    onOpenChange: undefined,
-    placement: "bottom",
+    placement: "top",
   },
 };

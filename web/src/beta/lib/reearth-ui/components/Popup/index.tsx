@@ -32,19 +32,8 @@ export const usePopoverContext = () => {
   if (context === null) {
     throw new Error("Popover components must be wrapped in <Popover.Root />");
   }
-
   return context;
 };
-
-export function Provider({
-  children,
-  ...restOptions
-}: {
-  children: ReactNode;
-} & PopupOptionsProps) {
-  const popover = usePopover({ ...restOptions });
-  return <PopoverContext.Provider value={popover}>{children}</PopoverContext.Provider>;
-}
 
 export type TriggerProps = {
   children?: ReactNode;
@@ -52,12 +41,11 @@ export type TriggerProps = {
   title?: string;
 };
 
-export const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
+const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
   function PopoverTrigger({ children, title, asChild = false, ...props }, propRef) {
     const context = usePopoverContext();
     const childrenRef = (children as any)?.ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
-    const { setOpen, open } = usePopoverContext();
 
     // `asChild` allows the user to pass any element as the anchor
     if (asChild && isValidElement(children)) {
@@ -67,19 +55,20 @@ export const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerP
           ref,
           ...props,
           ...children.props,
+          style: { width: "fit-content" },
         }),
       );
     }
 
     return (
       <TriggerWrapper ref={ref} {...context.getReferenceProps(props)}>
-        <Button title={title} onClick={() => setOpen?.(open)} />
+        <Button title={title} />
       </TriggerWrapper>
     );
   },
 );
 
-export const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function Content(
+const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function Content(
   { style, ...props },
   propRef,
 ) {
@@ -103,10 +92,38 @@ export const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(fun
     </FloatingPortal>
   );
 });
-const TriggerWrapper = styled("div")(() => ({
+const TriggerWrapper = styled("div")(({ theme }) => ({
   display: "flex",
+  gap: theme.spacing.small,
+  alignItems: "center",
+  width: "fit-content",
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
   zIndex: theme.zIndexes.editor.popover,
 }));
+
+export type PopupProps = {
+  children?: ReactNode;
+  trigger?: ReactNode;
+  asChild?: boolean;
+  title?: string;
+  placement?: Placement;
+  open?: boolean;
+  offset?: OffsetOptions;
+  shift?: ShiftOptions;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export const Popup = ({ children, trigger, asChild, title, ...restOptions }: PopupProps) => {
+  const popover = usePopover({ ...restOptions });
+
+  return (
+    <PopoverContext.Provider value={popover}>
+      <Trigger asChild={asChild} title={title}>
+        {trigger}
+      </Trigger>
+      <Content>{children}</Content>
+    </PopoverContext.Provider>
+  );
+};

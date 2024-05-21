@@ -10,7 +10,7 @@ import {
 } from "@floating-ui/react";
 import { useMemo, useState } from "react";
 
-import { PopupOptionsProps } from ".";
+import { PopupProps } from ".";
 
 const defaultPadding = 4;
 const usePopover = ({
@@ -19,7 +19,7 @@ const usePopover = ({
   offset: offsetProps,
   shift: shiftProps,
   onOpenChange: setControlledOpen,
-}: PopupOptionsProps) => {
+}: PopupProps) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
