@@ -56,14 +56,14 @@ import If from "./Icons/If.svg?react";
 import Image from "./Icons/Image.svg?react";
 import ImageFilled from "./Icons/ImageFilled.svg?react";
 import ImageSquare from "./Icons/ImageSquare.svg?react";
-import LToS from "./Icons/L-S.svg?react";
 import LayerFilled from "./Icons/LayerFilled.svg?react";
 import Layers from "./Icons/Layers.svg?react";
-import LineHeight from "./Icons/lineHight.svg?react";
+import LineHeight from "./Icons/LineHeight.svg?react";
 import LineSegments from "./Icons/LineSegments.svg?react";
 import LinkSimple from "./Icons/LinkSimple.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
 import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
+import LToS from "./Icons/LToS.svg?react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass.svg?react";
 import MapPin from "./Icons/MapPin.svg?react";
 import MapTrifold from "./Icons/MapTrifold.svg?react";
@@ -111,7 +111,7 @@ import Triangle from "./Icons/Triangle.svg?react";
 import UploadSimple from "./Icons/UploadSimple.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
-import ZToA from "./Icons/Z-A.svg?react";
+import ZToA from "./Icons/ZToA.svg?react";
 
 export default {
   addStyle: AddStyle,
