@@ -1,38 +1,10 @@
-import { Buffer } from "buffer";
-
-import type {
-  GeoJSON,
-  GeometryObject,
-  Feature as GeoJSONFeature,
-  FeatureCollection,
-} from "geojson";
+import type { GeometryObject, Feature as GeoJSONFeature, FeatureCollection } from "geojson";
 
 import type { Data, DataRange, Feature } from "../../types";
 import { processGeoJSON } from "../geojson";
 import { f, FetchOptions, generateRandomString } from "../utils";
 
 import { parseZip } from "./parseZip";
-
-async function binaryAjax(url: string, type?: string): Promise<Buffer | string | false> {
-  const fullUrl = type ? `${url}.${type}` : url;
-  const isOptionalTxt = type === "prj" || type === "cpg";
-  try {
-    const resp = await fetch(fullUrl);
-    if (resp.status > 399) {
-      throw new Error(resp.statusText);
-    }
-    if (isOptionalTxt) {
-      return resp.text();
-    }
-    const parsed = await resp.arrayBuffer();
-    return Buffer.from(parsed);
-  } catch (e) {
-    if (isOptionalTxt || type === "dbf") {
-      return false;
-    }
-    throw e;
-  }
-}
 
 export async function combine(
   shp: GeoJSONFeature<GeometryObject>[],
@@ -55,31 +27,18 @@ export async function combine(
   return out;
 }
 
-export default async function convertShapefileToGeoJSON(
-  base: string | Buffer | ArrayBuffer,
-): Promise<GeoJSON | GeoJSON[]> {
-  if (typeof base !== "string") {
-    return parseZip(base);
-  }
-
-  const a = await binaryAjax(base);
-  if (typeof a === "string" || !a) {
-    throw new Error("Failed to fetch zip file");
-  }
-  return parseZip(a);
-}
-
 export async function fetchShapefile(
   data: Data,
   range?: DataRange,
   options?: FetchOptions,
 ): Promise<Feature[] | void> {
   const arrayBuffer = data.url ? await (await f(data.url, options)).arrayBuffer() : data.value;
+  console.log("arraybuffer: ", arrayBuffer);
   if (!arrayBuffer) {
     throw new Error("No data provided");
   }
 
-  const geojson = await convertShapefileToGeoJSON(arrayBuffer);
+  const geojson = await parseZip(arrayBuffer);
 
   if (Array.isArray(geojson)) {
     const combinedFeatureCollection: FeatureCollection = {
