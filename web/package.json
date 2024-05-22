@@ -162,7 +162,7 @@
         "mini-svg-data-uri": "1.4.4",
         "moment-timezone": "0.5.43",
         "parse-domain": "7.0.1",
-        "proj4": "^2.11.0",
+        "proj4": "2.11.0",
         "protomaps": "^1.23.1",
         "quickjs-emscripten": "0.23.0",
         "quickjs-emscripten-sync": "1.5.2",
