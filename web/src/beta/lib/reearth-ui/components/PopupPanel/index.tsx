@@ -9,11 +9,11 @@ export type PopupPanelProps = {
   title?: string;
   width?: number;
   children: ReactNode;
+  actions?: ReactNode;
   onCancel?: () => void;
-  onApply?: () => void;
 };
 
-export const PopupPanel: FC<PopupPanelProps> = ({ title, width, children, onCancel, onApply }) => {
+export const PopupPanel: FC<PopupPanelProps> = ({ title, width, children, actions, onCancel }) => {
   return (
     <Wrapper width={width}>
       <HeaderWrapper>
@@ -21,10 +21,7 @@ export const PopupPanel: FC<PopupPanelProps> = ({ title, width, children, onCanc
         <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
       </HeaderWrapper>
       <Content>{children}</Content>
-      <ActionWrapper>
-        <Button extendWidth size="small" title="Cancel" onClick={onCancel} />
-        <Button extendWidth size="small" title="Apply" appearance="primary" onClick={onApply} />
-      </ActionWrapper>
+      {actions && <ActionWrapper>{actions}</ActionWrapper>}
     </Wrapper>
   );
 };
@@ -62,11 +59,6 @@ const Content = styled("div")(({ theme }) => ({
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start",
-  alignSelf: "stretch",
-  padding: theme.spacing.small,
   borderTop: `1px solid ${theme.outline.weak}`,
-  gap: theme.spacing.small,
+  padding: theme.spacing.small,
 }));
