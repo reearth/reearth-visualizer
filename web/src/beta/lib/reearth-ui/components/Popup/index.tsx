@@ -6,10 +6,10 @@ import {
   OffsetOptions,
   ShiftOptions,
 } from "@floating-ui/react";
-import { forwardRef, isValidElement, cloneElement, type HTMLProps, type ReactNode } from "react";
+import { forwardRef, type HTMLProps, type ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-import { Button } from "@reearth/beta/lib/reearth-ui/components/Button";
+import { Button } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 
 import usePopover from "./hooks";
@@ -27,34 +27,19 @@ export const usePopoverContext = () => {
   return context;
 };
 
-export type TriggerProps = {
+type TriggerProps = {
   children?: ReactNode;
-  asChild?: boolean;
-  title?: string;
 };
 
 const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
-  function PopoverTrigger({ children, title, asChild = false, ...props }, propRef) {
+  function PopoverTrigger({ children, ...props }, propRef) {
     const context = usePopoverContext();
     const childrenRef = (children as any)?.ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
-    // `asChild` allows the user to pass any element as the anchor
-    if (asChild && isValidElement(children)) {
-      return cloneElement(
-        children,
-        context.getReferenceProps({
-          ref,
-          ...props,
-          ...children.props,
-          style: { width: "fit-content" },
-        }),
-      );
-    }
-
     return (
       <TriggerWrapper ref={ref} {...context.getReferenceProps(props)}>
-        <Button title={title} />
+        {typeof children === "string" ? <Button title={children} /> : children}
       </TriggerWrapper>
     );
   },
@@ -88,8 +73,6 @@ const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function C
 export type PopupProps = {
   children?: ReactNode;
   trigger?: ReactNode;
-  asChild?: boolean;
-  title?: string;
   placement?: Placement;
   open?: boolean;
   offset?: OffsetOptions;
@@ -97,14 +80,12 @@ export type PopupProps = {
   onOpenChange?: (open: boolean) => void;
 };
 
-export const Popup = ({ children, trigger, asChild, title, ...restOptions }: PopupProps) => {
+export const Popup = ({ children, trigger, ...restOptions }: PopupProps) => {
   const popover = usePopover({ ...restOptions });
 
   return (
     <PopoverContext.Provider value={popover}>
-      <Trigger asChild={asChild} title={title}>
-        {trigger}
-      </Trigger>
+      <Trigger>{trigger}</Trigger>
       <Content>{children}</Content>
     </PopoverContext.Provider>
   );

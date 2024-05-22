@@ -38,11 +38,6 @@ const Title = styled("div")(() => ({
   lineHeight: `${fonts.lineHeights.h5}px`,
 }));
 
-const PopupWrapper = styled("div")(() => ({
-  maxWidth: "200px",
-  margin: "140px auto",
-}));
-
 const Content = styled("div")(() => ({
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
@@ -52,7 +47,6 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
   alignItems: "center",
-  width: "fit-content",
 }));
 
 export const BasicTrigger: Story = {
@@ -60,27 +54,22 @@ export const BasicTrigger: Story = {
     return <Popup {...args} />;
   },
   args: {
-    title: "Click me",
+    trigger: "Click me",
     children: <MockChild />,
-    open: undefined,
-    onOpenChange: undefined,
     placement: "bottom",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "When passing a string as a trigger, it will be rendered as a button.",
+      },
+    },
   },
 };
 
 export const CustomTrigger: Story = {
-  render: args => (
-    <Popup
-      {...args}
-      trigger={
-        <div>
-          <Button title="Trigger me" appearance="primary" />
-        </div>
-      }
-    />
-  ),
+  render: args => <Popup {...args} trigger={<Button title="Click me" appearance="primary" />} />,
   args: {
-    asChild: true,
     placement: "bottom",
     children: <MockChild />,
   },
@@ -90,15 +79,13 @@ export const MultipleTrigger: Story = {
   render: args => {
     return (
       <Wrapper>
-        <Popup title="Click me" {...args} />
-        <Popup title="Trigger me" {...args} />
+        <Popup trigger="Click me" {...args} />
+        <Popup trigger="Click me" {...args} />
       </Wrapper>
     );
   },
   args: {
     children: <MockChild />,
-    open: undefined,
-    onOpenChange: undefined,
     placement: "bottom",
   },
 };
@@ -106,16 +93,34 @@ export const MultipleTrigger: Story = {
 export const Placement: Story = {
   render: args => {
     return (
-      <PopupWrapper>
-        <Popup {...args} />
-      </PopupWrapper>
+      <div
+        style={{
+          height: 500,
+          display: "grid",
+          gridTemplateRows: "1fr 1fr 1fr 1fr 1fr",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          justifyItems: "center",
+          alignItems: "center",
+        }}>
+        <Popup {...args} trigger="top-start" placement="top-start" />
+        <Popup {...args} trigger="top" placement="top" />
+        <Popup {...args} trigger="top-end" placement="top-end" />
+        <Popup {...args} trigger="left-start" placement="left-start" />
+        <div />
+        <Popup {...args} trigger="right-start" placement="right-start" />
+        <Popup {...args} trigger="left" placement="left" />
+        <div />
+        <Popup {...args} trigger="right" placement="right" />
+        <Popup {...args} trigger="left-end" placement="left-end" />
+        <div />
+        <Popup {...args} trigger="right-end" placement="right-end" />
+        <Popup {...args} trigger="bottom-start" placement="bottom-start" />
+        <Popup {...args} trigger="bottom" placement="bottom" />
+        <Popup {...args} trigger="bottom-end" placement="bottom-end" />
+      </div>
     );
   },
   args: {
-    title: "Placement",
     children: <MockChild />,
-    open: undefined,
-    onOpenChange: undefined,
-    placement: "top",
   },
 };

@@ -12,14 +12,13 @@ import { useMemo, useState } from "react";
 
 import { PopupProps } from ".";
 
-const defaultPadding = 4;
 const usePopover = ({
   placement = "bottom",
   open: controlledOpen,
   offset: offsetProps,
   shift: shiftProps,
   onOpenChange: setControlledOpen,
-}: PopupProps) => {
+}: Omit<PopupProps, "children" | "trigger">) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
@@ -33,21 +32,18 @@ const usePopover = ({
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(offsetProps ?? defaultPadding),
+      offset(offsetProps),
       flip({
         crossAxis: placement.includes("-"),
         fallbackAxisSideDirection: "start",
-        padding: defaultPadding,
       }),
-      shift(shiftProps ?? { padding: defaultPadding }),
+      shift(shiftProps),
     ],
   });
 
   const context = data.context;
 
-  const click = useClick(context, {
-    enabled: controlledOpen == null,
-  });
+  const click = useClick(context);
   const dismiss = useDismiss(context);
 
   const interactions = useInteractions([click, dismiss]);
