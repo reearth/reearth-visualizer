@@ -15,7 +15,7 @@ export const Default: Story = {
     title: "Panel Title",
     children: (
       <div style={{ color: "#e0e0e0" }}>
-        <p>Panel content </p>
+        <p>Panel content</p>
         <p>Panel content</p>
         <p>Panel content</p>
         <p>Panel content</p>
