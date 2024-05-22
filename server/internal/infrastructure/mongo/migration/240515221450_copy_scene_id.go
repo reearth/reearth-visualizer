@@ -21,7 +21,7 @@ func CopySceneId(ctx context.Context, c DBClient) error {
 
 	var seeds []seed
 
-	col.Find(ctx, bson.M{}, &mongox.BatchConsumer{
+	err := col.Find(ctx, bson.M{}, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			log.Infofc(ctx, "log: migration: CopySceneId: hit scenes: %d\n", len(rows))
@@ -37,11 +37,11 @@ func CopySceneId(ctx context.Context, c DBClient) error {
 
 				pid, err := id.ProjectIDFrom(doc.Project)
 				if err != nil {
-					log.Errorfc(ctx, "log: migration: CopySceneId: project id error: %s\n", err)
+					return fmt.Errorf("migration: CopySceneId: project id error: %s\n", err)
 				}
 				sid, err := id.SceneIDFrom(doc.ID)
 				if err != nil {
-					log.Errorfc(ctx, "log: migration: CopySceneId: scene id error: %s\n", err)
+					return fmt.Errorf("migration: CopySceneId: scene id error: %s\n", err)
 				}
 
 				seeds = append(seeds, seed{pid, sid})
@@ -50,6 +50,10 @@ func CopySceneId(ctx context.Context, c DBClient) error {
 			return nil
 		},
 	})
+
+	if err != nil {
+		return err
+	}
 
 	col = c.WithCollection("project")
 	ids := make([]string, 0, len(seeds))
@@ -73,7 +77,7 @@ func CopySceneId(ctx context.Context, c DBClient) error {
 				p := rows[0]
 				var doc mongodoc.ProjectDocument
 				if err := bson.Unmarshal(p, &doc); err != nil {
-					return err
+					return fmt.Errorf("project unmarshal error: %s\n", err)
 				}
 
 				if doc.Scene != "" {
@@ -89,8 +93,7 @@ func CopySceneId(ctx context.Context, c DBClient) error {
 		})
 
 		if err != nil {
-			log.Errorfc(ctx, "log: migration: CopySceneId: project find error: %s\n", err)
-			continue
+			return err
 		}
 	}
 
