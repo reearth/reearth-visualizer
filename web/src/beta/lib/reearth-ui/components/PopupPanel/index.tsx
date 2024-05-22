@@ -1,41 +1,39 @@
 import { FC, ReactNode } from "react";
 
-import { Button } from "@reearth/beta/lib/reearth-ui/components/Button";
+import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
 
-import { Icon } from "../Icon";
+const DEFAULT_PANEL_WIDTH = 286;
 
 export type PopupPanelProps = {
   title?: string;
+  width?: number;
   children: ReactNode;
   onCancel?: () => void;
   onApply?: () => void;
 };
 
-export const PopupPanel: FC<PopupPanelProps> = ({ title, children, onCancel, onApply }) => {
+export const PopupPanel: FC<PopupPanelProps> = ({ title, width, children, onCancel, onApply }) => {
   return (
-    <Wrapper>
+    <Wrapper width={width}>
       <HeaderWrapper>
         <Title>{title}</Title>
-        <IconWrapper onClick={onCancel}>
-          <Icon icon="close" size="small" />
-        </IconWrapper>
+        <Button iconButton icon="close" size="small" onClick={onCancel} appearance="simple" />
       </HeaderWrapper>
       <Content>{children}</Content>
       <ActionWrapper>
-        <Button minWidth={131} size="small" title="Cancel" onClick={onCancel} />
-        <Button minWidth={131} size="small" title="Apply" appearance="primary" onClick={onApply} />
+        <Button extendWidth size="small" title="Cancel" onClick={onCancel} />
+        <Button extendWidth size="small" title="Apply" appearance="primary" onClick={onApply} />
       </ActionWrapper>
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
-  width: "286px",
+const Wrapper = styled("div")<{ width?: number }>(({ width, theme }) => ({
+  width: `${width ?? DEFAULT_PANEL_WIDTH}px`,
+  minWidth: "120px",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
@@ -52,13 +50,6 @@ const HeaderWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
 }));
 
-const IconWrapper = styled("div")(() => ({
-  cursor: "pointer",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-}));
-
 const Title = styled("div")(() => ({
   flex: "1 0 0",
   fontSize: fonts.sizes.body,
@@ -67,12 +58,6 @@ const Title = styled("div")(() => ({
 
 const Content = styled("div")(({ theme }) => ({
   padding: theme.spacing.small,
-  fontSize: fonts.sizes.body,
-  lineHeight: `${fonts.lineHeights.body}px`,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  gap: theme.spacing.normal,
   alignSelf: "stretch",
 }));
 
