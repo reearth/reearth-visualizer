@@ -5,9 +5,7 @@ import { parseDbf } from "./parseDbf";
 import { parseShp } from "./parseShp";
 import { combine } from "./shapefile";
 
-export async function parseZip(
-  buffer: ArrayBuffer | Buffer,
-): Promise<GeoJSON.GeoJSON | GeoJSON.GeoJSON[]> {
+export async function parseZip(buffer: ArrayBuffer): Promise<GeoJSON.GeoJSON | GeoJSON.GeoJSON[]> {
   const zip = await JSZip.loadAsync(buffer);
   const names: string[] = [];
   const projections: { [key: string]: proj4.Converter } = {};
