@@ -32,7 +32,20 @@ export async function fetchShapefile(
   range?: DataRange,
   options?: FetchOptions,
 ): Promise<Feature[] | void> {
-  const arrayBuffer = data.url ? await (await f(data.url, options)).arrayBuffer() : data.value;
+  let arrayBuffer: ArrayBuffer;
+
+  if (data.url) {
+    if (data.url.startsWith("data:text/plain;charset=UTF-8,")) {
+      const encodedData = data.url.split(",")[1];
+      const decodedData = decodeURIComponent(encodedData);
+      const uint8Array = new TextEncoder().encode(decodedData);
+      arrayBuffer = uint8Array.buffer;
+    } else {
+      arrayBuffer = await (await f(data.url, options)).arrayBuffer();
+    }
+  } else {
+    arrayBuffer = data.value;
+  }
   console.log("arraybuffer: ", arrayBuffer);
   if (!arrayBuffer) {
     throw new Error("No data provided");
