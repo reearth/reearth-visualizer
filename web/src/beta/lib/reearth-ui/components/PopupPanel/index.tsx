@@ -31,6 +31,7 @@ export const PopupPanel: FC<PopupPanelProps> = ({ title, width, children, onCanc
 
 const Wrapper = styled("div")<{ width?: number }>(({ width, theme }) => ({
   width: `${width ?? DEFAULT_PANEL_WIDTH}px`,
+  minWidth: "120px",
   display: "flex",
   flexDirection: "column",
   border: `1px solid ${theme.outline.weak}`,
