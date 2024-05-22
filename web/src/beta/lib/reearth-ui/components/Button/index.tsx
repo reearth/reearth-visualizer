@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { fonts, styled } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 
 import { IconName, Icon } from "../Icon";
 
@@ -54,8 +54,6 @@ const StyledButton = styled("button")<{
   alignItems: "center",
   justifyContent: "center",
   gap: `${theme.spacing.small}px`,
-  fontSize: fonts.sizes.footnote,
-  lineHeight: `${fonts.lineHeights.footnote}px`,
   border:
     appearance === "simple"
       ? "none"
