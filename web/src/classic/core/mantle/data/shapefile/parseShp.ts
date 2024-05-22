@@ -7,8 +7,10 @@ import type {
 } from "geojson";
 import proj4 from "proj4";
 
+import { generateRandomString } from "../utils";
+
 export function parseShp(
-  buffer: Buffer,
+  buffer: ArrayBuffer,
   trans?: proj4.Converter | false,
 ): GeoJSONFeature<GeometryObject>[] {
   const headers = parseHeader(buffer);
@@ -16,39 +18,40 @@ export function parseShp(
   const rows = getRows(buffer, headers, parseFunc);
   return rows;
 }
-function parseHeader(buffer: Buffer): {
+
+function parseHeader(buffer: ArrayBuffer): {
   length: number;
   version: number;
   shpCode: number;
   bbox: number[];
 } {
-  const view = buffer.subarray(0, 100);
+  const view = new DataView(buffer, 0, 100);
   return {
-    length: view.readInt32BE(6 << 2) << 1,
-    version: view.readInt32LE(7 << 2),
-    shpCode: view.readInt32LE(8 << 2),
+    length: view.getInt32(6 << 2, false) << 1,
+    version: view.getInt32(7 << 2, true),
+    shpCode: view.getInt32(8 << 2, true),
     bbox: [
-      view.readDoubleLE(9 << 2),
-      view.readDoubleLE(11 << 2),
-      view.readDoubleLE(13 << 2),
-      view.readDoubleLE(15 << 2),
+      view.getFloat64(9 << 2, true),
+      view.getFloat64(11 << 2, true),
+      view.getFloat64(13 << 2, true),
+      view.getFloat64(15 << 2, true),
     ],
   };
 }
 
 function makeParseCoord(
   trans?: proj4.Converter | false,
-): (data: Buffer, offset: number) => number[] {
+): (data: DataView, offset: number) => number[] {
   if (trans) {
-    return (data: Buffer, offset: number) => {
-      const x = data.readDoubleLE(offset);
-      const y = data.readDoubleLE(offset + 8);
+    return (data: DataView, offset: number) => {
+      const x = data.getFloat64(offset, true);
+      const y = data.getFloat64(offset + 8, true);
       return trans.inverse([x, y]);
     };
   } else {
-    return (data: Buffer, offset: number) => [
-      data.readDoubleLE(offset),
-      data.readDoubleLE(offset + 8),
+    return (data: DataView, offset: number) => [
+      data.getFloat64(offset, true),
+      data.getFloat64(offset + 8, true),
     ];
   }
 }
@@ -56,7 +59,7 @@ function makeParseCoord(
 function getParseFunction(
   shpCode: number,
   trans?: proj4.Converter | false,
-): (data: Buffer) => GeoJSONFeature<GeometryObject> | null {
+): (data: ArrayBuffer) => GeoJSONFeature<GeometryObject> | null {
   const num = shpCode > 20 ? shpCode - 20 : shpCode;
   const shpFuncObj: { [key: number]: keyof typeof parseFunctions } = {
     1: "parsePoint",
@@ -81,17 +84,23 @@ function getParseFunction(
     case "parseZPolyline":
     case "parsePolygon":
     case "parseZPolygon":
-      return (data: Buffer) => parseFunctions[funcName](data, parseCoord);
+      return (data: ArrayBuffer) => parseFunctions[funcName](new DataView(data), parseCoord);
     case "parsePointArray":
-      return (data: Buffer) => parseFunctions[funcName](data, 0, data.readInt32LE(32), parseCoord);
-    case "parseArrayGroup":
-      return (data: Buffer) =>
+      return (data: ArrayBuffer) =>
         parseFunctions[funcName](
-          data,
+          new DataView(data),
+          0,
+          new DataView(data).getInt32(32, true),
+          parseCoord,
+        );
+    case "parseArrayGroup":
+      return (data: ArrayBuffer) =>
+        parseFunctions[funcName](
+          new DataView(data),
           44,
           40,
-          data.readInt32LE(32),
-          data.readInt32LE(36),
+          new DataView(data).getInt32(32, true),
+          new DataView(data).getInt32(36, true),
           parseCoord,
         );
     default:
@@ -100,7 +109,7 @@ function getParseFunction(
 }
 
 function getRows(
-  buffer: Buffer,
+  buffer: ArrayBuffer,
   headers: ReturnType<typeof parseHeader>,
   parseFunc: ReturnType<typeof getParseFunction>,
 ): GeoJSONFeature<GeometryObject>[] {
@@ -115,6 +124,7 @@ function getRows(
     offset += 8 + record.len;
     const feature = parseFunc(record.data);
     if (feature) {
+      feature.id = generateRandomString(12);
       rows.push(feature);
     }
   }
@@ -122,25 +132,25 @@ function getRows(
 }
 
 function getRow(
-  buffer: Buffer,
+  buffer: ArrayBuffer,
   offset: number,
   bufferLength: number,
 ):
   | {
       id: number;
       len: number;
-      data: Buffer;
+      data: ArrayBuffer;
       type: number;
     }
   | undefined {
-  const view = buffer.subarray(offset, offset + 12);
-  const len = view.readInt32BE(4) << 1;
-  const id = view.readInt32BE(0);
+  const view = new DataView(buffer, offset, 12);
+  const len = view.getInt32(4, false) << 1;
+  const id = view.getInt32(0, false);
   if (len === 0) {
     return {
       id,
       len,
-      data: Buffer.alloc(0),
+      data: new ArrayBuffer(0),
       type: 0,
     };
   }
@@ -150,14 +160,14 @@ function getRow(
   return {
     id,
     len,
-    data: buffer.subarray(offset + 12, offset + len + 8),
-    type: view.readInt32LE(8),
+    data: buffer.slice(offset + 12, offset + len + 8),
+    type: view.getInt32(8, true),
   };
 }
 
 const parseFunctions = {
   parsePoint(
-    data: Buffer,
+    data: DataView,
     parseCoord: ReturnType<typeof makeParseCoord>,
   ): GeoJSONFeature<GeometryObject> {
     return {
@@ -171,16 +181,16 @@ const parseFunctions = {
   },
 
   parseZPoint(
-    data: Buffer,
+    data: DataView,
     parseCoord: ReturnType<typeof makeParseCoord>,
   ): GeoJSONFeature<GeometryObject> {
     const pointXY = parseFunctions.parsePoint(data, parseCoord);
-    (pointXY.geometry as any).coordinates.push(data.readDoubleLE(16));
+    (pointXY.geometry as any).coordinates.push(data.getFloat64(16, true));
     return pointXY;
   },
 
   parsePointArray(
-    data: Buffer,
+    data: DataView,
     offset: number,
     num: number,
     parseCoord: ReturnType<typeof makeParseCoord>,
@@ -201,20 +211,20 @@ const parseFunctions = {
   },
 
   parseZPointArray(
-    data: Buffer,
+    data: DataView,
     zOffset: number,
     num: number,
     coordinates: number[][],
   ): number[][] {
     for (let i = 0; i < num; i++) {
-      coordinates[i].push(data.readDoubleLE(zOffset));
+      coordinates[i].push(data.getFloat64(zOffset, true));
       zOffset += 8;
     }
     return coordinates;
   },
 
   parseArrayGroup(
-    data: Buffer,
+    data: DataView,
     offset: number,
     partOffset: number,
     num: number,
@@ -226,8 +236,8 @@ const parseFunctions = {
     for (let i = 0; i < num; i++) {
       const pointNum =
         i === num - 1
-          ? tot - data.readInt32LE(partOffset)
-          : data.readInt32LE(partOffset + 4) - data.readInt32LE(partOffset);
+          ? tot - data.getInt32(partOffset, true)
+          : data.getInt32(partOffset + 4, true) - data.getInt32(partOffset, true);
       partOffset += 4;
       if (pointNum === 0) {
         continue;
@@ -247,7 +257,7 @@ const parseFunctions = {
   },
 
   parseZArrayGroup(
-    data: Buffer,
+    data: DataView,
     zOffset: number,
     num: number,
     coordinates: number[][][],
@@ -265,10 +275,10 @@ const parseFunctions = {
   },
 
   parseMultiPoint(
-    data: Buffer,
+    data: DataView,
     parseCoord: ReturnType<typeof makeParseCoord>,
   ): GeoJSONFeature<MultiPoint> {
-    const num = data.readInt32LE(32);
+    const num = data.getInt32(32, true);
     if (num === 0) {
       return {
         type: "Feature",
@@ -295,10 +305,10 @@ const parseFunctions = {
   },
 
   parsePolyline(
-    data: Buffer,
+    data: DataView,
     parseCoord: ReturnType<typeof makeParseCoord>,
   ): GeoJSONFeature<MultiLineString> {
-    const numParts = data.readInt32LE(32);
+    const numParts = data.getInt32(32, true);
     if (numParts === 0) {
       return {
         type: "Feature",
@@ -310,7 +320,7 @@ const parseFunctions = {
       };
     }
     const bounds = [parseCoord(data, 0), parseCoord(data, 16)];
-    const num = data.readInt32LE(36);
+    const num = data.getInt32(36, true);
     const partOffset = 40;
     const pointOffset = 40 + (numParts << 2);
     const feature = parseFunctions.parseArrayGroup(
@@ -334,12 +344,12 @@ const parseFunctions = {
   },
 
   parseZPolyline(
-    data: Buffer,
+    data: DataView,
     parseCoord: ReturnType<typeof makeParseCoord>,
   ): GeoJSONFeature<GeometryObject> {
     const feature = parseFunctions.parsePolyline(data, parseCoord);
-    const numParts = data.readInt32LE(32);
-    const num = data.readInt32LE(36);
+    const numParts = data.getInt32(32, true);
+    const num = data.getInt32(36, true);
     const zOffset = 56 + (num << 4) + (numParts << 2);
     (feature.geometry as any).coordinates = parseFunctions.parseZArrayGroup(
       data,
@@ -351,7 +361,7 @@ const parseFunctions = {
   },
 
   parsePolygon(
-    data: Buffer,
+    data: DataView,
     parseCoord: ReturnType<typeof makeParseCoord>,
   ): GeoJSONFeature<GeometryObject> {
     const feature = parseFunctions.parsePolyline(data, parseCoord);
@@ -361,7 +371,7 @@ const parseFunctions = {
   },
 
   parseZPolygon(
-    data: Buffer,
+    data: DataView,
     parseCoord: ReturnType<typeof makeParseCoord>,
   ): GeoJSONFeature<GeometryObject> {
     const feature = parseFunctions.parseZPolyline(data, parseCoord);

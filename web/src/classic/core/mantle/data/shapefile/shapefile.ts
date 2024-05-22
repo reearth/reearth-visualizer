@@ -6,14 +6,11 @@ import type {
   Feature as GeoJSONFeature,
   FeatureCollection,
 } from "geojson";
-import proj4 from "proj4";
 
 import type { Data, DataRange, Feature } from "../../types";
 import { processGeoJSON } from "../geojson";
-import { f, FetchOptions } from "../utils";
+import { f, FetchOptions, generateRandomString } from "../utils";
 
-import { parseDbf } from "./parseDbf";
-import { parseShp } from "./parseShp";
 import { parseZip } from "./parseZip";
 
 async function binaryAjax(url: string, type?: string): Promise<Buffer | string | false> {
@@ -30,7 +27,6 @@ async function binaryAjax(url: string, type?: string): Promise<Buffer | string |
     const parsed = await resp.arrayBuffer();
     return Buffer.from(parsed);
   } catch (e) {
-    console.log("ERROR", e, type);
     if (isOptionalTxt || type === "dbf") {
       return false;
     }
@@ -52,59 +48,25 @@ export async function combine(
     out.features.push({
       type: "Feature",
       geometry: shp[i].geometry,
+      id: generateRandomString(12),
       properties: dbf[i] || {},
     });
   }
   return out;
 }
 
-async function parseShapefiles(
-  shpArrayBuffer: ArrayBuffer,
-  dbfArrayBuffer: ArrayBuffer,
-  prjString?: string,
-): Promise<FeatureCollection> {
-  let prj: proj4.Converter | false = false;
-  try {
-    if (prjString) {
-      prj = proj4(prjString);
-    }
-  } catch (e) {
-    prj = false;
-  }
-  const shpBuffer = Buffer.from(shpArrayBuffer);
-  const dbfBuffer = Buffer.from(dbfArrayBuffer);
-  const shp = parseShp(shpBuffer, prj);
-  const dbf = parseDbf(dbfBuffer);
-  return combine(shp, dbf);
-}
-
 export default async function convertShapefileToGeoJSON(
   base: string | Buffer | ArrayBuffer,
-  whiteList?: string[],
 ): Promise<GeoJSON | GeoJSON[]> {
   if (typeof base !== "string") {
-    return parseZip(base, whiteList);
+    return parseZip(base);
   }
-  if (base.slice(-4).toLowerCase() === ".zip") {
-    const a = await binaryAjax(base);
-    if (typeof a === "string" || !a) {
-      throw new Error("Failed to fetch zip file");
-    }
-    return parseZip(a, whiteList);
+
+  const a = await binaryAjax(base);
+  if (typeof a === "string" || !a) {
+    throw new Error("Failed to fetch zip file");
   }
-  const [shpBuffer, dbfBuffer, prjString] = await Promise.all([
-    binaryAjax(base, "shp"),
-    binaryAjax(base, "dbf"),
-    binaryAjax(base, "prj"),
-  ]);
-  if (typeof shpBuffer === "string" || !shpBuffer || typeof dbfBuffer === "string" || !dbfBuffer) {
-    throw new Error("Failed to fetch shp or dbf file");
-  }
-  return parseShapefiles(
-    shpBuffer,
-    dbfBuffer,
-    typeof prjString === "string" ? prjString : undefined,
-  );
+  return parseZip(a);
 }
 
 export async function fetchShapefile(

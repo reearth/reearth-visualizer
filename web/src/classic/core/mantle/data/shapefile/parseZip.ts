@@ -5,28 +5,12 @@ import { parseDbf } from "./parseDbf";
 import { parseShp } from "./parseShp";
 import { combine } from "./shapefile";
 
-function toBuffer(b: ArrayBuffer | Buffer): Buffer {
-  if (!b) {
-    throw new Error("forgot to pass buffer");
-  }
-  if (Buffer.isBuffer(b)) {
-    return b;
-  }
-  if (b instanceof ArrayBuffer) {
-    return Buffer.from(b);
-  }
-  throw new Error("Unknown buffer type");
-}
-
 export async function parseZip(
   buffer: ArrayBuffer | Buffer,
-  whiteList?: string[],
 ): Promise<GeoJSON.GeoJSON | GeoJSON.GeoJSON[]> {
-  buffer = toBuffer(buffer);
   const zip = await JSZip.loadAsync(buffer);
   const names: string[] = [];
   const projections: { [key: string]: proj4.Converter } = {};
-  whiteList = whiteList || [];
 
   for (const key of Object.keys(zip.files)) {
     if (key.indexOf("__MACOSX") !== -1) {
@@ -41,10 +25,7 @@ export async function parseZip(
       zip.files[fileName + ".shp"] = zip.files[key];
     } else if (fileExt === ".prj") {
       projections[fileName] = proj4(await zip.files[key].async("text"));
-    } else if (
-      fileExt === ".json" ||
-      (whiteList && whiteList.indexOf(key.split(".").pop() || "") > -1)
-    ) {
+    } else if (key.slice(-5).toLowerCase() === ".json") {
       names.push(fileName);
     } else if (fileExt === ".dbf" || fileExt === ".cpg") {
       zip.files[fileName + fileExt] = zip.files[key];
@@ -60,11 +41,7 @@ export async function parseZip(
       const lastDotIdx = name.lastIndexOf(".");
       if (lastDotIdx > -1 && name.slice(lastDotIdx).indexOf("json") > -1) {
         const parsed = JSON.parse(await zip.files[name].async("text"));
-        parsed.fileName = name.slice(0, lastDotIdx);
-        return parsed;
-      } else if (whiteList && whiteList.indexOf(name.slice(lastDotIdx + 1)) > -1) {
-        const parsed = zip.files[name];
-        parsed.name = name;
+        parsed.name = name.slice(0, lastDotIdx);
         return parsed;
       } else {
         const shpBuffer = await zip.files[name + ".shp"].async("arraybuffer");
@@ -76,8 +53,8 @@ export async function parseZip(
           : undefined;
         const prj = projections[name];
 
-        const shp = parseShp(toBuffer(shpBuffer), prj);
-        const dbf = dbfBuffer ? parseDbf(toBuffer(dbfBuffer), cpgString) : undefined;
+        const shp = parseShp(shpBuffer, prj);
+        const dbf = dbfBuffer ? parseDbf(dbfBuffer, cpgString) : undefined;
 
         const parsed = combine(shp, dbf);
         return parsed;
