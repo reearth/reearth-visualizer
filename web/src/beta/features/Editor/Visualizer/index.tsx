@@ -1,4 +1,4 @@
-import { MutableRefObject, SetStateAction, useCallback } from "react";
+import { MutableRefObject, SetStateAction } from "react";
 
 import Visualizer from "@reearth/beta/features/Visualizer";
 import { type InteractionModeType } from "@reearth/beta/features/Visualizer/Crust";
@@ -12,7 +12,7 @@ import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { WidgetAreaState } from "@reearth/services/state";
 
-import type { SelectedLayer } from "../useLayers";
+import type { LayerSelectProps, SelectedLayer } from "../useLayers";
 
 import useHooks from "./hooks";
 
@@ -35,10 +35,10 @@ export type Props = {
   onCameraChange: (camera: Camera) => void;
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
-  setIsVisualizerReady: (value: boolean) => void;
-  setSelectedLayer: (value: SelectedLayer | undefined) => void;
-  setSelectedLayerStyle: (value: string | undefined) => void;
-  setSelectedSceneSetting: (value: string | undefined) => void;
+  onVisualizerReady: (value: boolean) => void;
+  onLayerSelect: (props: LayerSelectProps) => void;
+  onLayerStyleSelect: (layerStyleId?: string) => void;
+  onSceneSettingSelect: (collection?: string) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
   selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
@@ -61,10 +61,10 @@ const EditorVisualizer: React.FC<Props> = ({
   onCameraChange,
   onSketchTypeChange,
   onSketchFeatureCreate,
-  setIsVisualizerReady,
-  setSelectedLayer,
-  setSelectedLayerStyle,
-  setSelectedSceneSetting,
+  onVisualizerReady,
+  onLayerSelect,
+  onLayerStyleSelect,
+  onSceneSettingSelect,
   setSelectedStoryPageId,
   selectWidgetArea,
 }) => {
@@ -91,6 +91,7 @@ const EditorVisualizer: React.FC<Props> = ({
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
+    handleMount,
     zoomToLayer,
   } = useHooks({
     sceneId,
@@ -98,13 +99,12 @@ const EditorVisualizer: React.FC<Props> = ({
     storyId: selectedStory?.id,
     showStoryPanel,
     selectedLayer,
-    setSelectedLayer,
-    setSelectedLayerStyle,
-    setSelectedSceneSetting,
+    onLayerSelect,
+    onLayerStyleSelect,
+    onSceneSettingSelect,
+    onVisualizerReady,
     setSelectedStoryPageId,
   });
-
-  const handleMount = useCallback(() => setIsVisualizerReady(true), [setIsVisualizerReady]);
 
   return (
     <Visualizer

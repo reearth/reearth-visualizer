@@ -22,7 +22,7 @@ type Props = {
   isSketchLayer?: boolean;
   customProperties?: any;
   layerId?: string;
-  sketchLayerFeature?: Feature;
+  sketchFeature?: Feature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
 };
 
@@ -39,7 +39,7 @@ const FeatureData: React.FC<Props> = ({
   isSketchLayer,
   customProperties,
   layerId,
-  sketchLayerFeature,
+  sketchFeature,
   onGeoJsonFeatureUpdate,
 }) => {
   const t = useT();
@@ -72,12 +72,12 @@ const FeatureData: React.FC<Props> = ({
       if (!selectedFeature) return;
       onGeoJsonFeatureUpdate?.({
         layerId: layerId ?? "",
-        featureId: sketchLayerFeature?.id ?? "",
+        featureId: sketchFeature?.id ?? "",
         geometry: selectedFeature.geometry,
         properties: p,
       });
     },
-    [layerId, onGeoJsonFeatureUpdate, selectedFeature, sketchLayerFeature?.id],
+    [layerId, onGeoJsonFeatureUpdate, selectedFeature, sketchFeature?.id],
   );
 
   return (
@@ -109,7 +109,7 @@ const FeatureData: React.FC<Props> = ({
             <FieldComponent
               field={f}
               key={f.id}
-              selectedFeature={sketchLayerFeature}
+              selectedFeature={sketchFeature}
               setField={setField}
               onSubmit={handleSubmit}
             />

@@ -1,5 +1,5 @@
 import NotFound from "@reearth/beta/components/NotFound";
-import PublishedGis from "@reearth/beta/features/PublishedVisualizer";
+import PublishedGis from "@reearth/beta/features/Published";
 import { useCore } from "@reearth/beta/utils/use-core";
 import ClassicPublished from "@reearth/classic/components/organisms/Published";
 import ClassicCorePublished from "@reearth/classic/components/organisms/Published/core";
