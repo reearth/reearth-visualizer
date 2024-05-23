@@ -8,6 +8,7 @@ export type TextInputProps = {
   size?: "normal" | "small";
   disabled?: boolean;
   appearance?: "readonly" | "present";
+  extendWidth?: boolean;
   actions?: FC[];
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
@@ -19,6 +20,7 @@ export const TextInput: FC<TextInputProps> = ({
   size = "normal",
   disabled,
   appearance,
+  extendWidth,
   actions,
   onChange,
   onBlur,
@@ -34,9 +36,9 @@ export const TextInput: FC<TextInputProps> = ({
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const newValue = e.currentTarget.value;
       setCurrentValue(newValue ?? "");
-      onChange?.(currentValue);
+      onChange?.(newValue);
     },
-    [currentValue, onChange],
+    [onChange],
   );
 
   const handleBlur = useCallback(() => {
@@ -49,7 +51,11 @@ export const TextInput: FC<TextInputProps> = ({
   }, []);
 
   return (
-    <Wrapper size={size} appearance={appearance} status={isFocused ? "active" : "default"}>
+    <Wrapper
+      size={size}
+      appearance={appearance}
+      extendWidth={extendWidth}
+      status={isFocused ? "active" : "default"}>
       <StyledInput
         value={currentValue}
         placeholder={placeholder}
@@ -74,7 +80,8 @@ const Wrapper = styled("div")<{
   size: "normal" | "small";
   appearance?: "readonly" | "present";
   status: "default" | "active";
-}>(({ size, theme, appearance, status }) => {
+  extendWidth?: boolean;
+}>(({ size, theme, appearance, status, extendWidth }) => {
   const borderStyle =
     appearance === "present"
       ? status === "default"
@@ -96,6 +103,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
+    width: !extendWidth ? "fit-content" : "100%",
   };
 });
 
