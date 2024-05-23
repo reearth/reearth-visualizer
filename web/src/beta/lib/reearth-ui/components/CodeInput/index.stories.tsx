@@ -61,7 +61,7 @@ export const JavascriptInput: Story = {
         value="console.log('codeinput')"
         onChange={action("changed-value")}
         onBlur={action("on-blur")}
-        language="js"
+        language="javascript"
       />
     </div>
   ),
