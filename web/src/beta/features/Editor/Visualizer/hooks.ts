@@ -87,21 +87,17 @@ export default ({
   }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
   const handleLayerSelect = useCallback(
-    async (
-      id?: string,
-      // layer?: () => Promise<ComputedLayer | undefined>,
-      layer?: ComputedLayer,
-      feature?: ComputedFeature,
-      // layerSelectionReason?: LayerSelectionReason,
-    ) => {
-      if ((!id && !feature && !selectedLayer) ?? (id === selectedLayer?.layer?.id || !feature))
+    (layerId?: string, computedLayer?: ComputedLayer, computedFeature?: ComputedFeature) => {
+      if (
+        (!layerId && !computedFeature && !selectedLayer) ??
+        (layerId === selectedLayer?.layer?.id || !computedFeature)
+      )
         return;
 
-      if (id) {
+      if (layerId) {
         onLayerStyleSelect(undefined);
         onSceneSettingSelect(undefined);
-        onLayerSelect({ layerId: id, computedLayer: layer, computedFeature: feature });
-        // setSelectedLayer({ layerId: id, layer: await layer?.(), feature, layerSelectionReason });
+        onLayerSelect({ layerId, computedLayer, computedFeature });
       } else {
         onLayerSelect(undefined);
       }

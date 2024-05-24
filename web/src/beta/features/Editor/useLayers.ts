@@ -1,12 +1,6 @@
 import { MutableRefObject, useCallback, useState } from "react";
 
-import type {
-  MapRef,
-  ComputedFeature,
-  ComputedLayer,
-  LayerSimple,
-  // LayerSelectionReason, TODO: remove
-} from "@reearth/core";
+import type { MapRef, ComputedFeature, ComputedLayer, LayerSimple } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -54,7 +48,6 @@ export type SelectedLayer = {
   layer?: NLSLayer;
   computedLayer?: ComputedLayer;
   computedFeature?: ComputedFeature;
-  // layerSelectionReason?: LayerSelectionReason; TODO: remove
 };
 
 export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerProps) {
@@ -64,12 +57,6 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
 
   const [selectedLayer, setSelectedLayer] = useState<SelectedLayer | undefined>();
-
-  // TODO: remove
-  // const selectedLayer = useMemo(
-  //   () => nlsLayers.find(l => l.id === selectedLayerId?.layerId) || undefined,
-  //   [nlsLayers, selectedLayerId],
-  // );
 
   const handleLayerSelect = useCallback(
     (props: LayerSelectProps) => {
@@ -160,6 +147,5 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
-    // setSelectedLayerId, TODO: remove
   };
 }
