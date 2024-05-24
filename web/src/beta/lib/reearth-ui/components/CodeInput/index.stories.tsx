@@ -21,8 +21,8 @@ export const Default: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value={JSON.stringify(TEST_JSON)}
-        onChange={action("changed-value")}
-        onBlur={action("on-blur")}
+        onChange={action("onChange")}
+        onBlur={action("onBlur")}
       />
     </div>
   ),
@@ -33,8 +33,8 @@ export const Disabled: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value={JSON.stringify(TEST_JSON)}
-        onChange={action("changed-value")}
-        onBlur={action("on-blur")}
+        onChange={action("onChange")}
+        onBlur={action("onBlur")}
         disabled={true}
       />
     </div>
@@ -46,8 +46,8 @@ export const HideLineNumber: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value={JSON.stringify(TEST_JSON)}
-        onChange={action("changed-value")}
-        onBlur={action("on-blur")}
+        onChange={action("onChange")}
+        onBlur={action("onBlur")}
         showLines={false}
       />
     </div>
@@ -59,8 +59,8 @@ export const JavascriptInput: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value="console.log('codeinput')"
-        onChange={action("changed-value")}
-        onBlur={action("on-blur")}
+        onChange={action("onChange")}
+        onBlur={action("onBlur")}
         language="javascript"
       />
     </div>

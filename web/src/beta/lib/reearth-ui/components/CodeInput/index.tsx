@@ -21,8 +21,6 @@ export const CodeInput: FC<CodeInputProps> = ({
   onBlur,
 }) => {
   const theme = useTheme();
-  const editorRef = useRef(null);
-  const monacoRef = useRef(null);
   const currentValue = useRef<string | undefined>(value);
   const [isActive, setIsActive] = useState<boolean>(false);
 
@@ -48,9 +46,6 @@ export const CodeInput: FC<CodeInputProps> = ({
   );
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-    monacoRef.current = monaco;
-
     monaco.editor.defineTheme("myCustomTheme", {
       base: "vs-dark",
       inherit: true,
@@ -104,6 +99,7 @@ const EditorWrapper = styled("div")<{
   width: "100%",
   height: "100%",
   overflow: "hidden",
+  boxSizing: "border-box",
   border: disabled
     ? `1px solid ${theme.outline.weak}`
     : isActive
