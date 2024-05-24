@@ -80,7 +80,7 @@ const StyledButton = styled("button")<{
       ? `${theme.dangerous.main}`
       : `${theme.content.main}`,
   backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
-  width: !extendWidth ? "fit-content" : "",
+  width: !extendWidth ? "fit-content" : "100%",
   minWidth: minWidth ? `${minWidth}px` : "",
   ["&:hover"]: {
     borderColor: "transparent",
