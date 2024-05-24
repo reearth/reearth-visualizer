@@ -89,11 +89,11 @@ const Wrapper = styled("div")<{
     borderRadius: theme.radius.small,
     background: theme.bg[1],
     display: "flex",
-    gap: theme.spacing.smallest,
+    gap: `${theme.spacing.smallest}px`,
     alignItems: "center",
     padding:
       size === "small"
-        ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
+        ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
   };
@@ -125,7 +125,7 @@ const StyledInput = styled("input")<{
 const ActionsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.smallest,
+  gap: `${theme.spacing.smallest}px`,
   flexShrink: 0,
   padding: theme.spacing.micro,
   color: theme.content.weak,

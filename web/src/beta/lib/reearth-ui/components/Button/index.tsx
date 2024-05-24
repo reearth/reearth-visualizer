@@ -2,12 +2,14 @@ import { FC } from "react";
 
 import { styled } from "@reearth/services/theme";
 
+import { IconName, Icon } from "../Icon";
+
 export type ButtonProps = {
   appearance?: "primary" | "secondary" | "dangerous" | "simple";
   disabled?: boolean;
   size?: "normal" | "small";
   iconButton?: boolean;
-  icon?: string; // TODO: Icon Name, Use Icon Component
+  icon?: IconName;
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
@@ -34,8 +36,7 @@ export const Button: FC<ButtonProps> = ({
       extendWidth={extendWidth}
       minWidth={minWidth}
       onClick={onClick}>
-      {/* TODD: Use Icon Component based on icon */}
-      {icon}
+      {icon && <Icon icon={icon} />}
       {!iconButton && title}
     </StyledButton>
   );
@@ -79,7 +80,7 @@ const StyledButton = styled("button")<{
       ? `${theme.dangerous.main}`
       : `${theme.content.main}`,
   backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
-  width: !extendWidth ? "fit-content" : "",
+  width: !extendWidth ? "fit-content" : "100%",
   minWidth: minWidth ? `${minWidth}px` : "",
   ["&:hover"]: {
     borderColor: "transparent",
