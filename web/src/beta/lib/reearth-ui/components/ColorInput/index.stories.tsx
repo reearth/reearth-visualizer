@@ -1,6 +1,5 @@
 import { action } from "@storybook/addon-actions";
 import { Meta, StoryObj } from "@storybook/react";
-import { FC, useState } from "react";
 
 import { ColorInput, ColorInputProps } from ".";
 
@@ -11,16 +10,29 @@ const meta: Meta<ColorInputProps> = {
 export default meta;
 type Story = StoryObj<typeof ColorInput>;
 
-const MockChild: FC = () => {
-  const [color, setColor] = useState("");
-
-  const handleChange = (newColor: string) => {
-    setColor(newColor);
-    action("onChange")(newColor);
-  };
-
-  return <ColorInput value={color} onChange={handleChange} />;
+export const ColorTypeIn: Story = {
+  render: arg => <ColorInput width={246} value="" onChange={action("onChange")} {...arg} />,
 };
-export const Default: Story = {
-  render: () => <MockChild />,
+
+export const ColorPicker: Story = {
+  render: arg => <ColorInput onChange={action("onChange")} {...arg} />,
+  args: {
+    width: 246,
+  },
+};
+
+export const Disabled: Story = {
+  render: arg => <ColorInput {...arg} />,
+  args: {
+    disabled: true,
+    width: 246,
+  },
+};
+
+export const SizeSmall: Story = {
+  render: arg => <ColorInput value={undefined} onChange={action("onChange")} {...arg} />,
+  args: {
+    size: "small",
+    width: 246,
+  },
 };

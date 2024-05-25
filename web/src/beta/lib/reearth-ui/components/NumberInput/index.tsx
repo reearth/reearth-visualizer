@@ -33,7 +33,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
-      if (/^-?\d*\.?\d*$/.test(currentValue)) {
+      if (/^-?\d*\.?\d*%*$/.test(currentValue)) {
         setCurrentValue(currentValue);
         onChange?.(parseFloat(currentValue));
       }
@@ -103,6 +103,7 @@ const StyledInput = styled("input")<{
   "::placeholder": {
     color: theme.content.weak,
   },
+  width: "100%",
 }));
 
 const UnitWrapper = styled("div")(({ theme }) => ({
