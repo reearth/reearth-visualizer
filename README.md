@@ -29,6 +29,8 @@ https://user-images.githubusercontent.com/49897538/123731067-6c802000-d8d2-11eb-
 
 ---
 
+💡 **We are hiring full-time OSS comitters!** [https://eukarya.io/join/en](https://eukarya.io/join/en)
+
 ## Features
 
 - 🔌 Highly extensible thanks to the robust plugin system
