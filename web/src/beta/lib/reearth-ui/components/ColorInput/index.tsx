@@ -29,6 +29,7 @@ export type RGBA = {
 
 const channels = ["r", "g", "b", "a"];
 const DEFAULT_PANEL_WIDTH = 2;
+const DEFAULT_PANEL_OFFSET = 4;
 
 export const ColorInput: FC<ColorInputProps> = ({
   value,
@@ -60,7 +61,7 @@ export const ColorInput: FC<ColorInputProps> = ({
     <Popup
       open={open}
       placement="bottom"
-      offset={4}
+      offset={DEFAULT_PANEL_OFFSET}
       trigger={
         <InputWrapper width={width}>
           <Swatch
