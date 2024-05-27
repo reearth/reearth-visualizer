@@ -7,3 +7,4 @@ export * from "./TextInput";
 export * from "./Typography";
 export * from "./PopupPanel";
 export * from "./CodeInput";
+export * from "./Collapse";
