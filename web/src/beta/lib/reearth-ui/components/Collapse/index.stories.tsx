@@ -51,3 +51,13 @@ export const CollapseWithHeaderBg: Story = {
     </div>
   ),
 };
+
+export const InitialAsCollapsed: Story = {
+  render: () => (
+    <div style={{ width: "500px", display: "flex", flexDirection: "column", gap: "12px" }}>
+      <Collapse title="Default Collapse" collapsed={true}>
+        <p>Lorem ipsum dolor sit</p>
+      </Collapse>
+    </div>
+  ),
+};

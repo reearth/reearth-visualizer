@@ -3,6 +3,7 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { styled } from "@reearth/services/theme";
 
 import { Icon } from "../Icon";
+import { Typography } from "../Typography";
 
 export type CollapseProps = {
   title?: string;
@@ -34,7 +35,7 @@ export const Collapse: FC<CollapseProps> = ({
         isCollapsed={isCollapsed}
         size={size}
         headerBg={headerBg}>
-        {title}
+        <Typography size="body">{title}</Typography>
         <IconWrapper isCollapsed={isCollapsed}>
           <Icon size="small" icon="triangle" />
         </IconWrapper>
