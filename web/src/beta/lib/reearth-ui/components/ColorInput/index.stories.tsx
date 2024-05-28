@@ -14,7 +14,7 @@ export const Default: Story = {
   render: () => <ColorInput onChange={action("onChange")} />,
 };
 
-export const RGB: Story = {
+export const AlphaDisabled: Story = {
   render: arg => <ColorInput onChange={action("onChange")} {...arg} />,
   args: {
     alphaDisabled: true,
