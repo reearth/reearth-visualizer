@@ -4,6 +4,7 @@ import { fonts, styled } from "@reearth/services/theme";
 
 export type TextInputProps = {
   value?: string;
+  maxLength?: number;
   placeholder?: string;
   size?: "normal" | "small";
   disabled?: boolean;
@@ -16,6 +17,7 @@ export type TextInputProps = {
 
 export const TextInput: FC<TextInputProps> = ({
   value,
+  maxLength,
   placeholder,
   size = "normal",
   disabled,
@@ -60,6 +62,7 @@ export const TextInput: FC<TextInputProps> = ({
         value={currentValue}
         placeholder={placeholder}
         disabled={disabled}
+        maxLength={maxLength}
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}

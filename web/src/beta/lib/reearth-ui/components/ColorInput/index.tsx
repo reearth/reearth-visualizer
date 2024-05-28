@@ -1,14 +1,14 @@
 import { FC } from "react";
 import { RgbaColorPicker } from "react-colorful";
 
-import { Button } from "@reearth/beta/lib/reearth-ui/components/Button";
-import { NumberInput } from "@reearth/beta/lib/reearth-ui/components/NumberInput";
-import { Popup } from "@reearth/beta/lib/reearth-ui/components/Popup";
-import { TextInput } from "@reearth/beta/lib/reearth-ui/components/TextInput";
-import { getChannelValue } from "@reearth/beta/utils/use-rgb-color";
+import {
+  Button,
+  NumberInput,
+  Popup,
+  TextInput,
+  PopupPanel,
+} from "@reearth/beta/lib/reearth-ui/components";
 import { fonts, styled } from "@reearth/services/theme";
-
-import { PopupPanel } from "../PopupPanel";
 
 import useHooks from "./hooks";
 
@@ -16,107 +16,98 @@ export type ColorInputProps = {
   value?: string;
   size?: "normal" | "small";
   disabled?: boolean;
-  alphaEnabled?: boolean;
+  alphaDisabled?: boolean;
   onChange?: (text: string) => void;
 };
 
-export type RGBA = {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-};
-
-const channels = ["r", "g", "b"];
-const channelsWithAlpha = [...channels, "a"];
 const DEFAULT_PANEL_OFFSET = 4;
 
 export const ColorInput: FC<ColorInputProps> = ({
   value,
   disabled,
   size = "normal",
-  alphaEnabled,
+  alphaDisabled,
   onChange,
 }) => {
   const {
     open,
-    rgba,
+    channels,
+    pickerColor,
     colorValue,
-    isFocused,
-    colorState,
+    isSwatchFocused,
+    handlePickerOpenChange,
+    handlePickerColorChange,
+    handlePickerInputChange,
     handleHexInputChange,
-    handleColorChange,
-    handleRgbaInputChange,
     handleHexInputBlur,
-    handleRgbaInputBlur,
-    handleToggle,
-    handleSave,
+    handlePickerApply,
+    handlePickerCancel,
   } = useHooks({
     value,
-    disabled,
+    alphaDisabled,
     onChange,
   });
-
-  const displayedChannels = alphaEnabled ? channelsWithAlpha : channels;
 
   return (
     <InputWrapper>
       <Popup
         open={open}
         placement="bottom"
+        disabled={disabled}
         offset={DEFAULT_PANEL_OFFSET}
+        onOpenChange={handlePickerOpenChange}
         trigger={
           <Swatch
-            color={colorState}
-            onClick={handleToggle}
-            status={isFocused}
+            color={colorValue}
+            alphaDisabled={alphaDisabled}
+            status={isSwatchFocused}
             size={size}
             disabled={disabled}
           />
         }>
         <PopupPanel
           title="Color Picker"
-          onCancel={handleToggle}
+          onCancel={handlePickerCancel}
           actions={
             <ActionsWrapper>
-              <Button extendWidth size="small" title="Cancel" onClick={handleToggle} />
+              <Button extendWidth size="small" title="Cancel" onClick={handlePickerCancel} />
               <Button
                 extendWidth
                 size="small"
                 title="Apply"
                 appearance="primary"
-                onClick={handleSave}
+                onClick={handlePickerApply}
               />
             </ActionsWrapper>
           }>
           <ColorPickerWrapper>
             <ColorPicker
               className="colorPicker"
-              alphaEnabled={alphaEnabled}
-              color={rgba}
-              onChange={handleColorChange}
+              alphaDisabled={alphaDisabled}
+              color={pickerColor}
+              onChange={handlePickerColorChange}
             />
-            <RgbaText>{alphaEnabled ? "RGBA" : "RGB"}</RgbaText>
-            <RgbaValuesWrapper>
-              {displayedChannels.map(channel => (
+            <Format>{alphaDisabled ? "RGB" : "RGBA"}</Format>
+            <ChannelsWrapper>
+              {channels.map(channel => (
                 <NumberInput
                   key={channel}
-                  value={getChannelValue(rgba, channel as keyof RGBA)}
-                  onChange={value => handleRgbaInputChange(channel as keyof RGBA, value)}
-                  onBlur={value => handleRgbaInputBlur(channel as keyof RGBA, value)}
+                  value={pickerColor[channel]}
+                  onChange={value => handlePickerInputChange(channel, value)}
                 />
               ))}
-            </RgbaValuesWrapper>
+            </ChannelsWrapper>
           </ColorPickerWrapper>
         </PopupPanel>
       </Popup>
       <TextInput
         value={colorValue}
-        placeholder="#RRGGBBAA"
+        placeholder={alphaDisabled ? "#RRGGBB" : "#RRGGBBAA"}
         onChange={handleHexInputChange}
         onBlur={handleHexInputBlur}
         disabled={disabled}
         size={size}
+        maxLength={alphaDisabled ? 7 : 9}
         extendWidth
       />
     </InputWrapper>
@@ -133,43 +124,66 @@ const Swatch = styled("div")<{
   color?: string;
   status?: boolean;
   disabled?: boolean;
+  alphaDisabled?: boolean;
   size: "normal" | "small";
-}>(({ theme, color, status, size, disabled }) => ({
-  padding: size === "small" ? theme.spacing.small + 1 : theme.spacing.normal + 1,
+}>(({ theme, color, status, size, disabled, alphaDisabled }) => ({
+  position: "relative",
+  boxSizing: "border-box",
+  width: size === "small" ? 20 : 28,
+  height: size === "small" ? 20 : 28,
   cursor: disabled ? "not-allowed" : "pointer",
   flexShrink: 0,
   borderRadius: theme.radius.small,
-  background: color ? color : theme.bg[1],
   boxShadow: theme.shadow.input,
   border: status ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
+  backgroundImage: alphaDisabled
+    ? ""
+    : `linear-gradient(45deg, ${theme.bg[2]} 25%, transparent 25%), linear-gradient(-45deg, ${theme.bg[2]} 25%, transparent 25%), linear-gradient(45deg, transparent 75%, ${theme.bg[2]} 75%), linear-gradient(-45deg, transparent 75%, ${theme.bg[2]} 75%)`,
+  backgroundSize: `${theme.spacing.small}px ${theme.spacing.small}px`,
+  backgroundPosition: `0 0, 0 ${theme.spacing.small / 2}px, ${theme.spacing.small / 2}px -${
+    theme.spacing.small / 2
+  }px, -${theme.spacing.small / 2}px 0px`,
+  overflow: "hidden",
+
+  ["&:before"]: {
+    content: '""',
+    display: "block",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    left: 0,
+    top: 0,
+    boxShadow: theme.shadow.input,
+    background: color ? color : "",
+  },
 }));
 
-const ColorPicker = styled(RgbaColorPicker)<{ alphaEnabled?: boolean }>(
-  ({ theme, alphaEnabled }) => ({
-    gap: theme.spacing.normal,
-    ".react-colorful__saturation-pointer": {
-      width: "12px",
-      height: "12px",
-      borderWidth: theme.spacing.smallest - 2,
-    },
-    ".react-colorful__hue-pointer, .react-colorful__alpha-pointer": {
-      width: "2px",
-      height: "10px",
-      border: `2px solid ${theme.item.default}`,
-      borderRadius: theme.radius.smallest,
-    },
-    ".react-colorful__alpha.react-colorful__last-control": {
-      display: alphaEnabled ? "auto" : "none",
-    },
-    ".react-colorful__saturation, .react-colorful__hue, .react-colorful__alpha": {
-      borderRadius: theme.radius.smallest + 1,
-      width: "270px",
-    },
-    ".react-colorful__hue, .react-colorful__alpha": {
-      height: "10px",
-    },
-  }),
-);
+const ColorPicker = styled(RgbaColorPicker, {
+  shouldForwardProp: prop => prop !== "alphaDisabled",
+})<{ alphaDisabled?: boolean }>(({ theme, alphaDisabled }) => ({
+  gap: theme.spacing.normal,
+  ".react-colorful__saturation-pointer": {
+    width: "12px",
+    height: "12px",
+    borderWidth: theme.spacing.smallest - 2,
+  },
+  ".react-colorful__hue-pointer, .react-colorful__alpha-pointer": {
+    width: "2px",
+    height: "10px",
+    border: `2px solid ${theme.item.default}`,
+    borderRadius: theme.radius.smallest,
+  },
+  ".react-colorful__alpha.react-colorful__last-control": {
+    display: alphaDisabled ? "none" : "auto",
+  },
+  ".react-colorful__saturation, .react-colorful__hue, .react-colorful__alpha": {
+    borderRadius: theme.radius.smallest + 1,
+    width: "270px",
+  },
+  ".react-colorful__hue, .react-colorful__alpha": {
+    height: "10px",
+  },
+}));
 
 const ColorPickerWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -178,12 +192,12 @@ const ColorPickerWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.normal,
 }));
 
-const RgbaText = styled("div")(() => ({
+const Format = styled("div")(() => ({
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
 }));
 
-const RgbaValuesWrapper = styled("div")(({ theme }) => ({
+const ChannelsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "flex-start",
   gap: theme.spacing.smallest,

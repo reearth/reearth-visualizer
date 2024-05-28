@@ -1,98 +1,105 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { RgbaColor } from "react-colorful";
 import tinycolor from "tinycolor2";
 
-import { checkRgbaRange, getHexString } from "@reearth/beta/utils/use-rgb-color";
-
-import { ColorInputProps, RGBA } from ".";
-
-const maxRgbValue = 255;
-const initialRgba = { r: 255, g: 255, b: 255, a: 1 };
+import { ColorInputProps } from ".";
 
 const useColorPicker = ({
   value,
-  disabled,
+  alphaDisabled,
   onChange,
-}: Pick<ColorInputProps, "value" | "disabled" | "onChange">) => {
+}: Pick<ColorInputProps, "value" | "alphaDisabled" | "onChange">) => {
   const [colorValue, setColorValue] = useState<string | undefined>(value);
-  const [rgba, setRgba] = useState<RGBA>(() => {
-    return value ? tinycolor(value).toRgb() : initialRgba;
-  });
-  const [colorState, setColorState] = useState(colorValue);
+  const [pickerColor, setPickerColor] = useState<RgbaColor>(tinycolor(value).toRgb());
+
   const [open, setOpen] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
+  const [isSwatchFocused, setSwatchFocused] = useState(false);
+
+  const handlePickerOpenChange = useCallback((open: boolean) => {
+    setSwatchFocused(open);
+    setOpen(open);
+  }, []);
+
+  const handlePickerClose = useCallback(() => {
+    setSwatchFocused(false);
+    setOpen(false);
+  }, []);
 
   const handleHexInputChange = useCallback((value: string) => {
     setColorValue(value);
-    const newColor = tinycolor(value).toRgb();
-    setRgba(newColor);
   }, []);
 
   const handleHexInputBlur = useCallback(() => {
     const hexPattern = /^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$/.test(colorValue || "");
     const color = !colorValue || hexPattern ? colorValue : value;
-    setColorState(color);
+    setPickerColor(tinycolor(color).toRgb());
     onChange?.(color || "");
   }, [colorValue, onChange, value]);
 
-  const handleToggle = useCallback(() => {
-    if (disabled) return;
-    setOpen(!open);
-    setIsFocused(!open);
-  }, [disabled, open]);
-
-  const handleColorChange = useCallback((newColor: RGBA) => {
-    setRgba(newColor);
+  const handlePickerColorChange = useCallback((newColor: RgbaColor) => {
+    setPickerColor(newColor);
   }, []);
 
-  const handleRgbaInputChange = useCallback(
-    (channel: keyof RGBA, value?: string | number) => {
-      if (!value) return;
-
-      handleColorChange({
-        ...rgba,
-        [channel]: value,
-      });
-    },
-    [handleColorChange, rgba],
-  );
-
-  const handleRgbaInputBlur = useCallback(
-    (channel: keyof RGBA, value?: string | number) => {
+  const handlePickerInputChange = useCallback(
+    (channel: keyof RgbaColor, value?: string | number) => {
       if (!value) return;
 
       const numericValue =
-        channel === "a" ? checkRgbaRange(value, 0, 1) : checkRgbaRange(value, 0, maxRgbValue);
+        channel === "a" ? validRgbaValue(value, 0, 1) : validRgbaValue(value, 0, 255);
 
-      handleColorChange({
-        ...rgba,
+      setPickerColor({
+        ...pickerColor,
         [channel]: numericValue,
       });
     },
-    [handleColorChange, rgba],
+    [pickerColor],
   );
 
-  const handleSave = useCallback(() => {
-    const color = getHexString(rgba);
-    setColorState(color);
+  const handlePickerCancel = useCallback(() => {
+    handlePickerClose();
+    setPickerColor(tinycolor(colorValue).toRgb());
+  }, [colorValue, handlePickerClose]);
+
+  const handlePickerApply = useCallback(() => {
+    const color =
+      "#" + (alphaDisabled ? tinycolor(pickerColor).toHex() : tinycolor(pickerColor).toHex8());
     setColorValue(color);
     onChange?.(color || "");
-    handleToggle();
-  }, [handleToggle, onChange, rgba]);
+    handlePickerClose();
+  }, [onChange, handlePickerClose, alphaDisabled, pickerColor]);
+
+  const channels = useMemo(
+    () => (alphaDisabled ? ["r", "g", "b"] : ["r", "g", "b", "a"]) as (keyof RgbaColor)[],
+    [alphaDisabled],
+  );
+
+  useEffect(() => {
+    setColorValue(value);
+    setPickerColor(tinycolor(value).toRgb());
+  }, [value]);
 
   return {
     open,
+    channels,
     colorValue,
-    colorState,
-    rgba,
-    isFocused,
+    pickerColor,
+    isSwatchFocused,
+    handlePickerOpenChange,
+    handlePickerColorChange,
+    handlePickerInputChange,
+    handlePickerApply,
+    handlePickerCancel,
     handleHexInputChange,
-    handleColorChange,
-    handleRgbaInputChange,
-    handleToggle,
     handleHexInputBlur,
-    handleRgbaInputBlur,
-    handleSave,
   };
 };
 
 export default useColorPicker;
+
+const validRgbaValue = (value: string | number, min: number, max: number) => {
+  let numericValue = parseFloat(value.toString());
+  if (isNaN(numericValue) || numericValue < min || numericValue > max) {
+    numericValue = max;
+  }
+  return numericValue;
+};

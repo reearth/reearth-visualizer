@@ -10,18 +10,14 @@ const meta: Meta<ColorInputProps> = {
 export default meta;
 type Story = StoryObj<typeof ColorInput>;
 
-export const ColorTypeIn: Story = {
-  render: arg => <ColorInput value="" onChange={action("onChange")} {...arg} />,
+export const Default: Story = {
+  render: () => <ColorInput onChange={action("onChange")} />,
 };
 
-export const ColorPicker: Story = {
+export const RGB: Story = {
   render: arg => <ColorInput onChange={action("onChange")} {...arg} />,
-};
-
-export const EnableAlphaChannel: Story = {
-  render: arg => <ColorInput value={undefined} onChange={action("onChange")} {...arg} />,
   args: {
-    alphaEnabled: true,
+    alphaDisabled: true,
   },
 };
 
@@ -32,8 +28,8 @@ export const Disabled: Story = {
   },
 };
 
-export const SizeSmall: Story = {
-  render: arg => <ColorInput value={undefined} onChange={action("onChange")} {...arg} />,
+export const Small: Story = {
+  render: arg => <ColorInput onChange={action("onChange")} {...arg} />,
   args: {
     size: "small",
   },
