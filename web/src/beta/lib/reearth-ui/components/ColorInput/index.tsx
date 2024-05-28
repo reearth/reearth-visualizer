@@ -16,6 +16,7 @@ export type ColorInputProps = {
   value?: string;
   size?: "normal" | "small";
   disabled?: boolean;
+  alphaEnabled?: boolean;
   onChange?: (text: string) => void;
 };
 
@@ -26,10 +27,17 @@ export type RGBA = {
   a: number;
 };
 
-const channels = ["r", "g", "b", "a"];
+const channels = ["r", "g", "b"];
+const channelsWithAlpha = [...channels, "a"];
 const DEFAULT_PANEL_OFFSET = 4;
 
-export const ColorInput: FC<ColorInputProps> = ({ value, disabled, size = "normal", onChange }) => {
+export const ColorInput: FC<ColorInputProps> = ({
+  value,
+  disabled,
+  size = "normal",
+  alphaEnabled,
+  onChange,
+}) => {
   const {
     open,
     rgba,
@@ -48,6 +56,8 @@ export const ColorInput: FC<ColorInputProps> = ({ value, disabled, size = "norma
     disabled,
     onChange,
   });
+
+  const displayedChannels = alphaEnabled ? channelsWithAlpha : channels;
 
   return (
     <InputWrapper>
@@ -81,9 +91,9 @@ export const ColorInput: FC<ColorInputProps> = ({ value, disabled, size = "norma
           }>
           <ColorPickerWrapper>
             <ColorPicker className="colorPicker" color={rgba} onChange={handleColorChange} />
-            <RgbaText>RGBA</RgbaText>
+            <RgbaText>{alphaEnabled ? "RGBA" : "RGB"}</RgbaText>
             <RgbaValuesWrapper>
-              {channels.map(channel => (
+              {displayedChannels.map(channel => (
                 <NumberInput
                   key={channel}
                   value={getChannelValue(rgba, channel as keyof RGBA)}
