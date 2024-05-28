@@ -8,3 +8,4 @@ export * from "./Typography";
 export * from "./PopupPanel";
 export * from "./CodeInput";
 export * from "./Collapse";
+export * from "./Switcher";
