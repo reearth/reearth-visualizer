@@ -15,7 +15,6 @@ import useHooks from "./hooks";
 export type ColorInputProps = {
   value?: string;
   size?: "normal" | "small";
-  width?: number;
   disabled?: boolean;
   onChange?: (text: string) => void;
 };
@@ -28,16 +27,9 @@ export type RGBA = {
 };
 
 const channels = ["r", "g", "b", "a"];
-const DEFAULT_PANEL_WIDTH = 2;
 const DEFAULT_PANEL_OFFSET = 4;
 
-export const ColorInput: FC<ColorInputProps> = ({
-  value,
-  width,
-  disabled,
-  size = "normal",
-  onChange,
-}) => {
+export const ColorInput: FC<ColorInputProps> = ({ value, disabled, size = "normal", onChange }) => {
   const {
     open,
     rgba,
@@ -58,12 +50,12 @@ export const ColorInput: FC<ColorInputProps> = ({
   });
 
   return (
-    <Popup
-      open={open}
-      placement="bottom"
-      offset={DEFAULT_PANEL_OFFSET}
-      trigger={
-        <InputWrapper width={width}>
+    <InputWrapper>
+      <Popup
+        open={open}
+        placement="bottom"
+        offset={DEFAULT_PANEL_OFFSET}
+        trigger={
           <Swatch
             color={colorState}
             onClick={handleToggle}
@@ -71,56 +63,55 @@ export const ColorInput: FC<ColorInputProps> = ({
             size={size}
             disabled={disabled}
           />
-          <TextInput
-            value={colorValue}
-            placeholder="#RRGGBBAA"
-            onChange={handleHexInputChange}
-            onBlur={handleHexInputBlur}
-            disabled={disabled}
-            size={size}
-            extendWidth
-          />
-        </InputWrapper>
-      }>
-      <PopupPanel
-        title="Color Picker"
-        onCancel={handleToggle}
-        actions={
-          <ActionsWrapper>
-            <Button extendWidth size="small" title="Cancel" onClick={handleToggle} />
-            <Button
-              extendWidth
-              size="small"
-              title="Apply"
-              appearance="primary"
-              onClick={handleSave}
-            />
-          </ActionsWrapper>
         }>
-        <ColorPickerWrapper>
-          <ColorPicker className="colorPicker" color={rgba} onChange={handleColorChange} />
-          <RgbaText>RGBA</RgbaText>
-          <RgbaValuesWrapper>
-            {channels.map(channel => (
-              <NumberInput
-                key={channel}
-                value={getChannelValue(rgba, channel as keyof RGBA)}
-                onChange={value => handleRgbaInputChange(channel as keyof RGBA, value)}
-                onBlur={value => handleRgbaInputBlur(channel as keyof RGBA, value)}
+        <PopupPanel
+          title="Color Picker"
+          onCancel={handleToggle}
+          actions={
+            <ActionsWrapper>
+              <Button extendWidth size="small" title="Cancel" onClick={handleToggle} />
+              <Button
+                extendWidth
+                size="small"
+                title="Apply"
+                appearance="primary"
+                onClick={handleSave}
               />
-            ))}
-          </RgbaValuesWrapper>
-        </ColorPickerWrapper>
-      </PopupPanel>
-    </Popup>
+            </ActionsWrapper>
+          }>
+          <ColorPickerWrapper>
+            <ColorPicker className="colorPicker" color={rgba} onChange={handleColorChange} />
+            <RgbaText>RGBA</RgbaText>
+            <RgbaValuesWrapper>
+              {channels.map(channel => (
+                <NumberInput
+                  key={channel}
+                  value={getChannelValue(rgba, channel as keyof RGBA)}
+                  onChange={value => handleRgbaInputChange(channel as keyof RGBA, value)}
+                  onBlur={value => handleRgbaInputBlur(channel as keyof RGBA, value)}
+                />
+              ))}
+            </RgbaValuesWrapper>
+          </ColorPickerWrapper>
+        </PopupPanel>
+      </Popup>
+      <TextInput
+        value={colorValue}
+        placeholder="#RRGGBBAA"
+        onChange={handleHexInputChange}
+        onBlur={handleHexInputBlur}
+        disabled={disabled}
+        size={size}
+        extendWidth
+      />
+    </InputWrapper>
   );
 };
 
-const InputWrapper = styled("div")<{ width?: number }>(({ theme, width }) => ({
+const InputWrapper = styled("div")<{ width?: number }>(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.smallest,
   alignItems: "flex-start",
-  width: `${width ?? DEFAULT_PANEL_WIDTH}px`,
 }));
 
 const Swatch = styled("div")<{
@@ -130,7 +121,7 @@ const Swatch = styled("div")<{
   size: "normal" | "small";
 }>(({ theme, color, status, size, disabled }) => ({
   padding: size === "small" ? theme.spacing.small + 1 : theme.spacing.normal + 1,
-  cursor: disabled ? "not-allowed" : "auto",
+  cursor: disabled ? "not-allowed" : "pointer",
   flexShrink: 0,
   borderRadius: theme.radius.small,
   background: color ? color : theme.bg[1],
