@@ -90,7 +90,12 @@ export const ColorInput: FC<ColorInputProps> = ({
             </ActionsWrapper>
           }>
           <ColorPickerWrapper>
-            <ColorPicker className="colorPicker" color={rgba} onChange={handleColorChange} />
+            <ColorPicker
+              className="colorPicker"
+              alphaEnabled={alphaEnabled}
+              color={rgba}
+              onChange={handleColorChange}
+            />
             <RgbaText>{alphaEnabled ? "RGBA" : "RGB"}</RgbaText>
             <RgbaValuesWrapper>
               {displayedChannels.map(channel => (
@@ -139,27 +144,32 @@ const Swatch = styled("div")<{
   border: status ? `1px solid ${theme.select.main}` : `1px solid ${theme.outline.weak}`,
 }));
 
-const ColorPicker = styled(RgbaColorPicker)(({ theme }) => ({
-  gap: theme.spacing.normal,
-  ".react-colorful__saturation-pointer": {
-    width: "12px",
-    height: "12px",
-    borderWidth: theme.spacing.smallest - 2,
-  },
-  ".react-colorful__hue-pointer, .react-colorful__alpha-pointer": {
-    width: "2px",
-    height: "10px",
-    border: `2px solid ${theme.item.default}`,
-    borderRadius: theme.radius.smallest,
-  },
-  ".react-colorful__saturation, .react-colorful__hue, .react-colorful__alpha": {
-    borderRadius: theme.radius.smallest + 1,
-    width: "270px",
-  },
-  ".react-colorful__hue, .react-colorful__alpha": {
-    height: "10px",
-  },
-}));
+const ColorPicker = styled(RgbaColorPicker)<{ alphaEnabled?: boolean }>(
+  ({ theme, alphaEnabled }) => ({
+    gap: theme.spacing.normal,
+    ".react-colorful__saturation-pointer": {
+      width: "12px",
+      height: "12px",
+      borderWidth: theme.spacing.smallest - 2,
+    },
+    ".react-colorful__hue-pointer, .react-colorful__alpha-pointer": {
+      width: "2px",
+      height: "10px",
+      border: `2px solid ${theme.item.default}`,
+      borderRadius: theme.radius.smallest,
+    },
+    ".react-colorful__alpha.react-colorful__last-control": {
+      display: alphaEnabled ? "auto" : "none",
+    },
+    ".react-colorful__saturation, .react-colorful__hue, .react-colorful__alpha": {
+      borderRadius: theme.radius.smallest + 1,
+      width: "270px",
+    },
+    ".react-colorful__hue, .react-colorful__alpha": {
+      height: "10px",
+    },
+  }),
+);
 
 const ColorPickerWrapper = styled("div")(({ theme }) => ({
   display: "flex",
