@@ -1,5 +1,6 @@
 import { useCallback, useState, useMemo } from "react";
 
+import defaultBetaProjectImage from "@reearth/beta/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
 import Button from "@reearth/beta/components/Button";
 import Collapse from "@reearth/beta/components/Collapse";
 import TextAreaField from "@reearth/beta/components/fields/TextAreaField";
@@ -7,7 +8,6 @@ import TextInput from "@reearth/beta/components/fields/TextField";
 import URLField from "@reearth/beta/components/fields/URLField";
 import Modal from "@reearth/beta/components/Modal";
 import Text from "@reearth/beta/components/Text";
-import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
