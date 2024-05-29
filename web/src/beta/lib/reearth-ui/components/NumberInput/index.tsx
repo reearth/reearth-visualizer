@@ -9,6 +9,8 @@ export type NumberInputProps = {
   placeholder?: string;
   appearance?: "readonly";
   unit?: string;
+  min?: number;
+  max?: number;
   onChange?: (value?: number | string) => void;
   onBlur?: (value?: number | string) => void;
 };
@@ -20,6 +22,8 @@ export const NumberInput: FC<NumberInputProps> = ({
   placeholder,
   appearance,
   unit,
+  min,
+  max,
   onChange,
   onBlur,
 }) => {
@@ -33,12 +37,14 @@ export const NumberInput: FC<NumberInputProps> = ({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
-      if (/^-?\d*\.?\d*%*$/.test(currentValue)) {
-        setCurrentValue(currentValue);
-        onChange?.(parseFloat(currentValue));
+      if (/^-?\d*\.?\d*$/.test(currentValue)) {
+        const validatedValue =
+          currentValue === "" ? currentValue : validateValue(currentValue, max, min);
+        setCurrentValue(validatedValue);
+        onChange?.(validatedValue);
       }
     },
-    [onChange],
+    [max, min, onChange],
   );
 
   const handleBlur = useCallback(() => {
@@ -111,3 +117,15 @@ const UnitWrapper = styled("div")(({ theme }) => ({
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
 }));
+
+const validateValue = (value: string, max?: number, min?: number): number | string => {
+  let numericValue = parseFloat(value);
+  if (isNaN(numericValue)) return value;
+  if (min !== undefined && numericValue < min) {
+    numericValue = min;
+  }
+  if (max !== undefined && numericValue > max) {
+    numericValue = max;
+  }
+  return numericValue;
+};

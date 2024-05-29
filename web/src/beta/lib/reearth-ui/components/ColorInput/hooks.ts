@@ -44,12 +44,9 @@ const useColorPicker = ({
     (channel: keyof RgbaColor, value?: string | number) => {
       if (!value) return;
 
-      const numericValue =
-        channel === "a" ? validRgbaValue(value, 0, 1) : validRgbaValue(value, 0, 255);
-
       setPickerColor({
         ...pickerColor,
-        [channel]: numericValue,
+        [channel]: value,
       });
     },
     [pickerColor],
@@ -95,11 +92,3 @@ const useColorPicker = ({
 };
 
 export default useColorPicker;
-
-const validRgbaValue = (value: string | number, min: number, max: number) => {
-  let numericValue = parseFloat(value.toString());
-  if (isNaN(numericValue) || numericValue < min || numericValue > max) {
-    numericValue = max;
-  }
-  return numericValue;
-};

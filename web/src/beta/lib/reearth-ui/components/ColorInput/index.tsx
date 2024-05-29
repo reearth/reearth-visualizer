@@ -94,6 +94,8 @@ export const ColorInput: FC<ColorInputProps> = ({
                   key={channel}
                   value={pickerColor[channel]}
                   onChange={value => handlePickerInputChange(channel, value)}
+                  max={channel === "a" ? 1 : 255}
+                  min={0}
                 />
               ))}
             </ChannelsWrapper>
