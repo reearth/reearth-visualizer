@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, FC } from "react";
+import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -35,7 +35,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   }, [value]);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
       if (/^-?\d*\.?\d*$/.test(currentValue)) {
         const validatedValue =
