@@ -5,7 +5,7 @@ export default create({
   fontBase: '"Open Sans", sans-serif',
   fontCode: "monospace",
   brandTitle: "Re:Earth",
-  brandUrl: "https://github.com/reearth/reearth",
+  brandUrl: "https://github.com/reearth/reearth-visualizer",
   brandImage: "/logo.svg",
   brandTarget: "_self",
   colorPrimary: "#E95518",
