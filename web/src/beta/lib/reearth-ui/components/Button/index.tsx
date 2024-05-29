@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, MouseEvent } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -14,7 +14,7 @@ export type ButtonProps = {
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLElement>) => void;
 };
 
 export const Button: FC<ButtonProps> = ({
