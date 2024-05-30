@@ -105,6 +105,7 @@
     "dependencies": {
         "@apollo/client": "3.8.1",
         "@auth0/auth0-react": "2.2.2",
+        "@aws-amplify/auth": "5.3.1",
         "@aws-amplify/ui-react": "5.3.1",
         "@carbon/colors": "11.20.1",
         "@emotion/react": "11.11.1",

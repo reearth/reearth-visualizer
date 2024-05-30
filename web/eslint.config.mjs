@@ -67,6 +67,16 @@ export default [
       "@typescript-eslint/no-explicit-any": ["warn"],
       "@typescript-eslint/consistent-type-definitions": ["warn"],
       "@typescript-eslint/array-type": ["warn"],
+      "@typescript-eslint/consistent-indexed-object-style": ["warn"],
+    },
+  },
+  {
+    files: [
+      "src/services/routing/index.tsx",
+      "src/services/config/unsafeBuiltinPlugin.ts",
+    ],
+    rules: {
+      "node/no-unsupported-features/es-syntax": ["warn"],
     },
   },
   {
