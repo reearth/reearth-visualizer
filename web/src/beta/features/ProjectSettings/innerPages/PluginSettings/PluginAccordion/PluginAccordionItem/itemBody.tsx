@@ -1,4 +1,4 @@
-import Markdown from "@reearth/classic/components/atoms/Markdown";
+import Markdown from "@reearth/beta/components/Markdown";
 import { useTheme, styled } from "@reearth/services/theme";
 
 export type Props = {
