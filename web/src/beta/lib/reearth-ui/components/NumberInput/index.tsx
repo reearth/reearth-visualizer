@@ -38,8 +38,19 @@ export const NumberInput: FC<NumberInputProps> = ({
     (e: ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
       if (/^-?\d*\.?\d*$/.test(currentValue)) {
-        const validatedValue =
-          currentValue === "" ? currentValue : validateValue(currentValue, max, min);
+        const numericValue = Number(currentValue);
+        let validatedValue = currentValue;
+
+        if (currentValue !== "") {
+          if (min !== undefined && numericValue < min) {
+            validatedValue = String(min);
+          } else if (max !== undefined && numericValue > max) {
+            validatedValue = String(max);
+          } else {
+            validatedValue = currentValue;
+          }
+        }
+
         setCurrentValue(validatedValue);
         onChange?.(validatedValue);
       }
@@ -117,15 +128,3 @@ const UnitWrapper = styled("div")(({ theme }) => ({
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
 }));
-
-const validateValue = (value: string, max?: number, min?: number): number | string => {
-  let numericValue = parseFloat(value);
-  if (isNaN(numericValue)) return value;
-  if (min !== undefined && numericValue < min) {
-    numericValue = min;
-  }
-  if (max !== undefined && numericValue > max) {
-    numericValue = max;
-  }
-  return numericValue;
-};
