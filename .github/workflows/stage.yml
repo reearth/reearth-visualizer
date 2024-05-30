@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: git config
         env:
-          GH_APP_USER: ${{ secrets.GH_APP_USER }}
+          GH_APP_USER: ${{ vars.GH_APP_USER }}
         run: |
           git config --global user.name $GH_APP_USER
           git config --global pull.rebase false
