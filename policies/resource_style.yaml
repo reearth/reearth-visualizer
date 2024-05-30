@@ -1,0 +1,20 @@
+---
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  importDerivedRoles:
+    - common_roles
+  resource: "style"
+  rules:
+    - actions: ['*']
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - owner
+
+    - actions: ['read']
+      effect: EFFECT_ALLOW
+      roles:
+        - user
+      condition:
+        match:
+          expr: request.resource.attr.public == true

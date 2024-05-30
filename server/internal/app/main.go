@@ -7,9 +7,11 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/cerbos/cerbos-sdk-go/cerbos"
 	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/app/config"
+	infraCerbos "github.com/reearth/reearth/server/internal/infrastructure/cerbos"
 	infraRedis "github.com/reearth/reearth/server/internal/infrastructure/redis"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -72,6 +74,43 @@ func Start(debug bool, version string) {
 		}
 	}()
 
+	// Cerbos
+	cerbosClient, err := cerbos.New(conf.CerbosHost, cerbos.WithPlaintext())
+	if err != nil {
+		log.Fatalf("Failed to create cerbos client: %v", err)
+	}
+	cerbosAdapter := infraCerbos.NewCerbosAdapter(cerbosClient)
+
+	principal := cerbos.NewPrincipal("bugs_bunny", "user")
+	principal.WithAttr("beta_tester", true)
+
+	kind := "album:object"
+	actions := []string{"view:public", "comment"}
+
+	r1 := cerbos.NewResource(kind, "BUGS001")
+	r1.WithAttributes(map[string]any{
+		"owner":   "bugs_bunny",
+		"public":  false,
+		"flagged": false,
+	})
+
+	r2 := cerbos.NewResource(kind, "DAFFY002")
+	r2.WithAttributes(map[string]any{
+		"owner":   "daffy_duck",
+		"public":  true,
+		"flagged": false,
+	})
+
+	batch := cerbos.NewResourceBatch()
+	batch.Add(r1, actions...)
+	batch.Add(r2, actions...)
+
+	resp, err := cerbosClient.CheckResources(context.Background(), principal, batch)
+	if err != nil {
+		log.Fatalf("Failed to check resources: %v", err)
+	}
+	log.Printf("%v", resp)
+
 	// Start web server
 	NewServer(ctx, &ServerConfig{
 		Config:          conf,
@@ -81,6 +120,7 @@ func Start(debug bool, version string) {
 		Gateways:        gateways,
 		AccountGateways: acGateways,
 		RedisAdapter:    redisAdapter,
+		CerbosAdapter:   cerbosAdapter,
 	}).Run()
 }
 
@@ -97,6 +137,7 @@ type ServerConfig struct {
 	Gateways        *gateway.Container
 	AccountGateways *accountgateway.Container
 	RedisAdapter    *infraRedis.RedisAdapter
+	CerbosAdapter   *infraCerbos.CerbosAdapter
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {

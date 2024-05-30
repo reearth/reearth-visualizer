@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
+	infraCerbos "github.com/reearth/reearth/server/internal/infrastructure/cerbos"
 	infraRedis "github.com/reearth/reearth/server/internal/infrastructure/redis"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
@@ -13,7 +14,15 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 )
 
-func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, redisAdapter *infraRedis.RedisAdapter, config interactor.ContainerConfig) echo.MiddlewareFunc {
+func UsecaseMiddleware(
+	r *repo.Container,
+	g *gateway.Container,
+	ar *accountrepo.Container,
+	ag *accountgateway.Container,
+	redisAdapter *infraRedis.RedisAdapter,
+	cerbosAdapter *infraCerbos.CerbosAdapter,
+	config interactor.ContainerConfig,
+) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		repos := r
 
@@ -37,7 +46,7 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 			ar2 = ar
 		}
 
-		uc := interactor.NewContainer(repos, g, ar2, ag, redisAdapter, config)
+		uc := interactor.NewContainer(repos, g, ar2, ag, redisAdapter, cerbosAdapter, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
 		return ctx
 	})

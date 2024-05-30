@@ -19,6 +19,9 @@ run-db:
 run-redis:
 	docker compose -f ../docker-compose.yml up -d reearth-redis
 
+run-cerbos:
+	docker compose -f ../docker-compose.yml up -d reearth-cerbos
+
 gql:
 	go generate ./internal/adapter/gql
 

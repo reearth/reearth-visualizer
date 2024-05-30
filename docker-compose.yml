@@ -26,3 +26,11 @@ services:
       - 6379:6379
     volumes:
       - ./redis:/data
+  # docker run --rm --name cerbos -d -v $(pwd)/policies:/policies -p 3592:3592 -p 3593:3593 ghcr.io/cerbos/cerbos:0.36.0
+  reearth-cerbos:
+    image: ghcr.io/cerbos/cerbos:0.36.0
+    ports:
+      - 3592:3592
+      - 3593:3593
+    volumes:
+      - ./policies:/policies

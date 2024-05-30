@@ -95,7 +95,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		}
 	}
 
-	e.Use(UsecaseMiddleware(cfg.Repos, cfg.Gateways, cfg.AccountRepos, cfg.AccountGateways, cfg.RedisAdapter, interactor.ContainerConfig{
+	e.Use(UsecaseMiddleware(cfg.Repos, cfg.Gateways, cfg.AccountRepos, cfg.AccountGateways, cfg.RedisAdapter, cfg.CerbosAdapter, interactor.ContainerConfig{
 		SignupSecret:       cfg.Config.SignupSecret,
 		PublishedIndexHTML: publishedIndexHTML,
 		PublishedIndexURL:  cfg.Config.Published.IndexURL,

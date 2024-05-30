@@ -2,7 +2,9 @@ package interactor
 
 import (
 	"context"
+	"log"
 
+	"github.com/cerbos/cerbos-sdk-go/cerbos"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -21,15 +23,17 @@ type Style struct {
 	sceneLockRepo repo.SceneLock
 	transaction   usecasex.Transaction
 	redis         gateway.RedisGateway
+	cerbos        gateway.CerbosGateway
 }
 
-func NewStyle(r *repo.Container, redis gateway.RedisGateway) interfaces.Style {
+func NewStyle(r *repo.Container, redis gateway.RedisGateway, cerbos gateway.CerbosGateway) interfaces.Style {
 	return &Style{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		styleRepo:       r.Style,
 		sceneLockRepo:   r.SceneLock,
 		transaction:     r.Transaction,
 		redis:           redis,
+		cerbos:          cerbos,
 	}
 }
 
@@ -53,6 +57,39 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 			err = err2
 		}
 	}()
+
+	// Check permissions
+	principal := cerbos.NewPrincipal(operator.AcOperator.User.String(), "user")
+	// principal.WithAttr("beta_tester", true)
+
+	kind := "style"
+	actions := []string{"read", "edit"}
+
+	r1 := cerbos.NewResource(kind, param.SceneID.String())
+	r1.WithAttributes(map[string]any{
+		"owner":   operator.AcOperator.User.String(),
+		"public":  false,
+		"flagged": false,
+	})
+
+	r2 := cerbos.NewResource(kind, "sceneID")
+	r2.WithAttributes(map[string]any{
+		"owner":   "dummy",
+		"public":  true,
+		"flagged": false,
+	})
+
+	resources := []*cerbos.Resource{r1, r2}
+
+	resp, err := checkPermissions(ctx, i.cerbos, principal, resources, actions)
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+
+	log.Printf("%v", resp)
 
 	// if err := i.CanWriteScene(param.SceneID, operator); err != nil {
 	// 	return nil, interfaces.ErrOperationDenied

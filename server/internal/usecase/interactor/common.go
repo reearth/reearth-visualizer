@@ -5,7 +5,9 @@ import (
 	"errors"
 	"net/url"
 
+	"github.com/cerbos/cerbos-sdk-go/cerbos"
 	"github.com/go-redis/redis/v8"
+	infraCerbos "github.com/reearth/reearth/server/internal/infrastructure/cerbos"
 	infraRedis "github.com/reearth/reearth/server/internal/infrastructure/redis"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -29,9 +31,15 @@ type ContainerConfig struct {
 	PublishedIndexURL  *url.URL
 }
 
-func NewContainer(r *repo.Container, g *gateway.Container,
-	ar *accountrepo.Container, ag *accountgateway.Container,
-	redisAdapter *infraRedis.RedisAdapter, config ContainerConfig) interfaces.Container {
+func NewContainer(
+	r *repo.Container,
+	g *gateway.Container,
+	ar *accountrepo.Container,
+	ag *accountgateway.Container,
+	redisAdapter *infraRedis.RedisAdapter,
+	cerbosAdapter *infraCerbos.CerbosAdapter,
+	config ContainerConfig,
+) interfaces.Container {
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
 		published = NewPublishedWithURL(r.Project, r.Storytelling, g.File, config.PublishedIndexURL)
@@ -44,7 +52,7 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 		Dataset:      NewDataset(r, g),
 		Layer:        NewLayer(r),
 		NLSLayer:     NewNLSLayer(r, redisAdapter),
-		Style:        NewStyle(r, redisAdapter),
+		Style:        NewStyle(r, redisAdapter, cerbosAdapter),
 		Plugin:       NewPlugin(r, g),
 		Policy:       NewPolicy(r),
 		Project:      NewProject(r, g),
@@ -299,4 +307,25 @@ func deleteFromCache(ctx context.Context, redisClient any, cacheKey string) erro
 	}
 
 	return redisAdapter.RemoveValue(ctx, cacheKey)
+}
+
+func checkCerbosClient(cerbosClient any) (*infraCerbos.CerbosAdapter, bool) {
+	if cerbosClient == nil {
+		return nil, false
+	}
+
+	adapter, ok := cerbosClient.(*infraCerbos.CerbosAdapter)
+	if !ok || adapter == nil {
+		return nil, false
+	}
+	return adapter, true
+}
+
+func checkPermissions(ctx context.Context, cerbosClient any, principal *cerbos.Principal, resources []*cerbos.Resource, actions []string) (*cerbos.CheckResourcesResponse, error) {
+	cerbosAdapter, ok := checkCerbosClient(cerbosClient)
+	if !ok {
+		return nil, nil
+	}
+
+	return cerbosAdapter.CheckPermissions(ctx, principal, resources, actions)
 }

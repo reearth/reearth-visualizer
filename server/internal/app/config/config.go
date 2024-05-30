@@ -77,6 +77,9 @@ type Config struct {
 
 	// uptrace
 	UptraceDSN string `envconfig:"UPTRACE_DSN" pp:",omitempty"`
+
+	// cerbos
+	CerbosHost string `envconfig:"CERBOS_HOST" default:"localhost:3593"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
