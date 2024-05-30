@@ -1,8 +1,9 @@
-import config, { commonjs } from "eslint-config-reearth";
+import config from "eslint-config-reearth";
 import playwright from "eslint-plugin-playwright";
 import globals from "globals";
 
 /** @type { import("eslint").Linter.FlatConfig[] } */
+
 export default [
   ...config,
   {
@@ -61,14 +62,11 @@ export default [
     },
   },
   {
-    ...commonjs[0],
-    files: ["i18next-parser.config.js"],
-  },
-  {
     files: ["src/**"],
     rules: {
       "@typescript-eslint/no-explicit-any": ["warn"],
       "@typescript-eslint/consistent-type-definitions": ["warn"],
+      "@typescript-eslint/array-type": ["warn"],
     },
   },
   {
