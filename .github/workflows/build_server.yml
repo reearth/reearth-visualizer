@@ -89,6 +89,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -147,4 +152,4 @@ jobs:
         if: github.event.inputs.name == 'nightly'
         with:
           workflow: deploy-server-nightly
-          token: ${{ secrets.GPT }}
+          token: ${{ steps.app-token.outputs.token }}
