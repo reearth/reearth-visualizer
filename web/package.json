@@ -1,7 +1,7 @@
 {
-    "name": "@reearth/web",
+    "name": "@reearth/visualizer",
     "version": "0.20.0",
-    "repository": "https://github.com/reearth/reearth.git",
+    "repository": "https://github.com/reearth/reearth-visualizer.git",
     "author": "Re:Earth contributors <community@reearth.io>",
     "license": "Apache-2.0",
     "type": "module",
