@@ -37,7 +37,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
-      if (/^-?\d*\.?\d*$/.test(currentValue)) {
+      if (/^-?\d*\.?\d*%?$/.test(currentValue)) {
         const numericValue = Number(currentValue);
         let validatedValue = currentValue;
 
