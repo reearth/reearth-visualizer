@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
 import { fonts, styled } from "@reearth/services/theme";
 
 export type NumberInputProps = {
-  value?: number;
+  value?: number | string;
   size?: "normal" | "small";
   disabled?: boolean;
   placeholder?: string;
@@ -11,8 +11,8 @@ export type NumberInputProps = {
   unit?: string;
   min?: number;
   max?: number;
-  onChange?: (value?: number | string) => void;
-  onBlur?: (value?: number | string) => void;
+  onChange?: (value?: number) => void;
+  onBlur?: (value?: number) => void;
 };
 
 export const NumberInput: FC<NumberInputProps> = ({
@@ -27,11 +27,11 @@ export const NumberInput: FC<NumberInputProps> = ({
   onChange,
   onBlur,
 }) => {
-  const [currentValue, setCurrentValue] = useState<number | string | undefined>(value);
+  const [currentValue, setCurrentValue] = useState<string>(value?.toString() ?? "");
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setCurrentValue(value);
+    setCurrentValue(value?.toString() ?? "");
   }, [value]);
 
   const handleChange = useCallback(
@@ -52,7 +52,7 @@ export const NumberInput: FC<NumberInputProps> = ({
         }
 
         setCurrentValue(validatedValue);
-        onChange?.(validatedValue);
+        onChange?.(parseFloat(validatedValue));
       }
     },
     [max, min, onChange],
@@ -61,14 +61,14 @@ export const NumberInput: FC<NumberInputProps> = ({
   const handleBlur = useCallback(() => {
     let value = currentValue;
     if (typeof value === "string") {
-      value = value.replace(/^0+(?=[1-9])/, "");
-      if (/^-?\d+$/.test(value)) {
-        value = parseInt(value, 10);
+      value = value.replace(/^(-?)0+(?=\d)/, "$1");
+      if (/^-?\d+(\.\d+)?$/.test(value)) {
+        value = Number(value).toString();
       }
     }
     setCurrentValue(value);
     setIsFocused(false);
-    onBlur?.(value);
+    onBlur?.(parseFloat(value));
   }, [onBlur, currentValue]);
 
   const handleFocus = useCallback(() => {
