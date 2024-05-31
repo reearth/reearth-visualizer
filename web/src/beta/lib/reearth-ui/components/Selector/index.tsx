@@ -1,4 +1,4 @@
-import { FC, MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { styled, useTheme } from "@reearth/services/theme";
 
@@ -8,44 +8,52 @@ import { Popup } from "../Popup";
 import { Typography } from "../Typography";
 
 export type SelectorProps = {
-  isMultiple?: boolean;
-  defaultValue?: string | string[];
-  values: string[];
+  multiple?: boolean;
+  value?: string | string[];
+  options: { value: string; label?: string }[];
+  disabled?: boolean;
   placeholder?: string;
   onChange?: (value: string | string[]) => void;
 };
 
 export const Selector: FC<SelectorProps> = ({
-  isMultiple,
-  defaultValue,
-  values,
-  placeholder,
+  multiple,
+  value,
+  options,
+  placeholder = "Please select",
+  disabled,
   onChange,
 }) => {
   const theme = useTheme();
+  const selectorRef = useRef<HTMLDivElement>(null);
   const [selectedValue, setSelectedValue] = useState<string | string[] | undefined>(
-    defaultValue ?? (isMultiple ? [] : undefined),
+    value ?? (multiple ? [] : undefined),
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectorWidth, setSelectorWidth] = useState<number>();
 
-  const dropdownValues = useMemo(() => values, [values]);
+  const optionValues = useMemo(() => options, [options]);
 
   useEffect(() => {
-    setSelectedValue(defaultValue ?? (isMultiple ? [] : undefined));
-  }, [defaultValue, isMultiple]);
+    setSelectedValue(value ?? (multiple ? [] : undefined));
+  }, [value, multiple]);
+
+  useEffect(() => {
+    setSelectorWidth(selectorRef.current?.clientWidth);
+  }, [selectorRef]);
 
   const isSelected = useCallback(
     (value: string) => {
-      if (isMultiple) {
+      if (multiple) {
         return Array.isArray(selectedValue) && selectedValue.includes(value);
       }
       return selectedValue === value;
     },
-    [isMultiple, selectedValue],
+    [multiple, selectedValue],
   );
 
   const handleChange = (value: string) => {
-    if (isMultiple && Array.isArray(selectedValue)) {
+    if (multiple && Array.isArray(selectedValue)) {
       if (selectedValue.includes(value)) {
         const newSelectedArr = selectedValue.filter(val => val !== value);
         setSelectedValue(newSelectedArr);
@@ -75,58 +83,74 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange],
   );
 
+  const renderTrigger = () => {
+    return (
+      <SelectInput isMultiple={multiple} isOpen={isOpen} disabled={disabled} width={selectorWidth}>
+        {!selectedValue || !selectedValue.length ? (
+          <Typography size="body" color={theme.content.weaker}>
+            {placeholder}
+          </Typography>
+        ) : multiple ? (
+          <SelectedItems>
+            {(selectedValue as string[]).map(val => (
+              <SelectedItem key={val}>
+                <Typography
+                  size="body"
+                  color={disabled ? theme.content.weaker : theme.content.main}>
+                  {val}
+                </Typography>
+                {!disabled && (
+                  <Button
+                    iconButton
+                    icon="close"
+                    appearance="simple"
+                    size="small"
+                    onClick={e => handleUnselect(e, val)}
+                  />
+                )}
+              </SelectedItem>
+            ))}
+          </SelectedItems>
+        ) : (
+          <Typography size="body" color={disabled ? theme.content.weaker : ""}>
+            {selectedValue}
+          </Typography>
+        )}
+        <Icon
+          icon={isOpen ? "caretUp" : "caretDown"}
+          color={disabled ? theme.content.weaker : theme.content.main}
+        />
+      </SelectInput>
+    );
+  };
+
   return (
-    <SelectorWrapper>
-      <Popup
-        trigger={
-          <SelectInput isMultiple={isMultiple} isOpen={isOpen}>
-            {!selectedValue || !selectedValue.length ? (
-              <Typography size="body" color={theme.content.weaker}>
-                {placeholder ?? "Please select"}
-              </Typography>
-            ) : isMultiple ? (
-              <SelectedItems>
-                {Array.isArray(selectedValue) &&
-                  selectedValue.map(value => (
-                    <SelectedItem key={value}>
-                      <Typography size="body" color={theme.content.main}>
-                        {value}
-                      </Typography>
-                      <Button
-                        iconButton
-                        icon="close"
-                        appearance="simple"
-                        size="small"
-                        onClick={e => handleUnselect(e, value)}
-                      />
-                    </SelectedItem>
-                  ))}
-              </SelectedItems>
-            ) : (
-              <Typography size="body">{selectedValue}</Typography>
-            )}
-            <Icon icon={isOpen ? "caretUp" : "caretDown"} color={theme.content.main} />
-          </SelectInput>
-        }
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        placement="bottom-start">
-        <DropDownWrapper>
-          {dropdownValues.map(item => (
-            <DropDownItem
-              key={item}
-              isSelected={isSelected(item)}
-              onClick={() => handleChange(item)}>
-              <Typography size="body" color={theme.content.main}>
-                {item}
-              </Typography>
-              {isSelected(item) && isMultiple && (
-                <Icon icon="check" size="small" color={theme.content.main} />
-              )}
-            </DropDownItem>
-          ))}
-        </DropDownWrapper>
-      </Popup>
+    <SelectorWrapper ref={selectorRef}>
+      {disabled ? (
+        renderTrigger()
+      ) : (
+        <Popup
+          trigger={renderTrigger()}
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          placement="bottom-start">
+          <DropDownWrapper width={selectorWidth}>
+            {optionValues.map((item: { value: string; label?: string }) => (
+              <DropDownItem
+                key={item.value}
+                isSelected={isSelected(item.value)}
+                onClick={() => handleChange(item.value)}>
+                <Typography size="body" color={theme.content.main}>
+                  {item.label ?? item.value}
+                </Typography>
+                {isSelected(item.value) && multiple && (
+                  <Icon icon="check" size="small" color={theme.content.main} />
+                )}
+              </DropDownItem>
+            ))}
+          </DropDownWrapper>
+        </Popup>
+      )}
     </SelectorWrapper>
   );
 };
@@ -138,7 +162,10 @@ const SelectorWrapper = styled("div")(() => ({
 const SelectInput = styled("div")<{
   isMultiple?: boolean;
   isOpen?: boolean;
-}>(({ isMultiple, isOpen, theme }) => ({
+  disabled?: boolean;
+  width?: number;
+}>(({ isMultiple, isOpen, disabled, width, theme }) => ({
+  boxSizing: "border-box",
   backgroundColor: `${theme.bg[1]}`,
   display: "flex",
   justifyContent: "space-between",
@@ -150,10 +177,11 @@ const SelectInput = styled("div")<{
   padding: `${theme.spacing.smallest}px ${
     isMultiple ? theme.spacing.smallest : theme.spacing.small
   }px`,
-  cursor: "pointer",
+  cursor: disabled ? "not-allowed" : "pointer",
+  width: width ? `${width}px` : "",
 }));
 
-const SelectedItems = styled("div")<{}>(({ theme }) => ({
+const SelectedItems = styled("div")(({ theme }) => ({
   flex: 1,
   display: "flex",
   alignItems: "center",
@@ -170,7 +198,10 @@ const SelectedItem = styled("div")(({ theme }) => ({
   borderRadius: `${theme.radius.smallest}px`,
 }));
 
-const DropDownWrapper = styled("div")(({ theme }) => ({
+const DropDownWrapper = styled("div")<{
+  width?: number;
+}>(({ width, theme }) => ({
+  boxSizing: "border-box",
   display: "flex",
   flexDirection: "column",
   gap: `${theme.spacing.micro}px`,
@@ -178,7 +209,7 @@ const DropDownWrapper = styled("div")(({ theme }) => ({
   backgroundColor: `${theme.bg[1]}`,
   boxShadow: `${theme.shadow.popup}`,
   borderRadius: `${theme.radius.small}px`,
-  border: "none",
+  width: width ? `${width}px` : "",
 }));
 
 const DropDownItem = styled("div")<{
@@ -186,6 +217,7 @@ const DropDownItem = styled("div")<{
 }>(({ isSelected, theme }) => ({
   display: "flex",
   alignItems: "center",
+  justifyContent: "space-between",
   gap: `${theme.spacing.small}px`,
   backgroundColor: !isSelected ? `${theme.bg[1]}` : `${theme.select.weak} !important`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
