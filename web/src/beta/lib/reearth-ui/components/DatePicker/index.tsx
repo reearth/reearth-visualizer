@@ -40,7 +40,6 @@ export const DatePicker: FC<DatePickerProps> = ({ value, disabled, onChange, onB
     <Wrapper status={isFocused ? "active" : "default"}>
       <StyledInput
         value={currentValue}
-        placeholder="MM/DD/YYYY"
         disabled={disabled}
         onChange={handleChange}
         onBlur={handleBlur}
