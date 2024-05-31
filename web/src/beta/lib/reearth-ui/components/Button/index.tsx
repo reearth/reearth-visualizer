@@ -82,7 +82,7 @@ const StyledButton = styled("button")<{
   backgroundColor: appearance === "simple" ? "transparent" : `${theme.bg[1]}`,
   width: !extendWidth ? "fit-content" : "100%",
   minWidth: minWidth ? `${minWidth}px` : "",
-  boxShadow: theme.shadow.input,
+  boxShadow: theme.shadow.button,
   ["&:hover"]: {
     borderColor: "transparent",
     color: `${theme.content.withBackground}`,

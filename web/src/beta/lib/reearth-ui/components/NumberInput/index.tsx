@@ -1,16 +1,18 @@
-import { useState, useCallback, useEffect, FC } from "react";
+import { useState, useCallback, useEffect, FC, ChangeEvent } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
 export type NumberInputProps = {
-  value?: number;
+  value?: number | string;
   size?: "normal" | "small";
   disabled?: boolean;
   placeholder?: string;
   appearance?: "readonly";
   unit?: string;
-  onChange?: (value?: number | string) => void;
-  onBlur?: (value?: number | string) => void;
+  min?: number;
+  max?: number;
+  onChange?: (value?: number) => void;
+  onBlur?: (value?: number) => void;
 };
 
 export const NumberInput: FC<NumberInputProps> = ({
@@ -20,30 +22,53 @@ export const NumberInput: FC<NumberInputProps> = ({
   placeholder,
   appearance,
   unit,
+  min,
+  max,
   onChange,
   onBlur,
 }) => {
-  const [currentValue, setCurrentValue] = useState<number | string | undefined>(value);
+  const [currentValue, setCurrentValue] = useState<string>(value?.toString() ?? "");
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setCurrentValue(value);
+    setCurrentValue(value?.toString() ?? "");
   }, [value]);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       const currentValue = e.currentTarget.value;
-      if (/^-?\d*\.?\d*$/.test(currentValue)) {
-        setCurrentValue(currentValue);
-        onChange?.(parseFloat(currentValue));
+      if (/^-?\d*\.?\d*%?$/.test(currentValue)) {
+        const numericValue = Number(currentValue);
+        let validatedValue = currentValue;
+
+        if (currentValue !== "") {
+          if (min !== undefined && numericValue < min) {
+            validatedValue = String(min);
+          } else if (max !== undefined && numericValue > max) {
+            validatedValue = String(max);
+          } else {
+            validatedValue = currentValue;
+          }
+        }
+
+        setCurrentValue(validatedValue);
+        onChange?.(parseFloat(validatedValue));
       }
     },
-    [onChange],
+    [max, min, onChange],
   );
 
   const handleBlur = useCallback(() => {
+    let value = currentValue;
+    if (typeof value === "string") {
+      value = value.replace(/^(-?)0+(?=\d)/, "$1");
+      if (/^-?\d+(\.\d+)?$/.test(value)) {
+        value = Number(value).toString();
+      }
+    }
+    setCurrentValue(value);
     setIsFocused(false);
-    onBlur?.(currentValue);
+    onBlur?.(parseFloat(value));
   }, [onBlur, currentValue]);
 
   const handleFocus = useCallback(() => {
@@ -103,6 +128,7 @@ const StyledInput = styled("input")<{
   "::placeholder": {
     color: theme.content.weak,
   },
+  width: "100%",
 }));
 
 const UnitWrapper = styled("div")(({ theme }) => ({
