@@ -9,3 +9,5 @@ export * from "./PopupPanel";
 export * from "./CodeInput";
 export * from "./Collapse";
 export * from "./Switcher";
+export * from "./ModalPanel";
+export * from "./Modal";
