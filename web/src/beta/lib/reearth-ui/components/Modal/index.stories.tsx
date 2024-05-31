@@ -28,7 +28,7 @@ const Modal: FC<ModalProps & { size: "small" | "medium" | "large"; onClose?: () 
   }, []);
 
   return (
-    <>
+    <div style={{ height: "50vh" }}>
       <Button title="Open Modal" appearance="primary" onClick={handleOpen} />
       {visible && (
         <ModalComponent size={size} visible={visible}>
@@ -65,7 +65,7 @@ const Modal: FC<ModalProps & { size: "small" | "medium" | "large"; onClose?: () 
           )}
         </ModalComponent>
       )}
-    </>
+    </div>
   );
 };
 
