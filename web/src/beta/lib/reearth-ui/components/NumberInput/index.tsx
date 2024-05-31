@@ -60,8 +60,11 @@ export const NumberInput: FC<NumberInputProps> = ({
 
   const handleBlur = useCallback(() => {
     let value = currentValue;
-    if (typeof value === "string" && /^-?\d+$/.test(value)) {
-      value = parseInt(value, 10);
+    if (typeof value === "string") {
+      value = value.replace(/^0+(?=[1-9])/, "");
+      if (/^-?\d+$/.test(value)) {
+        value = parseInt(value, 10);
+      }
     }
     setCurrentValue(value);
     setIsFocused(false);
