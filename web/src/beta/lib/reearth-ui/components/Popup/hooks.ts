@@ -8,7 +8,7 @@ import {
   useDismiss,
   useInteractions,
 } from "@floating-ui/react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { PopupProps } from ".";
 
@@ -17,14 +17,24 @@ const usePopover = ({
   open: controlledOpen,
   offset: offsetProps,
   shift: shiftProps,
-  onOpenChange: setControlledOpen,
+  onOpenChange,
 }: Omit<PopupProps, "children" | "trigger">) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
 
   const open = isControlled ? controlledOpen : uncontrolledOpen;
-  const setOpen = isControlled ? setControlledOpen : setUncontrolledOpen;
+
+  const setOpen = useCallback(
+    (newOpen: boolean) => {
+      if (!isControlled) {
+        setUncontrolledOpen(newOpen);
+      }
+
+      onOpenChange?.(newOpen);
+    },
+    [isControlled, onOpenChange],
+  );
 
   const data = useFloating({
     placement,

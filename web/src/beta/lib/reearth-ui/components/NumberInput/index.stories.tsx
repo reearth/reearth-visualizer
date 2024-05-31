@@ -50,3 +50,11 @@ export const UsecaseUnit: Story = {
     value: 10,
   },
 };
+
+export const UsecaseMinMax: Story = {
+  args: {
+    min: 1,
+    value: 10,
+    max: 20,
+  },
+};
