@@ -61,5 +61,5 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   display: "flex",
   alignItems: "flex-start",
-  gap: "12px",
+  gap: theme.spacing.normal,
 }));
