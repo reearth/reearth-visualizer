@@ -13,10 +13,7 @@ const meta: Meta<ModalProps> = {
 export default meta;
 type Story = StoryObj<typeof ModalComponent>;
 
-const Modal: FC<ModalProps & { size: "small" | "medium" | "large"; onClose?: () => void }> = ({
-  size,
-  children,
-}) => {
+const Modal: FC<ModalProps> = ({ size, children }: Omit<ModalProps, "visible">) => {
   const [visible, setVisible] = useState(false);
 
   const handleOpen = useCallback(() => {

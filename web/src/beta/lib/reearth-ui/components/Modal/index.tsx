@@ -1,6 +1,4 @@
-import useTransition from "@rot1024/use-transition";
-import { FC, ReactNode, useCallback, useMemo, useRef } from "react";
-import { useClickAway, useKeyPressEvent } from "react-use";
+import { FC, ReactNode, useMemo, useRef } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -8,32 +6,26 @@ export type ModalProps = {
   visible: boolean;
   children: ReactNode;
   size?: "small" | "medium" | "large";
-  onClose?: () => void;
 };
 
-const DEFAULT_MODAL_WIDTH = 572;
+const DEFAULT_SMALL_WIDTH = 416;
+const DEFAULT_MEDIUM_WIDTH = 572;
+const DEFAULT_LARGE_WIDTH = 778;
 
-export const Modal: FC<ModalProps> = ({ visible, children, size, onClose }) => {
+export const Modal: FC<ModalProps> = ({ visible, children, size }) => {
   const ref = useRef<HTMLDivElement>(null);
-  useClickAway(ref, () => onClose?.());
 
   const modalWidth = useMemo(
-    () => (size === "small" ? 416 : size === "large" ? 778 : DEFAULT_MODAL_WIDTH),
+    () =>
+      size === "small"
+        ? DEFAULT_SMALL_WIDTH
+        : size === "large"
+        ? DEFAULT_LARGE_WIDTH
+        : DEFAULT_MEDIUM_WIDTH,
     [size],
   );
 
-  const state = useTransition(visible, 300, {
-    mountOnEnter: true,
-    unmountOnExit: true,
-  });
-
-  const handleClose = useCallback(() => {
-    if (visible) onClose?.();
-  }, [onClose, visible]);
-
-  useKeyPressEvent("Escape", handleClose);
-
-  return state === "unmounted" ? null : (
+  return !visible ? null : (
     <Wrapper>
       <ContentWrapper modalWidth={modalWidth} ref={ref}>
         {children}
