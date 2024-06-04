@@ -17,21 +17,21 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/release'
     steps:
-      - name: Set up git config
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global pull.rebase false
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
+      - name: Set up git config
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global pull.rebase false
       - id: changelog
         name: Generate CHANGELOG
         uses: reearth/changelog-action@main
@@ -54,4 +54,4 @@ jobs:
           git tag $TAG
           git push --atomic origin release $TAG
       - name: Commit & push to main
-        run: git switch main && git cherry-pick release && git push
+        run: git switch main && git cherry-pick release && git push  --force
