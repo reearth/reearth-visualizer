@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { publishingType } from "@reearth/classic/components/molecules/EarthEditor/Header/index";
-import generateRandomString from "@reearth/classic/util/generate-random-string";
+import { publishingType } from "@reearth/beta/features/Editor/tabs/publish/Nav/PublishModal";
+import generateRandomString from "@reearth/beta/utils/generate-random-string";
 
 export type PublishStatus = "published" | "limited" | "unpublished";
 

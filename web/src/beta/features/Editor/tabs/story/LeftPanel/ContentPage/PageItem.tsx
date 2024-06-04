@@ -4,8 +4,8 @@ import TextInput from "@reearth/beta/components/fields/common/TextInput";
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import Text from "@reearth/beta/components/Text";
-import useDoubleClick from "@reearth/classic/util/use-double-click";
-import { ValueType, ValueTypes } from "@reearth/classic/util/value";
+import useDoubleClick from "@reearth/beta/utils/use-double-click";
+import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { Page } from "@reearth/services/api/storytellingApi/utils";
 import { styled } from "@reearth/services/theme";
 

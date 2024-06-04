@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FC } from "react";
+import { FC, useCallback, useState } from "react";
 
 import { fonts, styled } from "@reearth/services/theme";
 
@@ -20,6 +20,16 @@ const MockChild: FC = () => (
     <Content>
       Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
     </Content>
+  </Container>
+);
+
+const MockChildWithClose: FC<{ onClose: () => void }> = ({ onClose }) => (
+  <Container>
+    <Title>Title</Title>
+    <Content>
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+    </Content>
+    <Button title="Close" onClick={onClose} />
   </Container>
 );
 
@@ -123,4 +133,24 @@ export const Placement: Story = {
   args: {
     children: <MockChild />,
   },
+};
+
+const ControlledComponent: FC = () => {
+  const [open, setOpen] = useState(false);
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  return (
+    <Popup
+      trigger={<Button title="Click me" appearance="primary" />}
+      open={open}
+      onOpenChange={setOpen}>
+      <MockChildWithClose onClose={handleClose} />
+    </Popup>
+  );
+};
+
+export const Controlled: Story = {
+  render: () => <ControlledComponent />,
 };
