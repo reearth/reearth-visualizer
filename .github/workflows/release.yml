@@ -54,4 +54,4 @@ jobs:
           git tag $TAG
           git push --atomic origin release $TAG
       - name: Commit & push to main
-        run: git switch main && git cherry-pick release && git push  --force
+        run: git switch main && git cherry-pick release && git push

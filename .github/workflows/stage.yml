@@ -28,4 +28,4 @@ jobs:
       - name: Merge main branch to release branch
         run: git merge -X theirs main
       - name: Git push
-        run: git push origin release --force
+        run: git push origin release
