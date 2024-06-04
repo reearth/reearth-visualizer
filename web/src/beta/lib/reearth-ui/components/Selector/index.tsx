@@ -38,9 +38,32 @@ export const Selector: FC<SelectorProps> = ({
     setSelectedValue(value ?? (multiple ? [] : undefined));
   }, [value, multiple]);
 
+  const updateSelectorWidth = useCallback(() => {
+    if (selectorRef.current) {
+      const newWidth = selectorRef.current.clientWidth;
+      setSelectorWidth(newWidth);
+      console.log("Selector width updated:", newWidth);
+    }
+  }, []);
+
   useEffect(() => {
-    setSelectorWidth(selectorRef.current?.clientWidth);
-  }, [selectorRef]);
+    updateSelectorWidth();
+    window.addEventListener("resize", updateSelectorWidth);
+    return () => {
+      window.removeEventListener("resize", updateSelectorWidth);
+    };
+  }, [updateSelectorWidth]);
+
+  useEffect(() => {
+    if (selectorRef.current) {
+      const observer = new ResizeObserver(updateSelectorWidth);
+      observer.observe(selectorRef.current);
+      return () => {
+        observer.disconnect();
+      };
+    }
+    return () => {};
+  }, [selectorRef, updateSelectorWidth]);
 
   const isSelected = useCallback(
     (value: string) => {
@@ -86,7 +109,7 @@ export const Selector: FC<SelectorProps> = ({
   const renderTrigger = () => {
     return (
       <SelectInput isMultiple={multiple} isOpen={isOpen} disabled={disabled} width={selectorWidth}>
-        {!selectedValue || !selectedValue.length ? (
+        {!selectedValue?.length ? (
           <Typography size="body" color={theme.content.weaker}>
             {placeholder}
           </Typography>

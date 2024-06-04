@@ -59,7 +59,7 @@ export const MultipleSelector: Story = {
 export const Disabled: Story = {
   render: () => {
     return (
-      <div style={{ width: "300px" }}>
+      <div style={{ width: "300px", gap: "8px", display: "flex", flexDirection: "column" }}>
         <Selector options={LIST_ITEMS} disabled />
         <Selector options={LIST_ITEMS} value="item_1" disabled />
         <Selector options={LIST_ITEMS} value={["item_1", "item_2"]} multiple disabled />
