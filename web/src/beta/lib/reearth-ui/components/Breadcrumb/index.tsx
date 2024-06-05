@@ -3,7 +3,7 @@ import { FC, ReactNode } from "react";
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { DropDownMenu } from "./dropdownMenu";
+import { DropdownMenu } from "./dropdown";
 
 export type ItemsProp = {
   title?: string;
@@ -25,7 +25,7 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / " }
       {items.map((item, index) => (
         <ItemWrapper key={index}>
           {item.menuItems ? (
-            <DropDownMenu itemIcon={item.icon} items={item.menuItems} label={item.title} />
+            <DropdownMenu itemIcon={item.icon} items={item.menuItems} label={item.title} />
           ) : (
             <Item>
               {item.icon && <Icon icon={item.icon} size="small" color={theme.content.weak} />}

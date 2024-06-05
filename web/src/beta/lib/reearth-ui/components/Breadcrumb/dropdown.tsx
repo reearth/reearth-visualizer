@@ -6,13 +6,13 @@ import { styled, useTheme } from "@reearth/services/theme";
 
 import { ItemsProp } from ".";
 
-type DropDownMenuProps = {
+export type DropdownMenuProps = {
   label?: string;
   items: ItemsProp[];
   itemIcon?: IconName;
 };
 
-export const DropDownMenu: FC<DropDownMenuProps> = ({ label, items, itemIcon }) => {
+export const DropdownMenu: FC<DropdownMenuProps> = ({ label, items, itemIcon }) => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
 
