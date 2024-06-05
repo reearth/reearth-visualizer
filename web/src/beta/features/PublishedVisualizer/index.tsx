@@ -20,6 +20,7 @@ export default function Published({ alias }: Props) {
     ready,
     error,
     engineMeta,
+    visualizerRef,
   } = useHooks(alias);
 
   return error ? (
@@ -29,6 +30,7 @@ export default function Published({ alias }: Props) {
     />
   ) : (
     <Visualizer
+      visualizerRef={visualizerRef}
       engine="cesium"
       engineMeta={engineMeta}
       isBuilt
