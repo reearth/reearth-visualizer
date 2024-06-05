@@ -3,23 +3,21 @@ import { FC, ReactNode } from "react";
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { DropDownMenu } from "./DropDownMenu";
+import { DropDownMenu } from "./DropdownMenu";
 
 export type ItemsProp = {
-  title: string;
+  title?: string;
   path?: string;
   icon?: IconName;
-  breakpoint?: boolean;
   menuItems?: ItemsProp[];
 };
 
 export type BreadcrumbProp = {
-  items?: Omit<ItemsProp[], "breakpoint">;
+  items?: ItemsProp[];
   separator?: ReactNode;
-  nested?: boolean;
 };
 
-export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / ", nested }) => {
+export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / " }) => {
   const theme = useTheme();
 
   return (
@@ -27,7 +25,7 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / ", 
       {items.map((item, index) => (
         <ItemWrapper key={index}>
           {item.menuItems ? (
-            <DropDownMenu items={item.menuItems} label={item.title} nested={nested} />
+            <DropDownMenu itemIcon={item.icon} items={item.menuItems} label={item.title} />
           ) : (
             <Item>
               {item.icon && <Icon icon={item.icon} size="small" color={theme.content.weak} />}

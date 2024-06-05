@@ -11,30 +11,66 @@ export default meta;
 
 type Story = StoryObj<BreadcrumbProp>;
 
-const breadcrumbItems: ItemsProp[] = [
+const defaultItems: ItemsProp[] = [
   {
-    title: "pages",
-    icon: "folderSimple",
+    title: "First",
   },
   {
-    title: "Sub-page",
+    title: "Second",
   },
   {
-    title: "Second-sub-page",
+    title: "Third",
+  },
+];
+
+const itemMenu: ItemsProp[] = [
+  {
+    title: "Workspace",
+    menuItems: [
+      {
+        title: "Item1",
+        path: "/item",
+      },
+      {
+        title: "Item1",
+        path: "/item",
+      },
+      {
+        title: "Item1",
+        path: "/item",
+      },
+    ],
+  },
+  {
+    title: "Project",
+    menuItems: [
+      {
+        title: "Item2",
+      },
+      {
+        title: "Item2",
+      },
+    ],
+  },
+  {
+    title: "Sample",
   },
 ];
 
 const items: ItemsProp[] = [
   {
-    title: "Pages",
+    title: "Page1",
+    icon: "data",
     menuItems: [
       {
-        title: "Sub-page",
-        path: "/settings/project",
+        title: "Item1",
+        path: "/settings",
+        icon: "setting",
       },
       {
-        title: "Sub-page1",
-        path: "/settings/project",
+        title: "Item1",
+        path: "/item",
+        icon: "desktop",
       },
     ],
   },
@@ -42,27 +78,39 @@ const items: ItemsProp[] = [
     title: "Page 2",
     menuItems: [
       {
-        title: "Sub-page",
+        title: "Item2",
+        icon: "file",
       },
       {
-        title: "Sub-page2",
+        title: "Item2",
       },
     ],
   },
   {
     title: "Page 3",
+    icon: "folderSimple",
   },
 ];
 
 export const Default: Story = {
   render: () => (
     <div style={{ margin: "5px", height: "10vh" }}>
-      <Breadcrumb items={breadcrumbItems} />
+      <Breadcrumb items={defaultItems} />
     </div>
   ),
 };
 
 export const DropdownMenu: Story = {
+  render: () => (
+    <BrowserRouter>
+      <div style={{ margin: "5px", height: "10vh" }}>
+        <Breadcrumb items={itemMenu} />
+      </div>
+    </BrowserRouter>
+  ),
+};
+
+export const UsecaseIcon: Story = {
   render: () => (
     <BrowserRouter>
       <div style={{ margin: "5px", height: "10vh" }}>
