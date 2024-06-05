@@ -13,8 +13,11 @@ import type {
   LayerSelectWithRectMove,
   LayerSelectWithRectStart,
   LayerVisibilityEvent,
+  ViewerProperty,
+  SketchEventCallback,
+  SketchType,
+  TimelineManagerRef,
 } from "@reearth/core";
-import { SketchEventCallback, SketchType, TimelineManagerRef } from "@reearth/core";
 
 import type { MapRef, InteractionModeType } from "../types";
 import type { InternalWidget, WidgetAlignSystem } from "../Widgets";
@@ -26,7 +29,7 @@ import type { PluginInstances } from "./usePluginInstances";
 export type Props = PropsWithChildren<{
   engineName?: string;
   mapRef?: RefObject<MapRef>;
-  sceneProperty?: any;
+  viewerProperty?: ViewerProperty;
   inEditor?: boolean;
   built?: boolean;
   selectedLayer?: ComputedLayer;
@@ -38,7 +41,7 @@ export type Props = PropsWithChildren<{
   floatingWidgets?: InternalWidget[];
   useExperimentalSandbox?: boolean;
   timelineManagerRef?: TimelineManagerRef;
-  overrideSceneProperty?: (id: string, property: any) => void;
+  overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   camera?: Camera;
   interactionMode: InteractionModeType;
   overrideInteractionMode?: (mode: InteractionModeType) => void;

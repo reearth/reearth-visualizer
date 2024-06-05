@@ -457,7 +457,7 @@ export function useAPI({
 
   useEffect(() => {
     event.current?.[1]("update");
-  }, [block, layer, widget, ctx?.reearth.scene.property]);
+  }, [block, layer, widget, ctx?.reearth.viewer.property]);
 
   const onModalClose = useCallback(() => {
     event.current?.[1]("modalclose");

@@ -1,7 +1,14 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
-import type { LayerSelectionReason, LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
+import { convertData, mappingForSceneProperty } from "@reearth/beta/utils/convert-object";
+import type {
+  LayerSelectionReason,
+  LatLng,
+  ComputedLayer,
+  ComputedFeature,
+  ViewerProperty,
+} from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -60,9 +67,11 @@ export default ({
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
 
-  // Scene property
-  // TODO: Fix to use exact type through GQL typing
-  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
+  const viewerProperty = useMemo(() => {
+    const sceneProperty = processProperty(scene?.property);
+    if (!sceneProperty) return undefined;
+    return convertData(sceneProperty, mappingForSceneProperty) as ViewerProperty;
+  }, [scene?.property]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
 
@@ -262,7 +271,7 @@ export default ({
   }, [isBuilt, title]);
 
   return {
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,

@@ -1,4 +1,5 @@
-import type { DataRange, DataType, Geometry, SceneProperty, TimeInterval } from "@reearth/core";
+import { SceneProperty } from "@reearth/beta/types";
+import type { DataRange, DataType, Geometry, TimeInterval } from "@reearth/core";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 
 export type PublishedData = {

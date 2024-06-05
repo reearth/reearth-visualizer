@@ -10,6 +10,7 @@ import {
   type Layer,
   type LayerSelectionReason,
   type EngineType,
+  type ViewerProperty,
   CoreVisualizer,
 } from "@reearth/core";
 import { config } from "@reearth/services/config";
@@ -17,7 +18,8 @@ import { WidgetAreaState } from "@reearth/services/state";
 
 import Crust from "./Crust";
 import { InstallableInfoboxBlock } from "./Crust/Infobox";
-import { InteractionModeType, MapRef, SceneProperty } from "./Crust/types";
+import { WidgetThemeOptions } from "./Crust/theme";
+import { InteractionModeType, MapRef } from "./Crust/types";
 import { Alignment, Widget, WidgetAlignSystem, WidgetLayoutConstraint } from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
@@ -45,7 +47,7 @@ type VisualizerProps = {
         }
       | undefined;
   };
-  sceneProperty?: SceneProperty;
+  viewerProperty?: ViewerProperty;
   pluginProperty?:
     | {
         [key: string]: any;
@@ -69,6 +71,8 @@ type VisualizerProps = {
   handleSketchTypeChange?: (type: SketchType | undefined) => void;
   handleSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   handleMount?: () => void;
+  //
+  widgetThemeOptions?: WidgetThemeOptions;
   widgetAlignEditorActivated?: boolean;
   selectedWidgetArea?: WidgetAreaState;
   handleWidgetUpdate?: (
@@ -136,7 +140,7 @@ const Visualizer: FC<VisualizerProps> = ({
   ready,
   layers,
   widgets,
-  sceneProperty,
+  viewerProperty,
   pluginProperty,
   story,
   zoomedLayerId,
@@ -160,6 +164,7 @@ const Visualizer: FC<VisualizerProps> = ({
   handleStoryBlockDelete,
   handleStoryBlockMove,
   // widget
+  widgetThemeOptions,
   widgetAlignEditorActivated,
   selectedWidgetArea,
   handleWidgetUpdate,
@@ -191,7 +196,7 @@ const Visualizer: FC<VisualizerProps> = ({
         isEditable={!isBuilt}
         layers={layers}
         zoomedLayerId={zoomedLayerId}
-        sceneProperty={sceneProperty as SceneProperty}
+        viewerProperty={viewerProperty}
         ready={ready}
         meta={engineMeta}
         camera={currentCamera}
@@ -233,6 +238,7 @@ const Visualizer: FC<VisualizerProps> = ({
           // Plugin
           externalPlugin={{ pluginBaseUrl: config()?.plugins, pluginProperty }}
           // Widget
+          widgetThemeOptions={widgetThemeOptions}
           widgetAlignSystem={widgets?.alignSystem}
           widgetAlignSystemEditing={widgetAlignEditorActivated}
           widgetLayoutConstraint={widgets?.layoutConstraint}

@@ -69,7 +69,7 @@ const EditorVisualizer: React.FC<Props> = ({
   selectWidgetArea,
 }) => {
   const {
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,
@@ -116,7 +116,7 @@ const EditorVisualizer: React.FC<Props> = ({
       layers={layers}
       widgets={widgets}
       story={story}
-      sceneProperty={sceneProperty}
+      viewerProperty={viewerProperty}
       pluginProperty={pluginProperty}
       // editor
       zoomedLayerId={zoomedLayerId}

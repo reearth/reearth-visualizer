@@ -10,8 +10,17 @@ export type Props = {
 
 export default function Published({ alias }: Props) {
   const t = useT();
-  const { sceneProperty, pluginProperty, layers, widgets, story, ready, error, engineMeta } =
-    useHooks(alias);
+  const {
+    viewerProperty,
+    pluginProperty,
+    layers,
+    widgets,
+    widgetThemeOptions,
+    story,
+    ready,
+    error,
+    engineMeta,
+  } = useHooks(alias);
 
   return error ? (
     <NotFound
@@ -26,8 +35,9 @@ export default function Published({ alias }: Props) {
       ready={ready}
       layers={layers}
       widgets={widgets}
+      widgetThemeOptions={widgetThemeOptions}
       story={story}
-      sceneProperty={sceneProperty}
+      viewerProperty={viewerProperty}
       pluginProperty={pluginProperty}
       showStoryPanel={!!story}
     />

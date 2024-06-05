@@ -8,7 +8,11 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/features/Visualizer/Crust";
 import { Story } from "@reearth/beta/features/Visualizer/StoryPanel";
+import { convertData, mappingForSceneProperty } from "@reearth/beta/utils/convert-object";
+import { ViewerProperty } from "@reearth/core";
 import { config } from "@reearth/services/config";
+
+import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
 import { processProperty } from "./convert";
 import { processLayers, processNewProperty } from "./convert-new-property";
@@ -26,7 +30,17 @@ export default (alias?: string) => {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
 
-  const sceneProperty = processProperty(data?.property);
+  const [viewerProperty, widgetThemeOptions] = useMemo(() => {
+    const sceneProperty = processProperty(data?.property);
+    const widgetThemeOptions = sceneProperty.theme as WidgetThemeOptions | undefined;
+    return [
+      sceneProperty
+        ? (convertData(sceneProperty, mappingForSceneProperty) as ViewerProperty)
+        : undefined,
+      widgetThemeOptions,
+    ];
+  }, [data?.property]);
+
   const pluginProperty = useMemo(
     () =>
       Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
@@ -240,10 +254,11 @@ export default (alias?: string) => {
   useGA({ enableGa: data?.enableGa, trackingId: data?.trackingId });
 
   return {
-    sceneProperty,
+    viewerProperty,
     pluginProperty,
     layers,
     widgets,
+    widgetThemeOptions,
     story,
     ready,
     error,

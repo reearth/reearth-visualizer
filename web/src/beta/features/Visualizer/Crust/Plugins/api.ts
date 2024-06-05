@@ -424,7 +424,7 @@ export function commonReearth({
   hideLayer,
   addLayer,
   overrideLayerProperty,
-  overrideSceneProperty,
+  overrideViewerProperty,
   flyTo,
   lookAt,
   zoomIn,
@@ -487,7 +487,7 @@ export function commonReearth({
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
   addLayer: GlobalThis["reearth"]["layers"]["add"];
   overrideLayerProperty: GlobalThis["reearth"]["layers"]["overrideProperty"];
-  overrideSceneProperty: GlobalThis["reearth"]["scene"]["overrideProperty"];
+  overrideViewerProperty: GlobalThis["reearth"]["viewer"]["overrideProperty"];
   flyTo: GlobalThis["reearth"]["camera"]["flyTo"];
   lookAt: GlobalThis["reearth"]["camera"]["lookAt"];
   zoomIn: GlobalThis["reearth"]["camera"]["zoomIn"];
@@ -532,7 +532,7 @@ export function commonReearth({
 }): CommonReearth {
   return {
     version: window.REEARTH_CONFIG?.version || "",
-    apiVersion: 1,
+    apiVersion: 1.1,
     visualizer: {
       engine: engineName,
       camera: {
@@ -569,7 +569,7 @@ export function commonReearth({
       get property() {
         return sceneProperty?.();
       },
-      overrideProperty: overrideSceneProperty,
+      overrideProperty: overrideViewerProperty,
     },
     get clock() {
       return clock?.();
@@ -584,10 +584,6 @@ export function commonReearth({
       get built() {
         return !!built?.();
       },
-      get property() {
-        return sceneProperty?.();
-      },
-      overrideProperty: overrideSceneProperty,
       captureScreen,
       getLocationFromScreen,
       sampleTerrainHeight,
@@ -599,6 +595,12 @@ export function commonReearth({
       isPositionVisible,
       toWindowPosition,
       pickManyFromViewport,
+    },
+    viewer: {
+      get property() {
+        return sceneProperty?.();
+      },
+      overrideProperty: overrideViewerProperty,
     },
     get viewport() {
       return viewport?.();
