@@ -14,3 +14,4 @@ export * from "./Modal";
 export * from "./ColorInput";
 export * from "./DatePicker";
 export * from "./TimePicker";
+export * from "./Breadcrumb";

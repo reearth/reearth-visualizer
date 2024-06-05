@@ -3,7 +3,7 @@ import { FC, ReactNode } from "react";
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { DropDownMenu } from "./DropdownMenu";
+import { DropDownMenu } from "./dropdownMenu";
 
 export type ItemsProp = {
   title?: string;
