@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import {
   InternalWidget,
@@ -8,6 +8,7 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/features/Visualizer/Crust";
 import { Story } from "@reearth/beta/features/Visualizer/StoryPanel";
+import { MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
 
 import { processProperty } from "./convert";
@@ -22,6 +23,7 @@ import type {
 } from "./types";
 
 export default (alias?: string) => {
+  const visualizerRef = useRef<MapRef | null>(null);
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
@@ -248,6 +250,7 @@ export default (alias?: string) => {
     ready,
     error,
     engineMeta,
+    visualizerRef,
   };
 };
 
