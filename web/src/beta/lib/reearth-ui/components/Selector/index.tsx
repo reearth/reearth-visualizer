@@ -42,16 +42,12 @@ export const Selector: FC<SelectorProps> = ({
     if (selectorRef.current) {
       const newWidth = selectorRef.current.clientWidth;
       setSelectorWidth(newWidth);
-      console.log("Selector width updated:", newWidth);
     }
   }, []);
 
   useEffect(() => {
     updateSelectorWidth();
-    window.addEventListener("resize", updateSelectorWidth);
-    return () => {
-      window.removeEventListener("resize", updateSelectorWidth);
-    };
+    return window.addEventListener("resize", updateSelectorWidth);
   }, [updateSelectorWidth]);
 
   useEffect(() => {
@@ -62,7 +58,6 @@ export const Selector: FC<SelectorProps> = ({
         observer.disconnect();
       };
     }
-    return () => {};
   }, [selectorRef, updateSelectorWidth]);
 
   const isSelected = useCallback(
