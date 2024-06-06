@@ -70,7 +70,7 @@ const StyledButton = styled("button")<{
   padding:
     size === "small"
       ? iconButton
-        ? `${theme.spacing.micro}px`
+        ? "2px"
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`
       : iconButton
       ? `${theme.spacing.small}px`
@@ -103,5 +103,9 @@ const StyledButton = styled("button")<{
     color: `${theme.content.weaker}`,
     backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
     boxShadow: "none",
+  },
+  ["& svg"]: {
+    width: iconButton && size === "small" ? "12px" : "inherit",
+    height: iconButton && size === "small" ? "12px" : "inherit",
   },
 }));

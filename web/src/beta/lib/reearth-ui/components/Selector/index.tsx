@@ -197,6 +197,7 @@ const SelectInput = styled("div")<{
   }px`,
   cursor: disabled ? "not-allowed" : "pointer",
   width: width ? `${width}px` : "",
+  minHeight: "32px",
 }));
 
 const SelectedItems = styled("div")(({ theme }) => ({
@@ -214,6 +215,7 @@ const SelectedItem = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   backgroundColor: `${theme.bg[2]}`,
   borderRadius: `${theme.radius.smallest}px`,
+  height: "22px",
 }));
 
 const DropDownWrapper = styled("div")<{
