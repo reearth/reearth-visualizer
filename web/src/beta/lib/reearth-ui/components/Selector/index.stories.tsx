@@ -38,28 +38,20 @@ const LIST_ITEMS = [
 
 export const Default: Story = {
   render: () => {
-    return (
-      <div style={{ width: "300px" }}>
-        <Selector options={LIST_ITEMS} />
-      </div>
-    );
+    return <Selector options={LIST_ITEMS} />;
   },
 };
 
 export const MultipleSelector: Story = {
   render: () => {
-    return (
-      <div style={{ width: "300px" }}>
-        <Selector options={LIST_ITEMS} multiple={true} />
-      </div>
-    );
+    return <Selector options={LIST_ITEMS} multiple={true} />;
   },
 };
 
 export const Disabled: Story = {
   render: () => {
     return (
-      <div style={{ width: "300px", gap: "8px", display: "flex", flexDirection: "column" }}>
+      <div style={{ width: "100%", gap: "8px", display: "flex", flexDirection: "column" }}>
         <Selector options={LIST_ITEMS} disabled />
         <Selector options={LIST_ITEMS} value="item_1" disabled />
         <Selector options={LIST_ITEMS} value={["item_1", "item_2"]} multiple disabled />
