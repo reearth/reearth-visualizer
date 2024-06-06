@@ -215,7 +215,6 @@ const SelectedItem = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   backgroundColor: `${theme.bg[2]}`,
   borderRadius: `${theme.radius.smallest}px`,
-  height: "22px",
 }));
 
 const DropDownWrapper = styled("div")<{
