@@ -55,9 +55,11 @@ export type Props = {
   isBuilt?: boolean;
   mapRef?: RefObject<MapRef>;
   layers?: Layer[];
-  viewerProperty?: ViewerProperty;
   camera?: Camera;
   selectedFeatureInfo?: SelectedFeatureInfo;
+  // viewer
+  viewerProperty?: ViewerProperty;
+  overrideViewerProperty?: (pluginId: string, property: ViewerProperty) => void;
   // widgets
   widgetThemeOptions?: WidgetThemeOptions;
   widgetAlignSystem?: WidgetAlignSystemType;
@@ -119,12 +121,14 @@ export default function Crust({
   isEditable,
   inEditor,
   mapRef,
-  viewerProperty,
   camera,
   selectedFeatureInfo,
   externalPlugin,
   useExperimentalSandbox,
   layers,
+  // Viewer
+  viewerProperty,
+  overrideViewerProperty,
   // Widget
   widgetThemeOptions,
   widgetAlignSystem,
@@ -151,8 +155,6 @@ export default function Crust({
     selectedLayer,
     selectedComputedFeature,
     viewport,
-    overriddenViewerProperty,
-    overrideViewerProperty,
     handleCameraForceHorizontalRollChange,
     onLayerEdit,
     handleInteractionModeChange,
@@ -210,7 +212,7 @@ export default function Crust({
     <Plugins
       engineName={engineName}
       mapRef={mapRef}
-      viewerProperty={overriddenViewerProperty}
+      viewerProperty={viewerProperty}
       built={isBuilt}
       inEditor={inEditor}
       selectedLayer={selectedLayer?.layer}

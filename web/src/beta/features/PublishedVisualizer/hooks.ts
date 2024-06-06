@@ -33,7 +33,7 @@ export default (alias?: string) => {
 
   const [viewerProperty, widgetThemeOptions] = useMemo(() => {
     const sceneProperty = processProperty(data?.property);
-    const widgetThemeOptions = sceneProperty.theme as WidgetThemeOptions | undefined;
+    const widgetThemeOptions = sceneProperty?.theme as WidgetThemeOptions | undefined;
     return [
       sceneProperty
         ? (convertData(sceneProperty, mappingForSceneProperty) as ViewerProperty)

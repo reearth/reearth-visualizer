@@ -181,8 +181,9 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyItemMove,
   handlePropertyItemDelete,
 }) => {
-  const { shouldRender } = useHooks({
+  const { shouldRender, overriddenViewerProperty, overrideViewerProperty } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
+    viewerProperty,
   });
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -196,7 +197,7 @@ const Visualizer: FC<VisualizerProps> = ({
         isEditable={!isBuilt}
         layers={layers}
         zoomedLayerId={zoomedLayerId}
-        viewerProperty={viewerProperty}
+        viewerProperty={overriddenViewerProperty}
         ready={ready}
         meta={engineMeta}
         camera={currentCamera}
@@ -234,9 +235,12 @@ const Visualizer: FC<VisualizerProps> = ({
           camera={currentCamera}
           mapRef={visualizerRef}
           layers={layers}
-          useExperimentalSandbox={useExperimentalSandbox}
+          // Viewer
+          viewerProperty={overriddenViewerProperty}
+          overrideViewerProperty={overrideViewerProperty}
           // Plugin
           externalPlugin={{ pluginBaseUrl: config()?.plugins, pluginProperty }}
+          useExperimentalSandbox={useExperimentalSandbox}
           // Widget
           widgetThemeOptions={widgetThemeOptions}
           widgetAlignSystem={widgets?.alignSystem}
