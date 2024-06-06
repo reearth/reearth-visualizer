@@ -11,23 +11,29 @@ export default meta;
 
 type Story = StoryObj<TabsProps>;
 
-const Tabs: FC<{ position?: "top" | "left" }> = ({ position }) => {
+const Tabs: FC<TabsProps> = ({ position, tabs, iconOnly }) => {
   const [activeTab, setActiveTab] = useState("tab1");
   const handleTabChange = useCallback((newTab: string) => {
     setActiveTab(newTab);
   }, []);
 
   return (
-    <TabsMenu position={position} activeTab={activeTab} tabs={tabs} onChange={handleTabChange} />
+    <TabsMenu
+      position={position}
+      iconOnly={iconOnly}
+      activeTab={activeTab}
+      tabs={tabs}
+      onChange={handleTabChange}
+    />
   );
 };
-const tabs: TabItems[] = [
+
+const tabsItem: TabItems[] = [
   {
     id: "tab1",
     name: "Tab One",
     children: (
       <div>
-        <p>Here is tab one content</p>
         <p>Here is tab one content</p>
         <p>Here is tab one content</p>
       </div>
@@ -46,24 +52,61 @@ const tabs: TabItems[] = [
   },
 ];
 
+const tabsIcons: TabItems[] = [
+  {
+    id: "tab1",
+    icon: "data",
+    children: (
+      <div>
+        <p>Here is tab one content</p>
+      </div>
+    ),
+  },
+  {
+    id: "tab2",
+    icon: "editor",
+    children: <div>This is tab two content</div>,
+  },
+  {
+    id: "tab3",
+    icon: "layers",
+    children: <div>Content for Tab 3 </div>,
+  },
+];
+
 export const Default: Story = {
   render: arg => (
     <div style={{ width: "500px", marginTop: "10px", marginLeft: "10px" }}>
-      <Tabs position={arg.position} />
+      <Tabs {...arg} />
     </div>
   ),
   args: {
     position: "top",
+    tabs: tabsItem,
   },
 };
 
-export const LeftSide: Story = {
+export const LeftSideTabs: Story = {
   render: arg => (
     <div style={{ width: "500px" }}>
-      <Tabs position={arg.position} />
+      <Tabs {...arg} />
     </div>
   ),
   args: {
     position: "left",
+    tabs: tabsItem,
+  },
+};
+
+export const IconTabs: Story = {
+  render: arg => (
+    <div style={{ width: "500px", height: "100vh" }}>
+      <Tabs {...arg} />
+    </div>
+  ),
+  args: {
+    position: "left",
+    iconOnly: true,
+    tabs: tabsIcons,
   },
 };

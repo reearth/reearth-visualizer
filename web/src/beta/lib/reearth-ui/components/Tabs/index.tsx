@@ -7,7 +7,6 @@ export type TabItems = {
   id: string;
   name?: string;
   icon?: IconName;
-  disables?: boolean;
   children?: ReactNode;
 };
 
@@ -15,10 +14,11 @@ export type TabsProps = {
   tabs: TabItems[];
   position?: "top" | "left";
   activeTab?: string;
+  iconOnly?: boolean;
   onChange?: (tab: string) => void;
 };
 
-export const Tabs: FC<TabsProps> = ({ tabs, position = "top", activeTab, onChange }) => {
+export const Tabs: FC<TabsProps> = ({ tabs, position = "top", activeTab, iconOnly, onChange }) => {
   const theme = useTheme();
   const selectedTabItem = useMemo(() => {
     return tabs.find(({ id }) => id === activeTab);
@@ -26,14 +26,20 @@ export const Tabs: FC<TabsProps> = ({ tabs, position = "top", activeTab, onChang
 
   return (
     <Wrapper position={position}>
-      <TabsMenu position={position}>
+      <TabsMenu position={position} iconOnly={iconOnly}>
         {tabs.map(({ id, icon, name }) => (
           <Tab
             key={id}
             onClick={() => onChange?.(id)}
             selected={id === activeTab}
+            iconOnly={iconOnly}
             position={position}>
-            {icon && <Icon icon={icon} />}
+            {icon && (
+              <Icon
+                icon={icon}
+                color={id === activeTab ? theme.content.main : theme.content.weak}
+              />
+            )}
             {name && (
               <Typography
                 size="body"
@@ -54,26 +60,29 @@ const Wrapper = styled("div")<{ position?: "top" | "left" }>(({ position, theme 
   display: "flex",
   flexFlow: position === "top" ? "column nowrap" : "row nowrap",
   background: theme.bg[1],
+  height: "100%",
 }));
 
-const TabsMenu = styled("div")<{ position?: "top" | "left" }>(({ position, theme }) => ({
-  display: "flex",
-  flexFlow: position === "top" ? "row nowrap" : "column nowrap",
-  background: theme.bg[0],
-  padding: position === "top" ? " " : theme.spacing.large,
-  gap: theme.spacing.micro,
-  borderRight: position === "top" ? "none" : `1px solid ${theme.outline.weak}`,
-}));
+const TabsMenu = styled("div")<{ position?: "top" | "left"; iconOnly?: boolean }>(
+  ({ position, iconOnly, theme }) => ({
+    display: "flex",
+    flexFlow: position === "top" ? "row nowrap" : "column nowrap",
+    background: theme.bg[0],
+    padding: position === "left" && !iconOnly ? theme.spacing.large : " ",
+    gap: theme.spacing.micro,
+    borderRight: position === "left" && !iconOnly ? `1px solid ${theme.outline.weak}` : "none",
+  }),
+);
 
-const Tab = styled("div")<{ position?: "top" | "left"; selected: boolean }>(
-  ({ position, selected, theme }) => ({
+const Tab = styled("div")<{ position?: "top" | "left"; selected: boolean; iconOnly?: boolean }>(
+  ({ position, selected, iconOnly, theme }) => ({
     display: "flex",
     alignItems: "center",
     cursor: "pointer",
     gap: theme.spacing.smallest,
     background: selected ? theme.bg[1] : "inherit",
     padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-    borderRadius: position === "top" ? 0 : theme.radius.small,
+    borderRadius: position === "left" && !iconOnly ? theme.radius.small : 0,
     borderTopRightRadius: position === "top" ? theme.radius.small : "",
     borderTopLeftRadius: position === "top" ? theme.radius.small : "",
   }),
@@ -81,6 +90,5 @@ const Tab = styled("div")<{ position?: "top" | "left"; selected: boolean }>(
 
 const Content = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
-  display: "block",
   height: "auto",
 }));
