@@ -5866,10 +5866,10 @@
     pbf "3.2.1"
     threads "1.7.0"
 
-"@reearth/core@0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@reearth/core/-/core-0.0.5.tgz#a7d9d8ea41df9c749c4a6267d5d8f20393134acc"
-  integrity sha512-mm6/22fHZv6i3/qj/HefL6diM1BZ45CY2BR4MRJ6QWawBNRH6fFPRHbJy8Eaxr+koQyYW0ph6OoSZjByiXp25Q==
+"@reearth/core@0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@reearth/core/-/core-0.0.6.tgz#6f49a5eda06f169e9f7b76a8a42fb0359c33c0e4"
+  integrity sha512-D3roHQj7JEXEk7sNjMPewQQhcXGcufiCsVGRwhvconzhfYwmzyV73HyZEFJda1HK/NT6tRPATKxBLJ3P1ph3fg==
   dependencies:
     "@reearth/cesium-mvt-imagery-provider" "1.5.4"
     "@rot1024/use-transition" "1.0.0"
@@ -5900,7 +5900,7 @@
     react-error-boundary "4.0.11"
     react-nl2br "1.0.4"
     react-use "17.5.0"
-    resium "1.17.3"
+    resium "1.17.4"
     suspend-react "0.1.3"
     tiny-invariant "1.3.3"
     use-callback-ref "1.3.2"
@@ -17640,6 +17640,11 @@ resium@1.17.3:
   version "1.17.3"
   resolved "https://registry.yarnpkg.com/resium/-/resium-1.17.3.tgz#9d5a74582e1094acdcaacb6e8a3860d50c0caeb6"
   integrity sha512-3M0vsL9Phecl2kV8AwSPk/7r7arsLdaz0TrwXzEv8EZpI+KYlLKVkJPTB8Y3Wq3RwUx/VK8kY7OrYJvGM5TOPA==
+
+resium@1.17.4:
+  version "1.17.4"
+  resolved "https://registry.yarnpkg.com/resium/-/resium-1.17.4.tgz#9da878bb89418c9a9f8fda84171f755525371f1b"
+  integrity sha512-+LYqwThrKMhFwE8ugwg323OxYHbR6dAjY6t9kfS6U5XEguHLXkIvTVxEfYkF1HSgHM0t2K/cgm7RtobO9+xdgw==
 
 resize-observer-polyfill@^1.5.1:
   version "1.5.1"
