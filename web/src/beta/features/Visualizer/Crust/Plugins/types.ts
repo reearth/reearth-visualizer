@@ -41,9 +41,9 @@ export type Props = PropsWithChildren<{
   floatingWidgets?: InternalWidget[];
   useExperimentalSandbox?: boolean;
   timelineManagerRef?: TimelineManagerRef;
-  overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   camera?: Camera;
   interactionMode: InteractionModeType;
+  overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
   overrideInteractionMode?: (mode: InteractionModeType) => void;
   onLayerEdit?: (cb: (e: LayerEditEvent) => void) => void;
   onLayerSelectWithRectStart?: (cb: (e: LayerSelectWithRectStart) => void) => void;
