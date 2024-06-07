@@ -424,7 +424,7 @@ export function useAPI({
           onResize?.(width, height, extended);
         },
         startEventLoop,
-        overrideSceneProperty: ctx.overrideSceneProperty,
+        overrideViewerProperty: ctx.overrideViewerProperty,
         moveWidget: onWidgetMove,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,
@@ -436,7 +436,7 @@ export function useAPI({
     ctx?.pluginInstances,
     ctx?.clientStorage,
     ctx?.timelineManagerRef,
-    ctx?.overrideSceneProperty,
+    ctx?.overrideViewerProperty,
     extensionId,
     extensionType,
     pluginId,

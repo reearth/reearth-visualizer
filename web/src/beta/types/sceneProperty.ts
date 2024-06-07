@@ -1,3 +1,7 @@
+// This SceneProperty type is from backend.
+// Currently including the legacy properties.
+// TODO: remove legacy properties.
+
 type TerrainProperty = {
   terrain?: boolean;
   terrainType?: "cesium" | "arcgis" | "cesiumion"; // default: cesium
@@ -24,7 +28,7 @@ type Camera = {
 };
 
 export type SceneProperty = {
-  main?: {
+  default?: {
     sceneMode?: SceneMode;
     ion?: string;
     vr?: boolean;

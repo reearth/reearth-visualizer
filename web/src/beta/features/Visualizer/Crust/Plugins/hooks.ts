@@ -537,7 +537,7 @@ export default function ({
         engineName,
         events: ev,
         layers: getLayers,
-        sceneProperty: getViewerProperty,
+        viewerProperty: getViewerProperty,
         inEditor: getInEditor,
         built: getBuilt,
         tags: getTags,

@@ -8,7 +8,10 @@ import {
   isBuiltinWidget,
 } from "@reearth/beta/features/Visualizer/Crust";
 import { Story } from "@reearth/beta/features/Visualizer/StoryPanel";
-import { convertData, mappingForSceneProperty } from "@reearth/beta/utils/convert-object";
+import {
+  convertData,
+  sceneProperty2ViewerPropertyMapping,
+} from "@reearth/beta/utils/convert-object";
 import { ViewerProperty, MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
 
@@ -36,7 +39,7 @@ export default (alias?: string) => {
     const widgetThemeOptions = sceneProperty?.theme as WidgetThemeOptions | undefined;
     return [
       sceneProperty
-        ? (convertData(sceneProperty, mappingForSceneProperty) as ViewerProperty)
+        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
         : undefined,
       widgetThemeOptions,
     ];

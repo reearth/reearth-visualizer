@@ -50,7 +50,8 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
 }
 
 // Convert those been defined in backend only
-export const mappingForSceneProperty: Mapping = {
+// Remember to add more when needed
+export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "default.sceneMode": "scene.mode",
   "default.ion": "assets.cesium.tiles.ionAccessToken",
   "default.vr": "scene.vr",
@@ -75,7 +76,7 @@ export const mappingForSceneProperty: Mapping = {
   "terrain.terrainExaggerationRelativeHeight": "scene.verticalExaggerationRelativeHeight",
   "terrain.depthTestAgainstTerrain": "globe.depthTestAgainstTerrain",
   "globeLighting.globeLighting": "globe.enableLighting",
-  "globeShadow.globeShadow": "shadow.enabled",
+  "globeShadow.globeShadow": "scene.shadow.enabled",
   "globeAtmosphere.globeAtmosphere": "globe.atmosphere.enabled",
   "globeAtmosphere.globeAtmosphereIntensity": "globe.atmosphere.intensity",
   "skyBox.skyBox": "sky.skyBox.show",

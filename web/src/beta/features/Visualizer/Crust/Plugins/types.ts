@@ -62,5 +62,5 @@ export type Context = {
   clientStorage: ClientStorage;
   timelineManagerRef?: TimelineManagerRef;
   useExperimentalSandbox?: boolean;
-  overrideSceneProperty?: (id: string, property: any) => void;
+  overrideViewerProperty?: (id: string, property: ViewerProperty) => void;
 };

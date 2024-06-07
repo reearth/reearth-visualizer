@@ -1,7 +1,10 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
-import { convertData, mappingForSceneProperty } from "@reearth/beta/utils/convert-object";
+import {
+  convertData,
+  sceneProperty2ViewerPropertyMapping,
+} from "@reearth/beta/utils/convert-object";
 import type {
   LayerSelectionReason,
   LatLng,
@@ -70,7 +73,7 @@ export default ({
   const viewerProperty = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
     if (!sceneProperty) return undefined;
-    return convertData(sceneProperty, mappingForSceneProperty) as ViewerProperty;
+    return convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty;
   }, [scene?.property]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });

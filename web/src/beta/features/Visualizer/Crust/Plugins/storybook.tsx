@@ -218,7 +218,7 @@ export const context: Context = {
       });
     },
   },
-  overrideSceneProperty: act("overrideSceneProperty"),
+  overrideViewerProperty: act("overrideViewerProperty"),
 };
 
 function act<T extends any[], M extends (...args: T) => any>(
