@@ -3,38 +3,32 @@ import { FC, ReactNode } from "react";
 import { Icon, IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { DropdownMenu } from "./dropdown";
+import { Items } from "../PopupMenu";
 
 export type ItemsProp = {
-  title?: string;
-  path?: string;
+  title: string | ReactNode;
   icon?: IconName;
-  menuItems?: ItemsProp[];
+  subItem?: Items[];
 };
 
 export type BreadcrumbProp = {
-  items?: ItemsProp[];
+  items: ItemsProp[];
   separator?: ReactNode;
+  onClick?: () => void;
 };
 
-export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / " }) => {
+export const Breadcrumb: FC<BreadcrumbProp> = ({ items = [], separator = " / ", onClick }) => {
   const theme = useTheme();
-
   return (
     <Wrapper>
       {items.map((item, index) => (
         <ItemWrapper key={index}>
-          {item.menuItems ? (
-            <DropdownMenu itemIcon={item.icon} items={item.menuItems} label={item.title} />
-          ) : (
-            <Item>
-              {item.icon && <Icon icon={item.icon} size="small" color={theme.content.weak} />}
-              <Typography color={theme.content.weak} weight="bold" size="body">
-                {item.title}
-              </Typography>
-            </Item>
-          )}
-
+          <Item onClick={onClick}>
+            {item.icon && <Icon icon={item.icon} size="small" color={theme.content.weak} />}
+            <Typography color={theme.content.weak} weight="bold" size="body">
+              {item.title}
+            </Typography>
+          </Item>
           {index < items.length - 1 && <Separator>{separator}</Separator>}
         </ItemWrapper>
       ))}
@@ -51,7 +45,6 @@ const ItemWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  color: theme.content.weak,
   cursor: "pointer",
 }));
 

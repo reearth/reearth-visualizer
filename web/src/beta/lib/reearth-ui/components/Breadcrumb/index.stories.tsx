@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { BrowserRouter } from "react-router-dom";
 
-import { Breadcrumb, BreadcrumbProp, ItemsProp } from ".";
+import { PopupMenu, Items as PopupItems } from "@reearth/beta/lib/reearth-ui";
+
+import { Breadcrumb, BreadcrumbProp, ItemsProp } from "./";
 
 const meta: Meta<BreadcrumbProp> = {
   component: Breadcrumb,
@@ -23,74 +24,72 @@ const defaultItems: ItemsProp[] = [
   },
 ];
 
-const itemMenu: ItemsProp[] = [
+const multiLevelItems: ItemsProp[] = [
   {
-    title: "Workspace",
-    menuItems: [
+    title: "First Item",
+    subItem: [
       {
-        title: "Item1",
-        path: "/item",
+        title: "Sub Item one",
+        subItem: [
+          {
+            title: "Item one",
+          },
+          {
+            title: "Item two",
+          },
+        ],
       },
       {
-        title: "Item1",
-        path: "/item",
+        title: "Sub Item two",
       },
       {
-        title: "Item1",
-        path: "/item",
+        title: "Sub Item three",
       },
     ],
   },
   {
-    title: "Project",
-    menuItems: [
-      {
-        title: "Item2",
-      },
-      {
-        title: "Item2",
-      },
-    ],
-  },
-  {
-    title: "Sample",
+    title: "Second Item",
   },
 ];
 
-const items: ItemsProp[] = [
+const itemMenu: ItemsProp[] = [
   {
-    title: "Page1",
-    icon: "data",
-    menuItems: [
+    title: "First Item",
+    subItem: [
       {
-        title: "Item1",
-        path: "/settings",
-        icon: "setting",
+        title: "Sub Menu 1",
       },
       {
-        title: "Item1",
-        path: "/item",
-        icon: "desktop",
+        title: "Sub Menu 2",
       },
     ],
   },
   {
-    title: "Page 2",
-    menuItems: [
-      {
-        title: "Item2",
-        icon: "file",
-      },
-      {
-        title: "Item2",
-      },
-    ],
+    title: "Second Item",
   },
   {
-    title: "Page 3",
-    icon: "folderSimple",
+    title: "Third Item",
   },
 ];
+
+const renderPopupMenu = (items: ItemsProp[], level: number) => {
+  return items.map(item => {
+    if (item.subItem) {
+      return {
+        ...item,
+        title: (
+          <PopupMenu
+            label={item.title as string}
+            menu={item.subItem as PopupItems[]}
+            nested={level > 0}
+          />
+        ),
+        subItem: undefined,
+      };
+    }
+    return item;
+  });
+};
 
 export const Default: Story = {
   render: () => (
@@ -102,20 +101,16 @@ export const Default: Story = {
 
 export const DropdownMenu: Story = {
   render: () => (
-    <BrowserRouter>
-      <div style={{ margin: "5px", height: "10vh" }}>
-        <Breadcrumb items={itemMenu} />
-      </div>
-    </BrowserRouter>
+    <div style={{ margin: "5px", height: "10vh" }}>
+      <Breadcrumb items={renderPopupMenu(itemMenu, 0)} />
+    </div>
   ),
 };
 
-export const UsecaseIcon: Story = {
+export const MultiLevelMenu: Story = {
   render: () => (
-    <BrowserRouter>
-      <div style={{ margin: "5px", height: "10vh" }}>
-        <Breadcrumb items={items} />
-      </div>
-    </BrowserRouter>
+    <div style={{ margin: "5px", height: "10vh" }}>
+      <Breadcrumb items={renderPopupMenu(multiLevelItems, 0)} />
+    </div>
   ),
 };

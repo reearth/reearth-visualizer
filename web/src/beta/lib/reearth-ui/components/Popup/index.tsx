@@ -96,6 +96,7 @@ export const Popup = ({ children, trigger, disabled, ...restOptions }: PopupProp
 const TriggerWrapper = styled("div")<{ disabled?: boolean }>(({ disabled }) => ({
   width: "fit-content",
   pointerEvents: disabled ? "none" : "auto",
+  flex: 1,
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({

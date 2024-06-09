@@ -92,6 +92,10 @@ export const styles = css`
   .Resizer.disabled:hover {
     border-color: transparent;
   }
+
+  *:focus {
+    outline: none;
+  }
 `;
 
 const GlobalStyles: React.FC = () => <Global styles={styles} />;
