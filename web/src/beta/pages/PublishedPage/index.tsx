@@ -1,9 +1,9 @@
 import NotFound from "@reearth/beta/components/NotFound";
 import PublishedGis from "@reearth/beta/features/Published";
 import { useCore } from "@reearth/beta/utils/use-core";
+import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 import ClassicPublished from "@reearth/classic/components/organisms/Published";
 import ClassicCorePublished from "@reearth/classic/components/organisms/Published/core";
-import { Provider as DndProvider } from "@reearth/classic/util/use-dnd";
 import { useT } from "@reearth/services/i18n";
 
 const PublishedPage: React.FC<{

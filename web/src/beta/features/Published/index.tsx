@@ -10,8 +10,17 @@ export type Props = {
 
 export default function Published({ alias }: Props) {
   const t = useT();
-  const { sceneProperty, pluginProperty, layers, widgets, story, ready, error, engineMeta } =
-    useHooks(alias);
+  const {
+    sceneProperty,
+    pluginProperty,
+    layers,
+    widgets,
+    story,
+    ready,
+    error,
+    engineMeta,
+    visualizerRef,
+  } = useHooks(alias);
 
   return error ? (
     <NotFound
@@ -20,6 +29,7 @@ export default function Published({ alias }: Props) {
     />
   ) : (
     <Visualizer
+      visualizerRef={visualizerRef}
       engine="cesium"
       engineMeta={engineMeta}
       isBuilt

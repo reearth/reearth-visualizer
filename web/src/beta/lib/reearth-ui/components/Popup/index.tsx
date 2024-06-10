@@ -29,16 +29,17 @@ export const usePopoverContext = () => {
 
 type TriggerProps = {
   children?: ReactNode;
+  disabled?: boolean;
 };
 
 const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
-  function PopoverTrigger({ children, ...props }, propRef) {
+  function PopoverTrigger({ children, disabled, ...props }, propRef) {
     const context = usePopoverContext();
     const childrenRef = (children as any)?.ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
     return (
-      <TriggerWrapper ref={ref} {...context.getReferenceProps(props)}>
+      <TriggerWrapper disabled={disabled} ref={ref} {...context.getReferenceProps(props)}>
         {typeof children === "string" ? <Button title={children} /> : children}
       </TriggerWrapper>
     );
@@ -73,6 +74,7 @@ const Content = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(function C
 export type PopupProps = {
   children?: ReactNode;
   trigger?: ReactNode;
+  disabled?: boolean;
   placement?: Placement;
   open?: boolean;
   offset?: OffsetOptions;
@@ -80,19 +82,20 @@ export type PopupProps = {
   onOpenChange?: (open: boolean) => void;
 };
 
-export const Popup = ({ children, trigger, ...restOptions }: PopupProps) => {
+export const Popup = ({ children, trigger, disabled, ...restOptions }: PopupProps) => {
   const popover = usePopover({ ...restOptions });
 
   return (
     <PopoverContext.Provider value={popover}>
-      <Trigger>{trigger}</Trigger>
+      <Trigger disabled={disabled}>{trigger}</Trigger>
       <Content>{children}</Content>
     </PopoverContext.Provider>
   );
 };
 
-const TriggerWrapper = styled("div")(() => ({
+const TriggerWrapper = styled("div")<{ disabled?: boolean }>(({ disabled }) => ({
   width: "fit-content",
+  pointerEvents: disabled ? "none" : "auto",
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
