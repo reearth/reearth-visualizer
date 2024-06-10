@@ -59,10 +59,8 @@ type VisualizerProps = {
   onCameraChange?: (camera: Camera) => void;
   handleLayerSelect?: (
     layerId: string | undefined,
-    // layer: (() => Promise<ComputedLayer | undefined>) | undefined,
     layer: ComputedLayer | undefined,
     feature: ComputedFeature | undefined,
-    // reason: LayerSelectionReason | undefined,
   ) => void;
   handleLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   handleZoomToLayer?: (layerId: string | undefined) => void;

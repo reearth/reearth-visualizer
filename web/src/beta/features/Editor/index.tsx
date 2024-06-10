@@ -86,7 +86,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
-    // setSelectedLayerId,
   } = useLayers({
     sceneId,
     isVisualizerReady,
