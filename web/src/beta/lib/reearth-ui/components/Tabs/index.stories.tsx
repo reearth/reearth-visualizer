@@ -11,7 +11,7 @@ export default meta;
 
 type Story = StoryObj<TabsProps>;
 
-const Tabs: FC<TabsProps> = ({ position, tabs, iconOnly }) => {
+const Tabs: FC<TabsProps> = ({ position, tabs, tabStyle }) => {
   const [activeTab, setActiveTab] = useState("tab1");
   const handleTabChange = useCallback((newTab: string) => {
     setActiveTab(newTab);
@@ -20,8 +20,8 @@ const Tabs: FC<TabsProps> = ({ position, tabs, iconOnly }) => {
   return (
     <TabsMenu
       position={position}
-      iconOnly={iconOnly}
       activeTab={activeTab}
+      tabStyle={tabStyle}
       tabs={tabs}
       onChange={handleTabChange}
     />
@@ -95,6 +95,7 @@ export const LeftSideTabs: Story = {
   args: {
     position: "left",
     tabs: tabsItem,
+    tabStyle: "separated",
   },
 };
 
@@ -106,7 +107,6 @@ export const IconTabs: Story = {
   ),
   args: {
     position: "left",
-    iconOnly: true,
     tabs: tabsIcons,
   },
 };

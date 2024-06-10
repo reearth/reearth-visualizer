@@ -13,12 +13,18 @@ export type TabItems = {
 export type TabsProps = {
   tabs: TabItems[];
   position?: "top" | "left";
+  tabStyle?: "normal" | "separated";
   activeTab?: string;
-  iconOnly?: boolean;
   onChange?: (tab: string) => void;
 };
 
-export const Tabs: FC<TabsProps> = ({ tabs, position = "top", activeTab, iconOnly, onChange }) => {
+export const Tabs: FC<TabsProps> = ({
+  tabs,
+  position = "top",
+  tabStyle = "normal",
+  activeTab,
+  onChange,
+}) => {
   const theme = useTheme();
   const selectedTabItem = useMemo(() => {
     return tabs.find(({ id }) => id === activeTab);
@@ -26,14 +32,14 @@ export const Tabs: FC<TabsProps> = ({ tabs, position = "top", activeTab, iconOnl
 
   return (
     <Wrapper position={position}>
-      <TabsMenu position={position} iconOnly={iconOnly}>
+      <TabsMenu position={position} tabStyle={tabStyle}>
         {tabs.map(({ id, icon, name }) => (
           <Tab
             key={id}
             onClick={() => onChange?.(id)}
             selected={id === activeTab}
-            iconOnly={iconOnly}
-            position={position}>
+            position={position}
+            tabStyle={tabStyle}>
             {icon && (
               <Icon
                 icon={icon}
@@ -63,30 +69,31 @@ const Wrapper = styled("div")<{ position?: "top" | "left" }>(({ position, theme 
   height: "100%",
 }));
 
-const TabsMenu = styled("div")<{ position?: "top" | "left"; iconOnly?: boolean }>(
-  ({ position, iconOnly, theme }) => ({
+const TabsMenu = styled("div")<{ position?: "top" | "left"; tabStyle?: "normal" | "separated" }>(
+  ({ position, tabStyle, theme }) => ({
     display: "flex",
     flexFlow: position === "top" ? "row nowrap" : "column nowrap",
     background: theme.bg[0],
-    padding: position === "left" && !iconOnly ? theme.spacing.large : " ",
+    padding: tabStyle === "normal" ? " " : theme.spacing.large,
     gap: theme.spacing.micro,
-    borderRight: position === "left" && !iconOnly ? `1px solid ${theme.outline.weak}` : "none",
   }),
 );
 
-const Tab = styled("div")<{ position?: "top" | "left"; selected: boolean; iconOnly?: boolean }>(
-  ({ position, selected, iconOnly, theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-    gap: theme.spacing.smallest,
-    background: selected ? theme.bg[1] : "inherit",
-    padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-    borderRadius: position === "left" && !iconOnly ? theme.radius.small : 0,
-    borderTopRightRadius: position === "top" ? theme.radius.small : "",
-    borderTopLeftRadius: position === "top" ? theme.radius.small : "",
-  }),
-);
+const Tab = styled("div")<{
+  position?: "top" | "left";
+  selected: boolean;
+  tabStyle?: "normal" | "separated";
+}>(({ position, selected, tabStyle, theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
+  gap: theme.spacing.smallest,
+  background: selected ? theme.bg[1] : "inherit",
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  borderRadius: tabStyle === "separated" ? theme.radius.small : 0,
+  borderTopRightRadius: position === "top" && tabStyle === "normal" ? theme.radius.small : "",
+  borderTopLeftRadius: position === "top" && tabStyle === "normal" ? theme.radius.small : "",
+}));
 
 const Content = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal,
