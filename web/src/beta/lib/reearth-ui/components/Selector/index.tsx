@@ -153,19 +153,25 @@ export const Selector: FC<SelectorProps> = ({
           onOpenChange={setIsOpen}
           placement="bottom-start">
           <DropDownWrapper width={selectorWidth}>
-            {optionValues.map((item: { value: string; label?: string }) => (
-              <DropDownItem
-                key={item.value}
-                isSelected={isSelected(item.value)}
-                onClick={() => handleChange(item.value)}>
-                <Typography size="body" color={theme.content.main}>
-                  {item.label ?? item.value}
-                </Typography>
-                {isSelected(item.value) && multiple && (
-                  <Icon icon="check" size="small" color={theme.content.main} />
-                )}
-              </DropDownItem>
-            ))}
+            {optionValues.length === 0 ? (
+              <Typography size="body" color={theme.content.weaker}>
+                No Options yet
+              </Typography>
+            ) : (
+              optionValues.map((item: { value: string; label?: string }) => (
+                <DropDownItem
+                  key={item.value}
+                  isSelected={isSelected(item.value)}
+                  onClick={() => handleChange(item.value)}>
+                  <Typography size="body" color={theme.content.main}>
+                    {item.label ?? item.value}
+                  </Typography>
+                  {isSelected(item.value) && multiple && (
+                    <Icon icon="check" size="small" color={theme.content.main} />
+                  )}
+                </DropDownItem>
+              ))
+            )}
           </DropDownWrapper>
         </Popup>
       )}
@@ -229,6 +235,7 @@ const DropDownWrapper = styled("div")<{
   boxShadow: `${theme.shadow.popup}`,
   borderRadius: `${theme.radius.small}px`,
   width: width ? `${width}px` : "",
+  border: `1px solid ${theme.outline.weaker}`,
 }));
 
 const DropDownItem = styled("div")<{

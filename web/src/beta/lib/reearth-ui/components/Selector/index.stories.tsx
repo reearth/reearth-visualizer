@@ -48,6 +48,12 @@ export const MultipleSelector: Story = {
   },
 };
 
+export const NoOptions: Story = {
+  render: () => {
+    return <Selector options={[]} />;
+  },
+};
+
 export const Disabled: Story = {
   render: () => {
     return (
