@@ -16,6 +16,18 @@ export type SelectorProps = {
   onChange?: (value: string | string[]) => void;
 };
 
+const resizeObserver = new ResizeObserver(entries => {
+  entries.forEach(entry => {
+    const selectorRef = entry.target;
+    if (selectorRef instanceof HTMLElement) {
+      const updateSelectorWidth = (selectorRef as any)._updateSelectorWidth;
+      if (updateSelectorWidth) {
+        updateSelectorWidth(selectorRef.clientWidth);
+      }
+    }
+  });
+});
+
 export const Selector: FC<SelectorProps> = ({
   multiple,
   value,
@@ -40,25 +52,28 @@ export const Selector: FC<SelectorProps> = ({
 
   const updateSelectorWidth = useCallback(() => {
     if (selectorRef.current) {
-      const newWidth = selectorRef.current.clientWidth;
-      setSelectorWidth(newWidth);
+      setSelectorWidth(selectorRef.current.clientWidth);
     }
   }, []);
 
   useEffect(() => {
     updateSelectorWidth();
-    return window.addEventListener("resize", updateSelectorWidth);
+    const handleResize = () => updateSelectorWidth();
+    return window.addEventListener("resize", handleResize);
   }, [updateSelectorWidth]);
 
   useEffect(() => {
-    if (selectorRef.current) {
-      const observer = new ResizeObserver(updateSelectorWidth);
-      observer.observe(selectorRef.current);
-      return () => {
-        observer.disconnect();
-      };
+    const currentRef = selectorRef.current;
+    if (currentRef) {
+      (currentRef as any)._updateSelectorWidth = updateSelectorWidth;
+      resizeObserver.observe(currentRef);
     }
-  }, [selectorRef, updateSelectorWidth]);
+    return () => {
+      if (currentRef) {
+        resizeObserver.unobserve(currentRef);
+      }
+    };
+  }, [updateSelectorWidth]);
 
   const isSelected = useCallback(
     (value: string) => {
@@ -155,7 +170,7 @@ export const Selector: FC<SelectorProps> = ({
           <DropDownWrapper width={selectorWidth}>
             {optionValues.length === 0 ? (
               <Typography size="body" color={theme.content.weaker}>
-                No Options yet
+                No option yet
               </Typography>
             ) : (
               optionValues.map((item: { value: string; label?: string }) => (
