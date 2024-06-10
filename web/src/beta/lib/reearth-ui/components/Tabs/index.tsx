@@ -92,7 +92,8 @@ const Tab = styled("div")<{
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: tabStyle === "separated" ? theme.radius.small : 0,
   borderTopRightRadius: position === "top" && tabStyle === "normal" ? theme.radius.small : "",
-  borderTopLeftRadius: position === "top" && tabStyle === "normal" ? theme.radius.small : "",
+  borderTopLeftRadius: tabStyle === "normal" ? theme.radius.small : "",
+  borderBottomLeftRadius: position === "left" && tabStyle === "normal" ? theme.radius.small : "",
 }));
 
 const Content = styled("div")(({ theme }) => ({
