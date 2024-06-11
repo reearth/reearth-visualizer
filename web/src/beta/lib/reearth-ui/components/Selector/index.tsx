@@ -16,18 +16,6 @@ export type SelectorProps = {
   onChange?: (value: string | string[]) => void;
 };
 
-const resizeObserver = new ResizeObserver(entries => {
-  entries.forEach(entry => {
-    const selectorRef = entry.target;
-    if (selectorRef instanceof HTMLElement) {
-      const updateSelectorWidth = (selectorRef as any)._updateSelectorWidth;
-      if (updateSelectorWidth) {
-        updateSelectorWidth(selectorRef.clientWidth);
-      }
-    }
-  });
-});
-
 export const Selector: FC<SelectorProps> = ({
   multiple,
   value,
@@ -50,30 +38,20 @@ export const Selector: FC<SelectorProps> = ({
     setSelectedValue(value ?? (multiple ? [] : undefined));
   }, [value, multiple]);
 
-  const updateSelectorWidth = useCallback(() => {
-    if (selectorRef.current) {
-      setSelectorWidth(selectorRef.current.clientWidth);
-    }
-  }, []);
-
   useEffect(() => {
-    updateSelectorWidth();
-    const handleResize = () => updateSelectorWidth();
-    return window.addEventListener("resize", handleResize);
-  }, [updateSelectorWidth]);
-
-  useEffect(() => {
-    const currentRef = selectorRef.current;
-    if (currentRef) {
-      (currentRef as any)._updateSelectorWidth = updateSelectorWidth;
-      resizeObserver.observe(currentRef);
-    }
+    const selectorElement = selectorRef.current;
+    if (!selectorElement) return;
+    const resizeObserver = new ResizeObserver(entries => {
+      if (!entries || entries.length === 0) return;
+      const { width } = entries[0].contentRect;
+      setSelectorWidth(width);
+    });
+    resizeObserver.observe(selectorElement);
     return () => {
-      if (currentRef) {
-        resizeObserver.unobserve(currentRef);
-      }
+      resizeObserver.unobserve(selectorElement);
+      resizeObserver.disconnect();
     };
-  }, [updateSelectorWidth]);
+  }, []);
 
   const isSelected = useCallback(
     (value: string) => {
@@ -170,7 +148,7 @@ export const Selector: FC<SelectorProps> = ({
           <DropDownWrapper width={selectorWidth}>
             {optionValues.length === 0 ? (
               <Typography size="body" color={theme.content.weaker}>
-                No option yet
+                No Options yet
               </Typography>
             ) : (
               optionValues.map((item: { value: string; label?: string }) => (

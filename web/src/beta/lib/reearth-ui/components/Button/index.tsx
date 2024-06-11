@@ -70,7 +70,7 @@ const StyledButton = styled("button")<{
   padding:
     size === "small"
       ? iconButton
-        ? "2px"
+        ? `${theme.spacing.micro}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`
       : iconButton
       ? `${theme.spacing.small}px`
