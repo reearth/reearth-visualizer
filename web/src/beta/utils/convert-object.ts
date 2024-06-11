@@ -53,7 +53,6 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
 // Remember to update when cesium-beta schema changes
 export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "default.sceneMode": "scene.mode",
-  "default.ion": "assets.cesium.general.ionAccessToken",
   "default.vr": "scene.vr",
   tiles: [
     "tiles",

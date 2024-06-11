@@ -70,10 +70,15 @@ export default ({
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
 
-  const viewerProperty = useMemo(() => {
+  const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
-    if (!sceneProperty) return undefined;
-    return convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty;
+    const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    return {
+      viewerProperty: sceneProperty
+        ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
+        : undefined,
+      cesiumIonAccessToken,
+    };
   }, [scene?.property]);
 
   const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({ sceneId });
@@ -261,9 +266,12 @@ export default ({
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+      cesiumIonAccessToken:
+        typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
+          ? cesiumIonAccessToken
+          : config()?.cesiumIonAccessToken,
     }),
-    [],
+    [cesiumIonAccessToken],
   );
 
   // TODO: Use GQL value

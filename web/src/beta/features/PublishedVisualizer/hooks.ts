@@ -36,15 +36,17 @@ export default (alias?: string) => {
   const [error, setError] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
 
-  const [viewerProperty, widgetThemeOptions] = useMemo(() => {
+  const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(data?.property);
     const widgetThemeOptions = sceneProperty?.theme as WidgetThemeOptions | undefined;
-    return [
-      sceneProperty
+    const cesiumIonAccessToken = sceneProperty?.default?.ion;
+    return {
+      viewerProperty: sceneProperty
         ? (convertData(sceneProperty, sceneProperty2ViewerPropertyMapping) as ViewerProperty)
         : undefined,
       widgetThemeOptions,
-    ];
+      cesiumIonAccessToken,
+    };
   }, [data?.property]);
 
   const pluginProperty = useMemo(
@@ -251,9 +253,12 @@ export default (alias?: string) => {
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken,
+      cesiumIonAccessToken:
+        typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
+          ? cesiumIonAccessToken
+          : config()?.cesiumIonAccessToken,
     }),
-    [],
+    [cesiumIonAccessToken],
   );
 
   // GA
