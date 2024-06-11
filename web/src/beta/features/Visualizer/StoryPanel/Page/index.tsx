@@ -1,7 +1,7 @@
 import { Fragment, MutableRefObject, ReactNode, useEffect } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
-import type { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import type { Camera, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -29,6 +29,7 @@ type Props = {
   isEditable?: boolean;
   isAutoScrolling?: MutableRefObject<boolean>;
   scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  currentCamera?: Camera;
   children?: ReactNode;
   onCurrentPageChange?: (pageId: string, disableScrollIntoView?: boolean) => void;
   onPageSettingsToggle?: () => void;
@@ -73,6 +74,7 @@ const StoryPanel: React.FC<Props> = ({
   isEditable,
   scrollTimeoutRef,
   isAutoScrolling,
+  currentCamera,
   children,
   onCurrentPageChange,
   onPageSettingsToggle,
@@ -175,6 +177,7 @@ const StoryPanel: React.FC<Props> = ({
               }}
               isEditable={isEditable}
               isSelected={selectedStoryBlockId === titleId}
+              currentCamera={currentCamera}
               onClick={() => onBlockSelect?.(titleId)}
               onBlockDoubleClick={() => onBlockDoubleClick?.(titleId)}
               onClickAway={onBlockSelect}
@@ -224,6 +227,7 @@ const StoryPanel: React.FC<Props> = ({
                     pageId={page?.id}
                     isSelected={selectedStoryBlockId === b.id}
                     isEditable={isEditable}
+                    currentCamera={currentCamera}
                     onClick={() => onBlockSelect?.(b.id)}
                     onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
                     onClickAway={onBlockSelect}
