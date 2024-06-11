@@ -12,6 +12,7 @@ import {
   convertData,
   sceneProperty2ViewerPropertyMapping,
 } from "@reearth/beta/utils/convert-object";
+import type { Camera } from "@reearth/beta/utils/value";
 import { ViewerProperty, MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
 
@@ -33,6 +34,7 @@ export default (alias?: string) => {
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
+  const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(undefined);
 
   const [viewerProperty, widgetThemeOptions] = useMemo(() => {
     const sceneProperty = processProperty(data?.property);
@@ -268,6 +270,8 @@ export default (alias?: string) => {
     error,
     engineMeta,
     visualizerRef,
+    currentCamera,
+    setCurrentCamera,
   };
 };
 
