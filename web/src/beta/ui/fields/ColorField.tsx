@@ -7,7 +7,7 @@ import CommonField, { CommonFieldProps } from "./CommonField";
 export type ColorInputFieldProps = CommonFieldProps &
   Pick<ColorInputProps, "value" | "size" | "onChange" | "alphaDisabled" | "disabled">;
 
-const InputField: FC<ColorInputFieldProps> = ({ title, description, ...props }) => {
+const ColorInputField: FC<ColorInputFieldProps> = ({ title, description, ...props }) => {
   return (
     <CommonField title={title} description={description}>
       <ColorInput {...props} />
@@ -15,4 +15,4 @@ const InputField: FC<ColorInputFieldProps> = ({ title, description, ...props }) 
   );
 };
 
-export default InputField;
+export default ColorInputField;
