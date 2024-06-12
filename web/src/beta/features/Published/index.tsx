@@ -20,6 +20,8 @@ export default function Published({ alias }: Props) {
     error,
     engineMeta,
     visualizerRef,
+    currentCamera,
+    setCurrentCamera,
   } = useHooks(alias);
 
   return error ? (
@@ -40,6 +42,8 @@ export default function Published({ alias }: Props) {
       sceneProperty={sceneProperty}
       pluginProperty={pluginProperty}
       showStoryPanel={!!story}
+      currentCamera={currentCamera}
+      onCameraChange={setCurrentCamera}
     />
   );
 }
