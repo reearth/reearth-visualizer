@@ -137,19 +137,19 @@ export const Selector: FC<SelectorProps> = ({
 
   return (
     <SelectorWrapper ref={selectorRef}>
-      {disabled ? (
-        renderTrigger()
-      ) : (
-        <Popup
-          trigger={renderTrigger()}
-          open={isOpen}
-          onOpenChange={setIsOpen}
-          placement="bottom-start">
+      <Popup
+        trigger={renderTrigger()}
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        placement="bottom-start">
+        {!disabled && (
           <DropDownWrapper width={selectorWidth}>
             {optionValues.length === 0 ? (
-              <Typography size="body" color={theme.content.weaker}>
-                No Options yet
-              </Typography>
+              <DropDownItem>
+                <Typography size="body" color={theme.content.weaker}>
+                  No Options yet
+                </Typography>
+              </DropDownItem>
             ) : (
               optionValues.map((item: { value: string; label?: string }) => (
                 <DropDownItem
@@ -166,8 +166,8 @@ export const Selector: FC<SelectorProps> = ({
               ))
             )}
           </DropDownWrapper>
-        </Popup>
-      )}
+        )}
+      </Popup>
     </SelectorWrapper>
   );
 };
@@ -189,7 +189,7 @@ const SelectInput = styled("div")<{
   alignItems: "center",
   gap: `${theme.spacing.small}px`,
   borderRadius: `${theme.radius.smallest}px`,
-  border: `1px solid ${isOpen ? theme.select.strong : theme.outline.weak}`,
+  border: `1px solid ${!disabled && isOpen ? theme.select.strong : theme.outline.weak}`,
   boxShadow: `${theme.shadow.input}`,
   padding: `${theme.spacing.smallest}px ${
     isMultiple ? theme.spacing.smallest : theme.spacing.small
