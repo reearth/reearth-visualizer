@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { PopupMenu, Items as PopupItems } from "@reearth/beta/lib/reearth-ui";
+import { PopupMenu, PopupMenuItem as PopupItems } from "@reearth/beta/lib/reearth-ui";
 
-import { Breadcrumb, BreadcrumbProp, ItemsProp } from "./";
+import { Breadcrumb, BreadcrumbProp, BreadcrumbItem } from "./";
 
 const meta: Meta<BreadcrumbProp> = {
   component: Breadcrumb,
@@ -12,7 +12,7 @@ export default meta;
 
 type Story = StoryObj<BreadcrumbProp>;
 
-const defaultItems: ItemsProp[] = [
+const defaultItems: BreadcrumbItem[] = [
   {
     title: "First",
   },
@@ -24,25 +24,31 @@ const defaultItems: ItemsProp[] = [
   },
 ];
 
-const multiLevelItems: ItemsProp[] = [
+const multiLevelItems: BreadcrumbItem[] = [
   {
     title: "First Item",
+    icon: "addStyle",
     subItem: [
       {
+        id: "one",
         title: "Sub Item one",
         subItem: [
           {
+            id: "sub-one",
             title: "Item one",
           },
           {
+            id: "sub-two",
             title: "Item two",
           },
         ],
       },
       {
+        id: "two",
         title: "Sub Item two",
       },
       {
+        id: "three",
         title: "Sub Item three",
       },
     ],
@@ -52,14 +58,16 @@ const multiLevelItems: ItemsProp[] = [
   },
 ];
 
-const itemMenu: ItemsProp[] = [
+const itemMenu: BreadcrumbItem[] = [
   {
     title: "First Item",
     subItem: [
       {
+        id: "one-1",
         title: "Sub Menu 1",
       },
       {
+        id: "two-2",
         title: "Sub Menu 2",
       },
     ],
@@ -72,17 +80,13 @@ const itemMenu: ItemsProp[] = [
   },
 ];
 
-const renderPopupMenu = (items: ItemsProp[], level: number) => {
+const renderPopupMenu = (items: BreadcrumbItem[], level: number) => {
   return items.map(item => {
     if (item.subItem) {
       return {
         ...item,
         title: (
-          <PopupMenu
-            label={item.title as string}
-            menu={item.subItem as PopupItems[]}
-            nested={level > 0}
-          />
+          <PopupMenu label={item.title} menu={item.subItem as PopupItems[]} nested={level > 0} />
         ),
         subItem: undefined,
       };

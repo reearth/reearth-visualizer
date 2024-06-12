@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC, ReactNode, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Popup, Icon, Typography, IconName } from "@reearth/beta/lib/reearth-ui";
@@ -8,18 +8,19 @@ const MULTLEVEL_OFFSET = 6;
 const DEFAULT_OFFSET = 4;
 const DEFAULT_MENU_WIDTH = 180;
 
-export type Items = {
+export type PopupMenuItem = {
+  id: string;
   title?: string;
   path?: string;
   icon?: IconName;
-  subItem?: Items[];
-  onClick?: () => void;
+  subItem?: PopupMenuItem[];
+  onClick?: (id: string) => void;
 };
 
 export type PopupMenuProps = {
-  label?: string;
+  label?: string | ReactNode;
   icon?: IconName;
-  menu: Items[];
+  menu: PopupMenuItem[];
   nested?: boolean;
   width?: number;
 };
@@ -31,16 +32,16 @@ export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon
 
   const handlePopOver = useCallback(() => setOpen(!open), [open]);
 
-  const renderMenuItems = (menuItems: Items[]) => {
+  const renderMenuItems = (menuItems: PopupMenuItem[]) => {
     return (
       <PopupMenuWrapper width={width}>
-        {menuItems.map(({ title, path, icon, subItem, onClick }, index) => (
+        {menuItems.map(({ title, path, icon, subItem, id, onClick }, index) => (
           <Item
             key={index}
             onMouseEnter={() => setHoveredItemIndex(index)}
             onMouseLeave={() => setHoveredItemIndex(null)}
             isHovered={hoveredItemIndex === index}
-            onClick={onClick}>
+            onClick={() => onClick?.(id)}>
             {icon && <Icon icon={icon} size="small" color={theme.content.weak} />}
             {subItem ? (
               <PopupMenu label={title} menu={subItem} width={width} nested />
@@ -57,27 +58,31 @@ export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon
     );
   };
 
+  const renderTrigger = () => {
+    return typeof label === "string" ? (
+      <>
+        {icon && <Icon icon={icon} size="small" />}
+        <Typography size="body" weight="regular">
+          {label}
+        </Typography>
+        <Icon color={theme.content.weak} icon={nested ? "caretRight" : "caretDown"} size="small" />
+      </>
+    ) : label ? (
+      label
+    ) : icon ? (
+      <Icon icon={icon} size="small" />
+    ) : null;
+  };
+
   return (
     <Popup
-      open={open}
       placement={nested ? "right-start" : "bottom-start"}
       offset={nested ? MULTLEVEL_OFFSET : DEFAULT_OFFSET}
       onOpenChange={handlePopOver}
+      triggerOnHover={nested ? true : false}
       trigger={
         <TriggerWrapper onClick={handlePopOver} nested={nested}>
-          {icon && <Icon icon={icon} size="small" />}
-          {label && (
-            <>
-              <Typography size="body" weight="regular">
-                {label}
-              </Typography>
-              <Icon
-                color={theme.content.weak}
-                icon={nested ? "caretRight" : "caretDown"}
-                size="small"
-              />
-            </>
-          )}
+          {renderTrigger()}
         </TriggerWrapper>
       }>
       {renderMenuItems(menu)}
