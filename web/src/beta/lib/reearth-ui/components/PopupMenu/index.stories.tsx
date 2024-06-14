@@ -114,7 +114,10 @@ export const CustomLabel: Story = {
   render: () => (
     <BrowserRouter>
       <div style={{ margin: "5px", height: "100px" }}>
-        <PopupMenu label={<Button title="Multile Menu" />} menu={defaultItems} />
+        <PopupMenu
+          label={<Button title="Multile Menu" iconRight="caretDown" />}
+          menu={defaultItems}
+        />
       </div>
     </BrowserRouter>
   ),

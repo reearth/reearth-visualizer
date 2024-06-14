@@ -23,6 +23,7 @@ export type PopupMenuProps = {
   menu: PopupMenuItem[];
   nested?: boolean;
   width?: number;
+  triggerOnHover?: boolean;
 };
 
 export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon }) => {
