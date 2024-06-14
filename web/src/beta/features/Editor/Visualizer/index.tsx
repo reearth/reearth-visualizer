@@ -36,7 +36,7 @@ export type Props = {
   onSketchTypeChange?: (type: SketchType | undefined) => void;
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   onVisualizerReady: (value: boolean) => void;
-  onLayerSelect: (props: LayerSelectProps) => void;
+  onCoreLayerSelect: (props: LayerSelectProps) => void;
   onLayerStyleSelect: (layerStyleId?: string) => void;
   onSceneSettingSelect: (collection?: string) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
@@ -62,7 +62,7 @@ const EditorVisualizer: React.FC<Props> = ({
   onSketchTypeChange,
   onSketchFeatureCreate,
   onVisualizerReady,
-  onLayerSelect,
+  onCoreLayerSelect,
   onLayerStyleSelect,
   onSceneSettingSelect,
   setSelectedStoryPageId,
@@ -77,7 +77,7 @@ const EditorVisualizer: React.FC<Props> = ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
-    handleLayerSelect,
+    handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
     handleStoryBlockCreate,
@@ -99,7 +99,7 @@ const EditorVisualizer: React.FC<Props> = ({
     storyId: selectedStory?.id,
     showStoryPanel,
     selectedLayer,
-    onLayerSelect,
+    onCoreLayerSelect,
     onLayerStyleSelect,
     onSceneSettingSelect,
     onVisualizerReady,
@@ -124,7 +124,7 @@ const EditorVisualizer: React.FC<Props> = ({
       currentCamera={currentCamera}
       interactionMode={interactionMode}
       onCameraChange={onCameraChange}
-      handleLayerSelect={handleLayerSelect}
+      onCoreLayerSelect={handleCoreLayerSelect}
       handleLayerDrop={handleLayerDrop}
       handleZoomToLayer={zoomToLayer}
       handleSketchTypeChange={onSketchTypeChange}

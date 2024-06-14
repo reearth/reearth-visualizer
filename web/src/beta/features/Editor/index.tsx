@@ -80,12 +80,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     nlsLayers,
     selectedLayer,
+    ignoreCoreLayerUnselect,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
+    handleCoreLayerSelect,
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -147,8 +149,8 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     tab,
     nlsLayers,
     selectedLayer: selectedLayer?.layer,
+    ignoreCoreLayerUnselect,
     visualizerRef,
-    handleLayerConfigUpdate,
   });
 
   const { rightPanel } = useRightPanel({
@@ -162,7 +164,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedSceneSetting: selectedSceneSetting,
     sceneSettings: sceneSettings,
-    selectedLayer: selectedLayer,
+    selectedLayer,
     selectedWidget: selectedWidget,
     selectedWidgetArea: selectedWidgetArea,
     onFlyTo: handleFlyTo,
@@ -246,7 +248,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   onLayerStyleSelect={handleLayerStyleSelect}
                   onSceneSettingSelect={handleSceneSettingSelect}
                   onVisualizerReady={handleIsVisualizerUpdate}
-                  onLayerSelect={handleLayerSelect}
+                  onCoreLayerSelect={handleCoreLayerSelect}
                   setSelectedStoryPageId={setSelectedStoryPageId}
                   selectWidgetArea={selectWidgetArea}
                 />

@@ -42,11 +42,13 @@ const InspectorTabs: React.FC<Props> = ({
   const selectedFeature = useMemo(() => {
     if (!selectedLayer?.computedFeature?.id) return;
     const { id, geometry, properties } =
-      selectedLayer.layer?.config?.data?.type === "3dtiles"
+      selectedLayer.layer?.config?.data?.type === "3dtiles" ||
+      selectedLayer.layer?.config?.data?.type === "mvt"
         ? selectedLayer.computedFeature
         : selectedLayer.computedLayer?.features?.find(
             f => f.id === selectedLayer.computedFeature?.id,
           ) ?? {};
+
     if (!id) return;
     return {
       id,

@@ -90,13 +90,14 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.bg[0]};
 `;
 
-const ToolButton = styled(Button)<{ selected?: boolean }>`
+const ToolButton = styled(Button)<{ selected?: boolean; disabled?: boolean }>`
   height: 24px;
   width: 24px;
   padding: 0;
   border: none;
   box-shadow: none;
   background-color: ${({ theme, selected }) => (selected ? theme.select.main : "none")};
+  color: ${({ theme, disabled }) => (disabled ? theme.content.weak : theme.content.main)};
 
   &:hover {
     background-color: ${({ theme, selected }) => (selected ? theme.select.main : theme.bg[2])};

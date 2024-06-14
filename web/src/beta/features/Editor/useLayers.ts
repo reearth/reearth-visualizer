@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useState } from "react";
+import { MutableRefObject, useCallback, useRef, useState } from "react";
 
 import type { MapRef, ComputedFeature, ComputedLayer, LayerSimple } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
@@ -62,6 +62,42 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     (props: LayerSelectProps) => {
       if (!isVisualizerReady) return;
 
+      // later core unselect is effecting this select, so we need to delay it.
+      setTimeout(() => {
+        if (props?.layerId) {
+          setSelectedLayer({
+            layer: nlsLayers.find(l => l.id === props.layerId),
+            computedLayer: props?.computedLayer,
+            computedFeature: props?.computedFeature,
+          });
+        } else {
+          setSelectedLayer(undefined);
+        }
+      }, 1);
+
+      // Layer selection does not specific any feature, we do unselect for core.
+      console.log("core to select undefined");
+      visualizerRef?.current?.layers.selectFeatures([{ layerId: undefined, featureId: [""] }]);
+    },
+    [isVisualizerReady, visualizerRef, nlsLayers],
+  );
+
+  // Workaround: core will trigger a select undefined after sketch layer add feature.
+  const ignoreCoreLayerUnselect = useRef(false);
+
+  const handleCoreLayerSelect = useCallback(
+    (props: LayerSelectProps) => {
+      if (!isVisualizerReady) return;
+
+      if (!props?.layerId && !selectedLayer?.layer?.id) {
+        return;
+      }
+
+      if (ignoreCoreLayerUnselect.current && !props?.layerId) {
+        ignoreCoreLayerUnselect.current = false;
+        return;
+      }
+
       if (props?.layerId) {
         setSelectedLayer({
           layer: nlsLayers.find(l => l.id === props.layerId),
@@ -71,10 +107,8 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
       } else {
         setSelectedLayer(undefined);
       }
-      // Layer selection does not specific any feature, we do unselect for core.
-      visualizerRef?.current?.layers.select(undefined);
     },
-    [isVisualizerReady, visualizerRef, nlsLayers],
+    [isVisualizerReady, nlsLayers, selectedLayer],
   );
 
   const handleLayerDelete = useCallback(
@@ -141,7 +175,9 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   return {
     nlsLayers,
     selectedLayer,
+    ignoreCoreLayerUnselect,
     handleLayerSelect,
+    handleCoreLayerSelect,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerNameUpdate,

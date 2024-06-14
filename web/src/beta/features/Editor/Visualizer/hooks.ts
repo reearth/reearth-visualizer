@@ -24,7 +24,7 @@ export default ({
   isBuilt,
   showStoryPanel,
   selectedLayer,
-  onLayerSelect,
+  onCoreLayerSelect,
   onLayerStyleSelect,
   onSceneSettingSelect,
   onVisualizerReady,
@@ -35,7 +35,7 @@ export default ({
   isBuilt?: boolean;
   showStoryPanel?: boolean;
   selectedLayer?: SelectedLayer | undefined;
-  onLayerSelect: (props: LayerSelectProps) => void;
+  onCoreLayerSelect: (props: LayerSelectProps) => void;
   onLayerStyleSelect: (layerStyleId?: string) => void;
   onSceneSettingSelect: (collection?: string) => void;
   onVisualizerReady: (value: boolean) => void;
@@ -86,7 +86,7 @@ export default ({
     }));
   }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
-  const handleLayerSelect = useCallback(
+  const handleCoreLayerSelect = useCallback(
     (layerId?: string, computedLayer?: ComputedLayer, computedFeature?: ComputedFeature) => {
       if (
         (!layerId && !computedFeature && !selectedLayer) ??
@@ -97,12 +97,12 @@ export default ({
       if (layerId) {
         onLayerStyleSelect(undefined);
         onSceneSettingSelect(undefined);
-        onLayerSelect({ layerId, computedLayer, computedFeature });
+        onCoreLayerSelect({ layerId, computedLayer, computedFeature });
       } else {
-        onLayerSelect(undefined);
+        onCoreLayerSelect(undefined);
       }
     },
-    [selectedLayer, onLayerSelect, onLayerStyleSelect, onSceneSettingSelect],
+    [selectedLayer, onCoreLayerSelect, onLayerStyleSelect, onSceneSettingSelect],
   );
 
   const handleLayerDrop = useCallback(
@@ -273,7 +273,7 @@ export default ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
-    handleLayerSelect,
+    handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
     handleStoryBlockCreate,
