@@ -8,6 +8,7 @@ const darkTheme: Theme = {
   ...commonTheme,
   bg: {
     transparentBlack: rgba("#000000", 0.7),
+    base: "#060606",
     0: gray[100],
     1: gray[90],
     2: gray[80],

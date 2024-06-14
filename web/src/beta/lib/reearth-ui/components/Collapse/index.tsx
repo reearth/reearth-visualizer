@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 
 import { styled } from "@reearth/services/theme";
 
@@ -11,7 +11,9 @@ export type CollapseProps = {
   headerBg?: string;
   size?: "normal" | "small";
   collapsed?: boolean;
+  disabled?: boolean;
   children: ReactNode;
+  onCollapse?: (collapsed: boolean) => void;
 };
 
 export const Collapse: FC<CollapseProps> = ({
@@ -20,7 +22,9 @@ export const Collapse: FC<CollapseProps> = ({
   headerBg,
   size = "normal",
   collapsed,
+  disabled,
   children,
+  onCollapse,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed ?? false);
 
@@ -28,17 +32,25 @@ export const Collapse: FC<CollapseProps> = ({
     setIsCollapsed(collapsed ?? false);
   }, [collapsed]);
 
+  const handleCollapse = useCallback(() => {
+    setIsCollapsed(!isCollapsed);
+    onCollapse?.(!isCollapsed);
+  }, [isCollapsed, onCollapse]);
+
   return (
     <StyledWrapper background={background}>
       <StyledHeader
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={handleCollapse}
         isCollapsed={isCollapsed}
         size={size}
-        headerBg={headerBg}>
+        headerBg={headerBg}
+        disabled={disabled}>
         <Typography size="body">{title}</Typography>
-        <IconWrapper isCollapsed={isCollapsed}>
-          <Icon size="small" icon="triangle" />
-        </IconWrapper>
+        {!disabled && (
+          <IconWrapper isCollapsed={isCollapsed}>
+            <Icon size="small" icon="triangle" />
+          </IconWrapper>
+        )}
       </StyledHeader>
       {!isCollapsed && <ChildWrapper size={size}>{children}</ChildWrapper>}
     </StyledWrapper>
@@ -56,7 +68,8 @@ const StyledHeader = styled("div")<{
   size?: "normal" | "small";
   headerBg?: string;
   isCollapsed?: boolean;
-}>(({ headerBg, size, isCollapsed, theme }) => ({
+  disabled?: boolean;
+}>(({ headerBg, size, isCollapsed, disabled, theme }) => ({
   display: "flex",
   borderRadius: isCollapsed
     ? `${theme.radius.small}px`
@@ -68,8 +81,9 @@ const StyledHeader = styled("div")<{
   justifyContent: "space-between",
   alignItems: "center",
   color: `${theme.content.main}`,
-  cursor: "pointer",
+  cursor: disabled ? "auto" : "pointer",
   backgroundColor: headerBg ?? "",
+  fontSize: 0,
 }));
 
 const ChildWrapper = styled("div")<{

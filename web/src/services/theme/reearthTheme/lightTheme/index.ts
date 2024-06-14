@@ -8,6 +8,7 @@ const lightTheme: Theme = {
   ...commonTheme,
   bg: {
     transparentBlack: rgba("#000000", 0.7),
+    base: white,
     0: white,
     1: gray[10],
     2: gray[30],
