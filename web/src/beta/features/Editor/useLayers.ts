@@ -76,8 +76,7 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
       }, 1);
 
       // Layer selection does not specific any feature, we do unselect for core.
-      console.log("core to select undefined");
-      visualizerRef?.current?.layers.selectFeatures([{ layerId: undefined, featureId: [""] }]);
+      visualizerRef?.current?.layers.select(undefined);
     },
     [isVisualizerReady, visualizerRef, nlsLayers],
   );
