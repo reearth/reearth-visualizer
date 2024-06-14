@@ -1,7 +1,7 @@
 import { gray, blue, white, coolGray, red, yellow, rgba } from "@carbon/colors";
 
 import commonTheme from "../common";
-import { brandBlue } from "../common/colors";
+import { brandBlue, brandRed } from "../common/colors";
 import type { Theme } from "../types";
 
 const lightTheme: Theme = {
@@ -48,6 +48,7 @@ const lightTheme: Theme = {
   dangerous: {
     main: red[60],
     weak: red[70],
+    strong: brandRed.dark,
   },
   warning: { main: yellow[30] },
   placeHolder: { main_1: rgba("#FF560E", 0.2), main_2: rgba(brandBlue.main, 0.2) },
