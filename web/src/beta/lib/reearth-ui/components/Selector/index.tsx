@@ -141,32 +141,31 @@ export const Selector: FC<SelectorProps> = ({
         trigger={renderTrigger()}
         open={isOpen}
         onOpenChange={setIsOpen}
+        disabled={disabled}
         placement="bottom-start">
-        {!disabled && (
-          <DropDownWrapper width={selectorWidth}>
-            {optionValues.length === 0 ? (
-              <DropDownItem>
-                <Typography size="body" color={theme.content.weaker}>
-                  No Options yet
+        <DropDownWrapper width={selectorWidth}>
+          {optionValues.length === 0 ? (
+            <DropDownItem>
+              <Typography size="body" color={theme.content.weaker}>
+                No Options yet
+              </Typography>
+            </DropDownItem>
+          ) : (
+            optionValues.map((item: { value: string; label?: string }) => (
+              <DropDownItem
+                key={item.value}
+                isSelected={isSelected(item.value)}
+                onClick={() => handleChange(item.value)}>
+                <Typography size="body" color={theme.content.main}>
+                  {item.label ?? item.value}
                 </Typography>
+                {isSelected(item.value) && multiple && (
+                  <Icon icon="check" size="small" color={theme.content.main} />
+                )}
               </DropDownItem>
-            ) : (
-              optionValues.map((item: { value: string; label?: string }) => (
-                <DropDownItem
-                  key={item.value}
-                  isSelected={isSelected(item.value)}
-                  onClick={() => handleChange(item.value)}>
-                  <Typography size="body" color={theme.content.main}>
-                    {item.label ?? item.value}
-                  </Typography>
-                  {isSelected(item.value) && multiple && (
-                    <Icon icon="check" size="small" color={theme.content.main} />
-                  )}
-                </DropDownItem>
-              ))
-            )}
-          </DropDownWrapper>
-        )}
+            ))
+          )}
+        </DropDownWrapper>
       </Popup>
     </SelectorWrapper>
   );

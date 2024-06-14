@@ -9,7 +9,7 @@ const meta: Meta<SelectorProps> = {
 export default meta;
 type Story = StoryObj<typeof Selector>;
 
-const LIST_ITEMS = [
+const options = [
   {
     value: "item_1",
     label: "item_1",
@@ -38,13 +38,13 @@ const LIST_ITEMS = [
 
 export const Default: Story = {
   render: () => {
-    return <Selector options={LIST_ITEMS} />;
+    return <Selector options={options} />;
   },
 };
 
 export const MultipleSelector: Story = {
   render: () => {
-    return <Selector options={LIST_ITEMS} multiple={true} />;
+    return <Selector options={options} multiple={true} />;
   },
 };
 
@@ -58,9 +58,9 @@ export const Disabled: Story = {
   render: () => {
     return (
       <div style={{ width: "100%", gap: "8px", display: "flex", flexDirection: "column" }}>
-        <Selector options={LIST_ITEMS} disabled />
-        <Selector options={LIST_ITEMS} value="item_1" disabled />
-        <Selector options={LIST_ITEMS} value={["item_1", "item_2"]} multiple disabled />
+        <Selector options={options} disabled />
+        <Selector options={options} value="item_1" disabled />
+        <Selector options={options} value={["item_1", "item_2"]} multiple disabled />
       </div>
     );
   },
