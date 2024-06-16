@@ -10,6 +10,7 @@ export type ButtonProps = {
   size?: "normal" | "small";
   iconButton?: boolean;
   icon?: IconName;
+  iconRight?: IconName;
   title?: string;
   extendWidth?: boolean;
   minWidth?: number;
@@ -23,6 +24,7 @@ export const Button: FC<ButtonProps> = ({
   size = "normal",
   iconButton,
   title,
+  iconRight,
   extendWidth,
   minWidth,
   onClick,
@@ -38,6 +40,7 @@ export const Button: FC<ButtonProps> = ({
       onClick={onClick}>
       {icon && <Icon icon={icon} />}
       {!iconButton && title}
+      {iconRight && <Icon icon={iconRight} />}
     </StyledButton>
   );
 };
