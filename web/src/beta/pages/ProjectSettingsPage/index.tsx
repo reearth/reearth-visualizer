@@ -16,6 +16,7 @@ const ProjectSettingsPage: React.FC<Props> = () => {
 
   const namedTab = useMemo(() => tab ?? "general", [tab]);
 
+  console.log(tab);
   return !projectId || !isProjectSettingTab(namedTab) ? (
     <NotFound />
   ) : (

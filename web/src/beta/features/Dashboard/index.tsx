@@ -4,24 +4,27 @@ import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import useHooks from "./hooks";
+import LeftSidePanel from "./LeftSide";
+
 export type DashboardProps = {
   workspaceId?: string;
 };
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   const t = useT();
   const theme = useTheme();
+  const { currentUser } = useHooks(workspaceId);
 
-  console.log("work", workspaceId);
   return (
     <Wrapper>
-      <LeftSide>
+      <LeftSideWrapper>
         <Header>
           <Typography size="body" weight="bold" color={theme.dangerous.strong}>
             {t("Re:Earth Visualizer")}
           </Typography>
         </Header>
-        <p> helelo</p>
-      </LeftSide>
+        <LeftSidePanel currentUser={currentUser.name} workspaceId={workspaceId} />
+      </LeftSideWrapper>
       <Content>Content side</Content>
     </Wrapper>
   );
@@ -37,7 +40,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   background: theme.bg.transparentBlack,
 }));
 
-const LeftSide = styled("div")(({ theme }) => ({
+const LeftSideWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   display: "flex",
   flexDirection: "column",

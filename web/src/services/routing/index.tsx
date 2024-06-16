@@ -41,6 +41,14 @@ export const AppRoutes = () => {
   const router = createBrowserRouter([
     /* Beta routes - start */
     {
+      path: "dashboard/:workspaceId/",
+      element: <Dashboard />,
+    },
+    {
+      path: "dashboard/:workspaceId/:tab",
+      element: <Dashboard />,
+    },
+    {
       path: "scene/:sceneId/:tab",
       element: <BetaEditor />,
     },
@@ -73,14 +81,7 @@ export const AppRoutes = () => {
       path: "password-reset",
       element: <PasswordResetPage />,
     },
-    {
-      path: "dashboard",
-      element: <Dashboard />,
-    },
-    {
-      path: "dashboard/:workspaceId",
-      element: <Dashboard />,
-    },
+
     {
       path: "edit/:sceneId",
       children: [
