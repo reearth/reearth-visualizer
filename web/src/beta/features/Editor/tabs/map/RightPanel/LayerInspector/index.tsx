@@ -18,7 +18,7 @@ import LayerTab from "./LayerStyle";
 type Props = {
   layerStyles?: LayerStyle[];
   layers?: NLSLayer[];
-  selectedLayerId: SelectedLayer;
+  selectedLayer?: SelectedLayer;
   sceneId?: string;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
@@ -27,7 +27,7 @@ type Props = {
 const InspectorTabs: React.FC<Props> = ({
   layers,
   layerStyles,
-  selectedLayerId,
+  selectedLayer,
   sceneId,
   onLayerConfigUpdate,
   onGeoJsonFeatureUpdate,
@@ -39,29 +39,28 @@ const InspectorTabs: React.FC<Props> = ({
     setSelectedTab(newTab);
   }, []);
 
-  const selectedLayer = useMemo(
-    () => layers?.find(l => l.id === selectedLayerId.layerId),
-    [layers, selectedLayerId],
-  );
-
   const selectedFeature = useMemo(() => {
-    if (!selectedLayerId?.feature?.id) return;
+    if (!selectedLayer?.computedFeature?.id) return;
     const { id, geometry, properties } =
-      selectedLayer?.config?.data?.type === "3dtiles"
-        ? selectedLayerId.feature
-        : selectedLayerId.layer?.features?.find(f => f.id === selectedLayerId.feature?.id) ?? {};
+      selectedLayer.layer?.config?.data?.type === "3dtiles" ||
+      selectedLayer.layer?.config?.data?.type === "mvt"
+        ? selectedLayer.computedFeature
+        : selectedLayer.computedLayer?.features?.find(
+            f => f.id === selectedLayer.computedFeature?.id,
+          ) ?? {};
+
     if (!id) return;
     return {
       id,
       geometry,
       properties,
     };
-  }, [selectedLayerId, selectedLayer?.config?.data?.type]);
+  }, [selectedLayer]);
 
-  const sketchLayerFeature = useMemo(() => {
-    if (!selectedLayer?.sketch) return;
+  const selectedSketchFeature = useMemo(() => {
+    if (!selectedLayer?.layer?.sketch) return;
 
-    const { sketch } = selectedLayer;
+    const { sketch } = selectedLayer.layer;
     const features = sketch.featureCollection.features;
 
     if (!selectedFeature?.properties?.id) return;
@@ -76,43 +75,48 @@ const InspectorTabs: React.FC<Props> = ({
       {
         id: "layerData",
         name: t("Data"),
-        component: selectedLayer && <LayerData selectedLayer={selectedLayer} />,
+        component: selectedLayer?.layer ? (
+          <LayerData selectedLayer={selectedLayer.layer} />
+        ) : undefined,
         icon: "layerInspector",
       },
       {
         id: "featureData",
         name: t("Feature"),
-        component: selectedFeature && (
+        component: selectedFeature ? (
           <FeatureData
             selectedFeature={selectedFeature}
-            isSketchLayer={selectedLayer?.isSketch}
-            customProperties={selectedLayer?.sketch?.customPropertySchema}
-            layerId={selectedLayerId.layerId}
-            sketchLayerFeature={sketchLayerFeature}
+            isSketchLayer={selectedLayer?.layer?.isSketch}
+            customProperties={selectedLayer?.layer?.sketch?.customPropertySchema}
+            layerId={selectedLayer?.layer?.id}
+            sketchFeature={selectedSketchFeature}
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
           />
-        ),
+        ) : undefined,
         icon: "marker",
       },
       {
         id: "layerStyleSelector",
         name: t("Styling"),
-        component: selectedLayer && (
+        component: selectedLayer?.layer?.id ? (
           <LayerTab
             layerStyles={layerStyles}
             layers={layers}
             sceneId={sceneId}
-            selectedLayerId={selectedLayer.id}
+            selectedLayerId={selectedLayer.layer.id}
             onLayerConfigUpdate={onLayerConfigUpdate}
           />
-        ),
+        ) : undefined,
         icon: "layerStyle",
       },
       {
         id: "infobox",
-        component: selectedLayer && (
-          <Infobox selectedLayerId={selectedLayer.id} infobox={selectedLayer.infobox} />
-        ),
+        component: selectedLayer?.layer?.id ? (
+          <Infobox
+            selectedLayerId={selectedLayer.layer.id}
+            infobox={selectedLayer.layer?.infobox}
+          />
+        ) : undefined,
         icon: "infobox",
       },
     ],
@@ -120,8 +124,7 @@ const InspectorTabs: React.FC<Props> = ({
       t,
       selectedLayer,
       selectedFeature,
-      selectedLayerId.layerId,
-      sketchLayerFeature,
+      selectedSketchFeature,
       onGeoJsonFeatureUpdate,
       layerStyles,
       layers,

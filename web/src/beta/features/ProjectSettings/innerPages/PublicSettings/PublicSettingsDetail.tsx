@@ -10,7 +10,7 @@ import defaultBetaProjectImage from "@reearth/beta/components/Icon/Icons/default
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { useGA } from "../../../PublishedVisualizer/googleAnalytics/useGA";
+import { useGA } from "../../../Published/googleAnalytics/useGA";
 import { SettingsFields, ButtonWrapper } from "../common";
 
 import {
