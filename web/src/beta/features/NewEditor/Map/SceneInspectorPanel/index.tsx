@@ -7,7 +7,13 @@ const SceneInspectorPanel: FC = () => {
   const t = useT();
 
   return (
-    <Panel title={t("Scene Inspector")} storageId="editor-map-scene-inspector-panel" alwaysOpen />
+    <Panel
+      title={t("Scene Inspector")}
+      storageId="editor-map-scene-inspector-panel"
+      extend
+      alwaysOpen
+      background="normal"
+    />
   );
 };
 

@@ -205,7 +205,7 @@ const StyledArea = styled("div")<{
   boxSizing: "border-box",
   pointerEvents: asWrapper || passive ? "none" : "auto",
   ...(!asWrapper && {
-    padding: theme.spacing.micro,
+    padding: theme.spacing.micro / 2,
     gap: theme.spacing.micro,
     display: "flex",
     flexDirection: direction,
@@ -227,4 +227,9 @@ export const Window = styled("div")(() => ({
   flex: 1,
   width: "100%",
   height: "100%",
+  padding: 1,
+  boxSizing: "border-box",
+  ["*"]: {
+    boxSizing: "border-box",
+  },
 }));

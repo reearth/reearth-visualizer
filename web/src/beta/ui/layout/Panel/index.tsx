@@ -9,6 +9,7 @@ export type PanelProps = {
   collapsed?: boolean;
   storageId?: string;
   alwaysOpen?: boolean;
+  background?: "default" | "normal" | string;
   children?: ReactNode;
 };
 
@@ -18,6 +19,7 @@ export const Panel: FC<PanelProps> = ({
   storageId,
   collapsed,
   alwaysOpen,
+  background = "default",
   children,
 }) => {
   const theme = useTheme();
@@ -28,6 +30,16 @@ export const Panel: FC<PanelProps> = ({
     () => !!(storageKey ? localStorage.getItem(storageKey) === "1" : collapsed),
     [storageKey, collapsed],
   );
+
+  const backgroundStyle = useMemo(() => {
+    if (background === "default") {
+      return theme.bg[0];
+    }
+    if (background === "normal") {
+      return theme.bg[1];
+    }
+    return background;
+  }, [background, theme.bg]);
 
   const handleCollapse = useCallback(
     (collapsed: boolean) => {
@@ -43,22 +55,33 @@ export const Panel: FC<PanelProps> = ({
       {title ? (
         <Collapse
           title={title}
-          background="transparent"
+          background={backgroundStyle}
           headerBg={theme.bg[2]}
           size="small"
-          collapsed={initialCollapsed}
+          collapsed={alwaysOpen ? false : initialCollapsed}
           disabled={alwaysOpen}
           onCollapse={handleCollapse}>
           {children}
         </Collapse>
       ) : (
-        children
+        <ContentWrapper background={backgroundStyle}>{children}</ContentWrapper>
       )}
     </Wrapper>
   );
 };
 
 const Wrapper = styled("div")<{ extend?: boolean }>(({ theme, extend }) => ({
+  display: "flex",
+  flexDirection: "column",
   flex: extend ? 1 : "0 0 auto",
   borderRadius: theme.radius.small,
 }));
+
+const ContentWrapper = styled("div")<{ background?: string; extend?: boolean }>(
+  ({ background, extend, theme }) => ({
+    display: "flex",
+    flex: extend ? 1 : "0 0 auto",
+    background: background,
+    borderRadius: theme.radius.small,
+  }),
+);

@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { FC, useCallback, useState } from "react";
+import { FC } from "react";
 
-import { AreaSize } from "@reearth/beta/ui/layout";
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 
 import useHooks from "../Editor/hooks";
@@ -16,6 +15,7 @@ import Navbar, { Tab } from "../Navbar";
 import Map from "./Map";
 import Publish from "./Publish";
 import Story from "./Story";
+import useVisualizerSize from "./useVisualizerSize";
 import Widgets from "./Widgets";
 
 type Props = {
@@ -120,12 +120,7 @@ const NewEditor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     sceneId,
   });
 
-  const [visualizerSize, setVisualizerSize] = useState({ width: 0, height: 0, left: 0, top: 0 });
-
-  const handleVisuzlierResize = useCallback((size: AreaSize) => {
-    // Visualizer area does not have a padding
-    setVisualizerSize({ ...size, width: size.width + 4, height: size.height + 4 });
-  }, []);
+  const { visualizerSize, handleVisuzlierResize } = useVisualizerSize();
 
   return (
     <DndProvider>
@@ -176,27 +171,29 @@ const NewEditor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 
 export default NewEditor;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  color: ${({ theme }) => theme.content.main};
-`;
+const Wrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  height: "100vh",
+  width: "100vw",
+  color: theme.content.main,
+}));
 
-const Content = styled.div`
-  position: relative;
-  flex-grow: 1;
-  height: 0;
-`;
+const Content = styled("div")(() => ({
+  position: "relative",
+  flexGrow: 1,
+  height: 0,
+}));
 
-const Workbench = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-`;
+const Workbench = styled("div")(() => ({
+  position: "absolute",
+  width: "100%",
+  height: "100%",
+  pointerEvents: "none",
+}));
 
-const VisualizerArea = styled.div`
-  position: absolute;
-`;
+const VisualizerArea = styled("div")(({ theme }) => ({
+  position: "absolute",
+  borderRadius: theme.radius.small,
+  overflow: "hidden",
+}));

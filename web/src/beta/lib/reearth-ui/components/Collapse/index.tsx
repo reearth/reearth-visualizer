@@ -11,6 +11,7 @@ export type CollapseProps = {
   headerBg?: string;
   size?: "normal" | "small";
   collapsed?: boolean;
+  noPadding?: boolean;
   disabled?: boolean;
   children: ReactNode;
   onCollapse?: (collapsed: boolean) => void;
@@ -23,6 +24,7 @@ export const Collapse: FC<CollapseProps> = ({
   size = "normal",
   collapsed,
   disabled,
+  noPadding,
   children,
   onCollapse,
 }) => {
@@ -38,7 +40,7 @@ export const Collapse: FC<CollapseProps> = ({
   }, [isCollapsed, onCollapse]);
 
   return (
-    <StyledWrapper background={background}>
+    <StyledWrapper>
       <StyledHeader
         onClick={handleCollapse}
         isCollapsed={isCollapsed}
@@ -52,16 +54,20 @@ export const Collapse: FC<CollapseProps> = ({
           </IconWrapper>
         )}
       </StyledHeader>
-      {!isCollapsed && <ChildWrapper size={size}>{children}</ChildWrapper>}
+      {!isCollapsed && (
+        <ChildWrapper size={size} background={background} noPadding={noPadding}>
+          {children}
+        </ChildWrapper>
+      )}
     </StyledWrapper>
   );
 };
 
 const StyledWrapper = styled("div")<{
   background?: string;
-}>(({ background, theme }) => ({
-  backgroundColor: background ? background : `${theme.bg[1]}`,
+}>(({ theme }) => ({
   borderRadius: `${theme.radius.small}px`,
+  flex: 1,
 }));
 
 const StyledHeader = styled("div")<{
@@ -82,14 +88,26 @@ const StyledHeader = styled("div")<{
   alignItems: "center",
   color: `${theme.content.main}`,
   cursor: disabled ? "auto" : "pointer",
+  pointerEvents: disabled ? "none" : "auto",
   backgroundColor: headerBg ?? "",
   fontSize: 0,
 }));
 
 const ChildWrapper = styled("div")<{
   size?: "normal" | "small";
-}>(({ size, theme }) => ({
-  padding: size === "normal" ? `${theme.spacing.normal}px` : `${theme.spacing.small}px`,
+  background?: string;
+  noPadding?: boolean;
+}>(({ size, background, noPadding, theme }) => ({
+  backgroundColor: background ? background : `${theme.bg[1]}`,
+  padding: noPadding
+    ? 0
+    : size === "normal"
+    ? `${theme.spacing.normal}px`
+    : `${theme.spacing.small}px`,
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
 }));
 
 const IconWrapper = styled("div")<{
