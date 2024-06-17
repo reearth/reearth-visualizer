@@ -1,5 +1,3 @@
-import { useCallback } from "react";
-
 import Resizable from "@reearth/beta/components/Resizable";
 import useBottomPanel from "@reearth/beta/features/Editor/useBottomPanel";
 import useLeftPanel from "@reearth/beta/features/Editor/useLeftPanel";
@@ -18,6 +16,7 @@ import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
 import useScene from "./useScene";
 import useSketch from "./useSketch";
+import { useUISelection } from "./useUISelection";
 
 type Props = {
   sceneId: string;
@@ -81,14 +80,14 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     nlsLayers,
     selectedLayer,
-    selectedLayerId,
+    ignoreCoreLayerUnselect,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerSelect,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
-    setSelectedLayerId,
+    handleCoreLayerSelect,
   } = useLayers({
     sceneId,
     isVisualizerReady,
@@ -102,7 +101,6 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
     layerStyles,
     selectedLayerStyle,
-    setSelectedLayerStyleId,
     handleLayerStyleAdd,
     handleLayerStyleDelete,
     handleLayerStyleNameUpdate,
@@ -110,40 +108,20 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleLayerStyleSelect,
   } = useLayerStyles({ sceneId });
 
-  // State handling for editor UI
-  const handleLayerStyleSelected = useCallback(
-    (layerStyleId: string) => {
-      handleLayerSelect(undefined);
-      handleSceneSettingSelect(undefined);
-      handleLayerStyleSelect(layerStyleId);
-    },
-    [handleLayerStyleSelect, handleSceneSettingSelect, handleLayerSelect],
-  );
-
-  const handleLayerSelected = useCallback(
-    (layerId: string) => {
-      setSelectedLayerStyleId(undefined);
-      handleSceneSettingSelect(undefined);
-      handleLayerSelect(layerId);
-    },
-    [handleLayerSelect, handleSceneSettingSelect, setSelectedLayerStyleId],
-  );
-
-  const handleSceneSettingSelected = useCallback(
-    (collection?: string) => {
-      setSelectedLayerStyleId(undefined);
-      handleLayerSelect(undefined);
-      handleSceneSettingSelect(collection);
-    },
-    [handleLayerSelect, handleSceneSettingSelect, setSelectedLayerStyleId],
-  );
+  // TODO: manage panel item selection
+  const { handleLayerSelected, handleLayerStyleSelected, handleSceneSettingSelected } =
+    useUISelection({
+      handleLayerSelect,
+      handleLayerStyleSelect,
+      handleSceneSettingSelect,
+    });
 
   const { leftPanel } = useLeftPanel({
     tab,
     scene,
     nlsLayers,
     selectedStory,
-    selectedLayerId: selectedLayer?.id,
+    selectedLayerId: selectedLayer?.layer?.id,
     currentPageId: currentPage?.id,
     selectedSceneSetting,
     onCurrentPageChange: handleCurrentPageChange,
@@ -170,9 +148,9 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   } = useSketch({
     tab,
     nlsLayers,
-    selectedLayer,
+    selectedLayer: selectedLayer?.layer,
+    ignoreCoreLayerUnselect,
     visualizerRef,
-    handleLayerConfigUpdate,
   });
 
   const { rightPanel } = useRightPanel({
@@ -186,7 +164,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedLayerStyleId: selectedLayerStyle?.id,
     selectedSceneSetting: selectedSceneSetting,
     sceneSettings: sceneSettings,
-    selectedLayerId: selectedLayerId,
+    selectedLayer,
     selectedWidget: selectedWidget,
     selectedWidgetArea: selectedWidgetArea,
     onFlyTo: handleFlyTo,
@@ -216,7 +194,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     selectedProjectType,
     showWidgetEditor,
     sketchType,
-    isSketchLayerSelected: !!selectedLayer?.isSketch,
+    isSketchLayerSelected: !!selectedLayer?.layer?.isSketch,
     handleSketchTypeChange,
     handleProjectTypeChange,
     handleDeviceChange,
@@ -253,7 +231,7 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                 visualizerWidth={visualizerWidth}>
                 <EditorVisualizer
                   inEditor={tab !== "publish"}
-                  selectedLayer={selectedLayerId}
+                  selectedLayer={selectedLayer}
                   visualizerRef={visualizerRef}
                   storyPanelRef={storyPanelRef}
                   sceneId={sceneId}
@@ -267,10 +245,10 @@ const Editor: React.FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
                   onCameraChange={handleCameraUpdate}
                   onSketchTypeChange={handleSketchTypeChange}
                   onSketchFeatureCreate={handleSketchFeatureCreate}
-                  setIsVisualizerReady={handleIsVisualizerUpdate}
-                  setSelectedLayer={setSelectedLayerId}
-                  setSelectedLayerStyle={setSelectedLayerStyleId}
-                  setSelectedSceneSetting={handleSceneSettingSelect}
+                  onLayerStyleSelect={handleLayerStyleSelect}
+                  onSceneSettingSelect={handleSceneSettingSelect}
+                  onVisualizerReady={handleIsVisualizerUpdate}
+                  onCoreLayerSelect={handleCoreLayerSelect}
                   setSelectedStoryPageId={setSelectedStoryPageId}
                   selectWidgetArea={selectWidgetArea}
                 />

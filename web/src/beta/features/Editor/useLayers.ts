@@ -1,9 +1,8 @@
-import { MutableRefObject, useCallback, useMemo, useState } from "react";
+import { MutableRefObject, useCallback, useRef, useState } from "react";
 
-import { MapRef } from "@reearth/beta/features/Visualizer/Crust/types";
-import type { ComputedFeature, ComputedLayer, LayerSelectionReason } from "@reearth/core";
-import { LayerSimple } from "@reearth/core";
+import type { MapRef, ComputedFeature, ComputedLayer, LayerSimple } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 
 type LayerProps = {
@@ -11,6 +10,14 @@ type LayerProps = {
   isVisualizerReady?: boolean;
   visualizerRef?: MutableRefObject<MapRef | null>;
 };
+
+export type LayerSelectProps =
+  | {
+      layerId?: string;
+      computedLayer?: ComputedLayer;
+      computedFeature?: ComputedFeature;
+    }
+  | undefined;
 
 export type LayerAddProps = {
   config?: Omit<LayerSimple, "type" | "id">;
@@ -38,10 +45,9 @@ export type LayerVisibilityUpdateProps = {
 };
 
 export type SelectedLayer = {
-  layerId: string;
-  layer?: ComputedLayer;
-  feature?: ComputedFeature;
-  layerSelectionReason?: LayerSelectionReason;
+  layer?: NLSLayer;
+  computedLayer?: ComputedLayer;
+  computedFeature?: ComputedFeature;
 };
 
 export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerProps) {
@@ -50,27 +56,58 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
     useLayersFetcher();
   const { nlsLayers = [] } = useGetLayersQuery({ sceneId });
 
-  const [selectedLayerId, setSelectedLayerId] = useState<SelectedLayer | undefined>();
-
-  const selectedLayer = useMemo(
-    () => nlsLayers.find(l => l.id === selectedLayerId?.layerId) || undefined,
-    [nlsLayers, selectedLayerId],
-  );
+  const [selectedLayer, setSelectedLayer] = useState<SelectedLayer | undefined>();
 
   const handleLayerSelect = useCallback(
-    (layerId?: string) => {
+    (props: LayerSelectProps) => {
       if (!isVisualizerReady) return;
 
-      if (layerId && layerId !== selectedLayerId?.layerId) {
-        setSelectedLayerId({ layerId });
-      } else {
-        setSelectedLayerId(undefined);
-      }
-      // lib/core doesn't support selecting a layer without auto-selecting a feature, so
-      // Either way, we want to deselect from core as we are either deselecting, or changing to a new layer
+      // later core unselect is effecting this select, so we need to delay it.
+      setTimeout(() => {
+        if (props?.layerId) {
+          setSelectedLayer({
+            layer: nlsLayers.find(l => l.id === props.layerId),
+            computedLayer: props?.computedLayer,
+            computedFeature: props?.computedFeature,
+          });
+        } else {
+          setSelectedLayer(undefined);
+        }
+      }, 1);
+
+      // Layer selection does not specific any feature, we do unselect for core.
       visualizerRef?.current?.layers.select(undefined);
     },
-    [selectedLayerId?.layerId, isVisualizerReady, visualizerRef, setSelectedLayerId],
+    [isVisualizerReady, visualizerRef, nlsLayers],
+  );
+
+  // Workaround: core will trigger a select undefined after sketch layer add feature.
+  const ignoreCoreLayerUnselect = useRef(false);
+
+  const handleCoreLayerSelect = useCallback(
+    (props: LayerSelectProps) => {
+      if (!isVisualizerReady) return;
+
+      if (!props?.layerId && !selectedLayer?.layer?.id) {
+        return;
+      }
+
+      if (ignoreCoreLayerUnselect.current && !props?.layerId) {
+        ignoreCoreLayerUnselect.current = false;
+        return;
+      }
+
+      if (props?.layerId) {
+        setSelectedLayer({
+          layer: nlsLayers.find(l => l.id === props.layerId),
+          computedLayer: props?.computedLayer,
+          computedFeature: props?.computedFeature,
+        });
+      } else {
+        setSelectedLayer(undefined);
+      }
+    },
+    [isVisualizerReady, nlsLayers, selectedLayer],
   );
 
   const handleLayerDelete = useCallback(
@@ -81,13 +118,13 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
       await useRemoveNLSLayer({
         layerId,
       });
-      if (layerId === selectedLayerId?.layerId) {
-        handleLayerSelect(
-          nlsLayers[deletedPageIndex + 1]?.id ?? nlsLayers[deletedPageIndex - 1]?.id,
-        );
+      if (layerId === selectedLayer?.layer?.id) {
+        handleLayerSelect({
+          layerId: nlsLayers[deletedPageIndex + 1]?.id ?? nlsLayers[deletedPageIndex - 1]?.id,
+        });
       }
     },
-    [nlsLayers, selectedLayerId, handleLayerSelect, useRemoveNLSLayer],
+    [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer],
   );
 
   const handleLayerAdd = useCallback(
@@ -137,13 +174,13 @@ export default function ({ sceneId, isVisualizerReady, visualizerRef }: LayerPro
   return {
     nlsLayers,
     selectedLayer,
-    selectedLayerId,
+    ignoreCoreLayerUnselect,
     handleLayerSelect,
+    handleCoreLayerSelect,
     handleLayerAdd,
     handleLayerDelete,
     handleLayerNameUpdate,
     handleLayerConfigUpdate,
     handleLayerVisibilityUpdate,
-    setSelectedLayerId,
   };
 }

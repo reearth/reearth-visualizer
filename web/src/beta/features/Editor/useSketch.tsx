@@ -7,14 +7,12 @@ import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 import { Tab } from "../Navbar";
 
-import { LayerConfigUpdateProps } from "./useLayers";
-
 type Props = {
   tab: Tab;
   nlsLayers: NLSLayer[];
   selectedLayer: NLSLayer | undefined;
   visualizerRef: MutableRefObject<MapRef | null>;
-  handleLayerConfigUpdate: (inp: LayerConfigUpdateProps) => Promise<void>;
+  ignoreCoreLayerUnselect: MutableRefObject<boolean>;
 };
 
 export type FeatureProps = {
@@ -31,7 +29,13 @@ export type GeoJsonFeatureUpdateProps = {
   properties?: any;
 };
 
-export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {
+export default ({
+  tab,
+  nlsLayers,
+  selectedLayer,
+  visualizerRef,
+  ignoreCoreLayerUnselect,
+}: Props) => {
   const [sketchType, setSketchType] = useState<SketchType | undefined>(undefined);
 
   const pendingSketchSelectionRef = useRef<{ layerId: string; featureId: string } | undefined>(
@@ -73,27 +77,33 @@ export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {
         properties: { ...feature.properties, ...customProperties },
         geometry: feature.geometry,
       });
+
       pendingSketchSelectionRef.current = {
         layerId: selectedLayer.id,
         featureId: feature.properties.id,
       };
+
+      ignoreCoreLayerUnselect.current = true;
     },
-    [selectedLayer?.id, selectedLayer?.isSketch, handleSketchLayerAdd],
+    [selectedLayer?.id, selectedLayer?.isSketch, ignoreCoreLayerUnselect, handleSketchLayerAdd],
   );
 
+  // Workaround: we can't get an update from core after nlsLayers got updated.
+  // Therefore we need to get and select the latest sketch feature manually delayed.
   useEffect(() => {
-    // Workaround: Delay 2 frames to ensure the computed layer & feature can be found.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (pendingSketchSelectionRef.current) {
-          visualizerRef.current?.layers.selectFeature(
-            pendingSketchSelectionRef.current.layerId,
-            pendingSketchSelectionRef.current.featureId,
-          );
-          pendingSketchSelectionRef.current = undefined;
+    setTimeout(() => {
+      if (pendingSketchSelectionRef.current) {
+        const { layerId, featureId } = pendingSketchSelectionRef.current;
+        const layer = visualizerRef?.current?.layers
+          ?.layers?.()
+          ?.find(l => l.id === layerId)?.computed;
+        const feature = layer?.features?.find(f => f.properties?.id === featureId);
+        if (feature) {
+          visualizerRef?.current?.layers.selectFeature(layerId, feature?.id);
         }
-      });
-    });
+        pendingSketchSelectionRef.current = undefined;
+      }
+    }, 1);
   }, [nlsLayers, pendingSketchSelectionRef, visualizerRef]);
 
   useEffect(() => {
@@ -108,6 +118,11 @@ export default ({ tab, nlsLayers, selectedLayer, visualizerRef }: Props) => {
         geometry: inp.geometry,
         properties: inp.properties,
       });
+
+      pendingSketchSelectionRef.current = {
+        layerId: inp.layerId,
+        featureId: inp.properties?.id,
+      };
     },
     [useUpdateGeoJSONFeature],
   );
