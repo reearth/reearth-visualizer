@@ -7,6 +7,8 @@ import {
   useClick,
   useDismiss,
   useInteractions,
+  useHover,
+  safePolygon,
 } from "@floating-ui/react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -18,6 +20,7 @@ const usePopover = ({
   offset: offsetProps,
   shift: shiftProps,
   onOpenChange,
+  triggerOnHover = false,
 }: Omit<PopupProps, "children" | "trigger">) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
 
@@ -55,8 +58,12 @@ const usePopover = ({
 
   const click = useClick(context);
   const dismiss = useDismiss(context);
+  const hover = useHover(context, {
+    enabled: triggerOnHover,
+    handleClose: safePolygon(),
+  });
 
-  const interactions = useInteractions([click, dismiss]);
+  const interactions = useInteractions([hover, click, dismiss]);
 
   return useMemo(
     () => ({

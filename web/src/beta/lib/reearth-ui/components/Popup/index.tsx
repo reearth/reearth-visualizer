@@ -75,18 +75,26 @@ export type PopupProps = {
   children?: ReactNode;
   trigger?: ReactNode;
   disabled?: boolean;
+  triggerOnHover?: boolean;
   placement?: Placement;
   open?: boolean;
   offset?: OffsetOptions;
   shift?: ShiftOptions;
+  nested?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
-export const Popup = ({ children, trigger, disabled, ...restOptions }: PopupProps) => {
-  const popover = usePopover({ ...restOptions });
+export const Popup = ({
+  children,
+  trigger,
+  disabled,
+  triggerOnHover,
+  ...restOptions
+}: PopupProps) => {
+  const popover = usePopover({ ...restOptions, triggerOnHover });
 
   return (
-    <PopoverContext.Provider value={popover}>
+    <PopoverContext.Provider value={{ ...popover, setOpen: popover.setOpen }}>
       <Trigger disabled={disabled}>{trigger}</Trigger>
       <Content>{children}</Content>
     </PopoverContext.Provider>
@@ -96,6 +104,7 @@ export const Popup = ({ children, trigger, disabled, ...restOptions }: PopupProp
 const TriggerWrapper = styled("div")<{ disabled?: boolean }>(({ disabled }) => ({
   width: "fit-content",
   pointerEvents: disabled ? "none" : "auto",
+  flex: 1,
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
