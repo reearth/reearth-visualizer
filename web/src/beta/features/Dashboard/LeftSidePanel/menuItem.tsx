@@ -6,12 +6,12 @@ import { styled, useTheme } from "@reearth/services/theme";
 
 import { TabMenu } from ".";
 
-export const General: FC<Omit<TabMenu, "id">> = ({ icon, text, active, linkTo }) => {
+export const Menu: FC<Omit<TabMenu, "id">> = ({ icon, text, active, path }) => {
   const theme = useTheme();
   return (
-    <StyledLinkButton to={linkTo || ""}>
+    <StyledLinkButton to={path || ""}>
       <MenuWrapper active={active}>
-        {icon && <Icon icon={icon} size="normal" color={theme.content.main} />}
+        {icon && <Icon icon={icon} size="normal" color={theme.content.weak} />}
         <Typography size="body" color={theme.content.main}>
           {text}
         </Typography>

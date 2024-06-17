@@ -4,8 +4,7 @@ import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import useHooks from "./hooks";
-import LeftSidePanel from "./LeftSide";
+import LeftSidePanel from "./LeftSidePanel";
 
 export type DashboardProps = {
   workspaceId?: string;
@@ -13,7 +12,6 @@ export type DashboardProps = {
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   const t = useT();
   const theme = useTheme();
-  const { currentUser } = useHooks(workspaceId);
 
   return (
     <Wrapper>
@@ -23,7 +21,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
             {t("Re:Earth Visualizer")}
           </Typography>
         </Header>
-        <LeftSidePanel currentUser={currentUser.name} workspaceId={workspaceId} />
+        <LeftSidePanel workspaceId={workspaceId} />
       </LeftSideWrapper>
       <Content>Content side</Content>
     </Wrapper>

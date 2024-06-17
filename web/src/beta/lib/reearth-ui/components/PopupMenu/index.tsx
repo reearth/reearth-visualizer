@@ -31,8 +31,16 @@ export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon
   const [hoveredItemIndex, setHoveredItemIndex] = useState<number | null>(null);
   const theme = useTheme();
 
-  const handlePopOver = useCallback(() => setOpen(!open), [open]);
-
+  const handlePopOver = useCallback(
+    (state?: boolean) => {
+      if (state === undefined) {
+        setOpen(!open);
+      } else {
+        setOpen(state);
+      }
+    },
+    [open],
+  );
   const renderMenuItems = (menuItems: PopupMenuItem[]) => {
     return (
       <PopupMenuWrapper width={width}>
@@ -42,7 +50,11 @@ export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon
             onMouseEnter={() => setHoveredItemIndex(index)}
             onMouseLeave={() => setHoveredItemIndex(null)}
             isHovered={hoveredItemIndex === index}
-            onClick={() => onClick?.(id)}>
+            onClick={() => {
+              onClick?.(id);
+              handlePopOver(false);
+            }}>
+            {" "}
             {icon && <Icon icon={icon} size="small" color={theme.content.weak} />}
             {subItem ? (
               <PopupMenu label={title} menu={subItem} width={width} nested />
@@ -77,12 +89,13 @@ export const PopupMenu: FC<PopupMenuProps> = ({ label, menu, nested, width, icon
 
   return (
     <Popup
+      open={open}
       placement={nested ? "right-start" : "bottom-start"}
       offset={nested ? MULTLEVEL_OFFSET : DEFAULT_OFFSET}
       onOpenChange={handlePopOver}
       triggerOnHover={nested ? true : false}
       trigger={
-        <TriggerWrapper onClick={handlePopOver} nested={nested}>
+        <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>
           {renderTrigger()}
         </TriggerWrapper>
       }>

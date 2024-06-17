@@ -1,5 +1,6 @@
 import AddStyle from "./Icons/AddStyle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
+import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
 import Article from "./Icons/Article.svg?react";
 import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
@@ -84,6 +85,7 @@ import Polygon from "./Icons/Polygon.svg?react";
 import Polygone from "./Icons/Polygone.svg?react";
 import Polyline from "./Icons/Polyline.svg?react";
 import PuzzlePiece from "./Icons/PuzzlePiece.svg?react";
+import Question from "./Icons/Question.svg?react";
 import Return from "./Icons/Return.svg?react";
 import Rows from "./Icons/Rows.svg?react";
 import Setting from "./Icons/Setting.svg?react";
@@ -110,6 +112,8 @@ import TimeOrderInverse from "./Icons/TimeOrderInverse.svg?react";
 import Trash from "./Icons/Trash.svg?react";
 import Triangle from "./Icons/Triangle.svg?react";
 import UploadSimple from "./Icons/UploadSimple.svg?react";
+import User from "./Icons/User.svg?react";
+import UsersFour from "./Icons/UsersFour.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
 import ZToA from "./Icons/ZToA.svg?react";
@@ -117,6 +121,7 @@ import ZToA from "./Icons/ZToA.svg?react";
 export default {
   addStyle: AddStyle,
   appearance: Appearance,
+  arrowLeftRight: ArrowLeftRight,
   article: Article,
   book: Book,
   bracketsCurly: BracketsCurly,
@@ -199,6 +204,7 @@ export default {
   polygone: Polygone,
   polyline: Polyline,
   puzzlePiece: PuzzlePiece,
+  question: Question,
   return: Return,
   rows: Rows,
   setting: Setting,
@@ -226,6 +232,8 @@ export default {
   trash: Trash,
   triangle: Triangle,
   uploadSimple: UploadSimple,
+  user: User,
+  usersFour: UsersFour,
   videoFilled: VideoFilled,
   warning: Warning,
   aToZ: AToZ,
