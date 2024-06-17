@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
-import type { LayerSelectionReason, LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
+import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
   useLayersFetcher,
   useSceneFetcher,
@@ -13,7 +13,7 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 
-import type { SelectedLayer } from "../useLayers";
+import type { LayerSelectProps, SelectedLayer } from "../useLayers";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
@@ -24,9 +24,10 @@ export default ({
   isBuilt,
   showStoryPanel,
   selectedLayer,
-  setSelectedLayer,
-  setSelectedLayerStyle,
-  setSelectedSceneSetting,
+  onCoreLayerSelect,
+  onLayerStyleSelect,
+  onSceneSettingSelect,
+  onVisualizerReady,
   setSelectedStoryPageId,
 }: {
   sceneId?: string;
@@ -34,9 +35,10 @@ export default ({
   isBuilt?: boolean;
   showStoryPanel?: boolean;
   selectedLayer?: SelectedLayer | undefined;
-  setSelectedLayer: (value: SelectedLayer | undefined) => void;
-  setSelectedLayerStyle: (value: string | undefined) => void;
-  setSelectedSceneSetting: (value: string | undefined) => void;
+  onCoreLayerSelect: (props: LayerSelectProps) => void;
+  onLayerStyleSelect: (layerStyleId?: string) => void;
+  onSceneSettingSelect: (collection?: string) => void;
+  onVisualizerReady: (value: boolean) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
@@ -84,24 +86,23 @@ export default ({
     }));
   }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
 
-  const handleLayerSelect = useCallback(
-    async (
-      id?: string,
-      layer?: () => Promise<ComputedLayer | undefined>,
-      feature?: ComputedFeature,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => {
-      if ((!id && !feature && !selectedLayer) ?? (id === selectedLayer?.layerId || !feature))
+  const handleCoreLayerSelect = useCallback(
+    (layerId?: string, computedLayer?: ComputedLayer, computedFeature?: ComputedFeature) => {
+      if (
+        (!layerId && !computedFeature && !selectedLayer) ??
+        (layerId === selectedLayer?.layer?.id || !computedFeature)
+      )
         return;
-      if (id) {
-        setSelectedLayerStyle(undefined);
-        setSelectedSceneSetting(undefined);
+
+      if (layerId) {
+        onLayerStyleSelect(undefined);
+        onSceneSettingSelect(undefined);
+        onCoreLayerSelect({ layerId, computedLayer, computedFeature });
+      } else {
+        onCoreLayerSelect(undefined);
       }
-      setSelectedLayer(
-        id ? { layerId: id, layer: await layer?.(), feature, layerSelectionReason } : undefined,
-      );
     },
-    [selectedLayer, setSelectedLayer, setSelectedLayerStyle, setSelectedSceneSetting],
+    [selectedLayer, onCoreLayerSelect, onLayerStyleSelect, onSceneSettingSelect],
   );
 
   const handleLayerDrop = useCallback(
@@ -144,9 +145,9 @@ export default ({
 
   const handleInfoboxBlockCreate = useCallback(
     async (pluginId: string, extensionId: string, index?: number) => {
-      if (!selectedLayer) return;
+      if (!selectedLayer?.layer?.id) return;
       await useCreateInfoboxBlock({
-        layerId: selectedLayer.layerId,
+        layerId: selectedLayer.layer.id,
         pluginId,
         extensionId,
         index,
@@ -157,9 +158,9 @@ export default ({
 
   const handleInfoboxBlockMove = useCallback(
     async (id: string, targetIndex: number) => {
-      if (!selectedLayer) return;
+      if (!selectedLayer?.layer?.id) return;
       await useMoveInfoboxBlock({
-        layerId: selectedLayer.layerId,
+        layerId: selectedLayer.layer.id,
         infoboxBlockId: id,
         index: targetIndex,
       });
@@ -169,9 +170,9 @@ export default ({
 
   const handleInfoboxBlockRemove = useCallback(
     async (id?: string) => {
-      if (!selectedLayer || !id) return;
+      if (!selectedLayer?.layer?.id || !id) return;
       await useDeleteInfoboxBlock({
-        layerId: selectedLayer.layerId,
+        layerId: selectedLayer.layer.id,
         infoboxBlockId: id,
       });
     },
@@ -261,6 +262,8 @@ export default ({
     document.title = title;
   }, [isBuilt, title]);
 
+  const handleMount = useCallback(() => onVisualizerReady(true), [onVisualizerReady]);
+
   return {
     sceneProperty,
     pluginProperty,
@@ -270,7 +273,7 @@ export default ({
     engineMeta,
     zoomedLayerId,
     installableInfoboxBlocks,
-    handleLayerSelect,
+    handleCoreLayerSelect,
     handleLayerDrop,
     handleStoryPageChange,
     handleStoryBlockCreate,
@@ -284,6 +287,7 @@ export default ({
     handlePropertyItemAdd,
     handlePropertyItemDelete,
     handlePropertyItemMove,
+    handleMount,
     zoomToLayer,
   };
 };

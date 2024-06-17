@@ -29,7 +29,7 @@ type Props = {
   currentCamera?: Camera;
   selectedLayerStyleId?: string;
   selectedSceneSetting?: string;
-  selectedLayerId: SelectedLayer | undefined;
+  selectedLayer: SelectedLayer | undefined;
   selectedWidget: SelectedWidget | undefined;
   selectedWidgetArea: WidgetAreaState | undefined;
   onFlyTo?: FlyTo;
@@ -52,7 +52,7 @@ export default ({
   selectedSceneSetting,
   sceneSettings,
   currentCamera,
-  selectedLayerId,
+  selectedLayer,
   selectedWidget,
   selectedWidgetArea,
   onPageUpdate,
@@ -76,7 +76,7 @@ export default ({
             currentCamera={currentCamera}
             selectedLayerStyleId={selectedLayerStyleId}
             selectedSceneSetting={selectedSceneSetting}
-            selectedLayerId={selectedLayerId}
+            selectedLayer={selectedLayer}
             onFlyTo={onFlyTo}
             onLayerStyleValueUpdate={onLayerStyleValueUpdate}
             onLayerConfigUpdate={onLayerConfigUpdate}
@@ -119,16 +119,16 @@ export default ({
     sceneId,
     sceneSettings,
     currentCamera,
+    currentPage,
     selectedLayerStyleId,
     selectedSceneSetting,
-    selectedLayerId,
+    selectedLayer,
     selectedWidget,
     selectedWidgetArea,
     onFlyTo,
     onLayerStyleValueUpdate,
     onLayerConfigUpdate,
     onGeoJsonFeatureUpdate,
-    currentPage,
     onPageUpdate,
     setSelectedWidget,
     setSelectedWidgetArea,

@@ -14,6 +14,7 @@ import CaretDoubleLeft from "./Icons/CaretDoubleLeft.svg?react";
 import CaretDoubleRight from "./Icons/CaretDoubleRight.svg?react";
 import CaretDown from "./Icons/CaretDown.svg?react";
 import CaretLeft from "./Icons/CaretLeft.svg?react";
+import CaretRight from "./Icons/CaretRight.svg?react";
 import CaretUp from "./Icons/CaretUp.svg?react";
 import Check from "./Icons/Check.svg?react";
 import Checked from "./Icons/Checked.svg?react";
@@ -128,6 +129,7 @@ export default {
   caretDoubleLeft: CaretDoubleLeft,
   caretDoubleRight: CaretDoubleRight,
   caretDown: CaretDown,
+  caretRight: CaretRight,
   caretLeft: CaretLeft,
   caretUp: CaretUp,
   check: Check,

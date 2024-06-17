@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { FC, MutableRefObject, SetStateAction, useRef } from "react";
+import { FC, MutableRefObject, SetStateAction } from "react";
 
 import { Camera, LatLng, ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
@@ -8,7 +8,6 @@ import {
   type ComputedFeature,
   type ComputedLayer,
   type Layer,
-  type LayerSelectionReason,
   type EngineType,
   CoreVisualizer,
 } from "@reearth/core";
@@ -58,11 +57,10 @@ type VisualizerProps = {
   currentCamera?: Camera;
   interactionMode?: InteractionModeType;
   onCameraChange?: (camera: Camera) => void;
-  handleLayerSelect?: (
+  onCoreLayerSelect?: (
     layerId: string | undefined,
-    layer: (() => Promise<ComputedLayer | undefined>) | undefined,
+    layer: ComputedLayer | undefined,
     feature: ComputedFeature | undefined,
-    reason: LayerSelectionReason | undefined,
   ) => void;
   handleLayerDrop?: (layerId: string, propertyKey: string, position: LatLng | undefined) => void;
   handleZoomToLayer?: (layerId: string | undefined) => void;
@@ -145,7 +143,7 @@ const Visualizer: FC<VisualizerProps> = ({
   currentCamera,
   interactionMode,
   onCameraChange,
-  handleLayerSelect,
+  onCoreLayerSelect,
   handleLayerDrop,
   handleZoomToLayer,
   handleSketchTypeChange,
@@ -176,10 +174,10 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyItemMove,
   handlePropertyItemDelete,
 }) => {
-  const { shouldRender } = useHooks({
+  const { shouldRender, storyWrapperRef, handleCoreLayerSelect } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
+    onCoreLayerSelect,
   });
-  const storyWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
     <Wrapper storyPanelPosition={story?.position}>
@@ -198,7 +196,7 @@ const Visualizer: FC<VisualizerProps> = ({
         interactionMode={interactionMode}
         shouldRender={shouldRender}
         onCameraChange={onCameraChange}
-        onLayerSelect={handleLayerSelect}
+        onLayerSelect={handleCoreLayerSelect}
         onLayerDrop={handleLayerDrop}
         onZoomToLayer={handleZoomToLayer}
         onSketchTypeChangeProp={handleSketchTypeChange}

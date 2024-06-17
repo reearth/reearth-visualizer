@@ -28,7 +28,7 @@ type Props = {
   selectedLayerStyleId?: string;
   selectedSceneSetting?: string;
   currentCamera?: Camera;
-  selectedLayerId: SelectedLayer | undefined;
+  selectedLayer: SelectedLayer | undefined;
   onFlyTo?: FlyTo;
   onLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
@@ -44,7 +44,7 @@ const MapRightPanel: React.FC<Props> = ({
   selectedSceneSetting,
   sceneSettings,
   currentCamera,
-  selectedLayerId,
+  selectedLayer,
   onFlyTo,
   onLayerStyleValueUpdate,
   onLayerConfigUpdate,
@@ -57,7 +57,7 @@ const MapRightPanel: React.FC<Props> = ({
   return (
     <SidePanelCommon
       location="right"
-      padding={!selectedLayerId ? 8 : undefined}
+      padding={!selectedLayer ? 8 : undefined}
       contents={[
         {
           id: "map",
@@ -72,12 +72,12 @@ const MapRightPanel: React.FC<Props> = ({
                   onFlyTo={onFlyTo}
                 />
               )}
-              {selectedLayerId && (
+              {selectedLayer && (
                 <LayerInspector
                   layerStyles={layerStyles}
                   layers={layers}
                   sceneId={sceneId}
-                  selectedLayerId={selectedLayerId}
+                  selectedLayer={selectedLayer}
                   onLayerConfigUpdate={onLayerConfigUpdate}
                   onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
                 />
