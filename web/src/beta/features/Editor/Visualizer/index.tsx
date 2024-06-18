@@ -23,6 +23,7 @@ export type Props = {
   inEditor?: boolean;
   currentCamera?: Camera;
   interactionMode?: InteractionModeType;
+  isVisualizerResizing?: MutableRefObject<boolean>;
   // story
   storyPanelRef?: MutableRefObject<StoryPanelRef | null>;
   showStoryPanel?: boolean;
@@ -48,6 +49,7 @@ const EditorVisualizer: React.FC<Props> = ({
   inEditor,
   currentCamera,
   interactionMode,
+  isVisualizerResizing,
   storyPanelRef,
   showStoryPanel,
   selectedStory,
@@ -95,6 +97,7 @@ const EditorVisualizer: React.FC<Props> = ({
     storyId: selectedStory?.id,
     showStoryPanel,
     selectedLayer,
+    isVisualizerResizing,
     onCoreLayerSelect,
     onVisualizerReady,
     setSelectedStoryPageId,

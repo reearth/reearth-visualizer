@@ -7,7 +7,7 @@ import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { WidgetAreaPadding } from "@reearth/services/state";
 
-import { useWidgetsPage } from "../widgetsPageContext";
+import { useWidgetsPage } from "../context";
 
 import useHooks from "./hooks";
 

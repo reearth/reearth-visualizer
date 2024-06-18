@@ -2,13 +2,11 @@ import { FC, useRef } from "react";
 
 import { Window, Area } from "@reearth/beta/ui/layout";
 
+import { useStoryPage } from "./context";
 import PageSettingsPanel from "./PageSettingsPanel";
 import PagesPanel from "./PagesPanel";
-import { useStoryPage } from "./storyPageContext";
 
-type Props = {};
-
-const Story: FC<Props> = () => {
+const Story: FC = () => {
   const { onVisualizerResize } = useStoryPage();
   const windowRef = useRef<HTMLDivElement>(null);
 

@@ -3,14 +3,12 @@ import { FC, useRef } from "react";
 import { Window, Area } from "@reearth/beta/ui/layout";
 
 import ContainerSettingsPanel from "./ContainerSettingsPanel";
+import { useWidgetsPage } from "./context";
 import WASToolsPanel from "./WASToolsPanel";
 import WidgetInspectorPanel from "./WidgetInspectorPanel";
 import WidgetManagerPanel from "./WidgetManagerPanel";
-import { useWidgetsPage } from "./widgetsPageContext";
 
-type Props = {};
-
-const Widgets: FC<Props> = () => {
+const Widgets: FC = () => {
   const windowRef = useRef<HTMLDivElement>(null);
 
   const { onVisualizerResize, selectedWidgetArea, selectedWidget } = useWidgetsPage();

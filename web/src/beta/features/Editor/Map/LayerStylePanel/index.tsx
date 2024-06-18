@@ -1,4 +1,4 @@
-import { FC, ReactNode, useCallback } from "react";
+import { FC, useCallback } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
@@ -7,33 +7,25 @@ import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { LayerStyleAddProps, LayerStyleNameUpdateProps } from "../../hooks/useLayerStyles";
+import { useMapPage } from "../context";
 
 import LayerStyleCard from "./LayerStyleCard";
 
-export type LayerStylePanelProps = {
-  layerStyles: LayerStyle[];
-  selectedLayerStyleId?: string;
-  actionContent?: ReactNode;
-  onLayerStyleAdd: (inp: LayerStyleAddProps) => void;
-  onLayerStyleDelete: (id: string) => void;
-  onLayerStyleNameUpdate: (inp: LayerStyleNameUpdateProps) => void;
-  onLayerStyleSelect: (id: string) => void;
-};
+const StylesPanel: FC = () => {
+  const {
+    layerStyles,
+    selectedLayerStyleId,
+    onLayerStyleAdd,
+    onLayerStyleDelete,
+    onLayerStyleNameUpdate,
+    onLayerStyleSelect,
+  } = useMapPage();
 
-const StylesPanel: FC<LayerStylePanelProps> = ({
-  layerStyles,
-  selectedLayerStyleId,
-  onLayerStyleAdd,
-  onLayerStyleDelete,
-  onLayerStyleNameUpdate,
-  onLayerStyleSelect,
-}) => {
   const t = useT();
 
   const handleLayerStyleAddition = useCallback(() => {
-    onLayerStyleAdd({ name: `${t("Style_")}${layerStyles.length + 1}`, value: {} });
-  }, [layerStyles.length, t, onLayerStyleAdd]);
+    onLayerStyleAdd({ name: `${t("Style_")}${layerStyles?.length ?? 0 + 1}`, value: {} });
+  }, [layerStyles?.length, t, onLayerStyleAdd]);
 
   const handleSelectLayerStyle = useCallback(
     (layerStyle?: LayerStyle) => {
@@ -52,7 +44,7 @@ const StylesPanel: FC<LayerStylePanelProps> = ({
           </AdjustableButtonStyled>
         </Sidebar>
         <CatalogListWrapper>
-          {layerStyles.map(layerStyle => (
+          {layerStyles?.map(layerStyle => (
             <LayerStyleCard
               id={layerStyle.id}
               key={layerStyle.id}

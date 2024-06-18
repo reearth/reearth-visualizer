@@ -7,7 +7,7 @@ import { isEmptyString } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { useStoryPage } from "../storyPageContext";
+import { useStoryPage } from "../context";
 
 import Action from "./Action";
 import PageItem from "./PageItem";

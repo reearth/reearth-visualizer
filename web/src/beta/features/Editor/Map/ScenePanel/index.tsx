@@ -2,17 +2,15 @@ import { FC, useCallback } from "react";
 
 import ListItem from "@reearth/beta/components/ListItem";
 import { Panel } from "@reearth/beta/ui/layout";
-import { Scene, ScenePropertyCollection } from "@reearth/services/api/sceneApi";
+import { ScenePropertyCollection } from "@reearth/services/api/sceneApi";
 import { useT } from "@reearth/services/i18n";
 
-export type ScenePanelProps = {
-  scene?: Scene;
-  selectedSceneSetting?: string;
-  onSceneSettingSelect: (groupId: string) => void;
-};
+import { useMapPage } from "../context";
 
-const ScenePanel: FC<ScenePanelProps> = ({ scene, selectedSceneSetting, onSceneSettingSelect }) => {
+const ScenePanel: FC = () => {
   const t = useT();
+
+  const { scene, selectedSceneSetting, onSceneSettingSelect } = useMapPage();
 
   // TODO-VizUI: use EntryItem
   const handleTranslatedCollectionName = useCallback(

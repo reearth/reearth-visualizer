@@ -4,7 +4,7 @@ import Settings from "@reearth/beta/features/Editor/common/Settings";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 
-import { useStoryPage } from "../storyPageContext";
+import { useStoryPage } from "../context";
 
 const PageSettingsPanel: FC = () => {
   const { selectedStoryPage, currentCamera, layers, onPageUpdate, tab, onFlyTo } = useStoryPage();

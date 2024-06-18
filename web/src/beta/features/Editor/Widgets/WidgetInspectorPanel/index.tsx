@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 
-import { useWidgetsPage } from "../widgetsPageContext";
+import { useWidgetsPage } from "../context";
 
 import useHooks from "./hooks";
 import Settings from "./Settings";

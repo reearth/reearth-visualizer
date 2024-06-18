@@ -10,7 +10,7 @@ import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { usePublishPage } from "../publishPageContext";
+import { usePublishPage } from "../context";
 
 import useHooks from "./hooks";
 import PublishModal from "./PublishModal";

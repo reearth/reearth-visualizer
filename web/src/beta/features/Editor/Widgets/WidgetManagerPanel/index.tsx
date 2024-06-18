@@ -6,7 +6,7 @@ import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { useWidgetsPage } from "../widgetsPageContext";
+import { useWidgetsPage } from "../context";
 
 import ActionArea from "./Action";
 import useHooks from "./hooks";

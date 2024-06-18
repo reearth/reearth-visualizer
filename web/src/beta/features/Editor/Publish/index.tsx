@@ -2,12 +2,10 @@ import { FC, useRef } from "react";
 
 import { Window, Area } from "@reearth/beta/ui/layout";
 
-import { usePublishPage } from "./publishPageContext";
+import { usePublishPage } from "./context";
 import PublishToolsPanel from "./PublishToolsPanel";
 
-type Props = {};
-
-const Publish: FC<Props> = () => {
+const Publish: FC = () => {
   const windowRef = useRef<HTMLDivElement>(null);
   const { onVisualizerResize } = usePublishPage();
 

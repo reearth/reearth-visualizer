@@ -2,14 +2,9 @@ import { FC, useEffect, useMemo } from "react";
 
 import { IconButton, IconName } from "@reearth/beta/lib/reearth-ui";
 import { Panel } from "@reearth/beta/ui/layout";
-import { SketchType } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 
-export type ToolsPanelProps = {
-  sketchEnabled: boolean;
-  sketchType: SketchType | undefined;
-  onSketchTypeChange: (type: SketchType | undefined) => void;
-};
+import { useMapPage } from "../context";
 
 type SketchTool = {
   icon: IconName;
@@ -17,7 +12,9 @@ type SketchTool = {
   onClick: () => void;
 };
 
-const ToolsPanel: FC<ToolsPanelProps> = ({ sketchEnabled, sketchType, onSketchTypeChange }) => {
+const ToolsPanel: FC = () => {
+  const { sketchEnabled, sketchType, onSketchTypeChange } = useMapPage();
+
   const sketchTools: SketchTool[] = useMemo(
     () => [
       {

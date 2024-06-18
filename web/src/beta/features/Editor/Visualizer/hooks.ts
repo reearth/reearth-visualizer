@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback, useState, MutableRefObject } from "react";
 
 import type { Alignment, Location } from "@reearth/beta/features/Visualizer/Crust";
 import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
@@ -24,6 +24,7 @@ export default ({
   isBuilt,
   showStoryPanel,
   selectedLayer,
+  isVisualizerResizing,
   onCoreLayerSelect,
   onVisualizerReady,
   setSelectedStoryPageId,
@@ -33,6 +34,7 @@ export default ({
   isBuilt?: boolean;
   showStoryPanel?: boolean;
   selectedLayer?: SelectedLayer | undefined;
+  isVisualizerResizing?: MutableRefObject<boolean>;
   onCoreLayerSelect: (props: LayerSelectProps) => void;
   onVisualizerReady: (value: boolean) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
@@ -177,8 +179,11 @@ export default ({
   const story = useMemo(() => convertStory(scene, storyId), [storyId, scene]);
 
   const handleStoryPageChange = useCallback(
-    (pageId?: string) => setSelectedStoryPageId(pageId),
-    [setSelectedStoryPageId],
+    (pageId?: string) => {
+      if (isVisualizerResizing?.current) return;
+      setSelectedStoryPageId(pageId);
+    },
+    [isVisualizerResizing, setSelectedStoryPageId],
   );
 
   const handleStoryBlockCreate = useCallback(

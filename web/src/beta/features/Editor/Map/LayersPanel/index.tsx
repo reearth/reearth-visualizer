@@ -4,39 +4,28 @@ import Icon from "@reearth/beta/components/Icon";
 import * as Popover from "@reearth/beta/components/Popover";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
 import { Panel } from "@reearth/beta/ui/layout";
-import { FlyTo } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
-import { LayerNameUpdateProps, LayerVisibilityUpdateProps } from "../../hooks/useLayers";
+import { useMapPage } from "../context";
 
 import LayerItem from "./LayerItem";
 
-export type LayersPanelProps = {
-  layers: NLSLayer[];
-  selectedLayerId?: string;
-  onLayerDelete: (id: string) => void;
-  onLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
-  onLayerSelect: (id?: string) => void;
-  onDataSourceLayerCreatorOpen: () => void;
-  onSketchLayerCreatorOpen: () => void;
-  onLayerVisibilityUpate: (inp: LayerVisibilityUpdateProps) => void;
-  onFlyTo?: FlyTo;
-};
+const LayersPanel: FC = () => {
+  const {
+    layers,
+    selectedLayerId,
+    onLayerDelete,
+    onLayerNameUpdate,
+    onLayerSelect,
+    onDataSourceLayerCreatorOpen,
+    onSketchLayerCreatorOpen,
+    onLayerVisibilityUpate,
+    onFlyTo,
+  } = useMapPage();
 
-const LayersPanel: FC<LayersPanelProps> = ({
-  layers,
-  selectedLayerId,
-  onLayerDelete,
-  onLayerNameUpdate,
-  onLayerSelect,
-  onDataSourceLayerCreatorOpen,
-  onSketchLayerCreatorOpen,
-  onLayerVisibilityUpate,
-  onFlyTo,
-}) => {
   const t = useT();
+
   const [isAddMenuOpen, setAddMenuOpen] = useState(false);
 
   const toggleAddMenu = useCallback(() => {

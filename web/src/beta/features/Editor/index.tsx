@@ -1,30 +1,22 @@
 import styled from "@emotion/styled";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
 import { Provider as DndProvider } from "@reearth/beta/utils/use-dnd";
 
-// import useHooks from "../Editor/hooks";
 import Navbar, { Tab } from "../Navbar";
 
-import useEditorVisualizer from "./hooks/useEditorVisualizer";
-import useLayers from "./hooks/useLayers";
-import useLayerStyles from "./hooks/useLayerStyles";
-import useProperty from "./hooks/useProperty";
-import useScene from "./hooks/useScene";
-import useSketch from "./hooks/useSketch";
-import useStorytelling from "./hooks/useStorytelling";
-import useUI from "./hooks/useUI";
-import useWidgets from "./hooks/useWidgets";
+import useHooks from "./hooks";
 import Map from "./Map";
+import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
 import Publish from "./Publish";
-import { PublishPageProvider } from "./Publish/publishPageContext";
+import { PublishPageProvider } from "./Publish/context";
 import Story from "./Story";
-import { StoryPageProvider } from "./Story/storyPageContext";
+import { StoryPageProvider } from "./Story/context";
 import EditorVisualizer from "./Visualizer";
 import Widgets from "./Widgets";
-import { WidgetsPageProvider } from "./Widgets/widgetsPageContext";
+import { WidgetsPageProvider } from "./Widgets/context";
 
 type Props = {
   sceneId: string;
@@ -40,207 +32,38 @@ type Props = {
 //   bottomPanelMaxHeight: 232,
 // };
 
-const NewEditor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
+const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const {
-    visualizerRef,
-    isVisualizerReady,
-    handleIsVisualizerUpdate,
     visualizerSize,
-    handleVisuzlierResize,
-    currentCamera,
-    handleCameraUpdate,
-    handleFlyTo,
-  } = useEditorVisualizer();
-
-  const {
-    nlsLayers,
+    isVisualizerResizing,
     selectedLayer,
-    ignoreCoreLayerUnselect,
-    handleCoreLayerSelect,
-    // for layers tab
-    handleLayerAdd,
-    handleLayerDelete,
-    handleLayerSelect,
-    handleLayerNameUpdate,
-    handleLayerVisibilityUpdate,
-    handleLayerConfigUpdate,
-  } = useLayers({
-    sceneId,
-    isVisualizerReady,
     visualizerRef,
-  });
-
-  const {
+    storyPanelRef,
+    currentProjectType,
+    selectedStory,
+    installableStoryBlocks,
+    currentCamera,
+    showWASEditor,
+    selectedWidgetArea,
+    handleStoryBlockMove,
+    handleCameraUpdate,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
-    // for map tab
-    sketchType,
-    handleGeoJsonFeatureUpdate,
-  } = useSketch({
-    tab,
-    nlsLayers,
-    selectedLayer: selectedLayer?.layer,
-    ignoreCoreLayerUnselect,
-    visualizerRef,
-  });
-
-  const {
-    handleSceneSettingSelect,
-    // for map tab
-    scene,
-    selectedSceneSetting,
-    sceneSettings,
-  } = useScene({
-    sceneId,
-  });
-
-  const {
-    handleLayerStyleSelect,
-    // for map tab
-    layerStyles,
-    selectedLayerStyle,
-    handleLayerStyleAdd,
-    handleLayerStyleDelete,
-    handleLayerStyleNameUpdate,
-    handleLayerStyleValueUpdate,
-  } = useLayerStyles({ sceneId });
-
-  const {
-    currentProjectType,
-    handleProjectTypeChange,
-    // for ui
-    handleLayerSelectFromUI,
+    handleIsVisualizerUpdate,
     handleCoreLayerSelectFromUI,
-    handleSceneSettingSelectFromUI,
-    handleLayerStyleSelectFromUI,
-    dataSourceLayerCreatorShown,
-    openDataSourceLayerCreator,
-    closeDataSourceLayerCreator,
-    sketchLayerCreatorShown,
-    openSketchLayerCreator,
-    closeSketchLayerCreator,
-    selectedDevice,
-    handleDeviceChange,
-  } = useUI({
-    tab,
-    handleLayerSelect,
-    handleCoreLayerSelect,
-    handleSceneSettingSelect,
-    handleLayerStyleSelect,
-  });
-
-  const {
-    selectedStory,
-    storyPanelRef,
-    installableStoryBlocks,
-    currentStoryPage,
-    handleCurrentStoryPageChange,
-    // handlePageDuplicate // not in use
-    handleStoryPageDelete,
-    handleStoryPageAdd,
-    handleStoryPageMove,
-    handleStoryPageUpdate,
-    handleStoryBlockMove,
     selectStoryPage,
-  } = useStorytelling({
-    sceneId,
-  });
-
-  const {
-    showWASEditor,
-    handleShowWASEditorToggle,
-    selectedWidgetArea,
     selectWidgetArea,
-    selectedWidget,
-    selectWidget,
-  } = useWidgets({ tab });
-
-  const { handlePropertyValueUpdate } = useProperty();
-
-  const storyPageValue = useMemo(
-    () => ({
-      onVisualizerResize: handleVisuzlierResize,
-      storyPages: selectedStory?.pages ?? [],
-      selectedStoryPage: currentStoryPage,
-      onPageSelect: handleCurrentStoryPageChange,
-      onPageAdd: handleStoryPageAdd,
-      onPageDelete: handleStoryPageDelete,
-      onPageMove: handleStoryPageMove,
-      onPropertyUpdate: handlePropertyValueUpdate,
-      //
-      sceneId,
-      currentCamera, // TODO: Camera manager
-      layers: nlsLayers,
-      tab,
-      onFlyTo: handleFlyTo,
-      onPageUpdate: handleStoryPageUpdate,
-    }),
-    [
-      handleVisuzlierResize,
-      selectedStory,
-      currentStoryPage,
-      handleCurrentStoryPageChange,
-      handleStoryPageAdd,
-      handleStoryPageDelete,
-      handleStoryPageMove,
-      handlePropertyValueUpdate,
-      sceneId,
-      currentCamera,
-      nlsLayers,
-      tab,
-      handleFlyTo,
-      handleStoryPageUpdate,
-    ],
-  );
-
-  const widgetsPageValue = useMemo(
-    () => ({
-      onVisualizerResize: handleVisuzlierResize,
-      showWidgetEditor: showWASEditor,
-      onShowWidgetEditor: handleShowWASEditorToggle,
-      selectedDevice,
-      onDeviceChange: handleDeviceChange,
-      setSelectedWidgetArea: selectWidgetArea,
-      sceneId,
-      selectedWidget,
-      setSelectedWidget: selectWidget,
-      selectedWidgetArea,
-      currentCamera, // TODO: Camera manager
-      onFlyTo: handleFlyTo,
-    }),
-    [
-      handleVisuzlierResize,
-      showWASEditor,
-      handleShowWASEditorToggle,
-      selectedDevice,
-      handleDeviceChange,
-      selectWidgetArea,
-      sceneId,
-      selectedWidget,
-      selectWidget,
-      selectedWidgetArea,
-      currentCamera,
-      handleFlyTo,
-    ],
-  );
-
-  const publishPageValue = useMemo(
-    () => ({
-      onVisualizerResize: handleVisuzlierResize,
-      id: currentProjectType === "story" ? selectedStory?.id : projectId,
-      sceneId,
-      selectedProjectType: currentProjectType,
-      onProjectTypeChange: handleProjectTypeChange,
-    }),
-    [
-      handleVisuzlierResize,
-      sceneId,
-      currentProjectType,
-      selectedStory?.id,
-      projectId,
-      handleProjectTypeChange,
-    ],
-  );
+    mapPageValue,
+    storyPageValue,
+    widgetsPageValue,
+    publishPageValue,
+    dataSourceLayerCreatorShown,
+    closeDataSourceLayerCreator,
+    handleLayerAdd,
+    sketchLayerCreatorShown,
+    closeSketchLayerCreator,
+    layerStyles,
+  } = useHooks({ sceneId, tab, projectId });
 
   return (
     <DndProvider>
@@ -258,6 +81,7 @@ const NewEditor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
               selectedLayer={selectedLayer}
               visualizerRef={visualizerRef}
               storyPanelRef={storyPanelRef}
+              isVisualizerResizing={isVisualizerResizing}
               sceneId={sceneId}
               showStoryPanel={currentProjectType === "story"}
               selectedStory={selectedStory}
@@ -277,37 +101,9 @@ const NewEditor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           </VisualizerArea>
           <Workbench>
             {tab === "map" && (
-              <Map
-                onVisualizerResize={handleVisuzlierResize}
-                sketchEnabled={!!selectedLayer?.layer?.isSketch}
-                sketchType={sketchType}
-                onSketchTypeChange={handleSketchTypeChange}
-                scene={scene}
-                selectedSceneSetting={selectedSceneSetting}
-                onSceneSettingSelect={handleSceneSettingSelectFromUI}
-                layers={nlsLayers}
-                selectedLayerId={selectedLayer?.layer?.id}
-                onLayerDelete={handleLayerDelete}
-                onLayerNameUpdate={handleLayerNameUpdate}
-                onLayerSelect={handleLayerSelectFromUI}
-                onDataSourceLayerCreatorOpen={openDataSourceLayerCreator}
-                onSketchLayerCreatorOpen={openSketchLayerCreator}
-                onLayerVisibilityUpate={handleLayerVisibilityUpdate}
-                onFlyTo={handleFlyTo}
-                layerStyles={layerStyles}
-                selectedLayerStyleId={selectedLayerStyle?.id}
-                onLayerStyleAdd={handleLayerStyleAdd}
-                onLayerStyleDelete={handleLayerStyleDelete}
-                onLayerStyleNameUpdate={handleLayerStyleNameUpdate}
-                onLayerStyleSelect={handleLayerStyleSelectFromUI}
-                sceneId={sceneId}
-                sceneSettings={sceneSettings}
-                currentCamera={currentCamera}
-                selectedLayer={selectedLayer}
-                onLayerStyleValueUpdate={handleLayerStyleValueUpdate}
-                onLayerConfigUpdate={handleLayerConfigUpdate}
-                onGeoJsonFeatureUpdate={handleGeoJsonFeatureUpdate}
-              />
+              <MapPageProvider value={mapPageValue}>
+                <Map />
+              </MapPageProvider>
             )}
             {tab === "story" && (
               <StoryPageProvider value={storyPageValue}>
@@ -346,7 +142,7 @@ const NewEditor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   );
 };
 
-export default NewEditor;
+export default Editor;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
