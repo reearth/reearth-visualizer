@@ -13,7 +13,7 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 
-import type { LayerSelectProps, SelectedLayer } from "../useLayers";
+import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
@@ -25,8 +25,6 @@ export default ({
   showStoryPanel,
   selectedLayer,
   onCoreLayerSelect,
-  onLayerStyleSelect,
-  onSceneSettingSelect,
   onVisualizerReady,
   setSelectedStoryPageId,
 }: {
@@ -36,8 +34,6 @@ export default ({
   showStoryPanel?: boolean;
   selectedLayer?: SelectedLayer | undefined;
   onCoreLayerSelect: (props: LayerSelectProps) => void;
-  onLayerStyleSelect: (layerStyleId?: string) => void;
-  onSceneSettingSelect: (collection?: string) => void;
   onVisualizerReady: (value: boolean) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
 }) => {
@@ -95,14 +91,12 @@ export default ({
         return;
 
       if (layerId) {
-        onLayerStyleSelect(undefined);
-        onSceneSettingSelect(undefined);
         onCoreLayerSelect({ layerId, computedLayer, computedFeature });
       } else {
         onCoreLayerSelect(undefined);
       }
     },
-    [selectedLayer, onCoreLayerSelect, onLayerStyleSelect, onSceneSettingSelect],
+    [selectedLayer, onCoreLayerSelect],
   );
 
   const handleLayerDrop = useCallback(

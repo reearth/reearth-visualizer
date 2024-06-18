@@ -210,6 +210,8 @@ const StyledArea = styled("div")<{
     display: "flex",
     flexDirection: direction,
   }),
+  maxHeight: "100%",
+  maxWidth: "100%",
 }));
 
 const ResizeHandle = styled("div")<{ edge: ResizableEdge; color?: string }>(({ edge, color }) => ({

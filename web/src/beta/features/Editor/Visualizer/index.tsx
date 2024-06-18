@@ -12,7 +12,7 @@ import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytellingApi/utils";
 import { WidgetAreaState } from "@reearth/services/state";
 
-import type { LayerSelectProps, SelectedLayer } from "../useLayers";
+import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
 
 import useHooks from "./hooks";
 
@@ -37,8 +37,6 @@ export type Props = {
   onSketchFeatureCreate?: (feature: SketchFeature | null) => void;
   onVisualizerReady: (value: boolean) => void;
   onCoreLayerSelect: (props: LayerSelectProps) => void;
-  onLayerStyleSelect: (layerStyleId?: string) => void;
-  onSceneSettingSelect: (collection?: string) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
   selectWidgetArea: (update?: SetStateAction<WidgetAreaState | undefined>) => void;
 };
@@ -63,8 +61,6 @@ const EditorVisualizer: React.FC<Props> = ({
   onSketchFeatureCreate,
   onVisualizerReady,
   onCoreLayerSelect,
-  onLayerStyleSelect,
-  onSceneSettingSelect,
   setSelectedStoryPageId,
   selectWidgetArea,
 }) => {
@@ -100,8 +96,6 @@ const EditorVisualizer: React.FC<Props> = ({
     showStoryPanel,
     selectedLayer,
     onCoreLayerSelect,
-    onLayerStyleSelect,
-    onSceneSettingSelect,
     onVisualizerReady,
     setSelectedStoryPageId,
   });

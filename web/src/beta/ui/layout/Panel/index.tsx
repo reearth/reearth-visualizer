@@ -8,6 +8,7 @@ export type PanelProps = {
   extend?: boolean;
   collapsed?: boolean;
   storageId?: string;
+  noPadding?: boolean;
   alwaysOpen?: boolean;
   background?: "default" | "normal" | string;
   children?: ReactNode;
@@ -18,6 +19,7 @@ export const Panel: FC<PanelProps> = ({
   extend,
   storageId,
   collapsed,
+  noPadding,
   alwaysOpen,
   background = "default",
   children,
@@ -59,6 +61,7 @@ export const Panel: FC<PanelProps> = ({
           headerBg={theme.bg[2]}
           size="small"
           collapsed={alwaysOpen ? false : initialCollapsed}
+          noPadding={noPadding}
           disabled={alwaysOpen}
           onCollapse={handleCollapse}>
           {children}
@@ -74,6 +77,7 @@ const Wrapper = styled("div")<{ extend?: boolean }>(({ theme, extend }) => ({
   display: "flex",
   flexDirection: "column",
   flex: extend ? 1 : "0 0 auto",
+  // flexShrink: 0,
   borderRadius: theme.radius.small,
 }));
 

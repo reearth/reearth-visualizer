@@ -66,8 +66,12 @@ export const Collapse: FC<CollapseProps> = ({
 const StyledWrapper = styled("div")<{
   background?: string;
 }>(({ theme }) => ({
+  position: "relative",
   borderRadius: `${theme.radius.small}px`,
-  flex: 1,
+  flexGrow: 1,
+  flexShrink: 0,
+  display: "flex",
+  flexDirection: "column",
 }));
 
 const StyledHeader = styled("div")<{
@@ -98,16 +102,21 @@ const ChildWrapper = styled("div")<{
   background?: string;
   noPadding?: boolean;
 }>(({ size, background, noPadding, theme }) => ({
+  position: "relative",
   backgroundColor: background ? background : `${theme.bg[1]}`,
   padding: noPadding
     ? 0
     : size === "normal"
-    ? `${theme.spacing.normal}px`
-    : `${theme.spacing.small}px`,
-  flex: 1,
+    ? `${theme.spacing.small}px`
+    : `${theme.spacing.smallest}px`,
+  flexGrow: 1,
+  // flexShrink: 0,
   display: "flex",
   flexDirection: "column",
-  height: "100%",
+  overflowY: "auto",
+  ["::-webkit-scrollbar"]: {
+    display: "none",
+  },
 }));
 
 const IconWrapper = styled("div")<{
