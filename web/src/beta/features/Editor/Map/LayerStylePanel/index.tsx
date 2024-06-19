@@ -1,7 +1,7 @@
 import { FC, useCallback } from "react";
 
-import Icon from "@reearth/beta/components/Icon";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
+import { Button } from "@reearth/beta/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
@@ -46,11 +46,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}>
       <LayerStyleContainer>
-        <Sidebar>
-          <AdjustableButtonStyled onClick={handleLayerStyleAddition}>
-            <Icon icon="plus" />
-          </AdjustableButtonStyled>
-        </Sidebar>
+        <Button icon="plus" extendWidth onClick={handleLayerStyleAddition} title="New Style" />
         <CatalogListWrapper>
           {layerStyles?.map(layerStyle => (
             <LayerStyleCard
@@ -87,13 +83,8 @@ export default StylesPanel;
 
 const LayerStyleContainer = styled.div`
   display: flex;
-  height: 100%;
-`;
-
-const Sidebar = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 2px;
+  flex-direction: column;
+  width: 100%;
 `;
 
 const CatalogListWrapper = styled.div`
@@ -103,26 +94,4 @@ const CatalogListWrapper = styled.div`
   gap: 12px;
   overflow-y: auto;
   padding: 12px 8px;
-`;
-
-const AdjustableButtonStyled = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  color: ${({ theme }) => theme.content.main};
-  width: 32px;
-  height: 100%;
-
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.outline.weak};
-  background: ${({ theme }) => theme.bg[1]};
-
-  box-shadow: ${({ theme }) => theme.shadow.button};
-  transition: all 0.3s;
-
-  :hover {
-    background: ${({ theme }) => theme.bg[2]};
-  }
 `;

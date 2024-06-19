@@ -52,9 +52,7 @@ export default function ({ sceneId }: LayerStyleProps) {
         styleId,
       });
       if (styleId === selectedLayerStyleId) {
-        setSelectedLayerStyleId(
-          layerStyles[deletedPageIndex + 1]?.id ?? layerStyles[deletedPageIndex - 1]?.id,
-        );
+        setSelectedLayerStyleId(undefined);
       }
     },
     [layerStyles, selectedLayerStyleId, setSelectedLayerStyleId, useRemoveLayerStyle],
