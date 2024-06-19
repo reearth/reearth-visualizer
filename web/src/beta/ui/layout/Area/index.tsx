@@ -300,7 +300,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
           />
         )}
         {collapsed && (
-          <Panel extend>
+          <Panel extend background={backgroundColor}>
             <StyledIconButton
               icon="arrowsHorizontalOut"
               size="small"
