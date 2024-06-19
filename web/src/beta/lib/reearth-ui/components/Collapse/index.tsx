@@ -95,13 +95,14 @@ const StyledHeader = styled("div")<{
     size === "normal"
       ? `${theme.spacing.small}px`
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-  minHeight: size === "normal" ? "40px" : "28px",
+  minHeight: size === "normal" ? "34px" : "28px",
   justifyContent: "space-between",
   alignItems: "center",
   color: `${theme.content.main}`,
   cursor: disabled ? "auto" : "pointer",
-  backgroundColor: headerBg ?? "",
+  backgroundColor: headerBg ? headerBg : `${theme.bg[1]}`,
   fontSize: 0,
+  boxSizing: "border-box",
 }));
 
 const ActionsWapper = styled("div")(({ theme }) => ({
