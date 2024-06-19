@@ -1,7 +1,9 @@
-import { FC, ReactNode, useCallback, useMemo } from "react";
+import { FC, MouseEvent, ReactNode, useCallback, useMemo } from "react";
 
-import { Collapse } from "@reearth/beta/lib/reearth-ui";
+import { Collapse, IconButton } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+
+import { AreaRef } from "../Area";
 
 export type PanelProps = {
   title?: string;
@@ -11,6 +13,8 @@ export type PanelProps = {
   noPadding?: boolean;
   alwaysOpen?: boolean;
   background?: "default" | "normal" | string;
+  areaRef?: React.RefObject<AreaRef>;
+  showCollapseArea?: boolean;
   children?: ReactNode;
 };
 
@@ -22,6 +26,8 @@ export const Panel: FC<PanelProps> = ({
   noPadding,
   alwaysOpen,
   background = "default",
+  areaRef,
+  showCollapseArea,
   children,
 }) => {
   const theme = useTheme();
@@ -52,6 +58,28 @@ export const Panel: FC<PanelProps> = ({
     [storageKey],
   );
 
+  const collapseArea = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      areaRef?.current?.collapse();
+    },
+    [areaRef],
+  );
+
+  const actions = useMemo(() => {
+    if (!showCollapseArea) {
+      return undefined;
+    }
+    return (
+      <IconButton
+        icon="arrowsHorizontalIn"
+        size="small"
+        appearance="simple"
+        onClick={collapseArea}
+      />
+    );
+  }, [showCollapseArea, collapseArea]);
+
   return (
     <Wrapper extend={extend}>
       {title ? (
@@ -63,11 +91,14 @@ export const Panel: FC<PanelProps> = ({
           collapsed={alwaysOpen ? false : initialCollapsed}
           noPadding={noPadding}
           disabled={alwaysOpen}
+          actions={actions}
           onCollapse={handleCollapse}>
           {children}
         </Collapse>
       ) : (
-        <ContentWrapper background={backgroundStyle}>{children}</ContentWrapper>
+        <ContentWrapper background={backgroundStyle} extend={extend}>
+          {children}
+        </ContentWrapper>
       )}
     </Wrapper>
   );
@@ -77,8 +108,8 @@ const Wrapper = styled("div")<{ extend?: boolean }>(({ theme, extend }) => ({
   display: "flex",
   flexDirection: "column",
   flex: extend ? 1 : "0 0 auto",
-  // flexShrink: 0,
   borderRadius: theme.radius.small,
+  minHeight: 0,
 }));
 
 const ContentWrapper = styled("div")<{ background?: string; extend?: boolean }>(

@@ -13,6 +13,7 @@ export type CollapseProps = {
   collapsed?: boolean;
   noPadding?: boolean;
   disabled?: boolean;
+  actions?: ReactNode;
   children: ReactNode;
   onCollapse?: (collapsed: boolean) => void;
 };
@@ -25,6 +26,7 @@ export const Collapse: FC<CollapseProps> = ({
   collapsed,
   disabled,
   noPadding,
+  actions,
   children,
   onCollapse,
 }) => {
@@ -35,9 +37,10 @@ export const Collapse: FC<CollapseProps> = ({
   }, [collapsed]);
 
   const handleCollapse = useCallback(() => {
+    if (disabled) return;
     setIsCollapsed(!isCollapsed);
     onCollapse?.(!isCollapsed);
-  }, [isCollapsed, onCollapse]);
+  }, [disabled, isCollapsed, onCollapse]);
 
   return (
     <StyledWrapper>
@@ -48,11 +51,14 @@ export const Collapse: FC<CollapseProps> = ({
         headerBg={headerBg}
         disabled={disabled}>
         <Typography size="body">{title}</Typography>
-        {!disabled && (
-          <IconWrapper isCollapsed={isCollapsed}>
-            <Icon size="small" icon="triangle" />
-          </IconWrapper>
-        )}
+        <ActionsWapper>
+          {actions}
+          {!disabled && (
+            <IconWrapper isCollapsed={isCollapsed}>
+              <Icon size="small" icon="triangle" />
+            </IconWrapper>
+          )}
+        </ActionsWapper>
       </StyledHeader>
       {!isCollapsed && (
         <ChildWrapper size={size} background={background} noPadding={noPadding}>
@@ -69,9 +75,10 @@ const StyledWrapper = styled("div")<{
   position: "relative",
   borderRadius: `${theme.radius.small}px`,
   flexGrow: 1,
-  flexShrink: 0,
+  flexShrink: 1,
   display: "flex",
   flexDirection: "column",
+  minHeight: 0,
 }));
 
 const StyledHeader = styled("div")<{
@@ -88,13 +95,19 @@ const StyledHeader = styled("div")<{
     size === "normal"
       ? `${theme.spacing.small}px`
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  minHeight: size === "normal" ? "40px" : "28px",
   justifyContent: "space-between",
   alignItems: "center",
   color: `${theme.content.main}`,
   cursor: disabled ? "auto" : "pointer",
-  pointerEvents: disabled ? "none" : "auto",
   backgroundColor: headerBg ?? "",
   fontSize: 0,
+}));
+
+const ActionsWapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.micro,
 }));
 
 const ChildWrapper = styled("div")<{
@@ -110,13 +123,9 @@ const ChildWrapper = styled("div")<{
     ? `${theme.spacing.small}px`
     : `${theme.spacing.smallest}px`,
   flexGrow: 1,
-  // flexShrink: 0,
   display: "flex",
   flexDirection: "column",
   overflowY: "auto",
-  ["::-webkit-scrollbar"]: {
-    display: "none",
-  },
 }));
 
 const IconWrapper = styled("div")<{

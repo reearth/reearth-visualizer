@@ -1,12 +1,14 @@
 import { FC, useMemo } from "react";
 
 import Settings from "@reearth/beta/features/Editor/common/Settings";
-import { Panel } from "@reearth/beta/ui/layout";
+import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 
 import { useStoryPage } from "../context";
 
-const PageSettingsPanel: FC = () => {
+type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
+
+const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const { selectedStoryPage, currentCamera, layers, onPageUpdate, tab, onFlyTo } = useStoryPage();
 
   const t = useT();
@@ -20,7 +22,13 @@ const PageSettingsPanel: FC = () => {
   );
 
   return (
-    <Panel title={t("Page Settings")} extend>
+    <Panel
+      title={t("Page Settings")}
+      storageId="editor-widgets-page-settings-panel"
+      extend
+      alwaysOpen
+      showCollapseArea={showCollapseArea}
+      areaRef={areaRef}>
       {selectedStoryPage && (
         <Settings
           propertyId={selectedStoryPage.property.id}

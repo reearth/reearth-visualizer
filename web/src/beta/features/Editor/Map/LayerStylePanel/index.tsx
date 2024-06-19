@@ -2,7 +2,7 @@ import { FC, useCallback } from "react";
 
 import Icon from "@reearth/beta/components/Icon";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import { Panel } from "@reearth/beta/ui/layout";
+import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -11,7 +11,9 @@ import { useMapPage } from "../context";
 
 import LayerStyleCard from "./LayerStyleCard";
 
-const StylesPanel: FC = () => {
+type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
+
+const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const {
     layerStyles,
     selectedLayerStyleId,
@@ -36,7 +38,13 @@ const StylesPanel: FC = () => {
   );
 
   return (
-    <Panel title={t("Layer Style")} extend alwaysOpen storageId="editor-map-scene-panel">
+    <Panel
+      title={t("Layer Style")}
+      extend
+      alwaysOpen
+      storageId="editor-map-scene-panel"
+      showCollapseArea={showCollapseArea}
+      areaRef={areaRef}>
       <LayerStyleContainer>
         <Sidebar>
           <AdjustableButtonStyled onClick={handleLayerStyleAddition}>

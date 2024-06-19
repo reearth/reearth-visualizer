@@ -1,6 +1,6 @@
 import { FC, useRef } from "react";
 
-import { Window, Area } from "@reearth/beta/ui/layout";
+import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
 
 import { useMapPage } from "./context";
 import InspectorPanel from "./InspectorPanel";
@@ -10,9 +10,11 @@ import ScenePanel from "./ScenePanel";
 import ToolsPanel from "./ToolsPanel";
 
 const Map: FC = () => {
-  const windowRef = useRef<HTMLDivElement>(null);
-
   const { onVisualizerResize } = useMapPage();
+
+  const windowRef = useRef<HTMLDivElement>(null);
+  const secRightAreaRef = useRef<AreaRef>(null);
+  const rightAreaRef = useRef<AreaRef>(null);
 
   return (
     <Window ref={windowRef}>
@@ -26,12 +28,20 @@ const Map: FC = () => {
             <ToolsPanel />
           </Area>
           <Area extend onResize={onVisualizerResize} windowRef={windowRef} passive />
-          <Area resizableEdge="top" storageId="editor-map-bottom-area">
-            <LayerStylePanel />
-          </Area>
         </Area>
-        <Area direction="column" resizableEdge="left" storageId="editor-map-right-area">
-          <InspectorPanel />
+        <Area
+          direction="column"
+          resizableEdge="left"
+          storageId="editor-map-sec-right-area"
+          ref={secRightAreaRef}>
+          <InspectorPanel showCollapseArea areaRef={secRightAreaRef} />
+        </Area>
+        <Area
+          direction="column"
+          resizableEdge="left"
+          storageId="editor-map-right-area"
+          ref={rightAreaRef}>
+          <LayerStylePanel showCollapseArea areaRef={rightAreaRef} />
         </Area>
       </Area>
     </Window>

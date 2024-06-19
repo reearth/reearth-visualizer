@@ -1,6 +1,6 @@
 import { FC, useRef } from "react";
 
-import { Window, Area } from "@reearth/beta/ui/layout";
+import { Window, Area, AreaRef } from "@reearth/beta/ui/layout";
 
 import ContainerSettingsPanel from "./ContainerSettingsPanel";
 import { useWidgetsPage } from "./context";
@@ -9,9 +9,10 @@ import WidgetInspectorPanel from "./WidgetInspectorPanel";
 import WidgetManagerPanel from "./WidgetManagerPanel";
 
 const Widgets: FC = () => {
-  const windowRef = useRef<HTMLDivElement>(null);
-
   const { onVisualizerResize, selectedWidgetArea, selectedWidget } = useWidgetsPage();
+
+  const windowRef = useRef<HTMLDivElement>(null);
+  const rightAreaRef = useRef<AreaRef>(null);
 
   return (
     <Window ref={windowRef}>
@@ -22,8 +23,12 @@ const Widgets: FC = () => {
           </Area>
           <Area extend onResize={onVisualizerResize} windowRef={windowRef} passive />
         </Area>
-        <Area direction="column" resizableEdge="left" storageId="editor-widgets-right-area">
-          <WidgetManagerPanel />
+        <Area
+          direction="column"
+          resizableEdge="left"
+          storageId="editor-widgets-right-area"
+          ref={rightAreaRef}>
+          <WidgetManagerPanel showCollapseArea areaRef={rightAreaRef} />
           {selectedWidget && <WidgetInspectorPanel />}
           {selectedWidgetArea && <ContainerSettingsPanel />}
         </Area>

@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 
 import SceneSettings from "@reearth/beta/features/Editor/common/Settings";
-import { Panel } from "@reearth/beta/ui/layout";
+import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 
 import { useMapPage } from "../context";
@@ -9,7 +9,9 @@ import { useMapPage } from "../context";
 import LayerInspector from "./LayerInspector";
 import LayerStyleEditor from "./LayerStyleEditor";
 
-const InspectorPanel: FC = () => {
+type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
+
+const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
   const {
     scene,
     layers,
@@ -37,7 +39,9 @@ const InspectorPanel: FC = () => {
       extend
       alwaysOpen
       noPadding={!!selectedLayer}
-      background="normal">
+      background="normal"
+      areaRef={areaRef}
+      showCollapseArea={showCollapseArea}>
       {!!selectedSceneSetting && scenePropertyId && (
         <SceneSettings
           propertyId={scenePropertyId}

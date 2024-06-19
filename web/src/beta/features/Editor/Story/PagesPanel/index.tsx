@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 
 import DragAndDropList from "@reearth/beta/components/DragAndDropList";
 import { getFieldValue } from "@reearth/beta/features/Visualizer/StoryPanel/utils";
-import { Panel } from "@reearth/beta/ui/layout";
+import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { isEmptyString } from "@reearth/beta/utils/util";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -13,9 +13,9 @@ import Action from "./Action";
 import PageItem from "./PageItem";
 import PageItemWrapper from "./PageItemWrapper";
 
-export type PagesPanelProps = {};
+type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
 
-const PagesPanel: FC<PagesPanelProps> = () => {
+const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const {
     storyPages,
     selectedStoryPage,
@@ -36,7 +36,13 @@ const PagesPanel: FC<PagesPanelProps> = () => {
   }, [storyPages]);
 
   return (
-    <Panel title="Pages" extend storageId="editor-story-pages-panel">
+    <Panel
+      title="Pages"
+      extend
+      alwaysOpen
+      storageId="editor-story-pages-panel"
+      showCollapseArea={showCollapseArea}
+      areaRef={areaRef}>
       <SContent>
         <SContentUp onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}>
           <DragAndDropList

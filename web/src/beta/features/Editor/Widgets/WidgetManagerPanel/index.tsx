@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 
 import ListItem from "@reearth/beta/components/ListItem";
 import PopoverMenuContent from "@reearth/beta/components/PopoverMenuContent";
-import { Panel } from "@reearth/beta/ui/layout";
+import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
@@ -11,7 +11,9 @@ import { useWidgetsPage } from "../context";
 import ActionArea from "./Action";
 import useHooks from "./hooks";
 
-const WidgetManagerPanel: FC = () => {
+type Props = Pick<PanelProps, "showCollapseArea" | "areaRef">;
+
+const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const { sceneId, selectedWidget, setSelectedWidget } = useWidgetsPage();
 
   const t = useT();
@@ -35,7 +37,9 @@ const WidgetManagerPanel: FC = () => {
       title={t("Widget Manager")}
       alwaysOpen
       extend
-      storageId="editor-widgets-widget-manager-panel">
+      storageId="editor-widgets-widget-manager-panel"
+      showCollapseArea={showCollapseArea}
+      areaRef={areaRef}>
       <Wrapper>
         <ActionArea installableWidgets={installableWidgets} onWidgetAdd={handleWidgetAdd} />
         <InstalledWidgetsList>

@@ -56,6 +56,14 @@ export type Theme = Common & {
   warning: {
     main: string;
   };
+  relative: {
+    lightest: string;
+    lighter: string;
+    light: string;
+    dark: string;
+    darker: string;
+    darkest: string;
+  };
   placeHolder: {
     main_1: string;
     main_2: string;
