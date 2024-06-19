@@ -17,6 +17,7 @@ import {
   CREATE_PROJECT,
   DELETE_PROJECT,
   GET_PROJECT,
+  GET_PROJECTS,
   PUBLISH_PROJECT,
   UPDATE_PROJECT,
   UPDATE_PROJECT_ALIAS,
@@ -50,6 +51,18 @@ export default () => {
     );
 
     return { project, ...rest };
+  }, []);
+
+  const useProjectsQuery = useCallback((teamId?: string) => {
+    const { data, ...rest } = useQuery(GET_PROJECTS, {
+      variables: { teamId: teamId ?? "", last: 16 },
+      skip: !teamId,
+      notifyOnNetworkStatusChange: true,
+    });
+
+    const projects = useMemo(() => data?.projects, [data?.projects]);
+
+    return { projects, ...rest };
   }, []);
 
   const useProjectAliasCheckLazyQuery = useCallback(() => {
@@ -269,6 +282,7 @@ export default () => {
   return {
     publishProjectLoading,
     useProjectQuery,
+    useProjectsQuery,
     useProjectAliasCheckLazyQuery,
     useCreateProject,
     usePublishProject,

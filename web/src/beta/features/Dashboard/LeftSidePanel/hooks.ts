@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useMeFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
 import { useWorkspace } from "@reearth/services/state";
 
-import { TabMenu } from ".";
+import { TabItems } from ".";
 
 type Props = {
-  items: Omit<TabMenu[], "active">;
+  tabsItem: Omit<TabItems[], "active">;
   workspaceId?: string;
 };
 
-export default ({ workspaceId, items }: Props) => {
+export default ({ workspaceId, tabsItem }: Props) => {
   const navigate = useNavigate();
   const { useMeQuery } = useMeFetcher();
   const { me: data } = useMeQuery();
@@ -23,21 +23,15 @@ export default ({ workspaceId, items }: Props) => {
   const workspace = workspaces?.find(workspace => workspace.id === workspaceId);
   const isPersonal = !!workspaceId && workspaceId === data?.myTeam?.id;
 
-  const { tab } = useParams<{
-    tab?: string;
-  }>();
-
-  const currentTab = useMemo(() => tab ?? "project", [tab]);
-
   const tabs = useMemo(
     () =>
-      items
+      tabsItem
         .filter(tab => !(isPersonal && tab.id === "members"))
         .map(tab => ({
           ...tab,
           path: tab.path || `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`,
         })),
-    [items, isPersonal, workspaceId],
+    [tabsItem, isPersonal, workspaceId],
   );
 
   const topTabs = useMemo(
@@ -73,7 +67,6 @@ export default ({ workspaceId, items }: Props) => {
     workspaces,
     currentWorkspace,
     isPersonal,
-    currentTab,
     topTabs,
     bottomTabs,
     onSignOut: logout,

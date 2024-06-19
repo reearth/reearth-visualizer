@@ -187,7 +187,7 @@ const SelectInput = styled("div")<{
   justifyContent: "space-between",
   alignItems: "center",
   gap: `${theme.spacing.small}px`,
-  borderRadius: `${theme.radius.smallest}px`,
+  borderRadius: `${theme.radius.small}px`,
   border: `1px solid ${!disabled && isOpen ? theme.select.strong : theme.outline.weak}`,
   boxShadow: `${theme.shadow.input}`,
   padding: `${theme.spacing.smallest}px ${

@@ -4,15 +4,13 @@ import { IconName, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import { DashboardProps } from "..";
+
 import useHooks from "./hooks";
 import { Menu } from "./menuItem";
 import { Profile } from "./profile";
 
-export type Props = {
-  workspaceId?: string;
-};
-
-export type TabMenu = {
+export type TabItems = {
   id: string;
   text?: string;
   icon?: IconName;
@@ -20,7 +18,7 @@ export type TabMenu = {
   active?: boolean;
 };
 
-const items: Omit<TabMenu[], "active"> = [
+export const tabsItem: Omit<TabItems[], "active"> = [
   { id: "project", text: "Project", icon: "grid" },
   { id: "asset", text: "Assets", icon: "file" },
   { id: "members", text: "Members", icon: "appearance" },
@@ -29,14 +27,13 @@ const items: Omit<TabMenu[], "active"> = [
   { id: "documentary", text: "Documentary", icon: "book", path: " " },
   { id: "community", text: "Community", icon: "usersFour", path: " " },
   { id: "help", text: "Help & Support", icon: "question", path: " " },
-];
+] as const;
 
-const LeftSidePanel: FC<Props> = ({ workspaceId }) => {
+const LeftSidePanel: FC<DashboardProps> = ({ workspaceId, tab: currentTab }) => {
   const t = useT();
   const theme = useTheme();
 
   const {
-    currentTab,
     isPersonal,
     currentWorkspace,
     workspaces,
@@ -44,7 +41,7 @@ const LeftSidePanel: FC<Props> = ({ workspaceId }) => {
     bottomTabs,
     onSignOut,
     handleWorkspaceChange,
-  } = useHooks({ workspaceId, items });
+  } = useHooks({ tabsItem, workspaceId });
 
   return (
     <Wrapper>

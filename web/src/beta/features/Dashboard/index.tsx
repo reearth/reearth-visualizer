@@ -1,17 +1,25 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
+import { useParams } from "react-router-dom";
 
 import { Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
+import DashboardContents from "./Contents";
 import LeftSidePanel from "./LeftSidePanel";
 
 export type DashboardProps = {
   workspaceId?: string;
+  tab?: string;
 };
-const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
+const Dashboard: FC<Omit<DashboardProps, "tab">> = ({ workspaceId }) => {
   const t = useT();
   const theme = useTheme();
+
+  const { tab } = useParams<{
+    tab?: string;
+  }>();
+  const currentTab = useMemo(() => tab ?? "project", [tab]);
 
   return (
     <Wrapper>
@@ -21,9 +29,9 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
             {t("Re:Earth Visualizer")}
           </Typography>
         </Header>
-        <LeftSidePanel workspaceId={workspaceId} />
+        <LeftSidePanel tab={currentTab} workspaceId={workspaceId} />
       </LeftSideWrapper>
-      <Content>Content side</Content>
+      <DashboardContents tab={currentTab} workspaceId={workspaceId} />
     </Wrapper>
   );
 };
@@ -34,7 +42,6 @@ const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   height: "100%",
   width: "100%",
-  overflow: "auto",
   background: theme.bg.transparentBlack,
 }));
 
@@ -50,8 +57,4 @@ const Header = styled("div")(({ theme }) => ({
   borderBottom: `1px solid ${theme.outline.weaker}`,
   alignContent: "center",
   padding: theme.spacing.normal,
-}));
-
-const Content = styled("div")(() => ({
-  flex: 1,
 }));

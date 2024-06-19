@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 
-import { TabMenu } from ".";
+import { TabItems } from ".";
 
-export const Menu: FC<Omit<TabMenu, "id">> = ({ icon, text, active, path }) => {
+export const Menu: FC<Omit<TabItems, "id">> = ({ icon, text, active, path }) => {
   const theme = useTheme();
   return (
     <StyledLinkButton to={path || ""}>

@@ -63,6 +63,7 @@ import Layers from "./Icons/Layers.svg?react";
 import LineHeight from "./Icons/LineHeight.svg?react";
 import LineSegments from "./Icons/LineSegments.svg?react";
 import LinkSimple from "./Icons/LinkSimple.svg?react";
+import List from "./Icons/List.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
 import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
 import LToS from "./Icons/LToS.svg?react";
@@ -185,6 +186,7 @@ export default {
   linkSimple: LinkSimple,
   listDashes: ListDashes,
   listDashesFilled: ListDashesFilled,
+  list: List,
   magnifyingGlass: MagnifyingGlass,
   mapPin: MapPin,
   mapTrifold: MapTrifold,
